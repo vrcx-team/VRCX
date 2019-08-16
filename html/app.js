@@ -4267,11 +4267,7 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.addFeed = function (type, ref, extra) {
-			var array = this.feedTable.data;
-			if (array.length > 50000) {
-				array.length.splice(0, array.length - 10000);
-			}
-			array.push({
+			this.feedTable.data.push({
 				created_at: new Date().toJSON(),
 				type,
 				userId: ref.id,
