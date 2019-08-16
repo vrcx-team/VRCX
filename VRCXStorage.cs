@@ -11,6 +11,7 @@ namespace VRCX
     public class VRCXStorage
     {
         private static Dictionary<string, string> m_Storage = new Dictionary<string, string>();
+        private static bool m_Dirty;
 
         public static void Load()
         {
@@ -26,6 +27,7 @@ namespace VRCX
         {
             lock (m_Storage)
             {
+                m_Dirty = true;
                 m_Storage.Clear();
             }
         }
@@ -34,7 +36,11 @@ namespace VRCX
         {
             lock (m_Storage)
             {
-                Save();
+                if (m_Dirty)
+                {
+                    m_Dirty = false;
+                    Save();
+                }
             }
         }
 
@@ -42,6 +48,7 @@ namespace VRCX
         {
             lock (m_Storage)
             {
+                m_Dirty = true;
                 return m_Storage.Remove(key);
             }
         }
@@ -60,6 +67,7 @@ namespace VRCX
         {
             lock (m_Storage)
             {
+                m_Dirty = true;
                 m_Storage[key] = value;
             }
         }

@@ -84,9 +84,7 @@ if (window.CefSharp) {
 			this.Set(key, JSON.stringify(value));
 		};
 
-		VRCXStorage.Flush();
-
-		setInterval(() => VRCXStorage.Flush(), 3 * 60 * 1000);
+		setInterval(() => VRCXStorage.Flush(), 5 * 60 * 1000);
 
 		Noty.overrideDefaults({
 			animation: {
@@ -3341,7 +3339,7 @@ if (window.CefSharp) {
 				VRCX,
 				nextRefresh: 0,
 				isGameRunning: false,
-				appVersion: '2019.08.16',
+				appVersion: '2019.08.17',
 				latestAppVersion: '',
 				ossDialog: false
 			},
@@ -4201,6 +4199,7 @@ if (window.CefSharp) {
 
 		API.$on('LOGIN', (args) => {
 			$app.feedTable.data = VRCXStorage.GetArray(`${args.ref.id}_feedTable`);
+			$app.sweepFeed();
 		});
 
 		API.$on('USER:UPDATE', (args) => {
@@ -4268,13 +4267,18 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.addFeed = function (type, ref, extra) {
-			this.feedTable.data.push({
+			var array = this.feedTable.data;
+			if (array.length > 50000) {
+				array.length.splice(0, array.length - 10000);
+			}
+			array.push({
 				created_at: new Date().toJSON(),
 				type,
 				userId: ref.id,
 				displayName: ref.displayName,
 				...extra
 			});
+			this.sweepFeed();
 			this.saveFeed();
 			this.notifyMenu('feed');
 		};
@@ -4287,10 +4291,46 @@ if (window.CefSharp) {
 				type: 'info',
 				callback: (action) => {
 					if (action === 'confirm') {
-						this.feedTable.data = [];
+						// 필터된 데이터만 삭제 하려면.. 허어
+						var T = this.feedTable;
+						T.data = T.data.filter((row) => !T.filters.every((filter) => {
+							if (filter.value) {
+								if (!Array.isArray(filter.value)) {
+									if (filter.filterFn) {
+										return filter.filterFn(row, filter);
+									}
+									return String(row[filter.prop]).toUpperCase().includes(String(filter.value).toUpperCase());
+								}
+								if (filter.value.length) {
+									if (filter.filterFn) {
+										return filter.filterFn(row, filter);
+									}
+									var prop = String(row[filter.prop]).toUpperCase();
+									return filter.value.some((v) => prop.includes(String(v).toUpperCase()));
+								}
+							}
+							return true;
+						}));
 					}
 				}
 			});
+		};
+
+		$app.methods.sweepFeed = function () {
+			var array = this.feedTable.data;
+			// 로그는 3일까지만 남김
+			var limit = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toJSON();
+			var i = 0;
+			var j = array.length;
+			while (i < j &&
+				array[i].created_at < limit) {
+				++i;
+			}
+			if (i === j) {
+				this.feedTable.data = [];
+			} else if (i) {
+				array.splice(0, i);
+			}
 		};
 
 		// App: gameLog
@@ -4361,6 +4401,7 @@ if (window.CefSharp) {
 								this.lastLocation = ctx.data;
 							}
 						});
+						this.sweepGameLog();
 						this.updateSharedFeed();
 						this.notifyMenu('gameLog');
 					});
@@ -4368,6 +4409,23 @@ if (window.CefSharp) {
 					this.updateSharedFeed();
 				}
 			});
+		};
+
+		$app.methods.sweepGameLog = function () {
+			var array = this.gameLogTable.data;
+			// 로그는 3일까지만 남김
+			var limit = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toJSON();
+			var i = 0;
+			var j = array.length;
+			while (i < j &&
+				array[i].created_at < limit) {
+				++i;
+			}
+			if (i === j) {
+				this.gameLogTable.data = [];
+			} else if (i) {
+				array.splice(0, i);
+			}
 		};
 
 		$app.methods.updateDiscord = function () {

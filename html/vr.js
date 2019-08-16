@@ -469,13 +469,21 @@ if (window.CefSharp) {
 					} else if (L.worldId) {
 						var ref = API.world[L.worldId];
 						if (ref) {
-							this.text = `${ref.name} #${L.instanceName} ${L.accessType}`;
+							if (L.instanceId) {
+								this.text = `${ref.name} #${L.instanceName} ${L.accessType}`;
+							} else {
+								this.text = ref.name;
+							}
 						} else {
 							API.getWorld({
 								worldId: L.worldId
 							}).then((args) => {
 								if (L.tag === this.location) {
-									this.text = `${args.ref.name} #${L.instanceName} ${L.accessType}`;
+									if (L.instanceId) {
+										this.text = `${args.ref.name} #${L.instanceName} ${L.accessType}`;
+									} else {
+										this.text = args.ref.name;
+									}
 								}
 								return args;
 							});
@@ -590,9 +598,9 @@ if (window.CefSharp) {
 				// 현재 날짜 시간
 				// 컨트롤러 배터리 상황
 				// --
-				// OO is Let's Just H!!!!! [GPS]
-				// OO has logged in [Online]
-				// OO has logged out [Offline]
+				// OO is in Let's Just H!!!!! [GPS]
+				// OO has logged in [Online] -> TODO: location
+				// OO has logged out [Offline] -> TODO: location
 				// OO has joined [OnPlayerJoined]
 				// OO has left [OnPlayerLeft]
 				// [Moderation]
