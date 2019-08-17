@@ -12,6 +12,7 @@ Screenshots
 ![01feed](https://user-images.githubusercontent.com/25771678/63169780-a6dfcb80-c072-11e9-85f9-2e7c816633a2.png)
 ![02gamelog](https://user-images.githubusercontent.com/25771678/63169782-a7786200-c072-11e9-9221-bdc13ddbec5b.png)
 ![03search](https://user-images.githubusercontent.com/25771678/63169787-a810f880-c072-11e9-94fb-af3ed02fa5da.png)
+![note](https://user-images.githubusercontent.com/25771678/63212073-77949180-c13a-11e9-9d8e-a3db64f55b47.png)
 ![09w1](https://user-images.githubusercontent.com/25771678/63170557-8153c180-c074-11e9-8f89-9b1a61b7912f.png)
 ![09w2](https://user-images.githubusercontent.com/25771678/63170559-81ec5800-c074-11e9-8549-efd2d7843ca1.png)
 ![04fav](https://user-images.githubusercontent.com/25771678/63169788-a8a98f00-c072-11e9-9257-8d910880b4a3.png)
