@@ -56,7 +56,7 @@ namespace VRCX
             {
                 MainForm.Instance.BeginInvoke(new MethodInvoker(() =>
                 {
-                    if (VRForm.Instance==null)
+                    if (VRForm.Instance == null)
                     {
                         new VRForm().Show();
                     }

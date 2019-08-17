@@ -632,17 +632,30 @@
 					<el-button size="small" icon="el-icon-switch-button" @click="logout()">Logout</el-button>
 				</el-button-group>
 			</div>
-		</div>
-		<div style="margin-top:30px">
-			<span style="font-weight:bold">Past Display Names</span>
-			<data-tables v-bind="pastDisplayNameTable" style="margin-top:5px">
-				<el-table-column label="Date" prop="updated_at" sortable="custom">
-					<template v-once #default="scope">
-						<span>{{ scope.row.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}</span>
+			<div style="margin-top:30px">
+				<span style="font-weight:bold">Past Display Names</span>
+				<data-tables v-bind="pastDisplayNameTable" style="margin-top:5px">
+					<el-table-column label="Date" prop="updated_at" sortable="custom">
+						<template v-once #default="scope">
+							<span>{{ scope.row.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}</span>
+						</template>
+					</el-table-column>
+					<el-table-column label="Name" prop="displayName"></el-table-column>
+				</data-tables>
+			</div>
+			<div style="margin-top:30px">
+				<span style="font-weight:bold">JSON</span>
+				<el-button type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px"></el-button>
+				<el-button type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0"></el-button>
+				<el-tree :data="currentUserTreeData" style="margin-top:5px;font-size:12px">
+					<template #default="scope">
+						<span>
+							<span v-text="scope.data.key" style="font-weight:bold;margin-right:5px"></span>
+							<span v-if="!scope.data.children" v-text="scope.data.value"></span>
+						</span>
 					</template>
-				</el-table-column>
-				<el-table-column label="Name" prop="displayName"></el-table-column>
-			</data-tables>
+				</el-tree>
+			</div>
 		</div>
 		<div style="margin-top:30px">
 			<span style="font-weight:bold">Game Info</span>
@@ -707,7 +720,7 @@
 			</div>
 			<div style="font-size:12px;margin-top:5px">
 				<span style="display:inline-block;min-width:150px">Instance Details</span>
-				<el-switch v-model="discordInstance" :disabled="!discordActive"></el-switch>
+				<el-switch v-model="discordInstance"></el-switch>
 			</div>
 		</div>
 		<div style="margin-top:30px">
@@ -768,7 +781,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-text="friend.ref.displayName" class="name"></span>
+							<span v-if="friend.memo" class="name">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" class="name"></span>
 							<location :location="friend.ref.location" :link="false" class="extra"></location>
 						</div>
 					</template>
@@ -789,7 +803,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-text="friend.ref.displayName" class="name"></span>
+							<span v-if="friend.memo" class="name">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" class="name"></span>
 							<location :location="friend.ref.location" :link="false" class="extra"></location>
 						</div>
 					</template>
@@ -810,7 +825,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-text="friend.ref.displayName" class="name"></span>
+							<span v-if="friend.memo" class="name">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" class="name"></span>
 							<span v-text="friend.ref.statusDescription" :link="false" class="extra"></span>
 						</div>
 					</template>
@@ -831,7 +847,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-text="friend.ref.displayName" class="name"></span>
+							<span v-if="friend.memo" class="name">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" class="name"></span>
 							<span v-text="friend.ref.statusDescription" class="extra"></span>
 						</div>
 					</template>
@@ -905,11 +922,11 @@
 								</template>
 								<el-dropdown-item v-else-if="userDialog.outgoingRequest" icon="el-icon-close" command="Cancel Friend Request">Cancel Friend Request</el-dropdown-item>
 								<el-dropdown-item v-else icon="el-icon-plus" command="Send Friend Request">Send Friend Request</el-dropdown-item>
-								<el-dropdown-item v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided>Unblock</el-dropdown-item>
+								<el-dropdown-item v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided style="color:#F56C6C">Unblock</el-dropdown-item>
 								<el-dropdown-item v-else icon="el-icon-circle-close" command="Block" divided>Block</el-dropdown-item>
-								<el-dropdown-item v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute">Unmute</el-dropdown-item>
+								<el-dropdown-item v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C">Unmute</el-dropdown-item>
 								<el-dropdown-item v-else icon="el-icon-turn-off-microphone" command="Mute">Mute</el-dropdown-item>
-								<el-dropdown-item v-if="userDialog.isHideAvatar" icon="el-icon-user-solid" command="Show Avatar">Show Avatar</el-dropdown-item>
+								<el-dropdown-item v-if="userDialog.isHideAvatar" icon="el-icon-user-solid" command="Show Avatar" style="color:#F56C6C">Show Avatar</el-dropdown-item>
 								<el-dropdown-item v-else icon="el-icon-user" command="Hide Avatar">Hide Avatar</el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>
@@ -950,7 +967,14 @@
 							</div>
 						</div>
 					</div>
+					
 					<div class="x-friend-list" style="max-height:none">
+						<div class="x-friend-item" style="width:100%">
+							<div class="detail">
+								<span class="name">Note</span>
+								<el-input v-model="userDialog.memo" type="textarea" :rows="2" placeholder="Click to add a note" size="mini" resize="none" class="extra"></el-input>
+							</div>
+						</div>
 						<div class="x-friend-item">
 							<div class="detail">
 								<span class="name">Avatar Copying</span>
@@ -968,12 +992,6 @@
 							<div class="detail">
 								<span class="name">Last Platform</span>
 								<span class="extra" v-text="userDialog.ref.last_platform"></span>
-							</div>
-						</div>
-						<div class="x-friend-item" style="width:100%">
-							<div class="detail">
-								<span class="name">ID</span>
-								<span class="extra" v-text="userDialog.ref.id"></span>
 							</div>
 						</div>
 					</div>
@@ -1009,7 +1027,7 @@
 				</el-tab-pane>
 				<el-tab-pane label="JSON">
 					<el-button type="default" @click="refreshUserDialogTreeData()" size="mini" icon="el-icon-refresh" circle></el-button>
-					<el-tree :data="userDialog.treeData" style="margin-top:5px">
+					<el-tree :data="userDialog.treeData" style="margin-top:5px;font-size:12px">
 						<template #default="scope">
 							<span>
 								<span v-text="scope.data.key" style="font-weight:bold;margin-right:5px"></span>
@@ -1033,7 +1051,7 @@
 				<div style="flex:1;display:flex;align-items:center;margin-left:15px">
 					<div style="flex:1">
 						<div>
-							<i class="el-icon-s-home" v-show="worldDialog.location_.worldId === API.currentUser.homeLocation"></i>
+							<i class="el-icon-s-home" v-show="API.currentUser.homeLocation_ && API.currentUser.homeLocation_.worldId === worldDialog.id"></i>
 							<span v-text="worldDialog.ref.name" style="font-weight:bold"></span>
 						</div>
 						<div style="margin-top:5px">
@@ -1056,7 +1074,7 @@
 							<el-button type="default" icon="el-icon-more" circle></el-button>
 							<el-dropdown-menu #default="dropdown">
 								<el-dropdown-item icon="el-icon-s-flag" command="New Instance">New Instance</el-dropdown-item>
-								<el-dropdown-item v-if="worldDialog.location_.worldId === API.currentUser.homeLocation" icon="el-icon-magic-stick" command="Reset Home" divided>Reset Home</el-dropdown-item>
+								<el-dropdown-item v-if="API.currentUser.homeLocation_ && API.currentUser.homeLocation_.worldId === worldDialog.id" icon="el-icon-magic-stick" command="Reset Home" divided>Reset Home</el-dropdown-item>
 								<el-dropdown-item v-else icon="el-icon-s-home" command="Make Home" divided>Make Home</el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>
@@ -1162,17 +1180,11 @@
 								<span class="extra" v-text="worldDialogPlatform"></span>
 							</div>
 						</div>
-						<div class="x-friend-item" style="width:100%">
-							<div class="detail">
-								<span class="name">ID</span>
-								<span class="extra" v-text="worldDialog.ref.id"></span>
-							</div>
-						</div>
 					</div>
 				</el-tab-pane>
 				<el-tab-pane label="JSON">
 					<el-button type="default" @click="refreshWorldDialogTreeData()" size="mini" icon="el-icon-refresh" circle></el-button>
-					<el-tree :data="worldDialog.treeData" style="margin-top:5px">
+					<el-tree :data="worldDialog.treeData" style="margin-top:5px;font-size:12px">
 						<template #default="scope">
 							<span>
 								<span v-text="scope.data.key" style="font-weight:bold;margin-right:5px"></span>
@@ -1249,17 +1261,11 @@
 								<span class="extra" v-text="avatarDialogPlatform"></span>
 							</div>
 						</div>
-						<div class="x-friend-item" style="width:100%">
-							<div class="detail">
-								<span class="name">ID</span>
-								<span class="extra" v-text="avatarDialog.ref.id"></span>
-							</div>
-						</div>
 					</div>
 				</el-tab-pane>
 				<el-tab-pane label="JSON">
 					<el-button type="default" @click="refreshAvatarDialogTreeData()" size="mini" icon="el-icon-refresh" circle></el-button>
-					<el-tree :data="avatarDialog.treeData" style="margin-top:5px">
+					<el-tree :data="avatarDialog.treeData" style="margin-top:5px;font-size:12px">
 						<template #default="scope">
 							<span>
 								<span v-text="scope.data.key" style="font-weight:bold;margin-right:5px"></span>

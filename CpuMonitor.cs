@@ -39,13 +39,12 @@ namespace VRCX
                     }
                     while (m_Thread != null)
                     {
+                        if (cpuCounter != null)
+                        {
+                            CpuUsage = cpuCounter.NextValue();
+                        }
                         try
                         {
-                            if (cpuCounter != null)
-                            {
-                                CpuUsage = cpuCounter.NextValue();
-                            }
-
                             Thread.Sleep(1000);
                         }
                         catch

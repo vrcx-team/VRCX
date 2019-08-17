@@ -207,7 +207,7 @@ body, input, textarea, select, button {
 }
 
 .x-friend-item:hover {
-	background: #eee;
+	background: #f0f0f0;
 	border-radius: 2px;
 }
 
@@ -400,14 +400,21 @@ i.x-user-status.busy {
 	color: rgb(0, 0, 0);
 }
 
-.x-dialog .el-tree {
-	font-size: 12px;
-}
-
-.x-dialog .el-tree-node {
+.el-tree-node {
 	white-space: normal;
 }
 
-.x-dialog .el-tree-node__content {
+.el-tree-node__content {
 	height: auto;
+}
+
+.x-user-dialog .el-textarea__inner {
+	background: none;
+	border: 0;
+	border-radius: 2px;
+	padding: 0;
+}
+
+.x-user-dialog .el-tag+.el-tag {
+	margin-left: 5px;
 }

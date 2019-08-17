@@ -803,6 +803,9 @@ if (window.CefSharp) {
 			if (this.isLoggedIn) {
 				ctx = this.currentUser;
 				Object.assign(ctx, ref);
+				if (ctx.homeLocation_.tag !== ctx.homeLocation) {
+					ctx.homeLocation_ = this.parseLocation(ctx.homeLocation);
+				}
 			} else {
 				this.isLoggedIn = true;
 				ctx = {
@@ -828,8 +831,12 @@ if (window.CefSharp) {
 					onlineFriends: [],
 					activeFriends: [],
 					offlineFriends: [],
+					// custom
+					homeLocation_: {},
+					//
 					...ref
 				};
+				ctx.homeLocation_ = this.parseLocation(ctx.homeLocation);
 				this.currentUser = ctx;
 				this.$emit('LOGIN', {
 					json: ref,
@@ -3291,6 +3298,54 @@ if (window.CefSharp) {
 				: '';
 		};
 
+		var buildTreeData = (json) => {
+			var node = [];
+			for (var key in json) {
+				var value = json[key];
+				if (typeof value === 'object') {
+					if (Array.isArray(value)) {
+						node.push({
+							children: value.map((val, idx) => {
+								if (typeof val === 'object') {
+									return {
+										children: buildTreeData(val),
+										key: idx
+									};
+								}
+								return {
+									key: idx,
+									value: val
+								};
+							}),
+							key
+						});
+					} else {
+						node.push({
+							children: buildTreeData(value),
+							key
+						});
+					}
+				} else {
+					node.push({
+						key,
+						value: String(value)
+					});
+				}
+			}
+			node.sort((a, b) => {
+				var A = String(a.key).toUpperCase();
+				var B = String(b.key).toUpperCase();
+				if (A < B) {
+					return -1;
+				}
+				if (A > B) {
+					return 1;
+				}
+				return 0;
+			});
+			return node;
+		};
+
 		// Misc
 
 		var $timers = [];
@@ -3339,7 +3394,7 @@ if (window.CefSharp) {
 				VRCX,
 				nextRefresh: 0,
 				isGameRunning: false,
-				appVersion: '2019.08.17',
+				appVersion: '2019.08.17.1',
 				latestAppVersion: '',
 				ossDialog: false
 			},
@@ -3687,6 +3742,23 @@ if (window.CefSharp) {
 			}
 		};
 
+		$app.methods.loadMemo = function (id) {
+			return VRCXStorage.Get(`memo_${id}`);
+		};
+
+		$app.methods.saveMemo = function (id, memo) {
+			var key = `memo_${id}`;
+			if (memo) {
+				VRCXStorage.Set(key, String(memo));
+			} else {
+				VRCXStorage.Remove(key);
+			}
+			var ref = this.friend[id];
+			if (ref) {
+				ref.memo = String(memo || '');
+			}
+		};
+
 		// App: Friends
 
 		$app.data.friend = {};
@@ -3814,7 +3886,8 @@ if (window.CefSharp) {
 					ref,
 					vip: Boolean(API.favoriteObject[id]),
 					name: '',
-					no: ++this.friendNo
+					no: ++this.friendNo,
+					memo: this.loadMemo(id)
 				};
 				if (ref) {
 					ctx.name = ref.name;
@@ -4097,6 +4170,10 @@ if (window.CefSharp) {
 							var uname = String(ctx.ref.username);
 							match = uname.toUpperCase().includes(QUERY) &&
 								!uname.startsWith('steam_');
+						}
+						if (!match &&
+							ctx.memo) {
+							match = String(ctx.memo).toUpperCase().includes(QUERY);
 						}
 						if (match) {
 							this.quickSearchItems.push({
@@ -4399,7 +4476,11 @@ if (window.CefSharp) {
 						});
 						this.sweepGameLog();
 						this.updateSharedFeed();
-						this.notifyMenu('gameLog');
+						// sweepGameLog로 기록이 삭제되면
+						// 아무 것도 없는데 알림이 떠서 이상함
+						if (this.gameLogTable.length) {
+							this.notifyMenu('gameLog');
+						}
 					});
 				} else {
 					this.updateSharedFeed();
@@ -5320,6 +5401,7 @@ if (window.CefSharp) {
 
 		// App: More
 
+		$app.data.currentUserTreeData = [];
 		$app.data.pastDisplayNameTable = {
 			data: [],
 			tableProps: {
@@ -5353,6 +5435,7 @@ if (window.CefSharp) {
 		$app.watch.openVRAlways = saveOpenVROption;
 
 		API.$on('LOGIN', () => {
+			$app.currentUserTreeData = [];
 			$app.pastDisplayNameTable.data = [];
 		});
 
@@ -5407,6 +5490,10 @@ if (window.CefSharp) {
 			} else {
 				VRCX.StopVR();
 			}
+		};
+
+		$app.methods.refreshCurrentUserTreeData = function () {
+			this.currentUserTreeData = buildTreeData(API.currentUser);
 		};
 
 		$app.methods.promptUserDialog = function () {
@@ -5474,54 +5561,6 @@ if (window.CefSharp) {
 			}
 		};
 
-		var buildTreeData = (json) => {
-			var node = [];
-			for (var key in json) {
-				var value = json[key];
-				if (typeof value === 'object') {
-					if (Array.isArray(value)) {
-						node.push({
-							children: value.map((val, idx) => {
-								if (typeof val === 'object') {
-									return {
-										children: buildTreeData(val),
-										key: idx
-									};
-								}
-								return {
-									key: idx,
-									value: val
-								};
-							}),
-							key
-						});
-					} else {
-						node.push({
-							children: buildTreeData(value),
-							key
-						});
-					}
-				} else {
-					node.push({
-						key,
-						value: String(value)
-					});
-				}
-			}
-			node.sort((a, b) => {
-				var A = String(a.key).toUpperCase();
-				var B = String(b.key).toUpperCase();
-				if (A < B) {
-					return -1;
-				}
-				if (A > B) {
-					return 1;
-				}
-				return 0;
-			});
-			return node;
-		};
-
 		// App: User Dialog
 
 		$app.data.userDialog = {
@@ -5547,7 +5586,13 @@ if (window.CefSharp) {
 			isWorldsLoading: false,
 			isAvatarsLoading: false,
 
-			treeData: []
+			treeData: [],
+			memo: ''
+		};
+
+		$app.watch['userDialog.memo'] = function () {
+			var D = this.userDialog;
+			this.saveMemo(D.id, D.memo);
 		};
 
 		API.$on('LOGOUT', () => {
@@ -5691,6 +5736,7 @@ if (window.CefSharp) {
 			var D = this.userDialog;
 			D.id = userId;
 			D.treeData = [];
+			D.memo = this.loadMemo(userId);
 			D.visible = true;
 			D.loading = true;
 			API.getCachedUser({
@@ -6063,6 +6109,7 @@ if (window.CefSharp) {
 		$app.data.worldDialog = {
 			visible: false,
 			loading: false,
+			id: '',
 			location_: {},
 			ref: {},
 			isFavorite: false,
@@ -6079,7 +6126,7 @@ if (window.CefSharp) {
 		API.$on('WORLD', (args) => {
 			var D = $app.worldDialog;
 			if (D.visible &&
-				args.ref.id === D.location_.worldId) {
+				args.ref.id === D.id) {
 				D.ref = args.ref;
 				var id = extractFileId(args.ref.assetUrl);
 				if (id) {
@@ -6096,7 +6143,7 @@ if (window.CefSharp) {
 		API.$on('FAVORITE', (args) => {
 			var D = $app.worldDialog;
 			if (D.visible &&
-				args.ref.favoriteId === D.location_.worldId &&
+				args.ref.favoriteId === D.id &&
 				!args.ref.hide_) {
 				D.isFavorite = true;
 			}
@@ -6105,7 +6152,7 @@ if (window.CefSharp) {
 		API.$on('FAVORITE:@DELETE', (args) => {
 			var D = $app.worldDialog;
 			if (D.visible &&
-				args.ref.favoriteId === D.location_.worldId) {
+				args.ref.favoriteId === D.id) {
 				D.isFavorite = false;
 			}
 		});
@@ -6115,6 +6162,7 @@ if (window.CefSharp) {
 			var D = this.worldDialog;
 			var L = API.parseLocation(tag);
 			if (L.worldId) {
+				D.id = L.worldId;
 				D.location_ = L;
 				D.treeData = [];
 				D.fileCreatedAt = '';
@@ -6128,10 +6176,10 @@ if (window.CefSharp) {
 					D.visible = false;
 					throw err;
 				}).then((args) => {
-					if (D.location_.worldId === args.ref.id) {
+					if (D.id === args.ref.id) {
 						D.loading = false;
 						D.ref = args.ref;
-						D.isFavorite = Boolean(API.favoriteObject[D.location_.worldId]);
+						D.isFavorite = Boolean(API.favoriteObject[D.id]);
 						D.rooms = [];
 						this.updateWorldDialogInstances();
 						if (args.cache) {
@@ -6167,7 +6215,7 @@ if (window.CefSharp) {
 				for (var key in this.friend) {
 					ref = API.user[key];
 					if (ref &&
-						ref.location_.worldId === D.location_.worldId) {
+						ref.location_.worldId === D.id) {
 						({ instanceId } = ref.location_);
 						if (map[instanceId]) {
 							map[instanceId].users.push(ref);
@@ -6182,7 +6230,7 @@ if (window.CefSharp) {
 				}
 				D.rooms = [];
 				Object.values(map).sort((a, b) => b.users.length - a.users.length || b.occupants - a.occupants).forEach((v) => {
-					var L = API.parseLocation(`${D.location_.worldId}:${v.id}`);
+					var L = API.parseLocation(`${D.id}:${v.id}`);
 					v.location_ = L;
 					v.location = L.tag;
 					if (L.userId) {
@@ -6220,7 +6268,7 @@ if (window.CefSharp) {
 				if (command === 'New Instance') {
 					this.showNewInstanceDialog(D.location_.tag);
 				} else if (command === 'Add Favorite') {
-					this.showFavoriteDialog('world', D.location_.worldId);
+					this.showFavoriteDialog('world', D.id);
 				} else {
 					this.$confirm(`Continue? ${command}`, 'Confirm', {
 						confirmButtonText: 'Confirm',
@@ -6231,12 +6279,12 @@ if (window.CefSharp) {
 								switch (command) {
 									case 'Delete Favorite':
 										API.deleteFavorite({
-											objectId: D.location_.worldId
+											objectId: D.id
 										});
 										break;
 									case 'Make Home':
 										API.saveCurrentUser({
-											homeLocation: D.location_.worldId
+											homeLocation: D.id
 										}).then((args) => {
 											this.$message({
 												message: 'Home world updated',
