@@ -29,11 +29,6 @@ namespace VRCX
             m_Lock.EnterWriteLock();
             try
             {
-                if (m_Connection.State != ConnectionState.Open)
-                {
-                    m_Connection.Close();
-                    m_Connection.Open();
-                }
                 using (var C = new SQLiteCommand(sql, m_Connection))
                 {
                     if (param != null)
@@ -57,11 +52,6 @@ namespace VRCX
             m_Lock.EnterReadLock();
             try
             {
-                if (m_Connection.State != ConnectionState.Open)
-                {
-                    m_Connection.Close();
-                    m_Connection.Open();
-                }
                 using (var C = new SQLiteCommand(sql, m_Connection))
                 {
                     if (param != null)
