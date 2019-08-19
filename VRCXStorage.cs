@@ -4,71 +4,114 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace VRCX
 {
     public class VRCXStorage
     {
+        private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
         private static Dictionary<string, string> m_Storage = new Dictionary<string, string>();
         private static bool m_Dirty;
 
         public static void Load()
         {
-            JsonSerializer.Deserialize(Application.StartupPath + "/VRCX.json", ref m_Storage);
+            m_Lock.EnterWriteLock();
+            try
+            {
+                JsonSerializer.Deserialize(Application.StartupPath + "/VRCX.json", ref m_Storage);
+                m_Dirty = false;
+            }
+            finally
+            {
+                m_Lock.ExitWriteLock();
+            }
         }
 
         public static void Save()
         {
-            JsonSerializer.Serialize(Application.StartupPath + "/VRCX.json", m_Storage);
-        }
-
-        public void Clear()
-        {
-            lock (m_Storage)
+            m_Lock.EnterReadLock();
+            try
             {
-                m_Dirty = true;
-                m_Storage.Clear();
+                if (m_Dirty)
+                {
+                    JsonSerializer.Serialize(Application.StartupPath + "/VRCX.json", m_Storage);
+                    m_Dirty = false;
+                }
+            }
+            finally
+            {
+                m_Lock.ExitReadLock();
             }
         }
 
         public void Flush()
         {
-            lock (m_Storage)
+            Save();
+        }
+
+        public void Clear()
+        {
+            m_Lock.EnterWriteLock();
+            try
             {
-                if (m_Dirty)
+                if (m_Storage.Count > 0)
                 {
-                    m_Dirty = false;
-                    Save();
+                    m_Dirty = true;
                 }
+                m_Storage.Clear();
+            }
+            finally
+            {
+                m_Lock.ExitWriteLock();
             }
         }
 
         public bool Remove(string key)
         {
-            lock (m_Storage)
+            m_Lock.EnterWriteLock();
+            try
             {
-                m_Dirty = true;
-                return m_Storage.Remove(key);
+                var result = m_Storage.Remove(key);
+                if (result)
+                {
+                    m_Dirty = true;
+                }
+                return result;
+            }
+            finally
+            {
+                m_Lock.ExitWriteLock();
             }
         }
 
         public string Get(string key)
         {
-            lock (m_Storage)
+            m_Lock.EnterReadLock();
+            try
             {
                 return m_Storage.TryGetValue(key, out string value)
                     ? value
                     : string.Empty;
             }
+            finally
+            {
+                m_Lock.ExitReadLock();
+            }
         }
 
         public void Set(string key, string value)
         {
-            lock (m_Storage)
+            m_Lock.EnterWriteLock();
+            try
             {
-                m_Dirty = true;
                 m_Storage[key] = value;
+                m_Dirty = true;
+            }
+            finally
+            {
+                m_Lock.ExitWriteLock();
             }
         }
     }

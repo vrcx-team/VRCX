@@ -110,6 +110,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.111.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>packages\System.Data.SQLite.Core.1.0.111.0\lib\net451\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -125,6 +128,7 @@
     <Compile Include="CpuMonitor.cs" />
     <Compile Include="Browser.cs" />
     <Compile Include="RenderHandler.cs" />
+    <Compile Include="SQLite.cs" />
     <Compile Include="VRForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -204,8 +208,10 @@
     <Error Condition="!Exists('packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets'))" />
     <Error Condition="!Exists('packages\CefSharp.OffScreen.73.1.130\build\CefSharp.OffScreen.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.OffScreen.73.1.130\build\CefSharp.OffScreen.props'))" />
     <Error Condition="!Exists('packages\CefSharp.OffScreen.73.1.130\build\CefSharp.OffScreen.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.OffScreen.73.1.130\build\CefSharp.OffScreen.targets'))" />
+    <Error Condition="!Exists('packages\System.Data.SQLite.Core.1.0.111.0\build\net451\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\System.Data.SQLite.Core.1.0.111.0\build\net451\System.Data.SQLite.Core.targets'))" />
   </Target>
   <Import Project="packages\CefSharp.Common.73.1.130\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.73.1.130\build\CefSharp.Common.targets')" />
   <Import Project="packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets" Condition="Exists('packages\CefSharp.WinForms.73.1.130\build\CefSharp.WinForms.targets')" />
   <Import Project="packages\CefSharp.OffScreen.73.1.130\build\CefSharp.OffScreen.targets" Condition="Exists('packages\CefSharp.OffScreen.73.1.130\build\CefSharp.OffScreen.targets')" />
+  <Import Project="packages\System.Data.SQLite.Core.1.0.111.0\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('packages\System.Data.SQLite.Core.1.0.111.0\build\net451\System.Data.SQLite.Core.targets')" />
 </Project>

@@ -44,8 +44,10 @@ namespace VRCX
             };
             Browser1.JavascriptObjectRepository.Register("VRCX", new VRCX(), true, options);
             Browser1.JavascriptObjectRepository.Register("VRCXStorage", new VRCXStorage(), false, options);
+            Browser1.JavascriptObjectRepository.Register("SQLite", new SQLite(), true, options);
             Browser2.JavascriptObjectRepository.Register("VRCX", new VRCX(), true, options);
             Browser2.JavascriptObjectRepository.Register("VRCXStorage", new VRCXStorage(), false, options);
+            Browser2.JavascriptObjectRepository.Register("SQLite", new SQLite(), true, options);
             Browser1.IsBrowserInitializedChanged += (A, B) =>
             {
                 // Browser1.ShowDevTools();
@@ -60,9 +62,9 @@ namespace VRCX
 
         private void button_refresh_Click(object sender, System.EventArgs e)
         {
-            VRCXVR.Refresh();
             Browser1.ExecuteScriptAsync("location.reload()");
             Browser2.ExecuteScriptAsync("location.reload()");
+            VRCXVR.Refresh();
         }
 
         private void button_devtools_Click(object sender, System.EventArgs e)

@@ -69,12 +69,12 @@ namespace VRCX
 
         public void StartVR()
         {
-            VRCXVR.Start();
+            VRCXVR.SetActive(true);
         }
 
         public void StopVR()
         {
-            VRCXVR.Stop();
+            VRCXVR.SetActive(false);
         }
 
         public void RefreshVR()

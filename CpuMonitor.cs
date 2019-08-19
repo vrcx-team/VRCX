@@ -13,36 +13,32 @@ namespace VRCX
         public static float CpuUsage { get; private set; }
         private static Thread m_Thread;
 
-        public static void Start()
+        public static void Init()
         {
-            if (m_Thread == null)
+            m_Thread = new Thread(() =>
             {
-                m_Thread = new Thread(() =>
+                PerformanceCounter counter = null;
+                try
                 {
-                    PerformanceCounter cpuCounter = null;
-                    try
+                    counter = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total", true);
+                }
+                catch
+                {
+                }
+                try
+                {
+                    if (counter == null)
                     {
-                        cpuCounter = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total", true);
+                        counter = new PerformanceCounter("Processor", "% Processor Time", "_Total", true);
                     }
-                    catch
-                    {
-                    }
-                    try
-                    {
-                        if (cpuCounter == null)
-                        {
-                            cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total", true);
-                        }
-                    }
-                    catch
-                    {
-                    }
+                }
+                catch
+                {
+                }
+                if (counter != null)
+                {
                     while (m_Thread != null)
                     {
-                        if (cpuCounter != null)
-                        {
-                            CpuUsage = cpuCounter.NextValue();
-                        }
                         try
                         {
                             Thread.Sleep(1000);
@@ -51,31 +47,23 @@ namespace VRCX
                         {
                             // ThreadInterruptedException
                         }
+                        CpuUsage = counter.NextValue();
                     }
-                    if (cpuCounter != null)
-                    {
-                        cpuCounter.Dispose();
-                    }
-                });
-                m_Thread.Start();
-            }
+                    counter.Dispose();
+                }
+            })
+            {
+                IsBackground = true
+            };
+            m_Thread.Start();
         }
 
-        public static void Stop()
+        public static void Exit()
         {
-            var thread = m_Thread;
-            if (thread != null)
-            {
-                m_Thread = null;
-                try
-                {
-                    thread.Interrupt();
-                    thread.Join();
-                }
-                catch
-                {
-                }
-            }
+            var T = m_Thread;
+            m_Thread = null;
+            T.Interrupt();
+            T.Join();
         }
     }
 }

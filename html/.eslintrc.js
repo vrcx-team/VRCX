@@ -9,6 +9,7 @@ module.exports = {
         'CefSharp': 'readonly',
         'VRCX': 'readonly',
         'VRCXStorage': 'readonly',
+        'SQLite': 'readonly',
         'LogWatcher': 'readonly',
         'Discord': 'readonly',
         'Noty': 'readonly',

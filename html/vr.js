@@ -6,7 +6,8 @@
 if (window.CefSharp) {
 	Promise.all([
 		CefSharp.BindObjectAsync('VRCX'),
-		CefSharp.BindObjectAsync('VRCXStorage')
+		CefSharp.BindObjectAsync('VRCXStorage'),
+		CefSharp.BindObjectAsync('SQLite')
 	]).catch(() => {
 		location = 'https://github.com/pypy-vrc/vrcx';
 	}).then(() => {

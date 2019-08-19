@@ -4,38 +4,80 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using DiscordRPC;
+using System.Threading;
 
 namespace VRCX
 {
     public class Discord
     {
-        private static RichPresence m_Presence = new RichPresence();
-        private static DiscordRpcClient m_Client;
+        private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
+        private static readonly RichPresence m_Presence = new RichPresence();
+        private static Thread m_Thread;
         private static bool m_Active;
 
-        public static void Update()
+        public static void Init()
         {
-            if (m_Client != null)
+            m_Thread = new Thread(() =>
             {
-                m_Client.Invoke();
-            }
-            if (m_Active)
-            {
-                if (m_Client == null)
+                DiscordRpcClient client = null;
+                while (m_Thread != null)
                 {
-                    m_Client = new DiscordRpcClient("525953831020920832");
-                    m_Client.Initialize();
+                    try
+                    {
+                        Thread.Sleep(1000);
+                    }
+                    catch
+                    {
+                        // ThreadInterruptedException
+                    }
+                    if (client != null)
+                    {
+                        m_Lock.EnterReadLock();
+                        try
+                        {
+                            client.SetPresence(m_Presence);
+                        }
+                        finally
+                        {
+                            m_Lock.ExitReadLock();
+                        }
+                        client.Invoke();
+                    }
+                    if (m_Active)
+                    {
+                        if (client == null)
+                        {
+                            client = new DiscordRpcClient("525953831020920832");
+                            if (!client.Initialize())
+                            {
+                                client.Dispose();
+                                client = null;
+                            }
+                        }
+                    }
+                    else if (client != null)
+                    {
+                        client.Dispose();
+                        client = null;
+                    }
                 }
-                lock (m_Presence)
+                if (client != null)
                 {
-                    m_Client.SetPresence(m_Presence);
+                    client.Dispose();
                 }
-            }
-            else if (m_Client != null)
+            })
             {
-                m_Client.Dispose();
-                m_Client = null;
-            }
+                IsBackground = true
+            };
+            m_Thread.Start();
+        }
+
+        public static void Exit()
+        {
+            var T = m_Thread;
+            m_Thread = null;
+            T.Interrupt();
+            T.Join();
         }
 
         public void SetActive(bool active)
@@ -45,16 +87,22 @@ namespace VRCX
 
         public void SetText(string details, string state)
         {
-            lock (m_Presence)
+            m_Lock.EnterWriteLock();
+            try
             {
                 m_Presence.Details = details;
                 m_Presence.State = state;
+            }
+            finally
+            {
+                m_Lock.ExitWriteLock();
             }
         }
 
         public void SetAssets(string largeKey, string largeText, string smallKey, string smallText)
         {
-            lock (m_Presence)
+            m_Lock.EnterWriteLock();
+            try
             {
                 if (string.IsNullOrEmpty(largeKey) &&
                     string.IsNullOrEmpty(smallKey))
@@ -73,6 +121,10 @@ namespace VRCX
                     m_Presence.Assets.SmallImageText = smallText;
                 }
             }
+            finally
+            {
+                m_Lock.ExitWriteLock();
+            }
         }
 
         // JSB Sucks
@@ -83,7 +135,8 @@ namespace VRCX
 
         public static void SetTimestamps(ulong startUnixMilliseconds, ulong endUnixMilliseconds)
         {
-            lock (m_Presence)
+            m_Lock.EnterWriteLock();
+            try
             {
                 if (startUnixMilliseconds == 0)
                 {
@@ -105,6 +158,10 @@ namespace VRCX
                         m_Presence.Timestamps.EndUnixMilliseconds = endUnixMilliseconds;
                     }
                 }
+            }
+            finally
+            {
+                m_Lock.ExitWriteLock();
             }
         }
     }

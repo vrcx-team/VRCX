@@ -5,6 +5,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using CefSharp;
 using CefSharp.Enums;
 using CefSharp.OffScreen;
@@ -15,25 +16,31 @@ namespace VRCX
     public class RenderHandler : IRenderHandler
     {
         private ChromiumWebBrowser m_Browser;
-        public readonly object BufferLock = new object();
+        private ReaderWriterLockSlim m_Lock;
         public int BufferSize { get; private set; }
         public GCHandle Buffer { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
 
-        public RenderHandler(ChromiumWebBrowser browser)
+        public RenderHandler(ChromiumWebBrowser browser, ReaderWriterLockSlim @lock)
         {
             m_Browser = browser;
+            m_Lock = @lock;
         }
 
         public void Dispose()
         {
-            lock (BufferLock)
+            m_Lock.EnterWriteLock();
+            try
             {
                 if (Buffer.IsAllocated)
                 {
                     Buffer.Free();
                 }
+            }
+            finally
+            {
+                m_Lock.ExitWriteLock();
             }
             m_Browser = null;
         }
@@ -64,22 +71,35 @@ namespace VRCX
         {
             if (type == PaintElementType.View)
             {
-                lock (BufferLock)
+                m_Lock.EnterUpgradeableReadLock();
+                try
                 {
                     if (!Buffer.IsAllocated ||
                         width != Width ||
                         height != Height)
                     {
-                        Width = width;
-                        Height = height;
-                        BufferSize = width * height * 4;
-                        if (Buffer.IsAllocated)
+                        m_Lock.EnterWriteLock();
+                        try
                         {
-                            Buffer.Free();
+                            Width = width;
+                            Height = height;
+                            BufferSize = width * height * 4;
+                            if (Buffer.IsAllocated)
+                            {
+                                Buffer.Free();
+                            }
+                            Buffer = GCHandle.Alloc(new byte[BufferSize], GCHandleType.Pinned);
                         }
-                        Buffer = GCHandle.Alloc(new byte[BufferSize], GCHandleType.Pinned);
+                        finally
+                        {
+                            m_Lock.ExitWriteLock();
+                        }
                     }
                     WinApi.CopyMemory(Buffer.AddrOfPinnedObject(), buffer, (uint)BufferSize);
+                }
+                finally
+                {
+                    m_Lock.ExitUpgradeableReadLock();
                 }
             }
         }

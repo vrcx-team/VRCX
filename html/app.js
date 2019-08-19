@@ -7,6 +7,7 @@ if (window.CefSharp) {
 	Promise.all([
 		CefSharp.BindObjectAsync('VRCX'),
 		CefSharp.BindObjectAsync('VRCXStorage'),
+		CefSharp.BindObjectAsync('SQLite'),
 		CefSharp.BindObjectAsync('LogWatcher'),
 		CefSharp.BindObjectAsync('Discord')
 	]).catch(() => {
@@ -3490,6 +3491,8 @@ if (window.CefSharp) {
 			var ref;
 			var i;
 			var j;
+			// FIXME
+			// 여러 개 켠다면 gameLogTable의 데이터가 시간순이 아닐 수도 있음
 			i = this.gameLogTable.data.length;
 			j = 0;
 			while (j < 25) {
@@ -4460,31 +4463,27 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.refreshGameLog = function () {
-			LogWatcher.HasLog().then((result) => {
-				if (result) {
-					LogWatcher.GetLogs().then((logs) => {
-						logs.forEach((log) => {
-							var ctx = {
-								created_at: log[0],
-								type: log[1],
-								data: log[2]
-							};
-							this.gameLogTable.data.push(ctx);
-							if (ctx.type === 'Location') {
-								this.lastLocation = ctx.data;
-							}
-						});
-						this.sweepGameLog();
-						this.updateSharedFeed();
-						// sweepGameLog로 기록이 삭제되면
-						// 아무 것도 없는데 알림이 떠서 이상함
-						if (this.gameLogTable.length) {
-							this.notifyMenu('gameLog');
+			LogWatcher.Get().then((logs) => {
+				if (logs.length) {
+					logs.forEach((log) => {
+						var ctx = {
+							created_at: log[0],
+							type: log[1],
+							data: log[2]
+						};
+						this.gameLogTable.data.push(ctx);
+						if (ctx.type === 'Location') {
+							this.lastLocation = ctx.data;
 						}
 					});
-				} else {
-					this.updateSharedFeed();
+					this.sweepGameLog();
+					// sweepGameLog로 기록이 삭제되면
+					// 아무 것도 없는데 알림이 떠서 이상함
+					if (this.gameLogTable.length) {
+						this.notifyMenu('gameLog');
+					}
 				}
+				this.updateSharedFeed();
 			});
 		};
 

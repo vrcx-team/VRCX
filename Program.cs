@@ -53,15 +53,19 @@ namespace VRCX
                 {
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    CpuMonitor.Start();
                     VRCXStorage.Load();
-                    VRCXVR.Setup();
-                    VRCX_LogWatcher.Start();
+                    SQLite.Init();
+                    CpuMonitor.Init();
+                    Discord.Init();
+                    LogWatcher.Init();
+                    VRCXVR.Init();
                     Application.Run(new MainForm());
-                    VRCX_LogWatcher.Stop();
-                    VRCXVR.Stop();
+                    VRCXVR.Exit();
+                    LogWatcher.Exit();
+                    Discord.Exit();
+                    CpuMonitor.Exit();
+                    SQLite.Exit();
                     VRCXStorage.Save();
-                    CpuMonitor.Stop();
                     Cef.Shutdown();
                 }
             }

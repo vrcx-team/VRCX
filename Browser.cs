@@ -6,13 +6,14 @@
 using CefSharp;
 using CefSharp.OffScreen;
 using SharpDX.Direct3D11;
-using System;
 using System.Drawing;
+using System.Threading;
 
 namespace VRCX
 {
     public class Browser : ChromiumWebBrowser
     {
+        private readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
         private Texture2D m_Texture;
 
         public Browser(Texture2D texture, string address)
@@ -24,38 +25,46 @@ namespace VRCX
             m_Texture = texture;
             Size = new Size(texture.Description.Width, texture.Description.Height);
             RenderHandler.Dispose();
-            RenderHandler = new RenderHandler(this);
+            RenderHandler = new RenderHandler(this, m_Lock);
             var options = new BindingOptions()
             {
                 CamelCaseJavascriptNames = false
             };
             JavascriptObjectRepository.Register("VRCX", new VRCX(), true, options);
             JavascriptObjectRepository.Register("VRCXStorage", new VRCXStorage(), false, options);
+            JavascriptObjectRepository.Register("SQLite", new SQLite(), true, options);
+        }
+
+        public new void Dispose()
+        {
+            RenderHandler.Dispose();
+            RenderHandler = null;
+            base.Dispose();
         }
 
         public void Render()
         {
-            var handler = (RenderHandler)RenderHandler;
-            lock (handler.BufferLock)
+            m_Lock.EnterReadLock();
+            try
             {
-                if (handler.Buffer.IsAllocated)
+                var H = (RenderHandler)RenderHandler;
+                if (H.Buffer.IsAllocated)
                 {
                     var context = m_Texture.Device.ImmediateContext;
                     var box = context.MapSubresource(m_Texture, 0, MapMode.WriteDiscard, MapFlags.None);
-                    if (box.DataPointer != IntPtr.Zero)
+                    if (box.IsEmpty)
                     {
-                        var width = handler.Width;
-                        var height = handler.Height;
-                        if (box.RowPitch == width * 4)
+                        if (box.RowPitch == H.Width * 4)
                         {
-                            WinApi.CopyMemory(box.DataPointer, handler.Buffer.AddrOfPinnedObject(), (uint)handler.BufferSize);
+                            WinApi.CopyMemory(box.DataPointer, H.Buffer.AddrOfPinnedObject(), (uint)H.BufferSize);
                         }
                         else
                         {
                             var dest = box.DataPointer;
-                            var src = handler.Buffer.AddrOfPinnedObject();
+                            var src = H.Buffer.AddrOfPinnedObject();
                             var pitch = box.RowPitch;
-                            var length = width * 4;
+                            var length = H.Width * 4;
+                            var height = H.Height;
                             for (var i = 0; i < height; ++i)
                             {
                                 WinApi.CopyMemory(dest, src, (uint)length);
@@ -66,6 +75,10 @@ namespace VRCX
                     }
                     context.UnmapSubresource(m_Texture, 0);
                 }
+            }
+            finally
+            {
+                m_Lock.ExitReadLock();
             }
         }
     }
