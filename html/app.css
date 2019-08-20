@@ -418,3 +418,28 @@ i.x-user-status.busy {
 .x-user-dialog .el-tag+.el-tag {
 	margin-left: 5px;
 }
+
+
+.name.x-tag-untrusted {
+	color: rgb(204, 204, 204);
+}
+
+.name.x-tag-basic {
+	color: rgb(23, 120, 255);
+}
+
+.name.x-tag-user {
+	color: rgb(43, 207, 92);
+}
+
+.name.x-tag-known {
+	color: rgb(255, 123, 66);
+}
+
+.name.x-tag-trusted {
+	color: rgb(129, 67, 230);
+}
+
+.name.x-tag-veteran, .name.x-tag-legend {
+	color: rgb(255, 208, 0);
+}

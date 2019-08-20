@@ -4155,6 +4155,35 @@ if (window.CefSharp) {
 			});
 		};
 
+		$app.methods.userNameColorClass = function (user) {
+			var style = { name: true };
+			if (!user) return style;
+
+			switch (user.trustLevel_) {
+				case "Legendary User":
+					style['x-tag-legendary'] = true;
+					break;
+				case "Veteran User":
+					style['x-tag-veteran'] = true;
+					break;
+				case "Trusted User":
+					style['x-tag-trusted'] = true;
+					break;
+				case "Known User":
+					style['x-tag-known'] = true;
+					break;
+				case "User":
+					style['x-tag-user'] = true;
+					break;
+				case "New User":
+					style['x-tag-basic'] = true;
+				case "Visitor":
+					style['x-tag-untrusted'] = true;
+			}
+
+			return style;
+		};
+
 		// App: Quick Search
 
 		$app.data.quickSearch = '';
