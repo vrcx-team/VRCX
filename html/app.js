@@ -14,6 +14,10 @@ if (window.CefSharp) {
 		location = 'https://github.com/pypy-vrc/vrcx';
 	}).then(() => {
 
+		var $nameColorStyle = document.createElement('style');
+		$nameColorStyle.appendChild(document.createTextNode('.x-friend-item>.detail>.name { color: #303133 !important; }'));
+		document.head.appendChild($nameColorStyle);
+
 		document.addEventListener('keyup', (e) => {
 			if (e.ctrlKey) {
 				if (e.shiftKey && e.code === 'KeyI') {
@@ -947,6 +951,7 @@ if (window.CefSharp) {
 					admin_: false,
 					troll_: false,
 					trustLevel_: 'Visitor',
+					trustClass_: 'x-tag-untrusted',
 					//
 					...ref
 				};
@@ -959,21 +964,35 @@ if (window.CefSharp) {
 				ctx.admin_ = ctx.admin_ || ctx.tags.includes('admin_moderator');
 				ctx.troll_ = ctx.tags.includes('system_probable_troll') ||
 					ctx.tags.includes('system_troll');
-				if (ctx.tags.includes('system_legend')) {
+				if (ctx.troll_) {
+					ctx.trustLevel_ = 'Nuisance';
+					ctx.trustClass_ = 'x-tag-troll';
+				} else if (ctx.tags.includes('system_legend')) {
 					ctx.trustLevel_ = 'Legendary User';
+					ctx.trustClass_ = 'x-tag-legendary';
 				} else if (ctx.tags.includes('system_trust_legend')) {
 					ctx.trustLevel_ = 'Veteran User';
+					ctx.trustClass_ = 'x-tag-legend';
 				} else if (ctx.tags.includes('system_trust_veteran')) {
 					ctx.trustLevel_ = 'Trusted User';
+					ctx.trustClass_ = 'x-tag-veteran';
 				} else if (ctx.tags.includes('system_trust_trusted')) {
 					ctx.trustLevel_ = 'Known User';
+					ctx.trustClass_ = 'x-tag-trusted';
 				} else if (ctx.tags.includes('system_trust_known')) {
 					ctx.trustLevel_ = 'User';
+					ctx.trustClass_ = 'x-tag-known';
 				} else if (ctx.tags.includes('system_trust_basic')) {
 					ctx.trustLevel_ = 'New User';
+					ctx.trustClass_ = 'x-tag-basic';
 				} else {
 					ctx.trustLevel_ = 'Visitor';
+					ctx.trustClass_ = 'x-tag-untrusted';
 				}
+			}
+			if (ctx.admin_) {
+				ctx.trustLevel_ = 'VRChat Team';
+				ctx.trustClass_ = 'x-tag-vip';
 			}
 			return ctx;
 		};
@@ -4155,35 +4174,6 @@ if (window.CefSharp) {
 			});
 		};
 
-		$app.methods.userNameColorClass = function (user) {
-			var style = { name: true };
-			if (!user) return style;
-
-			switch (user.trustLevel_) {
-				case "Legendary User":
-					style['x-tag-legendary'] = true;
-					break;
-				case "Veteran User":
-					style['x-tag-veteran'] = true;
-					break;
-				case "Trusted User":
-					style['x-tag-trusted'] = true;
-					break;
-				case "Known User":
-					style['x-tag-known'] = true;
-					break;
-				case "User":
-					style['x-tag-user'] = true;
-					break;
-				case "New User":
-					style['x-tag-basic'] = true;
-				case "Visitor":
-					style['x-tag-untrusted'] = true;
-			}
-
-			return style;
-		};
-
 		// App: Quick Search
 
 		$app.data.quickSearch = '';
@@ -5081,7 +5071,6 @@ if (window.CefSharp) {
 			$app.deleteFriendship(args.param.userId);
 		});
 
-		// FIXME: table에서 accept, decline 한 경우 제대로 안남을지도 모름
 		API.$on('FRIEND:REQUEST', (args) => {
 			var ref = API.user[args.param.userId];
 			if (ref) {
@@ -5095,7 +5084,6 @@ if (window.CefSharp) {
 			}
 		});
 
-		// 여기도 그럼
 		API.$on('FRIEND:REQUEST:CANCEL', (args) => {
 			var ref = API.user[args.param.userId];
 			if (ref) {
@@ -5468,6 +5456,14 @@ if (window.CefSharp) {
 		};
 		$app.watch.openVR = saveOpenVROption;
 		$app.watch.openVRAlways = saveOpenVROption;
+		$app.data.showNameColor = VRCXStorage.GetBool('showNameColor');
+		$nameColorStyle.disabled = VRCXStorage.GetBool('showNameColor');
+		console.log('$nameColorStyle', $nameColorStyle);
+		$app.watch.showNameColor = function () {
+			VRCXStorage.SetBool('showNameColor', this.showNameColor);
+			$nameColorStyle.disabled = this.showNameColor;
+			console.log('$nameColorStyle', $nameColorStyle);
+		};
 
 		API.$on('LOGIN', () => {
 			$app.currentUserTreeData = [];

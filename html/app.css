@@ -180,7 +180,7 @@ body, input, textarea, select, button {
 	transform: rotate(90deg);
 }
 
-.x-aside-container .x-friend-list {
+.x-aside-container>.x-friend-list {
 	flex: 1;
 }
 
@@ -211,7 +211,7 @@ body, input, textarea, select, button {
 	border-radius: 2px;
 }
 
-.x-aside-container .x-friend-item:hover {
+.x-aside-container>.x-friend-list>.x-friend-item:hover {
 	background: #fff;
 	border-radius: 2px;
 }
@@ -298,24 +298,26 @@ body, input, textarea, select, button {
 }
 
 .x-friend-item>.detail>.name {
+	color: #303133;
 	font-weight: bold;
 }
 
 .x-friend-item>.detail>.extra {
+	color: #606266;
 	font-weight: normal;
 }
 
-.x-dialog .el-dialog {
+.x-dialog>.el-dialog {
 	margin-bottom: 10px;
 	max-width: 100%;
 }
 
-.x-user-dialog .el-dialog__header, .x-world-dialog .el-dialog__header, .x-avatar-dialog .el-dialog__header {
+.x-user-dialog>.el-dialog>.el-dialog__header, .x-world-dialog>.el-dialog>.el-dialog__header, .x-avatar-dialog>.el-dialog>.el-dialog__header {
 	padding: 0;
 	display: none;
 }
 
-.x-user-dialog .el-dialog__body, .x-world-dialog .el-dialog__body, .x-avatar-dialog .el-dialog__body {
+.x-user-dialog>.el-dialog>.el-dialog__body, .x-world-dialog>.el-dialog>.el-dialog__body, .x-avatar-dialog>.el-dialog>.el-dialog__body {
 	padding: 20px;
 }
 
@@ -346,16 +348,8 @@ i.x-user-status.busy {
 	background: #F56C6C;
 }
 
-.el-tag.x-tag-vip {
-	border-color: rgb(181, 38, 38);
-	color: rgb(181, 38, 38);
-}
-
-.el-tag.x-tag-friend {
-	/*border-color: rgb(255, 255, 0);
-	color: rgb(255, 255, 0);*/
-	border-color: rgb(255, 208, 0);
-	color: rgb(255, 208, 0);
+.x-friend-item>.detail>.name.x-tag-untrusted {
+	color: rgb(204, 204, 204);
 }
 
 .el-tag.x-tag-untrusted {
@@ -363,9 +357,17 @@ i.x-user-status.busy {
 	color: rgb(204, 204, 204);
 }
 
+.x-friend-item>.detail>.name.x-tag-basic {
+	color: rgb(23, 120, 255);
+}
+
 .el-tag.x-tag-basic {
 	border-color: rgb(23, 120, 255);
 	color: rgb(23, 120, 255);
+}
+
+.x-friend-item>.detail>.name.x-tag-known {
+	color: rgb(43, 207, 92);
 }
 
 .el-tag.x-tag-known {
@@ -373,14 +375,27 @@ i.x-user-status.busy {
 	color: rgb(43, 207, 92);
 }
 
+.x-friend-item>.detail>.name.x-tag-trusted {
+	color: rgb(255, 123, 66);
+}
+
 .el-tag.x-tag-trusted {
 	border-color: rgb(255, 123, 66);
 	color: rgb(255, 123, 66);
 }
 
+.x-friend-item>.detail>.name.x-tag-veteran {
+	color: rgb(129, 67, 230);
+}
+
 .el-tag.x-tag-veteran {
 	border-color: rgb(129, 67, 230);
 	color: rgb(129, 67, 230);
+}
+
+.x-friend-item>.detail>.name.x-tag-legend {
+	/*color: rgb(255, 255, 0);*/
+	color: rgb(255, 208, 0);
 }
 
 .el-tag.x-tag-legend {
@@ -390,14 +405,43 @@ i.x-user-status.busy {
 	color: rgb(255, 208, 0);
 }
 
-.el-tag.x-tag-troll {
-	border-color: rgb(120, 47, 47);
-	color: rgb(120, 47, 47);
+.x-friend-item>.detail>.name.x-tag-legendary {
+	color: rgb(0, 0, 0);
 }
 
 .el-tag.x-tag-legendary {
 	border-color: rgb(0, 0, 0);
 	color: rgb(0, 0, 0);
+}
+
+.x-friend-item>.detail>.name.x-tag-vip {
+	color: rgb(181, 38, 38);
+}
+
+.el-tag.x-tag-vip {
+	border-color: rgb(181, 38, 38);
+	color: rgb(181, 38, 38);
+}
+
+.x-friend-item>.detail>.name.x-tag-troll {
+	color: rgb(120, 47, 47);
+}
+
+.el-tag.x-tag-troll {
+	border-color: rgb(120, 47, 47);
+	color: rgb(120, 47, 47);
+}
+
+.x-friend-item>.detail>.name.x-tag-friend {
+	/*color: rgb(255, 255, 0);*/
+	color: rgb(255, 208, 0);
+}
+
+.el-tag.x-tag-friend {
+	/*border-color: rgb(255, 255, 0);
+	color: rgb(255, 255, 0);*/
+	border-color: rgb(255, 208, 0);
+	color: rgb(255, 208, 0);
 }
 
 .el-tree-node {
@@ -417,29 +461,4 @@ i.x-user-status.busy {
 
 .x-user-dialog .el-tag+.el-tag {
 	margin-left: 5px;
-}
-
-
-.name.x-tag-untrusted {
-	color: rgb(204, 204, 204);
-}
-
-.name.x-tag-basic {
-	color: rgb(23, 120, 255);
-}
-
-.name.x-tag-user {
-	color: rgb(43, 207, 92);
-}
-
-.name.x-tag-known {
-	color: rgb(255, 123, 66);
-}
-
-.name.x-tag-trusted {
-	color: rgb(129, 67, 230);
-}
-
-.name.x-tag-veteran, .name.x-tag-legend {
-	color: rgb(255, 208, 0);
 }
