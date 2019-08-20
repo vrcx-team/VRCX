@@ -5458,11 +5458,9 @@ if (window.CefSharp) {
 		$app.watch.openVRAlways = saveOpenVROption;
 		$app.data.showNameColor = VRCXStorage.GetBool('showNameColor');
 		$nameColorStyle.disabled = VRCXStorage.GetBool('showNameColor');
-		console.log('$nameColorStyle', $nameColorStyle);
 		$app.watch.showNameColor = function () {
 			VRCXStorage.SetBool('showNameColor', this.showNameColor);
 			$nameColorStyle.disabled = this.showNameColor;
-			console.log('$nameColorStyle', $nameColorStyle);
 		};
 
 		API.$on('LOGIN', () => {
