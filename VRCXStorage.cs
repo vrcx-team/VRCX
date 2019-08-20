@@ -58,9 +58,9 @@ namespace VRCX
             {
                 if (m_Storage.Count > 0)
                 {
+                    m_Storage.Clear();
                     m_Dirty = true;
                 }
-                m_Storage.Clear();
             }
             finally
             {

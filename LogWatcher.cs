@@ -63,11 +63,11 @@ namespace VRCX
                     if (di.Exists)
                     {
                         var files = di.GetFiles("output_log_*.txt", SearchOption.TopDirectoryOnly);
-                        Array.Sort(files, (A, B) => A.CreationTime.CompareTo(B.CreationTime));
-                        var bias = DateTime.Now.AddMinutes(-5d);
+                        Array.Sort(files, (A, B) => A.CreationTimeUtc.CompareTo(B.CreationTimeUtc));
+                        var bias = DateTime.UtcNow.AddMinutes(-5d);
                         foreach (var fi in files)
                         {
-                            if (bias.CompareTo(fi.LastWriteTime) <= 0)
+                            if (bias.CompareTo(fi.LastWriteTimeUtc) <= 0)
                             {
                                 fi.Refresh();
                             }

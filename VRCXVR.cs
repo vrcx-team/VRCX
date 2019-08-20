@@ -98,13 +98,13 @@ namespace VRCX
                         var system = OpenVR.System;
                         if (system == null)
                         {
-                            if (DateTime.Now.CompareTo(nextInit) <= 0)
+                            if (DateTime.UtcNow.CompareTo(nextInit) <= 0)
                             {
                                 continue;
                             }
                             var _err = EVRInitError.None;
                             system = OpenVR.Init(ref _err, EVRApplicationType.VRApplication_Overlay);
-                            nextInit = DateTime.Now.AddSeconds(5);
+                            nextInit = DateTime.UtcNow.AddSeconds(5);
                             if (system == null)
                             {
                                 continue;
@@ -118,22 +118,22 @@ namespace VRCX
                             {
                                 active = false;
                                 OpenVR.Shutdown();
-                                nextInit = DateTime.Now.AddSeconds(10);
+                                nextInit = DateTime.UtcNow.AddSeconds(10);
                                 system = null;
                                 break;
                             }
                         }
                         if (system != null)
                         {
-                            if (DateTime.Now.CompareTo(nextDeviceUpdate) >= 0)
+                            if (DateTime.UtcNow.CompareTo(nextDeviceUpdate) >= 0)
                             {
                                 overlayIndex = OpenVR.k_unTrackedDeviceIndexInvalid;
                                 UpdateDevices(system, ref overlayIndex);
                                 if (overlayIndex != OpenVR.k_unTrackedDeviceIndexInvalid)
                                 {
-                                    nextOverlay = DateTime.Now.AddSeconds(10);
+                                    nextOverlay = DateTime.UtcNow.AddSeconds(10);
                                 }
-                                nextDeviceUpdate = DateTime.Now.AddSeconds(0.1);
+                                nextDeviceUpdate = DateTime.UtcNow.AddSeconds(0.1);
                             }
                             var overlay = OpenVR.Overlay;
                             if (overlay != null)
@@ -457,7 +457,7 @@ namespace VRCX
             }
 
             if (!dashboardVisible &&
-                DateTime.Now.CompareTo(nextOverlay) <= 0)
+                DateTime.UtcNow.CompareTo(nextOverlay) <= 0)
             {
                 var texture = new Texture_t
                 {

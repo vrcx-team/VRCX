@@ -6,6 +6,7 @@
 using CefSharp;
 using CefSharp.OffScreen;
 using SharpDX.Direct3D11;
+using System;
 using System.Drawing;
 using System.Threading;
 
@@ -52,7 +53,7 @@ namespace VRCX
                 {
                     var context = m_Texture.Device.ImmediateContext;
                     var box = context.MapSubresource(m_Texture, 0, MapMode.WriteDiscard, MapFlags.None);
-                    if (!box.IsEmpty)
+                    if (box.DataPointer != IntPtr.Zero)
                     {
                         if (box.RowPitch == H.Width * 4)
                         {

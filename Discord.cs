@@ -61,10 +61,7 @@ namespace VRCX
                         client = null;
                     }
                 }
-                if (client != null)
-                {
-                    client.Dispose();
-                }
+                client?.Dispose();
             })
             {
                 IsBackground = true
