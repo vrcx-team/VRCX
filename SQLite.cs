@@ -24,7 +24,7 @@ namespace VRCX
             m_Connection.Dispose();
         }
 
-        public void Execute(string sql, IDictionary<string, object> param = null)
+        public int ExecuteNonQuery(string sql, IDictionary<string, object> param = null)
         {
             m_Lock.EnterWriteLock();
             try
@@ -38,7 +38,7 @@ namespace VRCX
                             C.Parameters.Add(new SQLiteParameter("@" + prop.Key, prop.Value));
                         }
                     }
-                    C.ExecuteNonQuery();
+                    return C.ExecuteNonQuery();
                 }
             }
             finally
@@ -47,7 +47,7 @@ namespace VRCX
             }
         }
 
-        public void ExecuteQuery(IJavascriptCallback callback, string sql, IDictionary<string, object> param = null)
+        public void Execute(IJavascriptCallback callback, string sql, IDictionary<string, object> param = null)
         {
             m_Lock.EnterReadLock();
             try

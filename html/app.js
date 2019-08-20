@@ -4479,7 +4479,7 @@ if (window.CefSharp) {
 					this.sweepGameLog();
 					// sweepGameLog로 기록이 삭제되면
 					// 아무 것도 없는데 알림이 떠서 이상함
-					if (this.gameLogTable.length) {
+					if (this.gameLogTable.data.length) {
 						this.notifyMenu('gameLog');
 					}
 				}
@@ -4948,8 +4948,8 @@ if (window.CefSharp) {
 				confirmButtonText: 'Confirm',
 				cancelButtonText: 'Cancel',
 				type: 'info',
-				callback: (action2) => {
-					if (action2 === 'confirm') {
+				callback: (action) => {
+					if (action === 'confirm') {
 						API.clearFavoriteGroup({
 							type: ctx.type,
 							group: ctx.name
@@ -5052,6 +5052,7 @@ if (window.CefSharp) {
 			$app.deleteFriendship(args.param.userId);
 		});
 
+		// FIXME: table에서 accept, decline 한 경우 제대로 안남을지도 모름
 		API.$on('FRIEND:REQUEST', (args) => {
 			var ref = API.user[args.param.userId];
 			if (ref) {
@@ -5065,6 +5066,7 @@ if (window.CefSharp) {
 			}
 		});
 
+		// 여기도 그럼
 		API.$on('FRIEND:REQUEST:CANCEL', (args) => {
 			var ref = API.user[args.param.userId];
 			if (ref) {
@@ -5097,9 +5099,14 @@ if (window.CefSharp) {
 			} else {
 				this.friendLog = {};
 				ref.friends.forEach((id) => {
-					this.friendLog[id] = {
+					var ctx = {
 						id
 					};
+					var user = API.user[id];
+					if (user) {
+						ctx.displayName = user.displayName;
+					}
+					this.friendLog[id] = ctx;
 				});
 				this.friendLogTable.data = [];
 				this.saveFriendLog();
@@ -5789,8 +5796,8 @@ if (window.CefSharp) {
 							D.avatars.push(ref);
 						}
 					}
-					$app.sortUserDialogWorlds();
-					$app.sortUserDialogAvatars();
+					this.sortUserDialogWorlds();
+					this.sortUserDialogAvatars();
 					API.getFriendStatus({
 						userId: D.id
 					});
@@ -6228,36 +6235,37 @@ if (window.CefSharp) {
 					}
 				}
 				D.rooms = [];
-				Object.values(map).sort((a, b) => b.users.length - a.users.length || b.occupants - a.occupants).forEach((v) => {
-					var L = API.parseLocation(`${D.id}:${v.id}`);
-					v.location_ = L;
-					v.location = L.tag;
-					if (L.userId) {
-						ref = API.user[L.userId];
-						if (ref) {
-							L.user = ref;
-						} else {
-							API.getUser({
-								userId: L.userId
-							}).then((args) => {
-								this.$set(L, 'user', args.ref);
-								return args;
-							});
+				Object.values(map).sort((a, b) => b.users.length - a.users.length ||
+					b.occupants - a.occupants).forEach((v) => {
+						var L = API.parseLocation(`${D.id}:${v.id}`);
+						v.location_ = L;
+						v.location = L.tag;
+						if (L.userId) {
+							ref = API.user[L.userId];
+							if (ref) {
+								L.user = ref;
+							} else {
+								API.getUser({
+									userId: L.userId
+								}).then((args) => {
+									this.$set(L, 'user', args.ref);
+									return args;
+								});
+							}
 						}
-					}
-					v.users.sort((a, b) => {
-						var A = String(a.displayName).toUpperCase();
-						var B = String(b.displayName).toUpperCase();
-						if (A < B) {
-							return -1;
-						}
-						if (A > B) {
-							return 1;
-						}
-						return 0;
+						v.users.sort((a, b) => {
+							var A = String(a.displayName).toUpperCase();
+							var B = String(b.displayName).toUpperCase();
+							if (A < B) {
+								return -1;
+							}
+							if (A > B) {
+								return 1;
+							}
+							return 0;
+						});
+						D.rooms.push(v);
 					});
-					D.rooms.push(v);
-				});
 			}
 		};
 
@@ -6665,7 +6673,7 @@ if (window.CefSharp) {
 			$app.newInstanceDialog.visible = false;
 		});
 
-		$app.methods.buildInstanceTag = function () {
+		$app.methods.buildInstance = function () {
 			var D = this.newInstanceDialog;
 			var tags = [];
 			tags.push((99999 * Math.random() + 1).toFixed(0));
@@ -6712,7 +6720,7 @@ if (window.CefSharp) {
 				var D = this.newInstanceDialog;
 				D.worldId = L.worldId;
 				D.accessType = 'public';
-				this.buildInstanceTag();
+				this.buildInstance();
 				D.visible = true;
 			}
 		};
