@@ -5528,7 +5528,7 @@ if (window.CefSharp) {
 		$app.methods.promptUserDialog = function () {
 			this.$prompt('Enter a User ID (UUID)', 'Direct Access', {
 				distinguishCancelAndClose: true,
-				confirmButtonText: 'Send',
+				confirmButtonText: 'OK',
 				cancelButtonText: 'Cancel',
 				inputPattern: /\S+/u,
 				inputErrorMessage: 'User ID is required',
@@ -5544,7 +5544,7 @@ if (window.CefSharp) {
 		$app.methods.promptWorldDialog = function () {
 			this.$prompt('Enter a World ID (UUID)', 'Direct Access', {
 				distinguishCancelAndClose: true,
-				confirmButtonText: 'Send',
+				confirmButtonText: 'OK',
 				cancelButtonText: 'Cancel',
 				inputPattern: /\S+/u,
 				inputErrorMessage: 'World ID is required',
@@ -5560,7 +5560,7 @@ if (window.CefSharp) {
 		$app.methods.promptAvatarDialog = function () {
 			this.$prompt('Enter a Avatar ID (UUID)', 'Direct Access', {
 				distinguishCancelAndClose: true,
-				confirmButtonText: 'Send',
+				confirmButtonText: 'OK',
 				cancelButtonText: 'Cancel',
 				inputPattern: /\S+/u,
 				inputErrorMessage: 'Avatar ID is required',
