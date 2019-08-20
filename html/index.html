@@ -328,7 +328,7 @@
 										<img v-lazy="favorite.ref.currentAvatarThumbnailImageUrl">
 									</div>
 									<div class="detail">
-										<span v-text="favorite.ref.displayName" class="name"></span>
+										<span v-text="favorite.ref.displayName" :class="userNameColorClass(favorite.ref)"></span>
 										<location v-if="favorite.ref.location !== 'offline'" :location="favorite.ref.location" :link="false" class="extra"></location>
 										<span v-else v-text="favorite.ref.statusDescription"></span>
 									</div>
@@ -760,7 +760,7 @@
 				<div class="x-friend-item">
 					<template v-if="item.ref">
 						<div class="detail">
-							<span v-text="item.ref.displayName" class="name"></span>
+							<span v-text="item.ref.displayName" :class="userNameColorClass(item.ref)"></span>
 							<location :location="item.ref.location" :link="false" class="extra"></location>
 						</div>
 						<img v-lazy="item.ref.currentAvatarThumbnailImageUrl" class="avatar">
@@ -781,8 +781,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-if="friend.memo" class="name">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
-							<span v-else v-text="friend.ref.displayName" class="name"></span>
+							<span v-if="friend.memo" :class="userNameColorClass(friend.ref)">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" :class="userNameColorClass(friend.ref)"></span>
 							<location :location="friend.ref.location" :link="false" class="extra"></location>
 						</div>
 					</template>
@@ -803,8 +803,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-if="friend.memo" class="name">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
-							<span v-else v-text="friend.ref.displayName" class="name"></span>
+							<span v-if="friend.memo" :class="userNameColorClass(friend.ref)">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" :class="userNameColorClass(friend.ref)"></span>
 							<location :location="friend.ref.location" :link="false" class="extra"></location>
 						</div>
 					</template>
@@ -825,8 +825,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-if="friend.memo" class="name">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
-							<span v-else v-text="friend.ref.displayName" class="name"></span>
+							<span v-if="friend.memo" :class="userNameColorClass(friend.ref)">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" :class="userNameColorClass(friend.ref)"></span>
 							<span v-text="friend.ref.statusDescription" :link="false" class="extra"></span>
 						</div>
 					</template>
@@ -847,8 +847,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-if="friend.memo" class="name">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
-							<span v-else v-text="friend.ref.displayName" class="name"></span>
+							<span v-if="friend.memo" :class="userNameColorClass(friend.ref)">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" :class="userNameColorClass(friend.ref)"></span>
 							<span v-text="friend.ref.statusDescription" class="extra"></span>
 						</div>
 					</template>
@@ -950,7 +950,7 @@
 										<img v-lazy="userDialog.location_.user.currentAvatarThumbnailImageUrl">
 									</div>
 									<div class="detail">
-										<span v-text="userDialog.location_.user.displayName" class="name"></span>
+										<span v-text="userDialog.location_.user.displayName" :class="userNameColorClass(userDialog.location_.user)"></span>
 										<span class="extra">Instance Creator</span>
 									</div>
 								</template>
@@ -961,7 +961,7 @@
 									<img v-lazy="user.currentAvatarThumbnailImageUrl">
 								</div>
 								<div class="detail">
-									<span v-text="user.displayName" class="name"></span>
+									<span v-text="user.displayName" :class="userNameColorClass(user)"></span>
 									<span class="extra"><timer :epoch="user.location_at_"></timer></span>
 								</div>
 							</div>
@@ -1100,7 +1100,7 @@
 										<img v-lazy="room.location_.user.currentAvatarThumbnailImageUrl">
 									</div>
 									<div class="detail">
-										<span v-text="room.location_.user.displayName" class="name"></span>
+										<span v-text="room.location_.user.displayName" :class="userNameColorClass(room.location_.user)"></span>
 										<span class="extra">Instance Creator</span>
 									</div>
 								</template>
@@ -1111,7 +1111,7 @@
 									<img v-lazy="user.currentAvatarThumbnailImageUrl">
 								</div>
 								<div class="detail">
-									<span v-text="user.displayName" class="name"></span>
+									<span v-text="user.displayName" :class="userNameColorClass(user)"></span>
 									<span class="extra"><timer :epoch="user.location_at_"></timer></span>
 								</div>
 							</div>
@@ -1297,7 +1297,7 @@
 								<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 							</div>
 							<div class="detail">
-								<span v-text="friend.ref.displayName" class="name"></span>
+								<span v-text="friend.ref.displayName" :class="userNameColorClass(friend.ref)"></span>
 							</div>
 						</template>
 						<span v-else v-text="friend.id"></span>
@@ -1310,7 +1310,7 @@
 								<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 							</div>
 							<div class="detail">
-								<span v-text="friend.ref.displayName" class="name"></span>
+								<span v-text="friend.ref.displayName" :class="userNameColorClass(friend.ref)"></span>
 							</div>
 						</template>
 						<span v-else v-text="friend.id"></span>
@@ -1323,7 +1323,7 @@
 								<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 							</div>
 							<div class="detail">
-								<span v-text="friend.ref.displayName" class="name"></span>
+								<span v-text="friend.ref.displayName" :class="userNameColorClass(friend.ref)"></span>
 							</div>
 						</template>
 						<span v-else v-text="friend.id"></span>
