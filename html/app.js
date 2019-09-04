@@ -707,7 +707,7 @@ if (window.CefSharp) {
 			return this.call(`auth/user?apiKey=${this.config.clientApiKey}`, {
 				method: 'GET',
 				headers: {
-					Authorization: `Basic ${btoa(encodeURIComponent(`${param.username}:${param.password}`).replace(/%([0-9A-F]{2})/gu, (_, s) => String.fromCharCode(parseInt(s, 16))))}`
+					Authorization: `Basic ${btoa(encodeURIComponent(`${param.username}:${param.password}`).replace(/%([0-9A-F]{2})/gu, (_, s) => String.fromCharCode(parseInt(s, 16))).replace('%', '%25'))}`
 				}
 			}).then((json) => {
 				var args = {
@@ -3414,7 +3414,7 @@ if (window.CefSharp) {
 				VRCX,
 				nextRefresh: 0,
 				isGameRunning: false,
-				appVersion: '2019.08.17.1',
+				appVersion: '2019.09.04',
 				latestAppVersion: '',
 				ossDialog: false
 			},

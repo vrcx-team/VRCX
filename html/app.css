@@ -458,7 +458,3 @@ i.x-user-status.busy {
 	border-radius: 2px;
 	padding: 0;
 }
-
-.x-user-dialog .el-tag+.el-tag {
-	margin-left: 5px;
-}
