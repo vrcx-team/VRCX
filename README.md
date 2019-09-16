@@ -12,7 +12,7 @@ Special comments about VRChatRPC.DLL
 -
 VRChatRPC.DLL is used to login VRChat via your **Steam account**. (If you press the Steam login button on the login page)
 
-If you do not need to login via Steam, VRChat RPC.DLL will not be used.
+If you don't need to login via Steam, VRChatRPC.DLL will not be used.
 
 In detail, VRChatRPC.DLL accesses the VRChat Process (DLL Injection) and calls the Steam API to obtain the Login Token. This may lead to BAN from VRChat.
 
