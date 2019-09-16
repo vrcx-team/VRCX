@@ -6,6 +6,20 @@ VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRCha
 
 pypy is not responsible for any problems caused by VRCX. ***Use at your own risk!***
 
+![image](https://user-images.githubusercontent.com/25771678/64982044-40abca00-d8f8-11e9-8e2e-a68933ab095d.png)
+
+Special comments about VRChatRPC.DLL
+-
+VRChatRPC.DLL is used to log in VRChat via your **Steam account**. (If you press the Steam login button on the login page)
+
+In detail, VRChatRPC.DLL accesses the VRChat Process (DLL Injection) and calls the Steam API to obtain the Login Token. This may lead to BAN from VRChat.
+
+No technical measures have been taken on security yet (Of course I can't say there's no risk, but there's no problem), but I don't know what will happen later.
+
+Since it is impossible to log in to a 3rdparty account in the usual way, so this is the only way.
+
+It's source code is available at https://github.com/pypy-vrc/VRChatRPC.
+
 Screenshots
 =
 ![2fa](https://user-images.githubusercontent.com/25771678/63169786-a810f880-c072-11e9-9ede-0a3a03d5da12.png)
