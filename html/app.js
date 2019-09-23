@@ -3175,12 +3175,61 @@ if (window.CefSharp) {
 					});
 					break;
 
+				case 'friend-location':
+					if (content.world) {
+						API.$emit('WORLD', {
+							param: {
+								worldId: content.world.id
+							},
+							json: content.world
+						});
+					}
+					if (content.userId === API.currentUser.id) {
+						API.$emit('USER', {
+							param: {
+								userId: content.userId
+							},
+							json: content.user
+						});
+					} else {
+						API.$emit('USER', {
+							param: {
+								userId: content.userId
+							},
+							json: {
+								location: content.location,
+								...content.user
+							}
+						});
+					}
+					break;
+
 				case 'user-update':
 					API.$emit('USER:CURRENT', {
 						param: {
 							userId: content.userId
 						},
 						json: content.user
+					});
+					break;
+
+				case 'user-location':
+					if (content.world) {
+						API.$emit('WORLD', {
+							param: {
+								worldId: content.world.id
+							},
+							json: content.world
+						});
+					}
+					API.$emit('USER', {
+						param: {
+							userId: content.userId
+						},
+						json: {
+							id: content.userId,
+							location: content.location
+						}
 					});
 					break;
 			}
@@ -3414,7 +3463,7 @@ if (window.CefSharp) {
 				VRCX,
 				nextRefresh: 0,
 				isGameRunning: false,
-				appVersion: '2019.09.04',
+				appVersion: '2019.09.23',
 				latestAppVersion: '',
 				ossDialog: false
 			},
