@@ -188,6 +188,14 @@ if (window.CefSharp) {
 
 		ELEMENT.locale(ELEMENT.lang.en);
 
+		var uuidv4 = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/gu, (c) => {
+			var v = Math.random() * 16 | 0;
+			if (c !== 'x') {
+				v |= 8;
+			}
+			return v.toString(16);
+		});
+
 		//
 		// API
 		//
@@ -3463,7 +3471,7 @@ if (window.CefSharp) {
 				VRCX,
 				nextRefresh: 0,
 				isGameRunning: false,
-				appVersion: '2019.09.23',
+				appVersion: '2019.09.24',
 				latestAppVersion: '',
 				ossDialog: false
 			},
@@ -6758,12 +6766,14 @@ if (window.CefSharp) {
 					tags.push(`~private(${API.currentUser.id})`);
 				}
 				// NOTE : crypto.getRandomValues()를 쓰면 안전한 대신 무겁겠지..
+				/*
 				var nonce = [];
 				for (var i = 0; i < 10; ++i) {
 					nonce.push(Math.random().toString(16).substr(2).toUpperCase());
 				}
 				nonce = nonce.join('').substr(0, 64);
-				tags.push(`~nonce(${nonce})`);
+				*/
+				tags.push(`~nonce(${uuidv4()})`);
 				if (D.accessType === 'invite+') {
 					tags.push('~canRequestInvite');
 				}
