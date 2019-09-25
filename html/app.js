@@ -3471,7 +3471,7 @@ if (window.CefSharp) {
 				VRCX,
 				nextRefresh: 0,
 				isGameRunning: false,
-				appVersion: '2019.09.24',
+				appVersion: '2019.09.26',
 				latestAppVersion: '',
 				ossDialog: false
 			},

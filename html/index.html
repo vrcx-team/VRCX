@@ -1300,6 +1300,16 @@
 		<div v-loading="inviteDialog.loading">
 			<location :location="inviteDialog.worldId" :link="false"></location>
 			<el-select v-model="inviteDialog.userIds" multiple clearable placeholder="Choose Friends" filterable :disabled="inviteDialog.loading" style="width:100%;margin-top:15px">
+				<el-option-group v-if="API.currentUser" label="ME">
+					<el-option :label="API.currentUser.displayName" :value="API.currentUser.id" class="x-friend-item" style="height:auto">
+						<div class="avatar" :class="userStatusClass(API.currentUser)">
+							<img v-lazy="API.currentUser.currentAvatarThumbnailImageUrl">
+						</div>
+						<div class="detail">
+							<span v-text="API.currentUser.displayName" class="name"></span>
+						</div>
+					</el-option>
+				</el-option-group>
 				<el-option-group v-if="friendGroup0.length" label="VIP">
 					<el-option v-for="friend in friendGroup0" :key="friend.id" :label="friend.name" :value="friend.id" class="x-friend-item" style="height:auto">
 						<template v-if="friend.ref">
