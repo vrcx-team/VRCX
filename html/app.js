@@ -6159,10 +6159,10 @@ if (window.CefSharp) {
 								instance.inputValue) {
 								API.sendNotification({
 									receiverUserId: D.id,
-									type: 'message',
+									type: 'invite',
 									message: instance.inputValue,
 									seen: false,
-									details: '{}'
+									details: {worldId: '', worldName: instance.inputValue}
 								}).then((args) => {
 									this.$message('Message sent');
 									return args;
