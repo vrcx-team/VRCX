@@ -3471,7 +3471,7 @@ if (window.CefSharp) {
 				VRCX,
 				nextRefresh: 0,
 				isGameRunning: false,
-				appVersion: '2019.09.26',
+				appVersion: '2019.10.31',
 				latestAppVersion: '',
 				ossDialog: false
 			},
@@ -6147,6 +6147,25 @@ if (window.CefSharp) {
 			if (D.visible) {
 				if (command === 'Add Favorite') {
 					this.showFavoriteDialog('friend', D.id);
+				} else if (command === 'Show Avatar Author') {
+					var id = extractFileId(D.ref.currentAvatarImageUrl);
+					if (id) {
+						API.call(`file/${id}`).then((json) => {
+							if (D.id === json.ownerId) {
+								this.$message({
+									message: 'It is own avatar',
+									type: 'warning'
+								});
+							} else {
+								this.showUserDialog(json.ownerId);
+							}
+						});
+					} else {
+						this.$message({
+							message: 'Sorry, the author is unknown',
+							type: 'error'
+						});
+					}
 				} else if (command === 'Message') {
 					this.$prompt('Enter a message', 'Send Message', {
 						distinguishCancelAndClose: true,

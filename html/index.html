@@ -922,6 +922,7 @@
 						<el-dropdown trigger="click" @command="userDialogCommand" size="small">
 							<el-button :type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle></el-button>
 							<el-dropdown-menu #default="dropdown">
+								<el-dropdown-item icon="el-icon-s-custom" command="Show Avatar Author">Show Avatar Author</el-dropdown-item>
 								<template v-if="userDialog.isFriend">
 									<el-dropdown-item icon="el-icon-message" command="Message">Message</el-dropdown-item>
 									<el-dropdown-item icon="el-icon-delete" command="Unfriend" divided>Unfriend</el-dropdown-item>
@@ -1729,10 +1730,10 @@ SOFTWARE.
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.2.0-beta/noty.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-lazyload/1.3.1/vue-lazyload.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-lazyload/1.3.3/vue-lazyload.js"></script>
 <script src="https://unpkg.com/vue-data-tables@3.4.4/dist/data-tables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.11.1/index.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.11.1/locale/en.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.12.0/index.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.12.0/locale/en.min.js"></script>
 <script>
 (() => {
 	var link = document.createElement('link');
