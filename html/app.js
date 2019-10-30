@@ -3471,7 +3471,7 @@ if (window.CefSharp) {
 				VRCX,
 				nextRefresh: 0,
 				isGameRunning: false,
-				appVersion: '2019.10.31',
+				appVersion: '2019.10.31.1',
 				latestAppVersion: '',
 				ossDialog: false
 			},
@@ -5179,6 +5179,7 @@ if (window.CefSharp) {
 					var user = API.user[id];
 					if (user) {
 						ctx.displayName = user.displayName;
+						ctx.trustLevel = user.trustLevel_;
 					}
 					this.friendLog[id] = ctx;
 				});
@@ -5191,12 +5192,14 @@ if (window.CefSharp) {
 			if (!this.friendLog[id]) {
 				var ctx = {
 					id,
-					displayName: null
+					displayName: null,
+					trustLevel: null
 				};
 				this.$set(this.friendLog, id, ctx);
 				var ref = API.user[id];
 				if (ref) {
 					ctx.displayName = ref.displayName;
+					ctx.trustLevel = ref.trustLevel_;
 					this.friendLogTable.data.push({
 						created_at: new Date().toJSON(),
 						type: 'Friend',
@@ -5239,27 +5242,44 @@ if (window.CefSharp) {
 
 		$app.methods.updateFriendship = function (ref) {
 			var ctx = this.friendLog[ref.id];
-			if (ctx &&
-				ctx.displayName !== ref.displayName) {
-				if (ctx.displayName) {
-					this.friendLogTable.data.push({
-						created_at: new Date().toJSON(),
-						type: 'DisplayName',
-						userId: ref.id,
-						displayName: ref.displayName,
-						previousDisplayName: ctx.displayName
-					});
-				} else if (ctx.displayName === null) {
-					this.friendLogTable.data.push({
-						created_at: new Date().toJSON(),
-						type: 'Friend',
-						userId: ref.id,
-						displayName: ref.displayName
-					});
+			if (ctx) {
+				if (ctx.displayName !== ref.displayName) {
+					if (ctx.displayName) {
+						this.friendLogTable.data.push({
+							created_at: new Date().toJSON(),
+							type: 'DisplayName',
+							userId: ref.id,
+							displayName: ref.displayName,
+							previousDisplayName: ctx.displayName
+						});
+					} else if (ctx.displayName === null) {
+						this.friendLogTable.data.push({
+							created_at: new Date().toJSON(),
+							type: 'Friend',
+							userId: ref.id,
+							displayName: ref.displayName
+						});
+					}
+					ctx.displayName = ref.displayName;
+					this.saveFriendLog();
+					this.notifyMenu('friendLog');
 				}
-				ctx.displayName = ref.displayName;
-				this.saveFriendLog();
-				this.notifyMenu('friendLog');
+				if (ref.trustLevel_ &&
+					ctx.trustLevel !== ref.trustLevel_) {
+					if (ctx.trustLevel) {
+						this.friendLogTable.data.push({
+							created_at: new Date().toJSON(),
+							type: 'TrustLevel',
+							userId: ref.id,
+							displayName: ref.displayName,
+							trustLevel: ref.trustLevel_,
+							previousTrustLevel: ctx.trustLevel
+						});
+					}
+					ctx.trustLevel = ref.trustLevel_;
+					this.saveFriendLog();
+					this.notifyMenu('friendLog');
+				}
 			}
 		};
 

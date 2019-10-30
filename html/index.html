@@ -410,7 +410,7 @@
 			<template #tool>
 				<div style="margin:0 0 10px;display:flex;align-items:center">
 					<el-select v-model="friendLogTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter">
-						<el-option v-once v-for="type in ['Friend', 'Unfriend', 'FriendRequest', 'CancelFriendRequest', 'DisplayName']" :key="type" :label="type" :value="type"></el-option>
+						<el-option v-once v-for="type in ['Friend', 'Unfriend', 'FriendRequest', 'CancelFriendRequest', 'DisplayName', 'TrustLevel']" :key="type" :label="type" :value="type"></el-option>
 					</el-select>
 					<el-input v-model="friendLogTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin-left:10px"></el-input>
 				</div>
@@ -430,6 +430,9 @@
 				<template v-once #default="scope">
 					<span v-if="scope.row.type === 'DisplayName'">{{ scope.row.previousDisplayName }}&nbsp;<i class="el-icon-right"></i>&nbsp;</span>
 					<span v-text="scope.row.displayName || scope.row.userId" @click="showUserDialog(scope.row.userId)" class="x-link"></span>
+					<template v-if="scope.row.type === 'TrustLevel'">
+						<br/><span>({{ scope.row.previousTrustLevel }}&nbsp;<i class="el-icon-right"></i>&nbsp;{{ scope.row.trustLevel }})</span>
+					</template>
 				</template>
 			</el-table-column>
 			<el-table-column label="Action" width="80" align="right">
@@ -1732,8 +1735,8 @@ SOFTWARE.
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-lazyload/1.3.3/vue-lazyload.js"></script>
 <script src="https://unpkg.com/vue-data-tables@3.4.4/dist/data-tables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.12.0/index.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.12.0/locale/en.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.11.1/index.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.11.1/locale/en.min.js"></script>
 <script>
 (() => {
 	var link = document.createElement('link');
