@@ -19,14 +19,14 @@ namespace VRCX
             {
                 var settings = new CefSettings
                 {
-                    IgnoreCertificateErrors = true,
                     CachePath = "cache",
                     PersistUserPreferences = true,
                     PersistSessionCookies = true,
                     WindowlessRenderingEnabled = true
                 };
+                settings.CefCommandLineArgs.Add("ignore-certificate-errors", "1");
                 settings.CefCommandLineArgs.Add("disable-web-security", "1");
-                settings.CefCommandLineArgs.Add("no-proxy-server", "1");
+                // settings.CefCommandLineArgs.Add("no-proxy-server", "1");
                 settings.CefCommandLineArgs.Add("disable-plugins-discovery", "1");
                 settings.CefCommandLineArgs.Add("disable-extensions", "1");
                 settings.CefCommandLineArgs.Add("disable-pdf-extension", "1");
