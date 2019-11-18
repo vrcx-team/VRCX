@@ -29,7 +29,7 @@ namespace VRCX
             }
         }
 
-        public static bool Deserialize<T>(string path, ref T obj)
+        public static bool Deserialize<T>(string path, ref T obj) where T : new()
         {
             try
             {
@@ -37,7 +37,12 @@ namespace VRCX
                 using (var stream = new StreamReader(file, Encoding.UTF8))
                 using (var reader = new JsonTextReader(stream))
                 {
-                    obj = Newtonsoft.Json.JsonSerializer.CreateDefault().Deserialize<T>(reader);
+                    var o = Newtonsoft.Json.JsonSerializer.CreateDefault().Deserialize<T>(reader);
+                    if (o == null)
+                    {
+                        o = new T();
+                    }
+                    obj = o;
                     return true;
                 }
             }
