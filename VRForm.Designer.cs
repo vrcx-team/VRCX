@@ -44,22 +44,25 @@ namespace VRCX
             // panel1
             // 
             this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(512, 512);
+            this.panel1.Size = new System.Drawing.Size(731, 768);
             this.panel1.TabIndex = 0;
             // 
             // panel2
             // 
-            this.panel2.Location = new System.Drawing.Point(518, 0);
+            this.panel2.Location = new System.Drawing.Point(740, 0);
+            this.panel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(512, 512);
+            this.panel2.Size = new System.Drawing.Size(731, 768);
             this.panel2.TabIndex = 1;
             // 
             // button_refresh
             // 
-            this.button_refresh.Location = new System.Drawing.Point(12, 518);
+            this.button_refresh.Location = new System.Drawing.Point(17, 777);
+            this.button_refresh.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button_refresh.Name = "button_refresh";
-            this.button_refresh.Size = new System.Drawing.Size(75, 23);
+            this.button_refresh.Size = new System.Drawing.Size(107, 34);
             this.button_refresh.TabIndex = 27;
             this.button_refresh.Text = "Refresh";
             this.button_refresh.UseVisualStyleBackColor = true;
@@ -67,9 +70,10 @@ namespace VRCX
             // 
             // button_devtools
             // 
-            this.button_devtools.Location = new System.Drawing.Point(93, 518);
+            this.button_devtools.Location = new System.Drawing.Point(133, 777);
+            this.button_devtools.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button_devtools.Name = "button_devtools";
-            this.button_devtools.Size = new System.Drawing.Size(75, 23);
+            this.button_devtools.Size = new System.Drawing.Size(107, 34);
             this.button_devtools.TabIndex = 27;
             this.button_devtools.Text = "DevTools";
             this.button_devtools.UseVisualStyleBackColor = true;
@@ -77,14 +81,15 @@ namespace VRCX
             // 
             // VRForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1038, 553);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(1483, 830);
             this.Controls.Add(this.button_devtools);
             this.Controls.Add(this.button_refresh);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.Name = "VRForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
