@@ -92,10 +92,12 @@ if (window.CefSharp) {
 		setInterval(() => VRCXStorage.Flush(), 5 * 60 * 1000);
 
 		Noty.overrideDefaults({
+			/*
 			animation: {
 				open: 'animated bounceInLeft',
 				close: 'animated bounceOutLeft'
 			},
+			*/
 			layout: 'bottomLeft',
 			theme: 'mint',
 			timeout: 6000
@@ -825,6 +827,8 @@ if (window.CefSharp) {
 					id: ref.id,
 					username: '',
 					displayName: '',
+					bio: '',
+					bioLinks: [],
 					pastDisplayNames: [],
 					friends: [],
 					currentAvatarImageUrl: '',
@@ -938,6 +942,8 @@ if (window.CefSharp) {
 					id: ref.id,
 					username: '',
 					displayName: '',
+					bio: '',
+					bioLinks: [],
 					currentAvatarImageUrl: '',
 					currentAvatarThumbnailImageUrl: '',
 					status: '',
@@ -3471,7 +3477,7 @@ if (window.CefSharp) {
 				VRCX,
 				nextRefresh: 0,
 				isGameRunning: false,
-				appVersion: '2019.10.31.1',
+				appVersion: 'VRCX 2019.11.18',
 				latestAppVersion: '',
 				ossDialog: false
 			},
@@ -3509,6 +3515,17 @@ if (window.CefSharp) {
 				if (json.name &&
 					json.published_at) {
 					this.latestAppVersion = `${json.name} (${formatDate(json.published_at, 'YYYY-MM-DD HH24:MI:SS')})`;
+					if (json.name > this.appVersion) {
+						new Noty({
+							type: 'info',
+							text: `Update available!!<br>${this.latestAppVersion}`,
+							timeout: false,
+							callbacks: {
+								onClick: () => VRCX.OpenRepository()
+							}
+						}).show();
+						this.notifyMenu('more');
+					}
 				} else {
 					this.latestAppVersion = 'Error occured';
 				}
@@ -3650,28 +3667,6 @@ if (window.CefSharp) {
 			var item = this.$refs.menu.items[index];
 			if (item) {
 				item.$el.classList.remove('notify');
-			}
-		};
-
-		$app.methods.showLaunchDialog = function (tag) {
-			var L = API.parseLocation(tag);
-			if (L.worldId) {
-				this.$msgbox({
-					title: 'Launch World',
-					message: `<span style="word-break:break-all;font-size:12px">${escapeTag(`https://vrchat.net/launch?worldId=${encodeURIComponent(L.worldId)}&instanceId=${encodeURIComponent(L.instanceId)}`)}</span>`,
-					dangerouslyUseHTMLString: true,
-					distinguishCancelAndClose: true,
-					showCancelButton: true,
-					cancelButtonText: 'Invite',
-					confirmButtonText: 'Launch',
-					callback: (action) => {
-						if (action === 'confirm') {
-							VRCX.StartGame(tag);
-						} else if (action === 'cancel') {
-							$app.showInviteDialog(tag);
-						}
-					}
-				});
 			}
 		};
 
@@ -6834,7 +6829,7 @@ if (window.CefSharp) {
 		$app.watch['newInstanceDialog.instanceId'] = updateLocationURL;
 
 		$app.methods.showNewInstanceDialog = function (tag) {
-			this.$nextTick(() => adjustDialogZ(this.$refs.inviteDialog.$el));
+			this.$nextTick(() => adjustDialogZ(this.$refs.newInstanceDialog.$el));
 			var L = API.parseLocation(tag);
 			if (!(L.isOffline || L.isPrivate) &&
 				L.worldId) {
@@ -6865,6 +6860,47 @@ if (window.CefSharp) {
 					}
 				}
 			});
+		};
+
+		// App: Launch Dialog
+
+		$app.data.launchDialog = {
+			visible: false,
+			loading: false,
+			desktop: VRCXStorage.GetBool('launchAsDesktop'),
+			location: '',
+			url: ''
+		};
+
+		$app.watch['launchDialog.desktop'] = function () {
+			VRCXStorage.SetBool('launchAsDesktop', this.launchDialog.desktop);
+		};
+
+		API.$on('LOGOUT', () => {
+			$app.launchDialog.visible = false;
+		});
+
+		$app.methods.showLaunchDialog = function (tag) {
+			this.$nextTick(() => adjustDialogZ(this.$refs.launchDialog.$el));
+			var L = API.parseLocation(tag);
+			if (!(L.isOffline || L.isPrivate) &&
+				L.worldId) {
+				var D = this.launchDialog;
+				if (L.instanceId) {
+					D.location = `${L.worldId}:${L.instanceId}`;
+					D.url = `https://vrchat.net/launch?worldId=${encodeURIComponent(L.worldId)}&instanceId=${encodeURIComponent(L.instanceId)}`;
+				} else {
+					D.location = L.worldId;
+					D.url = `https://vrchat.net/launch?worldId=${encodeURIComponent(L.worldId)}`;
+				}
+				D.visible = true;
+			}
+		};
+
+		$app.methods.launchGame = function () {
+			var D = this.launchDialog;
+			VRCX.StartGame(D.location, D.desktop);
+			D.visible = false;
 		};
 
 		$app = new Vue($app);

@@ -4,7 +4,11 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using CefSharp;
+using Microsoft.Win32;
 using System;
+using System.Diagnostics;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace VRCX
@@ -39,15 +43,43 @@ namespace VRCX
             return WinApi.FindWindow("UnityWndClass", "VRChat") != IntPtr.Zero;
         }
 
-        public void StartGame(string location)
+        public void StartGame(string location, bool desktop)
         {
             try
             {
-                System.Diagnostics.Process.Start("vrchat://launch?id=" + location);
+                using (var key = Registry.ClassesRoot.OpenSubKey(@"VRChat\shell\open\command"))
+                {
+                    // "C:\Program Files (x86)\Steam\steamapps\common\VRChat\launch.bat" "C:\Program Files (x86)\Steam\steamapps\common\VRChat" "%1"
+                    var match = Regex.Match(key.GetValue(string.Empty) as string, "^\"(.+\\\\VRChat)\\\\launch.bat\"");
+                    if (match.Success)
+                    {
+                        var path = match.Groups[1].Value;
+                        var args = new StringBuilder();
+                        if (desktop)
+                        {
+                            args.Append("--no-vr ");
+                        }
+                        args.Append("\"vrchat://launch?id=");
+                        args.Append(location);
+                        args.Append('"');
+                        Process.Start(new ProcessStartInfo
+                        {
+                            WorkingDirectory = path,
+                            FileName = path + "\\VRChat.exe",
+                            UseShellExecute = false,
+                            Arguments = args.ToString()
+                        }).Close();
+                    }
+                }
             }
             catch
             {
             }
+        }
+
+        public void OpenRepository()
+        {
+            Process.Start("https://github.com/pypy-vrc/VRCX").Close();
         }
 
         public void ShowVRForm()

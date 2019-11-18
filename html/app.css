@@ -64,6 +64,10 @@ For a copy, see <https://opensource.org/licenses/MIT>.
 	padding: 20px;
 }
 
+.el-dialog__footer>.el-button+.el-button {
+	margin-left: 5px;
+}
+
 ::-webkit-scrollbar {
 	width: 8px;
 	height: 8px;
@@ -135,14 +139,24 @@ body, input, textarea, select, button {
 	border: 0;
 }
 
+.el-menu-item.is-active::before {
+	position: absolute;
+	content: '';
+	left: 1px;
+	top: 4px;
+	width: 2px;
+	height: 48px;
+	background: #DCDFE6;
+}
+
 .el-menu-item.notify::after {
 	position: absolute;
 	content: '';
-	right: 5px;
-	top: 5px;
-	width: 5px;
-	height: 5px;
-	background: #909399;
+	right: 4px;
+	top: 4px;
+	width: 6px;
+	height: 6px;
+	background: #EBEEF5;
 	border-radius: 50%
 }
 

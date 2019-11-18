@@ -431,7 +431,7 @@
 					<span v-if="scope.row.type === 'DisplayName'">{{ scope.row.previousDisplayName }}&nbsp;<i class="el-icon-right"></i>&nbsp;</span>
 					<span v-text="scope.row.displayName || scope.row.userId" @click="showUserDialog(scope.row.userId)" class="x-link"></span>
 					<template v-if="scope.row.type === 'TrustLevel'">
-						<br/><span>({{ scope.row.previousTrustLevel }}&nbsp;<i class="el-icon-right"></i>&nbsp;{{ scope.row.trustLevel }})</span>
+						<br><span>({{ scope.row.previousTrustLevel }}&nbsp;<i class="el-icon-right"></i>&nbsp;{{ scope.row.trustLevel }})</span>
 					</template>
 				</template>
 			</el-table-column>
@@ -549,7 +549,7 @@
 						<span v-else class="extra">Click to refresh</span>
 					</div>
 				</div>
-				<div class="x-friend-item">
+				<div class="x-friend-item" @click="VRCX.OpenRepository()">
 					<div class="detail">
 						<span class="name">Repository URL</span>
 						<span class="extra">https://github.com/pypy-vrc/VRCX</span>
@@ -669,7 +669,7 @@
 				<div class="x-friend-item">
 					<div class="detail"  @click="API.getVisits()">
 						<span class="name">Online Users</span>
-						<span v-if="visits" class="extra">{{visits}} Users online.</span>
+						<span v-if="visits" class="extra">{{visits}} users online.</span>
 						<span v-else class="extra">Click to refresh</span>
 					</div>
 				</div>
@@ -1417,7 +1417,17 @@
 		<template #footer>
 			<el-button size="small" @click="makeHome(newInstanceDialog.location)">Make Home</el-button>
 			<el-button size="small" @click="showInviteDialog(newInstanceDialog.location)">Invite</el-button>
-			<el-button type="primary" size="small" @click="VRCX.StartGame(newInstanceDialog.location)">Launch</el-button>
+			<el-button type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location)">Launch</el-button>
+		</template>
+	</el-dialog>
+
+	<!-- dialog: launch -->
+	<el-dialog ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="400px" class="x-dialog">
+		<div><span v-text="launchDialog.url" style="word-break:break-all;font-size:12px"></span></div>
+		<template #footer>
+			<el-checkbox v-model="launchDialog.desktop" style="float:left;margin-top:5px">Start as Desktop (No VR)</el-checkbox>
+			<el-button size="small" @click="showInviteDialog(launchDialog.location)">Invite</el-button>
+			<el-button type="primary" size="small" @click="launchGame()">Launch</el-button>
 		</template>
 	</el-dialog>
 
