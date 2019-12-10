@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
@@ -122,6 +122,9 @@
 	<div class="x-container">
 		<span style="float:right">{{ currentTime | formatDate('YYYY-MM-DD HH:MI:SS AMPM') }}</span>
 		<span>CPU {{ cpuUsage }}%</span>
+	</div>
+	<div class="x-container">
+		<el-button size="small" @click="VRCX.togglePSM()">Toggle PlaySpaceMover</el-button>
 	</div>
 
 </div>

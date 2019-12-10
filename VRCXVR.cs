@@ -29,6 +29,7 @@ namespace VRCX
         private static Texture2D m_Texture2;
         private static Browser m_Browser1;
         private static Browser m_Browser2;
+        private static System.Diagnostics.Process psm;
         private static bool m_Active;
         private static float[] m_Rotation = { 0f, 0f, 0f };
         private static float[] m_Translation = { 0f, 0f, 0f };
@@ -187,6 +188,7 @@ namespace VRCX
 
         public static void Exit()
         {
+            killPSM();
             var T = m_Thread;
             m_Thread = null;
             T.Interrupt();
@@ -583,5 +585,34 @@ namespace VRCX
 
             return err;
         }
+
+        public static void togglePSM()
+        {
+            if (psm == null)
+            {
+                psm = new System.Diagnostics.Process();
+                psm.StartInfo.FileName = Application.StartupPath +  "/PlayspaceMover-v0.1.8/PlayspaceMover.exe";
+                psm.StartInfo.Arguments = "-l 2 -r 2 --resetButtonMask 4";
+                psm.EnableRaisingEvents = true;
+
+                psm.Exited += (sender, e) =>
+                {
+                    psm = null;
+                };
+
+                psm.Start();
+            }
+            else
+            {
+                psm.CloseMainWindow();
+            }
+        }
+
+        public static void killPSM()
+        {
+            if (psm != null)
+                psm.CloseMainWindow();
+        }
+
     }
 }

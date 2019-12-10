@@ -113,7 +113,7 @@ namespace VRCX
         {
             VRCXVR.Refresh();
         }
-
+        
         public string[][] GetVRDevices()
         {
             return VRCXVR.GetDevices();
@@ -122,6 +122,16 @@ namespace VRCX
         public float CpuUsage()
         {
             return CpuMonitor.CpuUsage;
+        }
+
+        public void togglePSM()
+        {
+            VRCXVR.togglePSM();
+        }
+
+        public void killPSM()
+        {
+            VRCXVR.killPSM();
         }
     }
 }
