@@ -829,7 +829,7 @@ if (window.CefSharp) {
 		};
 
 		API.updateCurrentUser = function (ref) {
-			var ctx;
+			var ctx = null;
 			if (this.isLoggedIn) {
 				ctx = this.currentUser;
 				Object.assign(ctx, ref);
@@ -913,7 +913,7 @@ if (window.CefSharp) {
 			var ctx = this.user[ref.id];
 			if (ctx) {
 				var prop = {};
-				var key;
+				var key = null;
 				for (key in ctx) {
 					if (typeof ctx[key] !== 'object') {
 						prop[key] = true;
@@ -2326,10 +2326,9 @@ if (window.CefSharp) {
 		};
 
 		API.resetFavoriteGroup = function () {
-			var i;
 			// 96 = ['group_0', 'group_1', 'group_2'] x 32
 			this.favoriteFriendGroups = [];
-			for (i = 0; i < 3; ++i) {
+			for (var i = 0; i < 3; ++i) {
 				this.favoriteFriendGroups.push({
 					type: 'friend',
 					name: `group_${i}`,
@@ -2340,22 +2339,22 @@ if (window.CefSharp) {
 			}
 			// 128 = ['worlds1', 'worlds2', 'worlds3', 'worlds4'] x 32
 			this.favoriteWorldGroups = [];
-			for (i = 0; i < 4; ++i) {
+			for (var j = 0; j < 4; ++j) {
 				this.favoriteWorldGroups.push({
 					type: 'world',
-					name: `worlds${i + 1}`,
-					displayName: `Group ${i + 1}`,
+					name: `worlds${j + 1}`,
+					displayName: `Group ${j + 1}`,
 					capacity: 32,
 					count: 0
 				});
 			}
 			// 16 = ['avatars1'] x 16
 			this.favoriteAvatarGroups = [];
-			for (i = 0; i < 1; ++i) {
+			for (var k = 0; k < 1; ++k) {
 				this.favoriteAvatarGroups.push({
 					type: 'avatar',
-					name: `avatars${i + 1}`,
-					displayName: `Group ${i + 1}`,
+					name: `avatars${k + 1}`,
+					displayName: `Group ${k + 1}`,
 					capacity: 16,
 					count: 0
 				});
@@ -2392,8 +2391,8 @@ if (window.CefSharp) {
 					});
 				}
 			};
-			var key;
-			var ctx;
+			var key = null;
+			var ctx = null;
 			for (key in this.favoriteGroup) {
 				ctx = this.favoriteGroup[key];
 				if (!ctx.hide_) {
@@ -3596,13 +3595,11 @@ if (window.CefSharp) {
 
 		$app.methods.updateSharedFeed = function () {
 			var arr = [];
-			var ref;
-			var i;
-			var j;
+			var ref = null;
 			// FIXME
 			// 여러 개 켠다면 gameLogTable의 데이터가 시간순이 아닐 수도 있음
-			i = this.gameLogTable.data.length;
-			j = 0;
+			var i = this.gameLogTable.data.length;
+			var j = 0;
 			while (j < 25) {
 				if (i <= 0) {
 					break;
@@ -3948,7 +3945,7 @@ if (window.CefSharp) {
 			ref.onlineFriends.forEach((id) => {
 				map[id] = 'online';
 			});
-			var key;
+			var key = null;
 			for (key in map) {
 				if (this.friend[key]) {
 					this.updateFriend(key, map[key], origin);
@@ -4884,8 +4881,8 @@ if (window.CefSharp) {
 
 		$app.methods.updateFavorite = function (type, objectId) {
 			var favorite = API.favoriteObject[objectId];
-			var ctx;
-			var ref;
+			var ctx = null;
+			var ref = null;
 			if (type === 'friend') {
 				ctx = this.favoriteFriend[objectId];
 				if (favorite) {
@@ -5872,8 +5869,8 @@ if (window.CefSharp) {
 					D.isBlock = false;
 					D.isMute = false;
 					D.isHideAvatar = false;
-					var key;
-					var ref;
+					var key = null;
+					var ref = null;
 					for (key in API.playerModeration) {
 						ref = API.playerModeration[key];
 						if (ref.targetUserId === D.id &&
@@ -5920,7 +5917,7 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.updateUserDialogLocation = function () {
-			var ref;
+			var ref = null;
 			var D = this.userDialog;
 			var L = API.parseLocation(D.ref.location);
 			D.location_ = L;
@@ -6087,7 +6084,7 @@ if (window.CefSharp) {
 		};
 
 		var performUserDialogCommand = (command, userId) => {
-			var key;
+			var key = null;
 			switch (command) {
 				case 'Delete Favorite':
 					API.deleteFavorite({
@@ -6327,7 +6324,7 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.updateWorldDialogInstances = function () {
-			var ref;
+			var ref = null;
 			var D = this.worldDialog;
 			if (D.ref.instances) {
 				var map = {};
