@@ -2507,7 +2507,7 @@ if (window.CefSharp) {
 			}
 			ctx.expired_ = false;
 			if (ctx.tags) {
-				[ctx.group_] = ctx.tags;
+				ctx.group_ = ctx.tags;
 			}
 			return ctx;
 		};
