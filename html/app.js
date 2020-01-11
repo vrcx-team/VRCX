@@ -1794,11 +1794,11 @@ if (window.CefSharp) {
 
 		// API: PlayerModeration
 
-		API.playerModeration = {};
+		API.cachedPlayerModerations = new Map();
 		API.isPlayerModerationLoading = false;
 
 		API.$on('LOGIN', function () {
-			this.playerModeration = {};
+			this.cachedPlayerModerations.clear();
 			this.isPlayerModerationLoading = false;
 		});
 
@@ -1831,8 +1831,7 @@ if (window.CefSharp) {
 		});
 
 		API.markAllPlayerModerationsAsExpired = function () {
-			for (var key in this.playerModeration) {
-				var ctx = this.playerModeration[key];
+			for (var ctx of this.cachedPlayerModerations.values()) {
 				if (!ctx.$isExpired) {
 					ctx.$isExpired = true;
 				}
@@ -1840,8 +1839,7 @@ if (window.CefSharp) {
 		};
 
 		API.checkExpiredPlayerModerations = function () {
-			for (var key in this.playerModeration) {
-				var ctx = this.playerModeration[key];
+			for (var ctx of this.cachedPlayerModerations.values()) {
 				if (ctx.$isExpired &&
 					!ctx.$isExpired) {
 					ctx.$isExpired = true;
@@ -1872,8 +1870,7 @@ if (window.CefSharp) {
 
 		API.handleDeletePlayerModeration = function (type, moderated) {
 			var cuid = this.currentUser.id;
-			for (var key in this.playerModeration) {
-				var ctx = this.playerModeration[key];
+			for (var ctx of this.cachedPlayerModerations.values()) {
 				if (ctx.type === type &&
 					ctx.targetUserId === moderated &&
 					ctx.sourceUserId === cuid &&
@@ -1890,7 +1887,7 @@ if (window.CefSharp) {
 		};
 
 		API.updatePlayerModeration = function (ref) {
-			var ctx = this.playerModeration[ref.id];
+			var ctx = this.cachedPlayerModerations.get(ref.id);
 			if (ctx) {
 				Object.assign(ctx, ref);
 			} else {
@@ -1907,7 +1904,7 @@ if (window.CefSharp) {
 					//
 					...ref
 				};
-				this.playerModeration[ctx.id] = ctx;
+				this.cachedPlayerModerations.set(ctx.id, ctx);
 			}
 			ctx.$isExpired = false;
 			return ctx;
@@ -5879,8 +5876,7 @@ if (window.CefSharp) {
 					D.isBlock = false;
 					D.isMute = false;
 					D.isHideAvatar = false;
-					for (var key in API.playerModeration) {
-						var ref = API.playerModeration[key];
+					for (var ref of API.cachedPlayerModerations.values()) {
 						if (ref.targetUserId === D.id &&
 							ref.sourceUserId === API.currentUser.id &&
 							!ref.$isExpired) {
