@@ -1408,7 +1408,7 @@ if (window.CefSharp) {
 
 		// API: Avatar
 
-		API.avatar = {};
+		API.cachedAvatars = new Map();
 
 		API.$on('AVATAR', function (args) {
 			args.ref = this.updateAvatar(args.json);
@@ -1448,7 +1448,7 @@ if (window.CefSharp) {
 		};
 
 		API.updateAvatar = function (ref) {
-			var ctx = this.avatar[ref.id];
+			var ctx = this.cachedAvatars.get(ref.id);
 			if (ctx) {
 				Object.assign(ctx, ref);
 			} else {
@@ -1472,7 +1472,7 @@ if (window.CefSharp) {
 					updated_at: '',
 					...ref
 				};
-				this.avatar[ctx.id] = ctx;
+				this.cachedAvatars.set(ctx.id, ctx);
 			}
 			return ctx;
 		};
@@ -1484,7 +1484,7 @@ if (window.CefSharp) {
 		*/
 		API.getCachedAvatar = function (param) {
 			return new Promise((resolve, reject) => {
-				var ctx = this.avatar[param.avatarId];
+				var ctx = this.cachedAvatars.get(param.avatarId);
 				if (ctx) {
 					resolve({
 						cache: true,
@@ -4949,7 +4949,7 @@ if (window.CefSharp) {
 			} else if (type === 'avatar') {
 				var ctx = this.favoriteAvatar[objectId];
 				if (favorite) {
-					var ref = API.avatar[objectId];
+					var ref = API.cachedAvatars.get(objectId);
 					if (ctx) {
 						if (ctx.ref !== ref) {
 							ctx.ref = ref;
@@ -5889,8 +5889,7 @@ if (window.CefSharp) {
 							D.worlds.push(ref);
 						}
 					}
-					for (var key in API.avatar) {
-						var ref = API.avatar[key];
+					for (var ref of API.cachedAvatars.values()) {
 						if (ref.authorId === D.id) {
 							D.avatars.push(ref);
 						}
