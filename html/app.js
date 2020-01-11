@@ -435,7 +435,7 @@ if (window.CefSharp) {
 
 		API.$bulk = function (options, args) {
 			if (typeof options.handle === 'function') {
-				options.handle(args, options);
+				options.handle.call(this, args, options);
 			}
 			if (args.json.length &&
 				(options.param.offset += args.json.length,
@@ -447,7 +447,7 @@ if (window.CefSharp) {
 							: options.param.n === args.json.length)) {
 				this.bulk(options);
 			} else if (typeof options.done === 'function') {
-				options.done(true, options);
+				options.done.call(this, true, options);
 			}
 			return args;
 		};
@@ -455,7 +455,7 @@ if (window.CefSharp) {
 		API.bulk = function (options) {
 			this[options.fn](options.param).catch((err) => {
 				if (typeof options.done === 'function') {
-					options.done(false, options);
+					options.done.call(this, false, options);
 				}
 				throw err;
 			}).then((args) => this.$bulk(options, args));
