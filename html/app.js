@@ -103,6 +103,8 @@ if (window.CefSharp) {
 			timeout: 6000
 		});
 
+		var isObject = (any) => any === Object(any);
+
 		var removeFromArray = function (array, item) {
 			var { length } = array;
 			for (var i = 0; i < length; ++i) {
