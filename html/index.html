@@ -322,7 +322,7 @@
 							<el-button @click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px"></el-button>
 						</template>
 						<div v-if="group.count" class="x-friend-list" style="margin-top:10px">
-							<div v-for="favorite in favoriteFriends" v-if="favorite.group === group.name" :key="favorite.id" @click="showUserDialog(favorite.id)" class="x-friend-item">
+							<div v-for="favorite in favoriteFriends" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showUserDialog(favorite.id)" class="x-friend-item">
 								<template v-if="favorite.ref">
 									<div class="avatar" :class="userStatusClass(favorite.ref)">
 										<img v-lazy="favorite.ref.currentAvatarThumbnailImageUrl">
@@ -352,7 +352,7 @@
 							<el-button @click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px"></el-button>
 						</template>
 						<div v-if="group.count" class="x-friend-list" style="margin-top:10px">
-							<div v-for="favorite in favoriteWorlds" v-if="favorite.group === group.name" :key="favorite.id" @click="showWorldDialog(favorite.id)" class="x-friend-item">
+							<div v-for="favorite in favoriteWorlds" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showWorldDialog(favorite.id)" class="x-friend-item">
 								<template v-if="favorite.ref">
 									<div class="avatar">
 										<img v-lazy="favorite.ref.thumbnailImageUrl">
@@ -382,7 +382,7 @@
 							<el-button @click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px"></el-button>
 						</template>
 						<div v-if="group.count" class="x-friend-list" style="margin-top:10px">
-							<div v-for="favorite in favoriteAvatars" v-if="favorite.group === group.name" :key="favorite.id" @click="showAvatarDialog(favorite.id)" class="x-friend-item">
+							<div v-for="favorite in favoriteAvatars" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showAvatarDialog(favorite.id)" class="x-friend-item">
 								<template v-if="favorite.ref">
 									<div class="avatar">
 										<img v-lazy="favorite.ref.thumbnailImageUrl">

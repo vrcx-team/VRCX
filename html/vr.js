@@ -83,7 +83,7 @@ if (window.CefSharp) {
 			timeout: 6000
 		});
 
-		var isObject = (any) => any === Object(any);
+		var isObject = (arg) => arg === Object(arg);
 
 		var escapeTag = (s) => String(s).replace(/["&'<>]/gu, (c) => `&#${c.charCodeAt(0)};`);
 		Vue.filter('escapeTag', escapeTag);
@@ -165,32 +165,31 @@ if (window.CefSharp) {
 				return;
 			}
 			try {
-				var { length } = handlers;
-				for (var i = 0; i < length; ++i) {
-					handlers[i].apply(this, args);
+				for (var handler of handlers) {
+					handler.apply(this, args);
 				}
 			} catch (err) {
 				console.error(err);
 			}
 		};
 
-		API.$on = function (name, fx) {
+		API.$on = function (name, fn) {
 			var handlers = this.eventHandlers.get(name);
 			if (handlers === undefined) {
 				handlers = [];
 				this.eventHandlers.set(name, handlers);
 			}
-			handlers.push(fx);
+			handlers.push(fn);
 		};
 
-		API.$off = function (name, fx) {
+		API.$off = function (name, fn) {
 			var handlers = this.eventHandlers.get(name);
 			if (handlers === undefined) {
 				return;
 			}
 			var { length } = handlers;
 			for (var i = 0; i < length; ++i) {
-				if (handlers[i] === fx) {
+				if (handlers[i] === fn) {
 					if (length > 1) {
 						handlers.splice(i, 1);
 					} else {
@@ -204,52 +203,55 @@ if (window.CefSharp) {
 		API.pendingGetRequests = new Map();
 
 		API.call = function (endpoint, options) {
-			var input = `https://api.vrchat.cloud/api/1/${endpoint}`;
+			var resource = `https://api.vrchat.cloud/api/1/${endpoint}`;
 			var init = {
 				method: 'GET',
 				mode: 'cors',
 				credentials: 'include',
 				cache: 'no-cache',
+				redirect: 'follow',
 				referrerPolicy: 'no-referrer',
 				...options
 			};
+			var { params } = init;
 			var isGetRequest = init.method === 'GET';
-
 			if (isGetRequest) {
 				// transform body to url
-				if (isObject(init.body)) {
-					var url = new URL(input);
-					for (var key in init.body) {
-						url.searchParams.set(key, init.body[key]);
+				if (isObject(params)) {
+					var url = new URL(resource);
+					var { searchParams } = url;
+					for (var key in params) {
+						searchParams.set(key, params[key]);
 					}
-					input = url.toString();
+					resource = url.toString();
 				}
-				delete init.body;
 				// merge requests
-				var request = this.pendingGetRequests.get(input);
-				if (request) {
-					return request;
+				var req = this.pendingGetRequests.get(resource);
+				if (req !== undefined) {
+					return req;
 				}
 			} else {
 				init.headers = {
 					'Content-Type': 'application/json;charset=utf-8',
 					...init.headers
 				};
-				init.body = isObject(init.body)
-					? JSON.stringify(init.body)
+				init.body = isObject(params)
+					? JSON.stringify(params)
 					: '{}';
 			}
-
-			var req = fetch(input, init).catch((err) => {
+			var req = fetch(resource, init).catch((err) => {
 				this.$throw(0, err);
 			}).then((res) => res.json().catch(() => {
-				if (!res.ok) {
-					this.$throw(res.status);
-				}
-				this.$throw(0, 'Invalid JSON');
-			}).then((json) => {
 				if (res.ok) {
-					if (json.success) {
+					this.$throw(0, 'Invalid JSON response');
+				}
+				this.$throw(res.status);
+			}).then((json) => {
+				if (isObject(json) === false) {
+					this.$throw(0, 'Invalid JSON response');
+				}
+				if (res.ok) {
+					if (isObject(json.success)) {
 						new Noty({
 							type: 'success',
 							text: escapeTag(json.success.message)
@@ -271,14 +273,12 @@ if (window.CefSharp) {
 				}
 				return json;
 			}));
-
 			if (isGetRequest) {
 				req.finally(() => {
-					this.pendingGetRequests.delete(input);
+					this.pendingGetRequests.delete(resource);
 				});
-				this.pendingGetRequests.set(input, req);
+				this.pendingGetRequests.set(resource, req);
 			}
-
 			return req;
 		};
 
@@ -359,7 +359,7 @@ if (window.CefSharp) {
 
 		API.$throw = function (code, error) {
 			var text = [];
-			if (code) {
+			if (code > 0) {
 				var status = this.statusCodes[code];
 				if (status) {
 					text.push(`${code} ${status}`);
@@ -371,6 +371,12 @@ if (window.CefSharp) {
 				text.push(error);
 			}
 			text = text.map((s) => escapeTag(s)).join('<br>');
+			if (text.length) {
+				new Noty({
+					type: 'error',
+					text
+				}).show();
+			}
 			throw new Error(text);
 		};
 
@@ -379,7 +385,7 @@ if (window.CefSharp) {
 		API.cachedConfig = {};
 
 		API.$on('CONFIG', function (args) {
-			args.ref = this.updateConfig(args.json);
+			args.ref = this.applyConfig(args.json);
 		});
 
 		API.getConfig = function () {
@@ -387,6 +393,7 @@ if (window.CefSharp) {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
+					ref: null,
 					json
 				};
 				this.$emit('CONFIG', args);
@@ -394,20 +401,21 @@ if (window.CefSharp) {
 			});
 		};
 
-		API.updateConfig = function (ref) {
-			var ctx = {
+		API.applyConfig = function (json) {
+			var ref = {
 				clientApiKey: '',
-				...ref
+				...json
 			};
-			this.cachedConfig = ctx;
-			return ctx;
+			this.cachedConfig = ref;
+			return ref;
 		};
 
 		// API: Location
 
 		API.parseLocation = function (tag) {
-			var L = {
-				tag: String(tag || ''),
+			tag = String(tag || '');
+			var ctx = {
+				tag,
 				isOffline: false,
 				isPrivate: false,
 				worldId: '',
@@ -420,16 +428,16 @@ if (window.CefSharp) {
 				friendsId: null,
 				canRequestInvite: false
 			};
-			if (L.tag === 'offline') {
-				L.isOffline = true;
-			} else if (L.tag === 'private') {
-				L.isPrivate = true;
-			} else if (!L.tag.startsWith('local')) {
-				var sep = L.tag.indexOf(':');
+			if (tag === 'offline') {
+				ctx.isOffline = true;
+			} else if (tag === 'private') {
+				ctx.isPrivate = true;
+			} else if (tag.startsWith('local') === false) {
+				var sep = tag.indexOf(':');
 				if (sep >= 0) {
-					L.worldId = L.tag.substr(0, sep);
-					L.instanceId = L.tag.substr(sep + 1);
-					L.instanceId.split('~').forEach((s, i) => {
+					ctx.worldId = tag.substr(0, sep);
+					ctx.instanceId = tag.substr(sep + 1);
+					ctx.instanceId.split('~').forEach((s, i) => {
 						if (i) {
 							var A = s.indexOf('(');
 							var Z = A >= 0
@@ -442,42 +450,42 @@ if (window.CefSharp) {
 								? s.substr(A + 1, Z - A - 1)
 								: '';
 							if (key === 'hidden') {
-								L.hiddenId = value;
+								ctx.hiddenId = value;
 							} else if (key === 'private') {
-								L.privateId = value;
+								ctx.privateId = value;
 							} else if (key === 'friends') {
-								L.friendsId = value;
+								ctx.friendsId = value;
 							} else if (key === 'canRequestInvite') {
-								L.canRequestInvite = true;
+								ctx.canRequestInvite = true;
 							}
 						} else {
-							L.instanceName = s;
+							ctx.instanceName = s;
 						}
 					});
-					L.accessType = 'public';
-					if (L.privateId !== null) {
-						if (L.canRequestInvite) {
+					ctx.accessType = 'public';
+					if (ctx.privateId !== null) {
+						if (ctx.canRequestInvite) {
 							// InvitePlus
-							L.accessType = 'invite+';
+							ctx.accessType = 'invite+';
 						} else {
 							// InviteOnly
-							L.accessType = 'invite';
+							ctx.accessType = 'invite';
 						}
-						L.userId = L.privateId;
-					} else if (L.friendsId !== null) {
+						ctx.userId = ctx.privateId;
+					} else if (ctx.friendsId !== null) {
 						// FriendsOnly
-						L.accessType = 'friends';
-						L.userId = L.friendsId;
-					} else if (L.hiddenId !== null) {
+						ctx.accessType = 'friends';
+						ctx.userId = ctx.friendsId;
+					} else if (ctx.hiddenId !== null) {
 						// FriendsOfGuests
-						L.accessType = 'friends+';
-						L.userId = L.hiddenId;
+						ctx.accessType = 'friends+';
+						ctx.userId = ctx.hiddenId;
 					}
 				} else {
-					L.worldId = L.tag;
+					ctx.worldId = tag;
 				}
 			}
-			return L;
+			return ctx;
 		};
 
 		Vue.component('location', {
@@ -499,25 +507,23 @@ if (window.CefSharp) {
 						this.text = 'Private';
 					} else if (L.worldId) {
 						var ref = API.cachedWorlds.get(L.worldId);
-						if (ref) {
-							if (L.instanceId) {
-								this.text = `${ref.name} #${L.instanceName} ${L.accessType}`;
-							} else {
-								this.text = ref.name;
-							}
-						} else {
+						if (ref === undefined) {
 							API.getWorld({
 								worldId: L.worldId
 							}).then((args) => {
 								if (L.tag === this.location) {
 									if (L.instanceId) {
-										this.text = `${args.ref.name} #${L.instanceName} ${L.accessType}`;
+										this.text = `${args.json.name} #${L.instanceName} ${L.accessType}`;
 									} else {
-										this.text = args.ref.name;
+										this.text = args.json.name;
 									}
 								}
 								return args;
 							});
+						} else if (L.instanceId) {
+							this.text = `${ref.name} #${L.instanceName} ${L.accessType}`;
+						} else {
+							this.text = ref.name;
 						}
 					}
 				}
@@ -537,34 +543,33 @@ if (window.CefSharp) {
 		API.cachedWorlds = new Map();
 
 		API.$on('WORLD', function (args) {
-			args.ref = this.updateWorld(args.json);
+			args.ref = this.applyWorld(args.json);
 		});
 
 		/*
-			param: {
+			params: {
 				worldId: string
 			}
 		*/
-		API.getWorld = function (param) {
-			return this.call(`worlds/${param.worldId}?apiKey=${this.cachedConfig.clientApiKey}`, {
+		API.getWorld = function (params) {
+			return this.call(`worlds/${params.worldId}`, {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
-					param,
-					json
+					ref: null,
+					json,
+					params
 				};
 				this.$emit('WORLD', args);
 				return args;
 			});
 		};
 
-		API.updateWorld = function (ref) {
-			var ctx = this.cachedWorlds.get(ref.id);
-			if (ctx) {
-				Object.assign(ctx, ref);
-			} else {
-				ctx = {
-					id: ref.id,
+		API.applyWorld = function (json) {
+			var ref = this.cachedWorlds.get(json.id);
+			if (ref === undefined) {
+				ref = {
+					id: '',
 					name: '',
 					description: '',
 					authorId: '',
@@ -582,7 +587,6 @@ if (window.CefSharp) {
 					unityPackageUrlObject: {},
 					unityPackages: [],
 					version: 0,
-					previewYoutubeId: '',
 					favorites: 0,
 					created_at: '',
 					updated_at: '',
@@ -595,17 +599,19 @@ if (window.CefSharp) {
 					privateOccupants: 0,
 					occupants: 0,
 					instances: [],
-					// custom
+					// VRCX
 					$isLabs: false,
 					//
-					...ref
+					...json
 				};
-				this.cachedWorlds.set(ctx.id, ctx);
+				this.cachedWorlds.set(ref.id, ref);
+			} else {
+				Object.assign(ref, json);
 			}
-			if (ctx.tags) {
-				ctx.$isLabs = ctx.tags.includes('system_labs');
+			if (Array.isArray(ref.tags)) {
+				ref.$isLabs = ref.tags.includes('system_labs');
 			}
-			return ctx;
+			return ref;
 		};
 
 		var $app = {
@@ -645,7 +651,7 @@ if (window.CefSharp) {
 				}).then((args) => {
 					setInterval(() => this.update(), 1000);
 					this.update();
-					this.$nextTick(() => {
+					this.$nextTick(function () {
 						if (this.appType === '1') {
 							this.$el.style.display = '';
 						}
