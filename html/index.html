@@ -902,17 +902,6 @@
 						</div>
 						<div style="margin-top:5px">
 							<el-tag type="info" effect="plain" size="mini" class="name" :class="userDialog.ref.trustClass_" v-text="userDialog.ref.trustLevel_"></el-tag>
-							<!--
-							<el-tag v-if="userDialog.ref.admin_" type="info" effect="plain" size="mini" class="x-tag-vip">VRChat Team</el-tag>
-							<el-tag v-else-if="userDialog.ref.trustLevel_ === 'Legendary User'" type="info" effect="plain" size="mini" class="x-tag-legendary">Legendary User</el-tag>
-							<el-tag v-else-if="userDialog.ref.trustLevel_ === 'Veteran User'" type="info" effect="plain" size="mini" class="x-tag-legend">Veteran User</el-tag>
-							<el-tag v-else-if="userDialog.ref.trustLevel_ === 'Trusted User'" type="info" effect="plain" size="mini" class="x-tag-veteran">Trusted User</el-tag>
-							<el-tag v-else-if="userDialog.ref.trustLevel_ === 'Known User'" type="info" effect="plain" size="mini" class="x-tag-trusted">Known User</el-tag>
-							<el-tag v-else-if="userDialog.ref.trustLevel_ === 'User'" type="info" effect="plain" size="mini" class="x-tag-known">User</el-tag>
-							<el-tag v-else-if="userDialog.ref.trustLevel_ === 'New User'" type="info" effect="plain" size="mini" class="x-tag-basic">New User</el-tag>
-							<el-tag v-else type="info" effect="plain" size="mini" class="x-tag-untrusted">Visitor</el-tag>
-							<el-tag v-if="userDialog.ref.troll_" type="info" effect="plain" size="mini" class="x-tag-troll">Nuisance</el-tag>
-							-->
 							<el-tag v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" class="x-tag-friend">Friend No.{{userDialog.friend.no}}</el-tag>
 						</div>
 						<div style="margin-top:5px">
