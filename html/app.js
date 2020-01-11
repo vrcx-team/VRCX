@@ -5479,7 +5479,8 @@ if (window.CefSharp) {
 			}
 			D.users = [];
 			if (!L.isOffline) {
-				for (var { ref } of this.friends.values()) {
+				for (var userId of this.friends.keys()) {
+					var ref = API.cachedUsers.get(userId);
 					if (ref &&
 						ref.location === D.ref.location) {
 						D.users.push(ref);
@@ -5886,7 +5887,8 @@ if (window.CefSharp) {
 						users: []
 					};
 				}
-				for (var { ref } of this.friends.values()) {
+				for (var userId of this.friends.keys()) {
+					var ref = API.cachedUsers.get(userId);
 					if (ref &&
 						ref.$location.worldId === D.id) {
 						({ instanceId } = ref.$location);
