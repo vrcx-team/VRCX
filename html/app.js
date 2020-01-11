@@ -442,6 +442,7 @@ if (window.CefSharp) {
 				}
 				if (args.json.length &&
 					(options.param.offset += args.json.length,
+						// eslint-disable-next-line no-nested-ternary
 						options.N > 0
 							? options.N > options.param.offset
 							: options.N < 0
