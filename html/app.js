@@ -1605,8 +1605,7 @@ if (window.CefSharp) {
 		});
 
 		API.markAllNotificationsAsExpired = function () {
-			for (var key in this.notification) {
-				var ctx = this.cachedNotifications.get(key);
+			for (var ctx of this.cachedNotifications.values()) {
 				if (!ctx.$isExpired) {
 					ctx.$isExpired = true;
 				}
@@ -1614,8 +1613,7 @@ if (window.CefSharp) {
 		};
 
 		API.checkExpiredNotifcations = function () {
-			for (var key in this.notification) {
-				var ctx = this.cachedNotifications.get(key);
+			for (var ctx of this.cachedNotifications.values()) {
 				if (ctx.$isExpired &&
 					!ctx.$isExpired) {
 					ctx.$isExpired = true;
@@ -1784,12 +1782,11 @@ if (window.CefSharp) {
 		};
 
 		API.getFriendRequest = function (userId) {
-			for (var key in this.notification) {
-				var ctx = this.cachedNotifications.get(key);
+			for (var ctx of this.cachedNotifications.values()) {
 				if (ctx.type === 'friendRequest' &&
 					ctx.senderUserId === userId &&
 					!ctx.$isExpired) {
-					return key;
+					return ctx.id;
 				}
 			}
 			return '';
