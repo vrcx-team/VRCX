@@ -1244,7 +1244,7 @@ if (window.CefSharp) {
 				if (user === undefined) {
 					return;
 				}
-				user.friend_ = true;
+				user.$isFriend = true;
 				delete this.friend404[json.id];
 			});
 		});
@@ -1254,7 +1254,7 @@ if (window.CefSharp) {
 				return this.currentUser.friends.every((id) => {
 					var user = this.cachedUsers.get(id);
 					if (user &&
-						user.friend_) {
+						user.$isFriend) {
 						return true;
 					}
 					// NOTE: NaN이면 false라서 괜찮음
@@ -1264,7 +1264,7 @@ if (window.CefSharp) {
 			this.currentUser.friends.forEach((id) => {
 				var ctx = this.cachedUsers.get(id);
 				if (!(ctx &&
-					ctx.friend_)) {
+					ctx.$isFriend)) {
 					var hit = Number(this.friend404[id]) || 0;
 					if (hit < 2) {
 						this.friend404[id] = hit + 1;
