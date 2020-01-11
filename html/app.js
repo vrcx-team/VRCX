@@ -251,7 +251,7 @@ if (window.CefSharp) {
 			}
 		};
 
-		API.$fetch = {};
+		API.$pendingGetRequests = new Map();
 
 		API.call = function (endpoint, options) {
 			var input = `https://api.vrchat.cloud/api/1/${endpoint}`;
@@ -263,28 +263,33 @@ if (window.CefSharp) {
 				referrerPolicy: 'no-referrer',
 				...options
 			};
-			if (init.method === 'GET') {
-				if (init.body) {
+			var isGetRequest = init.method === 'GET';
+
+			if (isGetRequest) {
+				// transform body to url
+				if (isObject(init.body)) {
 					var url = new URL(input);
 					for (var key in init.body) {
 						url.searchParams.set(key, init.body[key]);
 					}
 					input = url.toString();
-					init.body = null;
 				}
+				delete init.body;
 				// merge requests
-				if (this.$fetch[input]) {
-					return this.$fetch[input];
+				var request = this.$pendingGetRequests.get(input);
+				if (request) {
+					return request;
 				}
 			} else {
 				init.headers = {
 					'Content-Type': 'application/json;charset=utf-8',
 					...init.headers
 				};
-				init.body = init.body
+				init.body = isObject(init.body)
 					? JSON.stringify(init.body)
 					: '{}';
 			}
+
 			var req = fetch(input, init).catch((err) => {
 				this.$throw(0, err);
 			}).then((res) => res.json().catch(() => {
@@ -316,11 +321,14 @@ if (window.CefSharp) {
 				}
 				return json;
 			}));
-			if (init.method === 'GET') {
-				this.$fetch[input] = req.finally(() => {
-					delete this.$fetch[input];
+
+			if (isGetRequest) {
+				req.finally(() => {
+					this.$pendingGetRequests.delete(input);
 				});
+				this.$pendingGetRequests.set(input, req);
 			}
+
 			return req;
 		};
 
