@@ -477,7 +477,6 @@ if (window.CefSharp) {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json
 				};
 				this.$emit('CONFIG', args);
@@ -705,7 +704,6 @@ if (window.CefSharp) {
 			if (Array.isArray(args.json)) {
 				for (var json of args.json) {
 					this.$emit('USER', {
-						ref: null,
 						json,
 						params: {
 							userId: json.id
@@ -737,7 +735,6 @@ if (window.CefSharp) {
 				}
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params,
 					origin: true
@@ -762,7 +759,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params,
 					origin: true
@@ -787,7 +783,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -807,7 +802,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -821,7 +815,6 @@ if (window.CefSharp) {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					origin: true
 				};
@@ -893,7 +886,6 @@ if (window.CefSharp) {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1083,7 +1075,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1104,7 +1095,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1125,7 +1115,6 @@ if (window.CefSharp) {
 			if (Array.isArray(args.json)) {
 				for (var json of args.json) {
 					this.$emit('WORLD', {
-						ref: null,
 						json,
 						params: {
 							worldId: json.id
@@ -1145,7 +1134,6 @@ if (window.CefSharp) {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1247,7 +1235,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1272,7 +1259,6 @@ if (window.CefSharp) {
 			if (Array.isArray(args.json)) {
 				for (var json of args.json) {
 					this.$emit('USER', {
-						ref: null,
 						json,
 						params: {
 							userId: json.id
@@ -1363,7 +1349,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1382,7 +1367,6 @@ if (window.CefSharp) {
 				method: 'POST'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1401,7 +1385,6 @@ if (window.CefSharp) {
 				method: 'DELETE'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1420,7 +1403,6 @@ if (window.CefSharp) {
 				method: 'DELETE'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1439,7 +1421,6 @@ if (window.CefSharp) {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1460,7 +1441,6 @@ if (window.CefSharp) {
 			if (Array.isArray(args.json)) {
 				for (var json of args.json) {
 					this.$emit('AVATAR', {
-						ref: null,
 						json,
 						params: {
 							avatarId: json.id
@@ -1484,7 +1464,6 @@ if (window.CefSharp) {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1562,7 +1541,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1582,7 +1560,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1609,7 +1586,6 @@ if (window.CefSharp) {
 			if (Array.isArray(args.json)) {
 				for (var json of args.json) {
 					this.$emit('NOTIFICATION', {
-						ref: null,
 						json,
 						params: {
 							notificationId: json.id
@@ -1634,7 +1610,6 @@ if (window.CefSharp) {
 				}
 			});
 			this.$emit('FRIEND:ADD', {
-				ref: null,
 				params: {
 					userId: ref.senderUserId
 				}
@@ -1756,7 +1731,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1770,7 +1744,6 @@ if (window.CefSharp) {
 				method: 'PUT'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json
 				};
 				// FIXME: NOTIFICATION:CLEAR 핸들링
@@ -1794,7 +1767,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1813,7 +1785,6 @@ if (window.CefSharp) {
 				method: 'PUT'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1832,7 +1803,6 @@ if (window.CefSharp) {
 				method: 'PUT'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -1870,7 +1840,6 @@ if (window.CefSharp) {
 			if (Array.isArray(args.json)) {
 				for (var json of args.json) {
 					this.$emit('PLAYER-MODERATION', {
-						ref: null,
 						json,
 						params: {
 							playerModerationId: json.id
@@ -1882,7 +1851,6 @@ if (window.CefSharp) {
 
 		API.$on('PLAYER-MODERATION:SEND', function (args) {
 			this.$emit('PLAYER-MODERATION', {
-				ref: null,
 				json: args.json,
 				params: {
 					playerModerationId: args.json.id
@@ -1977,7 +1945,6 @@ if (window.CefSharp) {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json
 				};
 				this.$emit('PLAYER-MODERATION:LIST', args);
@@ -1990,7 +1957,6 @@ if (window.CefSharp) {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json
 				};
 				this.$emit('PLAYER-MODERATION:LIST', args);
@@ -2011,7 +1977,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -2033,7 +1998,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -2085,7 +2049,6 @@ if (window.CefSharp) {
 			if (Array.isArray(args.json)) {
 				for (var json of args.json) {
 					this.$emit('FAVORITE', {
-						ref: null,
 						json,
 						params: {
 							favoriteId: json.id
@@ -2097,7 +2060,6 @@ if (window.CefSharp) {
 
 		API.$on('FAVORITE:ADD', function (args) {
 			this.$emit('FAVORITE', {
-				ref: null,
 				json: args.json,
 				params: {
 					favoriteId: args.json.id
@@ -2135,7 +2097,6 @@ if (window.CefSharp) {
 			if (Array.isArray(args.json)) {
 				for (var json of args.json) {
 					this.$emit('FAVORITE:GROUP', {
-						ref: null,
 						json,
 						params: {
 							favoriteGroupId: json.id
@@ -2147,7 +2108,6 @@ if (window.CefSharp) {
 
 		API.$on('FAVORITE:GROUP:SAVE', function (args) {
 			this.$emit('FAVORITE:GROUP', {
-				ref: null,
 				json: args.json,
 				params: {
 					favoriteGroupId: args.json.id
@@ -2176,7 +2136,6 @@ if (window.CefSharp) {
 			if (Array.isArray(args.json)) {
 				for (var json of args.json) {
 					this.$emit('USER', {
-						ref: null,
 						json,
 						params: {
 							userId: json.id
@@ -2196,7 +2155,6 @@ if (window.CefSharp) {
 						continue;
 					}
 					this.$emit('WORLD', {
-						ref: null,
 						json,
 						params: {
 							worldId: json.id
@@ -2214,7 +2172,6 @@ if (window.CefSharp) {
 						continue;
 					}
 					this.$emit('AVATAR', {
-						ref: null,
 						json,
 						params: {
 							avatarId: json.id
@@ -2540,7 +2497,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -2562,7 +2518,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -2581,7 +2536,6 @@ if (window.CefSharp) {
 				method: 'DELETE'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -2630,7 +2584,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -2653,7 +2606,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -2674,7 +2626,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -2695,7 +2646,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -2716,7 +2666,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -2737,7 +2686,6 @@ if (window.CefSharp) {
 				params
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json,
 					params
 				};
@@ -2771,7 +2719,6 @@ if (window.CefSharp) {
 			switch (type) {
 				case 'notification':
 					this.$emit('NOTIFICATION', {
-						ref: null,
 						json: content,
 						params: {
 							notificationId: content.id
@@ -2781,14 +2728,12 @@ if (window.CefSharp) {
 
 				case 'friend-add':
 					this.$emit('USER', {
-						ref: null,
 						json: content.user,
 						params: {
 							userId: content.userId
 						}
 					});
 					this.$emit('FRIEND:ADD', {
-						ref: null,
 						params: {
 							userId: content.userId
 						}
@@ -2797,7 +2742,6 @@ if (window.CefSharp) {
 
 				case 'friend-delete':
 					this.$emit('FRIEND:DELETE', {
-						ref: null,
 						params: {
 							userId: content.userId
 						}
@@ -2806,7 +2750,6 @@ if (window.CefSharp) {
 
 				case 'friend-online':
 					this.$emit('USER', {
-						ref: null,
 						json: {
 							location: content.location,
 							...content.user
@@ -2816,7 +2759,6 @@ if (window.CefSharp) {
 						}
 					});
 					this.$emit('FRIEND:STATE', {
-						ref: null,
 						json: {
 							state: 'online'
 						},
@@ -2828,14 +2770,12 @@ if (window.CefSharp) {
 
 				case 'friend-active':
 					this.$emit('USER', {
-						ref: null,
 						json: content.user,
 						params: {
 							userId: content.userId
 						}
 					});
 					this.$emit('FRIEND:STATE', {
-						ref: null,
 						json: {
 							state: 'active'
 						},
@@ -2847,7 +2787,6 @@ if (window.CefSharp) {
 
 				case 'friend-offline':
 					this.$emit('FRIEND:STATE', {
-						ref: null,
 						json: {
 							state: 'offline'
 						},
@@ -2859,7 +2798,6 @@ if (window.CefSharp) {
 
 				case 'friend-update':
 					this.$emit('USER', {
-						ref: null,
 						json: content.user,
 						params: {
 							userId: content.userId
@@ -2870,7 +2808,6 @@ if (window.CefSharp) {
 				case 'friend-location':
 					if (content.world) {
 						this.$emit('WORLD', {
-							ref: null,
 							json: content.world,
 							params: {
 								worldId: content.world.id
@@ -2879,7 +2816,6 @@ if (window.CefSharp) {
 					}
 					if (content.userId === this.currentUser.id) {
 						this.$emit('USER', {
-							ref: null,
 							json: content.user,
 							params: {
 								userId: content.userId
@@ -2887,7 +2823,6 @@ if (window.CefSharp) {
 						});
 					} else {
 						this.$emit('USER', {
-							ref: null,
 							json: {
 								location: content.location,
 								...content.user
@@ -2901,7 +2836,6 @@ if (window.CefSharp) {
 
 				case 'user-update':
 					this.$emit('USER:CURRENT', {
-						ref: null,
 						json: content.user,
 						params: {
 							userId: content.userId
@@ -2912,7 +2846,6 @@ if (window.CefSharp) {
 				case 'user-location':
 					if (isObject(content.world)) {
 						this.$emit('WORLD', {
-							ref: null,
 							json: content.world,
 							params: {
 								worldId: content.world.id
@@ -2920,7 +2853,6 @@ if (window.CefSharp) {
 						});
 					}
 					this.$emit('USER', {
-						ref: null,
 						json: {
 							id: content.userId,
 							location: content.location
@@ -2941,7 +2873,6 @@ if (window.CefSharp) {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json
 				};
 				this.$emit('AUTH', args);
@@ -2969,7 +2900,6 @@ if (window.CefSharp) {
 							json.content = JSON.parse(json.content);
 						}
 						this.$emit('PIPELINE', {
-							ref: null,
 							json
 						});
 					} catch (err) {
@@ -2998,7 +2928,6 @@ if (window.CefSharp) {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
-					ref: null,
 					json
 				};
 				this.$emit('VISITS', args);
@@ -3224,27 +3153,26 @@ if (window.CefSharp) {
 				if (i <= 0) {
 					break;
 				}
-				var ref = this.gameLogTable.data[--i];
+				var ctx = this.gameLogTable.data[--i];
 				// Location, OnPlayerJoined, OnPlayerLeft
-				if (ref.type) {
+				if (ctx.type) {
 					// FIXME: 이거 존나 느릴거 같은데
 					var isFriend = false;
 					var isFavorite = false;
-					for (var key in API.user) {
-						var ref = API.cachedUsers.get(key);
-						if (ref.displayName === ref.data) {
-							isFriend = Boolean(this.friend[ref.id]);
+					for (var ref of API.cachedUsers.values()) {
+						if (ref.displayName === ctx.data) {
+							isFriend = this.friends.has(ref.id);
 							isFavorite = API.cachedFavoritesByObjectId.has(ref.id);
 							break;
 						}
 					}
 					arr.push({
-						...ref,
+						...ctx,
 						isFriend,
 						isFavorite
 					});
 				} else {
-					arr.push(ref);
+					arr.push(ctx);
 				}
 				++j;
 			}
@@ -3254,13 +3182,13 @@ if (window.CefSharp) {
 				if (i <= 0) {
 					break;
 				}
-				var ref = this.feedTable.data[--i];
+				var ctx = this.feedTable.data[--i];
 				// GPS, Online, Offline, Status, Avatar
-				if (ref.type !== 'Avatar') {
+				if (ctx.type !== 'Avatar') {
 					arr.push({
-						...ref,
-						isFriend: Boolean(this.friend[ref.userId]),
-						isFavorite: API.cachedFavoritesByObjectId.has(ref.userId)
+						...ctx,
+						isFriend: this.friends.has(ctx.userId),
+						isFavorite: API.cachedFavoritesByObjectId.has(ctx.userId)
 					});
 					++j;
 				}
@@ -3281,8 +3209,9 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.notifyMenu = function (index) {
-			if (this.$refs.menu.activeIndex !== index) {
-				var item = this.$refs.menu.items[index];
+			var { menu } = this.$refs;
+			if (menu.activeIndex !== index) {
+				var item = menu.items[index];
 				if (item) {
 					item.$el.classList.add('notify');
 				}
@@ -3460,7 +3389,7 @@ if (window.CefSharp) {
 			} else {
 				VRCXStorage.Remove(key);
 			}
-			var ref = this.friend[id];
+			var ref = this.friends.get(id);
 			if (ref) {
 				ref.memo = String(memo || '');
 			}
@@ -3468,8 +3397,8 @@ if (window.CefSharp) {
 
 		// App: Friends
 
-		$app.data.friend = {};
-		$app.data.friendNo = 0;
+		$app.data.friends = new Map();
+		$app.data.friendsNo = 0;
 		$app.data.isFriendGroup0 = true;
 		$app.data.isFriendGroup1 = true;
 		$app.data.isFriendGroup2 = true;
@@ -3502,8 +3431,8 @@ if (window.CefSharp) {
 		$app.watch.orderFriendGroup3 = saveOrderFriendGroup;
 
 		API.$on('LOGIN', function () {
-			$app.friend = {};
-			$app.friendNo = 0;
+			$app.friends.clear();
+			$app.friendsNo = 0;
 			$app.isFriendGroup0 = true;
 			$app.isFriendGroup1 = true;
 			$app.isFriendGroup2 = true;
@@ -3566,16 +3495,16 @@ if (window.CefSharp) {
 			ref.onlineFriends.forEach((id) => {
 				map[id] = 'online';
 			});
-			for (var key in map) {
-				if (this.friend[key]) {
-					this.updateFriend(key, map[key], origin);
+			for (var id in map) {
+				if (this.friends.has(id)) {
+					this.updateFriend(id, map[id], origin);
 				} else {
-					this.addFriend(key, map[key]);
+					this.addFriend(id, map[id]);
 				}
 			}
-			for (var key in this.friend) {
-				if (!map[key]) {
-					this.removeFriend(key);
+			for (var id of this.friends.keys()) {
+				if (map[id] === undefined) {
+					this.removeFriend(id);
 				}
 			}
 			if (origin) {
@@ -3584,7 +3513,7 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.addFriend = function (id, state) {
-			if (this.friend[id]) {
+			if (this.friends.has(id)) {
 				return;
 			}
 			var ref = API.cachedUsers.get(id);
@@ -3594,7 +3523,7 @@ if (window.CefSharp) {
 				ref,
 				vip: API.cachedFavoritesByObjectId.has(id),
 				name: '',
-				no: ++this.friendNo,
+				no: ++this.friendsNo,
 				memo: this.loadMemo(id)
 			};
 			if (ref) {
@@ -3606,7 +3535,7 @@ if (window.CefSharp) {
 					ctx.name = ref.displayName;
 				}
 			}
-			Vue.set(this.friend, id, ctx);
+			this.friends.set(id, ctx);
 			if (ctx.state === 'online') {
 				if (ctx.vip) {
 					this.sortFriendGroup0 = true;
@@ -3629,7 +3558,7 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.removeFriend = function (id) {
-			var ctx = this.friend[id];
+			var ctx = this.friends.get(id);
 			if (ctx) {
 				Vue.delete(this.friend, id);
 				if (ctx.state === 'online') {
@@ -3651,7 +3580,7 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.updateFriend = function (id, state, origin) {
-			var ctx = this.friend[id];
+			var ctx = this.friends.get(id);
 			if (ctx) {
 				var ref = API.cachedUsers.get(id);
 				var vip = API.cachedFavoritesByObjectId.has(id);
@@ -3868,8 +3797,7 @@ if (window.CefSharp) {
 			this.quickSearchItems = [];
 			if (query) {
 				var QUERY = query.toUpperCase();
-				for (var key in this.friend) {
-					var ctx = this.friend[key];
+				for (var ctx in this.friends.values()) {
 					if (ctx.ref) {
 						var NAME = ctx.name.toUpperCase();
 						var match = NAME.includes(QUERY);
@@ -3989,7 +3917,7 @@ if (window.CefSharp) {
 
 		API.$on('USER:UPDATE', function (args) {
 			var { ref, props } = args;
-			if ($app.friend[ref.id]) {
+			if ($app.friends.get(ref.id)) {
 				if (props.location) {
 					if (props.location[0] === 'offline') {
 						$app.addFeed('Offline', ref, {
@@ -4041,14 +3969,15 @@ if (window.CefSharp) {
 			}
 		});
 
-		var saveFeedTimer = false;
+		var saveFeedTimer = null;
 		$app.methods.saveFeed = function () {
-			if (saveFeedTimer === false) {
-				saveFeedTimer = setTimeout(() => {
-					saveFeedTimer = false;
-					VRCXStorage.SetArray(`${API.currentUser.id}_feedTable`, this.feedTable.data);
-				}, 1);
+			if (saveFeedTimer !== null) {
+				return;
 			}
+			saveFeedTimer = setTimeout(() => {
+				saveFeedTimer = null;
+				VRCXStorage.SetArray(`${API.currentUser.id}_feedTable`, this.feedTable.data);
+			}, 1);
 		};
 
 		$app.methods.addFeed = function (type, ref, extra) {
@@ -4248,10 +4177,9 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.lookupUser = function (name) {
-			for (var key in API.user) {
-				var ctx = API.cachedUsers.get(key);
-				if (ctx.displayName === name) {
-					this.showUserDialog(ctx.id);
+			for (var ref of API.cachedUsers.values()) {
+				if (ref.displayName === name) {
+					this.showUserDialog(ref.id);
 					return;
 				}
 			}
@@ -4781,16 +4709,17 @@ if (window.CefSharp) {
 			}
 		});
 
-		var saveFriendLogTimer = false;
+		var saveFriendLogTimer = null;
 		$app.methods.saveFriendLog = function () {
-			if (saveFriendLogTimer === false) {
-				saveFriendLogTimer = setTimeout(() => {
-					saveFriendLogTimer = false;
-					VRCXStorage.SetObject(`${API.currentUser.id}_friendLog`, this.friendLog);
-					VRCXStorage.SetArray(`${API.currentUser.id}_friendLogTable`, this.friendLogTable.data);
-					VRCXStorage.Set(`${API.currentUser.id}_friendLogUpdatedAt`, new Date().toJSON());
-				}, 1);
+			if (saveFriendLogTimer !== null) {
+				return;
 			}
+			saveFriendLogTimer = setTimeout(() => {
+				saveFriendLogTimer = null;
+				VRCXStorage.SetObject(`${API.currentUser.id}_friendLog`, this.friendLog);
+				VRCXStorage.SetArray(`${API.currentUser.id}_friendLogTable`, this.friendLogTable.data);
+				VRCXStorage.Set(`${API.currentUser.id}_friendLogUpdatedAt`, new Date().toJSON());
+			}, 1);
 		};
 
 		$app.methods.initFriendship = function (ref) {
@@ -5482,7 +5411,7 @@ if (window.CefSharp) {
 				if (args.ref.id === D.id) {
 					D.loading = false;
 					D.ref = args.ref;
-					D.friend = this.friend[D.id];
+					D.friend = this.friends.get(D.id);
 					D.isFriend = Boolean(D.friend);
 					D.incomingRequest = false;
 					D.outgoingRequest = false;
@@ -5550,8 +5479,7 @@ if (window.CefSharp) {
 			}
 			D.users = [];
 			if (!L.isOffline) {
-				for (var key in this.friend) {
-					var ref = API.cachedUsers.get(key);
+				for (var { ref } of this.friends.values()) {
 					if (ref &&
 						ref.location === D.ref.location) {
 						D.users.push(ref);
@@ -5958,8 +5886,7 @@ if (window.CefSharp) {
 						users: []
 					};
 				}
-				for (var key in this.friend) {
-					var ref = API.cachedUsers.get(key);
+				for (var { ref } of this.friends.values()) {
 					if (ref &&
 						ref.$location.worldId === D.id) {
 						({ instanceId } = ref.$location);
