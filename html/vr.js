@@ -8,9 +8,9 @@ if (window.CefSharp) {
 		CefSharp.BindObjectAsync('VRCX'),
 		CefSharp.BindObjectAsync('VRCXStorage'),
 		CefSharp.BindObjectAsync('SQLite')
-	]).catch(() => {
+	]).catch(function () {
 		location = 'https://github.com/pypy-vrc/vrcx';
-	}).then(() => {
+	}).then(function () {
 
 		VRCXStorage.GetBool = function (key) {
 			return this.Get(key) === 'true';
@@ -83,6 +83,8 @@ if (window.CefSharp) {
 			timeout: 6000
 		});
 
+		var isObject = (any) => any === Object(any);
+
 		var escapeTag = (s) => String(s).replace(/["&'<>]/gu, (c) => `&#${c.charCodeAt(0)};`);
 		Vue.filter('escapeTag', escapeTag);
 
@@ -90,21 +92,21 @@ if (window.CefSharp) {
 		Vue.filter('commaNumber', commaNumber);
 
 		var formatDate = (s, format) => {
-			var ctx = new Date(s);
-			if (isNaN(ctx)) {
+			var dt = new Date(s);
+			if (isNaN(dt)) {
 				return escapeTag(s);
 			}
-			var hours = ctx.getHours();
+			var hours = dt.getHours();
 			var map = {
-				'YYYY': String(10000 + ctx.getFullYear()).substr(-4),
-				'MM': String(101 + ctx.getMonth()).substr(-2),
-				'DD': String(100 + ctx.getDate()).substr(-2),
+				'YYYY': String(10000 + dt.getFullYear()).substr(-4),
+				'MM': String(101 + dt.getMonth()).substr(-2),
+				'DD': String(100 + dt.getDate()).substr(-2),
 				'HH24': String(100 + hours).substr(-2),
 				'HH': String(100 + (hours > 12
 					? hours - 12
 					: hours)).substr(-2),
-				'MI': String(100 + ctx.getMinutes()).substr(-2),
-				'SS': String(100 + ctx.getSeconds()).substr(-2),
+				'MI': String(100 + dt.getMinutes()).substr(-2),
+				'SS': String(100 + dt.getSeconds()).substr(-2),
 				'AMPM': hours >= 12
 					? 'PM'
 					: 'AM'
@@ -154,47 +156,52 @@ if (window.CefSharp) {
 
 		var API = {};
 
-		API.$handler = {};
+		API.eventHandlers = new Map();
 
-		API.$emit = function (event, ...args) {
+		API.$emit = function (name, ...args) {
+			// console.log(name, ...args);
+			var handlers = this.eventHandlers.get(name);
+			if (handlers === undefined) {
+				return;
+			}
 			try {
-				// console.log(event, ...args);
-				var h = this.$handler[event];
-				if (h) {
-					h.forEach((f) => f(...args));
+				var { length } = handlers;
+				for (var i = 0; i < length; ++i) {
+					handlers[i].apply(this, args);
 				}
 			} catch (err) {
 				console.error(err);
 			}
 		};
 
-		API.$on = function (event, callback) {
-			var h = this.$handler[event];
-			if (h) {
-				h.push(callback);
-			} else {
-				this.$handler[event] = [callback];
+		API.$on = function (name, fx) {
+			var handlers = this.eventHandlers.get(name);
+			if (handlers === undefined) {
+				handlers = [];
+				this.eventHandlers.set(name, handlers);
 			}
+			handlers.push(fx);
 		};
 
-		API.$off = function (event, callback) {
-			var h = this.$handler[event];
-			if (h) {
-				h.find((val, idx, arr) => {
-					if (val !== callback) {
-						return false;
-					}
-					if (arr.length > 1) {
-						arr.splice(idx, 1);
+		API.$off = function (name, fx) {
+			var handlers = this.eventHandlers.get(name);
+			if (handlers === undefined) {
+				return;
+			}
+			var { length } = handlers;
+			for (var i = 0; i < length; ++i) {
+				if (handlers[i] === fx) {
+					if (length > 1) {
+						handlers.splice(i, 1);
 					} else {
-						delete this.$handler[event];
+						this.eventHandlers.delete(name);
 					}
-					return true;
-				});
+					break;
+				}
 			}
 		};
 
-		API.$fetch = {};
+		API.pendingGetRequests = new Map();
 
 		API.call = function (endpoint, options) {
 			var input = `https://api.vrchat.cloud/api/1/${endpoint}`;
@@ -206,28 +213,33 @@ if (window.CefSharp) {
 				referrerPolicy: 'no-referrer',
 				...options
 			};
-			if (init.method === 'GET') {
-				if (init.body) {
+			var isGetRequest = init.method === 'GET';
+
+			if (isGetRequest) {
+				// transform body to url
+				if (isObject(init.body)) {
 					var url = new URL(input);
 					for (var key in init.body) {
 						url.searchParams.set(key, init.body[key]);
 					}
 					input = url.toString();
-					init.body = null;
 				}
+				delete init.body;
 				// merge requests
-				if (this.$fetch[input]) {
-					return this.$fetch[input];
+				var request = this.pendingGetRequests.get(input);
+				if (request) {
+					return request;
 				}
 			} else {
 				init.headers = {
 					'Content-Type': 'application/json;charset=utf-8',
 					...init.headers
 				};
-				init.body = init.body
+				init.body = isObject(init.body)
 					? JSON.stringify(init.body)
 					: '{}';
 			}
+
 			var req = fetch(input, init).catch((err) => {
 				this.$throw(0, err);
 			}).then((res) => res.json().catch(() => {
@@ -236,33 +248,41 @@ if (window.CefSharp) {
 				}
 				this.$throw(0, 'Invalid JSON');
 			}).then((json) => {
-				if (!res.ok) {
-					if (typeof json.error === 'object') {
-						this.$throw(
-							json.error.status_code || res.status,
-							json.error.message,
-							json.error.data
-						);
-					} else if (typeof json.error === 'string') {
-						this.$throw(
-							json.status_code || res.status,
-							json.error
-						);
-					} else {
-						this.$throw(res.status, json);
+				if (res.ok) {
+					if (json.success) {
+						new Noty({
+							type: 'success',
+							text: escapeTag(json.success.message)
+						}).show();
 					}
+				} else if (typeof json.error === 'object') {
+					this.$throw(
+						json.error.status_code || res.status,
+						json.error.message,
+						json.error.data
+					);
+				} else if (typeof json.error === 'string') {
+					this.$throw(
+						json.status_code || res.status,
+						json.error
+					);
+				} else {
+					this.$throw(res.status, json);
 				}
 				return json;
 			}));
-			if (init.method === 'GET') {
-				this.$fetch[input] = req.finally(() => {
-					delete this.$fetch[input];
+
+			if (isGetRequest) {
+				req.finally(() => {
+					this.pendingGetRequests.delete(input);
 				});
+				this.pendingGetRequests.set(input, req);
 			}
+
 			return req;
 		};
 
-		API.$status = {
+		API.statusCodes = {
 			100: 'Continue',
 			101: 'Switching Protocols',
 			102: 'Processing',
@@ -338,18 +358,28 @@ if (window.CefSharp) {
 		};
 
 		API.$throw = function (code, error) {
-			throw {
-				'status_code': code,
-				error
-			};
+			var text = [];
+			if (code) {
+				var status = this.statusCodes[code];
+				if (status) {
+					text.push(`${code} ${status}`);
+				} else {
+					text.push(`${code}`);
+				}
+			}
+			if (error !== undefined) {
+				text.push(error);
+			}
+			text = text.map((s) => escapeTag(s)).join('<br>');
+			throw new Error(text);
 		};
 
 		// API: Config
 
 		API.config = {};
 
-		API.$on('CONFIG', (args) => {
-			args.ref = API.updateConfig(args.json);
+		API.$on('CONFIG', function (args) {
+			args.ref = this.updateConfig(args.json);
 		});
 
 		API.getConfig = function () {
@@ -468,7 +498,7 @@ if (window.CefSharp) {
 					} else if (L.isPrivate) {
 						this.text = 'Private';
 					} else if (L.worldId) {
-						var ref = API.world[L.worldId];
+						var ref = API.cachedWorlds.get(L.worldId);
 						if (ref) {
 							if (L.instanceId) {
 								this.text = `${ref.name} #${L.instanceName} ${L.accessType}`;
@@ -504,10 +534,10 @@ if (window.CefSharp) {
 
 		// API: World
 
-		API.world = {};
+		API.cachedWorlds = new Map();
 
-		API.$on('WORLD', (args) => {
-			args.ref = API.updateWorld(args.json);
+		API.$on('WORLD', function (args) {
+			args.ref = this.updateWorld(args.json);
 		});
 
 		/*
@@ -529,7 +559,7 @@ if (window.CefSharp) {
 		};
 
 		API.updateWorld = function (ref) {
-			var ctx = this.world[ref.id];
+			var ctx = this.cachedWorlds.get(ref.id);
 			if (ctx) {
 				Object.assign(ctx, ref);
 			} else {
@@ -570,7 +600,7 @@ if (window.CefSharp) {
 					//
 					...ref
 				};
-				this.world[ctx.id] = ctx;
+				this.cachedWorlds.set(ctx.id, ctx);
 			}
 			if (ctx.tags) {
 				ctx.labs_ = ctx.tags.includes('system_labs');
