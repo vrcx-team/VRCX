@@ -103,7 +103,7 @@ if (window.CefSharp) {
 			timeout: 6000
 		});
 
-		var removeFromArray = (array, item) => {
+		var removeFromArray = function (array, item) {
 			var { length } = array;
 			for (var i = 0; i < length; ++i) {
 				if (array[i] === item) {
@@ -213,8 +213,9 @@ if (window.CefSharp) {
 				return;
 			}
 			try {
-				for (var fx of handlers) {
-					fx.apply(this, args);
+				var { length } = handlers;
+				for (var i = 0; i < length; ++i) {
+					handlers[i].apply(this, args);
 				}
 			} catch (err) {
 				console.error(err);
@@ -235,17 +236,17 @@ if (window.CefSharp) {
 			if (handlers === undefined) {
 				return;
 			}
-			handlers.find((item, index, array) => {
-				if (item !== fx) {
-					return false;
+			var { length } = handlers;
+			for (var i = 0; i < length; ++i) {
+				if (handlers[i] === fx) {
+					if (length > 1) {
+						handlers.splice(i, 1);
+					} else {
+						this.$eventHandlers.delete(name);
+					}
+					break;
 				}
-				if (array.length > 1) {
-					array.splice(index, 1);
-				} else {
-					this.$eventHandlers.delete(name);
-				}
-				return true;
-			});
+			}
 		};
 
 		API.$fetch = {};
