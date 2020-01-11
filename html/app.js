@@ -204,44 +204,48 @@ if (window.CefSharp) {
 
 		var API = {};
 
-		API.$handler = {};
+		API.$eventHandlers = new Map();
 
-		API.$emit = function (event, ...args) {
+		API.$emit = function (name, ...args) {
+			// console.log(name, ...args);
+			var handlers = this.$eventHandlers.get(name);
+			if (handlers === undefined) {
+				return;
+			}
 			try {
-				// console.log(event, ...args);
-				var h = this.$handler[event];
-				if (h) {
-					h.forEach((f) => f(...args));
+				for (var fx of handlers) {
+					fx.apply(this, args);
 				}
 			} catch (err) {
 				console.error(err);
 			}
 		};
 
-		API.$on = function (event, callback) {
-			var h = this.$handler[event];
-			if (h) {
-				h.push(callback);
-			} else {
-				this.$handler[event] = [callback];
+		API.$on = function (name, fx) {
+			var handlers = this.$eventHandlers.get(name);
+			if (handlers === undefined) {
+				handlers = [];
+				this.$eventHandlers.set(name, handlers);
 			}
+			handlers.push(fx);
 		};
 
-		API.$off = function (event, callback) {
-			var h = this.$handler[event];
-			if (h) {
-				h.find((val, idx, arr) => {
-					if (val !== callback) {
-						return false;
-					}
-					if (arr.length > 1) {
-						arr.splice(idx, 1);
-					} else {
-						delete this.$handler[event];
-					}
-					return true;
-				});
+		API.$off = function (name, fx) {
+			var handlers = this.$eventHandlers.get(name);
+			if (handlers === undefined) {
+				return;
 			}
+			handlers.find((item, index, array) => {
+				if (item !== fx) {
+					return false;
+				}
+				if (array.length > 1) {
+					array.splice(index, 1);
+				} else {
+					this.$eventHandlers.delete(name);
+				}
+				return true;
+			});
 		};
 
 		API.$fetch = {};
