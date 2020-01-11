@@ -10,15 +10,15 @@ if (window.CefSharp) {
 		CefSharp.BindObjectAsync('SQLite'),
 		CefSharp.BindObjectAsync('LogWatcher'),
 		CefSharp.BindObjectAsync('Discord')
-	]).catch(() => {
+	]).catch(function () {
 		location = 'https://github.com/pypy-vrc/vrcx';
-	}).then(() => {
+	}).then(function () {
 
 		var $nameColorStyle = document.createElement('style');
 		$nameColorStyle.appendChild(document.createTextNode('.x-friend-item>.detail>.name { color: #303133 !important; }'));
 		document.head.appendChild($nameColorStyle);
 
-		document.addEventListener('keyup', (e) => {
+		document.addEventListener('keyup', function (e) {
 			if (e.ctrlKey) {
 				if (e.shiftKey && e.code === 'KeyI') {
 					VRCX.ShowDevTools();
@@ -465,8 +465,8 @@ if (window.CefSharp) {
 
 		API.config = {};
 
-		API.$on('CONFIG', (args) => {
-			args.ref = API.updateConfig(args.json);
+		API.$on('CONFIG', function (args) {
+			args.ref = this.updateConfig(args.json);
 		});
 
 		API.getConfig = function () {
@@ -681,26 +681,26 @@ if (window.CefSharp) {
 		API.currentUser = {};
 		API.user = {};
 
-		API.$on('LOGOUT', () => {
-			API.isLoggedIn = false;
+		API.$on('LOGOUT', function () {
+			this.isLoggedIn = false;
 			VRCX.DeleteAllCookies();
 		});
 
-		API.$on('USER:CURRENT', (args) => {
-			args.ref = API.updateCurrentUser(args.json);
+		API.$on('USER:CURRENT', function (args) {
+			args.ref = this.updateCurrentUser(args.json);
 		});
 
-		API.$on('USER:CURRENT:SAVE', (args) => {
-			API.$emit('USER:CURRENT', args);
+		API.$on('USER:CURRENT:SAVE', function (args) {
+			this.$emit('USER:CURRENT', args);
 		});
 
-		API.$on('USER', (args) => {
-			args.ref = API.updateUser(args.json);
+		API.$on('USER', function (args) {
+			args.ref = this.updateUser(args.json);
 		});
 
-		API.$on('USER:LIST', (args) => {
+		API.$on('USER:LIST', function (args) {
 			args.json.forEach((json) => {
-				API.$emit('USER', {
+				this.$emit('USER', {
 					param: {
 						userId: json.id
 					},
@@ -1089,13 +1089,13 @@ if (window.CefSharp) {
 
 		API.world = {};
 
-		API.$on('WORLD', (args) => {
-			args.ref = API.updateWorld(args.json);
+		API.$on('WORLD', function (args) {
+			args.ref = this.updateWorld(args.json);
 		});
 
-		API.$on('WORLD:LIST', (args) => {
+		API.$on('WORLD:LIST', function (args) {
 			args.json.forEach((json) => {
-				API.$emit('WORLD', {
+				this.$emit('WORLD', {
 					param: {
 						worldId: json.id
 					},
@@ -1228,21 +1228,21 @@ if (window.CefSharp) {
 		API.friend404 = {};
 		API.isFriendLoading = false;
 
-		API.$on('LOGIN', () => {
-			API.friend404 = {};
-			API.isFriendLoading = false;
+		API.$on('LOGIN', function () {
+			this.friend404 = {};
+			this.isFriendLoading = false;
 		});
 
-		API.$on('FRIEND:LIST', (args) => {
+		API.$on('FRIEND:LIST', function (args) {
 			args.json.forEach((json) => {
-				API.$emit('USER', {
+				this.$emit('USER', {
 					param: {
 						userId: json.id
 					},
 					json
 				});
-				API.user[json.id].friend_ = true;
-				delete API.friend404[json.id];
+				this.user[json.id].friend_ = true;
+				delete this.friend404[json.id];
 			});
 		});
 
@@ -1407,13 +1407,13 @@ if (window.CefSharp) {
 
 		API.avatar = {};
 
-		API.$on('AVATAR', (args) => {
-			args.ref = API.updateAvatar(args.json);
+		API.$on('AVATAR', function (args) {
+			args.ref = this.updateAvatar(args.json);
 		});
 
-		API.$on('AVATAR:LIST', (args) => {
+		API.$on('AVATAR:LIST', function (args) {
 			args.json.forEach((json) => {
-				API.$emit('AVATAR', {
+				this.$emit('AVATAR', {
 					param: {
 						avatarId: json.id
 					},
@@ -1422,8 +1422,8 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('AVATAR:SELECT', (args) => {
-			API.$emit('USER:CURRENT', args);
+		API.$on('AVATAR:SELECT', function (args) {
+			this.$emit('USER:CURRENT', args);
 		});
 
 		/*
@@ -1545,18 +1545,18 @@ if (window.CefSharp) {
 		API.notification = {};
 		API.isNotificationLoading = false;
 
-		API.$on('LOGIN', () => {
-			API.notification = {};
-			API.isNotificationLoading = false;
+		API.$on('LOGIN', function () {
+			this.notification = {};
+			this.isNotificationLoading = false;
 		});
 
-		API.$on('NOTIFICATION', (args) => {
-			args.ref = API.updateNotification(args.json);
+		API.$on('NOTIFICATION', function (args) {
+			args.ref = this.updateNotification(args.json);
 		});
 
-		API.$on('NOTIFICATION:LIST', (args) => {
+		API.$on('NOTIFICATION:LIST', function (args) {
 			args.json.forEach((json) => {
-				API.$emit('NOTIFICATION', {
+				this.$emit('NOTIFICATION', {
 					param: {
 						notificationId: json.id
 					},
@@ -1565,19 +1565,19 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('NOTIFICATION:ACCEPT', (args) => {
-			var ctx = API.notification[args.param.notificationId];
+		API.$on('NOTIFICATION:ACCEPT', function (args) {
+			var ctx = this.notification[args.param.notificationId];
 			if (ctx &&
 				!ctx.hide_) {
 				ctx.hide_ = true;
 				args.ref = ctx;
-				API.$emit('NOTIFICATION:@DELETE', {
+				this.$emit('NOTIFICATION:@DELETE', {
 					param: {
 						notificationId: ctx.id
 					},
 					ref: ctx
 				});
-				API.$emit('FRIEND:ADD', {
+				this.$emit('FRIEND:ADD', {
 					param: {
 						userId: ctx.senderUserId
 					}
@@ -1585,13 +1585,13 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('NOTIFICATION:HIDE', (args) => {
-			var ctx = API.notification[args.param.notificationId];
+		API.$on('NOTIFICATION:HIDE', function (args) {
+			var ctx = this.notification[args.param.notificationId];
 			if (ctx &&
 				!ctx.hide_) {
 				ctx.hide_ = true;
 				args.ref = ctx;
-				API.$emit('NOTIFICATION:@DELETE', {
+				this.$emit('NOTIFICATION:@DELETE', {
 					param: {
 						notificationId: ctx.id
 					},
@@ -1793,18 +1793,18 @@ if (window.CefSharp) {
 		API.playerModeration = {};
 		API.isPlayerModerationLoading = false;
 
-		API.$on('LOGIN', () => {
-			API.playerModeration = {};
-			API.isPlayerModerationLoading = false;
+		API.$on('LOGIN', function () {
+			this.playerModeration = {};
+			this.isPlayerModerationLoading = false;
 		});
 
-		API.$on('PLAYER-MODERATION', (args) => {
-			args.ref = API.updatePlayerModeration(args.json);
+		API.$on('PLAYER-MODERATION', function (args) {
+			args.ref = this.updatePlayerModeration(args.json);
 		});
 
-		API.$on('PLAYER-MODERATION:LIST', (args) => {
+		API.$on('PLAYER-MODERATION:LIST', function (args) {
 			args.json.forEach((json) => {
-				API.$emit('PLAYER-MODERATION', {
+				this.$emit('PLAYER-MODERATION', {
 					param: {
 						playerModerationId: json.id
 					},
@@ -1813,8 +1813,8 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('PLAYER-MODERATION:SEND', (args) => {
-			API.$emit('PLAYER-MODERATION', {
+		API.$on('PLAYER-MODERATION:SEND', function (args) {
+			this.$emit('PLAYER-MODERATION', {
 				param: {
 					playerModerationId: args.json.id
 				},
@@ -1822,8 +1822,8 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('PLAYER-MODERATION:DELETE', (args) => {
-			API.handleDeletePlayerModeration(args.param.type, args.param.moderated);
+		API.$on('PLAYER-MODERATION:DELETE', function (args) {
+			this.handleDeletePlayerModeration(args.param.type, args.param.moderated);
 		});
 
 		API.markAllPlayerModerationsAsExpired = function () {
@@ -1983,26 +1983,26 @@ if (window.CefSharp) {
 		API.isFavoriteLoading = false;
 		API.isFavoriteGroupLoading = false;
 
-		API.$on('LOGIN', () => {
-			API.favorite = {};
-			API.favoriteGroup = {};
-			API.favoriteObject = {};
-			API.favoriteFriendGroups = [];
-			API.favoriteWorldGroups = [];
-			API.favoriteAvatarGroups = [];
-			API.isFavoriteLoading = false;
-			API.isFavoriteGroupLoading = false;
-			API.refreshFavorite();
+		API.$on('LOGIN', function () {
+			this.favorite = {};
+			this.favoriteGroup = {};
+			this.favoriteObject = {};
+			this.favoriteFriendGroups = [];
+			this.favoriteWorldGroups = [];
+			this.favoriteAvatarGroups = [];
+			this.isFavoriteLoading = false;
+			this.isFavoriteGroupLoading = false;
+			this.refreshFavorite();
 		});
 
-		API.$on('FAVORITE', (args) => {
-			var ref = API.updateFavorite(args.json);
+		API.$on('FAVORITE', function (args) {
+			var ref = this.updateFavorite(args.json);
 			args.ref = ref;
 			if (!ref.hide_ &&
-				API.favoriteObject[ref.favoriteId] !== ref) {
-				API.favoriteObject[ref.favoriteId] = ref;
+				this.favoriteObject[ref.favoriteId] !== ref) {
+				this.favoriteObject[ref.favoriteId] = ref;
 				if (ref.type === 'friend') {
-					API.favoriteFriendGroups.find((ctx) => {
+					this.favoriteFriendGroups.find((ctx) => {
 						if (ctx.name === ref.group_) {
 							++ctx.count;
 							return true;
@@ -2010,7 +2010,7 @@ if (window.CefSharp) {
 						return false;
 					});
 				} else if (ref.type === 'world') {
-					API.favoriteWorldGroups.find((ctx) => {
+					this.favoriteWorldGroups.find((ctx) => {
 						if (ctx.name === ref.group_) {
 							++ctx.count;
 							return true;
@@ -2018,7 +2018,7 @@ if (window.CefSharp) {
 						return false;
 					});
 				} else if (ref.type === 'avatar') {
-					API.favoriteAvatarGroups.find((ctx) => {
+					this.favoriteAvatarGroups.find((ctx) => {
 						if (ctx.name === ref.group_) {
 							++ctx.count;
 							return true;
@@ -2029,12 +2029,12 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FAVORITE:@DELETE', (args) => {
+		API.$on('FAVORITE:@DELETE', function (args) {
 			var { ref } = args;
-			if (API.favoriteObject[ref.favoriteId]) {
-				delete API.favoriteObject[ref.favoriteId];
+			if (this.favoriteObject[ref.favoriteId]) {
+				delete this.favoriteObject[ref.favoriteId];
 				if (ref.type === 'friend') {
-					API.favoriteFriendGroups.find((ctx) => {
+					this.favoriteFriendGroups.find((ctx) => {
 						if (ctx.name === ref.group_) {
 							--ctx.count;
 							return true;
@@ -2042,7 +2042,7 @@ if (window.CefSharp) {
 						return false;
 					});
 				} else if (ref.type === 'world') {
-					API.favoriteWorldGroups.find((ctx) => {
+					this.favoriteWorldGroups.find((ctx) => {
 						if (ctx.name === ref.group_) {
 							--ctx.count;
 							return true;
@@ -2050,7 +2050,7 @@ if (window.CefSharp) {
 						return false;
 					});
 				} else if (ref.type === 'avatar') {
-					API.favoriteAvatarGroups.find((ctx) => {
+					this.favoriteAvatarGroups.find((ctx) => {
 						if (ctx.name === ref.group_) {
 							--ctx.count;
 							return true;
@@ -2061,9 +2061,9 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FAVORITE:LIST', (args) => {
+		API.$on('FAVORITE:LIST', function (args) {
 			args.json.forEach((json) => {
-				API.$emit('FAVORITE', {
+				this.$emit('FAVORITE', {
 					param: {
 						favoriteId: json.id
 					},
@@ -2072,8 +2072,8 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('FAVORITE:ADD', (args) => {
-			API.$emit('FAVORITE', {
+		API.$on('FAVORITE:ADD', function (args) {
+			this.$emit('FAVORITE', {
 				param: {
 					favoriteId: args.json.id
 				},
@@ -2081,16 +2081,16 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('FAVORITE:DELETE', (args) => {
-			API.handleDeleteFavorite(args.param.objectId);
+		API.$on('FAVORITE:DELETE', function (args) {
+			this.handleDeleteFavorite(args.param.objectId);
 		});
 
-		API.$on('FAVORITE:GROUP', (args) => {
-			var ref = API.updateFavoriteGroup(args.json);
+		API.$on('FAVORITE:GROUP', function (args) {
+			var ref = this.updateFavoriteGroup(args.json);
 			args.ref = ref;
 			if (!ref.hide_) {
 				if (ref.type === 'friend') {
-					API.favoriteFriendGroups.find((ctx) => {
+					this.favoriteFriendGroups.find((ctx) => {
 						if (ctx.name === ref.name) {
 							ctx.displayName = ref.displayName;
 							return true;
@@ -2098,7 +2098,7 @@ if (window.CefSharp) {
 						return false;
 					});
 				} else if (ref.type === 'world') {
-					API.favoriteWorldGroups.find((ctx) => {
+					this.favoriteWorldGroups.find((ctx) => {
 						if (ctx.name === ref.name) {
 							ctx.displayName = ref.displayName;
 							return true;
@@ -2106,7 +2106,7 @@ if (window.CefSharp) {
 						return false;
 					});
 				} else if (ref.type === 'avatar') {
-					API.favoriteAvatarGroups.find((ctx) => {
+					this.favoriteAvatarGroups.find((ctx) => {
 						if (ctx.name === ref.name) {
 							ctx.displayName = ref.displayName;
 							return true;
@@ -2117,9 +2117,9 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FAVORITE:GROUP:LIST', (args) => {
+		API.$on('FAVORITE:GROUP:LIST', function (args) {
 			args.json.forEach((json) => {
-				API.$emit('FAVORITE:GROUP', {
+				this.$emit('FAVORITE:GROUP', {
 					param: {
 						favoriteGroupId: json.id
 					},
@@ -2128,8 +2128,8 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('FAVORITE:GROUP:SAVE', (args) => {
-			API.$emit('FAVORITE:GROUP', {
+		API.$on('FAVORITE:GROUP:SAVE', function (args) {
+			this.$emit('FAVORITE:GROUP', {
 				param: {
 					favoriteGroupId: args.json.id
 				},
@@ -2137,13 +2137,13 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('FAVORITE:GROUP:CLEAR', (args) => {
-			API.handleClearFavoriteGroup(args.param.group);
+		API.$on('FAVORITE:GROUP:CLEAR', function (args) {
+			this.handleClearFavoriteGroup(args.param.group);
 		});
 
-		API.$on('FAVORITE:FRIEND:LIST', (args) => {
+		API.$on('FAVORITE:FRIEND:LIST', function (args) {
 			args.json.forEach((json) => {
-				API.$emit('USER', {
+				this.$emit('USER', {
 					param: {
 						userId: json.id
 					},
@@ -2152,13 +2152,13 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('FAVORITE:WORLD:LIST', (args) => {
+		API.$on('FAVORITE:WORLD:LIST', function (args) {
 			args.json.forEach((json) => {
 				if (json.id !== '???') {
 					// FIXME
 					// json.favoriteId로 따로 불러와야 하나?
 					// 근데 ???가 많으면 과다 요청이 될듯
-					API.$emit('WORLD', {
+					this.$emit('WORLD', {
 						param: {
 							worldId: json.id
 						},
@@ -2168,11 +2168,11 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('FAVORITE:AVATAR:LIST', (args) => {
+		API.$on('FAVORITE:AVATAR:LIST', function (args) {
 			args.json.forEach((json) => {
 				if (json.releaseStatus !== 'hidden') {
 					// NOTE: 얘는 또 더미 데이터로 옴
-					API.$emit('AVATAR', {
+					this.$emit('AVATAR', {
 						param: {
 							avatarId: json.id
 						},
@@ -2737,18 +2737,18 @@ if (window.CefSharp) {
 		API.feedback = {};
 		API.isFeedbackLoading = false;
 
-		API.$on('LOGIN', () => {
-			API.feedback = {};
-			API.isFeedbackLoading = false;
+		API.$on('LOGIN', function () {
+			this.feedback = {};
+			this.isFeedbackLoading = false;
 		});
 
-		API.$on('FEEDBACK', (args) => {
-			args.ref = API.updateFeedback(args.json);
+		API.$on('FEEDBACK', function (args) {
+			args.ref = this.updateFeedback(args.json);
 		});
 
-		API.$on('FEEDBACK:LIST', (args) => {
+		API.$on('FEEDBACK:LIST', function (args) {
 			args.json.forEach((json) => {
-				API.$emit('FEEDBACK', {
+				this.$emit('FEEDBACK', {
 					param: {
 						feedbackId: json.id
 					},
@@ -2757,13 +2757,13 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('FEEDBACK:DELETE', (args) => {
-			var ctx = API.feedback[args.param.feedbackId];
+		API.$on('FEEDBACK:DELETE', function (args) {
+			var ctx = this.feedback[args.param.feedbackId];
 			if (ctx &&
 				!ctx.hide_) {
 				ctx.hide_ = true;
 				args.ref = ctx;
-				API.$emit('FEEDBACK:@DELETE', {
+				this.$emit('FEEDBACK:@DELETE', {
 					param: {
 						feedbackId: ctx.id
 					},
@@ -2888,18 +2888,18 @@ if (window.CefSharp) {
 		API.thing = {};
 		API.isThingLoading = false;
 
-		API.$on('LOGIN', () => {
-			API.thing = {};
-			API.isThingLoading = false;
+		API.$on('LOGIN', function () {
+			this.thing = {};
+			this.isThingLoading = false;
 		});
 
-		API.$on('THING', (args) => {
-			args.ref = API.updateThing(args.json);
+		API.$on('THING', function (args) {
+			args.ref = this.updateThing(args.json);
 		});
 
-		API.$on('THING:LIST', (args) => {
+		API.$on('THING:LIST', function (args) {
 			args.json.forEach((json) => {
-				API.$emit('THING', {
+				this.$emit('THING', {
 					param: {
 						thingId: json.id
 					},
@@ -2908,8 +2908,8 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('THING:ADD', (args) => {
-			API.$emit('THING', {
+		API.$on('THING:ADD', function (args) {
+			this.$emit('THING', {
 				param: {
 					thingId: args.json.id
 				},
@@ -2917,8 +2917,8 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('THING:SAVE', (args) => {
-			API.$emit('THING', {
+		API.$on('THING:SAVE', function (args) {
+			this.$emit('THING', {
 				param: {
 					thingId: args.json.id
 				},
@@ -2926,13 +2926,13 @@ if (window.CefSharp) {
 			});
 		});
 
-		API.$on('THING:DELETE', (args) => {
-			var ctx = API.thing[args.param.thingId];
+		API.$on('THING:DELETE', function (args) {
+			var ctx = this.thing[args.param.thingId];
 			if (ctx &&
 				!ctx.hide_) {
 				ctx.hide_ = true;
 				args.ref = ctx;
-				API.$emit('THING:@DELETE', {
+				this.$emit('THING:@DELETE', {
 					param: {
 						thingId: ctx.id
 					},
@@ -3091,27 +3091,27 @@ if (window.CefSharp) {
 
 		API.webSocket = false;
 
-		API.$on('LOGOUT', () => {
-			API.closeWebSocket();
+		API.$on('LOGOUT', function () {
+			this.closeWebSocket();
 		});
 
-		API.$on('USER:CURRENT', () => {
-			if (API.webSocket === false) {
-				API.getAuth();
+		API.$on('USER:CURRENT', function () {
+			if (this.webSocket === false) {
+				this.getAuth();
 			}
 		});
 
-		API.$on('AUTH', (args) => {
+		API.$on('AUTH', function (args) {
 			if (args.json.ok) {
-				API.connectWebSocket(args.json.token);
+				this.connectWebSocket(args.json.token);
 			}
 		});
 
-		API.$on('PIPELINE', (args) => {
+		API.$on('PIPELINE', function (args) {
 			var { type, content } = args.json;
 			switch (type) {
 				case 'notification':
-					API.$emit('NOTIFICATION', {
+					this.$emit('NOTIFICATION', {
 						param: {
 							notificationId: content.id
 						},
@@ -3120,13 +3120,13 @@ if (window.CefSharp) {
 					break;
 
 				case 'friend-add':
-					API.$emit('USER', {
+					this.$emit('USER', {
 						param: {
 							userId: content.userId
 						},
 						json: content.user
 					});
-					API.$emit('FRIEND:ADD', {
+					this.$emit('FRIEND:ADD', {
 						param: {
 							userId: content.userId
 						}
@@ -3134,7 +3134,7 @@ if (window.CefSharp) {
 					break;
 
 				case 'friend-delete':
-					API.$emit('FRIEND:DELETE', {
+					this.$emit('FRIEND:DELETE', {
 						param: {
 							userId: content.userId
 						}
@@ -3142,7 +3142,7 @@ if (window.CefSharp) {
 					break;
 
 				case 'friend-online':
-					API.$emit('USER', {
+					this.$emit('USER', {
 						param: {
 							userId: content.userId
 						},
@@ -3151,7 +3151,7 @@ if (window.CefSharp) {
 							...content.user
 						}
 					});
-					API.$emit('FRIEND:STATE', {
+					this.$emit('FRIEND:STATE', {
 						param: {
 							userId: content.userId
 						},
@@ -3162,13 +3162,13 @@ if (window.CefSharp) {
 					break;
 
 				case 'friend-active':
-					API.$emit('USER', {
+					this.$emit('USER', {
 						param: {
 							userId: content.userId
 						},
 						json: content.user
 					});
-					API.$emit('FRIEND:STATE', {
+					this.$emit('FRIEND:STATE', {
 						param: {
 							userId: content.userId
 						},
@@ -3179,7 +3179,7 @@ if (window.CefSharp) {
 					break;
 
 				case 'friend-offline':
-					API.$emit('FRIEND:STATE', {
+					this.$emit('FRIEND:STATE', {
 						param: {
 							userId: content.userId
 						},
@@ -3190,7 +3190,7 @@ if (window.CefSharp) {
 					break;
 
 				case 'friend-update':
-					API.$emit('USER', {
+					this.$emit('USER', {
 						param: {
 							userId: content.userId
 						},
@@ -3200,22 +3200,22 @@ if (window.CefSharp) {
 
 				case 'friend-location':
 					if (content.world) {
-						API.$emit('WORLD', {
+						this.$emit('WORLD', {
 							param: {
 								worldId: content.world.id
 							},
 							json: content.world
 						});
 					}
-					if (content.userId === API.currentUser.id) {
-						API.$emit('USER', {
+					if (content.userId === this.currentUser.id) {
+						this.$emit('USER', {
 							param: {
 								userId: content.userId
 							},
 							json: content.user
 						});
 					} else {
-						API.$emit('USER', {
+						this.$emit('USER', {
 							param: {
 								userId: content.userId
 							},
@@ -3228,7 +3228,7 @@ if (window.CefSharp) {
 					break;
 
 				case 'user-update':
-					API.$emit('USER:CURRENT', {
+					this.$emit('USER:CURRENT', {
 						param: {
 							userId: content.userId
 						},
@@ -3238,14 +3238,14 @@ if (window.CefSharp) {
 
 				case 'user-location':
 					if (content.world) {
-						API.$emit('WORLD', {
+						this.$emit('WORLD', {
 							param: {
 								worldId: content.world.id
 							},
 							json: content.world
 						});
 					}
-					API.$emit('USER', {
+					this.$emit('USER', {
 						param: {
 							userId: content.userId
 						},
@@ -3736,18 +3736,18 @@ if (window.CefSharp) {
 			});
 		};
 
-		API.$on('USER:2FA', () => {
+		API.$on('USER:2FA', function () {
 			$app.promptTOTP();
 		});
 
-		API.$on('LOGOUT', () => {
+		API.$on('LOGOUT', function () {
 			new Noty({
 				type: 'success',
-				text: `See you again, <strong>${escapeTag(API.currentUser.displayName)}</strong>!`
+				text: `See you again, <strong>${escapeTag(this.currentUser.displayName)}</strong>!`
 			}).show();
 		});
 
-		API.$on('LOGIN', (args) => {
+		API.$on('LOGIN', function (args) {
 			$app.$refs.menu.activeIndex = 'feed';
 			new Noty({
 				type: 'success',
@@ -3878,7 +3878,7 @@ if (window.CefSharp) {
 		$app.watch.orderFriendGroup2 = saveOrderFriendGroup;
 		$app.watch.orderFriendGroup3 = saveOrderFriendGroup;
 
-		API.$on('LOGIN', () => {
+		API.$on('LOGIN', function () {
 			$app.friend = {};
 			$app.friendNo = 0;
 			$app.isFriendGroup0 = true;
@@ -3899,33 +3899,33 @@ if (window.CefSharp) {
 			$app.sortFriendGroup3 = false;
 		});
 
-		API.$on('USER:CURRENT', (args) => {
+		API.$on('USER:CURRENT', function (args) {
 			// initFriendship()이 LOGIN에서 처리되기 때문에
 			// USER:CURRENT에서 처리를 함
 			$app.refreshFriend(args.ref, args.origin);
 		});
 
-		API.$on('USER', (args) => {
+		API.$on('USER', function (args) {
 			$app.updateFriend(args.ref.id);
 		});
 
-		API.$on('FRIEND:ADD', (args) => {
+		API.$on('FRIEND:ADD', function (args) {
 			$app.addFriend(args.param.userId);
 		});
 
-		API.$on('FRIEND:DELETE', (args) => {
+		API.$on('FRIEND:DELETE', function (args) {
 			$app.removeFriend(args.param.userId);
 		});
 
-		API.$on('FRIEND:STATE', (args) => {
+		API.$on('FRIEND:STATE', function (args) {
 			$app.updateFriend(args.param.userId, args.json.state);
 		});
 
-		API.$on('FAVORITE', (args) => {
+		API.$on('FAVORITE', function (args) {
 			$app.updateFriend(args.ref.favoriteId);
 		});
 
-		API.$on('FAVORITE:@DELETE', (args) => {
+		API.$on('FAVORITE:@DELETE', function (args) {
 			$app.updateFriend(args.ref.favoriteId);
 		});
 
@@ -4358,12 +4358,12 @@ if (window.CefSharp) {
 			}
 		};
 
-		API.$on('LOGIN', (args) => {
+		API.$on('LOGIN', function (args) {
 			$app.feedTable.data = VRCXStorage.GetArray(`${args.ref.id}_feedTable`);
 			$app.sweepFeed();
 		});
 
-		API.$on('USER:UPDATE', (args) => {
+		API.$on('USER:UPDATE', function (args) {
 			var { ref, prop } = args;
 			if ($app.friend[ref.id]) {
 				if (prop.location) {
@@ -4651,7 +4651,7 @@ if (window.CefSharp) {
 		$app.data.isSearchWorldLoading = false;
 		$app.data.isSearchAvatarLoading = false;
 
-		API.$on('LOGIN', () => {
+		API.$on('LOGIN', function () {
 			$app.searchText = '';
 			$app.searchUsers = [];
 			$app.searchUserParam = {};
@@ -4845,7 +4845,7 @@ if (window.CefSharp) {
 		$app.data.sortFavoriteWorlds = false;
 		$app.data.sortFavoriteAvatars = false;
 
-		API.$on('LOGIN', () => {
+		API.$on('LOGIN', function () {
 			$app.favoriteFriend = {};
 			$app.favoriteWorld = {};
 			$app.favoriteAvatar = {};
@@ -4857,23 +4857,23 @@ if (window.CefSharp) {
 			$app.sortFavoriteAvatars = false;
 		});
 
-		API.$on('FAVORITE', (args) => {
+		API.$on('FAVORITE', function (args) {
 			$app.updateFavorite(args.ref.type, args.ref.favoriteId);
 		});
 
-		API.$on('FAVORITE:@DELETE', (args) => {
+		API.$on('FAVORITE:@DELETE', function (args) {
 			$app.updateFavorite(args.ref.type, args.ref.favoriteId);
 		});
 
-		API.$on('USER', (args) => {
+		API.$on('USER', function (args) {
 			$app.updateFavorite('friend', args.ref.id);
 		});
 
-		API.$on('WORLD', (args) => {
+		API.$on('WORLD', function (args) {
 			$app.updateFavorite('world', args.ref.id);
 		});
 
-		API.$on('AVATAR', (args) => {
+		API.$on('AVATAR', function (args) {
 			$app.updateFavorite('avatar', args.ref.id);
 		});
 
@@ -5113,28 +5113,28 @@ if (window.CefSharp) {
 			}
 		};
 
-		API.$on('LOGIN', (args) => {
+		API.$on('LOGIN', function (args) {
 			$app.initFriendship(args.ref);
 		});
 
-		API.$on('USER:CURRENT', (args) => {
+		API.$on('USER:CURRENT', function (args) {
 			$app.updateFriendships(args.ref);
 		});
 
-		API.$on('USER', (args) => {
+		API.$on('USER', function (args) {
 			$app.updateFriendship(args.ref);
 		});
 
-		API.$on('FRIEND:ADD', (args) => {
+		API.$on('FRIEND:ADD', function (args) {
 			$app.addFriendship(args.param.userId);
 		});
 
-		API.$on('FRIEND:DELETE', (args) => {
+		API.$on('FRIEND:DELETE', function (args) {
 			$app.deleteFriendship(args.param.userId);
 		});
 
-		API.$on('FRIEND:REQUEST', (args) => {
-			var ref = API.user[args.param.userId];
+		API.$on('FRIEND:REQUEST', function (args) {
+			var ref = this.user[args.param.userId];
 			if (ref) {
 				$app.friendLogTable.data.push({
 					created_at: new Date().toJSON(),
@@ -5146,8 +5146,8 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FRIEND:REQUEST:CANCEL', (args) => {
-			var ref = API.user[args.param.userId];
+		API.$on('FRIEND:REQUEST:CANCEL', function (args) {
+			var ref = this.user[args.param.userId];
 			if (ref) {
 				$app.friendLogTable.data.push({
 					created_at: new Date().toJSON(),
@@ -5343,11 +5343,11 @@ if (window.CefSharp) {
 			}
 		};
 
-		API.$on('LOGIN', () => {
+		API.$on('LOGIN', function () {
 			$app.playerModerationTable.data = [];
 		});
 
-		API.$on('PLAYER-MODERATION', (args) => {
+		API.$on('PLAYER-MODERATION', function (args) {
 			var insertOrUpdate = $app.playerModerationTable.data.some((val, idx, arr) => {
 				if (val.id === args.ref.id) {
 					if (args.ref.hide_) {
@@ -5366,7 +5366,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('PLAYER-MODERATION:@DELETE', (args) => {
+		API.$on('PLAYER-MODERATION:@DELETE', function (args) {
 			$app.playerModerationTable.data.find((val, idx, arr) => {
 				if (val.id === args.ref.id) {
 					$app.$delete(arr, idx);
@@ -5429,11 +5429,11 @@ if (window.CefSharp) {
 			}
 		};
 
-		API.$on('LOGIN', () => {
+		API.$on('LOGIN', function () {
 			$app.notificationTable.data = [];
 		});
 
-		API.$on('NOTIFICATION', (args) => {
+		API.$on('NOTIFICATION', function (args) {
 			var insertOrUpdate = $app.notificationTable.data.some((val, idx, arr) => {
 				if (val.id === args.ref.id) {
 					if (args.ref.hide_) {
@@ -5452,7 +5452,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('NOTIFICATION:@DELETE', (args) => {
+		API.$on('NOTIFICATION:@DELETE', function (args) {
 			$app.notificationTable.data.find((val, idx, arr) => {
 				if (val.id === args.ref.id) {
 					$app.$delete(arr, idx);
@@ -5545,18 +5545,18 @@ if (window.CefSharp) {
 			$nameColorStyle.disabled = this.showNameColor;
 		};
 
-		API.$on('LOGIN', () => {
+		API.$on('LOGIN', function () {
 			$app.currentUserTreeData = [];
 			$app.pastDisplayNameTable.data = [];
 		});
 
-		API.$on('USER:CURRENT', (args) => {
+		API.$on('USER:CURRENT', function (args) {
 			if (args.ref.pastDisplayNames) {
 				$app.pastDisplayNameTable.data = args.ref.pastDisplayNames;
 			}
 		});
 
-		API.$on('VISITS', (args) => {
+		API.$on('VISITS', function (args) {
 			$app.visits = args.json;
 		});
 
@@ -5706,11 +5706,11 @@ if (window.CefSharp) {
 			this.saveMemo(D.id, D.memo);
 		};
 
-		API.$on('LOGOUT', () => {
+		API.$on('LOGOUT', function () {
 			$app.userDialog.visible = false;
 		});
 
-		API.$on('USER', (args) => {
+		API.$on('USER', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.ref.id === D.id) {
@@ -5719,7 +5719,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('WORLD', (args) => {
+		API.$on('WORLD', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.ref.id === D.location_.worldId) {
@@ -5727,7 +5727,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FRIEND:STATUS', (args) => {
+		API.$on('FRIEND:STATUS', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.param.userId === D.id) {
@@ -5737,7 +5737,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FRIEND:REQUEST', (args) => {
+		API.$on('FRIEND:REQUEST', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.param.userId === D.id) {
@@ -5749,7 +5749,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FRIEND:REQUEST:CANCEL', (args) => {
+		API.$on('FRIEND:REQUEST:CANCEL', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.param.userId === D.id) {
@@ -5757,7 +5757,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('NOTIFICATION', (args) => {
+		API.$on('NOTIFICATION', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.ref &&
@@ -5767,7 +5767,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('NOTIFICATION:ACCEPT', (args) => {
+		API.$on('NOTIFICATION:ACCEPT', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.ref &&
@@ -5777,7 +5777,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('NOTIFICATION:@DELETE', (args) => {
+		API.$on('NOTIFICATION:@DELETE', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.ref.senderUserId === D.id &&
@@ -5786,7 +5786,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FRIEND:DELETE', (args) => {
+		API.$on('FRIEND:DELETE', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.param.userId === D.id) {
@@ -5794,11 +5794,11 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('PLAYER-MODERATION', (args) => {
+		API.$on('PLAYER-MODERATION', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.ref.targetUserId === D.id &&
-				args.ref.sourceUserId === API.currentUser.id &&
+				args.ref.sourceUserId === this.currentUser.id &&
 				!args.ref.hide_) {
 				if (args.ref.type === 'block') {
 					D.isBlock = true;
@@ -5810,11 +5810,11 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('PLAYER-MODERATION:@DELETE', (args) => {
+		API.$on('PLAYER-MODERATION:@DELETE', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.ref.targetUserId === D.id &&
-				args.ref.sourceUserId === API.currentUser.id) {
+				args.ref.sourceUserId === this.currentUser.id) {
 				if (args.ref.type === 'block') {
 					D.isBlock = false;
 				} else if (args.ref.type === 'mute') {
@@ -5825,7 +5825,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FAVORITE', (args) => {
+		API.$on('FAVORITE', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.ref.favoriteId === D.id &&
@@ -5834,7 +5834,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FAVORITE:@DELETE', (args) => {
+		API.$on('FAVORITE:@DELETE', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.ref.favoriteId === D.id) {
@@ -6251,18 +6251,18 @@ if (window.CefSharp) {
 			fileSize: ''
 		};
 
-		API.$on('LOGOUT', () => {
+		API.$on('LOGOUT', function () {
 			$app.worldDialog.visible = false;
 		});
 
-		API.$on('WORLD', (args) => {
+		API.$on('WORLD', function (args) {
 			var D = $app.worldDialog;
 			if (D.visible &&
 				args.ref.id === D.id) {
 				D.ref = args.ref;
 				var id = extractFileId(args.ref.assetUrl);
 				if (id) {
-					API.call(`file/${id}`).then((json) => {
+					this.call(`file/${id}`).then((json) => {
 						var ref = json.versions[json.versions.length - 1];
 						D.fileCreatedAt = ref.created_at;
 						D.fileSize = `${(ref.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
@@ -6272,7 +6272,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FAVORITE', (args) => {
+		API.$on('FAVORITE', function (args) {
 			var D = $app.worldDialog;
 			if (D.visible &&
 				args.ref.favoriteId === D.id &&
@@ -6281,7 +6281,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FAVORITE:@DELETE', (args) => {
+		API.$on('FAVORITE:@DELETE', function (args) {
 			var D = $app.worldDialog;
 			if (D.visible &&
 				args.ref.favoriteId === D.id) {
@@ -6484,18 +6484,18 @@ if (window.CefSharp) {
 			fileSize: ''
 		};
 
-		API.$on('LOGOUT', () => {
+		API.$on('LOGOUT', function () {
 			$app.avatarDialog.visible = false;
 		});
 
-		API.$on('AVATAR', (args) => {
+		API.$on('AVATAR', function (args) {
 			var D = $app.avatarDialog;
 			if (D.visible &&
 				args.ref.id === D.id) {
 				D.ref = args.ref;
 				var id = extractFileId(args.ref.assetUrl);
 				if (id) {
-					API.call(`file/${id}`).then((json) => {
+					this.call(`file/${id}`).then((json) => {
 						var ref = json.versions[json.versions.length - 1];
 						D.fileCreatedAt = ref.created_at;
 						D.fileSize = `${(ref.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
@@ -6504,7 +6504,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FAVORITE', (args) => {
+		API.$on('FAVORITE', function (args) {
 			var D = $app.avatarDialog;
 			if (D.visible &&
 				args.ref.favoriteId === D.id &&
@@ -6513,7 +6513,7 @@ if (window.CefSharp) {
 			}
 		});
 
-		API.$on('FAVORITE:@DELETE', (args) => {
+		API.$on('FAVORITE:@DELETE', function (args) {
 			var D = $app.avatarDialog;
 			if (D.visible &&
 				args.ref.favoriteId === D.id) {
@@ -6629,7 +6629,7 @@ if (window.CefSharp) {
 			groups: []
 		};
 
-		API.$on('LOGOUT', () => {
+		API.$on('LOGOUT', function () {
 			$app.favoriteDialog.visible = false;
 		});
 
@@ -6675,7 +6675,7 @@ if (window.CefSharp) {
 			userIds: []
 		};
 
-		API.$on('LOGOUT', () => {
+		API.$on('LOGOUT', function () {
 			$app.inviteDialog.visible = false;
 		});
 
@@ -6755,7 +6755,7 @@ if (window.CefSharp) {
 			statusDescription: ''
 		};
 
-		API.$on('LOGOUT', () => {
+		API.$on('LOGOUT', function () {
 			$app.socialStatusDialog.visible = false;
 		});
 
@@ -6799,7 +6799,7 @@ if (window.CefSharp) {
 			url: ''
 		};
 
-		API.$on('LOGOUT', () => {
+		API.$on('LOGOUT', function () {
 			$app.newInstanceDialog.visible = false;
 		});
 
@@ -6892,7 +6892,7 @@ if (window.CefSharp) {
 			VRCXStorage.SetBool('launchAsDesktop', this.launchDialog.desktop);
 		};
 
-		API.$on('LOGOUT', () => {
+		API.$on('LOGOUT', function () {
 			$app.launchDialog.visible = false;
 		});
 
