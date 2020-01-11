@@ -828,8 +828,8 @@ if (window.CefSharp) {
 			if (this.isLoggedIn) {
 				ctx = this.currentUser;
 				Object.assign(ctx, ref);
-				if (ctx.homeLocation_.tag !== ctx.homeLocation) {
-					ctx.homeLocation_ = this.parseLocation(ctx.homeLocation);
+				if (ctx.$homeLocation.tag !== ctx.homeLocation) {
+					ctx.$homeLocation = this.parseLocation(ctx.homeLocation);
 				}
 			} else {
 				this.isLoggedIn = true;
@@ -859,11 +859,11 @@ if (window.CefSharp) {
 					activeFriends: [],
 					offlineFriends: [],
 					// custom
-					homeLocation_: {},
+					$homeLocation: {},
 					//
 					...ref
 				};
-				ctx.homeLocation_ = this.parseLocation(ctx.homeLocation);
+				ctx.$homeLocation = this.parseLocation(ctx.homeLocation);
 				this.currentUser = ctx;
 				this.$emit('LOGIN', {
 					json: ref,
@@ -915,8 +915,8 @@ if (window.CefSharp) {
 				}
 				var _ctx = { ...ctx };
 				Object.assign(ctx, ref);
-				if (ctx.location_.tag !== ctx.location) {
-					ctx.location_ = this.parseLocation(ctx.location);
+				if (ctx.$location.tag !== ctx.location) {
+					ctx.$location = this.parseLocation(ctx.location);
 				}
 				for (var key in ctx) {
 					if (isObject(ctx[key]) === false) {
@@ -938,8 +938,8 @@ if (window.CefSharp) {
 				if (has) {
 					if (prop.location) {
 						var now = Date.now();
-						prop.location.push(now - ctx.location_at_);
-						ctx.location_at_ = now;
+						prop.location.push(now - ctx.$location_at);
+						ctx.$location_at = now;
 					}
 					queueUserUpdate({
 						ref: ctx,
@@ -970,53 +970,53 @@ if (window.CefSharp) {
 					instanceId: '',
 					// custom
 					$isFriend: false,
-					location_: {},
-					location_at_: Date.now(),
-					admin_: false,
-					troll_: false,
-					trustLevel_: 'Visitor',
-					trustClass_: 'x-tag-untrusted',
+					$location: {},
+					$location_at: Date.now(),
+					$isModerator: false,
+					$isTroll: false,
+					$trustLevel: 'Visitor',
+					$trustClass: 'x-tag-untrusted',
 					//
 					...ref
 				};
-				ctx.location_ = this.parseLocation(ctx.location);
+				ctx.$location = this.parseLocation(ctx.location);
 				this.cachedUsers.set(ctx.id, ctx);
 			}
-			ctx.admin_ = ctx.developerType &&
+			ctx.$isModerator = ctx.developerType &&
 				ctx.developerType !== 'none';
 			if (ctx.tags) {
-				ctx.admin_ = ctx.admin_ || ctx.tags.includes('admin_moderator');
-				ctx.troll_ = ctx.tags.includes('system_probable_troll') ||
+				ctx.$isModerator = ctx.$isModerator || ctx.tags.includes('admin_moderator');
+				ctx.$isTroll = ctx.tags.includes('system_probable_troll') ||
 					ctx.tags.includes('system_troll');
-				if (ctx.troll_) {
-					ctx.trustLevel_ = 'Nuisance';
-					ctx.trustClass_ = 'x-tag-troll';
+				if (ctx.$isTroll) {
+					ctx.$trustLevel = 'Nuisance';
+					ctx.$trustClass = 'x-tag-troll';
 				} else if (ctx.tags.includes('system_legend')) {
-					ctx.trustLevel_ = 'Legendary User';
-					ctx.trustClass_ = 'x-tag-legendary';
+					ctx.$trustLevel = 'Legendary User';
+					ctx.$trustClass = 'x-tag-legendary';
 				} else if (ctx.tags.includes('system_trust_legend')) {
-					ctx.trustLevel_ = 'Veteran User';
-					ctx.trustClass_ = 'x-tag-legend';
+					ctx.$trustLevel = 'Veteran User';
+					ctx.$trustClass = 'x-tag-legend';
 				} else if (ctx.tags.includes('system_trust_veteran')) {
-					ctx.trustLevel_ = 'Trusted User';
-					ctx.trustClass_ = 'x-tag-veteran';
+					ctx.$trustLevel = 'Trusted User';
+					ctx.$trustClass = 'x-tag-veteran';
 				} else if (ctx.tags.includes('system_trust_trusted')) {
-					ctx.trustLevel_ = 'Known User';
-					ctx.trustClass_ = 'x-tag-trusted';
+					ctx.$trustLevel = 'Known User';
+					ctx.$trustClass = 'x-tag-trusted';
 				} else if (ctx.tags.includes('system_trust_known')) {
-					ctx.trustLevel_ = 'User';
-					ctx.trustClass_ = 'x-tag-known';
+					ctx.$trustLevel = 'User';
+					ctx.$trustClass = 'x-tag-known';
 				} else if (ctx.tags.includes('system_trust_basic')) {
-					ctx.trustLevel_ = 'New User';
-					ctx.trustClass_ = 'x-tag-basic';
+					ctx.$trustLevel = 'New User';
+					ctx.$trustClass = 'x-tag-basic';
 				} else {
-					ctx.trustLevel_ = 'Visitor';
-					ctx.trustClass_ = 'x-tag-untrusted';
+					ctx.$trustLevel = 'Visitor';
+					ctx.$trustClass = 'x-tag-untrusted';
 				}
 			}
-			if (ctx.admin_) {
-				ctx.trustLevel_ = 'VRChat Team';
-				ctx.trustClass_ = 'x-tag-vip';
+			if (ctx.$isModerator) {
+				ctx.$trustLevel = 'VRChat Team';
+				ctx.$trustClass = 'x-tag-vip';
 			}
 			return ctx;
 		};
@@ -1160,14 +1160,14 @@ if (window.CefSharp) {
 					occupants: 0,
 					instances: [],
 					// custom
-					labs_: false,
+					$isLabs: false,
 					//
 					...ref
 				};
 				this.cachedWorlds.set(ctx.id, ctx);
 			}
 			if (ctx.tags) {
-				ctx.labs_ = ctx.tags.includes('system_labs');
+				ctx.$isLabs = ctx.tags.includes('system_labs');
 			}
 			return ctx;
 		};
@@ -1572,8 +1572,8 @@ if (window.CefSharp) {
 		API.$on('NOTIFICATION:ACCEPT', function (args) {
 			var ctx = this.notification[args.param.notificationId];
 			if (ctx &&
-				!ctx.hide_) {
-				ctx.hide_ = true;
+				!ctx.$isExpired) {
+				ctx.$isExpired = true;
 				args.ref = ctx;
 				this.$emit('NOTIFICATION:@DELETE', {
 					param: {
@@ -1592,8 +1592,8 @@ if (window.CefSharp) {
 		API.$on('NOTIFICATION:HIDE', function (args) {
 			var ctx = this.notification[args.param.notificationId];
 			if (ctx &&
-				!ctx.hide_) {
-				ctx.hide_ = true;
+				!ctx.$isExpired) {
+				ctx.$isExpired = true;
 				args.ref = ctx;
 				this.$emit('NOTIFICATION:@DELETE', {
 					param: {
@@ -1607,8 +1607,8 @@ if (window.CefSharp) {
 		API.markAllNotificationsAsExpired = function () {
 			for (var key in this.notification) {
 				var ctx = this.notification[key];
-				if (!ctx.hide_) {
-					ctx.expired_ = true;
+				if (!ctx.$isExpired) {
+					ctx.$isExpired = true;
 				}
 			}
 		};
@@ -1616,9 +1616,9 @@ if (window.CefSharp) {
 		API.checkExpiredNotifcations = function () {
 			for (var key in this.notification) {
 				var ctx = this.notification[key];
-				if (ctx.expired_ &&
-					!ctx.hide_) {
-					ctx.hide_ = true;
+				if (ctx.$isExpired &&
+					!ctx.$isExpired) {
+					ctx.$isExpired = true;
 					this.$emit('NOTIFICATION:@DELETE', {
 						param: {
 							notificationId: ctx.id
@@ -1665,6 +1665,8 @@ if (window.CefSharp) {
 					details: {},
 					seen: false,
 					created_at: '',
+					// custom
+					$isExpired: false,
 					//
 					...ref
 				};
@@ -1682,7 +1684,7 @@ if (window.CefSharp) {
 				}
 				ctx.details = details;
 			}
-			ctx.expired_ = false;
+			ctx.$isExpired = false;
 			return ctx;
 		};
 
@@ -1786,7 +1788,7 @@ if (window.CefSharp) {
 				var ctx = this.notification[key];
 				if (ctx.type === 'friendRequest' &&
 					ctx.senderUserId === userId &&
-					!ctx.hide_) {
+					!ctx.$isExpired) {
 					return key;
 				}
 			}
@@ -1834,8 +1836,8 @@ if (window.CefSharp) {
 		API.markAllPlayerModerationsAsExpired = function () {
 			for (var key in this.playerModeration) {
 				var ctx = this.playerModeration[key];
-				if (!ctx.hide_) {
-					ctx.expired_ = true;
+				if (!ctx.$isExpired) {
+					ctx.$isExpired = true;
 				}
 			}
 		};
@@ -1843,9 +1845,9 @@ if (window.CefSharp) {
 		API.checkExpiredPlayerModerations = function () {
 			for (var key in this.playerModeration) {
 				var ctx = this.playerModeration[key];
-				if (ctx.expired_ &&
-					!ctx.hide_) {
-					ctx.hide_ = true;
+				if (ctx.$isExpired &&
+					!ctx.$isExpired) {
+					ctx.$isExpired = true;
 					this.$emit('PLAYER-MODERATION:@DELETE', {
 						param: {
 							playerModerationId: ctx.id
@@ -1878,8 +1880,8 @@ if (window.CefSharp) {
 				if (ctx.type === type &&
 					ctx.targetUserId === moderated &&
 					ctx.sourceUserId === cuid &&
-					!ctx.hide_) {
-					ctx.hide_ = true;
+					!ctx.$isExpired) {
+					ctx.$isExpired = true;
 					this.$emit('PLAYER-MODERATION:@DELETE', {
 						param: {
 							playerModerationId: ctx.id
@@ -1903,11 +1905,14 @@ if (window.CefSharp) {
 					targetUserId: '',
 					targetDisplayName: '',
 					created: '',
+					// custom
+					$isExpired: false,
+					//
 					...ref
 				};
 				this.playerModeration[ctx.id] = ctx;
 			}
-			ctx.expired_ = false;
+			ctx.$isExpired = false;
 			return ctx;
 		};
 
@@ -2003,12 +2008,12 @@ if (window.CefSharp) {
 		API.$on('FAVORITE', function (args) {
 			var ref = this.updateFavorite(args.json);
 			args.ref = ref;
-			if (!ref.hide_ &&
+			if (!ref.$isExpired &&
 				this.favoriteObject[ref.favoriteId] !== ref) {
 				this.favoriteObject[ref.favoriteId] = ref;
 				if (ref.type === 'friend') {
 					this.favoriteFriendGroups.find((ctx) => {
-						if (ctx.name === ref.group_) {
+						if (ctx.name === ref.$group) {
 							++ctx.count;
 							return true;
 						}
@@ -2016,7 +2021,7 @@ if (window.CefSharp) {
 					});
 				} else if (ref.type === 'world') {
 					this.favoriteWorldGroups.find((ctx) => {
-						if (ctx.name === ref.group_) {
+						if (ctx.name === ref.$group) {
 							++ctx.count;
 							return true;
 						}
@@ -2024,7 +2029,7 @@ if (window.CefSharp) {
 					});
 				} else if (ref.type === 'avatar') {
 					this.favoriteAvatarGroups.find((ctx) => {
-						if (ctx.name === ref.group_) {
+						if (ctx.name === ref.$group) {
 							++ctx.count;
 							return true;
 						}
@@ -2040,7 +2045,7 @@ if (window.CefSharp) {
 				delete this.favoriteObject[ref.favoriteId];
 				if (ref.type === 'friend') {
 					this.favoriteFriendGroups.find((ctx) => {
-						if (ctx.name === ref.group_) {
+						if (ctx.name === ref.$group) {
 							--ctx.count;
 							return true;
 						}
@@ -2048,7 +2053,7 @@ if (window.CefSharp) {
 					});
 				} else if (ref.type === 'world') {
 					this.favoriteWorldGroups.find((ctx) => {
-						if (ctx.name === ref.group_) {
+						if (ctx.name === ref.$group) {
 							--ctx.count;
 							return true;
 						}
@@ -2056,7 +2061,7 @@ if (window.CefSharp) {
 					});
 				} else if (ref.type === 'avatar') {
 					this.favoriteAvatarGroups.find((ctx) => {
-						if (ctx.name === ref.group_) {
+						if (ctx.name === ref.$group) {
 							--ctx.count;
 							return true;
 						}
@@ -2093,7 +2098,7 @@ if (window.CefSharp) {
 		API.$on('FAVORITE:GROUP', function (args) {
 			var ref = this.updateFavoriteGroup(args.json);
 			args.ref = ref;
-			if (!ref.hide_) {
+			if (!ref.$isExpired) {
 				if (ref.type === 'friend') {
 					this.favoriteFriendGroups.find((ctx) => {
 						if (ctx.name === ref.name) {
@@ -2190,8 +2195,8 @@ if (window.CefSharp) {
 		API.markAllFavoritesAsExpired = function () {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
-				if (!ctx.hide_) {
-					ctx.expired_ = true;
+				if (!ctx.$isExpired) {
+					ctx.$isExpired = true;
 				}
 			}
 		};
@@ -2199,9 +2204,9 @@ if (window.CefSharp) {
 		API.checkExpiredFavorites = function () {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
-				if (ctx.expired_ &&
-					!ctx.hide_) {
-					ctx.hide_ = true;
+				if (ctx.$isExpired &&
+					!ctx.$isExpired) {
+					ctx.$isExpired = true;
 					this.$emit('FAVORITE:@DELETE', {
 						param: {
 							favoriteId: ctx.id
@@ -2242,7 +2247,7 @@ if (window.CefSharp) {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
 				if (ctx.type === 'friend' &&
-					!ctx.hide_) {
+					!ctx.$isExpired) {
 					++N;
 				}
 			}
@@ -2263,7 +2268,7 @@ if (window.CefSharp) {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
 				if (ctx.type === 'world' &&
-					!ctx.hide_) {
+					!ctx.$isExpired) {
 					++N;
 				}
 			}
@@ -2284,7 +2289,7 @@ if (window.CefSharp) {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
 				if (ctx.type === 'avatar' &&
-					!ctx.hide_) {
+					!ctx.$isExpired) {
 					++N;
 				}
 			}
@@ -2303,8 +2308,8 @@ if (window.CefSharp) {
 		API.markAllFavoriteGroupsAsExpired = function () {
 			for (var key in this.favoriteGroup) {
 				var ctx = this.favoriteGroup[key];
-				if (!ctx.hide_) {
-					ctx.expired_ = true;
+				if (!ctx.$isExpired) {
+					ctx.$isExpired = true;
 				}
 			}
 		};
@@ -2312,9 +2317,9 @@ if (window.CefSharp) {
 		API.checkExpiredFavoriteGroups = function () {
 			for (var key in this.favoriteGroup) {
 				var ctx = this.favoriteGroup[key];
-				if (ctx.expired_ &&
-					!ctx.hide_) {
-					ctx.hide_ = true;
+				if (ctx.$isExpired &&
+					!ctx.$isExpired) {
+					ctx.$isExpired = true;
 					this.$emit('FAVORITE:GROUP:@DELETE', {
 						param: {
 							favoriteGroupId: ctx.id
@@ -2367,8 +2372,8 @@ if (window.CefSharp) {
 				if (!assign[ref.id]) {
 					array.find((ctx) => {
 						if (ctx.name === ref.name &&
-							!ctx.assign_) {
-							ctx.assign_ = true;
+							!ctx.$isAssign) {
+							ctx.$isAssign = true;
 							ctx.displayName = ref.displayName;
 							assign[ref.id] = true;
 							return true;
@@ -2380,8 +2385,8 @@ if (window.CefSharp) {
 			var set2 = function (array, ref) {
 				if (!assign[ref.id]) {
 					array.find((ctx) => {
-						if (!ctx.assign_) {
-							ctx.assign_ = true;
+						if (!ctx.$isAssign) {
+							ctx.$isAssign = true;
 							ctx.name = ref.name;
 							ctx.displayName = ref.displayName;
 							assign[ref.id] = true;
@@ -2393,7 +2398,7 @@ if (window.CefSharp) {
 			};
 			for (var key in this.favoriteGroup) {
 				var ctx = this.favoriteGroup[key];
-				if (!ctx.hide_) {
+				if (!ctx.$isExpired) {
 					if (ctx.type === 'friend') {
 						set1(this.favoriteFriendGroups, ctx);
 					} else if (ctx.type === 'world') {
@@ -2405,7 +2410,7 @@ if (window.CefSharp) {
 			}
 			for (var key in this.favoriteGroup) {
 				var ctx = this.favoriteGroup[key];
-				if (!ctx.hide_) {
+				if (!ctx.$isExpired) {
 					if (ctx.type === 'friend') {
 						set2(this.favoriteFriendGroups, ctx);
 					} else if (ctx.type === 'world') {
@@ -2417,11 +2422,11 @@ if (window.CefSharp) {
 			}
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
-				if (!ctx.hide_) {
+				if (!ctx.$isExpired) {
 					if (ctx.type === 'friend') {
 						// eslint-disable-next-line no-loop-func
 						this.favoriteFriendGroups.find((ref) => {
-							if (ref.name === ctx.group_) {
+							if (ref.name === ctx.$group) {
 								++ref.count;
 								return true;
 							}
@@ -2430,7 +2435,7 @@ if (window.CefSharp) {
 					} else if (ctx.type === 'world') {
 						// eslint-disable-next-line no-loop-func
 						this.favoriteWorldGroups.find((ref) => {
-							if (ref.name === ctx.group_) {
+							if (ref.name === ctx.$group) {
 								++ref.count;
 								return true;
 							}
@@ -2439,7 +2444,7 @@ if (window.CefSharp) {
 					} else if (ctx.type === 'avatar') {
 						// eslint-disable-next-line no-loop-func
 						this.favoriteAvatarGroups.find((ref) => {
-							if (ref.name === ctx.group_) {
+							if (ref.name === ctx.$group) {
 								++ref.count;
 								return true;
 							}
@@ -2477,8 +2482,8 @@ if (window.CefSharp) {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
 				if (ctx.favoriteId === objectId &&
-					!ctx.hide_) {
-					ctx.hide_ = true;
+					!ctx.$isExpired) {
+					ctx.$isExpired = true;
 					API.$emit('FAVORITE:@DELETE', {
 						param: {
 							favoriteId: ctx.id
@@ -2500,15 +2505,17 @@ if (window.CefSharp) {
 					favoriteId: '',
 					tags: [],
 					// custom
-					group_: '',
+					$isExpired: false,
+					$group: '',
 					//
 					...ref
 				};
 				this.favorite[ctx.id] = ctx;
 			}
-			ctx.expired_ = false;
+			ctx.$isExpired = false;
 			if (ctx.tags) {
-				ctx.group_ = ctx.tags;
+				// destructuring
+				[ctx.$group] = ctx.tags;
 			}
 			return ctx;
 		};
@@ -2588,11 +2595,14 @@ if (window.CefSharp) {
 					type: '',
 					visibility: '',
 					tags: [],
+					// custom
+					$isExpired: false,
+					//
 					...ref
 				};
 				this.favoriteGroup[ctx.id] = ctx;
 			}
-			ctx.expired_ = false;
+			ctx.$isExpired = false;
 			return ctx;
 		};
 
@@ -2662,9 +2672,9 @@ if (window.CefSharp) {
 		API.handleClearFavoriteGroup = function (name) {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
-				if (ctx.group_ === name &&
-					!ctx.hide_) {
-					ctx.hide_ = true;
+				if (ctx.$group === name &&
+					!ctx.$isExpired) {
+					ctx.$isExpired = true;
 					API.$emit('FAVORITE:@DELETE', {
 						param: {
 							favoriteId: ctx.id
@@ -2763,8 +2773,8 @@ if (window.CefSharp) {
 		API.$on('FEEDBACK:DELETE', function (args) {
 			var ctx = this.feedback[args.param.feedbackId];
 			if (ctx &&
-				!ctx.hide_) {
-				ctx.hide_ = true;
+				!ctx.$isExpired) {
+				ctx.$isExpired = true;
 				args.ref = ctx;
 				this.$emit('FEEDBACK:@DELETE', {
 					param: {
@@ -2778,8 +2788,8 @@ if (window.CefSharp) {
 		API.markAllFeedbacksAsExpired = function () {
 			for (var key in this.feedback) {
 				var ctx = this.feedback[key];
-				if (!ctx.hide_) {
-					ctx.expired_ = true;
+				if (!ctx.$isExpired) {
+					ctx.$isExpired = true;
 				}
 			}
 		};
@@ -2787,9 +2797,9 @@ if (window.CefSharp) {
 		API.checkExpiredFeedbacks = function () {
 			for (var key in this.feedback) {
 				var ctx = this.feedback[key];
-				if (ctx.expired_ &&
-					!ctx.hide_) {
-					ctx.hide_ = true;
+				if (ctx.$isExpired &&
+					!ctx.$isExpired) {
+					ctx.$isExpired = true;
 					this.$emit('FEEDBACK:@DELETE', {
 						param: {
 							feedbackId: ctx.id
@@ -2839,11 +2849,14 @@ if (window.CefSharp) {
 					contentAuthorId: '',
 					contentAuthorName: '',
 					tags: [],
+					// custom
+					$isExpired: false,
+					//
 					...ref
 				};
 				this.feedback[ctx.id] = ctx;
 			}
-			ctx.expired_ = false;
+			ctx.$isExpired = false;
 			return ctx;
 		};
 
@@ -2932,8 +2945,8 @@ if (window.CefSharp) {
 		API.$on('THING:DELETE', function (args) {
 			var ctx = this.thing[args.param.thingId];
 			if (ctx &&
-				!ctx.hide_) {
-				ctx.hide_ = true;
+				!ctx.$isExpired) {
+				ctx.$isExpired = true;
 				args.ref = ctx;
 				this.$emit('THING:@DELETE', {
 					param: {
@@ -2947,8 +2960,8 @@ if (window.CefSharp) {
 		API.markAllThingsAsExpired = function () {
 			for (var key in this.thing) {
 				var ctx = this.thing[key];
-				if (!ctx.hide_) {
-					ctx.expired_ = true;
+				if (!ctx.$isExpired) {
+					ctx.$isExpired = true;
 				}
 			}
 		};
@@ -2956,9 +2969,9 @@ if (window.CefSharp) {
 		API.checkExpiredThings = function () {
 			for (var key in this.thing) {
 				var ctx = this.thing[key];
-				if (ctx.expired_ &&
-					!ctx.hide_) {
-					ctx.hide_ = true;
+				if (ctx.$isExpired &&
+					!ctx.$isExpired) {
+					ctx.$isExpired = true;
 					this.$emit('THING:@DELETE', {
 						param: {
 							thingId: ctx.id
@@ -3002,11 +3015,14 @@ if (window.CefSharp) {
 					thingProperty: '',
 					otherThingProperty: '',
 					tags: [],
+					// custom
+					$isExpired: false,
+					//
 					...ref
 				};
 				this.thing[ctx.id] = ctx;
 			}
-			ctx.expired_ = false;
+			ctx.$isExpired = false;
 		};
 
 		/*
@@ -4896,7 +4912,7 @@ if (window.CefSharp) {
 					} else {
 						ctx = {
 							id: objectId,
-							group: favorite.group_,
+							group: favorite.$group,
 							ref,
 							name: ''
 						};
@@ -4933,7 +4949,7 @@ if (window.CefSharp) {
 					} else {
 						ctx = {
 							id: objectId,
-							group: favorite.group_,
+							group: favorite.$group,
 							ref,
 							name: ''
 						};
@@ -4964,7 +4980,7 @@ if (window.CefSharp) {
 					} else {
 						ctx = {
 							id: objectId,
-							group: favorite.group_,
+							group: favorite.$group,
 							ref,
 							name: ''
 						};
@@ -5183,7 +5199,7 @@ if (window.CefSharp) {
 					var user = API.cachedUsers.get(id);
 					if (user) {
 						ctx.displayName = user.displayName;
-						ctx.trustLevel = user.trustLevel_;
+						ctx.trustLevel = user.$trustLevel;
 					}
 					this.friendLog[id] = ctx;
 				});
@@ -5203,7 +5219,7 @@ if (window.CefSharp) {
 				var ref = API.cachedUsers.get(id);
 				if (ref) {
 					ctx.displayName = ref.displayName;
-					ctx.trustLevel = ref.trustLevel_;
+					ctx.trustLevel = ref.$trustLevel;
 					this.friendLogTable.data.push({
 						created_at: new Date().toJSON(),
 						type: 'Friend',
@@ -5268,19 +5284,19 @@ if (window.CefSharp) {
 					this.saveFriendLog();
 					this.notifyMenu('friendLog');
 				}
-				if (ref.trustLevel_ &&
-					ctx.trustLevel !== ref.trustLevel_) {
+				if (ref.$trustLevel &&
+					ctx.trustLevel !== ref.$trustLevel) {
 					if (ctx.trustLevel) {
 						this.friendLogTable.data.push({
 							created_at: new Date().toJSON(),
 							type: 'TrustLevel',
 							userId: ref.id,
 							displayName: ref.displayName,
-							trustLevel: ref.trustLevel_,
+							trustLevel: ref.$trustLevel,
 							previousTrustLevel: ctx.trustLevel
 						});
 					}
-					ctx.trustLevel = ref.trustLevel_;
+					ctx.trustLevel = ref.$trustLevel;
 					this.saveFriendLog();
 					this.notifyMenu('friendLog');
 				}
@@ -5349,7 +5365,7 @@ if (window.CefSharp) {
 		API.$on('PLAYER-MODERATION', function (args) {
 			var insertOrUpdate = $app.playerModerationTable.data.some((val, idx, arr) => {
 				if (val.id === args.ref.id) {
-					if (args.ref.hide_) {
+					if (args.ref.$isExpired) {
 						$app.$delete(arr, idx);
 					} else {
 						$app.$set(arr, idx, args.ref);
@@ -5359,7 +5375,7 @@ if (window.CefSharp) {
 				return false;
 			});
 			if (!insertOrUpdate &&
-				!args.ref.hide_) {
+				!args.ref.$isExpired) {
 				$app.playerModerationTable.data.push(args.ref);
 				$app.notifyMenu('moderation');
 			}
@@ -5435,7 +5451,7 @@ if (window.CefSharp) {
 		API.$on('NOTIFICATION', function (args) {
 			var insertOrUpdate = $app.notificationTable.data.some((val, idx, arr) => {
 				if (val.id === args.ref.id) {
-					if (args.ref.hide_) {
+					if (args.ref.$isExpired) {
 						$app.$delete(arr, idx);
 					} else {
 						$app.$set(arr, idx, args.ref);
@@ -5445,7 +5461,7 @@ if (window.CefSharp) {
 				return false;
 			});
 			if (!insertOrUpdate &&
-				!args.ref.hide_) {
+				!args.ref.$isExpired) {
 				$app.notificationTable.data.push(args.ref);
 				$app.notifyMenu('notification');
 			}
@@ -5687,7 +5703,7 @@ if (window.CefSharp) {
 			isHideAvatar: false,
 			isFavorite: false,
 
-			location_: {},
+			$location: {},
 			users: [],
 			instance: {},
 
@@ -5721,7 +5737,7 @@ if (window.CefSharp) {
 		API.$on('WORLD', function (args) {
 			var D = $app.userDialog;
 			if (D.visible &&
-				args.ref.id === D.location_.worldId) {
+				args.ref.id === D.$location.worldId) {
 				$app.updateUserDialogLocation();
 			}
 		});
@@ -5798,7 +5814,7 @@ if (window.CefSharp) {
 			if (D.visible &&
 				args.ref.targetUserId === D.id &&
 				args.ref.sourceUserId === this.currentUser.id &&
-				!args.ref.hide_) {
+				!args.ref.$isExpired) {
 				if (args.ref.type === 'block') {
 					D.isBlock = true;
 				} else if (args.ref.type === 'mute') {
@@ -5828,7 +5844,7 @@ if (window.CefSharp) {
 			var D = $app.userDialog;
 			if (D.visible &&
 				args.ref.favoriteId === D.id &&
-				!args.ref.hide_) {
+				!args.ref.$isExpired) {
 				D.isFavorite = true;
 			}
 		});
@@ -5870,7 +5886,7 @@ if (window.CefSharp) {
 						var ref = API.playerModeration[key];
 						if (ref.targetUserId === D.id &&
 							ref.sourceUserId === API.currentUser.id &&
-							!ref.hide_) {
+							!ref.$isExpired) {
 							if (ref.type === 'block') {
 								D.isBlock = true;
 							} else if (ref.type === 'mute') {
@@ -5912,7 +5928,7 @@ if (window.CefSharp) {
 		$app.methods.updateUserDialogLocation = function () {
 			var D = this.userDialog;
 			var L = API.parseLocation(D.ref.location);
-			D.location_ = L;
+			D.$location = L;
 			if (L.userId) {
 				var ref = API.cachedUsers.get(L.userId);
 				if (ref) {
@@ -5970,7 +5986,7 @@ if (window.CefSharp) {
 					API.getWorld({
 						worldId: L.worldId
 					}).then((args) => {
-						if (L.tag === D.location_.tag) {
+						if (L.tag === D.$location.tag) {
 							handle(args.ref.instances);
 						}
 						return true;
@@ -6235,7 +6251,7 @@ if (window.CefSharp) {
 			visible: false,
 			loading: false,
 			id: '',
-			location_: {},
+			$location: {},
 			ref: {},
 			isFavorite: false,
 			rooms: [],
@@ -6269,7 +6285,7 @@ if (window.CefSharp) {
 			var D = $app.worldDialog;
 			if (D.visible &&
 				args.ref.favoriteId === D.id &&
-				!args.ref.hide_) {
+				!args.ref.$isExpired) {
 				D.isFavorite = true;
 			}
 		});
@@ -6288,7 +6304,7 @@ if (window.CefSharp) {
 			var L = API.parseLocation(tag);
 			if (L.worldId) {
 				D.id = L.worldId;
-				D.location_ = L;
+				D.$location = L;
 				D.treeData = [];
 				D.fileCreatedAt = '';
 				D.fileSize = 'Loading';
@@ -6327,7 +6343,7 @@ if (window.CefSharp) {
 						users: []
 					};
 				});
-				var { instanceId } = D.location_;
+				var { instanceId } = D.$location;
 				if (instanceId &&
 					!map[instanceId]) {
 					map[instanceId] = {
@@ -6339,8 +6355,8 @@ if (window.CefSharp) {
 				for (var key in this.friend) {
 					var ref = API.cachedUsers.get(key);
 					if (ref &&
-						ref.location_.worldId === D.id) {
-						({ instanceId } = ref.location_);
+						ref.$location.worldId === D.id) {
+						({ instanceId } = ref.$location);
 						if (map[instanceId]) {
 							map[instanceId].users.push(ref);
 						} else {
@@ -6358,7 +6374,7 @@ if (window.CefSharp) {
 						b.occupants - a.occupants;
 				}).forEach((v) => {
 					var L = API.parseLocation(`${D.id}:${v.id}`);
-					v.location_ = L;
+					v.$location = L;
 					v.location = L.tag;
 					if (L.userId) {
 						var $ref = API.cachedUsers.get(L.userId);
@@ -6393,7 +6409,7 @@ if (window.CefSharp) {
 			var D = this.worldDialog;
 			if (D.visible) {
 				if (command === 'New Instance') {
-					this.showNewInstanceDialog(D.location_.tag);
+					this.showNewInstanceDialog(D.$location.tag);
 				} else if (command === 'Add Favorite') {
 					this.showFavoriteDialog('world', D.id);
 				} else {
@@ -6502,7 +6518,7 @@ if (window.CefSharp) {
 			var D = $app.avatarDialog;
 			if (D.visible &&
 				args.ref.favoriteId === D.id &&
-				!args.ref.hide_) {
+				!args.ref.$isExpired) {
 				D.isFavorite = true;
 			}
 		});

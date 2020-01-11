@@ -328,7 +328,7 @@
 										<img v-lazy="favorite.ref.currentAvatarThumbnailImageUrl">
 									</div>
 									<div class="detail">
-										<span v-text="favorite.ref.displayName" class="name" :class="favorite.ref.trustClass_"></span>
+										<span v-text="favorite.ref.displayName" class="name" :class="favorite.ref.$trustClass"></span>
 										<location v-if="favorite.ref.location !== 'offline'" :location="favorite.ref.location" :link="false" class="extra"></location>
 										<span v-else v-text="favorite.ref.statusDescription"></span>
 									</div>
@@ -770,7 +770,7 @@
 				<div class="x-friend-item">
 					<template v-if="item.ref">
 						<div class="detail">
-							<span v-text="item.ref.displayName" class="name" :class="item.ref.trustClass_"></span>
+							<span v-text="item.ref.displayName" class="name" :class="item.ref.$trustClass"></span>
 							<location :location="item.ref.location" :link="false" class="extra"></location>
 						</div>
 						<img v-lazy="item.ref.currentAvatarThumbnailImageUrl" class="avatar">
@@ -791,8 +791,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-if="friend.memo" class="name" :class="friend.ref.trustClass_">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
-							<span v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.trustClass_"></span>
+							<span v-if="friend.memo" class="name" :class="friend.ref.$trustClass">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass"></span>
 							<location :location="friend.ref.location" :link="false" class="extra"></location>
 						</div>
 					</template>
@@ -813,8 +813,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-if="friend.memo" class="name" :class="friend.ref.trustClass_">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
-							<span v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.trustClass_"></span>
+							<span v-if="friend.memo" class="name" :class="friend.ref.$trustClass">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass"></span>
 							<location :location="friend.ref.location" :link="false" class="extra"></location>
 						</div>
 					</template>
@@ -835,8 +835,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-if="friend.memo" class="name" :class="friend.ref.trustClass_">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
-							<span v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.trustClass_"></span>
+							<span v-if="friend.memo" class="name" :class="friend.ref.$trustClass">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass"></span>
 							<span v-text="friend.ref.statusDescription" :link="false" class="extra"></span>
 						</div>
 					</template>
@@ -857,8 +857,8 @@
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 						</div>
 						<div class="detail">
-							<span v-if="friend.memo" class="name" :class="friend.ref.trustClass_">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
-							<span v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.trustClass_"></span>
+							<span v-if="friend.memo" class="name" :class="friend.ref.$trustClass">{{ friend.ref.displayName }} ({{ friend.memo }})</span>
+							<span v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass"></span>
 							<span v-text="friend.ref.statusDescription" class="extra"></span>
 						</div>
 					</template>
@@ -901,7 +901,7 @@
 							</el-popover>
 						</div>
 						<div style="margin-top:5px">
-							<el-tag type="info" effect="plain" size="mini" class="name" :class="userDialog.ref.trustClass_" v-text="userDialog.ref.trustLevel_"></el-tag>
+							<el-tag type="info" effect="plain" size="mini" class="name" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel"></el-tag>
 							<el-tag v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" class="x-tag-friend">Friend No.{{userDialog.friend.no}}</el-tag>
 						</div>
 						<div style="margin-top:5px">
@@ -947,25 +947,25 @@
 							<launch :location="userDialog.ref.location" style="margin-left:5px"></launch>
 						</div>
 						<div class="x-friend-list" style="flex:1;margin-top:10px">
-							<div v-if="userDialog.location_.userId" @click="showUserDialog(userDialog.location_.userId)" class="x-friend-item">
-								<template v-if="userDialog.location_.user">
+							<div v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)" class="x-friend-item">
+								<template v-if="userDialog.$location.user">
 									<div class="avatar">
-										<img v-lazy="userDialog.location_.user.currentAvatarThumbnailImageUrl">
+										<img v-lazy="userDialog.$location.user.currentAvatarThumbnailImageUrl">
 									</div>
 									<div class="detail">
-										<span v-text="userDialog.location_.user.displayName" class="name" :class="userDialog.location_.user.trustClass_"></span>
+										<span v-text="userDialog.$location.user.displayName" class="name" :class="userDialog.$location.user.$trustClass"></span>
 										<span class="extra">Instance Creator</span>
 									</div>
 								</template>
-								<span v-else v-text="userDialog.location_.userId"></span>
+								<span v-else v-text="userDialog.$location.userId"></span>
 							</div>
 							<div v-for="user in userDialog.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item">
 								<div class="avatar">
 									<img v-lazy="user.currentAvatarThumbnailImageUrl">
 								</div>
 								<div class="detail">
-									<span v-text="user.displayName" class="name" :class="user.trustClass_"></span>
-									<span class="extra"><timer :epoch="user.location_at_"></timer></span>
+									<span v-text="user.displayName" class="name" :class="user.$trustClass"></span>
+									<span class="extra"><timer :epoch="user.$location_at"></timer></span>
 								</div>
 							</div>
 						</div>
@@ -1054,14 +1054,14 @@
 				<div style="flex:1;display:flex;align-items:center;margin-left:15px">
 					<div style="flex:1">
 						<div>
-							<i class="el-icon-s-home" v-show="API.currentUser.homeLocation_ && API.currentUser.homeLocation_.worldId === worldDialog.id"></i>
+							<i class="el-icon-s-home" v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id"></i>
 							<span v-text="worldDialog.ref.name" style="font-weight:bold"></span>
 						</div>
 						<div style="margin-top:5px">
 							<span v-text="worldDialog.ref.authorName" @click="showUserDialog(worldDialog.ref.authorId)" class="x-link" style="color:#909399;font-family:monospace"></span>
 						</div>
 						<div style="margin-top:5px">
-							<el-tag v-if="worldDialog.ref.labs_" type="primary" effect="plain" size="mini">Labs</el-tag>
+							<el-tag v-if="worldDialog.ref.$isLabs" type="primary" effect="plain" size="mini">Labs</el-tag>
 							<el-tag v-else-if="worldDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini">Public</el-tag>
 							<el-tag v-else type="danger" effect="plain" size="mini">Private</el-tag>
 							<el-tag type="info" effect="plain" size="mini" v-text="worldDialog.fileSize"></el-tag>
@@ -1077,7 +1077,7 @@
 							<el-button type="default" icon="el-icon-more" circle></el-button>
 							<el-dropdown-menu #default="dropdown">
 								<el-dropdown-item icon="el-icon-s-flag" command="New Instance">New Instance</el-dropdown-item>
-								<el-dropdown-item v-if="API.currentUser.homeLocation_ && API.currentUser.homeLocation_.worldId === worldDialog.id" icon="el-icon-magic-stick" command="Reset Home" divided>Reset Home</el-dropdown-item>
+								<el-dropdown-item v-if="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id" icon="el-icon-magic-stick" command="Reset Home" divided>Reset Home</el-dropdown-item>
 								<el-dropdown-item v-else icon="el-icon-s-home" command="Make Home" divided>Make Home</el-dropdown-item>
 							</el-dropdown-menu>
 						</el-dropdown>
@@ -1094,28 +1094,28 @@
 					<div v-for="room in worldDialog.rooms" :key="room.id">
 						<div>
 							<i class="el-icon-position"></i>
-							<span @click="showLaunchDialog(room.location_.tag)" class="x-link">#{{ room.location_.instanceName }} {{ room.location_.accessType }}<template v-if="room.occupants"> ({{ room.occupants }})</template></span>
+							<span @click="showLaunchDialog(room.$location.tag)" class="x-link">#{{ room.$location.instanceName }} {{ room.$location.accessType }}<template v-if="room.occupants"> ({{ room.occupants }})</template></span>
 						</div>
 						<div class="x-friend-list" style="margin:10px 0">
-							<div v-if="room.location_.userId" @click="showUserDialog(room.location_.userId)" class="x-friend-item">
-								<template v-if="room.location_.user">
+							<div v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)" class="x-friend-item">
+								<template v-if="room.$location.user">
 									<div class="avatar">
-										<img v-lazy="room.location_.user.currentAvatarThumbnailImageUrl">
+										<img v-lazy="room.$location.user.currentAvatarThumbnailImageUrl">
 									</div>
 									<div class="detail">
-										<span v-text="room.location_.user.displayName" class="name" :class="room.location_.user.trustClass_"></span>
+										<span v-text="room.$location.user.displayName" class="name" :class="room.$location.user.$trustClass"></span>
 										<span class="extra">Instance Creator</span>
 									</div>
 								</template>
-								<span v-else v-text="room.location_.userId"></span>
+								<span v-else v-text="room.$location.userId"></span>
 							</div>
 							<div v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item">
 								<div class="avatar">
 									<img v-lazy="user.currentAvatarThumbnailImageUrl">
 								</div>
 								<div class="detail">
-									<span v-text="user.displayName" class="name" :class="user.trustClass_"></span>
-									<span class="extra"><timer :epoch="user.location_at_"></timer></span>
+									<span v-text="user.displayName" class="name" :class="user.$trustClass"></span>
+									<span class="extra"><timer :epoch="user.$location_at"></timer></span>
 								</div>
 							</div>
 						</div>
@@ -1310,7 +1310,7 @@
 								<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 							</div>
 							<div class="detail">
-								<span v-text="friend.ref.displayName" class="name" :class="friend.ref.trustClass_"></span>
+								<span v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass"></span>
 							</div>
 						</template>
 						<span v-else v-text="friend.id"></span>
@@ -1323,7 +1323,7 @@
 								<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 							</div>
 							<div class="detail">
-								<span v-text="friend.ref.displayName" class="name" :class="friend.ref.trustClass_"></span>
+								<span v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass"></span>
 							</div>
 						</template>
 						<span v-else v-text="friend.id"></span>
@@ -1336,7 +1336,7 @@
 								<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
 							</div>
 							<div class="detail">
-								<span v-text="friend.ref.displayName" class="name" :class="friend.ref.trustClass_"></span>
+								<span v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass"></span>
 							</div>
 						</template>
 						<span v-else v-text="friend.id"></span>

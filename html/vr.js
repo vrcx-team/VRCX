@@ -596,14 +596,14 @@ if (window.CefSharp) {
 					occupants: 0,
 					instances: [],
 					// custom
-					labs_: false,
+					$isLabs: false,
 					//
 					...ref
 				};
 				this.cachedWorlds.set(ctx.id, ctx);
 			}
 			if (ctx.tags) {
-				ctx.labs_ = ctx.tags.includes('system_labs');
+				ctx.$isLabs = ctx.tags.includes('system_labs');
 			}
 			return ctx;
 		};
