@@ -65,6 +65,7 @@ module.exports = {
         'quotes': ['error', 'single', { 'avoidEscape': true }],
         'quote-props': 0,
         'sort-keys': 0,
+        'sort-vars': 0,
         'space-before-function-paren': ['error', { 'named': 'never' }],
         'strict': 0,
         'vars-on-top': 0
