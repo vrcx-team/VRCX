@@ -45,6 +45,7 @@ module.exports = {
         'new-cap': 0,
         'no-bitwise': 0,
         'no-console': 0,
+        'no-continue': 0,
         'no-empty': ['error', { 'allowEmptyCatch': true }],
         'no-magic-numbers': 0,
         'no-mixed-operators': 0,
