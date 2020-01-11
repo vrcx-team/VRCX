@@ -1572,8 +1572,8 @@ if (window.CefSharp) {
 		API.$on('NOTIFICATION:ACCEPT', function (args) {
 			var ctx = this.cachedNotifications.get(args.param.notificationId);
 			if (ctx &&
-				!ctx.$isExpired) {
-				ctx.$isExpired = true;
+				!ctx.$isDeleted) {
+				ctx.$isDeleted = true;
 				args.ref = ctx;
 				this.$emit('NOTIFICATION:@DELETE', {
 					param: {
@@ -1592,8 +1592,8 @@ if (window.CefSharp) {
 		API.$on('NOTIFICATION:HIDE', function (args) {
 			var ctx = this.cachedNotifications.get(args.param.notificationId);
 			if (ctx &&
-				!ctx.$isExpired) {
-				ctx.$isExpired = true;
+				!ctx.$isDeleted) {
+				ctx.$isDeleted = true;
 				args.ref = ctx;
 				this.$emit('NOTIFICATION:@DELETE', {
 					param: {
@@ -1606,7 +1606,7 @@ if (window.CefSharp) {
 
 		API.markAllNotificationsAsExpired = function () {
 			for (var ctx of this.cachedNotifications.values()) {
-				if (!ctx.$isExpired) {
+				if (!ctx.$isDeleted) {
 					ctx.$isExpired = true;
 				}
 			}
@@ -1615,8 +1615,8 @@ if (window.CefSharp) {
 		API.checkExpiredNotifcations = function () {
 			for (var ctx of this.cachedNotifications.values()) {
 				if (ctx.$isExpired &&
-					!ctx.$isExpired) {
-					ctx.$isExpired = true;
+					!ctx.$isDeleted) {
+					ctx.$isDeleted = true;
 					this.$emit('NOTIFICATION:@DELETE', {
 						param: {
 							notificationId: ctx.id
@@ -1664,6 +1664,7 @@ if (window.CefSharp) {
 					seen: false,
 					created_at: '',
 					// custom
+					$isDeleted: false,
 					$isExpired: false,
 					//
 					...ref
@@ -1785,7 +1786,7 @@ if (window.CefSharp) {
 			for (var ctx of this.cachedNotifications.values()) {
 				if (ctx.type === 'friendRequest' &&
 					ctx.senderUserId === userId &&
-					!ctx.$isExpired) {
+					!ctx.$isDeleted) {
 					return ctx.id;
 				}
 			}
@@ -1832,7 +1833,7 @@ if (window.CefSharp) {
 
 		API.markAllPlayerModerationsAsExpired = function () {
 			for (var ctx of this.cachedPlayerModerations.values()) {
-				if (!ctx.$isExpired) {
+				if (!ctx.$isDeleted) {
 					ctx.$isExpired = true;
 				}
 			}
@@ -1841,8 +1842,8 @@ if (window.CefSharp) {
 		API.checkExpiredPlayerModerations = function () {
 			for (var ctx of this.cachedPlayerModerations.values()) {
 				if (ctx.$isExpired &&
-					!ctx.$isExpired) {
-					ctx.$isExpired = true;
+					!ctx.$isDeleted) {
+					ctx.$isDeleted = true;
 					this.$emit('PLAYER-MODERATION:@DELETE', {
 						param: {
 							playerModerationId: ctx.id
@@ -1874,8 +1875,8 @@ if (window.CefSharp) {
 				if (ctx.type === type &&
 					ctx.targetUserId === moderated &&
 					ctx.sourceUserId === cuid &&
-					!ctx.$isExpired) {
-					ctx.$isExpired = true;
+					!ctx.$isDeleted) {
+					ctx.$isDeleted = true;
 					this.$emit('PLAYER-MODERATION:@DELETE', {
 						param: {
 							playerModerationId: ctx.id
@@ -1900,6 +1901,7 @@ if (window.CefSharp) {
 					targetDisplayName: '',
 					created: '',
 					// custom
+					$isDeleted: false,
 					$isExpired: false,
 					//
 					...ref
@@ -2092,7 +2094,7 @@ if (window.CefSharp) {
 		API.$on('FAVORITE:GROUP', function (args) {
 			var ref = this.updateFavoriteGroup(args.json);
 			args.ref = ref;
-			if (!ref.$isExpired) {
+			if (!ref.$isDeleted) {
 				if (ref.type === 'friend') {
 					this.favoriteFriendGroups.find((ctx) => {
 						if (ctx.name === ref.name) {
@@ -2189,7 +2191,7 @@ if (window.CefSharp) {
 		API.markAllFavoritesAsExpired = function () {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
-				if (!ctx.$isExpired) {
+				if (!ctx.$isDeleted) {
 					ctx.$isExpired = true;
 				}
 			}
@@ -2199,8 +2201,8 @@ if (window.CefSharp) {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
 				if (ctx.$isExpired &&
-					!ctx.$isExpired) {
-					ctx.$isExpired = true;
+					!ctx.$isDeleted) {
+					ctx.$isDeleted = true;
 					this.$emit('FAVORITE:@DELETE', {
 						param: {
 							favoriteId: ctx.id
@@ -2241,7 +2243,7 @@ if (window.CefSharp) {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
 				if (ctx.type === 'friend' &&
-					!ctx.$isExpired) {
+					!ctx.$isDeleted) {
 					++N;
 				}
 			}
@@ -2262,7 +2264,7 @@ if (window.CefSharp) {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
 				if (ctx.type === 'world' &&
-					!ctx.$isExpired) {
+					!ctx.$isDeleted) {
 					++N;
 				}
 			}
@@ -2283,7 +2285,7 @@ if (window.CefSharp) {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
 				if (ctx.type === 'avatar' &&
-					!ctx.$isExpired) {
+					!ctx.$isDeleted) {
 					++N;
 				}
 			}
@@ -2302,7 +2304,7 @@ if (window.CefSharp) {
 		API.markAllFavoriteGroupsAsExpired = function () {
 			for (var key in this.favoriteGroup) {
 				var ctx = this.favoriteGroup[key];
-				if (!ctx.$isExpired) {
+				if (!ctx.$isDeleted) {
 					ctx.$isExpired = true;
 				}
 			}
@@ -2312,8 +2314,8 @@ if (window.CefSharp) {
 			for (var key in this.favoriteGroup) {
 				var ctx = this.favoriteGroup[key];
 				if (ctx.$isExpired &&
-					!ctx.$isExpired) {
-					ctx.$isExpired = true;
+					!ctx.$isDeleted) {
+					ctx.$isDeleted = true;
 					this.$emit('FAVORITE:GROUP:@DELETE', {
 						param: {
 							favoriteGroupId: ctx.id
@@ -2392,7 +2394,7 @@ if (window.CefSharp) {
 			};
 			for (var key in this.favoriteGroup) {
 				var ctx = this.favoriteGroup[key];
-				if (!ctx.$isExpired) {
+				if (!ctx.$isDeleted) {
 					if (ctx.type === 'friend') {
 						set1(this.favoriteFriendGroups, ctx);
 					} else if (ctx.type === 'world') {
@@ -2404,7 +2406,7 @@ if (window.CefSharp) {
 			}
 			for (var key in this.favoriteGroup) {
 				var ctx = this.favoriteGroup[key];
-				if (!ctx.$isExpired) {
+				if (!ctx.$isDeleted) {
 					if (ctx.type === 'friend') {
 						set2(this.favoriteFriendGroups, ctx);
 					} else if (ctx.type === 'world') {
@@ -2416,7 +2418,7 @@ if (window.CefSharp) {
 			}
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
-				if (!ctx.$isExpired) {
+				if (!ctx.$isDeleted) {
 					if (ctx.type === 'friend') {
 						// eslint-disable-next-line no-loop-func
 						this.favoriteFriendGroups.find((ref) => {
@@ -2476,8 +2478,8 @@ if (window.CefSharp) {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
 				if (ctx.favoriteId === objectId &&
-					!ctx.$isExpired) {
-					ctx.$isExpired = true;
+					!ctx.$isDeleted) {
+					ctx.$isDeleted = true;
 					API.$emit('FAVORITE:@DELETE', {
 						param: {
 							favoriteId: ctx.id
@@ -2499,6 +2501,7 @@ if (window.CefSharp) {
 					favoriteId: '',
 					tags: [],
 					// custom
+					$isDeleted: false,
 					$isExpired: false,
 					$group: '',
 					//
@@ -2589,6 +2592,7 @@ if (window.CefSharp) {
 					visibility: '',
 					tags: [],
 					// custom
+					$isDeleted: false,
 					$isExpired: false,
 					//
 					...ref
@@ -2666,8 +2670,8 @@ if (window.CefSharp) {
 			for (var key in this.favorite) {
 				var ctx = this.favorite[key];
 				if (ctx.$group === name &&
-					!ctx.$isExpired) {
-					ctx.$isExpired = true;
+					!ctx.$isDeleted) {
+					ctx.$isDeleted = true;
 					API.$emit('FAVORITE:@DELETE', {
 						param: {
 							favoriteId: ctx.id
