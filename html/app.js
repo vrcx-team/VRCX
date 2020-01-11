@@ -123,21 +123,21 @@ if (window.CefSharp) {
 		Vue.filter('commaNumber', commaNumber);
 
 		var formatDate = (s, format) => {
-			var ctx = new Date(s);
-			if (isNaN(ctx)) {
+			var dt = new Date(s);
+			if (isNaN(dt)) {
 				return escapeTag(s);
 			}
-			var hours = ctx.getHours();
+			var hours = dt.getHours();
 			var map = {
-				'YYYY': String(10000 + ctx.getFullYear()).substr(-4),
-				'MM': String(101 + ctx.getMonth()).substr(-2),
-				'DD': String(100 + ctx.getDate()).substr(-2),
+				'YYYY': String(10000 + dt.getFullYear()).substr(-4),
+				'MM': String(101 + dt.getMonth()).substr(-2),
+				'DD': String(100 + dt.getDate()).substr(-2),
 				'HH24': String(100 + hours).substr(-2),
 				'HH': String(100 + (hours > 12
 					? hours - 12
 					: hours)).substr(-2),
-				'MI': String(100 + ctx.getMinutes()).substr(-2),
-				'SS': String(100 + ctx.getSeconds()).substr(-2),
+				'MI': String(100 + dt.getMinutes()).substr(-2),
+				'SS': String(100 + dt.getSeconds()).substr(-2),
 				'AMPM': hours >= 12
 					? 'PM'
 					: 'AM'
