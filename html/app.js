@@ -679,7 +679,7 @@ if (window.CefSharp) {
 
 		API.isLoggedIn = false;
 		API.currentUser = {};
-		API.user = {};
+		API.cachedUsers = new Map();
 
 		API.$on('LOGOUT', function () {
 			this.isLoggedIn = false;
@@ -905,7 +905,7 @@ if (window.CefSharp) {
 		};
 
 		API.updateUser = function (ref) {
-			var ctx = this.user[ref.id];
+			var ctx = this.cachedUsers.get(ref.id);
 			if (ctx) {
 				var prop = {};
 				var key = null;
@@ -980,7 +980,7 @@ if (window.CefSharp) {
 					...ref
 				};
 				ctx.location_ = this.parseLocation(ctx.location);
-				this.user[ctx.id] = ctx;
+				this.cachedUsers.set(ctx.id, ctx);
 			}
 			ctx.admin_ = ctx.developerType &&
 				ctx.developerType !== 'none';
@@ -1028,16 +1028,16 @@ if (window.CefSharp) {
 		*/
 		API.getCachedUser = function (param) {
 			return new Promise((resolve, reject) => {
-				var ctx = this.user[param.userId];
-				if (ctx) {
-					resolve({
-						cache: true,
-						ref: ctx,
-						param
-					});
-				} else {
+				var ctx = this.cachedUsers.get(param.userId);
+				if (ctx === undefined) {
 					this.getUser(param).catch(reject).then(resolve);
+					return;
 				}
+				resolve({
+					cache: true,
+					ref: ctx,
+					param
+				});
 			});
 		};
 
@@ -1241,7 +1241,11 @@ if (window.CefSharp) {
 					},
 					json
 				});
-				this.user[json.id].friend_ = true;
+				var user = this.cachedUsers.get(json.id);
+				if (user === undefined) {
+					return;
+				}
+				user.friend_ = true;
 				delete this.friend404[json.id];
 			});
 		});
@@ -1249,9 +1253,9 @@ if (window.CefSharp) {
 		API.checkFriends = function (mark) {
 			if (!mark) {
 				return this.currentUser.friends.every((id) => {
-					var ctx = this.user[id];
-					if (ctx &&
-						ctx.friend_) {
+					var user = this.cachedUsers.get(id);
+					if (user &&
+						user.friend_) {
 						return true;
 					}
 					// NOTE: NaN이면 false라서 괜찮음
@@ -1259,7 +1263,7 @@ if (window.CefSharp) {
 				});
 			}
 			this.currentUser.friends.forEach((id) => {
-				var ctx = this.user[id];
+				var ctx = this.cachedUsers.get(id);
 				if (!(ctx &&
 					ctx.friend_)) {
 					var hit = Number(this.friend404[id]) || 0;
@@ -3609,7 +3613,7 @@ if (window.CefSharp) {
 					var isFriend = false;
 					var isFavorite = false;
 					for (var key in API.user) {
-						var ctx = API.user[key];
+						var ctx = API.cachedUsers.get(key);
 						if (ctx.displayName === ref.data) {
 							isFriend = Boolean(this.friend[ctx.id]);
 							isFavorite = Boolean(API.favoriteObject[ctx.id]);
@@ -3963,7 +3967,7 @@ if (window.CefSharp) {
 
 		$app.methods.addFriend = function (id, state) {
 			if (!this.friend[id]) {
-				var ref = API.user[id];
+				var ref = API.cachedUsers.get(id);
 				var ctx = {
 					id,
 					state: state || 'offline',
@@ -4030,7 +4034,7 @@ if (window.CefSharp) {
 		$app.methods.updateFriend = function (id, state, origin) {
 			var ctx = this.friend[id];
 			if (ctx) {
-				var ref = API.user[id];
+				var ref = API.cachedUsers.get(id);
 				var vip = Boolean(API.favoriteObject[id]);
 				if (state === undefined ||
 					ctx.state === state) {
@@ -4625,7 +4629,7 @@ if (window.CefSharp) {
 
 		$app.methods.lookupUser = function (name) {
 			for (var key in API.user) {
-				var ctx = API.user[key];
+				var ctx = API.cachedUsers.get(key);
 				if (ctx.displayName === name) {
 					this.showUserDialog(ctx.id);
 					return;
@@ -4884,7 +4888,7 @@ if (window.CefSharp) {
 			if (type === 'friend') {
 				ctx = this.favoriteFriend[objectId];
 				if (favorite) {
-					ref = API.user[objectId];
+					ref = API.cachedUsers.get(objectId);
 					if (ctx) {
 						if (ctx.ref !== ref) {
 							ctx.ref = ref;
@@ -5134,7 +5138,7 @@ if (window.CefSharp) {
 		});
 
 		API.$on('FRIEND:REQUEST', function (args) {
-			var ref = this.user[args.param.userId];
+			var ref = this.cachedUsers.get(args.param.userId);
 			if (ref) {
 				$app.friendLogTable.data.push({
 					created_at: new Date().toJSON(),
@@ -5147,7 +5151,7 @@ if (window.CefSharp) {
 		});
 
 		API.$on('FRIEND:REQUEST:CANCEL', function (args) {
-			var ref = this.user[args.param.userId];
+			var ref = this.cachedUsers.get(args.param.userId);
 			if (ref) {
 				$app.friendLogTable.data.push({
 					created_at: new Date().toJSON(),
@@ -5181,7 +5185,7 @@ if (window.CefSharp) {
 					var ctx = {
 						id
 					};
-					var user = API.user[id];
+					var user = API.cachedUsers.get(id);
 					if (user) {
 						ctx.displayName = user.displayName;
 						ctx.trustLevel = user.trustLevel_;
@@ -5201,7 +5205,7 @@ if (window.CefSharp) {
 					trustLevel: null
 				};
 				this.$set(this.friendLog, id, ctx);
-				var ref = API.user[id];
+				var ref = API.cachedUsers.get(id);
 				if (ref) {
 					ctx.displayName = ref.displayName;
 					ctx.trustLevel = ref.trustLevel_;
@@ -5920,7 +5924,7 @@ if (window.CefSharp) {
 			var L = API.parseLocation(D.ref.location);
 			D.location_ = L;
 			if (L.userId) {
-				ref = API.user[L.userId];
+				ref = API.cachedUsers.get(L.userId);
 				if (ref) {
 					L.user = ref;
 				} else {
@@ -5935,7 +5939,7 @@ if (window.CefSharp) {
 			D.users = [];
 			if (!L.isOffline) {
 				for (var key in this.friend) {
-					ref = API.user[key];
+					ref = API.cachedUsers.get(key);
 					if (ref &&
 						ref.location === D.ref.location) {
 						D.users.push(ref);
@@ -6345,7 +6349,7 @@ if (window.CefSharp) {
 					};
 				}
 				for (var key in this.friend) {
-					ref = API.user[key];
+					ref = API.cachedUsers.get(key);
 					if (ref &&
 						ref.location_.worldId === D.id) {
 						({ instanceId } = ref.location_);
@@ -6367,7 +6371,7 @@ if (window.CefSharp) {
 						v.location_ = L;
 						v.location = L.tag;
 						if (L.userId) {
-							ref = API.user[L.userId];
+							ref = API.cachedUsers.get(L.userId);
 							if (ref) {
 								L.user = ref;
 							} else {
