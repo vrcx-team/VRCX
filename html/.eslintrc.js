@@ -50,7 +50,6 @@ module.exports = {
         'no-plusplus': 0,
         'no-tabs': 0,
         'no-ternary': 0,
-        'no-throw-literal': 0,
         'no-undefined': 0,
         'no-underscore-dangle': 0,
         'no-var': 0,

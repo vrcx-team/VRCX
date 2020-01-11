@@ -423,16 +423,14 @@ if (window.CefSharp) {
 			if (extra !== undefined) {
 				text.push(extra);
 			}
+			text = text.map((s) => escapeTag(s)).join('<br>');
 			if (text.length) {
 				new Noty({
 					type: 'error',
-					text: text.map((s) => escapeTag(s)).join('<br>')
+					text
 				}).show();
 			}
-			throw {
-				'status_code': code,
-				error
-			};
+			throw new Error(text);
 		};
 
 		API.bulk = function (options) {
