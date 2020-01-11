@@ -2508,8 +2508,7 @@ if (window.CefSharp) {
 			}
 			ctx.$isExpired = false;
 			if (ctx.tags) {
-				// destructuring
-				[ctx.$group] = ctx.tags;
+				ctx.$group = ctx.tags[0];
 			}
 			return ctx;
 		};

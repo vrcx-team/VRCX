@@ -60,6 +60,7 @@ module.exports = {
         'one-var': 0,
         'padded-blocks': 0,
         'prefer-arrow-callback': 0,
+        'prefer-destructuring': 0,
         'prefer-named-capture-group': 0,
         'quotes': ['error', 'single', { 'avoidEscape': true }],
         'quote-props': 0,
