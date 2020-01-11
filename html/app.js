@@ -305,7 +305,7 @@ if (window.CefSharp) {
 							text: escapeTag(json.success.message)
 						}).show();
 					}
-				} else if (typeof json.error === 'object') {
+				} else if (isObject(json.error)) {
 					this.$throw(
 						json.error.status_code || res.status,
 						json.error.message,
@@ -909,7 +909,7 @@ if (window.CefSharp) {
 			if (ctx) {
 				var prop = {};
 				for (var key in ctx) {
-					if (typeof ctx[key] !== 'object') {
+					if (isObject(ctx[key]) === false) {
 						prop[key] = true;
 					}
 				}
@@ -919,7 +919,7 @@ if (window.CefSharp) {
 					ctx.location_ = this.parseLocation(ctx.location);
 				}
 				for (var key in ctx) {
-					if (typeof ctx[key] !== 'object') {
+					if (isObject(ctx[key]) === false) {
 						prop[key] = true;
 					}
 				}
@@ -1665,15 +1665,16 @@ if (window.CefSharp) {
 					details: {},
 					seen: false,
 					created_at: '',
+					//
 					...ref
 				};
 				this.notification[ctx.id] = ctx;
 			}
-			if (typeof ctx.details !== 'object') {
+			if (isObject(ctx.details)) {
 				var details = {};
 				try {
 					var json = JSON.parse(ctx.details);
-					if (typeof json === 'object') {
+					if (isObject(json)) {
 						details = json;
 					}
 				} catch (err) {
@@ -3399,11 +3400,11 @@ if (window.CefSharp) {
 			var node = [];
 			for (var key in json) {
 				var value = json[key];
-				if (typeof value === 'object') {
+				if (isObject(value)) {
 					if (Array.isArray(value)) {
 						node.push({
 							children: value.map((val, idx) => {
-								if (typeof val === 'object') {
+								if (isObject(val)) {
 									return {
 										children: buildTreeData(val),
 										key: idx

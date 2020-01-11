@@ -255,7 +255,7 @@ if (window.CefSharp) {
 							text: escapeTag(json.success.message)
 						}).show();
 					}
-				} else if (typeof json.error === 'object') {
+				} else if (isObject(json.error)) {
 					this.$throw(
 						json.error.status_code || res.status,
 						json.error.message,
