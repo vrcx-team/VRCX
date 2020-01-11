@@ -1546,11 +1546,11 @@ if (window.CefSharp) {
 
 		// API: Notification
 
-		API.notification = {};
+		API.cachedNotifications = new Map();
 		API.isNotificationLoading = false;
 
 		API.$on('LOGIN', function () {
-			this.notification = {};
+			this.cachedNotifications.clear();
 			this.isNotificationLoading = false;
 		});
 
@@ -1570,7 +1570,7 @@ if (window.CefSharp) {
 		});
 
 		API.$on('NOTIFICATION:ACCEPT', function (args) {
-			var ctx = this.notification[args.param.notificationId];
+			var ctx = this.cachedNotifications.get(args.param.notificationId);
 			if (ctx &&
 				!ctx.$isExpired) {
 				ctx.$isExpired = true;
@@ -1590,7 +1590,7 @@ if (window.CefSharp) {
 		});
 
 		API.$on('NOTIFICATION:HIDE', function (args) {
-			var ctx = this.notification[args.param.notificationId];
+			var ctx = this.cachedNotifications.get(args.param.notificationId);
 			if (ctx &&
 				!ctx.$isExpired) {
 				ctx.$isExpired = true;
@@ -1606,7 +1606,7 @@ if (window.CefSharp) {
 
 		API.markAllNotificationsAsExpired = function () {
 			for (var key in this.notification) {
-				var ctx = this.notification[key];
+				var ctx = this.cachedNotifications.get(key);
 				if (!ctx.$isExpired) {
 					ctx.$isExpired = true;
 				}
@@ -1615,7 +1615,7 @@ if (window.CefSharp) {
 
 		API.checkExpiredNotifcations = function () {
 			for (var key in this.notification) {
-				var ctx = this.notification[key];
+				var ctx = this.cachedNotifications.get(key);
 				if (ctx.$isExpired &&
 					!ctx.$isExpired) {
 					ctx.$isExpired = true;
@@ -1652,7 +1652,7 @@ if (window.CefSharp) {
 		};
 
 		API.updateNotification = function (ref) {
-			var ctx = this.notification[ref.id];
+			var ctx = this.cachedNotifications.get(ref.id);
 			if (ctx) {
 				Object.assign(ctx, ref);
 			} else {
@@ -1670,7 +1670,7 @@ if (window.CefSharp) {
 					//
 					...ref
 				};
-				this.notification[ctx.id] = ctx;
+				this.cachedNotifications.set(ctx.id, ctx);
 			}
 			if (isObject(ctx.details)) {
 				var details = {};
@@ -1785,7 +1785,7 @@ if (window.CefSharp) {
 
 		API.getFriendRequest = function (userId) {
 			for (var key in this.notification) {
-				var ctx = this.notification[key];
+				var ctx = this.cachedNotifications.get(key);
 				if (ctx.type === 'friendRequest' &&
 					ctx.senderUserId === userId &&
 					!ctx.$isExpired) {
