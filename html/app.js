@@ -908,8 +908,7 @@ if (window.CefSharp) {
 			var ctx = this.cachedUsers.get(ref.id);
 			if (ctx) {
 				var prop = {};
-				var key = null;
-				for (key in ctx) {
+				for (var key in ctx) {
 					if (typeof ctx[key] !== 'object') {
 						prop[key] = true;
 					}
@@ -919,13 +918,13 @@ if (window.CefSharp) {
 				if (ctx.location_.tag !== ctx.location) {
 					ctx.location_ = this.parseLocation(ctx.location);
 				}
-				for (key in ctx) {
+				for (var key in ctx) {
 					if (typeof ctx[key] !== 'object') {
 						prop[key] = true;
 					}
 				}
 				var has = false;
-				for (key in prop) {
+				for (var key in prop) {
 					if (ctx[key] === _ctx[key]) {
 						delete prop[key];
 					} else {
@@ -2338,22 +2337,22 @@ if (window.CefSharp) {
 			}
 			// 128 = ['worlds1', 'worlds2', 'worlds3', 'worlds4'] x 32
 			this.favoriteWorldGroups = [];
-			for (var j = 0; j < 4; ++j) {
+			for (var i = 0; i < 4; ++i) {
 				this.favoriteWorldGroups.push({
 					type: 'world',
-					name: `worlds${j + 1}`,
-					displayName: `Group ${j + 1}`,
+					name: `worlds${i + 1}`,
+					displayName: `Group ${i + 1}`,
 					capacity: 32,
 					count: 0
 				});
 			}
 			// 16 = ['avatars1'] x 16
 			this.favoriteAvatarGroups = [];
-			for (var k = 0; k < 1; ++k) {
+			for (var i = 0; i < 1; ++i) {
 				this.favoriteAvatarGroups.push({
 					type: 'avatar',
-					name: `avatars${k + 1}`,
-					displayName: `Group ${k + 1}`,
+					name: `avatars${i + 1}`,
+					displayName: `Group ${i + 1}`,
 					capacity: 16,
 					count: 0
 				});
@@ -2390,10 +2389,8 @@ if (window.CefSharp) {
 					});
 				}
 			};
-			var key = null;
-			var ctx = null;
-			for (key in this.favoriteGroup) {
-				ctx = this.favoriteGroup[key];
+			for (var key in this.favoriteGroup) {
+				var ctx = this.favoriteGroup[key];
 				if (!ctx.hide_) {
 					if (ctx.type === 'friend') {
 						set1(this.favoriteFriendGroups, ctx);
@@ -2404,8 +2401,8 @@ if (window.CefSharp) {
 					}
 				}
 			}
-			for (key in this.favoriteGroup) {
-				ctx = this.favoriteGroup[key];
+			for (var key in this.favoriteGroup) {
+				var ctx = this.favoriteGroup[key];
 				if (!ctx.hide_) {
 					if (ctx.type === 'friend') {
 						set2(this.favoriteFriendGroups, ctx);
@@ -2416,8 +2413,8 @@ if (window.CefSharp) {
 					}
 				}
 			}
-			for (key in this.favorite) {
-				ctx = this.favorite[key];
+			for (var key in this.favorite) {
+				var ctx = this.favorite[key];
 				if (!ctx.hide_) {
 					if (ctx.type === 'friend') {
 						// eslint-disable-next-line no-loop-func
@@ -3597,7 +3594,6 @@ if (window.CefSharp) {
 
 		$app.methods.updateSharedFeed = function () {
 			var arr = [];
-			var ref = null;
 			// FIXME
 			// 여러 개 켠다면 gameLogTable의 데이터가 시간순이 아닐 수도 있음
 			var i = this.gameLogTable.data.length;
@@ -3606,7 +3602,7 @@ if (window.CefSharp) {
 				if (i <= 0) {
 					break;
 				}
-				ref = this.gameLogTable.data[--i];
+				var ref = this.gameLogTable.data[--i];
 				// Location, OnPlayerJoined, OnPlayerLeft
 				if (ref.type) {
 					// FIXME: 이거 존나 느릴거 같은데
@@ -3630,13 +3626,13 @@ if (window.CefSharp) {
 				}
 				++j;
 			}
-			i = this.feedTable.data.length;
-			j = 0;
+			var i = this.feedTable.data.length;
+			var j = 0;
 			while (j < 25) {
 				if (i <= 0) {
 					break;
 				}
-				ref = this.feedTable.data[--i];
+				var ref = this.feedTable.data[--i];
 				// GPS, Online, Offline, Status, Avatar
 				if (ref.type !== 'Avatar') {
 					arr.push({
@@ -3947,15 +3943,14 @@ if (window.CefSharp) {
 			ref.onlineFriends.forEach((id) => {
 				map[id] = 'online';
 			});
-			var key = null;
-			for (key in map) {
+			for (var key in map) {
 				if (this.friend[key]) {
 					this.updateFriend(key, map[key], origin);
 				} else {
 					this.addFriend(key, map[key]);
 				}
 			}
-			for (key in this.friend) {
+			for (var key in this.friend) {
 				if (!map[key]) {
 					this.removeFriend(key);
 				}
@@ -4883,12 +4878,10 @@ if (window.CefSharp) {
 
 		$app.methods.updateFavorite = function (type, objectId) {
 			var favorite = API.favoriteObject[objectId];
-			var ctx = null;
-			var ref = null;
 			if (type === 'friend') {
-				ctx = this.favoriteFriend[objectId];
+				var ctx = this.favoriteFriend[objectId];
 				if (favorite) {
-					ref = API.cachedUsers.get(objectId);
+					var ref = API.cachedUsers.get(objectId);
 					if (ctx) {
 						if (ctx.ref !== ref) {
 							ctx.ref = ref;
@@ -4923,9 +4916,9 @@ if (window.CefSharp) {
 					removeFromArray(this.favoriteFriends_, ctx);
 				}
 			} else if (type === 'world') {
-				ctx = this.favoriteWorld[objectId];
+				var ctx = this.favoriteWorld[objectId];
 				if (favorite) {
-					ref = API.world[objectId];
+					var ref = API.world[objectId];
 					if (ctx) {
 						if (ctx.ref !== ref) {
 							ctx.ref = ref;
@@ -4954,9 +4947,9 @@ if (window.CefSharp) {
 					removeFromArray(this.favoriteWorlds_, ctx);
 				}
 			} else if (type === 'avatar') {
-				ctx = this.favoriteAvatar[objectId];
+				var ctx = this.favoriteAvatar[objectId];
 				if (favorite) {
-					ref = API.avatar[objectId];
+					var ref = API.avatar[objectId];
 					if (ctx) {
 						if (ctx.ref !== ref) {
 							ctx.ref = ref;
@@ -5871,10 +5864,8 @@ if (window.CefSharp) {
 					D.isBlock = false;
 					D.isMute = false;
 					D.isHideAvatar = false;
-					var key = null;
-					var ref = null;
-					for (key in API.playerModeration) {
-						ref = API.playerModeration[key];
+					for (var key in API.playerModeration) {
+						var ref = API.playerModeration[key];
 						if (ref.targetUserId === D.id &&
 							ref.sourceUserId === API.currentUser.id &&
 							!ref.hide_) {
@@ -5893,14 +5884,14 @@ if (window.CefSharp) {
 					D.avatars = [];
 					D.isWorldsLoading = false;
 					D.isAvatarsLoading = false;
-					for (key in API.world) {
-						ref = API.world[key];
+					for (var key in API.world) {
+						var ref = API.world[key];
 						if (ref.authorId === D.id) {
 							D.worlds.push(ref);
 						}
 					}
-					for (key in API.avatar) {
-						ref = API.avatar[key];
+					for (var key in API.avatar) {
+						var ref = API.avatar[key];
 						if (ref.authorId === D.id) {
 							D.avatars.push(ref);
 						}
@@ -5919,12 +5910,11 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.updateUserDialogLocation = function () {
-			var ref = null;
 			var D = this.userDialog;
 			var L = API.parseLocation(D.ref.location);
 			D.location_ = L;
 			if (L.userId) {
-				ref = API.cachedUsers.get(L.userId);
+				var ref = API.cachedUsers.get(L.userId);
 				if (ref) {
 					L.user = ref;
 				} else {
@@ -5939,7 +5929,7 @@ if (window.CefSharp) {
 			D.users = [];
 			if (!L.isOffline) {
 				for (var key in this.friend) {
-					ref = API.cachedUsers.get(key);
+					var ref = API.cachedUsers.get(key);
 					if (ref &&
 						ref.location === D.ref.location) {
 						D.users.push(ref);
@@ -5973,7 +5963,7 @@ if (window.CefSharp) {
 						});
 					}
 				};
-				ref = API.world[L.worldId];
+				var ref = API.world[L.worldId];
 				if (ref) {
 					handle(ref.instances);
 				} else {
@@ -6086,7 +6076,6 @@ if (window.CefSharp) {
 		};
 
 		var performUserDialogCommand = (command, userId) => {
-			var key = null;
 			switch (command) {
 				case 'Delete Favorite':
 					API.deleteFavorite({
@@ -6099,7 +6088,7 @@ if (window.CefSharp) {
 					});
 					break;
 				case 'Accept Friend Request':
-					key = API.getFriendRequest(userId);
+					var key = API.getFriendRequest(userId);
 					if (key === '') {
 						API.sendFriendRequest({
 							userId
@@ -6111,7 +6100,7 @@ if (window.CefSharp) {
 					}
 					break;
 				case 'Decline Friend Request':
-					key = API.getFriendRequest(userId);
+					var key = API.getFriendRequest(userId);
 					if (key === '') {
 						API.cancelFriendRequest({
 							userId
@@ -6328,7 +6317,6 @@ if (window.CefSharp) {
 		};
 
 		$app.methods.updateWorldDialogInstances = function () {
-			var ref = null;
 			var D = this.worldDialog;
 			if (D.ref.instances) {
 				var map = {};
@@ -6349,7 +6337,7 @@ if (window.CefSharp) {
 					};
 				}
 				for (var key in this.friend) {
-					ref = API.cachedUsers.get(key);
+					var ref = API.cachedUsers.get(key);
 					if (ref &&
 						ref.location_.worldId === D.id) {
 						({ instanceId } = ref.location_);
@@ -6365,37 +6353,39 @@ if (window.CefSharp) {
 					}
 				}
 				D.rooms = [];
-				Object.values(map).sort((a, b) => b.users.length - a.users.length ||
-					b.occupants - a.occupants).forEach((v) => {
-						var L = API.parseLocation(`${D.id}:${v.id}`);
-						v.location_ = L;
-						v.location = L.tag;
-						if (L.userId) {
-							ref = API.cachedUsers.get(L.userId);
-							if (ref) {
-								L.user = ref;
-							} else {
-								API.getUser({
-									userId: L.userId
-								}).then((args) => {
-									this.$set(L, 'user', args.ref);
-									return args;
-								});
-							}
+				Object.values(map).sort(function (a, b) {
+					return b.users.length - a.users.length ||
+						b.occupants - a.occupants;
+				}).forEach((v) => {
+					var L = API.parseLocation(`${D.id}:${v.id}`);
+					v.location_ = L;
+					v.location = L.tag;
+					if (L.userId) {
+						var $ref = API.cachedUsers.get(L.userId);
+						if ($ref) {
+							L.user = $ref;
+						} else {
+							API.getUser({
+								userId: L.userId
+							}).then((args) => {
+								this.$set(L, 'user', args.ref);
+								return args;
+							});
 						}
-						v.users.sort((a, b) => {
-							var A = String(a.displayName).toUpperCase();
-							var B = String(b.displayName).toUpperCase();
-							if (A < B) {
-								return -1;
-							}
-							if (A > B) {
-								return 1;
-							}
-							return 0;
-						});
-						D.rooms.push(v);
+					}
+					v.users.sort((a, b) => {
+						var A = String(a.displayName).toUpperCase();
+						var B = String(b.displayName).toUpperCase();
+						if (A < B) {
+							return -1;
+						}
+						if (A > B) {
+							return 1;
+						}
+						return 0;
 					});
+					D.rooms.push(v);
+				});
 			}
 		};
 
