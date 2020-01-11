@@ -969,6 +969,7 @@ if (window.CefSharp) {
 					worldId: '',
 					instanceId: '',
 					// custom
+					$isFriend: false,
 					location_: {},
 					location_at_: Date.now(),
 					admin_: false,
