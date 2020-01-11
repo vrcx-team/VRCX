@@ -1225,11 +1225,11 @@ if (window.CefSharp) {
 
 		// API: Friend
 
-		API.friend404 = {};
+		API.friend404 = new Map();
 		API.isFriendLoading = false;
 
 		API.$on('LOGIN', function () {
-			this.friend404 = {};
+			this.friend404.clear();
 			this.isFriendLoading = false;
 		});
 
@@ -1246,7 +1246,7 @@ if (window.CefSharp) {
 					return;
 				}
 				user.$isFriend = true;
-				delete this.friend404[json.id];
+				this.friend404.delete(json.id);
 			});
 		});
 
@@ -1259,16 +1259,16 @@ if (window.CefSharp) {
 						return true;
 					}
 					// NOTE: NaN이면 false라서 괜찮음
-					return this.friend404[id] >= 2;
+					return this.friend404.get(id) >= 2;
 				});
 			}
 			this.currentUser.friends.forEach((id) => {
 				var ctx = this.cachedUsers.get(id);
 				if (!(ctx &&
 					ctx.$isFriend)) {
-					var hit = Number(this.friend404[id]) || 0;
+					var hit = Number(this.friend404.get(id)) || 0;
 					if (hit < 2) {
-						this.friend404[id] = hit + 1;
+						this.friend404.set(id, hit + 1);
 					}
 				}
 			});
