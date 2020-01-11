@@ -206,11 +206,11 @@ if (window.CefSharp) {
 
 		var API = {};
 
-		API.$eventHandlers = new Map();
+		API.eventHandlers = new Map();
 
 		API.$emit = function (name, ...args) {
 			// console.log(name, ...args);
-			var handlers = this.$eventHandlers.get(name);
+			var handlers = this.eventHandlers.get(name);
 			if (handlers === undefined) {
 				return;
 			}
@@ -225,16 +225,16 @@ if (window.CefSharp) {
 		};
 
 		API.$on = function (name, fx) {
-			var handlers = this.$eventHandlers.get(name);
+			var handlers = this.eventHandlers.get(name);
 			if (handlers === undefined) {
 				handlers = [];
-				this.$eventHandlers.set(name, handlers);
+				this.eventHandlers.set(name, handlers);
 			}
 			handlers.push(fx);
 		};
 
 		API.$off = function (name, fx) {
-			var handlers = this.$eventHandlers.get(name);
+			var handlers = this.eventHandlers.get(name);
 			if (handlers === undefined) {
 				return;
 			}
@@ -244,14 +244,14 @@ if (window.CefSharp) {
 					if (length > 1) {
 						handlers.splice(i, 1);
 					} else {
-						this.$eventHandlers.delete(name);
+						this.eventHandlers.delete(name);
 					}
 					break;
 				}
 			}
 		};
 
-		API.$pendingGetRequests = new Map();
+		API.pendingGetRequests = new Map();
 
 		API.call = function (endpoint, options) {
 			var input = `https://api.vrchat.cloud/api/1/${endpoint}`;
@@ -276,7 +276,7 @@ if (window.CefSharp) {
 				}
 				delete init.body;
 				// merge requests
-				var request = this.$pendingGetRequests.get(input);
+				var request = this.pendingGetRequests.get(input);
 				if (request) {
 					return request;
 				}
@@ -324,15 +324,15 @@ if (window.CefSharp) {
 
 			if (isGetRequest) {
 				req.finally(() => {
-					this.$pendingGetRequests.delete(input);
+					this.pendingGetRequests.delete(input);
 				});
-				this.$pendingGetRequests.set(input, req);
+				this.pendingGetRequests.set(input, req);
 			}
 
 			return req;
 		};
 
-		API.$status = {
+		API.statusCodes = {
 			100: 'Continue',
 			101: 'Switching Protocols',
 			102: 'Processing',
@@ -410,7 +410,7 @@ if (window.CefSharp) {
 		API.$throw = function (code, error, extra) {
 			var text = [];
 			if (code) {
-				var status = this.$status[code];
+				var status = this.statusCodes[code];
 				if (status) {
 					text.push(`${code} ${status}`);
 				} else {
