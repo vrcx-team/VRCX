@@ -376,7 +376,7 @@ if (window.CefSharp) {
 
 		// API: Config
 
-		API.config = {};
+		API.cachedConfig = {};
 
 		API.$on('CONFIG', function (args) {
 			args.ref = this.updateConfig(args.json);
@@ -399,7 +399,7 @@ if (window.CefSharp) {
 				clientApiKey: '',
 				...ref
 			};
-			this.config = ctx;
+			this.cachedConfig = ctx;
 			return ctx;
 		};
 
@@ -546,7 +546,7 @@ if (window.CefSharp) {
 			}
 		*/
 		API.getWorld = function (param) {
-			return this.call(`worlds/${param.worldId}?apiKey=${this.config.clientApiKey}`, {
+			return this.call(`worlds/${param.worldId}?apiKey=${this.cachedConfig.clientApiKey}`, {
 				method: 'GET'
 			}).then((json) => {
 				var args = {

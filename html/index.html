@@ -252,10 +252,10 @@
 				</el-button-group>
 			</el-tab-pane>
 			<el-tab-pane label="World" v-loading="isSearchWorldLoading" style="min-height:60px">
-				<el-dropdown @command="(command) => searchWorld(API.config.dynamicWorldRows[command])" size="small" trigger="click" style="margin-bottom:15px">
+				<el-dropdown @command="(command) => searchWorld(API.cachedConfig.dynamicWorldRows[command])" size="small" trigger="click" style="margin-bottom:15px">
 					<el-button size="small">Search by Category <i class="el-icon-arrow-down el-icon--right"></i></el-button>
 					<el-dropdown-menu #default="dropdown">
-						<el-dropdown-item v-for="row in API.config.dynamicWorldRows" :key="row.index" v-text="row.name" :command="row.index"></el-dropdown-item>
+						<el-dropdown-item v-for="row in API.cachedConfig.dynamicWorldRows" :key="row.index" v-text="row.name" :command="row.index"></el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 				<div class="x-friend-list">
@@ -676,19 +676,19 @@
 				<div class="x-friend-item">
 					<div class="detail">
 						<span class="name">SDK Unity Version</span>
-						<span class="extra" v-text="API.config.sdkUnityVersion"></span>
+						<span class="extra" v-text="API.cachedConfig.sdkUnityVersion"></span>
 					</div>
 				</div>
 				<div class="x-friend-item">
 					<div class="detail">
 						<span class="name">SDK Version</span>
-						<span class="extra" v-text="API.config.releaseSdkVersion"></span>
+						<span class="extra" v-text="API.cachedConfig.releaseSdkVersion"></span>
 					</div>
 				</div>
 				<div class="x-friend-item">
 					<div class="detail">
 						<span class="name">SDK URL</span>
-						<span class="extra" v-text="API.config.releaseSdkUrl"></span>
+						<span class="extra" v-text="API.cachedConfig.releaseSdkUrl"></span>
 					</div>
 				</div>
 			</div>

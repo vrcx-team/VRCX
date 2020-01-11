@@ -463,7 +463,7 @@ if (window.CefSharp) {
 
 		// API: Config
 
-		API.config = {};
+		API.cachedConfig = {};
 
 		API.$on('CONFIG', function (args) {
 			args.ref = this.updateConfig(args.json);
@@ -486,7 +486,7 @@ if (window.CefSharp) {
 				clientApiKey: '',
 				...ref
 			};
-			this.config = ctx;
+			this.cachedConfig = ctx;
 			return ctx;
 		};
 
@@ -724,7 +724,7 @@ if (window.CefSharp) {
 			}
 		*/
 		API.login = function (param) {
-			return this.call(`auth/user?apiKey=${this.config.clientApiKey}`, {
+			return this.call(`auth/user?apiKey=${this.cachedConfig.clientApiKey}`, {
 				method: 'GET',
 				headers: {
 					Authorization: `Basic ${btoa(encodeURIComponent(`${param.username}:${param.password}`).replace(/%([0-9A-F]{2})/gu, (_, s) => String.fromCharCode(parseInt(s, 16))).replace('%', '%25'))}`
@@ -750,7 +750,7 @@ if (window.CefSharp) {
 			}
 		*/
 		API.loginWithSteam = function (param) {
-			return this.call(`auth/steam?apiKey=${this.config.clientApiKey}`, {
+			return this.call(`auth/steam?apiKey=${this.cachedConfig.clientApiKey}`, {
 				method: 'POST',
 				body: param
 			}).then((json) => {
@@ -807,7 +807,7 @@ if (window.CefSharp) {
 		};
 
 		API.getCurrentUser = function () {
-			return this.call(`auth/user?apiKey=${this.config.clientApiKey}`, {
+			return this.call(`auth/user?apiKey=${this.cachedConfig.clientApiKey}`, {
 				method: 'GET'
 			}).then((json) => {
 				var args = {
