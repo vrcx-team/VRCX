@@ -615,7 +615,7 @@ if (window.CefSharp) {
 					} else if (L.isPrivate) {
 						this.text = 'Private';
 					} else if (L.worldId) {
-						var ref = API.world[L.worldId];
+						var ref = API.cachedWorlds.get(L.worldId);
 						if (ref) {
 							if (L.instanceId) {
 								this.text = `${ref.name} #${L.instanceName} ${L.accessType}`;
@@ -1086,7 +1086,7 @@ if (window.CefSharp) {
 
 		// API: World
 
-		API.world = {};
+		API.cachedWorlds = new Map();
 
 		API.$on('WORLD', function (args) {
 			args.ref = this.updateWorld(args.json);
@@ -1122,7 +1122,7 @@ if (window.CefSharp) {
 		};
 
 		API.updateWorld = function (ref) {
-			var ctx = this.world[ref.id];
+			var ctx = this.cachedWorlds.get(ref.id);
 			if (ctx) {
 				Object.assign(ctx, ref);
 			} else {
@@ -1163,7 +1163,7 @@ if (window.CefSharp) {
 					//
 					...ref
 				};
-				this.world[ctx.id] = ctx;
+				this.cachedWorlds.set(ctx.id, ctx);
 			}
 			if (ctx.tags) {
 				ctx.labs_ = ctx.tags.includes('system_labs');
@@ -1178,7 +1178,7 @@ if (window.CefSharp) {
 		*/
 		API.getCachedWorld = function (param) {
 			return new Promise((resolve, reject) => {
-				var ctx = this.world[param.worldId];
+				var ctx = this.cachedWorlds.get(param.worldId);
 				if (ctx) {
 					resolve({
 						cache: true,
@@ -4592,7 +4592,7 @@ if (window.CefSharp) {
 					L.worldName = L.worldId;
 					this.lastLocation_ = L;
 					if (L.worldId) {
-						var ref = API.world[L.worldId];
+						var ref = API.cachedWorlds.get(L.worldId);
 						if (ref) {
 							L.worldName = ref.name;
 						} else {
@@ -4918,7 +4918,7 @@ if (window.CefSharp) {
 			} else if (type === 'world') {
 				var ctx = this.favoriteWorld[objectId];
 				if (favorite) {
-					var ref = API.world[objectId];
+					var ref = API.cachedWorlds.get(objectId);
 					if (ctx) {
 						if (ctx.ref !== ref) {
 							ctx.ref = ref;
@@ -5885,7 +5885,7 @@ if (window.CefSharp) {
 					D.isWorldsLoading = false;
 					D.isAvatarsLoading = false;
 					for (var key in API.world) {
-						var ref = API.world[key];
+						var ref = API.cachedWorlds.get(key);
 						if (ref.authorId === D.id) {
 							D.worlds.push(ref);
 						}
@@ -5963,7 +5963,7 @@ if (window.CefSharp) {
 						});
 					}
 				};
-				var ref = API.world[L.worldId];
+				var ref = API.cachedWorlds.get(L.worldId);
 				if (ref) {
 					handle(ref.instances);
 				} else {
@@ -6726,7 +6726,7 @@ if (window.CefSharp) {
 					D.worldName = ref.name;
 					D.visible = true;
 				};
-				var ref = API.world[L.worldId];
+				var ref = API.cachedWorlds.get(L.worldId);
 				if (ref) {
 					handle(ref);
 				} else {
