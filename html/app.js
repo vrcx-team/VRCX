@@ -2982,60 +2982,6 @@ if (window.CefSharp) {
 			});
 		};
 
-		// API: Time
-
-		API.getServerTime = function () {
-			return this.call('time', {
-				method: 'GET'
-			}).then((json) => {
-				var args = {
-					json
-				};
-				this.$emit('TIME', args);
-				return args;
-			});
-		};
-
-		// API: Youtube
-
-		/*
-			param = {
-				q: string,
-				type: string ('video'),
-				safeSearch: string ('strict'),
-				maxResults: number (25),
-				part: string ('snippet')
-			}
-		*/
-		API.youtube = function (param) {
-			return this.call('youtube', {
-				method: 'GET',
-				body: param
-			}).then((json) => {
-				var args = {
-					param,
-					json
-				};
-				this.$emit('YOUTUBE', args);
-				return args;
-			});
-		};
-
-		// API: Events
-
-		// deprecated: moved to user's property
-		API.getEvents = function () {
-			return this.call('events', {
-				method: 'GET'
-			}).then((json) => {
-				var args = {
-					json
-				};
-				this.$emit('EVENTS', args);
-				return args;
-			});
-		};
-
 		// API
 
 		var extractFileId = (s) => {
