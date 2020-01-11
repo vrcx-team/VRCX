@@ -26,7 +26,6 @@ module.exports = {
         'camelcase': 0,
         'capitalized-comments': 0,
         'complexity': 0,
-        'default-case': 0,
         'func-names': 0,
         'function-call-argument-newline': 0,
         'guard-for-in': 0,

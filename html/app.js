@@ -3260,6 +3260,9 @@ if (window.CefSharp) {
 						}
 					});
 					break;
+
+				default:
+					break;
 			}
 		});
 
@@ -6166,6 +6169,8 @@ if (window.CefSharp) {
 						type: 'hideAvatar'
 					});
 					break;
+				default:
+					break;
 			}
 		};
 
@@ -6437,6 +6442,8 @@ if (window.CefSharp) {
 											return args;
 										});
 										break;
+									default:
+										break;
 								}
 							}
 						}
@@ -6569,6 +6576,8 @@ if (window.CefSharp) {
 										API.selectAvatar({
 											avatarId: D.id
 										});
+										break;
+									default:
 										break;
 								}
 							}
