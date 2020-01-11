@@ -23,6 +23,7 @@ module.exports = {
     },
     'root': true,
     'rules': {
+        'block-scoped-var': 0,
         'camelcase': 0,
         'capitalized-comments': 0,
         'complexity': 0,
@@ -48,6 +49,7 @@ module.exports = {
         'no-magic-numbers': 0,
         'no-mixed-operators': 0,
         'no-plusplus': 0,
+        'no-redeclare': 0,
         'no-tabs': 0,
         'no-ternary': 0,
         'no-undefined': 0,
