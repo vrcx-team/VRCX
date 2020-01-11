@@ -5884,8 +5884,7 @@ if (window.CefSharp) {
 					D.avatars = [];
 					D.isWorldsLoading = false;
 					D.isAvatarsLoading = false;
-					for (var key in API.world) {
-						var ref = API.cachedWorlds.get(key);
+					for (var ref of API.cachedWorlds.values()) {
 						if (ref.authorId === D.id) {
 							D.worlds.push(ref);
 						}
