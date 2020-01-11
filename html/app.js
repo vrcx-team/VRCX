@@ -433,36 +433,32 @@ if (window.CefSharp) {
 			throw new Error(text);
 		};
 
+		API.$bulk = function (options, args) {
+			if (typeof options.handle === 'function') {
+				options.handle(args, options);
+			}
+			if (args.json.length &&
+				(options.param.offset += args.json.length,
+					// eslint-disable-next-line no-nested-ternary
+					options.N > 0
+						? options.N > options.param.offset
+						: options.N < 0
+							? args.json.length
+							: options.param.n === args.json.length)) {
+				this.bulk(options);
+			} else if (typeof options.done === 'function') {
+				options.done(true, options);
+			}
+			return args;
+		};
+
 		API.bulk = function (options) {
-			var handle = (args) => {
-				if (typeof options.handle === 'function') {
-					options.handle(args, options);
-				}
-				if (args.json.length &&
-					(options.param.offset += args.json.length,
-						// eslint-disable-next-line no-nested-ternary
-						options.N > 0
-							? options.N > options.param.offset
-							: options.N < 0
-								? args.json.length
-								: options.param.n === args.json.length)) {
-					this[options.fn](options.param).catch((err) => {
-						if (typeof options.done === 'function') {
-							options.done(false, options);
-						}
-						throw err;
-					}).then(handle);
-				} else if (typeof options.done === 'function') {
-					options.done(true, options);
-				}
-				return args;
-			};
 			this[options.fn](options.param).catch((err) => {
 				if (typeof options.done === 'function') {
 					options.done(false, options);
 				}
 				throw err;
-			}).then(handle);
+			}).then((args) => this.$bulk(options, args));
 		};
 
 		// API: Config
