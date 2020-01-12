@@ -797,7 +797,7 @@ CefSharp.BindObjectAsync(
 		});
 	};
 
-	var applyUserTrustLevel = function (ref) {
+	API.applyUserTrustLevel = function (ref) {
 		ref.$isModerator = ref.developerType &&
 			ref.developerType !== 'none';
 		ref.$isTroll = false;
@@ -847,7 +847,7 @@ CefSharp.BindObjectAsync(
 			if (ref.homeLocation !== ref.$homeLocation.tag) {
 				ref.$homeLocation = this.parseLocation(ref.homeLocation);
 			}
-			applyUserTrustLevel(ref);
+			this.applyUserTrustLevel(ref);
 		} else {
 			ref = {
 				id: '',
@@ -884,7 +884,7 @@ CefSharp.BindObjectAsync(
 				...json
 			};
 			ref.$homeLocation = this.parseLocation(ref.homeLocation);
-			applyUserTrustLevel(ref);
+			this.applyUserTrustLevel(ref);
 			this.currentUser = ref;
 			this.isLoggedIn = true;
 			this.$emit('LOGIN', {
@@ -964,7 +964,7 @@ CefSharp.BindObjectAsync(
 				...json
 			};
 			ref.$location = this.parseLocation(ref.location);
-			applyUserTrustLevel(ref);
+			this.applyUserTrustLevel(ref);
 			this.cachedUsers.set(ref.id, ref);
 		} else {
 			var props = {};
@@ -978,7 +978,7 @@ CefSharp.BindObjectAsync(
 			if (ref.location !== ref.$location.tag) {
 				ref.$location = this.parseLocation(ref.location);
 			}
-			applyUserTrustLevel(ref);
+			this.applyUserTrustLevel(ref);
 			for (var prop in ref) {
 				if (isObject(ref[prop]) === false) {
 					props[prop] = true;
