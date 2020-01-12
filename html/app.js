@@ -2753,6 +2753,7 @@ CefSharp.BindObjectAsync(
 				break;
 
 			case 'friend-location':
+				// it seems to only come when a friend is in a private world :/
 				if (content.location !== 'private') {
 					this.$emit('WORLD', {
 						json: content.world,
