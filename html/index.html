@@ -1737,14 +1737,14 @@ SOFTWARE.
 <script src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.11.1/index.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.11.1/locale/en.min.js"></script>
 <script>
-(() => {
+(function () {
 	var link = document.createElement('link');
 	link.rel = 'stylesheet';
 	link.href = `app.css?_=${Date.now()}`;
-	document.getElementsByTagName('head')[0].appendChild(link);
+	document.head.appendChild(link);
 	var script = document.createElement('script');
 	script.src = `app.js?_=${Date.now()}`;
-	document.getElementsByTagName('body')[0].appendChild(script);
+	document.body.appendChild(script);
 })();
 </script>
 </body>
