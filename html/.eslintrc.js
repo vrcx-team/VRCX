@@ -23,6 +23,7 @@ module.exports = {
     },
     'root': true,
     'rules': {
+        'array-element-newline': 0,
         'block-scoped-var': 0,
         'camelcase': 0,
         'capitalized-comments': 0,
