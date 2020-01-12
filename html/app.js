@@ -3015,16 +3015,16 @@ CefSharp.BindObjectAsync(
 		});
 	};
 
-	var insertOrUpdateArrayById = (array, json) => {
-		var { id } = json;
+	var insertOrUpdateArrayById = (array, ref) => {
+		var { id } = ref;
 		var { length } = array;
 		for (var i = 0; i < length; ++i) {
 			if (array[i].id === id) {
-				Vue.set(array, i, json);
+				Vue.set(array, i, ref);
 				return;
 			}
 		}
-		array.push(json);
+		array.push(ref);
 	};
 
 	$app.methods.update = function () {
@@ -4168,9 +4168,13 @@ CefSharp.BindObjectAsync(
 			this.isSearchUserLoading = false;
 		}).then((args) => {
 			this.searchUsers = [];
-			args.json.forEach((json) => {
-				insertOrUpdateArrayById(this.searchUsers, json);
-			});
+			var { cachedUsers } = API;
+			for (var json of args.json) {
+				var ref = cachedUsers.get(json.id);
+				if (ref !== undefined) {
+					insertOrUpdateArrayById(this.searchUsers, ref);
+				}
+			}
 			return args;
 		});
 	};
@@ -4249,9 +4253,13 @@ CefSharp.BindObjectAsync(
 			this.isSearchWorldLoading = false;
 		}).then((args) => {
 			this.searchWorlds = [];
-			args.json.forEach((json) => {
-				insertOrUpdateArrayById(this.searchWorlds, json);
-			});
+			var { cachedWorlds } = API;
+			for (var json of args.json) {
+				var ref = cachedWorlds.get(json.id);
+				if (ref !== undefined) {
+					insertOrUpdateArrayById(this.searchWorlds, ref);
+				}
+			}
 			return args;
 		});
 	};
@@ -4296,9 +4304,13 @@ CefSharp.BindObjectAsync(
 			this.isSearchAvatarLoading = false;
 		}).then((args) => {
 			this.searchAvatars = [];
-			args.json.forEach((json) => {
-				insertOrUpdateArrayById(this.searchAvatars, json);
-			});
+			var { cachedAvatars } = API;
+			for (var json of args.json) {
+				var ref = cachedAvatars.get(json.id);
+				if (ref !== undefined) {
+					insertOrUpdateArrayById(this.searchAvatars, ref);
+				}
+			}
 			return args;
 		});
 	};
@@ -5487,9 +5499,13 @@ CefSharp.BindObjectAsync(
 				N: -1,
 				params,
 				handle: (args) => {
-					args.json.forEach((json) => {
-						insertOrUpdateArrayById(D.worlds, json);
-					});
+					var { cachedWorlds } = API;
+					for (var json of args.json) {
+						var ref = cachedWorlds.get(json.id);
+						if (ref !== undefined) {
+							insertOrUpdateArrayById(D.worlds, ref);
+						}
+					}
 				},
 				done: () => {
 					this.sortUserDialogWorlds();
@@ -5535,9 +5551,13 @@ CefSharp.BindObjectAsync(
 				N: -1,
 				params,
 				handle: (args) => {
-					args.json.forEach((json) => {
-						insertOrUpdateArrayById(D.avatars, json);
-					});
+					var { cachedAvatars } = API;
+					for (var json of args.json) {
+						var ref = cachedAvatars.get(json.id);
+						if (ref !== undefined) {
+							insertOrUpdateArrayById(D.avatars, ref);
+						}
+					}
 				},
 				done: () => {
 					this.sortUserDialogAvatars();
