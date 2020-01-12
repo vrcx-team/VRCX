@@ -240,7 +240,7 @@
 								<img v-lazy="user.currentAvatarThumbnailImageUrl">
 							</div>
 							<div class="detail">
-								<span v-text="user.displayName" class="name"></span>
+								<span v-text="user.displayName" class="name" :class="user.$trustClass"></span>
 								<span v-text="user.username" class="extra" style="font-family:monospace"></span>
 							</div>
 						</template>
