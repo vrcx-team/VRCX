@@ -241,9 +241,7 @@ CefSharp.BindObjectAsync(
 			}
 			this.$throw(res.status);
 		}).then((json) => {
-			if (isObject(json) === false) {
-				this.$throw(0, 'Invalid JSON response');
-			} else if (res.ok) {
+			if (res.ok) {
 				if (isObject(json.success)) {
 					new Noty({
 						type: 'success',
