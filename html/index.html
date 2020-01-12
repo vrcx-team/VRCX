@@ -310,7 +310,7 @@
 
 	<!-- favorite -->
 	<div v-show="$refs.menu && $refs.menu.activeIndex === 'favorite'" class="x-container">
-		<el-button type="default" :loading="API.isFavoriteLoading" @click="API.refreshFavorite()" size="small" icon="el-icon-refresh" circle style="position:relative;float:right;z-index:1"></el-button>
+		<el-button type="default" :loading="API.isFavoriteLoading" @click="API.refreshFavorites()" size="small" icon="el-icon-refresh" circle style="position:relative;float:right;z-index:1"></el-button>
 		<el-tabs type="card" v-loading="API.isFavoriteLoading">
 			<el-tab-pane label="Friend">
 				<el-collapse style="border:0">
@@ -445,14 +445,14 @@
 
 	<!-- moderation -->
 	<div v-show="$refs.menu && $refs.menu.activeIndex === 'moderation'" class="x-container">
-		<data-tables v-bind="playerModerationTable" v-loading="API.isPlayerModerationLoading">
+		<data-tables v-bind="playerModerationTable" v-loading="API.isPlayerModerationsLoading">
 			<template #tool>
 				<div style="margin:0 0 10px;display:flex;align-items:center">
 					<el-select v-model="playerModerationTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter">
 						<el-option v-once v-for="type in ['block', 'mute', 'unmute', 'hideAvatar', 'showAvatar']" :key="type" :label="type" :value="type"></el-option>
 					</el-select>
 					<el-input v-model="playerModerationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px"></el-input>
-					<el-button type="default" :loading="API.isPlayerModerationLoading" @click="API.refreshPlayerModeration()" icon="el-icon-refresh" circle style="flex:none"></el-button>
+					<el-button type="default" :loading="API.isPlayerModerationsLoading" @click="API.refreshPlayerModerations()" icon="el-icon-refresh" circle style="flex:none"></el-button>
 				</div>
 			</template>
 			<el-table-column label="Date" prop="created" sortable="custom" width="120">
@@ -485,7 +485,7 @@
 	</div>
 
 	<!-- notification -->
-	<div v-show="$refs.menu && $refs.menu.activeIndex === 'notification'" v-loading="API.isNotificationLoading" class="x-container">
+	<div v-show="$refs.menu && $refs.menu.activeIndex === 'notification'" v-loading="API.isNotificationsLoading" class="x-container">
 		<data-tables v-bind="notificationTable">
 			<template #tool>
 				<div style="margin:0 0 10px;display:flex;align-items:center">
@@ -493,7 +493,7 @@
 						<el-option v-once v-for="type in ['requestInvite', 'invite', 'friendRequest', 'message']" :key="type" :label="type" :value="type"></el-option>
 					</el-select>
 					<el-input v-model="notificationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px"></el-input>
-					<el-button type="default" :loading="API.isNotificationLoading" @click="API.refreshNotification()" icon="el-icon-refresh" circle style="flex:none"></el-button>
+					<el-button type="default" :loading="API.isNotificationsLoading" @click="API.refreshNotifications()" icon="el-icon-refresh" circle style="flex:none"></el-button>
 				</div>
 			</template>
 			<el-table-column label="Date" prop="created_at" sortable="custom" width="120">
@@ -697,19 +697,19 @@
 			<span style="font-weight:bold">Friends Sort Option</span>
 			<div style="font-size:12px;margin-top:5px">
 				<span style="display:inline-block;min-width:150px">VIP</span>
-				<el-switch v-model="orderFriendGroup0" inactive-text="by name" active-text="by state"></el-switch>
+				<el-switch v-model="orderFriendsGroup0" inactive-text="by name" active-text="by state"></el-switch>
 			</div>
 			<div style="font-size:12px;margin-top:5px">
 				<span style="display:inline-block;min-width:150px">ONLINE</span>
-				<el-switch v-model="orderFriendGroup1" inactive-text="by name" active-text="by state"></el-switch>
+				<el-switch v-model="orderFriendsGroup1" inactive-text="by name" active-text="by state"></el-switch>
 			</div>
 			<div style="font-size:12px;margin-top:5px">
 				<span style="display:inline-block;min-width:150px">ACTIVE</span>
-				<el-switch v-model="orderFriendGroup2" inactive-text="by name" active-text="by state"></el-switch>
+				<el-switch v-model="orderFriendsGroup2" inactive-text="by name" active-text="by state"></el-switch>
 			</div>
 			<div style="font-size:12px;margin-top:5px">
 				<span style="display:inline-block;min-width:150px">OFFLINE</span>
-				<el-switch v-model="orderFriendGroup3" inactive-text="by name" active-text="by state"></el-switch>
+				<el-switch v-model="orderFriendsGroup3" inactive-text="by name" active-text="by state"></el-switch>
 			</div>
 		</div>
 		<div style="margin-top:30px">
@@ -780,12 +780,12 @@
 			</el-option>
 		</el-select>
 		<div class="x-friend-list" style="padding-bottom:10px">
-			<div v-show="friendGroup0.length" class="x-friend-group">
-				<i class="el-icon-arrow-right" :class="{ rotate: isFriendGroup0 }"></i>
-				<span @click="isFriendGroup0 = !isFriendGroup0" class="x-link" style="margin-left:5px">VIP&horbar;{{ friendGroup0.length }}</span>
+			<div v-show="friendsGroup0.length" class="x-friend-group">
+				<i class="el-icon-arrow-right" :class="{ rotate: isFriendsGroup0 }"></i>
+				<span @click="isFriendsGroup0 = !isFriendsGroup0" class="x-link" style="margin-left:5px">VIP&horbar;{{ friendsGroup0.length }}</span>
 			</div>
-			<div v-show="isFriendGroup0">
-				<div v-for="friend in friendGroup0" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item">
+			<div v-show="isFriendsGroup0">
+				<div v-for="friend in friendsGroup0" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item">
 					<template v-if="friend.ref">
 						<div class="avatar" :class="userStatusClass(friend.ref)">
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
@@ -802,12 +802,12 @@
 					</template>
 				</div>
 			</div>
-			<div v-show="friendGroup1.length" class="x-friend-group">
-				<i class="el-icon-arrow-right" :class="{ rotate: isFriendGroup1 }"></i>
-				<span @click="isFriendGroup1 = !isFriendGroup1" class="x-link" style="margin-left:5px">ONLINE&horbar;{{ friendGroup1.length }}</span>
+			<div v-show="friendsGroup1.length" class="x-friend-group">
+				<i class="el-icon-arrow-right" :class="{ rotate: isFriendsGroup1 }"></i>
+				<span @click="isFriendsGroup1 = !isFriendsGroup1" class="x-link" style="margin-left:5px">ONLINE&horbar;{{ friendsGroup1.length }}</span>
 			</div>
-			<div v-show="isFriendGroup1">
-				<div v-for="friend in friendGroup1" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item">
+			<div v-show="isFriendsGroup1">
+				<div v-for="friend in friendsGroup1" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item">
 					<template v-if="friend.ref">
 						<div class="avatar" :class="userStatusClass(friend.ref)">
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
@@ -824,12 +824,12 @@
 					</template>
 				</div>
 			</div>
-			<div v-show="friendGroup2.length" class="x-friend-group">
-				<i class="el-icon-arrow-right" :class="{ rotate: isFriendGroup2 }"></i>
-				<span @click="isFriendGroup2 = !isFriendGroup2" class="x-link" style="margin-left:5px">ACTIVE&horbar;{{ friendGroup2.length }}</span>
+			<div v-show="friendsGroup2.length" class="x-friend-group">
+				<i class="el-icon-arrow-right" :class="{ rotate: isFriendsGroup2 }"></i>
+				<span @click="isFriendsGroup2 = !isFriendsGroup2" class="x-link" style="margin-left:5px">ACTIVE&horbar;{{ friendsGroup2.length }}</span>
 			</div>
-			<div v-show="isFriendGroup2">
-				<div v-for="friend in friendGroup2" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item">
+			<div v-show="isFriendsGroup2">
+				<div v-for="friend in friendsGroup2" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item">
 					<template v-if="friend.ref">
 						<div class="avatar">
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
@@ -846,12 +846,12 @@
 					</template>
 				</div>
 			</div>
-			<div v-show="friendGroup3.length" class="x-friend-group">
-				<i class="el-icon-arrow-right" :class="{ rotate: isFriendGroup3 }"></i>
-				<span @click="isFriendGroup3 = !isFriendGroup3" class="x-link" style="margin-left:5px">OFFLINE&horbar;{{ friendGroup3.length }}</span>
+			<div v-show="friendsGroup3.length" class="x-friend-group">
+				<i class="el-icon-arrow-right" :class="{ rotate: isFriendsGroup3 }"></i>
+				<span @click="isFriendsGroup3 = !isFriendsGroup3" class="x-link" style="margin-left:5px">OFFLINE&horbar;{{ friendsGroup3.length }}</span>
 			</div>
-			<div v-show="isFriendGroup3">
-				<div v-for="friend in friendGroup3" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item">
+			<div v-show="isFriendsGroup3">
+				<div v-for="friend in friendsGroup3" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item">
 					<template v-if="friend.ref">
 						<div class="avatar">
 							<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
@@ -1303,8 +1303,8 @@
 						</div>
 					</el-option>
 				</el-option-group>
-				<el-option-group v-if="friendGroup0.length" label="VIP">
-					<el-option v-for="friend in friendGroup0" :key="friend.id" :label="friend.name" :value="friend.id" class="x-friend-item" style="height:auto">
+				<el-option-group v-if="friendsGroup0.length" label="VIP">
+					<el-option v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" class="x-friend-item" style="height:auto">
 						<template v-if="friend.ref">
 							<div class="avatar" :class="userStatusClass(friend.ref)">
 								<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
@@ -1316,8 +1316,8 @@
 						<span v-else v-text="friend.id"></span>
 					</el-option>
 				</el-option-group>
-				<el-option-group v-if="friendGroup1.length" label="ONLINE">
-					<el-option v-for="friend in friendGroup1" :key="friend.id" :label="friend.name" :value="friend.id" class="x-friend-item" style="height:auto">
+				<el-option-group v-if="friendsGroup1.length" label="ONLINE">
+					<el-option v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" class="x-friend-item" style="height:auto">
 						<template v-if="friend.ref">
 							<div class="avatar" :class="userStatusClass(friend.ref)">
 								<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
@@ -1329,8 +1329,8 @@
 						<span v-else v-text="friend.id"></span>
 					</el-option>
 				</el-option-group>
-				<el-option-group v-if="friendGroup2.length" label="ACTIVE">
-					<el-option v-for="friend in friendGroup2" :key="friend.id" :label="friend.name" :value="friend.id" class="x-friend-item" style="height:auto">
+				<el-option-group v-if="friendsGroup2.length" label="ACTIVE">
+					<el-option v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" class="x-friend-item" style="height:auto">
 						<template v-if="friend.ref">
 							<div class="avatar">
 								<img v-lazy="friend.ref.currentAvatarThumbnailImageUrl">
