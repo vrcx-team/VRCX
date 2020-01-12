@@ -798,12 +798,12 @@ CefSharp.BindObjectAsync(
 	};
 
 	var applyUserTrustLevel = function (ref) {
-		ref.$isVIP = ref.developerType &&
+		ref.$isModerator = ref.developerType &&
 			ref.developerType !== 'none';
 		ref.$isTroll = false;
 		var { tags } = ref;
 		if (tags.includes('admin_moderator')) {
-			ref.$isVIP = true;
+			ref.$isModerator = true;
 		}
 		if (tags.includes('system_troll') ||
 			tags.includes('system_probable_troll')) {
@@ -831,7 +831,7 @@ CefSharp.BindObjectAsync(
 			ref.$trustLevel = 'Visitor';
 			ref.$trustClass = 'x-tag-untrusted';
 		}
-		if (ref.$isVIP) {
+		if (ref.$isModerator) {
 			ref.$trustLevel = 'VRChat Team';
 			ref.$trustClass = 'x-tag-vip';
 		} else if (ref.$isTroll) {
@@ -876,7 +876,7 @@ CefSharp.BindObjectAsync(
 				offlineFriends: [],
 				// VRCX
 				$homeLocation: {},
-				$isVIP: false,
+				$isModerator: false,
 				$isTroll: false,
 				$trustLevel: 'Visitor',
 				$trustClass: 'x-tag-untrusted',
@@ -956,7 +956,7 @@ CefSharp.BindObjectAsync(
 				// VRCX
 				$location: {},
 				$location_at: Date.now(),
-				$isVIP: false,
+				$isModerator: false,
 				$isTroll: false,
 				$trustLevel: 'Visitor',
 				$trustClass: 'x-tag-untrusted',
