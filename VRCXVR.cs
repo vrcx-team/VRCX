@@ -239,7 +239,8 @@ namespace VRCX
             {
                 var devClass = system.GetTrackedDeviceClass(i);
                 if (devClass == ETrackedDeviceClass.Controller ||
-                    devClass == ETrackedDeviceClass.GenericTracker)
+                    devClass == ETrackedDeviceClass.GenericTracker ||
+                    devClass == ETrackedDeviceClass.TrackingReference)
                 {
                     var err = ETrackedPropertyError.TrackedProp_Success;
                     var batteryPercentage = system.GetFloatTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_DeviceBatteryPercentage_Float, ref err);
@@ -293,6 +294,10 @@ namespace VRCX
                     else if (devClass == ETrackedDeviceClass.GenericTracker)
                     {
                         type = "tracker";
+                    }
+                    else if (devClass == ETrackedDeviceClass.TrackingReference)
+                    {
+                        type = "base";
                     }
                     var item = new[]
                     {
