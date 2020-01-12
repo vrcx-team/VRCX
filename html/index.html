@@ -982,7 +982,7 @@
 							<div class="detail">
 								<span class="name">Bio</span>
 								<pre class="extra" style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0;">{{ userDialog.ref.bio || '-' }}</pre>								<div style="margin-top:5px">
-									<el-tooltip v-for="link in userDialog.ref.bioLinks">
+									<el-tooltip v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
 										<template #content>
 											<span v-text="link"></span>
 										</template>
