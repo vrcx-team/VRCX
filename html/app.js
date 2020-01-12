@@ -1803,6 +1803,20 @@ CefSharp.BindObjectAsync(
 		return '';
 	};
 
+	API.parseInviteLocation = function (ref) {
+		try {
+			var L = API.parseLocation(ref.details.worldId);
+			if (L.worldId !== '' && L.instanceId !== '') {
+				return `${ref.details.worldName} #${L.instanceName} ${L.accessType}`;
+			}
+			return ref.message ||
+				ref.details.worldId ||
+				ref.details.worldName;
+		} catch (err) {
+			return '';
+		}
+	};
+
 	// API: PlayerModeration
 
 	API.cachedPlayerModerations = new Map();
@@ -4834,20 +4848,21 @@ CefSharp.BindObjectAsync(
 	});
 
 	API.$on('PLAYER-MODERATION', function (args) {
+		var { ref } = args;
 		var insertOrUpdate = $app.playerModerationTable.data.some((val, idx, arr) => {
-			if (val.id === args.ref.id) {
-				if (args.ref.$isExpired) {
+			if (val.id === ref.id) {
+				if (ref.$isExpired) {
 					Vue.delete(arr, idx);
 				} else {
-					Vue.set(arr, idx, args.ref);
+					Vue.set(arr, idx, ref);
 				}
 				return true;
 			}
 			return false;
 		});
 		if (!insertOrUpdate &&
-			!args.ref.$isExpired) {
-			$app.playerModerationTable.data.push(args.ref);
+			!ref.$isExpired) {
+			$app.playerModerationTable.data.push(ref);
 			$app.notifyMenu('moderation');
 		}
 	});
@@ -4920,20 +4935,21 @@ CefSharp.BindObjectAsync(
 	});
 
 	API.$on('NOTIFICATION', function (args) {
+		var { ref } = args;
 		var insertOrUpdate = $app.notificationTable.data.some((val, idx, arr) => {
-			if (val.id === args.ref.id) {
-				if (args.ref.$isExpired) {
+			if (val.id === ref.id) {
+				if (ref.$isExpired) {
 					Vue.delete(arr, idx);
 				} else {
-					Vue.set(arr, idx, args.ref);
+					Vue.set(arr, idx, ref);
 				}
 				return true;
 			}
 			return false;
 		});
 		if (!insertOrUpdate &&
-			!args.ref.$isExpired) {
-			$app.notificationTable.data.push(args.ref);
+			!ref.$isExpired) {
+			$app.notificationTable.data.push(ref);
 			$app.notifyMenu('notification');
 		}
 	});
@@ -4947,16 +4963,6 @@ CefSharp.BindObjectAsync(
 			return false;
 		});
 	});
-
-	$app.methods.parseInviteLocation = function (row) {
-		try {
-			var L = API.parseLocation(row.details.worldId);
-			return `${row.details.worldName} #${L.instanceName} ${L.accessType}`;
-		} catch (err) {
-			console.error(err);
-			return '';
-		}
-	};
 
 	$app.methods.acceptNotification = function (row) {
 		// FIXME: 메시지 수정

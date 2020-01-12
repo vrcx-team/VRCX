@@ -510,7 +510,7 @@
 				<template v-once #default="scope">
 					<el-tooltip placement="top" v-if="scope.row.type === 'invite'">
 						<template #content>
-							<span v-text="parseInviteLocation(scope.row)"></span>
+							<span v-text="API.parseInviteLocation(scope.row)"></span>
 						</template>
 						<span v-text="scope.row.type" @click="showWorldDialog(scope.row.details.worldId)" class="x-link"></span>
 					</el-tooltip>
@@ -914,10 +914,8 @@
 						<el-dropdown trigger="click" @command="userDialogCommand" size="small">
 							<el-button :type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle></el-button>
 							<el-dropdown-menu #default="dropdown">
-								<el-dropdown-item icon="el-icon-s-custom" command="Show Avatar Author">Show Avatar Author</el-dropdown-item>
 								<template v-if="userDialog.isFriend">
 									<el-dropdown-item icon="el-icon-message" command="Message">Message</el-dropdown-item>
-									<el-dropdown-item icon="el-icon-delete" command="Unfriend" divided>Unfriend</el-dropdown-item>
 								</template>
 								<template v-else-if="userDialog.incomingRequest">
 									<el-dropdown-item icon="el-icon-check" command="Accept Friend Request">Accept Friend Request</el-dropdown-item>
@@ -925,12 +923,16 @@
 								</template>
 								<el-dropdown-item v-else-if="userDialog.outgoingRequest" icon="el-icon-close" command="Cancel Friend Request">Cancel Friend Request</el-dropdown-item>
 								<el-dropdown-item v-else icon="el-icon-plus" command="Send Friend Request">Send Friend Request</el-dropdown-item>
+								<el-dropdown-item icon="el-icon-s-custom" command="Show Avatar Author" divided>Show Avatar Author</el-dropdown-item>
 								<el-dropdown-item v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided style="color:#F56C6C">Unblock</el-dropdown-item>
 								<el-dropdown-item v-else icon="el-icon-circle-close" command="Block" divided>Block</el-dropdown-item>
 								<el-dropdown-item v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C">Unmute</el-dropdown-item>
 								<el-dropdown-item v-else icon="el-icon-turn-off-microphone" command="Mute">Mute</el-dropdown-item>
 								<el-dropdown-item v-if="userDialog.isHideAvatar" icon="el-icon-user-solid" command="Show Avatar" style="color:#F56C6C">Show Avatar</el-dropdown-item>
 								<el-dropdown-item v-else icon="el-icon-user" command="Hide Avatar">Hide Avatar</el-dropdown-item>
+								<template v-if="userDialog.isFriend">
+									<el-dropdown-item icon="el-icon-delete" command="Unfriend" divided>Unfriend</el-dropdown-item>
+								</template>
 							</el-dropdown-menu>
 						</el-dropdown>
 					</div>
