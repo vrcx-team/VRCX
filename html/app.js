@@ -2688,6 +2688,14 @@ CefSharp.BindObjectAsync(
 				break;
 
 			case 'friend-online':
+				if (content.location !== 'private') {
+					this.$emit('WORLD', {
+						json: content.world,
+						params: {
+							worldId: content.world.id
+						}
+					});
+				}
 				this.$emit('USER', {
 					json: {
 						location: content.location,
@@ -2745,7 +2753,7 @@ CefSharp.BindObjectAsync(
 				break;
 
 			case 'friend-location':
-				if (content.world) {
+				if (content.location !== 'private') {
 					this.$emit('WORLD', {
 						json: content.world,
 						params: {
