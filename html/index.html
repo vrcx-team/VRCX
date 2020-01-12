@@ -971,12 +971,24 @@
 							</div>
 						</div>
 					</div>
-					
 					<div class="x-friend-list" style="max-height:none">
 						<div class="x-friend-item" style="width:100%">
 							<div class="detail">
 								<span class="name">Note</span>
 								<el-input v-model="userDialog.memo" type="textarea" :rows="2" placeholder="Click to add a note" size="mini" resize="none" class="extra"></el-input>
+							</div>
+						</div>
+						<div class="x-friend-item" style="width:100%">
+							<div class="detail">
+								<span class="name">Bio</span>
+								<pre class="extra" style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0;">{{ userDialog.ref.bio || '-' }}</pre>								<div style="margin-top:5px">
+									<el-tooltip v-for="link in userDialog.ref.bioLinks">
+										<template #content>
+											<span v-text="link"></span>
+										</template>
+										<img :src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px">
+									</el-tooltip>
+								</div>
 							</div>
 						</div>
 						<div class="x-friend-item">

@@ -5208,6 +5208,15 @@ CefSharp.BindObjectAsync(
 		this.saveMemo(D.id, D.memo);
 	};
 
+	$app.methods.getFaviconUrl = function (resource) {
+		try {
+			var url = new URL(resource);
+			return `https://www.google.com/s2/favicons?domain=${url.origin}`;
+		} catch (err) {
+			return '';
+		}
+	};
+
 	API.$on('LOGOUT', function () {
 		$app.userDialog.visible = false;
 	});
