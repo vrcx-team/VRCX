@@ -7,6 +7,17 @@ This work is licensed under the terms of the MIT license.
 For a copy, see <https://opensource.org/licenses/MIT>.
 */
 
+.color-palettes {
+	background: #409EFF;
+	background: #67C23A;
+	background: #E6A23C;
+	background: #F56C6C;
+	background: #909399;
+	background: #FD9200;
+	background: #E6E6E6;
+	background: #C0C4CC;
+}
+
 .noty_layout {
 	word-break: break-all;
 }
@@ -292,6 +303,10 @@ a {
 	background: #67C23A;
 }
 
+.x-friend-item>.avatar.inactive::after {
+	background: #FD9200;
+}
+
 .x-friend-item>.avatar.joinme::after {
 	background: #409EFF;
 }
@@ -357,6 +372,10 @@ i.x-user-status {
 
 i.x-user-status.active {
 	background: #67C23A;
+}
+
+i.x-user-status.inactive {
+	background: #FD9200;
 }
 
 i.x-user-status.joinme {

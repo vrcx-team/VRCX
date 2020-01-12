@@ -884,7 +884,8 @@
 						<div>
 							<el-tooltip v-if="userDialog.ref.status" placement="top">
 								<template #content>
-									<span v-if="userDialog.ref.location === 'offline'">Offline</span>
+									<span v-if="userDialog.ref.state === 'active'">Active</span>
+									<span v-else-if="userDialog.ref.location === 'offline'">Offline</span>
 									<span v-else-if="userDialog.ref.status === 'active'">Active</span>
 									<span v-else-if="userDialog.ref.status === 'join me'">Join Me</span>
 									<span v-else-if="userDialog.ref.status === 'busy'">Busy</span>

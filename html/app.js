@@ -3705,7 +3705,9 @@ CefSharp.BindObjectAsync(
 	$app.methods.userStatusClass = function (user) {
 		var style = {};
 		if (user) {
-			if (user.location === 'offline') {
+			if (user.state === 'active') {
+				style.inactive = true;
+			} else if (user.location === 'offline') {
 				style.offline = true;
 			} else if (user.status === 'active') {
 				style.active = true;
