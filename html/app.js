@@ -192,6 +192,11 @@ CefSharp.BindObjectAsync(
 		return v.toString(16);
 	});
 
+	var $appDarkStyle = document.createElement('link');
+	$appDarkStyle.rel = 'stylesheet';
+	$appDarkStyle.href = `app.dark.css?_=${Date.now()}`;
+	document.getElementsByTagName('head')[0].appendChild($appDarkStyle);
+
 	//
 	// API
 	//
@@ -5019,14 +5024,11 @@ CefSharp.BindObjectAsync(
 	};
 	$app.watch.openVR = saveOpenVROption;
 	$app.watch.openVRAlways = saveOpenVROption;
-	$app.data.showNameColor = VRCXStorage.GetBool('showNameColor');
-	var $nameColorStyle = document.createElement('style');
-	$nameColorStyle.appendChild(document.createTextNode('.x-friend-item>.detail>.name { color: #303133 !important; }'));
-	document.head.appendChild($nameColorStyle);
-	$nameColorStyle.disabled = VRCXStorage.GetBool('showNameColor');
-	$app.watch.showNameColor = function () {
-		VRCXStorage.SetBool('showNameColor', this.showNameColor);
-		$nameColorStyle.disabled = this.showNameColor;
+	$app.data.isDarkMode = VRCXStorage.GetBool('isDarkMode');
+	$appDarkStyle.disabled = $app.data.isDarkMode === false;
+	$app.watch.isDarkMode = function () {
+		VRCXStorage.SetBool('isDarkMode', this.isDarkMode);
+		$appDarkStyle.disabled = this.isDarkMode === false;
 	};
 
 	API.$on('LOGIN', function () {
