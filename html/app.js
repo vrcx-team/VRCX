@@ -195,7 +195,7 @@ CefSharp.BindObjectAsync(
 	var $appDarkStyle = document.createElement('link');
 	$appDarkStyle.rel = 'stylesheet';
 	$appDarkStyle.href = `app.dark.css?_=${Date.now()}`;
-	document.getElementsByTagName('head')[0].appendChild($appDarkStyle);
+	document.head.appendChild($appDarkStyle);
 
 	//
 	// API
