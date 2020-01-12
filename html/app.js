@@ -3715,7 +3715,7 @@ CefSharp.BindObjectAsync(
 		this.quickSearchItems = [];
 		if (query) {
 			var QUERY = query.toUpperCase();
-			for (var ctx in this.friends.values()) {
+			for (var ctx of this.friends.values()) {
 				if (ctx.ref) {
 					var NAME = ctx.name.toUpperCase();
 					var match = NAME.includes(QUERY);
