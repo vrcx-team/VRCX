@@ -3477,27 +3477,28 @@ CefSharp.BindObjectAsync(
 			return;
 		}
 		var ref = API.cachedUsers.get(id);
+		var isVIP = API.cachedFavoritesByObjectId.has(id);
 		var ctx = {
 			id,
 			state: state || 'offline',
 			ref,
-			vip: API.cachedFavoritesByObjectId.has(id),
+			isVIP,
 			name: '',
 			no: ++this.friendsNo,
 			memo: this.loadMemo(id)
 		};
-		if (ref) {
-			ctx.name = ref.name;
-		} else {
+		if (ref === undefined) {
 			ref = this.friendLog[id];
-			if (ref &&
+			if (ref !== undefined &&
 				ref.displayName) {
 				ctx.name = ref.displayName;
 			}
+		} else {
+			ctx.name = ref.name;
 		}
 		this.friends.set(id, ctx);
 		if (ctx.state === 'online') {
-			if (ctx.vip) {
+			if (ctx.isVIP) {
 				this.sortFriendsGroup0 = true;
 				this.friendsGroup0_.push(ctx);
 				this.friendsGroupA_.unshift(ctx);
@@ -3519,10 +3520,104 @@ CefSharp.BindObjectAsync(
 
 	$app.methods.deleteFriend = function (id) {
 		var ctx = this.friends.get(id);
-		if (ctx) {
-			Vue.delete(this.friend, id);
+		if (ctx === undefined) {
+			return;
+		}
+		this.friends.delete(id);
+		if (ctx.state === 'online') {
+			if (ctx.isVIP) {
+				removeFromArray(this.friendsGroup0_, ctx);
+				removeFromArray(this.friendsGroupA_, ctx);
+			} else {
+				removeFromArray(this.friendsGroup1_, ctx);
+				removeFromArray(this.friendsGroupB_, ctx);
+			}
+		} else if (ctx.state === 'active') {
+			removeFromArray(this.friendsGroup2_, ctx);
+			removeFromArray(this.friendsGroupC_, ctx);
+		} else {
+			removeFromArray(this.friendsGroup3_, ctx);
+			removeFromArray(this.friendsGroupD_, ctx);
+		}
+	};
+
+	$app.methods.updateFriend = function (id, state, origin) {
+		var ctx = this.friends.get(id);
+		if (ctx === undefined) {
+			return;
+		}
+		var ref = API.cachedUsers.get(id);
+		var isVIP = API.cachedFavoritesByObjectId.has(id);
+		if (state === undefined ||
+			ctx.state === state) {
+			// this is should be: undefined -> user
+			if (ctx.ref !== ref) {
+				ctx.ref = ref;
+				// NOTE
+				// AddFriend (CurrentUser) 이후,
+				// 서버에서 오는 순서라고 보면 될 듯.
+				if (ctx.state === 'online') {
+					if (ctx.isVIP) {
+						removeFromArray(this.friendsGroupA_, ctx);
+						this.friendsGroupA_.push(ctx);
+					} else {
+						removeFromArray(this.friendsGroupB_, ctx);
+						this.friendsGroupB_.push(ctx);
+					}
+				} else if (ctx.state === 'active') {
+					removeFromArray(this.friendsGroupC_, ctx);
+					this.friendsGroupC_.push(ctx);
+				} else {
+					removeFromArray(this.friendsGroupD_, ctx);
+					this.friendsGroupD_.push(ctx);
+				}
+			}
+			if (ctx.isVIP !== isVIP) {
+				ctx.isVIP = isVIP;
+				if (ctx.state === 'online') {
+					if (ctx.isVIP) {
+						removeFromArray(this.friendsGroup1_, ctx);
+						removeFromArray(this.friendsGroupB_, ctx);
+						this.sortFriendsGroup0 = true;
+						this.friendsGroup0_.push(ctx);
+						this.friendsGroupA_.unshift(ctx);
+					} else {
+						removeFromArray(this.friendsGroup0_, ctx);
+						removeFromArray(this.friendsGroupA_, ctx);
+						this.sortFriendsGroup1 = true;
+						this.friendsGroup1_.push(ctx);
+						this.friendsGroupB_.unshift(ctx);
+					}
+				}
+			}
+			if (ref !== undefined &&
+				ctx.name !== ref.displayName) {
+				ctx.name = ref.displayName;
+				if (ctx.state === 'online') {
+					if (ctx.isVIP) {
+						this.sortFriendsGroup0 = true;
+					} else {
+						this.sortFriendsGroup1 = true;
+					}
+				} else if (ctx.state === 'active') {
+					this.sortFriendsGroup2 = true;
+				} else {
+					this.sortFriendsGroup3 = true;
+				}
+			}
+			// FIXME: 도배 가능성 있음
+			if (origin &&
+				ctx.state !== 'online' &&
+				ref !== undefined &&
+				ref.location !== '' &&
+				ref.location !== 'offline') {
+				API.getUser({
+					userId: id
+				});
+			}
+		} else {
 			if (ctx.state === 'online') {
-				if (ctx.vip) {
+				if (ctx.isVIP) {
 					removeFromArray(this.friendsGroup0_, ctx);
 					removeFromArray(this.friendsGroupA_, ctx);
 				} else {
@@ -3536,131 +3631,36 @@ CefSharp.BindObjectAsync(
 				removeFromArray(this.friendsGroup3_, ctx);
 				removeFromArray(this.friendsGroupD_, ctx);
 			}
-		}
-	};
-
-	$app.methods.updateFriend = function (id, state, origin) {
-		var ctx = this.friends.get(id);
-		if (ctx) {
-			var ref = API.cachedUsers.get(id);
-			var vip = API.cachedFavoritesByObjectId.has(id);
-			if (state === undefined ||
-				ctx.state === state) {
-				if (ctx.ref !== ref) {
-					ctx.ref = ref;
-					// NOTE
-					// AddFriend (CurrentUser) 이후,
-					// 서버에서 오는 순서라고 보면 될 듯.
-					if (ctx.state === 'online') {
-						if (ctx.vip) {
-							removeFromArray(this.friendsGroupA_, ctx);
-							this.friendsGroupA_.push(ctx);
-						} else {
-							removeFromArray(this.friendsGroupB_, ctx);
-							this.friendsGroupB_.push(ctx);
-						}
-					} else if (ctx.state === 'active') {
-						removeFromArray(this.friendsGroupC_, ctx);
-						this.friendsGroupC_.push(ctx);
-					} else {
-						removeFromArray(this.friendsGroupD_, ctx);
-						this.friendsGroupD_.push(ctx);
-					}
+			ctx.state = state;
+			ctx.ref = ref;
+			ctx.isVIP = isVIP;
+			if (ref !== undefined &&
+				ctx.name !== ref.displayName) {
+				ctx.name = ref.displayName;
+			}
+			if (ctx.state === 'online') {
+				if (ctx.isVIP) {
+					this.sortFriendsGroup0 = true;
+					this.friendsGroup0_.push(ctx);
+					this.friendsGroupA_.unshift(ctx);
+				} else {
+					this.sortFriendsGroup1 = true;
+					this.friendsGroup1_.push(ctx);
+					this.friendsGroupB_.unshift(ctx);
 				}
-				if (ctx.vip !== vip) {
-					ctx.vip = vip;
-					if (ctx.state === 'online') {
-						if (ctx.vip) {
-							removeFromArray(this.friendsGroup1_, ctx);
-							removeFromArray(this.friendsGroupB_, ctx);
-							this.sortFriendsGroup0 = true;
-							this.friendsGroup0_.push(ctx);
-							this.friendsGroupA_.unshift(ctx);
-						} else {
-							removeFromArray(this.friendsGroup0_, ctx);
-							removeFromArray(this.friendsGroupA_, ctx);
-							this.sortFriendsGroup1 = true;
-							this.friendsGroup1_.push(ctx);
-							this.friendsGroupB_.unshift(ctx);
-						}
-					}
-				}
-				if (ctx.ref &&
-					ctx.name !== ctx.ref.displayName) {
-					ctx.name = ctx.ref.displayName;
-					if (ctx.state === 'online') {
-						if (ctx.vip) {
-							this.sortFriendsGroup0 = true;
-						} else {
-							this.sortFriendsGroup1 = true;
-						}
-					} else if (ctx.state === 'active') {
-						this.sortFriendsGroup2 = true;
-					} else {
-						this.sortFriendsGroup3 = true;
-					}
-				}
-				// FIXME: 도배 가능성 있음
-				if (origin &&
-					ctx.state !== 'online' &&
-					ctx.ref &&
-					ctx.ref.location !== '' &&
-					ctx.ref.location !== 'offline') {
-					API.getUser({
-						userId: id
-					});
-				}
+			} else if (ctx.state === 'active') {
+				this.sortFriendsGroup2 = true;
+				this.friendsGroup2_.push(ctx);
+				this.friendsGroupC_.unshift(ctx);
 			} else {
-				if (ctx.state === 'online') {
-					if (ctx.vip) {
-						removeFromArray(this.friendsGroup0_, ctx);
-						removeFromArray(this.friendsGroupA_, ctx);
-					} else {
-						removeFromArray(this.friendsGroup1_, ctx);
-						removeFromArray(this.friendsGroupB_, ctx);
-					}
-				} else if (ctx.state === 'active') {
-					removeFromArray(this.friendsGroup2_, ctx);
-					removeFromArray(this.friendsGroupC_, ctx);
-				} else {
-					removeFromArray(this.friendsGroup3_, ctx);
-					removeFromArray(this.friendsGroupD_, ctx);
-				}
-				ctx.state = state;
-				if (ctx.ref !== ref) {
-					ctx.ref = ref;
-				}
-				if (ctx.vip !== vip) {
-					ctx.vip = vip;
-				}
-				if (ctx.ref &&
-					ctx.name !== ctx.ref.displayName) {
-					ctx.name = ctx.ref.displayName;
-				}
-				if (ctx.state === 'online') {
-					if (ctx.vip) {
-						this.sortFriendsGroup0 = true;
-						this.friendsGroup0_.push(ctx);
-						this.friendsGroupA_.unshift(ctx);
-					} else {
-						this.sortFriendsGroup1 = true;
-						this.friendsGroup1_.push(ctx);
-						this.friendsGroupB_.unshift(ctx);
-					}
-				} else if (ctx.state === 'active') {
-					this.sortFriendsGroup2 = true;
-					this.friendsGroup2_.push(ctx);
-					this.friendsGroupC_.unshift(ctx);
-				} else {
-					this.sortFriendsGroup3 = true;
-					this.friendsGroup3_.push(ctx);
-					this.friendsGroupD_.unshift(ctx);
-				}
+				this.sortFriendsGroup3 = true;
+				this.friendsGroup3_.push(ctx);
+				this.friendsGroupD_.unshift(ctx);
 			}
 		}
 	};
 
-	var sortFriendByName = (a, b) => {
+	var sortFriendByName = function (a, b) {
 		var A = String(a.name).toUpperCase();
 		var B = String(b.name).toUpperCase();
 		if (A < B) {
@@ -3672,6 +3672,7 @@ CefSharp.BindObjectAsync(
 		return 0;
 	};
 
+	// VIP friends
 	$app.computed.friendsGroup0 = function () {
 		if (this.orderFriendsGroup0) {
 			return this.friendsGroupA_;
@@ -3683,6 +3684,7 @@ CefSharp.BindObjectAsync(
 		return this.friendsGroup0_;
 	};
 
+	// Online friends
 	$app.computed.friendsGroup1 = function () {
 		if (this.orderFriendsGroup1) {
 			return this.friendsGroupB_;
@@ -3694,6 +3696,7 @@ CefSharp.BindObjectAsync(
 		return this.friendsGroup1_;
 	};
 
+	// Active friends
 	$app.computed.friendsGroup2 = function () {
 		if (this.orderFriendsGroup2) {
 			return this.friendsGroupC_;
@@ -3705,6 +3708,7 @@ CefSharp.BindObjectAsync(
 		return this.friendsGroup2_;
 	};
 
+	// Offline friends
 	$app.computed.friendsGroup3 = function () {
 		if (this.orderFriendsGroup3) {
 			return this.friendsGroupD_;
@@ -3718,7 +3722,7 @@ CefSharp.BindObjectAsync(
 
 	$app.methods.userStatusClass = function (user) {
 		var style = {};
-		if (user) {
+		if (user !== undefined) {
 			// due to social status, check if the user isn't currentUser
 			if (user.state === 'active' &&
 				user.id !== API.currentUser.id) {
