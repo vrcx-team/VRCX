@@ -728,10 +728,15 @@ CefSharp.BindObjectAsync(
 		}
 	*/
 	API.login = function (params) {
+		var auth = `${params.username}:${params.password}`;
+		auth = encodeURIComponent(auth);
+		auth = auth.replace(/%([0-9A-F]{2})/gu, (_, s) => String.fromCharCode(parseInt(s, 16)));
+		auth = auth.replace('%', '%25');
+		auth = btoa(auth);
 		return this.call(`auth/user?apiKey=${this.cachedConfig.clientApiKey}`, {
 			method: 'GET',
 			headers: {
-				Authorization: `Basic ${btoa(encodeURIComponent(`${params.username}:${params.password}`).replace(/%([0-9A-F]{2})/gu, (_, s) => String.fromCharCode(parseInt(s, 16))).replace('%', '%25'))}`
+				Authorization: `Basic ${auth}`
 			}
 		}).then((json) => {
 			var args = {
