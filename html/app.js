@@ -3885,55 +3885,56 @@ CefSharp.BindObjectAsync(
 
 	API.$on('USER:UPDATE', function (args) {
 		var { ref, props } = args;
-		if ($app.friends.get(ref.id)) {
-			if (props.location) {
-				if (props.location[0] === 'offline') {
-					$app.addFeed('Offline', ref, {
-						location: props.location[1],
-						time: props.location[2]
-					});
-				} else if (props.location[1] === 'offline') {
-					$app.addFeed('Online', ref, {
-						location: props.location[0]
-					});
-				} else {
-					$app.addFeed('GPS', ref, {
-						location: [
-							props.location[0],
-							props.location[1]
-						],
-						time: props.location[2]
-					});
-				}
-			}
-			if (props.currentAvatarThumbnailImageUrl) {
-				$app.addFeed('Avatar', ref, {
-					avatar: props.currentAvatarThumbnailImageUrl
+		if ($app.friends.has(ref.id) === false) {
+			return;
+		}
+		if (props.location) {
+			if (props.location[0] === 'offline') {
+				$app.addFeed('Offline', ref, {
+					location: props.location[1],
+					time: props.location[2]
+				});
+			} else if (props.location[1] === 'offline') {
+				$app.addFeed('Online', ref, {
+					location: props.location[0]
+				});
+			} else {
+				$app.addFeed('GPS', ref, {
+					location: [
+						props.location[0],
+						props.location[1]
+					],
+					time: props.location[2]
 				});
 			}
-			if (props.status ||
-				props.statusDescription) {
-				$app.addFeed('Status', ref, {
-					status: [
-						{
-							status: props.status
-								? props.status[0]
-								: ref.status,
-							statusDescription: props.statusDescription
-								? props.statusDescription[0]
-								: ref.statusDescription
-						},
-						{
-							status: props.status
-								? props.status[1]
-								: ref.status,
-							statusDescription: props.statusDescription
-								? props.statusDescription[1]
-								: ref.statusDescription
-						}
-					]
-				});
-			}
+		}
+		if (props.currentAvatarThumbnailImageUrl) {
+			$app.addFeed('Avatar', ref, {
+				avatar: props.currentAvatarThumbnailImageUrl
+			});
+		}
+		if (props.status ||
+			props.statusDescription) {
+			$app.addFeed('Status', ref, {
+				status: [
+					{
+						status: props.status
+							? props.status[0]
+							: ref.status,
+						statusDescription: props.statusDescription
+							? props.statusDescription[0]
+							: ref.statusDescription
+					},
+					{
+						status: props.status
+							? props.status[1]
+							: ref.status,
+						statusDescription: props.statusDescription
+							? props.statusDescription[1]
+							: ref.statusDescription
+					}
+				]
+			});
 		}
 	});
 
