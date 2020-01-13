@@ -3761,7 +3761,7 @@ CefSharp.BindObjectAsync(
 	$app.data.quickSearchItems = [];
 
 	$app.methods.quickSearchRemoteMethod = function (query) {
-		this.quickSearchItems = [];
+		var results = [];
 		if (query) {
 			var QUERY = query.toUpperCase();
 			for (var ctx of this.friends.values()) {
@@ -3778,7 +3778,7 @@ CefSharp.BindObjectAsync(
 						match = String(ctx.memo).toUpperCase().includes(QUERY);
 					}
 					if (match) {
-						this.quickSearchItems.push({
+						results.push({
 							value: ctx.id,
 							label: ctx.name,
 							ref: ctx.ref,
@@ -3787,7 +3787,7 @@ CefSharp.BindObjectAsync(
 					}
 				}
 			}
-			this.quickSearchItems.sort((a, b) => {
+			results.sort((a, b) => {
 				var A = a.NAME.startsWith(QUERY);
 				var B = b.NAME.startsWith(QUERY);
 				if (A !== B) {
@@ -3806,14 +3806,15 @@ CefSharp.BindObjectAsync(
 				}
 				return 0;
 			});
-			if (this.quickSearchItems.length > 4) {
-				this.quickSearchItems.length = 4;
+			if (results.length > 4) {
+				results.length = 4;
 			}
-			this.quickSearchItems.push({
+			results.push({
 				value: `search:${query}`,
 				label: query
 			});
 		}
+		this.quickSearchItems = results;
 	};
 
 	$app.methods.quickSearchChange = function (value) {
