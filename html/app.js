@@ -3441,31 +3441,32 @@ CefSharp.BindObjectAsync(
 	});
 
 	$app.methods.refreshFriends = function (ref, origin) {
-		var map = {};
-		ref.friends.forEach((id) => {
-			map[id] = 'offline';
-		});
-		ref.offlineFriends.forEach((id) => {
-			map[id] = 'offline';
-		});
-		ref.activeFriends.forEach((id) => {
-			map[id] = 'active';
-		});
-		ref.onlineFriends.forEach((id) => {
-			map[id] = 'online';
-		});
-		for (var id in map) {
+		var states = {};
+		for (var id of ref.friends) {
+			states[id] = 'offline';
+		}
+		for (var id of ref.offlineFriends) {
+			states[id] = 'offline';
+		}
+		for (var id of ref.activeFriends) {
+			states[id] = 'active';
+		}
+		for (var id of ref.onlineFriends) {
+			states[id] = 'online';
+		}
+		for (var id in states) {
 			if (this.friends.has(id)) {
-				this.updateFriend(id, map[id], origin);
+				this.updateFriend(id, states[id], origin);
 			} else {
-				this.addFriend(id, map[id]);
+				this.addFriend(id, states[id]);
 			}
 		}
 		for (var id of this.friends.keys()) {
-			if (map[id] === undefined) {
+			if (states[id] === undefined) {
 				this.deleteFriend(id);
 			}
 		}
+		// called from API.login(), API.loginWithSteam(), API.getCurrentUser()
 		if (origin) {
 			API.refreshFriends();
 		}
