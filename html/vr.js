@@ -362,7 +362,7 @@ CefSharp.BindObjectAsync(
 			}
 		}
 		if (error !== undefined) {
-			text.push(error);
+			text.push(JSON.stringify(error));
 		}
 		text = text.map((s) => escapeTag(s)).join('<br>');
 		if (text.length) {
