@@ -893,7 +893,7 @@
 								</template>
 								<i class="x-user-status" :class="userStatusClass(userDialog.ref)"></i>
 							</el-tooltip>
-							<span v-text="userDialog.ref.displayName" style="font-weight:bold"></span>
+							<span v-text="userDialog.ref.displayName" style="margin-left:5px;font-weight:bold"></span>
 							<el-popover placement="top" trigger="click">
 								<span style="display:block;text-align:center;font-family:monospace;">{{ userDialog.ref.username | textToHex }}</span>
 								<span slot="reference" v-text="userDialog.ref.username" style="margin-left:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer"></span>
