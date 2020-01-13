@@ -108,16 +108,22 @@ CefSharp.BindObjectAsync(
 		return false;
 	};
 
-	var escapeTag = (s) => String(s).replace(/["&'<>]/gu, (c) => `&#${c.charCodeAt(0)};`);
+	var escapeTag = function (tag) {
+		var s = String(tag);
+		return s.replace(/["&'<>]/gu, (c) => `&#${c.charCodeAt(0)};`);
+	};
 	Vue.filter('escapeTag', escapeTag);
 
-	var commaNumber = (n) => String(Number(n) || 0).replace(/(\d)(?=(\d{3})+(?!\d))/gu, '$1,');
+	var commaNumber = function (num) {
+		var s = String(Number(num));
+		return s.replace(/(\d)(?=(\d{3})+(?!\d))/gu, '$1,');
+	};
 	Vue.filter('commaNumber', commaNumber);
 
-	var formatDate = (s, format) => {
-		var dt = new Date(s);
+	var formatDate = function (date, format) {
+		var dt = new Date(date);
 		if (isNaN(dt)) {
-			return escapeTag(s);
+			return escapeTag(date);
 		}
 		var hours = dt.getHours();
 		var map = {
@@ -138,34 +144,37 @@ CefSharp.BindObjectAsync(
 	};
 	Vue.filter('formatDate', formatDate);
 
-	var textToHex = (s) => String(s).split('').map((c) => c.charCodeAt(0).toString(16)).join(' ');
+	var textToHex = function (text) {
+		var s = String(text);
+		return s.split('').map((c) => c.charCodeAt(0).toString(16)).join(' ');
+	};
 	Vue.filter('textToHex', textToHex);
 
-	var timeToText = (t) => {
-		var sec = Number(t);
-		if (isNaN(sec)) {
-			return escapeTag(t);
+	var timeToText = function (sec) {
+		var n = Number(sec);
+		if (isNaN(n)) {
+			return escapeTag(sec);
 		}
-		sec = Math.floor(sec / 1000);
+		n = Math.floor(n / 1000);
 		var arr = [];
-		if (sec < 0) {
-			sec = -sec;
+		if (n < 0) {
+			n = -n;
 		}
-		if (sec >= 86400) {
-			arr.push(`${Math.floor(sec / 86400)}d`);
-			sec %= 86400;
+		if (n >= 86400) {
+			arr.push(`${Math.floor(n / 86400)}d`);
+			n %= 86400;
 		}
-		if (sec >= 3600) {
-			arr.push(`${Math.floor(sec / 3600)}h`);
-			sec %= 3600;
+		if (n >= 3600) {
+			arr.push(`${Math.floor(n / 3600)}h`);
+			n %= 3600;
 		}
-		if (sec >= 60) {
-			arr.push(`${Math.floor(sec / 60)}m`);
-			sec %= 60;
+		if (n >= 60) {
+			arr.push(`${Math.floor(n / 60)}m`);
+			n %= 60;
 		}
-		if (sec ||
-			!arr.length) {
-			arr.push(`${sec}s`);
+		if (n ||
+			arr.length === 0) {
+			arr.push(`${n}s`);
 		}
 		return arr.join(' ');
 	};
