@@ -234,7 +234,7 @@
 		<el-tabs ref="searchTab" type="card" style="margin-top:15px">
 			<el-tab-pane label="User" v-loading="isSearchUserLoading" style="min-height:60px">
 				<div class="x-friend-list">
-					<div v-for="user in searchUsers" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item">
+					<div v-for="user in searchUserResults" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item">
 						<template v-once>
 							<div class="avatar">
 								<img v-lazy="user.currentAvatarThumbnailImageUrl">
@@ -247,8 +247,8 @@
 					</div>
 				</div>
 				<el-button-group style="margin-top:15px">
-					<el-button v-if="searchUserParam.offset" @click="moreSearchUser(-1)" icon="el-icon-back" size="small">Prev</el-button>
-					<el-button v-if="searchUsers.length" @click="moreSearchUser(1)" icon="el-icon-right" size="small">Next</el-button>
+					<el-button v-if="searchUserParams.offset" @click="moreSearchUser(-1)" icon="el-icon-back" size="small">Prev</el-button>
+					<el-button v-if="searchUserResults.length" @click="moreSearchUser(1)" icon="el-icon-right" size="small">Next</el-button>
 				</el-button-group>
 			</el-tab-pane>
 			<el-tab-pane label="World" v-loading="isSearchWorldLoading" style="min-height:60px">
@@ -259,7 +259,7 @@
 					</el-dropdown-menu>
 				</el-dropdown>
 				<div class="x-friend-list">
-					<div v-for="world in searchWorlds" :key="world.id" @click="showWorldDialog(world.id)" class="x-friend-item">
+					<div v-for="world in searchWorldResults" :key="world.id" @click="showWorldDialog(world.id)" class="x-friend-item">
 						<template v-once>
 							<div class="avatar">
 								<img v-lazy="world.thumbnailImageUrl">
@@ -273,8 +273,8 @@
 					</div>
 				</div>
 				<el-button-group style="margin-top:15px">
-					<el-button v-if="searchWorldParam.offset" @click="moreSearchWorld(-1)" icon="el-icon-back" size="small">Prev</el-button>
-					<el-button v-if="searchWorlds.length" @click="moreSearchWorld(1)" icon="el-icon-right" size="small">Next</el-button>
+					<el-button v-if="searchWorldParams.offset" @click="moreSearchWorld(-1)" icon="el-icon-back" size="small">Prev</el-button>
+					<el-button v-if="searchWorldResults.length" @click="moreSearchWorld(1)" icon="el-icon-right" size="small">Next</el-button>
 				</el-button-group>
 			</el-tab-pane>
 			<el-tab-pane label="Avatar" v-loading="isSearchAvatarLoading" style="min-height:60px">
@@ -288,7 +288,7 @@
 				</el-dropdown>
 				<span style="margin-left:10px;font-size:12px;color:#909399">Avatar search is not possible.</span>
 				<div class="x-friend-list">
-					<div v-for="avatar in searchAvatars" :key="avatar.id" @click="showAvatarDialog(avatar.id)" class="x-friend-item">
+					<div v-for="avatar in searchAvatarResults" :key="avatar.id" @click="showAvatarDialog(avatar.id)" class="x-friend-item">
 						<template v-once>
 							<div class="avatar">
 								<img v-lazy="avatar.thumbnailImageUrl">
@@ -301,8 +301,8 @@
 					</div>
 				</div>
 				<el-button-group style="margin-top:15px">
-					<el-button v-if="searchAvatarParam.offset" @click="moreSearchAvatar(-1)" icon="el-icon-back" size="small">Prev</el-button>
-					<el-button v-if="searchAvatars.length" @click="moreSearchAvatar(1)" icon="el-icon-right" size="small">Next</el-button>
+					<el-button v-if="searchAvatarParams.offset" @click="moreSearchAvatar(-1)" icon="el-icon-back" size="small">Prev</el-button>
+					<el-button v-if="searchAvatarResults.length" @click="moreSearchAvatar(1)" icon="el-icon-right" size="small">Next</el-button>
 				</el-button-group>
 			</el-tab-pane>
 		</el-tabs>

@@ -1065,6 +1065,7 @@ CefSharp.BindObjectAsync(
 			} else {
 				resolve({
 					cache: true,
+					json: ref,
 					params,
 					ref
 				});
@@ -1212,6 +1213,7 @@ CefSharp.BindObjectAsync(
 			} else {
 				resolve({
 					cache: true,
+					json: ref,
 					params,
 					ref
 				});
@@ -1514,6 +1516,7 @@ CefSharp.BindObjectAsync(
 			} else {
 				resolve({
 					cache: true,
+					json: ref,
 					params,
 					ref
 				});
@@ -2020,6 +2023,7 @@ CefSharp.BindObjectAsync(
 	API.cachedFavorites = new Map();
 	API.cachedFavoritesByObjectId = new Map();
 	API.cachedFavoriteGroups = new Map();
+	API.cachedFavoriteGroupsByTypeName = new Map();
 	API.favoriteFriendGroups = [];
 	API.favoriteWorldGroups = [];
 	API.favoriteAvatarGroups = [];
@@ -2030,6 +2034,7 @@ CefSharp.BindObjectAsync(
 		this.cachedFavorites.clear();
 		this.cachedFavoritesByObjectId.clear();
 		this.cachedFavoriteGroups.clear();
+		this.cachedFavoriteGroupsByTypeName.clear();
 		this.favoriteFriendGroups = [];
 		this.favoriteWorldGroups = [];
 		this.favoriteAvatarGroups = [];
@@ -2131,6 +2136,7 @@ CefSharp.BindObjectAsync(
 				ref.$groupKey !== key) {
 				continue;
 			}
+			this.cachedFavoritesByObjectId.delete(ref.favoriteId);
 			ref.$isDeleted = true;
 			API.$emit('FAVORITE:@DELETE', {
 				ref,
@@ -2207,6 +2213,14 @@ CefSharp.BindObjectAsync(
 			ref.$isExpired = false;
 		}
 		ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
+		if (ref.$isDeleted === false &&
+			ref.$groupRef === null) {
+			var group = this.cachedFavoriteGroupsByTypeName.get(ref.$groupKey);
+			if (group !== undefined) {
+				ref.$groupRef = group;
+				++group.count;
+			}
+		}
 		return ref;
 	};
 
@@ -2391,7 +2405,7 @@ CefSharp.BindObjectAsync(
 			for (var group of groups) {
 				if (group.assign === false) {
 					group.assign = true;
-					group.key = `${group.type}:${group.name}`;
+					group.key = `${group.type}:${ref.name}`;
 					group.name = ref.name;
 					group.displayName = ref.displayName;
 					ref.$groupRef = group;
@@ -2400,10 +2414,10 @@ CefSharp.BindObjectAsync(
 			}
 		}
 		// update favorites
-		var groupByKey = {};
+		this.cachedFavoriteGroupsByTypeName.clear();
 		for (var type in types) {
 			for (var group of types[type]) {
-				groupByKey[group.key] = group;
+				this.cachedFavoriteGroupsByTypeName.set(group.key, group);
 			}
 		}
 		for (var ref of this.cachedFavorites.values()) {
@@ -2411,7 +2425,7 @@ CefSharp.BindObjectAsync(
 			if (ref.$isDeleted) {
 				continue;
 			}
-			var group = groupByKey[ref.$groupKey];
+			var group = this.cachedFavoriteGroupsByTypeName.get(ref.$groupKey);
 			if (group === undefined) {
 				continue;
 			}
@@ -2939,7 +2953,7 @@ CefSharp.BindObjectAsync(
 				});
 			}
 		}
-		node.sort((a, b) => {
+		node.sort(function (a, b) {
 			var A = String(a.key).toUpperCase();
 			var B = String(b.key).toUpperCase();
 			if (A < B) {
@@ -3059,18 +3073,6 @@ CefSharp.BindObjectAsync(
 		});
 	};
 
-	var insertOrUpdateArrayById = (array, ref) => {
-		var { id } = ref;
-		var { length } = array;
-		for (var i = 0; i < length; ++i) {
-			if (array[i].id === id) {
-				Vue.set(array, i, ref);
-				return;
-			}
-		}
-		array.push(ref);
-	};
-
 	$app.methods.update = function () {
 		if (API.isLoggedIn === false) {
 			return;
@@ -3110,13 +3112,14 @@ CefSharp.BindObjectAsync(
 		var arr = [];
 		// FIXME
 		// 여러 개 켠다면 gameLogTable의 데이터가 시간순이 아닐 수도 있음
-		var i = this.gameLogTable.data.length;
+		var { data } = this.gameLogTable;
+		var i = data.length;
 		var j = 0;
 		while (j < 25) {
 			if (i <= 0) {
 				break;
 			}
-			var ctx = this.gameLogTable.data[--i];
+			var ctx = data[--i];
 			// Location, OnPlayerJoined, OnPlayerLeft
 			if (ctx.type) {
 				// FIXME: 이거 존나 느릴거 같은데
@@ -3139,13 +3142,14 @@ CefSharp.BindObjectAsync(
 			}
 			++j;
 		}
-		var i = this.feedTable.data.length;
+		var { data } = this.feedTable;
+		var i = data.length;
 		var j = 0;
 		while (j < 25) {
 			if (i <= 0) {
 				break;
 			}
-			var ctx = this.feedTable.data[--i];
+			var ctx = data[--i];
 			// GPS, Online, Offline, Status, Avatar
 			if (ctx.type !== 'Avatar') {
 				arr.push({
@@ -3156,7 +3160,7 @@ CefSharp.BindObjectAsync(
 				++j;
 			}
 		}
-		arr.sort((a, b) => {
+		arr.sort(function (a, b) {
 			if (a.created_at < b.created_at) {
 				return 1;
 			}
@@ -3441,28 +3445,28 @@ CefSharp.BindObjectAsync(
 	});
 
 	$app.methods.refreshFriends = function (ref, origin) {
-		var states = {};
+		var map = new Map();
 		for (var id of ref.friends) {
-			states[id] = 'offline';
+			map.set(id, 'offline');
 		}
 		for (var id of ref.offlineFriends) {
-			states[id] = 'offline';
+			map.set(id, 'offline');
 		}
 		for (var id of ref.activeFriends) {
-			states[id] = 'active';
+			map.set(id, 'active');
 		}
 		for (var id of ref.onlineFriends) {
-			states[id] = 'online';
+			map.set(id, 'online');
 		}
-		for (var id in states) {
+		for (var [id, state] of map) {
 			if (this.friends.has(id)) {
-				this.updateFriend(id, states[id], origin);
+				this.updateFriend(id, state, origin);
 			} else {
-				this.addFriend(id, states[id]);
+				this.addFriend(id, state);
 			}
 		}
 		for (var id of this.friends.keys()) {
-			if (states[id] === undefined) {
+			if (map.has(id) === false) {
 				this.deleteFriend(id);
 			}
 		}
@@ -3481,8 +3485,8 @@ CefSharp.BindObjectAsync(
 		var ctx = {
 			id,
 			state: state || 'offline',
-			ref,
 			isVIP,
+			ref,
 			name: '',
 			no: ++this.friendsNo,
 			memo: this.loadMemo(id)
@@ -3631,12 +3635,21 @@ CefSharp.BindObjectAsync(
 				removeFromArray(this.friendsGroup3_, ctx);
 				removeFromArray(this.friendsGroupD_, ctx);
 			}
-			ctx.state = state;
-			ctx.ref = ref;
-			ctx.isVIP = isVIP;
-			if (ref !== undefined &&
-				ctx.name !== ref.displayName) {
-				ctx.name = ref.displayName;
+			// changing property triggers Vue
+			// so, we need compare and set
+			if (ctx.state !== state) {
+				ctx.state = state;
+			}
+			if (ctx.isVIP !== isVIP) {
+				ctx.isVIP = isVIP;
+			}
+			if (ref !== undefined) {
+				if (ctx.ref !== ref) {
+					ctx.ref = ref;
+				}
+				if (ctx.name !== ref.displayName) {
+					ctx.name = ref.displayName;
+				}
 			}
 			if (ctx.state === 'online') {
 				if (ctx.isVIP) {
@@ -3660,9 +3673,21 @@ CefSharp.BindObjectAsync(
 		}
 	};
 
-	var sortFriendByName = function (a, b) {
+	var compareByName = function (a, b) {
 		var A = String(a.name).toUpperCase();
 		var B = String(b.name).toUpperCase();
+		if (A < B) {
+			return -1;
+		}
+		if (A > B) {
+			return 1;
+		}
+		return 0;
+	};
+
+	var compareByDisplayName = function (a, b) {
+		var A = String(a.displayName).toUpperCase();
+		var B = String(b.displayName).toUpperCase();
 		if (A < B) {
 			return -1;
 		}
@@ -3679,7 +3704,7 @@ CefSharp.BindObjectAsync(
 		}
 		if (this.sortFriendsGroup0) {
 			this.sortFriendsGroup0 = false;
-			this.friendsGroup0_.sort(sortFriendByName);
+			this.friendsGroup0_.sort(compareByName);
 		}
 		return this.friendsGroup0_;
 	};
@@ -3691,7 +3716,7 @@ CefSharp.BindObjectAsync(
 		}
 		if (this.sortFriendsGroup1) {
 			this.sortFriendsGroup1 = false;
-			this.friendsGroup1_.sort(sortFriendByName);
+			this.friendsGroup1_.sort(compareByName);
 		}
 		return this.friendsGroup1_;
 	};
@@ -3703,7 +3728,7 @@ CefSharp.BindObjectAsync(
 		}
 		if (this.sortFriendsGroup2) {
 			this.sortFriendsGroup2 = false;
-			this.friendsGroup2_.sort(sortFriendByName);
+			this.friendsGroup2_.sort(compareByName);
 		}
 		return this.friendsGroup2_;
 	};
@@ -3715,7 +3740,7 @@ CefSharp.BindObjectAsync(
 		}
 		if (this.sortFriendsGroup3) {
 			this.sortFriendsGroup3 = false;
-			this.friendsGroup3_.sort(sortFriendByName);
+			this.friendsGroup3_.sort(compareByName);
 		}
 		return this.friendsGroup3_;
 	};
@@ -3765,29 +3790,30 @@ CefSharp.BindObjectAsync(
 		if (query) {
 			var QUERY = query.toUpperCase();
 			for (var ctx of this.friends.values()) {
-				if (ctx.ref) {
-					var NAME = ctx.name.toUpperCase();
-					var match = NAME.includes(QUERY);
-					if (!match) {
-						var uname = String(ctx.ref.username);
-						match = uname.toUpperCase().includes(QUERY) &&
-							!uname.startsWith('steam_');
-					}
-					if (!match &&
-						ctx.memo) {
-						match = String(ctx.memo).toUpperCase().includes(QUERY);
-					}
-					if (match) {
-						results.push({
-							value: ctx.id,
-							label: ctx.name,
-							ref: ctx.ref,
-							NAME
-						});
-					}
+				if (ctx.ref === undefined) {
+					continue;
+				}
+				var NAME = ctx.name.toUpperCase();
+				var match = NAME.includes(QUERY);
+				if (!match) {
+					var uname = String(ctx.ref.username);
+					match = uname.toUpperCase().includes(QUERY) &&
+						!uname.startsWith('steam_');
+				}
+				if (!match &&
+					ctx.memo) {
+					match = String(ctx.memo).toUpperCase().includes(QUERY);
+				}
+				if (match) {
+					results.push({
+						value: ctx.id,
+						label: ctx.name,
+						ref: ctx.ref,
+						NAME
+					});
 				}
 			}
-			results.sort((a, b) => {
+			results.sort(function (a, b) {
 				var A = a.NAME.startsWith(QUERY);
 				var B = b.NAME.startsWith(QUERY);
 				if (A !== B) {
@@ -3996,26 +4022,26 @@ CefSharp.BindObjectAsync(
 	};
 
 	$app.methods.sweepFeed = function () {
-		var array = this.feedTable.data;
+		var { data } = this.feedTable;
 		// 로그는 3일까지만 남김
 		var limit = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toJSON();
 		var i = 0;
-		var j = array.length;
+		var j = data.length;
 		while (i < j &&
-			array[i].created_at < limit) {
+			data[i].created_at < limit) {
 			++i;
 		}
 		if (i === j) {
 			this.feedTable.data = [];
 		} else if (i) {
-			array.splice(0, i);
+			data.splice(0, i);
 		}
 	};
 
 	// App: gameLog
 
 	$app.data.lastLocation = '';
-	$app.data.lastLocation_ = {};
+	$app.data.$lastLocation = {};
 	$app.data.discordActive = VRCXStorage.GetBool('discordActive');
 	$app.data.discordInstance = VRCXStorage.GetBool('discordInstance');
 	var saveDiscordOption = function () {
@@ -4068,21 +4094,22 @@ CefSharp.BindObjectAsync(
 	$app.methods.refreshGameLog = function () {
 		LogWatcher.Get().then((logs) => {
 			if (logs.length) {
-				logs.forEach((log) => {
+				var { data } = this.gameLogTable;
+				for (var log of logs) {
 					var ctx = {
 						created_at: log[0],
 						type: log[1],
 						data: log[2]
 					};
-					this.gameLogTable.data.push(ctx);
+					data.push(ctx);
 					if (ctx.type === 'Location') {
 						this.lastLocation = ctx.data;
 					}
-				});
+				}
 				this.sweepGameLog();
 				// sweepGameLog로 기록이 삭제되면
 				// 아무 것도 없는데 알림이 떠서 이상함
-				if (this.gameLogTable.data.length) {
+				if (data.length) {
 					this.notifyMenu('gameLog');
 				}
 			}
@@ -4091,58 +4118,58 @@ CefSharp.BindObjectAsync(
 	};
 
 	$app.methods.sweepGameLog = function () {
-		var array = this.gameLogTable.data;
+		var { data } = this.gameLogTable;
 		// 로그는 3일까지만 남김
 		var limit = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toJSON();
 		var i = 0;
-		var j = array.length;
+		var j = data.length;
 		while (i < j &&
-			array[i].created_at < limit) {
+			data[i].created_at < limit) {
 			++i;
 		}
 		if (i === j) {
 			this.gameLogTable.data = [];
 		} else if (i) {
-			array.splice(0, i);
+			data.splice(0, i);
 		}
 	};
 
 	$app.methods.updateDiscord = function () {
-		if (this.isGameRunning &&
-			this.lastLocation) {
-			if (this.lastLocation !== this.lastLocation_.tag) {
-				var L = API.parseLocation(this.lastLocation);
-				L.worldName = L.worldId;
-				this.lastLocation_ = L;
-				if (L.worldId) {
-					var ref = API.cachedWorlds.get(L.worldId);
-					if (ref) {
-						L.worldName = ref.name;
-					} else {
-						API.getWorld({
-							worldId: L.worldId
-						}).then((args) => {
-							L.worldName = args.ref.name;
-							return args;
-						});
-					}
+		if (this.isGameRunning === false ||
+			this.lastLocation === '') {
+			Discord.SetActive(false);
+			return;
+		}
+		if (this.lastLocation !== this.$lastLocation.tag) {
+			var L = API.parseLocation(this.lastLocation);
+			L.worldName = L.worldId;
+			this.$lastLocation = L;
+			if (L.worldId) {
+				var ref = API.cachedWorlds.get(L.worldId);
+				if (ref) {
+					L.worldName = ref.name;
+				} else {
+					API.getWorld({
+						worldId: L.worldId
+					}).then((args) => {
+						L.worldName = args.ref.name;
+						return args;
+					});
 				}
 			}
-			// NOTE
-			// 글자 수가 짧으면 업데이트가 안된다..
-			var LL = this.lastLocation_;
-			if (LL.worldName.length < 2) {
-				LL.worldName += '\uFFA0'.repeat(2 - LL.worldName.length);
-			}
-			if (this.discordInstance) {
-				Discord.SetText(LL.worldName, `#${LL.instanceName} ${LL.accessType}`);
-			} else {
-				Discord.SetText(LL.worldName, '');
-			}
-			Discord.SetActive(this.discordActive);
-		} else {
-			Discord.SetActive(false);
 		}
+		// NOTE
+		// 글자 수가 짧으면 업데이트가 안된다..
+		var LL = this.$lastLocation;
+		if (LL.worldName.length < 2) {
+			LL.worldName += '\uFFA0'.repeat(2 - LL.worldName.length);
+		}
+		if (this.discordInstance) {
+			Discord.SetText(LL.worldName, `#${LL.instanceName} ${LL.accessType}`);
+		} else {
+			Discord.SetText(LL.worldName, '');
+		}
+		Discord.SetActive(this.discordActive);
 	};
 
 	$app.methods.lookupUser = function (name) {
@@ -4161,35 +4188,35 @@ CefSharp.BindObjectAsync(
 	// App: Search
 
 	$app.data.searchText = '';
-	$app.data.searchUsers = [];
-	$app.data.searchUserParam = {};
-	$app.data.searchWorlds = [];
+	$app.data.searchUserResults = [];
+	$app.data.searchUserParams = {};
+	$app.data.searchWorldResults = [];
 	$app.data.searchWorldOption = '';
-	$app.data.searchWorldParam = {};
-	$app.data.searchAvatars = [];
-	$app.data.searchAvatarParam = {};
+	$app.data.searchWorldParams = {};
+	$app.data.searchAvatarResults = [];
+	$app.data.searchAvatarParams = {};
 	$app.data.isSearchUserLoading = false;
 	$app.data.isSearchWorldLoading = false;
 	$app.data.isSearchAvatarLoading = false;
 
 	API.$on('LOGIN', function () {
 		$app.searchText = '';
-		$app.searchUsers = [];
-		$app.searchUserParam = {};
-		$app.searchWorlds = [];
+		$app.searchUserResults = [];
+		$app.searchUserParams = {};
+		$app.searchWorldResults = [];
 		$app.searchWorldOption = '';
-		$app.searchWorldParam = {};
-		$app.searchAvatars = [];
-		$app.searchAvatarParam = {};
+		$app.searchWorldParams = {};
+		$app.searchAvatarResults = [];
+		$app.searchAvatarParams = {};
 		$app.isSearchUserLoading = false;
 		$app.isSearchWorldLoading = false;
 		$app.isSearchAvatarLoading = false;
 	});
 
 	$app.methods.clearSearch = function () {
-		this.searchUsers = [];
-		this.searchWorlds = [];
-		this.searchAvatars = [];
+		this.searchUserResults = [];
+		this.searchWorldResults = [];
+		this.searchAvatarResults = [];
 	};
 
 	$app.methods.search = function () {
@@ -4198,7 +4225,7 @@ CefSharp.BindObjectAsync(
 	};
 
 	$app.methods.searchUser = function () {
-		this.searchUserParam = {
+		this.searchUserParams = {
 			n: 10,
 			offset: 0,
 			search: this.searchText
@@ -4207,7 +4234,7 @@ CefSharp.BindObjectAsync(
 	};
 
 	$app.methods.moreSearchUser = function (go) {
-		var params = this.searchUserParam;
+		var params = this.searchUserParams;
 		if (go) {
 			params.offset += params.n * go;
 			if (params.offset < 0) {
@@ -4218,14 +4245,14 @@ CefSharp.BindObjectAsync(
 		API.getUsers(params).finally(() => {
 			this.isSearchUserLoading = false;
 		}).then((args) => {
-			this.searchUsers = [];
-			var { cachedUsers } = API;
+			var map = new Map();
 			for (var json of args.json) {
-				var ref = cachedUsers.get(json.id);
+				var ref = API.cachedUsers.get(json.id);
 				if (ref !== undefined) {
-					insertOrUpdateArrayById(this.searchUsers, ref);
+					map.set(ref.id, ref);
 				}
 			}
+			this.searchUserResults = Array.from(map.values());
 			return args;
 		});
 	};
@@ -4287,12 +4314,12 @@ CefSharp.BindObjectAsync(
 			params.tag = ref.tag;
 		}
 		// TODO: option.platform
-		this.searchWorldParam = params;
+		this.searchWorldParams = params;
 		this.moreSearchWorld();
 	};
 
 	$app.methods.moreSearchWorld = function (go) {
-		var params = this.searchWorldParam;
+		var params = this.searchWorldParams;
 		if (go) {
 			params.offset += params.n * go;
 			if (params.offset < 0) {
@@ -4303,14 +4330,14 @@ CefSharp.BindObjectAsync(
 		API.getWorlds(params, this.searchWorldOption).finally(() => {
 			this.isSearchWorldLoading = false;
 		}).then((args) => {
-			this.searchWorlds = [];
-			var { cachedWorlds } = API;
+			var map = new Map();
 			for (var json of args.json) {
-				var ref = cachedWorlds.get(json.id);
+				var ref = API.cachedWorlds.get(json.id);
 				if (ref !== undefined) {
-					insertOrUpdateArrayById(this.searchWorlds, ref);
+					map.set(ref.id, ref);
 				}
 			}
+			this.searchWorldResults = Array.from(map.values());
 			return args;
 		});
 	};
@@ -4338,12 +4365,12 @@ CefSharp.BindObjectAsync(
 		}
 		params.order = 'descending';
 		// TODO: option.platform
-		this.searchAvatarParam = params;
+		this.searchAvatarParams = params;
 		this.moreSearchAvatar();
 	};
 
 	$app.methods.moreSearchAvatar = function (go) {
-		var params = this.searchAvatarParam;
+		var params = this.searchAvatarParams;
 		if (go) {
 			params.offset += params.n * go;
 			if (params.offset < 0) {
@@ -4354,23 +4381,21 @@ CefSharp.BindObjectAsync(
 		API.getAvatars(params).finally(() => {
 			this.isSearchAvatarLoading = false;
 		}).then((args) => {
-			this.searchAvatars = [];
-			var { cachedAvatars } = API;
+			var map = new Map();
 			for (var json of args.json) {
-				var ref = cachedAvatars.get(json.id);
+				var ref = API.cachedAvatars.get(json.id);
 				if (ref !== undefined) {
-					insertOrUpdateArrayById(this.searchAvatars, ref);
+					map.set(ref.id, ref);
 				}
 			}
+			this.searchAvatarResults = Array.from(map.values());
 			return args;
 		});
 	};
 
 	// App: Favorite
 
-	$app.data.favoriteFriend = {};
-	$app.data.favoriteWorld = {};
-	$app.data.favoriteAvatar = {};
+	$app.data.favoriteObjects = new Map();
 	$app.data.favoriteFriends_ = [];
 	$app.data.favoriteWorlds_ = [];
 	$app.data.favoriteAvatars_ = [];
@@ -4379,9 +4404,7 @@ CefSharp.BindObjectAsync(
 	$app.data.sortFavoriteAvatars = false;
 
 	API.$on('LOGIN', function () {
-		$app.favoriteFriend = {};
-		$app.favoriteWorld = {};
-		$app.favoriteAvatar = {};
+		$app.favoriteObjects.clear();
 		$app.favoriteFriends_ = [];
 		$app.favoriteWorlds_ = [];
 		$app.favoriteAvatars_ = [];
@@ -4412,103 +4435,110 @@ CefSharp.BindObjectAsync(
 
 	$app.methods.applyFavorite = function (type, objectId) {
 		var favorite = API.cachedFavoritesByObjectId.get(objectId);
-		if (type === 'friend') {
-			var ctx = this.favoriteFriend[objectId];
-			if (favorite) {
-				var ref = API.cachedUsers.get(objectId);
-				if (ctx) {
-					if (ctx.ref !== ref) {
-						ctx.ref = ref;
-					}
-					if (ref &&
-						ctx.name !== ref.displayName) {
-						ctx.name = ref.displayName;
-						this.sortFavoriteFriends = true;
-					}
-				} else {
-					ctx = {
-						id: objectId,
-						groupKey: favorite.$groupKey,
-						ref,
-						name: ''
-					};
-					if (ref) {
-						ctx.name = ref.displayName;
-					} else {
+		var ctx = this.favoriteObjects.get(objectId);
+		if (favorite !== undefined) {
+			var isTypeChanged = false;
+			if (ctx === undefined) {
+				ctx = {
+					id: objectId,
+					type,
+					groupKey: favorite.$groupKey,
+					ref: null,
+					name: ''
+				};
+				this.favoriteObjects.set(objectId, ctx);
+				if (type === 'friend') {
+					var ref = API.cachedUsers.get(objectId);
+					if (ref === undefined) {
 						ref = this.friendLog[objectId];
-						if (ref &&
+						if (ref !== undefined &&
 							ref.displayName) {
 							ctx.name = ref.displayName;
 						}
+					} else {
+						ctx.ref = ref;
+						ctx.name = ref.displayName;
 					}
-					Vue.set(this.favoriteFriend, objectId, ctx);
+				} else if (type === 'world') {
+					var ref = API.cachedWorlds.get(objectId);
+					if (ref !== undefined) {
+						ctx.ref = ref;
+						ctx.name = ref.name;
+					}
+				} else if (type === 'avatar') {
+					var ref = API.cachedAvatars.get(objectId);
+					if (ref !== undefined) {
+						ctx.ref = ref;
+						ctx.name = ref.name;
+					}
+				}
+				isTypeChanged = true;
+			} else {
+				if (ctx.type !== type) {
+					// WTF???
+					isTypeChanged = true;
+					if (type === 'friend') {
+						removeFromArray(this.favoriteFriends_, ctx);
+					} else if (type === 'world') {
+						removeFromArray(this.favoriteWorlds_, ctx);
+					} else if (type === 'avatar') {
+						removeFromArray(this.favoriteAvatars_, ctx);
+					}
+				}
+				if (type === 'friend') {
+					var ref = API.cachedUsers.get(objectId);
+					if (ref !== undefined) {
+						if (ctx.ref !== ref) {
+							ctx.ref = ref;
+						}
+						if (ctx.name !== ref.displayName) {
+							ctx.name = ref.displayName;
+							this.sortFavoriteFriends = true;
+						}
+					}
+				} else if (type === 'world') {
+					var ref = API.cachedWorlds.get(objectId);
+					if (ref !== undefined) {
+						if (ctx.ref !== ref) {
+							ctx.ref = ref;
+						}
+						if (ctx.name !== ref.name) {
+							ctx.name = ref.name;
+							this.sortFavoriteWorlds = true;
+						}
+					}
+				} else if (type === 'avatar') {
+					var ref = API.cachedAvatars.get(objectId);
+					if (ref !== undefined) {
+						if (ctx.ref !== ref) {
+							ctx.ref = ref;
+						}
+						if (ctx.name !== ref.name) {
+							ctx.name = ref.name;
+							this.sortFavoriteAvatars = true;
+						}
+					}
+				}
+			}
+			if (isTypeChanged) {
+				if (type === 'friend') {
 					this.favoriteFriends_.push(ctx);
 					this.sortFavoriteFriends = true;
-				}
-			} else if (ctx) {
-				Vue.delete(this.favoriteFriend, objectId);
-				removeFromArray(this.favoriteFriends_, ctx);
-			}
-		} else if (type === 'world') {
-			var ctx = this.favoriteWorld[objectId];
-			if (favorite) {
-				var ref = API.cachedWorlds.get(objectId);
-				if (ctx) {
-					if (ctx.ref !== ref) {
-						ctx.ref = ref;
-					}
-					if (ref &&
-						ctx.name !== ref.name) {
-						ctx.name = ref.name;
-						this.sortFavoriteWorlds = true;
-					}
-				} else {
-					ctx = {
-						id: objectId,
-						groupKey: favorite.$groupKey,
-						ref,
-						name: ''
-					};
-					if (ref) {
-						ctx.name = ref.name;
-					}
-					Vue.set(this.favoriteWorld, objectId, ctx);
+				} else if (type === 'world') {
 					this.favoriteWorlds_.push(ctx);
 					this.sortFavoriteWorlds = true;
-				}
-			} else {
-				Vue.delete(this.favoriteWorld, objectId);
-				removeFromArray(this.favoriteWorlds_, ctx);
-			}
-		} else if (type === 'avatar') {
-			var ctx = this.favoriteAvatar[objectId];
-			if (favorite) {
-				var ref = API.cachedAvatars.get(objectId);
-				if (ctx) {
-					if (ctx.ref !== ref) {
-						ctx.ref = ref;
-					}
-					if (ref &&
-						ctx.name !== ref.name) {
-						ctx.name = ref.name;
-						this.sortFavoriteAvatars = true;
-					}
-				} else {
-					ctx = {
-						id: objectId,
-						groupKey: favorite.$groupKey,
-						ref,
-						name: ''
-					};
-					if (ref) {
-						ctx.name = ref.name;
-					}
-					Vue.set(this.favoriteAvatar, objectId, ctx);
+				} else if (type === 'avatar') {
 					this.favoriteAvatars_.push(ctx);
 					this.sortFavoriteAvatars = true;
 				}
-			} else {
-				Vue.delete(this.favoriteAvatar, objectId);
+			}
+		} else if (ctx !== undefined) {
+			this.favoriteObjects.delete(objectId);
+			if (type === 'friend') {
+				removeFromArray(this.favoriteFriends_, ctx);
+			} else if (type === 'world') {
+				removeFromArray(this.favoriteWorlds_, ctx);
+			} else if (type === 'avatar') {
 				removeFromArray(this.favoriteAvatars_, ctx);
 			}
 		}
@@ -4571,22 +4601,10 @@ CefSharp.BindObjectAsync(
 		});
 	};
 
-	var sortFavoriteByName = (a, b) => {
-		var A = String(a.name).toUpperCase();
-		var B = String(b.name).toUpperCase();
-		if (A < B) {
-			return -1;
-		}
-		if (A > B) {
-			return 1;
-		}
-		return 0;
-	};
-
 	$app.computed.favoriteFriends = function () {
 		if (this.sortFavoriteFriends) {
 			this.sortFavoriteFriends = false;
-			this.favoriteFriends_.sort(sortFavoriteByName);
+			this.favoriteFriends_.sort(compareByName);
 		}
 		return this.favoriteFriends_;
 	};
@@ -4594,7 +4612,7 @@ CefSharp.BindObjectAsync(
 	$app.computed.favoriteWorlds = function () {
 		if (this.sortFavoriteWorlds) {
 			this.sortFavoriteWorlds = false;
-			this.favoriteWorlds_.sort(sortFavoriteByName);
+			this.favoriteWorlds_.sort(compareByName);
 		}
 		return this.favoriteWorlds_;
 	};
@@ -4602,7 +4620,7 @@ CefSharp.BindObjectAsync(
 	$app.computed.favoriteAvatars = function () {
 		if (this.sortFavoriteAvatars) {
 			this.sortFavoriteAvatars = false;
-			this.favoriteAvatars_.sort(sortFavoriteByName);
+			this.favoriteAvatars_.sort(compareByName);
 		}
 		return this.favoriteAvatars_;
 	};
@@ -4666,28 +4684,30 @@ CefSharp.BindObjectAsync(
 
 	API.$on('FRIEND:REQUEST', function (args) {
 		var ref = this.cachedUsers.get(args.params.userId);
-		if (ref) {
-			$app.friendLogTable.data.push({
-				created_at: new Date().toJSON(),
-				type: 'FriendRequest',
-				userId: ref.id,
-				displayName: ref.displayName
-			});
-			$app.saveFriendLog();
+		if (ref === undefined) {
+			return;
 		}
+		$app.friendLogTable.data.push({
+			created_at: new Date().toJSON(),
+			type: 'FriendRequest',
+			userId: ref.id,
+			displayName: ref.displayName
+		});
+		$app.saveFriendLog();
 	});
 
 	API.$on('FRIEND:REQUEST:CANCEL', function (args) {
 		var ref = this.cachedUsers.get(args.params.userId);
-		if (ref) {
-			$app.friendLogTable.data.push({
-				created_at: new Date().toJSON(),
-				type: 'CancelFriendRequst',
-				userId: ref.id,
-				displayName: ref.displayName
-			});
-			$app.saveFriendLog();
+		if (ref === undefined) {
+			return;
 		}
+		$app.friendLogTable.data.push({
+			created_at: new Date().toJSON(),
+			type: 'CancelFriendRequst',
+			userId: ref.id,
+			displayName: ref.displayName
+		});
+		$app.saveFriendLog();
 	});
 
 	var saveFriendLogTimer = null;
@@ -4708,115 +4728,121 @@ CefSharp.BindObjectAsync(
 			this.friendLog = VRCXStorage.GetObject(`${ref.id}_friendLog`);
 			this.friendLogTable.data = VRCXStorage.GetArray(`${ref.id}_friendLogTable`);
 		} else {
-			this.friendLog = {};
-			ref.friends.forEach((id) => {
+			var friendLog = {};
+			for (var id of ref.friends) {
+				// DO NOT set displayName,
+				// it's flag about it's new friend
 				var ctx = {
 					id
 				};
 				var user = API.cachedUsers.get(id);
-				if (user) {
+				if (user !== undefined) {
 					ctx.displayName = user.displayName;
 					ctx.trustLevel = user.$trustLevel;
 				}
-				this.friendLog[id] = ctx;
-			});
+				friendLog[id] = ctx;
+			}
+			this.friendLog = friendLog;
 			this.friendLogTable.data = [];
 			this.saveFriendLog();
 		}
 	};
 
 	$app.methods.addFriendship = function (id) {
-		if (!this.friendLog[id]) {
-			var ctx = {
-				id,
-				displayName: null,
-				trustLevel: null
-			};
-			Vue.set(this.friendLog, id, ctx);
-			var ref = API.cachedUsers.get(id);
-			if (ref) {
-				ctx.displayName = ref.displayName;
-				ctx.trustLevel = ref.$trustLevel;
-				this.friendLogTable.data.push({
-					created_at: new Date().toJSON(),
-					type: 'Friend',
-					userId: ref.id,
-					displayName: ctx.displayName
-				});
-			}
-			this.saveFriendLog();
-			this.notifyMenu('friendLog');
+		if (this.friendLog[id] !== undefined) {
+			return;
 		}
+		var ctx = {
+			id,
+			displayName: null,
+			trustLevel: null
+		};
+		Vue.set(this.friendLog, id, ctx);
+		var ref = API.cachedUsers.get(id);
+		if (ref !== undefined) {
+			ctx.displayName = ref.displayName;
+			ctx.trustLevel = ref.$trustLevel;
+			this.friendLogTable.data.push({
+				created_at: new Date().toJSON(),
+				type: 'Friend',
+				userId: ref.id,
+				displayName: ctx.displayName
+			});
+		}
+		this.saveFriendLog();
+		this.notifyMenu('friendLog');
 	};
 
 	$app.methods.deleteFriendship = function (id) {
 		var ctx = this.friendLog[id];
-		if (ctx) {
-			Vue.delete(this.friendLog, id);
-			this.friendLogTable.data.push({
-				created_at: new Date().toJSON(),
-				type: 'Unfriend',
-				userId: id,
-				displayName: ctx.displayName
-			});
-			this.saveFriendLog();
-			this.notifyMenu('friendLog');
+		if (ctx === undefined) {
+			return;
 		}
+		Vue.delete(this.friendLog, id);
+		this.friendLogTable.data.push({
+			created_at: new Date().toJSON(),
+			type: 'Unfriend',
+			userId: id,
+			displayName: ctx.displayName
+		});
+		this.saveFriendLog();
+		this.notifyMenu('friendLog');
 	};
 
 	$app.methods.updateFriendships = function (ref) {
-		var map = {};
-		ref.friends.forEach((id) => {
-			map[id] = true;
+		var set = new Set();
+		for (var id of ref.friends) {
+			set.add(id);
 			this.addFriendship(id);
-		});
-		for (var key in this.friendLog) {
-			if (!map[key]) {
-				this.deleteFriendship(key);
+		}
+		for (var id in this.friendLog) {
+			if (set.has(id) === false) {
+				this.deleteFriendship(id);
 			}
 		}
 	};
 
 	$app.methods.updateFriendship = function (ref) {
 		var ctx = this.friendLog[ref.id];
-		if (ctx) {
-			if (ctx.displayName !== ref.displayName) {
-				if (ctx.displayName) {
-					this.friendLogTable.data.push({
-						created_at: new Date().toJSON(),
-						type: 'DisplayName',
-						userId: ref.id,
-						displayName: ref.displayName,
-						previousDisplayName: ctx.displayName
-					});
-				} else if (ctx.displayName === null) {
-					this.friendLogTable.data.push({
-						created_at: new Date().toJSON(),
-						type: 'Friend',
-						userId: ref.id,
-						displayName: ref.displayName
-					});
-				}
-				ctx.displayName = ref.displayName;
-				this.saveFriendLog();
-				this.notifyMenu('friendLog');
+		if (ctx === undefined) {
+			return;
+		}
+		if (ctx.displayName !== ref.displayName) {
+			if (ctx.displayName) {
+				this.friendLogTable.data.push({
+					created_at: new Date().toJSON(),
+					type: 'DisplayName',
+					userId: ref.id,
+					displayName: ref.displayName,
+					previousDisplayName: ctx.displayName
+				});
+			} else if (ctx.displayName === null) {
+				this.friendLogTable.data.push({
+					created_at: new Date().toJSON(),
+					type: 'Friend',
+					userId: ref.id,
+					displayName: ref.displayName
+				});
 			}
-			if (ref.$trustLevel &&
-				ctx.trustLevel !== ref.$trustLevel) {
-				if (ctx.trustLevel) {
-					this.friendLogTable.data.push({
-						created_at: new Date().toJSON(),
-						type: 'TrustLevel',
-						userId: ref.id,
-						displayName: ref.displayName,
-						trustLevel: ref.$trustLevel,
-						previousTrustLevel: ctx.trustLevel
-					});
-				}
-				ctx.trustLevel = ref.$trustLevel;
-				this.saveFriendLog();
-				this.notifyMenu('friendLog');
+			ctx.displayName = ref.displayName;
+			this.saveFriendLog();
+			this.notifyMenu('friendLog');
+		}
+		if (ref.$trustLevel &&
+			ctx.trustLevel !== ref.$trustLevel) {
+			if (ctx.trustLevel) {
+				this.friendLogTable.data.push({
+					created_at: new Date().toJSON(),
+					type: 'TrustLevel',
+					userId: ref.id,
+					displayName: ref.displayName,
+					trustLevel: ref.$trustLevel,
+					previousTrustLevel: ctx.trustLevel
+				});
 			}
+			ctx.trustLevel = ref.$trustLevel;
+			this.saveFriendLog();
+			this.notifyMenu('friendLog');
 		}
 	};
 
@@ -4827,10 +4853,9 @@ CefSharp.BindObjectAsync(
 			cancelButtonText: 'Cancel',
 			type: 'info',
 			callback: (action) => {
-				if (action === 'confirm') {
-					if (removeFromArray(this.friendLogTable.data, row)) {
-						this.saveFriendLog();
-					}
+				if (action === 'confirm' &&
+					removeFromArray(this.friendLogTable.data, row)) {
+					this.saveFriendLog();
 				}
 			}
 		});
@@ -4881,32 +4906,34 @@ CefSharp.BindObjectAsync(
 
 	API.$on('PLAYER-MODERATION', function (args) {
 		var { ref } = args;
-		var insertOrUpdate = $app.playerModerationTable.data.some((val, idx, arr) => {
-			if (val.id === ref.id) {
-				if (ref.$isExpired) {
-					Vue.delete(arr, idx);
+		var array = $app.playerModerationTable.data;
+		var { length } = array;
+		for (var i = 0; i < length; ++i) {
+			if (array[i].id === ref.id) {
+				if (ref.$isDeleted) {
+					array.splice(i, 1);
 				} else {
-					Vue.set(arr, idx, ref);
+					Vue.set(array, i, ref);
 				}
-				return true;
+				return;
 			}
-			return false;
-		});
-		if (!insertOrUpdate &&
-			!ref.$isExpired) {
+		}
+		if (ref.$isDeleted === false) {
 			$app.playerModerationTable.data.push(ref);
 			$app.notifyMenu('moderation');
 		}
 	});
 
 	API.$on('PLAYER-MODERATION:@DELETE', function (args) {
-		$app.playerModerationTable.data.find((val, idx, arr) => {
-			if (val.id === args.ref.id) {
-				Vue.delete(arr, idx);
-				return true;
+		var { ref } = args;
+		var array = $app.playerModerationTable.data;
+		var { length } = array;
+		for (var i = 0; i < length; ++i) {
+			if (array[i].id === ref.id) {
+				array.splice(i, 1);
+				return;
 			}
-			return false;
-		});
+		}
 	});
 
 	$app.methods.deletePlayerModeration = function (row) {
@@ -4968,32 +4995,34 @@ CefSharp.BindObjectAsync(
 
 	API.$on('NOTIFICATION', function (args) {
 		var { ref } = args;
-		var insertOrUpdate = $app.notificationTable.data.some((val, idx, arr) => {
-			if (val.id === ref.id) {
-				if (ref.$isExpired) {
-					Vue.delete(arr, idx);
+		var array = $app.notificationTable.data;
+		var { length } = array;
+		for (var i = 0; i < length; ++i) {
+			if (array[i].id === ref.id) {
+				if (ref.$isDeleted) {
+					array.splice(i, 1);
 				} else {
-					Vue.set(arr, idx, ref);
+					Vue.set(array, i, ref);
 				}
-				return true;
+				return;
 			}
-			return false;
-		});
-		if (!insertOrUpdate &&
-			!ref.$isExpired) {
+		}
+		if (ref.$isDeleted === false) {
 			$app.notificationTable.data.push(ref);
 			$app.notifyMenu('notification');
 		}
 	});
 
 	API.$on('NOTIFICATION:@DELETE', function (args) {
-		$app.notificationTable.data.find((val, idx, arr) => {
-			if (val.id === args.ref.id) {
-				Vue.delete(arr, idx);
-				return true;
+		var { ref } = args;
+		var array = $app.notificationTable.data;
+		var { length } = array;
+		for (var i = 0; i < length; ++i) {
+			if (array[i].id === ref.id) {
+				array.splice(i, 1);
+				return;
 			}
-			return false;
-		});
+		}
 	});
 
 	$app.methods.acceptNotification = function (row) {
@@ -5244,135 +5273,158 @@ CefSharp.BindObjectAsync(
 	});
 
 	API.$on('USER', function (args) {
+		var { ref } = args;
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.ref.id === D.id) {
-			D.ref = args.ref;
-			$app.applyUserDialogLocation();
+		if (D.visible === false ||
+			D.id !== ref.id) {
+			return;
 		}
+		D.ref = ref;
+		$app.applyUserDialogLocation();
 	});
 
 	API.$on('WORLD', function (args) {
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.ref.id === D.$location.worldId) {
-			$app.applyUserDialogLocation();
+		if (D.visible === false ||
+			D.$location.worldId !== args.ref.id) {
+			return;
 		}
+		$app.applyUserDialogLocation();
 	});
 
 	API.$on('FRIEND:STATUS', function (args) {
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.params.userId === D.id) {
-			D.isFriend = args.json.isFriend;
-			D.incomingRequest = args.json.incomingRequest;
-			D.outgoingRequest = args.json.outgoingRequest;
+		if (D.visible === false ||
+			D.id !== args.params.userId) {
+			return;
 		}
+		var { json } = args;
+		D.isFriend = json.isFriend;
+		D.incomingRequest = json.incomingRequest;
+		D.outgoingRequest = json.outgoingRequest;
 	});
 
 	API.$on('FRIEND:REQUEST', function (args) {
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.params.userId === D.id) {
-			if (args.json.success) {
-				D.isFriend = true;
-			} else {
-				D.outgoingRequest = true;
-			}
+		if (D.visible === false ||
+			D.id !== args.params.userId) {
+			return;
+		}
+		if (args.json.success) {
+			D.isFriend = true;
+		} else {
+			D.outgoingRequest = true;
 		}
 	});
 
 	API.$on('FRIEND:REQUEST:CANCEL', function (args) {
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.params.userId === D.id) {
-			D.outgoingRequest = false;
+		if (D.visible === false ||
+			D.id !== args.params.userId) {
+			return;
 		}
+		D.outgoingRequest = false;
 	});
 
 	API.$on('NOTIFICATION', function (args) {
+		var { ref } = args;
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.ref &&
-			args.ref.senderUserId === D.id &&
-			args.ref.type === 'friendRequest') {
-			D.incomingRequest = true;
+		if (D.visible === false ||
+			ref.$isDeleted ||
+			ref.type !== 'friendRequest' ||
+			ref.senderUserId !== D.id) {
+			return;
 		}
+		D.incomingRequest = true;
 	});
 
 	API.$on('NOTIFICATION:ACCEPT', function (args) {
+		var { ref } = args;
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.ref &&
-			args.ref.senderUserId === D.id &&
-			args.ref.type === 'friendRequest') {
-			D.isFriend = true;
+		// 얘는 @DELETE가 오고나서 ACCEPT가 옴
+		// 따라서 $isDeleted라면 ref가 undefined가 됨
+		if (D.visible === false ||
+			ref === undefined ||
+			ref.type !== 'friendRequest' ||
+			ref.senderUserId !== D.id) {
+			return;
 		}
+		D.isFriend = true;
 	});
 
 	API.$on('NOTIFICATION:@DELETE', function (args) {
+		var { ref } = args;
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.ref.senderUserId === D.id &&
-			args.ref.type === 'friendRequest') {
-			D.incomingRequest = false;
+		if (D.visible === false ||
+			ref.type !== 'friendRequest' ||
+			ref.senderUserId !== D.id) {
+			return;
 		}
+		D.incomingRequest = false;
 	});
 
 	API.$on('FRIEND:DELETE', function (args) {
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.params.userId === D.id) {
-			D.isFriend = false;
+		if (D.visible === false ||
+			D.id !== args.params.userId) {
+			return;
 		}
+		D.isFriend = false;
 	});
 
 	API.$on('PLAYER-MODERATION', function (args) {
+		var { ref } = args;
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.ref.targetUserId === D.id &&
-			args.ref.sourceUserId === this.currentUser.id &&
-			!args.ref.$isExpired) {
-			if (args.ref.type === 'block') {
-				D.isBlock = true;
-			} else if (args.ref.type === 'mute') {
-				D.isMute = true;
-			} else if (args.ref.type === 'hideAvatar') {
-				D.isHideAvatar = true;
-			}
+		if (D.visible === false ||
+			ref.$isDeleted ||
+			ref.targetUserId !== D.id &&
+			ref.sourceUserId !== this.currentUser.id) {
+			return;
+		}
+		if (ref.type === 'block') {
+			D.isBlock = true;
+		} else if (ref.type === 'mute') {
+			D.isMute = true;
+		} else if (ref.type === 'hideAvatar') {
+			D.isHideAvatar = true;
 		}
 	});
 
 	API.$on('PLAYER-MODERATION:@DELETE', function (args) {
+		var { ref } = args;
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.ref.targetUserId === D.id &&
-			args.ref.sourceUserId === this.currentUser.id) {
-			if (args.ref.type === 'block') {
-				D.isBlock = false;
-			} else if (args.ref.type === 'mute') {
-				D.isMute = false;
-			} else if (args.ref.type === 'hideAvatar') {
-				D.isHideAvatar = false;
-			}
+		if (D.visible === false ||
+			ref.targetUserId !== D.id ||
+			ref.sourceUserId !== this.currentUser.id) {
+			return;
+		}
+		if (ref.type === 'block') {
+			D.isBlock = false;
+		} else if (ref.type === 'mute') {
+			D.isMute = false;
+		} else if (ref.type === 'hideAvatar') {
+			D.isHideAvatar = false;
 		}
 	});
 
 	API.$on('FAVORITE', function (args) {
+		var { ref } = args;
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.ref.favoriteId === D.id &&
-			!args.ref.$isExpired) {
-			D.isFavorite = true;
+		if (D.visible === false ||
+			ref.$isDeleted ||
+			ref.favoriteId !== D.id) {
+			return;
 		}
+		D.isFavorite = true;
 	});
 
 	API.$on('FAVORITE:@DELETE', function (args) {
 		var D = $app.userDialog;
-		if (D.visible &&
-			args.ref.favoriteId === D.id) {
-			D.isFavorite = false;
+		if (D.visible === false ||
+			D.id !== args.ref.favoriteId) {
+			return;
 		}
+		D.isFavorite = false;
 	});
 
 	$app.methods.showUserDialog = function (userId) {
@@ -5401,9 +5453,9 @@ CefSharp.BindObjectAsync(
 				D.isMute = false;
 				D.isHideAvatar = false;
 				for (var ref of API.cachedPlayerModerations.values()) {
-					if (ref.targetUserId === D.id &&
-						ref.sourceUserId === API.currentUser.id &&
-						!ref.$isExpired) {
+					if (ref.$isDeleted === false &&
+						ref.targetUserId === D.id &&
+						ref.sourceUserId === API.currentUser.id) {
 						if (ref.type === 'block') {
 							D.isBlock = true;
 						} else if (ref.type === 'mute') {
@@ -5415,22 +5467,24 @@ CefSharp.BindObjectAsync(
 				}
 				D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
 				this.applyUserDialogLocation();
-				D.worlds = [];
-				D.avatars = [];
-				D.isWorldsLoading = false;
-				D.isAvatarsLoading = false;
+				var worlds = [];
 				for (var ref of API.cachedWorlds.values()) {
 					if (ref.authorId === D.id) {
-						D.worlds.push(ref);
+						worlds.push(ref);
 					}
 				}
+				worlds.sort(compareByName);
+				D.worlds = worlds;
+				var avatars = [];
 				for (var ref of API.cachedAvatars.values()) {
 					if (ref.authorId === D.id) {
-						D.avatars.push(ref);
+						avatars.push(ref);
 					}
 				}
-				this.sortUserDialogWorlds();
-				this.sortUserDialogAvatars();
+				avatars.sort(compareByName);
+				D.avatars = avatars;
+				D.isWorldsLoading = false;
+				D.isAvatarsLoading = false;
 				API.getFriendStatus({
 					userId: D.id
 				});
@@ -5448,172 +5502,147 @@ CefSharp.BindObjectAsync(
 		D.$location = L;
 		if (L.userId) {
 			var ref = API.cachedUsers.get(L.userId);
-			if (ref) {
-				L.user = ref;
-			} else {
+			if (ref === undefined) {
 				API.getUser({
 					userId: L.userId
 				}).then((args) => {
 					Vue.set(L, 'user', args.ref);
 					return args;
 				});
+			} else {
+				L.user = ref;
 			}
 		}
-		D.users = [];
-		if (!L.isOffline) {
-			for (var userId of this.friends.keys()) {
-				var ref = API.cachedUsers.get(userId);
-				if (ref &&
-					ref.location === D.ref.location) {
-					D.users.push(ref);
+		var users = [];
+		if (L.isOffline === false) {
+			for (var { ref } of this.friends.values()) {
+				if (ref !== undefined &&
+					ref.location === L.tag) {
+					users.push(ref);
 				}
 			}
-			D.users.sort((a, b) => {
-				var A = String(a.displayName).toUpperCase();
-				var B = String(b.displayName).toUpperCase();
-				if (A < B) {
-					return -1;
-				}
-				if (A > B) {
-					return 1;
-				}
-				return 0;
-			});
 		}
+		users.sort(compareByDisplayName);
+		D.users = users;
 		D.instance = {};
 		if (L.worldId) {
-			var handle = (instances) => {
-				if (instances) {
-					instances.find((v) => {
-						if (v[0] === L.instanceId) {
-							D.instance = {
-								id: v[0],
-								occupants: v[1]
-							};
-							return true;
-						}
-						return false;
-					});
+			var applyInstance = function (instances) {
+				for (var [id, occupants] of instances) {
+					if (id === L.instanceId) {
+						D.instance = {
+							id,
+							occupants
+						};
+						break;
+					}
 				}
 			};
 			var ref = API.cachedWorlds.get(L.worldId);
-			if (ref) {
-				handle(ref.instances);
-			} else {
+			if (ref === undefined) {
 				API.getWorld({
 					worldId: L.worldId
 				}).then((args) => {
-					if (L.tag === D.$location.tag) {
-						handle(args.ref.instances);
+					if (args.ref.id === L.worldId) {
+						applyInstance(args.ref.instances);
 					}
 					return true;
 				});
+			} else {
+				applyInstance(ref.instances);
 			}
 		}
-	};
-
-	$app.methods.sortUserDialogWorlds = function () {
-		this.userDialog.worlds.sort((a, b) => {
-			var A = String(a.name).toUpperCase();
-			var B = String(b.name).toUpperCase();
-			if (A < B) {
-				return -1;
-			}
-			if (A > B) {
-				return 1;
-			}
-			return 0;
-		});
 	};
 
 	$app.methods.refreshUserDialogWorlds = function () {
 		var D = this.userDialog;
-		if (!D.isWorldsLoading) {
-			D.isWorldsLoading = true;
-			var params = {
-				n: 100,
-				offset: 0,
-				sort: 'updated',
-				order: 'descending',
-				user: 'friends',
-				userId: D.id,
-				releaseStatus: 'public'
-			};
-			if (params.userId === API.currentUser.id) {
-				params.user = 'me';
-				params.releaseStatus = 'all';
-			}
-			API.bulk({
-				fn: 'getWorlds',
-				N: -1,
-				params,
-				handle: (args) => {
-					var { cachedWorlds } = API;
-					for (var json of args.json) {
-						var ref = cachedWorlds.get(json.id);
-						if (ref !== undefined) {
-							insertOrUpdateArrayById(D.worlds, ref);
-						}
-					}
-				},
-				done: () => {
-					this.sortUserDialogWorlds();
-					D.isWorldsLoading = false;
-				}
-			});
+		if (D.isWorldsLoading) {
+			return;
 		}
-	};
-
-	$app.methods.sortUserDialogAvatars = function () {
-		this.userDialog.avatars.sort((a, b) => {
-			var A = String(a.name).toUpperCase();
-			var B = String(b.name).toUpperCase();
-			if (A < B) {
-				return -1;
+		D.isWorldsLoading = true;
+		var params = {
+			n: 100,
+			offset: 0,
+			sort: 'updated',
+			order: 'descending',
+			user: 'friends',
+			userId: D.id,
+			releaseStatus: 'public'
+		};
+		if (params.userId === API.currentUser.id) {
+			params.user = 'me';
+			params.releaseStatus = 'all';
+		}
+		var map = new Map();
+		for (var ref of API.cachedWorlds.values()) {
+			if (ref.authorId === D.id) {
+				map.set(ref.id, ref);
 			}
-			if (A > B) {
-				return 1;
+		}
+		API.bulk({
+			fn: 'getWorlds',
+			N: -1,
+			params,
+			handle: (args) => {
+				for (var json of args.json) {
+					var $ref = API.cachedWorlds.get(json.id);
+					if ($ref !== undefined) {
+						map.set($ref.id, $ref);
+					}
+				}
+			},
+			done: () => {
+				var array = Array.from(map.values());
+				array.sort(compareByName);
+				D.worlds = array;
+				D.isWorldsLoading = false;
 			}
-			return 0;
 		});
 	};
 
 	$app.methods.refreshUserDialogAvatars = function () {
 		var D = this.userDialog;
-		if (!D.isAvatarsLoading) {
-			D.isAvatarsLoading = true;
-			var params = {
-				n: 100,
-				offset: 0,
-				sort: 'updated',
-				order: 'descending',
-				user: 'friends',
-				userId: D.id,
-				releaseStatus: 'public'
-			};
-			if (params.userId === API.currentUser.id) {
-				params.user = 'me';
-				params.releaseStatus = 'all';
-			}
-			API.bulk({
-				fn: 'getAvatars',
-				N: -1,
-				params,
-				handle: (args) => {
-					var { cachedAvatars } = API;
-					for (var json of args.json) {
-						var ref = cachedAvatars.get(json.id);
-						if (ref !== undefined) {
-							insertOrUpdateArrayById(D.avatars, ref);
-						}
-					}
-				},
-				done: () => {
-					this.sortUserDialogAvatars();
-					D.isAvatarsLoading = false;
-				}
-			});
+		if (D.isAvatarsLoading) {
+			return;
 		}
+		D.isAvatarsLoading = true;
+		var params = {
+			n: 100,
+			offset: 0,
+			sort: 'updated',
+			order: 'descending',
+			user: 'friends',
+			userId: D.id,
+			releaseStatus: 'public'
+		};
+		if (params.userId === API.currentUser.id) {
+			params.user = 'me';
+			params.releaseStatus = 'all';
+		}
+		var map = new Map();
+		for (var ref of API.cachedAvatars.values()) {
+			if (ref.authorId === D.id) {
+				map.set(ref.id, ref);
+			}
+		}
+		API.bulk({
+			fn: 'getAvatars',
+			N: -1,
+			params,
+			handle: (args) => {
+				for (var json of args.json) {
+					var $ref = API.cachedAvatars.get(json.id);
+					if ($ref !== undefined) {
+						map.set($ref.id, $ref);
+					}
+				}
+			},
+			done: () => {
+				var array = Array.from(map.values());
+				array.sort(compareByName);
+				D.avatars = array;
+				D.isAvatarsLoading = false;
+			}
+		});
 	};
 
 	var performUserDialogCommand = (command, userId) => {
@@ -5621,11 +5650,6 @@ CefSharp.BindObjectAsync(
 			case 'Delete Favorite':
 				API.deleteFavorite({
 					objectId: userId
-				});
-				break;
-			case 'Unfriend':
-				API.deleteFriend({
-					userId
 				});
 				break;
 			case 'Accept Friend Request':
@@ -5698,6 +5722,11 @@ CefSharp.BindObjectAsync(
 					type: 'hideAvatar'
 				});
 				break;
+			case 'Unfriend':
+				API.deleteFriend({
+					userId
+				});
+				break;
 			default:
 				break;
 		}
@@ -5705,63 +5734,64 @@ CefSharp.BindObjectAsync(
 
 	$app.methods.userDialogCommand = function (command) {
 		var D = this.userDialog;
-		if (D.visible) {
-			if (command === 'Add Favorite') {
-				this.showFavoriteDialog('friend', D.id);
-			} else if (command === 'Show Avatar Author') {
-				var id = extractFileId(D.ref.currentAvatarImageUrl);
-				if (id) {
-					API.call(`file/${id}`).then((json) => {
-						if (D.id === json.ownerId) {
-							this.$message({
-								message: 'It is own avatar',
-								type: 'warning'
-							});
-						} else {
-							this.showUserDialog(json.ownerId);
-						}
-					});
-				} else {
-					this.$message({
-						message: 'Sorry, the author is unknown',
-						type: 'error'
-					});
+		if (D.visible === false) {
+			return;
+		}
+		if (command === 'Add Favorite') {
+			this.showFavoriteDialog('friend', D.id);
+		} else if (command === 'Message') {
+			this.$prompt('Enter a message', 'Send Message', {
+				distinguishCancelAndClose: true,
+				confirmButtonText: 'Send',
+				cancelButtonText: 'Cancel',
+				inputPattern: /\S+/u,
+				inputErrorMessage: 'Message is required',
+				callback: (action, instance) => {
+					if (action === 'confirm' &&
+						instance.inputValue) {
+						API.sendNotification({
+							receiverUserId: D.id,
+							type: 'message',
+							message: instance.inputValue,
+							seen: false,
+							details: '{}'
+						}).then((args) => {
+							this.$message('Message sent');
+							return args;
+						});
+					}
 				}
-			} else if (command === 'Message') {
-				this.$prompt('Enter a message', 'Send Message', {
-					distinguishCancelAndClose: true,
-					confirmButtonText: 'Send',
-					cancelButtonText: 'Cancel',
-					inputPattern: /\S+/u,
-					inputErrorMessage: 'Message is required',
-					callback: (action, instance) => {
-						if (action === 'confirm' &&
-							instance.inputValue) {
-							API.sendNotification({
-								receiverUserId: D.id,
-								type: 'message',
-								message: instance.inputValue,
-								seen: false,
-								details: '{}'
-							}).then((args) => {
-								this.$message('Message sent');
-								return args;
-							});
-						}
+			});
+		} else if (command === 'Show Avatar Author') {
+			var id = extractFileId(D.ref.currentAvatarImageUrl);
+			if (id) {
+				API.call(`file/${id}`).then((json) => {
+					if (json.ownerId === D.id) {
+						this.$message({
+							message: 'It\'s personal (own) avatar',
+							type: 'warning'
+						});
+					} else {
+						this.showUserDialog(json.ownerId);
 					}
 				});
 			} else {
-				this.$confirm(`Continue? ${command}`, 'Confirm', {
-					confirmButtonText: 'Confirm',
-					cancelButtonText: 'Cancel',
-					type: 'info',
-					callback: (action) => {
-						if (action === 'confirm') {
-							performUserDialogCommand(command, D.id);
-						}
-					}
+				this.$message({
+					message: 'Sorry, the author is unknown',
+					type: 'error'
 				});
 			}
+		} else {
+			this.$confirm(`Continue? ${command}`, 'Confirm', {
+				confirmButtonText: 'Confirm',
+				cancelButtonText: 'Cancel',
+				type: 'info',
+				callback: (action) => {
+					if (action === 'confirm') {
+						performUserDialogCommand(command, D.id);
+					}
+				}
+			});
 		}
 	};
 
@@ -5790,195 +5820,200 @@ CefSharp.BindObjectAsync(
 	});
 
 	API.$on('WORLD', function (args) {
+		var { ref } = args;
 		var D = $app.worldDialog;
-		if (D.visible &&
-			args.ref.id === D.id) {
-			D.ref = args.ref;
-			var id = extractFileId(args.ref.assetUrl);
+		if (D.visible === false ||
+			D.id !== ref.id) {
+			return;
+		}
+		D.ref = ref;
+		if (D.fileSize === 'Loading') {
+			var id = extractFileId(ref.assetUrl);
 			if (id) {
-				this.call(`file/${id}`).then((json) => {
-					var ref = json.versions[json.versions.length - 1];
-					D.fileCreatedAt = ref.created_at;
-					D.fileSize = `${(ref.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
+				this.call(`file/${id}`).then(function (json) {
+					var ctx = json.versions[json.versions.length - 1];
+					D.fileCreatedAt = ctx.created_at;
+					D.fileSize = `${(ctx.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
 				});
 			}
-			$app.applyWorldDialogInstances();
 		}
+		$app.applyWorldDialogInstances();
 	});
 
 	API.$on('FAVORITE', function (args) {
+		var { ref } = args;
 		var D = $app.worldDialog;
-		if (D.visible &&
-			args.ref.favoriteId === D.id &&
-			!args.ref.$isExpired) {
-			D.isFavorite = true;
+		if (D.visible === false ||
+			ref.$isDeleted ||
+			ref.favoriteId !== D.id) {
+			return;
 		}
+		D.isFavorite = true;
 	});
 
 	API.$on('FAVORITE:@DELETE', function (args) {
 		var D = $app.worldDialog;
-		if (D.visible &&
-			args.ref.favoriteId === D.id) {
-			D.isFavorite = false;
+		if (D.visible === false ||
+			D.id !== args.ref.favoriteId) {
+			return;
 		}
+		D.isFavorite = false;
 	});
 
 	$app.methods.showWorldDialog = function (tag) {
 		this.$nextTick(() => adjustDialogZ(this.$refs.worldDialog.$el));
 		var D = this.worldDialog;
 		var L = API.parseLocation(tag);
-		if (L.worldId) {
-			D.id = L.worldId;
-			D.$location = L;
-			D.treeData = [];
-			D.fileCreatedAt = '';
-			D.fileSize = 'Loading';
-			D.visible = true;
-			D.loading = true;
-			API.getCachedWorld({
-				worldId: L.worldId
-			}).catch((err) => {
-				D.loading = false;
-				D.visible = false;
-				throw err;
-			}).then((args) => {
-				if (D.id === args.ref.id) {
-					D.loading = false;
-					D.ref = args.ref;
-					D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
-					D.rooms = [];
-					this.applyWorldDialogInstances();
-					if (args.cache) {
-						API.getWorld(args.params);
-					}
-				}
-				return args;
-			});
+		if (L.worldId === '') {
+			return;
 		}
+		D.id = L.worldId;
+		D.$location = L;
+		D.treeData = [];
+		D.fileCreatedAt = '';
+		D.fileSize = 'Loading';
+		D.visible = true;
+		D.loading = true;
+		API.getCachedWorld({
+			worldId: L.worldId
+		}).catch((err) => {
+			D.loading = false;
+			D.visible = false;
+			throw err;
+		}).then((args) => {
+			if (D.id === args.ref.id) {
+				D.loading = false;
+				D.ref = args.ref;
+				D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
+				D.rooms = [];
+				this.applyWorldDialogInstances();
+				if (args.cache) {
+					API.getWorld(args.params);
+				}
+			}
+			return args;
+		});
 	};
 
 	$app.methods.applyWorldDialogInstances = function () {
 		var D = this.worldDialog;
-		if (D.ref.instances) {
-			var map = {};
-			D.ref.instances.forEach((v) => {
-				map[v[0]] = {
-					id: v[0],
-					occupants: v[1],
-					users: []
-				};
-			});
-			var { instanceId } = D.$location;
-			if (instanceId &&
-				!map[instanceId]) {
-				map[instanceId] = {
+		var instances = {};
+		for (var [id, occupants] of D.ref.instances) {
+			instances[id] = {
+				id,
+				occupants,
+				users: []
+			};
+		}
+		var { instanceId } = D.$location;
+		if (instanceId &&
+			instances[instanceId] === undefined) {
+			instances[instanceId] = {
+				id: instanceId,
+				occupants: 0,
+				users: []
+			};
+		}
+		for (var { ref } of this.friends.values()) {
+			if (ref === undefined ||
+				ref.$location === undefined ||
+				ref.$location.worldId !== D.id) {
+				continue;
+			}
+			var { instanceId } = ref.$location;
+			var instance = instances[instanceId];
+			if (instance === undefined) {
+				instance = {
 					id: instanceId,
 					occupants: 0,
 					users: []
 				};
+				instances[instanceId] = instance;
 			}
-			for (var userId of this.friends.keys()) {
-				var ref = API.cachedUsers.get(userId);
-				if (ref &&
-					ref.$location.worldId === D.id) {
-					({ instanceId } = ref.$location);
-					if (map[instanceId]) {
-						map[instanceId].users.push(ref);
-					} else {
-						map[instanceId] = {
-							id: instanceId,
-							occupants: 0,
-							users: [ref]
-						};
-					}
-				}
-			}
-			D.rooms = [];
-			Object.values(map).sort(function (a, b) {
-				return b.users.length - a.users.length ||
-					b.occupants - a.occupants;
-			}).forEach((v) => {
-				var L = API.parseLocation(`${D.id}:${v.id}`);
-				v.$location = L;
-				v.location = L.tag;
-				if (L.userId) {
-					var $ref = API.cachedUsers.get(L.userId);
-					if ($ref) {
-						L.user = $ref;
-					} else {
-						API.getUser({
-							userId: L.userId
-						}).then((args) => {
-							Vue.set(L, 'user', args.ref);
-							return args;
-						});
-					}
-				}
-				v.users.sort((a, b) => {
-					var A = String(a.displayName).toUpperCase();
-					var B = String(b.displayName).toUpperCase();
-					if (A < B) {
-						return -1;
-					}
-					if (A > B) {
-						return 1;
-					}
-					return 0;
-				});
-				D.rooms.push(v);
-			});
+			instance.users.push(ref);
 		}
+		var rooms = [];
+		for (var instance of Object.values(instances)) {
+			// due to references on callback of API.getUser()
+			// this should be block scope variable
+			const L = API.parseLocation(`${D.id}:${instance.id}`);
+			instance.location = L.tag;
+			instance.$location = L;
+			if (L.userId) {
+				var ref = API.cachedUsers.get(L.userId);
+				if (ref === undefined) {
+					API.getUser({
+						userId: L.userId
+					}).then((args) => {
+						Vue.set(L, 'user', args.ref);
+						return args;
+					});
+				} else {
+					L.user = ref;
+				}
+			}
+			instance.users.sort(compareByDisplayName);
+			rooms.push(instance);
+		}
+		// sort by more friends, occupants
+		rooms.sort(function (a, b) {
+			return b.users.length - a.users.length ||
+				b.occupants - a.occupants;
+		});
+		D.rooms = rooms;
 	};
 
 	$app.methods.worldDialogCommand = function (command) {
 		var D = this.worldDialog;
-		if (D.visible) {
-			if (command === 'New Instance') {
-				this.showNewInstanceDialog(D.$location.tag);
-			} else if (command === 'Add Favorite') {
-				this.showFavoriteDialog('world', D.id);
-			} else {
-				this.$confirm(`Continue? ${command}`, 'Confirm', {
-					confirmButtonText: 'Confirm',
-					cancelButtonText: 'Cancel',
-					type: 'info',
-					callback: (action) => {
-						if (action === 'confirm') {
-							switch (command) {
-								case 'Delete Favorite':
-									API.deleteFavorite({
-										objectId: D.id
-									});
-									break;
-								case 'Make Home':
-									API.saveCurrentUser({
-										homeLocation: D.id
-									}).then((args) => {
-										this.$message({
-											message: 'Home world updated',
-											type: 'success'
-										});
-										return args;
-									});
-									break;
-								case 'Reset Home':
-									API.saveCurrentUser({
-										homeLocation: ''
-									}).then((args) => {
-										this.$message({
-											message: 'Home world has been reset',
-											type: 'success'
-										});
-										return args;
-									});
-									break;
-								default:
-									break;
-							}
-						}
+		if (D.visible === false) {
+			return;
+		}
+		if (command === 'New Instance') {
+			this.showNewInstanceDialog(D.$location.tag);
+		} else if (command === 'Add Favorite') {
+			this.showFavoriteDialog('world', D.id);
+		} else {
+			this.$confirm(`Continue? ${command}`, 'Confirm', {
+				confirmButtonText: 'Confirm',
+				cancelButtonText: 'Cancel',
+				type: 'info',
+				callback: (action) => {
+					if (action !== 'confirm') {
+						return;
 					}
-				});
-			}
+					switch (command) {
+						case 'Delete Favorite':
+							API.deleteFavorite({
+								objectId: D.id
+							});
+							break;
+						case 'Make Home':
+							API.saveCurrentUser({
+								homeLocation: D.id
+							}).then((args) => {
+								this.$message({
+									message: 'Home world updated',
+									type: 'success'
+								});
+								return args;
+							});
+							break;
+						case 'Reset Home':
+							API.saveCurrentUser({
+								homeLocation: ''
+							}).then((args) => {
+								this.$message({
+									message: 'Home world has been reset',
+									type: 'success'
+								});
+								return args;
+							});
+							break;
+						default:
+							break;
+					}
+				}
+			});
 		}
 	};
 
@@ -5991,17 +6026,17 @@ CefSharp.BindObjectAsync(
 		var { ref } = this.worldDialog;
 		var platforms = [];
 		if (ref.unityPackages) {
-			ref.unityPackages.forEach((v) => {
+			for (var unityPackage of ref.unityPackages) {
 				var platform = 'PC';
-				if (v.platform === 'standalonewindows') {
+				if (unityPackage.platform === 'standalonewindows') {
 					platform = 'PC';
-				} else if (v.platform === 'android') {
+				} else if (unityPackage.platform === 'android') {
 					platform = 'Quest';
-				} else if (v.platform) {
-					({ platform } = v);
+				} else if (unityPackage.platform) {
+					({ platform } = unityPackage);
 				}
-				platforms.push(`${platform}/${v.unityVersion}`);
-			});
+				platforms.push(`${platform}/${unityPackage.unityVersion}`);
+			}
 		}
 		return platforms.join(', ');
 	};
@@ -6025,9 +6060,12 @@ CefSharp.BindObjectAsync(
 
 	API.$on('AVATAR', function (args) {
 		var D = $app.avatarDialog;
-		if (D.visible &&
-			args.ref.id === D.id) {
-			D.ref = args.ref;
+		if (D.visible === false ||
+			D.id !== args.ref.id) {
+			return;
+		}
+		D.ref = args.ref;
+		if (D.fileSize === 'Loading') {
 			var id = extractFileId(args.ref.assetUrl);
 			if (id) {
 				this.call(`file/${id}`).then((json) => {
@@ -6040,20 +6078,23 @@ CefSharp.BindObjectAsync(
 	});
 
 	API.$on('FAVORITE', function (args) {
+		var { ref } = args;
 		var D = $app.avatarDialog;
-		if (D.visible &&
-			args.ref.favoriteId === D.id &&
-			!args.ref.$isExpired) {
-			D.isFavorite = true;
+		if (D.visible === false ||
+			ref.$isDeleted ||
+			ref.favoriteId !== D.id) {
+			return;
 		}
+		D.isFavorite = true;
 	});
 
 	API.$on('FAVORITE:@DELETE', function (args) {
 		var D = $app.avatarDialog;
-		if (D.visible &&
-			args.ref.favoriteId === D.id) {
-			D.isFavorite = false;
+		if (D.visible === false ||
+			D.id !== args.ref.favoriteId) {
+			return;
 		}
+		D.isFavorite = false;
 	});
 
 	$app.methods.showAvatarDialog = function (avatarId) {
@@ -6086,34 +6127,36 @@ CefSharp.BindObjectAsync(
 
 	$app.methods.avatarDialogCommand = function (command) {
 		var D = this.avatarDialog;
-		if (D.visible) {
-			if (command === 'Add Favorite') {
-				this.showFavoriteDialog('avatar', D.id);
-			} else {
-				this.$confirm(`Continue? ${command}`, 'Confirm', {
-					confirmButtonText: 'Confirm',
-					cancelButtonText: 'Cancel',
-					type: 'info',
-					callback: (action) => {
-						if (action === 'confirm') {
-							switch (command) {
-								case 'Delete Favorite':
-									API.deleteFavorite({
-										objectId: D.id
-									});
-									break;
-								case 'Select Avatar':
-									API.selectAvatar({
-										avatarId: D.id
-									});
-									break;
-								default:
-									break;
-							}
-						}
+		if (D.visible === false) {
+			return;
+		}
+		if (command === 'Add Favorite') {
+			this.showFavoriteDialog('avatar', D.id);
+		} else {
+			this.$confirm(`Continue? ${command}`, 'Confirm', {
+				confirmButtonText: 'Confirm',
+				cancelButtonText: 'Cancel',
+				type: 'info',
+				callback: (action) => {
+					if (action !== 'confirm') {
+						return;
 					}
-				});
-			}
+					switch (command) {
+						case 'Delete Favorite':
+							API.deleteFavorite({
+								objectId: D.id
+							});
+							break;
+						case 'Select Avatar':
+							API.selectAvatar({
+								avatarId: D.id
+							});
+							break;
+						default:
+							break;
+					}
+				}
+			});
 		}
 	};
 
@@ -6122,34 +6165,21 @@ CefSharp.BindObjectAsync(
 		D.treeData = buildTreeData(D.ref);
 	};
 
-	$app.computed.avatarDialogLastUpdate = function () {
-		var at = '';
-		var { ref } = this.avatarDialog;
-		if (ref.unityPackages) {
-			ref.unityPackages.forEach((v) => {
-				if (at < v.created_at) {
-					at = v.created_at;
-				}
-			});
-		}
-		return at || ref.updated_at || '';
-	};
-
 	$app.computed.avatarDialogPlatform = function () {
 		var { ref } = this.avatarDialog;
 		var platforms = [];
 		if (ref.unityPackages) {
-			ref.unityPackages.forEach((v) => {
+			for (var unityPackage of ref.unityPackages) {
 				var platform = 'PC';
-				if (v.platform === 'standalonewindows') {
+				if (unityPackage.platform === 'standalonewindows') {
 					platform = 'PC';
-				} else if (v.platform === 'android') {
+				} else if (unityPackage.platform === 'android') {
 					platform = 'Quest';
-				} else if (v.platform) {
-					({ platform } = v);
+				} else if (unityPackage.platform) {
+					({ platform } = unityPackage);
 				}
-				platforms.push(`${platform}/${v.unityVersion}`);
-			});
+				platforms.push(`${platform}/${unityPackage.unityVersion}`);
+			}
 		}
 		return platforms.join(', ');
 	};
@@ -6220,37 +6250,36 @@ CefSharp.BindObjectAsync(
 			cancelButtonText: 'Cancel',
 			type: 'info',
 			callback: (action) => {
-				if (action === 'confirm') {
-					var D = this.inviteDialog;
-					if (!D.loading) {
-						D.loading = true;
-						var params = {
-							receiverUserId: '',
-							type: 'invite',
-							message: '',
-							seen: false,
-							details: {
-								worldId: D.worldId,
-								worldName: D.worldName
-							}
-						};
-						var invite = () => {
-							if (D.userIds.length) {
-								params.receiverUserId = D.userIds.shift();
-								API.sendNotification(params).finally(invite);
-							} else {
-								D.loading = false;
-								D.visible = false;
-								this.$message({
-									message: 'Invite sent',
-									type: 'success'
-								});
-							}
-						};
-						invite();
-					}
-
+				var D = this.inviteDialog;
+				if (action !== 'confirm' ||
+					D.loading === true) {
+					return;
 				}
+				D.loading = true;
+				var params = {
+					receiverUserId: '',
+					type: 'invite',
+					message: '',
+					seen: false,
+					details: {
+						worldId: D.worldId,
+						worldName: D.worldName
+					}
+				};
+				var inviteLoop = () => {
+					if (D.userIds.length > 0) {
+						params.receiverUserId = D.userIds.shift();
+						API.sendNotification(params).finally(inviteLoop);
+					} else {
+						D.loading = false;
+						D.visible = false;
+						this.$message({
+							message: 'Invite sent',
+							type: 'success'
+						});
+					}
+				};
+				inviteLoop();
 			}
 		});
 	};
@@ -6258,27 +6287,20 @@ CefSharp.BindObjectAsync(
 	$app.methods.showInviteDialog = function (tag) {
 		this.$nextTick(() => adjustDialogZ(this.$refs.inviteDialog.$el));
 		var L = API.parseLocation(tag);
-		if (!(L.isOffline || L.isPrivate) &&
-			L.worldId) {
-			var handle = (ref) => {
-				var D = this.inviteDialog;
-				D.userIds = [];
-				D.worldId = L.tag;
-				D.worldName = ref.name;
-				D.visible = true;
-			};
-			var ref = API.cachedWorlds.get(L.worldId);
-			if (ref) {
-				handle(ref);
-			} else {
-				API.getWorld({
-					worldId: L.worldId
-				}).then((args) => {
-					handle(args.ref);
-					return args;
-				});
-			}
+		if (L.isOffline ||
+			L.isPrivate ||
+			L.worldId === '') {
+			return;
 		}
+		API.getCachedWorld({
+			worldId: L.worldId
+		}).then((args) => {
+			var D = this.inviteDialog;
+			D.userIds = [];
+			D.worldId = L.tag;
+			D.worldName = args.ref.name;
+			D.visible = true;
+		});
 	};
 
 	// App: Social Status Dialog
@@ -6296,22 +6318,23 @@ CefSharp.BindObjectAsync(
 
 	$app.methods.saveSocialStatus = function () {
 		var D = this.socialStatusDialog;
-		if (!D.loading) {
-			D.loading = true;
-			API.saveCurrentUser({
-				status: D.status,
-				statusDescription: D.statusDescription
-			}).finally(() => {
-				D.loading = false;
-			}).then((args) => {
-				D.visible = false;
-				this.$message({
-					message: 'Status updated',
-					type: 'success'
-				});
-				return args;
-			});
+		if (D.loading) {
+			return;
 		}
+		D.loading = true;
+		API.saveCurrentUser({
+			status: D.status,
+			statusDescription: D.statusDescription
+		}).finally(() => {
+			D.loading = false;
+		}).then((args) => {
+			D.visible = false;
+			this.$message({
+				message: 'Status updated',
+				type: 'success'
+			});
+			return args;
+		});
 	};
 
 	$app.methods.showSocialStatusDialog = function () {
@@ -6382,14 +6405,16 @@ CefSharp.BindObjectAsync(
 	$app.methods.showNewInstanceDialog = function (tag) {
 		this.$nextTick(() => adjustDialogZ(this.$refs.newInstanceDialog.$el));
 		var L = API.parseLocation(tag);
-		if (!(L.isOffline || L.isPrivate) &&
-			L.worldId) {
-			var D = this.newInstanceDialog;
-			D.worldId = L.worldId;
-			D.accessType = 'public';
-			this.buildInstance();
-			D.visible = true;
+		if (L.isOffline ||
+			L.isPrivate ||
+			L.worldId === '') {
+			return;
 		}
+		var D = this.newInstanceDialog;
+		D.worldId = L.worldId;
+		D.accessType = 'public';
+		this.buildInstance();
+		D.visible = true;
 	};
 
 	$app.methods.makeHome = function (tag) {
@@ -6398,17 +6423,18 @@ CefSharp.BindObjectAsync(
 			cancelButtonText: 'Cancel',
 			type: 'info',
 			callback: (action) => {
-				if (action === 'confirm') {
-					API.saveCurrentUser({
-						homeLocation: tag
-					}).then((args) => {
-						this.$message({
-							message: 'Home world updated',
-							type: 'success'
-						});
-						return args;
-					});
+				if (action !== 'confirm') {
+					return;
 				}
+				API.saveCurrentUser({
+					homeLocation: tag
+				}).then((args) => {
+					this.$message({
+						message: 'Home world updated',
+						type: 'success'
+					});
+					return args;
+				});
 			}
 		});
 	};
@@ -6434,18 +6460,20 @@ CefSharp.BindObjectAsync(
 	$app.methods.showLaunchDialog = function (tag) {
 		this.$nextTick(() => adjustDialogZ(this.$refs.launchDialog.$el));
 		var L = API.parseLocation(tag);
-		if (!(L.isOffline || L.isPrivate) &&
-			L.worldId) {
-			var D = this.launchDialog;
-			if (L.instanceId) {
-				D.location = `${L.worldId}:${L.instanceId}`;
-				D.url = `https://vrchat.net/launch?worldId=${encodeURIComponent(L.worldId)}&instanceId=${encodeURIComponent(L.instanceId)}`;
-			} else {
-				D.location = L.worldId;
-				D.url = `https://vrchat.net/launch?worldId=${encodeURIComponent(L.worldId)}`;
-			}
-			D.visible = true;
+		if (L.isOffline ||
+			L.isPrivate ||
+			L.worldId === '') {
+			return;
 		}
+		var D = this.launchDialog;
+		if (L.instanceId) {
+			D.location = `${L.worldId}:${L.instanceId}`;
+			D.url = `https://vrchat.net/launch?worldId=${encodeURIComponent(L.worldId)}&instanceId=${encodeURIComponent(L.instanceId)}`;
+		} else {
+			D.location = L.worldId;
+			D.url = `https://vrchat.net/launch?worldId=${encodeURIComponent(L.worldId)}`;
+		}
+		D.visible = true;
 	};
 
 	$app.methods.launchGame = function () {
