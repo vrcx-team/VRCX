@@ -1814,7 +1814,7 @@ CefSharp.BindObjectAsync(
 	API.parseInviteLocation = function (ref) {
 		try {
 			var L = API.parseLocation(ref.details.worldId);
-			if (L.worldId !== '' && L.instanceId !== '') {
+			if (L.worldId && L.instanceId) {
 				return `${ref.details.worldName} #${L.instanceName} ${L.accessType}`;
 			}
 			return ref.message ||
