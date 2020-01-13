@@ -311,20 +311,23 @@ CefSharp.BindObjectAsync(
 						text: escapeTag(json.success.message)
 					}).show();
 				}
-			} else if (isObject(json.error)) {
-				this.$throw(
-					json.error.status_code || res.status,
-					json.error.message,
-					json.error.data
-				);
-			} else if (typeof json.error === 'string') {
-				this.$throw(
-					json.status_code || res.status,
-					json.error
-				);
-			} else {
-				this.$throw(res.status, json);
+				return json;
 			}
+			if (isObject(json)) {
+				if (isObject(json.error)) {
+					this.$throw(
+						json.error.status_code || res.status,
+						json.error.message,
+						json.error.data
+					);
+				} else if (typeof json.error === 'string') {
+					this.$throw(
+						json.status_code || res.status,
+						json.error
+					);
+				}
+			}
+			this.$throw(res.status, json);
 			return json;
 		}));
 		if (isGetRequest) {
