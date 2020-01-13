@@ -3207,9 +3207,7 @@ CefSharp.BindObjectAsync(
 					API.verifyTOTP({
 						code: instance.inputValue
 					}).catch((err) => {
-						if (err.status_code === 400) {
-							this.promptTOTP();
-						}
+						this.promptTOTP();
 						throw err;
 					}).then((args) => {
 						API.getCurrentUser();
@@ -3235,9 +3233,7 @@ CefSharp.BindObjectAsync(
 					API.verifyOTP({
 						code: instance.inputValue
 					}).catch((err) => {
-						if (err.status_code === 400) {
-							this.promptOTP();
-						}
+						this.promptOTP();
 						throw err;
 					}).then((args) => {
 						API.getCurrentUser();
