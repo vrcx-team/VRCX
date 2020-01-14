@@ -6393,15 +6393,21 @@ CefSharp.BindObjectAsync(
 		D.instanceId = tags.join('');
 	};
 
+	var getLaunchURL = function (worldId, instanceId) {
+		if (instanceId) {
+			return `https://vrchat.net/launch?worldId=${encodeURIComponent(worldId)}&instanceId=${encodeURIComponent(instanceId)}`;
+		}
+		return `https://vrchat.net/launch?worldId=${encodeURIComponent(worldId)}`;
+	};
+
 	var updateLocationURL = function () {
 		var D = this.newInstanceDialog;
 		if (D.instanceId) {
 			D.location = `${D.worldId}:${D.instanceId}`;
-			D.url = `https://vrchat.net/launch?worldId=${encodeURIComponent(D.worldId)}&instanceId=${encodeURIComponent(D.instanceId)}`;
 		} else {
 			D.location = D.worldId;
-			D.url = `https://vrchat.net/launch?worldId=${encodeURIComponent(D.worldId)}`;
 		}
+		D.url = getLaunchURL(D.worldId, D.instanceId);
 	};
 	$app.watch['newInstanceDialog.worldId'] = updateLocationURL;
 	$app.watch['newInstanceDialog.instanceId'] = updateLocationURL;
@@ -6472,11 +6478,10 @@ CefSharp.BindObjectAsync(
 		var D = this.launchDialog;
 		if (L.instanceId) {
 			D.location = `${L.worldId}:${L.instanceId}`;
-			D.url = `https://vrchat.net/launch?worldId=${encodeURIComponent(L.worldId)}&instanceId=${encodeURIComponent(L.instanceId)}`;
 		} else {
 			D.location = L.worldId;
-			D.url = `https://vrchat.net/launch?worldId=${encodeURIComponent(L.worldId)}`;
 		}
+		D.url = getLaunchURL(L.worldId, L.instanceId);
 		D.visible = true;
 	};
 
