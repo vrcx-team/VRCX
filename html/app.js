@@ -5593,7 +5593,9 @@ CefSharp.BindObjectAsync(
 			done: () => {
 				var array = Array.from(map.values());
 				array.sort(compareByName);
-				D.worlds = array;
+				if (D.id === params.userId) {
+					D.worlds = array;
+				}
 				D.isWorldsLoading = false;
 			}
 		});
@@ -5639,7 +5641,9 @@ CefSharp.BindObjectAsync(
 			done: () => {
 				var array = Array.from(map.values());
 				array.sort(compareByName);
-				D.avatars = array;
+				if (D.id === params.userId) {
+					D.avatars = array;
+				}
 				D.isAvatarsLoading = false;
 			}
 		});
