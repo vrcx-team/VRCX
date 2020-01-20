@@ -4041,7 +4041,7 @@ CefSharp.BindObjectAsync(
 	// App: gameLog
 
 	$app.data.lastLocation = '';
-	$app.data.$lastLocation = {};
+	$app.data.lastLocation$ = {};
 	$app.data.discordActive = VRCXStorage.GetBool('discordActive');
 	$app.data.discordInstance = VRCXStorage.GetBool('discordInstance');
 	var saveDiscordOption = function () {
@@ -4140,10 +4140,10 @@ CefSharp.BindObjectAsync(
 			Discord.SetActive(false);
 			return;
 		}
-		if (this.lastLocation !== this.$lastLocation.tag) {
+		if (this.lastLocation !== this.lastLocation$.tag) {
 			var L = API.parseLocation(this.lastLocation);
 			L.worldName = L.worldId;
-			this.$lastLocation = L;
+			this.lastLocation$ = L;
 			if (L.worldId) {
 				var ref = API.cachedWorlds.get(L.worldId);
 				if (ref) {
@@ -4160,7 +4160,7 @@ CefSharp.BindObjectAsync(
 		}
 		// NOTE
 		// 글자 수가 짧으면 업데이트가 안된다..
-		var LL = this.$lastLocation;
+		var LL = this.lastLocation$;
 		if (LL.worldName.length < 2) {
 			LL.worldName += '\uFFA0'.repeat(2 - LL.worldName.length);
 		}
