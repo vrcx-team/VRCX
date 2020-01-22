@@ -110,6 +110,7 @@ namespace VRCX
 
         public static void Parse(FileInfo info, ref long position)
         {
+            var recentDestination = string.Empty;
             try
             {
                 using (var stream = info.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -122,7 +123,42 @@ namespace VRCX
                         if (s.Length > 35)
                         {
                             var c = s[35];
-                            if (c == 'R')
+                            if (c == 'V')
+                            {
+                                // 2020.01.20 21:21:18 Log        -  [VRCFlowManagerVRC] Destination set: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
+                                if (s.Length > 71 &&
+                                    string.Compare(s, 34, "[VRCFlowManagerVRC] Destination set: ", 0, "[VRCFlowManagerVRC] Destination set: ".Length, StringComparison.Ordinal) == 0)
+                                {
+                                    var destination = s.Substring(71);
+                                    if (destination.Length == 0)
+                                    {
+                                        // loading screen
+                                        continue;
+                                    }
+                                    if (destination.Split(':').Length == 1)
+                                    {
+                                        // no instance info
+                                        continue;
+                                    }
+                                    recentDestination = destination;
+                                    var item = new[]
+                                    {
+                                        ConvertLogTimeToISO8601(s),
+                                        "Location",
+                                        destination
+                                    };
+                                    m_Lock.EnterWriteLock();
+                                    try
+                                    {
+                                        m_GameLog.Add(item);
+                                    }
+                                    finally
+                                    {
+                                        m_Lock.ExitWriteLock();
+                                    }
+                                }
+                            }
+                            else if (c == 'R')
                             {
                                 // 2019.07.31 22:26:24 Log        -  [RoomManager] Joining wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd:6974~private(usr_4f76a584-9d4b-46f6-8209-8305eb683661)~nonce(0000000000000000000000000000000000000000000000000000000000000000)
                                 // 2019.07.31 22:26:24 Log        -  [RoomManager] Joining or Creating Room: VRChat Home
@@ -130,11 +166,17 @@ namespace VRCX
                                     string.Compare(s, 34, "[RoomManager] Joining ", 0, "[RoomManager] Joining ".Length, StringComparison.Ordinal) == 0 &&
                                     string.Compare(s, 56, "or ", 0, "or ".Length, StringComparison.Ordinal) != 0)
                                 {
+                                    var location = s.Substring(56);
+                                    if (recentDestination.Equals(location))
+                                    {
+                                        recentDestination = string.Empty; // only once
+                                        continue;
+                                    }
                                     var item = new[]
                                     {
                                         ConvertLogTimeToISO8601(s),
                                         "Location",
-                                        s.Substring(56)
+                                        location
                                     };
                                     m_Lock.EnterWriteLock();
                                     try
