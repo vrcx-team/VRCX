@@ -59,6 +59,7 @@ namespace VRCX
                         {
                             args.Append("--no-vr ");
                         }
+                        args.Append("--enable-debug-gui ");
                         args.Append("\"vrchat://launch?id=");
                         args.Append(location);
                         args.Append('"');
