@@ -22,6 +22,7 @@ namespace VRCX
     {
         private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
         private static List<string[]> m_GameLog = new List<string[]>();
+        private static string m_RecentDestination = string.Empty;
         private static Thread m_Thread;
         private static bool m_Reset;
 
@@ -47,6 +48,7 @@ namespace VRCX
                     if (m_Reset)
                     {
                         m_Reset = false;
+                        m_RecentDestination = string.Empty;
                         D.Clear();
                         m_Lock.EnterWriteLock();
                         try
@@ -110,7 +112,6 @@ namespace VRCX
 
         public static void Parse(FileInfo info, ref long position)
         {
-            var recentDestination = string.Empty;
             try
             {
                 using (var stream = info.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -140,7 +141,7 @@ namespace VRCX
                                         // no instance info
                                         continue;
                                     }
-                                    recentDestination = destination;
+                                    m_RecentDestination = destination;
                                     var item = new[]
                                     {
                                         ConvertLogTimeToISO8601(s),
@@ -167,9 +168,9 @@ namespace VRCX
                                     string.Compare(s, 56, "or ", 0, "or ".Length, StringComparison.Ordinal) != 0)
                                 {
                                     var location = s.Substring(56);
-                                    if (recentDestination.Equals(location))
+                                    if (m_RecentDestination.Equals(location))
                                     {
-                                        recentDestination = string.Empty; // only once
+                                        m_RecentDestination = string.Empty; // only once
                                         continue;
                                     }
                                     var item = new[]
