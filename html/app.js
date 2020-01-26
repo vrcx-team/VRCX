@@ -3017,7 +3017,7 @@ CefSharp.BindObjectAsync(
 			VRCX,
 			nextRefresh: 0,
 			isGameRunning: false,
-			appVersion: 'VRCX 2019.11.18',
+			appVersion: 'VRCX 2020.01.26',
 			latestAppVersion: '',
 			ossDialog: false
 		},
