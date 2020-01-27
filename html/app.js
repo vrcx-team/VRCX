@@ -4105,14 +4105,19 @@ CefSharp.BindObjectAsync(
 				var { data } = this.gameLogTable;
 				for (var log of logs) {
 					var ctx = {
-						created_at: log[0],
-						type: log[1],
-						data: log[2]
+						created_at: String(log[0]),
+						type: String(log[1]),
+						data: String(log[2])
 					};
-					data.push(ctx);
 					if (ctx.type === 'Location') {
-						this.lastLocation = ctx.data;
+						var tag = ctx.data;
+						if (tag.endsWith(':')) {
+							tag = tag.substr(0, tag.length - 1);
+							ctx.data = tag;
+						}
+						this.lastLocation = tag;
 					}
+					data.push(ctx);
 				}
 				this.sweepGameLog();
 				// sweepGameLog로 기록이 삭제되면
