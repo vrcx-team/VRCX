@@ -2373,6 +2373,7 @@ CefSharp.BindObjectAsync(
 			'world': this.favoriteWorldGroups,
 			'avatar': this.favoriteAvatarGroups
 		};
+		var assigns = new Set();
 		// assign the same name first
 		for (var ref of this.cachedFavoriteGroups.values()) {
 			if (ref.$isDeleted) {
@@ -2388,14 +2389,20 @@ CefSharp.BindObjectAsync(
 					group.assign = true;
 					group.displayName = ref.displayName;
 					ref.$groupRef = group;
+					assigns.add(ref.id);
 					break;
 				}
 			}
 		}
 		// assign the rest
+		// FIXME
+		// The order (cachedFavoriteGroups) is very important. It should be
+		// processed in the order in which the server responded. But since we
+		// used Map(), the order would be a mess. So we need something to solve
+		// this.
 		for (var ref of this.cachedFavoriteGroups.values()) {
 			if (ref.$isDeleted ||
-				ref.$ref) {
+				assigns.has(ref.id)) {
 				continue;
 			}
 			var groups = types[ref.type];
@@ -2409,6 +2416,7 @@ CefSharp.BindObjectAsync(
 					group.name = ref.name;
 					group.displayName = ref.displayName;
 					ref.$groupRef = group;
+					assigns.add(ref.id);
 					break;
 				}
 			}
