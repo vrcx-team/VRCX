@@ -3773,7 +3773,7 @@ CefSharp.BindObjectAsync(
 		return style;
 	};
 
-	$app.methods.deleteFriend = function (id) {
+	$app.methods.confirmDeleteFriend = function (id) {
 		this.$confirm('Continue? Unfriend', 'Confirm', {
 			confirmButtonText: 'Confirm',
 			cancelButtonText: 'Cancel',
