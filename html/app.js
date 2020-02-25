@@ -3103,6 +3103,7 @@ CefSharp.BindObjectAsync(
 				throw err1;
 			});
 		}
+		this.checkActiveFriends();
 		this.refreshGameLog();
 		VRCX.IsGameRunning().then((running) => {
 			if (running !== this.isGameRunning) {
@@ -3367,6 +3368,7 @@ CefSharp.BindObjectAsync(
 	// App: Friends
 
 	$app.data.friends = new Map();
+	$app.data.pendingActiveFriends = new Set();
 	$app.data.friendsNo = 0;
 	$app.data.isFriendsGroup0 = true;
 	$app.data.isFriendsGroup1 = true;
@@ -3399,8 +3401,36 @@ CefSharp.BindObjectAsync(
 	$app.watch.orderFriendsGroup2 = saveOrderFriendGroup;
 	$app.watch.orderFriendsGroup3 = saveOrderFriendGroup;
 
+	$app.methods.fetchActiveFriend = function (userId) {
+		this.pendingActiveFriends.add(userId);
+		// FIXME: handle error
+		return API.getUser({
+			userId
+		}).then((args) => {
+			this.pendingActiveFriends.delete(userId);
+			return args;
+		});
+	};
+
+	$app.methods.checkActiveFriends = function () {
+		if (Array.isArray(API.currentUser.activeFriends) === false) {
+			return;
+		}
+		for (var userId of API.currentUser.activeFriends) {
+			if (API.cachedUsers.has(userId) ||
+				this.pendingActiveFriends.has(userId)) {
+				continue;
+			}
+			if (this.pendingActiveFriends.size >= 5) {
+				break;
+			}
+			this.fetchActiveFriend(userId);
+		}
+	};
+
 	API.$on('LOGIN', function () {
 		$app.friends.clear();
+		$app.pendingActiveFriends.clear();
 		$app.friendsNo = 0;
 		$app.isFriendsGroup0 = true;
 		$app.isFriendsGroup1 = true;
