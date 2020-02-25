@@ -21,8 +21,6 @@ CefSharp.BindObjectAsync(
 		}
 	});
 
-	var isObject = (arg) => arg === Object(arg);
-
 	VRCXStorage.GetBool = function (key) {
 		return this.Get(key) === 'true';
 	};
@@ -68,7 +66,7 @@ CefSharp.BindObjectAsync(
 	VRCXStorage.GetObject = function (key) {
 		try {
 			var object = JSON.parse(this.Get(key));
-			if (isObject(object)) {
+			if (object === Object(object)) {
 				return object;
 			}
 		} catch (err) {
@@ -274,7 +272,7 @@ CefSharp.BindObjectAsync(
 		var isGetRequest = init.method === 'GET';
 		if (isGetRequest) {
 			// transform body to url
-			if (isObject(params)) {
+			if (params === Object(params)) {
 				var url = new URL(resource);
 				var { searchParams } = url;
 				for (var key in params) {
@@ -292,7 +290,7 @@ CefSharp.BindObjectAsync(
 				'Content-Type': 'application/json;charset=utf-8',
 				...init.headers
 			};
-			init.body = isObject(params)
+			init.body = params === Object(params)
 				? JSON.stringify(params)
 				: '{}';
 		}
@@ -305,7 +303,7 @@ CefSharp.BindObjectAsync(
 			this.$throw(res.status);
 		}).then((json) => {
 			if (res.ok) {
-				if (isObject(json.success)) {
+				if (json.success === Object(json.success)) {
 					new Noty({
 						type: 'success',
 						text: escapeTag(json.success.message)
@@ -313,8 +311,8 @@ CefSharp.BindObjectAsync(
 				}
 				return json;
 			}
-			if (isObject(json)) {
-				if (isObject(json.error)) {
+			if (json === Object(json)) {
+				if (json.error === Object(json.error)) {
 					this.$throw(
 						json.error.status_code || res.status,
 						json.error.message,
@@ -990,7 +988,7 @@ CefSharp.BindObjectAsync(
 		} else {
 			var props = {};
 			for (var prop in ref) {
-				if (isObject(ref[prop]) === false) {
+				if (ref[prop] !== Object(ref[prop])) {
 					props[prop] = true;
 				}
 			}
@@ -1001,7 +999,7 @@ CefSharp.BindObjectAsync(
 			}
 			this.applyUserTrustLevel(ref);
 			for (var prop in ref) {
-				if (isObject(ref[prop]) === false) {
+				if (ref[prop] !== Object(ref[prop])) {
 					props[prop] = true;
 				}
 			}
@@ -1655,12 +1653,12 @@ CefSharp.BindObjectAsync(
 			Object.assign(ref, json);
 			ref.$isExpired = false;
 		}
-		if (isObject(ref.details) === false) {
+		if (ref.details !== Object(ref.details)) {
 			var details = {};
 			if (ref.details !== '{}') {
 				try {
 					var object = JSON.parse(ref.details);
-					if (isObject(object)) {
+					if (object === Object(object)) {
 						details = object;
 					}
 				} catch (err) {
@@ -2830,7 +2828,7 @@ CefSharp.BindObjectAsync(
 				break;
 
 			case 'user-location':
-				if (isObject(content.world)) {
+				if (content.world === Object(content.world)) {
 					this.$emit('WORLD', {
 						json: content.world,
 						params: {
@@ -2936,7 +2934,7 @@ CefSharp.BindObjectAsync(
 			if (Array.isArray(value)) {
 				node.push({
 					children: value.map((val, idx) => {
-						if (isObject(val)) {
+						if (val === Object(val)) {
 							return {
 								children: buildTreeData(val),
 								key: idx
@@ -2949,7 +2947,7 @@ CefSharp.BindObjectAsync(
 					}),
 					key
 				});
-			} else if (isObject(value)) {
+			} else if (value === Object(value)) {
 				node.push({
 					children: buildTreeData(value),
 					key
@@ -3060,7 +3058,7 @@ CefSharp.BindObjectAsync(
 	$app.methods.checkAppVersion = function () {
 		var url = 'https://api.github.com/repos/pypy-vrc/VRCX/releases/latest';
 		fetch(url).then((res) => res.json()).then((json) => {
-			if (isObject(json) &&
+			if (json === Object(json) &&
 				json.name &&
 				json.published_at) {
 				this.latestAppVersion = `${json.name} (${formatDate(json.published_at, 'YYYY-MM-DD HH24:MI:SS')})`;
