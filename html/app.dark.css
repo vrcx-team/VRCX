@@ -278,7 +278,7 @@ For a copy, see <https://opensource.org/licenses/MIT>.
 	background: #3e3e3e;
 }
 
-.x-friend-item>.avatar.active::after, .x-friend-item>.avatar.joinme::after, .x-friend-item>.avatar.busy::after {
+.x-friend-item>.avatar.active::after, .x-friend-item>.avatar.joinme::after, .x-friend-item>.avatar.askme::after, .x-friend-item>.avatar.busy::after {
 	border: 2px solid #000;
 }
 

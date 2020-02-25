@@ -128,9 +128,10 @@
 						<template v-else-if="scope.row.type === 'Status'">
 							<el-tooltip placement="top">
 								<template #content>
-									<span v-if="scope.row.status[1].status === 'active'">Active</span>
+									<span v-if="scope.row.status[1].status === 'active'">Online</span>
 									<span v-else-if="scope.row.status[1].status === 'join me'">Join Me</span>
-									<span v-else-if="scope.row.status[1].status === 'busy'">Busy</span>
+									<span v-else-if="scope.row.status[1].status === 'ask me'">Ask Me</span>
+									<span v-else-if="scope.row.status[1].status === 'busy'">Do Not Disturb</span>
 									<span v-else>Offline</span>
 								</template>
 								<i class="x-user-status" :class="userStatusClass(scope.row.status[1])"></i>
@@ -140,9 +141,10 @@
 							<span><i class="el-icon-right"></i></span>
 							<el-tooltip placement="top">
 								<template #content>
-									<span v-if="scope.row.status[0].status === 'active'">Active</span>
+									<span v-if="scope.row.status[0].status === 'active'">Online</span>
 									<span v-else-if="scope.row.status[0].status === 'join me'">Join Me</span>
-									<span v-else-if="scope.row.status[0].status === 'busy'">Busy</span>
+									<span v-else-if="scope.row.status[0].status === 'ask me'">Ask Me</span>
+									<span v-else-if="scope.row.status[0].status === 'busy'">Do Not Disturb</span>
 									<span v-else>Offline</span>
 								</template>
 								<i class="x-user-status" :class="userStatusClass(scope.row.status[0])"></i>
@@ -179,9 +181,10 @@
 					<template v-else-if="scope.row.type === 'Status'">
 						<el-tooltip placement="top">
 							<template #content>
-								<span v-if="scope.row.status[0].status === 'active'">Active</span>
+								<span v-if="scope.row.status[0].status === 'active'">Online</span>
 								<span v-else-if="scope.row.status[0].status === 'join me'">Join Me</span>
-								<span v-else-if="scope.row.status[0].status === 'busy'">Busy</span>
+								<span v-else-if="scope.row.status[0].status === 'ask me'">Ask Me</span>
+								<span v-else-if="scope.row.status[0].status === 'busy'">Do Not Disturb</span>
 								<span v-else>Offline</span>
 							</template>
 							<i class="x-user-status" :class="userStatusClass(scope.row.status[0])"></i>
@@ -585,9 +588,10 @@
 						<span class="extra">
 							<el-tooltip placement="top">
 								<template #content>
-									<span v-if="API.currentUser.status === 'active'">Active</span>
+									<span v-if="API.currentUser.status === 'active'">Online</span>
 									<span v-else-if="API.currentUser.status === 'join me'">Join Me</span>
-									<span v-else-if="API.currentUser.status === 'busy'">Busy</span>
+									<span v-else-if="API.currentUser.status === 'ask me'">Ask Me</span>
+									<span v-else-if="API.currentUser.status === 'busy'">Do Not Disturb</span>
 									<span v-else>Offline</span>
 								</template>
 								<i class="x-user-status" :class="userStatusClass(API.currentUser)"></i>
@@ -884,11 +888,11 @@
 						<div>
 							<el-tooltip v-if="userDialog.ref.status" placement="top">
 								<template #content>
-									<span v-if="userDialog.ref.state === 'active'">Active</span>
-									<span v-else-if="userDialog.ref.location === 'offline'">Offline</span>
-									<span v-else-if="userDialog.ref.status === 'active'">Active</span>
+									<span v-if="userDialog.ref.location === 'offline'">Offline</span>
+									<span v-else-if="userDialog.ref.status === 'active'">Online</span>
 									<span v-else-if="userDialog.ref.status === 'join me'">Join Me</span>
-									<span v-else-if="userDialog.ref.status === 'busy'">Busy</span>
+									<span v-else-if="userDialog.ref.status === 'ask me'">Ask Me</span>
+									<span v-else-if="userDialog.ref.status === 'busy'">Do Not Disturb</span>
 									<span v-else>Offline</span>
 								</template>
 								<i class="x-user-status" :class="userStatusClass(userDialog.ref)"></i>
@@ -1367,14 +1371,17 @@
 		<el-row v-loading="socialStatusDialog.loading">
 			<el-col :span="9">
 				<el-select v-model="socialStatusDialog.status">
-					<el-option label="Active" value="active">
-						<i class="x-user-status active"></i> Active
+					<el-option label="Online" value="active">
+						<i class="x-user-status active"></i> Online
 					</el-option>
 					<el-option label="Join Me" value="join me">
 						<i class="x-user-status joinme"></i> Join Me
 					</el-option>
+					<el-option label="Ask Me" value="ask me">
+						<i class="x-user-status askme"></i> Ask Me
+					</el-option>
 					<el-option label="Busy" value="busy">
-						<i class="x-user-status busy"></i> Busy
+						<i class="x-user-status busy"></i> Do Not Disturb
 					</el-option>
 					<el-option label="Offline" value="offline">
 						<i class="x-user-status offline"></i> Offline

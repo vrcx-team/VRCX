@@ -1098,7 +1098,7 @@ CefSharp.BindObjectAsync(
 
 	/*
 		params: {
-			status: string ('active', 'join me', 'busy', 'offline'),
+			status: string ('active', 'offline', 'busy', 'ask me', 'join me'),
 			statusDescription: string
 		}
 	*/
@@ -3756,17 +3756,20 @@ CefSharp.BindObjectAsync(
 	$app.methods.userStatusClass = function (user) {
 		var style = {};
 		if (user !== undefined) {
-			// due to social status, check if the user isn't currentUser
-			if (user.state === 'active' &&
-				user.id !== API.currentUser.id) {
-				style.inactive = true;
-			} else if (user.location === 'offline') {
+			if (user.location === 'offline') {
+				// Offline
 				style.offline = true;
 			} else if (user.status === 'active') {
+				// Online
 				style.active = true;
 			} else if (user.status === 'join me') {
+				// Join Me
 				style.joinme = true;
+			} else if (user.status === 'ask me') {
+				// Ask Me
+				style.askme = true;
 			} else if (user.status === 'busy') {
+				// Do Not Disturb
 				style.busy = true;
 			}
 		}

@@ -303,12 +303,12 @@ a {
 	background: #67C23A;
 }
 
-.x-friend-item>.avatar.inactive::after {
-	background: #FD9200;
-}
-
 .x-friend-item>.avatar.joinme::after {
 	background: #409EFF;
+}
+
+.x-friend-item>.avatar.askme::after {
+	background: #FD9200;
 }
 
 .x-friend-item>.avatar.busy::after {
@@ -374,12 +374,12 @@ i.x-user-status.active {
 	background: #67C23A;
 }
 
-i.x-user-status.inactive {
-	background: #FD9200;
-}
-
 i.x-user-status.joinme {
 	background: #409EFF;
+}
+
+i.x-user-status.askme {
+	background: #FD9200;
 }
 
 i.x-user-status.busy {
