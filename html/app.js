@@ -5573,6 +5573,9 @@ CefSharp.BindObjectAsync(
 				}
 			}
 		}
+		if (this.lastLocation === L.tag) {
+			users.push(this.API.currentUser);
+		}
 		users.sort(compareByDisplayName);
 		D.users = users;
 		D.instance = {};
@@ -5986,6 +5989,19 @@ CefSharp.BindObjectAsync(
 				instances[instanceId] = instance;
 			}
 			instance.users.push(ref);
+		}
+		var lastLocation$ = API.parseLocation(this.lastLocation);
+		if (lastLocation$.worldId === D.id) {
+			var instance = instances[lastLocation$.instanceId];
+			if (instance === undefined) {
+				instance = {
+					id: lastLocation$.instanceId,
+					occupants: 1,
+					users: []
+				};
+				instances[instance.id] = instance;
+			}
+			instance.users.push(this.API.currentUser);
 		}
 		var rooms = [];
 		for (var instance of Object.values(instances)) {
