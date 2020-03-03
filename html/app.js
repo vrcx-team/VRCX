@@ -1017,7 +1017,10 @@ CefSharp.BindObjectAsync(
 					];
 				}
 			}
-			if (has) {
+			// FIXME
+			// if the status is offline, just ignore status and statusDescription only.
+			if (has &&
+				(ref.status !== 'offline' && $ref.status !== 'offline')) {
 				if (props.location) {
 					var ts = Date.now();
 					props.location.push(ts - ref.$location_at);
@@ -3417,8 +3420,12 @@ CefSharp.BindObjectAsync(
 			return;
 		}
 		for (var userId of API.currentUser.activeFriends) {
-			if (API.cachedUsers.has(userId) ||
-				this.pendingActiveFriends.has(userId)) {
+			if (this.pendingActiveFriends.has(userId)) {
+				continue;
+			}
+			var user = API.cachedUsers.get(userId);
+			if (user !== undefined &&
+				user.status !== 'offline') {
 				continue;
 			}
 			if (this.pendingActiveFriends.size >= 5) {
