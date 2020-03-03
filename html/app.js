@@ -3070,7 +3070,7 @@ CefSharp.BindObjectAsync(
 					new Noty({
 						type: 'info',
 						text: `Update available!!<br>${this.latestAppVersion}`,
-						timeout: false,
+						timeout: 60000,
 						callbacks: {
 							onClick: () => VRCX.OpenRepository()
 						}
