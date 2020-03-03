@@ -653,6 +653,7 @@ CefSharp.BindObjectAsync(
 
 	$app.methods.update = function () {
 		this.currentTime = new Date().toJSON();
+		this.currentUser = VRCXStorage.GetObject('currentUser') || {};
 		VRCX.CpuUsage().then((cpuUsage) => {
 			this.cpuUsage = cpuUsage.toFixed(2);
 		});
@@ -688,6 +689,10 @@ CefSharp.BindObjectAsync(
 					}
 				}
 			});
+			// disable notification on busy
+			if (this.currentUser.status === 'busy') {
+				return;
+			}
 			var notys = [];
 			this.feeds.forEach((feed) => {
 				if (feed.isFavorite) {

@@ -911,6 +911,7 @@ CefSharp.BindObjectAsync(
 				ref
 			});
 		}
+		VRCXStorage.SetObject('currentUser', ref);
 		return ref;
 	};
 
