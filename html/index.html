@@ -553,7 +553,7 @@
 						<span v-else class="extra">Click to refresh</span>
 					</div>
 				</div>
-				<div class="x-friend-item" @click="VRCX.OpenRepository()">
+				<div class="x-friend-item" @click="openExternalLink('https://github.com/pypy-vrc/VRCX')">
 					<div class="detail">
 						<span class="name">Repository URL</span>
 						<span class="extra">https://github.com/pypy-vrc/VRCX</span>
@@ -609,7 +609,7 @@
 								<template #content>
 									<span v-text="link"></span>
 								</template>
-								<img :src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px">
+								<img :src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px" @click.stop="openExternalLink(link)">
 							</el-tooltip>
 						</div>
 					</div>
@@ -1034,7 +1034,7 @@
 										<template #content>
 											<span v-text="link"></span>
 										</template>
-										<img :src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px">
+										<img :src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px" @click.stop="openExternalLink(link)">>
 									</el-tooltip>
 								</div>
 							</div>

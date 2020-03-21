@@ -3179,6 +3179,19 @@ CefSharp.BindObjectAsync(
 		}
 	};
 
+	$app.methods.openExternalLink = function (link) {
+		this.$confirm(`${link}`, 'Open External Link', {
+			confirmButtonText: 'Confirm',
+			cancelButtonText: 'Cancel',
+			type: 'info',
+			callback: (action) => {
+				if (action === 'confirm') {
+					VRCX.OpenLink(link);
+				}
+			}
+		});
+	};
+
 	$app.methods.languageClass = function (language) {
 		var style = {};
 		var mapping = languageMappings[language];
@@ -3201,7 +3214,7 @@ CefSharp.BindObjectAsync(
 						text: `Update available!!<br>${this.latestAppVersion}`,
 						timeout: 60000,
 						callbacks: {
-							onClick: () => VRCX.OpenRepository()
+							onClick: () => VRCX.OpenLink('https://github.com/pypy-vrc/VRCX/releases')
 						}
 					}).show();
 					this.notifyMenu('more');

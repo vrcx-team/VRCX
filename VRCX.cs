@@ -78,9 +78,12 @@ namespace VRCX
             }
         }
 
-        public void OpenRepository()
+        public void OpenLink(string url)
         {
-            Process.Start("https://github.com/pypy-vrc/VRCX").Close();
+            if (url.StartsWith("http://") || url.StartsWith("https://"))
+            {
+                Process.Start(url).Close();
+            }
         }
 
         public void ShowVRForm()
