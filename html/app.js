@@ -1118,6 +1118,44 @@ CefSharp.BindObjectAsync(
 		});
 	};
 
+	/*
+		params: {
+			tags: array[string]
+		}
+	*/
+	API.addUserTags = function (params) {
+		return this.call(`users/${this.currentUser.id}/addTags`, {
+			method: 'POST',
+			params
+		}).then((json) => {
+			var args = {
+				json,
+				params
+			};
+			this.$emit('USER:CURRENT:SAVE', args);
+			return args;
+		});
+	};
+
+	/*
+		params: {
+			tags: array[string]
+		}
+	*/
+	API.removeUserTags = function (params) {
+		return this.call(`users/${this.currentUser.id}/removeTags`, {
+			method: 'POST',
+			params
+		}).then((json) => {
+			var args = {
+				json,
+				params
+			};
+			this.$emit('USER:CURRENT:SAVE', args);
+			return args;
+		});
+	};
+
 	// API: World
 
 	API.cachedWorlds = new Map();
