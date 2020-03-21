@@ -899,7 +899,7 @@
 							</el-tooltip>
 							<span v-text="userDialog.ref.displayName" style="margin-left:5px;font-weight:bold"></span>
 							<el-popover placement="top" trigger="click">
-								<span style="display:block;text-align:center;font-family:monospace;">{{ userDialog.ref.username | textToHex }}</span>
+								<span style="display:block;text-align:center;font-family:monospace">{{ userDialog.ref.username | textToHex }}</span>
 								<span slot="reference" v-text="userDialog.ref.username" style="margin-left:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer"></span>
 							</el-popover>
 						</div>
@@ -985,7 +985,7 @@
 						<div class="x-friend-item" style="width:100%">
 							<div class="detail">
 								<span class="name">Bio</span>
-								<pre class="extra" style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0;">{{ userDialog.ref.bio || '-' }}</pre>								<div style="margin-top:5px">
+								<pre class="extra" style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0">{{ userDialog.ref.bio || '-' }}</pre>								<div style="margin-top:5px">
 									<el-tooltip v-for="(link, index) in userDialog.ref.bioLinks" :key="index">
 										<template #content>
 											<span v-text="link"></span>
