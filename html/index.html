@@ -601,6 +601,19 @@
 						</span>
 					</div>
 				</div>
+				<div class="x-friend-item" @click="showBioDialog()">
+					<div class="detail">
+						<span class="name"><i class="el-icon-edit"></i> Bio</span>
+						<pre class="extra" style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0">{{ API.currentUser.bio || '-' }}</pre>								<div style="margin-top:5px">
+							<el-tooltip v-for="(link, index) in API.currentUser.bioLinks" :key="index">
+								<template #content>
+									<span v-text="link"></span>
+								</template>
+								<img :src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px">
+							</el-tooltip>
+						</div>
+					</div>
+				</div>
 				<div class="x-friend-item">
 					<div class="detail">
 						<span class="name">Languages</span>
@@ -1426,6 +1439,19 @@
 		</el-row>
 		<template #footer>
 			<el-button type="primary" size="small" :disabled="socialStatusDialog.loading" @click="saveSocialStatus">Update</el-button>
+		</template>
+	</el-dialog>
+
+	<!-- dialog: bio -->
+	<el-dialog ref="bioDialog" :visible.sync="bioDialog.visible" title="Bio" width="400px" class="x-dialog">
+		<el-input type="textarea" v-model="bioDialog.bio" size="mini" maxlength="512" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="Please input a bio"></el-input>
+		<el-input v-for="(link, index) in bioDialog.bioLinks" :key="index" :value="link" v-model="bioDialog.bioLinks[index]" size="small" style="margin-top:5px">
+			<img slot="prepend" :src="getFaviconUrl(link)" style="width:16px;height:16px">
+			<el-button slot="append" icon="el-icon-delete" @click="bioDialog.bioLinks.splice(index, 1)"></el-button>
+		</el-input>
+		<el-button @click="bioDialog.bioLinks.push('')" size="mini" style="margin-top:5px">Add Link</el-button>
+		<template #footer>
+			<el-button type="primary" size="small" :disabled="bioDialog.loading" @click="saveBio">Update</el-button>
 		</template>
 	</el-dialog>
 

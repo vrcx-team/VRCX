@@ -6580,6 +6580,48 @@ CefSharp.BindObjectAsync(
 		D.visible = true;
 	};
 
+	// App: Bio Dialog
+
+	$app.data.bioDialog = {
+		visible: false,
+		loading: false,
+		bio: '',
+		bioLinks: []
+	};
+
+	API.$on('LOGOUT', function () {
+		$app.bioDialog.visible = false;
+	});
+
+	$app.methods.saveBio = function () {
+		var D = this.bioDialog;
+		if (D.loading) {
+			return;
+		}
+		D.loading = true;
+		API.saveCurrentUser({
+			bio: D.bio,
+			bioLinks: D.bioLinks
+		}).finally(() => {
+			D.loading = false;
+		}).then((args) => {
+			D.visible = false;
+			this.$message({
+				message: 'Bio updated',
+				type: 'success'
+			});
+			return args;
+		});
+	};
+
+	$app.methods.showBioDialog = function () {
+		this.$nextTick(() => adjustDialogZ(this.$refs.bioDialog.$el));
+		var D = this.bioDialog;
+		D.bio = API.currentUser.bio;
+		D.bioLinks = API.currentUser.bioLinks.slice();
+		D.visible = true;
+	};
+
 	// App: New Instance Dialog
 
 	$app.data.newInstanceDialog = {
