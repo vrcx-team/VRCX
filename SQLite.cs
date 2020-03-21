@@ -9,8 +9,14 @@ namespace VRCX
 {
     public class SQLite
     {
+        public static SQLite Instance { get; private set; }
         private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
         private static SQLiteConnection m_Connection;
+
+        static SQLite()
+        {
+            Instance = new SQLite();
+        }
 
         public static void Init()
         {

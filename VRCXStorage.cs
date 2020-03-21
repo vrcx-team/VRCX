@@ -11,9 +11,15 @@ namespace VRCX
 {
     public class VRCXStorage
     {
+        public static VRCXStorage Instance { get; private set; }
         private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
         private static Dictionary<string, string> m_Storage = new Dictionary<string, string>();
         private static bool m_Dirty;
+
+        static VRCXStorage()
+        {
+            Instance = new VRCXStorage();
+        }
 
         public static void Load()
         {

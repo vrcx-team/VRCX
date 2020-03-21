@@ -20,6 +20,7 @@ namespace VRCX
 
     public class LogWatcher
     {
+        public static LogWatcher Instance { get; private set; }
         private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
         private static List<string[]> m_GameLog = new List<string[]>();
         private static Thread m_Thread;
@@ -27,6 +28,11 @@ namespace VRCX
 
         // NOTE
         // FileSystemWatcher() is unreliable
+
+        static LogWatcher()
+        {
+            Instance = new LogWatcher();
+        }
 
         public static void Init()
         {

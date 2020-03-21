@@ -10,10 +10,16 @@ namespace VRCX
 {
     public class Discord
     {
+        public static Discord Instance { get; private set; }
         private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
         private static readonly RichPresence m_Presence = new RichPresence();
         private static Thread m_Thread;
         private static bool m_Active;
+
+        static Discord()
+        {
+            Instance = new Discord();
+        }
 
         public static void Init()
         {

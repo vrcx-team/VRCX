@@ -15,6 +15,13 @@ namespace VRCX
 {
     public class VRCX
     {
+        public static VRCX Instance { get; private set; }
+
+        static VRCX()
+        {
+            Instance = new VRCX();
+        }
+
         public void ShowDevTools()
         {
             try
