@@ -1075,6 +1075,10 @@
 				<el-tab-pane label="Worlds">
 					<el-button type="default" :loading="userDialog.isWorldsLoading" @click="refreshUserDialogWorlds()" size="mini" icon="el-icon-refresh" circle></el-button>
 					<span style="margin-left:5px">Total {{ userDialog.worlds.length }}</span>
+					<el-radio-group v-model="userDialog.worldSorting" size="mini" style="margin-left:30px" @change="changeUserDialogWorldSorting">
+						<el-radio label="name">by name</el-radio>
+						<el-radio label="update">by update</el-radio>
+					</el-radio-group>
 					<div v-loading="userDialog.isWorldsLoading" class="x-friend-list" style="margin-top:10px;min-height:60px">
 						<div v-for="world in userDialog.worlds" :key="world.id" @click="showWorldDialog(world.id)" class="x-friend-item">
 							<div class="avatar">
@@ -1090,6 +1094,10 @@
 				<el-tab-pane label="Avatars">
 					<el-button type="default" :loading="userDialog.isAvatarsLoading" @click="refreshUserDialogAvatars()" size="mini" icon="el-icon-refresh" circle></el-button>
 					<span style="margin-left:5px">Total {{ userDialog.avatars.length }}</span>
+					<el-radio-group v-model="userDialog.avatarSorting" size="mini" style="margin-left:30px" @change="changeUserDialogAvatarSorting">
+						<el-radio label="name">by name</el-radio>
+						<el-radio label="update">by update</el-radio>
+					</el-radio-group>
 					<div v-loading="userDialog.isAvatarsLoading" class="x-friend-list" style="margin-top:10px;min-height:60px">
 						<div v-for="avatar in userDialog.avatars" :key="avatar.id" @click="showAvatarDialog(avatar.id)" class="x-friend-item">
 							<div class="avatar">

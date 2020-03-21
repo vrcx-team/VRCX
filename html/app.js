@@ -3859,6 +3859,7 @@ CefSharp.BindObjectAsync(
 		}
 	};
 
+	// ascending
 	var compareByName = function (a, b) {
 		var A = String(a.name).toUpperCase();
 		var B = String(b.name).toUpperCase();
@@ -3871,6 +3872,20 @@ CefSharp.BindObjectAsync(
 		return 0;
 	};
 
+	// descending
+	var compareByUpdatedAt = function (a, b) {
+		var A = String(a.updated_at).toUpperCase();
+		var B = String(b.updated_at).toUpperCase();
+		if (A < B) {
+			return 1;
+		}
+		if (A > B) {
+			return -1;
+		}
+		return 0;
+	};
+
+	// ascending
 	var compareByDisplayName = function (a, b) {
 		var A = String(a.displayName).toUpperCase();
 		var B = String(b.displayName).toUpperCase();
@@ -5487,6 +5502,9 @@ CefSharp.BindObjectAsync(
 		isWorldsLoading: false,
 		isAvatarsLoading: false,
 
+		worldSorting: 'update',
+		avatarSorting: 'update',
+
 		treeData: [],
 		memo: ''
 	};
@@ -5710,15 +5728,14 @@ CefSharp.BindObjectAsync(
 						worlds.push(ref);
 					}
 				}
-				worlds.sort(compareByName);
-				D.worlds = worlds;
+				this.setUserDialogWorlds(worlds);
 				var avatars = [];
 				for (var ref of API.cachedAvatars.values()) {
 					if (ref.authorId === D.id) {
 						avatars.push(ref);
 					}
 				}
-				avatars.sort(compareByName);
+				this.setUserDialogAvatars(avatars);
 				D.avatars = avatars;
 				D.isWorldsLoading = false;
 				D.isAvatarsLoading = false;
@@ -5794,6 +5811,26 @@ CefSharp.BindObjectAsync(
 		}
 	};
 
+	$app.methods.setUserDialogWorlds = function (array) {
+		var D = this.userDialog;
+		if (D.worldSorting === 'update') {
+			array.sort(compareByUpdatedAt);
+		} else {
+			array.sort(compareByName);
+		}
+		D.worlds = array;
+	};
+
+	$app.methods.setUserDialogAvatars = function (array) {
+		var D = this.userDialog;
+		if (D.avatarSorting === 'update') {
+			array.sort(compareByUpdatedAt);
+		} else {
+			array.sort(compareByName);
+		}
+		D.avatars = array;
+	};
+
 	$app.methods.refreshUserDialogWorlds = function () {
 		var D = this.userDialog;
 		if (D.isWorldsLoading) {
@@ -5832,10 +5869,9 @@ CefSharp.BindObjectAsync(
 				}
 			},
 			done: () => {
-				var array = Array.from(map.values());
-				array.sort(compareByName);
 				if (D.id === params.userId) {
-					D.worlds = array;
+					var array = Array.from(map.values());
+					this.setUserDialogWorlds(array);
 				}
 				D.isWorldsLoading = false;
 			}
@@ -5880,10 +5916,9 @@ CefSharp.BindObjectAsync(
 				}
 			},
 			done: () => {
-				var array = Array.from(map.values());
-				array.sort(compareByName);
 				if (D.id === params.userId) {
-					D.avatars = array;
+					var array = Array.from(map.values());
+					this.setUserDialogAvatars(array);
 				}
 				D.isAvatarsLoading = false;
 			}
@@ -6043,6 +6078,16 @@ CefSharp.BindObjectAsync(
 	$app.methods.refreshUserDialogTreeData = function () {
 		var D = this.userDialog;
 		D.treeData = buildTreeData(D.ref);
+	};
+
+	$app.methods.changeUserDialogWorldSorting = function () {
+		var D = this.userDialog;
+		this.setUserDialogWorlds(D.worlds);
+	};
+
+	$app.methods.changeUserDialogAvatarSorting = function () {
+		var D = this.userDialog;
+		this.setUserDialogAvatars(D.avatars);
 	};
 
 	// App: World Dialog
