@@ -256,10 +256,10 @@
 				</el-button-group>
 			</el-tab-pane>
 			<el-tab-pane label="World" v-loading="isSearchWorldLoading" style="min-height:60px">
-				<el-dropdown @command="(command) => searchWorld(API.cachedConfig.dynamicWorldRows[command])" size="small" trigger="click" style="margin-bottom:15px">
+				<el-dropdown @command="(row) => searchWorld(row)" size="small" trigger="click" style="margin-bottom:15px">
 					<el-button size="small">Search by Category <i class="el-icon-arrow-down el-icon--right"></i></el-button>
 					<el-dropdown-menu #default="dropdown">
-						<el-dropdown-item v-for="row in API.cachedConfig.dynamicWorldRows" :key="row.index" v-text="row.name" :command="row.index"></el-dropdown-item>
+						<el-dropdown-item v-for="row in API.cachedConfig.dynamicWorldRows" :key="row.index" v-text="row.name" :command="row"></el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
 				<div class="x-friend-list">
