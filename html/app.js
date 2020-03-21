@@ -206,6 +206,59 @@ CefSharp.BindObjectAsync(
 	document.head.appendChild($appDarkStyle);
 
 	//
+	// Languages
+	//
+
+	var subsetOfLanguages = {
+		eng: 'English',
+		kor: '한국어',
+		rus: 'Русский',
+		spa: 'Español',
+		por: 'Português',
+		zho: '中文',
+		deu: 'Deutsch',
+		jpn: '日本語',
+		fra: 'Français',
+		swe: 'Svenska',
+		nld: 'Nederlands',
+		pol: 'Polski',
+		dan: 'Dansk',
+		nor: 'Norsk',
+		ita: 'Italiano',
+		tha: 'ภาษาไทย',
+		fin: 'Suomi',
+		hun: 'Magyar',
+		ces: 'Čeština',
+		tur: 'Türkçe',
+		ara: 'العربية'
+	};
+
+	// vrchat to famfamfam
+	var languageMappings = {
+		eng: 'us',
+		kor: 'kr',
+		rus: 'ru',
+		spa: 'es',
+		por: 'pt',
+		zho: 'cn',
+		deu: 'de',
+		jpn: 'jp',
+		fra: 'fr',
+		swe: 'se',
+		nld: 'nl',
+		pol: 'pl',
+		dan: 'dk',
+		nor: 'no',
+		ita: 'it',
+		tha: 'th',
+		fin: 'fi',
+		hun: 'hu',
+		ces: 'cz',
+		tur: 'tr',
+		ara: 'ae'
+	};
+
+	//
 	// API
 	//
 
@@ -600,6 +653,7 @@ CefSharp.BindObjectAsync(
 		}
 	});
 
+
 	Vue.component('location', {
 		template: '<span @click="showWorldDialog" :class="{ \'x-link\': link }">{{ text }}<slot></slot></span>',
 		props: {
@@ -859,6 +913,26 @@ CefSharp.BindObjectAsync(
 		}
 	};
 
+	// FIXME: it may performance issue. review here
+	API.applyUserLanguage = function (ref) {
+		ref.$languages = [];
+		var { tags } = ref;
+		for (var tag of tags) {
+			if (tag.startsWith('language_') === false) {
+				continue;
+			}
+			var key = tag.substr(9);
+			var value = subsetOfLanguages[key];
+			if (value === undefined) {
+				continue;
+			}
+			ref.$languages.push({
+				key,
+				value
+			});
+		}
+	};
+
 	API.applyCurrentUser = function (json) {
 		var ref = this.currentUser;
 		if (this.isLoggedIn) {
@@ -867,6 +941,7 @@ CefSharp.BindObjectAsync(
 				ref.$homeLocation = this.parseLocation(ref.homeLocation);
 			}
 			this.applyUserTrustLevel(ref);
+			this.applyUserLanguage(ref);
 		} else {
 			ref = {
 				id: '',
@@ -899,11 +974,13 @@ CefSharp.BindObjectAsync(
 				$isTroll: false,
 				$trustLevel: 'Visitor',
 				$trustClass: 'x-tag-untrusted',
+				$languages: [],
 				//
 				...json
 			};
 			ref.$homeLocation = this.parseLocation(ref.homeLocation);
 			this.applyUserTrustLevel(ref);
+			this.applyUserLanguage(ref);
 			this.currentUser = ref;
 			this.isLoggedIn = true;
 			this.$emit('LOGIN', {
@@ -980,11 +1057,13 @@ CefSharp.BindObjectAsync(
 				$isTroll: false,
 				$trustLevel: 'Visitor',
 				$trustClass: 'x-tag-untrusted',
+				$languages: [],
 				//
 				...json
 			};
 			ref.$location = this.parseLocation(ref.location);
 			this.applyUserTrustLevel(ref);
+			this.applyUserLanguage(ref);
 			this.cachedUsers.set(ref.id, ref);
 		} else {
 			var props = {};
@@ -999,6 +1078,7 @@ CefSharp.BindObjectAsync(
 				ref.$location = this.parseLocation(ref.location);
 			}
 			this.applyUserTrustLevel(ref);
+			this.applyUserLanguage(ref);
 			for (var prop in ref) {
 				if (ref[prop] !== Object(ref[prop])) {
 					props[prop] = true;
@@ -3059,6 +3139,8 @@ CefSharp.BindObjectAsync(
 		}
 	}, 5000);
 
+	// initialise
+
 	var $app = {
 		data: {
 			API,
@@ -3095,6 +3177,15 @@ CefSharp.BindObjectAsync(
 			});
 			this.checkAppVersion();
 		}
+	};
+
+	$app.methods.languageClass = function (language) {
+		var style = {};
+		var mapping = languageMappings[language];
+		if (mapping !== undefined) {
+			style[mapping] = true;
+		}
+		return style;
 	};
 
 	$app.methods.checkAppVersion = function () {
@@ -5149,6 +5240,19 @@ CefSharp.BindObjectAsync(
 
 	// App: More
 
+	$app.data.userLanguageVisible = 0;
+	$app.data.userLanguageSelected = '';
+	$app.data.userLanguages = (function () {
+		var data = [];
+		for (var key in subsetOfLanguages) {
+			var value = subsetOfLanguages[key];
+			data.push({
+				key,
+				value
+			});
+		}
+		return data;
+	}());
 	$app.data.currentUserTreeData = [];
 	$app.data.pastDisplayNameTable = {
 		data: [],
@@ -5202,6 +5306,24 @@ CefSharp.BindObjectAsync(
 	API.$on('VISITS', function (args) {
 		$app.visits = args.json;
 	});
+
+	$app.methods.addUserLanguage = function (language) {
+		if (language !== String(language)) {
+			return;
+		}
+		API.addUserTags({
+			tags: [`language_${language}`]
+		});
+	};
+
+	$app.methods.removeUserLanguage = function (language) {
+		if (language !== String(language)) {
+			return;
+		}
+		API.removeUserTags({
+			tags: [`language_${language}`]
+		});
+	};
 
 	$app.methods.logout = function () {
 		this.$confirm('Continue? Logout', 'Confirm', {

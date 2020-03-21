@@ -603,6 +603,33 @@
 				</div>
 				<div class="x-friend-item">
 					<div class="detail">
+						<span class="name">Languages</span>
+						<span class="extra">
+							<span v-for="item in API.currentUser.$languages" :key="item.key" style="display:block">
+								<span><span class="famfamfam-flags" :class="languageClass(item.key)" style="display:inline-block;margin-right:5px"></span> {{ item.value }} ({{ item.key }})</span>
+								<el-button type="text" icon="el-icon-close" size="mini" @click.stop="removeUserLanguage(item.key)" style="margin-left:5px"></el-button>
+							</span>
+						</span>
+					</div>
+				</div>
+				<div class="x-friend-item">
+					<div class="detail" v-if="userLanguageVisible">
+						<el-select v-model="userLanguageSelected" style="display:block">
+							<el-option v-for="item in userLanguages" :key="item.key" :value="item.key" :label="item.value">
+								<span><span class="famfamfam-flags" :class="languageClass(item.key)" style="display:inline-block;margin-right:5px"></span> {{ item.value }} ({{ item.key }})</span>
+							</el-option>
+						</el-select>
+						<div style="margin-top:5px">
+							<el-button @click="userLanguageVisible=0; addUserLanguage(userLanguageSelected)" size="mini">Ok</el-button>
+							<el-button @click="userLanguageVisible=0" size="mini" style="margin-left:0">Cancel</el-button>
+						</div>
+					</div>
+					<div class="detail" v-else>
+						<el-button @click="userLanguageSelected='';userLanguageVisible=1" size="mini">Add Language</el-button>
+					</div>
+				</div>
+				<div class="x-friend-item">
+					<div class="detail">
 						<span class="name">Last Login</span>
 						<span class="extra">{{ API.currentUser.last_login | formatDate('YYYY-MM-DD HH24:MI:SS') }}</span>
 					</div>
@@ -903,6 +930,12 @@
 								<span style="display:block;text-align:center;font-family:monospace">{{ userDialog.ref.username | textToHex }}</span>
 								<span slot="reference" v-text="userDialog.ref.username" style="margin-left:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer"></span>
 							</el-popover>
+							<el-tooltip v-for="item in userDialog.ref.$languages" :key="item.key" placement="top">
+								<template #content>
+									<span>{{ item.value }} ({{ item.key }})</span>
+								</template>
+								<span class="famfamfam-flags" :class="languageClass(item.key)" style="display:inline-block;margin-left:5px">
+							</el-tooltip>
 						</div>
 						<div style="margin-top:5px">
 							<el-tag type="info" effect="plain" size="mini" class="name" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel"></el-tag>
