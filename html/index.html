@@ -605,27 +605,24 @@
 					<div class="detail">
 						<span class="name">Languages</span>
 						<span class="extra">
-							<span v-for="item in API.currentUser.$languages" :key="item.key" style="display:block">
-								<span><span class="famfamfam-flags" :class="languageClass(item.key)" style="display:inline-block;margin-right:5px"></span> {{ item.value }} ({{ item.key }})</span>
-								<el-button type="text" icon="el-icon-close" size="mini" @click.stop="removeUserLanguage(item.key)" style="margin-left:5px"></el-button>
-							</span>
+							<div style="margin:5px 0">
+								<el-tag v-for="item in API.currentUser.$languages" :key="item.key" size="small" type="info" effect="plain" closable @close="removeUserLanguage(item.key)" style="margin-right:5px">
+									<span class="famfamfam-flags" :class="languageClass(item.key)" style="display:inline-block;margin-right:5px"></span> {{ item.value }} ({{ item.key }})
+								</el-tag>
+							</div>
+							<div v-if="userLanguageVisible">
+								<el-select v-model="userLanguageSelected" size="mini">
+									<el-option v-for="item in userLanguages" :key="item.key" :value="item.key" :label="item.value">
+										<span><span class="famfamfam-flags" :class="languageClass(item.key)" style="display:inline-block;margin-right:5px"></span> {{ item.value }} ({{ item.key }})</span>
+									</el-option>
+								</el-select>
+								<el-button @click="userLanguageVisible=0; addUserLanguage(userLanguageSelected)" size="mini">Ok</el-button>
+								<el-button @click="userLanguageVisible=0" size="mini" style="margin-left:0">Cancel</el-button>
+							</div>
+							<div v-else>
+								<el-button @click="userLanguageSelected='';userLanguageVisible=1" size="mini">Add Language</el-button>
+							</div>
 						</span>
-					</div>
-				</div>
-				<div class="x-friend-item">
-					<div class="detail" v-if="userLanguageVisible">
-						<el-select v-model="userLanguageSelected" style="display:block">
-							<el-option v-for="item in userLanguages" :key="item.key" :value="item.key" :label="item.value">
-								<span><span class="famfamfam-flags" :class="languageClass(item.key)" style="display:inline-block;margin-right:5px"></span> {{ item.value }} ({{ item.key }})</span>
-							</el-option>
-						</el-select>
-						<div style="margin-top:5px">
-							<el-button @click="userLanguageVisible=0; addUserLanguage(userLanguageSelected)" size="mini">Ok</el-button>
-							<el-button @click="userLanguageVisible=0" size="mini" style="margin-left:0">Cancel</el-button>
-						</div>
-					</div>
-					<div class="detail" v-else>
-						<el-button @click="userLanguageSelected='';userLanguageVisible=1" size="mini">Add Language</el-button>
 					</div>
 				</div>
 				<div class="x-friend-item">
