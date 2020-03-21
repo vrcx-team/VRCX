@@ -5304,12 +5304,16 @@ CefSharp.BindObjectAsync(
 		VRCXStorage.SetBool('isDarkMode', this.isDarkMode);
 		$appDarkStyle.disabled = this.isDarkMode === false;
 	};
+	$app.data.isStartAtWindowsStartup = VRCXStorage.GetBool('VRCX_StartAtWindowsStartup');
 	$app.data.isStartAsMinimizedState = VRCXStorage.GetBool('VRCX_StartAsMinimizedState');
 	$app.data.isCloseToTray = VRCXStorage.GetBool('VRCX_CloseToTray');
 	var saveVRCXWindowOption = function () {
+		VRCXStorage.SetBool('VRCX_StartAtWindowsStartup', this.isStartAtWindowsStartup);
 		VRCXStorage.SetBool('VRCX_StartAsMinimizedState', this.isStartAsMinimizedState);
 		VRCXStorage.SetBool('VRCX_CloseToTray', this.isCloseToTray);
+		VRCX.SetStartup(this.isStartAtWindowsStartup);
 	};
+	$app.watch.isStartAtWindowsStartup = saveVRCXWindowOption;
 	$app.watch.isStartAsMinimizedState = saveVRCXWindowOption;
 	$app.watch.isCloseToTray = saveVRCXWindowOption;
 

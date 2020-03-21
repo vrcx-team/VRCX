@@ -134,5 +134,27 @@ namespace VRCX
         {
             return CpuMonitor.CpuUsage;
         }
+
+        public void SetStartup(bool enabled)
+        {
+            try
+            {
+                using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                {
+                    if (enabled)
+                    {
+                        var path = Application.ExecutablePath;
+                        key.SetValue("VRCX", $"\"{path}\" --startup");
+                    }
+                    else
+                    {
+                        key.DeleteValue("VRCX", false);
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
     }
 }

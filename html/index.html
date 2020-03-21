@@ -771,7 +771,7 @@
 				<el-switch v-model="discordActive"></el-switch>
 			</div>
 			<div style="font-size:12px;margin-top:5px">
-				<span style="display:inline-block;min-width:150px">Instance Details</span>
+				<span style="display:inline-block;min-width:150px">Instance details</span>
 				<el-switch v-model="discordInstance"></el-switch>
 			</div>
 		</div>
@@ -794,11 +794,15 @@
 		<div style="margin-top:30px">
 			<span style="font-weight:bold">Window</span>
 			<div style="font-size:12px;margin-top:5px">
-				<span style="display:inline-block;min-width:150px">Start as Minimized State</span>
+				<span style="display:inline-block;min-width:150px">Start at Windows startup</span>
+				<el-switch v-model="isStartAtWindowsStartup"></el-switch>
+			</div>
+			<div style="font-size:12px;margin-top:5px">
+				<span style="display:inline-block;min-width:150px">Start as minimized state</span>
 				<el-switch v-model="isStartAsMinimizedState"></el-switch>
 			</div>
 			<div style="font-size:12px;margin-top:5px">
-				<span style="display:inline-block;min-width:150px">Close to Tray</span>
+				<span style="display:inline-block;min-width:150px">Close to tray</span>
 				<el-switch v-model="isCloseToTray"></el-switch>
 			</div>
 		</div>
