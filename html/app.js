@@ -6564,7 +6564,7 @@ CefSharp.BindObjectAsync(
 				var params = {
 					receiverUserId: '',
 					type: 'invite',
-					message: '',
+					message: 'This is a generated invite',
 					seen: false,
 					details: {
 						worldId: D.worldId,
