@@ -73,7 +73,7 @@ CefSharp.BindObjectAsync(
 			close: 'animated zoomOut'
 		},
 		layout: 'topCenter',
-		theme: 'relax',
+		theme: 'sunset',
 		timeout: 6000
 	});
 
