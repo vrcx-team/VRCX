@@ -3,7 +3,9 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+using System;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using CefSharp;
@@ -35,7 +37,7 @@ namespace VRCX
             {
             }
             // Application.StartupPath + "/html/index.html"
-            Browser = new ChromiumWebBrowser(Application.StartupPath + "/html/index.html")
+            Browser = new ChromiumWebBrowser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/index.html"))
             {
                 BrowserSettings =
                 {

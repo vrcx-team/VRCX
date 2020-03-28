@@ -3,6 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+using System;
+using System.IO;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
@@ -20,7 +22,7 @@ namespace VRCX
             Instance = this;
             InitializeComponent();
             // 
-            Browser1 = new ChromiumWebBrowser(Application.StartupPath + "/html/vr.html?1")
+            Browser1 = new ChromiumWebBrowser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/vr.html?1"))
             {
                 BrowserSettings =
                 {
@@ -29,7 +31,7 @@ namespace VRCX
                 },
                 Dock = DockStyle.Fill,
             };
-            Browser2 = new ChromiumWebBrowser(Application.StartupPath + "/html/vr.html?2")
+            Browser2 = new ChromiumWebBrowser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/vr.html?2"))
             {
                 BrowserSettings =
                 {
