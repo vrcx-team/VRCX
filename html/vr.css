@@ -19,7 +19,7 @@ For a copy, see <https://opensource.org/licenses/MIT>.
   position: relative; }
   .noty_theme__sunset.noty_bar .noty_body {
     padding: 10px;
-    font-size: 14px;
+    font-size: 20px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); }
   .noty_theme__sunset.noty_bar .noty_buttons {
     padding: 10px; }
