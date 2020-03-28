@@ -6,6 +6,7 @@
 using CefSharp;
 using CefSharp.WinForms;
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace VRCX
@@ -19,7 +20,7 @@ namespace VRCX
             {
                 var settings = new CefSettings
                 {
-                    CachePath = "cache",
+                    CachePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cache"),
                     PersistUserPreferences = true,
                     PersistSessionCookies = true,
                     WindowlessRenderingEnabled = true
