@@ -553,7 +553,7 @@ html
 				div(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
 					span(style="font-weight:bold") Legal Notice
 					div(style="margin-top:5px;font-size:12px")
-						p &copy; 2019 #[a(href="https://github.com/pypy-vrc" target="_blank")] pypy (mina#5656)
+						p &copy; 2019-2020 #[a(href="https://github.com/pypy-vrc" target="_blank") pypy] (mina#5656)
 						p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
 						p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
 						p pypy is not responsible for any problems caused by VRCX. Use at your own risk!
@@ -803,10 +803,10 @@ html
 										el-dropdown-item(v-else icon="el-icon-s-home" command="Make Home" divided) Make Home
 					el-tabs
 						el-tab-pane(label="Instances")
-							div(style="margin-bottom:10px")
-								i(class="el-icon-user") Public {{ worldDialog.ref.publicOccupants | commaNumber }}
-								i(class="el-icon-user-solid" style="margin-left:10px") Private {{ worldDialog.ref.privateOccupants | commaNumber }}
-								i(class="el-icon-check" style="margin-left:10px") Capacity {{ worldDialog.ref.capacity | commaNumber }}
+							div(style="margin-bottom:10px").
+								#[i(class="el-icon-user")] Public {{ worldDialog.ref.publicOccupants | commaNumber }}
+								#[i(class="el-icon-user-solid" style="margin-left:10px")] Private {{ worldDialog.ref.privateOccupants | commaNumber }}
+								#[i(class="el-icon-check" style="margin-left:10px")] Capacity {{ worldDialog.ref.capacity | commaNumber }}
 							div(v-for="room in worldDialog.rooms" :key="room.id")
 								div
 									i(class="el-icon-position")
@@ -978,16 +978,16 @@ html
 				el-row(v-loading="socialStatusDialog.loading")
 					el-col(:span="9")
 						el-select(v-model="socialStatusDialog.status")
-							el-option(label="Online" value="active")
-								i(class="x-user-status active") Online
-							el-option(label="Join Me" value="join me")
-								i(class="x-user-status joinme") Join Me
-							el-option(label="Ask Me" value="ask me")
-								i(class="x-user-status askme") Ask Me
-							el-option(label="Do Not Disturb" value="busy")
-								i(class="x-user-status busy") Do Not Disturb
-							el-option(label="Offline" value="offline")
-								i(class="x-user-status offline") Offline
+							el-option(label="Online" value="active").
+								#[i(class="x-user-status active")] Online
+							el-option(label="Join Me" value="join me").
+								#[i(class="x-user-status joinme")] Join Me
+							el-option(label="Ask Me" value="ask me").
+								#[i(class="x-user-status askme")] Ask Me
+							el-option(label="Do Not Disturb" value="busy").
+								#[i(class="x-user-status busy")] Do Not Disturb
+							el-option(label="Offline" value="offline").
+								#[i(class="x-user-status offline")] Offline
 					el-col(:span="1") &nbsp;
 					el-col(:span="14")
 						el-input(v-model="socialStatusDialog.statusDescription" placeholder="Status")
