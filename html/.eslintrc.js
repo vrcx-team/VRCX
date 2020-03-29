@@ -1,38 +1,36 @@
 module.exports = {
-    'env': {
-        'browser': true,
-        'es6': true,
-        'jquery': true
+    root: true,
+    env: {
+        browser: true,
+        node: true,
+        es2020: true
     },
-    'extends': 'eslint:all',
-    'globals': {
-        'CefSharp': 'readonly',
-        'VRCX': 'readonly',
-        'VRCXStorage': 'readonly',
-        'SQLite': 'readonly',
-        'LogWatcher': 'readonly',
-        'Discord': 'readonly',
-        'Noty': 'readonly',
-        'Vue': 'readonly',
-        'VueLazyload': 'readonly',
-        'DataTables': 'readonly',
-        'ELEMENT': 'readonly'
+    globals: {
+        CefSharp: 'readonly',
+        VRCX: 'readonly',
+        VRCXStorage: 'readonly',
+        SQLite: 'readonly',
+        LogWatcher: 'readonly',
+        Discord: 'readonly',
+        Noty: 'readonly',
+        Vue: 'readonly',
+        VueLazyload: 'readonly',
+        DataTables: 'readonly',
+        ELEMENT: 'readonly'
     },
-    'parserOptions': {
-        'ecmaVersion': 9
-    },
-    'root': true,
-    'rules': {
+    extends: 'eslint:all',
+    rules: {
+        'array-bracket-newline': 0,
         'array-element-newline': 0,
         'block-scoped-var': 0,
-        'camelcase': 0,
+        camelcase: 0,
         'capitalized-comments': 0,
-        'complexity': 0,
+        complexity: 0,
         'func-names': 0,
         'function-call-argument-newline': 0,
         'guard-for-in': 0,
         'id-length': 0,
-        'indent': 0,
+        indent: 0,
         'linebreak-style': 0,
         'lines-around-comment': 0,
         'max-depth': 0,
@@ -46,7 +44,7 @@ module.exports = {
         'no-bitwise': 0,
         'no-console': 0,
         'no-continue': 0,
-        'no-empty': ['error', { 'allowEmptyCatch': true }],
+        'no-empty': ['error', { allowEmptyCatch: true }],
         'no-magic-numbers': 0,
         'no-mixed-operators': 0,
         'no-param-reassign': 0,
@@ -59,17 +57,19 @@ module.exports = {
         'no-var': 0,
         'no-warning-comments': 0,
         'object-curly-spacing': ['error', 'always'],
+        'object-property-newline': 0,
         'one-var': 0,
         'padded-blocks': 0,
         'prefer-arrow-callback': 0,
         'prefer-destructuring': 0,
         'prefer-named-capture-group': 0,
-        'quotes': ['error', 'single', { 'avoidEscape': true }],
+        quotes: ['error', 'single', { avoidEscape: true }],
         'quote-props': 0,
+        'require-unicode-regexp': 0,
         'sort-keys': 0,
         'sort-vars': 0,
-        'space-before-function-paren': ['error', { 'named': 'never' }],
-        'strict': 0,
+        'space-before-function-paren': ['error', { named: 'never' }],
+        strict: 0,
         'vars-on-top': 0
     }
 };
