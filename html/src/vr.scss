@@ -1,0 +1,222 @@
+@charset "utf-8";
+/*
+Copyright(c) 2019 pypy. All rights reserved.
+
+This work is licensed under the terms of the MIT license.
+For a copy, see <https://opensource.org/licenses/MIT>.
+*/
+
+/*
+	마지노선인듯
+	화면 24px -> 나나 32
+	손등 18px -> 나나 24
+*/
+
+.noty_body {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.noty_layout {
+	max-width: none;
+	width: 80% !important;
+}
+
+.noty_theme__relax.noty_bar {
+	margin: 4px 0;
+	overflow: hidden;
+	border-radius: 2px;
+	position: relative;
+}
+
+.noty_theme__relax.noty_bar .noty_body {
+	padding: 5px 10px 10px;
+	font-size: 24px;
+	text-align: center;
+}
+
+.noty_theme__relax.noty_bar .noty_buttons {
+	border-top: 1px solid #e7e7e7;
+	padding: 5px 10px;
+}
+
+.noty_theme__relax.noty_type__alert, .noty_theme__relax.noty_type__notification {
+	background-color: #fff;
+	border: 1px solid #dedede;
+	color: #444;
+}
+
+.noty_theme__relax.noty_type__warning {
+	background-color: #FFEAA8;
+	border: 1px solid #FFC237;
+	color: #826200;
+}
+
+.noty_theme__relax.noty_type__warning .noty_buttons {
+	border-color: #dfaa30;
+}
+
+.noty_theme__relax.noty_type__error {
+	background-color: #FF8181;
+	border: 1px solid #e25353;
+	color: #FFF;
+}
+
+.noty_theme__relax.noty_type__error .noty_buttons {
+	border-color: darkred;
+}
+
+.noty_theme__relax.noty_type__info, .noty_theme__relax.noty_type__information {
+	background-color: #78C5E7;
+	border: 1px solid #3badd6;
+	color: #FFF;
+}
+
+.noty_theme__relax.noty_type__info .noty_buttons, .noty_theme__relax.noty_type__information .noty_buttons {
+	border-color: #0B90C4;
+}
+
+.noty_theme__relax.noty_type__success {
+	background-color: #BCF5BC;
+	border: 1px solid #7cdd77;
+	color: darkgreen;
+}
+
+.noty_theme__relax.noty_type__success .noty_buttons {
+	border-color: #50C24E;
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: rgba(0, 0, 0, 0.1);
+	border-radius: 16px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: rgba(0, 0, 0, 0.25);
+	border-radius: 16px;
+}
+
+body, input, textarea, select, button {
+	font-family: 'Noto Sans JP', 'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic', 'Segoe UI', sans-serif;
+	line-height: normal;
+}
+
+.x-app {
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.x-app-type {
+	background: #1f1f1f;
+	color: #fff;
+}
+
+.x-container {
+	flex: none;
+	padding: 10px;
+	overflow: hidden auto;
+	position: relative;
+}
+
+.x-friend-list {
+	overflow: hidden auto;
+	padding: 0 10px;
+}
+
+.x-friend-item {
+	display: flex;
+	align-items: center;
+	font-size: 18px;
+	box-sizing: border-box;
+}
+
+.x-friend-item .time {
+	margin-right: 5px;
+}
+
+.x-friend-item .name {
+	font-weight: bold;
+}
+
+.x-friend-item.friend .name {
+	color: #fff;
+}
+
+.x-friend-item.favorite .name {
+	color: #ff0;
+}
+
+.x-friend-item>.avatar {
+	flex: none;
+	width: 40px;
+	height: 40px;
+	margin-right: 8px;
+	display: inline-block;
+	position: relative;
+}
+
+.x-friend-item>img.avatar {
+	width: 50px;
+	height: 37.5px;
+	margin-left: 5px;
+	margin-right: 0;
+	border-radius: 2px;
+}
+
+.x-friend-item>.avatar>img {
+	width: 100%;
+	height: 100%;
+	border-radius: 40%;
+	object-fit: cover;
+}
+
+.x-friend-item>.detail {
+	flex: 1;
+	overflow: hidden;
+}
+
+.x-friend-item>.detail>.name, .x-friend-item>.detail>.extra {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.x-friend-item>.detail>.name {
+	font-weight: bold;
+}
+
+.x-friend-item>.detail>.extra {
+	font-weight: normal;
+}
+
+i.x-user-status {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: gray;
+}
+
+i.x-user-status.active {
+	background: #67C23A;
+}
+
+i.x-user-status.joinme {
+	background: #409EFF;
+}
+
+i.x-user-status.busy {
+	background: #F56C6C;
+}

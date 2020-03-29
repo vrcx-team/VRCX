@@ -1,0 +1,1325 @@
+doctype html
+html
+	head
+		meta(http-equiv="Content-Type" content="text/html;charset=utf-8")
+		meta(http-equiv="Cache-Control" content="no-cache")
+		meta(http-equiv="referrer" content="no-referrer")
+		meta(http-equiv="viewport" content="width=device-width,initial-scale=1,user-scalable=no")
+		title VRCX
+		link(rel="dns-prefetch" href="https://fonts.gstatic.com")
+		link(rel="preconnect" href="https://api.vrchat.cloud")
+		link(rel="preconnect" href="https://d348imysud55la.cloudfront.net")
+		link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css")
+		link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css")
+		link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.2.0-beta/noty.min.css")
+		link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.13.0/theme-chalk/index.css")
+		link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/famfamfam-flags/dist/sprite/famfamfam-flags.min.css")
+		link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP|Noto+Sans+KR&display=swap")
+		link(rel="stylesheet" href="app.css")
+	body
+		div.x-app#x-app(style="display:none")
+
+			//- login
+			div.x-login-container(v-show="!API.isLoggedIn")
+				div(style="width:300px;margin:auto")
+					el-form(ref="loginForm" :model="loginForm" :rules="loginForm.rules" v-loading="loginForm.loading" @submit.native.prevent="login()")
+						el-form-item(label="Username or Email" prop="username" required)
+							el-input(v-model="loginForm.username" name="username" placeholder="Username or Email" clearable)
+						el-form-item(label="Password" prop="password" required)
+							el-input(type="password" v-model="loginForm.password" name="password" placeholder="Password" clearable show-password)
+						el-form-item(style="margin-top:35px")
+							el-button(native-type="submit" type="primary" :loading="loginForm.loading" style="width:100%") Login
+						el-form-item
+							el-button(:loading="loginForm.loading" style="width:100%" @click="loginWithSteam()") Login with Steam
+					div(style="text-align:center;font-size:12px")
+						p &copy; 2019-2020 #[a(href="https://github.com/pypy-vrc" target="_blank") pypy] (mina#5656)
+						p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
+						p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
+						p pypy is not responsible for any problems caused by VRCX. Use at your own risk!
+
+			//- menu
+			div.x-menu-container
+				el-menu(ref="menu" collapse @select="selectMenu")
+					mixin menuitem(index, name, icon)
+						el-menu-item(index=index)
+							i(class=icon)
+							template(#title)
+								span= name
+					+menuitem('feed', 'Feed', 'el-icon-news')
+					+menuitem('gameLog', 'Game Log', 'el-icon-s-data')
+					+menuitem('search', 'Search', 'el-icon-search')
+					+menuitem('favorite', 'Favorite', 'el-icon-star-off')
+					+menuitem('friendLog', 'Friend Log', 'el-icon-notebook-2')
+					+menuitem('moderation', 'Moderation', 'el-icon-finished')
+					+menuitem('notification', 'Notification', 'el-icon-bell')
+					+menuitem('more', 'More', 'el-icon-s-tools')
+
+			//- feed
+			div.x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'feed'")
+				data-tables(v-bind="feedTable")
+					template(#tool)
+						div(style="margin:0 0 10px;display:flex;align-items:center")
+							div(style="flex:none;margin-right:10px")
+								el-switch(v-model="feedTable.filters[2].value" active-color="#13ce66")
+							el-select(v-model="feedTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
+								el-option(v-once v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar']" :key="type" :label="type" :value="type")
+							el-input(v-model="feedTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
+							el-button(type="default" @click="clearFeed()" icon="el-icon-delete" circle style="flex:none")
+					el-table-column(type="expand")
+						template(v-once #default="scope")
+							div(style="position:relative;font-size:14px")
+								template(v-if="scope.row.type === 'GPS'")
+									location(:location="scope.row.location[1]")
+									el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ scope.row.time | timeToText }}
+									br
+									span
+										i.el-icon-right
+									location(:location="scope.row.location[0]")
+								template(v-else-if="scope.row.type === 'Offline'")
+									location(:location="scope.row.location")
+									el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ scope.row.time | timeToText }}
+								template(v-else-if="scope.row.type === 'Online'")
+									location(:location="scope.row.location")
+								template(v-else-if="scope.row.type === 'Avatar'")
+									el-popover(placement="right" width="500px" trigger="click")
+										img(v-lazy="scope.row.avatar[1]" style="width:500px;height:375px")
+										img(slot="reference" v-lazy="scope.row.avatar[1]" class="x-link" style="flex:none;width:160px;height:120px;border-radius:4px")
+									span(style="position:relative;top:-50px;margin:0 5px")
+										i(class="el-icon-right")
+									el-popover(placement="right" width="500px" trigger="click")
+										img(v-lazy="scope.row.avatar[0]" style="width:500px;height:375px")
+										img(slot="reference" v-lazy="scope.row.avatar[0]" class="x-link" style="flex:none;width:160px;height:120px;border-radius:4px")
+								template(v-else-if="scope.row.type === 'Status'")
+									el-tooltip(placement="top")
+										template(#content)
+											span(v-if="scope.row.status[1].status === 'active'") Online
+											span(v-else-if="scope.row.status[1].status === 'join me'") Join Me
+											span(v-else-if="scope.row.status[1].status === 'ask me'") Ask Me
+											span(v-else-if="scope.row.status[1].status === 'busy'") Do Not Disturb
+											span(v-else) Offline
+										i(class="x-user-status" :class="userStatusClass(scope.row.status[1])")
+									span(v-text="scope.row.status[1].statusDescription")
+									br
+									span
+										i(class="el-icon-right")
+									el-tooltip(placement="top")
+										template(#content)
+											span(v-if="scope.row.status[0].status === 'active'") Online
+											span(v-else-if="scope.row.status[0].status === 'join me'") Join Me
+											span(v-else-if="scope.row.status[0].status === 'ask me'") Ask Me
+											span(v-else-if="scope.row.status[0].status === 'busy'") Do Not Disturb
+											span(v-else) Offline
+										i(class="x-user-status" :class="userStatusClass(scope.row.status[0])")
+									span(v-text="scope.row.status[0].statusDescription")
+					el-table-column(label="Time" prop="created_at" sortable="custom" width="80")
+						template(v-once #default="scope")
+							el-tooltip(placement="right")
+								template(#content)
+									span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+								span {{ scope.row.created_at | formatDate('HH24:MI') }}
+					el-table-column(label="Type" prop="type" width="100")
+					el-table-column(label="User" prop="displayName")
+						template(v-once #default="scope")
+							span(v-text="scope.row.displayName" @click="showUserDialog(scope.row.userId)" class="x-link")
+					el-table-column(label="Detail")
+						template(v-once #default="scope")
+							template(v-if="scope.row.type === 'GPS'")
+								location(:location="scope.row.location[0]")
+							template(v-else-if="scope.row.type === 'Offline' || scope.row.type === 'Online'")
+								location(:location="scope.row.location")
+							template(v-else-if="scope.row.type === 'Status'")
+								el-tooltip(placement="top")
+									template(#content)
+										span(v-if="scope.row.status[0].status === 'active'") Online
+										span(v-else-if="scope.row.status[0].status === 'join me'") Join Me
+										span(v-else-if="scope.row.status[0].status === 'ask me'") Ask Me
+										span(v-else-if="scope.row.status[0].status === 'busy'") Do Not Disturb
+										span(v-else) Offline
+									i(class="x-user-status" :class="userStatusClass(scope.row.status[0])")
+								span(v-text="scope.row.status[0].statusDescription")
+
+			//- gameLog
+			div(v-show="$refs.menu && $refs.menu.activeIndex === 'gameLog'" class="x-container")
+				data-tables(v-bind="gameLogTable")
+					template(#tool)
+						div(style="margin:0 0 10px;display:flex;align-items:center")
+							el-select(v-model="gameLogTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
+								el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft']" :key="type" :label="type" :value="type")
+							el-input(v-model="gameLogTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
+							el-button(type="default" @click="resetGameLog()" icon="el-icon-refresh" circle style="flex:none")
+					el-table-column(label="Time" prop="created_at" sortable="custom" width="80")
+						template(v-once #default="scope")
+							el-tooltip(placement="right")
+								template(#content)
+									span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+								span {{ scope.row.created_at | formatDate('HH24:MI') }}
+					el-table-column(label="Type" prop="type" width="120")
+					el-table-column(label="Detail")
+						template(v-once #default="scope")
+							location(v-if="scope.row.type === 'Location'" :location="scope.row.data")
+							span(v-else v-text="scope.row.data" @click="lookupUser(scope.row.data)" class="x-link")
+
+			//- search
+			div(v-show="$refs.menu && $refs.menu.activeIndex === 'search'" class="x-container")
+				div(style="margin:0 0 10px;display:flex;align-items:center")
+					el-input(v-model="searchText" clearable placeholder="Search" @keyup.native.13="search()" style="flex:1")
+					el-button(type="default" @click="clearSearch()" icon="el-icon-delete" circle style="flex:none;margin-left:10px")
+				el-tabs(ref="searchTab" type="card" style="margin-top:15px")
+					el-tab-pane(label="User" v-loading="isSearchUserLoading" style="min-height:60px")
+						div(class="x-friend-list")
+							div(v-for="user in searchUserResults" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item")
+								template(v-once)
+									div(class="avatar")
+										img(v-lazy="user.currentAvatarThumbnailImageUrl")
+									div(class="detail")
+										span(v-text="user.displayName" class="name" :class="user.$trustClass")
+										span(v-text="user.username" class="extra" style="font-family:monospace")
+						el-button-group(style="margin-top:15px")
+							el-button(v-if="searchUserParams.offset" @click="moreSearchUser(-1)" icon="el-icon-back" size="small") Prev
+							el-button(v-if="searchUserResults.length" @click="moreSearchUser(1)" icon="el-icon-right" size="small") Next
+					el-tab-pane(label="World" v-loading="isSearchWorldLoading" style="min-height:60px")
+						el-dropdown(@command="(row) => searchWorld(row)" size="small" trigger="click" style="margin-bottom:15px")
+							el-button(size="small") Search by Category #[i(class="el-icon-arrow-down el-icon--right")]
+							el-dropdown-menu(#default="dropdown")
+								el-dropdown-item(v-for="row in API.cachedConfig.dynamicWorldRows" :key="row.index" v-text="row.name" :command="row")
+						div(class="x-friend-list")
+							div(v-for="world in searchWorldResults" :key="world.id" @click="showWorldDialog(world.id)" class="x-friend-item")
+								template(v-once)
+									div(class="avatar")
+										img(v-lazy="world.thumbnailImageUrl")
+									div(class="detail")
+										span(v-text="world.name" class="name")
+										span(v-if="world.occupants" class="extra") {{ world.authorName }} ({{ world.occupants }})
+										span(v-else v-text="world.authorName" class="extra")
+						el-button-group(style="margin-top:15px")
+							el-button(v-if="searchWorldParams.offset" @click="moreSearchWorld(-1)" icon="el-icon-back" size="small") Prev
+							el-button(v-if="searchWorldResults.length" @click="moreSearchWorld(1)" icon="el-icon-right" size="small") Next
+					el-tab-pane(label="Avatar" v-loading="isSearchAvatarLoading" style="min-height:60px")
+						el-dropdown(@command="(command) => searchAvatar(command)" size="small" trigger="click" style="margin-bottom:15px")
+							el-button(size="small") Search by Category #[i(class="el-icon-arrow-down el-icon--right")]
+							el-dropdown-menu(#default="dropdown")
+								el-dropdown-item(command="updated") Updated Recently
+								el-dropdown-item(command="created") New
+								el-dropdown-item(command="mine") Mine
+						span(style="margin-left:10px;font-size:12px;color:#909399") Avatar search is not possible.
+						div(class="x-friend-list")
+							div(v-for="avatar in searchAvatarResults" :key="avatar.id" @click="showAvatarDialog(avatar.id)" class="x-friend-item")
+								template(v-once)
+									div(class="avatar")
+										img(v-lazy="avatar.thumbnailImageUrl")
+									div(class="detail")
+										span(v-text="avatar.name" class="name")
+										span(v-text="avatar.authorName" class="extra")
+						el-button-group(style="margin-top:15px")
+							el-button(v-if="searchAvatarParams.offset" @click="moreSearchAvatar(-1)" icon="el-icon-back" size="small") Prev
+							el-button(v-if="searchAvatarResults.length" @click="moreSearchAvatar(1)" icon="el-icon-right" size="small") Next
+
+			//- favorite
+			div(v-show="$refs.menu && $refs.menu.activeIndex === 'favorite'" class="x-container")
+				el-button(type="default" :loading="API.isFavoriteLoading" @click="API.refreshFavorites()" size="small" icon="el-icon-refresh" circle style="position:relative;float:right;z-index:1")
+				el-tabs(type="card" v-loading="API.isFavoriteLoading")
+					el-tab-pane(label="Friend")
+						el-collapse(style="border:0")
+							el-collapse-item(v-for="group in API.favoriteFriendGroups" :key="group.name")
+								template(slot="title")
+									span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
+									span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
+									el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
+									el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+								div(v-if="group.count" class="x-friend-list" style="margin-top:10px")
+									div(v-for="favorite in favoriteFriends" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showUserDialog(favorite.id)" class="x-friend-item")
+										template(v-if="favorite.ref")
+											div(class="avatar" :class="userStatusClass(favorite.ref)")
+												img(v-lazy="favorite.ref.currentAvatarThumbnailImageUrl")
+											div(class="detail")
+												span(v-text="favorite.ref.displayName" class="name" :class="favorite.ref.$trustClass")
+												location(v-if="favorite.ref.location !== 'offline'" :location="favorite.ref.location" :link="false" class="extra")
+												span(v-else v-text="favorite.ref.statusDescription")
+										template(v-else)
+											span(v-text="favorite.name || favorite.id")
+											el-button(type="text" icon="el-icon-close" size="mini" @click.stop="deleteFavorite(favorite.id)" style="margin-left:5px")
+					el-tab-pane(label="World")
+						el-collapse(style="border:0")
+							el-collapse-item(v-for="group in API.favoriteWorldGroups" :key="group.name")
+								template(slot="title")
+									span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
+									span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
+									el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
+									el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+								div(v-if="group.count" class="x-friend-list" style="margin-top:10px")
+									div(v-for="favorite in favoriteWorlds" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showWorldDialog(favorite.id)" class="x-friend-item")
+										template(v-if="favorite.ref")
+											div(class="avatar")
+												img(v-lazy="favorite.ref.thumbnailImageUrl")
+											div(class="detail")
+												span(v-text="favorite.ref.name" class="name")
+												span(v-if="favorite.ref.occupants" class="extra") {{ favorite.ref.authorName }} ({{ favorite.ref.occupants }})
+												span(v-else v-text="favorite.ref.authorName" class="extra")
+										template(v-else)
+											span(v-text="favorite.name || favorite.id")
+											el-button(type="text" icon="el-icon-close" size="mini" @click.stop="deleteFavorite(favorite.id)" style="margin-left:5px")
+					el-tab-pane(label="Avatar")
+						el-collapse(style="border:0")
+							el-collapse-item(v-for="group in API.favoriteAvatarGroups" :key="group.name")
+								template(slot="title")
+									span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
+									span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
+									el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
+									el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+								div(v-if="group.count" class="x-friend-list" style="margin-top:10px")
+									div(v-for="favorite in favoriteAvatars" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showAvatarDialog(favorite.id)" class="x-friend-item")
+										template(v-if="favorite.ref")
+											div(class="avatar")
+												img(v-lazy="favorite.ref.thumbnailImageUrl")
+											div(class="detail")
+												span(v-text="favorite.ref.name" class="name")
+												span(class="extra" v-text="favorite.ref.authorName")
+										template(v-else)
+											span(v-text="favorite.name || favorite.id")
+											el-button(type="text" icon="el-icon-close" size="mini" @click.stop="deleteFavorite(favorite.id)" style="margin-left:5px")
+
+			//- friendLog
+			div(v-show="$refs.menu && $refs.menu.activeIndex === 'friendLog'" class="x-container")
+				data-tables(v-bind="friendLogTable")
+					template(#tool)
+						div(style="margin:0 0 10px;display:flex;align-items:center")
+							el-select(v-model="friendLogTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
+								el-option(v-once v-for="type in ['Friend', 'Unfriend', 'FriendRequest', 'CancelFriendRequest', 'DisplayName', 'TrustLevel']" :key="type" :label="type" :value="type")
+							el-input(v-model="friendLogTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin-left:10px")
+					el-table-column(label="Date" prop="created_at" sortable="custom" width="120")
+						template(v-once #default="scope")
+							el-tooltip(placement="right")
+								template(#content)
+									span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+								span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+					el-table-column(label="Type" prop="type" width="150")
+					el-table-column(label="User" prop="displayName")
+						template(v-once #default="scope")
+							span(v-if="scope.row.type === 'DisplayName'") {{ scope.row.previousDisplayName }} #[i(class="el-icon-right")]
+							| &nbsp;
+							span(v-text="scope.row.displayName || scope.row.userId" @click="showUserDialog(scope.row.userId)" class="x-link")
+							template(v-if="scope.row.type === 'TrustLevel'")
+								br
+								span ({{ scope.row.previousTrustLevel }} #[i(class="el-icon-right")] {{ scope.row.trustLevel }})
+					el-table-column(label="Action" width="80" align="right")
+						template(v-once #default="scope")
+							el-button(type="text" icon="el-icon-close" size="mini" @click="deleteFriendLog(scope.row)")
+
+			//- moderation
+			div(v-show="$refs.menu && $refs.menu.activeIndex === 'moderation'" class="x-container")
+				data-tables(v-bind="playerModerationTable" v-loading="API.isPlayerModerationsLoading")
+					template(#tool)
+						div(style="margin:0 0 10px;display:flex;align-items:center")
+							el-select(v-model="playerModerationTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
+								el-option(v-once v-for="type in ['block', 'mute', 'unmute', 'hideAvatar', 'showAvatar']" :key="type" :label="type" :value="type")
+							el-input(v-model="playerModerationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
+							el-button(type="default" :loading="API.isPlayerModerationsLoading" @click="API.refreshPlayerModerations()" icon="el-icon-refresh" circle style="flex:none")
+					el-table-column(label="Date" prop="created" sortable="custom" width="120")
+						template(v-once #default="scope")
+							el-tooltip(placement="right")
+								template(#content)
+									span {{ scope.row.created | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+								span {{ scope.row.created | formatDate('MM-DD HH24:MI') }}
+					el-table-column(label="Type" prop="type" width="120")
+					el-table-column(label="Source" prop="sourceDisplayName")
+						template(v-once #default="scope")
+							span(v-text="scope.row.sourceDisplayName" @click="showUserDialog(scope.row.sourceUserId)" class="x-link")
+					el-table-column(label="Target" prop="targetDisplayName")
+						template(v-once #default="scope")
+							span(v-text="scope.row.targetDisplayName" @click="showUserDialog(scope.row.targetUserId)" class="x-link")
+					el-table-column(label="Action" width="80" align="right")
+						template(v-once #default="scope")
+							el-button(v-if="scope.row.sourceUserId === API.currentUser.id" type="text" icon="el-icon-close" size="mini" @click="deletePlayerModeration(scope.row)")
+
+			//- notification
+			div(v-show="$refs.menu && $refs.menu.activeIndex === 'notification'" v-loading="API.isNotificationsLoading" class="x-container")
+				data-tables(v-bind="notificationTable")
+					template(#tool)
+						div(style="margin:0 0 10px;display:flex;align-items:center")
+							el-select(v-model="notificationTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
+								el-option(v-once v-for="type in ['requestInvite', 'invite', 'friendRequest', 'message']" :key="type" :label="type" :value="type")
+							el-input(v-model="notificationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
+							el-button(type="default" :loading="API.isNotificationsLoading" @click="API.refreshNotifications()" icon="el-icon-refresh" circle style="flex:none")
+					el-table-column(label="Date" prop="created_at" sortable="custom" width="120")
+						template(v-once #default="scope")
+							el-tooltip(placement="right")
+								template(#content)
+									span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+								span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+					el-table-column(label="Type" prop="type" width="120")
+						template(v-once #default="scope")
+							el-tooltip(placement="top" v-if="scope.row.type === 'invite'")
+								template(#content)
+									span(v-text="API.parseInviteLocation(scope.row)")
+								span(v-text="scope.row.type" @click="showWorldDialog(scope.row.details.worldId)" class="x-link")
+							span(v-else v-text="scope.row.type")
+					el-table-column(label="User" prop="senderUsername")
+						template(v-once #default="scope")
+							span(v-text="scope.row.senderUsername" @click="showUserDialog(scope.row.senderUserId)" class="x-link")
+					el-table-column(label="Action" width="80" align="right")
+						template(v-once #default="scope")
+							el-button(v-if="scope.row.type === 'friendRequest'" type="text" icon="el-icon-check" size="mini" @click="acceptNotification(scope.row)")
+							el-button(type="text" icon="el-icon-close" size="mini" @click="hideNotification(scope.row)")
+
+			//- more
+			div(v-show="$refs.menu && $refs.menu.activeIndex === 'more'" class="x-container")
+				div
+					span(style="font-weight:bold") VRCX
+					div(class="x-friend-list" style="margin-top:10px")
+						div(class="x-friend-item")
+							div(class="detail")
+								span(class="name") Version
+								span(class="extra" v-text="appVersion")
+						div(class="x-friend-item" @click="checkAppVersion()")
+							div(class="detail")
+								span(class="name") Latest Version
+								span(class="extra" v-if="latestAppVersion" v-text="latestAppVersion")
+								span(v-else class="extra") Click to refresh
+						div(class="x-friend-item" @click="openExternalLink('https://github.com/pypy-vrc/VRCX')")
+							div(class="detail")
+								span(class="name") Repository URL
+								span(class="extra") https://github.com/pypy-vrc/VRCX
+				div(style="margin-top:30px")
+					span(style="font-weight:bold") Direct Access
+					div(style="margin-top:5px")
+						el-button-group
+							el-button(size="small" @click="promptUserDialog()") User
+							el-button(size="small" @click="promptWorldDialog()") World
+							el-button(size="small" @click="promptAvatarDialog()") Avatar
+				div(style="margin-top:30px")
+					span(style="font-weight:bold") My Profile
+					div(class="x-friend-list" style="margin-top:10px")
+						div(class="x-friend-item" @click="showUserDialog(API.currentUser.id)")
+							div(class="avatar")
+								img(v-lazy="API.currentUser.currentAvatarThumbnailImageUrl")
+							div(class="detail")
+								span(class="name" v-text="API.currentUser.displayName")
+								span(class="extra" v-text="API.currentUser.username")
+						div(class="x-friend-item" @click="showSocialStatusDialog()")
+							div(class="detail")
+								span(class="name") #[i(class="el-icon-edit")] Social Status
+								span(class="extra")
+									el-tooltip(placement="top")
+										template(#content)
+											span(v-if="API.currentUser.status === 'active'") Online
+											span(v-else-if="API.currentUser.status === 'join me'") Join Me
+											span(v-else-if="API.currentUser.status === 'ask me'") Ask Me
+											span(v-else-if="API.currentUser.status === 'busy'") Do Not Disturb
+											span(v-else) Offline
+										i(class="x-user-status" :class="userStatusClass(API.currentUser)")
+									span(v-text="API.currentUser.statusDescription")
+						div(class="x-friend-item" @click="showBioDialog()")
+							div(class="detail")
+								span(class="name") #[i(class="el-icon-edit")] Bio
+								pre(class="extra" style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0") {{ API.currentUser.bio || '-' }}
+								div(style="margin-top:5px")
+									el-tooltip(v-for="(link, index) in API.currentUser.bioLinks" :key="index")
+										template(#content)
+											span(v-text="link")
+										img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px" @click.stop="openExternalLink(link)")
+						div(class="x-friend-item")
+							div(class="detail")
+								span(class="name") Languages
+								span(class="extra")
+									div(style="margin:5px 0")
+										el-tag(v-for="item in API.currentUser.$languages" :key="item.key" size="small" type="info" effect="plain" closable @close="removeUserLanguage(item.key)" style="margin-right:5px")
+											span(class="famfamfam-flags" :class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
+											| {{ item.value }} ({{ item.key }})
+									div(v-if="userLanguageVisible")
+										el-select(v-model="userLanguageSelected" size="mini")
+											el-option(v-for="item in userLanguages" :key="item.key" :value="item.key" :label="item.value")
+												span(class="famfamfam-flags" :class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
+												| {{ item.value }} ({{ item.key }})
+										el-button(@click="userLanguageVisible=0; addUserLanguage(userLanguageSelected)" size="mini") Ok
+										el-button(@click="userLanguageVisible=0" size="mini" style="margin-left:0") Cancel
+									div(v-else)
+										el-button(@click="userLanguageSelected='';userLanguageVisible=1" size="mini") Add Language
+						div(class="x-friend-item")
+							div(class="detail")
+								span(class="name") Last Login
+								span(class="extra") {{ API.currentUser.last_login | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+						div(class="x-friend-item")
+							div(class="detail")
+								span(class="name") Two-Factor Auth (2FA)
+								span(class="extra") {{ API.currentUser.twoFactorAuthEnabled ? 'Enabled' : 'Disabled' }}
+						div(class="x-friend-item" @click="showUserDialog(API.currentUser.id)")
+							div(class="detail")
+								span(class="name") User ID
+								span(class="extra" v-text="API.currentUser.id")
+						div(class="x-friend-item" @click="showAvatarDialog(API.currentUser.currentAvatar)")
+							div(class="detail")
+								span(class="name") Avatar ID
+								span(class="extra" v-text="API.currentUser.currentAvatar")
+						div(class="x-friend-item" v-if="API.currentUser.homeLocation" @click="showWorldDialog(API.currentUser.homeLocation)")
+							div(class="detail")
+								span(class="name") Home Location
+								span(class="extra")
+									location(:location="API.currentUser.homeLocation" :link="false")
+									el-button(@click.stop="resetHome()" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+					div(style="margin-top:10px")
+						el-button-group
+							el-button(size="small" icon="el-icon-switch-button" @click="logout()") Logout
+					div(style="margin-top:30px")
+						span(style="font-weight:bold") Past Display Names
+						data-tables(v-bind="pastDisplayNameTable" style="margin-top:5px")
+							el-table-column(label="Date" prop="updated_at" sortable="custom")
+								template(v-once #default="scope")
+									span {{ scope.row.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+							el-table-column(label="Name" prop="displayName")
+					div(style="margin-top:30px")
+						span(style="font-weight:bold") JSON
+						el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+						el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+						el-tree(:data="currentUserTreeData" style="margin-top:5px;font-size:12px")
+							template(#default="scope")
+								span
+									span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
+									span(v-if="!scope.data.children" v-text="scope.data.value")
+				div(style="margin-top:30px")
+					span(style="font-weight:bold") Game Info
+					div(class="x-friend-list" style="margin-top:10px")
+						div(class="x-friend-item")
+							div(class="detail"  @click="API.getVisits()")
+								span(class="name") Online Users
+								span(v-if="visits" class="extra") {{visits}} users online.
+								span(v-else class="extra") Click to refresh
+						div(class="x-friend-item")
+							div(class="detail")
+								span(class="name") SDK Unity Version
+								span(class="extra" v-text="API.cachedConfig.sdkUnityVersion")
+						div(class="x-friend-item")
+							div(class="detail")
+								span(class="name") SDK Version
+								span(class="extra" v-text="API.cachedConfig.releaseSdkVersion")
+						div(class="x-friend-item")
+							div(class="detail")
+								span(class="name") SDK URL
+								span(class="extra" v-text="API.cachedConfig.releaseSdkUrl")
+				div(style="margin-top:30px")
+					span(style="font-weight:bold") Friends Sort Option
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") VIP
+						el-switch(v-model="orderFriendsGroup0" inactive-text="by name" active-text="by state")
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") ONLINE
+						el-switch(v-model="orderFriendsGroup1" inactive-text="by name" active-text="by state")
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") ACTIVE
+						el-switch(v-model="orderFriendsGroup2" inactive-text="by name" active-text="by state")
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") OFFLINE
+						el-switch(v-model="orderFriendsGroup3" inactive-text="by name" active-text="by state")
+				div(style="margin-top:30px")
+					span(style="font-weight:bold") Dark Mode
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") Enable
+						el-switch(v-model="isDarkMode")
+				div(style="margin-top:30px")
+					span(style="font-weight:bold") Discord Presence
+					div(style="font-size:12px;margin-top:5px")
+						span * Only works when VRChat is running.
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") Enable
+						el-switch(v-model="discordActive")
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") Instance details
+						el-switch(v-model="discordInstance")
+				div(style="margin-top:30px")
+					span(style="font-weight:bold") SteamVR Overlay
+					div(style="font-size:12px;margin-top:5px")
+						span * It runs automatically when VRChat is running.
+						br
+						span Vive or Other Controller: Grab Button
+						br
+						span Oculus Controller: B Button
+						br
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") Enable
+						el-switch(v-model="openVR")
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") Force Run
+						el-switch(v-model="openVRAlways")
+				div(style="margin-top:30px")
+					span(style="font-weight:bold") Window
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") Start at Windows startup
+						el-switch(v-model="isStartAtWindowsStartup")
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") Start as minimized state
+						el-switch(v-model="isStartAsMinimizedState")
+					div(style="font-size:12px;margin-top:5px")
+						span(style="display:inline-block;min-width:150px") Close to tray
+						el-switch(v-model="isCloseToTray")
+				div(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
+					span(style="font-weight:bold") Legal Notice
+					div(style="margin-top:5px;font-size:12px")
+						p &copy; 2019 #[a(href="https://github.com/pypy-vrc" target="_blank")] pypy (mina#5656)
+						p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
+						p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
+						p pypy is not responsible for any problems caused by VRCX. Use at your own risk!
+					div(style="margin-top:5px;font-size:12px")
+						el-button(@click="ossDialog = true" size="small") Open Source Software Notice
+
+			//- friends
+			div(class="x-aside-container")
+				el-select(v-model="quickSearch" clearable placeholder="Search" filterable remote :remote-method="quickSearchRemoteMethod" popper-class="x-quick-search" @change="quickSearchChange" @visible-change="quickSearchVisibleChange" style="flex:none;padding:10px")
+					el-option(v-for="item in quickSearchItems" :key="item.value" :value="item.value" :label="item.label")
+						div(class="x-friend-item")
+							template(v-if="item.ref")
+								div(class="detail")
+									span(v-text="item.ref.displayName" class="name" :class="item.ref.$trustClass")
+									location(:location="item.ref.location" :link="false" class="extra")
+								img(v-lazy="item.ref.currentAvatarThumbnailImageUrl" class="avatar")
+							span(v-else) Search More: #[span(v-text="item.label" style="font-weight:bold")]
+				div(class="x-friend-list" style="padding-bottom:10px")
+					div(v-show="friendsGroup0.length" class="x-friend-group")
+						i(class="el-icon-arrow-right" :class="{ rotate: isFriendsGroup0 }")
+						span(@click="isFriendsGroup0 = !isFriendsGroup0" class="x-link" style="margin-left:5px") VIP&horbar;{{ friendsGroup0.length }}
+					div(v-show="isFriendsGroup0")
+						div(v-for="friend in friendsGroup0" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item")
+							template(v-if="friend.ref")
+								div(class="avatar" :class="userStatusClass(friend.ref)")
+									img(v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
+								div(class="detail")
+									span(v-if="friend.memo" class="name" :class="friend.ref.$trustClass") {{ friend.ref.displayName }} ({{ friend.memo }})
+									span(v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass")
+									location(:location="friend.ref.location" :link="false" class="extra")
+							template(v-else)
+								span(v-text="friend.name || friend.id")
+								el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
+					div(v-show="friendsGroup1.length" class="x-friend-group")
+						i(class="el-icon-arrow-right" :class="{ rotate: isFriendsGroup1 }")
+						span(@click="isFriendsGroup1 = !isFriendsGroup1" class="x-link" style="margin-left:5px") ONLINE&horbar;{{ friendsGroup1.length }}
+					div(v-show="isFriendsGroup1")
+						div(v-for="friend in friendsGroup1" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item")
+							template(v-if="friend.ref")
+								div(class="avatar" :class="userStatusClass(friend.ref)")
+									img(v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
+								div(class="detail")
+									span(v-if="friend.memo" class="name" :class="friend.ref.$trustClass") {{ friend.ref.displayName }} ({{ friend.memo }})
+									span(v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass")
+									location(:location="friend.ref.location" :link="false" class="extra")
+							template(v-else)
+								span(v-text="friend.name || friend.id")
+								el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
+					div(v-show="friendsGroup2.length" class="x-friend-group")
+						i(class="el-icon-arrow-right" :class="{ rotate: isFriendsGroup2 }")
+						span(@click="isFriendsGroup2 = !isFriendsGroup2" class="x-link" style="margin-left:5px") ACTIVE&horbar;{{ friendsGroup2.length }}
+					div(v-show="isFriendsGroup2")
+						div(v-for="friend in friendsGroup2" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item")
+							template(v-if="friend.ref")
+								div(class="avatar")
+									img(v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
+								div(class="detail")
+									span(v-if="friend.memo" class="name" :class="friend.ref.$trustClass") {{ friend.ref.displayName }} ({{ friend.memo }})
+									span(v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass")
+									span(v-text="friend.ref.statusDescription" :link="false" class="extra")
+							template(v-else)
+								span(v-text="friend.name || friend.id")
+								el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
+					div(v-show="friendsGroup3.length" class="x-friend-group")
+						i(class="el-icon-arrow-right" :class="{ rotate: isFriendsGroup3 }")
+						span(@click="isFriendsGroup3 = !isFriendsGroup3" class="x-link" style="margin-left:5px") OFFLINE&horbar;{{ friendsGroup3.length }}
+					div(v-show="isFriendsGroup3")
+						div(v-for="friend in friendsGroup3" :key="friend.id" @click="showUserDialog(friend.id)" class="x-friend-item")
+							template(v-if="friend.ref")
+								div(class="avatar")
+									img(v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
+								div(class="detail")
+									span(v-if="friend.memo" class="name" :class="friend.ref.$trustClass") {{ friend.ref.displayName }} ({{ friend.memo }})
+									span(v-else v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass")
+									span(v-text="friend.ref.statusDescription" class="extra")
+							template(v-else)
+								span(v-text="friend.name || friend.id")
+								el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
+
+			//- dialog: user
+			el-dialog(ref="userDialog" :visible.sync="userDialog.visible" :show-close="false" width="600px" class="x-dialog x-user-dialog")
+				div(v-loading="userDialog.loading")
+					div(style="display:flex")
+						el-popover(placement="right" width="500px" trigger="click")
+							img(v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="width:500px;height:375px")
+							img(slot="reference" v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" class="x-link" style="flex:none;width:160px;height:120px;border-radius:4px")
+						div(style="flex:1;display:flex;align-items:center;margin-left:15px")
+							div(style="flex:1")
+								div
+									el-tooltip(v-if="userDialog.ref.status" placement="top")
+										template(#content)
+											span(v-if="userDialog.ref.location === 'offline'") Offline
+											span(v-else-if="userDialog.ref.status === 'active'") Online
+											span(v-else-if="userDialog.ref.status === 'join me'") Join Me
+											span(v-else-if="userDialog.ref.status === 'ask me'") Ask Me
+											span(v-else-if="userDialog.ref.status === 'busy'") Do Not Disturb
+											span(v-else) Offline
+										i(class="x-user-status" :class="userStatusClass(userDialog.ref)")
+									span(v-text="userDialog.ref.displayName" style="margin-left:5px;font-weight:bold")
+									el-popover(placement="top" trigger="click")
+										span(style="display:block;text-align:center;font-family:monospace") {{ userDialog.ref.username | textToHex }}
+										span(slot="reference" v-text="userDialog.ref.username" style="margin-left:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer")
+									el-tooltip(v-for="item in userDialog.ref.$languages" :key="item.key" placement="top")
+										template(#content)
+											span {{ item.value }} ({{ item.key }})
+										span(class="famfamfam-flags" :class="languageClass(item.key)" style="display:inline-block;margin-left:5px")
+								div(style="margin-top:5px")
+									el-tag(type="info" effect="plain" size="mini" class="name" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel")
+									el-tag(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" class="x-tag-friend") Friend No.{{userDialog.friend.no}}
+								div(style="margin-top:5px")
+									span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
+							div(style="flex:none;margin-left:10px")
+								el-button(v-if="userDialog.isFavorite" @click="userDialogCommand('Delete Favorite')" type="warning" icon="el-icon-star-on" circle)
+								el-button(v-else type="default" @click="userDialogCommand('Add Favorite')" icon="el-icon-star-off" circle)
+								el-dropdown(trigger="click" @command="userDialogCommand" size="small")
+									el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle)
+									el-dropdown-menu(#default="dropdown")
+										template(v-if="userDialog.isFriend")
+											el-dropdown-item(icon="el-icon-message" command="Message") Message
+										template(v-else-if="userDialog.incomingRequest")
+											el-dropdown-item(icon="el-icon-check" command="Accept Friend Request") Accept Friend Request
+											el-dropdown-item(icon="el-icon-close" command="Decline Friend Request") Decline Friend Request
+										el-dropdown-item(v-else-if="userDialog.outgoingRequest" icon="el-icon-close" command="Cancel Friend Request") Cancel Friend Request
+										el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") Send Friend Request
+										el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) Show Avatar Author
+										el-dropdown-item(v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided style="color:#F56C6C") Unblock
+										el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided) Block
+										el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") Unmute
+										el-dropdown-item(v-else icon="el-icon-turn-off-microphone" command="Mute") Mute
+										el-dropdown-item(v-if="userDialog.isHideAvatar" icon="el-icon-user-solid" command="Show Avatar" style="color:#F56C6C") Show Avatar
+										el-dropdown-item(v-else icon="el-icon-user" command="Hide Avatar") Hide Avatar
+										template(v-if="userDialog.isFriend")
+											el-dropdown-item(icon="el-icon-delete" command="Unfriend" divided) Unfriend
+					el-tabs
+						el-tab-pane(label="Info")
+							div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee")
+								div(style="flex:none")
+									i(class="el-icon-position")
+									location(:location="userDialog.ref.location")
+										template(#default v-if="userDialog.instance.occupants") ({{ userDialog.instance.occupants }})
+									launch(:location="userDialog.ref.location" style="margin-left:5px")
+								div(class="x-friend-list" style="flex:1;margin-top:10px")
+									div(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)" class="x-friend-item")
+										template(v-if="userDialog.$location.user")
+											div(class="avatar")
+												img(v-lazy="userDialog.$location.user.currentAvatarThumbnailImageUrl")
+											div(class="detail")
+												span(v-text="userDialog.$location.user.displayName" class="name" :class="userDialog.$location.user.$trustClass")
+												span(class="extra") Instance Creator
+										span(v-else v-text="userDialog.$location.userId")
+									div(v-for="user in userDialog.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item")
+										div(class="avatar")
+											img(v-lazy="user.currentAvatarThumbnailImageUrl")
+										div(class="detail")
+											span(v-text="user.displayName" class="name" :class="user.$trustClass")
+											span(class="extra")
+												timer(:epoch="user.$location_at")
+							div(class="x-friend-list" style="max-height:none")
+								div(class="x-friend-item" style="width:100%")
+									div(class="detail")
+										span(class="name") Note
+										el-input(v-model="userDialog.memo" type="textarea" :rows="2" placeholder="Click to add a note" size="mini" resize="none" class="extra")
+								div(class="x-friend-item" style="width:100%")
+									div(class="detail")
+										span(class="name") Bio
+										pre(class="extra" style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0") {{ userDialog.ref.bio || '-' }}
+										div(style="margin-top:5px")
+											el-tooltip(v-for="(link, index) in userDialog.ref.bioLinks" :key="index")
+												template(#content)
+													span(v-text="link")
+												img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px" @click.stop="openExternalLink(link)")
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Avatar Copying
+										span(class="extra" v-if="userDialog.ref.allowAvatarCopying" style="color:#67C23A") Allow
+										span(class="extra" v-else style="color:#F56C6C") Deny
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Last Login
+										span(class="extra") {{ userDialog.ref.last_login | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Last Platform
+										span(class="extra" v-text="userDialog.ref.last_platform")
+						el-tab-pane(label="Worlds")
+							el-button(type="default" :loading="userDialog.isWorldsLoading" @click="refreshUserDialogWorlds()" size="mini" icon="el-icon-refresh" circle)
+							span(style="margin-left:5px") Total {{ userDialog.worlds.length }}
+							el-radio-group(v-model="userDialog.worldSorting" size="mini" style="margin-left:30px" @change="changeUserDialogWorldSorting")
+								el-radio(label="name") by name
+								el-radio(label="update") by update
+							div(v-loading="userDialog.isWorldsLoading" class="x-friend-list" style="margin-top:10px;min-height:60px")
+								div(v-for="world in userDialog.worlds" :key="world.id" @click="showWorldDialog(world.id)" class="x-friend-item")
+									div(class="avatar")
+										img(v-lazy="world.thumbnailImageUrl")
+									div(class="detail")
+										span(v-text="world.name" class="name")
+										span(v-if="world.occupants" class="extra") ({{ world.occupants }})
+						el-tab-pane(label="Avatars")
+							el-button(type="default" :loading="userDialog.isAvatarsLoading" @click="refreshUserDialogAvatars()" size="mini" icon="el-icon-refresh" circle)
+							span(style="margin-left:5px") Total {{ userDialog.avatars.length }}
+							el-radio-group(v-model="userDialog.avatarSorting" size="mini" style="margin-left:30px" @change="changeUserDialogAvatarSorting")
+								el-radio(label="name") by name
+								el-radio(label="update") by update
+							div(v-loading="userDialog.isAvatarsLoading" class="x-friend-list" style="margin-top:10px;min-height:60px")
+								div(v-for="avatar in userDialog.avatars" :key="avatar.id" @click="showAvatarDialog(avatar.id)" class="x-friend-item")
+									div(class="avatar")
+										img(v-lazy="avatar.thumbnailImageUrl")
+									div(class="detail")
+										span(v-text="avatar.name" class="name")
+						el-tab-pane(label="JSON")
+							el-button(type="default" @click="refreshUserDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
+							el-tree(:data="userDialog.treeData" style="margin-top:5px;font-size:12px")
+								template(#default="scope")
+									span
+										span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
+										span(v-if="!scope.data.children" v-text="scope.data.value")
+
+			//- dialog: world
+			el-dialog(ref="worldDialog" :visible.sync="worldDialog.visible" :show-close="false" width="600px" class="x-dialog x-world-dialog")
+				div(v-loading="worldDialog.loading")
+					div(style="display:flex")
+						el-popover(placement="right" width="500px" trigger="click")
+							img(v-lazy="worldDialog.ref.thumbnailImageUrl" style="width:500px;height:375px")
+							img(slot="reference" v-lazy="worldDialog.ref.thumbnailImageUrl" class="x-link" style="flex:none;width:160px;height:120px;border-radius:4px")
+						div(style="flex:1;display:flex;align-items:center;margin-left:15px")
+							div(style="flex:1")
+								div
+									i(class="el-icon-s-home" v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id")
+									span(v-text="worldDialog.ref.name" style="font-weight:bold")
+								div(style="margin-top:5px")
+									span(v-text="worldDialog.ref.authorName" @click="showUserDialog(worldDialog.ref.authorId)" class="x-link" style="color:#909399;font-family:monospace")
+								div(style="margin-top:5px")
+									el-tag(v-if="worldDialog.ref.$isLabs" type="primary" effect="plain" size="mini") Labs
+									el-tag(v-else-if="worldDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini") Public
+									el-tag(v-else type="danger" effect="plain" size="mini") Private
+									el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize")
+								div(style="margin-top:5px")
+									span(v-show="worldDialog.ref.name !== worldDialog.ref.description" v-text="worldDialog.ref.description" style="font-size:12px")
+							div(style="flex:none;margin-left:10px")
+								el-button(v-if="worldDialog.isFavorite" type="warning" icon="el-icon-star-on" circle @click="worldDialogCommand('Delete Favorite')")
+								el-button(v-else type="default" icon="el-icon-star-off" circle @click="worldDialogCommand('Add Favorite')")
+								el-dropdown(trigger="click" @command="worldDialogCommand" size="small")
+									el-button(type="default" icon="el-icon-more" circle)
+									el-dropdown-menu(#default="dropdown")
+										el-dropdown-item(icon="el-icon-s-flag" command="New Instance") New Instance
+										el-dropdown-item(v-if="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id" icon="el-icon-magic-stick" command="Reset Home" divided) Reset Home
+										el-dropdown-item(v-else icon="el-icon-s-home" command="Make Home" divided) Make Home
+					el-tabs
+						el-tab-pane(label="Instances")
+							div(style="margin-bottom:10px")
+								i(class="el-icon-user") Public {{ worldDialog.ref.publicOccupants | commaNumber }}
+								i(class="el-icon-user-solid" style="margin-left:10px") Private {{ worldDialog.ref.privateOccupants | commaNumber }}
+								i(class="el-icon-check" style="margin-left:10px") Capacity {{ worldDialog.ref.capacity | commaNumber }}
+							div(v-for="room in worldDialog.rooms" :key="room.id")
+								div
+									i(class="el-icon-position")
+									span(@click="showLaunchDialog(room.$location.tag)" class="x-link") \#{{ room.$location.instanceName }} {{ room.$location.accessType }} #[template(v-if="room.occupants") ({{ room.occupants }})]
+								div(class="x-friend-list" style="margin:10px 0")
+									div(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)" class="x-friend-item")
+										template(v-if="room.$location.user")
+											div(class="avatar")
+												img(v-lazy="room.$location.user.currentAvatarThumbnailImageUrl")
+											div(class="detail")
+												span(v-text="room.$location.user.displayName" class="name" :class="room.$location.user.$trustClass")
+												span(class="extra") Instance Creator
+										span(v-else v-text="room.$location.userId")
+									div(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item")
+										div(class="avatar")
+											img(v-lazy="user.currentAvatarThumbnailImageUrl")
+										div(class="detail")
+											span(v-text="user.displayName" class="name" :class="user.$trustClass")
+											span(class="extra")
+												timer(:epoch="user.$location_at")
+						el-tab-pane(label="Info")
+							div(class="x-friend-list" style="max-height:none")
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Players
+										span(class="extra") {{ worldDialog.ref.occupants | commaNumber }}
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Favorites
+										span(class="extra") {{ worldDialog.ref.favorites | commaNumber }}
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Visits
+										span(class="extra") {{ worldDialog.ref.visits | commaNumber }}
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Capacity
+										span(class="extra" v-text="worldDialog.ref.capacity")
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Heat
+										span(class="extra") {{ worldDialog.ref.heat | commaNumber }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Popularity
+										span(class="extra") {{ worldDialog.ref.popularity | commaNumber }} {{ '💖'.repeat(worldDialog.ref.popularity) }}
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Created
+										span(class="extra") {{ worldDialog.ref.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Last Updated
+										span(class="extra") {{ worldDialog.fileCreatedAt | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Version
+										span(class="extra" v-text="worldDialog.ref.version")
+								div(class="x-friend-item" style="width:100%")
+									div(class="detail")
+										span(class="name") Platform
+										span(class="extra" v-text="worldDialogPlatform")
+						el-tab-pane(label="JSON")
+							el-button(type="default" @click="refreshWorldDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
+							el-tree(:data="worldDialog.treeData" style="margin-top:5px;font-size:12px")
+								template(#default="scope")
+									span
+										span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
+										span(v-if="!scope.data.children" v-text="scope.data.value")
+
+			//- dialog: avatar
+			el-dialog(ref="avatarDialog" :visible.sync="avatarDialog.visible" :show-close="false" width="600px" class="x-dialog x-avatar-dialog")
+				div(v-loading="avatarDialog.loading")
+					div(style="display:flex")
+						el-popover(placement="right" width="500px" trigger="click")
+							img(v-lazy="avatarDialog.ref.thumbnailImageUrl" style="width:500px;height:375px")
+							img(slot="reference" v-lazy="avatarDialog.ref.thumbnailImageUrl" class="x-link" style="flex:none;width:160px;height:120px;border-radius:4px")
+						div(style="flex:1;display:flex;align-items:center;margin-left:15px")
+							div(style="flex:1")
+								div
+									span(v-text="avatarDialog.ref.name" style="font-weight:bold")
+								div(style="margin-top:5px")
+									span(v-text="avatarDialog.ref.authorName" @click="showUserDialog(avatarDialog.ref.authorId)" class="x-link" style="color:#909399;font-family:monospace")
+								div(style="margin-top:5px")
+									el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini") Public
+									el-tag(v-else type="danger" effect="plain" size="mini") Private
+									el-tag(type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize")
+								div(style="margin-top:5px")
+									span(v-show="avatarDialog.ref.name !== avatarDialog.ref.description" v-text="avatarDialog.ref.description" style="font-size:12px")
+							div(style="flex:none;margin-left:10px")
+								el-button(v-if="avatarDialog.isFavorite" type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Delete Favorite')")
+								el-button(v-else type="default" icon="el-icon-star-off" circle @click="avatarDialogCommand('Add Favorite')")
+								el-dropdown(trigger="click" @command="avatarDialogCommand" size="small")
+									el-button(type="default" icon="el-icon-more" circle)
+									el-dropdown-menu(#default="dropdown")
+										el-dropdown-item(icon="el-icon-check" command="Select Avatar") Select Avatar
+					el-tabs
+						el-tab-pane(label="Info")
+							div(class="x-friend-list")
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Created
+										span(class="extra") {{ avatarDialog.ref.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Last Updated
+										span(class="extra") {{ avatarDialog.fileCreatedAt | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+								div(class="x-friend-item")
+									div(class="detail")
+										span(class="name") Version
+										span(class="extra" v-text="avatarDialog.ref.version")
+								div(class="x-friend-item" style="width:100%")
+									div(class="detail")
+										span(class="name") Platform
+										span(class="extra" v-text="avatarDialogPlatform")
+						el-tab-pane(label="JSON")
+							el-button(type="default" @click="refreshAvatarDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
+							el-tree(:data="avatarDialog.treeData" style="margin-top:5px;font-size:12px")
+								template(#default="scope")
+									span
+										span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
+										span(v-if="!scope.data.children" v-text="scope.data.value")
+
+			//- dialog: favorite
+			el-dialog(ref="favoriteDialog" :visible.sync="favoriteDialog.visible" title="Choose Group" width="250px" class="x-dialog")
+				div(v-loading="favoriteDialog.loading")
+					el-button(v-for="group in favoriteDialog.groups" :key="group.name" style="display:block;width:100%;margin:10px 0" @click="addFavorite(group)" :disabled="group.count >= group.capacity") {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
+
+			//- dialog: invite
+			el-dialog(ref="inviteDialog" :visible.sync="inviteDialog.visible" title="Invite" width="450px" class="x-dialog")
+				div(v-loading="inviteDialog.loading")
+					location(:location="inviteDialog.worldId" :link="false")
+					el-select(v-model="inviteDialog.userIds" multiple clearable placeholder="Choose Friends" filterable :disabled="inviteDialog.loading" style="width:100%;margin-top:15px")
+						el-option-group(v-if="API.currentUser" label="ME")
+							el-option(:label="API.currentUser.displayName" :value="API.currentUser.id" class="x-friend-item" style="height:auto")
+								div(class="avatar" :class="userStatusClass(API.currentUser)")
+									img(v-lazy="API.currentUser.currentAvatarThumbnailImageUrl")
+								div(class="detail")
+									span(v-text="API.currentUser.displayName" class="name")
+						el-option-group(v-if="friendsGroup0.length" label="VIP")
+							el-option(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" class="x-friend-item" style="height:auto")
+								template(v-if="friend.ref")
+									div(class="avatar" :class="userStatusClass(friend.ref)")
+										img(v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
+									div(class="detail")
+										span(v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass")
+								span(v-else v-text="friend.id")
+						el-option-group(v-if="friendsGroup1.length" label="ONLINE")
+							el-option(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" class="x-friend-item" style="height:auto")
+								template(v-if="friend.ref")
+									div(class="avatar" :class="userStatusClass(friend.ref)")
+										img(v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
+									div(class="detail")
+										span(v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass")
+								span(v-else v-text="friend.id")
+						el-option-group(v-if="friendsGroup2.length" label="ACTIVE")
+							el-option(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" class="x-friend-item" style="height:auto")
+								template(v-if="friend.ref")
+									div(class="avatar")
+										img(v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
+									div(class="detail")
+										span(v-text="friend.ref.displayName" class="name" :class="friend.ref.$trustClass")
+								span(v-else v-text="friend.id")
+				template(#footer)
+					el-button(type="primary" size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="sendInvite()") Invite
+
+			//- dialog: social status
+			el-dialog(ref="socialStatusDialog" :visible.sync="socialStatusDialog.visible" title="Social Status" width="400px" class="x-dialog")
+				el-row(v-loading="socialStatusDialog.loading")
+					el-col(:span="9")
+						el-select(v-model="socialStatusDialog.status")
+							el-option(label="Online" value="active")
+								i(class="x-user-status active") Online
+							el-option(label="Join Me" value="join me")
+								i(class="x-user-status joinme") Join Me
+							el-option(label="Ask Me" value="ask me")
+								i(class="x-user-status askme") Ask Me
+							el-option(label="Do Not Disturb" value="busy")
+								i(class="x-user-status busy") Do Not Disturb
+							el-option(label="Offline" value="offline")
+								i(class="x-user-status offline") Offline
+					el-col(:span="1") &nbsp;
+					el-col(:span="14")
+						el-input(v-model="socialStatusDialog.statusDescription" placeholder="Status")
+				template(#footer)
+					el-button(type="primary" size="small" :disabled="socialStatusDialog.loading" @click="saveSocialStatus") Update
+
+			//- dialog: bio
+			el-dialog(ref="bioDialog" :visible.sync="bioDialog.visible" title="Bio" width="400px" class="x-dialog")
+				el-input(type="textarea" v-model="bioDialog.bio" size="mini" maxlength="512" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="Please input a bio")
+				el-input(v-for="(link, index) in bioDialog.bioLinks" :key="index" :value="link" v-model="bioDialog.bioLinks[index]" size="small" style="margin-top:5px")
+					img(slot="prepend" :src="getFaviconUrl(link)" style="width:16px;height:16px")
+					el-button(slot="append" icon="el-icon-delete" @click="bioDialog.bioLinks.splice(index, 1)")
+				el-button(@click="bioDialog.bioLinks.push('')" size="mini" style="margin-top:5px") Add Link
+				template(#footer)
+					el-button(type="primary" size="small" :disabled="bioDialog.loading" @click="saveBio") Update
+
+			//- dialog: new instance
+			el-dialog(ref="newInstanceDialog" :visible.sync="newInstanceDialog.visible" title="New Instance" width="600px" class="x-dialog")
+				el-form(:model="newInstanceDialog" label-width="100px")
+					el-form-item(label="Access Type")
+						el-radio-group(v-model="newInstanceDialog.accessType" size="mini" @change="buildInstance")
+							el-radio-button(label="public")
+							el-radio-button(label="friends+")
+							el-radio-button(label="friends")
+							el-radio-button(label="invite+")
+							el-radio-button(label="invite")
+					el-form-item(label="World ID")
+						el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+					el-form-item(label="Instance ID")
+						el-input(v-model="newInstanceDialog.instanceId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+					el-form-item(label="Location")
+						el-input(v-model="newInstanceDialog.location" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+					el-form-item(label="URL")
+						el-input(ref="wtf" v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+				template(#footer)
+					el-button(size="small" @click="makeHome(newInstanceDialog.location)") Make Home
+					el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)") Invite
+					el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location)") Launch
+
+			//- dialog: launch
+			el-dialog(ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="400px" class="x-dialog")
+				div #[span(v-text="launchDialog.url" style="word-break:break-all;font-size:12px")]
+				template(#footer)
+					el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop (No VR)
+					el-button(size="small" @click="showInviteDialog(launchDialog.location)") Invite
+					el-button(type="primary" size="small" @click="launchGame()") Launch
+
+			//- dialog: open source software notice
+			el-dialog(:visible.sync="ossDialog" title="Open Source Software Notice" width="650px" class="x-dialog")
+				div(style="height:350px;overflow:hidden scroll;word-break:break-all")
+					div
+						span VRCX is based on open source software. It was possible because of their contribution.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") animate.css
+						pre(style="font-size:12px;white-space:pre-line")
+							| The MIT License (MIT)
+							|
+							| Copyright (c) 2019 Daniel Eden
+							|
+							| Permission is hereby granted, free of charge, to any person obtaining a copy
+							| of this software and associated documentation files (the "Software"), to deal
+							| in the Software without restriction, including without limitation the rights
+							| to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+							| copies of the Software, and to permit persons to whom the Software is
+							| furnished to do so, subject to the following conditions:
+							|
+							| The above copyright notice and this permission notice shall be included in all
+							| copies or substantial portions of the Software.
+							|
+							| THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+							| IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+							| FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+							| AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+							| LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+							| OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+							| SOFTWARE.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") CefSharp
+						pre(style="font-size:12px;white-space:pre-line")
+							| // Copyright © The CefSharp Authors. All rights reserved.
+							| //
+							| // Redistribution and use in source and binary forms, with or without
+							| // modification, are permitted provided that the following conditions are
+							| // met:
+							| //
+							| //    * Redistributions of source code must retain the above copyright
+							| //      notice, this list of conditions and the following disclaimer.
+							| //
+							| //    * Redistributions in binary form must reproduce the above
+							| //      copyright notice, this list of conditions and the following disclaimer
+							| //      in the documentation and/or other materials provided with the
+							| //      distribution.
+							| //
+							| //    * Neither the name of Google Inc. nor the name Chromium Embedded
+							| //      Framework nor the name CefSharp nor the names of its contributors
+							| //      may be used to endorse or promote products derived from this software
+							| //      without specific prior written permission.
+							| //
+							| // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+							| // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+							| // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+							| // A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+							| // OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+							| // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+							| // LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+							| // DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+							| // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+							| // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+							| // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") DiscordRichPresence
+						pre(style="font-size:12px;white-space:pre-line")
+							| MIT License
+							|
+							| Copyright (c) 2018 Lachee
+							|
+							| Permission is hereby granted, free of charge, to any person obtaining a copy
+							| of this software and associated documentation files (the "Software"), to deal
+							| in the Software without restriction, including without limitation the rights
+							| to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+							| copies of the Software, and to permit persons to whom the Software is
+							| furnished to do so, subject to the following conditions:
+							|
+							| The above copyright notice and this permission notice shall be included in all
+							| copies or substantial portions of the Software.
+							|
+							| THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+							| IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+							| FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+							| AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+							| LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+							| OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+							| SOFTWARE.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") element
+						pre(style="font-size:12px;white-space:pre-line")
+							| The MIT License (MIT)
+							|
+							| Copyright (c) 2016-present ElemeFE
+							|
+							| Permission is hereby granted, free of charge, to any person obtaining a copy
+							| of this software and associated documentation files (the "Software"), to deal
+							| in the Software without restriction, including without limitation the rights
+							| to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+							| copies of the Software, and to permit persons to whom the Software is
+							| furnished to do so, subject to the following conditions:
+							|
+							| The above copyright notice and this permission notice shall be included in all
+							| copies or substantial portions of the Software.
+							|
+							| THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+							| IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+							| FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+							| AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+							| LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+							| OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+							| SOFTWARE.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") Newtonsoft.Json
+						pre(style="font-size:12px;white-space:pre-line")
+							| The MIT License (MIT)
+							|
+							| Copyright (c) 2007 James Newton-King
+							|
+							| Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+							|
+							| The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+							|
+							| THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") normalize
+						pre(style="font-size:12px;white-space:pre-line")
+							| The MIT License (MIT)
+							|
+							| Copyright © Nicolas Gallagher and Jonathan Neal
+							|
+							| Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+							|
+							| The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+							|
+							| THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") noty
+						pre(style="font-size:12px;white-space:pre-line")
+							| Copyright (c) 2012 Nedim Arabacı
+							|
+							| Permission is hereby granted, free of charge, to any person obtaining
+							| a copy of this software and associated documentation files (the
+							| "Software"), to deal in the Software without restriction, including
+							| without limitation the rights to use, copy, modify, merge, publish,
+							| distribute, sublicense, and/or sell copies of the Software, and to
+							| permit persons to whom the Software is furnished to do so, subject to
+							| the following conditions:
+							|
+							| The above copyright notice and this permission notice shall be
+							| included in all copies or substantial portions of the Software.
+							|
+							| THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+							| EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+							| MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+							| NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+							| LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+							| OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+							| WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") OpenVR SDK
+						pre(style="font-size:12px;white-space:pre-line")
+							| Copyright (c) 2015, Valve Corporation
+							| All rights reserved.
+							|
+							| Redistribution and use in source and binary forms, with or without modification,
+							| are permitted provided that the following conditions are met:
+							|
+							| 1. Redistributions of source code must retain the above copyright notice, this
+							| list of conditions and the following disclaimer.
+							|
+							| 2. Redistributions in binary form must reproduce the above copyright notice,
+							| this list of conditions and the following disclaimer in the documentation and/or
+							| other materials provided with the distribution.
+							|
+							| 3. Neither the name of the copyright holder nor the names of its contributors
+							| may be used to endorse or promote products derived from this software without
+							| specific prior written permission.
+							|
+							| THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+							| ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+							| WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+							| DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+							| ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+							| (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+							| LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+							| ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+							| (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+							| SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") SharpDX
+						pre(style="font-size:12px;white-space:pre-line")
+							| Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
+							|
+							| Permission is hereby granted, free of charge, to any person obtaining a copy
+							| of this software and associated documentation files (the "Software"), to deal
+							| in the Software without restriction, including without limitation the rights
+							| to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+							| copies of the Software, and to permit persons to whom the Software is
+							| furnished to do so, subject to the following conditions:
+							|
+							| The above copyright notice and this permission notice shall be included in
+							| all copies or substantial portions of the Software.
+							|
+							| THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+							| IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+							| FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+							| AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+							| LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+							| OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+							| THE SOFTWARE.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") vue
+						pre(style="font-size:12px;white-space:pre-line")
+							| The MIT License (MIT)
+							|
+							| Copyright (c) 2013-present, Yuxi (Evan) You
+							|
+							| Permission is hereby granted, free of charge, to any person obtaining a copy
+							| of this software and associated documentation files (the "Software"), to deal
+							| in the Software without restriction, including without limitation the rights
+							| to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+							| copies of the Software, and to permit persons to whom the Software is
+							| furnished to do so, subject to the following conditions:
+							|
+							| The above copyright notice and this permission notice shall be included in
+							| all copies or substantial portions of the Software.
+							|
+							| THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+							| IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+							| FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+							| AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+							| LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+							| OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+							| THE SOFTWARE.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") vue-data-tables
+						pre(style="font-size:12px;white-space:pre-line")
+							| The MIT License (MIT)
+							|
+							| Copyright (c) 2018 Leon Zhang
+							|
+							| Permission is hereby granted, free of charge, to any person obtaining a copy
+							| of this software and associated documentation files (the "Software"), to deal
+							| in the Software without restriction, including without limitation the rights
+							| to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+							| copies of the Software, and to permit persons to whom the Software is
+							| furnished to do so, subject to the following conditions:
+							|
+							| The above copyright notice and this permission notice shall be included in all
+							| copies or substantial portions of the Software.
+							|
+							| THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+							| IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+							| FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+							| AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+							| LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+							| OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+							| SOFTWARE.
+					div(style="margin-top:15px")
+						p(style="font-weight:bold") vue-lazyload
+						pre(style="font-size:12px;white-space:pre-line")
+							| The MIT License (MIT)
+							|
+							| Copyright (c) 2016 Awe
+							|
+							| Permission is hereby granted, free of charge, to any person obtaining a copy
+							| of this software and associated documentation files (the "Software"), to deal
+							| in the Software without restriction, including without limitation the rights
+							| to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+							| copies of the Software, and to permit persons to whom the Software is
+							| furnished to do so, subject to the following conditions:
+							|
+							| The above copyright notice and this permission notice shall be included in all
+							| copies or substantial portions of the Software.
+							|
+							| THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+							| IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+							| FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+							| AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+							| LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+							| OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+							| SOFTWARE.
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.2.0-beta/noty.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/vue-lazyload/1.3.3/vue-lazyload.js")
+		script(src="https://unpkg.com/vue-data-tables@3.4.5/dist/data-tables.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.13.0/index.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.13.0/locale/en.min.js")
+		script(src="app.js")
