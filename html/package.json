@@ -1,0 +1,35 @@
+{
+  "name": "vrcx",
+  "version": "0.0.0",
+  "description": "VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx webpack --mode production",
+    "watch": "npx webpack --mode development --watch --progress"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pypy-vrc/VRCX.git"
+  },
+  "keywords": [
+    "vrchat"
+  ],
+  "author": "pypy <git@pypy.moe>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pypy-vrc/VRCX/issues"
+  },
+  "homepage": "https://github.com/pypy-vrc/VRCX#readme",
+  "devDependencies": {
+    "css-loader": "^3.4.2",
+    "html-webpack-plugin": "^4.0.3",
+    "mini-css-extract-plugin": "^0.9.0",
+    "pug": "^2.0.4",
+    "pug-loader": "^2.4.0",
+    "remove-files-webpack-plugin": "^1.4.0",
+    "sass": "^1.26.3",
+    "sass-loader": "^8.0.2",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  }
+}
