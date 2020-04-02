@@ -197,6 +197,35 @@ namespace VRCX
                                     }
                                 }
                             }
+                            else if (c == 'P')
+                            {
+                                // 2020.04.02 20:59:08 Log        -  [Player] Initialized PlayerAPI "pypy" is local
+                                if (s.Length > 66 &&
+                                    string.Compare(s, 34, "[Player] Initialized PlayerAPI \"", 0, "[Player] Initialized PlayerAPI \"".Length, StringComparison.Ordinal) == 0)
+                                {
+                                    var str = s.Substring(66);
+                                    var pos = str.LastIndexOf('"');
+                                    if (pos >= 0)
+                                    {
+                                        str = str.Substring(0, pos);
+                                    }
+                                    var item = new[]
+                                    {
+                                        ConvertLogTimeToISO8601(s),
+                                        "OnPlayerJoined",
+                                        str
+                                    };
+                                    m_Lock.EnterWriteLock();
+                                    try
+                                    {
+                                        m_GameLog.Add(item);
+                                    }
+                                    finally
+                                    {
+                                        m_Lock.ExitWriteLock();
+                                    }
+                                }
+                            }
                         }
                     }
                     position = stream.Position;
