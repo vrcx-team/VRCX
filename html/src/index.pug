@@ -981,15 +981,15 @@ html
 					el-col(:span="9")
 						el-select(v-model="socialStatusDialog.status")
 							el-option(label="Online" value="active").
-								#[i.x-user-status active] Online
+								#[i.x-user-status.active] Online
 							el-option(label="Join Me" value="join me").
-								#[i.x-user-status joinme] Join Me
+								#[i.x-user-status.joinme] Join Me
 							el-option(label="Ask Me" value="ask me").
-								#[i.x-user-status askme] Ask Me
+								#[i.x-user-status.askme] Ask Me
 							el-option(label="Do Not Disturb" value="busy").
-								#[i.x-user-status busy] Do Not Disturb
+								#[i.x-user-status.busy] Do Not Disturb
 							el-option(label="Offline" value="offline").
-								#[i.x-user-status offline] Offline
+								#[i.x-user-status.offline] Offline
 					el-col(:span="1") &nbsp;
 					el-col(:span="14")
 						el-input(v-model="socialStatusDialog.statusDescription" placeholder="Status")
