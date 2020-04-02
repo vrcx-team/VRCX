@@ -487,14 +487,15 @@ html
 							.detail
 								span.name SDK Unity Version
 								span.extra(v-text="API.cachedConfig.sdkUnityVersion")
-						.x-friend-item
-							.detail
-								span.name SDK Version
-								span.extra(v-text="API.cachedConfig.releaseSdkVersion")
-						.x-friend-item
-							.detail
-								span.name SDK URL
-								span.extra(v-text="API.cachedConfig.releaseSdkUrl")
+						.template(v-if="API.cachedConfig.downloadUrls")
+							.x-friend-item
+								.detail
+									span.name VRCSDK2 URL
+									span.extra(v-text="API.cachedConfig.downloadUrls.sdk2")
+							.x-friend-item
+								.detail
+									span.name VRCSDK3 URL
+									span.extra(v-text="API.cachedConfig.downloadUrls.sdk3")
 				div(style="margin-top:30px")
 					span(style="font-weight:bold") Friends Sort Option
 					div(style="font-size:12px;margin-top:5px")
