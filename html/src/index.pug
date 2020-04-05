@@ -154,7 +154,7 @@ html
 									span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
 								span {{ scope.row.created_at | formatDate('HH24:MI') }}
 					el-table-column(label="Type" prop="type" width="120")
-					el-table-column(label="Detail")
+					el-table-column(label="Detail" prop="data")
 						template(v-once #default="scope")
 							location(v-if="scope.row.type === 'Location'" :location="scope.row.data")
 							span.x-link(v-else v-text="scope.row.data" @click="lookupUser(scope.row.data)")

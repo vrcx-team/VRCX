@@ -4264,7 +4264,7 @@ CefSharp.BindObjectAsync(
 				filterFn: (row, filter) => filter.value.some((v) => v === row.type)
 			},
 			{
-				prop: 'detail',
+				prop: 'data',
 				value: ''
 			}
 		],
