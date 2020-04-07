@@ -21,8 +21,8 @@
   },
   "homepage": "https://github.com/pypy-vrc/VRCX#readme",
   "devDependencies": {
-    "css-loader": "^3.4.2",
-    "html-webpack-plugin": "^4.0.3",
+    "css-loader": "^3.5.1",
+    "html-webpack-plugin": "^4.0.4",
     "mini-css-extract-plugin": "^0.9.0",
     "pug": "^2.0.4",
     "pug-loader": "^2.4.0",

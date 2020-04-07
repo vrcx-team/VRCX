@@ -262,7 +262,6 @@ __pycache__/
 
 # NodeJS
 node_modules/
-package-lock.json
 
 # html sources
 /html/app.css
