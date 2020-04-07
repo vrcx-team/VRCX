@@ -202,7 +202,7 @@ CefSharp.BindObjectAsync(
 	var $appDarkStyle = document.createElement('link');
 	$appDarkStyle.disabled = true;
 	$appDarkStyle.rel = 'stylesheet';
-	$appDarkStyle.href = `app-dark.css?_=${Date.now()}`;
+	$appDarkStyle.href = `app.dark.css?_=${Date.now()}`;
 	document.head.appendChild($appDarkStyle);
 
 	//
