@@ -663,7 +663,7 @@ html
 										span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-left:5px")
 								div(style="margin-top:5px")
 									el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel")
-									el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini") Friend No.{{userDialog.friend.no}}
+									el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-left:5px") Friend No.{{userDialog.friend.no}}
 								div(style="margin-top:5px")
 									span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
 							div(style="flex:none;margin-left:10px")
@@ -790,7 +790,7 @@ html
 									el-tag(v-if="worldDialog.ref.$isLabs" type="primary" effect="plain" size="mini") Labs
 									el-tag(v-else-if="worldDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini") Public
 									el-tag(v-else type="danger" effect="plain" size="mini") Private
-									el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize")
+									el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-left:5px")
 								div(style="margin-top:5px")
 									span(v-show="worldDialog.ref.name !== worldDialog.ref.description" v-text="worldDialog.ref.description" style="font-size:12px")
 							div(style="flex:none;margin-left:10px")
@@ -804,16 +804,16 @@ html
 										el-dropdown-item(v-else icon="el-icon-s-home" command="Make Home" divided) Make Home
 					el-tabs
 						el-tab-pane(label="Instances")
-							div(style="margin-bottom:10px").
+							div.
 								#[i.el-icon-user] Public {{ worldDialog.ref.publicOccupants | commaNumber }}
 								#[i.el-icon-user-solid(style="margin-left:10px")] Private {{ worldDialog.ref.privateOccupants | commaNumber }}
 								#[i.el-icon-check(style="margin-left:10px")] Capacity {{ worldDialog.ref.capacity | commaNumber }}
 							div(v-for="room in worldDialog.rooms" :key="room.id")
-								div
+								div(style="margin:5px 0")
 									i.el-icon-position
 									span.x-link(@click="showLaunchDialog(room.$location.tag)").
 										\#{{ room.$location.instanceName }} {{ room.$location.accessType }} #[template(v-if="room.occupants") ({{ room.occupants }})]
-								.x-friend-list(style="margin:10px 0")
+								.x-friend-list(style="margin:10px 0" v-if="room.$location.userId || room.users.length")
 									.x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)")
 										template(v-if="room.$location.user")
 											.avatar
@@ -895,7 +895,7 @@ html
 								div(style="margin-top:5px")
 									el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini") Public
 									el-tag(v-else type="danger" effect="plain" size="mini") Private
-									el-tag(type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize")
+									el-tag(type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-left:5px")
 								div(style="margin-top:5px")
 									span(v-show="avatarDialog.ref.name !== avatarDialog.ref.description" v-text="avatarDialog.ref.description" style="font-size:12px")
 							div(style="flex:none;margin-left:10px")
