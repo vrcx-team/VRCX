@@ -5842,7 +5842,7 @@ CefSharp.BindObjectAsync(
 			offset: 0,
 			sort: 'updated',
 			order: 'descending',
-			user: 'friends',
+			// user: 'friends',
 			userId: D.id,
 			releaseStatus: 'public'
 		};
@@ -5889,7 +5889,7 @@ CefSharp.BindObjectAsync(
 			offset: 0,
 			sort: 'updated',
 			order: 'descending',
-			user: 'friends',
+			// user: 'friends',
 			userId: D.id,
 			releaseStatus: 'public'
 		};
@@ -6059,7 +6059,7 @@ CefSharp.BindObjectAsync(
 						offset: 0,
 						sort: 'updated',
 						order: 'descending',
-						user: 'friends',
+						// user: 'friends',
 						userId: ownerId,
 						releaseStatus: 'public'
 					};
