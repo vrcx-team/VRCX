@@ -160,21 +160,22 @@ namespace VRCX
                                 if (s.Length > 66 &&
                                     string.Compare(s, 34, "[NetworkManager] OnPlayerJoined ", 0, "[NetworkManager] OnPlayerJoined ".Length, StringComparison.Ordinal) == 0)
                                 {
-                                    var item = new[]
-                                    {
-                                        ConvertLogTimeToISO8601(s),
-                                        "OnPlayerJoined",
-                                        s.Substring(66)
-                                    };
-                                    m_Lock.EnterWriteLock();
-                                    try
-                                    {
-                                        m_GameLog.Add(item);
-                                    }
-                                    finally
-                                    {
-                                        m_Lock.ExitWriteLock();
-                                    }
+                                    // using Initialized PlayerAPI instead
+                                    //var item = new[]
+                                    //{
+                                    //    ConvertLogTimeToISO8601(s),
+                                    //    "OnPlayerJoined",
+                                    //    s.Substring(66)
+                                    //};
+                                    //m_Lock.EnterWriteLock();
+                                    //try
+                                    //{
+                                    //    m_GameLog.Add(item);
+                                    //}
+                                    //finally
+                                    //{
+                                    //    m_Lock.ExitWriteLock();
+                                    //}
                                 }
                                 // 2019.07.31 22:29:31 Log        -  [NetworkManager] OnPlayerLeft pypy
                                 else if (s.Length > 64 &&
