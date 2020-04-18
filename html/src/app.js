@@ -1385,6 +1385,11 @@ CefSharp.BindObjectAsync(
 		this.isFriendsLoading = false;
 	});
 
+	API.$on('USER', function (args) {
+		this.friends200.add(args.ref.id);
+		this.friends404.delete(args.ref.id);
+	});
+
 	API.$on('FRIEND:LIST', function (args) {
 		for (var json of args.json) {
 			this.$emit('USER', {
@@ -1393,8 +1398,6 @@ CefSharp.BindObjectAsync(
 					userId: json.id
 				}
 			});
-			this.friends200.add(json.id);
-			this.friends404.delete(json.id);
 		}
 	});
 
