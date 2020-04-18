@@ -20,7 +20,7 @@ namespace VRCX
 
         public static void Init()
         {
-            m_Connection = new SQLiteConnection($"Data Source={Application.StartupPath}/VRCX.sqlite;Version=3");
+            m_Connection = new SQLiteConnection($"Data Source={Application.StartupPath}/VRCX.sqlite3;Version=3;PRAGMA locking_mode=NORMAL;PRAGMA cache_size=10000;PRAGMA temp_store=MEMORY;PRAGMA synchronous=OFF;PRAGMA journal_mode=MEMORY;PRAGMA busy_timeout=1000");
             m_Connection.Open();
         }
 
