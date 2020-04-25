@@ -699,14 +699,14 @@ html
 								.x-friend-list(style="flex:1;margin-top:10px")
 									.x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)")
 										template(v-if="userDialog.$location.user")
-											.avatar
+											.avatar(:class="userStatusClass(userDialog.$location.user)")
 												img(v-lazy="userDialog.$location.user.currentAvatarThumbnailImageUrl")
 											.detail
 												span.name(v-text="userDialog.$location.user.displayName" :class="userDialog.$location.user.$trustClass")
 												span.extra Instance Creator
 										span(v-else v-text="userDialog.$location.userId")
 									.x-friend-item(v-for="user in userDialog.users" :key="user.id" @click="showUserDialog(user.id)")
-										.avatar
+										.avatar(:class="userStatusClass(user)")
 											img(v-lazy="user.currentAvatarThumbnailImageUrl")
 										.detail
 											span.name(v-text="user.displayName" :class="user.$trustClass")
@@ -816,14 +816,14 @@ html
 								.x-friend-list(style="margin:10px 0" v-if="room.$location.userId || room.users.length")
 									.x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)")
 										template(v-if="room.$location.user")
-											.avatar
+											.avatar(:class="userStatusClass(room.$location.user)")
 												img(v-lazy="room.$location.user.currentAvatarThumbnailImageUrl")
 											.detail
 												span.name(v-text="room.$location.user.displayName" :class="room.$location.user.$trustClass")
 												span.extra Instance Creator
 										span(v-else v-text="room.$location.userId")
 									.x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)")
-										.avatar
+										.avatar(:class="userStatusClass(user)")
 											img(v-lazy="user.currentAvatarThumbnailImageUrl")
 										.detail
 											span.name(v-text="user.displayName" :class="user.$trustClass")
