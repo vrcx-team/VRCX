@@ -6598,6 +6598,14 @@ CefSharp.BindObjectAsync(
 					D.loading === true) {
 					return;
 				}
+				if (this.API.currentUser.status === 'busy' &&
+					D.userIds.includes(this.API.currentUser.id) === true) {
+					this.$message({
+						message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
+						type: 'error'
+					});
+					return;
+				}
 				D.loading = true;
 				var params = {
 					receiverUserId: '',
