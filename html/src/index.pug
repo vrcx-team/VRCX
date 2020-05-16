@@ -82,13 +82,13 @@ html
 									location(:location="scope.row.location")
 								template(v-else-if="scope.row.type === 'Avatar'")
 									el-popover(placement="right" width="500px" trigger="click")
-										img(v-lazy="scope.row.avatar[1]" style="width:500px;height:375px")
 										img.x-link(slot="reference" v-lazy="scope.row.avatar[1]" style="flex:none;width:160px;height:120px;border-radius:4px")
+										img(v-lazy="scope.row.avatar[1]" style="width:500px;height:375px")
 									span(style="position:relative;top:-50px;margin:0 5px")
 										i.el-icon-right
 									el-popover(placement="right" width="500px" trigger="click")
-										img(v-lazy="scope.row.avatar[0]" style="width:500px;height:375px")
 										img.x-link(slot="reference" v-lazy="scope.row.avatar[0]" style="flex:none;width:160px;height:120px;border-radius:4px")
+										img(v-lazy="scope.row.avatar[0]" style="width:500px;height:375px")
 								template(v-else-if="scope.row.type === 'Status'")
 									el-tooltip(placement="top")
 										template(#content)
@@ -639,8 +639,8 @@ html
 				div(v-loading="userDialog.loading")
 					div(style="display:flex")
 						el-popover(placement="right" width="500px" trigger="click")
-							img(v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="width:500px;height:375px")
 							img.x-link(slot="reference" v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+							img(v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="width:500px;height:375px")
 						div(style="flex:1;display:flex;align-items:center;margin-left:15px")
 							div(style="flex:1")
 								div
@@ -655,8 +655,8 @@ html
 										i.x-user-status(:class="userStatusClass(userDialog.ref)")
 									span(v-text="userDialog.ref.displayName" style="margin-left:5px;font-weight:bold")
 									el-popover(placement="top" trigger="click")
-										span(style="display:block;text-align:center;font-family:monospace") {{ userDialog.ref.username | textToHex }}
 										span(slot="reference" v-text="userDialog.ref.username" style="margin-left:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer")
+										span(style="display:block;text-align:center;font-family:monospace") {{ userDialog.ref.username | textToHex }}
 									el-tooltip(v-for="item in userDialog.ref.$languages" :key="item.key" placement="top")
 										template(#content)
 											span {{ item.value }} ({{ item.key }})
@@ -777,8 +777,8 @@ html
 				div(v-loading="worldDialog.loading")
 					div(style="display:flex")
 						el-popover(placement="right" width="500px" trigger="click")
-							img(v-lazy="worldDialog.ref.thumbnailImageUrl" style="width:500px;height:375px")
 							img.x-link(slot="reference" v-lazy="worldDialog.ref.thumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+							img(v-lazy="worldDialog.ref.thumbnailImageUrl" style="width:500px;height:375px")
 						div(style="flex:1;display:flex;align-items:center;margin-left:15px")
 							div(style="flex:1")
 								div
@@ -884,8 +884,8 @@ html
 				div(v-loading="avatarDialog.loading")
 					div(style="display:flex")
 						el-popover(placement="right" width="500px" trigger="click")
-							img(v-lazy="avatarDialog.ref.thumbnailImageUrl" style="width:500px;height:375px")
 							img.x-link(slot="reference" v-lazy="avatarDialog.ref.thumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+							img(v-lazy="avatarDialog.ref.thumbnailImageUrl" style="width:500px;height:375px")
 						div(style="flex:1;display:flex;align-items:center;margin-left:15px")
 							div(style="flex:1")
 								div
