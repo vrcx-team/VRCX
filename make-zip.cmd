@@ -4,5 +4,8 @@ set TODAY=%DATE:~0,4%%DATE:~5,2%%DATE:~8,2%
 set ZIP_NAME=VRCX_%TODAY%.zip
 echo %ZIP_NAME%
 rem using bandizip (https://www.bandisoft.com/bandizip)
-bandizip c -l:9 -cmt:"https://github.com/pypy-vrc/VRCX" -ex:"cache;node_modules;src;*.log;*.zip;package.json;package-lock.json;.eslintrc.js;webpack.config.js;VRCX.json;VRCX.sqlite;VRCX_ZIP.cmd" -r %ZIP_NAME% bin/x64/Release/*
+cd "%~dp0\bin\x64\Release"
+bz c -l:9 -r -storeroot:yes -ex:"cache;*.log;VRCX.json;VRCX.sqlite" -cmt:"https://github.com/pypy-vrc/VRCX" %ZIP_NAME% *
+cd "%~dp0"
+move "%~dp0\bin\x64\Release\%ZIP_NAME%" "%~dp0"
 pause
