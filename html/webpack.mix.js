@@ -20,6 +20,12 @@ mix.override(function (webpackConfig) {
         inject: false,
         minify: false
     }));
+    webpackConfig.plugins.push(new HtmlWebpackPlugin({
+        filename: 'dist/vr.html',
+        template: 'src/vr.pug',
+        inject: false,
+        minify: false
+    }));
 });
 
 // vendor
@@ -28,7 +34,6 @@ mix.copyDirectory('node_modules/famfamfam-flags/dist/sprite/famfamfam-flags.png'
 
 // app
 mix.copyDirectory('images/', 'dist/images/');
-mix.copy('src/vr.html', 'dist/');
 mix.js('src/app.js', 'dist/');
 mix.js('src/vr.js', 'dist/');
 mix.sass('src/app.scss', 'dist/');

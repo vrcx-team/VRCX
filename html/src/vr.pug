@@ -1,0 +1,89 @@
+doctype html
+html
+	head
+		meta(http-equiv="Content-Type" content="text/html;charset=utf-8")
+		meta(http-equiv="Cache-Control" content="no-cache")
+		meta(http-equiv="referrer" content="no-referrer")
+		meta(http-equiv="viewport" content="width=device-width,initial-scale=1,user-scalable=no")
+		title VRCXVR
+		link(rel="dns-prefetch" href="https://fonts.gstatic.com")
+		link(rel="preconnect" href="https://api.vrchat.cloud")
+		link(rel="preconnect" href="https://d348imysud55la.cloudfront.net")
+		link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP|Noto+Sans+KR&display=swap")
+		link(rel="stylesheet" href="vr.css")
+	body
+		.x-app#x-app(style="display:none" :class="{ 'x-app-type': appType === '1' }")
+			.x-container(style="flex:1")
+				.x-friend-list(ref="list" style="color:#aaa")
+					template(v-for="feed in feeds")
+						.x-friend-item(v-if="feed.type === 'GPS'" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+							.detail
+								span.extra
+									span.time {{ feed.created_at | formatDate('HH:MI') }}
+									| #[span.name(v-text="feed.displayName")] is in #[location(:location="feed.location[0]")]
+						div(v-else-if="feed.type === 'Offline'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+							.detail
+								span.extra
+									span.time {{ feed.created_at | formatDate('HH:MI') }}
+									| #[span.name(v-text="feed.displayName")] has logged out
+						div(v-else-if="feed.type === 'Online'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+							.detail
+								span.extra
+									span.time {{ feed.created_at | formatDate('HH:MI') }}
+									| #[span.name(v-text="feed.displayName")] has logged in
+						div(v-else-if="feed.type === 'Status'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+							.detail
+								span.extra
+									span.time {{ feed.created_at | formatDate('HH:MI') }}
+									| #[span.name(v-text="feed.displayName")] is #[i.x-user-status(:class="userStatusClass(feed.status[0])")] {{feed.status[0].statusDescription}}
+						div(v-else-if="feed.type === 'OnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+							.detail
+								span.extra
+									span.time {{ feed.created_at | formatDate('HH:MI') }}
+									| #[span.name(v-text="feed.data")] has joined
+						div(v-else-if="feed.type === 'OnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+							.detail
+								span.extra
+									span.time {{ feed.created_at | formatDate('HH:MI') }}
+									| #[span.name(v-text="feed.data")] has left
+						div(v-else-if="feed.type === 'Location'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+							.detail
+								span.extra
+									span.time {{ feed.created_at | formatDate('HH:MI') }}
+									location(:location="feed.data")
+			.x-container
+				div(style="display:flex;flex-direction:row")
+					template(v-if="devices.length")
+						div(v-for="device in devices" style="flex:none;text-align:center;width:64px")
+							template(v-if="device[0] === 'tracker'")
+								img(v-if="device[1] !== 'connected'" src="images/tracker_status_off.png" style="width:32px;height:32px")
+								img(v-else-if="device[2] < 20" src="images/tracker_status_ready_low.png" style="width:32px;height:32px")
+								img(v-else src="images/tracker_status_ready.png" style="width:32px;height:32px")
+							template(v-else-if="device[0] === 'leftController'")
+								img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" style="width:32px;height:32px")
+								img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" style="width:32px;height:32px")
+								img(v-else src="images/controller_status_ready.png" style="width:32px;height:32px")
+							template(v-else-if="device[0] === 'rightController'")
+								img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" style="width:32px;height:32px")
+								img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" style="width:32px;height:32px")
+								img(v-else src="images/controller_status_ready.png" style="width:32px;height:32px")
+							template(v-else-if="device[0] === 'controller'")
+								img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" style="width:32px;height:32px")
+								img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" style="width:32px;height:32px")
+								img(v-else src="images/controller_status_ready.png" style="width:32px;height:32px")
+							template(v-else-if="device[0] === 'base'")
+								img(v-if="device[1] !== 'connected'" src="images/base_status_off.png" style="width:32px;height:32px")
+								img(v-else-if="device[2] < 20" src="images/base_status_ready_low.png" style="width:32px;height:32px")
+								img(v-else src="images/base_status_ready.png" style="width:32px;height:32px")
+							template(v-else)
+								img(v-if="device[1] !== 'connected'" src="images/other_status_off.png" style="width:32px;height:32px")
+								img(v-else-if="device[2] < 20" src="images/other_status_ready_low.png" style="width:32px;height:32px")
+								img(v-else src="images/other_status_ready.png" style="width:32px;height:32px")
+							br
+							span {{ device[2] }}%
+					div(v-else)
+						span No SteamVR Devices
+			.x-container
+				span(style="float:right") {{ currentTime | formatDate('YYYY-MM-DD HH:MI:SS AMPM') }}
+				span CPU {{ cpuUsage }}%
+		script(src="vr.js")
