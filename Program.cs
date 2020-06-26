@@ -21,20 +21,21 @@ namespace VRCX
                 var settings = new CefSettings
                 {
                     CachePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cache"),
+                    IgnoreCertificateErrors = true,
+                    LogSeverity = LogSeverity.Disable,
                     PersistUserPreferences = true,
-                    PersistSessionCookies = true,
-                    WindowlessRenderingEnabled = true
+                    WindowlessRenderingEnabled = true,
+                    PersistSessionCookies = true
                 };
                 settings.CefCommandLineArgs.Add("ignore-certificate-errors", "1");
-                settings.CefCommandLineArgs.Add("disable-web-security", "1");
                 // settings.CefCommandLineArgs.Add("no-proxy-server", "1");
-                settings.CefCommandLineArgs.Add("disable-plugins-discovery", "1");
+                settings.CefCommandLineArgs.Add("disable-web-security", "1");
                 settings.CefCommandLineArgs.Add("disable-extensions", "1");
+                settings.CefCommandLineArgs.Add("disable-plugins", "1");
                 settings.CefCommandLineArgs.Add("disable-pdf-extension", "1");
+                settings.CefCommandLineArgs.Add("disable-spell-checking", "1");
                 settings.CefCommandLineArgs.Add("disable-gpu", "1");
                 settings.CefCommandLineArgs.Add("disable-gpu-vsync", "1");
-                // settings.CefCommandLineArgs.Add("disable-direct-write", "1");
-                settings.LogSeverity = LogSeverity.Disable;
                 settings.DisableGpuAcceleration();
                 /*settings.RegisterScheme(new CefCustomScheme
                 {
