@@ -2,7 +2,7 @@ module.exports = {
     root: true,
     env: {
         browser: true,
-        node: true,
+        commonjs: true,
         es2020: true
     },
     globals: {
@@ -11,12 +11,7 @@ module.exports = {
         VRCXStorage: 'readonly',
         SQLite: 'readonly',
         LogWatcher: 'readonly',
-        Discord: 'readonly',
-        Noty: 'readonly',
-        Vue: 'readonly',
-        VueLazyload: 'readonly',
-        DataTables: 'readonly',
-        ELEMENT: 'readonly'
+        Discord: 'readonly'
     },
     extends: 'eslint:all',
     rules: {
@@ -44,7 +39,12 @@ module.exports = {
         'no-bitwise': 0,
         'no-console': 0,
         'no-continue': 0,
-        'no-empty': ['error', { allowEmptyCatch: true }],
+        'no-empty': [
+            'error',
+            {
+                allowEmptyCatch: true
+            }
+        ],
         'no-magic-numbers': 0,
         'no-mixed-operators': 0,
         'no-param-reassign': 0,
@@ -56,19 +56,33 @@ module.exports = {
         'no-underscore-dangle': 0,
         'no-var': 0,
         'no-warning-comments': 0,
-        'object-curly-spacing': ['error', 'always'],
+        'object-curly-spacing': [
+            'error',
+            'always'
+        ],
         'object-property-newline': 0,
         'one-var': 0,
         'padded-blocks': 0,
         'prefer-arrow-callback': 0,
         'prefer-destructuring': 0,
         'prefer-named-capture-group': 0,
-        quotes: ['error', 'single', { avoidEscape: true }],
+        quotes: [
+            'error',
+            'single',
+            {
+                avoidEscape: true
+            }
+        ],
         'quote-props': 0,
         'require-unicode-regexp': 0,
         'sort-keys': 0,
         'sort-vars': 0,
-        'space-before-function-paren': ['error', { named: 'never' }],
+        'space-before-function-paren': [
+            'error',
+            {
+                named: 'never'
+            }
+        ],
         strict: 0,
         'vars-on-top': 0
     }
