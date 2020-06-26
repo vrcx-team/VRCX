@@ -1,11 +1,12 @@
 @charset "utf-8";
-/*
-Copyright(c) 2019-2020 pypy and individual contributors.
-All rights reserved.
 
-This work is licensed under the terms of the MIT license.
-For a copy, see <https://opensource.org/licenses/MIT>.
-*/
+//
+// Copyright(c) 2019-2020 pypy and individual contributors.
+// All rights reserved.
+//
+// This work is licensed under the terms of the MIT license.
+// For a copy, see <https://opensource.org/licenses/MIT>.
+//
 
 ::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.05);
@@ -17,21 +18,38 @@ For a copy, see <https://opensource.org/licenses/MIT>.
     border-radius: 16px;
 }
 
+html,
+body {
+    background-color: #101010;
+}
+
+body,
+input,
+textarea,
+select,
+button {
+    color: #fff;
+}
+
 .el-loading-mask {
     background-color: rgba(0, 0, 0, 0.6);
 }
 
 .el-input__inner {
-    background-color: #444444;
-    border: #333333;
+    color: #fff;
+    background-color: #444;
+    border: #333;
 }
 
-.el-table td, .el-table th.is-leaf {
+.el-table td,
+.el-table th.is-leaf {
     background-color: #292929;
     border-bottom: 1px solid #5f5f5f;
 }
 
-.el-table--border::after, .el-table--group::after, .el-table::before {
+.el-table--border::after,
+.el-table--group::after,
+.el-table::before {
     background-color: #5f5f5f;
 }
 
@@ -39,46 +57,44 @@ For a copy, see <https://opensource.org/licenses/MIT>.
     background-color: #202020;
 }
 
-.el-table--enable-row-hover .el-table__body tr:hover>td {
+.el-table--enable-row-hover .el-table__body tr:hover > td {
     background-color: #323232;
 }
 
-.el-pagination .btn-next, .el-pagination .btn-prev {
-    background-color: #333333;
-    color: #bbbbbb;
+.el-pagination .btn-next,
+.el-pagination .btn-prev {
+    color: #bbb;
+    background-color: #333;
 }
 
 .el-pagination button:disabled {
-    background-color: #333333;
     color: #101010;
+    background-color: #333;
 }
 
-.el-dialog, .el-pager li {
-    background-color: #333333;
+.el-dialog,
+.el-pager li {
+    background-color: #333;
 }
 
 .el-pager li {
-    color: #bbbbbb;
+    color: #bbb;
 }
 
 .el-table {
-    color: #ffffff;
+    color: #fff;
 }
 
 .el-pagination__total {
-    color: #bbbbbb;
+    color: #bbb;
 }
 
 .el-tag--plain.el-tag--info {
-    background-color: #333333;
+    background-color: #333;
 }
 
 .el-tag--plain.el-tag--success {
-    background-color: #333333;
-}
-
-.el-tag--plain.el-tag--success {
-    background-color: #333333;
+    background-color: #333;
 }
 
 .el-button {
@@ -90,17 +106,18 @@ For a copy, see <https://opensource.org/licenses/MIT>.
     border-color: #404040;
 }
 
-.el-button:not(.el-button--text):focus, .el-button:not(.el-button--text):hover {
-    color: #000000;
-    border-color: #656565;
+.el-button:not(.el-button--text):focus,
+.el-button:not(.el-button--text):hover {
+    color: #000;
     background-color: #737373;
+    border-color: #656565;
 }
 
 .el-tabs__item {
     color: #c2c4ca;
 }
 
-.el-tabs--card>.el-tabs__header {
+.el-tabs--card > .el-tabs__header {
     border-bottom-color: #5f5f5f;
 }
 
@@ -109,7 +126,7 @@ For a copy, see <https://opensource.org/licenses/MIT>.
     border-color: #404040;
 }
 
-.el-dropdown-menu__item--divided:before {
+.el-dropdown-menu__item--divided::before {
     background-color: #404040;
 }
 
@@ -117,53 +134,56 @@ For a copy, see <https://opensource.org/licenses/MIT>.
     color: #d4d4d4;
 }
 
-.el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
-    background-color: #444444;
+.el-dropdown-menu__item:focus,
+.el-dropdown-menu__item:not(.is-disabled):hover {
     color: #66b1ff;
+    background-color: #444;
 }
 
-.el-popper[x-placement^=bottom] .popper__arrow::after {
-    border-bottom-color: #333333;
+.el-popper[x-placement^="bottom"] .popper__arrow::after {
+    border-bottom-color: #333;
 }
 
-.el-popper[x-placement^=bottom] .popper__arrow {
+.el-popper[x-placement^="bottom"] .popper__arrow {
     border-bottom-color: #404040;
 }
 
 .el-message-box {
-    background-color: #333333;
+    background-color: #333;
     border-color: #5f5f5f;
 }
 
 .el-tree {
+    color: #bbb;
     background: #202020;
-    color: #bbbbbb;
 }
 
-.el-menu-item:focus, .el-menu-item:hover {
+.el-menu-item:focus,
+.el-menu-item:hover {
     background-color: #505050;
 }
 
-.el-tabs--card>.el-tabs__header .el-tabs__item {
+.el-tabs--card > .el-tabs__header .el-tabs__item {
     border-left-color: #5f5f5f;
 }
 
-.el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
+.el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+    border-bottom-color: #9c9c9c;
     border-left-color: #5f5f5f;
 }
 
-.el-tabs--card>.el-tabs__header .el-tabs__nav {
+.el-tabs--card > .el-tabs__header .el-tabs__nav {
     border-color: #5f5f5f;
 }
 
 .el-collapse-item__header {
-    background-color: inherit;
     color: #d0d0d0;
+    background-color: inherit;
     border-bottom-color: #5f5f5f;
 }
 
 .el-collapse-item__wrap {
-    background-color: #333333;
+    background-color: #333;
     border-bottom-color: #5f5f5f;
 }
 
@@ -179,10 +199,6 @@ For a copy, see <https://opensource.org/licenses/MIT>.
     color: #a5a7ad;
 }
 
-.el-input__inner {
-    color: #ffffff;
-}
-
 .el-collapse-item__content {
     color: #848484;
 }
@@ -193,15 +209,15 @@ For a copy, see <https://opensource.org/licenses/MIT>.
 }
 
 .el-popover {
-    background-color: #333333;
+    background-color: #333;
     border-color: #5f5f5f;
 }
 
-.el-popper[x-placement^=right] .popper__arrow::after {
+.el-popper[x-placement^="right"] .popper__arrow::after {
     border-right-color: #5f5f5f;
 }
 
-.el-popper[x-placement^=right] .popper__arrow {
+.el-popper[x-placement^="right"] .popper__arrow {
     border-right-color: #5f5f5f;
 }
 
@@ -209,7 +225,8 @@ For a copy, see <https://opensource.org/licenses/MIT>.
     color: #a0a0a0;
 }
 
-.el-table, .el-table__expanded-cell {
+.el-table,
+.el-table__expanded-cell {
     background-color: inherit;
 }
 
@@ -217,8 +234,8 @@ For a copy, see <https://opensource.org/licenses/MIT>.
     background-color: #272727;
 }
 
-.el-tree-node:focus>.el-tree-node__content {
-    background-color: #333333;
+.el-tree-node:focus > .el-tree-node__content {
+    background-color: #333;
 }
 
 .el-select-dropdown {
@@ -233,7 +250,8 @@ For a copy, see <https://opensource.org/licenses/MIT>.
     background-color: #404040;
 }
 
-.el-select-dropdown__item.hover, .el-select-dropdown__item:hover {
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
     background-color: #3e3e3e;
 }
 
@@ -246,12 +264,8 @@ For a copy, see <https://opensource.org/licenses/MIT>.
     background-color: #323232 !important;
 }
 
-.el-tabs--card>.el-tabs__header .el-tabs__item.is-active {
-    border-bottom-color: #9c9c9c;
-}
-
 .el-dialog__body {
-    color: #ffffff;
+    color: #fff;
 }
 
 .x-app {
@@ -270,56 +284,51 @@ For a copy, see <https://opensource.org/licenses/MIT>.
     background-color: #171717;
 }
 
-.x-friend-list>.x-friend-group {
-    color: #ffffff;
+.x-friend-list > .x-friend-group {
+    color: #fff;
 }
 
 .x-friend-item:hover {
     background: #3e3e3e;
 }
 
-.x-friend-item>.avatar.active::after, .x-friend-item>.avatar.joinme::after, .x-friend-item>.avatar.askme::after, .x-friend-item>.avatar.busy::after {
+.x-friend-item > .avatar.active::after,
+.x-friend-item > .avatar.joinme::after,
+.x-friend-item > .avatar.askme::after,
+.x-friend-item > .avatar.busy::after {
     border: 2px solid #000;
 }
 
-.x-friend-item>.detail>.name {
-    color: #ffffff;
+.x-friend-item > .detail > .name {
+    color: #fff;
 }
 
-.x-friend-item>.detail>.extra {
+.x-friend-item > .detail > .extra {
     color: #c7c7c7;
 }
 
-.x-friend-item>.detail>.name.x-tag-veteran {
+.x-friend-item > .detail > .name.x-tag-veteran {
     color: rgb(177, 143, 255);
 }
 
 .el-tag.x-tag-veteran {
-    border-color: rgb(177, 143, 255);
     color: rgb(177, 143, 255);
+    border-color: rgb(177, 143, 255);
 }
 
-.x-friend-item>.detail>.name.x-tag-legendary {
+.x-friend-item > .detail > .name.x-tag-legendary {
     color: rgb(255, 255, 255);
 }
 
 .el-tag.x-tag-legendary {
-    border-color: rgb(255, 255, 255);
     color: rgb(255, 255, 255);
+    border-color: rgb(255, 255, 255);
 }
 
 .x-user-dialog .el-textarea__inner {
-    color: #ffffff;
-}
-
-html, body {
-    background-color: #101010;
-}
-
-body, input, textarea, select, button {
-    color: #ffffff;
+    color: #fff;
 }
 
 .x-login-container p {
-    color: #dddddd;
+    color: #ddd;
 }
