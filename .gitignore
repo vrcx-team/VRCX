@@ -263,11 +263,6 @@ __pycache__/
 # NodeJS
 node_modules/
 
-# html sources
-/html/app.css
-/html/app.dark.css
-/html/app.js
-/html/index.html
-/html/vr.css
-/html/vr.html
-/html/vr.js
+# html
+/html/dist/
+/html/mix-manifest.json
