@@ -1,3 +1,4 @@
+var path = require('path');
 var mix = require('laravel-mix');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -27,8 +28,6 @@ mix.js('src/app.js', 'dist/');
 mix.js('src/vr.js', 'dist/');
 mix.sass('src/app.scss', 'dist/');
 mix.sass('src/app.dark.scss', 'dist/');
-// mix.pug('src/index.pug', 'dist/');
-// mix.pug('src/vr.pug', 'dist/');
 
 // Full API
 // mix.js(src, output);
