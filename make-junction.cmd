@@ -1,2 +1,3 @@
-mklink /J html bin\x64\Release\html
+mklink /J "%~dp0\bin\x64\Debug\html" "%~dp0\html"
+mklink /J "%~dp0\bin\x64\Release\html" "%~dp0\html"
 pause
