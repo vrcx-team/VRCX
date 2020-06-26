@@ -4,6 +4,13 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+import Noty from 'noty';
+import Vue from 'vue';
+import VueLazyload from 'vue-lazyload';
+import { DataTables } from 'vue-data-tables';
+import ElementUI from 'element-ui';
+import locale from 'element-ui/lib/locale/lang/en';
+
 CefSharp.BindObjectAsync(
 	'VRCX',
 	'VRCXStorage',
@@ -93,6 +100,10 @@ CefSharp.BindObjectAsync(
 		layout: 'bottomLeft',
 		theme: 'mint',
 		timeout: 6000
+	});
+
+	Vue.use(ElementUI, {
+		locale
 	});
 
 	var removeFromArray = function (array, item) {
@@ -187,9 +198,7 @@ CefSharp.BindObjectAsync(
 		}
 	});
 
-	Vue.use(DataTables.DataTables);
-
-	ELEMENT.locale(ELEMENT.lang.en);
+	Vue.use(DataTables);
 
 	var uuidv4 = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
 		var v = Math.random() * 16 | 0;

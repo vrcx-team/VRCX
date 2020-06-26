@@ -4,6 +4,11 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+import Noty from 'noty';
+import Vue from 'vue';
+import ElementUI from 'element-ui';
+import locale from 'element-ui/lib/locale/lang/en';
+
 CefSharp.BindObjectAsync(
 	'VRCX',
 	'VRCXStorage',
@@ -75,6 +80,10 @@ CefSharp.BindObjectAsync(
 		layout: 'topCenter',
 		theme: 'relax',
 		timeout: 6000
+	});
+
+	Vue.use(ElementUI, {
+		locale
 	});
 
 	var escapeTag = (s) => String(s).replace(/["&'<>]/gu, (c) => `&#${c.charCodeAt(0)};`);

@@ -22,6 +22,11 @@ mix.override(function (webpackConfig) {
     }));
 });
 
+// vendor
+mix.copyDirectory('node_modules/element-ui/lib/theme-chalk/fonts/', 'dist/fonts/');
+mix.copyDirectory('node_modules/famfamfam-flags/dist/sprite/famfamfam-flags.png', 'dist/');
+
+// app
 mix.copyDirectory('images/', 'dist/images/');
 mix.copy('src/vr.html', 'dist/');
 mix.js('src/app.js', 'dist/');

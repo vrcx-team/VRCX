@@ -1,4 +1,5 @@
 @charset "utf-8";
+
 /*
 Copyright(c) 2019-2020 pypy and individual contributors.
 All rights reserved.
@@ -6,6 +7,12 @@ All rights reserved.
 This work is licensed under the terms of the MIT license.
 For a copy, see <https://opensource.org/licenses/MIT>.
 */
+
+@import '~normalize.css/normalize.css';
+@import '~animate.css/animate.min.css';
+@import '~noty/lib/noty.css';
+@import '~element-ui/lib/theme-chalk/index.css';
+@import '~famfamfam-flags/dist/sprite/famfamfam-flags.min.css';
 
 .color-palettes {
 	background: #409EFF;
