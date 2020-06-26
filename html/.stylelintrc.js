@@ -20,14 +20,14 @@ module.exports = {
         // 'declaration-empty-line-before': null,
         // 'declaration-no-important': true,
         // 'font-family-name-quotes': 'always-where-recommended',
-        'font-weight-notation': [
-            'numeric',
-            {
-                'ignore': [
-                    'relative'
-                ]
-            }
-        ],
+        // 'font-weight-notation': [
+        //     'numeric',
+        //     {
+        //         'ignore': [
+        //             'relative'
+        //         ]
+        //     }
+        // ],
         // 'function-url-no-scheme-relative': true,
         'function-url-quotes': 'always',
         'indentation': 4, // pypy
@@ -35,7 +35,7 @@ module.exports = {
         // 'max-line-length': null,
         // 'media-feature-name-no-vendor-prefix': true,
         'no-descending-specificity': null,
-        'number-leading-zero': 'never',
+        'number-leading-zero': null, // pypy
         'order/properties-order': [
             'position',
             'top',
