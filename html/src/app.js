@@ -4340,8 +4340,8 @@ CefSharp.BindObjectAsync(
 
     $app.methods.sweepGameLog = function () {
         var { data } = this.gameLogTable;
-        // 로그는 3일까지만 남김
-        var limit = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toJSON();
+        // 로그는 7일까지만 남김
+        var limit = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toJSON();
         var i = 0;
         var j = data.length;
         while (i < j &&
