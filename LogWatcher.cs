@@ -16,6 +16,7 @@ namespace VRCX
     {
         public long Length;
         public long Position;
+        public string Tag;
     }
 
     public class LogWatcher
@@ -91,7 +92,7 @@ namespace VRCX
                                 D.Add(fi.Name, F);
                             }
                             F.Length = fi.Length;
-                            Parse(fi, ref F.Position);
+                            Parse(fi, F);
                         }
                     }
                     foreach (var key in S)
@@ -114,112 +115,113 @@ namespace VRCX
             T.Join();
         }
 
-        public static void Parse(FileInfo info, ref long position)
+        public static void Parse(FileInfo info, LogWatcherFile F)
         {
             try
             {
                 using (var stream = info.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                using (var reader = new StreamReader(stream, Encoding.UTF8))
                 {
-                    stream.Position = position;
-                    var s = string.Empty;
-                    while ((s = reader.ReadLine()) != null)
+                    stream.Position = F.Position;
+                    using (var reader = new StreamReader(stream, Encoding.UTF8))
                     {
-                        if (s.Length > 35)
+                        var s = string.Empty;
+                        while ((s = reader.ReadLine()) != null)
                         {
+                            s = s.Trim();
+                            if (s.Length <= 35)
+                            {
+                                continue;
+                            }
                             var c = s[35];
-                            if (c == 'R')
+                            if (c == 'P')
                             {
-                                // 2019.07.31 22:26:24 Log        -  [RoomManager] Joining wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd:6974~private(usr_4f76a584-9d4b-46f6-8209-8305eb683661)~nonce(0000000000000000000000000000000000000000000000000000000000000000)
-                                // 2019.07.31 22:26:24 Log        -  [RoomManager] Joining or Creating Room: VRChat Home
-                                if (s.Length > 56 &&
-                                    string.Compare(s, 34, "[RoomManager] Joining ", 0, "[RoomManager] Joining ".Length, StringComparison.Ordinal) == 0 &&
-                                    string.Compare(s, 56, "or ", 0, "or ".Length, StringComparison.Ordinal) != 0)
-                                {
-                                    var location = s.Substring(56);
-                                    var item = new[]
-                                    {
-                                        ConvertLogTimeToISO8601(s),
-                                        "Location",
-                                        location
-                                    };
-                                    m_Lock.EnterWriteLock();
-                                    try
-                                    {
-                                        m_GameLog.Add(item);
-                                    }
-                                    finally
-                                    {
-                                        m_Lock.ExitWriteLock();
-                                    }
-                                }
-                            }
-                            else if (c == 'N')
-                            {
-                                // 2019.07.31 22:41:18 Log        -  [NetworkManager] OnPlayerJoined pypy
                                 if (s.Length > 66 &&
-                                    string.Compare(s, 34, "[NetworkManager] OnPlayerJoined ", 0, "[NetworkManager] OnPlayerJoined ".Length, StringComparison.Ordinal) == 0)
+                                    string.Compare(s, 34, "[Player] Initialized PlayerAPI \"", 0, 32, StringComparison.Ordinal) == 0)
                                 {
-                                    // using Initialized PlayerAPI instead
-                                    //var item = new[]
-                                    //{
-                                    //    ConvertLogTimeToISO8601(s),
-                                    //    "OnPlayerJoined",
-                                    //    s.Substring(66)
-                                    //};
-                                    //m_Lock.EnterWriteLock();
-                                    //try
-                                    //{
-                                    //    m_GameLog.Add(item);
-                                    //}
-                                    //finally
-                                    //{
-                                    //    m_Lock.ExitWriteLock();
-                                    //}
-                                }
-                                // 2019.07.31 22:29:31 Log        -  [NetworkManager] OnPlayerLeft pypy
-                                else if (s.Length > 64 &&
-                                    string.Compare(s, 34, "[NetworkManager] OnPlayerLeft ", 0, "[NetworkManager] OnPlayerLeft ".Length, StringComparison.Ordinal) == 0)
-                                {
-                                    var item = new[]
-                                    {
-                                        ConvertLogTimeToISO8601(s),
-                                        "OnPlayerLeft",
-                                        s.Substring(64)
-                                    };
-                                    m_Lock.EnterWriteLock();
-                                    try
-                                    {
-                                        m_GameLog.Add(item);
-                                    }
-                                    finally
-                                    {
-                                        m_Lock.ExitWriteLock();
-                                    }
-                                }
-                            }
-                            else if (c == 'P')
-                            {
-                                // 2020.04.02 20:59:08 Log        -  [Player] Initialized PlayerAPI "pypy" is local
-                                if (s.Length > 66 &&
-                                    string.Compare(s, 34, "[Player] Initialized PlayerAPI \"", 0, "[Player] Initialized PlayerAPI \"".Length, StringComparison.Ordinal) == 0)
-                                {
-                                    var str = s.Substring(66);
-                                    var pos = str.LastIndexOf('"');
+                                    // 2020.04.02 20:59:08 Log        -  [Player] Initialized PlayerAPI "pypy" is local
+                                    var time = ConvertLogTimeToISO8601(s);
+                                    var data = s.Substring(66);
+                                    var pos = data.LastIndexOf('"');
                                     if (pos >= 0)
                                     {
-                                        str = str.Substring(0, pos);
+                                        data = data.Substring(0, pos);
                                     }
-                                    var item = new[]
-                                    {
-                                        ConvertLogTimeToISO8601(s),
-                                        "OnPlayerJoined",
-                                        str
-                                    };
                                     m_Lock.EnterWriteLock();
                                     try
                                     {
-                                        m_GameLog.Add(item);
+                                        m_GameLog.Add(new[]
+                                        {
+                                            time,
+                                            "OnPlayerJoined",
+                                            data
+                                        });
+                                    }
+                                    finally
+                                    {
+                                        m_Lock.ExitWriteLock();
+                                    }
+                                }
+                            }
+                            else if (c == 'R')
+                            {
+                                if (s.Length > 56 &&
+                                    string.Compare(s, 34, "[RoomManager] Joining ", 0, 22, StringComparison.Ordinal) == 0)
+                                {
+                                    if (string.Compare(s, 56, "or ", 0, 3, StringComparison.Ordinal) == 0)
+                                    {
+                                        // 2019.07.31 22:26:24 Log        -  [RoomManager] Joining or Creating Room: VRChat Home
+                                        var time = ConvertLogTimeToISO8601(s);
+                                        var data = string.Empty;
+                                        if (s.Length > 74)
+                                        {
+                                            data = s.Substring(74);
+                                        }
+                                        m_Lock.EnterWriteLock();
+                                        try
+                                        {
+                                            m_GameLog.Add(new[]
+                                            {
+                                                time,
+                                                "Location",
+                                                F.Tag,
+                                                data
+                                            });
+                                        }
+                                        finally
+                                        {
+                                            m_Lock.ExitWriteLock();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // 2019.07.31 22:26:24 Log        -  [RoomManager] Joining wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd:6974~private(usr_4f76a584-9d4b-46f6-8209-8305eb683661)~nonce(0000000000000000000000000000000000000000000000000000000000000000)
+                                        F.Tag = s.Substring(56);
+                                    }
+                                }
+                            }
+                            else if (c == 'e')
+                            {
+                                if (s.Length > 82 &&
+                                    string.Compare(s, 34, "Received Message of type: notification content: ", 0, 48, StringComparison.Ordinal) == 0)
+                                {
+                                    // 2020.06.28 06:28:18 Log        -  Received Message of type: notification content: {{"id":"not_7ba7c14f-e9e4-4e2f-a2e7-f5ccb7ffdad5","type":"invite","senderUserId":"usr_4f76a584-9d4b-46f6-8209-8305eb683661","senderUsername":"pypy","receiverUserId":"usr_f38006b4-eab5-4243-bcb1-206138e629d8","message":"This is a generated invite","details":{{"worldId":"wrld_03f52086-965c-456f-a5e9-4ba6df473173:72562~friends(usr_8a2f5b19-4f97-4642-b0fe-d8b338691b47)~nonce(1158A2215996CF893F29D270E47681DED8B6C226BCEF9B767F66EB7B55144E58)","worldName":"Shy Avatars"}},"created_at":"2020-06-27T21:28:18.520Z"}} received at 2020-06-27 PM 9:28:18 UTC
+                                    // 2020.06.28 06:28:18 Log        -  Received Notification: <Notification from username:pypy, sender user id:usr_4f76a584-9d4b-46f6-8209-8305eb683661 to usr_f38006b4-eab5-4243-bcb1-206138e629d8 of type: invite, id: not_7ba7c14f-e9e4-4e2f-a2e7-f5ccb7ffdad5, created at: 2020-06-27 PM 9:28:18 UTC, details: {{worldId=wrld_03f52086-965c-456f-a5e9-4ba6df473173:72562~friends(usr_8a2f5b19-4f97-4642-b0fe-d8b338691b47)~nonce(1158A2215996CF893F29D270E47681DED8B6C226BCEF9B767F66EB7B55144E58), worldName=Shy Avatars}}, type:invite, m seen:False, message: "This is a generated invite"> received at 2020-06-27 PM 9:28:18 UTC
+                                    var time = ConvertLogTimeToISO8601(s);
+                                    var data = s.Substring(82);
+                                    var pos = data.LastIndexOf('}');
+                                    if (pos >= 0)
+                                    {
+                                        data = data.Substring(0, pos + 1); // including brace
+                                    }
+                                    m_Lock.EnterWriteLock();
+                                    try
+                                    {
+                                        m_GameLog.Add(new[]
+                                        {
+                                            time,
+                                            "Notification",
+                                            data
+                                        });
                                     }
                                     finally
                                     {
@@ -229,7 +231,7 @@ namespace VRCX
                             }
                         }
                     }
-                    position = stream.Position;
+                    F.Position = stream.Position;
                 }
             }
             catch
