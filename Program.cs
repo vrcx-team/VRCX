@@ -27,15 +27,15 @@ namespace VRCX
                     WindowlessRenderingEnabled = true,
                     PersistSessionCookies = true
                 };
-                settings.CefCommandLineArgs.Add("ignore-certificate-errors", "1");
-                // settings.CefCommandLineArgs.Add("no-proxy-server", "1");
-                settings.CefCommandLineArgs.Add("disable-web-security", "1");
-                settings.CefCommandLineArgs.Add("disable-extensions", "1");
-                settings.CefCommandLineArgs.Add("disable-plugins", "1");
-                settings.CefCommandLineArgs.Add("disable-pdf-extension", "1");
-                settings.CefCommandLineArgs.Add("disable-spell-checking", "1");
-                settings.CefCommandLineArgs.Add("disable-gpu", "1");
-                settings.CefCommandLineArgs.Add("disable-gpu-vsync", "1");
+                settings.CefCommandLineArgs.Add("ignore-certificate-errors");
+                // settings.CefCommandLineArgs.Add("no-proxy-server");
+                settings.CefCommandLineArgs.Add("disable-web-security");
+                settings.CefCommandLineArgs.Add("disable-extensions");
+                settings.CefCommandLineArgs.Add("disable-plugins");
+                settings.CefCommandLineArgs.Add("disable-pdf-extension");
+                settings.CefCommandLineArgs.Add("disable-spell-checking");
+                settings.CefCommandLineArgs.Add("disable-gpu");
+                settings.CefCommandLineArgs.Add("disable-gpu-vsync");
                 settings.DisableGpuAcceleration();
                 /*settings.RegisterScheme(new CefCustomScheme
                 {
