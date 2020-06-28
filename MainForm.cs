@@ -39,6 +39,7 @@ namespace VRCX
             // Application.StartupPath + "/html/index.html"
             Browser = new ChromiumWebBrowser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/index.html"))
             {
+                DragHandler = new NoopDragHandler(),
                 BrowserSettings =
                 {
                     // UniversalAccessFromFileUrls = CefState.Enabled,

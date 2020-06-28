@@ -24,6 +24,7 @@ namespace VRCX
             // 
             Browser1 = new ChromiumWebBrowser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/vr.html?1"))
             {
+                DragHandler = new NoopDragHandler(),
                 BrowserSettings =
                 {
                     // UniversalAccessFromFileUrls = CefState.Enabled,
@@ -33,6 +34,7 @@ namespace VRCX
             };
             Browser2 = new ChromiumWebBrowser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/vr.html?2"))
             {
+                DragHandler = new NoopDragHandler(),
                 BrowserSettings =
                 {
                     // UniversalAccessFromFileUrls = CefState.Enabled,

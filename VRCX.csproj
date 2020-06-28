@@ -128,6 +128,7 @@
     <Compile Include="Discord.cs" />
     <Compile Include="CpuMonitor.cs" />
     <Compile Include="Browser.cs" />
+    <Compile Include="NoopDragHandler.cs" />
     <Compile Include="RenderHandler.cs" />
     <Compile Include="SQLite.cs" />
     <Compile Include="VRForm.cs">
