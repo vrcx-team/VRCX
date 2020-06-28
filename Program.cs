@@ -29,7 +29,8 @@ namespace VRCX
                 };
                 settings.CefCommandLineArgs.Add("ignore-certificate-errors");
                 // settings.CefCommandLineArgs.Add("no-proxy-server");
-                settings.CefCommandLineArgs.Add("disable-web-security");
+                // settings.CefCommandLineArgs.Add("disable-web-security");
+                settings.CefCommandLineArgs.Add("allow-universal-access-from-files");
                 settings.CefCommandLineArgs.Add("disable-extensions");
                 settings.CefCommandLineArgs.Add("disable-plugins");
                 settings.CefCommandLineArgs.Add("disable-pdf-extension");
