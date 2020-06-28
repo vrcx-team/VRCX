@@ -37,6 +37,7 @@ namespace VRCX
                 settings.CefCommandLineArgs.Add("disable-spell-checking");
                 settings.CefCommandLineArgs.Add("disable-gpu");
                 settings.CefCommandLineArgs.Add("disable-gpu-vsync");
+                settings.CefCommandLineArgs.Add("disable-webgl");
                 settings.DisableGpuAcceleration();
                 /*settings.RegisterScheme(new CefCustomScheme
                 {
