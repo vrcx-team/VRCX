@@ -230,8 +230,8 @@ namespace VRCX
                                 }
                             }
                         }
+                        F.Position = stream.Position;
                     }
-                    F.Position = stream.Position;
                 }
             }
             catch
