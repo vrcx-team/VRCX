@@ -5903,7 +5903,8 @@ CefSharp.BindObjectAsync(
         }
         if (this.isGameRunning &&
             this.lastLocation === L.tag) {
-            users.push(API.currentUser);
+            var ref = API.cachedUsers.get(API.currentUser.id);
+            users.push((ref === undefined) ? API.currentUser : ref);
         }
         users.sort(compareByDisplayName);
         D.users = users;
@@ -6402,7 +6403,8 @@ CefSharp.BindObjectAsync(
                     };
                     instances[instance.id] = instance;
                 }
-                instance.users.push(API.currentUser);
+                var ref = API.cachedUsers.get(API.currentUser.id);
+                instance.users.push((ref === undefined) ? API.currentUser : ref);
             }
         }
         var rooms = [];
