@@ -987,11 +987,12 @@ html
 
             //- dialog: bio
             el-dialog.x-dialog(ref="bioDialog" :visible.sync="bioDialog.visible" title="Bio" width="400px")
-                el-input(type="textarea" v-model="bioDialog.bio" size="mini" maxlength="512" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="Please input a bio")
-                el-input(v-for="(link, index) in bioDialog.bioLinks" :key="index" :value="link" v-model="bioDialog.bioLinks[index]" size="small" style="margin-top:5px")
-                    img(slot="prepend" :src="getFaviconUrl(link)" style="width:16px;height:16px")
-                    el-button(slot="append" icon="el-icon-delete" @click="bioDialog.bioLinks.splice(index, 1)")
-                el-button(@click="bioDialog.bioLinks.push('')" size="mini" style="margin-top:5px") Add Link
+                div(v-loading="bioDialog.loading")
+                    el-input(type="textarea" v-model="bioDialog.bio" size="mini" maxlength="512" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="Please input a bio")
+                    el-input(v-for="(link, index) in bioDialog.bioLinks" :key="index" :value="link" v-model="bioDialog.bioLinks[index]" size="small" style="margin-top:5px")
+                        img(slot="prepend" :src="getFaviconUrl(link)" style="width:16px;height:16px")
+                        el-button(slot="append" icon="el-icon-delete" @click="bioDialog.bioLinks.splice(index, 1)")
+                    el-button(@click="bioDialog.bioLinks.push('')" size="mini" style="margin-top:5px") Add Link
                 template(#footer)
                     el-button(type="primary" size="small" :disabled="bioDialog.loading" @click="saveBio") Update
 
