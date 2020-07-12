@@ -50,7 +50,7 @@ namespace VRCX
             return WinApi.FindWindow("UnityWndClass", "VRChat") != IntPtr.Zero;
         }
 
-        public void StartGame(string location, bool desktop)
+        public void StartGame(string arguments)
         {
             try
             {
@@ -61,21 +61,12 @@ namespace VRCX
                     if (match.Success)
                     {
                         var path = match.Groups[1].Value;
-                        var args = new StringBuilder();
-                        if (desktop)
-                        {
-                            args.Append("--no-vr ");
-                        }
-                        args.Append("--enable-debug-gui ");
-                        args.Append("\"vrchat://launch?id=");
-                        args.Append(location);
-                        args.Append('"');
                         Process.Start(new ProcessStartInfo
                         {
                             WorkingDirectory = path,
                             FileName = path + "\\VRChat.exe",
                             UseShellExecute = false,
-                            Arguments = args.ToString()
+                            Arguments = arguments
                         }).Close();
                     }
                 }

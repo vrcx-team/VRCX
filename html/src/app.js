@@ -6964,6 +6964,40 @@ CefSharp.BindObjectAsync(
         });
     };
 
+    // App: Launch Options
+
+    $app.data.launchArguments = VRCXStorage.Get('launchArguments');
+
+    // App: Launch Options Dialog
+
+    $app.data.launchOptionsDialog = {
+        visible: false,
+        arguments: ''
+    };
+
+    API.$on('LOGOUT', function () {
+        $app.launchOptionsDialog.visible = false;
+    });
+
+    $app.methods.updateLaunchOptions = function () {
+        var D = this.launchOptionsDialog;
+        D.visible = false;
+        var args = String(D.arguments).replace(/\s+/g, ' ').trim();
+        this.launchArguments = args;
+        VRCXStorage.Set('launchArguments', args);
+        this.$message({
+            message: 'updated',
+            type: 'success'
+        });
+    };
+
+    $app.methods.showLaunchOptions = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.launchOptionsDialog.$el));
+        var D = this.launchOptionsDialog;
+        D.arguments = this.launchArguments;
+        D.visible = true;
+    };
+
     // App: Launch Dialog
 
     $app.data.launchDialog = {
@@ -7000,9 +7034,19 @@ CefSharp.BindObjectAsync(
         D.visible = true;
     };
 
-    $app.methods.launchGame = function () {
+    $app.methods.locationToLaunchArg = function (location) {
+        return `"vrchat://launch?id=${location}"`;
+    }
+
+    $app.methods.launchGame = function (...args) {
         var D = this.launchDialog;
-        VRCX.StartGame(D.location, D.desktop);
+        if (this.launchArguments) {
+            args.push(this.launchArguments);
+        }
+        if (D.desktop === true) {
+            args.push('--no-vr');
+        }
+        VRCX.StartGame(args.join(' '));
         D.visible = false;
     };
 
