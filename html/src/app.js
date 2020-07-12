@@ -6559,6 +6559,12 @@ CefSharp.BindObjectAsync(
                         case 'Select Avatar':
                             API.selectAvatar({
                                 avatarId: D.id
+                            }).then((args) => {
+                                this.$message({
+                                    message: 'Avatar changed',
+                                    type: 'success'
+                                });
+                                return args;
                             });
                             break;
                         default:
