@@ -29,7 +29,7 @@
     "pug": "^3.0.0",
     "pug-loader": "^2.4.0",
     "resolve-url-loader": "^3.1.0",
-    "sass": "^1.26.9",
+    "sass": "^1.26.10",
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.11"
   },
