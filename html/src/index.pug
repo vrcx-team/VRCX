@@ -633,9 +633,9 @@ html
                                     el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
                                         template(v-if="userDialog.ref.id === API.currentUser.id")
-                                            el-dropdown-item(icon="el-icon-edit" command="Edit Social Status") Edit Social Status
-                                            el-dropdown-item(icon="el-icon-edit" command="Edit Language") Edit Language
-                                            el-dropdown-item(icon="el-icon-edit" command="Edit Bio") Edit Bio
+                                            el-dropdown-item(icon="el-icon-edit" command="Edit Social Status") Social Status
+                                            el-dropdown-item(icon="el-icon-edit" command="Edit Language") Language
+                                            el-dropdown-item(icon="el-icon-edit" command="Edit Bio") Bio
                                             el-dropdown-item(icon="el-icon-switch-button" command="Logout" divided) Logout
                                         template(v-else)
                                             template(v-if="userDialog.isFriend")
