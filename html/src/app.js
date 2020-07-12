@@ -4266,9 +4266,27 @@ CefSharp.BindObjectAsync(
                 });
             }
         }
-        if (props.currentAvatarThumbnailImageUrl) {
+        if (props.currentAvatarImageUrl ||
+            props.currentAvatarThumbnailImageUrl) {
             $app.addFeed('Avatar', ref, {
-                avatar: props.currentAvatarThumbnailImageUrl
+                avatar: [
+                    {
+                        currentAvatarImageUrl: props.currentAvatarImageUrl
+                            ? props.currentAvatarImageUrl[0]
+                            : ref.currentAvatarImageUrl,
+                        currentAvatarThumbnailImageUrl: props.currentAvatarThumbnailImageUrl
+                            ? props.currentAvatarThumbnailImageUrl[0]
+                            : ref.currentAvatarThumbnailImageUrl
+                    },
+                    {
+                        currentAvatarImageUrl: props.currentAvatarImageUrl
+                            ? props.currentAvatarImageUrl[1]
+                            : ref.currentAvatarImageUrl,
+                        currentAvatarThumbnailImageUrl: props.currentAvatarThumbnailImageUrl
+                            ? props.currentAvatarThumbnailImageUrl[1]
+                            : ref.currentAvatarThumbnailImageUrl
+                    }
+                ]
             });
         }
         if (props.status ||

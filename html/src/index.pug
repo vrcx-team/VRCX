@@ -76,14 +76,26 @@ html
                                 template(v-else-if="scope.row.type === 'Online'")
                                     location(:location="scope.row.location")
                                 template(v-else-if="scope.row.type === 'Avatar'")
-                                    el-popover(placement="right" width="500px" trigger="click")
-                                        img.x-link(slot="reference" v-lazy="scope.row.avatar[1]" style="flex:none;width:160px;height:120px;border-radius:4px")
-                                        img(v-lazy="scope.row.avatar[1]" style="width:500px;height:375px")
-                                    span(style="position:relative;top:-50px;margin:0 5px")
-                                        i.el-icon-right
-                                    el-popover(placement="right" width="500px" trigger="click")
-                                        img.x-link(slot="reference" v-lazy="scope.row.avatar[0]" style="flex:none;width:160px;height:120px;border-radius:4px")
-                                        img(v-lazy="scope.row.avatar[0]" style="width:500px;height:375px")
+                                    template(v-if="scope.row.avatar[0] === Object(scope.row.avatar[0])")
+                                        //- high resolution (v2) 2020.07.12~
+                                        el-popover(placement="right" width="500px" trigger="click")
+                                            img.x-link(slot="reference" v-lazy="scope.row.avatar[1].currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+                                            img(v-lazy="scope.row.avatar[1].currentAvatarImageUrl" style="width:500px;height:375px")
+                                        span(style="position:relative;top:-50px;margin:0 5px")
+                                            i.el-icon-right
+                                        el-popover(placement="right" width="500px" trigger="click")
+                                            img.x-link(slot="reference" v-lazy="scope.row.avatar[0].currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+                                            img(v-lazy="scope.row.avatar[0].currentAvatarImageUrl" style="width:500px;height:375px")
+                                    template(v-else)
+                                        //- legacy
+                                        el-popover(placement="right" width="500px" trigger="click")
+                                            img.x-link(slot="reference" v-lazy="scope.row.avatar[1]" style="flex:none;width:160px;height:120px;border-radius:4px")
+                                            img(v-lazy="scope.row.avatar[1]" style="width:500px;height:375px")
+                                        span(style="position:relative;top:-50px;margin:0 5px")
+                                            i.el-icon-right
+                                        el-popover(placement="right" width="500px" trigger="click")
+                                            img.x-link(slot="reference" v-lazy="scope.row.avatar[0]" style="flex:none;width:160px;height:120px;border-radius:4px")
+                                            img(v-lazy="scope.row.avatar[0]" style="width:500px;height:375px")
                                 template(v-else-if="scope.row.type === 'Status'")
                                     el-tooltip(placement="top")
                                         template(#content)
@@ -600,7 +612,7 @@ html
                     div(style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                            img(v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="width:500px;height:375px")
+                            img(v-lazy="userDialog.ref.currentAvatarImageUrl" style="width:500px;height:375px")
                         div(style="flex:1;display:flex;align-items:center;margin-left:15px")
                             div(style="flex:1")
                                 div
@@ -750,7 +762,7 @@ html
                     div(style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="worldDialog.ref.thumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                            img(v-lazy="worldDialog.ref.thumbnailImageUrl" style="width:500px;height:375px")
+                            img(v-lazy="worldDialog.ref.imageUrl" style="width:500px;height:375px")
                         div(style="flex:1;display:flex;align-items:center;margin-left:15px")
                             div(style="flex:1")
                                 div
@@ -857,7 +869,7 @@ html
                     div(style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="avatarDialog.ref.thumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                            img(v-lazy="avatarDialog.ref.thumbnailImageUrl" style="width:500px;height:375px")
+                            img(v-lazy="avatarDialog.ref.imageUrl" style="width:500px;height:375px")
                         div(style="flex:1;display:flex;align-items:center;margin-left:15px")
                             div(style="flex:1")
                                 div
