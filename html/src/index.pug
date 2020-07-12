@@ -106,12 +106,12 @@ html
                                             span(v-else) Offline
                                         i.x-user-status(:class="userStatusClass(scope.row.status[0])")
                                     span(v-text="scope.row.status[0].statusDescription")
-                    el-table-column(label="Time" prop="created_at" sortable="custom" width="100")
+                    el-table-column(label="Date" prop="created_at" sortable="custom" width="100")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
                                 template(#content)
                                     span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                span {{ scope.row.created_at | formatDate('HH24:MI') }}
+                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
                     el-table-column(label="Type" prop="type" width="80")
                     el-table-column(label="User" prop="displayName")
                         template(v-once #default="scope")
@@ -146,12 +146,12 @@ html
                         template(v-once #default="scope")
                             template(v-if="scope.row.type === 'Notification'")
                                 span(v-text="scope.row.data")
-                    el-table-column(label="Time" prop="created_at" sortable="custom" width="100")
+                    el-table-column(label="Date" prop="created_at" sortable="custom" width="100")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
                                 template(#content)
                                     span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                span {{ scope.row.created_at | formatDate('HH24:MI') }}
+                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
                     el-table-column(label="Type" prop="type" width="120")
                     el-table-column(label="Detail" prop="data")
                         template(v-once #default="scope")
