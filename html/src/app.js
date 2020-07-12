@@ -662,6 +662,63 @@ CefSharp.BindObjectAsync(
         }
     });
 
+    Vue.component('invite-yourself', {
+        template: '<el-button @click="confirm" size="mini" icon="el-icon-message" circle></el-button>',
+        props: {
+            location: String
+        },
+        methods: {
+            parse() {
+                var L = API.parseLocation(this.location);
+                this.$el.style.display = L.isOffline || L.isPrivate
+                    ? 'none'
+                    : '';
+            },
+            confirm() {
+                var L = API.parseLocation(this.location);
+                if (L.isOffline ||
+                    L.isPrivate ||
+                    L.worldId === '') {
+                    return;
+                }
+                API.getCachedWorld({
+                    worldId: L.worldId
+                }).then((args) => {
+                    var params = {
+                        receiverUserId: API.currentUser.id,
+                        type: 'invite',
+                        message: 'This is a generated invite',
+                        seen: false,
+                        details: {
+                            worldId: L.tag,
+                            worldName: args.ref.name
+                        }
+                    };
+                    if (API.currentUser.status === 'busy') {
+                        this.$message({
+                            message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
+                            type: 'error'
+                        });
+                        return;
+                    }
+                    API.sendNotification(params).finally(() => {
+                        this.$message({
+                            message: 'Invite sent to yourself',
+                            type: 'success'
+                        });
+                    });
+                });
+            }
+        },
+        watch: {
+            location() {
+                this.parse();
+            }
+        },
+        mounted() {
+            this.parse();
+        }
+    });
 
     Vue.component('location', {
         template: '<span @click="showWorldDialog" :class="{ \'x-link\': link }">{{ text }}<slot></slot></span>',
