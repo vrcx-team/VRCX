@@ -89,6 +89,10 @@
     margin-left: 5px;
 }
 
+.el-message-box__message p {
+    word-break: break-all;
+}
+
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
