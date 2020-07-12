@@ -397,45 +397,6 @@ html
                             .detail
                                 span.name(v-text="API.currentUser.displayName")
                                 span.extra(v-text="API.currentUser.username")
-                        .x-friend-item(@click="showSocialStatusDialog()")
-                            .detail
-                                span.name #[i.el-icon-edit] Social Status
-                                span.extra
-                                    el-tooltip(placement="top")
-                                        template(#content)
-                                            span(v-if="API.currentUser.status === 'active'") Online
-                                            span(v-else-if="API.currentUser.status === 'join me'") Join Me
-                                            span(v-else-if="API.currentUser.status === 'ask me'") Ask Me
-                                            span(v-else-if="API.currentUser.status === 'busy'") Do Not Disturb
-                                            span(v-else) Offline
-                                        i.x-user-status(:class="userStatusClass(API.currentUser)")
-                                    span(v-text="API.currentUser.statusDescription")
-                        .x-friend-item(@click="showBioDialog()")
-                            .detail
-                                span.name #[i.el-icon-edit] Bio
-                                pre.extra(style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0") {{ API.currentUser.bio || '-' }}
-                                div(style="margin-top:5px")
-                                    el-tooltip(v-for="(link, index) in API.currentUser.bioLinks" :key="index")
-                                        template(#content)
-                                            span(v-text="link")
-                                        img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px" @click.stop="openExternalLink(link)")
-                        .x-friend-item
-                            .detail
-                                span.name Languages
-                                span.extra
-                                    div(style="margin:5px 0")
-                                        el-tag(v-for="item in API.currentUser.$languages" :key="item.key" size="small" type="info" effect="plain" closable @close="removeUserLanguage(item.key)" style="margin-right:5px")
-                                            span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
-                                            | {{ item.value }} ({{ item.key }})
-                                    div(v-if="userLanguageVisible")
-                                        el-select(v-model="userLanguageSelected" size="mini")
-                                            el-option(v-for="item in userLanguages" :key="item.key" :value="item.key" :label="item.value")
-                                                span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
-                                                | {{ item.value }} ({{ item.key }})
-                                        el-button(@click="userLanguageVisible=0; addUserLanguage(userLanguageSelected)" size="mini") Ok
-                                        el-button(@click="userLanguageVisible=0" size="mini" style="margin-left:0") Cancel
-                                    div(v-else)
-                                        el-button(@click="userLanguageSelected='';userLanguageVisible=1" size="mini") Add Language
                         .x-friend-item
                             .detail
                                 span.name Last Login
@@ -444,12 +405,6 @@ html
                             .detail
                                 span.name Two-Factor Auth (2FA)
                                 span.extra {{ API.currentUser.twoFactorAuthEnabled ? 'Enabled' : 'Disabled' }}
-                        .x-friend-item(v-if="API.currentUser.homeLocation" @click="showWorldDialog(API.currentUser.homeLocation)")
-                            .detail
-                                span.name Home Location
-                                span.extra
-                                    location(:location="API.currentUser.homeLocation" :link="false")
-                                    el-button(@click.stop="resetHome()" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     div(style="margin-top:10px")
                         el-button-group
                             el-button(size="small" icon="el-icon-switch-button" @click="logout()") Logout
@@ -567,6 +522,17 @@ html
                                 img.avatar(v-lazy="item.ref.currentAvatarThumbnailImageUrl")
                             span(v-else) Search More: #[span(v-text="item.label" style="font-weight:bold")]
                 .x-friend-list(style="padding-bottom:10px")
+                    .x-friend-group
+                        i.el-icon-arrow-right(:class="{ rotate: isFriendsGroupMe }")
+                        span.x-link(@click="isFriendsGroupMe = !isFriendsGroupMe" style="margin-left:5px") ME
+                    div(v-show="isFriendsGroupMe")
+                        .x-friend-item(:key="API.currentUser.id" @click="showUserDialog(API.currentUser.id)")
+                            .avatar(:class="userStatusClass(API.currentUser)")
+                                img(v-lazy="API.currentUser.currentAvatarThumbnailImageUrl")
+                            .detail
+                                span.name(v-text="API.currentUser.displayName" :class="API.currentUser.$trustClass")
+                                location.extra(v-if="isGameRunning === true" :location="lastLocation" :link="false")
+                                span.extra(v-else v-text="API.currentUser.statusDescription" :link="false")
                     .x-friend-group(v-show="friendsGroup0.length")
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup0 }")
                         span.x-link(@click="isFriendsGroup0 = !isFriendsGroup0" style="margin-left:5px") VIP&horbar;{{ friendsGroup0.length }}
@@ -666,22 +632,28 @@ html
                                 el-dropdown(trigger="click" @command="userDialogCommand" size="small")
                                     el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
-                                        template(v-if="userDialog.isFriend")
-                                            el-dropdown-item(icon="el-icon-message" command="Message") Message
-                                        template(v-else-if="userDialog.incomingRequest")
-                                            el-dropdown-item(icon="el-icon-check" command="Accept Friend Request") Accept Friend Request
-                                            el-dropdown-item(icon="el-icon-close" command="Decline Friend Request") Decline Friend Request
-                                        el-dropdown-item(v-else-if="userDialog.outgoingRequest" icon="el-icon-close" command="Cancel Friend Request") Cancel Friend Request
-                                        el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") Send Friend Request
-                                        el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) Show Avatar Author
-                                        el-dropdown-item(v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided style="color:#F56C6C") Unblock
-                                        el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided) Block
-                                        el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") Unmute
-                                        el-dropdown-item(v-else icon="el-icon-turn-off-microphone" command="Mute") Mute
-                                        el-dropdown-item(v-if="userDialog.isHideAvatar" icon="el-icon-user-solid" command="Show Avatar" style="color:#F56C6C") Show Avatar
-                                        el-dropdown-item(v-else icon="el-icon-user" command="Hide Avatar") Hide Avatar
-                                        template(v-if="userDialog.isFriend")
-                                            el-dropdown-item(icon="el-icon-delete" command="Unfriend" divided) Unfriend
+                                        template(v-if="userDialog.ref.id === API.currentUser.id")
+                                            el-dropdown-item(icon="el-icon-edit" command="Edit Social Status") Edit Social Status
+                                            el-dropdown-item(icon="el-icon-edit" command="Edit Language") Edit Language
+                                            el-dropdown-item(icon="el-icon-edit" command="Edit Bio") Edit Bio
+                                            el-dropdown-item(icon="el-icon-switch-button" command="Logout" divided) Logout
+                                        template(v-else)
+                                            template(v-if="userDialog.isFriend")
+                                                el-dropdown-item(icon="el-icon-message" command="Message") Message
+                                            template(v-else-if="userDialog.incomingRequest")
+                                                el-dropdown-item(icon="el-icon-check" command="Accept Friend Request") Accept Friend Request
+                                                el-dropdown-item(icon="el-icon-close" command="Decline Friend Request") Decline Friend Request
+                                            el-dropdown-item(v-else-if="userDialog.outgoingRequest" icon="el-icon-close" command="Cancel Friend Request") Cancel Friend Request
+                                            el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") Send Friend Request
+                                            el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) Show Avatar Author
+                                            el-dropdown-item(v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided style="color:#F56C6C") Unblock
+                                            el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided) Block
+                                            el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") Unmute
+                                            el-dropdown-item(v-else icon="el-icon-turn-off-microphone" command="Mute") Mute
+                                            el-dropdown-item(v-if="userDialog.isHideAvatar" icon="el-icon-user-solid" command="Show Avatar" style="color:#F56C6C") Show Avatar
+                                            el-dropdown-item(v-else icon="el-icon-user" command="Hide Avatar") Hide Avatar
+                                            template(v-if="userDialog.isFriend")
+                                                el-dropdown-item(icon="el-icon-delete" command="Unfriend" divided) Unfriend
                     el-tabs
                         el-tab-pane(label="Info")
                             div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee")
@@ -733,6 +705,12 @@ html
                                     .detail
                                         span.name Last Platform
                                         span.extra(v-text="userDialog.ref.last_platform")
+                                .x-friend-item(v-if="userDialog.ref.id === API.currentUser.id && API.currentUser.homeLocation" @click="showWorldDialog(API.currentUser.homeLocation)" style="width:100%")
+                                    .detail
+                                        span.name Home Location
+                                        span.extra
+                                            location(:location="API.currentUser.homeLocation" :link="false")
+                                            el-button(@click.stop="resetHome()" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                         el-tab-pane(label="Worlds")
                             el-button(type="default" :loading="userDialog.isWorldsLoading" @click="refreshUserDialogWorlds()" size="mini" icon="el-icon-refresh" circle)
                             span(style="margin-left:5px") Total {{ userDialog.worlds.length }}
@@ -974,24 +952,38 @@ html
 
             //- dialog: social status
             el-dialog.x-dialog(ref="socialStatusDialog" :visible.sync="socialStatusDialog.visible" title="Social Status" width="400px")
-                el-row(v-loading="socialStatusDialog.loading")
-                    el-col(:span="9")
-                        el-select(v-model="socialStatusDialog.status")
-                            el-option(label="Online" value="active").
-                                #[i.x-user-status.active] Online
-                            el-option(label="Join Me" value="join me").
-                                #[i.x-user-status.joinme] Join Me
-                            el-option(label="Ask Me" value="ask me").
-                                #[i.x-user-status.askme] Ask Me
-                            el-option(label="Do Not Disturb" value="busy").
-                                #[i.x-user-status.busy] Do Not Disturb
-                            el-option(label="Offline" value="offline").
-                                #[i.x-user-status.offline] Offline
-                    el-col(:span="1") &nbsp;
-                    el-col(:span="14")
-                        el-input(v-model="socialStatusDialog.statusDescription" placeholder="Status")
+                div(v-loading="socialStatusDialog.loading")
+                    el-select(v-model="socialStatusDialog.status" style="dispaly:block")
+                        el-option(label="Online" value="active").
+                            #[i.x-user-status.active] Online
+                        el-option(label="Join Me" value="join me").
+                            #[i.x-user-status.joinme] Join Me
+                        el-option(label="Ask Me" value="ask me").
+                            #[i.x-user-status.askme] Ask Me
+                        el-option(label="Do Not Disturb" value="busy").
+                            #[i.x-user-status.busy] Do Not Disturb
+                        el-option(label="Offline" value="offline").
+                            #[i.x-user-status.offline] Offline
+                    el-input(v-model="socialStatusDialog.statusDescription" placeholder="Status" style="dispaly:block;margin-top:10px")
                 template(#footer)
                     el-button(type="primary" size="small" :disabled="socialStatusDialog.loading" @click="saveSocialStatus") Update
+
+            //- dialog: language
+            el-dialog.x-dialog(ref="languageDialog" :visible.sync="languageDialog.visible" title="Language" width="400px")
+                div(v-loading="languageDialog.loading")
+                    div(style="margin:5px 0")
+                        el-tag(v-for="item in API.currentUser.$languages" :key="item.key" size="small" type="info" effect="plain" closable @close="removeUserLanguage(item.key)" style="margin-right:5px")
+                            span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
+                            | {{ item.value }} ({{ item.key }})
+                    div(v-if="languageDialog.languageChoice === true")
+                        el-select(v-model="languageDialog.languageValue" size="mini")
+                            el-option(v-for="item in languageDialog.languages" :key="item.key" :value="item.key" :label="item.value")
+                                span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
+                                | {{ item.value }} ({{ item.key }})
+                        el-button(@click="languageDialog.languageChoice=false; addUserLanguage(languageDialog.languageValue)" size="mini") Ok
+                        el-button(@click="languageDialog.languageChoice=false" size="mini" style="margin-left:0") Cancel
+                    div(v-else)
+                        el-button(@click="languageDialog.languageValue='';languageDialog.languageChoice=true" size="mini") Add Language
 
             //- dialog: bio
             el-dialog.x-dialog(ref="bioDialog" :visible.sync="bioDialog.visible" title="Bio" width="400px")

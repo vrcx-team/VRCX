@@ -812,7 +812,27 @@ CefSharp.BindObjectAsync(
     });
 
     API.$on('USER:CURRENT', function (args) {
-        args.ref = this.applyCurrentUser(args.json);
+        var { json } = args;
+        args.ref = this.applyCurrentUser(json);
+        this.applyUser({
+            id: json.id,
+            username: json.username,
+            displayName: json.displayName,
+            bio: json.bio,
+            bioLinks: json.bioLinks,
+            currentAvatarImageUrl: json.currentAvatarImageUrl,
+            currentAvatarThumbnailImageUrl: json.currentAvatarThumbnailImageUrl,
+            status: json.status,
+            statusDescription: json.statusDescription,
+            state: json.state,
+            tags: json.tags,
+            developerType: json.developerType,
+            last_login: json.last_login,
+            last_platform: json.last_platform,
+            allowAvatarCopying: json.allowAvatarCopying,
+            isFriend: false,
+            location: ($app.isGameRunning === true) ? $app.lastLocation : ''
+        });
     });
 
     API.$on('USER:CURRENT:SAVE', function (args) {
@@ -1094,6 +1114,14 @@ CefSharp.BindObjectAsync(
 
     API.applyUser = function (json) {
         var ref = this.cachedUsers.get(json.id);
+        // adjust some missing variables
+        if (json.id === API.currentUser.id) {
+            json.status = API.currentUser.status;
+            json.statusDescription = API.currentUser.statusDescription;
+            json.state = API.currentUser.state;
+            json.last_login = API.currentUser.last_login;
+            json.location = ($app.isGameRunning === true) ? $app.lastLocation : '';
+        }
         if (ref === undefined) {
             ref = {
                 id: '',
@@ -3615,6 +3643,7 @@ CefSharp.BindObjectAsync(
     $app.data.friends = new Map();
     $app.data.pendingActiveFriends = new Set();
     $app.data.friendsNo = 0;
+    $app.data.isFriendsGroupMe = true;
     $app.data.isFriendsGroup0 = true;
     $app.data.isFriendsGroup1 = true;
     $app.data.isFriendsGroup2 = true;
@@ -4443,6 +4472,16 @@ CefSharp.BindObjectAsync(
     };
 
     $app.methods.updateDiscord = function () {
+        var ref = API.cachedUsers.get(API.currentUser.id);
+        if (ref !== undefined) {
+            var myLocation = (this.isGameRunning === true) ? this.lastLocation : '';
+            if (ref.location !== myLocation) {
+                API.applyUser({
+                    id: ref.id,
+                    location: myLocation
+                });
+            }
+        }
         if (this.isGameRunning === false ||
             this.lastLocation === '') {
             Discord.SetActive(false);
@@ -5367,19 +5406,6 @@ CefSharp.BindObjectAsync(
 
     // App: More
 
-    $app.data.userLanguageVisible = 0;
-    $app.data.userLanguageSelected = '';
-    $app.data.userLanguages = (function () {
-        var data = [];
-        for (var key in subsetOfLanguages) {
-            var value = subsetOfLanguages[key];
-            data.push({
-                key,
-                value
-            });
-        }
-        return data;
-    }());
     $app.data.currentUserTreeData = [];
     $app.data.pastDisplayNameTable = {
         data: [],
@@ -5445,24 +5471,6 @@ CefSharp.BindObjectAsync(
     API.$on('VISITS', function (args) {
         $app.visits = args.json;
     });
-
-    $app.methods.addUserLanguage = function (language) {
-        if (language !== String(language)) {
-            return;
-        }
-        API.addUserTags({
-            tags: [`language_${language}`]
-        });
-    };
-
-    $app.methods.removeUserLanguage = function (language) {
-        if (language !== String(language)) {
-            return;
-        }
-        API.removeUserTags({
-            tags: [`language_${language}`]
-        });
-    };
 
     $app.methods.logout = function () {
         this.$confirm('Continue? Logout', 'Confirm', {
@@ -6118,6 +6126,14 @@ CefSharp.BindObjectAsync(
         }
         if (command === 'Add Favorite') {
             this.showFavoriteDialog('friend', D.id);
+        } else if (command === 'Edit Social Status') {
+            this.showSocialStatusDialog();
+        } else if (command === 'Edit Language') {
+            this.showLanguageDialog();
+        } else if (command === 'Edit Bio') {
+            this.showBioDialog();
+        } else if (command === 'Logout') {
+            this.logout();
         } else if (command === 'Message') {
             this.$prompt('Enter a message', 'Send Message', {
                 distinguishCancelAndClose: true,
@@ -6819,6 +6835,62 @@ CefSharp.BindObjectAsync(
         var D = this.socialStatusDialog;
         D.status = API.currentUser.status;
         D.statusDescription = API.currentUser.statusDescription;
+        D.visible = true;
+    };
+
+    // App: Language Dialog
+
+    $app.data.languageDialog = {
+        visible: false,
+        loading: false,
+        languageChoice: false,
+        languageValue: '',
+        languages: (function () {
+            var data = [];
+            for (var key in subsetOfLanguages) {
+                var value = subsetOfLanguages[key];
+                data.push({
+                    key,
+                    value
+                });
+            }
+            return data;
+        }())
+    };
+
+    API.$on('LOGOUT', function () {
+        $app.languageDialog.visible = false;
+    });
+
+    $app.methods.addUserLanguage = function (language) {
+        if (language !== String(language)) {
+            return;
+        }
+        var D = this.languageDialog;
+        D.loading = true;
+        API.addUserTags({
+            tags: [`language_${language}`]
+        }).finally(function () {
+            D.loading = false;
+        });
+    };
+
+    $app.methods.removeUserLanguage = function (language) {
+        if (language !== String(language)) {
+            return;
+        }
+        var D = this.languageDialog;
+        D.loading = true;
+        API.removeUserTags({
+            tags: [`language_${language}`]
+        }).finally(function () {
+            D.loading = false;
+        });
+    };
+
+    $app.methods.showLanguageDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.languageDialog.$el));
+        var D = this.languageDialog;
         D.visible = true;
     };
 
