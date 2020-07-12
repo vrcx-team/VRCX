@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\CefSharp.WinForms.81.3.100\build\CefSharp.WinForms.props" Condition="Exists('packages\CefSharp.WinForms.81.3.100\build\CefSharp.WinForms.props')" />
-  <Import Project="packages\CefSharp.OffScreen.81.3.100\build\CefSharp.OffScreen.props" Condition="Exists('packages\CefSharp.OffScreen.81.3.100\build\CefSharp.OffScreen.props')" />
-  <Import Project="packages\CefSharp.Common.81.3.100\build\CefSharp.Common.props" Condition="Exists('packages\CefSharp.Common.81.3.100\build\CefSharp.Common.props')" />
-  <Import Project="packages\cef.redist.x86.81.3.10\build\cef.redist.x86.props" Condition="Exists('packages\cef.redist.x86.81.3.10\build\cef.redist.x86.props')" />
-  <Import Project="packages\cef.redist.x64.81.3.10\build\cef.redist.x64.props" Condition="Exists('packages\cef.redist.x64.81.3.10\build\cef.redist.x64.props')" />
+  <Import Project="packages\CefSharp.WinForms.83.4.20\build\CefSharp.WinForms.props" Condition="Exists('packages\CefSharp.WinForms.83.4.20\build\CefSharp.WinForms.props')" />
+  <Import Project="packages\CefSharp.OffScreen.83.4.20\build\CefSharp.OffScreen.props" Condition="Exists('packages\CefSharp.OffScreen.83.4.20\build\CefSharp.OffScreen.props')" />
+  <Import Project="packages\CefSharp.Common.83.4.20\build\CefSharp.Common.props" Condition="Exists('packages\CefSharp.Common.83.4.20\build\CefSharp.Common.props')" />
+  <Import Project="packages\cef.redist.x86.83.4.2\build\cef.redist.x86.props" Condition="Exists('packages\cef.redist.x86.83.4.2\build\cef.redist.x86.props')" />
+  <Import Project="packages\cef.redist.x64.83.4.2\build\cef.redist.x64.props" Condition="Exists('packages\cef.redist.x64.83.4.2\build\cef.redist.x64.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -202,18 +202,18 @@
     <PropertyGroup>
       <ErrorText>이 프로젝트는 이 컴퓨터에 없는 NuGet 패키지를 참조합니다. 해당 패키지를 다운로드하려면 NuGet 패키지 복원을 사용하십시오. 자세한 내용은 http://go.microsoft.com/fwlink/?LinkID=322105를 참조하십시오. 누락된 파일은 {0}입니다.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\cef.redist.x64.81.3.10\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\cef.redist.x64.81.3.10\build\cef.redist.x64.props'))" />
-    <Error Condition="!Exists('packages\cef.redist.x86.81.3.10\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\cef.redist.x86.81.3.10\build\cef.redist.x86.props'))" />
-    <Error Condition="!Exists('packages\CefSharp.Common.81.3.100\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.81.3.100\build\CefSharp.Common.props'))" />
-    <Error Condition="!Exists('packages\CefSharp.Common.81.3.100\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.81.3.100\build\CefSharp.Common.targets'))" />
-    <Error Condition="!Exists('packages\CefSharp.OffScreen.81.3.100\build\CefSharp.OffScreen.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.OffScreen.81.3.100\build\CefSharp.OffScreen.props'))" />
-    <Error Condition="!Exists('packages\CefSharp.OffScreen.81.3.100\build\CefSharp.OffScreen.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.OffScreen.81.3.100\build\CefSharp.OffScreen.targets'))" />
-    <Error Condition="!Exists('packages\CefSharp.WinForms.81.3.100\build\CefSharp.WinForms.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.WinForms.81.3.100\build\CefSharp.WinForms.props'))" />
-    <Error Condition="!Exists('packages\CefSharp.WinForms.81.3.100\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.WinForms.81.3.100\build\CefSharp.WinForms.targets'))" />
     <Error Condition="!Exists('packages\System.Data.SQLite.Core.1.0.113.1\build\net451\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\System.Data.SQLite.Core.1.0.113.1\build\net451\System.Data.SQLite.Core.targets'))" />
+    <Error Condition="!Exists('packages\cef.redist.x64.83.4.2\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\cef.redist.x64.83.4.2\build\cef.redist.x64.props'))" />
+    <Error Condition="!Exists('packages\cef.redist.x86.83.4.2\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\cef.redist.x86.83.4.2\build\cef.redist.x86.props'))" />
+    <Error Condition="!Exists('packages\CefSharp.Common.83.4.20\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.83.4.20\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('packages\CefSharp.Common.83.4.20\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.Common.83.4.20\build\CefSharp.Common.targets'))" />
+    <Error Condition="!Exists('packages\CefSharp.OffScreen.83.4.20\build\CefSharp.OffScreen.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.OffScreen.83.4.20\build\CefSharp.OffScreen.props'))" />
+    <Error Condition="!Exists('packages\CefSharp.OffScreen.83.4.20\build\CefSharp.OffScreen.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.OffScreen.83.4.20\build\CefSharp.OffScreen.targets'))" />
+    <Error Condition="!Exists('packages\CefSharp.WinForms.83.4.20\build\CefSharp.WinForms.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.WinForms.83.4.20\build\CefSharp.WinForms.props'))" />
+    <Error Condition="!Exists('packages\CefSharp.WinForms.83.4.20\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.WinForms.83.4.20\build\CefSharp.WinForms.targets'))" />
   </Target>
-  <Import Project="packages\CefSharp.Common.81.3.100\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.81.3.100\build\CefSharp.Common.targets')" />
-  <Import Project="packages\CefSharp.OffScreen.81.3.100\build\CefSharp.OffScreen.targets" Condition="Exists('packages\CefSharp.OffScreen.81.3.100\build\CefSharp.OffScreen.targets')" />
-  <Import Project="packages\CefSharp.WinForms.81.3.100\build\CefSharp.WinForms.targets" Condition="Exists('packages\CefSharp.WinForms.81.3.100\build\CefSharp.WinForms.targets')" />
   <Import Project="packages\System.Data.SQLite.Core.1.0.113.1\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('packages\System.Data.SQLite.Core.1.0.113.1\build\net451\System.Data.SQLite.Core.targets')" />
+  <Import Project="packages\CefSharp.Common.83.4.20\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.83.4.20\build\CefSharp.Common.targets')" />
+  <Import Project="packages\CefSharp.OffScreen.83.4.20\build\CefSharp.OffScreen.targets" Condition="Exists('packages\CefSharp.OffScreen.83.4.20\build\CefSharp.OffScreen.targets')" />
+  <Import Project="packages\CefSharp.WinForms.83.4.20\build\CefSharp.WinForms.targets" Condition="Exists('packages\CefSharp.WinForms.83.4.20\build\CefSharp.WinForms.targets')" />
 </Project>
