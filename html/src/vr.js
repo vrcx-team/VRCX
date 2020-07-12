@@ -149,8 +149,6 @@ CefSharp.BindObjectAsync(
     };
     Vue.filter('timeToText', timeToText);
 
-    ELEMENT.locale(ELEMENT.lang.en);
-
     //
     // API
     //
