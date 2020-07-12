@@ -378,16 +378,30 @@ html
                             .detail
                                 span.name Repository URL
                                 span.extra https://github.com/pypy-vrc/VRCX
-                div(style="margin-top:5px")
-                    el-button-group
-                        el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") VRChat Launch Options
                 div(style="margin-top:30px")
-                    span(style="font-weight:bold") Direct Access
+                    span(style="font-weight:bold") Game Info
+                    .x-friend-list(style="margin-top:10px")
+                        .x-friend-item
+                            .detail(@click="API.getVisits()")
+                                span.name Online Users
+                                span.extra(v-if="visits") {{visits}} users online.
+                                span.extra(v-else) Click to refresh
+                        .x-friend-item
+                            .detail
+                                span.name SDK Unity Version
+                                span.extra(v-text="API.cachedConfig.sdkUnityVersion")
+                        .template(v-if="API.cachedConfig.downloadUrls")
+                            .x-friend-item
+                                .detail
+                                    span.name VRCSDK2 URL
+                                    span.extra(v-text="API.cachedConfig.downloadUrls.sdk2" @click="openExternalLink(API.cachedConfig.downloadUrls.sdk2)")
+                            .x-friend-item
+                                .detail
+                                    span.name VRCSDK3 URL
+                                    span.extra(v-text="API.cachedConfig.downloadUrls.sdk3" @click="openExternalLink(API.cachedConfig.downloadUrls.sdk3)")
                     div(style="margin-top:5px")
                         el-button-group
-                            el-button(size="small" @click="promptUserDialog()") User
-                            el-button(size="small" @click="promptWorldDialog()") World
-                            el-button(size="small" @click="promptAvatarDialog()") Avatar
+                            el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
                 div(style="margin-top:30px")
                     span(style="font-weight:bold") My Profile
                     .x-friend-list(style="margin-top:10px")
@@ -425,26 +439,12 @@ html
                                     span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
                                     span(v-if="!scope.data.children" v-text="scope.data.value")
                 div(style="margin-top:30px")
-                    span(style="font-weight:bold") Game Info
-                    .x-friend-list(style="margin-top:10px")
-                        .x-friend-item
-                            .detail(@click="API.getVisits()")
-                                span.name Online Users
-                                span.extra(v-if="visits") {{visits}} users online.
-                                span.extra(v-else) Click to refresh
-                        .x-friend-item
-                            .detail
-                                span.name SDK Unity Version
-                                span.extra(v-text="API.cachedConfig.sdkUnityVersion")
-                        .template(v-if="API.cachedConfig.downloadUrls")
-                            .x-friend-item
-                                .detail
-                                    span.name VRCSDK2 URL
-                                    span.extra(v-text="API.cachedConfig.downloadUrls.sdk2")
-                            .x-friend-item
-                                .detail
-                                    span.name VRCSDK3 URL
-                                    span.extra(v-text="API.cachedConfig.downloadUrls.sdk3")
+                    span(style="font-weight:bold") Direct Access
+                    div(style="margin-top:5px")
+                        el-button-group
+                            el-button(size="small" @click="promptUserDialog()") User
+                            el-button(size="small" @click="promptWorldDialog()") World
+                            el-button(size="small" @click="promptAvatarDialog()") Avatar
                 div(style="margin-top:30px")
                     span(style="font-weight:bold") Friends Sort Option
                     div(style="font-size:12px;margin-top:5px")
