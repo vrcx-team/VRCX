@@ -59,28 +59,38 @@ html
                                 img(v-if="device[1] !== 'connected'" src="images/tracker_status_off.png" style="width:32px;height:32px")
                                 img(v-else-if="device[2] < 20" src="images/tracker_status_ready_low.png" style="width:32px;height:32px")
                                 img(v-else src="images/tracker_status_ready.png" style="width:32px;height:32px")
+                                br
+                                span {{ device[2] }}%
                             template(v-else-if="device[0] === 'leftController'")
                                 img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" style="width:32px;height:32px")
                                 img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" style="width:32px;height:32px")
                                 img(v-else src="images/controller_status_ready.png" style="width:32px;height:32px")
+                                br
+                                span L:{{ device[2] }}%
                             template(v-else-if="device[0] === 'rightController'")
                                 img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" style="width:32px;height:32px")
                                 img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" style="width:32px;height:32px")
                                 img(v-else src="images/controller_status_ready.png" style="width:32px;height:32px")
+                                br
+                                span R:{{ device[2] }}%
                             template(v-else-if="device[0] === 'controller'")
                                 img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" style="width:32px;height:32px")
                                 img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" style="width:32px;height:32px")
                                 img(v-else src="images/controller_status_ready.png" style="width:32px;height:32px")
+                                br
+                                span {{ device[2] }}%
                             template(v-else-if="device[0] === 'base'")
                                 img(v-if="device[1] !== 'connected'" src="images/base_status_off.png" style="width:32px;height:32px")
                                 img(v-else-if="device[2] < 20" src="images/base_status_ready_low.png" style="width:32px;height:32px")
                                 img(v-else src="images/base_status_ready.png" style="width:32px;height:32px")
+                                br
+                                span {{ device[2] }}%
                             template(v-else)
                                 img(v-if="device[1] !== 'connected'" src="images/other_status_off.png" style="width:32px;height:32px")
                                 img(v-else-if="device[2] < 20" src="images/other_status_ready_low.png" style="width:32px;height:32px")
                                 img(v-else src="images/other_status_ready.png" style="width:32px;height:32px")
-                            br
-                            span {{ device[2] }}%
+                                br
+                                span {{ device[2] }}%
                     div(v-else)
                         span No SteamVR Devices
             .x-container
