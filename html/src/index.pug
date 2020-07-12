@@ -444,14 +444,6 @@ html
                             .detail
                                 span.name Two-Factor Auth (2FA)
                                 span.extra {{ API.currentUser.twoFactorAuthEnabled ? 'Enabled' : 'Disabled' }}
-                        .x-friend-item(@click="showUserDialog(API.currentUser.id)")
-                            .detail
-                                span.name User ID
-                                span.extra(v-text="API.currentUser.id")
-                        .x-friend-item(@click="showAvatarDialog(API.currentUser.currentAvatar)")
-                            .detail
-                                span.name Avatar ID
-                                span.extra(v-text="API.currentUser.currentAvatar")
                         .x-friend-item(v-if="API.currentUser.homeLocation" @click="showWorldDialog(API.currentUser.homeLocation)")
                             .detail
                                 span.name Home Location
