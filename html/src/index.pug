@@ -691,7 +691,6 @@ html
                         el-tab-pane(label="Info")
                             div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee")
                                 div(style="flex:none")
-                                    i.el-icon-position
                                     location(:location="userDialog.ref.location")
                                         template(#default v-if="userDialog.instance.occupants") ({{ userDialog.instance.occupants }})
                                     launch(:location="userDialog.ref.location" style="margin-left:5px")
@@ -809,7 +808,6 @@ html
                                 #[i.el-icon-check(style="margin-left:10px")] Capacity {{ worldDialog.ref.capacity | commaNumber }}
                             div(v-for="room in worldDialog.rooms" :key="room.id")
                                 div(style="margin:5px 0")
-                                    i.el-icon-position
                                     span.x-link(@click="showLaunchDialog(room.$location.tag)").
                                         \#{{ room.$location.instanceName }} {{ room.$location.accessType }} #[template(v-if="room.occupants") ({{ room.occupants }})]
                                 .x-friend-list(style="margin:10px 0" v-if="room.$location.userId || room.users.length")
