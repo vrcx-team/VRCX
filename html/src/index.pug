@@ -904,6 +904,9 @@ html
                                     el-button(type="default" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-check" command="Select Avatar") Select Avatar
+                                        template(v-if="avatarDialog.ref.authorId === API.currentUser.id")
+                                            el-dropdown-item(v-if="avatarDialog.ref.releaseStatus === 'public'" icon="el-icon-user-solid" command="Make Private" divided) Make Private
+                                            el-dropdown-item(v-else icon="el-icon-user" command="Make Public" divided) Make Public
                     el-tabs
                         el-tab-pane(label="Info")
                             .x-friend-list

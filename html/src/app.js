@@ -1640,6 +1640,16 @@ CefSharp.BindObjectAsync(
         }
     });
 
+    API.$on('AVATAR:SAVE', function (args) {
+        var { json } = args;
+        this.$emit('AVATAR', {
+            json,
+            params: {
+                avatarId: json.id
+            }
+        });
+    });
+
     API.$on('AVATAR:SELECT', function (args) {
         this.$emit('USER:CURRENT', args);
     });
@@ -1736,6 +1746,26 @@ CefSharp.BindObjectAsync(
                 params
             };
             this.$emit('AVATAR:LIST', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            id: string
+            releaseStatus: string ('public','private'),
+        }
+    */
+    API.saveAvatar = function (params) {
+        return this.call(`avatars/${params.id}`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('AVATAR:SAVE', args);
             return args;
         });
     };
@@ -6566,6 +6596,30 @@ CefSharp.BindObjectAsync(
                                 });
                                 return args;
                             });
+                            break;
+                        case 'Make Public':
+                            API.saveAvatar({
+                                id: D.id,
+                                releaseStatus: 'public'
+                            }).then((args) => {
+                                this.$message({
+                                    message: 'Avatar updated to public',
+                                    type: 'success'
+                                });
+                                return args;
+                            });;
+                            break;
+                        case 'Make Private':
+                            API.saveAvatar({
+                                id: D.id,
+                                releaseStatus: 'private'
+                            }).then((args) => {
+                                this.$message({
+                                    message: 'Avatar updated to private',
+                                    type: 'success'
+                                });
+                                return args;
+                            });;
                             break;
                         default:
                             break;
