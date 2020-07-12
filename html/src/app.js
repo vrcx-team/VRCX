@@ -91,12 +91,10 @@ CefSharp.BindObjectAsync(
     }, 5 * 60 * 1000);
 
     Noty.overrideDefaults({
-        /*
         animation: {
-            open: 'animated bounceInLeft',
-            close: 'animated bounceOutLeft'
+            open: 'animate__animated animate__bounceInLeft',
+            close: 'animate__animated animate__bounceOutLeft'
         },
-        */
         layout: 'bottomLeft',
         theme: 'mint',
         timeout: 6000

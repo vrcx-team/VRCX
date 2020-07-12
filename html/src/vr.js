@@ -74,8 +74,8 @@ CefSharp.BindObjectAsync(
 
     Noty.overrideDefaults({
         animation: {
-            open: 'animated fadeIn',
-            close: 'animated zoomOut'
+            open: 'animate__animated animate__fadeIn',
+            close: 'animate__animated animate__zoomOut'
         },
         layout: 'topCenter',
         theme: 'relax',
