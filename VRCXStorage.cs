@@ -3,9 +3,10 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace VRCX
 {
@@ -14,6 +15,7 @@ namespace VRCX
         public static VRCXStorage Instance { get; private set; }
         private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
         private static Dictionary<string, string> m_Storage = new Dictionary<string, string>();
+        private static string m_JsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "VRCX.json");
         private static bool m_Dirty;
 
         static VRCXStorage()
@@ -26,7 +28,7 @@ namespace VRCX
             m_Lock.EnterWriteLock();
             try
             {
-                JsonSerializer.Deserialize(Application.StartupPath + "/VRCX.json", ref m_Storage);
+                JsonSerializer.Deserialize(m_JsonPath, ref m_Storage);
                 m_Dirty = false;
             }
             finally
@@ -42,7 +44,7 @@ namespace VRCX
             {
                 if (m_Dirty)
                 {
-                    JsonSerializer.Serialize(Application.StartupPath + "/VRCX.json", m_Storage);
+                    JsonSerializer.Serialize(m_JsonPath, m_Storage);
                     m_Dirty = false;
                 }
             }

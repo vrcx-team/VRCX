@@ -10,6 +10,7 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -65,8 +66,8 @@ namespace VRCX
                 BindFlags = BindFlags.ShaderResource,
                 CpuAccessFlags = CpuAccessFlags.Write
             });
-            m_Browser1 = new Browser(m_Texture1, Application.StartupPath + "/html/vr.html?1");
-            m_Browser2 = new Browser(m_Texture2, Application.StartupPath + "/html/vr.html?2");
+            m_Browser1 = new Browser(m_Texture1, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/vr.html?1"));
+            m_Browser2 = new Browser(m_Texture2, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/vr.html?2"));
             m_Thread = new Thread(() =>
             {
                 var active = false;
