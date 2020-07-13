@@ -183,7 +183,7 @@ namespace VRCX
                                             {
                                                 time,
                                                 "Location",
-                                                F.Tag,
+                                                F.Tag ?? string.Empty,
                                                 data
                                             });
                                         }
