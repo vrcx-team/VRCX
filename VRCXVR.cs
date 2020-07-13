@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 using Valve.VR;
 using Device = SharpDX.Direct3D11.Device;
 
