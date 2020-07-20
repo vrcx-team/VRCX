@@ -4,6 +4,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using DiscordRPC;
+using System.Text;
 using System.Threading;
 
 namespace VRCX
@@ -88,13 +89,27 @@ namespace VRCX
             m_Active = active;
         }
 
+        // https://stackoverflow.com/questions/1225052/best-way-to-shorten-utf8-string-based-on-byte-length
+        private static string LimitByteLength(string str, int maxBytesLength)
+        {
+            var bytesArr = Encoding.UTF8.GetBytes(str);
+            int bytesToRemove = 0;
+            int lastIndexInString = str.Length - 1;
+            while (bytesArr.Length - bytesToRemove > maxBytesLength)
+            {
+                bytesToRemove += Encoding.UTF8.GetByteCount(new char[] { str[lastIndexInString] });
+                --lastIndexInString;
+            }
+            return Encoding.UTF8.GetString(bytesArr, 0, bytesArr.Length - bytesToRemove);
+        }
+
         public void SetText(string details, string state)
         {
             m_Lock.EnterWriteLock();
             try
             {
-                m_Presence.Details = details;
-                m_Presence.State = state;
+                m_Presence.Details = LimitByteLength(details, 127);
+                m_Presence.State = LimitByteLength(state, 127);
             }
             finally
             {
