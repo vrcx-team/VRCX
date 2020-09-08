@@ -5422,6 +5422,7 @@ CefSharp.BindObjectAsync(
 
     // App: More
 
+    $app.data.configTreeData = [];
     $app.data.currentUserTreeData = [];
     $app.data.pastDisplayNameTable = {
         data: [],
@@ -5529,6 +5530,10 @@ CefSharp.BindObjectAsync(
         } else {
             VRCX.StopVR();
         }
+    };
+
+    $app.methods.refreshConfigTreeData = function () {
+        this.configTreeData = buildTreeData(API.cachedConfig);
     };
 
     $app.methods.refreshCurrentUserTreeData = function () {
