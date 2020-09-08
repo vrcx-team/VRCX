@@ -398,19 +398,6 @@ html
                                 span.name Online Users
                                 span.extra(v-if="visits") {{visits}} users online.
                                 span.extra(v-else) Click to refresh
-                        .x-friend-item
-                            .detail
-                                span.name SDK Unity Version
-                                span.extra(v-text="API.cachedConfig.sdkUnityVersion")
-                        .template(v-if="API.cachedConfig.downloadUrls")
-                            .x-friend-item
-                                .detail
-                                    span.name VRCSDK2 URL
-                                    span.extra(v-text="API.cachedConfig.downloadUrls.sdk2" @click="openExternalLink(API.cachedConfig.downloadUrls.sdk2)")
-                            .x-friend-item
-                                .detail
-                                    span.name VRCSDK3 URL
-                                    span.extra(v-text="API.cachedConfig.downloadUrls.sdk3" @click="openExternalLink(API.cachedConfig.downloadUrls.sdk3)")
                     div(style="margin-top:5px")
                         el-button-group
                             el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
