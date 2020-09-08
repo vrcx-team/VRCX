@@ -6441,7 +6441,28 @@ CefSharp.BindObjectAsync(
         if (D.visible === false) {
             return;
         }
-        if (command === 'New Instance') {
+        if (command === 'Refresh') {
+            D.loading = true;
+            API.getWorld({
+                worldId: D.id
+            }).catch((err) => {
+                D.loading = false;
+                D.visible = false;
+                throw err;
+            }).then((args) => {
+                if (D.id === args.ref.id) {
+                    D.loading = false;
+                    D.ref = args.ref;
+                    D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
+                    D.rooms = [];
+                    this.applyWorldDialogInstances();
+                    if (args.cache) {
+                        API.getWorld(args.params);
+                    }
+                }
+                return args;
+            });
+        } else if (command === 'New Instance') {
             this.showNewInstanceDialog(D.$location.tag);
         } else if (command === 'Add Favorite') {
             this.showFavoriteDialog('world', D.id);

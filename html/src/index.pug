@@ -784,7 +784,8 @@ html
                                 el-dropdown(trigger="click" @command="worldDialogCommand" size="small" style="margin-left:5px")
                                     el-button(type="default" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
-                                        el-dropdown-item(icon="el-icon-s-flag" command="New Instance") New Instance
+                                        el-dropdown-item(icon="el-icon-refresh" command="Refresh") Refresh
+                                        el-dropdown-item(icon="el-icon-s-flag" command="New Instance" divided) New Instance
                                         el-dropdown-item(v-if="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id" icon="el-icon-magic-stick" command="Reset Home" divided) Reset Home
                                         el-dropdown-item(v-else icon="el-icon-s-home" command="Make Home" divided) Make Home
                     el-tabs
