@@ -438,7 +438,7 @@ html
                                     span {{ scope.row.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
                             el-table-column(label="Name" prop="displayName")
                     div(style="margin-top:30px")
-                        span(style="font-weight:bold") JSON
+                        span(style="font-weight:bold") Current User JSON
                         el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
                         el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                         el-tree(:data="currentUserTreeData" style="margin-top:5px;font-size:12px")
