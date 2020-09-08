@@ -642,7 +642,7 @@ html
                                 el-button(v-if="userDialog.isFavorite" @click="userDialogCommand('Delete Favorite')" type="warning" icon="el-icon-star-on" circle)
                                 el-button(v-else type="default" @click="userDialogCommand('Add Favorite')" icon="el-icon-star-off" circle)
                                 el-dropdown(trigger="click" @command="userDialogCommand" size="small")
-                                    el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle)
+                                    el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                                     el-dropdown-menu(#default="dropdown")
                                         template(v-if="userDialog.ref.id === API.currentUser.id")
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author") Show Avatar Author
@@ -781,7 +781,7 @@ html
                             div(style="flex:none;margin-left:10px")
                                 el-button(v-if="worldDialog.isFavorite" type="warning" icon="el-icon-star-on" circle @click="worldDialogCommand('Delete Favorite')")
                                 el-button(v-else type="default" icon="el-icon-star-off" circle @click="worldDialogCommand('Add Favorite')")
-                                el-dropdown(trigger="click" @command="worldDialogCommand" size="small")
+                                el-dropdown(trigger="click" @command="worldDialogCommand" size="small" style="margin-left:5px")
                                     el-button(type="default" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-s-flag" command="New Instance") New Instance
