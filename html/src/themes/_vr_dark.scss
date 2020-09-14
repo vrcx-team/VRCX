@@ -1,0 +1,55 @@
+//
+// Copyright(c) 2019-2020 pypy and individual contributors.
+// All rights reserved.
+//
+// This work is licensed under the terms of the MIT license.
+// For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
+////////////////////////////////////////////////////////////////////////////////
+// noty notifications
+////////////////////////////////////////////////////////////////////////////////
+
+// Alert
+$color-noty-window-foreground-dark-alert: #666;
+$color-noty-window-background-dark-alert: #333;
+$color-noty-window-border-dark-alert:     #222;
+$color-noty-button-border-dark-alert:     #000;
+
+// Error
+$color-noty-window-foreground-dark-error: #600;
+$color-noty-window-background-dark-error: #300;
+$color-noty-window-border-dark-error:     #300;
+$color-noty-button-border-dark-error:     #200;
+
+// Informational
+$color-noty-window-foreground-dark-info: hsl(195, 72%, 50%);
+$color-noty-window-background-dark-info: hsl(195, 72%, 10%);
+$color-noty-button-border-dark-info:     hsl(195, 72%, 15%);
+$color-noty-window-border-dark-info:     hsl(195, 72%, 14%);
+
+// Success
+$color-noty-window-foreground-dark-success: #bfb;
+$color-noty-window-background-dark-success: #030;
+$color-noty-window-border-dark-success:     #020;
+$color-noty-button-border-dark-success:     #010;
+
+// Warning
+$color-noty-window-foreground-dark-warning: #fea;
+$color-noty-window-background-dark-warning: #420;
+$color-noty-window-border-dark-warning:     #751;
+$color-noty-button-border-dark-warning:     #640;
+
+////////////////////////////////////////////////////////////////////////////////
+// Chat Window?
+////////////////////////////////////////////////////////////////////////////////
+$color-app-type-foreground: #fff;
+$color-app-type-background: #1f1f1f;
+
+$color-name-friend-foreground:   #fff;
+$color-name-favorite-foreground: #ff0;
+
+$color-user-status-idle-background: #808080;
+$color-user-status-active-background: #67c23a;
+$color-user-status-joinme-background: #409eff;
+$color-user-status-busy-background: #f56c6c;

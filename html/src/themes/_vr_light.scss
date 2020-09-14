@@ -1,0 +1,55 @@
+//
+// Copyright(c) 2019-2020 pypy and individual contributors.
+// All rights reserved.
+//
+// This work is licensed under the terms of the MIT license.
+// For a copy, see <https://opensource.org/licenses/MIT>.
+//
+
+////////////////////////////////////////////////////////////////////////////////
+// noty notifications
+////////////////////////////////////////////////////////////////////////////////
+
+// Alert
+$color-noty-window-foreground-light-alert: #444;
+$color-noty-window-background-light-alert: #fff;
+$color-noty-window-border-light-alert:     #dedede;
+$color-noty-button-border-light-alert:     #e7e7e7;
+
+// Error
+$color-noty-window-foreground-light-error: #fff;
+$color-noty-window-background-light-error: #ff8181;
+$color-noty-window-border-light-error:     #e25353;
+$color-noty-button-border-light-error:     #8b0000;
+
+// Informational
+$color-noty-button-border-light-info:     #3badd6;
+$color-noty-window-border-light-info:     #3badd6;
+$color-noty-window-foreground-light-info: #fff;
+$color-noty-window-background-light-info: #78c5e7;
+
+// Success
+$color-noty-window-foreground-light-success: #006400;
+$color-noty-window-background-light-success: #bcf5bc;
+$color-noty-window-border-light-success:     #7cdd77;
+$color-noty-button-border-light-success:     #50c24e;
+
+// Warning
+$color-noty-window-foreground-light-warning: #826200;
+$color-noty-window-background-light-warning: #ffeaa8;
+$color-noty-window-border-light-warning:     #ffc237;
+$color-noty-button-border-light-warning:     #dfaa30;
+
+////////////////////////////////////////////////////////////////////////////////
+// Chat Window?
+////////////////////////////////////////////////////////////////////////////////
+$color-app-type-foreground: #fff;
+$color-app-type-background: #1f1f1f;
+
+$color-name-friend-foreground:   #fff;
+$color-name-favorite-foreground: #ff0;
+
+$color-user-status-idle-background: #808080;
+$color-user-status-active-background: #67c23a;
+$color-user-status-joinme-background: #409eff;
+$color-user-status-busy-background: #f56c6c;

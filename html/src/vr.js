@@ -611,6 +611,12 @@ CefSharp.BindObjectAsync(
         });
     };
 
+    var $appStyle = document.createElement('link');
+    $appStyle.disabled = true;
+    $appStyle.rel = 'stylesheet';
+    $appStyle.href = `vr-light.css?_=${Date.now()}`;
+    document.head.appendChild($appLightStyle);
+
     var $app = {
         data: {
             API,
@@ -763,6 +769,22 @@ CefSharp.BindObjectAsync(
             }
         }
         return style;
+    };
+
+    window.updateTheme = function() {
+        if(VRCXStorage.GetBool('isDarkMode')){
+            document.body.classList.remove('vrcx_light');
+            document.body.classList.add('vrcx_dark');
+        } else {
+            document.body.classList.remove('vrcx_dark');
+            document.body.classList.add('vrcx_light');
+        }
+    };
+    updateTheme();
+    $appStyle.href = ($app.data.isDarkMode === false) ? `vr-light.css?_=${Date.now()}` : `vr-dark.css?_=${Date.now()}`;
+    $app.watch.isDarkMode = function () {
+        VRCXStorage.SetBool('isDarkMode', this.isDarkMode);
+        updateTheme();
     };
 
     $app = new Vue($app);

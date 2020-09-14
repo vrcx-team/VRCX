@@ -8,10 +8,33 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
+@use "./themes/vr_dark" as vrdark;
+@use "./themes/vr_light" as vrlight;
+
 @import "~normalize.css/normalize.css";
 @import "~animate.css/animate.min.css";
 @import "~noty/lib/noty.css";
 @import "~element-ui/lib/theme-chalk/index.css";
+
+
+:root {
+    // noty Notification colors
+    // Overridden depending on type of notification and theme.
+    --color-noty-button-border:     #{vrlight.$color-noty-button-border-light-info};
+    --color-noty-window-border:     #{vrlight.$color-noty-window-border-light-info};
+    --color-noty-window-foreground: #{vrlight.$color-noty-window-foreground-light-info};
+    --color-noty-window-background: #{vrlight.$color-noty-window-background-light-info};
+    // Chat window?
+    --color-app-type-color:         #{vrlight.$color-app-type-foreground};
+    --color-app-type-background:    #{vrlight.$color-app-type-background};
+    --color-name-friend-foreground: #{vrlight.$color-name-friend-foreground};
+    --color-name-favorite-foreground: #{vrlight.$color-name-favorite-foreground};
+    // User Status
+    --color-user-status-active-background: #{vrlight.$color-user-status-active-background};
+    --color-user-status-busy-background: #{vrlight.$color-user-status-busy-background};
+    --color-user-status-idle-background: #{vrlight.$color-user-status-idle-background};
+    --color-user-status-joinme-background: #{vrlight.$color-user-status-joinme-background};
+}
 
 /*
     마지노선인듯
@@ -31,72 +54,146 @@
     max-width: none;
 }
 
-.noty_theme__relax.noty_bar {
-    position: relative;
-    margin: 4px 0;
-    overflow: hidden;
-    border-radius: 2px;
+.noty_theme__relax {
+    // Set up our color variables ahead of time.  We can change them in theme selectors.
+    color: var(--color-noty-window-foreground);
+    background-color: var(--color-noty-window-background);
+    border: 1px solid var(--color-noty-window-border);
+    .noty_buttons {
+        border-color: var(--color-noty-button-border);
+    }
+
+    // Layout
+    &.noty_bar {
+        position: relative;
+        margin: 4px 0;
+        overflow: hidden;
+        border-radius: 2px;
+    }
+    &.noty_bar {
+        .noty_body {
+            padding: 5px 10px 10px;
+            font-size: 24px;
+            text-align: center;
+        }
+        .noty_buttons {
+            padding: 5px 10px;
+            //border-top: 1px solid #e7e7e7;
+        }
+    }
 }
 
-.noty_theme__relax.noty_bar .noty_body {
-    padding: 5px 10px 10px;
-    font-size: 24px;
-    text-align: center;
+.vrcx_dark {
+    .x-app-type {
+        --color-app-type-foreground: #{vrdark.$color-app-type-foreground};
+        --color-app-type-background: #{vrdark.$color-app-type-background};
+    }
+    .x-friend-item {
+        --color-name-friend-foreground: #{vrdark.$color-name-friend-foreground};
+        --color-name-favorite-foreground: #{vrdark.$color-name-favorite-foreground};
+    }
+    .x-user-status {
+        --color-user-status-active-background: #{vrdark.$color-user-status-active-background};
+        --color-user-status-busy-background: #{vrdark.$color-user-status-busy-background};
+        --color-user-status-idle-background: #{vrdark.$color-user-status-idle-background};
+        --color-user-status-joinme-background: #{vrdark.$color-user-status-joinme-background};
+    }
+    .noty_theme__relax {
+        // Alert/Notification
+        &.noty_type__alert,
+        &.noty_theme__relax.noty_type__notification {
+            --color-noty-window-foreground: #{vrdark.$color-noty-window-foreground-dark-alert};
+            --color-noty-window-background: #{vrdark.$color-noty-window-background-dark-alert};
+            --color-noty-window-border:     #{vrdark.$color-noty-window-border-dark-alert};
+            --color-noty-button-border:     #{vrdark.$color-noty-button-border-dark-alert};
+        }
+        // Warning
+        &.noty_type__warning {
+            --color-noty-window-foreground: #{vrdark.$color-noty-window-foreground-dark-warning};
+            --color-noty-window-background: #{vrdark.$color-noty-window-background-dark-warning};
+            --color-noty-window-border:     #{vrdark.$color-noty-window-border-dark-warning};
+            --color-noty-button-border:     #{vrdark.$color-noty-button-border-dark-warning};
+        }
+        // Error
+        &.noty_type__error {
+            --color-noty-window-foreground: #{vrdark.$color-noty-window-foreground-dark-error};
+            --color-noty-window-background: #{vrdark.$color-noty-window-background-dark-error};
+            --color-noty-window-border:     #{vrdark.$color-noty-window-border-dark-error};
+            --color-noty-button-border:     #{vrdark.$color-noty-button-border-dark-error};
+        }
+        // Info/Information
+        &.noty_type__info,
+        &.noty_type__information {
+            --color-noty-window-foreground: #{vrdark.$color-noty-window-foreground-dark-info};
+            --color-noty-window-background: #{vrdark.$color-noty-window-background-dark-info};
+            --color-noty-window-border:     #{vrdark.$color-noty-window-border-dark-info};
+            --color-noty-button-border:     #{vrdark.$color-noty-button-border-dark-info};
+        }
+        // Success
+        &.noty_type__success {
+            --color-noty-window-foreground: #{vrdark.$color-noty-window-foreground-dark-success};
+            --color-noty-window-background: #{vrdark.$color-noty-window-background-dark-success};
+            --color-noty-window-border: #{vrdark.$color-noty-window-border-dark-success};
+            --color-noty-button-border: #{vrdark.$color-noty-button-border-dark-success};
+        }
+    }
+}
+.vrcx_light {
+    .x-app-type {
+        --color-app-type-foreground: #{vrlight.$color-app-type-foreground};
+        --color-app-type-background: #{vrlight.$color-app-type-background};
+    }
+    .x-friend-item {
+        --color-name-friend-foreground: #{vrlight.$color-name-friend-foreground};
+        --color-name-favorite-foreground: #{vrlight.$color-name-favorite-foreground};
+    }
+    .x-user-status {
+        --color-user-status-active-background: #{vrlight.$color-user-status-active-background};
+        --color-user-status-busy-background: #{vrlight.$color-user-status-busy-background};
+        --color-user-status-idle-background: #{vrlight.$color-user-status-idle-background};
+        --color-user-status-joinme-background: #{vrlight.$color-user-status-joinme-background};
+    }
+    .noty_theme__relax {
+        // Alert/Notification
+        &.noty_type__alert,
+        &.noty_theme__relax.noty_type__notification {
+            --color-noty-window-foreground:  #{vrlight.$color-noty-window-foreground-light-alert};
+            --color-noty-window-background:  #{vrlight.$color-noty-window-background-light-alert};
+            --color-noty-window-border:      #{vrlight.$color-noty-window-border-light-alert};
+            --color-noty-button-border:      #{vrlight.$color-noty-button-border-light-alert};
+        }
+        // Warning
+        &.noty_type__warning {
+            --color-noty-window-foreground:  #{vrlight.$color-noty-window-foreground-light-warning};
+            --color-noty-window-background:  #{vrlight.$color-noty-window-background-light-warning};
+            --color-noty-window-border:      #{vrlight.$color-noty-window-border-light-warning};
+            --color-noty-button-border:      #{vrlight.$color-noty-button-border-light-warning};
+        }
+        // Error
+        &.noty_type__error {
+            --color-noty-window-foreground:  #{vrlight.$color-noty-window-foreground-light-error};
+            --color-noty-window-background:  #{vrlight.$color-noty-window-background-light-error};
+            --color-noty-window-border:      #{vrlight.$color-noty-window-border-light-error};
+            --color-noty-button-border:      #{vrlight.$color-noty-button-border-light-error};
+        }
+        // Info/Information
+        &.noty_type__info,
+        &.noty_type__information {
+            --color-noty-window-foreground:  #{vrlight.$color-noty-window-foreground-light-info};
+            --color-noty-window-background:  #{vrlight.$color-noty-window-background-light-info};
+            --color-noty-window-border:      #{vrlight.$color-noty-window-border-light-info};
+            --color-noty-button-border:      #{vrlight.$color-noty-button-border-light-info};
+        }
+        // Success
+        &.noty_type__success {
+            --color-noty-window-foreground:  #{vrlight.$color-noty-window-foreground-light-success};
+            --color-noty-window-background:  #{vrlight.$color-noty-window-background-light-success};
+            --color-noty-window-border:  #{vrlight.$color-noty-window-border-light-success};
+            --color-noty-button-border:  #{vrlight.$color-noty-button-border-light-success};
+        }
+    }
 }
 
-.noty_theme__relax.noty_bar .noty_buttons {
-    padding: 5px 10px;
-    border-top: 1px solid #e7e7e7;
-}
-
-.noty_theme__relax.noty_type__alert,
-.noty_theme__relax.noty_type__notification {
-    color: #444;
-    background-color: #fff;
-    border: 1px solid #dedede;
-}
-
-.noty_theme__relax.noty_type__warning {
-    color: #826200;
-    background-color: #ffeaa8;
-    border: 1px solid #ffc237;
-}
-
-.noty_theme__relax.noty_type__warning .noty_buttons {
-    border-color: #dfaa30;
-}
-
-.noty_theme__relax.noty_type__error {
-    color: #fff;
-    background-color: #ff8181;
-    border: 1px solid #e25353;
-}
-
-.noty_theme__relax.noty_type__error .noty_buttons {
-    border-color: #8b0000;
-}
-
-.noty_theme__relax.noty_type__info,
-.noty_theme__relax.noty_type__information {
-    color: #fff;
-    background-color: #78c5e7;
-    border: 1px solid #3badd6;
-}
-
-.noty_theme__relax.noty_type__info .noty_buttons,
-.noty_theme__relax.noty_type__information .noty_buttons {
-    border-color: #0b90c4;
-}
-
-.noty_theme__relax.noty_type__success {
-    color: #006400;
-    background-color: #bcf5bc;
-    border: 1px solid #7cdd77;
-}
-
-.noty_theme__relax.noty_type__success .noty_buttons {
-    border-color: #50c24e;
-}
 
 ::-webkit-scrollbar {
     width: 8px;
@@ -132,8 +229,8 @@ button {
 }
 
 .x-app-type {
-    color: #fff;
-    background: #1f1f1f;
+    color: var(--color-app-type-foreground);
+    background: var(--color-app-type-background);
 }
 
 .x-container {
@@ -164,11 +261,11 @@ button {
 }
 
 .x-friend-item.friend .name {
-    color: #fff;
+    color: var(--color-name-friend-foreground);
 }
 
 .x-friend-item.favorite .name {
-    color: #ff0;
+    color: var(--color-name-favorite-foreground);
 }
 
 .x-friend-item > .avatar {
@@ -220,18 +317,18 @@ i.x-user-status {
     display: inline-block;
     width: 14px;
     height: 14px;
-    background: #808080;
+    background: var(--color-user-status-idle-background);
     border-radius: 50%;
 }
 
 i.x-user-status.active {
-    background: #67c23a;
+    background: var(--color-user-status-active-background);
 }
 
 i.x-user-status.joinme {
-    background: #409eff;
+    background: var(--color-user-status-joinme-background);
 }
 
 i.x-user-status.busy {
-    background: #f56c6c;
+    background: var(--color-user-status-busy-background);
 }
