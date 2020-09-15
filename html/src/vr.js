@@ -771,7 +771,7 @@ CefSharp.BindObjectAsync(
         return style;
     };
 
-    window.updateTheme = function() {
+    window.updateVRTheme = function() {
         if(VRCXStorage.GetBool('isDarkMode')){
             document.body.classList.remove('vrcx_light');
             document.body.classList.add('vrcx_dark');
@@ -780,11 +780,10 @@ CefSharp.BindObjectAsync(
             document.body.classList.add('vrcx_light');
         }
     };
-    updateTheme();
-    $appStyle.href = ($app.data.isDarkMode === false) ? `vr-light.css?_=${Date.now()}` : `vr-dark.css?_=${Date.now()}`;
+    updateVRTheme();
     $app.watch.isDarkMode = function () {
         VRCXStorage.SetBool('isDarkMode', this.isDarkMode);
-        updateTheme();
+        updateVRTheme();
     };
 
     $app = new Vue($app);
