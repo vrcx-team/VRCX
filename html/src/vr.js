@@ -614,7 +614,7 @@ CefSharp.BindObjectAsync(
     var $appStyle = document.createElement('link');
     $appStyle.disabled = true;
     $appStyle.rel = 'stylesheet';
-    $appStyle.href = `vr-light.css?_=${Date.now()}`;
+    $appStyle.href = `vr.css?_=${Date.now()}`;
     document.head.appendChild($appLightStyle);
 
     var $app = {
