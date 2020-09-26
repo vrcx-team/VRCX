@@ -6689,6 +6689,59 @@ CefSharp.BindObjectAsync(
         }
     };
 
+    $app.methods.showAvatarAuthorDialog = function (refUserId, currentAvatarImageUrl) {
+        var id = extractFileId(currentAvatarImageUrl);
+        if (id) {
+            API.call(`file/${id}`).then(({ ownerId }) => {
+                for (var ref of API.cachedAvatars.values()) {
+                    if (ref.imageUrl === currentAvatarImageUrl) {
+                        this.showAvatarDialog(ref.id);
+                        return;
+                    }
+                }
+                var params = {
+                    n: 100,
+                    offset: 0,
+                    sort: 'updated',
+                    order: 'descending',
+                    // user: 'friends',
+                    userId: ownerId,
+                    releaseStatus: 'public'
+                };
+                if (params.userId === API.currentUser.id) {
+                    params.user = 'me';
+                    params.releaseStatus = 'all';
+                }
+                API.bulk({
+                    fn: 'getAvatars',
+                    N: -1,
+                    params,
+                    done: () => {
+                        for (var ref2 of API.cachedAvatars.values()) {
+                            if (ref2.imageUrl === currentAvatarImageUrl) {
+                                this.showAvatarDialog(ref2.id);
+                                return;
+                            }
+                        }
+                        if (ownerId === refUserId) {
+                            this.$message({
+                                message: 'It\'s personal (own) avatar',
+                                type: 'warning'
+                            });
+                            return;
+                        }
+                        this.showUserDialog(ownerId);
+                    }
+                });
+            });
+        } else {
+            this.$message({
+                message: 'Sorry, the author is unknown',
+                type: 'error'
+            });
+        }
+    };
+
     $app.methods.refreshAvatarDialogTreeData = function () {
         var D = this.avatarDialog;
         D.treeData = buildTreeData(D.ref);

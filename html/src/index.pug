@@ -80,12 +80,12 @@ html
                                         //- high resolution (v2) 2020.07.12~
                                         el-popover(placement="right" width="500px" trigger="click")
                                             img.x-link(slot="reference" v-lazy="scope.row.avatar[1].currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                                            img(v-lazy="scope.row.avatar[1].currentAvatarImageUrl" style="width:500px;height:375px")
+                                            img.x-link(v-lazy="scope.row.avatar[1].currentAvatarImageUrl" style="width:500px;height:375px" @click="showAvatarAuthorDialog(scope.row.userId, scope.row.avatar[1].currentAvatarImageUrl)")
                                         span(style="position:relative;top:-50px;margin:0 5px")
                                             i.el-icon-right
                                         el-popover(placement="right" width="500px" trigger="click")
                                             img.x-link(slot="reference" v-lazy="scope.row.avatar[0].currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                                            img(v-lazy="scope.row.avatar[0].currentAvatarImageUrl" style="width:500px;height:375px")
+                                            img.x-link(v-lazy="scope.row.avatar[0].currentAvatarImageUrl" style="width:500px;height:375px" @click="showAvatarAuthorDialog(scope.row.userId, scope.row.avatar[0].currentAvatarImageUrl)")
                                     template(v-else)
                                         //- legacy
                                         el-popover(placement="right" width="500px" trigger="click")
