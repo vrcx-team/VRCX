@@ -428,8 +428,8 @@ html
                                 span.name Two-Factor Auth (2FA)
                                 span.extra {{ API.currentUser.twoFactorAuthEnabled ? 'Enabled' : 'Disabled' }}
                     div(style="margin-top:10px")
-                        el-button-group
-                            el-button(size="small" icon="el-icon-switch-button" @click="logout()") Logout
+                        el-button(size="small" icon="el-icon-switch-button" @click="logout()") Logout
+                        el-button(size="small" icon="el-icon-printer" @click="showExportFriendsListDialog()") Export Friends List
                     div(style="margin-top:30px")
                         span(style="font-weight:bold") Past Display Names
                         data-tables(v-bind="pastDisplayNameTable" style="margin-top:5px")
@@ -1048,6 +1048,10 @@ html
                     el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop (No VR)
                     el-button(size="small" @click="showInviteDialog(launchDialog.location)") Invite
                     el-button(type="primary" size="small" @click="launchGame(locationToLaunchArg(launchDialog.location))") Launch
+
+            //- dialog: export friends list
+            el-dialog.x-dialog(:visible.sync="exportFriendsListDialog" title="Export Friends List" width="650px")
+                el-input(type="textarea" v-model="exportFriendsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px"  @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:visible.sync="ossDialog" title="Open Source Software Notice" width="650px")

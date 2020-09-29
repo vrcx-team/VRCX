@@ -3274,7 +3274,9 @@ CefSharp.BindObjectAsync(
             isGameRunning: false,
             appVersion: 'VRCX 2020.07.13',
             latestAppVersion: '',
-            ossDialog: false
+            ossDialog: false,
+            exportFriendsListDialog: false,
+            exportFriendsListContent: ''
         },
         computed: {},
         methods: {},
@@ -3526,6 +3528,29 @@ CefSharp.BindObjectAsync(
                 }
             }
         });
+    };
+
+    $app.methods.showExportFriendsListDialog = function () {
+        var { friends } = API.currentUser;
+        if (Array.isArray(friends) === false) {
+            return;
+        }
+        var lines = [
+            'UserID,DisplayName'
+        ];
+        var _ = function (str) {
+            if (/[\x00-\x1f,"]/.test(str) === true) {
+                str = `"${str.replace('"', '""')}"`;
+            }
+            return str;
+        };
+        for (var userId of friends) {
+            var ref = this.friends.get(userId);
+            var name = (ref !== undefined && ref.name) || '';
+            lines.push(`${_(userId)},${_(name)}`);
+        }
+        this.exportFriendsListContent = lines.join('\n');
+        this.exportFriendsListDialog = true;
     };
 
     API.$on('USER:2FA', function () {
