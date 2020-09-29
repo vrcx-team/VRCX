@@ -3540,7 +3540,7 @@ CefSharp.BindObjectAsync(
         ];
         var _ = function (str) {
             if (/[\x00-\x1f,"]/.test(str) === true) {
-                str = `"${str.replace('"', '""')}"`;
+                str = `"${str.replace(/"/g, '""')}"`;
             }
             return str;
         };
