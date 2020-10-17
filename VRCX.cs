@@ -1,4 +1,4 @@
-﻿// Copyright(c) 2019 pypy. All rights reserved.
+// Copyright(c) 2019-2020 pypy. All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -7,6 +7,8 @@ using CefSharp;
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -46,7 +48,29 @@ namespace VRCX
 
         public bool IsGameRunning()
         {
-            return WinApi.FindWindow("UnityWndClass", "VRChat") != IntPtr.Zero;
+            IntPtr hwnd = WinApi.FindWindow("UnityWndClass", "VRChat");
+            if (hwnd == IntPtr.Zero)
+            {
+                return false;
+            }
+
+            String cmdline;
+            try
+            {
+                Int32 pid;
+                WinApi.GetWindowThreadProcessId(hwnd, out pid);
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + pid))
+                using (ManagementObjectCollection objects = searcher.Get())
+                {
+                    cmdline = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return !cmdline.Contains("--no-vr");
         }
 
         public void StartGame(string arguments)
