@@ -4474,6 +4474,9 @@ CefSharp.BindObjectAsync(
                         type: String(log[1]),
                         data: String(log[2])
                     };
+                    if (ctx.data === API.currentUser.displayName) {
+                        continue;
+                    }
                     if (ctx.type === 'Location') {
                         var tag = ctx.data;
                         if (tag.endsWith(':')) {
