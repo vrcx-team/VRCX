@@ -5497,7 +5497,7 @@ CefSharp.BindObjectAsync(
     $app.watch.hidePrivateFromFeed = saveOpenVROption;
     $app.watch.hideLoginsFromFeed = saveOpenVROption;
     $app.watch.hideDevicesFromFeed = saveOpenVROption;
-    $app.watch.vipNotifications = saveVRCXPyPyOption;
+    $app.watch.vipNotifications = saveOpenVROption;
     $app.data.isDarkMode = VRCXStorage.GetBool('isDarkMode');
     $appDarkStyle.disabled = $app.data.isDarkMode === false;
     $app.watch.isDarkMode = function () {
