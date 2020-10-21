@@ -705,52 +705,54 @@ CefSharp.BindObjectAsync(
             if (this.currentUser.status === 'busy') {
                 return;
             }
-            var notys = [];
-            this.feeds.forEach((feed) => {
-                if (feed.isFavorite) {
-                    if (feed.type === 'Online' ||
-                        feed.type === 'Offline') {
-                        if (!map[feed.displayName] ||
-                            map[feed.displayName] < feed.created_at) {
-                            map[feed.displayName] = feed.created_at;
-                            notys.push(feed);
-                        }
-                    } else if (feed.type === 'OnPlayerJoined' ||
-                        feed.type === 'OnPlayerLeft') {
-                        if (!map[feed.data] ||
-                            map[feed.data] < feed.created_at) {
-                            map[feed.data] = feed.created_at;
-                            notys.push(feed);
+            if (VRCXStorage.GetBool('VRCX_VIPNotifications') === true) {
+                var notys = [];
+                this.feeds.forEach((feed) => {
+                    if (feed.isFavorite) {
+                        if (feed.type === 'Online' ||
+                            feed.type === 'Offline') {
+                            if (!map[feed.displayName] ||
+                                map[feed.displayName] < feed.created_at) {
+                                map[feed.displayName] = feed.created_at;
+                                notys.push(feed);
+                            }
+                        } else if (feed.type === 'OnPlayerJoined' ||
+                            feed.type === 'OnPlayerLeft') {
+                            if (!map[feed.data] ||
+                                map[feed.data] < feed.created_at) {
+                                map[feed.data] = feed.created_at;
+                                notys.push(feed);
+                            }
                         }
                     }
-                }
-            });
-            var bias = new Date(Date.now() - 60000).toJSON();
-            notys.forEach((noty) => {
-                if (noty.created_at > bias) {
-                    if (noty.type === 'OnPlayerJoined') {
-                        new Noty({
-                            type: 'alert',
-                            text: `<strong>${noty.data}</strong> has joined`
-                        }).show();
-                    } else if (noty.type === 'OnPlayerLeft') {
-                        new Noty({
-                            type: 'alert',
-                            text: `<strong>${noty.data}</strong> has left`
-                        }).show();
-                    } else if (noty.type === 'Online') {
-                        new Noty({
-                            type: 'alert',
-                            text: `<strong>${noty.displayName}</strong> has logged in`
-                        }).show();
-                    } else if (noty.type === 'Offline') {
-                        new Noty({
-                            type: 'alert',
-                            text: `<strong>${noty.displayName}</strong> has logged out`
-                        }).show();
+                });
+                var bias = new Date(Date.now() - 60000).toJSON();
+                notys.forEach((noty) => {
+                    if (noty.created_at > bias) {
+                        if (noty.type === 'OnPlayerJoined') {
+                            new Noty({
+                                type: 'alert',
+                                text: `<strong>${noty.data}</strong> has joined`
+                            }).show();
+                        } else if (noty.type === 'OnPlayerLeft') {
+                            new Noty({
+                                type: 'alert',
+                                text: `<strong>${noty.data}</strong> has left`
+                            }).show();
+                        } else if (noty.type === 'Online') {
+                            new Noty({
+                                type: 'alert',
+                                text: `<strong>${noty.displayName}</strong> has logged in`
+                            }).show();
+                        } else if (noty.type === 'Offline') {
+                            new Noty({
+                                type: 'alert',
+                                text: `<strong>${noty.displayName}</strong> has logged out`
+                            }).show();
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     };
 
