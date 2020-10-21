@@ -3432,7 +3432,8 @@ CefSharp.BindObjectAsync(
             var ctx = data[--i];
             // GPS, Online, Offline, Status, Avatar
             if ((ctx.type !== 'Avatar') &&
-            !((ctx.type === 'GPS') && (ctx.location[0] === 'private') && (this.hidePrivateFromFeed === true))) {
+            !((ctx.type === 'GPS') && (ctx.location[0] === 'private') && (this.hidePrivateFromFeed === true)) &&
+            !(((ctx.type === 'Online') || (ctx.type === 'Offline')) && (this.hideLoginsFromFeed === true))) {
                 arr.push({
                     ...ctx,
                     isFriend: this.friends.has(ctx.userId),
@@ -5479,16 +5480,19 @@ CefSharp.BindObjectAsync(
     $app.data.openVR = VRCXStorage.GetBool('openVR');
     $app.data.openVRAlways = VRCXStorage.GetBool('openVRAlways');
     $app.data.hidePrivateFromFeed = VRCXStorage.GetBool('VRCX_hidePrivateFromFeed');
+    $app.data.hideLoginsFromFeed = VRCXStorage.GetBool('VRCX_hideLoginsFromFeed');
     $app.data.hideDevicesFromFeed = VRCXStorage.GetBool('VRCX_hideDevicesFromFeed');
     var saveOpenVROption = function () {
         VRCXStorage.SetBool('openVR', this.openVR);
         VRCXStorage.SetBool('openVRAlways', this.openVRAlways);
         VRCXStorage.SetBool('VRCX_hidePrivateFromFeed', this.hidePrivateFromFeed);
+        VRCXStorage.SetBool('VRCX_hideLoginsFromFeed', this.hideLoginsFromFeed);
         VRCXStorage.SetBool('VRCX_hideDevicesFromFeed', this.hideDevicesFromFeed);
     };
     $app.watch.openVR = saveOpenVROption;
     $app.watch.openVRAlways = saveOpenVROption;
     $app.watch.hidePrivateFromFeed = saveOpenVROption;
+    $app.watch.hideLoginsFromFeed = saveOpenVROption;
     $app.watch.hideDevicesFromFeed = saveOpenVROption;
     $app.data.isDarkMode = VRCXStorage.GetBool('isDarkMode');
     $appDarkStyle.disabled = $app.data.isDarkMode === false;
