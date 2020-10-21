@@ -1029,6 +1029,7 @@ html
                         el-input(ref="wtf" v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                 template(#footer)
                     el-button(size="small" @click="makeHome(newInstanceDialog.location)") Make Home
+                    el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.url)") Copy
                     el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)") Invite
                     el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location)") Launch
 
@@ -1048,7 +1049,8 @@ html
             el-dialog.x-dialog(ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="400px")
                 div #[span(v-text="launchDialog.url" style="word-break:break-all;font-size:12px")]
                 template(#footer)
-                    el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop (No VR)
+                    el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop
+                    el-button(size="small" @click="copyInstanceUrl(launchDialog.url)") Copy
                     el-button(size="small" @click="showInviteDialog(launchDialog.location)") Invite
                     el-button(type="primary" size="small" @click="launchGame(locationToLaunchArg(launchDialog.location))") Launch
 

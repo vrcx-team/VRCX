@@ -10,6 +10,7 @@ import VueLazyload from 'vue-lazyload';
 import { DataTables } from 'vue-data-tables';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
+import copy from 'copy-to-clipboard';
 
 CefSharp.BindObjectAsync(
     'VRCX',
@@ -7250,6 +7251,16 @@ CefSharp.BindObjectAsync(
         VRCX.StartGame(args.join(' '));
         D.visible = false;
     };
+
+    $app.methods.copyInstanceUrl = function (URL) {
+      copy(URL);
+      this.$message({
+          message: 'URL copied to Clipboard',
+          type: 'success'
+      });
+      this.launchDialog.visible = false;
+      this.newInstanceDialog.visible = false;
+		};
 
     $app = new Vue($app);
     window.$app = $app;

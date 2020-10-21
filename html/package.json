@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/pypy-vrc/VRCX#readme",
   "devDependencies": {
+    "copy-to-clipboard": "^3.3.1",
     "cross-env": "^7.0.2",
     "html-webpack-plugin": "^4.5.0",
     "laravel-mix": "^5.0.7",
