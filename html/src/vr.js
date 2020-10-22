@@ -705,7 +705,7 @@ CefSharp.BindObjectAsync(
             if (this.currentUser.status === 'busy') {
                 return;
             }
-            if ((this.appType === '2') && (VRCXStorage.GetBool('VRCX_VIPNotifications') === true)) {
+            if (VRCXStorage.GetBool('VRCX_VIPNotifications') === true) {
                 var notys = [];
                 this.feeds.forEach((feed) => {
                     if (feed.isFavorite) {
