@@ -6221,6 +6221,19 @@ CefSharp.BindObjectAsync(
                     }
                 }
             });
+        } else if (command === 'Request Invite') {
+            API.sendNotification({
+                receiverUserId: D.id,
+                type: 'requestInvite',
+                message: '',
+                seen: false,
+                details: {
+                    platform: 'standalonewindows'
+                }
+            }).then((args) => {
+                this.$message('Request invite sent');
+                return args;
+            });
         } else if (command === 'Show Avatar Author') {
             var { currentAvatarImageUrl } = D.ref;
             var id = extractFileId(currentAvatarImageUrl);
