@@ -660,7 +660,7 @@ html
                                             el-dropdown-item(icon="el-icon-switch-button" command="Logout" divided) Logout
                                         template(v-else)
                                             template(v-if="userDialog.isFriend")
-                                                el-dropdown-item(icon="el-icon-message" command="Message") Message
+                                                //- el-dropdown-item(icon="el-icon-message" command="Message") Message
                                             template(v-else-if="userDialog.incomingRequest")
                                                 el-dropdown-item(icon="el-icon-check" command="Accept Friend Request") Accept Friend Request
                                                 el-dropdown-item(icon="el-icon-close" command="Decline Friend Request") Decline Friend Request
