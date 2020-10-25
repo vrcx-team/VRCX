@@ -46,31 +46,38 @@ namespace VRCX
                 : string.Empty;
         }
 
-        public bool IsGameRunning()
+        public bool[] CheckGameRunning()
         {
-            IntPtr hwnd = WinApi.FindWindow("UnityWndClass", "VRChat");
-            if (hwnd == IntPtr.Zero)
-            {
-                return false;
-            }
+            var isGameRunning = false;
+            var isGameNoVR = false;
 
-            String cmdline;
-            try
+            var hwnd = WinApi.FindWindow("UnityWndClass", "VRChat");
+            if (hwnd != IntPtr.Zero)
             {
-                Int32 pid;
-                WinApi.GetWindowThreadProcessId(hwnd, out pid);
-                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + pid))
-                using (ManagementObjectCollection objects = searcher.Get())
+                var cmdline = string.Empty;
+                try
                 {
-                    cmdline = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
+                    Int32 pid = 0;
+                    WinApi.GetWindowThreadProcessId(hwnd, out pid);
+                    using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + pid))
+                    using (ManagementObjectCollection objects = searcher.Get())
+                    {
+                        cmdline = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
+                    }
                 }
-            }
-            catch
-            {
-                return false;
+                catch
+                {
+                }
+
+                isGameRunning = true;
+                isGameNoVR = cmdline.Contains("--no-vr");
             }
 
-            return !cmdline.Contains("--no-vr");
+            return new bool[]
+            {
+                isGameRunning,
+                isGameNoVR
+            };
         }
 
         public void StartGame(string arguments)

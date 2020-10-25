@@ -3272,6 +3272,7 @@ CefSharp.BindObjectAsync(
             VRCX,
             nextRefresh: 0,
             isGameRunning: false,
+            isGameNoVR: false,
             appVersion: 'VRCX 2020.07.13',
             latestAppVersion: '',
             ossDialog: false,
@@ -3378,11 +3379,12 @@ CefSharp.BindObjectAsync(
         }
         this.checkActiveFriends();
         this.refreshGameLog();
-        VRCX.IsGameRunning().then((running) => {
-            if (running !== this.isGameRunning) {
-                this.isGameRunning = running;
+        VRCX.CheckGameRunning().then(([isGameRunning, isGameNoVR]) => {
+            if (isGameRunning !== this.isGameRunning) {
+                this.isGameRunning = isGameRunning;
                 Discord.SetTimestamps(Date.now(), 0);
             }
+            this.isGameNoVR = isGameNoVR;
             this.updateDiscord();
             this.updateOpenVR();
         });
@@ -5567,6 +5569,7 @@ CefSharp.BindObjectAsync(
 
     $app.methods.updateOpenVR = function () {
         if (this.openVR &&
+            this.isGameNoVR === false &&
             (this.isGameRunning || this.openVRAlways)) {
             VRCX.StartVR();
         } else {
