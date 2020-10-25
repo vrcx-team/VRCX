@@ -3273,7 +3273,7 @@ CefSharp.BindObjectAsync(
             nextRefresh: 0,
             isGameRunning: false,
             isGameNoVR: false,
-            appVersion: 'VRCX 2020.07.13',
+            appVersion: 'VRCX 2020.10.25',
             latestAppVersion: '',
             ossDialog: false,
             exportFriendsListDialog: false,
