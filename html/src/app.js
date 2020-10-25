@@ -7259,7 +7259,7 @@ CefSharp.BindObjectAsync(
     };
 
     $app.methods.locationToLaunchArg = function (location) {
-        return `"vrchat://launch?id=${location}"`;
+        return `vrchat://launch?id=${location}`;
     }
 
     $app.methods.launchGame = function (...args) {

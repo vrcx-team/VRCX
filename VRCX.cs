@@ -75,12 +75,39 @@ namespace VRCX
 
         public void StartGame(string arguments)
         {
+            // try stream first
+            try
+            {
+                using (var key = Registry.ClassesRoot.OpenSubKey(@"steam\shell\open\command"))
+                {
+                    // "C:\Program Files (x86)\Steam\steam.exe" -- "%1"
+                    var match = Regex.Match(key.GetValue(string.Empty) as string, "^\"(.+?)\\\\steam.exe\"");
+                    if (match.Success)
+                    {
+                        var path = match.Groups[1].Value;
+                        var _arguments = Uri.EscapeDataString(arguments);
+                        Process.Start(new ProcessStartInfo
+                        {
+                            WorkingDirectory = path,
+                            FileName = path + "\\steam.exe",
+                            UseShellExecute = false,
+                            Arguments = $"-- \"steam://rungameid/438100//{_arguments}\""
+                        }).Close();
+                        return;
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            // fallback
             try
             {
                 using (var key = Registry.ClassesRoot.OpenSubKey(@"VRChat\shell\open\command"))
                 {
                     // "C:\Program Files (x86)\Steam\steamapps\common\VRChat\launch.bat" "C:\Program Files (x86)\Steam\steamapps\common\VRChat" "%1"
-                    var match = Regex.Match(key.GetValue(string.Empty) as string, "^\"(.+\\\\VRChat)\\\\launch.bat\"");
+                    var match = Regex.Match(key.GetValue(string.Empty) as string, "^\"(.+?)\\\\launch.bat\"");
                     if (match.Success)
                     {
                         var path = match.Groups[1].Value;
@@ -89,7 +116,7 @@ namespace VRCX
                             WorkingDirectory = path,
                             FileName = path + "\\VRChat.exe",
                             UseShellExecute = false,
-                            Arguments = arguments
+                            Arguments = $"\"{arguments}\""
                         }).Close();
                     }
                 }
