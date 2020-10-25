@@ -665,15 +665,15 @@ CefSharp.BindObjectAsync(
             this.cpuUsage = cpuUsage.toFixed(2);
         });
         if (VRCXStorage.GetBool('VRCX_hideDevicesFromFeed') === false) {
-          VRCX.GetVRDevices().then((devices) => {
-              devices.forEach((device) => {
-                  device[2] = parseInt(device[2], 10);
-              });
-              this.devices = devices;
-          });
+            VRCX.GetVRDevices().then((devices) => {
+                devices.forEach((device) => {
+                    device[2] = parseInt(device[2], 10);
+                });
+                this.devices = devices;
+            });
         }
         else {
-              this.devices = "";
+            this.devices = '';
         }
         this.updateSharedFeed();
     };

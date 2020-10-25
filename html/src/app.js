@@ -3432,8 +3432,8 @@ CefSharp.BindObjectAsync(
             var ctx = data[--i];
             // GPS, Online, Offline, Status, Avatar
             if ((ctx.type !== 'Avatar') &&
-            !((ctx.type === 'GPS') && (ctx.location[0] === 'private') && (this.hidePrivateFromFeed === true)) &&
-            !(((ctx.type === 'Online') || (ctx.type === 'Offline')) && (this.hideLoginsFromFeed === true))) {
+                !((ctx.type === 'GPS') && (ctx.location[0] === 'private') && (this.hidePrivateFromFeed === true)) &&
+                !(((ctx.type === 'Online') || (ctx.type === 'Offline')) && (this.hideLoginsFromFeed === true))) {
                 arr.push({
                     ...ctx,
                     isFriend: this.friends.has(ctx.userId),
