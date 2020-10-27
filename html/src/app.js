@@ -5485,6 +5485,7 @@ CefSharp.BindObjectAsync(
     $app.data.hideLoginsFromFeed = VRCXStorage.GetBool('VRCX_hideLoginsFromFeed');
     $app.data.hideDevicesFromFeed = VRCXStorage.GetBool('VRCX_hideDevicesFromFeed');
     $app.data.vipNotifications = VRCXStorage.GetBool('VRCX_VIPNotifications');
+    $app.data.minimalFeed = VRCXStorage.GetBool('VRCX_minimalFeed');
     var saveOpenVROption = function () {
         VRCXStorage.SetBool('openVR', this.openVR);
         VRCXStorage.SetBool('openVRAlways', this.openVRAlways);
@@ -5492,6 +5493,7 @@ CefSharp.BindObjectAsync(
         VRCXStorage.SetBool('VRCX_hideLoginsFromFeed', this.hideLoginsFromFeed);
         VRCXStorage.SetBool('VRCX_hideDevicesFromFeed', this.hideDevicesFromFeed);
         VRCXStorage.SetBool('VRCX_VIPNotifications', this.vipNotifications);
+        VRCXStorage.SetBool('VRCX_minimalFeed', this.minimalFeed);
     };
     $app.watch.openVR = saveOpenVROption;
     $app.watch.openVRAlways = saveOpenVROption;
@@ -5499,6 +5501,7 @@ CefSharp.BindObjectAsync(
     $app.watch.hideLoginsFromFeed = saveOpenVROption;
     $app.watch.hideDevicesFromFeed = saveOpenVROption;
     $app.watch.vipNotifications = saveOpenVROption;
+    $app.watch.minimalFeed = saveOpenVROption;
     $app.data.isDarkMode = VRCXStorage.GetBool('isDarkMode');
     $appDarkStyle.disabled = $app.data.isDarkMode === false;
     $app.watch.isDarkMode = function () {
