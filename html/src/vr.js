@@ -79,7 +79,7 @@ CefSharp.BindObjectAsync(
         },
         layout: 'topCenter',
         theme: 'relax',
-        timeout: 6000
+        timeout: 3000
     });
 
     Vue.use(ElementUI, {
@@ -727,28 +727,41 @@ CefSharp.BindObjectAsync(
                     }
                 });
                 var bias = new Date(Date.now() - 60000).toJSON();
+                var theme = "relax";
                 notys.forEach((noty) => {
                     if (noty.created_at > bias) {
-                        if (noty.type === 'OnPlayerJoined') {
-                            new Noty({
-                                type: 'alert',
-                                text: `<strong>${noty.data}</strong> has joined`
-                            }).show();
-                        } else if (noty.type === 'OnPlayerLeft') {
-                            new Noty({
-                                type: 'alert',
-                                text: `<strong>${noty.data}</strong> has left`
-                            }).show();
-                        } else if (noty.type === 'Online') {
-                            new Noty({
-                                type: 'alert',
-                                text: `<strong>${noty.displayName}</strong> has logged in`
-                            }).show();
-                        } else if (noty.type === 'Offline') {
-                            new Noty({
-                                type: 'alert',
-                                text: `<strong>${noty.displayName}</strong> has logged out`
-                            }).show();
+                        if (VRCXStorage.GetBool('isDarkMode') === true) {
+                            theme = "sunset";
+                        }
+                        switch(noty.type) {
+                            case 'OnPlayerJoined':
+                                new Noty({
+                                    type: 'alert',
+                                    theme: theme,
+                                    text: `<strong>${noty.data}</strong> has joined`
+                                }).show();
+                                break;
+                            case 'OnPlayerLeft':
+                                new Noty({
+                                    type: 'alert',
+                                    theme: theme,
+                                    text: `<strong>${noty.data}</strong> has left`
+                                }).show();
+                                break;
+                            case 'Online':
+                                new Noty({
+                                    type: 'alert',
+                                    theme: theme,
+                                    text: `<strong>${noty.displayName}</strong> has logged in`
+                                }).show();
+                                break;
+                            case 'Offline':
+                                new Noty({
+                                    type: 'alert',
+                                    theme: theme,
+                                    text: `<strong>${noty.displayName}</strong> has logged out`
+                                }).show();
+                                break;
                         }
                     }
                 });
