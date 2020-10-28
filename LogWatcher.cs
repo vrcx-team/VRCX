@@ -133,19 +133,14 @@ namespace VRCX
                                 continue;
                             }
                             var c = s[35];
-                            if (c == 'P')
+                            if (c == 'N')
                             {
                                 if (s.Length > 66 &&
-                                    string.Compare(s, 34, "[Player] Initialized PlayerAPI \"", 0, 32, StringComparison.Ordinal) == 0)
+                                    string.Compare(s, 34, "[NetworkManager] OnPlayerJoined ", 0, 32, StringComparison.Ordinal) == 0)
                                 {
-                                    // 2020.04.02 20:59:08 Log        -  [Player] Initialized PlayerAPI "pypy" is local
+                                    // 2020.10.28 22:57:04 Log        -  [NetworkManager] OnPlayerJoined pypy
                                     var time = ConvertLogTimeToISO8601(s);
                                     var data = s.Substring(66);
-                                    var pos = data.LastIndexOf('"');
-                                    if (pos >= 0)
-                                    {
-                                        data = data.Substring(0, pos);
-                                    }
                                     m_Lock.EnterWriteLock();
                                     try
                                     {
@@ -153,6 +148,27 @@ namespace VRCX
                                         {
                                             time,
                                             "OnPlayerJoined",
+                                            data
+                                        });
+                                    }
+                                    finally
+                                    {
+                                        m_Lock.ExitWriteLock();
+                                    }
+                                }
+                                else if (s.Length > 64 &&
+                                    string.Compare(s, 34, "[NetworkManager] OnPlayerLeft ", 0, 30, StringComparison.Ordinal) == 0)
+                                {
+                                    // 2020.10.28 22:57:42 Log        -  [NetworkManager] OnPlayerLeft pypy
+                                    var time = ConvertLogTimeToISO8601(s);
+                                    var data = s.Substring(64);
+                                    m_Lock.EnterWriteLock();
+                                    try
+                                    {
+                                        m_GameLog.Add(new[]
+                                        {
+                                            time,
+                                            "OnPlayerLeft",
                                             data
                                         });
                                     }
