@@ -4523,7 +4523,7 @@ CefSharp.BindObjectAsync(
                     };
                     break;
 
-                case 'player-join':
+                case 'player-joined':
                     var userDisplayName = args[0];
                     gameLogTableData = {
                         created_at: dt,
