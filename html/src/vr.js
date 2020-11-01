@@ -621,7 +621,8 @@ CefSharp.BindObjectAsync(
             currentTime: new Date().toJSON(),
             cpuUsage: 0,
             feeds: [],
-            devices: []
+            devices: [],
+            isMinimalFeed: false,
         },
         computed: {},
         methods: {},
@@ -679,6 +680,7 @@ CefSharp.BindObjectAsync(
     };
 
     $app.methods.updateSharedFeed = function () {
+        this.isMinimalFeed = VRCXStorage.GetBool('VRCX_minimalFeed');
         // TODO: block mute hideAvatar unfriend
         var _feeds = this.feeds;
         this.feeds = VRCXStorage.GetArray('sharedFeeds');
