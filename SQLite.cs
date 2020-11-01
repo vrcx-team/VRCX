@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace VRCX
 {
@@ -60,11 +61,13 @@ namespace VRCX
             }
         }
 
-        public void Execute(IJavascriptCallback callback, string sql, IDictionary<string, object> args = null)
+        public void Execute(IJavascriptCallback rowCallback, IJavascriptCallback doneCallback, string sql, IDictionary<string, object> args = null)
         {
             m_ConnectionLock.EnterReadLock();
             try
             {
+                using (rowCallback)
+                using (doneCallback)
                 using (var command = new SQLiteCommand(sql, m_Connection))
                 {
                     if (args != null)
@@ -80,8 +83,9 @@ namespace VRCX
                         {
                             var values = new object[reader.FieldCount];
                             reader.GetValues(values);
-                            callback.ExecuteAsync(values);
+                            rowCallback.ExecuteAsync(values);
                         }
+                        doneCallback.ExecuteAsync();
                     }
                 }
             }
