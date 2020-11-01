@@ -647,8 +647,8 @@ CefSharp.BindObjectAsync(
                 // FIXME: 어케 복구하냐 이건
                 throw err;
             }).then((args) => {
-                setInterval(() => this.update(), 1000);
-                this.update();
+                this.updateLoop();
+                this.updateCpuUsageLoop();
                 this.$nextTick(function () {
                     if (this.appType === '1') {
                         this.$el.style.display = '';
@@ -659,24 +659,36 @@ CefSharp.BindObjectAsync(
         }
     };
 
-    $app.methods.update = function () {
-        this.currentTime = new Date().toJSON();
-        this.currentUser = VRCXStorage.GetObject('currentUser') || {};
-        VRCX.CpuUsage().then((cpuUsage) => {
-            this.cpuUsage = cpuUsage.toFixed(2);
-        });
-        if (VRCXStorage.GetBool('VRCX_hideDevicesFromFeed') === false) {
-            VRCX.GetVRDevices().then((devices) => {
-                devices.forEach((device) => {
-                    device[2] = parseInt(device[2], 10);
+    $app.methods.updateLoop = async function () {
+        try {
+            this.currentTime = new Date().toJSON();
+            this.currentUser = VRCXStorage.GetObject('currentUser') || {};
+            if (VRCXStorage.GetBool('VRCX_hideDevicesFromFeed') === false) {
+                VRCX.GetVRDevices().then((devices) => {
+                    devices.forEach((device) => {
+                        device[2] = parseInt(device[2], 10);
+                    });
+                    this.devices = devices;
                 });
-                this.devices = devices;
-            });
+            }
+            else {
+                this.devices = '';
+            }
+            this.updateSharedFeed();
+        } catch (err) {
+            console.error(err);
         }
-        else {
-            this.devices = '';
+        setTimeout(() => this.updateLoop(), 500);
+    };
+
+    $app.methods.updateCpuUsageLoop = async function() {
+        try {
+            var cpuUsage = await VRCX.CpuUsage();
+            this.cpuUsage = cpuUsage.toFixed(2);
+        } catch (err) {
+            console.error(err);
         }
-        this.updateSharedFeed();
+        setTimeout(() => this.updateCpuUsageLoop(), 1000);
     };
 
     $app.methods.updateSharedFeed = function () {

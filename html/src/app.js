@@ -3287,9 +3287,8 @@ CefSharp.BindObjectAsync(
             LogWatcher.Reset().then(() => {
                 API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
                 API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
-                setInterval(() => this.update(), 1000);
-                setInterval(() => this.refreshGameLog(), 100);
-                this.update();
+                this.updateLoop();
+                this.updateGameLogLoop();
                 this.$nextTick(function () {
                     this.$el.style.display = '';
                     this.loginForm.loading = true;
@@ -3354,40 +3353,44 @@ CefSharp.BindObjectAsync(
         });
     };
 
-    $app.methods.update = function () {
-        if (API.isLoggedIn === false) {
-            return;
-        }
-        if (--this.nextRefresh <= 0) {
-            this.nextRefresh = 60;
-            API.getCurrentUser().catch((err1) => {
-                if (err1.status_code === 401) {
-                    API.getConfig().then((args) => {
-                        API.login({
-                            username: this.loginForm.username,
-                            password: this.loginForm.password
-                        }).catch((err2) => {
-                            if (err2.status_code === 401) {
-                                API.logout();
-                            }
-                            throw err2;
-                        });
-                        return args;
+    $app.methods.updateLoop = function () {
+        try {
+            if (API.isLoggedIn === true) {
+                if (--this.nextRefresh <= 0) {
+                    this.nextRefresh = 60;
+                    API.getCurrentUser().catch((err1) => {
+                        if (err1.status_code === 401) {
+                            API.getConfig().then((args) => {
+                                API.login({
+                                    username: this.loginForm.username,
+                                    password: this.loginForm.password
+                                }).catch((err2) => {
+                                    if (err2.status_code === 401) {
+                                        API.logout();
+                                    }
+                                    throw err2;
+                                });
+                                return args;
+                            });
+                        }
+                        throw err1;
                     });
                 }
-                throw err1;
-            });
-        }
-        this.checkActiveFriends();
-        VRCX.CheckGameRunning().then(([isGameRunning, isGameNoVR]) => {
-            if (isGameRunning !== this.isGameRunning) {
-                this.isGameRunning = isGameRunning;
-                Discord.SetTimestamps(Date.now(), 0);
+                this.checkActiveFriends();
+                VRCX.CheckGameRunning().then(([isGameRunning, isGameNoVR]) => {
+                    if (isGameRunning !== this.isGameRunning) {
+                        this.isGameRunning = isGameRunning;
+                        Discord.SetTimestamps(Date.now(), 0);
+                    }
+                    this.isGameNoVR = isGameNoVR;
+                    this.updateDiscord();
+                    this.updateOpenVR();
+                });
             }
-            this.isGameNoVR = isGameNoVR;
-            this.updateDiscord();
-            this.updateOpenVR();
-        });
+        } catch (err) {
+            console.error(err);
+        }
+        setTimeout(() => this.updateLoop(), 500);
     };
 
     $app.methods.updateSharedFeed = function () {
@@ -4470,11 +4473,25 @@ CefSharp.BindObjectAsync(
         });
     };
 
-    $app.methods.refreshGameLog = async function () {
-        if (API.isLoggedIn !== true) {
-            return;
-        }
+    $app.methods.updateGameLogLoop = async function () {
+        try {
+            if (API.isLoggedIn === true) {
+                await this.updateGameLog();
+                this.sweepGameLog();
 
+                if (this.gameLogTable.data.length > 0) {
+                    this.notifyMenu('gameLog');
+                }
+
+                this.updateSharedFeed();
+            }
+        } catch (err) {
+            console.error(err);
+        }
+        setTimeout(() => this.updateGameLogLoop(), 1000);
+    };
+
+    $app.methods.updateGameLog = async function () {
         var currentUser = API.currentUser.username;
 
         for (var [fileName, dt, type, ...args] of await LogWatcher.Get()) {
@@ -4556,15 +4573,7 @@ CefSharp.BindObjectAsync(
                 this.gameLogTable.data.push(gameLogTableData);
             }
         }
-
-        this.sweepGameLog();
-
-        if (this.gameLogTable.data.length > 0) {
-            this.notifyMenu('gameLog');
-        }
-
-        this.updateSharedFeed();
-    };
+    }
 
     $app.methods.sweepGameLog = function () {
         var { data } = this.gameLogTable;
