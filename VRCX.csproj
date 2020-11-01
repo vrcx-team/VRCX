@@ -133,6 +133,7 @@
     <Compile Include="RenderHandler.cs" />
     <Compile Include="SQLite.cs" />
     <Compile Include="SharedVariable.cs" />
+    <Compile Include="Util.cs" />
     <Compile Include="VRForm.cs">
       <SubType>Form</SubType>
     </Compile>

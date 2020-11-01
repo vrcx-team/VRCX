@@ -47,16 +47,7 @@ namespace VRCX
                 },
                 Dock = DockStyle.Fill,
             };
-            var options = new BindingOptions()
-            {
-                CamelCaseJavascriptNames = false
-            };
-            Browser.JavascriptObjectRepository.Register("VRCX", VRCX.Instance, true, options);
-            Browser.JavascriptObjectRepository.Register("SharedVariable", SharedVariable.Instance, false, options);
-            Browser.JavascriptObjectRepository.Register("VRCXStorage", VRCXStorage.Instance, false, options);
-            Browser.JavascriptObjectRepository.Register("SQLite", SQLite.Instance, false, options);
-            Browser.JavascriptObjectRepository.Register("LogWatcher", LogWatcher.Instance, true, options);
-            Browser.JavascriptObjectRepository.Register("Discord", Discord.Instance, true, options);
+            Util.RegisterBindings(Browser.JavascriptObjectRepository);
             Browser.IsBrowserInitializedChanged += (A, B) =>
             {
                 // Browser.ShowDevTools();

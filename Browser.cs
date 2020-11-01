@@ -27,14 +27,7 @@ namespace VRCX
             Size = new Size(texture.Description.Width, texture.Description.Height);
             RenderHandler.Dispose();
             RenderHandler = new RenderHandler(this, m_Lock);
-            var options = new BindingOptions()
-            {
-                CamelCaseJavascriptNames = false
-            };
-            JavascriptObjectRepository.Register("VRCX", VRCX.Instance, true, options);
-            JavascriptObjectRepository.Register("SharedVariable", SharedVariable.Instance, false, options);
-            JavascriptObjectRepository.Register("VRCXStorage", VRCXStorage.Instance, false, options);
-            JavascriptObjectRepository.Register("SQLite", SQLite.Instance, false, options);
+            Util.RegisterBindings(JavascriptObjectRepository);
         }
 
         public new void Dispose()
