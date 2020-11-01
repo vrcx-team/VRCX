@@ -1084,7 +1084,7 @@ window.configRepository = configRepository;
                 ref
             });
         }
-        sharedRepository.set('current_user_status', ref.status);
+        sharedRepository.setString('current_user_status', ref.status);
         return ref;
     };
 

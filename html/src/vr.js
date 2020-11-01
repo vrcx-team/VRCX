@@ -615,7 +615,7 @@ window.configRepository = configRepository;
     $app.methods.updateLoop = async function () {
         try {
             this.currentTime = new Date().toJSON();
-            this.currentUserStatus = sharedRepository.get('current_user_status');
+            this.currentUserStatus = sharedRepository.getString('current_user_status');
             if (configRepository.getBool('VRCX_hideDevicesFromFeed') === false) {
                 VRCX.GetVRDevices().then((devices) => {
                     devices.forEach((device) => {
