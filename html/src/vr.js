@@ -727,13 +727,13 @@ CefSharp.BindObjectAsync(
                     }
                 });
                 var bias = new Date(Date.now() - 60000).toJSON();
-                var theme = "relax";
+                var theme = 'relax';
+                if (VRCXStorage.GetBool('isDarkMode') === true) {
+                    theme = 'sunset';
+                }
                 notys.forEach((noty) => {
                     if (noty.created_at > bias) {
-                        if (VRCXStorage.GetBool('isDarkMode') === true) {
-                            theme = "sunset";
-                        }
-                        switch(noty.type) {
+                        switch (noty.type) {
                             case 'OnPlayerJoined':
                                 new Noty({
                                     type: 'alert',
