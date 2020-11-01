@@ -42,7 +42,7 @@ namespace VRCX
                     {
                         foreach (var prop in param)
                         {
-                            C.Parameters.Add(new SQLiteParameter("@" + prop.Key, prop.Value));
+                            C.Parameters.Add(new SQLiteParameter(prop.Key, prop.Value));
                         }
                     }
                     return C.ExecuteNonQuery();
@@ -65,7 +65,7 @@ namespace VRCX
                     {
                         foreach (var prop in param)
                         {
-                            C.Parameters.Add(new SQLiteParameter("@" + prop.Key, prop.Value));
+                            C.Parameters.Add(new SQLiteParameter(prop.Key, prop.Value));
                         }
                     }
                     using (var R = C.ExecuteReader())
