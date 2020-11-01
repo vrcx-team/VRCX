@@ -1,4 +1,4 @@
-import sqlite from '../sqlite.js';
+import sqliteService from '../service/sqlite.js';
 import sharedRepository, { SharedRepository } from './shared.js';
 
 var dirtyKeySet = new Set();
@@ -6,8 +6,8 @@ var dirtyKeySet = new Set();
 class ConfigRepository extends SharedRepository {
     async init() {
         try {
-            await sqlite.executeNonQuery('CREATE TABLE IF NOT EXISTS configs (`key` TEXT PRIMARY KEY, `value` TEXT)');
-            await sqlite.execute(
+            await sqliteService.executeNonQuery('CREATE TABLE IF NOT EXISTS configs (`key` TEXT PRIMARY KEY, `value` TEXT)');
+            await sqliteService.execute(
                 (key, value) => sharedRepository.setString(key, value),
                 'SELECT `key`, `value` FROM configs'
             );
@@ -37,10 +37,10 @@ function transformKey(key) {
 async function syncLoop() {
     if (dirtyKeySet.size > 0) {
         try {
-            await sqlite.executeNonQuery('BEGIN');
+            await sqliteService.executeNonQuery('BEGIN');
             try {
                 for (var key of dirtyKeySet) {
-                    await sqlite.executeNonQuery(
+                    await sqliteService.executeNonQuery(
                         'INSERT OR REPLACE INTO configs (`key`, `value`) VALUES (@key, @value)',
                         {
                             '@key': key,
@@ -50,7 +50,7 @@ async function syncLoop() {
                 }
                 dirtyKeySet.clear();
             } finally {
-                await sqlite.executeNonQuery('COMMIT');
+                await sqliteService.executeNonQuery('COMMIT');
             }
         } catch (err) {
             console.error(err);
