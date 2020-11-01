@@ -132,6 +132,7 @@
     <Compile Include="NoopDragHandler.cs" />
     <Compile Include="RenderHandler.cs" />
     <Compile Include="SQLite.cs" />
+    <Compile Include="SharedVariable.cs" />
     <Compile Include="VRForm.cs">
       <SubType>Form</SubType>
     </Compile>
