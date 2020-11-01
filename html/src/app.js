@@ -3288,6 +3288,7 @@ CefSharp.BindObjectAsync(
                 API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
                 API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
                 setInterval(() => this.update(), 1000);
+                setInterval(() => this.refreshGameLog(), 100);
                 this.update();
                 this.$nextTick(function () {
                     this.$el.style.display = '';
@@ -3378,7 +3379,6 @@ CefSharp.BindObjectAsync(
             });
         }
         this.checkActiveFriends();
-        this.refreshGameLog();
         VRCX.CheckGameRunning().then(([isGameRunning, isGameNoVR]) => {
             if (isGameRunning !== this.isGameRunning) {
                 this.isGameRunning = isGameRunning;
@@ -4417,6 +4417,8 @@ CefSharp.BindObjectAsync(
 
     // App: gameLog
 
+    var gameLogContextMap = new Map();
+
     $app.data.lastLocation = '';
     $app.data.lastLocation$ = {};
     $app.data.discordActive = VRCXStorage.GetBool('discordActive');
@@ -4468,38 +4470,100 @@ CefSharp.BindObjectAsync(
         });
     };
 
-    $app.methods.refreshGameLog = function () {
-        LogWatcher.Get().then((logs) => {
-            if (logs.length) {
-                var { data } = this.gameLogTable;
-                for (var log of logs) {
-                    var ctx = {
-                        created_at: String(log[0]),
-                        type: String(log[1]),
-                        data: String(log[2])
-                    };
-                    if (ctx.data === API.currentUser.displayName) {
-                        continue;
-                    }
-                    if (ctx.type === 'Location') {
-                        var tag = ctx.data;
-                        if (tag.endsWith(':')) {
-                            tag = tag.substr(0, tag.length - 1);
-                            ctx.data = tag;
-                        }
-                        this.lastLocation = tag;
-                    }
-                    data.push(ctx);
-                }
-                this.sweepGameLog();
-                // sweepGameLog로 기록이 삭제되면
-                // 아무 것도 없는데 알림이 떠서 이상함
-                if (data.length) {
-                    this.notifyMenu('gameLog');
-                }
+    $app.methods.refreshGameLog = async function () {
+        if (API.isLoggedIn !== true) {
+            return;
+        }
+
+        var currentUser = API.currentUser.username;
+
+        for (var [fileName, dt, type, ...args] of await LogWatcher.Get()) {
+            var gameLogContext = gameLogContextMap.get(fileName);
+            if (gameLogContext === undefined) {
+                gameLogContext = {
+                    // auth
+                    loginProvider: null,
+                    loginUser: null,
+
+                    // hmd
+                    hmdModel: null,
+
+                    // location
+                    location: null,
+                };
+                gameLogContextMap.set(fileName, gameLogContext);
             }
-            this.updateSharedFeed();
-        });
+
+            var gameLogTableData = null;
+
+            switch (type) {
+                case 'auth':
+                    gameLogContext.loginProvider = args[0];
+                    gameLogContext.loginUser = args[1];
+                    break;
+
+                case 'hmd-model':
+                    gameLogContext.hmdModel = args[0];
+                    break;
+
+                case 'location':
+                    var location = args[0];
+                    gameLogContext.location = location;
+                    if (gameLogContext.loginUser === currentUser) {
+                        this.lastLocation = location;
+                    }
+                    break;
+
+                case 'world':
+                    // var worldName = params[0];
+                    gameLogTableData = {
+                        created_at: dt,
+                        type: 'Location',
+                        data: gameLogContext.location
+                    };
+                    break;
+
+                case 'player-join':
+                    var userDisplayName = args[0];
+                    gameLogTableData = {
+                        created_at: dt,
+                        type: 'OnPlayerJoined',
+                        data: userDisplayName
+                    };
+                    break;
+
+                case 'player-left':
+                    var userDisplayName = args[0];
+                    gameLogTableData = {
+                        created_at: dt,
+                        type: 'OnPlayerLeft',
+                        data: userDisplayName
+                    };
+                    break;
+
+                case 'notification':
+                    var json = args[0];
+                    gameLogTableData = {
+                        created_at: dt,
+                        type: 'Notification',
+                        data: json
+                    };
+                    break;
+            }
+
+            if (gameLogTableData !== null &&
+                gameLogContext.loginUser === currentUser) {
+                this.gameLogTable.data.push(gameLogTableData);
+            }
+        }
+
+        this.sweepGameLog();
+
+        if (this.gameLogTable.data.length > 0) {
+            this.notifyMenu('gameLog');
+        }
+
+        this.updateSharedFeed();
     };
 
     $app.methods.sweepGameLog = function () {

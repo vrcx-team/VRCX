@@ -60,11 +60,11 @@ namespace VRCX
                     SQLite.Init();
                     CpuMonitor.Init();
                     Discord.Init();
-                    LogWatcher.Init();
+                    LogWatcher.Instance.Init();
                     VRCXVR.Init();
                     Application.Run(new MainForm());
                     VRCXVR.Exit();
-                    LogWatcher.Exit();
+                    LogWatcher.Instance.Exit();
                     Discord.Exit();
                     CpuMonitor.Exit();
                     SQLite.Exit();
