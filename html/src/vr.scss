@@ -184,11 +184,10 @@ button {
     position: relative;
     flex: none;
     padding: 10px;
-    overflow: hidden;
+    overflow: hidden auto;
 }
 
 .x-friend-list {
-    overflow: hidden auto;
 }
 
 .x-friend-item {
