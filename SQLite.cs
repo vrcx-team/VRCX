@@ -21,7 +21,7 @@ namespace VRCX
         public static void Init()
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "VRCX.sqlite3");
-            m_Connection = new SQLiteConnection($"Data Source=\"{path}\";Version=3;PRAGMA locking_mode=NORMAL;PRAGMA cache_size=10000;PRAGMA temp_store=MEMORY;PRAGMA synchronous=OFF;PRAGMA journal_mode=MEMORY;PRAGMA busy_timeout=1000", true);
+            m_Connection = new SQLiteConnection($"Data Source=\"{path}\";Version=3;PRAGMA locking_mode=NORMAL;PRAGMA busy_timeout=5000", true);
             m_Connection.Open();
         }
 
