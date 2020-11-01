@@ -52,9 +52,9 @@ namespace VRCX
                 CamelCaseJavascriptNames = false
             };
             Browser.JavascriptObjectRepository.Register("VRCX", VRCX.Instance, true, options);
-            Browser.JavascriptObjectRepository.Register("SharedVariable", SharedVariable.Instance, true, options);
+            Browser.JavascriptObjectRepository.Register("SharedVariable", SharedVariable.Instance, false, options);
             Browser.JavascriptObjectRepository.Register("VRCXStorage", VRCXStorage.Instance, false, options);
-            Browser.JavascriptObjectRepository.Register("SQLite", SQLite.Instance, true, options);
+            Browser.JavascriptObjectRepository.Register("SQLite", SQLite.Instance, false, options);
             Browser.JavascriptObjectRepository.Register("LogWatcher", LogWatcher.Instance, true, options);
             Browser.JavascriptObjectRepository.Register("Discord", Discord.Instance, true, options);
             Browser.IsBrowserInitializedChanged += (A, B) =>

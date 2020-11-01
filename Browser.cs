@@ -32,9 +32,9 @@ namespace VRCX
                 CamelCaseJavascriptNames = false
             };
             JavascriptObjectRepository.Register("VRCX", VRCX.Instance, true, options);
-            JavascriptObjectRepository.Register("SharedVariable", SharedVariable.Instance, true, options);
+            JavascriptObjectRepository.Register("SharedVariable", SharedVariable.Instance, false, options);
             JavascriptObjectRepository.Register("VRCXStorage", VRCXStorage.Instance, false, options);
-            JavascriptObjectRepository.Register("SQLite", SQLite.Instance, true, options);
+            JavascriptObjectRepository.Register("SQLite", SQLite.Instance, false, options);
         }
 
         public new void Dispose()
