@@ -25,13 +25,7 @@ namespace VRCX
 
         public void ShowDevTools()
         {
-            try
-            {
-                MainForm.Browser.ShowDevTools();
-            }
-            catch
-            {
-            }
+            MainForm.Instance.Browser.ShowDevTools();
         }
 
         public void DeleteAllCookies()
@@ -41,8 +35,9 @@ namespace VRCX
 
         public string LoginWithSteam()
         {
-            return VRChatRPC.Update()
-                ? VRChatRPC.GetAuthSessionTicket()
+            var rpc = VRChatRPC.Instance;
+            return rpc.Update() == true
+                ? rpc.GetAuthSessionTicket()
                 : string.Empty;
         }
 
@@ -55,12 +50,12 @@ namespace VRCX
             if (hwnd != IntPtr.Zero)
             {
                 var cmdline = string.Empty;
+
                 try
                 {
-                    Int32 pid = 0;
-                    WinApi.GetWindowThreadProcessId(hwnd, out pid);
-                    using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + pid))
-                    using (ManagementObjectCollection objects = searcher.Get())
+                    WinApi.GetWindowThreadProcessId(hwnd, out uint pid);
+                    using (var searcher = new ManagementObjectSearcher($"SELECT CommandLine FROM Win32_Process WHERE ProcessId = {pid}"))
+                    using (var objects = searcher.Get())
                     {
                         cmdline = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
                     }
@@ -89,14 +84,14 @@ namespace VRCX
                 {
                     // "C:\Program Files (x86)\Steam\steam.exe" -- "%1"
                     var match = Regex.Match(key.GetValue(string.Empty) as string, "^\"(.+?)\\\\steam.exe\"");
-                    if (match.Success)
+                    if (match.Success == true)
                     {
                         var path = match.Groups[1].Value;
                         var _arguments = Uri.EscapeDataString(arguments);
                         Process.Start(new ProcessStartInfo
                         {
                             WorkingDirectory = path,
-                            FileName = path + "\\steam.exe",
+                            FileName = $"{path}\\steam.exe",
                             UseShellExecute = false,
                             Arguments = $"-- \"steam://rungameid/438100//{_arguments}\""
                         }).Close();
@@ -115,13 +110,13 @@ namespace VRCX
                 {
                     // "C:\Program Files (x86)\Steam\steamapps\common\VRChat\launch.bat" "C:\Program Files (x86)\Steam\steamapps\common\VRChat" "%1"
                     var match = Regex.Match(key.GetValue(string.Empty) as string, "^\"(.+?)\\\\launch.bat\"");
-                    if (match.Success)
+                    if (match.Success == true)
                     {
                         var path = match.Groups[1].Value;
                         Process.Start(new ProcessStartInfo
                         {
                             WorkingDirectory = path,
-                            FileName = path + "\\VRChat.exe",
+                            FileName = $"{path}\\VRChat.exe",
                             UseShellExecute = false,
                             Arguments = $"\"{arguments}\""
                         }).Close();
@@ -135,7 +130,8 @@ namespace VRCX
 
         public void OpenLink(string url)
         {
-            if (url.StartsWith("http://") || url.StartsWith("https://"))
+            if (url.StartsWith("http://") == true ||
+                url.StartsWith("https://") == true)
             {
                 Process.Start(url).Close();
             }
@@ -180,7 +176,7 @@ namespace VRCX
 
         public float CpuUsage()
         {
-            return CpuMonitor.CpuUsage;
+            return CpuMonitor.Instance.CpuUsage;
         }
 
         public void SetStartup(bool enabled)
@@ -189,7 +185,7 @@ namespace VRCX
             {
                 using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
                 {
-                    if (enabled)
+                    if (enabled == true)
                     {
                         var path = Application.ExecutablePath;
                         key.SetValue("VRCX", $"\"{path}\" --startup");

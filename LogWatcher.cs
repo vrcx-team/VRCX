@@ -25,7 +25,7 @@ namespace VRCX
         private readonly Dictionary<string, LogContext> m_LogContextMap; // <FileName, LogContext>
         private readonly ReaderWriterLockSlim m_LogListLock;
         private readonly List<string[]> m_LogList;
-        private Thread m_WatchThread;
+        private Thread m_Thread;
         private bool m_ResetLog;
 
         // NOTE
@@ -43,29 +43,31 @@ namespace VRCX
             m_LogContextMap = new Dictionary<string, LogContext>();
             m_LogListLock = new ReaderWriterLockSlim();
             m_LogList = new List<string[]>();
-            m_WatchThread = new Thread(WatchLoop)
+            m_Thread = new Thread(ThreadLoop)
             {
                 IsBackground = true
             };
         }
 
-        public void Init()
+        internal void Init()
         {
-            m_WatchThread.Start();
+            m_Thread.Start();
         }
 
-        public void Exit()
+        internal void Exit()
         {
-            var watchThread = m_WatchThread;
-            m_WatchThread = null;
-            watchThread.Interrupt();
-            watchThread.Join();
+            var thread = m_Thread;
+            m_Thread = null;
+            thread.Interrupt();
+            thread.Join();
         }
 
-        private void WatchLoop()
+        private void ThreadLoop()
         {
-            while (m_WatchThread != null)
+            while (m_Thread != null)
             {
+                Update();
+
                 try
                 {
                     Thread.Sleep(1000);
@@ -74,8 +76,6 @@ namespace VRCX
                 {
                     // ThreadInterruptedException
                 }
-
-                Update();
             }
         }
 
@@ -232,7 +232,7 @@ namespace VRCX
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
                 "hmd-model",
-            hmdModel
+                hmdModel
             });
 
             return true;
@@ -404,10 +404,7 @@ namespace VRCX
         public void Reset()
         {
             m_ResetLog = true;
-            if (m_WatchThread != null)
-            {
-                m_WatchThread.Interrupt();
-            }
+            m_Thread?.Interrupt();
         }
 
         public string[][] Get()
@@ -418,21 +415,21 @@ namespace VRCX
                 m_LogListLock.EnterWriteLock();
                 try
                 {
-                    string[][] array;
+                    string[][] items;
 
-                    if (m_LogList.Count > 100)
+                    if (m_LogList.Count > 1000)
                     {
-                        array = new string[100][];
-                        m_LogList.CopyTo(0, array, 0, 100);
-                        m_LogList.RemoveRange(0, 100);
+                        items = new string[1000][];
+                        m_LogList.CopyTo(0, items, 0, 1000);
+                        m_LogList.RemoveRange(0, 1000);
                     }
                     else
                     {
-                        array = m_LogList.ToArray();
+                        items = m_LogList.ToArray();
                         m_LogList.Clear();
                     }
 
-                    return array;
+                    return items;
                 }
                 finally
                 {

@@ -57,17 +57,17 @@ namespace VRCX
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
                     VRCXStorage.Load();
-                    SQLite.Init();
-                    CpuMonitor.Init();
-                    Discord.Init();
+                    CpuMonitor.Instance.Init();
+                    Discord.Instance.Init();
+                    SQLite.Instance.Init();
                     LogWatcher.Instance.Init();
                     VRCXVR.Init();
                     Application.Run(new MainForm());
                     VRCXVR.Exit();
                     LogWatcher.Instance.Exit();
-                    Discord.Exit();
-                    CpuMonitor.Exit();
-                    SQLite.Exit();
+                    SQLite.Instance.Exit();
+                    Discord.Instance.Exit();
+                    CpuMonitor.Instance.Exit();
                     VRCXStorage.Save();
                     Cef.Shutdown();
                 }

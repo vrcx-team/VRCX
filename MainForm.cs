@@ -16,7 +16,7 @@ namespace VRCX
     public partial class MainForm : Form
     {
         public static MainForm Instance { get; private set; }
-        public static ChromiumWebBrowser Browser { get; private set; }
+        public ChromiumWebBrowser Browser { get; private set; }
         private int LastLocationX;
         private int LastLocationY;
         private int LastSizeWidth;

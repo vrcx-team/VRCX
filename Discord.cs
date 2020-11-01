@@ -12,76 +12,92 @@ namespace VRCX
     public class Discord
     {
         public static Discord Instance { get; private set; }
-        private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
-        private static readonly RichPresence m_Presence = new RichPresence();
-        private static Thread m_Thread;
-        private static bool m_Active;
+        private readonly ReaderWriterLockSlim m_Lock;
+        private readonly RichPresence m_Presence;
+        private DiscordRpcClient m_Client;
+        private Thread m_Thread;
+        private bool m_Active;
 
         static Discord()
         {
             Instance = new Discord();
         }
 
-        public static void Init()
+        public Discord()
         {
-            m_Thread = new Thread(() =>
-            {
-                DiscordRpcClient client = null;
-                while (m_Thread != null)
-                {
-                    try
-                    {
-                        Thread.Sleep(1000);
-                    }
-                    catch
-                    {
-                        // ThreadInterruptedException
-                    }
-                    if (client != null)
-                    {
-                        m_Lock.EnterReadLock();
-                        try
-                        {
-                            client.SetPresence(m_Presence);
-                        }
-                        finally
-                        {
-                            m_Lock.ExitReadLock();
-                        }
-                        client.Invoke();
-                    }
-                    if (m_Active)
-                    {
-                        if (client == null)
-                        {
-                            client = new DiscordRpcClient("525953831020920832");
-                            if (!client.Initialize())
-                            {
-                                client.Dispose();
-                                client = null;
-                            }
-                        }
-                    }
-                    else if (client != null)
-                    {
-                        client.Dispose();
-                        client = null;
-                    }
-                }
-                client?.Dispose();
-            })
+            m_Lock = new ReaderWriterLockSlim();
+            m_Presence = new RichPresence();
+            m_Thread = new Thread(ThreadLoop)
             {
                 IsBackground = true
             };
+        }
+
+        internal void Init()
+        {
             m_Thread.Start();
         }
 
-        public static void Exit()
+        internal void Exit()
         {
-            var T = m_Thread;
+            var thread = m_Thread;
             m_Thread = null;
-            T.Interrupt();
-            T.Join();
+            thread.Interrupt();
+            thread.Join();
+
+            m_Client?.Dispose();
+        }
+
+        private void ThreadLoop()
+        {
+            while (m_Thread != null)
+            {
+                Update();
+
+                try
+                {
+                    Thread.Sleep(1000);
+                }
+                catch
+                {
+                    // ThreadInterruptedException
+                }
+            }
+        }
+
+        private void Update()
+        {
+            if (m_Client != null)
+            {
+                m_Lock.EnterReadLock();
+                try
+                {
+                    m_Client.SetPresence(m_Presence);
+                }
+                finally
+                {
+                    m_Lock.ExitReadLock();
+                }
+                m_Client.Invoke();
+            }
+
+            if (m_Active == true)
+            {
+                if (m_Client == null)
+                {
+                    m_Client = new DiscordRpcClient("525953831020920832");
+                    if (m_Client.Initialize() == false)
+                    {
+                        m_Client.Dispose();
+                        m_Client = null;
+                    }
+                }
+            }
+            else if (m_Client != null)
+            {
+                m_Client.Dispose();
+                m_Client = null;
+            }
         }
 
         public void SetActive(bool active)
@@ -93,8 +109,8 @@ namespace VRCX
         private static string LimitByteLength(string str, int maxBytesLength)
         {
             var bytesArr = Encoding.UTF8.GetBytes(str);
-            int bytesToRemove = 0;
-            int lastIndexInString = str.Length - 1;
+            var bytesToRemove = 0;
+            var lastIndexInString = str.Length - 1;
             while (bytesArr.Length - bytesToRemove > maxBytesLength)
             {
                 bytesToRemove += Encoding.UTF8.GetByteCount(new char[] { str[lastIndexInString] });
@@ -122,8 +138,8 @@ namespace VRCX
             m_Lock.EnterWriteLock();
             try
             {
-                if (string.IsNullOrEmpty(largeKey) &&
-                    string.IsNullOrEmpty(smallKey))
+                if (string.IsNullOrEmpty(largeKey) == true &&
+                    string.IsNullOrEmpty(smallKey) == true)
                 {
                     m_Presence.Assets = null;
                 }
@@ -145,18 +161,15 @@ namespace VRCX
             }
         }
 
-        // JSB Sucks
         public void SetTimestamps(double startUnixMilliseconds, double endUnixMilliseconds)
         {
-            SetTimestamps((ulong)startUnixMilliseconds, (ulong)endUnixMilliseconds);
-        }
+            var _startUnixMilliseconds = (ulong)startUnixMilliseconds;
+            var _endUnixMilliseconds = (ulong)endUnixMilliseconds;
 
-        public static void SetTimestamps(ulong startUnixMilliseconds, ulong endUnixMilliseconds)
-        {
             m_Lock.EnterWriteLock();
             try
             {
-                if (startUnixMilliseconds == 0)
+                if (_startUnixMilliseconds == 0)
                 {
                     m_Presence.Timestamps = null;
                 }
@@ -166,14 +179,16 @@ namespace VRCX
                     {
                         m_Presence.Timestamps = new Timestamps();
                     }
-                    m_Presence.Timestamps.StartUnixMilliseconds = startUnixMilliseconds;
-                    if (endUnixMilliseconds == 0)
+
+                    m_Presence.Timestamps.StartUnixMilliseconds = _startUnixMilliseconds;
+
+                    if (_endUnixMilliseconds == 0)
                     {
                         m_Presence.Timestamps.End = null;
                     }
                     else
                     {
-                        m_Presence.Timestamps.EndUnixMilliseconds = endUnixMilliseconds;
+                        m_Presence.Timestamps.EndUnixMilliseconds = _endUnixMilliseconds;
                     }
                 }
             }

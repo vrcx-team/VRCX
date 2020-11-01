@@ -10,78 +10,84 @@ namespace VRCX
     public class SQLite
     {
         public static SQLite Instance { get; private set; }
-        private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
-        private static SQLiteConnection m_Connection;
+        private readonly ReaderWriterLockSlim m_ConnectionLock;
+        private readonly SQLiteConnection m_Connection;
 
         static SQLite()
         {
             Instance = new SQLite();
         }
 
-        public static void Init()
+        public SQLite()
         {
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "VRCX.sqlite3");
-            m_Connection = new SQLiteConnection($"Data Source=\"{path}\";Version=3;PRAGMA locking_mode=NORMAL;PRAGMA busy_timeout=5000", true);
+            m_ConnectionLock = new ReaderWriterLockSlim();
+
+            var dataSource = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "VRCX.sqlite3");
+            m_Connection = new SQLiteConnection($"Data Source=\"{dataSource}\";Version=3;PRAGMA locking_mode=NORMAL;PRAGMA busy_timeout=5000", true);
+        }
+
+        internal void Init()
+        {
             m_Connection.Open();
         }
 
-        public static void Exit()
+        internal void Exit()
         {
             m_Connection.Close();
             m_Connection.Dispose();
         }
 
-        public int ExecuteNonQuery(string sql, IDictionary<string, object> param = null)
+        public int ExecuteNonQuery(string sql, IDictionary<string, object> args = null)
         {
-            m_Lock.EnterWriteLock();
+            m_ConnectionLock.EnterWriteLock();
             try
             {
-                using (var C = new SQLiteCommand(sql, m_Connection))
+                using (var command = new SQLiteCommand(sql, m_Connection))
                 {
-                    if (param != null)
+                    if (args != null)
                     {
-                        foreach (var prop in param)
+                        foreach (var arg in args)
                         {
-                            C.Parameters.Add(new SQLiteParameter(prop.Key, prop.Value));
+                            command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
                         }
                     }
-                    return C.ExecuteNonQuery();
+                    return command.ExecuteNonQuery();
                 }
             }
             finally
             {
-                m_Lock.ExitWriteLock();
+                m_ConnectionLock.ExitWriteLock();
             }
         }
 
-        public void Execute(IJavascriptCallback callback, string sql, IDictionary<string, object> param = null)
+        public void Execute(IJavascriptCallback callback, string sql, IDictionary<string, object> args = null)
         {
-            m_Lock.EnterReadLock();
+            m_ConnectionLock.EnterReadLock();
             try
             {
-                using (var C = new SQLiteCommand(sql, m_Connection))
+                using (var command = new SQLiteCommand(sql, m_Connection))
                 {
-                    if (param != null)
+                    if (args != null)
                     {
-                        foreach (var prop in param)
+                        foreach (var arg in args)
                         {
-                            C.Parameters.Add(new SQLiteParameter(prop.Key, prop.Value));
+                            command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
                         }
                     }
-                    using (var R = C.ExecuteReader())
+                    using (var reader = command.ExecuteReader())
                     {
-                        while (R.Read())
+                        while (reader.Read() == true)
                         {
-                            var row = new object[R.FieldCount];
-                            R.GetValues(row);
-                            callback.ExecuteAsync(row);
+                            var values = new object[reader.FieldCount];
+                            reader.GetValues(values);
+                            callback.ExecuteAsync(values);
                         }
                     }
                 }
             }
             finally
             {
-                m_Lock.ExitReadLock();
+                m_ConnectionLock.ExitReadLock();
             }
         }
     }

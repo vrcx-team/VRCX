@@ -9,8 +9,10 @@ using System.Text;
 
 namespace VRCX
 {
-    public static class VRChatRPC
+    public class VRChatRPC
     {
+        public static VRChatRPC Instance { get; private set; }
+
         [DllImport("VRChatRPC", CallingConvention = CallingConvention.Cdecl)]
         private static extern bool VRChatRPC_000();
 
@@ -20,19 +22,24 @@ namespace VRCX
         [DllImport("VRChatRPC", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr VRChatRPC_002();
 
-        public static bool Update()
+        static VRChatRPC()
+        {
+            Instance = new VRChatRPC();
+        }
+
+        public bool Update()
         {
             return VRChatRPC_000();
         }
 
-        public static string GetAuthSessionTicket()
+        public string GetAuthSessionTicket()
         {
             var a = new byte[1024];
             var n = VRChatRPC_001(a, 1024);
             return BitConverter.ToString(a, 0, n).Replace("-", string.Empty);
         }
 
-        public static string GetPersonaName()
+        public string GetPersonaName()
         {
             var ptr = VRChatRPC_002();
             if (ptr != IntPtr.Zero)

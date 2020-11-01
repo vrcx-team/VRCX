@@ -30,23 +30,7 @@ namespace VRCX
             m_MapLock.EnterWriteLock();
             try
             {
-                if (m_Map.Count > 0)
-                {
-                    m_Map.Clear();
-                }
-            }
-            finally
-            {
-                m_MapLock.ExitWriteLock();
-            }
-        }
-
-        public bool Remove(string key)
-        {
-            m_MapLock.EnterWriteLock();
-            try
-            {
-                return m_Map.Remove(key);
+                m_Map.Clear();
             }
             finally
             {
@@ -78,6 +62,19 @@ namespace VRCX
             try
             {
                 m_Map[key] = value;
+            }
+            finally
+            {
+                m_MapLock.ExitWriteLock();
+            }
+        }
+
+        public bool Remove(string key)
+        {
+            m_MapLock.EnterWriteLock();
+            try
+            {
+                return m_Map.Remove(key);
             }
             finally
             {
