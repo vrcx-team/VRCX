@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace VRCX
 {
@@ -40,6 +39,8 @@ namespace VRCX
 
         public int ExecuteNonQuery(string sql, IDictionary<string, object> args = null)
         {
+            int result = -1;
+
             m_ConnectionLock.EnterWriteLock();
             try
             {
@@ -52,47 +53,61 @@ namespace VRCX
                             command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
                         }
                     }
-                    return command.ExecuteNonQuery();
+                    result = command.ExecuteNonQuery();
                 }
+            }
+            catch
+            {
             }
             finally
             {
                 m_ConnectionLock.ExitWriteLock();
             }
+
+            return result;
         }
 
-        public void Execute(IJavascriptCallback rowCallback, IJavascriptCallback doneCallback, string sql, IDictionary<string, object> args = null)
+        public void Execute(IJavascriptCallback fetchCallback, IJavascriptCallback resolveCallback, IJavascriptCallback rejectCallback, string sql, IDictionary<string, object> args = null)
         {
-            m_ConnectionLock.EnterReadLock();
             try
             {
-                using (rowCallback)
-                using (doneCallback)
-                using (var command = new SQLiteCommand(sql, m_Connection))
+                m_ConnectionLock.EnterReadLock();
+                try
                 {
-                    if (args != null)
+                    using (var command = new SQLiteCommand(sql, m_Connection))
                     {
-                        foreach (var arg in args)
+                        if (args != null)
                         {
-                            command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
+                            foreach (var arg in args)
+                            {
+                                command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
+                            }
+                        }
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read() == true)
+                            {
+                                var values = new object[reader.FieldCount];
+                                reader.GetValues(values);
+                                fetchCallback.ExecuteAsync(values);
+                            }
                         }
                     }
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read() == true)
-                        {
-                            var values = new object[reader.FieldCount];
-                            reader.GetValues(values);
-                            rowCallback.ExecuteAsync(values);
-                        }
-                        doneCallback.ExecuteAsync();
-                    }
+                    resolveCallback.ExecuteAsync();
+                }
+                finally
+                {
+                    m_ConnectionLock.ExitReadLock();
                 }
             }
-            finally
+            catch (Exception e)
             {
-                m_ConnectionLock.ExitReadLock();
+                rejectCallback.ExecuteAsync(e.ToString());
             }
+
+            fetchCallback.Dispose();
+            resolveCallback.Dispose();
+            rejectCallback.Dispose();
         }
     }
 }
