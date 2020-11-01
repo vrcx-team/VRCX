@@ -11,13 +11,51 @@ import { DataTables } from 'vue-data-tables';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 
-CefSharp.BindObjectAsync(
-    'VRCX',
-    'VRCXStorage',
-    'SQLite',
-    'LogWatcher',
-    'Discord'
-).then(function () {
+import sharedRepository from './repository/shared.js';
+import configRepository from './repository/config.js';
+
+window.sharedRepository = sharedRepository;
+window.configRepository = configRepository;
+
+(async function () {
+    await CefSharp.BindObjectAsync(
+        'VRCX',
+        'SharedVariable', // DO NOT DIRECT ACCESS
+        'VRCXStorage',
+        'SQLite', // DO NOT DIRECT ACCESS
+        'LogWatcher',
+        'Discord'
+    );
+
+    await configRepository.init();
+
+    if (configRepository.getBool('migrate_config_20201101') === null) {
+        var legacyConfigKeys = [
+            'orderFriendGroup0',
+            'orderFriendGroup1',
+            'orderFriendGroup2',
+            'orderFriendGroup3',
+            'discordActive',
+            'discordInstance',
+            'openVR',
+            'openVRAlways',
+            'VRCX_hidePrivateFromFeed',
+            'VRCX_hideLoginsFromFeed',
+            'VRCX_hideDevicesFromFeed',
+            'VRCX_VIPNotifications',
+            'VRCX_minimalFeed',
+            'isDarkMode',
+            'VRCX_StartAtWindowsStartup',
+            'VRCX_StartAsMinimizedState',
+            'VRCX_CloseToTray',
+            'launchAsDesktop'
+        ];
+        for (var key of legacyConfigKeys) {
+            configRepository.setBool(key, VRCXStorage.Get(key) === 'true');
+        }
+        configRepository.setBool('migrate_config_20201101', true);
+    }
+
     document.addEventListener('keyup', function (e) {
         if (e.ctrlKey) {
             if (e.shiftKey && e.code === 'KeyI') {
@@ -27,32 +65,6 @@ CefSharp.BindObjectAsync(
             }
         }
     });
-
-    VRCXStorage.GetBool = function (key) {
-        return this.Get(key) === 'true';
-    };
-
-    VRCXStorage.SetBool = function (key, value) {
-        this.Set(key, value
-            ? 'true'
-            : 'false');
-    };
-
-    VRCXStorage.GetInt = function (key) {
-        return parseInt(this.Get(key), 10) || 0;
-    };
-
-    VRCXStorage.SetInt = function (key, value) {
-        this.Set(key, String(value));
-    };
-
-    VRCXStorage.GetFloat = function (key) {
-        return parseFloat(this.Get(key), 10) || 0.0;
-    };
-
-    VRCXStorage.SetFloat = function (key, value) {
-        this.Set(key, String(value));
-    };
 
     VRCXStorage.GetArray = function (key) {
         try {
@@ -1072,7 +1084,7 @@ CefSharp.BindObjectAsync(
                 ref
             });
         }
-        VRCXStorage.SetObject('currentUser', ref);
+        sharedRepository.set('current_user_status', ref.status);
         return ref;
     };
 
@@ -3459,7 +3471,7 @@ CefSharp.BindObjectAsync(
         if (arr.length > 25) {
             arr.length = 25;
         }
-        VRCXStorage.SetArray('sharedFeeds', arr);
+        sharedRepository.setArray('feeds', arr);
     };
 
     $app.methods.notifyMenu = function (index) {
@@ -3690,15 +3702,15 @@ CefSharp.BindObjectAsync(
     $app.data.sortFriendsGroup1 = false;
     $app.data.sortFriendsGroup2 = false;
     $app.data.sortFriendsGroup3 = false;
-    $app.data.orderFriendsGroup0 = VRCXStorage.GetBool('orderFriendGroup0');
-    $app.data.orderFriendsGroup1 = VRCXStorage.GetBool('orderFriendGroup1');
-    $app.data.orderFriendsGroup2 = VRCXStorage.GetBool('orderFriendGroup2');
-    $app.data.orderFriendsGroup3 = VRCXStorage.GetBool('orderFriendGroup3');
+    $app.data.orderFriendsGroup0 = configRepository.getBool('orderFriendGroup0');
+    $app.data.orderFriendsGroup1 = configRepository.getBool('orderFriendGroup1');
+    $app.data.orderFriendsGroup2 = configRepository.getBool('orderFriendGroup2');
+    $app.data.orderFriendsGroup3 = configRepository.getBool('orderFriendGroup3');
     var saveOrderFriendGroup = function () {
-        VRCXStorage.SetBool('orderFriendGroup0', this.orderFriendsGroup0);
-        VRCXStorage.SetBool('orderFriendGroup1', this.orderFriendsGroup1);
-        VRCXStorage.SetBool('orderFriendGroup2', this.orderFriendsGroup2);
-        VRCXStorage.SetBool('orderFriendGroup3', this.orderFriendsGroup3);
+        configRepository.setBool('orderFriendGroup0', this.orderFriendsGroup0);
+        configRepository.setBool('orderFriendGroup1', this.orderFriendsGroup1);
+        configRepository.setBool('orderFriendGroup2', this.orderFriendsGroup2);
+        configRepository.setBool('orderFriendGroup3', this.orderFriendsGroup3);
     };
     $app.watch.orderFriendsGroup0 = saveOrderFriendGroup;
     $app.watch.orderFriendsGroup1 = saveOrderFriendGroup;
@@ -4424,11 +4436,11 @@ CefSharp.BindObjectAsync(
 
     $app.data.lastLocation = '';
     $app.data.lastLocation$ = {};
-    $app.data.discordActive = VRCXStorage.GetBool('discordActive');
-    $app.data.discordInstance = VRCXStorage.GetBool('discordInstance');
+    $app.data.discordActive = configRepository.getBool('discordActive');
+    $app.data.discordInstance = configRepository.getBool('discordInstance');
     var saveDiscordOption = function () {
-        VRCXStorage.SetBool('discordActive', this.discordActive);
-        VRCXStorage.SetBool('discordInstance', this.discordInstance);
+        configRepository.setBool('discordActive', this.discordActive);
+        configRepository.setBool('discordInstance', this.discordInstance);
     };
     $app.watch.discordActive = saveDiscordOption;
     $app.watch.discordInstance = saveDiscordOption;
@@ -5552,21 +5564,21 @@ CefSharp.BindObjectAsync(
         }
     };
     $app.data.visits = 0;
-    $app.data.openVR = VRCXStorage.GetBool('openVR');
-    $app.data.openVRAlways = VRCXStorage.GetBool('openVRAlways');
-    $app.data.hidePrivateFromFeed = VRCXStorage.GetBool('VRCX_hidePrivateFromFeed');
-    $app.data.hideLoginsFromFeed = VRCXStorage.GetBool('VRCX_hideLoginsFromFeed');
-    $app.data.hideDevicesFromFeed = VRCXStorage.GetBool('VRCX_hideDevicesFromFeed');
-    $app.data.vipNotifications = VRCXStorage.GetBool('VRCX_VIPNotifications');
-    $app.data.minimalFeed = VRCXStorage.GetBool('VRCX_minimalFeed');
+    $app.data.openVR = configRepository.getBool('openVR');
+    $app.data.openVRAlways = configRepository.getBool('openVRAlways');
+    $app.data.hidePrivateFromFeed = configRepository.getBool('VRCX_hidePrivateFromFeed');
+    $app.data.hideLoginsFromFeed = configRepository.getBool('VRCX_hideLoginsFromFeed');
+    $app.data.hideDevicesFromFeed = configRepository.getBool('VRCX_hideDevicesFromFeed');
+    $app.data.vipNotifications = configRepository.getBool('VRCX_VIPNotifications');
+    $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
     var saveOpenVROption = function () {
-        VRCXStorage.SetBool('openVR', this.openVR);
-        VRCXStorage.SetBool('openVRAlways', this.openVRAlways);
-        VRCXStorage.SetBool('VRCX_hidePrivateFromFeed', this.hidePrivateFromFeed);
-        VRCXStorage.SetBool('VRCX_hideLoginsFromFeed', this.hideLoginsFromFeed);
-        VRCXStorage.SetBool('VRCX_hideDevicesFromFeed', this.hideDevicesFromFeed);
-        VRCXStorage.SetBool('VRCX_VIPNotifications', this.vipNotifications);
-        VRCXStorage.SetBool('VRCX_minimalFeed', this.minimalFeed);
+        configRepository.setBool('openVR', this.openVR);
+        configRepository.setBool('openVRAlways', this.openVRAlways);
+        configRepository.setBool('VRCX_hidePrivateFromFeed', this.hidePrivateFromFeed);
+        configRepository.setBool('VRCX_hideLoginsFromFeed', this.hideLoginsFromFeed);
+        configRepository.setBool('VRCX_hideDevicesFromFeed', this.hideDevicesFromFeed);
+        configRepository.setBool('VRCX_VIPNotifications', this.vipNotifications);
+        configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
     };
     $app.watch.openVR = saveOpenVROption;
     $app.watch.openVRAlways = saveOpenVROption;
@@ -5575,19 +5587,19 @@ CefSharp.BindObjectAsync(
     $app.watch.hideDevicesFromFeed = saveOpenVROption;
     $app.watch.vipNotifications = saveOpenVROption;
     $app.watch.minimalFeed = saveOpenVROption;
-    $app.data.isDarkMode = VRCXStorage.GetBool('isDarkMode');
+    $app.data.isDarkMode = configRepository.getBool('isDarkMode');
     $appDarkStyle.disabled = $app.data.isDarkMode === false;
     $app.watch.isDarkMode = function () {
-        VRCXStorage.SetBool('isDarkMode', this.isDarkMode);
+        configRepository.setBool('isDarkMode', this.isDarkMode);
         $appDarkStyle.disabled = this.isDarkMode === false;
     };
-    $app.data.isStartAtWindowsStartup = VRCXStorage.GetBool('VRCX_StartAtWindowsStartup');
-    $app.data.isStartAsMinimizedState = VRCXStorage.GetBool('VRCX_StartAsMinimizedState');
-    $app.data.isCloseToTray = VRCXStorage.GetBool('VRCX_CloseToTray');
+    $app.data.isStartAtWindowsStartup = configRepository.getBool('VRCX_StartAtWindowsStartup');
+    $app.data.isStartAsMinimizedState = configRepository.getBool('VRCX_StartAsMinimizedState');
+    $app.data.isCloseToTray = configRepository.getBool('VRCX_CloseToTray');
     var saveVRCXWindowOption = function () {
-        VRCXStorage.SetBool('VRCX_StartAtWindowsStartup', this.isStartAtWindowsStartup);
-        VRCXStorage.SetBool('VRCX_StartAsMinimizedState', this.isStartAsMinimizedState);
-        VRCXStorage.SetBool('VRCX_CloseToTray', this.isCloseToTray);
+        configRepository.setBool('VRCX_StartAtWindowsStartup', this.isStartAtWindowsStartup);
+        configRepository.setBool('VRCX_StartAsMinimizedState', this.isStartAsMinimizedState);
+        configRepository.setBool('VRCX_CloseToTray', this.isCloseToTray);
         VRCX.SetStartup(this.isStartAtWindowsStartup);
     };
     $app.watch.isStartAtWindowsStartup = saveVRCXWindowOption;
@@ -7306,13 +7318,13 @@ CefSharp.BindObjectAsync(
     $app.data.launchDialog = {
         visible: false,
         loading: false,
-        desktop: VRCXStorage.GetBool('launchAsDesktop'),
+        desktop: configRepository.getBool('launchAsDesktop'),
         location: '',
         url: ''
     };
 
     $app.watch['launchDialog.desktop'] = function () {
-        VRCXStorage.SetBool('launchAsDesktop', this.launchDialog.desktop);
+        configRepository.setBool('launchAsDesktop', this.launchDialog.desktop);
     };
 
     API.$on('LOGOUT', function () {
@@ -7355,4 +7367,4 @@ CefSharp.BindObjectAsync(
 
     $app = new Vue($app);
     window.$app = $app;
-});
+})();

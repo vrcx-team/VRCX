@@ -9,68 +9,20 @@ import Vue from 'vue';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 
-CefSharp.BindObjectAsync(
-    'VRCX',
-    'VRCXStorage',
-    'SQLite'
-).then(function () {
-    VRCXStorage.GetBool = function (key) {
-        return this.Get(key) === 'true';
-    };
+import sharedRepository from './repository/shared.js';
+import configRepository from './repository/config.js';
 
-    VRCXStorage.SetBool = function (key, value) {
-        this.Set(key, value
-            ? 'true'
-            : 'false');
-    };
+window.sharedRepository = sharedRepository;
+window.configRepository = configRepository;
 
-    VRCXStorage.GetInt = function (key) {
-        return parseInt(this.Get(key), 10) || 0;
-    };
+(async function () {
+    await CefSharp.BindObjectAsync(
+        'VRCX',
+        'SharedVariable',
+        'SQLite'
+    );
 
-    VRCXStorage.SetInt = function (key, value) {
-        this.Set(key, String(value));
-    };
-
-    VRCXStorage.GetFloat = function (key) {
-        return parseFloat(this.Get(key), 10) || 0.0;
-    };
-
-    VRCXStorage.SetFloat = function (key, value) {
-        this.Set(key, String(value));
-    };
-
-    VRCXStorage.GetArray = function (key) {
-        try {
-            var array = JSON.parse(this.Get(key));
-            if (Array.isArray(array)) {
-                return array;
-            }
-        } catch (err) {
-            console.error(err);
-        }
-        return [];
-    };
-
-    VRCXStorage.SetArray = function (key, value) {
-        this.Set(key, JSON.stringify(value));
-    };
-
-    VRCXStorage.GetObject = function (key) {
-        try {
-            var object = JSON.parse(this.Get(key));
-            if (object === Object(object)) {
-                return object;
-            }
-        } catch (err) {
-            console.error(err);
-        }
-        return {};
-    };
-
-    VRCXStorage.SetObject = function (key, value) {
-        this.Set(key, JSON.stringify(value));
-    };
+    await configRepository.init();
 
     Noty.overrideDefaults({
         animation: {
@@ -619,6 +571,7 @@ CefSharp.BindObjectAsync(
             // 2 = 항상 화면에 보이는 거
             appType: location.href.substr(-1),
             currentTime: new Date().toJSON(),
+            currentUserStatus: null,
             cpuUsage: 0,
             feeds: [],
             devices: [],
@@ -662,8 +615,8 @@ CefSharp.BindObjectAsync(
     $app.methods.updateLoop = async function () {
         try {
             this.currentTime = new Date().toJSON();
-            this.currentUser = VRCXStorage.GetObject('currentUser') || {};
-            if (VRCXStorage.GetBool('VRCX_hideDevicesFromFeed') === false) {
+            this.currentUserStatus = sharedRepository.get('current_user_status');
+            if (configRepository.getBool('VRCX_hideDevicesFromFeed') === false) {
                 VRCX.GetVRDevices().then((devices) => {
                     devices.forEach((device) => {
                         device[2] = parseInt(device[2], 10);
@@ -674,14 +627,14 @@ CefSharp.BindObjectAsync(
             else {
                 this.devices = '';
             }
-            this.updateSharedFeed();
+            await this.updateSharedFeed();
         } catch (err) {
             console.error(err);
         }
         setTimeout(() => this.updateLoop(), 500);
     };
 
-    $app.methods.updateCpuUsageLoop = async function() {
+    $app.methods.updateCpuUsageLoop = async function () {
         try {
             var cpuUsage = await VRCX.CpuUsage();
             this.cpuUsage = cpuUsage.toFixed(2);
@@ -691,11 +644,18 @@ CefSharp.BindObjectAsync(
         setTimeout(() => this.updateCpuUsageLoop(), 1000);
     };
 
-    $app.methods.updateSharedFeed = function () {
-        this.isMinimalFeed = VRCXStorage.GetBool('VRCX_minimalFeed');
+    $app.methods.updateSharedFeed = async function () {
+        this.isMinimalFeed = configRepository.getBool('VRCX_minimalFeed');
         // TODO: block mute hideAvatar unfriend
+
+        var feeds = sharedRepository.getArray('feeds');
+        if (feeds === null) {
+            return;
+        }
+
         var _feeds = this.feeds;
-        this.feeds = VRCXStorage.GetArray('sharedFeeds');
+        this.feeds = feeds;
+
         if (this.appType === '2') {
             var map = {};
             _feeds.forEach((feed) => {
@@ -716,10 +676,10 @@ CefSharp.BindObjectAsync(
                 }
             });
             // disable notification on busy
-            if (this.currentUser.status === 'busy') {
+            if (this.currentUserStatus === 'busy') {
                 return;
             }
-            if (VRCXStorage.GetBool('VRCX_VIPNotifications') === true) {
+            if (configRepository.getBool('VRCX_VIPNotifications') === true) {
                 var notys = [];
                 this.feeds.forEach((feed) => {
                     if (feed.isFavorite) {
@@ -742,7 +702,7 @@ CefSharp.BindObjectAsync(
                 });
                 var bias = new Date(Date.now() - 60000).toJSON();
                 var theme = 'relax';
-                if (VRCXStorage.GetBool('isDarkMode') === true) {
+                if (configRepository.getBool('isDarkMode') === true) {
                     theme = 'sunset';
                 }
                 notys.forEach((noty) => {
@@ -801,4 +761,4 @@ CefSharp.BindObjectAsync(
 
     $app = new Vue($app);
     window.$app = $app;
-});
+})();
