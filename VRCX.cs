@@ -87,13 +87,13 @@ namespace VRCX
                     if (match.Success == true)
                     {
                         var path = match.Groups[1].Value;
-                        var _arguments = Uri.EscapeDataString(arguments);
+                        // var _arguments = Uri.EscapeDataString(arguments);
                         Process.Start(new ProcessStartInfo
                         {
                             WorkingDirectory = path,
                             FileName = $"{path}\\steam.exe",
                             UseShellExecute = false,
-                            Arguments = $"-- \"steam://rungameid/438100//{_arguments}\""
+                            Arguments = $"-applaunch 438100 {arguments}"
                         }).Close();
                         return;
                     }
@@ -118,7 +118,7 @@ namespace VRCX
                             WorkingDirectory = path,
                             FileName = $"{path}\\VRChat.exe",
                             UseShellExecute = false,
-                            Arguments = $"\"{arguments}\""
+                            Arguments = arguments
                         }).Close();
                     }
                 }
