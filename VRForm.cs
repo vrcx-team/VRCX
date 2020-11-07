@@ -42,12 +42,8 @@ namespace VRCX
                 },
                 Dock = DockStyle.Fill,
             };
-            var options = new BindingOptions()
-            {
-                CamelCaseJavascriptNames = false
-            };
-            Util.RegisterBindings(Browser1.JavascriptObjectRepository);
-            Util.RegisterBindings(Browser2.JavascriptObjectRepository);
+            Util.ApplyJavascriptBindings(Browser1.JavascriptObjectRepository);
+            Util.ApplyJavascriptBindings(Browser2.JavascriptObjectRepository);
             panel1.Controls.Add(Browser1);
             panel2.Controls.Add(Browser2);
         }

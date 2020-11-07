@@ -27,7 +27,7 @@ namespace VRCX
             Size = new Size(texture.Description.Width, texture.Description.Height);
             RenderHandler.Dispose();
             RenderHandler = new RenderHandler(this, m_Lock);
-            Util.RegisterBindings(JavascriptObjectRepository);
+            Util.ApplyJavascriptBindings(JavascriptObjectRepository);
         }
 
         public new void Dispose()

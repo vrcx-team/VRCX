@@ -4,19 +4,16 @@ namespace VRCX
 {
     public static class Util
     {
-        public static void RegisterBindings(IJavascriptObjectRepository repository)
+        public static void ApplyJavascriptBindings(IJavascriptObjectRepository repository)
         {
-            var options = new BindingOptions()
-            {
-                CamelCaseJavascriptNames = false
-            };
-            repository.Register("VRCX", VRCX.Instance, true, options);
-            repository.Register("SharedVariable", SharedVariable.Instance, false, options);
-            repository.Register("WebApi", WebApi.Instance, true, options);
-            repository.Register("VRCXStorage", VRCXStorage.Instance, false, options);
-            repository.Register("SQLite", SQLite.Instance, true, options);
-            repository.Register("LogWatcher", LogWatcher.Instance, true, options);
-            repository.Register("Discord", Discord.Instance, true, options);
+            repository.NameConverter = null;
+            repository.Register("VRCX", VRCX.Instance, true);
+            repository.Register("SharedVariable", SharedVariable.Instance, false);
+            repository.Register("WebApi", WebApi.Instance, true);
+            repository.Register("VRCXStorage", VRCXStorage.Instance, false);
+            repository.Register("SQLite", SQLite.Instance, true);
+            repository.Register("LogWatcher", LogWatcher.Instance, true);
+            repository.Register("Discord", Discord.Instance, true);
         }
     }
 }

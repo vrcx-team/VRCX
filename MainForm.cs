@@ -47,7 +47,7 @@ namespace VRCX
                 },
                 Dock = DockStyle.Fill,
             };
-            Util.RegisterBindings(Browser.JavascriptObjectRepository);
+            Util.ApplyJavascriptBindings(Browser.JavascriptObjectRepository);
             Browser.IsBrowserInitializedChanged += (A, B) =>
             {
                 // Browser.ShowDevTools();
