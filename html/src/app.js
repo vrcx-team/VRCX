@@ -14,7 +14,7 @@ import locale from 'element-ui/lib/locale/lang/en';
 import sharedRepository from './repository/shared.js';
 import configRepository from './repository/config.js';
 import webApiService from './service/webapi.js';
-import logWatcherService from './service/logwatcher.js'
+import gameLogService from './service/gamelog.js'
 
 (async function () {
     await CefSharp.BindObjectAsync(
@@ -3296,7 +3296,7 @@ import logWatcherService from './service/logwatcher.js'
         el: '#x-app',
         async mounted() {
             this.checkAppVersion();
-            await logWatcherService.reset();
+            await gameLogService.reset();
             API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
             API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
             this.updateLoop();
@@ -4435,8 +4435,6 @@ import logWatcherService from './service/logwatcher.js'
 
     // App: gameLog
 
-    var gameLogContextMap = new Map();
-
     $app.data.lastLocation = '';
     $app.data.lastLocation$ = {};
     $app.data.discordActive = configRepository.getBool('discordActive');
@@ -4483,7 +4481,7 @@ import logWatcherService from './service/logwatcher.js'
     };
 
     $app.methods.resetGameLog = async function () {
-        await logWatcherService.reset();
+        await gameLogService.reset();
         this.gameLogTable.data = [];
     };
 
@@ -4506,94 +4504,61 @@ import logWatcherService from './service/logwatcher.js'
     };
 
     $app.methods.updateGameLog = async function () {
-        var {
-            displayName: currentUserDisplayName,
-            username: currentUserName
-        } = API.currentUser;
+        var currentUserDisplayName = API.currentUser.displayName;
 
-        for (var [fileName, dt, type, ...args] of await logWatcherService.get()) {
-            var gameLogContext = gameLogContextMap.get(fileName);
-            if (gameLogContext === undefined) {
-                gameLogContext = {
-                    // auth
-                    loginProvider: null,
-                    loginUser: null,
+        for (var gameLog of await gameLogService.poll(API.currentUser.username)) {
+            var tableData = null;
 
-                    // hmd
-                    hmdModel: null,
-
-                    // location
-                    location: null,
-                };
-                gameLogContextMap.set(fileName, gameLogContext);
-            }
-
-            var gameLogTableData = null;
-
-            switch (type) {
-                case 'auth':
-                    gameLogContext.loginProvider = args[0];
-                    gameLogContext.loginUser = args[1];
-                    break;
-
-                case 'hmd-model':
-                    gameLogContext.hmdModel = args[0];
+            switch (gameLog.type) {
+                case 'location':
+                    tableData = {
+                        created_at: gameLog.dt,
+                        type: 'Location',
+                        data: gameLog.location
+                    };
                     break;
 
                 case 'location':
-                    var location = args[0];
-                    gameLogContext.location = location;
-                    if (gameLogContext.loginUser === currentUserName) {
-                        this.lastLocation = location;
-                    }
-                    break;
-
-                case 'world':
-                    // var worldName = params[0];
-                    gameLogTableData = {
-                        created_at: dt,
+                    tableData = {
+                        created_at: gameLog.dt,
                         type: 'Location',
-                        data: gameLogContext.location
+                        data: gameLog.location
                     };
                     break;
 
                 case 'player-joined':
-                    var userDisplayName = args[0];
-                    if (currentUserDisplayName === userDisplayName) {
+                    if (currentUserDisplayName === gameLog.userDisplayName) {
                         continue;
                     }
-                    gameLogTableData = {
-                        created_at: dt,
+                    tableData = {
+                        created_at: gameLog.dt,
                         type: 'OnPlayerJoined',
-                        data: userDisplayName
+                        data: gameLog.userDisplayName
                     };
                     break;
 
                 case 'player-left':
-                    var userDisplayName = args[0];
-                    if (currentUserDisplayName === userDisplayName) {
+                    if (currentUserDisplayName === gameLog.userDisplayName) {
                         continue;
                     }
-                    gameLogTableData = {
-                        created_at: dt,
+                    tableData = {
+                        created_at: gameLog.dt,
                         type: 'OnPlayerLeft',
-                        data: userDisplayName
+                        data: gameLog.userDisplayName
                     };
                     break;
 
                 case 'notification':
-                    var json = args[0];
-                    gameLogTableData = {
-                        created_at: dt,
+                    tableData = {
+                        created_at: gameLog.dt,
                         type: 'Notification',
-                        data: json
+                        data: gameLog.json
                     };
                     break;
             }
 
-            if (gameLogTableData !== null &&
-                gameLogContext.loginUser === currentUserName) {
-                this.gameLogTable.data.push(gameLogTableData);
+            if (tableData !== null) {
+                this.gameLogTable.data.push(tableData);
             }
         }
     }
