@@ -14,14 +14,15 @@ import locale from 'element-ui/lib/locale/lang/en';
 import sharedRepository from './repository/shared.js';
 import configRepository from './repository/config.js';
 import webApiService from './service/webapi.js';
+import logWatcherService from './service/logwatcher.js'
 
 (async function () {
     await CefSharp.BindObjectAsync(
         'WebApi',
         'VRCX',
-        'SharedVariable', // DO NOT DIRECT ACCESS
+        'SharedVariable',
         'VRCXStorage',
-        'SQLite', // DO NOT DIRECT ACCESS
+        'SQLite',
         'LogWatcher',
         'Discord'
     );
@@ -3294,27 +3295,26 @@ import webApiService from './service/webapi.js';
         methods: {},
         watch: {},
         el: '#x-app',
-        mounted() {
-            LogWatcher.Reset().then(() => {
-                API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
-                API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
-                this.updateLoop();
-                this.updateGameLogLoop();
-                this.$nextTick(function () {
-                    this.$el.style.display = '';
-                    this.loginForm.loading = true;
-                    API.getConfig().catch((err) => {
+        async mounted() {
+            this.checkAppVersion();
+            await logWatcherService.reset();
+            API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
+            API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
+            this.updateLoop();
+            this.updateGameLogLoop();
+            this.$nextTick(function () {
+                this.$el.style.display = '';
+                this.loginForm.loading = true;
+                API.getConfig().catch((err) => {
+                    this.loginForm.loading = false;
+                    throw err;
+                }).then((args) => {
+                    API.getCurrentUser().finally(() => {
                         this.loginForm.loading = false;
-                        throw err;
-                    }).then((args) => {
-                        API.getCurrentUser().finally(() => {
-                            this.loginForm.loading = false;
-                        });
-                        return args;
                     });
+                    return args;
                 });
             });
-            this.checkAppVersion();
         }
     };
 
@@ -4483,10 +4483,9 @@ import webApiService from './service/webapi.js';
         }
     };
 
-    $app.methods.resetGameLog = function () {
-        LogWatcher.Reset().then(() => {
-            this.gameLogTable.data = [];
-        });
+    $app.methods.resetGameLog = async function () {
+        await logWatcherService.reset();
+        this.gameLogTable.data = [];
     };
 
     $app.methods.updateGameLogLoop = async function () {
@@ -4513,7 +4512,7 @@ import webApiService from './service/webapi.js';
             username: currentUserName
         } = API.currentUser;
 
-        for (var [fileName, dt, type, ...args] of await LogWatcher.Get()) {
+        for (var [fileName, dt, type, ...args] of await logWatcherService.get()) {
             var gameLogContext = gameLogContextMap.get(fileName);
             if (gameLogContext === undefined) {
                 gameLogContext = {
