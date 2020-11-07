@@ -3047,7 +3047,6 @@ import gameLogService from './service/gamelog.js'
                 break;
 
             case 'friend-location':
-                // it seems to only come when a friend is in a private world :/
                 if (content.location !== 'private') {
                     this.$emit('WORLD', {
                         json: content.world,
@@ -4511,6 +4510,7 @@ import gameLogService from './service/gamelog.js'
 
             switch (gameLog.type) {
                 case 'location':
+                    this.lastLocation = gameLog.location;
                     tableData = {
                         created_at: gameLog.dt,
                         type: 'Location',
