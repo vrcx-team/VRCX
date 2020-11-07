@@ -102,7 +102,7 @@ namespace VRCX
             }
             catch (Exception e)
             {
-                rejectCallback.ExecuteAsync(e.ToString());
+                rejectCallback.ExecuteAsync(e.Message);
             }
 
             fetchCallback.Dispose();

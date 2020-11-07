@@ -72,9 +72,9 @@ namespace VRCX
                     Cef.Shutdown();
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                MessageBox.Show($"{ex.Message}\n{ex.StackTrace}", "PLEASE REPORT TO PYPY", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(e.ToString(), "PLEASE REPORT TO PYPY", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(0);
             }
         }
