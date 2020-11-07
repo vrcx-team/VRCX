@@ -44,7 +44,7 @@ async function syncLoop() {
                         'INSERT OR REPLACE INTO configs (`key`, `value`) VALUES (@key, @value)',
                         {
                             '@key': key,
-                            '@value': sharedRepository.get(key)
+                            '@value': sharedRepository.getString(key)
                         }
                     );
                 }
