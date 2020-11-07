@@ -5,16 +5,20 @@ var dirtyKeySet = new Set();
 
 class ConfigRepository extends SharedRepository {
     async init() {
-        try {
-            await sqliteService.executeNonQuery('CREATE TABLE IF NOT EXISTS configs (`key` TEXT PRIMARY KEY, `value` TEXT)');
-            await sqliteService.execute(
-                (key, value) => sharedRepository.setString(key, value),
-                'SELECT `key`, `value` FROM configs'
-            );
-        } catch (err) {
-            console.error(err);
-        }
+        await sqliteService.executeNonQuery(
+            'CREATE TABLE IF NOT EXISTS configs (`key` TEXT PRIMARY KEY, `value` TEXT)'
+        );
+        await sqliteService.execute(
+            (key, value) => sharedRepository.setString(key, value),
+            'SELECT `key`, `value` FROM configs'
+        );
         syncLoop();
+    }
+
+    remove(key) {
+        key = transformKey(key);
+        sharedRepository.remove(key);
+        dirtyKeySet.add(key);
     }
 
     getString(key, defaultValue = null) {
@@ -40,13 +44,23 @@ async function syncLoop() {
             await sqliteService.executeNonQuery('BEGIN');
             try {
                 for (var key of dirtyKeySet) {
-                    await sqliteService.executeNonQuery(
-                        'INSERT OR REPLACE INTO configs (`key`, `value`) VALUES (@key, @value)',
-                        {
-                            '@key': key,
-                            '@value': sharedRepository.getString(key)
-                        }
-                    );
+                    var value = sharedRepository.getString(key);
+                    if (value === null) {
+                        await sqliteService.executeNonQuery(
+                            'DELETE FROM configs WHERE `key` = @key',
+                            {
+                                '@key': key,
+                            }
+                        );
+                    } else {
+                        await sqliteService.executeNonQuery(
+                            'INSERT OR REPLACE INTO configs (`key`, `value`) VALUES (@key, @value)',
+                            {
+                                '@key': key,
+                                '@value': value
+                            }
+                        );
+                    }
                 }
                 dirtyKeySet.clear();
             } finally {
