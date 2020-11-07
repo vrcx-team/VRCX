@@ -131,6 +131,7 @@
     <Compile Include="Browser.cs" />
     <Compile Include="NoopDragHandler.cs" />
     <Compile Include="RenderHandler.cs" />
+    <Compile Include="WebApi.cs" />
     <Compile Include="SQLite.cs" />
     <Compile Include="SharedVariable.cs" />
     <Compile Include="Util.cs" />

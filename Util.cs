@@ -12,6 +12,7 @@ namespace VRCX
             };
             repository.Register("VRCX", VRCX.Instance, true, options);
             repository.Register("SharedVariable", SharedVariable.Instance, false, options);
+            repository.Register("WebApi", WebApi.Instance, true, options);
             repository.Register("VRCXStorage", VRCXStorage.Instance, false, options);
             repository.Register("SQLite", SQLite.Instance, true, options);
             repository.Register("LogWatcher", LogWatcher.Instance, true, options);
