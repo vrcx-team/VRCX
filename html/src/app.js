@@ -879,11 +879,10 @@ import logWatcherService from './service/logwatcher.js'
         }
     */
     API.login = function (params) {
-        var auth = `${params.username}:${params.password}`;
-        auth = encodeURIComponent(auth);
-        auth = auth.replace(/%([0-9A-F]{2})/g, (_, s) => String.fromCharCode(parseInt(s, 16)));
-        auth = auth.replace('%', '%25');
-        auth = btoa(auth);
+        var { username, password } = params;
+        username = encodeURIComponent(username);
+        password = encodeURIComponent(password);
+        var auth = btoa(`${username}:${password}`);
         return this.call(`auth/user?apiKey=${this.cachedConfig.clientApiKey}`, {
             method: 'GET',
             headers: {
