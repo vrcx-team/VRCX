@@ -4508,7 +4508,10 @@ import webApiService from './service/webapi.js';
     };
 
     $app.methods.updateGameLog = async function () {
-        var currentUser = API.currentUser.username;
+        var {
+            displayName: currentUserDisplayName,
+            username: currentUserName
+        } = API.currentUser;
 
         for (var [fileName, dt, type, ...args] of await LogWatcher.Get()) {
             var gameLogContext = gameLogContextMap.get(fileName);
@@ -4529,10 +4532,6 @@ import webApiService from './service/webapi.js';
 
             var gameLogTableData = null;
 
-            if (API.currentUser.displayName === args[0]) {
-                continue;
-            }
-
             switch (type) {
                 case 'auth':
                     gameLogContext.loginProvider = args[0];
@@ -4546,7 +4545,7 @@ import webApiService from './service/webapi.js';
                 case 'location':
                     var location = args[0];
                     gameLogContext.location = location;
-                    if (gameLogContext.loginUser === currentUser) {
+                    if (gameLogContext.loginUser === currentUserName) {
                         this.lastLocation = location;
                     }
                     break;
@@ -4562,6 +4561,9 @@ import webApiService from './service/webapi.js';
 
                 case 'player-joined':
                     var userDisplayName = args[0];
+                    if (currentUserDisplayName === userDisplayName) {
+                        continue;
+                    }
                     gameLogTableData = {
                         created_at: dt,
                         type: 'OnPlayerJoined',
@@ -4571,6 +4573,9 @@ import webApiService from './service/webapi.js';
 
                 case 'player-left':
                     var userDisplayName = args[0];
+                    if (currentUserDisplayName === userDisplayName) {
+                        continue;
+                    }
                     gameLogTableData = {
                         created_at: dt,
                         type: 'OnPlayerLeft',
@@ -4589,7 +4594,7 @@ import webApiService from './service/webapi.js';
             }
 
             if (gameLogTableData !== null &&
-                gameLogContext.loginUser === currentUser) {
+                gameLogContext.loginUser === currentUserName) {
                 this.gameLogTable.data.push(gameLogTableData);
             }
         }
