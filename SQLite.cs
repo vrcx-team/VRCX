@@ -37,6 +37,47 @@ namespace VRCX
             m_Connection.Dispose();
         }
 
+        public void Execute(IJavascriptCallback callback, string sql, IDictionary<string, object> args = null)
+        {
+            try
+            {
+                m_ConnectionLock.EnterReadLock();
+                try
+                {
+                    using (var command = new SQLiteCommand(sql, m_Connection))
+                    {
+                        if (args != null)
+                        {
+                            foreach (var arg in args)
+                            {
+                                command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
+                            }
+                        }
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read() == true)
+                            {
+                                var values = new object[reader.FieldCount];
+                                reader.GetValues(values);
+                                callback.ExecuteAsync(null, values);
+                            }
+                        }
+                    }
+                    callback.ExecuteAsync(null, null);
+                }
+                finally
+                {
+                    m_ConnectionLock.ExitReadLock();
+                }
+            }
+            catch (Exception e)
+            {
+                callback.ExecuteAsync(e.Message, null);
+            }
+
+            callback.Dispose();
+        }
+
         public int ExecuteNonQuery(string sql, IDictionary<string, object> args = null)
         {
             int result = -1;
@@ -65,49 +106,6 @@ namespace VRCX
             }
 
             return result;
-        }
-
-        public void Execute(IJavascriptCallback fetchCallback, IJavascriptCallback resolveCallback, IJavascriptCallback rejectCallback, string sql, IDictionary<string, object> args = null)
-        {
-            try
-            {
-                m_ConnectionLock.EnterReadLock();
-                try
-                {
-                    using (var command = new SQLiteCommand(sql, m_Connection))
-                    {
-                        if (args != null)
-                        {
-                            foreach (var arg in args)
-                            {
-                                command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
-                            }
-                        }
-                        using (var reader = command.ExecuteReader())
-                        {
-                            while (reader.Read() == true)
-                            {
-                                var values = new object[reader.FieldCount];
-                                reader.GetValues(values);
-                                fetchCallback.ExecuteAsync(values);
-                            }
-                        }
-                    }
-                    resolveCallback.ExecuteAsync();
-                }
-                finally
-                {
-                    m_ConnectionLock.ExitReadLock();
-                }
-            }
-            catch (Exception e)
-            {
-                rejectCallback.ExecuteAsync(e.Message);
-            }
-
-            fetchCallback.Dispose();
-            resolveCallback.Dispose();
-            rejectCallback.Dispose();
         }
     }
 }
