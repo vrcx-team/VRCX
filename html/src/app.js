@@ -4525,6 +4525,10 @@ window.configRepository = configRepository;
 
             var gameLogTableData = null;
 
+            if (API.currentUser.displayName === args[0]) {
+                continue;
+            }
+
             switch (type) {
                 case 'auth':
                     gameLogContext.loginProvider = args[0];
