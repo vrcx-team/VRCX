@@ -112,7 +112,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.1\lib\net451\System.Data.SQLite.dll</HintPath>
+      <HintPath>packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\lib\net451\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
@@ -214,10 +214,10 @@
     <Error Condition="!Exists('packages\CefSharp.OffScreen.79.1.360\build\CefSharp.OffScreen.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.OffScreen.79.1.360\build\CefSharp.OffScreen.targets'))" />
     <Error Condition="!Exists('packages\CefSharp.WinForms.79.1.360\build\CefSharp.WinForms.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.WinForms.79.1.360\build\CefSharp.WinForms.props'))" />
     <Error Condition="!Exists('packages\CefSharp.WinForms.79.1.360\build\CefSharp.WinForms.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\CefSharp.WinForms.79.1.360\build\CefSharp.WinForms.targets'))" />
-    <Error Condition="!Exists('packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.1\build\net451\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.1\build\net451\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
+    <Error Condition="!Exists('packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net451\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net451\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
   </Target>
   <Import Project="packages\CefSharp.Common.79.1.360\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.79.1.360\build\CefSharp.Common.targets')" />
   <Import Project="packages\CefSharp.OffScreen.79.1.360\build\CefSharp.OffScreen.targets" Condition="Exists('packages\CefSharp.OffScreen.79.1.360\build\CefSharp.OffScreen.targets')" />
   <Import Project="packages\CefSharp.WinForms.79.1.360\build\CefSharp.WinForms.targets" Condition="Exists('packages\CefSharp.WinForms.79.1.360\build\CefSharp.WinForms.targets')" />
-  <Import Project="packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.1\build\net451\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.1\build\net451\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
+  <Import Project="packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net451\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\build\net451\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
 </Project>
