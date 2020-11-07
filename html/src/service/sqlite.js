@@ -21,6 +21,7 @@ class SQLiteService {
 }
 
 var self = new SQLiteService();
+window.sqliteService = self;
 
 export {
     self as default,

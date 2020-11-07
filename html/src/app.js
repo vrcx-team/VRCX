@@ -13,8 +13,6 @@ import locale from 'element-ui/lib/locale/lang/en';
 
 import sharedRepository from './repository/shared.js';
 import configRepository from './repository/config.js';
-window.sharedRepository = sharedRepository;
-window.configRepository = configRepository;
 import webApiService from './service/webapi.js';
 
 (async function () {

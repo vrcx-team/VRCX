@@ -12,9 +12,6 @@ import locale from 'element-ui/lib/locale/lang/en';
 import sharedRepository from './repository/shared.js';
 import configRepository from './repository/config.js';
 
-window.sharedRepository = sharedRepository;
-window.configRepository = configRepository;
-
 (async function () {
     await CefSharp.BindObjectAsync(
         'VRCX',

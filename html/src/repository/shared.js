@@ -97,6 +97,7 @@ function transformKey(key) {
 }
 
 var self = new SharedRepository();
+window.sharedRepository = self;
 
 export {
     self as default,

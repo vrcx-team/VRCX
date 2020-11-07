@@ -60,6 +60,7 @@ async function syncLoop() {
 }
 
 var self = new ConfigRepository();
+window.configRepository = self;
 
 export {
     self as default,
