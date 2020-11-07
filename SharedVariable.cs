@@ -53,7 +53,7 @@ namespace VRCX
                 m_MapLock.ExitReadLock();
             }
 
-            return string.Empty;
+            return null;
         }
 
         public void Set(string key, string value)
