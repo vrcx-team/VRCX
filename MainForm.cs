@@ -78,6 +78,7 @@ namespace VRCX
             catch
             {
             }
+
             try
             {
                 var state = WindowState;
@@ -98,6 +99,9 @@ namespace VRCX
             catch
             {
             }
+
+            // 가끔 화면 위치가 안맞음.. 이걸로 해결 될지는 모르겠음
+            Browser.Invalidate();
         }
 
         private void MainForm_Resize(object sender, System.EventArgs e)
