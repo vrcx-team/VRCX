@@ -8,7 +8,6 @@ class WebApiService {
     execute(options) {
         return new Promise((resolve, reject) => {
             WebApi.Execute(options, (err, response) => {
-                console.log('WebApi', options, { err, response });
                 if (err !== null) {
                     reject(err);
                     return;
