@@ -41,7 +41,10 @@ namespace VRCX
         // 메모리 릭 때문에 미리 생성해놓고 계속 사용함
         public static void Init()
         {
-            m_Device = new Device(DriverType.Hardware, DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport);
+            m_Device = new Device(
+                DriverType.Hardware,
+                DeviceCreationFlags.BgraSupport
+            );
             m_Texture1 = new Texture2D(m_Device, new Texture2DDescription()
             {
                 Width = 512,

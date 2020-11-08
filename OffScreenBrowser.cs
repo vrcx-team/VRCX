@@ -74,32 +74,29 @@ namespace VRCX
         {
             if (type == PaintElementType.View)
             {
-                using (var device = _texture.Device)
-                using (var context = device.ImmediateContext)
+                var context = _texture.Device.ImmediateContext;
+                var dataBox = context.MapSubresource(_texture, 0, MapMode.WriteDiscard, MapFlags.None);
+                if (dataBox.IsEmpty == false)
                 {
-                    var dataBox = context.MapSubresource(_texture, 0, MapMode.WriteDiscard, MapFlags.None);
-                    if (dataBox.IsEmpty == false)
+                    var sourcePtr = buffer;
+                    var destinationPtr = dataBox.DataPointer;
+                    var rowPitch = dataBox.RowPitch;
+                    var pitch = width * 4;
+                    if (rowPitch == pitch)
                     {
-                        var sourcePtr = buffer;
-                        var destinationPtr = dataBox.DataPointer;
-                        var rowPitch = dataBox.RowPitch;
-                        var pitch = width * 4;
-                        if (rowPitch == pitch)
+                        WinApi.CopyMemory(destinationPtr, sourcePtr, (uint)(width * height * 4));
+                    }
+                    else
+                    {
+                        for (var i = height; i > 0; --i)
                         {
-                            WinApi.CopyMemory(destinationPtr, sourcePtr, (uint)(width * height * 4));
-                        }
-                        else
-                        {
-                            for (var i = height; i > 0; --i)
-                            {
-                                WinApi.CopyMemory(destinationPtr, sourcePtr, (uint)pitch);
-                                sourcePtr += pitch;
-                                destinationPtr += rowPitch;
-                            }
+                            WinApi.CopyMemory(destinationPtr, sourcePtr, (uint)pitch);
+                            sourcePtr += pitch;
+                            destinationPtr += rowPitch;
                         }
                     }
-                    context.UnmapSubresource(_texture, 0);
                 }
+                context.UnmapSubresource(_texture, 0);
             }
         }
 
