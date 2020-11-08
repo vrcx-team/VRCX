@@ -11,7 +11,7 @@ namespace VRCX
 {
     public class Discord
     {
-        public static Discord Instance { get; private set; }
+        public static readonly Discord Instance;
         private readonly ReaderWriterLockSlim m_Lock;
         private readonly RichPresence m_Presence;
         private DiscordRpcClient m_Client;

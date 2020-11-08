@@ -15,8 +15,8 @@ namespace VRCX
 {
     public partial class MainForm : Form
     {
-        public static MainForm Instance { get; private set; }
-        public ChromiumWebBrowser Browser { get; private set; }
+        public static MainForm Instance;
+        public ChromiumWebBrowser Browser;
         private int LastLocationX;
         private int LastLocationY;
         private int LastSizeWidth;
@@ -162,6 +162,5 @@ namespace VRCX
         {
             Application.Exit();
         }
-
     }
 }

@@ -20,7 +20,7 @@ namespace VRCX
             public long Position;
         }
 
-        public static LogWatcher Instance { get; private set; }
+        public static readonly LogWatcher Instance;
         private readonly DirectoryInfo m_LogDirectoryInfo;
         private readonly Dictionary<string, LogContext> m_LogContextMap; // <FileName, LogContext>
         private readonly ReaderWriterLockSlim m_LogListLock;

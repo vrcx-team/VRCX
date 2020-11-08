@@ -10,7 +10,7 @@ namespace VRCX
 {
     public class CpuMonitor
     {
-        public static CpuMonitor Instance { get; private set; }
+        public static readonly CpuMonitor Instance;
         public float CpuUsage { get; private set; }
         private readonly PerformanceCounter m_Counter;
         private Thread m_Thread;

@@ -9,7 +9,7 @@ namespace VRCX
 {
     public class SQLite
     {
-        public static SQLite Instance { get; private set; }
+        public static readonly SQLite Instance;
         private readonly ReaderWriterLockSlim m_ConnectionLock;
         private readonly SQLiteConnection m_Connection;
 

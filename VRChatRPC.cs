@@ -11,7 +11,7 @@ namespace VRCX
 {
     public class VRChatRPC
     {
-        public static VRChatRPC Instance { get; private set; }
+        public static readonly VRChatRPC Instance;
 
         [DllImport("VRChatRPC", CallingConvention = CallingConvention.Cdecl)]
         private static extern bool VRChatRPC_000();

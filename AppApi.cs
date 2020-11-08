@@ -16,7 +16,7 @@ namespace VRCX
 {
     public class AppApi
     {
-        public static AppApi Instance { get; private set; }
+        public static readonly AppApi Instance;
 
         static AppApi()
         {

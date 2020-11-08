@@ -7,7 +7,7 @@ namespace VRCX
 {
     public class CefService
     {
-        public static CefService Instance { get; private set; }
+        public static readonly CefService Instance;
 
         static CefService()
         {

@@ -9,8 +9,8 @@ namespace VRCX
 {
     public class WebApi
     {
-        private readonly string COOKIE_FILE_NAME = Path.Combine(Program.BaseDirectory, "cookies.dat");
-        public static WebApi Instance { get; private set; }
+        public static readonly WebApi Instance;
+        private readonly string _cookieFilePath;
         private CookieContainer _cookieContainer;
 
         static WebApi()
@@ -21,6 +21,7 @@ namespace VRCX
 
         public WebApi()
         {
+            _cookieFilePath = Path.Combine(Program.BaseDirectory, "cookies.dat");
             _cookieContainer = new CookieContainer();
         }
 
@@ -28,7 +29,7 @@ namespace VRCX
         {
             try
             {
-                using (var file = File.Open(COOKIE_FILE_NAME, FileMode.Open, FileAccess.Read))
+                using (var file = File.Open(_cookieFilePath, FileMode.Open, FileAccess.Read))
                 {
                     _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(file);
                 }
@@ -42,7 +43,7 @@ namespace VRCX
         {
             try
             {
-                using (var file = File.Open(COOKIE_FILE_NAME, FileMode.Create, FileAccess.Write))
+                using (var file = File.Open(_cookieFilePath, FileMode.Create, FileAccess.Write))
                 {
                     new BinaryFormatter().Serialize(file, _cookieContainer);
                 }

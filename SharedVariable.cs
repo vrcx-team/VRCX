@@ -10,7 +10,7 @@ namespace VRCX
 {
     public class SharedVariable
     {
-        public static SharedVariable Instance { get; private set; }
+        public static readonly SharedVariable Instance;
         private readonly ReaderWriterLockSlim m_MapLock;
         private readonly Dictionary<string, string> m_Map;
 

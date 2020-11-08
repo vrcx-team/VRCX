@@ -13,9 +13,9 @@ namespace VRCX
 {
     public partial class VRForm : Form
     {
-        public static VRForm Instance { get; private set; }
-        public static ChromiumWebBrowser Browser1 { get; private set; }
-        public static ChromiumWebBrowser Browser2 { get; private set; }
+        public static VRForm Instance;
+        private ChromiumWebBrowser Browser1;
+        private ChromiumWebBrowser Browser2;
 
         public VRForm()
         {
