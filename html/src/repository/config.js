@@ -9,7 +9,7 @@ class ConfigRepository extends SharedRepository {
             'CREATE TABLE IF NOT EXISTS configs (`key` TEXT PRIMARY KEY, `value` TEXT)'
         );
         await sqliteService.execute(
-            (key, value) => sharedRepository.setString(key, value),
+            ([key, value]) => sharedRepository.setString(key, value),
             'SELECT `key`, `value` FROM configs'
         );
         syncLoop();

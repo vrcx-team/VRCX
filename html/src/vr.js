@@ -565,7 +565,6 @@ import webApiService from './service/webapi.js';
     var $app = {
         data: {
             API,
-            VRCX,
             // 1 = 대시보드랑 손목에 보이는거
             // 2 = 항상 화면에 보이는 거
             appType: location.href.substr(-1),
