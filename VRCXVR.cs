@@ -19,222 +19,263 @@ using Device = SharpDX.Direct3D11.Device;
 
 namespace VRCX
 {
-    public static class VRCXVR
+    public class VRCXVR
     {
-        private static readonly ReaderWriterLockSlim m_Lock = new ReaderWriterLockSlim();
-        private static List<string[]> m_Devices = new List<string[]>();
-        private static Thread m_Thread;
-        private static Device m_Device;
-        private static Texture2D m_Texture1;
-        private static Texture2D m_Texture2;
-        private static OffScreenBrowser m_Browser1;
-        private static OffScreenBrowser m_Browser2;
-        private static bool m_Active;
-        private static float[] m_Rotation = { 0f, 0f, 0f };
-        private static float[] m_Translation = { 0f, 0f, 0f };
-        private static float[] m_L_Translation = { -7f / 100f, -5f / 100f, 6f / 100f };
-        private static float[] m_R_Translation = { 7f / 100f, -5f / 100f, 6f / 100f };
-        private static float[] m_L_Rotation = { 90f * (float)(Math.PI / 180f), 90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
-        private static float[] m_R_Rotation = { -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
+        public static readonly VRCXVR Instance;
+        private static readonly float[] _rotation = { 0f, 0f, 0f };
+        private static readonly float[] _translation = { 0f, 0f, 0f };
+        private static readonly float[] _translationLeft = { -7f / 100f, -5f / 100f, 6f / 100f };
+        private static readonly float[] _translationRight = { 7f / 100f, -5f / 100f, 6f / 100f };
+        private static readonly float[] _rotationLeft = { 90f * (float)(Math.PI / 180f), 90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
+        private static readonly float[] _rotationRight = { -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
+        private readonly ReaderWriterLockSlim _deviceListLock;
+        private List<string[]> _deviceList;
+        private Thread _thread;
+        private Device _device;
+        private Texture2D _texture1;
+        private Texture2D _texture2;
+        private OffScreenBrowser _browser1;
+        private OffScreenBrowser _browser2;
+        private bool _active;
 
-        // NOTE
-        // 메모리 릭 때문에 미리 생성해놓고 계속 사용함
-        public static void Init()
+        static VRCXVR()
         {
-            m_Device = new Device(
-                DriverType.Hardware,
-                DeviceCreationFlags.BgraSupport
-            );
-            m_Texture1 = new Texture2D(m_Device, new Texture2DDescription()
-            {
-                Width = 512,
-                Height = 512,
-                MipLevels = 1,
-                ArraySize = 1,
-                Format = Format.B8G8R8A8_UNorm,
-                SampleDescription = new SampleDescription(1, 0),
-                Usage = ResourceUsage.Dynamic,
-                BindFlags = BindFlags.ShaderResource,
-                CpuAccessFlags = CpuAccessFlags.Write
-            });
-            m_Texture2 = new Texture2D(m_Device, new Texture2DDescription()
-            {
-                Width = 512,
-                Height = 512,
-                MipLevels = 1,
-                ArraySize = 1,
-                Format = Format.B8G8R8A8_UNorm,
-                SampleDescription = new SampleDescription(1, 0),
-                Usage = ResourceUsage.Dynamic,
-                BindFlags = BindFlags.ShaderResource,
-                CpuAccessFlags = CpuAccessFlags.Write
-            });
-            m_Browser1 = new OffScreenBrowser(m_Texture1, Path.Combine(Program.BaseDirectory, "html/vr.html?1"));
-            m_Browser2 = new OffScreenBrowser(m_Texture2, Path.Combine(Program.BaseDirectory, "html/vr.html?2"));
-            m_Thread = new Thread(() =>
-            {
-                var active = false;
-                var e = new VREvent_t();
-                var nextInit = DateTime.MinValue;
-                var nextDeviceUpdate = DateTime.MinValue;
-                var nextOverlay = DateTime.MinValue;
-                var overlayIndex = OpenVR.k_unTrackedDeviceIndexInvalid;
-                var overlayVisible1 = false;
-                var overlayVisible2 = false;
-                var dashboardHandle = 0UL;
-                var overlayHandle1 = 0UL;
-                var overlayHandle2 = 0UL;
-                while (m_Thread != null)
-                {
-                    try
-                    {
-                        Thread.Sleep(10);
-                    }
-                    catch
-                    {
-                        // ThreadInterruptedException
-                    }
-                    if (m_Active)
-                    {
-                        m_Browser1.Render();
-                        m_Browser2.Render();
-                        var system = OpenVR.System;
-                        if (system == null)
-                        {
-                            if (DateTime.UtcNow.CompareTo(nextInit) <= 0)
-                            {
-                                continue;
-                            }
-                            var _err = EVRInitError.None;
-                            system = OpenVR.Init(ref _err, EVRApplicationType.VRApplication_Overlay);
-                            nextInit = DateTime.UtcNow.AddSeconds(5);
-                            if (system == null)
-                            {
-                                continue;
-                            }
-                            active = true;
-                        }
-                        while (system.PollNextEvent(ref e, (uint)Marshal.SizeOf(e)))
-                        {
-                            var type = (EVREventType)e.eventType;
-                            if (type == EVREventType.VREvent_Quit)
-                            {
-                                active = false;
-                                OpenVR.Shutdown();
-                                nextInit = DateTime.UtcNow.AddSeconds(10);
-                                system = null;
-                                break;
-                            }
-                        }
-                        if (system != null)
-                        {
-                            if (DateTime.UtcNow.CompareTo(nextDeviceUpdate) >= 0)
-                            {
-                                overlayIndex = OpenVR.k_unTrackedDeviceIndexInvalid;
-                                UpdateDevices(system, ref overlayIndex);
-                                if (overlayIndex != OpenVR.k_unTrackedDeviceIndexInvalid)
-                                {
-                                    nextOverlay = DateTime.UtcNow.AddSeconds(10);
-                                }
-                                nextDeviceUpdate = DateTime.UtcNow.AddSeconds(0.1);
-                            }
-                            var overlay = OpenVR.Overlay;
-                            if (overlay != null)
-                            {
-                                var dashboardVisible = overlay.IsDashboardVisible();
-                                var err = ProcessDashboard(overlay, ref dashboardHandle, dashboardVisible);
-                                if (err != EVROverlayError.None &&
-                                    dashboardHandle != 0)
-                                {
-                                    overlay.DestroyOverlay(dashboardHandle);
-                                    dashboardHandle = 0;
-                                }
-                                err = ProcessOverlay1(overlay, ref overlayHandle1, ref overlayVisible1, dashboardVisible, overlayIndex, nextOverlay);
-                                if (err != EVROverlayError.None &&
-                                    overlayHandle1 != 0)
-                                {
-                                    overlay.DestroyOverlay(overlayHandle1);
-                                    overlayHandle1 = 0;
-                                }
-                                err = ProcessOverlay2(overlay, ref overlayHandle2, ref overlayVisible2, dashboardVisible);
-                                if (err != EVROverlayError.None &&
-                                    overlayHandle2 != 0)
-                                {
-                                    overlay.DestroyOverlay(overlayHandle2);
-                                    overlayHandle2 = 0;
-                                }
-                            }
-                        }
-                    }
-                    else if (active)
-                    {
-                        active = false;
-                        OpenVR.Shutdown();
-                        m_Lock.EnterWriteLock();
-                        try
-                        {
-                            m_Devices.Clear();
-                        }
-                        finally
-                        {
-                            m_Lock.ExitWriteLock();
-                        }
-                    }
-                }
-            })
+            Instance = new VRCXVR();
+        }
+
+        public VRCXVR()
+        {
+            _deviceListLock = new ReaderWriterLockSlim();
+            _deviceList = new List<string[]>();
+            _thread = new Thread(ThreadLoop)
             {
                 IsBackground = true
             };
-            m_Thread.Start();
         }
 
-        public static void Exit()
+        // NOTE
+        // 메모리 릭 때문에 미리 생성해놓고 계속 사용함
+        internal void Init()
         {
-            var T = m_Thread;
-            m_Thread = null;
-            T.Interrupt();
-            T.Join();
-            m_Browser2.Dispose();
-            m_Browser1.Dispose();
-            m_Texture2.Dispose();
-            m_Texture1.Dispose();
-            m_Device.Dispose();
+            _thread.Start();
         }
 
-        public static void SetActive(bool active)
+        internal void Exit()
         {
-            m_Active = active;
+            var thread = _thread;
+            _thread = null;
+            thread.Interrupt();
+            thread.Join();
         }
 
-        public static void Refresh()
+        private void ThreadLoop()
         {
-            m_Browser1.ExecuteScriptAsync("location.reload()");
-            m_Browser2.ExecuteScriptAsync("location.reload()");
+            var active = false;
+            var e = new VREvent_t();
+            var nextInit = DateTime.MinValue;
+            var nextDeviceUpdate = DateTime.MinValue;
+            var nextOverlay = DateTime.MinValue;
+            var overlayIndex = OpenVR.k_unTrackedDeviceIndexInvalid;
+            var overlayVisible1 = false;
+            var overlayVisible2 = false;
+            var dashboardHandle = 0UL;
+            var overlayHandle1 = 0UL;
+            var overlayHandle2 = 0UL;
+
+            // REMOVE THIS
+            nextOverlay = DateTime.MaxValue;
+
+            _device = new Device(
+                DriverType.Hardware,
+                DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport
+            );
+
+            _texture1 = new Texture2D(
+                _device,
+                new Texture2DDescription()
+                {
+                    Width = 512,
+                    Height = 512,
+                    MipLevels = 1,
+                    ArraySize = 1,
+                    Format = Format.B8G8R8A8_UNorm,
+                    SampleDescription = new SampleDescription(1, 0),
+                    Usage = ResourceUsage.Dynamic,
+                    BindFlags = BindFlags.ShaderResource,
+                    CpuAccessFlags = CpuAccessFlags.Write
+                }
+            );
+
+            _texture2 = new Texture2D(
+                _device,
+                new Texture2DDescription()
+                {
+                    Width = 512,
+                    Height = 512,
+                    MipLevels = 1,
+                    ArraySize = 1,
+                    Format = Format.B8G8R8A8_UNorm,
+                    SampleDescription = new SampleDescription(1, 0),
+                    Usage = ResourceUsage.Dynamic,
+                    BindFlags = BindFlags.ShaderResource,
+                    CpuAccessFlags = CpuAccessFlags.Write
+                }
+            );
+
+            _browser1 = new OffScreenBrowser(
+                Path.Combine(Program.BaseDirectory, "html/vr.html?1"),
+                512,
+                512
+            );
+
+            _browser2 = new OffScreenBrowser(
+                Path.Combine(Program.BaseDirectory, "html/vr.html?2"),
+                512,
+                512
+            );
+
+            while (_thread != null)
+            {
+                _browser1.RenderToTexture(_texture1);
+                _browser2.RenderToTexture(_texture2);
+
+                try
+                {
+                    Thread.Sleep(10);
+                }
+                catch
+                {
+                    // ThreadInterruptedException
+                }
+
+                if (_active)
+                {
+                    var system = OpenVR.System;
+                    if (system == null)
+                    {
+                        if (DateTime.UtcNow.CompareTo(nextInit) <= 0)
+                        {
+                            continue;
+                        }
+                        var _err = EVRInitError.None;
+                        system = OpenVR.Init(ref _err, EVRApplicationType.VRApplication_Overlay);
+                        nextInit = DateTime.UtcNow.AddSeconds(5);
+                        if (system == null)
+                        {
+                            continue;
+                        }
+                        active = true;
+                    }
+                    while (system.PollNextEvent(ref e, (uint)Marshal.SizeOf(e)))
+                    {
+                        var type = (EVREventType)e.eventType;
+                        if (type == EVREventType.VREvent_Quit)
+                        {
+                            active = false;
+                            OpenVR.Shutdown();
+                            nextInit = DateTime.UtcNow.AddSeconds(10);
+                            system = null;
+                            break;
+                        }
+                    }
+                    if (system != null)
+                    {
+                        if (DateTime.UtcNow.CompareTo(nextDeviceUpdate) >= 0)
+                        {
+                            overlayIndex = OpenVR.k_unTrackedDeviceIndexInvalid;
+                            UpdateDevices(system, ref overlayIndex);
+                            if (overlayIndex != OpenVR.k_unTrackedDeviceIndexInvalid)
+                            {
+                                nextOverlay = DateTime.UtcNow.AddSeconds(10);
+                            }
+                            nextDeviceUpdate = DateTime.UtcNow.AddSeconds(0.1);
+                        }
+                        var overlay = OpenVR.Overlay;
+                        if (overlay != null)
+                        {
+                            var dashboardVisible = overlay.IsDashboardVisible();
+                            var err = ProcessDashboard(overlay, ref dashboardHandle, dashboardVisible);
+                            if (err != EVROverlayError.None &&
+                                dashboardHandle != 0)
+                            {
+                                overlay.DestroyOverlay(dashboardHandle);
+                                dashboardHandle = 0;
+                            }
+                            err = ProcessOverlay1(overlay, ref overlayHandle1, ref overlayVisible1, dashboardVisible, overlayIndex, nextOverlay);
+                            if (err != EVROverlayError.None &&
+                                overlayHandle1 != 0)
+                            {
+                                overlay.DestroyOverlay(overlayHandle1);
+                                overlayHandle1 = 0;
+                            }
+                            err = ProcessOverlay2(overlay, ref overlayHandle2, ref overlayVisible2, dashboardVisible);
+                            if (err != EVROverlayError.None &&
+                                overlayHandle2 != 0)
+                            {
+                                overlay.DestroyOverlay(overlayHandle2);
+                                overlayHandle2 = 0;
+                            }
+                        }
+                    }
+                }
+                else if (active)
+                {
+                    active = false;
+                    OpenVR.Shutdown();
+                    _deviceListLock.EnterWriteLock();
+                    try
+                    {
+                        _deviceList.Clear();
+                    }
+                    finally
+                    {
+                        _deviceListLock.ExitWriteLock();
+                    }
+                }
+            }
+
+            _browser2.Dispose();
+            _browser1.Dispose();
+            _texture2.Dispose();
+            _texture1.Dispose();
+            _device.Dispose();
+
         }
 
-        public static string[][] GetDevices()
+        public void SetActive(bool active)
         {
-            m_Lock.EnterReadLock();
+            _active = active;
+        }
+
+        public void Refresh()
+        {
+            _browser1.ExecuteScriptAsync("location.reload()");
+            _browser2.ExecuteScriptAsync("location.reload()");
+        }
+
+        public string[][] GetDevices()
+        {
+            _deviceListLock.EnterReadLock();
             try
             {
-                return m_Devices.ToArray();
+                return _deviceList.ToArray();
             }
             finally
             {
-                m_Lock.ExitReadLock();
+                _deviceListLock.ExitReadLock();
             }
         }
 
-        private static void UpdateDevices(CVRSystem system, ref uint overlayIndex)
+        internal void UpdateDevices(CVRSystem system, ref uint overlayIndex)
         {
-            m_Lock.EnterWriteLock();
+            _deviceListLock.EnterWriteLock();
             try
             {
-                m_Devices.Clear();
+                _deviceList.Clear();
             }
             finally
             {
-                m_Lock.ExitWriteLock();
+                _deviceListLock.ExitWriteLock();
             }
             var sb = new StringBuilder(256);
             var state = new VRControllerState_t();
@@ -267,13 +308,13 @@ namespace VRCX
                         {
                             if (role == ETrackedControllerRole.LeftHand)
                             {
-                                Array.Copy(m_L_Translation, m_Translation, 3);
-                                Array.Copy(m_L_Rotation, m_Rotation, 3);
+                                Array.Copy(_translationLeft, _translation, 3);
+                                Array.Copy(_rotationLeft, _rotation, 3);
                             }
                             else
                             {
-                                Array.Copy(m_R_Translation, m_Translation, 3);
-                                Array.Copy(m_R_Rotation, m_Rotation, 3);
+                                Array.Copy(_translationRight, _translation, 3);
+                                Array.Copy(_rotationRight, _rotation, 3);
                             }
                             overlayIndex = i;
                         }
@@ -310,20 +351,20 @@ namespace VRCX
                             : "disconnected",
                         (batteryPercentage * 100).ToString()
                     };
-                    m_Lock.EnterWriteLock();
+                    _deviceListLock.EnterWriteLock();
                     try
                     {
-                        m_Devices.Add(item);
+                        _deviceList.Add(item);
                     }
                     finally
                     {
-                        m_Lock.ExitWriteLock();
+                        _deviceListLock.ExitWriteLock();
                     }
                 }
             }
         }
 
-        private static EVROverlayError ProcessDashboard(CVROverlay overlay, ref ulong dashboardHandle, bool dashboardVisible)
+        internal EVROverlayError ProcessDashboard(CVROverlay overlay, ref ulong dashboardHandle, bool dashboardVisible)
         {
             var err = EVROverlayError.None;
 
@@ -363,20 +404,20 @@ namespace VRCX
                 if (type == EVREventType.VREvent_MouseMove)
                 {
                     var m = e.data.mouse;
-                    var s = m_Browser1.Size;
-                    m_Browser1.GetBrowserHost().SendMouseMoveEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), false, CefEventFlags.None);
+                    var s = _browser1.Size;
+                    _browser1.GetBrowserHost().SendMouseMoveEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), false, CefEventFlags.None);
                 }
                 else if (type == EVREventType.VREvent_MouseButtonDown)
                 {
                     var m = e.data.mouse;
-                    var s = m_Browser1.Size;
-                    m_Browser1.GetBrowserHost().SendMouseClickEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), MouseButtonType.Left, false, 1, CefEventFlags.LeftMouseButton);
+                    var s = _browser1.Size;
+                    _browser1.GetBrowserHost().SendMouseClickEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), MouseButtonType.Left, false, 1, CefEventFlags.LeftMouseButton);
                 }
                 else if (type == EVREventType.VREvent_MouseButtonUp)
                 {
                     var m = e.data.mouse;
-                    var s = m_Browser1.Size;
-                    m_Browser1.GetBrowserHost().SendMouseClickEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), MouseButtonType.Left, true, 1, CefEventFlags.None);
+                    var s = _browser1.Size;
+                    _browser1.GetBrowserHost().SendMouseClickEvent((int)(m.x * s.Width), s.Height - (int)(m.y * s.Height), MouseButtonType.Left, true, 1, CefEventFlags.None);
                 }
             }
 
@@ -384,7 +425,7 @@ namespace VRCX
             {
                 var texture = new Texture_t
                 {
-                    handle = m_Texture1.NativePointer
+                    handle = _texture1.NativePointer
                 };
                 err = overlay.SetOverlayTexture(dashboardHandle, ref texture);
                 if (err != EVROverlayError.None)
@@ -396,7 +437,7 @@ namespace VRCX
             return err;
         }
 
-        private static EVROverlayError ProcessOverlay1(CVROverlay overlay, ref ulong overlayHandle, ref bool overlayVisible, bool dashboardVisible, uint overlayIndex, DateTime nextOverlay)
+        internal EVROverlayError ProcessOverlay1(CVROverlay overlay, ref ulong overlayHandle, ref bool overlayVisible, bool dashboardVisible, uint overlayIndex, DateTime nextOverlay)
         {
             var err = EVROverlayError.None;
 
@@ -438,10 +479,10 @@ namespace VRCX
                 // http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices
                 // Scaling-Rotation-Translation
                 var m = Matrix.Scaling(0.25f);
-                m *= Matrix.RotationX(m_Rotation[0]);
-                m *= Matrix.RotationY(m_Rotation[1]);
-                m *= Matrix.RotationZ(m_Rotation[2]);
-                m *= Matrix.Translation(m_Translation[0], m_Translation[1], m_Translation[2]);
+                m *= Matrix.RotationX(_rotation[0]);
+                m *= Matrix.RotationY(_rotation[1]);
+                m *= Matrix.RotationZ(_rotation[2]);
+                m *= Matrix.Translation(_translation[0], _translation[1], _translation[2]);
                 var hm34 = new HmdMatrix34_t
                 {
                     m0 = m.M11,
@@ -469,7 +510,7 @@ namespace VRCX
             {
                 var texture = new Texture_t
                 {
-                    handle = m_Texture1.NativePointer
+                    handle = _texture1.NativePointer
                 };
                 err = overlay.SetOverlayTexture(overlayHandle, ref texture);
                 if (err != EVROverlayError.None)
@@ -499,7 +540,7 @@ namespace VRCX
             return err;
         }
 
-        private static EVROverlayError ProcessOverlay2(CVROverlay overlay, ref ulong overlayHandle, ref bool overlayVisible, bool dashboardVisible)
+        internal EVROverlayError ProcessOverlay2(CVROverlay overlay, ref ulong overlayHandle, ref bool overlayVisible, bool dashboardVisible)
         {
             var err = EVROverlayError.None;
 
@@ -562,7 +603,7 @@ namespace VRCX
             {
                 var texture = new Texture_t
                 {
-                    handle = m_Texture2.NativePointer
+                    handle = _texture2.NativePointer
                 };
                 err = overlay.SetOverlayTexture(overlayHandle, ref texture);
                 if (err != EVROverlayError.None)

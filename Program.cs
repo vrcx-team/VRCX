@@ -45,9 +45,9 @@ namespace VRCX
             LogWatcher.Instance.Init();
 
             CefService.Instance.Init();
-            VRCXVR.Init();
+            VRCXVR.Instance.Init();
             Application.Run(new MainForm());
-            VRCXVR.Exit();
+            VRCXVR.Instance.Exit();
             CefService.Instance.Exit();
 
             LogWatcher.Instance.Exit();

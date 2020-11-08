@@ -140,6 +140,7 @@ namespace VRCX
             }
             catch (Exception e)
             {
+                // FIXME: 브라우저는 종료되었는데 얘는 이후에 실행되면 터짐
                 callback.ExecuteAsync(e.Message, null);
             }
 

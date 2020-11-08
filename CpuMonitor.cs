@@ -11,9 +11,9 @@ namespace VRCX
     public class CpuMonitor
     {
         public static readonly CpuMonitor Instance;
-        public float CpuUsage { get; private set; }
-        private readonly PerformanceCounter m_Counter;
-        private Thread m_Thread;
+        public float CpuUsage;
+        private PerformanceCounter _performanceCounter;
+        private Thread _thread;
 
         static CpuMonitor()
         {
@@ -24,25 +24,35 @@ namespace VRCX
         {
             try
             {
-                m_Counter = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total", true);
+                _performanceCounter = new PerformanceCounter(
+                    "Processor Information",
+                    "% Processor Utility",
+                    "_Total",
+                    true
+                );
             }
             catch
             {
             }
 
             // fallback
-            if (m_Counter == null)
+            if (_performanceCounter == null)
             {
                 try
                 {
-                    m_Counter = new PerformanceCounter("Processor", "% Processor Time", "_Total", true);
+                    _performanceCounter = new PerformanceCounter(
+                        "Processor",
+                        "% Processor Time",
+                        "_Total",
+                        true
+                    );
                 }
                 catch
                 {
                 }
             }
 
-            m_Thread = new Thread(ThreadLoop)
+            _thread = new Thread(ThreadLoop)
             {
                 IsBackground = true
             };
@@ -50,25 +60,25 @@ namespace VRCX
 
         internal void Init()
         {
-            m_Thread.Start();
+            _thread.Start();
         }
 
         internal void Exit()
         {
-            var thread = m_Thread;
-            m_Thread = null;
+            var thread = _thread;
+            _thread = null;
             thread.Interrupt();
             thread.Join();
-            m_Counter?.Dispose();
+            _performanceCounter?.Dispose();
         }
 
         private void ThreadLoop()
         {
-            while (m_Thread != null)
+            while (_thread != null)
             {
-                if (m_Counter != null)
+                if (_performanceCounter != null)
                 {
-                    CpuUsage = m_Counter.NextValue();
+                    CpuUsage = _performanceCounter.NextValue();
                 }
 
                 try

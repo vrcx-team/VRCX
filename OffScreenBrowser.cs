@@ -9,22 +9,32 @@ using CefSharp.OffScreen;
 using CefSharp.Structs;
 using SharpDX.Direct3D11;
 using System;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace VRCX
 {
     public class OffScreenBrowser : ChromiumWebBrowser, IRenderHandler
     {
-        private Texture2D _texture;
+        private ReaderWriterLockSlim _paintBufferLock;
+        private GCHandle _paintBuffer;
+        private int _width;
+        private int _height;
 
-        public OffScreenBrowser(Texture2D texture, string address)
-            : base(address, new BrowserSettings()
-            {
-                DefaultEncoding = "UTF-8"
-            })
+        public OffScreenBrowser(string address, int width, int height)
+            : base(
+                address,
+                new BrowserSettings()
+                {
+                    DefaultEncoding = "UTF-8"
+                }
+            )
         {
-            _texture = texture;
-            Size = new System.Drawing.Size(texture.Description.Width, texture.Description.Height);
+            _paintBufferLock = new ReaderWriterLockSlim();
+
+            Size = new System.Drawing.Size(width, height);
             RenderHandler = this;
+
             Util.ApplyJavascriptBindings(JavascriptObjectRepository);
         }
 
@@ -32,17 +42,78 @@ namespace VRCX
         {
             RenderHandler = null;
             base.Dispose();
-            _texture = null;
+
+            _paintBufferLock.EnterWriteLock();
+            try
+            {
+                if (_paintBuffer.IsAllocated == true)
+                {
+                    _paintBuffer.Free();
+                }
+            }
+            finally
+            {
+                _paintBufferLock.ExitWriteLock();
+            }
+
+            _paintBufferLock.Dispose();
         }
 
-        //
+        public void RenderToTexture(Texture2D texture)
+        {
+            _paintBufferLock.EnterReadLock();
+            try
+            {
+                if (_width > 0 &&
+                    _height > 0)
+                {
+                    var context = texture.Device.ImmediateContext;
+                    var dataBox = context.MapSubresource(
+                        texture,
+                        0,
+                        MapMode.WriteDiscard,
+                        MapFlags.None
+                    );
+                    if (dataBox.IsEmpty == false)
+                    {
+                        var sourcePtr = _paintBuffer.AddrOfPinnedObject();
+                        var destinationPtr = dataBox.DataPointer;
+                        var pitch = _width * 4;
+                        var rowPitch = dataBox.RowPitch;
+                        if (pitch == rowPitch)
+                        {
+                            WinApi.CopyMemory(
+                                destinationPtr,
+                                sourcePtr,
+                                (uint)(_width * _height * 4)
+                            );
+                        }
+                        else
+                        {
+                            for (var y = _height; y > 0; --y)
+                            {
+                                WinApi.CopyMemory(
+                                    destinationPtr,
+                                    sourcePtr,
+                                    (uint)pitch
+                                );
+                                sourcePtr += pitch;
+                                destinationPtr += rowPitch;
+                            }
+                        }
+                    }
+                    context.UnmapSubresource(texture, 0);
+                }
+            }
+            finally
+            {
+                _paintBufferLock.ExitReadLock();
+            }
+        }
 
         ScreenInfo? IRenderHandler.GetScreenInfo()
         {
-            return new ScreenInfo
-            {
-                DeviceScaleFactor = 1f
-            };
+            return null;
         }
 
         bool IRenderHandler.GetScreenPoint(int viewX, int viewY, out int screenX, out int screenY)
@@ -74,29 +145,34 @@ namespace VRCX
         {
             if (type == PaintElementType.View)
             {
-                var context = _texture.Device.ImmediateContext;
-                var dataBox = context.MapSubresource(_texture, 0, MapMode.WriteDiscard, MapFlags.None);
-                if (dataBox.IsEmpty == false)
+                _paintBufferLock.EnterWriteLock();
+                try
                 {
-                    var sourcePtr = buffer;
-                    var destinationPtr = dataBox.DataPointer;
-                    var rowPitch = dataBox.RowPitch;
-                    var pitch = width * 4;
-                    if (rowPitch == pitch)
+                    if (_width != width ||
+                        _height != height)
                     {
-                        WinApi.CopyMemory(destinationPtr, sourcePtr, (uint)(width * height * 4));
-                    }
-                    else
-                    {
-                        for (var i = height; i > 0; --i)
+                        _width = width;
+                        _height = height;
+                        if (_paintBuffer.IsAllocated == true)
                         {
-                            WinApi.CopyMemory(destinationPtr, sourcePtr, (uint)pitch);
-                            sourcePtr += pitch;
-                            destinationPtr += rowPitch;
+                            _paintBuffer.Free();
                         }
+                        _paintBuffer = GCHandle.Alloc(
+                            new byte[_width * _height * 4],
+                            GCHandleType.Pinned
+                        );
                     }
+
+                    WinApi.CopyMemory(
+                        _paintBuffer.AddrOfPinnedObject(),
+                        buffer,
+                        (uint)(width * height * 4)
+                    );
                 }
-                context.UnmapSubresource(_texture, 0);
+                finally
+                {
+                    _paintBufferLock.ExitWriteLock();
+                }
             }
         }
 

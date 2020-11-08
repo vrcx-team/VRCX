@@ -26,6 +26,7 @@ namespace VRCX
         {
             Instance = this;
             InitializeComponent();
+
             try
             {
                 var location = Assembly.GetExecutingAssembly().Location;
@@ -36,22 +37,26 @@ namespace VRCX
             catch
             {
             }
-            // Program.BaseDirectory + "/html/index.html"
-            Browser = new ChromiumWebBrowser(Path.Combine(Program.BaseDirectory, "html/index.html"))
+
+            Browser = new ChromiumWebBrowser(
+                Path.Combine(Program.BaseDirectory, "html/index.html")
+            )
             {
                 DragHandler = new NoopDragHandler(),
                 BrowserSettings =
                 {
-                    // UniversalAccessFromFileUrls = CefState.Enabled,
                     DefaultEncoding = "UTF-8",
                 },
-                Dock = DockStyle.Fill,
+                Dock = DockStyle.Fill
             };
-            Util.ApplyJavascriptBindings(Browser.JavascriptObjectRepository);
+
             Browser.IsBrowserInitializedChanged += (A, B) =>
             {
                 // Browser.ShowDevTools();
             };
+
+            Util.ApplyJavascriptBindings(Browser.JavascriptObjectRepository);
+
             Controls.Add(Browser);
         }
 

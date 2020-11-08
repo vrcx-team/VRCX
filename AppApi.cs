@@ -156,22 +156,22 @@ namespace VRCX
 
         public void StartVR()
         {
-            VRCXVR.SetActive(true);
+            VRCXVR.Instance.SetActive(true);
         }
 
         public void StopVR()
         {
-            VRCXVR.SetActive(false);
+            VRCXVR.Instance.SetActive(false);
         }
 
         public void RefreshVR()
         {
-            VRCXVR.Refresh();
+            VRCXVR.Instance.Refresh();
         }
 
         public string[][] GetVRDevices()
         {
-            return VRCXVR.GetDevices();
+            return VRCXVR.Instance.GetDevices();
         }
 
         public float CpuUsage()
