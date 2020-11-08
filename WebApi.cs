@@ -9,7 +9,7 @@ namespace VRCX
 {
     public class WebApi
     {
-        private readonly string COOKIE_FILE_NAME = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cookies.dat");
+        private readonly string COOKIE_FILE_NAME = Path.Combine(Program.BaseDirectory, "cookies.dat");
         public static WebApi Instance { get; private set; }
         private CookieContainer _cookieContainer;
 

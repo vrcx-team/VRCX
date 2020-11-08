@@ -22,7 +22,7 @@ namespace VRCX
             Instance = this;
             InitializeComponent();
             // 
-            Browser1 = new ChromiumWebBrowser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/vr.html?1"))
+            Browser1 = new ChromiumWebBrowser(Path.Combine(Program.BaseDirectory, "html/vr.html?1"))
             {
                 DragHandler = new NoopDragHandler(),
                 BrowserSettings =
@@ -32,7 +32,7 @@ namespace VRCX
                 },
                 Dock = DockStyle.Fill,
             };
-            Browser2 = new ChromiumWebBrowser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/vr.html?2"))
+            Browser2 = new ChromiumWebBrowser(Path.Combine(Program.BaseDirectory, "html/vr.html?2"))
             {
                 DragHandler = new NoopDragHandler(),
                 BrowserSettings =

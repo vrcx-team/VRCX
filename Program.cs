@@ -11,8 +11,15 @@ using System.Windows.Forms;
 
 namespace VRCX
 {
-    public static class Program
+    public class Program
     {
+        public static string BaseDirectory { get; private set; }
+
+        static Program()
+        {
+            BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        }
+
         [STAThread]
         public static void Main()
         {

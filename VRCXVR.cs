@@ -66,8 +66,8 @@ namespace VRCX
                 BindFlags = BindFlags.ShaderResource,
                 CpuAccessFlags = CpuAccessFlags.Write
             });
-            m_Browser1 = new Browser(m_Texture1, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/vr.html?1"));
-            m_Browser2 = new Browser(m_Texture2, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/vr.html?2"));
+            m_Browser1 = new Browser(m_Texture1, Path.Combine(Program.BaseDirectory, "html/vr.html?1"));
+            m_Browser2 = new Browser(m_Texture2, Path.Combine(Program.BaseDirectory, "html/vr.html?2"));
             m_Thread = new Thread(() =>
             {
                 var active = false;

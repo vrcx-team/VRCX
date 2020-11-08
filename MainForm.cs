@@ -36,8 +36,8 @@ namespace VRCX
             catch
             {
             }
-            // AppDomain.CurrentDomain.BaseDirectory + "/html/index.html"
-            Browser = new ChromiumWebBrowser(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "html/index.html"))
+            // Program.BaseDirectory + "/html/index.html"
+            Browser = new ChromiumWebBrowser(Path.Combine(Program.BaseDirectory, "html/index.html"))
             {
                 DragHandler = new NoopDragHandler(),
                 BrowserSettings =
