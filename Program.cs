@@ -44,11 +44,11 @@ namespace VRCX
             WebApi.Instance.Init();
             LogWatcher.Instance.Init();
 
-            CefService.Init();
+            CefService.Instance.Init();
             VRCXVR.Init();
             Application.Run(new MainForm());
             VRCXVR.Exit();
-            CefService.Exit();
+            CefService.Instance.Exit();
 
             LogWatcher.Instance.Exit();
             WebApi.Instance.Exit();

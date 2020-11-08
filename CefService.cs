@@ -5,9 +5,16 @@ using System.IO;
 
 namespace VRCX
 {
-    public static class CefService
+    public class CefService
     {
-        public static void Init()
+        public static CefService Instance { get; private set; }
+
+        static CefService()
+        {
+            Instance = new CefService();
+        }
+
+        internal void Init()
         {
             var cefSettings = new CefSettings
             {
@@ -52,7 +59,7 @@ namespace VRCX
             }
         }
 
-        public static void Exit()
+        internal void Exit()
         {
             Cef.Shutdown();
         }
