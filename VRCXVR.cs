@@ -83,7 +83,7 @@ namespace VRCX
             var overlayHandle2 = 0UL;
 
             // REMOVE THIS
-            nextOverlay = DateTime.MaxValue;
+            // nextOverlay = DateTime.MaxValue;
 
             _device = new Device(
                 DriverType.Hardware,
