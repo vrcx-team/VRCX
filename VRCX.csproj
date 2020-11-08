@@ -128,9 +128,8 @@
     <Compile Include="CefService.cs" />
     <Compile Include="Discord.cs" />
     <Compile Include="CpuMonitor.cs" />
-    <Compile Include="Browser.cs" />
+    <Compile Include="OffScreenBrowser.cs" />
     <Compile Include="NoopDragHandler.cs" />
-    <Compile Include="RenderHandler.cs" />
     <Compile Include="WebApi.cs" />
     <Compile Include="SQLite.cs" />
     <Compile Include="SharedVariable.cs" />

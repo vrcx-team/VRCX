@@ -27,8 +27,8 @@ namespace VRCX
         private static Device m_Device;
         private static Texture2D m_Texture1;
         private static Texture2D m_Texture2;
-        private static Browser m_Browser1;
-        private static Browser m_Browser2;
+        private static OffScreenBrowser m_Browser1;
+        private static OffScreenBrowser m_Browser2;
         private static bool m_Active;
         private static float[] m_Rotation = { 0f, 0f, 0f };
         private static float[] m_Translation = { 0f, 0f, 0f };
@@ -66,8 +66,8 @@ namespace VRCX
                 BindFlags = BindFlags.ShaderResource,
                 CpuAccessFlags = CpuAccessFlags.Write
             });
-            m_Browser1 = new Browser(m_Texture1, Path.Combine(Program.BaseDirectory, "html/vr.html?1"));
-            m_Browser2 = new Browser(m_Texture2, Path.Combine(Program.BaseDirectory, "html/vr.html?2"));
+            m_Browser1 = new OffScreenBrowser(m_Texture1, Path.Combine(Program.BaseDirectory, "html/vr.html?1"));
+            m_Browser2 = new OffScreenBrowser(m_Texture2, Path.Combine(Program.BaseDirectory, "html/vr.html?2"));
             m_Thread = new Thread(() =>
             {
                 var active = false;
