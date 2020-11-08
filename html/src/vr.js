@@ -15,8 +15,8 @@ import webApiService from './service/webapi.js';
 
 (async function () {
     await CefSharp.BindObjectAsync(
+        'AppApi',
         'WebApi',
-        'VRCX',
         'SharedVariable',
         'SQLite'
     );
@@ -616,7 +616,7 @@ import webApiService from './service/webapi.js';
             this.currentTime = new Date().toJSON();
             this.currentUserStatus = sharedRepository.getString('current_user_status');
             if (configRepository.getBool('VRCX_hideDevicesFromFeed') === false) {
-                VRCX.GetVRDevices().then((devices) => {
+                AppApi.GetVRDevices().then((devices) => {
                     devices.forEach((device) => {
                         device[2] = parseInt(device[2], 10);
                     });
@@ -635,7 +635,7 @@ import webApiService from './service/webapi.js';
 
     $app.methods.updateCpuUsageLoop = async function () {
         try {
-            var cpuUsage = await VRCX.CpuUsage();
+            var cpuUsage = await AppApi.CpuUsage();
             this.cpuUsage = cpuUsage.toFixed(2);
         } catch (err) {
             console.error(err);

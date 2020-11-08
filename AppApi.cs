@@ -14,13 +14,13 @@ using System.Windows.Forms;
 
 namespace VRCX
 {
-    public class VRCX
+    public class AppApi
     {
-        public static VRCX Instance { get; private set; }
+        public static AppApi Instance { get; private set; }
 
-        static VRCX()
+        static AppApi()
         {
-            Instance = new VRCX();
+            Instance = new AppApi();
         }
 
         public void ShowDevTools()
