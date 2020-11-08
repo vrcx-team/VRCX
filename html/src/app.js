@@ -3280,7 +3280,6 @@ import gameLogService from './service/gamelog.js'
     var $app = {
         data: {
             API,
-            VRCX,
             nextRefresh: 0,
             isGameRunning: false,
             isGameNoVR: false,
