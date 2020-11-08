@@ -100,73 +100,7 @@ namespace VRCX
                     }
                     context.UnmapSubresource(_texture, 0);
                 }
-                /*_bufferAssignLock.EnterUpgradeableReadLock();
-                try
-                {
-                    if (_buffer.IsAllocated == false ||
-                        width != _width ||
-                        height != _height)
-                    {
-                        _bufferAssignLock.EnterWriteLock();
-                        try
-                        {
-                            _width = width;
-                            _height = height;
-                            _bufferSize = width * height * 4;
-                            if (_buffer.IsAllocated == true)
-                            {
-                                _buffer.Free();
-                            }
-                            _buffer = GCHandle.Alloc(new byte[_bufferSize], GCHandleType.Pinned);
-                        }
-                        finally
-                        {
-                            _bufferAssignLock.ExitWriteLock();
-                        }
-                    }
-                    WinApi.CopyMemory(_buffer.AddrOfPinnedObject(), buffer, (uint)_bufferSize);
-                }
-                finally
-                {
-                    _bufferAssignLock.ExitUpgradeableReadLock();
-                }*/
             }
-
-            /*_bufferAssignLock.EnterReadLock();
-            try
-            {
-                if (_buffer.IsAllocated == true)
-                {
-                    var context = _texture.Device.ImmediateContext;
-                    var box = context.MapSubresource(_texture, 0, MapMode.WriteDiscard, MapFlags.None);
-                    var destinationPtr = box.DataPointer;
-                    var sourcePtr = _buffer.AddrOfPinnedObject();
-                    if (destinationPtr != IntPtr.Zero)
-                    {
-                        if (box.RowPitch == _width * 4)
-                        {
-                            WinApi.CopyMemory(destinationPtr, sourcePtr, (uint)_bufferSize);
-                        }
-                        else
-                        {
-
-                            var pitch = box.RowPitch;
-                            var rowPitch = _width * 4;
-                            for (var i = _height; i > 0; --i)
-                            {
-                                WinApi.CopyMemory(destinationPtr, sourcePtr, (uint)rowPitch);
-                                destinationPtr += pitch;
-                                sourcePtr += rowPitch;
-                            }
-                        }
-                    }
-                    context.UnmapSubresource(_texture, 0);
-                }
-            }
-            finally
-            {
-                _bufferAssignLock.ExitReadLock();
-            }*/
         }
 
         void IRenderHandler.OnPopupShow(bool show)
