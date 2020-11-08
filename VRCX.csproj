@@ -125,6 +125,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CefService.cs" />
     <Compile Include="Discord.cs" />
     <Compile Include="CpuMonitor.cs" />
     <Compile Include="Browser.cs" />
