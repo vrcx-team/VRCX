@@ -3295,7 +3295,6 @@ import gameLogService from './service/gamelog.js'
         el: '#x-app',
         async mounted() {
             this.checkAppVersion();
-            await gameLogService.reset();
             API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
             API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
             this.updateLoop();
@@ -3591,6 +3590,7 @@ import gameLogService from './service/gamelog.js'
             text: `Hello there, <strong>${escapeTag(args.ref.displayName)}</strong>!`
         }).show();
         $app.$refs.menu.activeIndex = 'feed';
+        $app.resetGameLog();
     });
 
     $app.data.loginForm = {
@@ -4482,6 +4482,7 @@ import gameLogService from './service/gamelog.js'
     $app.methods.resetGameLog = async function () {
         await gameLogService.reset();
         this.gameLogTable.data = [];
+        this.lastLocation = '';
     };
 
     $app.methods.updateGameLogLoop = async function () {
