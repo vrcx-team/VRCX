@@ -14,6 +14,7 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,7 +27,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -95,7 +95,6 @@
     <Compile Include="CpuMonitor.cs" />
     <Compile Include="OffScreenBrowser.cs" />
     <Compile Include="NoopDragHandler.cs" />
-    <Compile Include="ToastService.cs" />
     <Compile Include="WebApi.cs" />
     <Compile Include="SQLite.cs" />
     <Compile Include="SharedVariable.cs" />
@@ -174,9 +173,6 @@
     </PackageReference>
     <PackageReference Include="DiscordRichPresence">
       <Version>1.0.166</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Windows.SDK.Contracts">
-      <Version>10.0.17134.1000</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
