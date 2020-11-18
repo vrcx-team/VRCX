@@ -672,12 +672,18 @@ import webApiService from './service/webapi.js';
                         }
                     }
                 }
+                if (feed.type === 'invite') {
+                    if (!map[feed.senderUsername] ||
+                        map[feed.senderUsername] < feed.created_at) {
+                        map[feed.senderUsername] = feed.created_at;
+                    }
+                }
             });
             // disable notification on busy
             if (this.currentUserStatus === 'busy') {
                 return;
             }
-            if (configRepository.getBool('VRCX_VIPNotifications') === true) {
+            if (configRepository.getBool('VRCX_overlayNotifications') === true) {
                 var notys = [];
                 this.feeds.forEach((feed) => {
                     if (feed.isFavorite) {
@@ -695,6 +701,13 @@ import webApiService from './service/webapi.js';
                                 map[feed.data] = feed.created_at;
                                 notys.push(feed);
                             }
+                        }
+                    }
+                    if (feed.type === 'invite') {
+                        if (!map[feed.senderUsername] ||
+                            map[feed.senderUsername] < feed.created_at) {
+                            map[feed.senderUsername] = feed.created_at;
+                            notys.push(feed);
                         }
                     }
                 });
@@ -732,6 +745,13 @@ import webApiService from './service/webapi.js';
                                     type: 'alert',
                                     theme: theme,
                                     text: `<strong>${noty.displayName}</strong> has logged out`
+                                }).show();
+                                break;
+                            case 'invite':
+                                new Noty({
+                                    type: 'alert',
+                                    theme: theme,
+                                    text: `<strong>${noty.senderUsername}</strong> has invited you to ${noty.details.worldName}`
                                 }).show();
                                 break;
                         }

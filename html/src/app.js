@@ -3460,6 +3460,15 @@ import gameLogService from './service/gamelog.js'
                 ++j;
             }
         }
+        var { data } = this.notificationTable;
+        for (i = 0; i < data.length; i++) {
+            var ctx = data[i];
+            arr.push({
+                ...ctx,
+                isFriend: this.friends.has(ctx.senderUserId),
+                isFavorite: API.cachedFavoritesByObjectId.has(ctx.senderUserId)
+            });
+        }
         arr.sort(function (a, b) {
             if (a.created_at < b.created_at) {
                 return 1;
@@ -5546,7 +5555,7 @@ import gameLogService from './service/gamelog.js'
     $app.data.hidePrivateFromFeed = configRepository.getBool('VRCX_hidePrivateFromFeed');
     $app.data.hideLoginsFromFeed = configRepository.getBool('VRCX_hideLoginsFromFeed');
     $app.data.hideDevicesFromFeed = configRepository.getBool('VRCX_hideDevicesFromFeed');
-    $app.data.vipNotifications = configRepository.getBool('VRCX_VIPNotifications');
+    $app.data.overlayNotifications = configRepository.getBool('VRCX_overlayNotifications');
     $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
     var saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
@@ -5554,7 +5563,7 @@ import gameLogService from './service/gamelog.js'
         configRepository.setBool('VRCX_hidePrivateFromFeed', this.hidePrivateFromFeed);
         configRepository.setBool('VRCX_hideLoginsFromFeed', this.hideLoginsFromFeed);
         configRepository.setBool('VRCX_hideDevicesFromFeed', this.hideDevicesFromFeed);
-        configRepository.setBool('VRCX_VIPNotifications', this.vipNotifications);
+        configRepository.setBool('VRCX_overlayNotifications', this.overlayNotifications);
         configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
     };
     $app.watch.openVR = saveOpenVROption;
@@ -5562,7 +5571,7 @@ import gameLogService from './service/gamelog.js'
     $app.watch.hidePrivateFromFeed = saveOpenVROption;
     $app.watch.hideLoginsFromFeed = saveOpenVROption;
     $app.watch.hideDevicesFromFeed = saveOpenVROption;
-    $app.watch.vipNotifications = saveOpenVROption;
+    $app.watch.overlayNotifications = saveOpenVROption;
     $app.watch.minimalFeed = saveOpenVROption;
     $app.data.isDarkMode = configRepository.getBool('isDarkMode');
     $appDarkStyle.disabled = $app.data.isDarkMode === false;
