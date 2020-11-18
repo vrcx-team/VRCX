@@ -41,10 +41,6 @@ namespace VRCX
             cefSettings.CefCommandLineArgs.Add("disable-extensions");
             // cefSettings.CefCommandLineArgs.Add("allow-universal-access-from-files");
             // cefSettings.CefCommandLineArgs.Add("disable-web-security");
-            cefSettings.CefCommandLineArgs.Add("disable-gpu");
-            cefSettings.CefCommandLineArgs.Add("disable-gpu-compositing");
-            cefSettings.CefCommandLineArgs.Add("disable-webgl");
-            cefSettings.DisableGpuAcceleration();
             cefSettings.SetOffScreenRenderingBestPerformanceArgs();
 
             CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO
