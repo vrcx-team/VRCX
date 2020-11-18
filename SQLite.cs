@@ -78,6 +78,40 @@ namespace VRCX
             callback.Dispose();
         }
 
+        public void Execute(Action<object[]> callback, string sql, IDictionary<string, object> args = null)
+        {
+            m_ConnectionLock.EnterReadLock();
+            try
+            {
+                using (var command = new SQLiteCommand(sql, m_Connection))
+                {
+                    if (args != null)
+                    {
+                        foreach (var arg in args)
+                        {
+                            command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
+                        }
+                    }
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read() == true)
+                        {
+                            var values = new object[reader.FieldCount];
+                            reader.GetValues(values);
+                            callback(values);
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+            finally
+            {
+                m_ConnectionLock.ExitReadLock();
+            }
+        }
+
         public int ExecuteNonQuery(string sql, IDictionary<string, object> args = null)
         {
             int result = -1;
@@ -96,9 +130,6 @@ namespace VRCX
                     }
                     result = command.ExecuteNonQuery();
                 }
-            }
-            catch
-            {
             }
             finally
             {

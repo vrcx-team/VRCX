@@ -3,7 +3,6 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-using CefSharp.DevTools.Runtime;
 using System;
 using System.Windows.Forms;
 
@@ -37,10 +36,10 @@ namespace VRCX
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            SQLite.Instance.Init();
             VRCXStorage.Load();
             CpuMonitor.Instance.Init();
             Discord.Instance.Init();
-            SQLite.Instance.Init();
             WebApi.Instance.Init();
             LogWatcher.Instance.Init();
 
@@ -52,10 +51,11 @@ namespace VRCX
 
             LogWatcher.Instance.Exit();
             WebApi.Instance.Exit();
-            SQLite.Instance.Exit();
+
             Discord.Instance.Exit();
             CpuMonitor.Instance.Exit();
             VRCXStorage.Save();
+            SQLite.Instance.Exit();
         }
     }
 }

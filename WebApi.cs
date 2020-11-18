@@ -10,7 +10,6 @@ namespace VRCX
     public class WebApi
     {
         public static readonly WebApi Instance;
-        private readonly string _cookieFilePath;
         private CookieContainer _cookieContainer;
 
         static WebApi()
@@ -21,31 +20,46 @@ namespace VRCX
 
         public WebApi()
         {
-            _cookieFilePath = Path.Combine(Program.BaseDirectory, "cookies.dat");
             _cookieContainer = new CookieContainer();
         }
 
         internal void Init()
         {
-            try
-            {
-                using (var file = File.Open(_cookieFilePath, FileMode.Open, FileAccess.Read))
+            SQLite.Instance.ExecuteNonQuery("CREATE TABLE IF NOT EXISTS `cookies` (`key` TEXT PRIMARY KEY, `value` TEXT)");
+            SQLite.Instance.Execute((values) =>
                 {
-                    _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(file);
+                    try
+                    {
+                        using (var stream = new MemoryStream(Convert.FromBase64String((string)values[0])))
+                        {
+                            _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
+                        }
+                    }
+                    catch
+                    {
+                    }
+                },
+                "SELECT `value` FROM `cookies` WHERE `key` = @key",
+                new Dictionary<string, object>() {
+                    {"@key", "default"}
                 }
-            }
-            catch
-            {
-            }
+            );
         }
 
         internal void Exit()
         {
             try
             {
-                using (var file = File.Open(_cookieFilePath, FileMode.Create, FileAccess.Write))
+                using (var memoryStream = new MemoryStream())
                 {
-                    new BinaryFormatter().Serialize(file, _cookieContainer);
+                    new BinaryFormatter().Serialize(memoryStream, _cookieContainer);
+                    SQLite.Instance.ExecuteNonQuery(
+                        "INSERT OR REPLACE INTO `cookies` (`key`, `value`) VALUES (@key, @value)",
+                        new Dictionary<string, object>() {
+                            {"@key", "default"},
+                            {"@value", Convert.ToBase64String(memoryStream.ToArray())}
+                        }
+                    );
                 }
             }
             catch
