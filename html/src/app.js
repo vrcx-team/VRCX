@@ -3463,11 +3463,13 @@ import gameLogService from './service/gamelog.js'
         var { data } = this.notificationTable;
         for (i = 0; i < data.length; i++) {
             var ctx = data[i];
-            arr.push({
-                ...ctx,
-                isFriend: this.friends.has(ctx.senderUserId),
-                isFavorite: API.cachedFavoritesByObjectId.has(ctx.senderUserId)
-            });
+            if (ctx.senderUserId !== API.currentUser.id) {
+                arr.push({
+                    ...ctx,
+                    isFriend: this.friends.has(ctx.senderUserId),
+                    isFavorite: API.cachedFavoritesByObjectId.has(ctx.senderUserId)
+                });
+            }
         }
         arr.sort(function (a, b) {
             if (a.created_at < b.created_at) {
