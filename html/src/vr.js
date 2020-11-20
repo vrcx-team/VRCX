@@ -643,8 +643,16 @@ import webApiService from './service/webapi.js';
     };
 
     $app.methods.updateSharedFeed = async function () {
-        this.isMinimalFeed = configRepository.getBool('VRCX_minimalFeed');
         // TODO: block mute hideAvatar unfriend
+        this.isMinimalFeed = configRepository.getBool('VRCX_minimalFeed');
+        var notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
+        if (notificationTimeout == '' || isNaN(notificationTimeout)) {
+            notificationTimeout = 3000;
+        }
+        var theme = 'relax';
+        if (configRepository.getBool('isDarkMode') === true) {
+            theme = 'sunset';
+        }
 
         var feeds = sharedRepository.getArray('feeds');
         if (feeds === null) {
@@ -727,6 +735,7 @@ import webApiService from './service/webapi.js';
                                 new Noty({
                                     type: 'alert',
                                     theme: theme,
+                                    timeout: notificationTimeout,
                                     text: `<strong>${noty.data}</strong> has joined`
                                 }).show();
                                 break;
@@ -734,6 +743,7 @@ import webApiService from './service/webapi.js';
                                 new Noty({
                                     type: 'alert',
                                     theme: theme,
+                                    timeout: notificationTimeout,
                                     text: `<strong>${noty.data}</strong> has left`
                                 }).show();
                                 break;
@@ -741,6 +751,7 @@ import webApiService from './service/webapi.js';
                                 new Noty({
                                     type: 'alert',
                                     theme: theme,
+                                    timeout: notificationTimeout,
                                     text: `<strong>${noty.displayName}</strong> has logged in`
                                 }).show();
                                 break;
@@ -748,6 +759,7 @@ import webApiService from './service/webapi.js';
                                 new Noty({
                                     type: 'alert',
                                     theme: theme,
+                                    timeout: notificationTimeout,
                                     text: `<strong>${noty.displayName}</strong> has logged out`
                                 }).show();
                                 break;
@@ -755,6 +767,7 @@ import webApiService from './service/webapi.js';
                                 new Noty({
                                     type: 'alert',
                                     theme: theme,
+                                    timeout: notificationTimeout,
                                     text: `<strong>${noty.senderUsername}</strong> has invited you to ${noty.details.worldName}`
                                 }).show();
                                 break;
@@ -762,6 +775,7 @@ import webApiService from './service/webapi.js';
                                 new Noty({
                                     type: 'alert',
                                     theme: theme,
+                                    timeout: notificationTimeout,
                                     text: `<strong>${noty.senderUsername}</strong> has requested an invite`
                                 }).show();
                                 break;
@@ -769,6 +783,7 @@ import webApiService from './service/webapi.js';
                                 new Noty({
                                     type: 'alert',
                                     theme: theme,
+                                    timeout: notificationTimeout,
                                     text: `<strong>${noty.senderUsername}</strong> has sent you a friend request`
                                 }).show();
                                 break;

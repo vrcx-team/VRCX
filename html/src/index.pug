@@ -507,11 +507,13 @@ html
                         span(style="display:inline-block;min-width:150px") Hide Private Worlds
                         el-switch(v-model="hidePrivateFromFeed")
                     div(style="font-size:12px;margin-top:5px")
+                        span(style="display:inline-block;min-width:150px") Minimal Feed Icons
+                        el-switch(v-model="minimalFeed")
+                    div(style="font-size:12px;margin-top:5px")
                         span(style="display:inline-block;min-width:150px") Overlay Notifications
                         el-switch(v-model="overlayNotifications")
                     div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Minimal Feed Icons
-                        el-switch(v-model="minimalFeed")
+                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()") Notification Timeout
                 div(style="margin-top:30px")
                     span(style="font-weight:bold") Window
                     div(style="font-size:12px;margin-top:5px")
