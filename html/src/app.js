@@ -5559,6 +5559,7 @@ import gameLogService from './service/gamelog.js'
     $app.data.hideDevicesFromFeed = configRepository.getBool('VRCX_hideDevicesFromFeed');
     $app.data.overlayNotifications = configRepository.getBool('VRCX_overlayNotifications');
     $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
+    $app.data.notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
     var saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -5704,6 +5705,25 @@ import gameLogService from './service/gamelog.js'
                 if (action === 'confirm' &&
                     instance.inputValue) {
                     this.showAvatarDialog(instance.inputValue);
+                }
+            }
+        });
+    };
+
+    $app.methods.promptNotificationTimeout = function () {
+        this.$prompt('Enter amount of seconds', 'Notification Timeout', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputValue: this.notificationTimeout / 1000,
+            inputPattern: /\d+$/,
+            inputErrorMessage: 'Valid number is required',
+            callback: (action, instance) => {
+                if (action === 'confirm' &&
+                    instance.inputValue &&
+                    !isNaN(instance.inputValue)) {
+                    this.notificationTimeout = Math.trunc(Number(instance.inputValue) * 1000);
+                    configRepository.setString('VRCX_notificationTimeout', this.notificationTimeout);
                 }
             }
         });
