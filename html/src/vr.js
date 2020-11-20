@@ -672,19 +672,9 @@ import webApiService from './service/webapi.js';
                         }
                     }
                 }
-                if (feed.type === 'invite') {
-                    if (!map[feed.senderUsername] ||
-                        map[feed.senderUsername] < feed.created_at) {
-                        map[feed.senderUsername] = feed.created_at;
-                    }
-                }
-                else if (feed.type === 'requestInvite') {
-                    if (!map[feed.senderUsername] ||
-                        map[feed.senderUsername] < feed.created_at) {
-                        map[feed.senderUsername] = feed.created_at;
-                    }
-                }
-                else if (feed.type === 'friendRequest') {
+                if (feed.type === 'invite' ||
+                    feed.type === 'requestInvite' ||
+                    feed.type === 'friendRequest') {
                     if (!map[feed.senderUsername] ||
                         map[feed.senderUsername] < feed.created_at) {
                         map[feed.senderUsername] = feed.created_at;
@@ -715,21 +705,9 @@ import webApiService from './service/webapi.js';
                             }
                         }
                     }
-                    if (feed.type === 'invite') {
-                        if (!map[feed.senderUsername] ||
-                            map[feed.senderUsername] < feed.created_at) {
-                            map[feed.senderUsername] = feed.created_at;
-                            notys.push(feed);
-                        }
-                    }
-                    else if (feed.type === 'requestInvite') {
-                        if (!map[feed.senderUsername] ||
-                            map[feed.senderUsername] < feed.created_at) {
-                            map[feed.senderUsername] = feed.created_at;
-                            notys.push(feed);
-                        }
-                    }
-                    else if (feed.type === 'friendRequest') {
+                    if (feed.type === 'invite' ||
+                        feed.type === 'requestInvite' ||
+                        feed.type === 'friendRequest') {
                         if (!map[feed.senderUsername] ||
                             map[feed.senderUsername] < feed.created_at) {
                             map[feed.senderUsername] = feed.created_at;
