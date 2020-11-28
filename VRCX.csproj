@@ -166,10 +166,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.OffScreen">
-      <Version>85.3.130</Version>
+      <Version>86.0.241</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
-      <Version>85.3.130</Version>
+      <Version>86.0.241</Version>
     </PackageReference>
     <PackageReference Include="DiscordRichPresence">
       <Version>1.0.166</Version>
