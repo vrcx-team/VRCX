@@ -5594,6 +5594,34 @@ import gameLogService from './service/gamelog.js'
     $app.watch.isStartAtWindowsStartup = saveVRCXWindowOption;
     $app.watch.isStartAsMinimizedState = saveVRCXWindowOption;
     $app.watch.isCloseToTray = saveVRCXWindowOption;
+    if (!configRepository.getString('VRCX_notificationTimeout')) {
+        $app.data.notificationTimeout = 3000;
+        configRepository.setString('VRCX_notificationTimeout', $app.data.notificationTimeout);
+    }
+    if (!configRepository.getString('VRCX_notificationJoinLeaveFilter')) {
+        $app.data.notificationJoinLeaveFilter = 'VIP';
+        configRepository.setString('VRCX_notificationJoinLeaveFilter', $app.data.notificationJoinLeaveFilter);
+    }
+    if (!configRepository.getString('VRCX_notificationOnlineOfflineFilter')) {
+        $app.data.notificationOnlineOfflineFilter = 'VIP';
+        configRepository.setString('VRCX_notificationOnlineOfflineFilter', $app.data.notificationOnlineOfflineFilter);
+    }
+    if (!configRepository.getString('VRCX_notificationPosition')) {
+        $app.data.notificationPosition = 'topCenter';
+        configRepository.setString('VRCX_notificationPosition', $app.data.notificationPosition);
+    }
+    $app.data.notificationJoinLeaveFilter = configRepository.getString('VRCX_notificationJoinLeaveFilter');
+    $app.methods.changeNotificationJoinLeaveFilter = function () {
+        configRepository.setString('VRCX_notificationJoinLeaveFilter', this.notificationJoinLeaveFilter);
+    };
+    $app.data.notificationOnlineOfflineFilter = configRepository.getString('VRCX_notificationOnlineOfflineFilter');
+    $app.methods.changeNotificationOnlineOfflineFilter = function () {
+        configRepository.setString('VRCX_notificationOnlineOfflineFilter', this.notificationOnlineOfflineFilter);
+    };
+    $app.data.notificationPosition = configRepository.getString('VRCX_notificationPosition');
+    $app.methods.changeNotificationPosition = function () {
+        configRepository.setString('VRCX_notificationPosition', this.notificationPosition);
+    };
 
     API.$on('LOGIN', function () {
         $app.currentUserTreeData = [];
