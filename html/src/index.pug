@@ -515,6 +515,36 @@ html
                     div(style="font-size:12px;margin-top:5px")
                         el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()") Notification Timeout
                 div(style="margin-top:30px")
+                    span Join/Leave Notifications
+                    div(style="font-size:12px;margin-top:5px")
+                        el-radio-group(v-model="notificationJoinLeaveFilter" size="mini" style="margin-left:30px" @change="changeNotificationJoinLeaveFilter")
+                            el-radio(label="VIP" v-model="notificationJoinLeaveFilter") VIP
+                            el-radio(label="Friends" v-model="notificationJoinLeaveFilter") Friends
+                            el-radio(label="Everyone" v-model="notificationJoinLeaveFilter") Everyone
+                            el-radio(label="Off" v-model="notificationJoinLeaveFilter") Off
+                div(style="margin-top:30px")
+                    span Online/Offline Notifications
+                    div(style="font-size:12px;margin-top:5px")
+                        el-radio-group(v-model="notificationOnlineOfflineFilter" size="mini" style="margin-left:30px" @change="changeNotificationOnlineOfflineFilter")
+                            el-radio(label="VIP" v-model="notificationOnlineOfflineFilter") VIP
+                            el-radio(label="Friends" v-model="notificationOnlineOfflineFilter") Friends
+                            el-radio(label="Off" v-model="notificationOnlineOfflineFilter") Off
+                div(style="margin-top:30px")
+                    span Notification position
+                    div(style="font-size:12px;margin-top:5px")
+                        el-radio-group(v-model="notificationPosition" size="mini" style="margin-left:30px" @change="changeNotificationPosition")
+                            el-radio(label="top" v-model="notificationPosition") Top
+                            el-radio(label="topLeft" v-model="notificationPosition") Top Left
+                            el-radio(label="topCenter" v-model="notificationPosition") Top Center
+                            el-radio(label="topRight" v-model="notificationPosition") Top Right
+                            el-radio(label="center" v-model="notificationPosition") Center
+                            el-radio(label="centerLeft" v-model="notificationPosition") Center Left
+                            el-radio(label="centerRight" v-model="notificationPosition") Center Right
+                            el-radio(label="bottom" v-model="notificationPosition") Bottom
+                            el-radio(label="bottomLeft" v-model="notificationPosition") Bottom Left
+                            el-radio(label="bottomCenter" v-model="notificationPosition") Bottom Center
+                            el-radio(label="bottomRight" v-model="notificationPosition") Bottom Right
+                div(style="margin-top:30px")
                     span(style="font-weight:bold") Window
                     div(style="font-size:12px;margin-top:5px")
                         span(style="display:inline-block;min-width:150px") Start at Windows startup

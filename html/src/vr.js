@@ -645,10 +645,8 @@ import webApiService from './service/webapi.js';
     $app.methods.updateSharedFeed = async function () {
         // TODO: block mute hideAvatar unfriend
         this.isMinimalFeed = configRepository.getBool('VRCX_minimalFeed');
+        var notificationPosition = configRepository.getString('VRCX_notificationPosition');
         var notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
-        if (notificationTimeout == '' || isNaN(notificationTimeout)) {
-            notificationTimeout = 3000;
-        }
         var theme = 'relax';
         if (configRepository.getBool('isDarkMode') === true) {
             theme = 'sunset';
@@ -663,21 +661,21 @@ import webApiService from './service/webapi.js';
         this.feeds = feeds;
 
         if (this.appType === '2') {
+            var notificationJoinLeaveFilter = configRepository.getString('VRCX_notificationJoinLeaveFilter');
+            var notificationOnlineOfflineFilter = configRepository.getString('VRCX_notificationOnlineOfflineFilter');
             var map = {};
             _feeds.forEach((feed) => {
-                if (feed.isFavorite) {
-                    if (feed.type === 'OnPlayerJoined' ||
-                        feed.type === 'OnPlayerLeft') {
-                        if (!map[feed.data] ||
-                            map[feed.data] < feed.created_at) {
-                            map[feed.data] = feed.created_at;
-                        }
-                    } else if (feed.type === 'Online' ||
-                        feed.type === 'Offline') {
-                        if (!map[feed.displayName] ||
-                            map[feed.displayName] < feed.created_at) {
-                            map[feed.displayName] = feed.created_at;
-                        }
+                if (feed.type === 'OnPlayerJoined' ||
+                    feed.type === 'OnPlayerLeft') {
+                    if (!map[feed.data] ||
+                        map[feed.data] < feed.created_at) {
+                        map[feed.data] = feed.created_at;
+                    }
+                } else if (feed.type === 'Online' ||
+                    feed.type === 'Offline') {
+                    if (!map[feed.displayName] ||
+                        map[feed.displayName] < feed.created_at) {
+                        map[feed.displayName] = feed.created_at;
                     }
                 }
                 if (feed.type === 'invite' ||
@@ -696,7 +694,8 @@ import webApiService from './service/webapi.js';
             if (configRepository.getBool('VRCX_overlayNotifications') === true) {
                 var notys = [];
                 this.feeds.forEach((feed) => {
-                    if (feed.isFavorite) {
+                    if (((notificationOnlineOfflineFilter === "Friends") && (feed.isFriend)) ||
+                        ((notificationOnlineOfflineFilter === "VIP") && (feed.isFavorite))) {
                         if (feed.type === 'Online' ||
                             feed.type === 'Offline') {
                             if (!map[feed.displayName] ||
@@ -704,7 +703,12 @@ import webApiService from './service/webapi.js';
                                 map[feed.displayName] = feed.created_at;
                                 notys.push(feed);
                             }
-                        } else if (feed.type === 'OnPlayerJoined' ||
+                        }
+                    }
+                    if ((notificationJoinLeaveFilter === "Everyone") ||
+                        ((notificationJoinLeaveFilter === "Friends") && (feed.isFriend)) ||
+                        ((notificationJoinLeaveFilter === "VIP") && (feed.isFavorite))) {
+                        if (feed.type === 'OnPlayerJoined' ||
                             feed.type === 'OnPlayerLeft') {
                             if (!map[feed.data] ||
                                 map[feed.data] < feed.created_at) {
@@ -736,6 +740,7 @@ import webApiService from './service/webapi.js';
                                     type: 'alert',
                                     theme: theme,
                                     timeout: notificationTimeout,
+                                    layout: notificationPosition,
                                     text: `<strong>${noty.data}</strong> has joined`
                                 }).show();
                                 break;
@@ -744,6 +749,7 @@ import webApiService from './service/webapi.js';
                                     type: 'alert',
                                     theme: theme,
                                     timeout: notificationTimeout,
+                                    layout: notificationPosition,
                                     text: `<strong>${noty.data}</strong> has left`
                                 }).show();
                                 break;
@@ -752,6 +758,7 @@ import webApiService from './service/webapi.js';
                                     type: 'alert',
                                     theme: theme,
                                     timeout: notificationTimeout,
+                                    layout: notificationPosition,
                                     text: `<strong>${noty.displayName}</strong> has logged in`
                                 }).show();
                                 break;
@@ -760,6 +767,7 @@ import webApiService from './service/webapi.js';
                                     type: 'alert',
                                     theme: theme,
                                     timeout: notificationTimeout,
+                                    layout: notificationPosition,
                                     text: `<strong>${noty.displayName}</strong> has logged out`
                                 }).show();
                                 break;
@@ -768,6 +776,7 @@ import webApiService from './service/webapi.js';
                                     type: 'alert',
                                     theme: theme,
                                     timeout: notificationTimeout,
+                                    layout: notificationPosition,
                                     text: `<strong>${noty.senderUsername}</strong> has invited you to ${noty.details.worldName}`
                                 }).show();
                                 break;
@@ -776,6 +785,7 @@ import webApiService from './service/webapi.js';
                                     type: 'alert',
                                     theme: theme,
                                     timeout: notificationTimeout,
+                                    layout: notificationPosition,
                                     text: `<strong>${noty.senderUsername}</strong> has requested an invite`
                                 }).show();
                                 break;
@@ -784,6 +794,7 @@ import webApiService from './service/webapi.js';
                                     type: 'alert',
                                     theme: theme,
                                     timeout: notificationTimeout,
+                                    layout: notificationPosition,
                                     text: `<strong>${noty.senderUsername}</strong> has sent you a friend request`
                                 }).show();
                                 break;
