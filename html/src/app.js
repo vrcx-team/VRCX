@@ -7349,6 +7349,17 @@ import gameLogService from './service/gamelog.js'
         D.visible = true;
     };
 
+    // App: Notification position
+
+    $app.data.notificationPositionDialog = {
+        visible: false
+    };
+    
+    $app.methods.showNotificationPositionDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.notificationPositionDialog.$el));
+        this.notificationPositionDialog.visible = true;
+    };
+
     // App: Launch Dialog
 
     $app.data.launchDialog = {
