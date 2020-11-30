@@ -515,18 +515,18 @@ html
                     div(style="font-size:12px;margin-top:5px")
                         el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()") Notification Timeout
                         el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog()") Notification Position
-                div(style="margin-top:30px")
-                    span Join/Leave Notifications
                     div(style="font-size:12px;margin-top:5px")
-                        el-radio-group(v-model="notificationJoinLeaveFilter" size="mini" style="margin-left:30px" @change="changeNotificationJoinLeaveFilter")
+                        span Join/Leave Notifications
+                        br
+                        el-radio-group(v-model="notificationJoinLeaveFilter" size="mini" @change="changeNotificationJoinLeaveFilter")
                             el-radio(label="VIP" v-model="notificationJoinLeaveFilter") VIP
                             el-radio(label="Friends" v-model="notificationJoinLeaveFilter") Friends
                             el-radio(label="Everyone" v-model="notificationJoinLeaveFilter") Everyone
                             el-radio(label="Off" v-model="notificationJoinLeaveFilter") Off
-                div(style="margin-top:30px")
-                    span Online/Offline Notifications
                     div(style="font-size:12px;margin-top:5px")
-                        el-radio-group(v-model="notificationOnlineOfflineFilter" size="mini" style="margin-left:30px" @change="changeNotificationOnlineOfflineFilter")
+                        span Online/Offline Notifications
+                        br
+                        el-radio-group(v-model="notificationOnlineOfflineFilter" size="mini" @change="changeNotificationOnlineOfflineFilter")
                             el-radio(label="VIP" v-model="notificationOnlineOfflineFilter") VIP
                             el-radio(label="Friends" v-model="notificationOnlineOfflineFilter") Friends
                             el-radio(label="Off" v-model="notificationOnlineOfflineFilter") Off
