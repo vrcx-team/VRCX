@@ -514,6 +514,7 @@ html
                         el-switch(v-model="overlayNotifications")
                     div(style="font-size:12px;margin-top:5px")
                         el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()") Notification Timeout
+                        el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog()") Notification Position
                 div(style="margin-top:30px")
                     span Join/Leave Notifications
                     div(style="font-size:12px;margin-top:5px")
@@ -1100,6 +1101,28 @@ html
             //- dialog: export friends list
             el-dialog.x-dialog(:visible.sync="exportFriendsListDialog" title="Export Friends List" width="650px")
                 el-input(type="textarea" v-model="exportFriendsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px"  @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+
+            //- dialog: Notification position
+            el-dialog.x-dialog(ref="notificationPositionDialog" :visible.sync="notificationPositionDialog.visible" title="Notification Position" width="400px")
+                div(style='font-size:12px;')
+                    | Choose a notification position.
+                svg(version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 200" style="margin-top:15px;" xml:space="preserve")
+                    path(style="fill:black;" d="M291.89,5A3.11,3.11,0,0,1,295,8.11V160.64a3.11,3.11,0,0,1-3.11,3.11H8.11A3.11,3.11,0,0,1,5,160.64V8.11A3.11,3.11,0,0,1,8.11,5H291.89m0-5H8.11A8.11,8.11,0,0,0,0,8.11V160.64a8.11,8.11,0,0,0,8.11,8.11H291.89a8.11,8.11,0,0,0,8.11-8.11V8.11A8.11,8.11,0,0,0,291.89,0Z")
+                    rect(style="fill:#d8d8d8;" x="5" y="5" width="290" height="158.75" rx="5.61")
+                        path(d="M291.89,5A3.11,3.11,0,0,1,295,8.11V160.64a3.11,3.11,0,0,1-3.11,3.11H8.11A3.11,3.11,0,0,1,5,160.64V8.11A3.11,3.11,0,0,1,8.11,5H291.89m0-5H8.11A8.11,8.11,0,0,0,0,8.11V160.64a8.11,8.11,0,0,0,8.11,8.11H291.89a8.11,8.11,0,0,0,8.11-8.11V8.11A8.11,8.11,0,0,0,291.89,0Z")
+                el-radio-group(v-model="notificationPosition" size="mini")
+                    el-radio(label="top" v-model="notificationPosition" style="margin:0;position:absolute;left:195px;top:120px;") ‎
+                    el-radio(label="topLeft" v-model="notificationPosition" style="margin:0;position:absolute;left:35px;top:120px;") ‎
+                    el-radio(label="topCenter" v-model="notificationPosition" style="margin:0;position:absolute;left:195px;top:200px;") ‎
+                    el-radio(label="topRight" v-model="notificationPosition" style="margin:0;position:absolute;right:20px;top:120px;") ‎
+                    el-radio(label="centerLeft" v-model="notificationPosition" style="margin:0;position:absolute;left:35px;top:200px;") ‎
+                    el-radio(label="centerRight" v-model="notificationPosition" style="margin:0;position:absolute;right:20px;top:200px;") ‎
+                    el-radio(label="bottom" v-model="notificationPosition" style="margin:0;position:absolute;left:195px;top:280px;") ‎
+                    el-radio(label="bottomLeft" v-model="notificationPosition" style="margin:0;position:absolute;left:35px;top:280px;") ‎
+                    el-radio(label="bottomRight" v-model="notificationPosition" style="margin:0;position:absolute;right:20px;top:280px;") ‎
+                template(#footer)
+                    div(style="display:flex")
+                        el-button(type="primary" size="small" style="margin-left:auto" @click="notificationPositionDialog.visible = false") OK
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
