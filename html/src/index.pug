@@ -481,7 +481,7 @@ html
                         el-switch(v-model="discordActive")
                     div(style="font-size:12px;margin-top:5px")
                         span(style="display:inline-block;min-width:150px") Instance details
-                        el-switch(v-model="discordInstance")
+                        el-switch(v-model="discordInstance" :disabled="!discordActive")
                 div(style="margin-top:30px")
                     span(style="font-weight:bold") SteamVR Overlay
                     div(style="font-size:12px;margin-top:5px")
@@ -496,29 +496,29 @@ html
                         el-switch(v-model="openVR")
                     div(style="font-size:12px;margin-top:5px")
                         span(style="display:inline-block;min-width:150px") Force Run
-                        el-switch(v-model="openVRAlways")
+                        el-switch(v-model="openVRAlways" :disabled="!openVR")
                     div(style="font-size:12px;margin-top:5px")
                         span(style="display:inline-block;min-width:150px") Hide VR Devices
-                        el-switch(v-model="hideDevicesFromFeed")
+                        el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR")
                     div(style="font-size:12px;margin-top:5px")
                         span(style="display:inline-block;min-width:150px") Hide Online/Offline
-                        el-switch(v-model="hideLoginsFromFeed")
+                        el-switch(v-model="hideLoginsFromFeed" :disabled="!openVR")
                     div(style="font-size:12px;margin-top:5px")
                         span(style="display:inline-block;min-width:150px") Hide Private Worlds
-                        el-switch(v-model="hidePrivateFromFeed")
+                        el-switch(v-model="hidePrivateFromFeed" :disabled="!openVR")
                     div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Minimal Feed Icons
+                        span(style="display:inline-block;min-width:150px" :disabled="!openVR") Minimal Feed Icons
                         el-switch(v-model="minimalFeed")
-                    div(style="font-size:12px;margin-top:5px")
+                    div(style="font-size:12px;margin-top:5px" :disabled="!openVR")
                         span(style="display:inline-block;min-width:150px") Overlay Notifications
-                        el-switch(v-model="overlayNotifications")
+                        el-switch(v-model="overlayNotifications" :disabled="!openVR")
                     div(style="font-size:12px;margin-top:5px")
-                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()") Notification Timeout
-                        el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog()") Notification Position
+                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()" :disabled="!overlayNotifications || !openVR") Notification Timeout
+                        el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog()" :disabled="!overlayNotifications || !openVR") Notification Position
                     div(style="font-size:12px;margin-top:5px")
                         span Join/Leave Notifications
                         br
-                        el-radio-group(v-model="notificationJoinLeaveFilter" size="mini" @change="changeNotificationJoinLeaveFilter")
+                        el-radio-group(v-model="notificationJoinLeaveFilter" size="mini" @change="changeNotificationJoinLeaveFilter" :disabled="!overlayNotifications || !openVR")
                             el-radio(label="VIP" v-model="notificationJoinLeaveFilter") VIP
                             el-radio(label="Friends" v-model="notificationJoinLeaveFilter") Friends
                             el-radio(label="Everyone" v-model="notificationJoinLeaveFilter") Everyone
@@ -526,7 +526,7 @@ html
                     div(style="font-size:12px;margin-top:5px")
                         span Online/Offline Notifications
                         br
-                        el-radio-group(v-model="notificationOnlineOfflineFilter" size="mini" @change="changeNotificationOnlineOfflineFilter")
+                        el-radio-group(v-model="notificationOnlineOfflineFilter" size="mini" @change="changeNotificationOnlineOfflineFilter" :disabled="!overlayNotifications || !openVR")
                             el-radio(label="VIP" v-model="notificationOnlineOfflineFilter") VIP
                             el-radio(label="Friends" v-model="notificationOnlineOfflineFilter") Friends
                             el-radio(label="Off" v-model="notificationOnlineOfflineFilter") Off
