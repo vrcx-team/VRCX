@@ -6361,7 +6361,7 @@ import gameLogService from './service/gamelog.js'
                 this.$message('Request invite sent');
                 return args;
             });
-        } else if (command === 'Show Avatar Author') {
+        } else if (command === 'Show Avatar Details') {
             var { currentAvatarImageUrl } = D.ref;
             var id = extractFileId(currentAvatarImageUrl);
             if (id) {
@@ -7354,7 +7354,7 @@ import gameLogService from './service/gamelog.js'
     $app.data.notificationPositionDialog = {
         visible: false
     };
-    
+
     $app.methods.showNotificationPositionDialog = function () {
         this.$nextTick(() => adjustDialogZ(this.$refs.notificationPositionDialog.$el));
         this.notificationPositionDialog.visible = true;
