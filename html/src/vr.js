@@ -647,6 +647,8 @@ import webApiService from './service/webapi.js';
         this.isMinimalFeed = configRepository.getBool('VRCX_minimalFeed');
         var notificationPosition = configRepository.getString('VRCX_notificationPosition');
         var notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
+        var notificationJoinLeaveFilter = configRepository.getString('VRCX_notificationJoinLeaveFilter');
+        var notificationOnlineOfflineFilter = configRepository.getString('VRCX_notificationOnlineOfflineFilter');
         var theme = 'relax';
         if (configRepository.getBool('isDarkMode') === true) {
             theme = 'sunset';
@@ -661,8 +663,6 @@ import webApiService from './service/webapi.js';
         this.feeds = feeds;
 
         if (this.appType === '2') {
-            var notificationJoinLeaveFilter = configRepository.getString('VRCX_notificationJoinLeaveFilter');
-            var notificationOnlineOfflineFilter = configRepository.getString('VRCX_notificationOnlineOfflineFilter');
             var map = {};
             _feeds.forEach((feed) => {
                 if (feed.type === 'OnPlayerJoined' ||
