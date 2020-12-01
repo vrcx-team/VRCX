@@ -677,8 +677,7 @@ import webApiService from './service/webapi.js';
                         map[feed.displayName] < feed.created_at) {
                         map[feed.displayName] = feed.created_at;
                     }
-                }
-                if (feed.type === 'invite' ||
+                } else if (feed.type === 'invite' ||
                     feed.type === 'requestInvite' ||
                     feed.type === 'friendRequest') {
                     if (!map[feed.senderUsername] ||
@@ -704,8 +703,7 @@ import webApiService from './service/webapi.js';
                                 notys.push(feed);
                             }
                         }
-                    }
-                    if ((notificationJoinLeaveFilter === "Everyone") ||
+                    } else if ((notificationJoinLeaveFilter === "Everyone") ||
                         ((notificationJoinLeaveFilter === "Friends") && (feed.isFriend)) ||
                         ((notificationJoinLeaveFilter === "VIP") && (feed.isFavorite))) {
                         if (feed.type === 'OnPlayerJoined' ||
@@ -716,8 +714,7 @@ import webApiService from './service/webapi.js';
                                 notys.push(feed);
                             }
                         }
-                    }
-                    if (feed.type === 'invite' ||
+                    } else if (feed.type === 'invite' ||
                         feed.type === 'requestInvite' ||
                         feed.type === 'friendRequest') {
                         if (!map[feed.senderUsername] ||
