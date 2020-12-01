@@ -507,8 +507,8 @@ html
                         span(style="display:inline-block;min-width:150px") Hide Private Worlds
                         el-switch(v-model="hidePrivateFromFeed" :disabled="!openVR")
                     div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px" :disabled="!openVR") Minimal Feed Icons
-                        el-switch(v-model="minimalFeed")
+                        span(style="display:inline-block;min-width:150px") Minimal Feed Icons
+                        el-switch(v-model="minimalFeed" :disabled="!openVR")
                     div(style="font-size:12px;margin-top:5px" :disabled="!openVR")
                         span(style="display:inline-block;min-width:150px") Overlay Notifications
                         el-switch(v-model="overlayNotifications" :disabled="!openVR")
