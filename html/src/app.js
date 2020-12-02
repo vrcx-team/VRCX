@@ -4458,6 +4458,7 @@ import gameLogService from './service/gamelog.js'
 
     $app.data.gameLogTable = {
         data: [],
+        lastRunLength: 0,
         filters: [
             {
                 prop: 'type',
@@ -4502,9 +4503,10 @@ import gameLogService from './service/gamelog.js'
                 await this.updateGameLog();
                 this.sweepGameLog();
 
-                if (this.gameLogTable.data.length > 0) {
+                if (this.gameLogTable.data.length > this.gameLogTable.lastRunLength) {
                     this.notifyMenu('gameLog');
                 }
+                this.gameLogTable.lastRunLength = this.gameLogTable.data.length;
 
                 this.updateSharedFeed();
             }
