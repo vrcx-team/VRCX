@@ -3567,7 +3567,7 @@ import gameLogService from './service/gamelog.js'
             return;
         }
         var lines = [
-            'UserID,DisplayName'
+            'UserID,DisplayName,Memo'
         ];
         var _ = function (str) {
             if (/[\x00-\x1f,"]/.test(str) === true) {
@@ -3578,7 +3578,8 @@ import gameLogService from './service/gamelog.js'
         for (var userId of friends) {
             var ref = this.friends.get(userId);
             var name = (ref !== undefined && ref.name) || '';
-            lines.push(`${_(userId)},${_(name)}`);
+            var memo = (ref !== undefined && ref.memo) || '';
+            lines.push(`${_(userId)},${_(name)},${_(memo)}`);
         }
         this.exportFriendsListContent = lines.join('\n');
         this.exportFriendsListDialog = true;
