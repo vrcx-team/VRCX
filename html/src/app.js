@@ -2613,14 +2613,14 @@ import gameLogService from './service/gamelog.js'
         }
         // 16 = ['avatars1'] x 16
         this.favoriteAvatarGroups = [];
-        for (var i = 0; i < 1; ++i) {
+        for (var i = 0; i < 4; ++i) {
             this.favoriteAvatarGroups.push({
                 assign: false,
                 key: `avatar:avatars${i + 1}`,
                 type: 'avatar',
                 name: `avatars${i + 1}`,
                 displayName: `Group ${i + 1}`,
-                capacity: 16,
+                capacity: 25,
                 count: 0
             });
         }
