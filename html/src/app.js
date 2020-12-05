@@ -2611,7 +2611,17 @@ import gameLogService from './service/gamelog.js'
                 count: 0
             });
         }
-        // 16 = ['avatars1'] x 16
+        // 100 = ['avatars1'] x 25
+        // Favorite Avatars (0/25)
+        // VRC+ Group 1 (0/25)
+        // VRC+ Group 2 (0/25)
+        // VRC+ Group 3 (0/25)
+        var avatarGroupNames = [
+            'Favorite Avatars',
+            'VRC+ Group 1',
+            'VRC+ Group 2',
+            'VRC+ Group 3',
+        ];
         this.favoriteAvatarGroups = [];
         for (var i = 0; i < 4; ++i) {
             this.favoriteAvatarGroups.push({
@@ -2619,7 +2629,7 @@ import gameLogService from './service/gamelog.js'
                 key: `avatar:avatars${i + 1}`,
                 type: 'avatar',
                 name: `avatars${i + 1}`,
-                displayName: `Group ${i + 1}`,
+                displayName: avatarGroupNames[i],
                 capacity: 25,
                 count: 0
             });
@@ -2643,7 +2653,9 @@ import gameLogService from './service/gamelog.js'
                 if (group.assign === false &&
                     group.name === ref.name) {
                     group.assign = true;
-                    group.displayName = ref.displayName;
+                    if (ref.type !== 'avatar') {
+                        group.displayName = ref.displayName;
+                    }
                     ref.$groupRef = group;
                     assigns.add(ref.id);
                     break;
@@ -2670,7 +2682,9 @@ import gameLogService from './service/gamelog.js'
                     group.assign = true;
                     group.key = `${group.type}:${ref.name}`;
                     group.name = ref.name;
-                    group.displayName = ref.displayName;
+                    if (ref.type !== 'avatar') {
+                        group.displayName = ref.displayName;
+                    }
                     ref.$groupRef = group;
                     assigns.add(ref.id);
                     break;
