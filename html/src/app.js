@@ -3158,7 +3158,6 @@ import gameLogService from './service/gamelog.js'
                 try {
                     var json = JSON.parse(data);
                     json.content = JSON.parse(json.content);
-                    console.log('WebSocket', json);
                     this.$emit('PIPELINE', {
                         json
                     });
