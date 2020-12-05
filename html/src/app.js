@@ -1035,6 +1035,7 @@ import gameLogService from './service/gamelog.js'
             if (ref.homeLocation !== ref.$homeLocation.tag) {
                 ref.$homeLocation = this.parseLocation(ref.homeLocation);
             }
+            ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
         } else {
@@ -1065,6 +1066,7 @@ import gameLogService from './service/gamelog.js'
                 offlineFriends: [],
                 // VRCX
                 $homeLocation: {},
+                $isVRCPlus: false,
                 $isModerator: false,
                 $isTroll: false,
                 $trustLevel: 'Visitor',
@@ -1074,6 +1076,7 @@ import gameLogService from './service/gamelog.js'
                 ...json
             };
             ref.$homeLocation = this.parseLocation(ref.homeLocation);
+            ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
             this.currentUser = ref;
@@ -1156,6 +1159,7 @@ import gameLogService from './service/gamelog.js'
                 // VRCX
                 $location: {},
                 $location_at: Date.now(),
+                $isVRCPlus: false,
                 $isModerator: false,
                 $isTroll: false,
                 $trustLevel: 'Visitor',
@@ -1165,6 +1169,7 @@ import gameLogService from './service/gamelog.js'
                 ...json
             };
             ref.$location = this.parseLocation(ref.location);
+            ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
             this.cachedUsers.set(ref.id, ref);
@@ -1180,6 +1185,7 @@ import gameLogService from './service/gamelog.js'
             if (ref.location !== ref.$location.tag) {
                 ref.$location = this.parseLocation(ref.location);
             }
+            ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
             for (var prop in ref) {

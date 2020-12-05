@@ -674,6 +674,7 @@ html
                                 div(style="margin-top:5px")
                                     el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel")
                                     el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-left:5px") Friend No.{{userDialog.friend.no}}
+                                    el-tag.x-tag-vrcplus(type="info" effect="plain" size="mini" v-if="userDialog.ref.$isVRCPlus" style="margin-left:5px") VRC+
                                 div(style="margin-top:5px")
                                     span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
                             div(v-if="userDialog.ref.userIcon" style="flex:none")
