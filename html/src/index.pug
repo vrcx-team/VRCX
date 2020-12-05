@@ -277,7 +277,7 @@ html
                                 template(slot="title")
                                     span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
                                     span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
-                                    el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
+                                    //- el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
                                     el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                 .x-friend-list(v-if="group.count" style="margin-top:10px")
                                     .x-friend-item(v-for="favorite in favoriteAvatars" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showAvatarDialog(favorite.id)")
