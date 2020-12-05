@@ -1123,7 +1123,7 @@ import gameLogService from './service/gamelog.js'
 
     API.applyUser = function (json) {
         var ref = this.cachedUsers.get(json.id);
-        // adjust some missing variables
+        // some missing variables on currentUser
         if (json.id === API.currentUser.id) {
             json.status = API.currentUser.status;
             json.statusDescription = API.currentUser.statusDescription;
