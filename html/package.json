@@ -23,13 +23,13 @@
   },
   "homepage": "https://github.com/pypy-vrc/VRCX#readme",
   "devDependencies": {
-    "cross-env": "^7.0.2",
+    "cross-env": "^7.0.3",
     "html-webpack-plugin": "^4.5.0",
     "laravel-mix": "^5.0.9",
     "pug": "^3.0.0",
     "pug-loader": "^2.4.0",
     "resolve-url-loader": "^3.1.2",
-    "sass": "^1.29.0",
+    "sass": "^1.30.0",
     "sass-loader": "^10.1.0",
     "vue-template-compiler": "^2.6.12"
   },
