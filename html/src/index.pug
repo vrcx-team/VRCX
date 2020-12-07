@@ -440,6 +440,15 @@ html
                                 template(v-once #default="scope")
                                     span {{ scope.row.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
                             el-table-column(label="Name" prop="displayName")
+                    div(v-if="API.currentUser.$isVRCPlus" style="margin-top:30px")
+                        span(style="font-weight:bold") VRCPlus Icons
+                        el-button(type="default" @click="displayVRCPlusIconsTable()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                        el-button(type="default" @click="setVRCPlusIcon('')" size="mini" icon="el-icon-close" circle style="margin:0")
+                        br
+                        .x-friend-item(v-for="icon in VRCPlusIconsTable" :key="icon.id" style="display:inline-block;")
+                            .vrcplus-icon(style="" @click="setVRCPlusIcon(icon.id)" :class="{ 'current-vrcplus-icon': 'https://api.vrchat.cloud/api/1/file/' + icon.id + '/1' === API.currentUser.userIcon }")
+                                img.avatar(v-if="icon.versions[1].file.url" v-lazy="icon.versions[1].file.url")
+                            el-button(type="default" @click="deleteVRCPlusIcon(icon.id)" size="mini" icon="el-icon-delete" circle style="float:right;")
                     div(style="margin-top:30px")
                         span(style="font-weight:bold") Current User JSON
                         el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
