@@ -7531,21 +7531,37 @@ import gameLogService from './service/gamelog.js'
         if (!files.length) {
             return;
         }
-        API.uploadVRCPlusIcon({ files[0]
-        }).then((args) => {
-            this.$message({
-                message: 'Icon uploaded',
-                type: 'success'
+        var based64 = '';
+        var r = new FileReader();
+        r.onload = function() {
+            based64 = btoa(r.result);
+            var file = {
+                filename: 'blob',
+                private: false,
+                contents: based64
+            };
+            var array2 = { file };
+            console.log(JSON.stringify(array2));
+            API.uploadVRCPlusIcon(JSON.stringify(array2)
+            ).then((args) => {
+                this.$message({
+                    message: 'Icon uploaded',
+                    type: 'success'
+                });
+                return args;
             });
-            return args;
-        });
+        };
+        r.readAsBinaryString(files[0]);
     };
 
     API.uploadVRCPlusIcon = function (params) {
         return this.call('icon', {
             method: 'POST',
-            'Content-Type': 'multipart/form-data',
-            'Content-Disposition': 'form-data; name="file"; filename="blob"',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Disposition': 'form-data; name="file"; filename="blob"'
+                //'Content-Transfer-Encoding': 'base64'
+            },
             test: 'a',
             body: params
         }).then((json) => {
