@@ -336,8 +336,7 @@ import gameLogService from './service/gamelog.js'
             ...options
         };
         var { params } = init;
-        var isGetRequest = init.method === 'GET';
-        if (isGetRequest === true) {
+        if (init.method === 'GET') {
             // transform body to url
             if (params === Object(params)) {
                 var url = new URL(init.url);
@@ -352,7 +351,10 @@ import gameLogService from './service/gamelog.js'
             if (req !== undefined) {
                 return req;
             }
-        } else {
+        } else if (init.test === 'a') {
+            console.log("test");
+        }
+        else {
             init.headers = {
                 'Content-Type': 'application/json;charset=utf-8',
                 ...init.headers
@@ -361,6 +363,7 @@ import gameLogService from './service/gamelog.js'
                 ? JSON.stringify(params)
                 : '{}';
         }
+        console.log(init);
         var req = webApiService.execute(init).catch((err) => {
             this.$throw(0, err);
         }).then((response) => {
@@ -400,7 +403,7 @@ import gameLogService from './service/gamelog.js'
             this.$throw(status, data);
             return data;
         });
-        if (isGetRequest === true) {
+        if (init.method === 'GET') {
             req.finally(() => {
                 this.pendingGetRequests.delete(init.url);
             });
@@ -7443,6 +7446,8 @@ import gameLogService from './service/gamelog.js'
         D.visible = false;
     };
 
+    // App: VRCPlus Icons
+
     $app.methods.displayVRCPlusIconsTable = function () {
         var params = {
             n: 100,
@@ -7515,6 +7520,38 @@ import gameLogService from './service/gamelog.js'
         }).then((json) => {
             var args = {
                 json
+            };
+            return args;
+        });
+    };
+
+    $app.methods.onFileChange = function (e) {
+        var files = e.target.files || e.dataTransfer.files;
+        console.log(e);
+        if (!files.length) {
+            return;
+        }
+        API.uploadVRCPlusIcon({ files[0]
+        }).then((args) => {
+            this.$message({
+                message: 'Icon uploaded',
+                type: 'success'
+            });
+            return args;
+        });
+    };
+
+    API.uploadVRCPlusIcon = function (params) {
+        return this.call('icon', {
+            method: 'POST',
+            'Content-Type': 'multipart/form-data',
+            'Content-Disposition': 'form-data; name="file"; filename="blob"',
+            test: 'a',
+            body: params
+        }).then((json) => {
+            var args = {
+                json,
+                params
             };
             return args;
         });
