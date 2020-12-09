@@ -404,14 +404,12 @@ html
                         el-button-group
                             el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
                 div(style="margin-top:30px")
-                    span(style="font-weight:bold") Config JSON
-                    el-button(type="default" @click="refreshConfigTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                    el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
-                    el-tree(:data="configTreeData" style="margin-top:5px;font-size:12px")
-                        template(#default="scope")
-                            span
-                                span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
-                                span(v-if="!scope.data.children" v-text="scope.data.value")
+                    span(style="font-weight:bold") Direct Access
+                    div(style="margin-top:5px")
+                        el-button-group
+                            el-button(size="small" @click="promptUserDialog()") User
+                            el-button(size="small" @click="promptWorldDialog()") World
+                            el-button(size="small" @click="promptAvatarDialog()") Avatar
                 div(style="margin-top:30px")
                     span(style="font-weight:bold") My Profile
                     .x-friend-list(style="margin-top:10px")
@@ -451,6 +449,15 @@ html
                                     span {{ scope.row.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
                             el-table-column(label="Name" prop="displayName")
                     div(style="margin-top:30px")
+                        span(style="font-weight:bold") Config JSON
+                        el-button(type="default" @click="refreshConfigTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                        el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                        el-tree(:data="configTreeData" style="margin-top:5px;font-size:12px")
+                            template(#default="scope")
+                                span
+                                    span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
+                                    span(v-if="!scope.data.children" v-text="scope.data.value")
+                    div(style="margin-top:30px")
                         span(style="font-weight:bold") Current User JSON
                         el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
                         el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
@@ -459,13 +466,6 @@ html
                                 span
                                     span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
                                     span(v-if="!scope.data.children" v-text="scope.data.value")
-                div(style="margin-top:30px")
-                    span(style="font-weight:bold") Direct Access
-                    div(style="margin-top:5px")
-                        el-button-group
-                            el-button(size="small" @click="promptUserDialog()") User
-                            el-button(size="small" @click="promptWorldDialog()") World
-                            el-button(size="small" @click="promptAvatarDialog()") Avatar
                 div(style="margin-top:30px")
                     span(style="font-weight:bold") Friends Sort Option
                     div(style="font-size:12px;margin-top:5px")
