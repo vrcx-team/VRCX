@@ -352,7 +352,9 @@ import gameLogService from './service/gamelog.js'
                 return req;
             }
         } else if (init.test === 'a') {
+            delete init.test;
             console.log("test");
+            console.log(init);
         }
         else {
             init.headers = {
@@ -363,7 +365,6 @@ import gameLogService from './service/gamelog.js'
                 ? JSON.stringify(params)
                 : '{}';
         }
-        console.log(init);
         var req = webApiService.execute(init).catch((err) => {
             this.$throw(0, err);
         }).then((response) => {
@@ -7531,18 +7532,14 @@ import gameLogService from './service/gamelog.js'
         if (!files.length) {
             return;
         }
-        var based64 = '';
         var r = new FileReader();
         r.onload = function() {
-            based64 = btoa(r.result);
-            var file = {
-                filename: 'blob',
-                private: false,
-                contents: based64
-            };
-            var array2 = { file };
-            console.log(JSON.stringify(array2));
-            API.uploadVRCPlusIcon(JSON.stringify(array2)
+            var bodyStart = '---------------------------26696829785232761561272838397\nContent-Disposition: form-data; name="file"; filename="blob"\nContent-Type: image/png\n\n';
+            var bodyEnd = '\n---------------------------26696829785232761561272838397--\n';
+            var body = bodyStart + r.result + bodyEnd
+            var base64Body = btoa(body);
+            console.log(base64Body);
+            API.uploadVRCPlusIcon(base64Body
             ).then((args) => {
                 this.$message({
                     message: 'Icon uploaded',
@@ -7558,9 +7555,8 @@ import gameLogService from './service/gamelog.js'
         return this.call('icon', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Content-Disposition': 'form-data; name="file"; filename="blob"'
-                //'Content-Transfer-Encoding': 'base64'
+                'Content-Type': 'multipart/form-data; boundary=-------------------------26696829785232761561272838397',
+                'Content-Transfer-Encoding': 'base64'
             },
             test: 'a',
             body: params
