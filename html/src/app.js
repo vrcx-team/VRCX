@@ -7449,6 +7449,10 @@ import gameLogService from './service/gamelog.js'
 
     // App: VRCPlus Icons
 
+    API.$on('LOGIN', function () {
+        $app.data.VRCPlusIconsTable = {};
+    });
+
     $app.methods.displayVRCPlusIconsTable = function () {
         var params = {
             n: 100,
