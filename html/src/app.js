@@ -351,9 +351,8 @@ import gameLogService from './service/gamelog.js'
             if (req !== undefined) {
                 return req;
             }
-        } else if (init.test === 'a') {
-            delete init.test;
-            console.log("test");
+        } else if (init.VRCPlusIcon) {
+            delete init.VRCPlusIcon;
             console.log(init);
         }
         else {
@@ -7530,9 +7529,9 @@ import gameLogService from './service/gamelog.js'
         });
     };
 
-    $app.methods.onFileChange = function (e) {
+    // requres decoding base64 body on C# side
+    $app.methods.onFileChangeVRCPlusIcon = function (e) {
         var files = e.target.files || e.dataTransfer.files;
-        console.log(e);
         if (!files.length) {
             return;
         }
@@ -7542,7 +7541,6 @@ import gameLogService from './service/gamelog.js'
             var bodyEnd = '\n---------------------------26696829785232761561272838397--\n';
             var body = bodyStart + r.result + bodyEnd
             var base64Body = btoa(body);
-            console.log(base64Body);
             API.uploadVRCPlusIcon(base64Body
             ).then((args) => {
                 this.$message({
@@ -7559,10 +7557,9 @@ import gameLogService from './service/gamelog.js'
         return this.call('icon', {
             method: 'POST',
             headers: {
-                'Content-Type': 'multipart/form-data; boundary=-------------------------26696829785232761561272838397',
-                'Content-Transfer-Encoding': 'base64'
+                'Content-Type': 'multipart/form-data; boundary=-------------------------26696829785232761561272838397'
             },
-            test: 'a',
+            VRCPlusIcon: true,
             body: params
         }).then((json) => {
             var args = {
