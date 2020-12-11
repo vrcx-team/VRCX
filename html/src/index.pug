@@ -656,7 +656,7 @@ html
                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
 
             //- dialog: user
-            el-dialog.x-dialog.x-user-dialog(ref="userDialog" :visible.sync="userDialog.visible" :show-close="false" width="600px")
+            el-dialog.x-dialog.x-user-dialog(ref="userDialog" :visible.sync="userDialog.visible" :show-close="false" width="770px")
                 div(v-loading="userDialog.loading")
                     div(style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click")
@@ -688,7 +688,7 @@ html
                                     el-tag.x-tag-vrcplus(type="info" effect="plain" size="mini" v-if="userDialog.ref.$isVRCPlus" style="margin-left:5px") VRC+
                                 div(style="margin-top:5px")
                                     span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
-                            div(v-if="userDialog.ref.userIcon" style="flex:none")
+                            div(v-if="userDialog.ref.userIcon" style="flex:none;margin-right:10px")
                                 el-popover(placement="right" width="500px" trigger="click")
                                     img.x-link(slot="reference" v-lazy="userDialog.ref.userIcon" style="flex:none;width:120px;height:120px;border-radius:4px")
                                     img(v-lazy="userDialog.ref.userIcon" style="width:500px;height:500px;")
