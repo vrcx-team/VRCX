@@ -377,28 +377,26 @@ import gameLogService from './service/gamelog.js'
             }
             this.$throw(res.status);
         }).then(({ data, status }) => {
-            if (data === Object(data)) {
-                if (status === 200) {
-                    if (data.success === Object(data.success)) {
-                        new Noty({
-                            type: 'success',
-                            text: escapeTag(data.success.message)
-                        }).show();
-                    }
-                    return data;
+            if (status === 200) {
+                if (data.success === Object(data.success)) {
+                    new Noty({
+                        type: 'success',
+                        text: escapeTag(data.success.message)
+                    }).show();
                 }
-                if (data.error === Object(data.error)) {
-                    this.$throw(
-                        data.error.status_code || status,
-                        data.error.message,
-                        data.error.data
-                    );
-                } else if (typeof data.error === 'string') {
-                    this.$throw(
-                        data.status_code || status,
-                        data.error
-                    );
-                }
+                return data;
+            }
+            if (data.error === Object(data.error)) {
+                this.$throw(
+                    data.error.status_code || status,
+                    data.error.message,
+                    data.error.data
+                );
+            } else if (typeof data.error === 'string') {
+                this.$throw(
+                    data.status_code || status,
+                    data.error
+                );
             }
             this.$throw(status, data);
             return data;
