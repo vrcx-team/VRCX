@@ -7541,8 +7541,7 @@ import gameLogService from './service/gamelog.js'
             var bodyEnd = '\n---------------------------26696829785232761561272838397--\n';
             var body = bodyStart + r.result + bodyEnd
             var base64Body = btoa(body);
-            API.uploadVRCPlusIcon(base64Body
-            ).then((args) => {
+            API.uploadVRCPlusIcon(base64Body).then((args) => {
                 this.$message({
                     message: 'Icon uploaded',
                     type: 'success'
