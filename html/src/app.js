@@ -3305,7 +3305,7 @@ import gameLogService from './service/gamelog.js'
             nextRefresh: 0,
             isGameRunning: false,
             isGameNoVR: false,
-            appVersion: 'VRCX 2020.10.25',
+            appVersion: 'VRCX 2020.12.13',
             latestAppVersion: '',
             ossDialog: false,
             exportFriendsListDialog: false,
