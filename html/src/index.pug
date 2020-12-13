@@ -433,7 +433,7 @@ html
                         el-button(size="small" icon="el-icon-printer" @click="showExportFriendsListDialog()") Export Friends List
                     div(v-if="API.currentUser.$isVRCPlus" style="margin-top:30px")
                         span(style="font-weight:bold") VRCPlus Icons
-                        el-button(type="default" @click="displaysTable()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                        el-button(type="default" @click="displayVRCPlusIconsTable()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
                         el-button(type="default" @click="VRCPlusIconsTable = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                         el-button(type="default" @click="setVRCPlusIcon('')" size="mini" icon="el-icon-close" circle style="margin:0" :disabled="!API.currentUser.userIcon")
                         //- input(type="file" @change="onFileChangeVRCPlusIcon")
