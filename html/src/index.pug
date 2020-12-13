@@ -769,6 +769,14 @@ html
                                         span.extra(v-else style="color:#F56C6C") Deny
                                 .x-friend-item
                                     .detail
+                                        span.name(v-if="userDialog.ref.state != 'offline' && userDialog.ref.state != 'active' && userDialog.ref.state != ''") Online For
+                                        span.name(v-else) Offline For
+                                        span.extra
+                                            timer(v-if="userDialog.ref.state != 'offline' && userDialog.ref.state != 'active' && userDialog.ref.state != ''" :epoch="userDialog.ref.$online_for")
+                                            timer(v-else-if="userDialog.ref.$offline_for" :epoch="userDialog.ref.$offline_for")
+                                            span(v-else) -
+                                .x-friend-item
+                                    .detail
                                         span.name Last Login
                                         span.extra {{ userDialog.ref.last_login | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
                                 .x-friend-item

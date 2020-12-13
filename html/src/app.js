@@ -1160,6 +1160,8 @@ import gameLogService from './service/gamelog.js'
                 // VRCX
                 $location: {},
                 $location_at: Date.now(),
+                $online_for: Date.now(),
+                $offline_for: '',
                 $isVRCPlus: false,
                 $isModerator: false,
                 $isTroll: false,
@@ -4060,7 +4062,24 @@ import gameLogService from './service/gamelog.js'
                 this.friendsGroup3_.push(ctx);
                 this.friendsGroupD_.unshift(ctx);
             }
+            if (ctx.ref !== undefined) {
+                console.log(ctx.name + ' ' + ctx.state + ' ref: ' + ctx.ref.state);
+                if ((ctx.ref.$offline_for == '') &&
+                    ((ctx.state == 'offline') && ctx.ref.state == '') ||
+                    (((ctx.state == 'offline') || (ctx.state == 'active')) &&
+                    ((ctx.ref.state != 'offline') && (ctx.ref.state != 'active') && (ctx.ref.state != '')))) {
+                    ctx.ref.$online_for = '';
+                    ctx.ref.$offline_for = Date.now();
+                    console.log('^update offline^');
+                }
+                if ((ctx.ref.$online_for == '') && (ctx.state == 'online')) {
+                    ctx.ref.$online_for = Date.now();
+                    ctx.ref.$offline_for = '';
+                    console.log('^update online^');
+                }
+            }
         }
+
     };
 
     // ascending
