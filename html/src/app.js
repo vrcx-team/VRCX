@@ -3755,7 +3755,7 @@ import gameLogService from './service/gamelog.js'
     $app.watch.orderFriendsGroup2 = saveOrderFriendGroup;
     $app.watch.orderFriendsGroup3 = saveOrderFriendGroup;
     $app.watch.displayVRCPlusIconsAsAvatar = saveOrderFriendGroup;
-    if (!configRepository.getBool('displayVRCPlusIconsAsAvatar')) {
+    if (configRepository.getBool('displayVRCPlusIconsAsAvatar') === null) {
         $app.data.displayVRCPlusIconsAsAvatar = true;
         configRepository.setBool('displayVRCPlusIconsAsAvatar', $app.data.displayVRCPlusIconsAsAvatar);
     }
