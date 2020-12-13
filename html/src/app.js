@@ -4080,6 +4080,7 @@ import gameLogService from './service/gamelog.js'
                     console.log('^update offline^');
                 }
                 if ((ctx.ref.$online_for == '') && (ctx.state == 'online')) {
+                    ctx.ref.$location_at = Date.now();
                     ctx.ref.$online_for = Date.now();
                     ctx.ref.$offline_for = '';
                     console.log('^update online^');
