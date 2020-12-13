@@ -3742,16 +3742,23 @@ import gameLogService from './service/gamelog.js'
     $app.data.orderFriendsGroup1 = configRepository.getBool('orderFriendGroup1');
     $app.data.orderFriendsGroup2 = configRepository.getBool('orderFriendGroup2');
     $app.data.orderFriendsGroup3 = configRepository.getBool('orderFriendGroup3');
+    $app.data.displayVRCPlusIconsAsAvatar = configRepository.getBool('displayVRCPlusIconsAsAvatar');
     var saveOrderFriendGroup = function () {
         configRepository.setBool('orderFriendGroup0', this.orderFriendsGroup0);
         configRepository.setBool('orderFriendGroup1', this.orderFriendsGroup1);
         configRepository.setBool('orderFriendGroup2', this.orderFriendsGroup2);
         configRepository.setBool('orderFriendGroup3', this.orderFriendsGroup3);
+        configRepository.setBool('displayVRCPlusIconsAsAvatar', this.displayVRCPlusIconsAsAvatar);
     };
     $app.watch.orderFriendsGroup0 = saveOrderFriendGroup;
     $app.watch.orderFriendsGroup1 = saveOrderFriendGroup;
     $app.watch.orderFriendsGroup2 = saveOrderFriendGroup;
     $app.watch.orderFriendsGroup3 = saveOrderFriendGroup;
+    $app.watch.displayVRCPlusIconsAsAvatar = saveOrderFriendGroup;
+    if (!configRepository.getBool('displayVRCPlusIconsAsAvatar')) {
+        $app.data.displayVRCPlusIconsAsAvatar = true;
+        configRepository.setBool('displayVRCPlusIconsAsAvatar', $app.data.displayVRCPlusIconsAsAvatar);
+    }
 
     $app.methods.fetchActiveFriend = function (userId) {
         this.pendingActiveFriends.add(userId);
