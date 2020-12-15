@@ -439,7 +439,7 @@ html
                         //- input(type="file" @change="onFileChangeVRCPlusIcon")
                         br
                         .x-friend-item(v-for="icon in VRCPlusIconsTable" :key="icon.id" style="display:inline-block;cursor:auto;")
-                            .vrcplus-icon(style="" @click="setVRCPlusIcon(icon.id)" :class="{ 'current-vrcplus-icon': 'https://api.vrchat.cloud/api/1/file/' + icon.id + '/1' === API.currentUser.userIcon }")
+                            .vrcplus-icon(style="" @click="setVRCPlusIcon(icon.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(icon.id) }")
                                 img.avatar(v-if="icon.versions[1].file.url" v-lazy="icon.versions[1].file.url")
                             el-button(type="default" @click="deleteVRCPlusIcon(icon.id)" size="mini" icon="el-icon-delete" circle style="float:right;")
                     div(style="margin-top:30px")
