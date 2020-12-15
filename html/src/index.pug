@@ -762,9 +762,10 @@ html
                                         pre.extra(style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0") {{ userDialog.ref.bio || '-' }}
                                         div(style="margin-top:5px")
                                             el-tooltip(v-for="(link, index) in userDialog.ref.bioLinks" :key="index")
-                                                template(#content)
-                                                    span(v-text="link")
-                                                img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px" @click.stop="openExternalLink(link)")
+                                                template(v-if="link")
+                                                    template(#content)
+                                                        span(v-text="link")
+                                                    img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px" @click.stop="openExternalLink(link)")
                                 .x-friend-item
                                     .detail
                                         span.name Avatar Copying
