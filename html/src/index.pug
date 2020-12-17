@@ -774,9 +774,7 @@ html
                                     .detail
                                         span.name(v-if="userDialog.ref.state === 'online'") Online For
                                         span.name(v-else) Offline For
-                                        span.extra
-                                            timer(v-if="userOnlineFor(userDialog)" :epoch="userOnlineFor(userDialog)")
-                                            span(v-else) -
+                                        span.extra(v-text="userOnlineFor(userDialog)")
                                 .x-friend-item
                                     .detail
                                         span.name Last Login
