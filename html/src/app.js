@@ -7601,12 +7601,41 @@ import gameLogService from './service/gamelog.js'
     };
 
     $app.methods.userOnlineFor = function (ctx) {
+        var timeToText = function (sec) {
+            var n = Number(sec);
+            if (isNaN(n)) {
+                return escapeTag(sec);
+            }
+            n = Math.floor(n / 1000);
+            var arr = [];
+            if (n < 0) {
+                n = -n;
+            }
+            if (n >= 86400) {
+                arr.push(`${Math.floor(n / 86400)}d`);
+                n %= 86400;
+            }
+            if (n >= 3600) {
+                arr.push(`${Math.floor(n / 3600)}h`);
+                n %= 3600;
+            }
+            if (n >= 60) {
+                arr.push(`${Math.floor(n / 60)}m`);
+                n %= 60;
+            }
+            if (n ||
+                arr.length === 0) {
+                arr.push(`${n}s`);
+            }
+            return arr.join(' ');
+        };
+
         if (ctx.ref.state === 'online') {
-            return ctx.ref.$online_for;
+            return timeToText(Date.now() - ctx.ref.$online_for)
         } else if (ctx.ref.$offline_for) {
-            return ctx.ref.$offline_for;
+            return timeToText(Date.now() - ctx.ref.$offline_for)
         } else {
-            return false;
+            return '-';
         }
     };
 
