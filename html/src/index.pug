@@ -438,7 +438,7 @@ html
                         el-button(type="default" @click="setVRCPlusIcon('')" size="mini" icon="el-icon-close" circle style="margin:0" :disabled="!API.currentUser.userIcon")
                         //- input(type="file" @change="onFileChangeVRCPlusIcon")
                         br
-                        .x-friend-item(v-for="icon in VRCPlusIconsTable" :key="icon.id" style="display:inline-block;cursor:auto;")
+                        .x-friend-item(v-for="icon in VRCPlusIconsTable" :key="icon.id" style="display:inline-block;cursor:auto")
                             .vrcplus-icon(style="" @click="setVRCPlusIcon(icon.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(icon.id) }")
                                 img.avatar(v-if="icon.versions[1].file.url" v-lazy="icon.versions[1].file.url")
                             el-button(type="default" @click="deleteVRCPlusIcon(icon.id)" size="mini" icon="el-icon-delete" circle style="float:right;")
