@@ -7547,11 +7547,14 @@ import gameLogService from './service/gamelog.js'
     };
 
     $app.methods.compareCurrentVRCPlusIcon = function (userIcon) {
-        var url = new URL(API.currentUser.userIcon);
-        var pathArray = url.pathname.split('/');
-        var currentUserIcon = pathArray[4];
-        if (userIcon === currentUserIcon) {
-            return true;
+        try {
+            var url = new URL(API.currentUser.userIcon);
+            var pathArray = url.pathname.split('/');
+            var currentUserIcon = pathArray[4];
+            if (userIcon === currentUserIcon) {
+                return true;
+            }
+        } catch (err) {
         }
         return false;
     };
