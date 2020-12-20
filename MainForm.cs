@@ -1,4 +1,4 @@
-﻿// Copyright(c) 2019 pypy. All rights reserved.
+// Copyright(c) 2019 pypy. All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -132,7 +132,7 @@ namespace VRCX
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing &&
-                "true".Equals(VRCXStorage.Instance.Get("VRCX_CloseToTray")))
+                "true".Equals(SharedVariable.Instance.Get("config:vrcx_closetotray")))
             {
                 e.Cancel = true;
                 Hide();
