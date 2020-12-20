@@ -433,15 +433,27 @@ html
                         el-button(size="small" icon="el-icon-printer" @click="showExportFriendsListDialog()") Export Friends List
                     div(v-if="API.currentUser.$isVRCPlus" style="margin-top:30px")
                         span(style="font-weight:bold") VRCPlus Icons
-                        el-button(type="default" @click="displayVRCPlusIconsTable()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                        el-button(type="default" @click="VRCPlusIconsTable = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
-                        el-button(type="default" @click="setVRCPlusIcon('')" size="mini" icon="el-icon-close" circle style="margin:0" :disabled="!API.currentUser.userIcon")
+                        el-tooltip(placement="top")
+                            template(#content)
+                                span Refresh
+                            el-button(type="default" @click="displayVRCPlusIconsTable()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                        el-tooltip(placement="top")
+                            template(#content)
+                                span Clear results
+                            el-button(type="default" @click="VRCPlusIconsTable = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                        el-tooltip(placement="top")
+                            template(#content)
+                                span Reset icon
+                            el-button(type="default" @click="setVRCPlusIcon('')" size="mini" icon="el-icon-close" circle style="margin:0" :disabled="!API.currentUser.userIcon")
                         //- input(type="file" @change="onFileChangeVRCPlusIcon")
                         br
                         .x-friend-item(v-for="icon in VRCPlusIconsTable" :key="icon.id" style="display:inline-block;cursor:auto")
                             .vrcplus-icon(style="" @click="setVRCPlusIcon(icon.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(icon.id) }")
                                 img.avatar(v-if="icon.versions[1].file.url" v-lazy="icon.versions[1].file.url")
-                            el-button(type="default" @click="deleteVRCPlusIcon(icon.id)" size="mini" icon="el-icon-delete" circle style="float:right;")
+                            el-tooltip(placement="top")
+                                template(#content)
+                                    span Delete
+                                el-button(type="default" @click="deleteVRCPlusIcon(icon.id)" size="mini" icon="el-icon-delete" circle style="float:right;")
                     div(style="margin-top:30px")
                         span(style="font-weight:bold") Past Display Names
                         data-tables(v-bind="pastDisplayNameTable" style="margin-top:5px")
@@ -451,8 +463,14 @@ html
                             el-table-column(label="Name" prop="displayName")
                     div(style="margin-top:30px")
                         span(style="font-weight:bold") Config JSON
-                        el-button(type="default" @click="refreshConfigTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                        el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                        el-tooltip(placement="top")
+                            template(#content)
+                                span Refresh
+                            el-button(type="default" @click="refreshConfigTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                        el-tooltip(placement="top")
+                            template(#content)
+                                span Clear results
+                            el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                         el-tree(:data="configTreeData" style="margin-top:5px;font-size:12px")
                             template(#default="scope")
                                 span
@@ -460,8 +478,14 @@ html
                                     span(v-if="!scope.data.children" v-text="scope.data.value")
                     div(style="margin-top:30px")
                         span(style="font-weight:bold") Current User JSON
-                        el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                        el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                        el-tooltip(placement="top")
+                            template(#content)
+                                span Refresh
+                            el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                        el-tooltip(placement="top")
+                            template(#content)
+                                span Clear results
+                            el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                         el-tree(:data="currentUserTreeData" style="margin-top:5px;font-size:12px")
                             template(#default="scope")
                                 span
