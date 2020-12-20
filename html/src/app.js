@@ -5638,11 +5638,11 @@ import gameLogService from './service/gamelog.js'
         $appDarkStyle.disabled = this.isDarkMode === false;
     };
     $app.data.isStartAtWindowsStartup = configRepository.getBool('VRCX_StartAtWindowsStartup');
-    $app.data.isStartAsMinimizedState = configRepository.getBool('VRCX_StartAsMinimizedState');
+    $app.data.isStartAsMinimizedState = (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true');
     $app.data.isCloseToTray = configRepository.getBool('VRCX_CloseToTray');
     var saveVRCXWindowOption = function () {
         configRepository.setBool('VRCX_StartAtWindowsStartup', this.isStartAtWindowsStartup);
-        configRepository.setBool('VRCX_StartAsMinimizedState', this.isStartAsMinimizedState);
+        VRCXStorage.Set('VRCX_StartAsMinimizedState', this.isStartAsMinimizedState.toString());
         configRepository.setBool('VRCX_CloseToTray', this.isCloseToTray);
         AppApi.SetStartup(this.isStartAtWindowsStartup);
     };
