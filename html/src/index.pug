@@ -16,21 +16,36 @@ html
 
             //- login
             .x-login-container(v-show="!API.isLoggedIn")
-                div(style="width:300px;margin:auto")
-                    el-form(ref="loginForm" :model="loginForm" :rules="loginForm.rules" v-loading="loginForm.loading" @submit.native.prevent="login()")
-                        el-form-item(label="Username or Email" prop="username" required)
-                            el-input(v-model="loginForm.username" name="username" placeholder="Username or Email" clearable)
-                        el-form-item(label="Password" prop="password" required)
-                            el-input(type="password" v-model="loginForm.password" name="password" placeholder="Password" clearable show-password)
-                        el-form-item(style="margin-top:35px")
-                            el-button(native-type="submit" type="primary" :loading="loginForm.loading" style="width:100%") Login
-                        el-form-item
-                            el-button(:loading="loginForm.loading" style="width:100%" @click="loginWithSteam()") Login with Steam
-                    div(style="text-align:center;font-size:12px")
-                        p &copy; 2019-2020 #[a(href="https://github.com/pypy-vrc" target="_blank") pypy] (mina#5656)
-                        p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
-                        p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
-                        p pypy is not responsible for any problems caused by VRCX. Use at your own risk!
+                div(style="width:300px;margin:auto" v-loading="loginForm.loading")
+                    div(style="margin:15px" v-if="Object.keys(loginForm.savedCredentials).length !== 0")
+                        h2(style="font-weight:bold;text-align:center;margin:0") Saved Accounts
+                        .x-friend-list(style="margin-top:10px")
+                            .x-friend-item(v-for="user in loginForm.savedCredentials" :key="user.user.id")
+                                .x-friend-item(@click="relogin(user.loginParmas)" style="width:202px;padding:0")
+                                    .avatar
+                                        img(v-if="displayVRCPlusIconsAsAvatar && user.user.userIcon" v-lazy="user.user.userIcon")
+                                        img(v-else v-lazy="user.user.currentAvatarThumbnailImageUrl")
+                                    .detail
+                                        span.name(v-text="user.user.displayName")
+                                        span.extra(v-text="user.user.username")
+                                el-button(type="default" @click="deleteSavedLogin(user.user.username)" size="mini" icon="el-icon-delete" circle)
+                    div(style="margin:15px")
+                        h2(style="font-weight:bold;text-align:center;margin:0") Login
+                        el-form(ref="loginForm" :model="loginForm" :rules="loginForm.rules" @submit.native.prevent="login()")
+                            el-form-item(label="Username or Email" prop="username" required)
+                                el-input(v-model="loginForm.username" name="username" placeholder="Username or Email" clearable)
+                            el-form-item(label="Password" prop="password" required)
+                                el-input(type="password" v-model="loginForm.password" name="password" placeholder="Password" clearable show-password)
+                            el-checkbox(v-model="loginForm.saveCredentials") Save Credentials
+                            el-form-item(style="margin-top:35px")
+                                el-button(native-type="submit" type="primary" :loading="loginForm.loading" style="width:100%") Login
+                            el-form-item
+                                el-button(:loading="loginForm.loading" style="width:100%" @click="loginWithSteam()") Login with Steam
+                        div(style="text-align:center;font-size:12px")
+                            p &copy; 2019-2020 #[a(href="https://github.com/pypy-vrc" target="_blank") pypy] (mina#5656)
+                            p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
+                            p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
+                            p pypy is not responsible for any problems caused by VRCX. Use at your own risk!
 
             //- menu
             .x-menu-container
@@ -572,7 +587,7 @@ html
                             el-radio(label="Friends" v-model="notificationOnlineOfflineFilter") Friends
                             el-radio(label="Off" v-model="notificationOnlineOfflineFilter") Off
                 div(style="margin-top:30px")
-                    span(style="font-weight:bold") Window
+                    span(style="font-weight:bold") Application
                     div(style="font-size:12px;margin-top:5px")
                         span(style="display:inline-block;min-width:150px") Start at Windows startup
                         el-switch(v-model="isStartAtWindowsStartup")
@@ -582,6 +597,9 @@ html
                     div(style="font-size:12px;margin-top:5px")
                         span(style="display:inline-block;min-width:150px") Close to tray
                         el-switch(v-model="isCloseToTray")
+                    div(style="font-size:12px;margin-top:5px")
+                        span(style="display:inline-block;min-width:150px") Auto login
+                        el-switch(v-model="isAutoLogin")
                 div(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                     span(style="font-weight:bold") Legal Notice
                     div(style="margin-top:5px;font-size:12px")

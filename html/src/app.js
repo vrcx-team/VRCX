@@ -386,6 +386,9 @@ import gameLogService from './service/gamelog.js'
                 }
                 return data;
             }
+            if ((status === 401) && (data.error.message === '"Missing Credentials"') && (this.pendingGetRequests.size <= 1)) {
+                this.$emit('AUTOLOGIN');
+            }
             if (data.error === Object(data.error)) {
                 this.$throw(
                     data.error.status_code || status,
@@ -880,10 +883,14 @@ import gameLogService from './service/gamelog.js'
         }
     */
     API.login = function (params) {
-        var { username, password } = params;
+        var { username, password, saveCredentials } = params;
         username = encodeURIComponent(username);
         password = encodeURIComponent(password);
         var auth = btoa(`${username}:${password}`);
+        if (saveCredentials) {
+            delete params.saveCredentials;
+            $app.saveCredentials = params;
+        }
         return this.call(`auth/user?apiKey=${this.cachedConfig.clientApiKey}`, {
             method: 'GET',
             headers: {
@@ -3394,20 +3401,6 @@ import gameLogService from './service/gamelog.js'
                 if (--this.nextRefresh <= 0) {
                     this.nextRefresh = 60;
                     API.getCurrentUser().catch((err1) => {
-                        if (err1.status_code === 401) {
-                            API.getConfig().then((args) => {
-                                API.login({
-                                    username: this.loginForm.username,
-                                    password: this.loginForm.password
-                                }).catch((err2) => {
-                                    if (err2.status_code === 401) {
-                                        API.logout();
-                                    }
-                                    throw err2;
-                                });
-                                return args;
-                            });
-                        }
                         throw err1;
                     });
                 }
@@ -3627,10 +3620,81 @@ import gameLogService from './service/gamelog.js'
         $app.resetGameLog();
     });
 
+    API.$on('LOGIN', function (args) {
+        var savedCredentialsArray = {};
+        if (configRepository.getString('savedCredentials') !== null) {
+            var savedCredentialsArray = JSON.parse(configRepository.getString('savedCredentials'));
+        }
+        if ($app.saveCredentials) {
+            var credentialsToSave = { user: args.ref, loginParmas: $app.saveCredentials };
+            savedCredentialsArray[args.ref.username] = credentialsToSave;
+            delete $app.saveCredentials;
+        } else {
+            if (savedCredentialsArray[args.ref.username] !== undefined) {
+                savedCredentialsArray[args.ref.username].user = args.ref;
+            }
+        }
+        $app.loginForm.savedCredentials = savedCredentialsArray;
+        var jsonCredentialsArray = JSON.stringify(savedCredentialsArray);
+        configRepository.setString('savedCredentials', jsonCredentialsArray);
+        $app.loginForm.lastUserLoggedIn = args.ref.username;
+        configRepository.setString('lastUserLoggedIn', args.ref.username);
+    });
+
+    $app.methods.relogin = function (loginParmas) {
+        this.loginForm.loading = true;
+        return API.getConfig().catch((err) => {
+            this.loginForm.loading = false;
+            throw err;
+        }).then((args) => {
+            API.login({
+                username: loginParmas.username,
+                password: loginParmas.password
+            }).catch((err2) => {
+                API.logout();
+                throw err2;
+            }).finally(() => {
+                this.loginForm.loading = false;
+            });
+        });
+    };
+
+    $app.methods.deleteSavedLogin = function (username) {
+        var savedCredentialsArray = JSON.parse(configRepository.getString('savedCredentials'));
+        delete savedCredentialsArray[username];
+        $app.loginForm.savedCredentials = savedCredentialsArray;
+        var jsonCredentialsArray = JSON.stringify(savedCredentialsArray);
+        configRepository.setString('savedCredentials', jsonCredentialsArray);
+        new Noty({
+            type: 'success',
+            text: 'Account removed.'
+        }).show();
+    };
+
+    API.$on('AUTOLOGIN', function () {
+        if ($app.isAutoLogin) {
+            var user = $app.loginForm.savedCredentials[$app.loginForm.lastUserLoggedIn]
+            if (user !== undefined) {
+                $app.relogin({
+                    username: user.loginParmas.username,
+                    password: user.loginParmas.password
+                }).then((args) => {
+                    new Noty({
+                        type: 'success',
+                        text: 'Automatically logged in.'
+                    }).show();
+                });
+            }
+        }
+    });
+
     $app.data.loginForm = {
         loading: true,
         username: '',
         password: '',
+        saveCredentials: false,
+        savedCredentials: ((configRepository.getString('lastUserLoggedIn') !== null) ? JSON.parse(configRepository.getString('savedCredentials')) : {}),
+        lastUserLoggedIn: configRepository.getString('lastUserLoggedIn'),
         rules: {
             username: [
                 {
@@ -3658,8 +3722,11 @@ import gameLogService from './service/gamelog.js'
                 }).then((args) => {
                     API.login({
                         username: this.loginForm.username,
-                        password: this.loginForm.password
+                        password: this.loginForm.password,
+                        saveCredentials: this.loginForm.saveCredentials
                     }).finally(() => {
+                        this.loginForm.username = '';
+                        this.loginForm.password = '';
                         this.loginForm.loading = false;
                     });
                     return args;
@@ -5640,15 +5707,18 @@ import gameLogService from './service/gamelog.js'
     $app.data.isStartAtWindowsStartup = configRepository.getBool('VRCX_StartAtWindowsStartup');
     $app.data.isStartAsMinimizedState = (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true');
     $app.data.isCloseToTray = configRepository.getBool('VRCX_CloseToTray');
+    $app.data.isAutoLogin= configRepository.getBool('VRCX_AutoLogin');
     var saveVRCXWindowOption = function () {
         configRepository.setBool('VRCX_StartAtWindowsStartup', this.isStartAtWindowsStartup);
         VRCXStorage.Set('VRCX_StartAsMinimizedState', this.isStartAsMinimizedState.toString());
         configRepository.setBool('VRCX_CloseToTray', this.isCloseToTray);
         AppApi.SetStartup(this.isStartAtWindowsStartup);
+        configRepository.setBool('VRCX_AutoLogin', this.isAutoLogin);
     };
     $app.watch.isStartAtWindowsStartup = saveVRCXWindowOption;
     $app.watch.isStartAsMinimizedState = saveVRCXWindowOption;
     $app.watch.isCloseToTray = saveVRCXWindowOption;
+    $app.watch.isAutoLogin = saveVRCXWindowOption;
     if (!configRepository.getString('VRCX_notificationTimeout')) {
         $app.data.notificationTimeout = 3000;
         configRepository.setString('VRCX_notificationTimeout', $app.data.notificationTimeout);
