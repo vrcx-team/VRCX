@@ -3621,25 +3621,33 @@ import gameLogService from './service/gamelog.js'
     });
 
     API.$on('LOGIN', function (args) {
+        $app.updateStoredUser(args.ref);
+    });
+
+    API.$on('LOGOUT', function () {
+        $app.updateStoredUser(this.currentUser);
+    });
+
+    $app.methods.updateStoredUser = function (currentUser) {
         var savedCredentialsArray = {};
         if (configRepository.getString('savedCredentials') !== null) {
             var savedCredentialsArray = JSON.parse(configRepository.getString('savedCredentials'));
         }
-        if ($app.saveCredentials) {
-            var credentialsToSave = { user: args.ref, loginParmas: $app.saveCredentials };
-            savedCredentialsArray[args.ref.username] = credentialsToSave;
-            delete $app.saveCredentials;
+        if (this.saveCredentials) {
+            var credentialsToSave = { user: currentUser, loginParmas: this.saveCredentials };
+            savedCredentialsArray[currentUser.username] = credentialsToSave;
+            delete this.saveCredentials;
         } else {
-            if (savedCredentialsArray[args.ref.username] !== undefined) {
-                savedCredentialsArray[args.ref.username].user = args.ref;
+            if (savedCredentialsArray[currentUser.username] !== undefined) {
+                savedCredentialsArray[currentUser.username].user = currentUser;
             }
         }
-        $app.loginForm.savedCredentials = savedCredentialsArray;
+        this.loginForm.savedCredentials = savedCredentialsArray;
         var jsonCredentialsArray = JSON.stringify(savedCredentialsArray);
         configRepository.setString('savedCredentials', jsonCredentialsArray);
-        $app.loginForm.lastUserLoggedIn = args.ref.username;
-        configRepository.setString('lastUserLoggedIn', args.ref.username);
-    });
+        this.loginForm.lastUserLoggedIn = currentUser.username;
+        configRepository.setString('lastUserLoggedIn', currentUser.username);
+    };
 
     $app.methods.relogin = function (loginParmas) {
         this.loginForm.loading = true;
