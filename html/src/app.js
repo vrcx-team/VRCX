@@ -386,8 +386,11 @@ import gameLogService from './service/gamelog.js'
                 }
                 return data;
             }
-            if ((status === 401) && (data.error.message === '"Missing Credentials"') && (this.pendingGetRequests.size <= 1)) {
-                this.$emit('AUTOLOGIN');
+            if ((status === 401) && (data.error.message === '"Missing Credentials"') && ($app.isAutoLogin)) {
+                if (endpoint.substring(0, 10) == 'auth/user?') {
+                    this.$emit('AUTOLOGIN');
+                }
+                throw new Error('401: Missing Credentials');
             }
             if (data.error === Object(data.error)) {
                 this.$throw(
@@ -3680,19 +3683,17 @@ import gameLogService from './service/gamelog.js'
     };
 
     API.$on('AUTOLOGIN', function () {
-        if ($app.isAutoLogin) {
-            var user = $app.loginForm.savedCredentials[$app.loginForm.lastUserLoggedIn]
-            if (user !== undefined) {
-                $app.relogin({
+        var user = $app.loginForm.savedCredentials[$app.loginForm.lastUserLoggedIn]
+        if (user !== undefined) {
+            $app.relogin({
                     username: user.loginParmas.username,
                     password: user.loginParmas.password
                 }).then((args) => {
                     new Noty({
                         type: 'success',
                         text: 'Automatically logged in.'
-                    }).show();
-                });
-            }
+                }).show();
+            });
         }
     });
 
