@@ -39,6 +39,7 @@ namespace VRCX
             cefSettings.CefCommandLineArgs.Add("disable-spell-checking");
             cefSettings.CefCommandLineArgs.Add("disable-pdf-extension");
             cefSettings.CefCommandLineArgs.Add("disable-extensions");
+            cefSettings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
             // cefSettings.CefCommandLineArgs.Add("allow-universal-access-from-files");
             // cefSettings.CefCommandLineArgs.Add("disable-web-security");
             cefSettings.SetOffScreenRenderingBestPerformanceArgs();

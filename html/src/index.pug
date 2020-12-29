@@ -569,12 +569,21 @@ html
                         span(style="display:inline-block;min-width:150px") Overlay Notifications
                         el-switch(v-model="overlayNotifications" :disabled="!openVR")
                     div(style="font-size:12px;margin-top:5px")
+                        span(style="display:inline-block;min-width:150px") Notification TTS
+                        el-switch(v-model="notificationTTS" :disabled="!openVR")
+                    div(style="font-size:12px;margin-top:5px")
+                        span(style="display:inline-block;min-width:150px") TTS Voice
+                        el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
+                            el-button(v-text="TTSvoices[notificationTTSVoice].name" size="mini" :disabled="!openVR || !notificationTTS")
+                            el-dropdown-menu(#default="dropdown")
+                                el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")          
+                    div(style="font-size:12px;margin-top:5px")
                         el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()" :disabled="!overlayNotifications || !openVR") Notification Timeout
                         el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog()" :disabled="!overlayNotifications || !openVR") Notification Position
                     div(style="font-size:12px;margin-top:5px")
                         span Join/Leave Notifications
                         br
-                        el-radio-group(v-model="notificationJoinLeaveFilter" size="mini" @change="changeNotificationJoinLeaveFilter" :disabled="!overlayNotifications || !openVR")
+                        el-radio-group(v-model="notificationJoinLeaveFilter" size="mini" @change="changeNotificationJoinLeaveFilter" :disabled="!overlayNotifications && !notificationTTS || !openVR")
                             el-radio(label="VIP" v-model="notificationJoinLeaveFilter") VIP
                             el-radio(label="Friends" v-model="notificationJoinLeaveFilter") Friends
                             el-radio(label="Everyone" v-model="notificationJoinLeaveFilter") Everyone
@@ -582,7 +591,7 @@ html
                     div(style="font-size:12px;margin-top:5px")
                         span Online/Offline Notifications
                         br
-                        el-radio-group(v-model="notificationOnlineOfflineFilter" size="mini" @change="changeNotificationOnlineOfflineFilter" :disabled="!overlayNotifications || !openVR")
+                        el-radio-group(v-model="notificationOnlineOfflineFilter" size="mini" @change="changeNotificationOnlineOfflineFilter" :disabled="!overlayNotifications && !notificationTTS || !openVR")
                             el-radio(label="VIP" v-model="notificationOnlineOfflineFilter") VIP
                             el-radio(label="Friends" v-model="notificationOnlineOfflineFilter") Friends
                             el-radio(label="Off" v-model="notificationOnlineOfflineFilter") Off

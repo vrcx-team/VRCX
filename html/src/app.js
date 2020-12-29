@@ -16,6 +16,8 @@ import configRepository from './repository/config.js';
 import webApiService from './service/webapi.js';
 import gameLogService from './service/gamelog.js'
 
+speechSynthesis.getVoices();
+
 (async function () {
     await CefSharp.BindObjectAsync(
         'AppApi',
@@ -3411,6 +3413,7 @@ import gameLogService from './service/gamelog.js'
                 AppApi.CheckGameRunning().then(([isGameRunning, isGameNoVR]) => {
                     if (isGameRunning !== this.isGameRunning) {
                         this.isGameRunning = isGameRunning;
+                        sharedRepository.setBool('isGameRunning', isGameRunning);
                         Discord.SetTimestamps(Date.now(), 0);
                     }
                     this.isGameNoVR = isGameNoVR;
@@ -5690,6 +5693,8 @@ import gameLogService from './service/gamelog.js'
     $app.data.hideDevicesFromFeed = configRepository.getBool('VRCX_hideDevicesFromFeed');
     $app.data.overlayNotifications = configRepository.getBool('VRCX_overlayNotifications');
     $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
+    $app.data.notificationTTS = configRepository.getBool('VRCX_notificationTTS');
+    $app.data.notificationTTSVoice = configRepository.getString('VRCX_notificationTTSVoice');
     $app.data.notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
     var saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
@@ -5700,6 +5705,13 @@ import gameLogService from './service/gamelog.js'
         configRepository.setBool('VRCX_overlayNotifications', this.overlayNotifications);
         configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
     };
+    $app.data.TTSvoices = speechSynthesis.getVoices();
+    var saveNotificationTTS = function () {
+        configRepository.setBool('VRCX_notificationTTS', this.notificationTTS);
+        if (this.notificationTTS) {
+            this.speak('Notification text-to-speech enabled');
+        }
+    };
     $app.watch.openVR = saveOpenVROption;
     $app.watch.openVRAlways = saveOpenVROption;
     $app.watch.hidePrivateFromFeed = saveOpenVROption;
@@ -5707,6 +5719,7 @@ import gameLogService from './service/gamelog.js'
     $app.watch.hideDevicesFromFeed = saveOpenVROption;
     $app.watch.overlayNotifications = saveOpenVROption;
     $app.watch.minimalFeed = saveOpenVROption;
+    $app.watch.notificationTTS = saveNotificationTTS;
     $app.data.isDarkMode = configRepository.getBool('isDarkMode');
     $appDarkStyle.disabled = $app.data.isDarkMode === false;
     $app.watch.isDarkMode = function () {
@@ -5743,6 +5756,10 @@ import gameLogService from './service/gamelog.js'
     if (!configRepository.getString('VRCX_notificationPosition')) {
         $app.data.notificationPosition = 'topCenter';
         configRepository.setString('VRCX_notificationPosition', $app.data.notificationPosition);
+    }
+    if (!configRepository.getString('VRCX_notificationTTSVoice')) {
+        $app.data.notificationTTSVoice = '0';
+        configRepository.setString('VRCX_notificationTTSVoice', $app.data.notificationTTSVoice);
     }
     $app.data.notificationJoinLeaveFilter = configRepository.getString('VRCX_notificationJoinLeaveFilter');
     $app.methods.changeNotificationJoinLeaveFilter = function () {
@@ -5814,6 +5831,22 @@ import gameLogService from './service/gamelog.js'
         } else {
             AppApi.StopVR();
         }
+    };
+
+    $app.methods.changeTTSVoice = function (index) {
+        this.notificationTTSVoice = index;
+        configRepository.setString('VRCX_notificationTTSVoice', this.notificationTTSVoice);
+        var voices = speechSynthesis.getVoices();
+        var voiceName = voices[index].name;
+        this.speak(voiceName);
+    };
+
+    $app.methods.speak = function (text) {
+        var tts = new SpeechSynthesisUtterance();
+        var voices = speechSynthesis.getVoices();
+        tts.voice = voices[this.notificationTTSVoice];
+        tts.text = text;
+        speechSynthesis.speak(tts);
     };
 
     $app.methods.refreshConfigTreeData = function () {

@@ -13,6 +13,8 @@ import sharedRepository from './repository/shared.js';
 import configRepository from './repository/config.js';
 import webApiService from './service/webapi.js';
 
+speechSynthesis.getVoices();
+
 (async function () {
     await CefSharp.BindObjectAsync(
         'AppApi',
@@ -662,7 +664,7 @@ import webApiService from './service/webapi.js';
         var _feeds = this.feeds;
         this.feeds = feeds;
 
-        if (this.appType === '2') {
+        if ((this.appType === '2') && sharedRepository.getBool('isGameRunning')) {
             var map = {};
             _feeds.forEach((feed) => {
                 if (feed.type === 'OnPlayerJoined' ||
@@ -690,47 +692,47 @@ import webApiService from './service/webapi.js';
             if (this.currentUserStatus === 'busy') {
                 return;
             }
-            if (configRepository.getBool('VRCX_overlayNotifications') === true) {
-                var notys = [];
-                this.feeds.forEach((feed) => {
-                    if (((notificationOnlineOfflineFilter === "Friends") && (feed.isFriend)) ||
-                        ((notificationOnlineOfflineFilter === "VIP") && (feed.isFavorite))) {
-                        if (feed.type === 'Online' ||
-                            feed.type === 'Offline') {
-                            if (!map[feed.displayName] ||
-                                map[feed.displayName] < feed.created_at) {
-                                map[feed.displayName] = feed.created_at;
-                                notys.push(feed);
-                            }
-                        }
-                    } else if ((notificationJoinLeaveFilter === "Everyone") ||
-                        ((notificationJoinLeaveFilter === "Friends") && (feed.isFriend)) ||
-                        ((notificationJoinLeaveFilter === "VIP") && (feed.isFavorite))) {
-                        if (feed.type === 'OnPlayerJoined' ||
-                            feed.type === 'OnPlayerLeft') {
-                            if (!map[feed.data] ||
-                                map[feed.data] < feed.created_at) {
-                                map[feed.data] = feed.created_at;
-                                notys.push(feed);
-                            }
-                        }
-                    } else if (feed.type === 'invite' ||
-                        feed.type === 'requestInvite' ||
-                        feed.type === 'friendRequest') {
-                        if (!map[feed.senderUsername] ||
-                            map[feed.senderUsername] < feed.created_at) {
-                            map[feed.senderUsername] = feed.created_at;
+            var notys = [];
+            this.feeds.forEach((feed) => {
+                if (((notificationOnlineOfflineFilter === "Friends") && (feed.isFriend)) ||
+                    ((notificationOnlineOfflineFilter === "VIP") && (feed.isFavorite))) {
+                    if (feed.type === 'Online' ||
+                        feed.type === 'Offline') {
+                        if (!map[feed.displayName] ||
+                            map[feed.displayName] < feed.created_at) {
+                            map[feed.displayName] = feed.created_at;
                             notys.push(feed);
                         }
                     }
-                });
-                var bias = new Date(Date.now() - 60000).toJSON();
-                var theme = 'relax';
-                if (configRepository.getBool('isDarkMode') === true) {
-                    theme = 'sunset';
+                } else if ((notificationJoinLeaveFilter === "Everyone") ||
+                    ((notificationJoinLeaveFilter === "Friends") && (feed.isFriend)) ||
+                    ((notificationJoinLeaveFilter === "VIP") && (feed.isFavorite))) {
+                    if (feed.type === 'OnPlayerJoined' ||
+                        feed.type === 'OnPlayerLeft') {
+                        if (!map[feed.data] ||
+                            map[feed.data] < feed.created_at) {
+                            map[feed.data] = feed.created_at;
+                            notys.push(feed);
+                        }
+                    }
+                } else if (feed.type === 'invite' ||
+                    feed.type === 'requestInvite' ||
+                    feed.type === 'friendRequest') {
+                    if (!map[feed.senderUsername] ||
+                        map[feed.senderUsername] < feed.created_at) {
+                        map[feed.senderUsername] = feed.created_at;
+                        notys.push(feed);
+                    }
                 }
-                notys.forEach((noty) => {
-                    if (noty.created_at > bias) {
+            });
+            var bias = new Date(Date.now() - 60000).toJSON();
+            var theme = 'relax';
+            if (configRepository.getBool('isDarkMode') === true) {
+                theme = 'sunset';
+            }
+            notys.forEach((noty) => {
+                if (noty.created_at > bias) {
+                    if (configRepository.getBool('VRCX_overlayNotifications')) {
                         switch (noty.type) {
                             case 'OnPlayerJoined':
                                 new Noty({
@@ -797,8 +799,33 @@ import webApiService from './service/webapi.js';
                                 break;
                         }
                     }
-                });
-            }
+                    if (configRepository.getBool('VRCX_notificationTTS')) {
+                        switch (noty.type) {
+                            case 'OnPlayerJoined':
+                                this.speak(`${noty.data} has joined`);
+                                break;
+                            case 'OnPlayerLeft':
+                                this.speak(`${noty.data} has left`);
+                                break;
+                            case 'Online':
+                                this.speak(`${noty.displayName} has logged in`);
+                                break;
+                            case 'Offline':
+                                this.speak(`${noty.displayName} has logged out`);
+                                break;
+                            case 'invite':
+                                this.speak(`${noty.senderUsername} has invited you to ${noty.details.worldName}`);
+                                break;
+                            case 'requestInvite':
+                                this.speak(`${noty.senderUsername} has requested an invite`);
+                                break;
+                            case 'friendRequest':
+                                this.speak(`${noty.senderUsername} has sent you a friend request`);
+                                break;
+                        }
+                    }
+                }
+            });
         }
     };
 
@@ -816,6 +843,15 @@ import webApiService from './service/webapi.js';
             }
         }
         return style;
+    };
+
+    $app.methods.speak = function (text) {
+        var tts = new SpeechSynthesisUtterance();
+        var voices = speechSynthesis.getVoices();
+        var voiceIndex = configRepository.getString('VRCX_notificationTTSVoice');
+        tts.voice = voices[voiceIndex];
+        tts.text = text;
+        speechSynthesis.speak(tts);
     };
 
     $app = new Vue($app);
