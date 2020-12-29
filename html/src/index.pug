@@ -750,6 +750,8 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Edit Bio") Bio
                                             el-dropdown-item(icon="el-icon-switch-button" command="Logout" divided) Logout
                                         template(v-else)
+                                            template(v-if="lastLocation && isGameRunning")
+                                                el-dropdown-item(icon="el-icon-message" command="Invite") Invite
                                             template(v-if="userDialog.isFriend")
                                                 el-dropdown-item(icon="el-icon-postcard" command="Request Invite") Request Invite
                                                 //- el-dropdown-item(icon="el-icon-message" command="Message") Message

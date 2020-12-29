@@ -6495,6 +6495,25 @@ import gameLogService from './service/gamelog.js'
                 this.$message('Request invite sent');
                 return args;
             });
+        } else if (command === 'Invite') {
+            var L = API.parseLocation(this.lastLocation);
+            API.getCachedWorld({
+                worldId: L.worldId
+            }).then((args) => {
+                API.sendNotification({
+                    receiverUserId: D.id,
+                    type: 'invite',
+                    message: 'This is a generated invite',
+                    seen: false,
+                    details: {
+                        worldId: this.lastLocation,
+                        worldName: args.ref.name
+                    }
+                }).then((args) => {
+                    this.$message('Invite sent');
+                    return args;
+                });
+            });
         } else if (command === 'Show Avatar Details') {
             var { currentAvatarImageUrl } = D.ref;
             var id = extractFileId(currentAvatarImageUrl);
