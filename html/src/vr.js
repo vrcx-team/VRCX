@@ -616,6 +616,7 @@ speechSynthesis.getVoices();
         try {
             this.currentTime = new Date().toJSON();
             this.currentUserStatus = sharedRepository.getString('current_user_status');
+            this.isGameRunning = sharedRepository.getBool('is_game_running');
             if (configRepository.getBool('VRCX_hideDevicesFromFeed') === false) {
                 AppApi.GetVRDevices().then((devices) => {
                     devices.forEach((device) => {
@@ -664,7 +665,7 @@ speechSynthesis.getVoices();
         var _feeds = this.feeds;
         this.feeds = feeds;
 
-        if ((this.appType === '2') && sharedRepository.getBool('isGameRunning')) {
+        if ((this.appType === '2') && this.isGameRunning) {
             var map = {};
             _feeds.forEach((feed) => {
                 if (feed.type === 'OnPlayerJoined' ||

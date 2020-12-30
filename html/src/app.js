@@ -3413,7 +3413,7 @@ speechSynthesis.getVoices();
                 AppApi.CheckGameRunning().then(([isGameRunning, isGameNoVR]) => {
                     if (isGameRunning !== this.isGameRunning) {
                         this.isGameRunning = isGameRunning;
-                        sharedRepository.setBool('isGameRunning', isGameRunning);
+                        sharedRepository.setBool('is_game_running', isGameRunning);
                         Discord.SetTimestamps(Date.now(), 0);
                     }
                     this.isGameNoVR = isGameNoVR;
