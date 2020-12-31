@@ -705,7 +705,8 @@ speechSynthesis.getVoices();
                             notys.push(feed);
                         }
                     }
-                } else if ((notificationJoinLeaveFilter === "Everyone") ||
+                }
+                if ((notificationJoinLeaveFilter === "Everyone") ||
                     ((notificationJoinLeaveFilter === "Friends") && (feed.isFriend)) ||
                     ((notificationJoinLeaveFilter === "VIP") && (feed.isFavorite))) {
                     if (feed.type === 'OnPlayerJoined' ||
@@ -716,7 +717,8 @@ speechSynthesis.getVoices();
                             notys.push(feed);
                         }
                     }
-                } else if (feed.type === 'invite' ||
+                }
+                if (feed.type === 'invite' ||
                     feed.type === 'requestInvite' ||
                     feed.type === 'friendRequest') {
                     if (!map[feed.senderUsername] ||
