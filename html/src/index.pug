@@ -825,7 +825,7 @@ html
                                         span.extra(v-else style="color:#F56C6C") Deny
                                 .x-friend-item
                                     .detail
-                                        span.name(v-if="userDialog.ref.state === 'online'") Online For
+                                        span.name(v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for") Online For
                                         span.name(v-else) Offline For
                                         span.extra(v-text="userOnlineFor(userDialog)")
                                 .x-friend-item

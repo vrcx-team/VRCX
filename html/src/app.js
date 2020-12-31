@@ -1146,6 +1146,8 @@ speechSynthesis.getVoices();
             json.state = API.currentUser.state;
             json.last_login = API.currentUser.last_login;
             json.location = ($app.isGameRunning === true) ? $app.lastLocation : '';
+            json.$online_for = API.currentUser.$online_for;
+            json.$offline_for = API.currentUser.$offline_for;
         }
         if (ref === undefined) {
             ref = {
@@ -5774,6 +5776,19 @@ speechSynthesis.getVoices();
         configRepository.setString('VRCX_notificationPosition', this.notificationPosition);
     };
 
+    var isGameRunningStateChange = function () {
+        $app.lastLocation = '';
+        if (this.isGameRunning) {
+            API.currentUser.$online_for = Date.now();
+            API.currentUser.$offline_for = '';
+        }
+        else {
+            API.currentUser.$online_for = '';
+            API.currentUser.$offline_for = Date.now();
+        }
+    }
+    $app.watch.isGameRunning = isGameRunningStateChange;
+
     API.$on('LOGIN', function () {
         $app.currentUserTreeData = [];
         $app.pastDisplayNameTable.data = [];
@@ -7760,7 +7775,7 @@ speechSynthesis.getVoices();
             return arr.join(' ');
         };
 
-        if (ctx.ref.state === 'online') {
+        if ((ctx.ref.state === 'online') && (ctx.ref.$online_for)) {
             return timeToText(Date.now() - ctx.ref.$online_for)
         } else if (ctx.ref.$offline_for) {
             return timeToText(Date.now() - ctx.ref.$offline_for)
