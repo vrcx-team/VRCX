@@ -67,6 +67,26 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | 💚 #[span.name(v-text="feed.senderUsername")]
+                            div(v-else-if="feed.type === 'Friend'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 💖 #[span.name(v-text="feed.displayName")]
+                            div(v-else-if="feed.type === 'Unfriend'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 💔 #[span.name(v-text="feed.displayName")]
+                            div(v-else-if="feed.type === 'DisplayName'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 📃 #[span.name(v-text="feed.previousDisplayName")] #[i.el-icon-right] #[span.name(v-text="feed.displayName")]
+                            div(v-else-if="feed.type === 'TrustLevel'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 🤝 #[span.name(v-text="feed.displayName")] {{ feed.previousTrustLevel }} #[i.el-icon-right] {{ feed.trustLevel }}
                     template(v-else)
                         template(v-for="feed in feeds")
                             .x-friend-item(v-if="feed.type === 'GPS'" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
@@ -119,6 +139,26 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | #[span.name(v-text="feed.senderUsername")] has sent you a friend request
+                            div(v-else-if="feed.type === 'Friend'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.displayName")] is now your friend
+                            div(v-else-if="feed.type === 'Unfriend'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.displayName")] has unfriended you
+                            div(v-else-if="feed.type === 'DisplayName'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.previousDisplayName")] changed their name to #[span.name(v-text="feed.displayName")]
+                            div(v-else-if="feed.type === 'TrustLevel'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.displayName")] trust level is now {{ feed.trustLevel }}
             .x-container
                 div(style="display:flex;flex-direction:row")
                     template(v-if="devices.length")
