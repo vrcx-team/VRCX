@@ -188,15 +188,15 @@ button {
 }
 
 .el-message-box__title {
-    color: #909090;
+    color: #c8c8c8;
 }
 
 .el-dialog__title {
-    color: #909090;
+    color: #c8c8c8;
 }
 
 .el-message-box__content {
-    color: #a5a7ad;
+    color: #c8c8c8;
 }
 
 .el-collapse-item__content {
@@ -242,6 +242,10 @@ button {
     background-color: #353535;
 }
 
+.el-select-dropdown__item {
+    color: #c8c8c8;
+}
+
 .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
     background-color: #404040;
 }
@@ -266,6 +270,22 @@ button {
 
 .el-dialog__body {
     color: #fff;
+}
+
+.el-radio {
+    color: #fff;
+}
+
+.el-button {
+    color: #fff;
+}
+
+.el-form-item__label {
+    color: #c8c8c8;
+}
+
+.el-checkbox {
+    color: #c8c8c8;
 }
 
 .x-app {

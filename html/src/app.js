@@ -740,7 +740,7 @@ speechSynthesis.getVoices();
     });
 
     Vue.component('location', {
-        template: '<span @click="showWorldDialog" :class="{ \'x-link\': link }">{{ text }}<slot></slot></span>',
+        template: '<span @click="showWorldDialog" :class="{ \'x-link\': link && this.location !== \'private\' && this.location !== \'offline\'}">{{ text }}<slot></slot></span>',
         props: {
             location: String,
             link: {

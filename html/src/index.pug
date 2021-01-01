@@ -391,10 +391,10 @@ html
 
             //- more
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'more'")
-                div
-                    span(style="font-weight:bold") VRCX
+                div.options-container(style="margin-top:0")
+                    span.header VRCX
                     .x-friend-list(style="margin-top:10px")
-                        .x-friend-item
+                        .x-friend-item(style="cursor:default")
                             .detail
                                 span.name Version
                                 span.extra(v-text="appVersion")
@@ -407,8 +407,8 @@ html
                             .detail
                                 span.name Repository URL
                                 span.extra https://github.com/pypy-vrc/VRCX
-                div(style="margin-top:30px")
-                    span(style="font-weight:bold") Game Info
+                div.options-container
+                    span.header Game Info
                     .x-friend-list(style="margin-top:10px")
                         .x-friend-item
                             .detail(@click="API.getVisits()")
@@ -418,15 +418,15 @@ html
                     div(style="margin-top:5px")
                         el-button-group
                             el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
-                div(style="margin-top:30px")
-                    span(style="font-weight:bold") Direct Access
-                    div(style="margin-top:5px")
+                div.options-container
+                    span.header Direct Access
+                    div(style="margin-top:10px")
                         el-button-group
                             el-button(size="small" @click="promptUserDialog()") User
                             el-button(size="small" @click="promptWorldDialog()") World
                             el-button(size="small" @click="promptAvatarDialog()") Avatar
-                div(style="margin-top:30px")
-                    span(style="font-weight:bold") My Profile
+                div.options-container
+                    span.header My Profile
                     .x-friend-list(style="margin-top:10px")
                         .x-friend-item(@click="showUserDialog(API.currentUser.id)")
                             .avatar
@@ -435,11 +435,11 @@ html
                             .detail
                                 span.name(v-text="API.currentUser.displayName")
                                 span.extra(v-text="API.currentUser.username")
-                        .x-friend-item
+                        .x-friend-item(style="cursor:default")
                             .detail
                                 span.name Last Login
                                 span.extra {{ API.currentUser.last_login | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                        .x-friend-item
+                        .x-friend-item(style="cursor:default")
                             .detail
                                 span.name Two-Factor Auth (2FA)
                                 span.extra {{ API.currentUser.twoFactorAuthEnabled ? 'Enabled' : 'Disabled' }}
@@ -447,7 +447,7 @@ html
                         el-button(size="small" icon="el-icon-switch-button" @click="logout()") Logout
                         el-button(size="small" icon="el-icon-printer" @click="showExportFriendsListDialog()") Export Friends List
                     div(v-if="API.currentUser.$isVRCPlus" style="margin-top:30px")
-                        span(style="font-weight:bold") VRCPlus Icons
+                        span.header VRCPlus Icons
                         el-tooltip(placement="top")
                             template(#content)
                                 span Refresh
@@ -462,22 +462,22 @@ html
                             el-button(type="default" @click="setVRCPlusIcon('')" size="mini" icon="el-icon-close" circle style="margin:0" :disabled="!API.currentUser.userIcon")
                         //- input(type="file" @change="onFileChangeVRCPlusIcon")
                         br
-                        .x-friend-item(v-for="icon in VRCPlusIconsTable" :key="icon.id" style="display:inline-block;cursor:auto")
+                        .x-friend-item(v-for="icon in VRCPlusIconsTable" :key="icon.id" style="display:inline-block;margin-top:10px;cursor:default")
                             .vrcplus-icon(style="" @click="setVRCPlusIcon(icon.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(icon.id) }")
                                 img.avatar(v-if="icon.versions[1].file.url" v-lazy="icon.versions[1].file.url")
                             el-tooltip(placement="top")
                                 template(#content)
                                     span Delete
                                 el-button(type="default" @click="deleteVRCPlusIcon(icon.id)" size="mini" icon="el-icon-delete" circle style="float:right;")
-                    div(style="margin-top:30px")
-                        span(style="font-weight:bold") Past Display Names
-                        data-tables(v-bind="pastDisplayNameTable" style="margin-top:5px")
+                    div.options-container
+                        span.header Past Display Names
+                        data-tables(v-bind="pastDisplayNameTable" style="margin-top:10px")
                             el-table-column(label="Date" prop="updated_at" sortable="custom")
                                 template(v-once #default="scope")
                                     span {{ scope.row.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
                             el-table-column(label="Name" prop="displayName")
-                    div(style="margin-top:30px")
-                        span(style="font-weight:bold") Config JSON
+                    div.options-container
+                        span.header Config JSON
                         el-tooltip(placement="top")
                             template(#content)
                                 span Refresh
@@ -486,13 +486,13 @@ html
                             template(#content)
                                 span Clear results
                             el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
-                        el-tree(:data="configTreeData" style="margin-top:5px;font-size:12px")
+                        el-tree(:data="configTreeData" style="margin-top:10px;font-size:12px")
                             template(#default="scope")
                                 span
                                     span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
                                     span(v-if="!scope.data.children" v-text="scope.data.value")
-                    div(style="margin-top:30px")
-                        span(style="font-weight:bold") Current User JSON
+                    div.options-container
+                        span.header Current User JSON
                         el-tooltip(placement="top")
                             template(#content)
                                 span Refresh
@@ -501,86 +501,86 @@ html
                             template(#content)
                                 span Clear results
                             el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
-                        el-tree(:data="currentUserTreeData" style="margin-top:5px;font-size:12px")
+                        el-tree(:data="currentUserTreeData" style="margin-top:10px;font-size:12px")
                             template(#default="scope")
                                 span
                                     span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
                                     span(v-if="!scope.data.children" v-text="scope.data.value")
-                div(style="margin-top:30px")
-                    span(style="font-weight:bold") Appearance
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Dark Mode
+                div.options-container
+                    span.header Appearance
+                    div.options-container-item
+                        span.name Dark Mode
                         el-switch(v-model="isDarkMode")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") VRCPlus Profile Icons
+                    div.options-container-item
+                        span.name VRCPlus Profile Icons
                         el-switch(v-model="displayVRCPlusIconsAsAvatar")
-                div(style="margin-top:30px")
-                    span(style="font-weight:bold") Friends Sort Option
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") VIP
+                div.options-container
+                    span.header Friends Sort Option
+                    div.options-container-item
+                        span.name VIP
                         el-switch(v-model="orderFriendsGroup0" inactive-text="by name" active-text="by state")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") ONLINE
+                    div.options-container-item
+                        span.name ONLINE
                         el-switch(v-model="orderFriendsGroup1" inactive-text="by name" active-text="by state")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") ACTIVE
+                    div.options-container-item
+                        span.name ACTIVE
                         el-switch(v-model="orderFriendsGroup2" inactive-text="by name" active-text="by state")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") OFFLINE
+                    div.options-container-item
+                        span.name OFFLINE
                         el-switch(v-model="orderFriendsGroup3" inactive-text="by name" active-text="by state")
-                div(style="margin-top:30px")
-                    span(style="font-weight:bold") Discord Presence
-                    div(style="font-size:12px;margin-top:5px")
+                div.options-container
+                    span.header Discord Presence
+                    div.options-container-item
                         span * Only works when VRChat is running.
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Enable
+                    div.options-container-item
+                        span.name Enable
                         el-switch(v-model="discordActive")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Instance details
+                    div.options-container-item
+                        span.name Instance details
                         el-switch(v-model="discordInstance" :disabled="!discordActive")
-                div(style="margin-top:30px")
-                    span(style="font-weight:bold") SteamVR Overlay
-                    div(style="font-size:12px;margin-top:5px")
+                div.options-container
+                    span.header SteamVR Overlay
+                    div.options-container-item
                         span * It runs automatically when VRChat is running.
                         br
                         span Vive or Other Controller: Grab Button
                         br
                         span Oculus Controller: B Button
                         br
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Enable
+                    div.options-container-item
+                        span.name Enable
                         el-switch(v-model="openVR")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Force Run
+                    div.options-container-item
+                        span.name Force Run
                         el-switch(v-model="openVRAlways" :disabled="!openVR")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Hide VR Devices
+                    div.options-container-item
+                        span.name Hide VR Devices
                         el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Hide Online/Offline
+                    div.options-container-item
+                        span.name Hide Online/Offline
                         el-switch(v-model="hideLoginsFromFeed" :disabled="!openVR")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Hide Private Worlds
+                    div.options-container-item
+                        span.name Hide Private Worlds
                         el-switch(v-model="hidePrivateFromFeed" :disabled="!openVR")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Minimal Feed Icons
+                    div.options-container-item
+                        span.name Minimal Feed Icons
                         el-switch(v-model="minimalFeed" :disabled="!openVR")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Overlay Notifications
+                    div.options-container-item
+                        span.name Overlay Notifications
                         el-switch(v-model="overlayNotifications" :disabled="!openVR")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Notification TTS
+                    div.options-container-item
+                        span.name Notification TTS
                         el-switch(v-model="notificationTTS" :disabled="!openVR")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") TTS Voice
+                    div.options-container-item
+                        span.name TTS Voice
                         el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
                             el-button(v-text="TTSvoices[notificationTTSVoice].name" size="mini" :disabled="!openVR || !notificationTTS")
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")          
-                    div(style="font-size:12px;margin-top:5px")
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()" :disabled="!overlayNotifications || !openVR") Notification Timeout
                         el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog()" :disabled="!overlayNotifications || !openVR") Notification Position
-                    div(style="font-size:12px;margin-top:5px")
+                    div.options-container-item
                         span Join/Leave Notifications
                         br
                         el-radio-group(v-model="notificationJoinLeaveFilter" size="mini" @change="changeNotificationJoinLeaveFilter" :disabled="!overlayNotifications && !notificationTTS || !openVR")
@@ -588,35 +588,35 @@ html
                             el-radio(label="Friends" v-model="notificationJoinLeaveFilter") Friends
                             el-radio(label="Everyone" v-model="notificationJoinLeaveFilter") Everyone
                             el-radio(label="Off" v-model="notificationJoinLeaveFilter") Off
-                    div(style="font-size:12px;margin-top:5px")
+                    div.options-container-item
                         span Online/Offline Notifications
                         br
                         el-radio-group(v-model="notificationOnlineOfflineFilter" size="mini" @change="changeNotificationOnlineOfflineFilter" :disabled="!overlayNotifications && !notificationTTS || !openVR")
                             el-radio(label="VIP" v-model="notificationOnlineOfflineFilter") VIP
                             el-radio(label="Friends" v-model="notificationOnlineOfflineFilter") Friends
                             el-radio(label="Off" v-model="notificationOnlineOfflineFilter") Off
-                div(style="margin-top:30px")
-                    span(style="font-weight:bold") Application
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Start at Windows startup
+                div.options-container
+                    span.header Application
+                    div.options-container-item
+                        span.name Start at Windows startup
                         el-switch(v-model="isStartAtWindowsStartup")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Start as minimized state
+                    div.options-container-item
+                        span.name Start as minimized state
                         el-switch(v-model="isStartAsMinimizedState")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Close to tray
+                    div.options-container-item
+                        span.name Close to tray
                         el-switch(v-model="isCloseToTray")
-                    div(style="font-size:12px;margin-top:5px")
-                        span(style="display:inline-block;min-width:150px") Auto login
+                    div.options-container-item
+                        span.name Auto login
                         el-switch(v-model="isAutoLogin")
-                div(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
-                    span(style="font-weight:bold") Legal Notice
-                    div(style="margin-top:5px;font-size:12px")
+                div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
+                    span.header Legal Notice
+                    div.options-container-item
                         p &copy; 2019-2020 #[a(href="https://github.com/pypy-vrc" target="_blank") pypy] (mina#5656)
                         p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
                         p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
                         p pypy is not responsible for any problems caused by VRCX. Use at your own risk!
-                    div(style="margin-top:5px;font-size:12px")
+                    div.options-container-item
                         el-button(@click="ossDialog = true" size="small") Open Source Software Notice
 
             //- friends
@@ -782,7 +782,7 @@ html
                         el-tab-pane(label="Info")
                             div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee")
                                 div(style="flex:none")
-                                    location(:location="userDialog.ref.location")
+                                    location(:location="userDialog.ref.location") 
                                         template(#default v-if="userDialog.instance.occupants") ({{ userDialog.instance.occupants }})
                                     launch(:location="userDialog.ref.location" style="margin-left:5px")
                                     invite-yourself(:location="userDialog.ref.location" style="margin-left:5px")
@@ -805,11 +805,11 @@ html
                                             span.extra
                                                 timer(:epoch="user.$location_at")
                             .x-friend-list(style="max-height:none")
-                                .x-friend-item(style="width:100%")
+                                .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Note
                                         el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" placeholder="Click to add a note" size="mini" resize="none")
-                                .x-friend-item(style="width:100%")
+                                .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Bio
                                         pre.extra(style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0") {{ userDialog.ref.bio || '-' }}
@@ -817,22 +817,22 @@ html
                                             el-tooltip(v-if="link" v-for="(link, index) in userDialog.ref.bioLinks" :key="index")
                                                 template(#content)
                                                     span(v-text="link")
-                                                img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px" @click.stop="openExternalLink(link)")
-                                .x-friend-item
+                                                img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Avatar Copying
                                         span.extra(v-if="userDialog.ref.allowAvatarCopying" style="color:#67C23A") Allow
                                         span.extra(v-else style="color:#F56C6C") Deny
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name(v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for") Online For
                                         span.name(v-else) Offline For
                                         span.extra(v-text="userOnlineFor(userDialog)")
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Last Login
                                         span.extra {{ userDialog.ref.last_login | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Last Platform
                                         span.extra(v-text="userDialog.ref.last_platform")
@@ -937,43 +937,43 @@ html
                                                 timer(:epoch="user.$location_at")
                         el-tab-pane(label="Info")
                             .x-friend-list(style="max-height:none")
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Players
                                         span.extra {{ worldDialog.ref.occupants | commaNumber }}
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Favorites
                                         span.extra {{ worldDialog.ref.favorites | commaNumber }}
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Visits
                                         span.extra {{ worldDialog.ref.visits | commaNumber }}
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Capacity
                                         span.extra(v-text="worldDialog.ref.capacity")
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Heat
                                         span.extra {{ worldDialog.ref.heat | commaNumber }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Popularity
                                         span.extra {{ worldDialog.ref.popularity | commaNumber }} {{ '💖'.repeat(worldDialog.ref.popularity) }}
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Created
                                         span.extra {{ worldDialog.ref.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Last Updated
                                         span.extra {{ worldDialog.fileCreatedAt | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Version
                                         span.extra(v-text="worldDialog.ref.version")
-                                .x-friend-item(style="width:100%")
+                                .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Platform
                                         span.extra(v-text="worldDialogPlatform")
@@ -1017,19 +1017,19 @@ html
                     el-tabs
                         el-tab-pane(label="Info")
                             .x-friend-list
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Created
                                         span.extra {{ avatarDialog.ref.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Last Updated
                                         span.extra {{ avatarDialog.fileCreatedAt | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
-                                .x-friend-item
+                                .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Version
                                         span.extra(v-text="avatarDialog.ref.version")
-                                .x-friend-item(style="width:100%")
+                                .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Platform
                                         span.extra(v-text="avatarDialogPlatform")
