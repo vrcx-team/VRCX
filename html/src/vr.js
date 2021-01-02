@@ -727,6 +727,14 @@ speechSynthesis.getVoices();
                         notys.push(feed);
                     }
                 }
+                if (feed.type === 'Friend' ||
+                    feed.type === 'Unfriend') {
+                    if (!map[feed.displayName] ||
+                        map[feed.displayName] < feed.created_at) {
+                        map[feed.displayName] = feed.created_at;
+                        notys.push(feed);
+                    }
+                }
             });
             var bias = new Date(Date.now() - 60000).toJSON();
             var theme = 'relax';
@@ -736,70 +744,44 @@ speechSynthesis.getVoices();
             notys.forEach((noty) => {
                 if (noty.created_at > bias) {
                     if (configRepository.getBool('VRCX_overlayNotifications')) {
+                        var text = '';
                         switch (noty.type) {
                             case 'OnPlayerJoined':
-                                new Noty({
-                                    type: 'alert',
-                                    theme: theme,
-                                    timeout: notificationTimeout,
-                                    layout: notificationPosition,
-                                    text: `<strong>${noty.data}</strong> has joined`
-                                }).show();
+                                text = `<strong>${noty.data}</strong> has joined`;
                                 break;
                             case 'OnPlayerLeft':
-                                new Noty({
-                                    type: 'alert',
-                                    theme: theme,
-                                    timeout: notificationTimeout,
-                                    layout: notificationPosition,
-                                    text: `<strong>${noty.data}</strong> has left`
-                                }).show();
+                                text = `<strong>${noty.data}</strong> has left`;
                                 break;
                             case 'Online':
-                                new Noty({
-                                    type: 'alert',
-                                    theme: theme,
-                                    timeout: notificationTimeout,
-                                    layout: notificationPosition,
-                                    text: `<strong>${noty.displayName}</strong> has logged in`
-                                }).show();
+                                text = `<strong>${noty.displayName}</strong> has logged in`;
                                 break;
                             case 'Offline':
-                                new Noty({
-                                    type: 'alert',
-                                    theme: theme,
-                                    timeout: notificationTimeout,
-                                    layout: notificationPosition,
-                                    text: `<strong>${noty.displayName}</strong> has logged out`
-                                }).show();
+                                text = `<strong>${noty.displayName}</strong> has logged out`;
                                 break;
                             case 'invite':
-                                new Noty({
-                                    type: 'alert',
-                                    theme: theme,
-                                    timeout: notificationTimeout,
-                                    layout: notificationPosition,
-                                    text: `<strong>${noty.senderUsername}</strong> has invited you to ${noty.details.worldName}`
-                                }).show();
+                                text = `<strong>${noty.senderUsername}</strong> has invited you to ${noty.details.worldName}`;
                                 break;
                             case 'requestInvite':
-                                new Noty({
-                                    type: 'alert',
-                                    theme: theme,
-                                    timeout: notificationTimeout,
-                                    layout: notificationPosition,
-                                    text: `<strong>${noty.senderUsername}</strong> has requested an invite`
-                                }).show();
+                                text = `<strong>${noty.senderUsername}</strong> has requested an invite`;
                                 break;
                             case 'friendRequest':
-                                new Noty({
-                                    type: 'alert',
-                                    theme: theme,
-                                    timeout: notificationTimeout,
-                                    layout: notificationPosition,
-                                    text: `<strong>${noty.senderUsername}</strong> has sent you a friend request`
-                                }).show();
+                                text = `<strong>${noty.senderUsername}</strong> has sent you a friend request`;
                                 break;
+                            case 'Friend':
+                                text = `<strong>${noty.displayName}</strong> is now your friend`;
+                                break;
+                            case 'Unfriend':
+                                text = `<strong>${noty.displayName}</strong> has unfriended you`;
+                                break;
+                        }
+                        if (text) {
+                            new Noty({
+                                type: 'alert',
+                                theme: theme,
+                                timeout: notificationTimeout,
+                                layout: notificationPosition,
+                                text: text
+                            }).show();
                         }
                     }
                     if (configRepository.getBool('VRCX_notificationTTS')) {
@@ -824,6 +806,12 @@ speechSynthesis.getVoices();
                                 break;
                             case 'friendRequest':
                                 this.speak(`${noty.senderUsername} has sent you a friend request`);
+                                break;
+                            case 'Friend':
+                                this.speak(`${noty.displayName} is now your friend`);
+                                break;
+                            case 'Unfriend':
+                                this.speak(`${noty.displayName} has unfriended you`);
                                 break;
                         }
                     }
