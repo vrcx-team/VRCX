@@ -543,16 +543,20 @@ html
                     div.options-container-item
                         span * It runs automatically when VRChat is running.
                         br
-                        span Vive or Other Controller: Grab Button
                         br
-                        span Oculus Controller: B Button
+                        span Grip: Vive or Other Controllers Grab, Oculus X/A Buttons
+                        br
+                        span Menu: Vive Menu, Index B, Oculus Y/B Buttons
                         br
                     div.options-container-item
                         span.name Enable
                         el-switch(v-model="openVR")
                     div.options-container-item
-                        span.name Force Run
+                        span.name Force Run (Opens SteamVR)
                         el-switch(v-model="openVRAlways" :disabled="!openVR")
+                    div.options-container-item
+                        span.name(style="min-width:137px") Overlay Button
+                        el-switch(v-model="overlaybutton" inactive-text="Grip" active-text="Menu" :disabled="!openVR")
                     div.options-container-item
                         span.name Hide VR Devices
                         el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR")
@@ -572,7 +576,7 @@ html
                         span.name Notification TTS
                         el-switch(v-model="notificationTTS" :disabled="!openVR")
                     div.options-container-item
-                        span.name TTS Voice
+                        span.name Text-to-Speech Voice
                         el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
                             el-button(v-text="TTSvoices[notificationTTSVoice].name" size="mini" :disabled="!openVR || !notificationTTS")
                             el-dropdown-menu(#default="dropdown")

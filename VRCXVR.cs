@@ -295,6 +295,7 @@ namespace VRCX
                     sb.Clear();
                     system.GetStringTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_TrackingSystemName_String, sb, (uint)sb.Capacity, ref err);
                     var isOculus = sb.ToString().IndexOf("oculus", StringComparison.OrdinalIgnoreCase) >= 0;
+                    var button = "true".Equals(SharedVariable.Instance.Get("config:vrcx_overlaybutton"));
                     // Oculus : B/Y, Bit 1, Mask 2
                     // Oculus : A/X, Bit 7, Mask 128
                     // Vive : Menu, Bit 1, Mask 2,
@@ -304,7 +305,7 @@ namespace VRCX
                         role == ETrackedControllerRole.RightHand)
                     {
                         if (system.GetControllerState(i, ref state, (uint)Marshal.SizeOf(state)) &&
-                            (state.ulButtonPressed & (isOculus ? 2u : 4u)) != 0)
+                            (state.ulButtonPressed & (button ? 2u : (isOculus ? 128u : 4u))) != 0)
                         {
                             if (role == ETrackedControllerRole.LeftHand)
                             {
