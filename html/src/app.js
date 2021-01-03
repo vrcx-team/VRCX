@@ -3497,7 +3497,7 @@ speechSynthesis.getVoices();
         // TrustLevel, Friend, FriendRequest, Unfriend, DisplayName
         var { data } = this.friendLogTable;
         var j = this.friendLogTable.data.length;
-        for (i = j - 1; i >= j - 6; i--) {
+        for (i = j - 1; i >= j - ((j > 10) ? 10 : j); i--) {
             var ctx = data[i];
             if (ctx.type !== 'FriendRequest') {
                 arr.push({

@@ -687,6 +687,12 @@ speechSynthesis.getVoices();
                         map[feed.senderUsername] < feed.created_at) {
                         map[feed.senderUsername] = feed.created_at;
                     }
+                } else if (feed.type === 'Friend' ||
+                    feed.type === 'Unfriend') {
+                    if (!map[feed.displayName] ||
+                        map[feed.displayName] < feed.created_at) {
+                        map[feed.displayName] = feed.created_at;
+                    }
                 }
             });
             // disable notification on busy
