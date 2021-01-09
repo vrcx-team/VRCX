@@ -59,11 +59,17 @@ namespace VRCX
                             {
                                 var values = new object[reader.FieldCount];
                                 reader.GetValues(values);
-                                callback.ExecuteAsync(null, values);
+                                if (callback.CanExecute == true)
+                                {
+                                    callback.ExecuteAsync(null, values);
+                                }
                             }
                         }
                     }
-                    callback.ExecuteAsync(null, null);
+                    if (callback.CanExecute == true)
+                    {
+                        callback.ExecuteAsync(null, null);
+                    }
                 }
                 finally
                 {
@@ -72,7 +78,10 @@ namespace VRCX
             }
             catch (Exception e)
             {
-                callback.ExecuteAsync(e.Message, null);
+                if (callback.CanExecute == true)
+                {
+                    callback.ExecuteAsync(e.Message, null);
+                }
             }
 
             callback.Dispose();

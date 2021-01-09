@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Forms;
 
 namespace VRCX
 {
@@ -125,11 +126,14 @@ namespace VRCX
                     using (var stream = response.GetResponseStream())
                     using (var streamReader = new StreamReader(stream))
                     {
-                        callback.ExecuteAsync(null, new
+                        if (callback.CanExecute == true)
                         {
-                            data = await streamReader.ReadToEndAsync(),
-                            status = response.StatusCode
-                        });
+                            callback.ExecuteAsync(null, new
+                            {
+                                data = await streamReader.ReadToEndAsync(),
+                                status = response.StatusCode
+                            });
+                        }
                     }
                 }
                 catch (WebException webException)
@@ -139,14 +143,17 @@ namespace VRCX
                         using (var stream = response.GetResponseStream())
                         using (var streamReader = new StreamReader(stream))
                         {
-                            callback.ExecuteAsync(null, new
+                            if (callback.CanExecute == true)
                             {
-                                data = await streamReader.ReadToEndAsync(),
-                                status = response.StatusCode
-                            });
+                                callback.ExecuteAsync(null, new
+                                {
+                                    data = await streamReader.ReadToEndAsync(),
+                                    status = response.StatusCode
+                                });
+                            }
                         }
                     }
-                    else
+                    else if (callback.CanExecute == true)
                     {
                         callback.ExecuteAsync(webException.Message, null);
                     }
@@ -154,8 +161,11 @@ namespace VRCX
             }
             catch (Exception e)
             {
-                // FIXME: 브라우저는 종료되었는데 얘는 이후에 실행되면 터짐
-                callback.ExecuteAsync(e.Message, null);
+                if (callback.CanExecute == true)
+                {
+                    // FIXME: 브라우저는 종료되었는데 얘는 이후에 실행되면 터짐
+                    callback.ExecuteAsync(e.Message, null);
+                }
             }
 
             callback.Dispose();
