@@ -274,3 +274,19 @@ i.x-user-status.joinme {
 i.x-user-status.busy {
     background: #f56c6c;
 }
+
+.spin {
+  animation: rotation 2.5s infinite linear;
+  position: absolute;
+  width: 14px;
+  height: 28px;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}

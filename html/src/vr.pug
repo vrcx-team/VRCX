@@ -12,11 +12,11 @@ html
         link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP|Noto+Sans+KR&display=swap")
         link(rel="stylesheet" href="vr.css")
     body
-        .x-app#x-app(style="display:none" :class="{ 'x-app-type': appType === '1' }")
+        .x-app#x-app(v-if="appType === '1'" class="x-app-type")
             .x-container(style="flex:1")
                 .x-friend-list(ref="list" style="color:#aaa")
-                    template(v-if="isMinimalFeed === true")
-                        template(v-for="feed in feeds")
+                    template(v-if="isMinimalFeed")
+                        template(v-for="feed in wristFeed")
                             .x-friend-item(v-if="feed.type === 'GPS'" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -47,6 +47,12 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | ◀️ #[span.name(v-text="feed.data")]
+                            div(v-else-if="feed.type === 'OnPlayerJoining'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        span.spin ▶️
+                                        span.name(v-text="feed.data" style="margin-left:20px")
                             div(v-else-if="feed.type === 'Location'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -88,7 +94,7 @@ html
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | 🤝 #[span.name(v-text="feed.displayName")] {{ feed.previousTrustLevel }} #[i.el-icon-right] {{ feed.trustLevel }}
                     template(v-else)
-                        template(v-for="feed in feeds")
+                        template(v-for="feed in wristFeed")
                             .x-friend-item(v-if="feed.type === 'GPS'" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -119,6 +125,11 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | #[span.name(v-text="feed.data")] has left
+                            div(v-else-if="feed.type === 'OnPlayerJoining'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.data")] is joining
                             div(v-else-if="feed.type === 'Location'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra

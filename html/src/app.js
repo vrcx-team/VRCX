@@ -8,6 +8,7 @@ import Noty from 'noty';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
 import { DataTables } from 'vue-data-tables';
+import ToggleSwitch from 'vuejs-toggle-switch'
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 
@@ -3415,7 +3416,6 @@ speechSynthesis.getVoices();
                 AppApi.CheckGameRunning().then(([isGameRunning, isGameNoVR]) => {
                     if (isGameRunning !== this.isGameRunning) {
                         this.isGameRunning = isGameRunning;
-                        sharedRepository.setBool('is_game_running', isGameRunning);
                         Discord.SetTimestamps(Date.now(), 0);
                     }
                     this.isGameNoVR = isGameNoVR;
@@ -3472,9 +3472,7 @@ speechSynthesis.getVoices();
             }
             var ctx = data[--i];
             // GPS, Online, Offline, Status, Avatar
-            if ((ctx.type !== 'Avatar') &&
-                !((ctx.type === 'GPS') && (ctx.location[0] === 'private') && (this.hidePrivateFromFeed === true)) &&
-                !(((ctx.type === 'Online') || (ctx.type === 'Offline')) && (this.hideLoginsFromFeed === true))) {
+            if (ctx.type !== 'Avatar') {
                 arr.push({
                     ...ctx,
                     isFriend: this.friends.has(ctx.userId),
@@ -3483,6 +3481,7 @@ speechSynthesis.getVoices();
                 ++j;
             }
         }
+        // invite, requestInvite, friendRequest
         var { data } = this.notificationTable;
         for (i = 0; i < data.length; i++) {
             var ctx = data[i];
@@ -5705,7 +5704,6 @@ speechSynthesis.getVoices();
     $app.data.openVRAlways = configRepository.getBool('openVRAlways');
     $app.data.overlaybutton = configRepository.getBool('VRCX_overlaybutton');
     $app.data.hidePrivateFromFeed = configRepository.getBool('VRCX_hidePrivateFromFeed');
-    $app.data.hideLoginsFromFeed = configRepository.getBool('VRCX_hideLoginsFromFeed');
     $app.data.hideDevicesFromFeed = configRepository.getBool('VRCX_hideDevicesFromFeed');
     $app.data.overlayNotifications = configRepository.getBool('VRCX_overlayNotifications');
     $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
@@ -5717,10 +5715,10 @@ speechSynthesis.getVoices();
         configRepository.setBool('openVRAlways', this.openVRAlways);
         configRepository.setBool('VRCX_overlaybutton', this.overlaybutton);
         configRepository.setBool('VRCX_hidePrivateFromFeed', this.hidePrivateFromFeed);
-        configRepository.setBool('VRCX_hideLoginsFromFeed', this.hideLoginsFromFeed);
         configRepository.setBool('VRCX_hideDevicesFromFeed', this.hideDevicesFromFeed);
         configRepository.setBool('VRCX_overlayNotifications', this.overlayNotifications);
         configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
+        AppApi.RefreshVR();
     };
     $app.data.TTSvoices = speechSynthesis.getVoices();
     var saveNotificationTTS = function () {
@@ -5729,12 +5727,12 @@ speechSynthesis.getVoices();
         if (this.notificationTTS) {
             this.speak('Notification text-to-speech enabled');
         }
+        AppApi.RefreshVR();
     };
     $app.watch.openVR = saveOpenVROption;
     $app.watch.openVRAlways = saveOpenVROption;
     $app.watch.overlaybutton = saveOpenVROption;
     $app.watch.hidePrivateFromFeed = saveOpenVROption;
-    $app.watch.hideLoginsFromFeed = saveOpenVROption;
     $app.watch.hideDevicesFromFeed = saveOpenVROption;
     $app.watch.overlayNotifications = saveOpenVROption;
     $app.watch.minimalFeed = saveOpenVROption;
@@ -5744,6 +5742,7 @@ speechSynthesis.getVoices();
     $app.watch.isDarkMode = function () {
         configRepository.setBool('isDarkMode', this.isDarkMode);
         $appDarkStyle.disabled = this.isDarkMode === false;
+        AppApi.RefreshVR();
     };
     $app.data.isStartAtWindowsStartup = configRepository.getBool('VRCX_StartAtWindowsStartup');
     $app.data.isStartAsMinimizedState = (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true');
@@ -5760,40 +5759,142 @@ speechSynthesis.getVoices();
     $app.watch.isStartAsMinimizedState = saveVRCXWindowOption;
     $app.watch.isCloseToTray = saveVRCXWindowOption;
     $app.watch.isAutoLogin = saveVRCXWindowOption;
-    if (!configRepository.getString('VRCX_notificationTimeout')) {
-        $app.data.notificationTimeout = 3000;
-        configRepository.setString('VRCX_notificationTimeout', $app.data.notificationTimeout);
-    }
-    if (!configRepository.getString('VRCX_notificationJoinLeaveFilter')) {
-        $app.data.notificationJoinLeaveFilter = 'VIP';
-        configRepository.setString('VRCX_notificationJoinLeaveFilter', $app.data.notificationJoinLeaveFilter);
-    }
-    if (!configRepository.getString('VRCX_notificationOnlineOfflineFilter')) {
-        $app.data.notificationOnlineOfflineFilter = 'VIP';
-        configRepository.setString('VRCX_notificationOnlineOfflineFilter', $app.data.notificationOnlineOfflineFilter);
-    }
+
+    //setting defaults
     if (!configRepository.getString('VRCX_notificationPosition')) {
         $app.data.notificationPosition = 'topCenter';
         configRepository.setString('VRCX_notificationPosition', $app.data.notificationPosition);
+    }
+    if (!configRepository.getString('VRCX_notificationTimeout')) {
+        $app.data.notificationTimeout = 3000;
+        configRepository.setString('VRCX_notificationTimeout', $app.data.notificationTimeout);
     }
     if (!configRepository.getString('VRCX_notificationTTSVoice')) {
         $app.data.notificationTTSVoice = '0';
         configRepository.setString('VRCX_notificationTTSVoice', $app.data.notificationTTSVoice);
     }
-    $app.data.notificationJoinLeaveFilter = configRepository.getString('VRCX_notificationJoinLeaveFilter');
-    $app.methods.changeNotificationJoinLeaveFilter = function () {
-        configRepository.setString('VRCX_notificationJoinLeaveFilter', this.notificationJoinLeaveFilter);
+    if (!configRepository.getString('sharedFeedFilters')) {
+        var sharedFeedFilters = {
+            noty: {},
+            wrist: {}
+        };
+        sharedFeedFilters.noty.Location = 'Off';
+        sharedFeedFilters.noty.OnPlayerJoined = 'VIP';
+        sharedFeedFilters.noty.OnPlayerLeft = 'VIP';
+        sharedFeedFilters.noty.OnPlayerJoining = 'VIP';
+        sharedFeedFilters.noty.Online = 'VIP';
+        sharedFeedFilters.noty.Offline = 'VIP';
+        sharedFeedFilters.noty.GPS = 'Off';
+        sharedFeedFilters.noty.Status = 'Off';
+        sharedFeedFilters.noty.invite = 'Friends';
+        sharedFeedFilters.noty.requestInvite = 'Friends';
+        sharedFeedFilters.noty.friendRequest = 'On';
+        sharedFeedFilters.noty.Friend = 'On';
+        sharedFeedFilters.noty.Unfriend = 'On';
+        sharedFeedFilters.noty.DisplayName = 'VIP';
+        sharedFeedFilters.noty.TrustLevel = 'VIP';
+        sharedFeedFilters.wrist.Location = 'On';
+        sharedFeedFilters.wrist.OnPlayerJoined = 'Everyone';
+        sharedFeedFilters.wrist.OnPlayerLeft = 'Everyone';
+        sharedFeedFilters.wrist.OnPlayerJoining = 'Friends';
+        sharedFeedFilters.wrist.Online = 'Friends';
+        sharedFeedFilters.wrist.Offline = 'Friends';
+        sharedFeedFilters.wrist.GPS = 'Friends';
+        sharedFeedFilters.wrist.Status = 'Friends';
+        sharedFeedFilters.wrist.invite = 'Friends';
+        sharedFeedFilters.wrist.requestInvite = 'Friends';
+        sharedFeedFilters.wrist.friendRequest = 'On';
+        sharedFeedFilters.wrist.Friend = 'On';
+        sharedFeedFilters.wrist.Unfriend = 'On';
+        sharedFeedFilters.wrist.DisplayName = 'Friends';
+        sharedFeedFilters.wrist.TrustLevel = 'Friends';
+        configRepository.setString('sharedFeedFilters', JSON.stringify(sharedFeedFilters));
+    }
+    $app.data.sharedFeedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));
+
+    $app.data.toggleSwitchOptionsEveryone = {
+        layout: {
+            backgroundColor: "white",
+            selectedBackgroundColor: "#409eff",
+            selectedColor: "white",
+            color: "#409eff",
+            borderColor: "#409eff",
+            fontWeight: "bold",
+            fontFamily: '"Noto Sans JP", "Noto Sans KR", "Meiryo UI", "Malgun Gothic", "Segoe UI", "sans-serif"'
+        },
+        size: {
+            height: 1.5,
+            width: 15,
+            padding: 0.1,
+            fontSize: 0.75
+        },
+        items: {
+            labels: [{ name: "Off" }, { name: "VIP" }, { name: "Friends" }, { name: "Everyone" }]
+        }
     };
-    $app.data.notificationOnlineOfflineFilter = configRepository.getString('VRCX_notificationOnlineOfflineFilter');
-    $app.methods.changeNotificationOnlineOfflineFilter = function () {
-        configRepository.setString('VRCX_notificationOnlineOfflineFilter', this.notificationOnlineOfflineFilter);
+    $app.data.toggleSwitchOptionsFriends = {
+        layout: {
+            backgroundColor: "white",
+            selectedBackgroundColor: "#409eff",
+            selectedColor: "white",
+            color: "#409eff",
+            borderColor: "#409eff",
+            fontWeight: "bold",
+            fontFamily: '"Noto Sans JP", "Noto Sans KR", "Meiryo UI", "Malgun Gothic", "Segoe UI", "sans-serif"'
+        },
+        size: {
+            height: 1.5,
+            width: 11.25,
+            padding: 0.1,
+            fontSize: 0.75
+        },
+        items: {
+            labels: [{ name: "Off" }, { name: "VIP" }, { name: "Friends" }]
+        }
     };
+    $app.data.toggleSwitchOptionsOn = {
+        layout: {
+            backgroundColor: "white",
+            selectedBackgroundColor: "#409eff",
+            selectedColor: "white",
+            color: "#409eff",
+            borderColor: "#409eff",
+            fontWeight: "bold",
+            fontFamily: '"Noto Sans JP", "Noto Sans KR", "Meiryo UI", "Malgun Gothic", "Segoe UI", "sans-serif"'
+        },
+        size: {
+            height: 1.5,
+            width: 7.5,
+            padding: 0.1,
+            fontSize: 0.75
+        },
+        items: {
+            labels: [{ name: "Off" }, { name: "On" }]
+        }
+    };
+
+    $app.methods.saveSharedFeedFilters = function () {
+        this.notyFeedFiltersDialog.visible = false;
+        this.wristFeedFiltersDialog.visible = false;
+        configRepository.setString('sharedFeedFilters', JSON.stringify(this.sharedFeedFilters));
+        AppApi.RefreshVR();
+    }
+
+    $app.methods.cancelSharedFeedFilters = function () {
+        this.notyFeedFiltersDialog.visible = false;
+        this.wristFeedFiltersDialog.visible = false;
+        this.sharedFeedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));
+    }
+
     $app.data.notificationPosition = configRepository.getString('VRCX_notificationPosition');
     $app.methods.changeNotificationPosition = function () {
         configRepository.setString('VRCX_notificationPosition', this.notificationPosition);
+        AppApi.RefreshVR();
     };
 
+    sharedRepository.setBool('is_game_running', false);
     var isGameRunningStateChange = function () {
+        sharedRepository.setBool('is_game_running', this.isGameRunning);
         $app.lastLocation = '';
         if (this.isGameRunning) {
             API.currentUser.$online_for = Date.now();
@@ -5872,6 +5973,7 @@ speechSynthesis.getVoices();
         var voiceName = voices[index].name;
         speechSynthesis.cancel();
         this.speak(voiceName);
+        AppApi.RefreshVR();
     };
 
     $app.methods.speak = function (text) {
@@ -7577,6 +7679,28 @@ speechSynthesis.getVoices();
     $app.methods.showNotificationPositionDialog = function () {
         this.$nextTick(() => adjustDialogZ(this.$refs.notificationPositionDialog.$el));
         this.notificationPositionDialog.visible = true;
+    };
+
+    // App: Noty feed filters
+
+    $app.data.notyFeedFiltersDialog = {
+        visible: false
+    };
+
+    $app.methods.showNotyFeedFiltersDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.notyFeedFiltersDialog.$el));
+        this.notyFeedFiltersDialog.visible = true;
+    };
+
+    // App: Wrist feed filters
+
+    $app.data.wristFeedFiltersDialog = {
+        visible: false
+    };
+
+    $app.methods.showWristFeedFiltersDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.wristFeedFiltersDialog.$el));
+        this.wristFeedFiltersDialog.visible = true;
     };
 
     // App: Launch Dialog

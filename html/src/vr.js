@@ -573,9 +573,21 @@ speechSynthesis.getVoices();
             currentTime: new Date().toJSON(),
             currentUserStatus: null,
             cpuUsage: 0,
-            feeds: [],
+            isGameRunning: false,
+            lastLocation: '',
+            lastFeedEntry: [],
+            feedFilters: [],
+            wristFeed: [],
+            notyMap: [],
             devices: [],
+            overlayNotificationsToggle: false,
+            notificationTTSToggle: false,
+            notificationTTSVoice: '0',
+            hideDevicesToggle: false,
             isMinimalFeed: false,
+            notificationPosition: 'topCenter',
+            notificationTimeout: '3000',
+            notificationTheme: 'relax'
         },
         computed: {},
         methods: {},
@@ -600,6 +612,8 @@ speechSynthesis.getVoices();
                 // FIXME: 어케 복구하냐 이건
                 throw err;
             }).then((args) => {
+                this.initConfigVars();
+                this.initNotyMap();
                 this.updateLoop();
                 this.updateCpuUsageLoop();
                 this.$nextTick(function () {
@@ -612,23 +626,70 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.methods.initConfigVars = function () {
+        this.notificationTTSToggle = configRepository.getBool('VRCX_notificationTTS');
+        this.notificationTTSVoice = configRepository.getString('VRCX_notificationTTSVoice');
+        this.overlayNotificationsToggle = configRepository.getBool('VRCX_overlayNotifications');
+        this.hidePrivateFromFeed = configRepository.getBool('VRCX_hidePrivateFromFeed');
+        this.hideDevicesToggle = configRepository.getBool('VRCX_hideDevicesFromFeed');
+        this.isMinimalFeed = configRepository.getBool('VRCX_minimalFeed');
+        this.feedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));
+        this.notificationPosition = configRepository.getString('VRCX_notificationPosition');
+        this.notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
+        if (configRepository.getBool('isDarkMode')) {
+            this.notificationTheme = 'sunset';
+        } else {
+            this.notificationTheme = 'relax';
+        }
+    };
+
+    $app.methods.initNotyMap = function () {
+        var feeds = sharedRepository.getArray('feeds');
+        if (feeds === null) {
+            return;
+        }
+        var filter = this.feedFilters.noty;
+        var filtered = [];
+        feeds.forEach((feed) => {
+            if (filter[feed.type]) {
+                if ((filter[feed.type] !== 'Off') &&
+                    ((filter[feed.type] === 'Everyone') || (filter[feed.type] === 'On') ||
+                    ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
+                    ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
+                    var displayName = '';
+                    if (feed.data) {
+                        displayName = feed.data;
+                    } else if (feed.displayName) {
+                        displayName = feed.displayName;
+                    } else if (feed.senderUsername) {
+                        displayName = feed.senderUsername;
+                    }
+                    if ((displayName) && (!this.notyMap[displayName]) ||
+                        (this.notyMap[displayName] < feed.created_at)) {
+                        this.notyMap[displayName] = feed.created_at;
+                    }
+                }
+            }
+        });
+    };
+
     $app.methods.updateLoop = async function () {
         try {
             this.currentTime = new Date().toJSON();
             this.currentUserStatus = sharedRepository.getString('current_user_status');
             this.isGameRunning = sharedRepository.getBool('is_game_running');
-            if (configRepository.getBool('VRCX_hideDevicesFromFeed') === false) {
+            this.lastLocation = sharedRepository.getString('last_location');
+            if (!this.hideDevicesToggle) {
                 AppApi.GetVRDevices().then((devices) => {
                     devices.forEach((device) => {
                         device[2] = parseInt(device[2], 10);
                     });
                     this.devices = devices;
                 });
-            }
-            else {
+            } else {
                 this.devices = '';
             }
-            await this.updateSharedFeed();
+            await this.updateSharedFeeds();
         } catch (err) {
             console.error(err);
         }
@@ -645,185 +706,228 @@ speechSynthesis.getVoices();
         setTimeout(() => this.updateCpuUsageLoop(), 1000);
     };
 
-    $app.methods.updateSharedFeed = async function () {
-        // TODO: block mute hideAvatar unfriend
-        this.isMinimalFeed = configRepository.getBool('VRCX_minimalFeed');
-        var notificationPosition = configRepository.getString('VRCX_notificationPosition');
-        var notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
-        var notificationJoinLeaveFilter = configRepository.getString('VRCX_notificationJoinLeaveFilter');
-        var notificationOnlineOfflineFilter = configRepository.getString('VRCX_notificationOnlineOfflineFilter');
-        var theme = 'relax';
-        if (configRepository.getBool('isDarkMode') === true) {
-            theme = 'sunset';
-        }
-
+    $app.methods.updateSharedFeeds = async function () {
         var feeds = sharedRepository.getArray('feeds');
         if (feeds === null) {
             return;
         }
-
-        var _feeds = this.feeds;
-        this.feeds = feeds;
-
-        if ((this.appType === '2') && this.isGameRunning) {
-            var map = {};
-            _feeds.forEach((feed) => {
-                if (feed.type === 'OnPlayerJoined' ||
-                    feed.type === 'OnPlayerLeft') {
-                    if (!map[feed.data] ||
-                        map[feed.data] < feed.created_at) {
-                        map[feed.data] = feed.created_at;
-                    }
-                } else if (feed.type === 'Online' ||
-                    feed.type === 'Offline') {
-                    if (!map[feed.displayName] ||
-                        map[feed.displayName] < feed.created_at) {
-                        map[feed.displayName] = feed.created_at;
-                    }
-                } else if (feed.type === 'invite' ||
-                    feed.type === 'requestInvite' ||
-                    feed.type === 'friendRequest') {
-                    if (!map[feed.senderUsername] ||
-                        map[feed.senderUsername] < feed.created_at) {
-                        map[feed.senderUsername] = feed.created_at;
-                    }
-                } else if (feed.type === 'Friend' ||
-                    feed.type === 'Unfriend') {
-                    if (!map[feed.displayName] ||
-                        map[feed.displayName] < feed.created_at) {
-                        map[feed.displayName] = feed.created_at;
-                    }
-                }
-            });
-            // disable notification on busy
-            if (this.currentUserStatus === 'busy') {
-                return;
-            }
-            var notys = [];
-            this.feeds.forEach((feed) => {
-                if (((notificationOnlineOfflineFilter === "Friends") && (feed.isFriend)) ||
-                    ((notificationOnlineOfflineFilter === "VIP") && (feed.isFavorite))) {
-                    if (feed.type === 'Online' ||
-                        feed.type === 'Offline') {
-                        if (!map[feed.displayName] ||
-                            map[feed.displayName] < feed.created_at) {
-                            map[feed.displayName] = feed.created_at;
-                            notys.push(feed);
-                        }
-                    }
-                }
-                if ((notificationJoinLeaveFilter === "Everyone") ||
-                    ((notificationJoinLeaveFilter === "Friends") && (feed.isFriend)) ||
-                    ((notificationJoinLeaveFilter === "VIP") && (feed.isFavorite))) {
-                    if (feed.type === 'OnPlayerJoined' ||
-                        feed.type === 'OnPlayerLeft') {
-                        if (!map[feed.data] ||
-                            map[feed.data] < feed.created_at) {
-                            map[feed.data] = feed.created_at;
-                            notys.push(feed);
-                        }
-                    }
-                }
-                if (feed.type === 'invite' ||
-                    feed.type === 'requestInvite' ||
-                    feed.type === 'friendRequest') {
-                    if (!map[feed.senderUsername] ||
-                        map[feed.senderUsername] < feed.created_at) {
-                        map[feed.senderUsername] = feed.created_at;
-                        notys.push(feed);
-                    }
-                }
-                if (feed.type === 'Friend' ||
-                    feed.type === 'Unfriend') {
-                    if (!map[feed.displayName] ||
-                        map[feed.displayName] < feed.created_at) {
-                        map[feed.displayName] = feed.created_at;
-                        notys.push(feed);
-                    }
-                }
-            });
-            var bias = new Date(Date.now() - 60000).toJSON();
-            var theme = 'relax';
-            if (configRepository.getBool('isDarkMode') === true) {
-                theme = 'sunset';
-            }
-            notys.forEach((noty) => {
-                if (noty.created_at > bias) {
-                    if (configRepository.getBool('VRCX_overlayNotifications')) {
-                        var text = '';
-                        switch (noty.type) {
-                            case 'OnPlayerJoined':
-                                text = `<strong>${noty.data}</strong> has joined`;
-                                break;
-                            case 'OnPlayerLeft':
-                                text = `<strong>${noty.data}</strong> has left`;
-                                break;
-                            case 'Online':
-                                text = `<strong>${noty.displayName}</strong> has logged in`;
-                                break;
-                            case 'Offline':
-                                text = `<strong>${noty.displayName}</strong> has logged out`;
-                                break;
-                            case 'invite':
-                                text = `<strong>${noty.senderUsername}</strong> has invited you to ${noty.details.worldName}`;
-                                break;
-                            case 'requestInvite':
-                                text = `<strong>${noty.senderUsername}</strong> has requested an invite`;
-                                break;
-                            case 'friendRequest':
-                                text = `<strong>${noty.senderUsername}</strong> has sent you a friend request`;
-                                break;
-                            case 'Friend':
-                                text = `<strong>${noty.displayName}</strong> is now your friend`;
-                                break;
-                            case 'Unfriend':
-                                text = `<strong>${noty.displayName}</strong> has unfriended you`;
-                                break;
-                        }
-                        if (text) {
-                            new Noty({
-                                type: 'alert',
-                                theme: theme,
-                                timeout: notificationTimeout,
-                                layout: notificationPosition,
-                                text: text
-                            }).show();
-                        }
-                    }
-                    if (configRepository.getBool('VRCX_notificationTTS')) {
-                        switch (noty.type) {
-                            case 'OnPlayerJoined':
-                                this.speak(`${noty.data} has joined`);
-                                break;
-                            case 'OnPlayerLeft':
-                                this.speak(`${noty.data} has left`);
-                                break;
-                            case 'Online':
-                                this.speak(`${noty.displayName} has logged in`);
-                                break;
-                            case 'Offline':
-                                this.speak(`${noty.displayName} has logged out`);
-                                break;
-                            case 'invite':
-                                this.speak(`${noty.senderUsername} has invited you to ${noty.details.worldName}`);
-                                break;
-                            case 'requestInvite':
-                                this.speak(`${noty.senderUsername} has requested an invite`);
-                                break;
-                            case 'friendRequest':
-                                this.speak(`${noty.senderUsername} has sent you a friend request`);
-                                break;
-                            case 'Friend':
-                                this.speak(`${noty.displayName} is now your friend`);
-                                break;
-                            case 'Unfriend':
-                                this.speak(`${noty.displayName} has unfriended you`);
-                                break;
-                        }
-                    }
-                }
-            });
+        if ((this.lastFeedEntry !== undefined) &&
+            (feeds[0].created_at === this.lastFeedEntry.created_at)) {
+            return;
         }
+        this.lastFeedEntry = feeds[0];
+
+        // OnPlayerJoining
+        var bias = new Date(Date.now() - 120000).toJSON();
+        for (i = 0; i < feeds.length; i++) {
+            var ctx = feeds[i];
+            if ((ctx.created_at < bias) || (ctx.type === 'Location')) {
+                break;
+            }
+            if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation)) {
+                var joining = true;
+                for (var k = 0; k < feeds.length; k++) {
+                    var feedItem = feeds[k];
+                    if ((feedItem.type === 'OnPlayerJoined') && (feedItem.data === ctx.displayName)) {
+                        joining = false;
+                        break;
+                    }
+                    if ((feedItem.created_at < bias) || (feedItem.type === 'Location') ||
+                        ((feedItem.type === 'GPS') && (feedItem.location !== ctx.location[0]) &&
+                        (feedItem.displayName === ctx.displayName))) {
+                        break;
+                    }
+                }
+                if (joining) {
+                    var onPlayerJoining = {};
+                    onPlayerJoining.created_at = ctx.created_at;
+                    onPlayerJoining.data = ctx.displayName;
+                    onPlayerJoining.isFavorite = ctx.isFavorite;
+                    onPlayerJoining.isFriend = ctx.isFriend;
+                    onPlayerJoining.type = 'OnPlayerJoining';
+                    feeds.splice(i, 0, onPlayerJoining);
+                    i++;
+                }
+            }
+        }
+
+        if (this.hidePrivateFromFeed) {
+            for (var i = 0; i < feeds.length; i++) {
+                var feed = feeds[i];
+                if ((feed.type === 'GPS') && (feed.location[0] === 'private')) {
+                    feeds.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+
+        if (this.appType === '1') {
+            this.updateSharedFeedWrist(feeds);
+        }
+        if (this.appType === '2') {
+            this.updateSharedFeedNoty(feeds);
+        }
+    };
+
+    $app.methods.updateSharedFeedWrist = async function (feeds) {
+        var filter = this.feedFilters.wrist;
+        var filtered = [];
+        feeds.forEach((feed) => {
+            if (filter[feed.type]) {
+                if ((filter[feed.type] !== 'Off') &&
+                    ((filter[feed.type] === 'Everyone') || (filter[feed.type] === 'On') ||
+                    ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
+                    ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
+                    filtered.push(feed);
+                }
+            } else {
+                console.error(`missing feed filter for ${feed.type}`);
+                filtered.push(feed);
+            }
+        });
+        this.wristFeed = filtered;
+    };
+
+    $app.methods.updateSharedFeedNoty = async function (feeds) {
+        var filter = this.feedFilters.noty;
+        var filtered = [];
+        feeds.forEach((feed) => {
+            if (filter[feed.type]) {
+                if ((filter[feed.type] !== 'Off') &&
+                    ((filter[feed.type] === 'Everyone') || (filter[feed.type] === 'On') ||
+                    ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
+                    ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
+                    filtered.push(feed);
+                }
+            }
+        });
+        var notyToPlay = [];
+        filtered.forEach((feed) => {
+            var displayName = '';
+            if (feed.displayName) {
+                displayName = feed.displayName;
+            } else if (feed.senderUsername) {
+                displayName = feed.senderUsername;
+            } else if (feed.data) {
+                displayName = feed.data;
+            } else {
+                console.error('missing displayName');
+            }
+            if ((displayName) && (!this.notyMap[displayName]) ||
+                (this.notyMap[displayName] < feed.created_at)) {
+                this.notyMap[displayName] = feed.created_at;
+                notyToPlay.push(feed);
+            }
+        });
+
+        // disable notifications when busy or game isn't running
+        if ((this.currentUserStatus === 'busy') || (!this.isGameRunning)) {
+            return;
+        }
+        notyToPlay.forEach(async (noty) => {
+            if (this.overlayNotificationsToggle) {
+                var text = '';
+                switch (noty.type) {
+                    case 'OnPlayerJoined':
+                        text = `<strong>${noty.data}</strong> has joined`;
+                        break;
+                    case 'OnPlayerLeft':
+                        text = `<strong>${noty.data}</strong> has left`;
+                        break;
+                    case 'OnPlayerJoining':
+                        text = `<strong>${noty.data}</strong> is joining`;
+                        break;
+                    case 'GPS':
+                        text = '<strong>' + noty.displayName + '</strong> is in ' + await this.displayLocation(noty.location[0]);
+                        break;
+                    case 'Online':
+                        text = `<strong>${noty.displayName}</strong> has logged in`;
+                        break;
+                    case 'Offline':
+                        text = `<strong>${noty.displayName}</strong> has logged out`;
+                        break;
+                    case 'Status':
+                        text = `<strong>${noty.displayName}</strong> status is now <i>${noty.status[0].status}</i> ${noty.status[0].statusDescription}`;
+                        break;
+                    case 'invite':
+                        text = `<strong>${noty.senderUsername}</strong> has invited you to ${noty.details.worldName}`;
+                        break;
+                    case 'requestInvite':
+                        text = `<strong>${noty.senderUsername}</strong> has requested an invite`;
+                        break;
+                    case 'friendRequest':
+                        text = `<strong>${noty.senderUsername}</strong> has sent you a friend request`;
+                        break;
+                    case 'Friend':
+                        text = `<strong>${noty.displayName}</strong> is now your friend`;
+                        break;
+                    case 'Unfriend':
+                        text = `<strong>${noty.displayName}</strong> has unfriended you`;
+                        break;
+                    case 'TrustLevel':
+                        text = `<strong>${noty.displayName}</strong> trust level is now ${noty.trustLevel}`;
+                        break;
+                    case 'DisplayName':
+                        text = `<strong>${noty.previousDisplayName}</strong> changed their name to ${noty.displayName}`;
+                        break;
+                }
+                if (text) {
+                    new Noty({
+                        type: 'alert',
+                        theme: this.notificationTheme,
+                        timeout: this.notificationTimeout,
+                        layout: this.notificationPosition,
+                        text: text
+                    }).show();
+                }
+            }
+            if (this.notificationTTSToggle) {
+                switch (noty.type) {
+                    case 'OnPlayerJoined':
+                        this.speak(`${noty.data} has joined`);
+                        break;
+                    case 'OnPlayerLeft':
+                        this.speak(`${noty.data} has left`);
+                        break;
+                    case 'OnPlayerJoining':
+                        this.speak(`${noty.data} is joining`);
+                        break;
+                    case 'GPS':
+                        this.speak(noty.displayName + ' is in ' + await this.displayLocation(noty.location[0]));
+                        break;
+                    case 'Online':
+                        this.speak(`${noty.displayName} has logged in`);
+                        break;
+                    case 'Offline':
+                        this.speak(`${noty.displayName} has logged out`);
+                        break;
+                    case 'Status':
+                        this.speak(`${noty.displayName} status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`);
+                        break;
+                    case 'invite':
+                        this.speak(`${noty.senderUsername} has invited you to ${noty.details.worldName}`);
+                        break;
+                    case 'requestInvite':
+                        this.speak(`${noty.senderUsername} has requested an invite`);
+                        break;
+                    case 'friendRequest':
+                        this.speak(`${noty.senderUsername} has sent you a friend request`);
+                        break;
+                    case 'Friend':
+                        this.speak(`${noty.displayName} is now your friend`);
+                        break;
+                    case 'Unfriend':
+                        this.speak(`${noty.displayName} has unfriended you`);
+                        break;
+                    case 'TrustLevel':
+                        this.speak(`${noty.displayName} trust level is now ${noty.trustLevel}`);
+                        break;
+                    case 'DisplayName':
+                        this.speak(`${noty.previousDisplayName} changed their name to ${noty.displayName}`);
+                        break;
+                }
+            }
+        });
     };
 
     $app.methods.userStatusClass = function (user) {
@@ -842,10 +946,40 @@ speechSynthesis.getVoices();
         return style;
     };
 
+    $app.methods.displayLocation = async function (location) {
+        var text = '';
+        var L = API.parseLocation(location);
+        if (L.isOffline) {
+            text = 'Offline';
+        } else if (L.isPrivate) {
+            text = 'Private';
+        } else if (L.worldId) {
+            var ref = API.cachedWorlds.get(L.worldId);
+            if (ref === undefined) {
+                await API.getWorld({
+                    worldId: L.worldId
+                }).then((args) => {
+                    if (L.tag === location) {
+                        if (L.instanceId) {
+                            text = `${args.json.name} ${L.accessType}`;
+                        } else {
+                            text = args.json.name;
+                        }
+                    }
+                });
+            } else if (L.instanceId) {
+                text = `${ref.name} ${L.accessType}`;
+            } else {
+                text = ref.name;
+            }
+        }
+        return text;
+    };
+
     $app.methods.speak = function (text) {
         var tts = new SpeechSynthesisUtterance();
         var voices = speechSynthesis.getVoices();
-        var voiceIndex = configRepository.getString('VRCX_notificationTTSVoice');
+        var voiceIndex = this.notificationTTSVoice;
         tts.voice = voices[voiceIndex];
         tts.text = text;
         speechSynthesis.speak(tts);

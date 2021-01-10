@@ -515,18 +515,18 @@ html
                         span.name VRCPlus Profile Icons
                         el-switch(v-model="displayVRCPlusIconsAsAvatar")
                 div.options-container
-                    span.header Friends Sort Option
+                    span.header Side Pannel Sorting Options
                     div.options-container-item
                         span.name VIP
                         el-switch(v-model="orderFriendsGroup0" inactive-text="by name" active-text="by state")
                     div.options-container-item
-                        span.name ONLINE
+                        span.name Online
                         el-switch(v-model="orderFriendsGroup1" inactive-text="by name" active-text="by state")
                     div.options-container-item
-                        span.name ACTIVE
+                        span.name Active
                         el-switch(v-model="orderFriendsGroup2" inactive-text="by name" active-text="by state")
                     div.options-container-item
-                        span.name OFFLINE
+                        span.name Offline
                         el-switch(v-model="orderFriendsGroup3" inactive-text="by name" active-text="by state")
                 div.options-container
                     span.header Discord Presence
@@ -561,9 +561,6 @@ html
                         span.name Hide VR Devices
                         el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR")
                     div.options-container-item
-                        span.name Hide Online/Offline
-                        el-switch(v-model="hideLoginsFromFeed" :disabled="!openVR")
-                    div.options-container-item
                         span.name Hide Private Worlds
                         el-switch(v-model="hidePrivateFromFeed" :disabled="!openVR")
                     div.options-container-item
@@ -582,23 +579,11 @@ html
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")          
                     div.options-container-item
+                        el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog()" :disabled="!openVR") Wrist Feed Filters
+                        el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()" :disabled="!overlayNotifications || !openVR") Notification Filters
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()" :disabled="!overlayNotifications || !openVR") Notification Timeout
                         el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog()" :disabled="!overlayNotifications || !openVR") Notification Position
-                    div.options-container-item
-                        span Join/Leave Notifications
-                        br
-                        el-radio-group(v-model="notificationJoinLeaveFilter" size="mini" @change="changeNotificationJoinLeaveFilter" :disabled="!overlayNotifications && !notificationTTS || !openVR")
-                            el-radio(label="VIP" v-model="notificationJoinLeaveFilter") VIP
-                            el-radio(label="Friends" v-model="notificationJoinLeaveFilter") Friends
-                            el-radio(label="Everyone" v-model="notificationJoinLeaveFilter") Everyone
-                            el-radio(label="Off" v-model="notificationJoinLeaveFilter") Off
-                    div.options-container-item
-                        span Online/Offline Notifications
-                        br
-                        el-radio-group(v-model="notificationOnlineOfflineFilter" size="mini" @change="changeNotificationOnlineOfflineFilter" :disabled="!overlayNotifications && !notificationTTS || !openVR")
-                            el-radio(label="VIP" v-model="notificationOnlineOfflineFilter") VIP
-                            el-radio(label="Friends" v-model="notificationOnlineOfflineFilter") Friends
-                            el-radio(label="Off" v-model="notificationOnlineOfflineFilter") Off
                 div.options-container
                     span.header Application
                     div.options-container-item
@@ -1206,6 +1191,107 @@ html
                     div(style="display:flex")
                         el-button(type="primary" size="small" style="margin-left:auto" @click="notificationPositionDialog.visible = false") OK
 
+            //- dialog: Noty feed filters
+            el-dialog.x-dialog(ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="400px")
+                div.toggle-list
+                    div
+                        span.toggle-name OnPlayerJoining
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupOnPlayerJoining" v-model="sharedFeedFilters.noty.OnPlayerJoining" class="toggle-switch")
+                    div
+                        span.toggle-name OnPlayerJoined
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGroupOnPlayerJoined" v-model="sharedFeedFilters.noty.OnPlayerJoined" class="toggle-switch")
+                    div
+                        span.toggle-name OnPlayerLeft
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGroupOnPlayerLeft" v-model="sharedFeedFilters.noty.OnPlayerLeft" class="toggle-switch")
+                    div
+                        span.toggle-name Online
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupOnline" v-model="sharedFeedFilters.noty.Online" class="toggle-switch")
+                    div
+                        span.toggle-name Offline
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupOffline" v-model="sharedFeedFilters.noty.Offline" class="toggle-switch")
+                    div
+                        span.toggle-name GPS
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupGPS" v-model="sharedFeedFilters.noty.GPS" class="toggle-switch")
+                    div
+                        span.toggle-name Status
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupStatus" v-model="sharedFeedFilters.noty.Status" class="toggle-switch")
+                    div
+                        span.toggle-name Invite
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupinvite" v-model="sharedFeedFilters.noty.invite" class="toggle-switch")
+                    div
+                        span.toggle-name Request Invite
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGrouprequestInvite" v-model="sharedFeedFilters.noty.requestInvite" class="toggle-switch")
+                    div
+                        span.toggle-name Friend Request
+                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestfriendRequest" v-model="sharedFeedFilters.noty.friendRequest" class="toggle-switch")
+                    div
+                        span.toggle-name New Friend
+                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestFriend" v-model="sharedFeedFilters.noty.Friend" class="toggle-switch")
+                    div
+                        span.toggle-name Unfriend
+                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestUnfriend" v-model="sharedFeedFilters.noty.Unfriend" class="toggle-switch")
+                    div
+                        span.toggle-name DisplayName
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGrouprequestDisplayName" v-model="sharedFeedFilters.noty.DisplayName" class="toggle-switch")
+                    div
+                        span.toggle-name TrustLevel
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGrouprequestTrustLevel" v-model="sharedFeedFilters.noty.TrustLevel" class="toggle-switch")
+                template(#footer)
+                    el-button(type="small" @click="cancelSharedFeedFilters") Cancel
+                    el-button(type="primary" size="small" style="margin-left:10px" @click="saveSharedFeedFilters") Save
+                    
+            //- dialog: wrist feed filters
+            el-dialog.x-dialog(ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="400px")
+                div.toggle-list
+                    div
+                        span.toggle-name Self Location
+                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGroupLocation" v-model="sharedFeedFilters.wrist.Location" class="toggle-switch")
+                    div
+                        span.toggle-name OnPlayerJoining
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupOnPlayerJoining" v-model="sharedFeedFilters.wrist.OnPlayerJoining" class="toggle-switch")
+                    div
+                        span.toggle-name OnPlayerJoined
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGroupOnPlayerJoined" v-model="sharedFeedFilters.wrist.OnPlayerJoined" class="toggle-switch")
+                    div
+                        span.toggle-name OnPlayerLeft
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGroupOnPlayerLeft" v-model="sharedFeedFilters.wrist.OnPlayerLeft" class="toggle-switch")
+                    div
+                        span.toggle-name Online
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupOnline" v-model="sharedFeedFilters.wrist.Online" class="toggle-switch")
+                    div
+                        span.toggle-name Offline
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupOffline" v-model="sharedFeedFilters.wrist.Offline" class="toggle-switch")
+                    div
+                        span.toggle-name GPS
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupGPS" v-model="sharedFeedFilters.wrist.GPS" class="toggle-switch")
+                    div
+                        span.toggle-name Status
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupStatus" v-model="sharedFeedFilters.wrist.Status" class="toggle-switch")
+                    div
+                        span.toggle-name Invite
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupinvite" v-model="sharedFeedFilters.wrist.invite" class="toggle-switch")
+                    div
+                        span.toggle-name Request Invite
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGrouprequestInvite" v-model="sharedFeedFilters.wrist.requestInvite" class="toggle-switch")
+                    div
+                        span.toggle-name Friend Request
+                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestfriendRequest" v-model="sharedFeedFilters.wrist.friendRequest" class="toggle-switch")
+                    div
+                        span.toggle-name New Friend
+                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestFriend" v-model="sharedFeedFilters.wrist.Friend" class="toggle-switch")
+                    div
+                        span.toggle-name Unfriend
+                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestUnfriend" v-model="sharedFeedFilters.wrist.Unfriend" class="toggle-switch")
+                    div
+                        span.toggle-name DisplayName
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGrouprequestDisplayName" v-model="sharedFeedFilters.wrist.DisplayName" class="toggle-switch")
+                    div
+                        span.toggle-name TrustLevel
+                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGrouprequestTrustLevel" v-model="sharedFeedFilters.wrist.TrustLevel" class="toggle-switch")
+                template(#footer)
+                    el-button(type="small" @click="cancelSharedFeedFilters") Cancel
+                    el-button(type="primary" size="small" @click="saveSharedFeedFilters") Save
+
             //- dialog: open source software notice
             el-dialog.x-dialog(:visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
                 div(style="height:350px;overflow:hidden scroll;word-break:break-all")
@@ -1469,6 +1555,30 @@ html
                             The MIT License (MIT)
                             
                             Copyright (c) 2016 Awe
+                            
+                            Permission is hereby granted, free of charge, to any person obtaining a copy
+                            of this software and associated documentation files (the "Software"), to deal
+                            in the Software without restriction, including without limitation the rights
+                            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                            copies of the Software, and to permit persons to whom the Software is
+                            furnished to do so, subject to the following conditions:
+                            
+                            The above copyright notice and this permission notice shall be included in all
+                            copies or substantial portions of the Software.
+                            
+                            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                            SOFTWARE.
+                    div(style="margin-top:15px")
+                        p(style="font-weight:bold") vuejs-toggle-switch
+                        pre(style="font-size:12px;white-space:pre-line").
+                            MIT License
+                            
+                            Copyright (c) 2018 Lars-Martin Hejll
                             
                             Permission is hereby granted, free of charge, to any person obtaining a copy
                             of this software and associated documentation files (the "Software"), to deal

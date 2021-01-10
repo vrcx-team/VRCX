@@ -567,3 +567,19 @@ i.x-user-status.busy {
     display: inline-block;
     min-width: 175px;
 }
+
+.toggle-switch {
+    display: inline-block;
+}
+
+.toggle-list {
+    font-size: 12px;
+}
+
+.toggle-list .toggle-name {
+    display: inline-block;
+    min-width: 100px;
+    padding: 2px 5px 2px 0;
+    vertical-align: top;
+    text-align: right;
+}
