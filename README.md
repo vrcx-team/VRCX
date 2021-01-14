@@ -1,6 +1,6 @@
 # VRCX
 
-VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
+VRCX is an assistant application for VRChat that provides information about and managing friendship. This application uses the unofficial VRChat API (VRCSDK).
 
 VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
 
@@ -48,18 +48,18 @@ Screenshots
 # How to build VRCX
 
 * Get source code
-    * Download latest source code [zip](https://github.com/pypy-vrc/VRCX/archive/master.zip) or clone repo with `git clone`
+    * Download latest source code [zip](https://github.com/pypy-vrc/VRCX/archive/master.zip) or clone repo with `git clone`.
 
 * Build .NET
-    * Install [Visual Studio](https://visualstudio.microsoft.com/) if it's not already installed
-    * In Visual Studio "Open Project/Solution" and browse to the [Solution file](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file) provided inside the downloaded source code
-    * Restore [NuGet](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore#restore-packages-automatically-using-visual-studio) packages
-    * [Build](https://docs.microsoft.com/en-us/visualstudio/ide/building-and-cleaning-projects-and-solutions-in-visual-studio) Solution
+    * Install [Visual Studio](https://visualstudio.microsoft.com/) if it's not already installed.
+    * In Visual Studio "Open Project/Solution" and browse to the [Solution file](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file) provided inside the downloaded source code.
+    * Restore [NuGet](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore#restore-packages-automatically-using-visual-studio) packages.
+    * [Build](https://docs.microsoft.com/en-us/visualstudio/ide/building-and-cleaning-projects-and-solutions-in-visual-studio) Solution.
 
 * Build Node.js
-    * Download and install [Node.js](https://nodejs.org/en/download/)
-    * Run `build-node.js.cmd`
-    * Run `make-junction.cmd`
+    * Download and install [Node.js](https://nodejs.org/en/download/).
+    * Run `build-node.js.cmd`.
+    * Run `make-junction.cmd`.
 
 * Create release zip
-    * Run `make-zip.cmd` for [Bandizip](https://www.bandisoft.com/bandizip) or `make-zip-7z.cmd` for [7-Zip](https://www.7-zip.org)
+    * Run `make-zip.cmd` for [Bandizip](https://www.bandisoft.com/bandizip) or `make-zip-7z.cmd` for [7-Zip](https://www.7-zip.org).
