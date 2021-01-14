@@ -3436,7 +3436,7 @@ speechSynthesis.getVoices();
         var { data } = this.gameLogTable;
         var i = data.length;
         var j = 0;
-        while (j < 25) {
+        while (j < 30) {
             if (i <= 0) {
                 break;
             }
@@ -3466,7 +3466,7 @@ speechSynthesis.getVoices();
         var { data } = this.feedTable;
         var i = data.length;
         var j = 0;
-        while (j < 25) {
+        while (j < 30) {
             if (i <= 0) {
                 break;
             }
@@ -3515,8 +3515,8 @@ speechSynthesis.getVoices();
             }
             return 0;
         });
-        if (arr.length > 25) {
-            arr.length = 25;
+        if (arr.length > 30) {
+            arr.length = 30;
         }
         sharedRepository.setArray('feeds', arr);
     };
@@ -3835,23 +3835,16 @@ speechSynthesis.getVoices();
     $app.data.orderFriendsGroup1 = configRepository.getBool('orderFriendGroup1');
     $app.data.orderFriendsGroup2 = configRepository.getBool('orderFriendGroup2');
     $app.data.orderFriendsGroup3 = configRepository.getBool('orderFriendGroup3');
-    $app.data.displayVRCPlusIconsAsAvatar = configRepository.getBool('displayVRCPlusIconsAsAvatar');
     var saveOrderFriendGroup = function () {
         configRepository.setBool('orderFriendGroup0', this.orderFriendsGroup0);
         configRepository.setBool('orderFriendGroup1', this.orderFriendsGroup1);
         configRepository.setBool('orderFriendGroup2', this.orderFriendsGroup2);
         configRepository.setBool('orderFriendGroup3', this.orderFriendsGroup3);
-        configRepository.setBool('displayVRCPlusIconsAsAvatar', this.displayVRCPlusIconsAsAvatar);
     };
     $app.watch.orderFriendsGroup0 = saveOrderFriendGroup;
     $app.watch.orderFriendsGroup1 = saveOrderFriendGroup;
     $app.watch.orderFriendsGroup2 = saveOrderFriendGroup;
     $app.watch.orderFriendsGroup3 = saveOrderFriendGroup;
-    $app.watch.displayVRCPlusIconsAsAvatar = saveOrderFriendGroup;
-    if (configRepository.getBool('displayVRCPlusIconsAsAvatar') === null) {
-        $app.data.displayVRCPlusIconsAsAvatar = true;
-        configRepository.setBool('displayVRCPlusIconsAsAvatar', $app.data.displayVRCPlusIconsAsAvatar);
-    }
 
     $app.methods.fetchActiveFriend = function (userId) {
         this.pendingActiveFriends.add(userId);
@@ -5706,7 +5699,9 @@ speechSynthesis.getVoices();
     $app.data.hidePrivateFromFeed = configRepository.getBool('VRCX_hidePrivateFromFeed');
     $app.data.hideDevicesFromFeed = configRepository.getBool('VRCX_hideDevicesFromFeed');
     $app.data.overlayNotifications = configRepository.getBool('VRCX_overlayNotifications');
+    $app.data.desktopToast = configRepository.getBool('VRCX_desktopToast');
     $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
+    $app.data.displayVRCPlusIconsAsAvatar = configRepository.getBool('displayVRCPlusIconsAsAvatar');
     $app.data.notificationTTS = configRepository.getBool('VRCX_notificationTTS');
     $app.data.notificationTTSVoice = configRepository.getString('VRCX_notificationTTSVoice');
     $app.data.notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
@@ -5717,7 +5712,9 @@ speechSynthesis.getVoices();
         configRepository.setBool('VRCX_hidePrivateFromFeed', this.hidePrivateFromFeed);
         configRepository.setBool('VRCX_hideDevicesFromFeed', this.hideDevicesFromFeed);
         configRepository.setBool('VRCX_overlayNotifications', this.overlayNotifications);
+        configRepository.setBool('VRCX_desktopToast', this.desktopToast);
         configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
+        configRepository.setBool('displayVRCPlusIconsAsAvatar', this.displayVRCPlusIconsAsAvatar);
         AppApi.RefreshVR();
     };
     $app.data.TTSvoices = speechSynthesis.getVoices();
@@ -5735,7 +5732,9 @@ speechSynthesis.getVoices();
     $app.watch.hidePrivateFromFeed = saveOpenVROption;
     $app.watch.hideDevicesFromFeed = saveOpenVROption;
     $app.watch.overlayNotifications = saveOpenVROption;
+    $app.watch.desktopToast = saveOpenVROption;
     $app.watch.minimalFeed = saveOpenVROption;
+    $app.watch.displayVRCPlusIconsAsAvatar = saveOpenVROption;
     $app.watch.notificationTTS = saveNotificationTTS;
     $app.data.isDarkMode = configRepository.getBool('isDarkMode');
     $appDarkStyle.disabled = $app.data.isDarkMode === false;
@@ -5761,6 +5760,10 @@ speechSynthesis.getVoices();
     $app.watch.isAutoLogin = saveVRCXWindowOption;
 
     //setting defaults
+    if (configRepository.getBool('displayVRCPlusIconsAsAvatar') === null) {
+        $app.data.displayVRCPlusIconsAsAvatar = true;
+        configRepository.setBool('displayVRCPlusIconsAsAvatar', $app.data.displayVRCPlusIconsAsAvatar);
+    }
     if (!configRepository.getString('VRCX_notificationPosition')) {
         $app.data.notificationPosition = 'topCenter';
         configRepository.setString('VRCX_notificationPosition', $app.data.notificationPosition);
@@ -5906,6 +5909,17 @@ speechSynthesis.getVoices();
         }
     }
     $app.watch.isGameRunning = isGameRunningStateChange;
+
+    sharedRepository.setBool('is_Game_No_VR', false);
+    var isGameNoVRStateChange = function () {
+        sharedRepository.setBool('is_Game_No_VR', this.isGameNoVR);
+    }
+    $app.watch.isGameNoVR = isGameNoVRStateChange;
+
+    var lastLocationStateChange = function () {
+        sharedRepository.setString('last_location', $app.lastLocation);
+    }
+    $app.watch.lastLocation = lastLocationStateChange;
 
     API.$on('LOGIN', function () {
         $app.currentUserTreeData = [];

@@ -564,6 +564,113 @@ speechSynthesis.getVoices();
         });
     };
 
+    // API: User
+
+    API.cachedUsers = new Map();
+
+    API.$on('USER', function (args) {
+        args.ref = this.applyUser(args.json);
+    });
+
+    API.applyUser = function (json) {
+        var ref = this.cachedUsers.get(json.id);
+        if (ref === undefined) {
+            ref = {
+                id: '',
+                username: '',
+                displayName: '',
+                userIcon: '',
+                bio: '',
+                bioLinks: [],
+                currentAvatarImageUrl: '',
+                currentAvatarThumbnailImageUrl: '',
+                status: '',
+                statusDescription: '',
+                state: '',
+                tags: [],
+                developerType: '',
+                last_login: '',
+                last_platform: '',
+                allowAvatarCopying: false,
+                isFriend: false,
+                location: '',
+                worldId: '',
+                instanceId: '',
+                // VRCX
+                ...json
+            };
+            this.cachedUsers.set(ref.id, ref);
+        } else {
+            var props = {};
+            for (var prop in ref) {
+                if (ref[prop] !== Object(ref[prop])) {
+                    props[prop] = true;
+                }
+            }
+            var $ref = { ...ref };
+            Object.assign(ref, json);
+            for (var prop in ref) {
+                if (ref[prop] !== Object(ref[prop])) {
+                    props[prop] = true;
+                }
+            }
+            var has = false;
+            for (var prop in props) {
+                var asis = $ref[prop];
+                var tobe = ref[prop];
+                if (asis === tobe) {
+                    delete props[prop];
+                } else {
+                    has = true;
+                    props[prop] = [
+                        tobe,
+                        asis
+                    ];
+                }
+            }
+        }
+        return ref;
+    };
+
+    /*
+        params: {
+            userId: string
+        }
+    */
+    API.getUser = function (params) {
+        return this.call(`users/${params.userId}`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('USER', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            userId: string
+        }
+    */
+    API.getCachedUser = function (params) {
+        return new Promise((resolve, reject) => {
+            var ref = this.cachedUsers.get(params.userId);
+            if (ref === undefined) {
+                this.getUser(params).catch(reject).then(resolve);
+            } else {
+                resolve({
+                    cache: true,
+                    json: ref,
+                    params,
+                    ref
+                });
+            }
+        });
+    };
+
     var $app = {
         data: {
             API,
@@ -574,17 +681,20 @@ speechSynthesis.getVoices();
             currentUserStatus: null,
             cpuUsage: 0,
             isGameRunning: false,
+            isGameNoVR: false,
             lastLocation: '',
             lastFeedEntry: [],
             feedFilters: [],
             wristFeed: [],
             notyMap: [],
             devices: [],
+            desktopToastToggle: false,
             overlayNotificationsToggle: false,
             notificationTTSToggle: false,
             notificationTTSVoice: '0',
             hideDevicesToggle: false,
             isMinimalFeed: false,
+            displayVRCPlusIconsAsAvatar: false,
             notificationPosition: 'topCenter',
             notificationTimeout: '3000',
             notificationTheme: 'relax'
@@ -613,14 +723,13 @@ speechSynthesis.getVoices();
                 throw err;
             }).then((args) => {
                 this.initConfigVars();
-                this.initNotyMap();
+                if (this.appType === '1') {
+                    this.updateCpuUsageLoop();
+                }
+                if (this.appType === '2') {
+                    this.initNotyMap();
+                }
                 this.updateLoop();
-                this.updateCpuUsageLoop();
-                this.$nextTick(function () {
-                    if (this.appType === '1') {
-                        this.$el.style.display = '';
-                    }
-                });
                 return args;
             });
         }
@@ -630,9 +739,11 @@ speechSynthesis.getVoices();
         this.notificationTTSToggle = configRepository.getBool('VRCX_notificationTTS');
         this.notificationTTSVoice = configRepository.getString('VRCX_notificationTTSVoice');
         this.overlayNotificationsToggle = configRepository.getBool('VRCX_overlayNotifications');
+        this.desktopToastToggle = configRepository.getBool('VRCX_desktopToast');
         this.hidePrivateFromFeed = configRepository.getBool('VRCX_hidePrivateFromFeed');
         this.hideDevicesToggle = configRepository.getBool('VRCX_hideDevicesFromFeed');
         this.isMinimalFeed = configRepository.getBool('VRCX_minimalFeed');
+        this.displayVRCPlusIconsAsAvatar = configRepository.getBool('displayVRCPlusIconsAsAvatar');
         this.feedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));
         this.notificationPosition = configRepository.getString('VRCX_notificationPosition');
         this.notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
@@ -678,8 +789,9 @@ speechSynthesis.getVoices();
             this.currentTime = new Date().toJSON();
             this.currentUserStatus = sharedRepository.getString('current_user_status');
             this.isGameRunning = sharedRepository.getBool('is_game_running');
+            this.isGameNoVR = sharedRepository.getBool('is_Game_No_VR');
             this.lastLocation = sharedRepository.getString('last_location');
-            if (!this.hideDevicesToggle) {
+            if ((!this.hideDevicesToggle) && (this.appType === '1')) {
                 AppApi.GetVRDevices().then((devices) => {
                     devices.forEach((device) => {
                         device[2] = parseInt(device[2], 10);
@@ -824,8 +936,14 @@ speechSynthesis.getVoices();
         if ((this.currentUserStatus === 'busy') || (!this.isGameRunning)) {
             return;
         }
-        notyToPlay.forEach(async (noty) => {
-            if (this.overlayNotificationsToggle) {
+        var bias = new Date(Date.now() - 60000).toJSON();
+        var noty = {};
+        for (var i = 0; i < notyToPlay.length; i++) {
+            noty = notyToPlay[i];
+            if (noty.created_at < bias) {
+                continue;
+            }
+            if ((this.overlayNotificationsToggle) && (!this.isGameNoVR)) {
                 var text = '';
                 switch (noty.type) {
                     case 'OnPlayerJoined':
@@ -927,7 +1045,66 @@ speechSynthesis.getVoices();
                         break;
                 }
             }
-        });
+            if ((this.desktopToastToggle) && (this.isGameNoVR)) {
+                var imageURL = '';
+                if (noty.userId) {
+                    await API.getCachedUser({
+                            userId: noty.userId
+                        }).catch((err) => {
+                            throw err;
+                        }).then((args) => {
+                            imageURL = args.json.currentAvatarThumbnailImageUrl;
+                            if ((this.displayVRCPlusIconsAsAvatar) && (args.json.userIcon)) {
+                                imageURL = args.json.userIcon;
+                            }
+                    });
+                }
+                switch (noty.type) {
+                    case 'OnPlayerJoined':
+                        AppApi.DesktopNotification(noty.data, 'has joined', imageURL);
+                        break;
+                    case 'OnPlayerLeft':
+                        AppApi.DesktopNotification(noty.data, 'has left', imageURL);
+                        break;
+                    case 'OnPlayerJoining':
+                        AppApi.DesktopNotification(noty.data, 'is joining', imageURL);
+                        break;
+                    case 'GPS':
+                        AppApi.DesktopNotification(noty.displayName, 'is in ' + await this.displayLocation(noty.location[0]), imageURL);
+                        break;
+                    case 'Online':
+                        AppApi.DesktopNotification(noty.displayName, 'has logged in', imageURL);
+                        break;
+                    case 'Offline':
+                        AppApi.DesktopNotification(noty.displayName, 'has logged out', imageURL);
+                        break;
+                    case 'Status':
+                        AppApi.DesktopNotification(noty.displayName, `status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, imageURL);
+                        break;
+                    case 'invite':
+                        AppApi.DesktopNotification(noty.senderUsername, `has invited you to ${noty.details.worldName}`, imageURL);
+                        break;
+                    case 'requestInvite':
+                        AppApi.DesktopNotification(noty.senderUsername, 'has requested an invite', imageURL);
+                        break;
+                    case 'friendRequest':
+                        AppApi.DesktopNotification(noty.senderUsername, 'has sent you a friend request', imageURL);
+                        break;
+                    case 'Friend':
+                        AppApi.DesktopNotification(noty.displayName, 'has sent you a friend request', imageURL);
+                        break;
+                    case 'Unfriend':
+                        AppApi.DesktopNotification(noty.displayName, 'has unfriended you', imageURL);
+                        break;
+                    case 'TrustLevel':
+                        AppApi.DesktopNotification(noty.displayName, `trust level is now ${noty.trustLevel}`, imageURL);
+                        break;
+                    case 'DisplayName':
+                        AppApi.DesktopNotification(noty.previousDisplayName, `changed their name to ${noty.displayName}`, imageURL);
+                        break;
+                }
+            }
+        }
     };
 
     $app.methods.userStatusClass = function (user) {

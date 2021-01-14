@@ -11,6 +11,10 @@ using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.IO;
+using System.Net;
+using Windows.UI.Notifications;
+using Windows.Data.Xml.Dom;
 
 namespace VRCX
 {
@@ -177,6 +181,30 @@ namespace VRCX
         public float CpuUsage()
         {
             return CpuMonitor.Instance.CpuUsage;
+        }
+
+        public void DesktopNotification(string BoldText, string Text, string ImageURL = "")
+        {
+            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
+            XmlNodeList stringElements = toastXml.GetElementsByTagName("text");
+            String imagePath = Path.Combine(Program.BaseDirectory, "cache\\toast");
+            if (ImageURL == String.Empty)
+            {
+                imagePath = Path.Combine(Program.BaseDirectory, "VRCX.ico");
+            }
+            else
+            {
+                using (var client = new WebClient())
+                {
+                    client.DownloadFile(ImageURL, imagePath);
+                }
+            }
+            stringElements[0].AppendChild(toastXml.CreateTextNode(BoldText));
+            stringElements[1].AppendChild(toastXml.CreateTextNode(Text));
+            XmlNodeList imageElements = toastXml.GetElementsByTagName("image");
+            imageElements[0].Attributes.GetNamedItem("src").NodeValue = imagePath;
+            ToastNotification toast = new ToastNotification(toastXml);
+            ToastNotificationManager.CreateToastNotifier("VRCX").Show(toast);
         }
 
         public void SetStartup(bool enabled)
