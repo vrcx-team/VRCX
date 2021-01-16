@@ -741,6 +741,7 @@ speechSynthesis.getVoices();
         this.overlayNotificationsToggle = configRepository.getBool('VRCX_overlayNotifications');
         this.desktopToastToggle = configRepository.getBool('VRCX_desktopToast');
         this.hidePrivateFromFeed = configRepository.getBool('VRCX_hidePrivateFromFeed');
+        this.hideOnPlayerJoined = configRepository.getBool('VRCX_hideOnPlayerJoined');
         this.hideDevicesToggle = configRepository.getBool('VRCX_hideDevicesFromFeed');
         this.isMinimalFeed = configRepository.getBool('VRCX_minimalFeed');
         this.displayVRCPlusIconsAsAvatar = configRepository.getBool('displayVRCPlusIconsAsAvatar');
@@ -840,7 +841,8 @@ speechSynthesis.getVoices();
                 var joining = true;
                 for (var k = 0; k < feeds.length; k++) {
                     var feedItem = feeds[k];
-                    if ((feedItem.type === 'OnPlayerJoined') && (feedItem.data === ctx.displayName)) {
+                    if (((feedItem.type === 'OnPlayerJoined') && (feedItem.data === ctx.displayName)) ||
+                        ((feedItem.type === 'Friend') && (feedItem.displayName === ctx.displayName))) {
                         joining = false;
                         break;
                     }
@@ -863,6 +865,26 @@ speechSynthesis.getVoices();
             }
         }
 
+        //on Location change remove OnPlayerJoined
+        if (this.hideOnPlayerJoined) {
+            for (i = 0; i < feeds.length; i++) {
+                var ctx = feeds[i];
+                if (ctx.type === 'Location') {
+                    var bias = new Date(Date.parse(ctx.created_at) + 10000).toJSON();
+                    for (var k = i - 1; k > 0; k--) {
+                        var feedItem = feeds[k];
+                        if (feedItem.type === 'OnPlayerJoined') {
+                            feeds.splice(k, 1);
+                            i--;
+                        }
+                        if ((feedItem.created_at > bias) || (feedItem.type === 'Location')) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         if (this.hidePrivateFromFeed) {
             for (var i = 0; i < feeds.length; i++) {
                 var feed = feeds[i];
@@ -873,6 +895,7 @@ speechSynthesis.getVoices();
             }
         }
 
+        feeds.splice(25);
         if (this.appType === '1') {
             this.updateSharedFeedWrist(feeds);
         }
