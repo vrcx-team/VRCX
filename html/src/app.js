@@ -2124,6 +2124,7 @@ speechSynthesis.getVoices();
     API.$on('LOGIN', function () {
         this.cachedPlayerModerations.clear();
         this.isPlayerModerationsLoading = false;
+        this.refreshPlayerModerations();
     });
 
     API.$on('PLAYER-MODERATION', function (args) {
@@ -2229,6 +2230,11 @@ speechSynthesis.getVoices();
             this.isPlayerModerationsLoading = false;
         }).then(() => {
             this.deleteExpiredPlayerModerations();
+            if (($app.playerModerationTable.data.length !== $app.playerModerationTable.lastRunLength) &&
+                ($app.playerModerationTable.lastRunLength > 0)) {
+                $app.notifyMenu('moderation');
+            }
+            $app.playerModerationTable.lastRunLength = $app.playerModerationTable.data.length;
         });
     };
 
@@ -3411,6 +3417,11 @@ speechSynthesis.getVoices();
                     API.getCurrentUser().catch((err1) => {
                         throw err1;
                     });
+                    if (this.isGameRunning) {
+                        API.refreshPlayerModerations().catch((err1) => {
+                            throw err1;
+                        });
+                    }
                 }
                 this.checkActiveFriends();
                 AppApi.CheckGameRunning().then(([isGameRunning, isGameNoVR]) => {
@@ -3507,6 +3518,25 @@ speechSynthesis.getVoices();
                     ...ctx,
                     isFriend: this.friends.has(ctx.userId),
                     isFavorite: API.cachedFavoritesByObjectId.has(ctx.userId)
+                });
+                ++j;
+            }
+        }
+        var { data } = this.playerModerationTable;
+        var i = data.length;
+        var j = 0;
+        while (j < 10) {
+            if (i <= 0) {
+                break;
+            }
+            var ctx = data[--i];
+            // showAvatar, hideAvatar, block, mute, unmute
+            if (ctx.sourceUserId !== API.currentUser.id) {
+                arr.push({
+                    ...ctx,
+                    created_at: ctx.created,
+                    isFriend: this.friends.has(ctx.sourceUserId),
+                    isFavorite: API.cachedFavoritesByObjectId.has(ctx.sourceUserId)
                 });
                 ++j;
             }
@@ -4634,12 +4664,10 @@ speechSynthesis.getVoices();
             if (API.isLoggedIn === true) {
                 await this.updateGameLog();
                 this.sweepGameLog();
-
-                if (this.gameLogTable.data.length > this.gameLogTable.lastRunLength) {
+                if (this.gameLogTable.data.length !== this.gameLogTable.lastRunLength) {
                     this.notifyMenu('gameLog');
                 }
                 this.gameLogTable.lastRunLength = this.gameLogTable.data.length;
-
                 this.updateSharedFeed();
             }
         } catch (err) {
@@ -5475,6 +5503,7 @@ speechSynthesis.getVoices();
 
     $app.data.playerModerationTable = {
         data: [],
+        lastRunLength: 0,
         filters: [
             {
                 prop: 'type',
@@ -5530,7 +5559,6 @@ speechSynthesis.getVoices();
         }
         if (ref.$isDeleted === false) {
             $app.playerModerationTable.data.push(ref);
-            $app.notifyMenu('moderation');
         }
     });
 
@@ -5801,6 +5829,11 @@ speechSynthesis.getVoices();
         sharedFeedFilters.noty.Unfriend = 'On';
         sharedFeedFilters.noty.DisplayName = 'VIP';
         sharedFeedFilters.noty.TrustLevel = 'VIP';
+        sharedFeedFilters.noty.showAvatar = 'On';
+        sharedFeedFilters.noty.hideAvatar = 'On';
+        sharedFeedFilters.noty.block = 'On';
+        sharedFeedFilters.noty.mute = 'On';
+        sharedFeedFilters.noty.unmute = 'On';
         sharedFeedFilters.wrist.Location = 'On';
         sharedFeedFilters.wrist.OnPlayerJoined = 'Everyone';
         sharedFeedFilters.wrist.OnPlayerLeft = 'Everyone';
@@ -5816,6 +5849,12 @@ speechSynthesis.getVoices();
         sharedFeedFilters.wrist.Unfriend = 'On';
         sharedFeedFilters.wrist.DisplayName = 'Friends';
         sharedFeedFilters.wrist.TrustLevel = 'Friends';
+        sharedFeedFilters.wrist.showAvatar = 'On';
+        sharedFeedFilters.wrist.hideAvatar = 'On';
+        sharedFeedFilters.wrist.block = 'On';
+        sharedFeedFilters.wrist.mute = 'On';
+        sharedFeedFilters.wrist.unmute = 'On';
+
         configRepository.setString('sharedFeedFilters', JSON.stringify(sharedFeedFilters));
     }
     $app.data.sharedFeedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));

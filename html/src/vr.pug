@@ -93,6 +93,31 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | 🤝 #[span.name(v-text="feed.displayName")] {{ feed.previousTrustLevel }} #[i.el-icon-right] {{ feed.trustLevel }}
+                            div(v-else-if="feed.type === 'showAvatar'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 👀 #[span.name(v-text="feed.sourceDisplayName")]
+                            div(v-else-if="feed.type === 'hideAvatar'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 🙈 #[span.name(v-text="feed.sourceDisplayName")]
+                            div(v-else-if="feed.type === 'block'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 🛑 #[span.name(v-text="feed.sourceDisplayName")] has blocked you
+                            div(v-else-if="feed.type === 'mute'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 🔇 #[span.name(v-text="feed.sourceDisplayName")] has muted you
+                            div(v-else-if="feed.type === 'unmute'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 🎤 #[span.name(v-text="feed.sourceDisplayName")] has unmuted you
                     template(v-else)
                         template(v-for="feed in wristFeed")
                             .x-friend-item(v-if="feed.type === 'GPS'" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
@@ -170,6 +195,31 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | #[span.name(v-text="feed.displayName")] trust level is now {{ feed.trustLevel }}
+                            div(v-else-if="feed.type === 'showAvatar'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.sourceDisplayName")] has shown your avatar
+                            div(v-else-if="feed.type === 'hideAvatar'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.sourceDisplayName")] has hidden your avatar
+                            div(v-else-if="feed.type === 'block'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.sourceDisplayName")] has blocked you
+                            div(v-else-if="feed.type === 'mute'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.sourceDisplayName")] has muted you
+                            div(v-else-if="feed.type === 'unmute'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.sourceDisplayName")] has unmuted you
             .x-container
                 div(style="display:flex;flex-direction:row")
                     template(v-if="devices.length")
