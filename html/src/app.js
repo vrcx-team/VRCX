@@ -3481,10 +3481,10 @@ speechSynthesis.getVoices();
                 ++j;
             }
         }
-        // invite, requestInvite, friendRequest
         var { data } = this.notificationTable;
-        for (i = 0; i < data.length; i++) {
+        for (var i = 0; i < data.length; i++) {
             var ctx = data[i];
+            // invite, requestInvite, friendRequest
             if (ctx.senderUserId !== API.currentUser.id) {
                 arr.push({
                     ...ctx,
@@ -3493,17 +3493,22 @@ speechSynthesis.getVoices();
                 });
             }
         }
-        // TrustLevel, Friend, FriendRequest, Unfriend, DisplayName
         var { data } = this.friendLogTable;
-        var j = this.friendLogTable.data.length;
-        for (i = j - 1; i >= j - ((j > 10) ? 10 : j); i--) {
-            var ctx = data[i];
+        var i = data.length;
+        var j = 0;
+        while (j < 10) {
+            if (i <= 0) {
+                break;
+            }
+            var ctx = data[--i];
+            // TrustLevel, Friend, FriendRequest, Unfriend, DisplayName
             if (ctx.type !== 'FriendRequest') {
                 arr.push({
                     ...ctx,
                     isFriend: this.friends.has(ctx.userId),
                     isFavorite: API.cachedFavoritesByObjectId.has(ctx.userId)
                 });
+                ++j;
             }
         }
         arr.sort(function (a, b) {
