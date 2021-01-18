@@ -110,6 +110,11 @@ namespace VRCX
 
                 foreach (var fileInfo in fileInfos)
                 {
+                    if (DateTime.Compare(DateTime.Today.AddDays(-7), fileInfo.LastWriteTimeUtc) >= 0)
+                    {
+                        continue;
+                    }
+
                     if (bias.CompareTo(fileInfo.LastWriteTimeUtc) <= 0)
                     {
                         fileInfo.Refresh();
