@@ -2538,6 +2538,7 @@ speechSynthesis.getVoices();
             'world': [0, 'getFavoriteWorlds'],
             'avatar': [0, 'getFavoriteAvatars']
         };
+        var tags = [];
         for (var ref of this.cachedFavorites.values()) {
             if (ref.$isDeleted) {
                 continue;
@@ -2546,19 +2547,37 @@ speechSynthesis.getVoices();
             if (type === undefined) {
                 continue;
             }
+            if ((ref.type === 'avatar') && (!tags.includes(ref.tags[0]))) {
+                tags.push(ref.tags[0]);
+            }
             ++type[0];
         }
         for (var type in types) {
             var [N, fn] = types[type];
             if (N > 0) {
-                this.bulk({
-                    fn,
-                    N,
+                if (type === 'avatar') {
+                    tags.forEach((tag) => {
+                        this.bulk({
+                            fn,
+                            N,
+                            params: {
+                                n: 100,
+                                offset: 0,
+                                tag: tag
+                            }
+                        });
+                    });
+                }
+                else {
+                    this.bulk({
+                        fn,
+                        N,
                     params: {
                         n: 100,
                         offset: 0
                     }
-                });
+                    });
+                }
             }
         }
     };
