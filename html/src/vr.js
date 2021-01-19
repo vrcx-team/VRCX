@@ -680,24 +680,14 @@ speechSynthesis.getVoices();
             currentTime: new Date().toJSON(),
             currentUserStatus: null,
             cpuUsage: 0,
+            config: {},
             isGameRunning: false,
             isGameNoVR: false,
             lastLocation: '',
             lastFeedEntry: [],
-            feedFilters: [],
             wristFeed: [],
             notyMap: [],
             devices: [],
-            desktopToastToggle: false,
-            overlayNotificationsToggle: false,
-            notificationTTSToggle: false,
-            notificationTTSVoice: '0',
-            hideDevicesToggle: false,
-            isMinimalFeed: false,
-            displayVRCPlusIconsAsAvatar: false,
-            notificationPosition: 'topCenter',
-            notificationTimeout: '3000',
-            notificationTheme: 'relax'
         },
         computed: {},
         methods: {},
@@ -722,7 +712,6 @@ speechSynthesis.getVoices();
                 // FIXME: 어케 복구하냐 이건
                 throw err;
             }).then((args) => {
-                this.initConfigVars();
                 if (this.appType === '1') {
                     this.updateCpuUsageLoop();
                 }
@@ -735,23 +724,11 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.initConfigVars = function () {
-        this.notificationTTSToggle = configRepository.getBool('VRCX_notificationTTS');
-        this.notificationTTSVoice = configRepository.getString('VRCX_notificationTTSVoice');
-        this.overlayNotificationsToggle = configRepository.getBool('VRCX_overlayNotifications');
-        this.desktopToastToggle = configRepository.getBool('VRCX_desktopToast');
-        this.hidePrivateFromFeed = configRepository.getBool('VRCX_hidePrivateFromFeed');
-        this.hideOnPlayerJoined = configRepository.getBool('VRCX_hideOnPlayerJoined');
-        this.hideDevicesToggle = configRepository.getBool('VRCX_hideDevicesFromFeed');
-        this.isMinimalFeed = configRepository.getBool('VRCX_minimalFeed');
-        this.displayVRCPlusIconsAsAvatar = configRepository.getBool('displayVRCPlusIconsAsAvatar');
-        this.feedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));
-        this.notificationPosition = configRepository.getString('VRCX_notificationPosition');
-        this.notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
-        if (configRepository.getBool('isDarkMode')) {
-            this.notificationTheme = 'sunset';
-        } else {
-            this.notificationTheme = 'relax';
+    $app.methods.updateVRConfigVars = function () {
+        var newConfig = sharedRepository.getObject('VRConfigVars');
+        if ((newConfig) && (JSON.stringify(newConfig) !== JSON.stringify(this.config))) {
+            this.config = newConfig;
+            this.lastFeedEntry = [];
         }
     };
 
@@ -760,7 +737,8 @@ speechSynthesis.getVoices();
         if (feeds === null) {
             return;
         }
-        var filter = this.feedFilters.noty;
+        var sharedFeedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));
+        var filter = sharedFeedFilters.noty;
         var filtered = [];
         feeds.forEach((feed) => {
             if (filter[feed.type]) {
@@ -791,12 +769,16 @@ speechSynthesis.getVoices();
 
     $app.methods.updateLoop = async function () {
         try {
+            this.updateVRConfigVars();
+            if (!this.config) {
+                return;
+            }
             this.currentTime = new Date().toJSON();
             this.currentUserStatus = sharedRepository.getString('current_user_status');
             this.isGameRunning = sharedRepository.getBool('is_game_running');
             this.isGameNoVR = sharedRepository.getBool('is_Game_No_VR');
             this.lastLocation = sharedRepository.getString('last_location');
-            if ((!this.hideDevicesToggle) && (this.appType === '1')) {
+            if ((!this.config.hideDevicesFromFeed) && (this.appType === '1')) {
                 AppApi.GetVRDevices().then((devices) => {
                     devices.forEach((device) => {
                         device[2] = parseInt(device[2], 10);
@@ -870,7 +852,7 @@ speechSynthesis.getVoices();
         }
 
         //on Location change remove OnPlayerJoined
-        if (this.hideOnPlayerJoined) {
+        if (this.config.hideOnPlayerJoined) {
             for (i = 0; i < feeds.length; i++) {
                 var ctx = feeds[i];
                 if (ctx.type === 'Location') {
@@ -889,7 +871,7 @@ speechSynthesis.getVoices();
             }
         }
 
-        if (this.hidePrivateFromFeed) {
+        if (this.config.hidePrivateFromFeed) {
             for (var i = 0; i < feeds.length; i++) {
                 var feed = feeds[i];
                 if ((feed.type === 'GPS') && (feed.location[0] === 'private')) {
@@ -909,7 +891,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateSharedFeedWrist = async function (feeds) {
-        var filter = this.feedFilters.wrist;
+        var filter = this.config.sharedFeedFilters.wrist;
         var filtered = [];
         feeds.forEach((feed) => {
             if (filter[feed.type]) {
@@ -928,7 +910,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateSharedFeedNoty = async function (feeds) {
-        var filter = this.feedFilters.noty;
+        var filter = this.config.sharedFeedFilters.noty;
         var filtered = [];
         feeds.forEach((feed) => {
             if (filter[feed.type]) {
@@ -972,7 +954,7 @@ speechSynthesis.getVoices();
             if (noty.created_at < bias) {
                 continue;
             }
-            if ((this.overlayNotificationsToggle) && (!this.isGameNoVR)) {
+            if ((this.config.overlayNotifications) && (!this.isGameNoVR)) {
                 var text = '';
                 switch (noty.type) {
                     case 'OnPlayerJoined':
@@ -1036,14 +1018,14 @@ speechSynthesis.getVoices();
                 if (text) {
                     new Noty({
                         type: 'alert',
-                        theme: this.notificationTheme,
-                        timeout: this.notificationTimeout,
-                        layout: this.notificationPosition,
+                        theme: this.config.notificationTheme,
+                        timeout: this.config.notificationTimeout,
+                        layout: this.config.notificationPosition,
                         text: text
                     }).show();
                 }
             }
-            if (this.notificationTTSToggle) {
+            if (this.config.notificationTTS) {
                 switch (noty.type) {
                     case 'OnPlayerJoined':
                         this.speak(`${noty.data} has joined`);
@@ -1104,7 +1086,7 @@ speechSynthesis.getVoices();
                         break;
                 }
             }
-            if ((this.desktopToastToggle) && (this.isGameNoVR)) {
+            if ((this.config.desktopToast) && (this.isGameNoVR)) {
                 var imageURL = '';
                 if (noty.userId) {
                     await API.getCachedUser({
@@ -1113,7 +1095,7 @@ speechSynthesis.getVoices();
                             throw err;
                         }).then((args) => {
                             imageURL = args.json.currentAvatarThumbnailImageUrl;
-                            if ((this.displayVRCPlusIconsAsAvatar) && (args.json.userIcon)) {
+                            if ((this.config.displayVRCPlusIconsAsAvatar) && (args.json.userIcon)) {
                                 imageURL = args.json.userIcon;
                             }
                     });
@@ -1215,7 +1197,7 @@ speechSynthesis.getVoices();
     $app.methods.speak = function (text) {
         var tts = new SpeechSynthesisUtterance();
         var voices = speechSynthesis.getVoices();
-        var voiceIndex = this.notificationTTSVoice;
+        var voiceIndex = this.config.notificationTTSVoice;
         tts.voice = voices[voiceIndex];
         tts.text = text;
         speechSynthesis.speak(tts);

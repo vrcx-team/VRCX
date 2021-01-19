@@ -15,7 +15,7 @@ html
         .x-app#x-app(v-if="appType === '1'" class="x-app-type")
             .x-container(style="flex:1")
                 .x-friend-list(ref="list" style="color:#aaa")
-                    template(v-if="isMinimalFeed")
+                    template(v-if="config.minimalFeed")
                         template(v-for="feed in wristFeed")
                             .x-friend-item(v-if="feed.type === 'GPS'" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
