@@ -707,7 +707,7 @@ speechSynthesis.getVoices();
                     var params = {
                         receiverUserId: API.currentUser.id,
                         type: 'invite',
-                        message: 'This is a generated invite',
+                        message: '',
                         seen: false,
                         details: {
                             worldId: L.tag,
@@ -6780,7 +6780,7 @@ speechSynthesis.getVoices();
                 API.sendNotification({
                     receiverUserId: D.id,
                     type: 'invite',
-                    message: 'This is a generated invite',
+                    message: '',
                     seen: false,
                     details: {
                         worldId: this.lastLocation,
@@ -7461,7 +7461,7 @@ speechSynthesis.getVoices();
                 var params = {
                     receiverUserId: '',
                     type: 'invite',
-                    message: 'This is a generated invite',
+                    message: '',
                     seen: false,
                     details: {
                         worldId: D.worldId,
