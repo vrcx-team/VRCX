@@ -2123,6 +2123,7 @@ speechSynthesis.getVoices();
 
     API.$on('LOGIN', function () {
         this.cachedPlayerModerations.clear();
+        $app.playerModerationTable.lastRunLength = 0;
         this.isPlayerModerationsLoading = false;
         this.refreshPlayerModerations();
     });
