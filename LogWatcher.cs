@@ -376,31 +376,29 @@ namespace VRCX
 
         private bool ParseLogNotification(FileInfo fileInfo, string line)
         {
-            // 2020.10.31 23:36:28 Log        -  Received Message of type: notification content: {{"id":"not_3a8f66eb-613c-4351-bee3-9980e6b5652c","senderUserId":"usr_4f76a584-9d4b-46f6-8209-8305eb683661","senderUsername":"pypy","type":"friendRequest","message":"","details":"{{}}","seen":false,"created_at":"2020-08-16T11:03:59.291Z"}} received at 10/31/2020 14:36:28 UTC
+            // 2021.01.03 05:48:58 Log        -  Received Notification: < Notification from username:pypy, sender user id:usr_4f76a584-9d4b-46f6-8209-8305eb683661 to of type: friendRequest, id: not_3a8f66eb-613c-4351-bee3-9980e6b5652c, created at: 01/14/2021 15:38:40 UTC, details: {{}}, type:friendRequest, m seen:False, message: ""> received at 01/02/2021 16:48:58 UTC
 
-            if (line.Length <= 82 ||
+            if (line.Length <= 57 ||
                 line[34] != 'R' ||
-                string.Compare(line, 34, "Received Message of type: notification content: ", 0, 48, StringComparison.Ordinal) != 0)
+                string.Compare(line, 34, "Received Notification: ", 0, 23, StringComparison.Ordinal) != 0)
             {
                 return false;
             }
 
-            var pos = line.LastIndexOf("}} received at");
+            var pos = line.LastIndexOf("> received at ");
             if (pos < 0)
             {
                 return false;
             }
 
-            var json = line.Substring(82, pos - 82 + 2); // including brace
-            json = json.Replace("{{", "{");
-            json = json.Replace("}}", "}");
+            var data = line.Substring(58, pos - 58);
 
             AppendLog(new[]
             {
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
                 "notification",
-                json
+                data
             });
 
             return true;
