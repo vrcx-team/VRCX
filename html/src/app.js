@@ -4216,14 +4216,14 @@ speechSynthesis.getVoices();
                 this.friendsGroupD_.unshift(ctx);
             }
             if (ctx.ref !== undefined) {
-                if ((ctx.ref.$offline_for == '') &&
-                    ((ctx.state == 'offline') && ctx.ref.state == '') ||
-                    (((ctx.state == 'offline') || (ctx.state == 'active')) &&
-                        ((ctx.ref.state == 'online')))) {
+                if ((ctx.ref.$offline_for === '') &&
+                    ((ctx.state === 'offline') && ctx.ref.state === '') ||
+                    (((ctx.state === 'offline') || (ctx.state === 'active')) &&
+                        ((ctx.ref.state === 'online')))) {
                     ctx.ref.$online_for = '';
                     ctx.ref.$offline_for = Date.now();
                 }
-                if (ctx.state == 'online') {
+                if (ctx.state === 'online') {
                     ctx.ref.$location_at = Date.now();
                     ctx.ref.$online_for = Date.now();
                     ctx.ref.$offline_for = '';
@@ -7914,7 +7914,7 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.setVRCPlusIcon = function (userIcon) {
-        if (userIcon != '') {
+        if (userIcon !== '') {
             userIcon = `https://api.vrchat.cloud/api/1/file/${userIcon}/1`;
         }
         API.setVRCPlusIcon({
