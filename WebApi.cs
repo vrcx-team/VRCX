@@ -15,6 +15,7 @@ namespace VRCX
         static WebApi()
         {
             Instance = new WebApi();
+            ServicePointManager.DefaultConnectionLimit = 10;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
 
