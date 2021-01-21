@@ -3361,7 +3361,7 @@ speechSynthesis.getVoices();
         methods: {},
         watch: {},
         el: '#x-app',
-        async mounted() {
+        mounted() {
             this.checkAppVersion();
             API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
             API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
