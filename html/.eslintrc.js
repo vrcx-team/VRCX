@@ -42,6 +42,7 @@ module.exports = {
         'multiline-comment-style': 0,
         'newline-per-chained-call': 0,
         'new-cap': 0,
+        'no-await-in-loop': 0,
         'no-bitwise': 0,
         'no-console': 0,
         'no-continue': 0,
