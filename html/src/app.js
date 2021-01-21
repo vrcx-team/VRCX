@@ -8,6 +8,7 @@ import Noty from 'noty';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
 import { DataTables } from 'vue-data-tables';
+// eslint-disable-next-line no-unused-vars
 import ToggleSwitch from 'vuejs-toggle-switch';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
