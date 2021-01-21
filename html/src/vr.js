@@ -967,7 +967,7 @@ speechSynthesis.getVoices();
                         text = `<strong>${noty.data}</strong> is joining`;
                         break;
                     case 'GPS':
-                        text = '<strong>' + noty.displayName + '</strong> is in ' + await this.displayLocation(noty.location[0]);
+                        text = `<strong>${noty.displayName}</strong> is in ${await this.displayLocation(noty.location[0])}`;
                         break;
                     case 'Online':
                         text = `<strong>${noty.displayName}</strong> has logged in`;
@@ -1039,7 +1039,7 @@ speechSynthesis.getVoices();
                         this.speak(`${noty.data} is joining`);
                         break;
                     case 'GPS':
-                        this.speak(noty.displayName + ' is in ' + await this.displayLocation(noty.location[0]));
+                        this.speak(`${noty.displayName} is in ${await this.displayLocation(noty.location[0])}`);
                         break;
                     case 'Online':
                         this.speak(`${noty.displayName} has logged in`);
@@ -1115,7 +1115,7 @@ speechSynthesis.getVoices();
                         AppApi.DesktopNotification(noty.data, 'is joining', imageURL);
                         break;
                     case 'GPS':
-                        AppApi.DesktopNotification(noty.displayName, 'is in ' + await this.displayLocation(noty.location[0]), imageURL);
+                        AppApi.DesktopNotification(noty.displayName, `is in ${await this.displayLocation(noty.location[0])}`, imageURL);
                         break;
                     case 'Online':
                         AppApi.DesktopNotification(noty.displayName, 'has logged in', imageURL);
