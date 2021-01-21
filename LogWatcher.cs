@@ -158,17 +158,17 @@ namespace VRCX
         {
             try
             {
-                using (var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 65536, FileOptions.SequentialScan))
+                using (var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 65536, FileOptions.SequentialScan))
                 {
-                    fileStream.Position = logContext.Position;
-                    using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
+                    stream.Position = logContext.Position;
+                    using (var streamReader = new StreamReader(stream, Encoding.UTF8))
                     {
                         while (true)
                         {
                             var line = streamReader.ReadLine();
                             if (line == null)
                             {
-                                logContext.Position = fileStream.Position;
+                                logContext.Position = stream.Position;
                                 break;
                             }
 
