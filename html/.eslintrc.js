@@ -55,6 +55,7 @@ module.exports = {
         'no-invalid-this': 0,
         'no-magic-numbers': 0,
         'no-mixed-operators': 0,
+        'no-negated-condition': 0,
         'no-param-reassign': 0,
         'no-plusplus': 0,
         'no-redeclare': 0,
