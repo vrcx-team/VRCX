@@ -4754,8 +4754,8 @@ speechSynthesis.getVoices();
                     };
                     break;
 
-                    default:
-                        break;
+                default:
+                    break;
             }
 
             if (tableData !== null) {
