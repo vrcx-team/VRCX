@@ -3444,9 +3444,7 @@ speechSynthesis.getVoices();
                         throw err1;
                     });
                     if (this.isGameRunning) {
-                        API.refreshPlayerModerations().catch((err1) => {
-                            throw err1;
-                        });
+                        API.refreshPlayerModerations();
                     }
                 }
                 this.checkActiveFriends();
