@@ -357,8 +357,7 @@ speechSynthesis.getVoices();
         } else if (init.VRCPlusIcon) {
             delete init.VRCPlusIcon;
             console.log(init);
-        }
-        else {
+        } else {
             init.headers = {
                 'Content-Type': 'application/json;charset=utf-8',
                 ...init.headers
