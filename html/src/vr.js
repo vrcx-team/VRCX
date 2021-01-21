@@ -115,7 +115,7 @@ speechSynthesis.getVoices();
     API.$emit = function (name, ...args) {
         // console.log(name, ...args);
         var handlers = this.eventHandlers.get(name);
-        if (handlers === undefined) {
+        if (typeof handlers === 'undefined') {
             return;
         }
         try {
@@ -129,7 +129,7 @@ speechSynthesis.getVoices();
 
     API.$on = function (name, handler) {
         var handlers = this.eventHandlers.get(name);
-        if (handlers === undefined) {
+        if (typeof handlers === 'undefined') {
             handlers = [];
             this.eventHandlers.set(name, handlers);
         }
@@ -138,7 +138,7 @@ speechSynthesis.getVoices();
 
     API.$off = function (name, handler) {
         var handlers = this.eventHandlers.get(name);
-        if (handlers === undefined) {
+        if (typeof handlers === 'undefined') {
             return;
         }
         var { length } = handlers;
@@ -176,7 +176,7 @@ speechSynthesis.getVoices();
             }
             // merge requests
             var req = this.pendingGetRequests.get(init.url);
-            if (req !== undefined) {
+            if (typeof req !== 'undefined') {
                 return req;
             }
         } else {
@@ -316,13 +316,13 @@ speechSynthesis.getVoices();
         var text = [];
         if (code > 0) {
             var status = this.statusCodes[code];
-            if (status === undefined) {
+            if (typeof status === 'undefined') {
                 text.push(`${code}`);
             } else {
                 text.push(`${code} ${status}`);
             }
         }
-        if (error !== undefined) {
+        if (typeof error !== 'undefined') {
             text.push(JSON.stringify(error));
         }
         text = text.map((s) => escapeTag(s)).join('<br>');
@@ -462,7 +462,7 @@ speechSynthesis.getVoices();
                     this.text = 'Private';
                 } else if (L.worldId) {
                     var ref = API.cachedWorlds.get(L.worldId);
-                    if (ref === undefined) {
+                    if (typeof ref === 'undefined') {
                         API.getWorld({
                             worldId: L.worldId
                         }).then((args) => {
@@ -503,7 +503,7 @@ speechSynthesis.getVoices();
 
     API.applyWorld = function (json) {
         var ref = this.cachedWorlds.get(json.id);
-        if (ref === undefined) {
+        if (typeof ref === 'undefined') {
             ref = {
                 id: '',
                 name: '',
@@ -577,7 +577,7 @@ speechSynthesis.getVoices();
 
     API.applyUser = function (json) {
         var ref = this.cachedUsers.get(json.id);
-        if (ref === undefined) {
+        if (typeof ref === 'undefined') {
             ref = {
                 id: '',
                 username: '',
@@ -659,7 +659,7 @@ speechSynthesis.getVoices();
     API.getCachedUser = function (params) {
         return new Promise((resolve, reject) => {
             var ref = this.cachedUsers.get(params.userId);
-            if (ref === undefined) {
+            if (typeof ref === 'undefined') {
                 this.getUser(params).catch(reject).then(resolve);
             } else {
                 resolve({
@@ -810,7 +810,7 @@ speechSynthesis.getVoices();
         if (feeds === null) {
             return;
         }
-        if ((this.lastFeedEntry !== undefined) &&
+        if (('lastFeedEntry' in this) &&
             (feeds[0].created_at === this.lastFeedEntry.created_at)) {
             return;
         }
@@ -1156,7 +1156,7 @@ speechSynthesis.getVoices();
 
     $app.methods.userStatusClass = function (user) {
         var style = {};
-        if (user !== undefined) {
+        if (typeof user !== 'undefined') {
             if (user.location === 'offline') {
                 // Offline
                 style.offline = true;
@@ -1186,7 +1186,7 @@ speechSynthesis.getVoices();
             text = 'Private';
         } else if (L.worldId) {
             var ref = API.cachedWorlds.get(L.worldId);
-            if (ref === undefined) {
+            if (typeof ref === 'undefined') {
                 await API.getWorld({
                     worldId: L.worldId
                 }).then((args) => {
