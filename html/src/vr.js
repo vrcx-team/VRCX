@@ -1150,14 +1150,21 @@ speechSynthesis.getVoices();
 
     $app.methods.userStatusClass = function (user) {
         var style = {};
-        if (user) {
+        if (user !== undefined) {
             if (user.location === 'offline') {
+                // Offline
                 style.offline = true;
             } else if (user.status === 'active') {
+                // Online
                 style.active = true;
             } else if (user.status === 'join me') {
+                // Join Me
                 style.joinme = true;
+            } else if (user.status === 'ask me') {
+                // Ask Me
+                style.askme = true;
             } else if (user.status === 'busy') {
+                // Do Not Disturb
                 style.busy = true;
             }
         }
