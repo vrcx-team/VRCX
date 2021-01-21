@@ -64,7 +64,6 @@ module.exports = {
         'no-shadow': 0,
         'no-tabs': 0,
         'no-ternary': 0,
-        'no-undefined': 0,
         'no-underscore-dangle': 0,
         'no-var': 0,
         'no-warning-comments': 0,
