@@ -37,8 +37,11 @@ namespace VRCX
 
         internal void Exit()
         {
-            m_Timer.Change(-1, -1);
-            m_Client?.Dispose();
+            lock (this)
+            {
+                m_Timer.Change(-1, -1);
+                m_Client?.Dispose();
+            }
         }
 
         private void TimerCallback(object state)

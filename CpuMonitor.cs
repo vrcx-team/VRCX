@@ -62,21 +62,27 @@ namespace VRCX
 
         internal void Exit()
         {
-            _timer.Change(-1, -1);
-            _performanceCounter?.Dispose();
+            lock (this)
+            {
+                _timer.Change(-1, -1);
+                _performanceCounter?.Dispose();
+            }
         }
 
         private void TimerCallback(object state)
         {
-            try
+            lock (this)
             {
-                if (_performanceCounter != null)
+                try
                 {
-                    CpuUsage = _performanceCounter.NextValue();
+                    if (_performanceCounter != null)
+                    {
+                        CpuUsage = _performanceCounter.NextValue();
+                    }
                 }
-            }
-            catch
-            {
+                catch
+                {
+                }
             }
         }
     }
