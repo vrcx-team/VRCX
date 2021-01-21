@@ -81,6 +81,7 @@ module.exports = {
         ],
         'quote-props': 0,
         'require-unicode-regexp': 0,
+        'sort-imports': 0,
         'sort-keys': 0,
         'sort-vars': 0,
         'space-before-function-paren': [
