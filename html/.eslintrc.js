@@ -11,7 +11,10 @@ module.exports = {
         VRCXStorage: 'readonly',
         SQLite: 'readonly',
         LogWatcher: 'readonly',
-        Discord: 'readonly'
+        Discord: 'readonly',
+        AppApi: 'readonly',
+        SharedVariable: 'readonly',
+        WebApi: 'readonly'
     },
     extends: 'eslint:all',
     rules: {
