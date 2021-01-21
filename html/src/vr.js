@@ -1093,15 +1093,15 @@ speechSynthesis.getVoices();
             if ((this.config.desktopToast) && (this.isGameNoVR)) {
                 var imageURL = '';
                 if (noty.userId) {
-                    await API.getCachedUser({
+                    imageURL = await API.getCachedUser({
                         userId: noty.userId
                     }).catch((err) => {
                         throw err;
                     }).then((args) => {
-                        imageURL = args.json.currentAvatarThumbnailImageUrl;
                         if ((this.config.displayVRCPlusIconsAsAvatar) && (args.json.userIcon)) {
-                            imageURL = args.json.userIcon;
+                            return args.json.userIcon;
                         }
+                        return args.json.currentAvatarThumbnailImageUrl;
                     });
                 }
                 switch (noty.type) {
