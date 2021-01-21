@@ -14,13 +14,6 @@ class GameLogService {
                 context = {
                     updatedAt: null,
 
-                    // auth
-                    loginProvider: null,
-                    loginUser: null,
-
-                    // hmd
-                    hmdModel: null,
-
                     // location
                     location: null,
                 };
@@ -30,15 +23,6 @@ class GameLogService {
             var gameLog = parseRawGameLog(dt, type, args);
 
             switch (gameLog.type) {
-                case 'auth':
-                    context.loginProvider = gameLog.loginProvider;
-                    context.loginUser = gameLog.loginUser;
-                    break;
-
-                case 'hmd-model':
-                    context.hmdModel = gameLog.hmdModel;
-                    break;
-
                 case 'location':
                     context.location = gameLog.location;
                     break;
@@ -65,15 +49,6 @@ function parseRawGameLog(dt, type, args) {
     };
 
     switch (type) {
-        case 'auth':
-            gameLog.loginProvider = args[0];
-            gameLog.loginUser = args[1];
-            break;
-
-        case 'hmd-model':
-            gameLog.hmdModel = args[0];
-            break;
-
         case 'location':
             gameLog.location = args[0];
             break;
