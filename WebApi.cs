@@ -25,13 +25,12 @@ namespace VRCX
         public WebApi()
         {
             _cookieContainer = new CookieContainer();
-            _cookieSaveTimer = new Timer(CookieSaveTimerCallback, this, -1, -1);
+            _cookieSaveTimer = new Timer(CookieSaveTimerCallback, null, -1, -1);
         }
 
-        private static void CookieSaveTimerCallback(object state)
+        private void CookieSaveTimerCallback(object state)
         {
-            var self = (WebApi)state;
-            self.SaveCookies();
+            SaveCookies();
         }
 
         internal void Init()
