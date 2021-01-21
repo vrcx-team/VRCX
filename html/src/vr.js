@@ -849,7 +849,7 @@ speechSynthesis.getVoices();
             }
         }
 
-        //on Location change remove OnPlayerJoined
+        // on Location change remove OnPlayerJoined
         if (this.config.hideOnPlayerJoined) {
             for (i = 0; i < feeds.length; i++) {
                 var ctx = feeds[i];
