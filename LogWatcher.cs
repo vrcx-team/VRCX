@@ -106,16 +106,20 @@ namespace VRCX
                 // sort by creation time
                 Array.Sort(fileInfos, (a, b) => a.CreationTimeUtc.CompareTo(b.CreationTimeUtc));
 
-                var bias = DateTime.UtcNow.AddMinutes(-3d);
+                var utcNow = DateTime.UtcNow;
+                var minLimitDateTime = utcNow.AddDays(-7d);
+                var minRefreshDateTime = utcNow.AddMinutes(-3d);
 
                 foreach (var fileInfo in fileInfos)
                 {
-                    if (DateTime.Compare(DateTime.Today.AddDays(-7), fileInfo.LastWriteTimeUtc) >= 0)
+                    var lastWriteTimeUtc = fileInfo.LastWriteTimeUtc;
+
+                    if (lastWriteTimeUtc < minLimitDateTime)
                     {
                         continue;
                     }
 
-                    if (bias.CompareTo(fileInfo.LastWriteTimeUtc) <= 0)
+                    if (lastWriteTimeUtc >= minRefreshDateTime)
                     {
                         fileInfo.Refresh();
                         if (fileInfo.Exists == false)
