@@ -805,7 +805,7 @@ speechSynthesis.getVoices();
         setTimeout(() => this.updateCpuUsageLoop(), 1000);
     };
 
-    $app.methods.updateSharedFeeds = async function () {
+    $app.methods.updateSharedFeeds = function () {
         var feeds = sharedRepository.getArray('feeds');
         if (feeds === null) {
             return;
@@ -890,7 +890,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.updateSharedFeedWrist = async function (feeds) {
+    $app.methods.updateSharedFeedWrist = function (feeds) {
         var filter = this.config.sharedFeedFilters.wrist;
         var filtered = [];
         feeds.forEach((feed) => {
