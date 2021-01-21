@@ -2563,7 +2563,7 @@ speechSynthesis.getVoices();
             var [N, fn] = types[type];
             if (N > 0) {
                 if (type === 'avatar') {
-                    tags.forEach((tag) => {
+                    for (var tag of tags) {
                         this.bulk({
                             fn,
                             N,
@@ -2573,7 +2573,7 @@ speechSynthesis.getVoices();
                                 tag
                             }
                         });
-                    });
+                    }
                 } else {
                     this.bulk({
                         fn,
