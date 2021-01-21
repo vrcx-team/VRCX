@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
 namespace VRCX
 {
@@ -11,6 +12,8 @@ namespace VRCX
     {
         public static readonly WebApi Instance;
         private CookieContainer _cookieContainer;
+        private bool _cookieDirty;
+        private Timer _cookieSaveTimer;
 
         static WebApi()
         {
@@ -22,24 +25,48 @@ namespace VRCX
         public WebApi()
         {
             _cookieContainer = new CookieContainer();
+            _cookieSaveTimer = new Timer(CookieSaveTimerCallback, this, -1, -1);
+        }
+
+        private static void CookieSaveTimerCallback(object state)
+        {
+            var self = (WebApi)state;
+            self.SaveCookies();
         }
 
         internal void Init()
         {
+            LoadCookies();
+            _cookieSaveTimer.Change(1000, 1000);
+        }
+
+        internal void Exit()
+        {
+            _cookieSaveTimer.Change(-1, -1);
+            SaveCookies();
+        }
+
+        public void ClearCookies()
+        {
+            _cookieContainer = new CookieContainer();
+        }
+
+        internal void LoadCookies()
+        {
             SQLite.Instance.ExecuteNonQuery("CREATE TABLE IF NOT EXISTS `cookies` (`key` TEXT PRIMARY KEY, `value` TEXT)");
             SQLite.Instance.Execute((values) =>
+            {
+                try
                 {
-                    try
+                    using (var stream = new MemoryStream(Convert.FromBase64String((string)values[0])))
                     {
-                        using (var stream = new MemoryStream(Convert.FromBase64String((string)values[0])))
-                        {
-                            _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
-                        }
+                        _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
                     }
-                    catch
-                    {
-                    }
-                },
+                }
+                catch
+                {
+                }
+            },
                 "SELECT `value` FROM `cookies` WHERE `key` = @key",
                 new Dictionary<string, object>() {
                     {"@key", "default"}
@@ -47,8 +74,12 @@ namespace VRCX
             );
         }
 
-        internal void Exit()
+        internal void SaveCookies()
         {
+            if (_cookieDirty == true)
+            {
+                return;
+            }
             try
             {
                 using (var memoryStream = new MemoryStream())
@@ -62,15 +93,11 @@ namespace VRCX
                         }
                     );
                 }
+                _cookieDirty = false;
             }
             catch
             {
             }
-        }
-
-        public void ClearCookies()
-        {
-            _cookieContainer = new CookieContainer();
         }
 
 #pragma warning disable CS4014
@@ -123,16 +150,22 @@ namespace VRCX
                 try
                 {
                     using (var response = await request.GetResponseAsync() as HttpWebResponse)
-                    using (var stream = response.GetResponseStream())
-                    using (var streamReader = new StreamReader(stream))
                     {
-                        if (callback.CanExecute == true)
+                        if (response.Headers["Set-Cookie"] != null)
                         {
-                            callback.ExecuteAsync(null, new
+                            _cookieDirty = true;
+                        }
+                        using (var stream = response.GetResponseStream())
+                        using (var streamReader = new StreamReader(stream))
+                        {
+                            if (callback.CanExecute == true)
                             {
-                                data = await streamReader.ReadToEndAsync(),
-                                status = response.StatusCode
-                            });
+                                callback.ExecuteAsync(null, new
+                                {
+                                    data = await streamReader.ReadToEndAsync(),
+                                    status = response.StatusCode
+                                });
+                            }
                         }
                     }
                 }
@@ -140,6 +173,10 @@ namespace VRCX
                 {
                     if (webException.Response is HttpWebResponse response)
                     {
+                        if (response.Headers["Set-Cookie"] != null)
+                        {
+                            _cookieDirty = true;
+                        }
                         using (var stream = response.GetResponseStream())
                         using (var streamReader = new StreamReader(stream))
                         {
