@@ -5886,12 +5886,12 @@ speechSynthesis.getVoices();
 
     $app.data.toggleSwitchOptionsEveryone = {
         layout: {
-            backgroundColor: "white",
-            selectedBackgroundColor: "#409eff",
-            selectedColor: "white",
-            color: "#409eff",
-            borderColor: "#409eff",
-            fontWeight: "bold",
+            backgroundColor: 'white',
+            selectedBackgroundColor: '#409eff',
+            selectedColor: 'white',
+            color: '#409eff',
+            borderColor: '#409eff',
+            fontWeight: 'bold',
             fontFamily: '"Noto Sans JP", "Noto Sans KR", "Meiryo UI", "Malgun Gothic", "Segoe UI", "sans-serif"'
         },
         size: {
@@ -5901,17 +5901,17 @@ speechSynthesis.getVoices();
             fontSize: 0.75
         },
         items: {
-            labels: [{ name: "Off" }, { name: "VIP" }, { name: "Friends" }, { name: "Everyone" }]
+            labels: [{ name: 'Off' }, { name: 'VIP' }, { name: 'Friends' }, { name: 'Everyone' }]
         }
     };
     $app.data.toggleSwitchOptionsFriends = {
         layout: {
-            backgroundColor: "white",
-            selectedBackgroundColor: "#409eff",
-            selectedColor: "white",
-            color: "#409eff",
-            borderColor: "#409eff",
-            fontWeight: "bold",
+            backgroundColor: 'white',
+            selectedBackgroundColor: '#409eff',
+            selectedColor: 'white',
+            color: '#409eff',
+            borderColor: '#409eff',
+            fontWeight: 'bold',
             fontFamily: '"Noto Sans JP", "Noto Sans KR", "Meiryo UI", "Malgun Gothic", "Segoe UI", "sans-serif"'
         },
         size: {
@@ -5921,17 +5921,17 @@ speechSynthesis.getVoices();
             fontSize: 0.75
         },
         items: {
-            labels: [{ name: "Off" }, { name: "VIP" }, { name: "Friends" }]
+            labels: [{ name: 'Off' }, { name: 'VIP' }, { name: 'Friends' }]
         }
     };
     $app.data.toggleSwitchOptionsOn = {
         layout: {
-            backgroundColor: "white",
-            selectedBackgroundColor: "#409eff",
-            selectedColor: "white",
-            color: "#409eff",
-            borderColor: "#409eff",
-            fontWeight: "bold",
+            backgroundColor: 'white',
+            selectedBackgroundColor: '#409eff',
+            selectedColor: 'white',
+            color: '#409eff',
+            borderColor: '#409eff',
+            fontWeight: 'bold',
             fontFamily: '"Noto Sans JP", "Noto Sans KR", "Meiryo UI", "Malgun Gothic", "Segoe UI", "sans-serif"'
         },
         size: {
@@ -5941,7 +5941,7 @@ speechSynthesis.getVoices();
             fontSize: 0.75
         },
         items: {
-            labels: [{ name: "Off" }, { name: "On" }]
+            labels: [{ name: 'Off' }, { name: 'On' }]
         }
     };
 
@@ -7884,7 +7884,7 @@ speechSynthesis.getVoices();
     };
 
     API.refreshVRCPlusIconsTableData = function (params) {
-        return this.call(`files`, {
+        return this.call('files', {
             method: 'GET',
             params
         }).then((json) => {
