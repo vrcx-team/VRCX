@@ -45,6 +45,7 @@ module.exports = {
         'no-bitwise': 0,
         'no-console': 0,
         'no-continue': 0,
+        'no-control-regex': 0,
         'no-empty': [
             'error',
             {
