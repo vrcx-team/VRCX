@@ -4720,14 +4720,6 @@ speechSynthesis.getVoices();
                     };
                     break;
 
-                case 'location':
-                    tableData = {
-                        created_at: gameLog.dt,
-                        type: 'Location',
-                        data: gameLog.location
-                    };
-                    break;
-
                 case 'player-joined':
                     if (currentUserDisplayName === gameLog.userDisplayName) {
                         continue;
