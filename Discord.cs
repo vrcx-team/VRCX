@@ -15,7 +15,7 @@ namespace VRCX
         private readonly ReaderWriterLockSlim m_Lock;
         private readonly RichPresence m_Presence;
         private DiscordRpcClient m_Client;
-        private Thread m_Thread;
+        private Timer m_Timer;
         private bool m_Active;
 
         static Discord()
@@ -27,40 +27,30 @@ namespace VRCX
         {
             m_Lock = new ReaderWriterLockSlim();
             m_Presence = new RichPresence();
-            m_Thread = new Thread(ThreadLoop)
-            {
-                IsBackground = true
-            };
+            m_Timer = new Timer(TimerCallback, null, -1, -1);
         }
 
         internal void Init()
         {
-            m_Thread.Start();
+            m_Timer.Change(0, 1000);
         }
 
         internal void Exit()
         {
-            var thread = m_Thread;
-            m_Thread = null;
-            thread.Interrupt();
-            thread.Join();
-
+            m_Timer.Change(-1, -1);
             m_Client?.Dispose();
         }
 
-        private void ThreadLoop()
+        private void TimerCallback(object state)
         {
-            while (m_Thread != null)
+            lock (this)
             {
-                Update();
-
                 try
                 {
-                    Thread.Sleep(1000);
+                    Update();
                 }
                 catch
                 {
-                    // ThreadInterruptedException
                 }
             }
         }
