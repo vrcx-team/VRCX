@@ -816,7 +816,7 @@ speechSynthesis.getVoices();
 
         // OnPlayerJoining
         var bias = new Date(Date.now() - 120000).toJSON();
-        for (i = 0; i < feeds.length; i++) {
+        for (var i = 0; i < feeds.length; i++) {
             var ctx = feeds[i];
             if ((ctx.created_at < bias) || (ctx.type === 'Location')) {
                 break;
