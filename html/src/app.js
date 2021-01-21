@@ -853,7 +853,9 @@ speechSynthesis.getVoices();
             last_platform: json.last_platform,
             allowAvatarCopying: json.allowAvatarCopying,
             isFriend: false,
-            location: ($app.isGameRunning === true) ? $app.lastLocation : ''
+            location: ($app.isGameRunning === true)
+                ? $app.lastLocation
+                : ''
         });
     });
 
@@ -1148,7 +1150,9 @@ speechSynthesis.getVoices();
             json.statusDescription = API.currentUser.statusDescription;
             json.state = API.currentUser.state;
             json.last_login = API.currentUser.last_login;
-            json.location = ($app.isGameRunning === true) ? $app.lastLocation : '';
+            json.location = ($app.isGameRunning === true)
+                ? $app.lastLocation
+                : '';
             json.$online_for = API.currentUser.$online_for;
             json.$offline_for = API.currentUser.$offline_for;
         }
@@ -3773,7 +3777,9 @@ speechSynthesis.getVoices();
         username: '',
         password: '',
         saveCredentials: false,
-        savedCredentials: ((configRepository.getString('lastUserLoggedIn') !== null) ? JSON.parse(configRepository.getString('savedCredentials')) : {}),
+        savedCredentials: ((configRepository.getString('lastUserLoggedIn') !== null)
+            ? JSON.parse(configRepository.getString('savedCredentials'))
+            : {}),
         lastUserLoggedIn: configRepository.getString('lastUserLoggedIn'),
         rules: {
             username: [
@@ -4785,7 +4791,9 @@ speechSynthesis.getVoices();
     $app.methods.updateDiscord = function () {
         var ref = API.cachedUsers.get(API.currentUser.id);
         if (ref !== undefined) {
-            var myLocation = (this.isGameRunning === true) ? this.lastLocation : '';
+            var myLocation = (this.isGameRunning === true)
+                ? this.lastLocation
+                : '';
             if (ref.location !== myLocation) {
                 API.applyUser({
                     id: ref.id,
@@ -6492,7 +6500,9 @@ speechSynthesis.getVoices();
         if (this.isGameRunning &&
             this.lastLocation === L.tag) {
             var ref = API.cachedUsers.get(API.currentUser.id);
-            users.push((ref === undefined) ? API.currentUser : ref);
+            users.push((ref === undefined)
+                ? API.currentUser
+                : ref);
         }
         users.sort(compareByDisplayName);
         D.users = users;
@@ -7024,7 +7034,9 @@ speechSynthesis.getVoices();
                     instances[instance.id] = instance;
                 }
                 var ref = API.cachedUsers.get(API.currentUser.id);
-                instance.users.push((ref === undefined) ? API.currentUser : ref);
+                instance.users.push((ref === undefined)
+                    ? API.currentUser
+                    : ref);
             }
         }
         var rooms = [];
