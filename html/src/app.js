@@ -3730,7 +3730,7 @@ speechSynthesis.getVoices();
         return API.getConfig().catch((err) => {
             this.loginForm.loading = false;
             throw err;
-        }).then((args) => {
+        }).then(() => {
             API.login({
                 username: loginParmas.username,
                 password: loginParmas.password
@@ -3761,7 +3761,7 @@ speechSynthesis.getVoices();
             $app.relogin({
                 username: user.loginParmas.username,
                 password: user.loginParmas.password
-            }).then((args) => {
+            }).then(() => {
                 new Noty({
                     type: 'success',
                     text: 'Automatically logged in.'
