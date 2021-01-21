@@ -8035,9 +8035,9 @@ speechSynthesis.getVoices();
             return timeToText(Date.now() - ctx.ref.$online_for);
         } else if (ctx.ref.$offline_for) {
             return timeToText(Date.now() - ctx.ref.$offline_for);
-        } else {
-            return '-';
         }
+
+        return '-';
     };
 
     $app = new Vue($app);
