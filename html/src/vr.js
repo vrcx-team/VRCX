@@ -614,14 +614,12 @@ speechSynthesis.getVoices();
                     props[prop] = true;
                 }
             }
-            var has = false;
             for (var prop in props) {
                 var asis = $ref[prop];
                 var tobe = ref[prop];
                 if (asis === tobe) {
                     delete props[prop];
                 } else {
-                    has = true;
                     props[prop] = [
                         tobe,
                         asis
