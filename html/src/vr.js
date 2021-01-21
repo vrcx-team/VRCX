@@ -744,8 +744,8 @@ speechSynthesis.getVoices();
             if (filter[feed.type]) {
                 if ((filter[feed.type] !== 'Off') &&
                     ((filter[feed.type] === 'Everyone') || (filter[feed.type] === 'On') ||
-                    ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
-                    ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
+                        ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
+                        ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
                     var displayName = '';
                     if (feed.displayName) {
                         displayName = feed.displayName;
@@ -834,7 +834,7 @@ speechSynthesis.getVoices();
                     }
                     if ((feedItem.created_at < bias) || (feedItem.type === 'Location') ||
                         ((feedItem.type === 'GPS') && (feedItem.created_at !== ctx.created_at) &&
-                        (feedItem.displayName === ctx.displayName))) {
+                            (feedItem.displayName === ctx.displayName))) {
                         break;
                     }
                 }
@@ -897,8 +897,8 @@ speechSynthesis.getVoices();
             if (filter[feed.type]) {
                 if ((filter[feed.type] !== 'Off') &&
                     ((filter[feed.type] === 'Everyone') || (filter[feed.type] === 'On') ||
-                    ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
-                    ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
+                        ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
+                        ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
                     filtered.push(feed);
                 }
             } else {
@@ -916,8 +916,8 @@ speechSynthesis.getVoices();
             if (filter[feed.type]) {
                 if ((filter[feed.type] !== 'Off') &&
                     ((filter[feed.type] === 'Everyone') || (filter[feed.type] === 'On') ||
-                    ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
-                    ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
+                        ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
+                        ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
                     filtered.push(feed);
                 }
             }
@@ -1090,14 +1090,14 @@ speechSynthesis.getVoices();
                 var imageURL = '';
                 if (noty.userId) {
                     await API.getCachedUser({
-                            userId: noty.userId
-                        }).catch((err) => {
-                            throw err;
-                        }).then((args) => {
-                            imageURL = args.json.currentAvatarThumbnailImageUrl;
-                            if ((this.config.displayVRCPlusIconsAsAvatar) && (args.json.userIcon)) {
-                                imageURL = args.json.userIcon;
-                            }
+                        userId: noty.userId
+                    }).catch((err) => {
+                        throw err;
+                    }).then((args) => {
+                        imageURL = args.json.currentAvatarThumbnailImageUrl;
+                        if ((this.config.displayVRCPlusIconsAsAvatar) && (args.json.userIcon)) {
+                            imageURL = args.json.userIcon;
+                        }
                     });
                 }
                 switch (noty.type) {

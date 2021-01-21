@@ -2573,10 +2573,10 @@ speechSynthesis.getVoices();
                     this.bulk({
                         fn,
                         N,
-                    params: {
-                        n: 100,
-                        offset: 0
-                    }
+                        params: {
+                            n: 100,
+                            offset: 0
+                        }
                     });
                 }
             }
@@ -3755,12 +3755,12 @@ speechSynthesis.getVoices();
         var user = $app.loginForm.savedCredentials[$app.loginForm.lastUserLoggedIn]
         if (user !== undefined) {
             $app.relogin({
-                    username: user.loginParmas.username,
-                    password: user.loginParmas.password
-                }).then((args) => {
-                    new Noty({
-                        type: 'success',
-                        text: 'Automatically logged in.'
+                username: user.loginParmas.username,
+                password: user.loginParmas.password
+            }).then((args) => {
+                new Noty({
+                    type: 'success',
+                    text: 'Automatically logged in.'
                 }).show();
             });
         }
@@ -4211,7 +4211,7 @@ speechSynthesis.getVoices();
                 if ((ctx.ref.$offline_for == '') &&
                     ((ctx.state == 'offline') && ctx.ref.state == '') ||
                     (((ctx.state == 'offline') || (ctx.state == 'active')) &&
-                    ((ctx.ref.state == 'online')))) {
+                        ((ctx.ref.state == 'online')))) {
                     ctx.ref.$online_for = '';
                     ctx.ref.$offline_for = Date.now();
                 }
@@ -5802,7 +5802,7 @@ speechSynthesis.getVoices();
     $app.data.isStartAtWindowsStartup = configRepository.getBool('VRCX_StartAtWindowsStartup');
     $app.data.isStartAsMinimizedState = (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true');
     $app.data.isCloseToTray = configRepository.getBool('VRCX_CloseToTray');
-    $app.data.isAutoLogin= configRepository.getBool('VRCX_AutoLogin');
+    $app.data.isAutoLogin = configRepository.getBool('VRCX_AutoLogin');
     var saveVRCXWindowOption = function () {
         configRepository.setBool('VRCX_StartAtWindowsStartup', this.isStartAtWindowsStartup);
         VRCXStorage.Set('VRCX_StartAsMinimizedState', this.isStartAsMinimizedState.toString());
@@ -7963,7 +7963,7 @@ speechSynthesis.getVoices();
             return;
         }
         var r = new FileReader();
-        r.onload = function() {
+        r.onload = function () {
             var bodyStart = '---------------------------26696829785232761561272838397\nContent-Disposition: form-data; name="file"; filename="blob"\nContent-Type: image/png\n\n';
             var bodyEnd = '\n---------------------------26696829785232761561272838397--\n';
             var body = bodyStart + r.result + bodyEnd
