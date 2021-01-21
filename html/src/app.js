@@ -4751,6 +4751,9 @@ speechSynthesis.getVoices();
                         data: gameLog.json
                     };
                     break;
+
+                    default:
+                        break;
             }
 
             if (tableData !== null) {

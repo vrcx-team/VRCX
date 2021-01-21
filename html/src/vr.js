@@ -1014,6 +1014,8 @@ speechSynthesis.getVoices();
                     case 'unmute':
                         text = `<strong>${noty.sourceDisplayName}</strong> has unmuted you`;
                         break;
+                    default:
+                        break;
                 }
                 if (text) {
                     new Noty({
@@ -1084,6 +1086,8 @@ speechSynthesis.getVoices();
                     case 'unmute':
                         this.speak(`${noty.sourceDisplayName} has unmuted you`);
                         break;
+                    default:
+                        break;
                 }
             }
             if ((this.config.desktopToast) && (this.isGameNoVR)) {
@@ -1142,6 +1146,8 @@ speechSynthesis.getVoices();
                         break;
                     case 'DisplayName':
                         AppApi.DesktopNotification(noty.previousDisplayName, `changed their name to ${noty.displayName}`, imageURL);
+                        break;
+                    default:
                         break;
                 }
             }
