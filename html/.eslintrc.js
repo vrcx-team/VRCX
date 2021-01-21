@@ -52,6 +52,7 @@ module.exports = {
                 allowEmptyCatch: true
             }
         ],
+        'no-extra-parens': 0,
         'no-invalid-this': 0,
         'no-magic-numbers': 0,
         'no-mixed-operators': 0,
