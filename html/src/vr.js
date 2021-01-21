@@ -688,7 +688,7 @@ speechSynthesis.getVoices();
             lastFeedEntry: [],
             wristFeed: [],
             notyMap: [],
-            devices: [],
+            devices: []
         },
         computed: {},
         methods: {},

@@ -2672,7 +2672,7 @@ speechSynthesis.getVoices();
             'Favorite Avatars',
             'VRC+ Group 1',
             'VRC+ Group 2',
-            'VRC+ Group 3',
+            'VRC+ Group 3'
         ];
         this.favoriteAvatarGroups = [];
         for (var i = 0; i < 4; ++i) {
