@@ -56,6 +56,7 @@ module.exports = {
         'no-param-reassign': 0,
         'no-plusplus': 0,
         'no-redeclare': 0,
+        'no-shadow': 0,
         'no-tabs': 0,
         'no-ternary': 0,
         'no-undefined': 0,
