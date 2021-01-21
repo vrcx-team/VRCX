@@ -5,6 +5,9 @@ module.exports = {
         commonjs: true,
         es2020: true
     },
+    parserOptions: {
+        sourceType: 'module'
+    },
     globals: {
         CefSharp: 'readonly',
         VRCX: 'readonly',
