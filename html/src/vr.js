@@ -737,7 +737,6 @@ speechSynthesis.getVoices();
         }
         var sharedFeedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));
         var filter = sharedFeedFilters.noty;
-        var filtered = [];
         feeds.forEach((feed) => {
             if (filter[feed.type]) {
                 if ((filter[feed.type] !== 'Off') &&
