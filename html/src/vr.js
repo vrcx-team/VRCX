@@ -200,6 +200,7 @@ speechSynthesis.getVoices();
                 this.$throw(0, 'Invalid JSON response');
             }
             this.$throw(response.status);
+            return {};
         }).then(({ data, status }) => {
             if (data === Object(data)) {
                 if (status === 200) {
