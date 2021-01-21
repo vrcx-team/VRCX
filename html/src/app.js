@@ -8037,4 +8037,4 @@ speechSynthesis.getVoices();
 
     $app = new Vue($app);
     window.$app = $app;
-})();
+}());
