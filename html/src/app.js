@@ -392,7 +392,7 @@ speechSynthesis.getVoices();
                 return data;
             }
             if ((status === 401) && (data.error.message === '"Missing Credentials"') && ($app.isAutoLogin)) {
-                if (endpoint.substring(0, 10) == 'auth/user?') {
+                if (endpoint.substring(0, 10) === 'auth/user?') {
                     this.$emit('AUTOLOGIN');
                 }
                 throw new Error('401: Missing Credentials');
