@@ -94,6 +94,7 @@ module.exports = {
             }
         ],
         strict: 0,
-        'vars-on-top': 0
+        'vars-on-top': 0,
+        'wrap-regex': 0
     }
 };
