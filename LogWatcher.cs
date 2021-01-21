@@ -173,9 +173,7 @@ namespace VRCX
                                 ParseLogOnPlayerJoined(fileInfo, line) == true ||
                                 ParseLogOnPlayerLeft(fileInfo, line) == true ||
                                 ParseLogNotification(fileInfo, line) == true ||
-                                ParseLogLocation(fileInfo, line) == true ||
-                                ParseLogHMDModel(fileInfo, line) == true ||
-                                ParseLogAuth(fileInfo, line) == true)
+                                ParseLogLocation(fileInfo, line) == true)
                             {
                                 continue;
                             }
@@ -217,62 +215,6 @@ namespace VRCX
             }
 
             return $"{dt:yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'}";
-        }
-
-        private bool ParseLogHMDModel(FileInfo fileInfo, string line)
-        {
-            // 2020.10.31 23:36:23 Log        -  STEAMVR HMD Model: VIVE_Pro MV
-
-            if (line.Length <= 53 ||
-                line[34] != 'S' ||
-                string.Compare(line, 34, "STEAMVR HMD Model: ", 0, 19, StringComparison.Ordinal) != 0)
-            {
-                return false;
-            }
-
-            var hmdModel = line.Substring(53);
-
-            AppendLog(new[]
-            {
-                fileInfo.Name,
-                ConvertLogTimeToISO8601(line),
-                "hmd-model",
-                hmdModel
-            });
-
-            return true;
-        }
-
-        private bool ParseLogAuth(FileInfo fileInfo, string line)
-        {
-            // 2020.10.31 23:36:26 Log        -  [VRCFlowNetworkManager] Sending token from provider vrchat as user zetyx
-
-            if (line.Length <= 86 ||
-                line[35] != 'V' ||
-                string.Compare(line, 34, "[VRCFlowNetworkManager] Sending token from provider ", 0, 41, StringComparison.Ordinal) != 0)
-            {
-                return false;
-            }
-
-            var pos = line.IndexOf(" as user ", 86);
-            if (pos < 0)
-            {
-                return false;
-            }
-
-            var loginProvider = line.Substring(86, pos - 86);
-            var loginUser = line.Substring(pos + 9);
-
-            AppendLog(new[]
-            {
-                fileInfo.Name,
-                ConvertLogTimeToISO8601(line),
-                "auth",
-                loginProvider,
-                loginUser
-            });
-
-            return true;
         }
 
         private bool ParseLogLocation(FileInfo fileInfo, string line)
