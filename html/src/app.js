@@ -20,6 +20,8 @@ import gameLogService from './service/gamelog.js';
 speechSynthesis.getVoices();
 
 (async function () {
+    var $app = null;
+
     await CefSharp.BindObjectAsync(
         'AppApi',
         'WebApi',

@@ -16,6 +16,8 @@ import webApiService from './service/webapi.js';
 speechSynthesis.getVoices();
 
 (async function () {
+    var $app = null;
+
     await CefSharp.BindObjectAsync(
         'AppApi',
         'WebApi',
