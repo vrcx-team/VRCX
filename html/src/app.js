@@ -5817,7 +5817,7 @@ speechSynthesis.getVoices();
     $app.watch.isCloseToTray = saveVRCXWindowOption;
     $app.watch.isAutoLogin = saveVRCXWindowOption;
 
-    //setting defaults
+    // setting defaults
     if (configRepository.getBool('displayVRCPlusIconsAsAvatar') === null) {
         $app.data.displayVRCPlusIconsAsAvatar = true;
         configRepository.setBool('displayVRCPlusIconsAsAvatar', $app.data.displayVRCPlusIconsAsAvatar);
