@@ -2570,7 +2570,7 @@ speechSynthesis.getVoices();
                             params: {
                                 n: 100,
                                 offset: 0,
-                                tag: tag
+                                tag
                             }
                         });
                     });
@@ -6016,7 +6016,7 @@ speechSynthesis.getVoices();
             sharedFeedFilters: this.sharedFeedFilters,
             notificationPosition: this.notificationPosition,
             notificationTimeout: this.notificationTimeout,
-            notificationTheme: notificationTheme
+            notificationTheme
         };
         sharedRepository.setObject('VRConfigVars', VRConfigVars);
     };
@@ -7914,7 +7914,7 @@ speechSynthesis.getVoices();
             userIcon = `https://api.vrchat.cloud/api/1/file/${userIcon}/1`;
         }
         API.setVRCPlusIcon({
-            userIcon: userIcon
+            userIcon
         }).then((args) => {
             this.$message({
                 message: 'Icon changed',
