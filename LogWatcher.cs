@@ -158,7 +158,7 @@ namespace VRCX
         {
             try
             {
-                using (var fileStream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 65536, FileOptions.SequentialScan))
                 {
                     fileStream.Position = logContext.Position;
                     using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
