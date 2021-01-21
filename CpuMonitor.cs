@@ -13,7 +13,7 @@ namespace VRCX
         public static readonly CpuMonitor Instance;
         public float CpuUsage;
         private PerformanceCounter _performanceCounter;
-        private Thread _thread;
+        private Timer _timer;
 
         static CpuMonitor()
         {
@@ -52,43 +52,31 @@ namespace VRCX
                 }
             }
 
-            _thread = new Thread(ThreadLoop)
-            {
-                IsBackground = true
-            };
+            _timer = new Timer(TimerCallback, null, -1, -1);
         }
 
         internal void Init()
         {
-            _thread.Start();
+            _timer.Change(1000, 1000);
         }
 
         internal void Exit()
         {
-            var thread = _thread;
-            _thread = null;
-            thread.Interrupt();
-            thread.Join();
+            _timer.Change(-1, -1);
             _performanceCounter?.Dispose();
         }
 
-        private void ThreadLoop()
+        private void TimerCallback(object state)
         {
-            while (_thread != null)
+            try
             {
                 if (_performanceCounter != null)
                 {
                     CpuUsage = _performanceCounter.NextValue();
                 }
-
-                try
-                {
-                    Thread.Sleep(1000);
-                }
-                catch
-                {
-                    // ThreadInterruptedException
-                }
+            }
+            catch
+            {
             }
         }
     }
