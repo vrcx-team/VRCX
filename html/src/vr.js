@@ -1021,7 +1021,7 @@ speechSynthesis.getVoices();
                         theme: this.config.notificationTheme,
                         timeout: this.config.notificationTimeout,
                         layout: this.config.notificationPosition,
-                        text: text
+                        text
                     }).show();
                 }
             }
