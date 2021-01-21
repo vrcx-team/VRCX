@@ -2574,8 +2574,7 @@ speechSynthesis.getVoices();
                             }
                         });
                     });
-                }
-                else {
+                } else {
                     this.bulk({
                         fn,
                         N,
@@ -3715,10 +3714,8 @@ speechSynthesis.getVoices();
             var credentialsToSave = { user: currentUser, loginParmas: this.saveCredentials };
             savedCredentialsArray[currentUser.username] = credentialsToSave;
             delete this.saveCredentials;
-        } else {
-            if (savedCredentialsArray[currentUser.username] !== undefined) {
-                savedCredentialsArray[currentUser.username].user = currentUser;
-            }
+        } else if (savedCredentialsArray[currentUser.username] !== undefined) {
+            savedCredentialsArray[currentUser.username].user = currentUser;
         }
         this.loginForm.savedCredentials = savedCredentialsArray;
         var jsonCredentialsArray = JSON.stringify(savedCredentialsArray);
@@ -5982,8 +5979,7 @@ speechSynthesis.getVoices();
         if (this.isGameRunning) {
             API.currentUser.$online_for = Date.now();
             API.currentUser.$offline_for = '';
-        }
-        else {
+        } else {
             API.currentUser.$online_for = '';
             API.currentUser.$offline_for = Date.now();
         }
