@@ -8,14 +8,14 @@ import Noty from 'noty';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
 import { DataTables } from 'vue-data-tables';
-import ToggleSwitch from 'vuejs-toggle-switch'
+import ToggleSwitch from 'vuejs-toggle-switch';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 
 import sharedRepository from './repository/shared.js';
 import configRepository from './repository/config.js';
 import webApiService from './service/webapi.js';
-import gameLogService from './service/gamelog.js'
+import gameLogService from './service/gamelog.js';
 
 speechSynthesis.getVoices();
 
@@ -3752,7 +3752,7 @@ speechSynthesis.getVoices();
     };
 
     API.$on('AUTOLOGIN', function () {
-        var user = $app.loginForm.savedCredentials[$app.loginForm.lastUserLoggedIn]
+        var user = $app.loginForm.savedCredentials[$app.loginForm.lastUserLoggedIn];
         if (user !== undefined) {
             $app.relogin({
                 username: user.loginParmas.username,
@@ -4758,7 +4758,7 @@ speechSynthesis.getVoices();
                 this.gameLogTable.data.push(tableData);
             }
         }
-    }
+    };
 
     $app.methods.sweepGameLog = function () {
         var { data } = this.gameLogTable;
@@ -5948,13 +5948,13 @@ speechSynthesis.getVoices();
         this.wristFeedFiltersDialog.visible = false;
         configRepository.setString('sharedFeedFilters', JSON.stringify(this.sharedFeedFilters));
         this.updateVRConfigVars();
-    }
+    };
 
     $app.methods.cancelSharedFeedFilters = function () {
         this.notyFeedFiltersDialog.visible = false;
         this.wristFeedFiltersDialog.visible = false;
         this.sharedFeedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));
-    }
+    };
 
     $app.data.notificationPosition = configRepository.getString('VRCX_notificationPosition');
     $app.methods.changeNotificationPosition = function () {
@@ -5974,18 +5974,18 @@ speechSynthesis.getVoices();
             API.currentUser.$online_for = '';
             API.currentUser.$offline_for = Date.now();
         }
-    }
+    };
     $app.watch.isGameRunning = isGameRunningStateChange;
 
     sharedRepository.setBool('is_Game_No_VR', false);
     var isGameNoVRStateChange = function () {
         sharedRepository.setBool('is_Game_No_VR', this.isGameNoVR);
-    }
+    };
     $app.watch.isGameNoVR = isGameNoVRStateChange;
 
     var lastLocationStateChange = function () {
         sharedRepository.setString('last_location', $app.lastLocation);
-    }
+    };
     $app.watch.lastLocation = lastLocationStateChange;
 
     $app.methods.updateVRConfigVars = function () {
@@ -6008,9 +6008,9 @@ speechSynthesis.getVoices();
             notificationPosition: this.notificationPosition,
             notificationTimeout: this.notificationTimeout,
             notificationTheme: notificationTheme
-        }
+        };
         sharedRepository.setObject('VRConfigVars', VRConfigVars);
-    }
+    };
 
     API.$on('LOGIN', function () {
         $app.updateVRConfigVars();
@@ -7279,7 +7279,7 @@ speechSynthesis.getVoices();
                                     type: 'success'
                                 });
                                 return args;
-                            });;
+                            });
                             break;
                         case 'Make Private':
                             API.saveAvatar({
@@ -7291,7 +7291,7 @@ speechSynthesis.getVoices();
                                     type: 'success'
                                 });
                                 return args;
-                            });;
+                            });
                             break;
                         default:
                             break;
@@ -7850,7 +7850,7 @@ speechSynthesis.getVoices();
 
     $app.methods.locationToLaunchArg = function (location) {
         return `vrchat://launch?id=${location}`;
-    }
+    };
 
     $app.methods.launchGame = function (...args) {
         var D = this.launchDialog;
@@ -7966,7 +7966,7 @@ speechSynthesis.getVoices();
         r.onload = function () {
             var bodyStart = '---------------------------26696829785232761561272838397\nContent-Disposition: form-data; name="file"; filename="blob"\nContent-Type: image/png\n\n';
             var bodyEnd = '\n---------------------------26696829785232761561272838397--\n';
-            var body = bodyStart + r.result + bodyEnd
+            var body = bodyStart + r.result + bodyEnd;
             var base64Body = btoa(body);
             API.uploadVRCPlusIcon(base64Body).then((args) => {
                 this.$message({
@@ -8027,9 +8027,9 @@ speechSynthesis.getVoices();
         };
 
         if ((ctx.ref.state === 'online') && (ctx.ref.$online_for)) {
-            return timeToText(Date.now() - ctx.ref.$online_for)
+            return timeToText(Date.now() - ctx.ref.$online_for);
         } else if (ctx.ref.$offline_for) {
-            return timeToText(Date.now() - ctx.ref.$offline_for)
+            return timeToText(Date.now() - ctx.ref.$offline_for);
         } else {
             return '-';
         }
