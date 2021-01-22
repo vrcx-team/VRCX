@@ -3477,7 +3477,7 @@ speechSynthesis.getVoices();
             }
             var ctx = data[--i];
             // Location, OnPlayerJoined, OnPlayerLeft
-            if (ctx.type) {
+            if (ctx.type !== 'Notification') {
                 // FIXME: 이거 존나 느릴거 같은데
                 var isFriend = false;
                 var isFavorite = false;
