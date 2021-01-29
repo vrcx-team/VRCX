@@ -3493,8 +3493,6 @@ speechSynthesis.getVoices();
                     isFriend,
                     isFavorite
                 });
-            } else {
-                arr.push(ctx);
             }
             ++j;
         }
