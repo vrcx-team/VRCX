@@ -838,8 +838,8 @@ html
                                         span.extra {{ userDialog.ref.last_login | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
-                                        span.name Last Platform
-                                        span.extra(v-text="userDialog.ref.last_platform")
+                                        span.name Date Joined
+                                        span.extra(v-text="userDialog.ref.date_joined")
                                 .x-friend-item(v-if="userDialog.ref.id === API.currentUser.id && API.currentUser.homeLocation" @click="showWorldDialog(API.currentUser.homeLocation)" style="width:100%")
                                     .detail
                                         span.name Home Location

@@ -852,6 +852,7 @@ speechSynthesis.getVoices();
             developerType: json.developerType,
             last_login: json.last_login,
             last_platform: json.last_platform,
+            date_joined: json.date_joined,
             allowAvatarCopying: json.allowAvatarCopying,
             isFriend: false,
             location: ($app.isGameRunning === true)
@@ -1079,6 +1080,7 @@ speechSynthesis.getVoices();
                 developerType: '',
                 last_login: '',
                 last_platform: '',
+                date_joined: '',
                 allowAvatarCopying: false,
                 onlineFriends: [],
                 activeFriends: [],
@@ -1174,6 +1176,7 @@ speechSynthesis.getVoices();
                 developerType: '',
                 last_login: '',
                 last_platform: '',
+                date_joined: '',
                 allowAvatarCopying: false,
                 isFriend: false,
                 location: '',
