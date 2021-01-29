@@ -5752,7 +5752,7 @@ speechSynthesis.getVoices();
     $app.data.hideOnPlayerJoined = configRepository.getBool('VRCX_hideOnPlayerJoined');
     $app.data.hideDevicesFromFeed = configRepository.getBool('VRCX_hideDevicesFromFeed');
     $app.data.overlayNotifications = configRepository.getBool('VRCX_overlayNotifications');
-    $app.data.desktopToast = configRepository.getBool('VRCX_desktopToast');
+    $app.data.desktopToast = configRepository.getString('VRCX_desktopToast');
     $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
     $app.data.displayVRCPlusIconsAsAvatar = configRepository.getBool('displayVRCPlusIconsAsAvatar');
     $app.data.notificationTTS = configRepository.getBool('VRCX_notificationTTS');
@@ -5766,7 +5766,7 @@ speechSynthesis.getVoices();
         configRepository.setBool('VRCX_hideOnPlayerJoined', this.hideOnPlayerJoined);
         configRepository.setBool('VRCX_hideDevicesFromFeed', this.hideDevicesFromFeed);
         configRepository.setBool('VRCX_overlayNotifications', this.overlayNotifications);
-        configRepository.setBool('VRCX_desktopToast', this.desktopToast);
+        configRepository.setString('VRCX_desktopToast', this.desktopToast);
         configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
         configRepository.setBool('displayVRCPlusIconsAsAvatar', this.displayVRCPlusIconsAsAvatar);
         this.updateVRConfigVars();
@@ -5830,6 +5830,10 @@ speechSynthesis.getVoices();
     if (!configRepository.getString('VRCX_notificationTTSVoice')) {
         $app.data.notificationTTSVoice = '0';
         configRepository.setString('VRCX_notificationTTSVoice', $app.data.notificationTTSVoice);
+    }
+    if (!configRepository.getString('VRCX_desktopToast')) {
+        $app.data.desktopToast = 'Never';
+        configRepository.setString('VRCX_desktopToast', $app.data.desktopToast);
     }
     if (!configRepository.getString('sharedFeedFilters')) {
         var sharedFeedFilters = {
@@ -5939,6 +5943,26 @@ speechSynthesis.getVoices();
         },
         items: {
             labels: [{ name: 'Off' }, { name: 'On' }]
+        }
+    };
+    $app.data.desktopToastToggleSwitchOption = {
+        layout: {
+            backgroundColor: 'white',
+            selectedBackgroundColor: '#409eff',
+            selectedColor: 'white',
+            color: '#409eff',
+            borderColor: '#409eff',
+            fontWeight: 'bold',
+            fontFamily: '"Noto Sans JP", "Noto Sans KR", "Meiryo UI", "Malgun Gothic", "Segoe UI", "sans-serif"'
+        },
+        size: {
+            height: 1.5,
+            width: 22,
+            padding: 0.1,
+            fontSize: 0.75
+        },
+        items: {
+            labels: [{ name: 'Never' }, { name: 'Desktop Mode' }, { name: 'Game Closed' }, { name: 'Always' }]
         }
     };
 

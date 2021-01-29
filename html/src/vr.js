@@ -944,8 +944,8 @@ speechSynthesis.getVoices();
             }
         });
 
-        // disable notifications when busy or game isn't running
-        if ((this.currentUserStatus === 'busy') || (!this.isGameRunning)) {
+        // disable notifications when busy
+        if (this.currentUserStatus === 'busy') {
             return;
         }
         var bias = new Date(Date.now() - 60000).toJSON();
@@ -955,7 +955,7 @@ speechSynthesis.getVoices();
             if (noty.created_at < bias) {
                 continue;
             }
-            if ((this.config.overlayNotifications) && (!this.isGameNoVR)) {
+            if ((this.config.overlayNotifications) && (!this.isGameNoVR) && (this.isGameRunning)) {
                 var text = '';
                 switch (noty.type) {
                     case 'OnPlayerJoined':
@@ -1028,7 +1028,7 @@ speechSynthesis.getVoices();
                     }).show();
                 }
             }
-            if (this.config.notificationTTS) {
+            if ((this.config.notificationTTS) && (this.isGameRunning)) {
                 switch (noty.type) {
                     case 'OnPlayerJoined':
                         this.speak(`${noty.data} has joined`);
@@ -1091,7 +1091,9 @@ speechSynthesis.getVoices();
                         break;
                 }
             }
-            if ((this.config.desktopToast) && (this.isGameNoVR)) {
+            if ((this.config.desktopToast === 'Always') ||
+                ((this.config.desktopToast === 'Game Closed') && (!this.isGameRunning)) ||
+                ((this.config.desktopToast === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) {
                 var imageURL = '';
                 if (noty.userId) {
                     imageURL = await API.getCachedUser({

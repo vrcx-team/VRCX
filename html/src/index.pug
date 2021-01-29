@@ -573,19 +573,21 @@ html
                         el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog()" :disabled="!openVR") Wrist Feed Filters
+                        el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()" :disabled="!openVR") Notification Filters
                     br
-                    span.sub-header Notification Options
+                    span.sub-header VR Notifications
                     div.options-container-item
                         span.name Overlay Notifications
                         el-switch(v-model="overlayNotifications" :disabled="!openVR")
                     div.options-container-item
-                        span.name Desktop Notifications
-                        el-switch(v-model="desktopToast" :disabled="!openVR")
-                    
-                    div.options-container-item
-                        el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()" :disabled="!openVR") Notification Filters
                         el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()" :disabled="!overlayNotifications || !openVR") Notification Timeout
                         el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog()" :disabled="!overlayNotifications || !openVR") Notification Position
+                    br
+                    span.sub-header Desktop Notifications
+                    div.options-container-item
+                        span.name When to display notifications:
+                        br
+                        toggle-switch(:options="desktopToastToggleSwitchOption" group="desktopToastToggleSwitchOption" v-model="desktopToast" class="toggle-switch" :disabled="!openVR")
                     br
                     span.sub-header TTS Options
                     div.options-container-item
