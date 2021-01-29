@@ -81,7 +81,7 @@ namespace VRCX
 
         internal void SaveCookies()
         {
-            if (_cookieDirty == true)
+            if (_cookieDirty == false)
             {
                 return;
             }
