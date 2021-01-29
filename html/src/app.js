@@ -4209,7 +4209,7 @@ speechSynthesis.getVoices();
                 this.friendsGroup3_.push(ctx);
                 this.friendsGroupD_.unshift(ctx);
             }
-            if ('ref' in ctx) {
+            if (typeof ctx.ref !== 'undefined') {
                 if ((ctx.ref.$offline_for === '') &&
                     ((ctx.state === 'offline') && ctx.ref.state === '') ||
                     (((ctx.state === 'offline') || (ctx.state === 'active')) &&
@@ -4361,7 +4361,7 @@ speechSynthesis.getVoices();
         if (query) {
             var QUERY = query.toUpperCase();
             for (var ctx of this.friends.values()) {
-                if (('ref' in ctx) === false) {
+                if (typeof ctx.ref === 'undefined') {
                     continue;
                 }
                 var NAME = ctx.name.toUpperCase();
@@ -7014,7 +7014,7 @@ speechSynthesis.getVoices();
         }
         for (var { ref } of this.friends.values()) {
             if (typeof ref === 'undefined' ||
-                ('$location' in ref) === false ||
+                typeof ref.$location === 'undefined' ||
                 ref.$location.worldId !== D.id) {
                 continue;
             }
