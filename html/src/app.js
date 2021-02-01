@@ -6946,7 +6946,7 @@ speechSynthesis.getVoices();
         this.setUserDialogWorlds(D.worlds);
     };
 
-    $app.methods.changeUserDialogAvatarReleaseStatus = function () {
+    $app.methods.changeUserDialogWorldSorting = function () {
         var D = this.userDialog;
         this.setUserDialogAvatars(D.avatars);
     };
