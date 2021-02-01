@@ -769,7 +769,7 @@ html
                                     el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-left:5px") Friend No.{{userDialog.friend.no}}
                                     el-tag.x-tag-vrcplus(type="info" effect="plain" size="mini" v-if="userDialog.ref.$isVRCPlus" style="margin-left:5px") VRC+
                                     el-tag.x-tag-platform-pc(type="info" effect="plain" size="mini" v-if="userDialog.ref.last_platform === 'standalonewindows'" style="margin-left:5px") PC
-                                    el-tag.x-tag-platform-quest(type="info" effect="plain" size="mini" v-if="userDialog.ref.last_platform === 'android'" style="margin-left:5px") PC
+                                    el-tag.x-tag-platform-quest(type="info" effect="plain" size="mini" v-if="userDialog.ref.last_platform === 'android'" style="margin-left:5px") Quest
                                 div(style="margin-top:5px")
                                     span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
                             div(v-if="userDialog.ref.userIcon" style="flex:none;margin-right:10px")
