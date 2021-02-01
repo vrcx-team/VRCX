@@ -528,6 +528,30 @@ html
                     div.options-container-item
                         span.name Offline
                         el-switch(v-model="orderFriendsGroup3" inactive-text="by name" active-text="by state")
+                    div.options-container
+                        span.header Trust Rank Colors
+                        div.options-container-item
+                            div
+                                v-swatches(v-model="trustColor.untrusted" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-untrusted")
+                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Visitor
+                            div
+                                v-swatches(v-model="trustColor.basic" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-basic")
+                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] New User
+                            div
+                                v-swatches(v-model="trustColor.known" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-known")
+                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] User
+                            div
+                                v-swatches(v-model="trustColor.trusted" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-trusted")
+                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Known User
+                            div
+                                v-swatches(v-model="trustColor.veteran" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-veteran")
+                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Trusted User
+                            div
+                                v-swatches(v-model="trustColor.legend" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-legend")
+                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Veteran User
+                            div
+                                v-swatches(v-model="trustColor.legendary" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-legendary")
+                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Legendary User
                 div.options-container
                     span.header Discord Presence
                     div.options-container-item
@@ -598,7 +622,7 @@ html
                         el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
                             el-button(v-text="TTSvoices[notificationTTSVoice].name" size="mini" :disabled="!openVR || !notificationTTS")
                             el-dropdown-menu(#default="dropdown")
-                                el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")         
+                                el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")     
                 div.options-container
                     span.header Application
                     div.options-container-item

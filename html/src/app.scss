@@ -433,105 +433,14 @@ i.x-user-status.busy {
     background: #f56c6c;
 }
 
-.x-friend-item > .detail > .name.x-tag-untrusted {
-    color: rgb(204, 204, 204);
+.x-tag-friend {
+    color: rgb(255, 208, 0) !important;
+    border-color: rgb(255, 208, 0) !important;
 }
 
-.el-tag.x-tag-untrusted {
-    color: rgb(204, 204, 204);
-    border-color: rgb(204, 204, 204);
-}
-
-.x-friend-item > .detail > .name.x-tag-basic {
-    color: rgb(23, 120, 255);
-}
-
-.el-tag.x-tag-basic {
-    color: rgb(23, 120, 255);
-    border-color: rgb(23, 120, 255);
-}
-
-.x-friend-item > .detail > .name.x-tag-known {
-    color: rgb(43, 207, 92);
-}
-
-.el-tag.x-tag-known {
-    color: rgb(43, 207, 92);
-    border-color: rgb(43, 207, 92);
-}
-
-.x-friend-item > .detail > .name.x-tag-trusted {
-    color: rgb(255, 123, 66);
-}
-
-.el-tag.x-tag-trusted {
-    color: rgb(255, 123, 66);
-    border-color: rgb(255, 123, 66);
-}
-
-.x-friend-item > .detail > .name.x-tag-veteran {
-    color: rgb(129, 67, 230);
-}
-
-.el-tag.x-tag-veteran {
-    color: rgb(129, 67, 230);
-    border-color: rgb(129, 67, 230);
-}
-
-.x-friend-item > .detail > .name.x-tag-legend {
-    // color: rgb(255, 255, 0);
-    color: rgb(255, 208, 0);
-}
-
-.el-tag.x-tag-legend {
-    // border-color: rgb(255, 255, 0);
-    // color: rgb(255, 255, 0);
-    color: rgb(255, 208, 0);
-    border-color: rgb(255, 208, 0);
-}
-
-.x-friend-item > .detail > .name.x-tag-legendary {
-    color: rgb(255, 105, 180);
-}
-
-.el-tag.x-tag-legendary {
-    color: rgb(255, 105, 180);
-    border-color: rgb(255, 105, 180);
-}
-
-.x-friend-item > .detail > .name.x-tag-vip {
-    color: rgb(181, 38, 38);
-}
-
-.el-tag.x-tag-vip {
-    color: rgb(181, 38, 38);
-    border-color: rgb(181, 38, 38);
-}
-
-.x-friend-item > .detail > .name.x-tag-troll {
-    color: rgb(120, 47, 47);
-}
-
-.el-tag.x-tag-troll {
-    color: rgb(120, 47, 47);
-    border-color: rgb(120, 47, 47);
-}
-
-.x-friend-item > .detail > .name.x-tag-friend {
-    // color: rgb(255, 255, 0);
-    color: rgb(255, 208, 0);
-}
-
-.el-tag.x-tag-friend {
-    // border-color: rgb(255, 255, 0);
-    // color: rgb(255, 255, 0);
-    color: rgb(255, 208, 0);
-    border-color: rgb(255, 208, 0);
-}
-
-.el-tag.x-tag-vrcplus {
-    color: rgb(255, 208, 0);
-    border-color: rgb(255, 208, 0);
+.x-tag-vrcplus {
+    color: rgb(255, 208, 0) !important;
+    border-color: rgb(255, 208, 0) !important;
 }
 
 .el-tree-node {
@@ -587,4 +496,8 @@ i.x-user-status.busy {
     padding: 2px 5px 2px 0;
     vertical-align: top;
     text-align: right;
+}
+
+.color-picker {
+    font-size: 18px;
 }

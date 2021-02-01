@@ -10,6 +10,9 @@ import VueLazyload from 'vue-lazyload';
 import { DataTables } from 'vue-data-tables';
 // eslint-disable-next-line no-unused-vars
 import ToggleSwitch from 'vuejs-toggle-switch';
+import VSwatches from 'vue-swatches';
+Vue.component('v-swatches', VSwatches)
+import "../node_modules/vue-swatches/dist/vue-swatches.css"
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 
@@ -5968,6 +5971,52 @@ speechSynthesis.getVoices();
             labels: [{ name: 'Never' }, { name: 'Desktop Mode' }, { name: 'Game Closed' }, { name: 'Always' }]
         }
     };
+
+    if (!configRepository.getString('VRCX_trustColor')) {
+        var trustColor = {
+            untrusted: '#CCCCCC',
+            basic: '#1778FF',
+            known: '#2BCF5C',
+            trusted: '#FF7B42',
+            veteran: '#B18FFF',
+            legend: '#FFD000',
+            legendary: '#FF69B4'
+        };
+        configRepository.setString('VRCX_trustColor', JSON.stringify(trustColor));
+    }
+    $app.data.trustColor = JSON.parse(configRepository.getString('VRCX_trustColor'));
+
+    $app.data.trustColorSwatches = ['#CCCCCC', '#1778FF', '#2BCF5C', '#FF7B42', '#B18FFF', '#FFD000', '#FF69B4', '#ABCDEF', '#8143E6', '#B52626', '#000000', '#FFFFFF'];
+
+    $app.methods.updatetrustColor = function () {
+        var trustColor = $app.trustColor;
+        if (trustColor) {
+            configRepository.setString('VRCX_trustColor', JSON.stringify(trustColor));
+        } else {
+            trustColor = JSON.parse(configRepository.getString('VRCX_trustColor'));
+            $app.trustColor = trustColor;
+        }
+        if (document.getElementById('trustColor') !== null) {
+            document.getElementById('trustColor').outerHTML = '';
+        }
+        var style = document.createElement('style');
+        style.id = 'trustColor';
+        style.type = 'text/css';
+        var newCSS = '';
+        for (var rank in trustColor) {
+            newCSS += `.x-tag-${rank} { color: ${trustColor[rank]} !important; border-color: ${trustColor[rank]} !important; } `;
+        }
+        style.innerHTML = newCSS;
+        document.getElementsByTagName('head')[0].appendChild(style);
+    };
+    $app.methods.updatetrustColor();
+    $app.watch['trustColor.untrusted'] = $app.methods.updatetrustColor;
+    $app.watch['trustColor.basic'] = $app.methods.updatetrustColor;
+    $app.watch['trustColor.known'] = $app.methods.updatetrustColor;
+    $app.watch['trustColor.trusted'] = $app.methods.updatetrustColor;
+    $app.watch['trustColor.veteran'] = $app.methods.updatetrustColor;
+    $app.watch['trustColor.legend'] = $app.methods.updatetrustColor;
+    $app.watch['trustColor.legendary'] = $app.methods.updatetrustColor;
 
     $app.methods.saveSharedFeedFilters = function () {
         this.notyFeedFiltersDialog.visible = false;
