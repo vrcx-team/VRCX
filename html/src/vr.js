@@ -1028,7 +1028,7 @@ speechSynthesis.getVoices();
                     }).show();
                 }
             }
-            if ((this.config.notificationTTS) && (this.isGameRunning)) {
+            if ((this.config.notificationTTS) && (!this.isGameNoVR) && (this.isGameRunning)) {
                 switch (noty.type) {
                     case 'OnPlayerJoined':
                         this.speak(`${noty.data} has joined`);
