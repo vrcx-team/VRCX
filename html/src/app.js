@@ -6286,6 +6286,7 @@ speechSynthesis.getVoices();
 
         worldSorting: 'update',
         avatarSorting: 'update',
+        avatarReleaseStatus: 'all',
 
         treeData: [],
         memo: ''
@@ -6948,6 +6949,20 @@ speechSynthesis.getVoices();
     $app.methods.changeUserDialogAvatarSorting = function () {
         var D = this.userDialog;
         this.setUserDialogAvatars(D.avatars);
+    };
+
+    $app.methods.changeUserDialogAvatarReleaseStatus = function () {
+        var D = this.userDialog;
+        this.setUserDialogAvatars(D.avatars);
+    };
+
+    $app.computed.userDialogAvatars = function () {
+        var { avatars, avatarReleaseStatus } = this.userDialog;
+        if (avatarReleaseStatus === 'public' ||
+            avatarReleaseStatus === 'private') {
+            return avatars.filter((avatar) => avatar.releaseStatus === avatarReleaseStatus);
+        }
+        return avatars;
     };
 
     // App: World Dialog
