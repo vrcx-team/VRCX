@@ -3434,7 +3434,7 @@ speechSynthesis.getVoices();
                         onClick: () => AppApi.OpenLink('https://github.com/pypy-vrc/VRCX/releases')
                     }
                 }).show();
-                this.notifyMenu('more');
+                this.notifyMenu('settings');
             }
         } else {
             this.latestAppVersion = 'Error occured';
@@ -5723,7 +5723,7 @@ speechSynthesis.getVoices();
         });
     };
 
-    // App: More
+    // App: Profile + Settings
 
     $app.data.configTreeData = [];
     $app.data.currentUserTreeData = [];

@@ -62,7 +62,8 @@ html
                     +menuitem('friendLog', 'Friend Log', 'el-icon-notebook-2')
                     +menuitem('moderation', 'Moderation', 'el-icon-finished')
                     +menuitem('notification', 'Notification', 'el-icon-bell')
-                    +menuitem('more', 'More', 'el-icon-s-tools')
+                    +menuitem('profile', 'Profile', 'el-icon-user')
+                    +menuitem('settings', 'Settings', 'el-icon-s-tools')
 
             //- feed
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'feed'")
@@ -389,44 +390,10 @@ html
                             el-button(v-if="scope.row.type === 'friendRequest'" type="text" icon="el-icon-check" size="mini" @click="acceptNotification(scope.row)")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="hideNotification(scope.row)")
 
-            //- more
-            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'more'")
+            //- profile
+            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'profile'")
                 div.options-container(style="margin-top:0")
-                    span.header VRCX
-                    .x-friend-list(style="margin-top:10px")
-                        .x-friend-item(style="cursor:default")
-                            .detail
-                                span.name Version
-                                span.extra(v-text="appVersion")
-                        .x-friend-item(@click="checkAppVersion()")
-                            .detail
-                                span.name Latest Version
-                                span.extra(v-if="latestAppVersion" v-text="latestAppVersion")
-                                span.extra(v-else) Click to refresh
-                        .x-friend-item(@click="openExternalLink('https://github.com/pypy-vrc/VRCX')")
-                            .detail
-                                span.name Repository URL
-                                span.extra https://github.com/pypy-vrc/VRCX
-                div.options-container
-                    span.header Game Info
-                    .x-friend-list(style="margin-top:10px")
-                        .x-friend-item
-                            .detail(@click="API.getVisits()")
-                                span.name Online Users
-                                span.extra(v-if="visits") {{visits}} users online.
-                                span.extra(v-else) Click to refresh
-                    div(style="margin-top:5px")
-                        el-button-group
-                            el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
-                div.options-container
-                    span.header Direct Access
-                    div(style="margin-top:10px")
-                        el-button-group
-                            el-button(size="small" @click="promptUserDialog()") User
-                            el-button(size="small" @click="promptWorldDialog()") World
-                            el-button(size="small" @click="promptAvatarDialog()") Avatar
-                div.options-container
-                    span.header My Profile
+                    span.header Profile
                     .x-friend-list(style="margin-top:10px")
                         .x-friend-item(@click="showUserDialog(API.currentUser.id)")
                             .avatar
@@ -446,66 +413,100 @@ html
                     div(style="margin-top:10px")
                         el-button(size="small" icon="el-icon-switch-button" @click="logout()") Logout
                         el-button(size="small" icon="el-icon-printer" @click="showExportFriendsListDialog()") Export Friends List
-                    div(v-if="API.currentUser.$isVRCPlus" style="margin-top:30px")
-                        span.header VRCPlus Icons
+                div.options-container
+                    span.header Game Info
+                    .x-friend-list(style="margin-top:10px")
+                        .x-friend-item
+                            .detail(@click="API.getVisits()")
+                                span.name Online Users
+                                span.extra(v-if="visits") {{visits}} users online.
+                                span.extra(v-else) Click to refresh
+                div.options-container
+                    span.header Direct Access
+                    div(style="margin-top:10px")
+                        el-button-group
+                            el-button(size="small" @click="promptUserDialog()") User
+                            el-button(size="small" @click="promptWorldDialog()") World
+                            el-button(size="small" @click="promptAvatarDialog()") Avatar
+                div.options-container(v-if="API.currentUser.$isVRCPlus" style="margin-top:30px")
+                    span.header VRCPlus Icons
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Refresh
+                        el-button(type="default" @click="displayVRCPlusIconsTable()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Clear results
+                        el-button(type="default" @click="VRCPlusIconsTable = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Reset icon
+                        el-button(type="default" @click="setVRCPlusIcon('')" size="mini" icon="el-icon-close" circle style="margin:0" :disabled="!API.currentUser.userIcon")
+                    //- input(type="file" @change="onFileChangeVRCPlusIcon")
+                    br
+                    .x-friend-item(v-for="icon in VRCPlusIconsTable" :key="icon.id" style="display:inline-block;margin-top:10px;cursor:default")
+                        .vrcplus-icon(style="" @click="setVRCPlusIcon(icon.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(icon.id) }")
+                            img.avatar(v-if="icon.versions[1].file.url" v-lazy="icon.versions[1].file.url")
                         el-tooltip(placement="top")
                             template(#content)
-                                span Refresh
-                            el-button(type="default" @click="displayVRCPlusIconsTable()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                        el-tooltip(placement="top")
-                            template(#content)
-                                span Clear results
-                            el-button(type="default" @click="VRCPlusIconsTable = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
-                        el-tooltip(placement="top")
-                            template(#content)
-                                span Reset icon
-                            el-button(type="default" @click="setVRCPlusIcon('')" size="mini" icon="el-icon-close" circle style="margin:0" :disabled="!API.currentUser.userIcon")
-                        //- input(type="file" @change="onFileChangeVRCPlusIcon")
-                        br
-                        .x-friend-item(v-for="icon in VRCPlusIconsTable" :key="icon.id" style="display:inline-block;margin-top:10px;cursor:default")
-                            .vrcplus-icon(style="" @click="setVRCPlusIcon(icon.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(icon.id) }")
-                                img.avatar(v-if="icon.versions[1].file.url" v-lazy="icon.versions[1].file.url")
-                            el-tooltip(placement="top")
-                                template(#content)
-                                    span Delete
-                                el-button(type="default" @click="deleteVRCPlusIcon(icon.id)" size="mini" icon="el-icon-delete" circle style="float:right;")
-                    div.options-container
-                        span.header Past Display Names
-                        data-tables(v-bind="pastDisplayNameTable" style="margin-top:10px")
-                            el-table-column(label="Date" prop="updated_at" sortable="custom")
-                                template(v-once #default="scope")
-                                    span {{ scope.row.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                            el-table-column(label="Name" prop="displayName")
-                    div.options-container
-                        span.header Config JSON
-                        el-tooltip(placement="top")
-                            template(#content)
-                                span Refresh
-                            el-button(type="default" @click="refreshConfigTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                        el-tooltip(placement="top")
-                            template(#content)
-                                span Clear results
-                            el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
-                        el-tree(:data="configTreeData" style="margin-top:10px;font-size:12px")
-                            template(#default="scope")
-                                span
-                                    span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
-                                    span(v-if="!scope.data.children" v-text="scope.data.value")
-                    div.options-container
-                        span.header Current User JSON
-                        el-tooltip(placement="top")
-                            template(#content)
-                                span Refresh
-                            el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                        el-tooltip(placement="top")
-                            template(#content)
-                                span Clear results
-                            el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
-                        el-tree(:data="currentUserTreeData" style="margin-top:10px;font-size:12px")
-                            template(#default="scope")
-                                span
-                                    span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
-                                    span(v-if="!scope.data.children" v-text="scope.data.value")
+                                span Delete
+                            el-button(type="default" @click="deleteVRCPlusIcon(icon.id)" size="mini" icon="el-icon-delete" circle style="float:right;")
+                div.options-container
+                    span.header Past Display Names
+                    data-tables(v-bind="pastDisplayNameTable" style="margin-top:10px")
+                        el-table-column(label="Date" prop="updated_at" sortable="custom")
+                            template(v-once #default="scope")
+                                span {{ scope.row.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+                        el-table-column(label="Name" prop="displayName")
+                div.options-container
+                    span.header Config JSON
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Refresh
+                        el-button(type="default" @click="refreshConfigTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Clear results
+                        el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                    el-tree(:data="configTreeData" style="margin-top:10px;font-size:12px")
+                        template(#default="scope")
+                            span
+                                span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
+                                span(v-if="!scope.data.children" v-text="scope.data.value")
+                div.options-container
+                    span.header Current User JSON
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Refresh
+                        el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Clear results
+                        el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                    el-tree(:data="currentUserTreeData" style="margin-top:10px;font-size:12px")
+                        template(#default="scope")
+                            span
+                                span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
+                                span(v-if="!scope.data.children" v-text="scope.data.value")
+
+            //- settings
+            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'settings'")
+                div.options-container(style="margin-top:0")       
+                    span.header Settings
+                    .x-friend-list(style="margin-top:10px")
+                        .x-friend-item(style="cursor:default")
+                            .detail
+                                span.name Version
+                                span.extra(v-text="appVersion")
+                        .x-friend-item(@click="checkAppVersion()")
+                            .detail
+                                span.name Latest Version
+                                span.extra(v-if="latestAppVersion" v-text="latestAppVersion")
+                                span.extra(v-else) Click to refresh
+                        .x-friend-item(@click="openExternalLink('https://github.com/pypy-vrc/VRCX')")
+                            .detail
+                                span.name Repository URL
+                                span.extra https://github.com/pypy-vrc/VRCX
                 div.options-container
                     span.header Appearance
                     div.options-container-item
@@ -637,6 +638,9 @@ html
                     div.options-container-item
                         span.name Auto login
                         el-switch(v-model="isAutoLogin")
+                    div.options-container-item
+                        el-button-group
+                            el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
                 div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                     span.header Legal Notice
                     div.options-container-item
