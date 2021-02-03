@@ -20,6 +20,7 @@ function parseRawGameLog(dt, type, args) {
 
         case 'player-joined':
             gameLog.userDisplayName = args[0];
+            gameLog.userType = args[1];
             break;
 
         case 'player-left':

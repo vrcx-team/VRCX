@@ -279,7 +279,31 @@ namespace VRCX
             // 2020.11.01 00:07:01 Log        -  [PlayerManager] Removed player 2 / Rize♡
             // 2020.11.01 00:07:02 Log        -  [Player] Unregistering Rize♡
 
-            if (string.Compare(line, offset, "OnPlayerJoined ", 0, 15, StringComparison.Ordinal) == 0)
+            if (string.Compare(line, offset, "Initialized PlayerAPI \"", 0, 23, StringComparison.Ordinal) == 0)
+            {
+                var pos = line.LastIndexOf("\" is ");
+                if (pos < 0)
+                {
+                    return false;
+                }
+
+                var userDisplayName = line.Substring(offset + 23, pos - (offset + 23));
+                var userType = line.Substring(pos + 5);
+
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "player-joined",
+                    userDisplayName,
+                    userType,
+                });
+
+                return true;
+            }
+
+            // fallback method
+            /*if (string.Compare(line, offset, "OnPlayerJoined ", 0, 15, StringComparison.Ordinal) == 0)
             {
                 var userDisplayName = line.Substring(offset + 15);
 
@@ -292,7 +316,7 @@ namespace VRCX
                 });
 
                 return true;
-            }
+            }*/
 
             if (string.Compare(line, offset, "OnPlayerLeft ", 0, 13, StringComparison.Ordinal) == 0)
             {
