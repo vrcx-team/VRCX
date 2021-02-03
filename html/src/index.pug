@@ -183,7 +183,7 @@ html
                     el-table-column(label="Type" prop="type" width="120")
                     el-table-column(label="Detail" prop="data")
                         template(v-once #default="scope")
-                            location(v-if="scope.row.type === 'Location'" :location="scope.row.data")
+                            location(v-if="scope.row.type === 'Location'" :location="scope.row.data[0]" :hint="scope.row.data[1]")
                             span.x-link(v-else-if="scope.row.type !== 'Notification'" v-text="scope.row.data" @click="lookupUser(scope.row.data)")
 
             //- search

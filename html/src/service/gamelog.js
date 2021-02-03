@@ -12,10 +12,7 @@ function parseRawGameLog(dt, type, args) {
     switch (type) {
         case 'location':
             gameLog.location = args[0];
-            break;
-
-        case 'world':
-            gameLog.worldName = args[0];
+            gameLog.worldName = args[1];
             break;
 
         case 'player-joined':

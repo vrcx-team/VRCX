@@ -446,7 +446,11 @@ speechSynthesis.getVoices();
     Vue.component('location', {
         template: '<span>{{ text }}<slot></slot></span>',
         props: {
-            location: String
+            location: String,
+            hint: {
+                type: String,
+                default: ''
+            }
         },
         data() {
             return {
@@ -460,6 +464,12 @@ speechSynthesis.getVoices();
                     this.text = 'Offline';
                 } else if (L.isPrivate) {
                     this.text = 'Private';
+                } else if (typeof this.hint === 'string' && this.hint !== '') {
+                    if (L.instanceId) {
+                        this.text = `${this.hint} #${L.instanceName} ${L.accessType}`;
+                    } else {
+                        this.text = this.hint;
+                    }
                 } else if (L.worldId) {
                     var ref = API.cachedWorlds.get(L.worldId);
                     if (typeof ref === 'undefined') {
