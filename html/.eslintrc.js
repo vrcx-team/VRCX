@@ -30,6 +30,7 @@ module.exports = {
         'class-methods-use-this': 0,
         complexity: 0,
         'func-names': 0,
+        'func-style': 0,
         'function-call-argument-newline': 0,
         'guard-for-in': 0,
         'id-length': 0,
