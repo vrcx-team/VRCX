@@ -18,6 +18,7 @@ namespace VRCX
         {
             public long Length;
             public long Position;
+            public string RecentWorldName;
         }
 
         public static readonly LogWatcher Instance;
@@ -250,6 +251,13 @@ namespace VRCX
             // 2020.10.31 23:36:31 Log        -  [RoomManager] Successfully joined room
             // 2021.02.03 10:18:58 Log        -  [ǄǄǅǅǅǄǄǅǅǄǅǅǅǅǄǄǄǅǅǄǄǅǅǅǅǄǅǅǅǅǄǄǄǄǄǅǄǅǄǄǄǅǅǄǅǅǅ] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
 
+            if (string.Compare(line, offset, "Entering Room: ", 0, 15, StringComparison.Ordinal) == 0)
+            {
+                var worldName = line.Substring(offset + 15);
+                logContext.RecentWorldName = worldName;
+                return true;
+            }
+
             if (string.Compare(line, offset, "Joining wrld_", 0, 13, StringComparison.Ordinal) == 0)
             {
                 var location = line.Substring(offset + 8);
@@ -259,7 +267,8 @@ namespace VRCX
                     fileInfo.Name,
                     ConvertLogTimeToISO8601(line),
                     "location",
-                    location
+                    location,
+                    logContext.RecentWorldName
                 });
 
                 return true;
