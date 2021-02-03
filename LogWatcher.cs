@@ -172,12 +172,31 @@ namespace VRCX
                                 break;
                             }
 
-                            if (line.Length <= 34 ||
-                                line[31] != '-' ||
-                                ParseLogOnPlayerJoined(fileInfo, line) == true ||
-                                ParseLogOnPlayerLeft(fileInfo, line) == true ||
-                                ParseLogNotification(fileInfo, line) == true ||
-                                ParseLogLocation(fileInfo, line) == true)
+                            // 2020.10.31 23:36:28 Log        -  [VRCFlowManagerVRC] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
+                            // 2021.02.03 10:18:58 Log        -  [ǄǄǅǅǅǄǄǅǅǄǅǅǅǅǄǄǄǅǅǄǄǅǅǅǅǄǅǅǅǅǄǄǄǄǄǅǄǅǄǄǄǅǅǄǅǅǅ] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
+
+                            if (line.Length <= 36 ||
+                                line[31] != '-')
+                            {
+                                continue;
+                            }
+
+                            if (line[34] == '[')
+                            {
+                                var offset = line.IndexOf("] ", 35, StringComparison.Ordinal);
+                                if (offset >= 35)
+                                {
+                                    offset += 2;
+                                    if (ParseLogOnPlayerJoinedOrLeft(fileInfo, logContext, line, offset) == true ||
+                                        ParseLogLocation(fileInfo, logContext, line, offset) == true)
+                                    {
+                                        continue;
+                                    }
+                                }
+                                continue;
+                            }
+
+                            if (ParseLogNotification(fileInfo, logContext, line, 34) == true)
                             {
                                 continue;
                             }
@@ -221,7 +240,7 @@ namespace VRCX
             return $"{dt:yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'}";
         }
 
-        private bool ParseLogLocation(FileInfo fileInfo, string line)
+        private bool ParseLogLocation(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2020.10.31 23:36:28 Log        -  [VRCFlowManagerVRC] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
             // 2020.10.31 23:36:28 Log        -  [VRCFlowManagerVRC] Destination set: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
@@ -229,17 +248,11 @@ namespace VRCX
             // 2020.10.31 23:36:31 Log        -  [RoomManager] Joining wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd:67646~private(usr_4f76a584-9d4b-46f6-8209-8305eb683661)~nonce(D9298A536FEEEDDBB61633661A4BDAA09717C5178DEF865C4C09372FE12E09A6)
             // 2020.10.31 23:36:31 Log        -  [RoomManager] Joining or Creating Room: VRChat Home
             // 2020.10.31 23:36:31 Log        -  [RoomManager] Successfully joined room
+            // 2021.02.03 10:18:58 Log        -  [ǄǄǅǅǅǄǄǅǅǄǅǅǅǅǄǄǄǅǅǄǄǅǅǅǅǄǅǅǅǅǄǄǄǄǄǅǄǅǄǄǄǅǅǄǅǅǅ] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
 
-            if (line.Length <= 56 ||
-                line[35] != 'R' ||
-                string.Compare(line, 34, "[RoomManager] Joining ", 0, 22, StringComparison.Ordinal) != 0)
+            if (string.Compare(line, offset, "Joining wrld_", 0, 13, StringComparison.Ordinal) == 0)
             {
-                return false;
-            }
-
-            if (string.Compare(line, 56, "or ", 0, 3, StringComparison.Ordinal) != 0)
-            {
-                var location = line.Substring(56);
+                var location = line.Substring(offset + 8);
 
                 AppendLog(new[]
                 {
@@ -252,81 +265,58 @@ namespace VRCX
                 return true;
             }
 
-            var worldName = (line.Length <= 74)
-                ? string.Empty
-                : line.Substring(74);
-
-            AppendLog(new[]
-            {
-                fileInfo.Name,
-                ConvertLogTimeToISO8601(line),
-                "world",
-                worldName
-            });
-
-            return true;
+            return false;
         }
 
-        private bool ParseLogOnPlayerJoined(FileInfo fileInfo, string line)
+        private bool ParseLogOnPlayerJoinedOrLeft(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2020.10.31 23:36:58 Log        -  [NetworkManager] OnPlayerJoined pypy
             // 2020.10.31 23:36:58 Log        -  [Player] Initialized PlayerAPI "pypy" is local
             // 2020.10.31 23:36:58 Log        -  [NetworkManager] OnPlayerJoined Rize♡
             // 2020.10.31 23:36:58 Log        -  [Player] Initialized PlayerAPI "Rize♡" is remote
 
-            if (line.Length <= 66 ||
-                line[35] != 'N' ||
-                string.Compare(line, 34, "[NetworkManager] OnPlayerJoined ", 0, 32, StringComparison.Ordinal) != 0)
-            {
-                return false;
-            }
-
-            var userDisplayName = line.Substring(66);
-
-            AppendLog(new[]
-            {
-                fileInfo.Name,
-                ConvertLogTimeToISO8601(line),
-                "player-joined",
-                userDisplayName
-            });
-
-            return true;
-        }
-
-        private bool ParseLogOnPlayerLeft(FileInfo fileInfo, string line)
-        {
             // 2020.11.01 00:07:01 Log        -  [NetworkManager] OnPlayerLeft Rize♡
             // 2020.11.01 00:07:01 Log        -  [PlayerManager] Removed player 2 / Rize♡
             // 2020.11.01 00:07:02 Log        -  [Player] Unregistering Rize♡
 
-            if (line.Length <= 64 ||
-                line[35] != 'N' ||
-                string.Compare(line, 34, "[NetworkManager] OnPlayerLeft ", 0, 30, StringComparison.Ordinal) != 0)
+            if (string.Compare(line, offset, "OnPlayerJoined ", 0, 15, StringComparison.Ordinal) == 0)
             {
-                return false;
+                var userDisplayName = line.Substring(offset + 15);
+
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "player-joined",
+                    userDisplayName
+                });
+
+                return true;
             }
 
-            var userDisplayName = line.Substring(64);
-
-            AppendLog(new[]
+            if (string.Compare(line, offset, "OnPlayerLeft ", 0, 13, StringComparison.Ordinal) == 0)
             {
-                fileInfo.Name,
-                ConvertLogTimeToISO8601(line),
-                "player-left",
-                userDisplayName
-            });
+                var userDisplayName = line.Substring(offset + 13);
 
-            return true;
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "player-left",
+                    userDisplayName
+                });
+
+                return true;
+            }
+
+            return false;
         }
 
-        private bool ParseLogNotification(FileInfo fileInfo, string line)
+        private bool ParseLogNotification(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2021.01.03 05:48:58 Log        -  Received Notification: < Notification from username:pypy, sender user id:usr_4f76a584-9d4b-46f6-8209-8305eb683661 to of type: friendRequest, id: not_3a8f66eb-613c-4351-bee3-9980e6b5652c, created at: 01/14/2021 15:38:40 UTC, details: {{}}, type:friendRequest, m seen:False, message: ""> received at 01/02/2021 16:48:58 UTC
 
-            if (line.Length <= 57 ||
-                line[34] != 'R' ||
-                string.Compare(line, 34, "Received Notification: ", 0, 23, StringComparison.Ordinal) != 0)
+            if (string.Compare(line, offset, "Received Notification: <", 0, 24, StringComparison.Ordinal) != 0)
             {
                 return false;
             }
@@ -337,7 +327,7 @@ namespace VRCX
                 return false;
             }
 
-            var data = line.Substring(58, pos - 58);
+            var data = line.Substring(offset + 24, pos - (offset + 24));
 
             AppendLog(new[]
             {
