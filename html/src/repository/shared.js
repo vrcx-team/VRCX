@@ -1,5 +1,9 @@
 // requires binding of SharedVariable
 
+function transformKey(key) {
+    return String(key).toLowerCase();
+}
+
 class SharedRepository {
     remove(key) {
         key = transformKey(key);
@@ -95,10 +99,6 @@ class SharedRepository {
     setArray(key, value) {
         this.setObject(key, value);
     }
-};
-
-function transformKey(key) {
-    return String(key).toLowerCase();
 }
 
 var self = new SharedRepository();

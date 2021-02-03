@@ -3,6 +3,45 @@ import sharedRepository, { SharedRepository } from './shared.js';
 
 var dirtyKeySet = new Set();
 
+function transformKey(key) {
+    return `config:${String(key).toLowerCase()}`;
+}
+
+async function syncLoop() {
+    if (dirtyKeySet.size > 0) {
+        try {
+            await sqliteService.executeNonQuery('BEGIN');
+            try {
+                for (var key of dirtyKeySet) {
+                    var value = sharedRepository.getString(key);
+                    if (value === null) {
+                        await sqliteService.executeNonQuery(
+                            'DELETE FROM configs WHERE `key` = @key',
+                            {
+                                '@key': key
+                            }
+                        );
+                    } else {
+                        await sqliteService.executeNonQuery(
+                            'INSERT OR REPLACE INTO configs (`key`, `value`) VALUES (@key, @value)',
+                            {
+                                '@key': key,
+                                '@value': value
+                            }
+                        );
+                    }
+                }
+                dirtyKeySet.clear();
+            } finally {
+                await sqliteService.executeNonQuery('COMMIT');
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+    setTimeout(syncLoop, 100);
+}
+
 class ConfigRepository extends SharedRepository {
     async init() {
         await sqliteService.executeNonQuery(
@@ -32,45 +71,6 @@ class ConfigRepository extends SharedRepository {
         sharedRepository.setString(key, value);
         dirtyKeySet.add(key);
     }
-}
-
-function transformKey(key) {
-    return `config:${String(key).toLowerCase()}`;
-}
-
-async function syncLoop() {
-    if (dirtyKeySet.size > 0) {
-        try {
-            await sqliteService.executeNonQuery('BEGIN');
-            try {
-                for (var key of dirtyKeySet) {
-                    var value = sharedRepository.getString(key);
-                    if (value === null) {
-                        await sqliteService.executeNonQuery(
-                            'DELETE FROM configs WHERE `key` = @key',
-                            {
-                                '@key': key,
-                            }
-                        );
-                    } else {
-                        await sqliteService.executeNonQuery(
-                            'INSERT OR REPLACE INTO configs (`key`, `value`) VALUES (@key, @value)',
-                            {
-                                '@key': key,
-                                '@value': value
-                            }
-                        );
-                    }
-                }
-                dirtyKeySet.clear();
-            } finally {
-                await sqliteService.executeNonQuery('COMMIT');
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }
-    setTimeout(syncLoop, 100);
 }
 
 var self = new ConfigRepository();

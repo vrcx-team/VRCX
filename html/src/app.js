@@ -11,8 +11,8 @@ import { DataTables } from 'vue-data-tables';
 // eslint-disable-next-line no-unused-vars
 import ToggleSwitch from 'vuejs-toggle-switch';
 import VSwatches from 'vue-swatches';
-Vue.component('v-swatches', VSwatches)
-import "../node_modules/vue-swatches/dist/vue-swatches.css"
+Vue.component('v-swatches', VSwatches);
+import '../node_modules/vue-swatches/dist/vue-swatches.css';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 
@@ -4710,7 +4710,7 @@ speechSynthesis.getVoices();
     $app.methods.updateGameLog = async function () {
         var currentUserDisplayName = API.currentUser.displayName;
 
-        for (var gameLog of await gameLogService.poll(API.currentUser.username)) {
+        for (var gameLog of await gameLogService.poll()) {
             var tableData = null;
 
             switch (gameLog.type) {
