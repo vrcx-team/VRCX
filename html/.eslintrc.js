@@ -27,6 +27,7 @@ module.exports = {
         'block-scoped-var': 0,
         camelcase: 0,
         'capitalized-comments': 0,
+        'class-methods-use-this': 0,
         complexity: 0,
         'func-names': 0,
         'function-call-argument-newline': 0,
