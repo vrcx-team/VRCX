@@ -3360,6 +3360,61 @@ speechSynthesis.getVoices();
         }
     }, 5000);
 
+    // Countdown timer
+
+    var $countDownTimers = [];
+
+    Vue.component('countdown-timer', {
+        template: '<span v-text="text"></span>',
+        props: {
+            datetime: {
+                type: String,
+                default() {
+                    return '';
+                }
+            },
+            hours: {
+                type: Number,
+                default() {
+                    return 1;
+                }
+            }
+        },
+        data() {
+            return {
+                text: ''
+            };
+        },
+        methods: {
+            update() {
+                var epoch = new Date(this.datetime).getTime() + (1000 * 60 * 60 * this.hours) - Date.now();
+                if (epoch >= 0) {
+                    this.text = timeToText(epoch);
+                } else {
+                    this.text = '';
+                }
+            }
+        },
+        watch: {
+            date() {
+                this.update();
+            }
+        },
+        mounted() {
+            $countDownTimers.push(this);
+            this.update();
+        },
+        destroyed() {
+            removeFromArray($countDownTimers, this);
+        }
+    });
+
+    setInterval(function () {
+        for (var $countDownTimer of $countDownTimers) {
+            $countDownTimer.update();
+        }
+    }, 5000);
+
     // initialise
 
     var $app = {
@@ -5760,6 +5815,27 @@ speechSynthesis.getVoices();
         }
     };
     $app.data.VRCPlusIconsTable = {};
+    $app.data.inviteMessageTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        }
+    };
+    $app.data.inviteResponseMessageTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        }
+    };
+    $app.data.inviteRequestMessageTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        }
+    };
     $app.data.visits = 0;
     $app.data.openVR = configRepository.getBool('openVR');
     $app.data.openVRAlways = configRepository.getBool('openVRAlways');
@@ -8102,6 +8178,96 @@ speechSynthesis.getVoices();
         }
 
         return '-';
+    };
+
+    // App: Invite Messages
+
+    API.$on('LOGIN', function () {
+        $app.inviteMessageTable.data = [];
+        $app.inviteResponseMessageTable.data = [];
+        $app.inviteRequestMessageTable.data = [];
+    });
+
+    API.refreshInviteMessageTableData = function (messageType) {
+        return this.call(`message/${this.currentUser.id}/${messageType}`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json
+            };
+            this.$emit(`INVITE:${messageType.toUpperCase()}`, args);
+            return args;
+        });
+    };
+
+    API.$on('INVITE:MESSAGE', function (args) {
+        $app.inviteMessageTable.data = args.json;
+    });
+
+    API.$on('INVITE:RESPONSE', function (args) {
+        $app.inviteResponseMessageTable.data = args.json;
+    });
+
+    API.$on('INVITE:REQUEST', function (args) {
+        $app.inviteRequestMessageTable.data = args.json;
+    });
+
+    API.editInviteMessage = function (params, messageType, slot) {
+        return this.call(`message/${this.currentUser.id}/${messageType}/${slot}`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            return args;
+        });
+    };
+
+    // App: Edit Invite Message Dialog
+
+    $app.data.editInviteMessageDialog = {
+        visible: false
+    };
+
+    $app.methods.showEditInviteMessageDialog = function (messageType, inviteMessage) {
+        this.$nextTick(() => adjustDialogZ(this.$refs.editInviteMessageDialog.$el));
+        var D = this.editInviteMessageDialog;
+        //D.newMessage = inviteMessage.message;
+        D.visible = true;
+        D.inviteMessage = inviteMessage;
+        D.messageType = messageType;
+    };
+
+    $app.methods.saveInviteMessage = function () {
+        var D = this.editInviteMessageDialog;
+        D.visible = false;
+        if (D.inviteMessage.message !== D.newMessage) {
+            var slot = D.inviteMessage.slot;
+            var messageType = D.messageType;
+            var params = {
+                message: D.newMessage
+            };
+            API.editInviteMessage(params, messageType, slot).catch((err) => {
+                throw err;
+            }).then((args) => {
+                this.$message({
+                    message: 'Invite message updated',
+                    type: 'success'
+                });
+                return args;
+            }).finally(() => {
+                API.refreshInviteMessageTableData(messageType);
+            });
+        }
+        //D.newMessage = '';
+    };
+
+    $app.methods.cancelInviteMessage = function () {
+        var D = this.editInviteMessageDialog;
+        D.visible = false;
+        //D.newMessage = '';
     };
 
     $app = new Vue($app);

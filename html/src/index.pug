@@ -438,6 +438,63 @@ html
                             el-button(size="small" @click="promptUserDialog()") User
                             el-button(size="small" @click="promptWorldDialog()") World
                             el-button(size="small" @click="promptAvatarDialog()") Avatar
+                div.options-container(style="margin-top:30px")
+                    span.header Invite Messages
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Refresh
+                        el-button(type="default" @click="API.refreshInviteMessageTableData('message')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Clear results
+                        el-button(type="default" @click="inviteMessageTable.data = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                    data-tables(v-if="inviteMessageTable.data.length > 0" v-bind="inviteMessageTable" style="margin-top:10px")
+                        el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
+                        el-table-column(label="Message" prop="message")
+                        el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
+                            template(v-once #default="scope")
+                                countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
+                        el-table-column(label="Action" width="60" align="right")
+                            template(v-once #default="scope")
+                                el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditInviteMessageDialog('message', scope.row)")
+                div.options-container(style="margin-top:30px")
+                    span.header Invite Response Messages
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Refresh
+                        el-button(type="default" @click="API.refreshInviteMessageTableData('response')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Clear results
+                        el-button(type="default" @click="inviteResponseMessageTable.data = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                    data-tables(v-if="inviteResponseMessageTable.data.length > 0" v-bind="inviteResponseMessageTable" style="margin-top:10px")
+                        el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
+                        el-table-column(label="Message" prop="message")
+                        el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
+                            template(v-once #default="scope")
+                                countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
+                        el-table-column(label="Action" width="60" align="right")
+                            template(v-once #default="scope")
+                                el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditInviteMessageDialog('response', scope.row)")
+                div.options-container(style="margin-top:30px")
+                    span.header Invite Request Messages
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Refresh
+                        el-button(type="default" @click="API.refreshInviteMessageTableData('request')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                    el-tooltip(placement="top")
+                        template(#content)
+                            span Clear results
+                        el-button(type="default" @click="inviteRequestMessageTable.data = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                    data-tables(v-if="inviteRequestMessageTable.data.length > 0" v-bind="inviteRequestMessageTable" style="margin-top:10px")
+                        el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
+                        el-table-column(label="Message" prop="message")
+                        el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
+                            template(v-once #default="scope")
+                                countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
+                        el-table-column(label="Action" width="60" align="right")
+                            template(v-once #default="scope")
+                                el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditInviteMessageDialog('request', scope.row)")
                 div.options-container(v-if="API.currentUser.$isVRCPlus" style="margin-top:30px")
                     span.header VRCPlus Icons
                     el-tooltip(placement="top")
@@ -447,7 +504,7 @@ html
                     el-tooltip(placement="top")
                         template(#content)
                             span Clear results
-                        el-button(type="default" @click="VRCPlusIconsTable = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                        el-button(type="default" @click="VRCPlusIconsTable = {}" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                     el-tooltip(placement="top")
                         template(#content)
                             span Reset icon
@@ -1383,6 +1440,15 @@ html
                 template(#footer)
                     el-button(type="small" @click="cancelSharedFeedFilters") Cancel
                     el-button(type="primary" size="small" @click="saveSharedFeedFilters") Save
+                    
+            //- dialog: Edit Invite Message
+            el-dialog.x-dialog(ref="editInviteMessageDialog" :visible.sync="editInviteMessageDialog.visible" title="Edit Invite Message" width="400px")
+                div(style='font-size:12px')
+                    span Edit cool down time 1 hour.
+                el-input(type="textarea" v-model="editInviteMessageDialog.newMessage" size="mini" maxlength="64" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+                template(#footer)
+                    el-button(type="small" @click="cancelInviteMessage") Cancel
+                    el-button(type="primary" size="small" @click="saveInviteMessage") Save
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
