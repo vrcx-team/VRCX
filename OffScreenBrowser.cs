@@ -20,6 +20,7 @@ namespace VRCX
         private GCHandle _paintBuffer;
         private int _width;
         private int _height;
+        private bool _dirty;
 
         public OffScreenBrowser(string address, int width, int height)
             : base(
@@ -61,53 +62,57 @@ namespace VRCX
 
         public void RenderToTexture(Texture2D texture)
         {
-            _paintBufferLock.EnterReadLock();
-            try
+            if (_dirty == true)
             {
-                if (_width > 0 &&
-                    _height > 0)
+                _dirty = false;
+                _paintBufferLock.EnterReadLock();
+                try
                 {
-                    var context = texture.Device.ImmediateContext;
-                    var dataBox = context.MapSubresource(
-                        texture,
-                        0,
-                        MapMode.WriteDiscard,
-                        MapFlags.None
-                    );
-                    if (dataBox.IsEmpty == false)
+                    if (_width > 0 &&
+                        _height > 0)
                     {
-                        var sourcePtr = _paintBuffer.AddrOfPinnedObject();
-                        var destinationPtr = dataBox.DataPointer;
-                        var pitch = _width * 4;
-                        var rowPitch = dataBox.RowPitch;
-                        if (pitch == rowPitch)
+                        var context = texture.Device.ImmediateContext;
+                        var dataBox = context.MapSubresource(
+                            texture,
+                            0,
+                            MapMode.WriteDiscard,
+                            MapFlags.None
+                        );
+                        if (dataBox.IsEmpty == false)
                         {
-                            WinApi.CopyMemory(
-                                destinationPtr,
-                                sourcePtr,
-                                (uint)(_width * _height * 4)
-                            );
-                        }
-                        else
-                        {
-                            for (var y = _height; y > 0; --y)
+                            var sourcePtr = _paintBuffer.AddrOfPinnedObject();
+                            var destinationPtr = dataBox.DataPointer;
+                            var pitch = _width * 4;
+                            var rowPitch = dataBox.RowPitch;
+                            if (pitch == rowPitch)
                             {
                                 WinApi.CopyMemory(
                                     destinationPtr,
                                     sourcePtr,
-                                    (uint)pitch
+                                    (uint)(_width * _height * 4)
                                 );
-                                sourcePtr += pitch;
-                                destinationPtr += rowPitch;
+                            }
+                            else
+                            {
+                                for (var y = _height; y > 0; --y)
+                                {
+                                    WinApi.CopyMemory(
+                                        destinationPtr,
+                                        sourcePtr,
+                                        (uint)pitch
+                                    );
+                                    sourcePtr += pitch;
+                                    destinationPtr += rowPitch;
+                                }
                             }
                         }
+                        context.UnmapSubresource(texture, 0);
                     }
-                    context.UnmapSubresource(texture, 0);
                 }
-            }
-            finally
-            {
-                _paintBufferLock.ExitReadLock();
+                finally
+                {
+                    _paintBufferLock.ExitReadLock();
+                }
             }
         }
 
@@ -173,6 +178,7 @@ namespace VRCX
                 {
                     _paintBufferLock.ExitWriteLock();
                 }
+                _dirty = true;
             }
         }
 
