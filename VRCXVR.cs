@@ -141,7 +141,7 @@ namespace VRCX
 
                 try
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(16);
                 }
                 catch
                 {
