@@ -75,7 +75,7 @@ namespace VRCX
             {
                 if (Browser.IsDisposed == false)
                 {
-                    Browser.ShowDevTools();
+                    // Browser.ShowDevTools();
                 }
             };
 
