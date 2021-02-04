@@ -10,6 +10,7 @@
     <AssemblyName>VRCX</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
@@ -77,9 +78,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -89,29 +93,26 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CefService.cs" />
     <Compile Include="Discord.cs" />
     <Compile Include="CpuMonitor.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DragHandler.cs" />
+    <Compile Include="NoopMenuHandler.cs" />
     <Compile Include="OffScreenBrowser.cs" />
     <Compile Include="NoopDragHandler.cs" />
     <Compile Include="WebApi.cs" />
     <Compile Include="SQLite.cs" />
     <Compile Include="SharedVariable.cs" />
     <Compile Include="Util.cs" />
-    <Compile Include="VRForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="VRForm.Designer.cs">
-      <DependentUpon>VRForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="VRCXVR.cs" />
     <Compile Include="openvr_api.cs" />
     <Compile Include="Program.cs" />
@@ -122,12 +123,6 @@
     <Compile Include="VRCXStorage.cs" />
     <Compile Include="JsonSerializer.cs" />
     <Compile Include="WinApi.cs" />
-    <EmbeddedResource Include="VRForm.resx">
-      <DependentUpon>VRForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -172,7 +167,7 @@
     <PackageReference Include="CefSharp.OffScreen">
       <Version>86.0.241</Version>
     </PackageReference>
-    <PackageReference Include="CefSharp.WinForms">
+    <PackageReference Include="CefSharp.Wpf">
       <Version>86.0.241</Version>
     </PackageReference>
     <PackageReference Include="DiscordRichPresence">
@@ -202,6 +197,16 @@
     <PackageReference Include="System.Data.SQLite.Core">
       <Version>1.0.113.7</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

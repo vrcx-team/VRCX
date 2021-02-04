@@ -1,5 +1,5 @@
 ﻿using CefSharp;
-using CefSharp.WinForms;
+using CefSharp.Wpf;
 using System;
 using System.IO;
 
@@ -16,6 +16,8 @@ namespace VRCX
 
         internal void Init()
         {
+            AppContext.SetSwitch("Switch.System.Windows.Input.Stylus.EnablePointerSupport", true);
+
             var cefSettings = new CefSettings
             {
                 CachePath = Path.Combine(Program.BaseDirectory, "cache"),
@@ -34,6 +36,7 @@ namespace VRCX
                 SchemeHandlerFactory = new FolderSchemeHandlerFactory(Application.StartupPath + "/../../../html")
             });*/
 
+            cefSettings.CefCommandLineArgs.Add("disable-threaded-scrolling");
             cefSettings.CefCommandLineArgs.Add("ignore-certificate-errors");
             cefSettings.CefCommandLineArgs.Add("disable-plugins");
             cefSettings.CefCommandLineArgs.Add("disable-spell-checking");

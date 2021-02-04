@@ -67,9 +67,9 @@ speechSynthesis.getVoices();
 
     document.addEventListener('keyup', function (e) {
         if (e.ctrlKey) {
-            if (e.shiftKey && e.code === 'KeyI') {
+            if (e.key === 'I') {
                 AppApi.ShowDevTools();
-            } else if (e.code === 'KeyR') {
+            } else if (e.key === 'r') {
                 location.reload();
             }
         }
@@ -3453,6 +3453,18 @@ speechSynthesis.getVoices();
                 });
             });
         }
+    };
+
+    $app.methods.minimizeWindow = function () {
+        AppApi.MinimizeMainWindow();
+    };
+
+    $app.methods.toggleMaximizeWindow = function () {
+        AppApi.ToggleMaximizeMainWindow();
+    };
+
+    $app.methods.closeWindow = function () {
+        AppApi.CloseMainWindow();
     };
 
     $app.methods.openExternalLink = function (link) {
