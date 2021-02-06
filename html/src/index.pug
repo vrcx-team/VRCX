@@ -1476,8 +1476,8 @@ html
                         span 1 hour edit cool down time.
                     el-input(type="textarea" v-model="editInviteMessageDialog.newMessage" size="mini" maxlength="64" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
                     template(#footer)
-                    el-button(type="small" @click="cancelEditInviteMessage") Cancel
-                    el-button(type="primary" size="small" @click="saveEditInviteMessage") Save
+                        el-button(type="small" @click="cancelEditInviteMessage") Cancel
+                        el-button(type="primary" size="small" @click="saveEditInviteMessage") Save
                     
             //- dialog: Edit And Send Invite Response Message
             el-dialog.x-dialog(ref="editAndSendInviteResponseDialog" :visible.sync="editAndSendInviteResponseDialog.visible" title="Edit and Send Invite Message" width="400px")
