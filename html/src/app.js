@@ -5814,39 +5814,44 @@ speechSynthesis.getVoices();
                 order: 'descending'
             }
         },
-        pageSize: 10,
-        paginationProps: {
-            small: true,
-            layout: 'sizes,prev,pager,next,total',
-            pageSizes: [
-                10,
-                25,
-                50,
-                100
-            ]
-        }
+        layout: 'table'
     };
     $app.data.VRCPlusIconsTable = {};
     $app.data.inviteMessageTable = {
+        visible: false,
         data: [],
         tableProps: {
             stripe: true,
             size: 'mini'
-        }
+        },
+        layout: 'table'
     };
     $app.data.inviteResponseMessageTable = {
+        visible: false,
         data: [],
         tableProps: {
             stripe: true,
             size: 'mini'
-        }
+        },
+        layout: 'table'
     };
     $app.data.inviteRequestMessageTable = {
+        visible: false,
         data: [],
         tableProps: {
             stripe: true,
             size: 'mini'
-        }
+        },
+        layout: 'table'
+    };
+    $app.data.inviteRequestResponseMessageTable = {
+        visible: false,
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        layout: 'table'
     };
     $app.data.visits = 0;
     $app.data.openVR = configRepository.getBool('openVR');
@@ -6911,29 +6916,6 @@ speechSynthesis.getVoices();
             this.showBioDialog();
         } else if (command === 'Logout') {
             this.logout();
-        } else if (command === 'Message') {
-            this.$prompt('Enter a message', 'Send Message', {
-                distinguishCancelAndClose: true,
-                confirmButtonText: 'Send',
-                cancelButtonText: 'Cancel',
-                inputPattern: /\S+/,
-                inputErrorMessage: 'Message is required',
-                callback: (action, instance) => {
-                    if (action === 'confirm' &&
-                        instance.inputValue) {
-                        API.sendNotification({
-                            receiverUserId: D.id,
-                            type: 'message',
-                            message: instance.inputValue,
-                            seen: false,
-                            details: '{}'
-                        }).then((args) => {
-                            this.$message('Message sent');
-                            return args;
-                        });
-                    }
-                }
-            });
         } else if (command === 'Request Invite') {
             API.sendNotification({
                 receiverUserId: D.id,
@@ -8123,7 +8105,8 @@ speechSynthesis.getVoices();
             method: 'DELETE'
         }).then((json) => {
             var args = {
-                json
+                json,
+                userIcon
             };
             return args;
         });
@@ -8198,14 +8181,24 @@ speechSynthesis.getVoices();
         $app.inviteMessageTable.data = [];
         $app.inviteResponseMessageTable.data = [];
         $app.inviteRequestMessageTable.data = [];
+        $app.inviteRequestResponseMessageTable.data = [];
+        $app.inviteMessageTable.visible = false;
+        $app.inviteResponseMessageTable.visible = false;
+        $app.inviteRequestMessageTable.visible = false;
+        $app.inviteRequestResponseMessageTable.visible = false;
     });
+
+    $app.methods.refreshInviteMessageTable = function (messageType) {
+        API.refreshInviteMessageTableData(messageType);
+    }
 
     API.refreshInviteMessageTableData = function (messageType) {
         return this.call(`message/${this.currentUser.id}/${messageType}`, {
             method: 'GET'
         }).then((json) => {
             var args = {
-                json
+                json,
+                messageType
             };
             this.$emit(`INVITE:${messageType.toUpperCase()}`, args);
             return args;
@@ -8224,6 +8217,10 @@ speechSynthesis.getVoices();
         $app.inviteRequestMessageTable.data = args.json;
     });
 
+    API.$on('INVITE:REQUESTRESPONSE', function (args) {
+        $app.inviteRequestResponseMessageTable.data = args.json;
+    });
+
     API.editInviteMessage = function (params, messageType, slot) {
         return this.call(`message/${this.currentUser.id}/${messageType}/${slot}`, {
             method: 'PUT',
@@ -8231,7 +8228,9 @@ speechSynthesis.getVoices();
         }).then((json) => {
             var args = {
                 json,
-                params
+                params,
+                messageType,
+                slot
             };
             return args;
         });
@@ -8240,19 +8239,22 @@ speechSynthesis.getVoices();
     // App: Edit Invite Message Dialog
 
     $app.data.editInviteMessageDialog = {
-        visible: false
+        visible: false,
+        inviteMessage: '',
+        messageType: '',
+        newMessage: ''
     };
 
     $app.methods.showEditInviteMessageDialog = function (messageType, inviteMessage) {
         this.$nextTick(() => adjustDialogZ(this.$refs.editInviteMessageDialog.$el));
         var D = this.editInviteMessageDialog;
-        //D.newMessage = inviteMessage.message;
+        D.newMessage = inviteMessage.message;
         D.visible = true;
         D.inviteMessage = inviteMessage;
         D.messageType = messageType;
     };
 
-    $app.methods.saveInviteMessage = function () {
+    $app.methods.saveEditInviteMessage = function () {
         var D = this.editInviteMessageDialog;
         D.visible = false;
         if (D.inviteMessage.message !== D.newMessage) {
@@ -8273,13 +8275,189 @@ speechSynthesis.getVoices();
                 API.refreshInviteMessageTableData(messageType);
             });
         }
-        //D.newMessage = '';
     };
 
-    $app.methods.cancelInviteMessage = function () {
-        var D = this.editInviteMessageDialog;
+    $app.methods.cancelEditInviteMessage = function () {
+        this.editInviteMessageDialog.visible = false;
+    };
+
+    // App: Edit and Send Invite Response Message Dialog
+
+    $app.data.editAndSendInviteResponseDialog = {
+        visible: false,
+        inviteMessage: '',
+        messageType: '',
+        newMessage: ''
+    };
+
+    $app.methods.showEditAndSendInviteResponseDialog = function (messageType, inviteMessage) {
+        this.$nextTick(() => adjustDialogZ(this.$refs.editAndSendInviteResponseDialog.$el));
+        this.editAndSendInviteResponseDialog = {
+            newMessage: inviteMessage.message,
+            visible: true,
+            messageType,
+            inviteMessage
+        };
+    };
+
+    $app.methods.saveEditAndSendInviteResponse = async function () {
+        var D = this.editAndSendInviteResponseDialog;
         D.visible = false;
-        //D.newMessage = '';
+        var messageType = D.messageType;
+        var slot = D.inviteMessage.slot;
+        if (D.inviteMessage.message !== D.newMessage) {
+            var params = {
+                message: D.newMessage
+            };
+            await API.editInviteMessage(params, messageType, slot).catch((err) => {
+                throw err;
+            }).then((args) => {
+                this.$message({
+                    message: 'Invite message updated',
+                    type: 'success'
+                });
+                return args;
+            });
+            await API.refreshInviteMessageTableData(messageType).catch((err) => {
+                throw err;
+            }).then((args) => {
+                if (args.json[slot].message !== D.newMessage) {
+                    this.$message({
+                        message: 'VRC API didn\'t update message, try again',
+                        type: 'error'
+                    });
+                    throw 'VRC API didn\'t update message, try again';
+                }
+            });
+        }
+
+        var I = this.sendInviteResponseDialog;
+        var params = {
+            responseSlot: slot,
+            rsvp: true
+        };
+        API.sendInviteResponse(params, I.invite.id).catch((err) => {
+            D.visible = false;
+            throw err;
+        }).then((args) => {
+            API.hideNotification({
+                notificationId: I.invite.id
+            });
+            this.$message({
+                message: 'Invite response message sent',
+                type: 'success'
+            });
+            D.visible = false;
+            this.sendInviteResponseDialogVisible = false;
+            this.sendInviteRequestResponseDialogVisible = false;
+            return args;
+        });
+    };
+
+    $app.methods.cancelEditAndSendInviteResponse = function () {
+        this.editAndSendInviteResponseDialog.visible = false;
+    };
+
+    $app.data.sendInviteResponseDialog = {
+        message: '',
+        invite: ''
+    };
+
+    $app.data.sendInviteResponseDialogVisible = false;
+
+    $app.data.sendInviteResponseConfirmDialog = {
+        visible: false
+    };
+
+    API.$on('LOGIN', function () {
+        $app.sendInviteResponseDialogVisible = false;
+        $app.sendInviteResponseConfirmDialog.visible = false;
+    });
+
+    $app.methods.showSendInviteResponseDialog = function (invite) {
+        this.sendInviteResponseDialog = {
+            invite
+        };
+        API.refreshInviteMessageTableData('response');
+        this.$nextTick(() => adjustDialogZ(this.$refs.sendInviteResponseDialog.$el));
+        this.sendInviteResponseDialogVisible = true;
+    };
+
+    $app.methods.showSendInviteResponseConfirmDialog = function (val) {
+        if (this.editAndSendInviteResponseDialog.visible === true || val === null) {
+            return;
+        }
+        this.$nextTick(() => adjustDialogZ(this.$refs.sendInviteResponseConfirmDialog.$el));
+        this.sendInviteResponseConfirmDialog.visible = true;
+        this.sendInviteResponseDialog.messageSlot = val.slot;
+    };
+
+    $app.methods.cancelSendInviteResponse = function () {
+        this.sendInviteResponseDialogVisible = false;
+    };
+
+    $app.methods.cancelInviteResponseConfirm = function () {
+        this.sendInviteResponseConfirmDialog.visible = false;
+    };
+
+    $app.methods.sendInviteResponseConfirm = function () {
+        var D = this.sendInviteResponseDialog;
+        var params = {
+            responseSlot: D.messageSlot,
+            rsvp: true
+        };
+        API.sendInviteResponse(params, D.invite.id, D.messageType).catch((err) => {
+            throw err;
+        }).then((args) => {
+            API.hideNotification({
+                notificationId: D.invite.id
+            });
+            this.$message({
+                message: 'Invite response message sent',
+                type: 'success'
+            });
+            return args;
+        });
+        this.sendInviteResponseDialogVisible = false;
+        this.sendInviteRequestResponseDialogVisible = false;
+        this.sendInviteResponseConfirmDialog.visible = false;
+    };
+
+    API.sendInviteResponse = function (params, inviteID) {
+        return this.call(`invite/${inviteID}/response`, {
+            method: 'POST',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params,
+                inviteID
+            };
+            this.$emit('INVITE:RESPONSE:SEND', args);
+            return args;
+        });
+    };
+
+    // App: Invite Request Response Message Dialog
+
+    $app.data.sendInviteRequestResponseDialogVisible = false;
+
+    $app.methods.cancelSendInviteRequestResponse = function () {
+        this.sendInviteRequestResponseDialogVisible = false;
+    };
+
+    API.$on('LOGIN', function () {
+        $app.sendInviteRequestResponseDialogVisible = false;
+        $app.showSendInviteResponseConfirmDialog.visible = false;
+    });
+
+    $app.methods.showSendInviteRequestResponseDialog = function (invite) {
+        this.sendInviteResponseDialog = {
+            invite
+        };
+        API.refreshInviteMessageTableData('requestResponse');
+        this.$nextTick(() => adjustDialogZ(this.$refs.sendInviteRequestResponseDialog.$el));
+        this.sendInviteRequestResponseDialogVisible = true;
     };
 
     $app = new Vue($app);
