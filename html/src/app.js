@@ -6927,13 +6927,26 @@ speechSynthesis.getVoices();
             this.logout();
         } else if (command === 'Request Invite') {
             API.sendRequestInvite({
-                details: {
-                    platform: 'standalonewindows'
-                }
+                platform: 'standalonewindows'
             }, D.id).then((args) => {
                 this.$message('Request invite sent');
                 return args;
             });
+        } else if (command === 'Invite Message') {
+            var L = API.parseLocation(this.lastLocation);
+            API.getCachedWorld({
+                worldId: L.worldId
+            }).then((args) => {
+                this.showSendInviteDialog({
+                    instanceId: this.lastLocation,
+                    worldId: this.lastLocation,
+                    worldName: args.ref.name
+                }, D.id);
+            });
+        } else if (command === 'Request Invite Message') {
+            this.showSendInviteRequestDialog({
+                platform: 'standalonewindows'
+            }, D.id);
         } else if (command === 'Invite') {
             var L = API.parseLocation(this.lastLocation);
             API.getCachedWorld({
@@ -8234,7 +8247,7 @@ speechSynthesis.getVoices();
 
     $app.data.editInviteMessageDialog = {
         visible: false,
-        inviteMessage: '',
+        inviteMessage: {},
         messageType: '',
         newMessage: ''
     };
@@ -8260,10 +8273,7 @@ speechSynthesis.getVoices();
             API.editInviteMessage(params, messageType, slot).catch((err) => {
                 throw err;
             }).then((args) => {
-                this.$message({
-                    message: 'Invite message updated',
-                    type: 'success'
-                });
+                this.$message('Invite message updated');
                 return args;
             }).finally(() => {
                 API.refreshInviteMessageTableData(messageType);
@@ -8279,7 +8289,7 @@ speechSynthesis.getVoices();
 
     $app.data.editAndSendInviteResponseDialog = {
         visible: false,
-        inviteMessage: '',
+        inviteMessage: {},
         messageType: '',
         newMessage: ''
     };
@@ -8306,10 +8316,6 @@ speechSynthesis.getVoices();
             await API.editInviteMessage(params, messageType, slot).catch((err) => {
                 throw err;
             }).then((args) => {
-                this.$message({
-                    message: 'Invite message updated',
-                    type: 'success'
-                });
                 return args;
             });
             await API.refreshInviteMessageTableData(messageType).catch((err) => {
@@ -8320,7 +8326,9 @@ speechSynthesis.getVoices();
                         message: 'VRChat API didn\'t update message, try again',
                         type: 'error'
                     });
-                    throw 'VRChat API didn\'t update message, try again';
+                    throw new Error('VRChat API didn\'t update message, try again');
+                } else {
+                    this.$message('Invite message updated');
                 }
             });
         }
@@ -8331,17 +8339,12 @@ speechSynthesis.getVoices();
             rsvp: true
         };
         API.sendInviteResponse(params, I.invite.id).catch((err) => {
-            D.visible = false;
             throw err;
         }).then((args) => {
             API.hideNotification({
                 notificationId: I.invite.id
             });
-            this.$message({
-                message: 'Invite response message sent',
-                type: 'success'
-            });
-            D.visible = false;
+            this.$message('Invite response message sent');
             this.sendInviteResponseDialogVisible = false;
             this.sendInviteRequestResponseDialogVisible = false;
             return args;
@@ -8354,8 +8357,8 @@ speechSynthesis.getVoices();
 
     $app.data.sendInviteResponseDialog = {
         message: '',
-        invite: '',
-        messageSlot: ''
+        messageSlot: 0,
+        invite: {}
     };
 
     $app.data.sendInviteResponseDialogVisible = false;
@@ -8407,10 +8410,7 @@ speechSynthesis.getVoices();
             API.hideNotification({
                 notificationId: D.invite.id
             });
-            this.$message({
-                message: 'Invite response message sent',
-                type: 'success'
-            });
+            this.$message('Invite response message sent');
             return args;
         });
         this.sendInviteResponseDialogVisible = false;
@@ -8453,6 +8453,170 @@ speechSynthesis.getVoices();
         API.refreshInviteMessageTableData('requestResponse');
         this.$nextTick(() => adjustDialogZ(this.$refs.sendInviteRequestResponseDialog.$el));
         this.sendInviteRequestResponseDialogVisible = true;
+    };
+
+    // App: Invite Message Dialog
+
+    $app.data.editAndSendInviteDialog = {
+        visible: false,
+        messageType: '',
+        newMessage: '',
+        inviteMessage: {}
+    };
+
+    $app.methods.showEditAndSendInviteDialog = function (messageType, inviteMessage) {
+        this.$nextTick(() => adjustDialogZ(this.$refs.editAndSendInviteDialog.$el));
+        this.editAndSendInviteDialog = {
+            newMessage: inviteMessage.message,
+            visible: true,
+            messageType,
+            inviteMessage
+        };
+    };
+
+    $app.methods.saveEditAndSendInvite = async function () {
+        var D = this.editAndSendInviteDialog;
+        D.visible = false;
+        var messageType = D.messageType;
+        var slot = D.inviteMessage.slot;
+        if (D.inviteMessage.message !== D.newMessage) {
+            var params = {
+                message: D.newMessage
+            };
+            await API.editInviteMessage(params, messageType, slot).catch((err) => {
+                throw err;
+            }).then((args) => {
+                return args;
+            });
+            await API.refreshInviteMessageTableData(messageType).catch((err) => {
+                throw err;
+            }).then((args) => {
+                if (args.json[slot].message !== D.newMessage) {
+                    this.$message({
+                        message: 'VRChat API didn\'t update message, try again',
+                        type: 'error'
+                    });
+                    throw new Error('VRChat API didn\'t update message, try again');
+                } else {
+                    this.$message('Invite message updated');
+                }
+            });
+        }
+        var I = this.sendInviteDialog;
+        if (I.messageType === 'invite') {
+            I.params.messageSlot = slot;
+            API.sendInvite(I.params, I.userId).catch((err) => {
+                throw err;
+            }).then((args) => {
+                this.$message('Invite message sent');
+                return args;
+            });
+        } else if (I.messageType === 'requestInvite') {
+            I.params.requestSlot = slot;
+            API.sendRequestInvite(I.params, I.userId).catch((err) => {
+                throw err;
+            }).then((args) => {
+                this.$message('Request invite message sent');
+                return args;
+            });
+        }
+    };
+
+    $app.methods.cancelEditAndSendInvite = function () {
+        this.editAndSendInviteDialog.visible = false;
+    };
+
+    $app.data.sendInviteDialog = {
+        message: '',
+        messageSlot: 0,
+        userId: '',
+        messageType: '',
+        params: {}
+    };
+
+    $app.data.sendInviteDialogVisible = false;
+
+    $app.data.sendInviteConfirmDialog = {
+        visible: false
+    };
+
+    API.$on('LOGIN', function () {
+        $app.sendInviteDialogVisible = false;
+        $app.sendInviteConfirmDialog.visible = false;
+    });
+
+    $app.methods.showSendInviteDialog = function (params, userId) {
+        this.sendInviteDialog = {
+            params,
+            userId,
+            messageType: 'invite'
+        };
+        API.refreshInviteMessageTableData('message');
+        this.$nextTick(() => adjustDialogZ(this.$refs.sendInviteDialog.$el));
+        this.sendInviteDialogVisible = true;
+    };
+
+    $app.methods.showSendInviteConfirmDialog = function (val) {
+        if (this.editAndSendInviteDialog.visible === true || val === null) {
+            return;
+        }
+        this.$nextTick(() => adjustDialogZ(this.$refs.sendInviteConfirmDialog.$el));
+        this.sendInviteConfirmDialog.visible = true;
+        this.sendInviteDialog.messageSlot = val.slot;
+    };
+
+    $app.methods.cancelSendInvite = function () {
+        this.sendInviteDialogVisible = false;
+    };
+
+    $app.methods.cancelInviteConfirm = function () {
+        this.sendInviteConfirmDialog.visible = false;
+    };
+
+    $app.methods.sendInviteConfirm = function () {
+        var D = this.sendInviteDialog;
+        if (D.messageType === 'invite') {
+            D.params.messageSlot = D.messageSlot;
+            API.sendInvite(D.params, D.userId).catch((err) => {
+                throw err;
+            }).then((args) => {
+                this.$message('Invite message sent');
+                return args;
+            });
+        } else if (D.messageType === 'requestInvite') {
+            D.params.requestSlot = D.messageSlot;
+            API.sendRequestInvite(D.params, D.userId).then((args) => {
+                this.$message('Request invite message sent');
+                return args;
+            });
+        }
+        this.sendInviteDialogVisible = false;
+        this.sendInviteRequestDialogVisible = false;
+        this.sendInviteConfirmDialog.visible = false;
+    };
+
+    // App: Invite Request Message Dialog
+
+    $app.data.sendInviteRequestDialogVisible = false;
+
+    $app.methods.cancelSendInviteRequest = function () {
+        this.sendInviteRequestDialogVisible = false;
+    };
+
+    API.$on('LOGIN', function () {
+        $app.sendInviteRequestDialogVisible = false;
+        $app.showSendInviteConfirmDialog.visible = false;
+    });
+
+    $app.methods.showSendInviteRequestDialog = function (params, userId) {
+        this.sendInviteDialog = {
+            params,
+            userId,
+            messageType: 'requestInvite'
+        };
+        API.refreshInviteMessageTableData('request');
+        this.$nextTick(() => adjustDialogZ(this.$refs.sendInviteRequestDialog.$el));
+        this.sendInviteRequestDialogVisible = true;
     };
 
     $app = new Vue($app);

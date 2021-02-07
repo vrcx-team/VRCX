@@ -401,14 +401,16 @@ html
                         el-table-column(label="Message" prop="message")
                             template(v-once #default="scope")
                                 span(v-if="scope.row.message" v-text="scope.row.message")
-                                span(v-else-if='scope.row.details.responseMessage' v-text="scope.row.details.responseMessage")
                                 span(v-else-if='scope.row.details.inviteMessage' v-text="scope.row.details.inviteMessage")
+                                span(v-else-if='scope.row.details.requestMessage' v-text="scope.row.details.requestMessage")
+                                span(v-else-if='scope.row.details.responseMessage' v-text="scope.row.details.responseMessage")
                         el-table-column(label="Action" width="80" align="right")
                             template(v-once #default="scope")
-                                el-button(v-if="scope.row.type === 'friendRequest'" type="text" icon="el-icon-check" size="mini" @click="acceptNotification(scope.row)")
-                                el-button(v-else-if="scope.row.type === 'invite'" type="text" icon="el-icon-chat-line-square" size="mini" @click="showSendInviteResponseDialog(scope.row)")
-                                el-button(v-else-if="scope.row.type === 'requestInvite'" type="text" icon="el-icon-chat-line-square" size="mini" @click="showSendInviteRequestResponseDialog(scope.row)")
-                                el-button(type="text" icon="el-icon-close" size="mini" @click="hideNotification(scope.row)")
+                                template(v-if="scope.row.senderUserId !== API.currentUser.id")
+                                    el-button(v-if="scope.row.type === 'friendRequest'" type="text" icon="el-icon-check" size="mini" @click="acceptNotification(scope.row)")
+                                    el-button(v-else-if="scope.row.type === 'invite'" type="text" icon="el-icon-chat-line-square" size="mini" @click="showSendInviteResponseDialog(scope.row)")
+                                    el-button(v-else-if="scope.row.type === 'requestInvite'" type="text" icon="el-icon-chat-line-square" size="mini" @click="showSendInviteRequestResponseDialog(scope.row)")
+                                    el-button(type="text" icon="el-icon-close" size="mini" @click="hideNotification(scope.row)")
 
                 //- profile
                 .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'profile'")
@@ -891,9 +893,10 @@ html
                                             template(v-else)
                                                 template(v-if="lastLocation && isGameRunning")
                                                     el-dropdown-item(icon="el-icon-message" command="Invite") Invite
+                                                    el-dropdown-item(icon="el-icon-message" command="Invite Message") Invite With Message
                                                 template(v-if="userDialog.isFriend")
                                                     el-dropdown-item(icon="el-icon-postcard" command="Request Invite") Request Invite
-                                                    //- el-dropdown-item(icon="el-icon-message" command="Message") Message
+                                                    el-dropdown-item(icon="el-icon-postcard" command="Request Invite Message") Request Invite With Message
                                                 template(v-else-if="userDialog.incomingRequest")
                                                     el-dropdown-item(icon="el-icon-check" command="Accept Friend Request") Accept Friend Request
                                                     el-dropdown-item(icon="el-icon-close" command="Decline Friend Request") Decline Friend Request
@@ -1478,53 +1481,100 @@ html
                     template(#footer)
                         el-button(type="small" @click="cancelEditInviteMessage") Cancel
                         el-button(type="primary" size="small" @click="saveEditInviteMessage") Save
-                    
-            //- dialog: Edit And Send Invite Response Message
-            el-dialog.x-dialog(ref="editAndSendInviteResponseDialog" :visible.sync="editAndSendInviteResponseDialog.visible" title="Edit and Send Invite Message" width="400px")
-                div(style='font-size:12px')
-                    span 1 hour edit cool down time.
-                el-input(type="textarea" v-model="editAndSendInviteResponseDialog.newMessage" size="mini" maxlength="64" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
-                template(#footer)
-                    el-button(type="small" @click="cancelEditAndSendInviteResponse") Cancel
-                    el-button(type="primary" size="small" @click="saveEditAndSendInviteResponse") Send
-                    
-            //- dialog Table: Send Invite Response Message
-            el-dialog.x-dialog(ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" title="Send Invite Response Message" width="800px")
-                data-tables(v-bind="inviteResponseMessageTable" @current-change="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
-                    el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
-                    el-table-column(label="Message" prop="message")
-                    el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
-                        template(v-once #default="scope")
-                            countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
-                    el-table-column(label="Action" width="60" align="right")
-                        template(v-once #default="scope")
-                            el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditAndSendInviteResponseDialog('response', scope.row)")
-                template(#footer)
-                    el-button(type="small" @click="API.refreshInviteMessageTableData('response')") Refresh
-                    el-button(type="small" @click="cancelSendInviteResponse") Cancel
-                    
-            //- dialog Table: Send Invite Response Message
-            el-dialog.x-dialog(ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" title="Send Invite Request Response Message" width="800px")
-                data-tables(v-bind="inviteRequestResponseMessageTable" @current-change="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
-                    el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
-                    el-table-column(label="Message" prop="message")
-                    el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
-                        template(v-once #default="scope")
-                            countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
-                    el-table-column(label="Action" width="60" align="right")
-                        template(v-once #default="scope")
-                            el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditAndSendInviteResponseDialog('requestResponse', scope.row)")
-                template(#footer)
-                    el-button(type="small" @click="API.refreshInviteMessageTableData('requestResponse')") Refresh
-                    el-button(type="small" @click="cancelSendInviteRequestResponse") Cancel
+                        
+                //- dialog: Edit And Send Invite Response Message
+                el-dialog.x-dialog(ref="editAndSendInviteResponseDialog" :visible.sync="editAndSendInviteResponseDialog.visible" title="Edit and Send Invite Message" width="400px")
+                    div(style='font-size:12px')
+                        span 1 hour edit cool down time.
+                    el-input(type="textarea" v-model="editAndSendInviteResponseDialog.newMessage" size="mini" maxlength="64" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+                    template(#footer)
+                        el-button(type="small" @click="cancelEditAndSendInviteResponse") Cancel
+                        el-button(type="primary" size="small" @click="saveEditAndSendInviteResponse") Send
+                        
+                //- dialog Table: Send Invite Response Message
+                el-dialog.x-dialog(ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" title="Send Invite Response Message" width="800px")
+                    data-tables(v-bind="inviteResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
+                        el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
+                        el-table-column(label="Message" prop="message")
+                        el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
+                            template(v-once #default="scope")
+                                countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
+                        el-table-column(label="Action" width="60" align="right")
+                            template(v-once #default="scope")
+                                el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditAndSendInviteResponseDialog('response', scope.row)")
+                    template(#footer)
+                        el-button(type="small" @click="cancelSendInviteResponse") Cancel
+                        el-button(type="small" @click="API.refreshInviteMessageTableData('response')") Refresh
+                        
+                //- dialog Table: Send Invite Request Response Message
+                el-dialog.x-dialog(ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" title="Send Invite Request Response Message" width="800px")
+                    data-tables(v-bind="inviteRequestResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
+                        el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
+                        el-table-column(label="Message" prop="message")
+                        el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
+                            template(v-once #default="scope")
+                                countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
+                        el-table-column(label="Action" width="60" align="right")
+                            template(v-once #default="scope")
+                                el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditAndSendInviteResponseDialog('requestResponse', scope.row)")
+                    template(#footer)
+                        el-button(type="small" @click="cancelSendInviteRequestResponse") Cancel
+                        el-button(type="small" @click="API.refreshInviteMessageTableData('requestResponse')") Refresh
 
-            //- dialog: Send Invite Message Confirm
-            el-dialog.x-dialog(ref="sendInviteResponseConfirmDialog" :visible.sync="sendInviteResponseConfirmDialog.visible" title="Send Invite Message" width="400px")
-                div(style='font-size:12px')
-                    span Are you sure you want to send?
-                template(#footer)
-                    el-button(type="small" @click="cancelInviteResponseConfirm") Cancel
-                    el-button(type="primary" size="small" @click="sendInviteResponseConfirm") Confirm
+                //- dialog: Send Invite Response Message Confirm
+                el-dialog.x-dialog(ref="sendInviteResponseConfirmDialog" :visible.sync="sendInviteResponseConfirmDialog.visible" title="Send Invite Response Message" width="400px")
+                    div(style='font-size:12px')
+                        span Are you sure you want to send?
+                    template(#footer)
+                        el-button(type="small" @click="cancelInviteResponseConfirm") Cancel
+                        el-button(type="primary" size="small" @click="sendInviteResponseConfirm") Confirm
+                        
+                //- dialog Table: Send Invite Message
+                el-dialog.x-dialog(ref="sendInviteDialog" :visible.sync="sendInviteDialogVisible" title="Send Invite Message" width="800px")
+                    data-tables(v-bind="inviteMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
+                        el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
+                        el-table-column(label="Message" prop="message")
+                        el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
+                            template(v-once #default="scope")
+                                countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
+                        el-table-column(label="Action" width="60" align="right")
+                            template(v-once #default="scope")
+                                el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditAndSendInviteDialog('message', scope.row)")
+                    template(#footer)
+                        el-button(type="small" @click="cancelSendInvite") Cancel
+                        el-button(type="small" @click="API.refreshInviteMessageTableData('message')") Refresh
+                        
+                //- dialog Table: Send Invite Request Message
+                el-dialog.x-dialog(ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" title="Send Invite Request Message" width="800px")
+                    data-tables(v-bind="inviteRequestMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
+                        el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
+                        el-table-column(label="Message" prop="message")
+                        el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
+                            template(v-once #default="scope")
+                                countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
+                        el-table-column(label="Action" width="60" align="right")
+                            template(v-once #default="scope")
+                                el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditAndSendInviteDialog('request', scope.row)")
+                    template(#footer)
+                        el-button(type="small" @click="cancelSendInviteRequest") Cancel
+                        el-button(type="small" @click="API.refreshInviteMessageTableData('request')") Refresh
+                        
+                //- dialog: Send Invite Message Confirm
+                el-dialog.x-dialog(ref="sendInviteConfirmDialog" :visible.sync="sendInviteConfirmDialog.visible" title="Send Invite Message" width="400px")
+                    div(style='font-size:12px')
+                        span Are you sure you want to send?
+                    template(#footer)
+                        el-button(type="small" @click="cancelInviteConfirm") Cancel
+                        el-button(type="primary" size="small" @click="sendInviteConfirm") Confirm
+                        
+                //- dialog: Edit And Send Invite Message
+                el-dialog.x-dialog(ref="editAndSendInviteDialog" :visible.sync="editAndSendInviteDialog.visible" title="Edit and Send Invite Message" width="400px")
+                    div(style='font-size:12px')
+                        span 1 hour edit cool down time.
+                    el-input(type="textarea" v-model="editAndSendInviteDialog.newMessage" size="mini" maxlength="64" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+                    template(#footer)
+                        el-button(type="small" @click="cancelEditAndSendInvite") Cancel
+                        el-button(type="primary" size="small" @click="saveEditAndSendInvite") Send
 
                 //- dialog: open source software notice
                 el-dialog.x-dialog(:visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
