@@ -710,16 +710,6 @@ speechSynthesis.getVoices();
                 API.getCachedWorld({
                     worldId: L.worldId
                 }).then((args) => {
-                    var params = {
-                        receiverUserId: API.currentUser.id,
-                        type: 'invite',
-                        message: '',
-                        seen: false,
-                        details: {
-                            worldId: L.tag,
-                            worldName: args.ref.name
-                        }
-                    };
                     if (API.currentUser.status === 'busy') {
                         this.$message({
                             message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
@@ -727,7 +717,11 @@ speechSynthesis.getVoices();
                         });
                         return;
                     }
-                    API.sendNotification(params).finally(() => {
+                    API.sendInvite({
+                        instanceId: L.tag,
+                        worldId: L.tag,
+                        worldName: args.ref.name
+                    }, API.currentUser.id).finally(() => {
                         this.$message({
                             message: 'Invite sent to yourself',
                             type: 'success'
@@ -2064,8 +2058,9 @@ speechSynthesis.getVoices();
             details: json-string
         }
     */
-    API.sendNotification = function (params) {
-        return this.call(`user/${params.receiverUserId}/notification`, {
+
+    API.sendInvite = function (params, receiverUserId) {
+        return this.call(`invite/${receiverUserId}`, {
             method: 'POST',
             params
         }).then((json) => {
@@ -2073,7 +2068,21 @@ speechSynthesis.getVoices();
                 json,
                 params
             };
-            this.$emit('NOTIFICATION:SEND', args);
+            this.$emit('NOTIFICATION:INVITE:SEND', args);
+            return args;
+        });
+    };
+
+    API.sendRequestInvite = function (params, receiverUserId) {
+        return this.call(`requestInvite/${receiverUserId}`, {
+            method: 'POST',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('NOTIFICATION:REQUESTINVITE:SEND', args);
             return args;
         });
     };
@@ -6917,15 +6926,11 @@ speechSynthesis.getVoices();
         } else if (command === 'Logout') {
             this.logout();
         } else if (command === 'Request Invite') {
-            API.sendNotification({
-                receiverUserId: D.id,
-                type: 'requestInvite',
-                message: '',
-                seen: false,
+            API.sendRequestInvite({
                 details: {
                     platform: 'standalonewindows'
                 }
-            }).then((args) => {
+            }, D.id).then((args) => {
                 this.$message('Request invite sent');
                 return args;
             });
@@ -6934,16 +6939,11 @@ speechSynthesis.getVoices();
             API.getCachedWorld({
                 worldId: L.worldId
             }).then((args) => {
-                API.sendNotification({
-                    receiverUserId: D.id,
-                    type: 'invite',
-                    message: '',
-                    seen: false,
-                    details: {
-                        worldId: this.lastLocation,
-                        worldName: args.ref.name
-                    }
-                }).then((_args) => {
+                API.sendInvite({
+                    instanceId: this.lastLocation,
+                    worldId: this.lastLocation,
+                    worldName: args.ref.name
+                }, D.id).then((_args) => {
                     this.$message('Invite sent');
                     return _args;
                 });
@@ -7626,20 +7626,14 @@ speechSynthesis.getVoices();
                     return;
                 }
                 D.loading = true;
-                var params = {
-                    receiverUserId: '',
-                    type: 'invite',
-                    message: '',
-                    seen: false,
-                    details: {
-                        worldId: D.worldId,
-                        worldName: D.worldName
-                    }
-                };
                 var inviteLoop = () => {
                     if (D.userIds.length > 0) {
-                        params.receiverUserId = D.userIds.shift();
-                        API.sendNotification(params).finally(inviteLoop);
+                        var receiverUserId = D.userIds.shift();
+                        API.sendInvite({
+                            instanceId: D.worldId,
+                            worldId: D.worldId,
+                            worldName: D.worldName
+                        }, receiverUserId).finally(inviteLoop);
                     } else {
                         D.loading = false;
                         D.visible = false;
