@@ -4801,7 +4801,9 @@ speechSynthesis.getVoices();
 
             switch (gameLog.type) {
                 case 'location':
-                    this.lastLocation = gameLog.location;
+                    if (this.isGameRunning) {
+                        this.lastLocation = gameLog.location;
+                    }
                     tableData = {
                         created_at: gameLog.dt,
                         type: 'Location',
@@ -5968,6 +5970,8 @@ speechSynthesis.getVoices();
         sharedFeedFilters.noty.Status = 'Off';
         sharedFeedFilters.noty.invite = 'Friends';
         sharedFeedFilters.noty.requestInvite = 'Friends';
+        sharedFeedFilters.noty.inviteResponse = 'Friends';
+        sharedFeedFilters.noty.requestInviteResponse = 'Friends';
         sharedFeedFilters.noty.friendRequest = 'On';
         sharedFeedFilters.noty.Friend = 'On';
         sharedFeedFilters.noty.Unfriend = 'On';
@@ -5988,6 +5992,8 @@ speechSynthesis.getVoices();
         sharedFeedFilters.wrist.Status = 'Friends';
         sharedFeedFilters.wrist.invite = 'Friends';
         sharedFeedFilters.wrist.requestInvite = 'Friends';
+        sharedFeedFilters.wrist.inviteResponse = 'Friends';
+        sharedFeedFilters.wrist.requestInviteResponse = 'Friends';
         sharedFeedFilters.wrist.friendRequest = 'On';
         sharedFeedFilters.wrist.Friend = 'On';
         sharedFeedFilters.wrist.Unfriend = 'On';

@@ -62,12 +62,22 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | 📨 #[span.name(v-text="feed.senderUsername")] #[location(:location="feed.details.worldId")]
+                                        | 📨 #[span.name(v-text="feed.senderUsername")] #[location(:location="feed.details.worldId")] #[span(v-text="feed.details.inviteMessage")]
                             div(v-else-if="feed.type === 'requestInvite'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | 📩 #[span.name(v-text="feed.senderUsername")]
+                                        | 📩 #[span.name(v-text="feed.senderUsername")] #[span(v-text="feed.details.requestMessage")]
+                            div(v-else-if="feed.type === 'inviteResponse'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 💬 #[span.name(v-text="feed.senderUsername")] #[span(v-text="feed.details.responseMessage")]
+                            div(v-else-if="feed.type === 'requestInviteResponse'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 💬 #[span.name(v-text="feed.senderUsername")] #[span(v-text="feed.details.responseMessage")]
                             div(v-else-if="feed.type === 'friendRequest'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -164,12 +174,22 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.senderUsername")] has invited you to #[location(:location="feed.details.worldId")]
+                                        | #[span.name(v-text="feed.senderUsername")] has invited you to #[location(:location="feed.details.worldId")] #[span(v-text="feed.details.inviteMessage")]
                             div(v-else-if="feed.type === 'requestInvite'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.senderUsername")] has requested an invite
+                                        | #[span.name(v-text="feed.senderUsername")] has requested an invite #[span(v-text="feed.details.requestMessage")]
+                            div(v-else-if="feed.type === 'inviteResponse'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.senderUsername")] has responded to your invite #[span(v-text="feed.details.responseMessage")]
+                            div(v-else-if="feed.type === 'requestInviteResponse'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.senderUsername")] has responded to your invite request #[span(v-text="feed.details.responseMessage")]
                             div(v-else-if="feed.type === 'friendRequest'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra

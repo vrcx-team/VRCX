@@ -827,7 +827,7 @@ speechSynthesis.getVoices();
         }
         this.lastFeedEntry = feeds[0];
 
-        if (isGameRunning) {
+        if (this.isGameRunning) {
             // OnPlayerJoining
             var bias = new Date(Date.now() - 120000).toJSON();
             for (var i = 0; i < feeds.length; i++) {
@@ -862,22 +862,22 @@ speechSynthesis.getVoices();
                     }
                 }
             }
+        }
 
-            // on Location change remove OnPlayerJoined
-            if (this.config.hideOnPlayerJoined) {
-                for (i = 0; i < feeds.length; i++) {
-                    var ctx = feeds[i];
-                    if (ctx.type === 'Location') {
-                        var bias = new Date(Date.parse(ctx.created_at) + 10000).toJSON();
-                        for (var k = i - 1; k > 0; k--) {
-                            var feedItem = feeds[k];
-                            if (feedItem.type === 'OnPlayerJoined') {
-                                feeds.splice(k, 1);
-                                i--;
-                            }
-                            if ((feedItem.created_at > bias) || (feedItem.type === 'Location')) {
-                                break;
-                            }
+        // on Location change remove OnPlayerJoined
+        if (this.config.hideOnPlayerJoined) {
+            for (i = 0; i < feeds.length; i++) {
+                var ctx = feeds[i];
+                if (ctx.type === 'Location') {
+                    var bias = new Date(Date.parse(ctx.created_at) + 10000).toJSON();
+                    for (var k = i - 1; k > 0; k--) {
+                        var feedItem = feeds[k];
+                        if (feedItem.type === 'OnPlayerJoined') {
+                            feeds.splice(k, 1);
+                            i--;
+                        }
+                        if ((feedItem.created_at > bias) || (feedItem.type === 'Location')) {
+                            break;
                         }
                     }
                 }
@@ -962,10 +962,17 @@ speechSynthesis.getVoices();
         }
         var bias = new Date(Date.now() - 60000).toJSON();
         var noty = {};
+        var messageList = [ 'inviteMessage', 'requestMessage', 'responseMessage' ];
         for (var i = 0; i < notyToPlay.length; i++) {
             noty = notyToPlay[i];
             if (noty.created_at < bias) {
                 continue;
+            }
+            var message = '';
+            for (i = 0; i < messageList.length; i++) {
+                if (typeof noty.details[messageList[i]] !== 'undefined') {
+                    message = noty.details[messageList[i]];
+                }
             }
             if ((this.config.overlayNotifications) && (!this.isGameNoVR) && (this.isGameRunning)) {
                 var text = '';
@@ -992,10 +999,16 @@ speechSynthesis.getVoices();
                         text = `<strong>${noty.displayName}</strong> status is now <i>${noty.status[0].status}</i> ${noty.status[0].statusDescription}`;
                         break;
                     case 'invite':
-                        text = `<strong>${noty.senderUsername}</strong> has invited you to ${noty.details.worldName}`;
+                        text = `<strong>${noty.senderUsername}</strong> has invited you to ${noty.details.worldName} ${message}`;
                         break;
                     case 'requestInvite':
-                        text = `<strong>${noty.senderUsername}</strong> has requested an invite`;
+                        text = `<strong>${noty.senderUsername}</strong> has requested an invite ${message}`;
+                        break;
+                    case 'inviteResponse':
+                        text = `<strong>${noty.senderUsername}</strong> has responded to your invite ${message}`;
+                        break;
+                    case 'requestInviteResponse':
+                        text = `<strong>${noty.senderUsername}</strong> has responded to your invite request ${message}`;
                         break;
                     case 'friendRequest':
                         text = `<strong>${noty.senderUsername}</strong> has sent you a friend request`;
@@ -1064,10 +1077,16 @@ speechSynthesis.getVoices();
                         this.speak(`${noty.displayName} status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`);
                         break;
                     case 'invite':
-                        this.speak(`${noty.senderUsername} has invited you to ${noty.details.worldName}`);
+                        this.speak(`${noty.senderUsername} has invited you to ${noty.details.worldName} ${message}`);
                         break;
                     case 'requestInvite':
-                        this.speak(`${noty.senderUsername} has requested an invite`);
+                        this.speak(`${noty.senderUsername} has requested an invite ${message}`);
+                        break;
+                    case 'inviteResponse':
+                        this.speak(`${noty.senderUsername} has responded to your invite ${message}`);
+                        break;
+                    case 'requestInviteResponse':
+                        this.speak(`${noty.senderUsername} has responded to your invite request ${message}`);
                         break;
                     case 'friendRequest':
                         this.speak(`${noty.senderUsername} has sent you a friend request`);
@@ -1142,10 +1161,16 @@ speechSynthesis.getVoices();
                         AppApi.DesktopNotification(noty.displayName, `status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, imageURL);
                         break;
                     case 'invite':
-                        AppApi.DesktopNotification(noty.senderUsername, `has invited you to ${noty.details.worldName}`, imageURL);
+                        AppApi.DesktopNotification(noty.senderUsername, `has invited you to ${noty.details.worldName} ${message}`, imageURL);
                         break;
                     case 'requestInvite':
-                        AppApi.DesktopNotification(noty.senderUsername, 'has requested an invite', imageURL);
+                        AppApi.DesktopNotification(noty.senderUsername, `has requested an invite ${message}`, imageURL);
+                        break;
+                    case 'inviteResponse':
+                        AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite ${message}`, imageURL);
+                        break;
+                    case 'requestInviteResponse':
+                        AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite request ${message}`, imageURL);
                         break;
                     case 'friendRequest':
                         AppApi.DesktopNotification(noty.senderUsername, 'has sent you a friend request', imageURL);

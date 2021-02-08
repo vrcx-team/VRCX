@@ -1343,7 +1343,7 @@ html
                             el-button(type="primary" size="small" style="margin-left:auto" @click="notificationPositionDialog.visible = false") OK
 
                 //- dialog: Noty feed filters
-                el-dialog.x-dialog(ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="400px")
+                el-dialog.x-dialog(ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="450px")
                     div.toggle-list
                         div
                             span.toggle-name OnPlayerJoining
@@ -1372,6 +1372,12 @@ html
                         div
                             span.toggle-name Request Invite
                             toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGrouprequestInvite" v-model="sharedFeedFilters.noty.requestInvite" class="toggle-switch")
+                        div
+                            span.toggle-name Invite Response
+                            toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupinviteResponse" v-model="sharedFeedFilters.noty.inviteResponse" class="toggle-switch")
+                        div
+                            span.toggle-name Request Invite Response
+                            toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGrouprequestInviteResponse" v-model="sharedFeedFilters.noty.requestInviteResponse" class="toggle-switch")
                         div
                             span.toggle-name Friend Request
                             toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestfriendRequest" v-model="sharedFeedFilters.noty.friendRequest" class="toggle-switch")
@@ -1407,7 +1413,7 @@ html
                         el-button(type="primary" size="small" style="margin-left:10px" @click="saveSharedFeedFilters") Save
                         
                 //- dialog: wrist feed filters
-                el-dialog.x-dialog(ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="400px")
+                el-dialog.x-dialog(ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="450px")
                     div.toggle-list
                         div
                             span.toggle-name Self Location
@@ -1439,6 +1445,12 @@ html
                         div
                             span.toggle-name Request Invite
                             toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGrouprequestInvite" v-model="sharedFeedFilters.wrist.requestInvite" class="toggle-switch")
+                        div
+                            span.toggle-name Invite Response
+                            toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupinviteResponse" v-model="sharedFeedFilters.wrist.inviteResponse" class="toggle-switch")
+                        div
+                            span.toggle-name Request Invite Response
+                            toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGrouprequestInviteResponse" v-model="sharedFeedFilters.wrist.requestInviteResponse" class="toggle-switch")
                         div
                             span.toggle-name Friend Request
                             toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestfriendRequest" v-model="sharedFeedFilters.wrist.friendRequest" class="toggle-switch")
