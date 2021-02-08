@@ -839,7 +839,7 @@ speechSynthesis.getVoices();
                     var joining = true;
                     for (var k = 0; k < feeds.length; k++) {
                         var feedItem = feeds[k];
-                        if (((feedItem.type === 'OnPlayerJoined') && (feedItem.data === ctx.displayName)) ||
+                        if ((feedItem.data === ctx.displayName) ||
                             ((feedItem.type === 'Friend') && (feedItem.displayName === ctx.displayName))) {
                             joining = false;
                             break;
@@ -851,12 +851,13 @@ speechSynthesis.getVoices();
                         }
                     }
                     if (joining) {
-                        var onPlayerJoining = {};
-                        onPlayerJoining.created_at = ctx.created_at;
-                        onPlayerJoining.data = ctx.displayName;
-                        onPlayerJoining.isFavorite = ctx.isFavorite;
-                        onPlayerJoining.isFriend = ctx.isFriend;
-                        onPlayerJoining.type = 'OnPlayerJoining';
+                        var onPlayerJoining = {
+                            created_at: ctx.created_at,
+                            data: ctx.displayName,
+                            isFavorite: ctx.isFavorite,
+                            isFriend: ctx.isFriend,
+                            type: 'OnPlayerJoining'
+                        };
                         feeds.splice(i, 0, onPlayerJoining);
                         i++;
                     }
@@ -970,7 +971,7 @@ speechSynthesis.getVoices();
             }
             var message = '';
             for (i = 0; i < messageList.length; i++) {
-                if (typeof noty.details[messageList[i]] !== 'undefined') {
+                if (typeof noty.details !== 'undefined' && typeof noty.details[messageList[i]] !== 'undefined') {
                     message = noty.details[messageList[i]];
                 }
             }
