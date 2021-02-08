@@ -827,55 +827,57 @@ speechSynthesis.getVoices();
         }
         this.lastFeedEntry = feeds[0];
 
-        // OnPlayerJoining
-        var bias = new Date(Date.now() - 120000).toJSON();
-        for (var i = 0; i < feeds.length; i++) {
-            var ctx = feeds[i];
-            if ((ctx.created_at < bias) || (ctx.type === 'Location')) {
-                break;
-            }
-            if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation)) {
-                var joining = true;
-                for (var k = 0; k < feeds.length; k++) {
-                    var feedItem = feeds[k];
-                    if (((feedItem.type === 'OnPlayerJoined') && (feedItem.data === ctx.displayName)) ||
-                        ((feedItem.type === 'Friend') && (feedItem.displayName === ctx.displayName))) {
-                        joining = false;
-                        break;
-                    }
-                    if ((feedItem.created_at < bias) || (feedItem.type === 'Location') ||
-                        ((feedItem.type === 'GPS') && (feedItem.created_at !== ctx.created_at) &&
-                            (feedItem.displayName === ctx.displayName))) {
-                        break;
-                    }
-                }
-                if (joining) {
-                    var onPlayerJoining = {};
-                    onPlayerJoining.created_at = ctx.created_at;
-                    onPlayerJoining.data = ctx.displayName;
-                    onPlayerJoining.isFavorite = ctx.isFavorite;
-                    onPlayerJoining.isFriend = ctx.isFriend;
-                    onPlayerJoining.type = 'OnPlayerJoining';
-                    feeds.splice(i, 0, onPlayerJoining);
-                    i++;
-                }
-            }
-        }
-
-        // on Location change remove OnPlayerJoined
-        if (this.config.hideOnPlayerJoined) {
-            for (i = 0; i < feeds.length; i++) {
+        if (isGameRunning) {
+            // OnPlayerJoining
+            var bias = new Date(Date.now() - 120000).toJSON();
+            for (var i = 0; i < feeds.length; i++) {
                 var ctx = feeds[i];
-                if (ctx.type === 'Location') {
-                    var bias = new Date(Date.parse(ctx.created_at) + 10000).toJSON();
-                    for (var k = i - 1; k > 0; k--) {
+                if ((ctx.created_at < bias) || (ctx.type === 'Location')) {
+                    break;
+                }
+                if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation)) {
+                    var joining = true;
+                    for (var k = 0; k < feeds.length; k++) {
                         var feedItem = feeds[k];
-                        if (feedItem.type === 'OnPlayerJoined') {
-                            feeds.splice(k, 1);
-                            i--;
-                        }
-                        if ((feedItem.created_at > bias) || (feedItem.type === 'Location')) {
+                        if (((feedItem.type === 'OnPlayerJoined') && (feedItem.data === ctx.displayName)) ||
+                            ((feedItem.type === 'Friend') && (feedItem.displayName === ctx.displayName))) {
+                            joining = false;
                             break;
+                        }
+                        if ((feedItem.created_at < bias) || (feedItem.type === 'Location') ||
+                            ((feedItem.type === 'GPS') && (feedItem.created_at !== ctx.created_at) &&
+                                (feedItem.displayName === ctx.displayName))) {
+                            break;
+                        }
+                    }
+                    if (joining) {
+                        var onPlayerJoining = {};
+                        onPlayerJoining.created_at = ctx.created_at;
+                        onPlayerJoining.data = ctx.displayName;
+                        onPlayerJoining.isFavorite = ctx.isFavorite;
+                        onPlayerJoining.isFriend = ctx.isFriend;
+                        onPlayerJoining.type = 'OnPlayerJoining';
+                        feeds.splice(i, 0, onPlayerJoining);
+                        i++;
+                    }
+                }
+            }
+
+            // on Location change remove OnPlayerJoined
+            if (this.config.hideOnPlayerJoined) {
+                for (i = 0; i < feeds.length; i++) {
+                    var ctx = feeds[i];
+                    if (ctx.type === 'Location') {
+                        var bias = new Date(Date.parse(ctx.created_at) + 10000).toJSON();
+                        for (var k = i - 1; k > 0; k--) {
+                            var feedItem = feeds[k];
+                            if (feedItem.type === 'OnPlayerJoined') {
+                                feeds.splice(k, 1);
+                                i--;
+                            }
+                            if ((feedItem.created_at > bias) || (feedItem.type === 'Location')) {
+                                break;
+                            }
                         }
                     }
                 }
