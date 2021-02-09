@@ -8576,9 +8576,39 @@ speechSynthesis.getVoices();
 
     $app.methods.sendInviteConfirm = function () {
         var D = this.sendInviteDialog;
-        if (D.messageType === 'invite') {
-            D.params.messageSlot = D.messageSlot;
-            API.sendInvite(D.params, D.userId).catch((err) => {
+        var J = this.inviteDialog;
+        if (J.visible) {
+            if (this.API.currentUser.status === 'busy' &&
+                J.userIds.includes(this.API.currentUser.id) === true) {
+                this.$message({
+                    message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
+                    type: 'error'
+                });
+                return;
+            }
+            var inviteLoop = () => {
+                if (J.userIds.length > 0) {
+                    var receiverUserId = J.userIds.shift();
+                    API.sendInvite({
+                        instanceId: J.worldId,
+                        worldId: J.worldId,
+                        worldName: J.worldName,
+                        messageSlot: D.messageSlot
+                    }, receiverUserId).finally(inviteLoop);
+                } else {
+                    J.loading = false;
+                    J.visible = false;
+                    this.$message({
+                        message: 'Invite sent',
+                        type: 'success'
+                    });
+                }
+            };
+            inviteLoop();
+        } else {
+            if (D.messageType === 'invite') {
+                D.params.messageSlot = D.messageSlot;
+                API.sendInvite(D.params, D.userId).catch((err) => {
                 throw err;
             }).then((args) => {
                 this.$message('Invite message sent');
@@ -8588,8 +8618,9 @@ speechSynthesis.getVoices();
             D.params.requestSlot = D.messageSlot;
             API.sendRequestInvite(D.params, D.userId).then((args) => {
                 this.$message('Request invite message sent');
-                return args;
-            });
+                    return args;
+                });
+            }
         }
         this.sendInviteDialogVisible = false;
         this.sendInviteRequestDialogVisible = false;

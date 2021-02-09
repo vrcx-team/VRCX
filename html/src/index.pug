@@ -1227,6 +1227,7 @@ html
                                     span(v-else v-text="friend.id")
                     template(#footer)
                         el-button(type="primary" size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="sendInvite()") Invite
+                        el-button(type="primary" size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="showSendInviteDialog()") Invite With Message
 
                 //- dialog: social status
                 el-dialog.x-dialog(ref="socialStatusDialog" :visible.sync="socialStatusDialog.visible" title="Social Status" width="400px")
