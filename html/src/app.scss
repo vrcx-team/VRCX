@@ -525,3 +525,10 @@ i.x-user-status.busy {
 .color-picker {
     font-size: 18px;
 }
+
+.disableToggleSwitch ul li label {
+    background-color: #fff !important;
+    color: #8cc4ff !important;
+    border-color: #8cc4ff !important;
+    cursor: not-allowed !important;
+}

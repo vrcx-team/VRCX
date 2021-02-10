@@ -710,7 +710,7 @@ html
                         div.options-container-item
                             span.name When to display notifications:
                             br
-                            toggle-switch(:options="desktopToastToggleSwitchOption" group="desktopToastToggleSwitchOption" v-model="desktopToast" class="toggle-switch" :disabled="!openVR")
+                            toggle-switch(:options="desktopToastToggleSwitchOption" group="desktopToastToggleSwitchOption" v-model="desktopToast" class="toggle-switch" :class="{ 'disableToggleSwitch': !openVR }" :disabled="!openVR")
                         br
                         span.sub-header TTS Options
                         div.options-container-item

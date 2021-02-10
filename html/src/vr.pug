@@ -204,7 +204,7 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.displayName")] has unfriended you
+                                        | #[span.name(v-text="feed.displayName")] is no longer your friend
                             div(v-else-if="feed.type === 'DisplayName'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
