@@ -8346,7 +8346,10 @@ speechSynthesis.getVoices();
             API.hideNotification({
                 notificationId: I.invite.id
             });
-            this.$message('Invite response message sent');
+            this.$message({
+                message: 'Invite response message sent',
+                type: 'success'
+            });
             this.sendInviteResponseDialogVisible = false;
             this.sendInviteRequestResponseDialogVisible = false;
             return args;
@@ -8412,7 +8415,10 @@ speechSynthesis.getVoices();
             API.hideNotification({
                 notificationId: D.invite.id
             });
-            this.$message('Invite response message sent');
+            this.$message({
+                message: 'Invite response message sent',
+                type: 'success'
+            });
             return args;
         });
         this.sendInviteResponseDialogVisible = false;
@@ -8502,25 +8508,62 @@ speechSynthesis.getVoices();
             });
         }
         var I = this.sendInviteDialog;
-        if (I.messageType === 'invite') {
-            I.params.messageSlot = slot;
-            API.sendInvite(I.params, I.userId).catch((err) => {
-                throw err;
-            }).then((args) => {
-                this.$message('Invite message sent');
-                return args;
-            });
-            this.sendInviteDialogVisible = false;
-        } else if (I.messageType === 'requestInvite') {
-            I.params.requestSlot = slot;
-            API.sendRequestInvite(I.params, I.userId).catch((err) => {
-                throw err;
-            }).then((args) => {
-                this.$message('Request invite message sent');
-                return args;
-            });
-            this.sendInviteRequestDialogVisible = false;
+        var J = this.inviteDialog;
+        if (J.visible) {
+            if (this.API.currentUser.status === 'busy' &&
+                J.userIds.includes(this.API.currentUser.id) === true) {
+                this.$message({
+                    message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
+                    type: 'error'
+                });
+                return;
+            }
+            var inviteLoop = () => {
+                if (J.userIds.length > 0) {
+                    var receiverUserId = J.userIds.shift();
+                    API.sendInvite({
+                        instanceId: J.worldId,
+                        worldId: J.worldId,
+                        worldName: J.worldName,
+                        messageSlot: slot
+                    }, receiverUserId).finally(inviteLoop);
+                } else {
+                    J.loading = false;
+                    J.visible = false;
+                    this.$message({
+                        message: 'Invite message sent',
+                        type: 'success'
+                    });
+                }
+            };
+            inviteLoop();
+        } else {
+            if (I.messageType === 'invite') {
+                I.params.messageSlot = slot;
+                API.sendInvite(I.params, I.userId).catch((err) => {
+                    throw err;
+                }).then((args) => {
+                    this.$message({
+                        message: 'Invite message sent',
+                        type: 'success'
+                    });
+                    return args;
+                });
+            } else if (I.messageType === 'requestInvite') {
+                I.params.requestSlot = slot;
+                API.sendRequestInvite(I.params, I.userId).catch((err) => {
+                    throw err;
+                }).then((args) => {
+                    this.$message({
+                        message: 'Request invite message sent',
+                        type: 'success'
+                    });
+                    return args;
+                });
+            }
         }
+        this.sendInviteDialogVisible = false;
+        this.sendInviteRequestDialogVisible = false;
     };
 
     $app.methods.cancelEditAndSendInvite = function () {
@@ -8599,7 +8642,7 @@ speechSynthesis.getVoices();
                     J.loading = false;
                     J.visible = false;
                     this.$message({
-                        message: 'Invite sent',
+                        message: 'Invite message sent',
                         type: 'success'
                     });
                 }
@@ -8609,15 +8652,21 @@ speechSynthesis.getVoices();
             if (D.messageType === 'invite') {
                 D.params.messageSlot = D.messageSlot;
                 API.sendInvite(D.params, D.userId).catch((err) => {
-                throw err;
-            }).then((args) => {
-                this.$message('Invite message sent');
-                return args;
-            });
-        } else if (D.messageType === 'requestInvite') {
-            D.params.requestSlot = D.messageSlot;
-            API.sendRequestInvite(D.params, D.userId).then((args) => {
-                this.$message('Request invite message sent');
+                    throw err;
+                }).then((args) => {
+                    this.$message({
+                        message: 'Invite message sent',
+                        type: 'success'
+                    });
+                    return args;
+                });
+            } else if (D.messageType === 'requestInvite') {
+                D.params.requestSlot = D.messageSlot;
+                API.sendRequestInvite(D.params, D.userId).then((args) => {
+                    this.$message({
+                        message: 'Request invite message sent',
+                        type: 'success'
+                    });
                     return args;
                 });
             }
