@@ -695,7 +695,8 @@ speechSynthesis.getVoices();
             isGameRunning: false,
             isGameNoVR: false,
             lastLocation: '',
-            lastFeedEntry: [],
+            wristFeedLastEntry: '',
+            notyFeedLastEntry: '',
             wristFeed: [],
             notyMap: [],
             devices: []
@@ -736,11 +737,17 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateVRConfigVars = function () {
+        this.currentUserStatus = sharedRepository.getString('current_user_status');
+        this.isGameRunning = sharedRepository.getBool('is_game_running');
+        this.isGameNoVR = sharedRepository.getBool('is_Game_No_VR');
+        this.lastLocation = sharedRepository.getString('last_location');
         var newConfig = sharedRepository.getObject('VRConfigVars');
         if (newConfig) {
             if (JSON.stringify(newConfig) !== JSON.stringify(this.config)) {
                 this.config = newConfig;
-                this.lastFeedEntry = [];
+                this.notyFeedLastEntry = '';
+                this.wristFeedLastEntry = '';
+                this.initNotyMap();
             }
         } else {
             throw 'config not set';
@@ -748,47 +755,34 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.initNotyMap = function () {
-        var feeds = sharedRepository.getArray('feeds');
-        if (feeds === null) {
+        var notyFeed = sharedRepository.getArray('notyFeed');
+        if (notyFeed === null) {
             return;
         }
-        var sharedFeedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));
-        var filter = sharedFeedFilters.noty;
-        feeds.forEach((feed) => {
-            if (filter[feed.type]) {
-                if ((filter[feed.type] !== 'Off') &&
-                    ((filter[feed.type] === 'Everyone') || (filter[feed.type] === 'On') ||
-                        ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
-                        ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
-                    var displayName = '';
-                    if (feed.displayName) {
-                        displayName = feed.displayName;
-                    } else if (feed.senderUsername) {
-                        displayName = feed.senderUsername;
-                    } else if (feed.sourceDisplayName) {
-                        displayName = feed.sourceDisplayName;
-                    } else if (feed.data) {
-                        displayName = feed.data;
-                    } else {
-                        console.error('missing displayName');
-                    }
-                    if ((displayName) && (!this.notyMap[displayName]) ||
-                        (this.notyMap[displayName] < feed.created_at)) {
-                        this.notyMap[displayName] = feed.created_at;
-                    }
-                }
+        notyFeed.forEach((feed) => {
+            var displayName = '';
+            if (feed.displayName) {
+                displayName = feed.displayName;
+            } else if (feed.senderUsername) {
+                displayName = feed.senderUsername;
+            } else if (feed.sourceDisplayName) {
+                displayName = feed.sourceDisplayName;
+            } else if (feed.data) {
+                displayName = feed.data;
+            } else {
+                console.error('missing displayName');
+            }
+            if ((displayName) && (!this.notyMap[displayName]) ||
+                (this.notyMap[displayName] < feed.created_at)) {
+                this.notyMap[displayName] = feed.created_at;
             }
         });
     };
 
     $app.methods.updateLoop = async function () {
         try {
-            this.updateVRConfigVars();
             this.currentTime = new Date().toJSON();
-            this.currentUserStatus = sharedRepository.getString('current_user_status');
-            this.isGameRunning = sharedRepository.getBool('is_game_running');
-            this.isGameNoVR = sharedRepository.getBool('is_Game_No_VR');
-            this.lastLocation = sharedRepository.getString('last_location');
+            await this.updateVRConfigVars();
             if ((!this.config.hideDevicesFromFeed) && (this.appType === '1')) {
                 AppApi.GetVRDevices().then((devices) => {
                     devices.forEach((device) => {
@@ -817,128 +811,18 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateSharedFeeds = function () {
-        var feeds = sharedRepository.getArray('feeds');
-        if (feeds === null) {
-            return;
-        }
-        if (typeof this.lastFeedEntry !== 'undefined' &&
-            (feeds[0].created_at === this.lastFeedEntry.created_at)) {
-            return;
-        }
-        this.lastFeedEntry = feeds[0];
-
-        if (this.isGameRunning) {
-            // OnPlayerJoining
-            var bias = new Date(Date.now() - 120000).toJSON();
-            for (var i = 0; i < feeds.length; i++) {
-                var ctx = feeds[i];
-                if ((ctx.created_at < bias) || (ctx.type === 'Location')) {
-                    break;
-                }
-                if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation)) {
-                    var joining = true;
-                    for (var k = 0; k < feeds.length; k++) {
-                        var feedItem = feeds[k];
-                        if ((feedItem.data === ctx.displayName) ||
-                            ((feedItem.type === 'Friend') && (feedItem.displayName === ctx.displayName))) {
-                            joining = false;
-                            break;
-                        }
-                        if ((feedItem.created_at < bias) || (feedItem.type === 'Location') ||
-                            ((feedItem.type === 'GPS') && (feedItem.created_at !== ctx.created_at) &&
-                                (feedItem.displayName === ctx.displayName))) {
-                            break;
-                        }
-                    }
-                    if (joining) {
-                        var onPlayerJoining = {
-                            created_at: ctx.created_at,
-                            data: ctx.displayName,
-                            isFavorite: ctx.isFavorite,
-                            isFriend: ctx.isFriend,
-                            userId: ctx.userId,
-                            type: 'OnPlayerJoining'
-                        };
-                        feeds.splice(i, 0, onPlayerJoining);
-                        i++;
-                    }
-                }
-            }
-        }
-
-        // on Location change remove OnPlayerJoined
-        if (this.config.hideOnPlayerJoined) {
-            for (i = 0; i < feeds.length; i++) {
-                var ctx = feeds[i];
-                if (ctx.type === 'Location') {
-                    var bias = new Date(Date.parse(ctx.created_at) + 10000).toJSON();
-                    for (var k = i - 1; k > 0; k--) {
-                        var feedItem = feeds[k];
-                        if (feedItem.type === 'OnPlayerJoined') {
-                            feeds.splice(k, 1);
-                            i--;
-                        }
-                        if ((feedItem.created_at > bias) || (feedItem.type === 'Location')) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (this.config.hidePrivateFromFeed) {
-            for (var i = 0; i < feeds.length; i++) {
-                var feed = feeds[i];
-                if ((feed.type === 'GPS') && (feed.location[0] === 'private')) {
-                    feeds.splice(i, 1);
-                    i--;
-                }
-            }
-        }
-
-        feeds.splice(25);
         if (this.appType === '1') {
-            this.updateSharedFeedWrist(feeds);
+            this.wristFeed = sharedRepository.getArray('wristFeed');
         }
         if (this.appType === '2') {
-            this.updateSharedFeedNoty(feeds);
+            var notyFeed = sharedRepository.getArray('notyFeed');
+            this.updateSharedFeedNoty(notyFeed);
         }
     };
 
-    $app.methods.updateSharedFeedWrist = function (feeds) {
-        var filter = this.config.sharedFeedFilters.wrist;
-        var filtered = [];
-        feeds.forEach((feed) => {
-            if (filter[feed.type]) {
-                if ((filter[feed.type] !== 'Off') &&
-                    ((filter[feed.type] === 'Everyone') || (filter[feed.type] === 'On') ||
-                        ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
-                        ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
-                    filtered.push(feed);
-                }
-            } else {
-                console.error(`missing feed filter for ${feed.type}`);
-                filtered.push(feed);
-            }
-        });
-        this.wristFeed = filtered;
-    };
-
-    $app.methods.updateSharedFeedNoty = async function (feeds) {
-        var filter = this.config.sharedFeedFilters.noty;
-        var filtered = [];
-        feeds.forEach((feed) => {
-            if (filter[feed.type]) {
-                if ((filter[feed.type] !== 'Off') &&
-                    ((filter[feed.type] === 'Everyone') || (filter[feed.type] === 'On') ||
-                        ((filter[feed.type] === 'Friends') && (feed.isFriend)) ||
-                        ((filter[feed.type] === 'VIP') && (feed.isFavorite)))) {
-                    filtered.push(feed);
-                }
-            }
-        });
+    $app.methods.updateSharedFeedNoty = async function (notyFeed) {
         var notyToPlay = [];
-        filtered.forEach((feed) => {
+        notyFeed.forEach((feed) => {
             var displayName = '';
             if (feed.displayName) {
                 displayName = feed.displayName;
@@ -986,7 +870,7 @@ speechSynthesis.getVoices();
                         text = `<strong>${noty.data}</strong> has left`;
                         break;
                     case 'OnPlayerJoining':
-                        text = `<strong>${noty.data}</strong> is joining`;
+                        text = `<strong>${noty.displayName}</strong> is joining`;
                         break;
                     case 'GPS':
                         text = `<strong>${noty.displayName}</strong> is in ${await this.displayLocation(noty.location[0])}`;
@@ -1064,7 +948,7 @@ speechSynthesis.getVoices();
                         this.speak(`${noty.data} has left`);
                         break;
                     case 'OnPlayerJoining':
-                        this.speak(`${noty.data} is joining`);
+                        this.speak(`${noty.displayName} is joining`);
                         break;
                     case 'GPS':
                         this.speak(`${noty.displayName} is in ${await this.displayLocation(noty.location[0])}`);
@@ -1148,7 +1032,7 @@ speechSynthesis.getVoices();
                         AppApi.DesktopNotification(noty.data, 'has left', imageURL);
                         break;
                     case 'OnPlayerJoining':
-                        AppApi.DesktopNotification(noty.data, 'is joining', imageURL);
+                        AppApi.DesktopNotification(noty.displayName, 'is joining', imageURL);
                         break;
                     case 'GPS':
                         AppApi.DesktopNotification(noty.displayName, `is in ${await this.displayLocation(noty.location[0])}`, imageURL);

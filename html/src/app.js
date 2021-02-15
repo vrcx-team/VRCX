@@ -3556,106 +3556,48 @@ speechSynthesis.getVoices();
         setTimeout(() => this.updateLoop(), 500);
     };
 
-    $app.methods.updateSharedFeed = function () {
-        var arr = [];
-        // FIXME
-        // 여러 개 켠다면 gameLogTable의 데이터가 시간순이 아닐 수도 있음
-        var { data } = this.gameLogTable;
-        var i = data.length;
-        var j = 0;
-        while (j < 100) {
-            if (i <= 0) {
-                break;
-            }
-            var ctx = data[--i];
-            // Location, OnPlayerJoined, OnPlayerLeft
-            if (ctx.type !== 'Notification') {
-                // FIXME: 이거 존나 느릴거 같은데
-                var isFriend = false;
-                var isFavorite = false;
-                for (var ref of API.cachedUsers.values()) {
-                    if (ref.displayName === ctx.data) {
-                        isFriend = this.friends.has(ref.id);
-                        isFavorite = API.cachedFavoritesByObjectId.has(ref.id);
-                        break;
-                    }
-                }
-                arr.push({
-                    ...ctx,
-                    isFriend,
-                    isFavorite
-                });
-            }
-            ++j;
+    $app.data.sharedFeed = {
+        gameLog: {
+            wrist: [],
+            noty: [],
+            lastEntryDate: ''
+        },
+        feedTable: {
+            wrist: [],
+            noty: [],
+            lastEntryDate: ''
+        },
+        notificationTable: {
+            wrist: [],
+            noty: [],
+            lastEntryDate: ''
+        },
+        friendLogTable: {
+            wrist: [],
+            noty: [],
+            lastEntryDate: ''
+        },
+        playerModerationTable: {
+            wrist: [],
+            noty: [],
+            lastEntryDate: ''
+        },
+        pendingUpdate: false
+    };
+
+    $app.methods.updateSharedFeed = function (forceUpdate) {
+        this.updateSharedFeedGameLog(forceUpdate);
+        this.updateSharedFeedFeedTable(forceUpdate);
+        this.updateSharedFeedNotificationTable(forceUpdate);
+        this.updateSharedFeedFriendLogTable(forceUpdate);
+        this.updateSharedFeedPlayerModerationTable(forceUpdate);
+        var feeds = this.sharedFeed;
+        if (feeds.pendingUpdate === false) {
+            return;
         }
-        var { data } = this.feedTable;
-        var i = data.length;
-        var j = 0;
-        while (j < 100) {
-            if (i <= 0) {
-                break;
-            }
-            var ctx = data[--i];
-            // GPS, Online, Offline, Status, Avatar
-            if (ctx.type !== 'Avatar') {
-                arr.push({
-                    ...ctx,
-                    isFriend: this.friends.has(ctx.userId),
-                    isFavorite: API.cachedFavoritesByObjectId.has(ctx.userId)
-                });
-                ++j;
-            }
-        }
-        var { data } = this.notificationTable;
-        for (var i = 0; i < data.length; i++) {
-            var ctx = data[i];
-            // invite, requestInvite, friendRequest
-            if (ctx.senderUserId !== API.currentUser.id) {
-                arr.push({
-                    ...ctx,
-                    isFriend: this.friends.has(ctx.senderUserId),
-                    isFavorite: API.cachedFavoritesByObjectId.has(ctx.senderUserId)
-                });
-            }
-        }
-        var { data } = this.friendLogTable;
-        var i = data.length;
-        var j = 0;
-        while (j < 10) {
-            if (i <= 0) {
-                break;
-            }
-            var ctx = data[--i];
-            // TrustLevel, Friend, FriendRequest, Unfriend, DisplayName
-            if (ctx.type !== 'FriendRequest') {
-                arr.push({
-                    ...ctx,
-                    isFriend: this.friends.has(ctx.userId),
-                    isFavorite: API.cachedFavoritesByObjectId.has(ctx.userId)
-                });
-                ++j;
-            }
-        }
-        var { data } = this.playerModerationTable;
-        var i = data.length;
-        var j = 0;
-        while (j < 10) {
-            if (i <= 0) {
-                break;
-            }
-            var ctx = data[--i];
-            // showAvatar, hideAvatar, block, mute, unmute
-            if (ctx.sourceUserId !== API.currentUser.id) {
-                arr.push({
-                    ...ctx,
-                    created_at: ctx.created,
-                    isFriend: this.friends.has(ctx.sourceUserId),
-                    isFavorite: API.cachedFavoritesByObjectId.has(ctx.sourceUserId)
-                });
-                ++j;
-            }
-        }
-        arr.sort(function (a, b) {
+        var wristFeed = [];
+        wristFeed = wristFeed.concat(feeds.gameLog.wrist, feeds.feedTable.wrist, feeds.notificationTable.wrist, feeds.friendLogTable.wrist, feeds.playerModerationTable.wrist);
+        wristFeed.sort(function (a, b) {
             if (a.created_at < b.created_at) {
                 return 1;
             }
@@ -3664,7 +3606,382 @@ speechSynthesis.getVoices();
             }
             return 0;
         });
-        sharedRepository.setArray('feeds', arr);
+        wristFeed.splice(20);
+        var notyFeed = [];
+        notyFeed = notyFeed.concat(feeds.gameLog.noty, feeds.feedTable.noty, feeds.notificationTable.noty, feeds.friendLogTable.noty, feeds.playerModerationTable.noty);
+        // OnPlayerJoining
+        if ((this.isGameRunning) && ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') ||
+            (this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP'))) {
+            var bias = new Date(Date.now() - 120000).toJSON();
+            for (var i = 0; i < wristFeed.length; i++) {
+                var ctx = wristFeed[i];
+                if ((ctx.created_at < bias) || (ctx.type === 'Location')) {
+                    break;
+                }
+                if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation)) {
+                    var joining = true;
+                    for (var k = 0; k < wristFeed.length; k++) {
+                        var feedItem = wristFeed[k];
+                        if ((feedItem.data === ctx.displayName) ||
+                            ((feedItem.type === 'Friend') && (feedItem.displayName === ctx.displayName))) {
+                            joining = false;
+                            break;
+                        }
+                        if ((feedItem.created_at < bias) || (feedItem.type === 'Location') ||
+                            ((feedItem.type === 'GPS') && (feedItem.created_at !== ctx.created_at) &&
+                            (feedItem.displayName === ctx.displayName))) {
+                            break;
+                        }
+                    }
+                    if (joining) {
+                        var onPlayerJoining = {
+                            ...ctx,
+                            type: 'OnPlayerJoining'
+                        };
+                        if ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') ||
+                            ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') && (ctx.isFavorite))) {
+                            wristFeed.splice(i, 0, onPlayerJoining);
+                            i++;
+                        }
+                        if ((this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') ||
+                            ((this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP') && (ctx.isFavorite))) {
+                            notyFeed.push(onPlayerJoining);
+                        }
+                    }
+                }
+            }
+        }
+        notyFeed.sort(function (a, b) {
+            if (a.created_at < b.created_at) {
+                return 1;
+            }
+            if (a.created_at > b.created_at) {
+                return -1;
+            }
+            return 0;
+        });
+        notyFeed.splice(5);
+        sharedRepository.setArray('wristFeed', wristFeed);
+        sharedRepository.setArray('notyFeed', notyFeed);
+        feeds.pendingUpdate = false;
+    };
+
+    $app.methods.updateSharedFeedGameLog = function (forceUpdate) {
+        // Location, OnPlayerJoined, OnPlayerLeft
+        var { data } = this.gameLogTable;
+        var i = data.length;
+        if (i > 0) {
+            if ((data[i - 1].created_at === this.sharedFeed.gameLog.lastEntryDate) &&
+                (forceUpdate === false)) {
+                return;
+            }
+            this.sharedFeed.gameLog.lastEntryDate = data[i - 1].created_at;
+        }
+        var bias = new Date(Date.now() - 86400000).toJSON(); //24 hours
+        var wristArr = [];
+        var notyArr = [];
+        var w = 0;
+        var n = 0;
+        var wristFilter = this.sharedFeedFilters.wrist;
+        var notyFilter = this.sharedFeedFilters.noty;
+        var locationChange = false;
+        while ((w < 20) || (n < 5) || ((!locationChange) && (this.hideOnPlayerJoined))) {
+            var ctx = data[--i];
+            if ((i <= -1) || (ctx.created_at < bias)) {
+                break;
+            }
+            if (ctx.type === 'Notification') {
+                continue;
+            }
+            // on Location change remove OnPlayerJoined
+            if ((ctx.type === 'Location') && (this.hideOnPlayerJoined)) {
+                var locationBias = new Date(Date.parse(ctx.created_at) + 10000).toJSON(); //10 seconds
+                for (var k = w - 1; k > -1; k--) {
+                    var feedItem = wristArr[k];
+                        if (feedItem.type === 'OnPlayerJoined') {
+                            wristArr.splice(k, 1);
+                            w--;
+                        }
+                        if ((feedItem.created_at > locationBias) || (feedItem.type === 'Location')) {
+                            break;
+                        }
+                    }
+                    for (var k = n - 1; k > -1; k--) {
+                        var feedItem = notyArr[k];
+                        if (feedItem.type === 'OnPlayerJoined') {
+                            notyArr.splice(k, 1);
+                            n--;
+                        }
+                        if (feedItem.created_at > locationBias) {
+                        break;
+                    }
+                }
+                if (w >= 20) {
+                    locationChange = true;
+                }
+            }
+            var isFriend = false;
+            var isFavorite = false;
+            for (var ref of API.cachedUsers.values()) {
+                if (ref.displayName === ctx.data) {
+                    isFriend = this.friends.has(ref.id);
+                    isFavorite = API.cachedFavoritesByObjectId.has(ref.id);
+                    break;
+                }
+            }
+            if ((w < 20) && (wristFilter[ctx.type]) &&
+                ((wristFilter[ctx.type] === 'On') ||
+                (wristFilter[ctx.type] === 'Everyone') ||
+                ((wristFilter[ctx.type] === 'Friends') && (isFriend)) ||
+                ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                wristArr.push({
+                    ...ctx,
+                    isFriend,
+                    isFavorite
+                });
+                ++w;
+            }
+            if ((n < 5) && (notyFilter[ctx.type]) &&
+                ((notyFilter[ctx.type] === 'On') ||
+                (notyFilter[ctx.type] === 'Everyone') ||
+                ((notyFilter[ctx.type] === 'Friends') && (isFriend)) ||
+                ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                notyArr.push({
+                    ...ctx,
+                    isFriend,
+                    isFavorite
+                });
+                ++n;
+            }
+        }
+        this.sharedFeed.gameLog.wrist = wristArr;
+        this.sharedFeed.gameLog.noty = notyArr;
+        this.sharedFeed.pendingUpdate = true;
+    };
+
+    $app.methods.updateSharedFeedFeedTable = function (forceUpdate) {
+        // GPS, Online, Offline, Status, Avatar
+        var { data } = this.feedTable;
+        var i = data.length;
+        if (i > 0) {
+            if ((data[i - 1].created_at === this.sharedFeed.feedTable.lastEntryDate) &&
+                (forceUpdate === false)) {
+                return;
+            }
+            this.sharedFeed.feedTable.lastEntryDate = data[i - 1].created_at;
+        }
+        var bias = new Date(Date.now() - 86400000).toJSON(); //24 hours
+        var wristArr = [];
+        var notyArr = [];
+        var w = 0;
+        var n = 0;
+        var wristFilter = this.sharedFeedFilters.wrist;
+        var notyFilter = this.sharedFeedFilters.noty;
+        while ((w < 20) || (n < 5)) {
+            var ctx = data[--i];
+            if ((i <= -1) || (ctx.created_at < bias)) {
+                break;
+            }
+            if (ctx.type === 'Avatar') {
+                continue;
+            }
+            // hide private worlds from feeds
+            if ((this.hidePrivateFromFeed) &&
+                (ctx.type === 'GPS') && (ctx.location[0] === 'private')) {
+                continue;
+            }
+            var isFriend = this.friends.has(ctx.userId);
+            var isFavorite = API.cachedFavoritesByObjectId.has(ctx.userId);
+            if ((w < 20) && (wristFilter[ctx.type]) &&
+                ((wristFilter[ctx.type] === 'Friends') ||
+                ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                wristArr.push({
+                    ...ctx,
+                    isFriend,
+                    isFavorite
+                });
+                ++w;
+            }
+            if ((n < 5) && (notyFilter[ctx.type]) &&
+                ((notyFilter[ctx.type] === 'Friends') ||
+                ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                notyArr.push({
+                    ...ctx,
+                    isFriend,
+                    isFavorite
+                });
+                ++n;
+            }
+        }
+        this.sharedFeed.feedTable.wrist = wristArr;
+        this.sharedFeed.feedTable.noty = notyArr;
+        this.sharedFeed.pendingUpdate = true;
+    };
+
+    $app.methods.updateSharedFeedNotificationTable = function (forceUpdate) {
+        // invite, requestInvite, requestInviteResponse, inviteResponse, friendRequest
+        var { data } = this.notificationTable;
+        var i = data.length;
+        if (i > 0) {
+            if ((data[i - 1].created_at === this.sharedFeed.notificationTable.lastEntryDate) &&
+                (forceUpdate === false)) {
+                return;
+            }
+            this.sharedFeed.notificationTable.lastEntryDate = data[i - 1].created_at;
+        }
+        var bias = new Date(Date.now() - 86400000).toJSON(); //24 hours
+        var wristArr = [];
+        var notyArr = [];
+        var w = 0;
+        var n = 0;
+        var wristFilter = this.sharedFeedFilters.wrist;
+        var notyFilter = this.sharedFeedFilters.noty;
+        while ((w < 20) || (n < 5)) {
+            var ctx = data[--i];
+            if ((i <= -1) || (ctx.created_at < bias)) {
+                break;
+            }
+            if (ctx.senderUserId === API.currentUser.id) {
+                continue;
+            }
+            var isFriend = this.friends.has(ctx.senderUserId);
+            var isFavorite = API.cachedFavoritesByObjectId.has(ctx.senderUserId);
+            if ((w < 20) && (wristFilter[ctx.type]) &&
+                ((wristFilter[ctx.type] === 'On') ||
+                (wristFilter[ctx.type] === 'Friends') ||
+                ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                wristArr.push({
+                    ...ctx,
+                    isFriend,
+                    isFavorite
+                });
+                ++w;
+            }
+            if ((n < 5) && (notyFilter[ctx.type]) &&
+                ((notyFilter[ctx.type] === 'On') ||
+                (notyFilter[ctx.type] === 'Friends') ||
+                ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                notyArr.push({
+                    ...ctx,
+                    isFriend,
+                    isFavorite
+                });
+                ++n;
+            }
+        }
+        this.sharedFeed.notificationTable.wrist = wristArr;
+        this.sharedFeed.notificationTable.noty = notyArr;
+        this.sharedFeed.pendingUpdate = true;
+    };
+
+    $app.methods.updateSharedFeedFriendLogTable = function (forceUpdate) {
+        // TrustLevel, Friend, FriendRequest, Unfriend, DisplayName
+        var { data } = this.friendLogTable;
+        var i = data.length;
+        if (i > 0) {
+            if ((data[i - 1].created_at === this.sharedFeed.friendLogTable.lastEntryDate) &&
+                (forceUpdate === false)) {
+                return;
+            }
+            this.sharedFeed.friendLogTable.lastEntryDate = data[i - 1].created_at;
+        }
+        var bias = new Date(Date.now() - 86400000).toJSON(); //24 hours
+        var wristArr = [];
+        var notyArr = [];
+        var w = 0;
+        var n = 0;
+        var wristFilter = this.sharedFeedFilters.wrist;
+        var notyFilter = this.sharedFeedFilters.noty;
+        while ((w < 20) || (n < 5)) {
+            var ctx = data[--i];
+            if ((i <= -1) || (ctx.created_at < bias)) {
+                break;
+            }
+            if (ctx.type === 'FriendRequest') {
+                continue;
+            }
+            var isFriend = this.friends.has(ctx.userId);
+            var isFavorite = API.cachedFavoritesByObjectId.has(ctx.userId);
+            if ((w < 20) && (wristFilter[ctx.type]) &&
+                ((wristFilter[ctx.type] === 'On') ||
+                (wristFilter[ctx.type] === 'Friends') ||
+                ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                wristArr.push({
+                    ...ctx,
+                    isFriend,
+                    isFavorite
+                });
+                ++w;
+            }
+            if ((n < 5) && (notyFilter[ctx.type]) &&
+                ((notyFilter[ctx.type] === 'On') ||
+                (notyFilter[ctx.type] === 'Friends') ||
+                ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                notyArr.push({
+                    ...ctx,
+                    isFriend,
+                    isFavorite
+                });
+                ++n;
+            }
+        }
+        this.sharedFeed.friendLogTable.wrist = wristArr;
+        this.sharedFeed.friendLogTable.noty = notyArr;
+        this.sharedFeed.pendingUpdate = true;
+    };
+
+    $app.methods.updateSharedFeedPlayerModerationTable = function (forceUpdate) {
+        // showAvatar, hideAvatar, block, mute, unmute
+        var { data } = this.playerModerationTable;
+        var i = data.length;
+        if (i > 0) {
+            if ((data[i - 1].created === this.sharedFeed.playerModerationTable.lastEntryDate) &&
+                (forceUpdate === false)) {
+                return;
+            }
+            this.sharedFeed.playerModerationTable.lastEntryDate = data[i - 1].created;
+        }
+        var bias = new Date(Date.now() - 86400000).toJSON(); //24 hours
+        var wristArr = [];
+        var notyArr = [];
+        var w = 0;
+        var n = 0;
+        var wristFilter = this.sharedFeedFilters.wrist;
+        var notyFilter = this.sharedFeedFilters.noty;
+        while ((w < 20) || (n < 5)) {
+            var ctx = data[--i];
+            if ((i <= -1) || (ctx.created < bias)) {
+                break;
+            }
+            if (ctx.sourceUserId === API.currentUser.id) {
+                continue;
+            }
+            var isFriend = this.friends.has(ctx.sourceUserId);
+            var isFavorite = API.cachedFavoritesByObjectId.has(ctx.sourceUserId);
+            if ((w < 20) && (wristFilter[ctx.type]) &&
+                (wristFilter[ctx.type] === 'On')) {
+                wristArr.push({
+                    ...ctx,
+                    created_at: ctx.created,
+                    isFriend,
+                    isFavorite
+                });
+                ++w;
+            }
+            if ((n < 5) && (notyFilter[ctx.type]) &&
+                (notyFilter[ctx.type] === 'On')) {
+                notyArr.push({
+                    ...ctx,
+                    created_at: ctx.created,
+                    isFriend,
+                    isFavorite
+                });
+                ++n;
+            }
+        }
+        this.sharedFeed.playerModerationTable.wrist = wristArr;
+        this.sharedFeed.playerModerationTable.noty = notyArr;
+        this.sharedFeed.pendingUpdate = true;
     };
 
     $app.methods.notifyMenu = function (index) {
@@ -4666,6 +4983,7 @@ speechSynthesis.getVoices();
         });
         this.sweepFeed();
         this.saveFeed();
+        this.updateSharedFeed(false);
         this.notifyMenu('feed');
     };
 
@@ -4785,12 +5103,12 @@ speechSynthesis.getVoices();
                     }
                     this.gameLogTable.lastEntryDate = this.gameLogTable.data[length - 1].created_at;
                 }
-                this.updateSharedFeed();
+                this.updateSharedFeed(false);
             }
         } catch (err) {
             console.error(err);
         }
-        setTimeout(() => this.updateGameLogLoop(), 1000);
+        setTimeout(() => this.updateGameLogLoop(), 500);
     };
 
     $app.methods.updateGameLog = async function () {
@@ -5469,6 +5787,7 @@ speechSynthesis.getVoices();
         if (saveFriendLogTimer !== null) {
             return;
         }
+        this.updateSharedFeed(true);
         saveFriendLogTimer = setTimeout(() => {
             saveFriendLogTimer = null;
             VRCXStorage.SetObject(`${API.currentUser.id}_friendLog`, this.friendLog);
@@ -5765,6 +6084,7 @@ speechSynthesis.getVoices();
             $app.notificationTable.data.push(ref);
             $app.notifyMenu('notification');
         }
+        $app.updateSharedFeed(true);
     });
 
     API.$on('NOTIFICATION:@DELETE', function (args) {
@@ -6191,17 +6511,15 @@ speechSynthesis.getVoices();
             notificationTTSVoice: this.notificationTTSVoice,
             overlayNotifications: this.overlayNotifications,
             desktopToast: this.desktopToast,
-            hidePrivateFromFeed: this.hidePrivateFromFeed,
-            hideOnPlayerJoined: this.hideOnPlayerJoined,
             hideDevicesFromFeed: this.hideDevicesFromFeed,
             minimalFeed: this.minimalFeed,
             displayVRCPlusIconsAsAvatar: this.displayVRCPlusIconsAsAvatar,
-            sharedFeedFilters: this.sharedFeedFilters,
             notificationPosition: this.notificationPosition,
             notificationTimeout: this.notificationTimeout,
             notificationTheme
         };
         sharedRepository.setObject('VRConfigVars', VRConfigVars);
+        this.updateSharedFeed(true);
     };
 
     API.$on('LOGIN', function () {
