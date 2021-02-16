@@ -686,17 +686,17 @@ html
                             span.name Minimal Feed Icons
                             el-switch(v-model="minimalFeed" :disabled="!openVR")
                         div.options-container-item
-                            span.name Hide Private Worlds
-                            el-switch(v-model="hidePrivateFromFeed" :disabled="!openVR")
-                        div.options-container-item
-                            span.name Hide Joins When Joining
-                            el-switch(v-model="hideOnPlayerJoined" :disabled="!openVR")
-                        div.options-container-item
                             span.name Hide VR Devices
                             el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR")
                         div.options-container-item
+                            span.name Hide Private Worlds
+                            el-switch(v-model="hidePrivateFromFeed")
+                        div.options-container-item
+                            span.name Hide Joins When Joining
+                            el-switch(v-model="hideOnPlayerJoined")
+                        div.options-container-item
                             el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog()" :disabled="!openVR") Wrist Feed Filters
-                            el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()" :disabled="!openVR") Notification Filters
+                            el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()") Notification Filters
                         br
                         span.sub-header VR Notifications
                         div.options-container-item
@@ -710,16 +710,16 @@ html
                         div.options-container-item
                             span.name When to display notifications:
                             br
-                            toggle-switch(:options="desktopToastToggleSwitchOption" group="desktopToastToggleSwitchOption" v-model="desktopToast" class="toggle-switch" :class="{ 'disableToggleSwitch': !openVR }" :disabled="!openVR")
+                            toggle-switch(:options="desktopToastToggleSwitchOption" group="desktopToastToggleSwitchOption" v-model="desktopToast" class="toggle-switch")
                         br
                         span.sub-header TTS Options
                         div.options-container-item
                             span.name Notification TTS
-                            el-switch(v-model="notificationTTS" :disabled="!openVR")
+                            el-switch(v-model="notificationTTS")
                         div.options-container-item
                             span.name Text-to-Speech Voice
                             el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
-                                el-button(v-text="TTSvoices[notificationTTSVoice].name" size="mini" :disabled="!openVR || !notificationTTS")
+                                el-button(v-text="TTSvoices[notificationTTSVoice].name" size="mini" :disabled="!notificationTTS")
                                 el-dropdown-menu(#default="dropdown")
                                     el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")     
                     div.options-container

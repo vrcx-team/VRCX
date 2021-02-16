@@ -727,10 +727,7 @@ speechSynthesis.getVoices();
                 if (this.appType === '1') {
                     this.updateCpuUsageLoop();
                 }
-                if (this.appType === '2') {
-                    this.initNotyMap();
-                }
-                this.updateLoop();
+                this.initLoop();
                 return args;
             });
         }
@@ -747,7 +744,9 @@ speechSynthesis.getVoices();
                 this.config = newConfig;
                 this.notyFeedLastEntry = '';
                 this.wristFeedLastEntry = '';
-                this.initNotyMap();
+                if (this.appType === '2') {
+                    this.initNotyMap();
+                }
             }
         } else {
             throw 'config not set';
@@ -777,6 +776,14 @@ speechSynthesis.getVoices();
                 this.notyMap[displayName] = feed.created_at;
             }
         });
+    };
+
+    $app.methods.initLoop = async function () {
+        if (!sharedRepository.getBool('VRInit')) {
+            setTimeout(this.initLoop, 500);
+        } else {
+            this.updateLoop();
+        }
     };
 
     $app.methods.updateLoop = async function () {
@@ -841,7 +848,6 @@ speechSynthesis.getVoices();
                 notyToPlay.push(feed);
             }
         });
-
         // disable notifications when busy
         if (this.currentUserStatus === 'busy') {
             return;
@@ -937,144 +943,6 @@ speechSynthesis.getVoices();
                         layout: this.config.notificationPosition,
                         text
                     }).show();
-                }
-            }
-            if ((this.config.notificationTTS) && (!this.isGameNoVR) && (this.isGameRunning)) {
-                switch (noty.type) {
-                    case 'OnPlayerJoined':
-                        this.speak(`${noty.data} has joined`);
-                        break;
-                    case 'OnPlayerLeft':
-                        this.speak(`${noty.data} has left`);
-                        break;
-                    case 'OnPlayerJoining':
-                        this.speak(`${noty.displayName} is joining`);
-                        break;
-                    case 'GPS':
-                        this.speak(`${noty.displayName} is in ${await this.displayLocation(noty.location[0])}`);
-                        break;
-                    case 'Online':
-                        this.speak(`${noty.displayName} has logged in`);
-                        break;
-                    case 'Offline':
-                        this.speak(`${noty.displayName} has logged out`);
-                        break;
-                    case 'Status':
-                        this.speak(`${noty.displayName} status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`);
-                        break;
-                    case 'invite':
-                        this.speak(`${noty.senderUsername} has invited you to ${noty.details.worldName} ${message}`);
-                        break;
-                    case 'requestInvite':
-                        this.speak(`${noty.senderUsername} has requested an invite ${message}`);
-                        break;
-                    case 'inviteResponse':
-                        this.speak(`${noty.senderUsername} has responded to your invite ${message}`);
-                        break;
-                    case 'requestInviteResponse':
-                        this.speak(`${noty.senderUsername} has responded to your invite request ${message}`);
-                        break;
-                    case 'friendRequest':
-                        this.speak(`${noty.senderUsername} has sent you a friend request`);
-                        break;
-                    case 'Friend':
-                        this.speak(`${noty.displayName} is now your friend`);
-                        break;
-                    case 'Unfriend':
-                        this.speak(`${noty.displayName} is no longer your friend`);
-                        break;
-                    case 'TrustLevel':
-                        this.speak(`${noty.displayName} trust level is now ${noty.trustLevel}`);
-                        break;
-                    case 'DisplayName':
-                        this.speak(`${noty.previousDisplayName} changed their name to ${noty.displayName}`);
-                        break;
-                    case 'showAvatar':
-                        this.speak(`${noty.sourceDisplayName} has shown your avatar`);
-                        break;
-                    case 'hideAvatar':
-                        this.speak(`${noty.sourceDisplayName} has hidden your avatar`);
-                        break;
-                    case 'block':
-                        this.speak(`${noty.sourceDisplayName} has blocked you`);
-                        break;
-                    case 'mute':
-                        this.speak(`${noty.sourceDisplayName} has muted you`);
-                        break;
-                    case 'unmute':
-                        this.speak(`${noty.sourceDisplayName} has unmuted you`);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if ((this.config.desktopToast === 'Always') ||
-                ((this.config.desktopToast === 'Game Closed') && (!this.isGameRunning)) ||
-                ((this.config.desktopToast === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) {
-                var imageURL = '';
-                if (noty.userId) {
-                    imageURL = await API.getCachedUser({
-                        userId: noty.userId
-                    }).catch((err) => {
-                        throw err;
-                    }).then((args) => {
-                        if ((this.config.displayVRCPlusIconsAsAvatar) && (args.json.userIcon)) {
-                            return args.json.userIcon;
-                        }
-                        return args.json.currentAvatarThumbnailImageUrl;
-                    });
-                }
-                switch (noty.type) {
-                    case 'OnPlayerJoined':
-                        AppApi.DesktopNotification(noty.data, 'has joined', imageURL);
-                        break;
-                    case 'OnPlayerLeft':
-                        AppApi.DesktopNotification(noty.data, 'has left', imageURL);
-                        break;
-                    case 'OnPlayerJoining':
-                        AppApi.DesktopNotification(noty.displayName, 'is joining', imageURL);
-                        break;
-                    case 'GPS':
-                        AppApi.DesktopNotification(noty.displayName, `is in ${await this.displayLocation(noty.location[0])}`, imageURL);
-                        break;
-                    case 'Online':
-                        AppApi.DesktopNotification(noty.displayName, 'has logged in', imageURL);
-                        break;
-                    case 'Offline':
-                        AppApi.DesktopNotification(noty.displayName, 'has logged out', imageURL);
-                        break;
-                    case 'Status':
-                        AppApi.DesktopNotification(noty.displayName, `status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, imageURL);
-                        break;
-                    case 'invite':
-                        AppApi.DesktopNotification(noty.senderUsername, `has invited you to ${noty.details.worldName} ${message}`, imageURL);
-                        break;
-                    case 'requestInvite':
-                        AppApi.DesktopNotification(noty.senderUsername, `has requested an invite ${message}`, imageURL);
-                        break;
-                    case 'inviteResponse':
-                        AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite ${message}`, imageURL);
-                        break;
-                    case 'requestInviteResponse':
-                        AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite request ${message}`, imageURL);
-                        break;
-                    case 'friendRequest':
-                        AppApi.DesktopNotification(noty.senderUsername, 'has sent you a friend request', imageURL);
-                        break;
-                    case 'Friend':
-                        AppApi.DesktopNotification(noty.displayName, 'has sent you a friend request', imageURL);
-                        break;
-                    case 'Unfriend':
-                        AppApi.DesktopNotification(noty.displayName, 'is no longer your friend', imageURL);
-                        break;
-                    case 'TrustLevel':
-                        AppApi.DesktopNotification(noty.displayName, `trust level is now ${noty.trustLevel}`, imageURL);
-                        break;
-                    case 'DisplayName':
-                        AppApi.DesktopNotification(noty.previousDisplayName, `changed their name to ${noty.displayName}`, imageURL);
-                        break;
-                    default:
-                        break;
                 }
             }
         }

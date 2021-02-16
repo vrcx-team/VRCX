@@ -3585,14 +3585,31 @@ speechSynthesis.getVoices();
         pendingUpdate: false
     };
 
+    $app.data.appInit = false;
+    $app.data.notyInit = false;
+
+    API.$on('LOGIN', function (args) {
+        sharedRepository.setArray('wristFeed', []);
+        sharedRepository.setArray('notyFeed', []);
+        setTimeout(function() {
+            $app.appInit = true;
+            $app.updateSharedFeed(true);
+            $app.notyInit = true;
+            sharedRepository.setBool('VRInit', true);
+        }, 10000);
+    });
+
     $app.methods.updateSharedFeed = function (forceUpdate) {
+        if (!this.appInit) {
+            return;
+        }
         this.updateSharedFeedGameLog(forceUpdate);
         this.updateSharedFeedFeedTable(forceUpdate);
         this.updateSharedFeedNotificationTable(forceUpdate);
         this.updateSharedFeedFriendLogTable(forceUpdate);
         this.updateSharedFeedPlayerModerationTable(forceUpdate);
         var feeds = this.sharedFeed;
-        if (feeds.pendingUpdate === false) {
+        if (!feeds.pendingUpdate) {
             return;
         }
         var wristFeed = [];
@@ -3663,6 +3680,7 @@ speechSynthesis.getVoices();
         notyFeed.splice(5);
         sharedRepository.setArray('wristFeed', wristFeed);
         sharedRepository.setArray('notyFeed', notyFeed);
+        this.playNoty(notyFeed);
         feeds.pendingUpdate = false;
     };
 
@@ -3676,6 +3694,8 @@ speechSynthesis.getVoices();
                 return;
             }
             this.sharedFeed.gameLog.lastEntryDate = data[i - 1].created_at;
+        } else {
+            return;
         }
         var bias = new Date(Date.now() - 86400000).toJSON(); //24 hours
         var wristArr = [];
@@ -3698,21 +3718,21 @@ speechSynthesis.getVoices();
                 var locationBias = new Date(Date.parse(ctx.created_at) + 10000).toJSON(); //10 seconds
                 for (var k = w - 1; k > -1; k--) {
                     var feedItem = wristArr[k];
-                        if (feedItem.type === 'OnPlayerJoined') {
-                            wristArr.splice(k, 1);
-                            w--;
-                        }
-                        if ((feedItem.created_at > locationBias) || (feedItem.type === 'Location')) {
-                            break;
-                        }
+                    if (feedItem.type === 'OnPlayerJoined') {
+                        wristArr.splice(k, 1);
+                        w--;
                     }
-                    for (var k = n - 1; k > -1; k--) {
-                        var feedItem = notyArr[k];
-                        if (feedItem.type === 'OnPlayerJoined') {
-                            notyArr.splice(k, 1);
-                            n--;
-                        }
-                        if (feedItem.created_at > locationBias) {
+                    if ((feedItem.created_at > locationBias) || (feedItem.type === 'Location')) {
+                        break;
+                    }
+                }
+                for (var k = n - 1; k > -1; k--) {
+                    var feedItem = notyArr[k];
+                    if (feedItem.type === 'OnPlayerJoined') {
+                        notyArr.splice(k, 1);
+                        n--;
+                    }
+                    if (feedItem.created_at > locationBias) {
                         break;
                     }
                 }
@@ -3769,6 +3789,8 @@ speechSynthesis.getVoices();
                 return;
             }
             this.sharedFeed.feedTable.lastEntryDate = data[i - 1].created_at;
+        } else {
+            return;
         }
         var bias = new Date(Date.now() - 86400000).toJSON(); //24 hours
         var wristArr = [];
@@ -3828,6 +3850,8 @@ speechSynthesis.getVoices();
                 return;
             }
             this.sharedFeed.notificationTable.lastEntryDate = data[i - 1].created_at;
+        } else {
+            return;
         }
         var bias = new Date(Date.now() - 86400000).toJSON(); //24 hours
         var wristArr = [];
@@ -3884,6 +3908,8 @@ speechSynthesis.getVoices();
                 return;
             }
             this.sharedFeed.friendLogTable.lastEntryDate = data[i - 1].created_at;
+        } else {
+            return;
         }
         var bias = new Date(Date.now() - 86400000).toJSON(); //24 hours
         var wristArr = [];
@@ -3940,6 +3966,8 @@ speechSynthesis.getVoices();
                 return;
             }
             this.sharedFeed.playerModerationTable.lastEntryDate = data[i - 1].created;
+        } else {
+            return;
         }
         var bias = new Date(Date.now() - 86400000).toJSON(); //24 hours
         var wristArr = [];
@@ -3982,6 +4010,256 @@ speechSynthesis.getVoices();
         this.sharedFeed.playerModerationTable.wrist = wristArr;
         this.sharedFeed.playerModerationTable.noty = notyArr;
         this.sharedFeed.pendingUpdate = true;
+    };
+
+    $app.data.notyMap = [];
+
+    $app.methods.playNoty = async function (notyFeed) {
+        var notyToPlay = [];
+        notyFeed.forEach((feed) => {
+            var displayName = '';
+            if (feed.displayName) {
+                displayName = feed.displayName;
+            } else if (feed.senderUsername) {
+                displayName = feed.senderUsername;
+            } else if (feed.sourceDisplayName) {
+                displayName = feed.sourceDisplayName;
+            } else if (feed.data) {
+                displayName = feed.data;
+            } else {
+                console.error('missing displayName');
+            }
+            if ((displayName) && (!this.notyMap[displayName]) ||
+                (this.notyMap[displayName] < feed.created_at)) {
+                this.notyMap[displayName] = feed.created_at;
+                notyToPlay.push(feed);
+            }
+        });
+        // disable notifications when busy
+        if ((this.currentUserStatus === 'busy') || (!this.notyInit)) {
+            return;
+        }
+        var bias = new Date(Date.now() - 60000).toJSON();
+        var noty = {};
+        var messageList = [ 'inviteMessage', 'requestMessage', 'responseMessage' ];
+        for (var i = 0; i < notyToPlay.length; i++) {
+            noty = notyToPlay[i];
+            if (noty.created_at < bias) {
+                continue;
+            }
+            var message = '';
+            for (i = 0; i < messageList.length; i++) {
+                if (typeof noty.details !== 'undefined' && typeof noty.details[messageList[i]] !== 'undefined') {
+                    message = noty.details[messageList[i]];
+                }
+            }
+            if ((this.notificationTTS) && (this.isGameRunning)) {
+                this.playNotyTTS(noty, message);
+            }
+            if ((this.desktopToast === 'Always') ||
+                ((this.desktopToast === 'Game Closed') && (!this.isGameRunning)) ||
+                ((this.desktopToast === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) {
+                this.displayDesktopToast(noty, message);
+            }
+        }
+    };
+
+    $app.methods.playNotyTTS = async function (noty, message) {
+        switch (noty.type) {
+            case 'OnPlayerJoined':
+                this.speak(`${noty.data} has joined`);
+                break;
+            case 'OnPlayerLeft':
+                this.speak(`${noty.data} has left`);
+                break;
+            case 'OnPlayerJoining':
+                this.speak(`${noty.displayName} is joining`);
+                break;
+            case 'GPS':
+                this.speak(`${noty.displayName} is in ${await this.displayLocation(noty.location[0])}`);
+                break;
+            case 'Online':
+                this.speak(`${noty.displayName} has logged in`);
+                break;
+            case 'Offline':
+                this.speak(`${noty.displayName} has logged out`);
+                break;
+            case 'Status':
+                this.speak(`${noty.displayName} status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`);
+                break;
+            case 'invite':
+                this.speak(`${noty.senderUsername} has invited you to ${noty.details.worldName} ${message}`);
+                break;
+            case 'requestInvite':
+                this.speak(`${noty.senderUsername} has requested an invite ${message}`);
+                break;
+            case 'inviteResponse':
+                this.speak(`${noty.senderUsername} has responded to your invite ${message}`);
+                break;
+            case 'requestInviteResponse':
+                this.speak(`${noty.senderUsername} has responded to your invite request ${message}`);
+                break;
+            case 'friendRequest':
+                this.speak(`${noty.senderUsername} has sent you a friend request`);
+                break;
+            case 'Friend':
+                this.speak(`${noty.displayName} is now your friend`);
+                break;
+            case 'Unfriend':
+                this.speak(`${noty.displayName} is no longer your friend`);
+                break;
+            case 'TrustLevel':
+                this.speak(`${noty.displayName} trust level is now ${noty.trustLevel}`);
+                break;
+            case 'DisplayName':
+                this.speak(`${noty.previousDisplayName} changed their name to ${noty.displayName}`);
+                break;
+            case 'showAvatar':
+                this.speak(`${noty.sourceDisplayName} has shown your avatar`);
+                break;
+            case 'hideAvatar':
+                this.speak(`${noty.sourceDisplayName} has hidden your avatar`);
+                break;
+            case 'block':
+                this.speak(`${noty.sourceDisplayName} has blocked you`);
+                break;
+            case 'mute':
+                this.speak(`${noty.sourceDisplayName} has muted you`);
+                break;
+            case 'unmute':
+                this.speak(`${noty.sourceDisplayName} has unmuted you`);
+                break;
+            default:
+                break;
+        }
+    };
+
+    $app.methods.displayDesktopToast = async function (noty, message) {
+        var imageURL = '';
+        var userId = '';
+        if (noty.userId) {
+            userId = noty.userId;
+        } else if (noty.senderUserId) {
+            userId = noty.senderUserId;
+        } else if (noty.sourceUserId) {
+            userId = noty.sourceUserId;
+        } else if (noty.data) {
+            for (var ref of API.cachedUsers.values()) {
+                if (ref.displayName === noty.data) {
+                    userId = ref.id;
+                    break;
+                }
+            }
+        }
+        if (userId) {
+            imageURL = await API.getCachedUser({
+                userId: userId
+            }).catch((err) => {
+                throw err;
+            }).then((args) => {
+                if ((this.displayVRCPlusIconsAsAvatar) && (args.json.userIcon)) {
+                    return args.json.userIcon;
+                }
+                return args.json.currentAvatarThumbnailImageUrl;
+            });
+        }
+        switch (noty.type) {
+            case 'OnPlayerJoined':
+                AppApi.DesktopNotification(noty.data, 'has joined', imageURL);
+                break;
+            case 'OnPlayerLeft':
+                AppApi.DesktopNotification(noty.data, 'has left', imageURL);
+                break;
+            case 'OnPlayerJoining':
+                AppApi.DesktopNotification(noty.displayName, 'is joining', imageURL);
+                break;
+            case 'GPS':
+                AppApi.DesktopNotification(noty.displayName, `is in ${await this.displayLocation(noty.location[0])}`, imageURL);
+                break;
+            case 'Online':
+                AppApi.DesktopNotification(noty.displayName, 'has logged in', imageURL);
+                break;
+            case 'Offline':
+                AppApi.DesktopNotification(noty.displayName, 'has logged out', imageURL);
+                break;
+            case 'Status':
+                AppApi.DesktopNotification(noty.displayName, `status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, imageURL);
+                break;
+            case 'invite':
+                AppApi.DesktopNotification(noty.senderUsername, `has invited you to ${noty.details.worldName} ${message}`, imageURL);
+                break;
+            case 'requestInvite':
+                AppApi.DesktopNotification(noty.senderUsername, `has requested an invite ${message}`, imageURL);
+                break;
+            case 'inviteResponse':
+                AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite ${message}`, imageURL);
+                break;
+            case 'requestInviteResponse':
+                AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite request ${message}`, imageURL);
+                break;
+            case 'friendRequest':
+                AppApi.DesktopNotification(noty.senderUsername, 'has sent you a friend request', imageURL);
+                break;
+            case 'Friend':
+                AppApi.DesktopNotification(noty.displayName, 'has sent you a friend request', imageURL);
+                break;
+            case 'Unfriend':
+                AppApi.DesktopNotification(noty.displayName, 'is no longer your friend', imageURL);
+                break;
+            case 'TrustLevel':
+                AppApi.DesktopNotification(noty.displayName, `trust level is now ${noty.trustLevel}`, imageURL);
+                break;
+            case 'DisplayName':
+                AppApi.DesktopNotification(noty.previousDisplayName, `changed their name to ${noty.displayName}`, imageURL);
+                break;
+            case 'showAvatar':
+                AppApi.DesktopNotification(noty.sourceDisplayName, `has shown your avatar`, imageURL);
+                break;
+            case 'hideAvatar':
+                AppApi.DesktopNotification(noty.sourceDisplayName, `has hidden your avatar`, imageURL);
+                break;
+            case 'block':
+                AppApi.DesktopNotification(noty.sourceDisplayName, `has blocked you`, imageURL);
+                break;
+            case 'mute':
+                AppApi.DesktopNotification(noty.sourceDisplayName, `has muted you`, imageURL);
+                break;
+            case 'unmute':
+                AppApi.DesktopNotification(noty.sourceDisplayName, `has unmuted you`, imageURL);
+                break;
+            default:
+                break;
+        }
+    };
+
+    $app.methods.displayLocation = async function (location) {
+        var text = '';
+        var L = API.parseLocation(location);
+        if (L.isOffline) {
+            text = 'Offline';
+        } else if (L.isPrivate) {
+            text = 'Private';
+        } else if (L.worldId) {
+            var ref = API.cachedWorlds.get(L.worldId);
+            if (typeof ref === 'undefined') {
+                await API.getWorld({
+                    worldId: L.worldId
+                }).then((args) => {
+                    if (L.tag === location) {
+                        if (L.instanceId) {
+                            text = `${args.json.name} ${L.accessType}`;
+                        } else {
+                            text = args.json.name;
+                        }
+                    }
+                });
+            } else if (L.instanceId) {
+                text = `${ref.name} ${L.accessType}`;
+            } else {
+                text = ref.name;
+            }
+        }
+        return text;
     };
 
     $app.methods.notifyMenu = function (index) {
