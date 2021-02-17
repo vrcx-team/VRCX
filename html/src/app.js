@@ -3718,22 +3718,22 @@ speechSynthesis.getVoices();
                 var locationBias = new Date(Date.parse(ctx.created_at) + 10000).toJSON(); //10 seconds
                 for (var k = w - 1; k > -1; k--) {
                     var feedItem = wristArr[k];
+                    if ((feedItem.created_at > locationBias) || (feedItem.type === 'Location')) {
+                        break;
+                    }
                     if (feedItem.type === 'OnPlayerJoined') {
                         wristArr.splice(k, 1);
                         w--;
                     }
-                    if ((feedItem.created_at > locationBias) || (feedItem.type === 'Location')) {
-                        break;
-                    }
                 }
                 for (var k = n - 1; k > -1; k--) {
                     var feedItem = notyArr[k];
+                    if (feedItem.created_at > locationBias) {
+                        break;
+                    }
                     if (feedItem.type === 'OnPlayerJoined') {
                         notyArr.splice(k, 1);
                         n--;
-                    }
-                    if (feedItem.created_at > locationBias) {
-                        break;
                     }
                 }
                 if (w >= 20) {
