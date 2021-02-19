@@ -538,9 +538,14 @@ html
                             el-button(type="default" @click="VRCPlusIconsTable = {}" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                         el-tooltip(placement="top")
                             template(#content)
+                                span Upload icon
+                            div(style="display:inline-block")
+                                el-button(type="default" @click="displayVRCPlusIconUpload" size="mini" icon="el-icon-upload2" circle style="margin-left:0")
+                                input(type="file" multiple accept="image/*" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
+                        el-tooltip(placement="top")
+                            template(#content)
                                 span Reset icon
-                            el-button(type="default" @click="setVRCPlusIcon('')" size="mini" icon="el-icon-close" circle style="margin:0" :disabled="!API.currentUser.userIcon")
-                        //- input(type="file" @change="onFileChangeVRCPlusIcon")
+                            el-button(type="default" @click="setVRCPlusIcon('')" size="mini" icon="el-icon-close" circle style="margin-left:0" :disabled="!API.currentUser.userIcon")
                         br
                         .x-friend-item(v-for="icon in VRCPlusIconsTable" :key="icon.id" style="display:inline-block;margin-top:10px;cursor:default")
                             .vrcplus-icon(style="" @click="setVRCPlusIcon(icon.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(icon.id) }")

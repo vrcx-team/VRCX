@@ -1,9 +1,10 @@
-﻿using CefSharp;
+using CefSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using System.Threading;
 
 namespace VRCX
@@ -150,6 +151,50 @@ namespace VRCX
                             await streamWriter.WriteAsync((string)body);
                         }
                     }
+                }
+
+                if (options.TryGetValue("uploadImage", out object uploadImage) == true)
+                {
+                    request.Method = "POST";
+                    string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
+                    request.ContentType = "multipart/form-data; boundary=" + boundary;
+                    Stream requestStream = request.GetRequestStream();
+                    if (options.TryGetValue("postData", out object postDataObject) == true)
+                    {
+                        Dictionary<string, string> postData = new Dictionary<string, string>();
+                        postData.Add("data", (string)postDataObject);
+                        string FormDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n";
+                        foreach (string key in postData.Keys)
+                        {
+                            string item = String.Format(FormDataTemplate, boundary, key, postData[key]);
+                            byte[] itemBytes = System.Text.Encoding.UTF8.GetBytes(item);
+                            requestStream.Write(itemBytes, 0, itemBytes.Length);
+                        }
+                    }
+                    var imageData = options["imageData"] as string;
+                    byte[] fileToUpload = Convert.FromBase64CharArray(imageData.ToCharArray(), 0, imageData.Length);
+                    string fileFormKey = "image";
+                    string fileName = "image.png";
+                    string fileMimeType = "image/png";
+                    string HeaderTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n";
+                    string header = String.Format(HeaderTemplate, boundary, fileFormKey, fileName, fileMimeType);
+                    byte[] headerbytes = Encoding.UTF8.GetBytes(header);
+                    requestStream.Write(headerbytes, 0, headerbytes.Length);
+                    using (MemoryStream fileStream = new MemoryStream(fileToUpload))
+                    {
+                        byte[] buffer = new byte[1024];
+                        int bytesRead = 0;
+                        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                        {
+                            requestStream.Write(buffer, 0, bytesRead);
+                        }
+                        fileStream.Close();
+                    }
+                    byte[] newlineBytes = Encoding.UTF8.GetBytes("\r\n");
+                    requestStream.Write(newlineBytes, 0, newlineBytes.Length);
+                    byte[] endBytes = System.Text.Encoding.UTF8.GetBytes("--" + boundary + "--");
+                    requestStream.Write(endBytes, 0, endBytes.Length);
+                    requestStream.Close();
                 }
 
                 try

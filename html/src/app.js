@@ -360,9 +360,7 @@ speechSynthesis.getVoices();
             if (typeof req !== 'undefined') {
                 return req;
             }
-        } else if (init.VRCPlusIcon) {
-            delete init.VRCPlusIcon;
-            console.log(init);
+        } else if (init.uploadImage) {
         } else {
             init.headers = {
                 'Content-Type': 'application/json;charset=utf-8',
@@ -8734,20 +8732,30 @@ speechSynthesis.getVoices();
         return false;
     };
 
-    // requres decoding base64 body on C# side
     $app.methods.onFileChangeVRCPlusIcon = function (e) {
         var files = e.target.files || e.dataTransfer.files;
         if (!files.length) {
             return;
         }
+        if (files[0].size >= 10485760) { //10MB
+            $app.$message({
+                message: 'File size too large',
+                type: 'error'
+            });
+            return;
+        }
+        if (!files[0].type.match(/image.*/)) {
+            $app.$message({
+                message: 'File isn\'t an image',
+                type: 'error'
+            });
+            return;
+        }
         var r = new FileReader();
         r.onload = function () {
-            var bodyStart = '---------------------------26696829785232761561272838397\nContent-Disposition: form-data; name="file"; filename="blob"\nContent-Type: image/png\n\n';
-            var bodyEnd = '\n---------------------------26696829785232761561272838397--\n';
-            var body = bodyStart + r.result + bodyEnd;
-            var base64Body = btoa(body);
+            var base64Body = btoa(r.result);
             API.uploadVRCPlusIcon(base64Body).then((args) => {
-                this.$message({
+                $app.$message({
                     message: 'Icon uploaded',
                     type: 'success'
                 });
@@ -8757,14 +8765,14 @@ speechSynthesis.getVoices();
         r.readAsBinaryString(files[0]);
     };
 
+    $app.methods.displayVRCPlusIconUpload = function () {
+        document.getElementById('VRCPlusIconUploadButton').click();
+    };
+
     API.uploadVRCPlusIcon = function (params) {
         return this.call('icon', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'multipart/form-data; boundary=-------------------------26696829785232761561272838397'
-            },
-            VRCPlusIcon: true,
-            body: params
+            uploadImage: true,
+            imageData: params
         }).then((json) => {
             var args = {
                 json,
