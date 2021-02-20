@@ -8877,9 +8877,8 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.clearInviteImageUpload = function () {
-        if (document.querySelector('#InviteImageUploadButton')) {
-            document.querySelector('#InviteImageUploadButton').value = '';
-        }
+        var buttonList = document.querySelectorAll('.inviteImageUploadButton');
+        buttonList.forEach(button => button.value = '');
         this.uploadImage = '';
     };
 

@@ -1513,7 +1513,7 @@ html
                 //- dialog Table: Send Invite Response Message
                 el-dialog.x-dialog(ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" title="Send Invite Response Message" width="800px")
                     template(v-if="API.currentUser.$isVRCPlus")
-                        input(type="file" multiple accept="image/*" @change="inviteImageUpload" id="InviteImageUploadButton")
+                        input.inviteImageUploadButton(type="file" multiple accept="image/*" @change="inviteImageUpload")
                     data-tables(v-bind="inviteResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                         el-table-column(label="Message" prop="message")
@@ -1530,7 +1530,7 @@ html
                 //- dialog Table: Send Invite Request Response Message
                 el-dialog.x-dialog(ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" title="Send Invite Request Response Message" width="800px")
                     template(v-if="API.currentUser.$isVRCPlus")
-                        input(type="file" multiple accept="image/*" @change="inviteImageUpload" id="InviteImageUploadButton")
+                        input.inviteImageUploadButton(type="file" multiple accept="image/*" @change="inviteImageUpload")
                     data-tables(v-bind="inviteRequestResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                         el-table-column(label="Message" prop="message")
@@ -1555,7 +1555,7 @@ html
                 //- dialog Table: Send Invite Message
                 el-dialog.x-dialog(ref="sendInviteDialog" :visible.sync="sendInviteDialogVisible" title="Send Invite Message" width="800px")
                     template(v-if="API.currentUser.$isVRCPlus")
-                        input(type="file" multiple accept="image/*" @change="inviteImageUpload" id="InviteImageUploadButton")
+                        input.inviteImageUploadButton(type="file" multiple accept="image/*" @change="inviteImageUpload")
                     data-tables(v-bind="inviteMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                         el-table-column(label="Message" prop="message")
@@ -1572,7 +1572,7 @@ html
                 //- dialog Table: Send Invite Request Message
                 el-dialog.x-dialog(ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" title="Send Invite Request Message" width="800px")
                     template(v-if="API.currentUser.$isVRCPlus")
-                        input(type="file" multiple accept="image/*" @change="inviteImageUpload" id="InviteImageUploadButton")
+                        input.inviteImageUploadButton(type="file" multiple accept="image/*" @change="inviteImageUpload")
                     data-tables(v-bind="inviteRequestMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                         el-table-column(label="Message" prop="message")
