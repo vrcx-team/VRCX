@@ -3689,6 +3689,7 @@ speechSynthesis.getVoices();
         if ((this.isGameRunning) && ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') ||
             (this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP'))) {
             var bias = new Date(Date.now() - 120000).toJSON();
+            var locationBias = new Date(Date.now() - 10000).toJSON();
             for (var i = 0; i < wristFeed.length; i++) {
                 var ctx = wristFeed[i];
                 if ((ctx.created_at < bias) || (ctx.type === 'Location')) {
@@ -3698,14 +3699,19 @@ speechSynthesis.getVoices();
                     var joining = true;
                     for (var k = 0; k < wristFeed.length; k++) {
                         var feedItem = wristFeed[k];
-                        if ((feedItem.data === ctx.displayName) ||
-                            ((feedItem.type === 'Friend') && (feedItem.displayName === ctx.displayName))) {
+                        if ((this.hideOnPlayerJoined) && (feedItem.type === 'Location') &&
+                            (feedItem.created_at < locationBias)) {
                             joining = false;
                             break;
                         }
-                        if ((feedItem.created_at < bias) || (feedItem.type === 'Location') ||
-                            ((feedItem.type === 'GPS') && (feedItem.created_at !== ctx.created_at) &&
-                            (feedItem.displayName === ctx.displayName))) {
+                        if ((feedItem.data === ctx.displayName) ||
+                            (((feedItem.type === 'Friend') || (feedItem.type === 'Status')) && (feedItem.displayName === ctx.displayName))) {
+                            joining = false;
+                            break;
+                        }
+                        if ((feedItem.created_at < bias) ||
+                            (feedItem.type === 'Location') ||
+                            ((feedItem.type === 'GPS') && (feedItem.created_at !== ctx.created_at) && (feedItem.displayName === ctx.displayName))) {
                             break;
                         }
                     }
