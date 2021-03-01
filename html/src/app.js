@@ -860,9 +860,7 @@ speechSynthesis.getVoices();
             date_joined: json.date_joined,
             allowAvatarCopying: json.allowAvatarCopying,
             isFriend: false,
-            location: ($app.isGameRunning === true)
-                ? $app.lastLocation
-                : ''
+            location: $app.lastLocation.location
         });
     });
 
@@ -1158,9 +1156,10 @@ speechSynthesis.getVoices();
             json.statusDescription = API.currentUser.statusDescription;
             json.state = API.currentUser.state;
             json.last_login = API.currentUser.last_login;
-            json.location = ($app.isGameRunning === true)
-                ? $app.lastLocation
-                : '';
+            if ($app.lastLocation.location) {
+                json.location = $app.lastLocation.location;
+                json.$location_at = Date.parse($app.lastLocation.date);
+            }
             json.$online_for = API.currentUser.$online_for;
             json.$offline_for = API.currentUser.$offline_for;
         }
@@ -3652,7 +3651,7 @@ speechSynthesis.getVoices();
     API.$on('LOGIN', function (args) {
         sharedRepository.setArray('wristFeed', []);
         sharedRepository.setArray('notyFeed', []);
-        setTimeout(function() {
+        setTimeout(function () {
             $app.appInit = true;
             $app.updateSharedFeed(true);
             $app.notyInit = true;
@@ -3690,14 +3689,14 @@ speechSynthesis.getVoices();
         // OnPlayerJoining
         if ((this.isGameRunning) && ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') ||
             (this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP'))) {
-            var bias = new Date(Date.now() - 120000).toJSON();
+            var bias = new Date(Date.now() - 120000).toJSON(); //2 minutes
             var locationBias = new Date(Date.now() - 15000).toJSON(); //15 seconds
             for (var i = 0; i < wristFeed.length; i++) {
                 var ctx = wristFeed[i];
                 if ((ctx.created_at < bias) || (ctx.type === 'Location')) {
                     break;
                 }
-                if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation)) {
+                if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation.location)) {
                     var joining = true;
                     for (var k = 0; k < wristFeed.length; k++) {
                         var feedItem = wristFeed[k];
@@ -4108,7 +4107,7 @@ speechSynthesis.getVoices();
         }
         var bias = new Date(Date.now() - 60000).toJSON();
         var noty = {};
-        var messageList = [ 'inviteMessage', 'requestMessage', 'responseMessage' ];
+        var messageList = ['inviteMessage', 'requestMessage', 'responseMessage'];
         for (var i = 0; i < notyToPlay.length; i++) {
             noty = notyToPlay[i];
             if (noty.created_at < bias) {
@@ -5389,7 +5388,11 @@ speechSynthesis.getVoices();
 
     // App: gameLog
 
-    $app.data.lastLocation = '';
+    $app.data.lastLocation = {
+        date: '',
+        location: '',
+        name: ''
+    };
     $app.data.lastLocation$ = {};
     $app.data.discordActive = configRepository.getBool('discordActive');
     $app.data.discordInstance = configRepository.getBool('discordInstance');
@@ -5438,7 +5441,11 @@ speechSynthesis.getVoices();
     $app.methods.resetGameLog = async function () {
         await gameLogService.reset();
         this.gameLogTable.data = [];
-        this.lastLocation = '';
+        this.lastLocation = {
+            date: '',
+            location: '',
+            name: ''
+        };
     };
 
     $app.methods.updateGameLogLoop = async function () {
@@ -5470,7 +5477,11 @@ speechSynthesis.getVoices();
             switch (gameLog.type) {
                 case 'location':
                     if (this.isGameRunning) {
-                        this.lastLocation = gameLog.location;
+                        this.lastLocation = {
+                            date: gameLog.dt,
+                            location: gameLog.location,
+                            name: gameLog.worldName
+                        };
                     }
                     tableData = {
                         created_at: gameLog.dt,
@@ -5539,9 +5550,7 @@ speechSynthesis.getVoices();
     $app.methods.updateDiscord = function () {
         var ref = API.cachedUsers.get(API.currentUser.id);
         if (typeof ref !== 'undefined') {
-            var myLocation = (this.isGameRunning === true)
-                ? this.lastLocation
-                : '';
+            var myLocation = this.lastLocation.location;
             if (ref.location !== myLocation) {
                 API.applyUser({
                     id: ref.id,
@@ -5550,12 +5559,12 @@ speechSynthesis.getVoices();
             }
         }
         if (this.isGameRunning === false ||
-            this.lastLocation === '') {
+            this.lastLocation.location === '') {
             Discord.SetActive(false);
             return;
         }
-        if (this.lastLocation !== this.lastLocation$.tag) {
-            var L = API.parseLocation(this.lastLocation);
+        if (this.lastLocation.location !== this.lastLocation$.tag) {
+            var L = API.parseLocation(this.lastLocation.location);
             L.worldName = L.worldId;
             this.lastLocation$ = L;
             if (L.worldId) {
@@ -6828,7 +6837,11 @@ speechSynthesis.getVoices();
     sharedRepository.setBool('is_game_running', false);
     var isGameRunningStateChange = function () {
         sharedRepository.setBool('is_game_running', this.isGameRunning);
-        $app.lastLocation = '';
+        $app.lastLocation = {
+            date: '',
+            location: '',
+            name: ''
+        };
         if (this.isGameRunning) {
             API.currentUser.$online_for = Date.now();
             API.currentUser.$offline_for = '';
@@ -6846,9 +6859,9 @@ speechSynthesis.getVoices();
     $app.watch.isGameNoVR = isGameNoVRStateChange;
 
     var lastLocationStateChange = function () {
-        sharedRepository.setString('last_location', $app.lastLocation);
+        sharedRepository.setObject('last_location', $app.lastLocation);
     };
-    $app.watch.lastLocation = lastLocationStateChange;
+    $app.watch['lastLocation.location'] = lastLocationStateChange;
 
     $app.methods.updateVRConfigVars = function () {
         if (configRepository.getBool('isDarkMode')) {
@@ -7350,7 +7363,7 @@ speechSynthesis.getVoices();
             }
         }
         if (this.isGameRunning &&
-            this.lastLocation === L.tag) {
+            this.lastLocation.location === L.tag) {
             var ref = API.cachedUsers.get(API.currentUser.id);
             users.push((typeof ref === 'undefined')
                 ? API.currentUser
@@ -7611,13 +7624,13 @@ speechSynthesis.getVoices();
                 return args;
             });
         } else if (command === 'Invite Message') {
-            var L = API.parseLocation(this.lastLocation);
+            var L = API.parseLocation(this.lastLocation.location);
             API.getCachedWorld({
                 worldId: L.worldId
             }).then((args) => {
                 this.showSendInviteDialog({
-                    instanceId: this.lastLocation,
-                    worldId: this.lastLocation,
+                    instanceId: this.lastLocation.location,
+                    worldId: this.lastLocation.location,
                     worldName: args.ref.name
                 }, D.id);
             });
@@ -7626,13 +7639,13 @@ speechSynthesis.getVoices();
                 platform: 'standalonewindows'
             }, D.id);
         } else if (command === 'Invite') {
-            var L = API.parseLocation(this.lastLocation);
+            var L = API.parseLocation(this.lastLocation.location);
             API.getCachedWorld({
                 worldId: L.worldId
             }).then((args) => {
                 API.sendInvite({
-                    instanceId: this.lastLocation,
-                    worldId: this.lastLocation,
+                    instanceId: this.lastLocation.location,
+                    worldId: this.lastLocation.location,
                     worldName: args.ref.name
                 }, D.id).then((_args) => {
                     this.$message('Invite sent');
@@ -7864,7 +7877,7 @@ speechSynthesis.getVoices();
             instance.users.push(ref);
         }
         if (this.isGameRunning) {
-            var lastLocation$ = API.parseLocation(this.lastLocation);
+            var lastLocation$ = API.parseLocation(this.lastLocation.location);
             if (lastLocation$.worldId === D.id) {
                 var instance = instances[lastLocation$.instanceId];
                 if (typeof instance === 'undefined') {
@@ -8822,7 +8835,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.onFileChangeVRCPlusIcon = function (e) {
-        var clearFile = function() {
+        var clearFile = function () {
             if (document.querySelector('#VRCPlusIconUploadButton')) {
                 document.querySelector('#VRCPlusIconUploadButton').value = '';
             }

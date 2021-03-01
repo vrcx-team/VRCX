@@ -694,7 +694,7 @@ speechSynthesis.getVoices();
             config: {},
             isGameRunning: false,
             isGameNoVR: false,
-            lastLocation: '',
+            lastLocation: {},
             wristFeedLastEntry: '',
             notyFeedLastEntry: '',
             wristFeed: [],
@@ -737,7 +737,7 @@ speechSynthesis.getVoices();
         this.currentUserStatus = sharedRepository.getString('current_user_status');
         this.isGameRunning = sharedRepository.getBool('is_game_running');
         this.isGameNoVR = sharedRepository.getBool('is_Game_No_VR');
-        this.lastLocation = sharedRepository.getString('last_location');
+        this.lastLocation = sharedRepository.getObject('last_location');
         var newConfig = sharedRepository.getObject('VRConfigVars');
         if (newConfig) {
             if (JSON.stringify(newConfig) !== JSON.stringify(this.config)) {

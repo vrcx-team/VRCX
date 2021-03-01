@@ -778,7 +778,7 @@ html
                                     img(v-else v-lazy="API.currentUser.currentAvatarThumbnailImageUrl")
                                 .detail
                                     span.name(v-text="API.currentUser.displayName" :class="API.currentUser.$trustClass")
-                                    location.extra(v-if="isGameRunning === true" :location="lastLocation" :link="false")
+                                    location.extra(v-if="isGameRunning === true" :location="lastLocation.location" :link="false")
                                     span.extra(v-else v-text="API.currentUser.statusDescription" :link="false")
                         .x-friend-group(v-show="friendsGroup0.length")
                             i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup0 }")
@@ -897,7 +897,7 @@ html
                                                 el-dropdown-item(icon="el-icon-edit" command="Edit Bio") Bio
                                                 el-dropdown-item(icon="el-icon-switch-button" command="Logout" divided) Logout
                                             template(v-else)
-                                                template(v-if="lastLocation && isGameRunning")
+                                                template(v-if="lastLocation.location && isGameRunning")
                                                     el-dropdown-item(icon="el-icon-message" command="Invite") Invite
                                                     el-dropdown-item(icon="el-icon-message" command="Invite Message") Invite With Message
                                                 template(v-if="userDialog.isFriend")
