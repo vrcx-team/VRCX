@@ -187,6 +187,19 @@ button {
     overflow: hidden auto;
 }
 
+.x-containerbottom {
+    padding: 0px 10px;
+    overflow: hidden;
+    font-size: 20px;
+    white-space: nowrap;
+}
+
+.x-containerbottom span {
+    padding: 0px;
+    display: block;
+    overflow: hidden;
+}
+
 .x-friend-item {
     box-sizing: border-box;
     display: flex;

@@ -240,7 +240,7 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | #[span.name(v-text="feed.sourceDisplayName")] has unmuted you
-            .x-container
+            .x-containerbottom
                 div(style="display:flex;flex-direction:row")
                     template(v-if="devices.length")
                         div(v-for="device in devices" style="flex:none;text-align:center;width:64px")
@@ -280,7 +280,11 @@ html
                                 img(v-else src="images/other_status_ready.png" style="width:32px;height:32px")
                                 br
                                 span {{ device[2] }}%
-            .x-container
+            .x-containerbottom
+                span(style="float:right") Timer: {{ lastLocationTimer }}
+                span(style="display:inline-block") Players: {{ lastLocation.playerCount }} 
+                span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendCount !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendCount})` : ''}}
+                br
                 span(style="float:right") {{ currentTime | formatDate('YYYY-MM-DD HH:MI:SS AMPM') }}
                 span CPU {{ cpuUsage }}%
         script(src="vr.js")

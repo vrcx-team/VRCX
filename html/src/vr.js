@@ -694,7 +694,14 @@ speechSynthesis.getVoices();
             config: {},
             isGameRunning: false,
             isGameNoVR: false,
-            lastLocation: {},
+            lastLocation: {
+                date: 0,
+                location: '',
+                name: '',
+                playerCount: 0,
+                friendCount: 0
+            },
+            lastLocationTimer: '',
             wristFeedLastEntry: '',
             notyFeedLastEntry: '',
             wristFeed: [],
@@ -738,6 +745,11 @@ speechSynthesis.getVoices();
         this.isGameRunning = sharedRepository.getBool('is_game_running');
         this.isGameNoVR = sharedRepository.getBool('is_Game_No_VR');
         this.lastLocation = sharedRepository.getObject('last_location');
+        if (this.lastLocation.date !== 0) {
+            this.lastLocationTimer = timeToText(Date.now() - this.lastLocation.date);
+        } else {
+            this.lastLocationTimer = '';
+        }
         var newConfig = sharedRepository.getObject('VRConfigVars');
         if (newConfig) {
             if (JSON.stringify(newConfig) !== JSON.stringify(this.config)) {
@@ -810,7 +822,7 @@ speechSynthesis.getVoices();
     $app.methods.updateCpuUsageLoop = async function () {
         try {
             var cpuUsage = await AppApi.CpuUsage();
-            this.cpuUsage = cpuUsage.toFixed(2);
+            this.cpuUsage = cpuUsage.toFixed(0);
         } catch (err) {
             console.error(err);
         }
