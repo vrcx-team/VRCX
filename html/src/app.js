@@ -3711,8 +3711,7 @@ speechSynthesis.getVoices();
                             break;
                         }
                         if ((feedItem.created_at < bias) ||
-                            (feedItem.type === 'Location') ||
-                            ((feedItem.type === 'GPS') && (feedItem.created_at !== ctx.created_at) && (feedItem.displayName === ctx.displayName))) {
+                            (feedItem.type === 'Location')) {
                             break;
                         }
                     }
