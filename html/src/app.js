@@ -399,9 +399,6 @@ speechSynthesis.getVoices();
                 }
                 throw new Error('401: Missing Credentials');
             }
-            if ((status === 503) && (data.error.message === 'endpoint temporarily disabled')) {
-                throw new Error('503: Endpoint temporarily disabled');
-            }
             if (data.error === Object(data.error)) {
                 this.$throw(
                     data.error.status_code || status,
