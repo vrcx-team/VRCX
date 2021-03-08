@@ -281,9 +281,10 @@ html
                                 br
                                 span {{ device[2] }}%
             .x-containerbottom
-                span(style="float:right") Timer: {{ lastLocationTimer }}
-                span(style="display:inline-block") Players: {{ lastLocation.playerCount }} 
-                span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendCount !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendCount})` : ''}}
+                template(v-if="lastLocation.date != 0")
+                    span(style="float:right") Timer: {{ lastLocationTimer }}
+                    span(style="display:inline-block") Players: {{ lastLocation.playerCount }} 
+                    span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendCount !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendCount})` : ''}}
                 br
                 span(style="float:right") {{ currentTime | formatDate('YYYY-MM-DD HH:MI:SS AMPM') }}
                 span CPU {{ cpuUsage }}%
