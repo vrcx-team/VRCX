@@ -7054,6 +7054,56 @@ speechSynthesis.getVoices();
         });
     };
 
+    $app.methods.promptRenameAvatar = function (avatar) {
+        this.$prompt('Enter avatar name', 'Rename Avatar', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputValue: avatar.ref.name,
+            inputErrorMessage: 'Valid name is required',
+            callback: (action, instance) => {
+                if (action === 'confirm' &&
+                    instance.inputValue !== avatar.ref.name) {
+                    API.saveAvatar({
+                        id: avatar.id,
+                        name: instance.inputValue
+                    }).then((args) => {
+                        this.$message({
+                            message: 'Avatar renamed',
+                            type: 'success'
+                        });
+                        return args;
+                    });
+                }
+            }
+        });
+    };
+
+    $app.methods.promptChangeDescription = function (avatar) {
+        this.$prompt('Enter avatar description', 'Change Description', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputValue: avatar.ref.description,
+            inputErrorMessage: 'Valid description is required',
+            callback: (action, instance) => {
+                if (action === 'confirm' &&
+                    instance.inputValue !== avatar.ref.description) {
+                    API.saveAvatar({
+                        id: avatar.id,
+                        description: instance.inputValue
+                    }).then((args) => {
+                        this.$message({
+                            message: 'Avatar description changed',
+                            type: 'success'
+                        });
+                        return args;
+                    });
+                }
+            }
+        });
+    };
+
     // App: Dialog
 
     var adjustDialogZ = (el) => {
@@ -8126,12 +8176,20 @@ speechSynthesis.getVoices();
         if (D.visible === false) {
             return;
         }
-        if (command === 'Add Favorite') {
-            this.showFavoriteDialog('avatar', D.id);
-        } else {
-            this.$confirm(`Continue? ${command}`, 'Confirm', {
-                confirmButtonText: 'Confirm',
-                cancelButtonText: 'Cancel',
+        switch (command) {
+            case 'Rename':
+                this.promptRenameAvatar(D);
+                break;
+            case 'Change Description':
+                this.promptChangeDescription(D);
+                break;
+            case 'Add Favorite':
+                this.showFavoriteDialog('avatar', D.id);
+                break;
+            default:
+                this.$confirm(`Continue? ${command}`, 'Confirm', {
+                    confirmButtonText: 'Confirm',
+                    cancelButtonText: 'Cancel',
                 type: 'info',
                 callback: (action) => {
                     if (action !== 'confirm') {
@@ -8180,9 +8238,10 @@ speechSynthesis.getVoices();
                             break;
                         default:
                             break;
+                        }
                     }
-                }
-            });
+                });
+                break;
         }
     };
 

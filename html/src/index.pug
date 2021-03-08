@@ -1151,6 +1151,8 @@ html
                                         template(v-if="avatarDialog.ref.authorId === API.currentUser.id")
                                             el-dropdown-item(v-if="avatarDialog.ref.releaseStatus === 'public'" icon="el-icon-user-solid" command="Make Private" divided) Make Private
                                             el-dropdown-item(v-else icon="el-icon-user" command="Make Public" divided) Make Public
+                                            el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
+                                            el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
                     el-tabs
                         el-tab-pane(label="Info")
                             .x-friend-list
