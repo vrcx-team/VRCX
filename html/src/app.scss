@@ -138,24 +138,10 @@ a {
 .x-app {
     position: absolute;
     display: flex;
-    flex-direction: column;
     width: 100%;
     height: 100%;
-    overflow: hidden;
-}
-
-.x-title-bar {
-    display: flex;
-    width: 100%;
-    height: 30px;
-}
-
-.x-wrap {
-    position: relative;
-    display: flex;
-    width: 100%;
-    height: calc(100% - 30px);
     overflow: hidden auto;
+    cursor: default;
 }
 
 .x-container {
@@ -170,10 +156,10 @@ a {
     position: absolute;
     // modal 시작이 2000이라서
     z-index: 1999;
+    display: flex;
     width: 100%;
     height: 100%;
     background: #fff;
-    overflow: hidden scroll;
 }
 
 .x-menu-container {

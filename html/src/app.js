@@ -3524,18 +3524,6 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.minimizeWindow = function () {
-        AppApi.MinimizeMainWindow();
-    };
-
-    $app.methods.toggleMaximizeWindow = function () {
-        AppApi.ToggleMaximizeMainWindow();
-    };
-
-    $app.methods.closeWindow = function () {
-        AppApi.CloseMainWindow();
-    };
-
     $app.methods.openExternalLink = function (link) {
         this.$confirm(`${link}`, 'Open External Link', {
             confirmButtonText: 'Confirm',

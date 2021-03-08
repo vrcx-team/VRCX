@@ -45,11 +45,7 @@ namespace VRCX
 
             CefService.Instance.Init();
             VRCXVR.Instance.Init();
-
-            var app = new App();
-            app.InitializeComponent();
-            app.Run();
-
+            Application.Run(new MainForm());
             WebApi.Instance.SaveCookies();
             VRCXVR.Instance.Exit();
             CefService.Instance.Exit();

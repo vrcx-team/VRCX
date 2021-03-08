@@ -15,7 +15,6 @@ using System.IO;
 using System.Net;
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
-using System.Windows;
 
 namespace VRCX
 {
@@ -28,59 +27,9 @@ namespace VRCX
             Instance = new AppApi();
         }
 
-        public void CloseMainWindow()
-        {
-            try
-            {
-                MainWindow.Instance.Dispatcher.BeginInvoke(new MethodInvoker(() =>
-                {
-                    MainWindow.Instance.Close();
-                }));
-            }
-            catch
-            {
-            }
-        }
-
-        public void MinimizeMainWindow()
-        {
-            try
-            {
-                MainWindow.Instance.Dispatcher.BeginInvoke(new MethodInvoker(() =>
-                {
-                    MainWindow.Instance.WindowState = WindowState.Minimized;
-                }));
-            }
-            catch
-            {
-            }
-        }
-
-        public void ToggleMaximizeMainWindow()
-        {
-            try
-            {
-                MainWindow.Instance.Dispatcher.BeginInvoke(new MethodInvoker(() =>
-                {
-                    var mainWindow = MainWindow.Instance;
-                    if (mainWindow.WindowState == WindowState.Maximized)
-                    {
-                        mainWindow.WindowState = WindowState.Normal;
-                    }
-                    else
-                    {
-                        mainWindow.WindowState = WindowState.Maximized;
-                    }
-                }));
-            }
-            catch
-            {
-            }
-        }
-
         public void ShowDevTools()
         {
-            MainWindow.Instance.Browser.ShowDevTools();
+            MainForm.Instance.Browser.ShowDevTools();
         }
 
         public void DeleteAllCookies()
@@ -196,13 +145,13 @@ namespace VRCX
         {
             try
             {
-                /*MainForm.Instance.BeginInvoke(new MethodInvoker(() =>
+                MainForm.Instance.BeginInvoke(new MethodInvoker(() =>
                 {
                     if (VRForm.Instance == null)
                     {
                         new VRForm().Show();
                     }
-                }));*/
+                }));
             }
             catch
             {
@@ -266,7 +215,7 @@ namespace VRCX
                 {
                     if (enabled == true)
                     {
-                        var path = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                        var path = Application.ExecutablePath;
                         key.SetValue("VRCX", $"\"{path}\" --startup");
                     }
                     else
