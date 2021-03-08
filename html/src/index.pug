@@ -648,6 +648,12 @@ html
                             div
                                 v-swatches(v-model="trustColor.legendary" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-legendary")
                                     span.color-picker(slot="trigger") #[i.el-icon-s-open] Legendary User
+                            div
+                                v-swatches(v-model="trustColor.vip" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-vip")
+                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] VRChat Team
+                            div
+                                v-swatches(v-model="trustColor.troll" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-troll")
+                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Nuisance
                 div.options-container
                     span.header Discord Presence
                     div.options-container-item

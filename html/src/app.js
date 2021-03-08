@@ -6788,13 +6788,15 @@ speechSynthesis.getVoices();
             trusted: '#FF7B42',
             veteran: '#B18FFF',
             legend: '#FFD000',
-            legendary: '#FF69B4'
+            legendary: '#FF69B4',
+            vip: '#FF2626',
+            troll: '#782F2F'
         };
         configRepository.setString('VRCX_trustColor', JSON.stringify(trustColor));
     }
     $app.data.trustColor = JSON.parse(configRepository.getString('VRCX_trustColor'));
 
-    $app.data.trustColorSwatches = ['#CCCCCC', '#1778FF', '#2BCF5C', '#FF7B42', '#B18FFF', '#FFD000', '#FF69B4', '#ABCDEF', '#8143E6', '#B52626', '#000000', '#FFFFFF'];
+    $app.data.trustColorSwatches = ['#CCCCCC', '#1778FF', '#2BCF5C', '#FF7B42', '#B18FFF', '#FFD000', '#FF69B4', '#ABCDEF', '#8143E6', '#B52626', '#FF2626', '#782F2F'];
 
     $app.methods.updatetrustColor = function () {
         var trustColor = $app.trustColor;
@@ -6825,6 +6827,8 @@ speechSynthesis.getVoices();
     $app.watch['trustColor.veteran'] = $app.methods.updatetrustColor;
     $app.watch['trustColor.legend'] = $app.methods.updatetrustColor;
     $app.watch['trustColor.legendary'] = $app.methods.updatetrustColor;
+    $app.watch['trustColor.vip'] = $app.methods.updatetrustColor;
+    $app.watch['trustColor.troll'] = $app.methods.updatetrustColor;
 
     $app.methods.saveSharedFeedFilters = function () {
         this.notyFeedFiltersDialog.visible = false;
