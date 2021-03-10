@@ -4282,7 +4282,7 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification(noty.senderUsername, 'has sent you a friend request', imageURL);
                 break;
             case 'Friend':
-                AppApi.DesktopNotification(noty.displayName, 'has sent you a friend request', imageURL);
+                AppApi.DesktopNotification(noty.displayName, 'is now your friend', imageURL);
                 break;
             case 'Unfriend':
                 AppApi.DesktopNotification(noty.displayName, 'is no longer your friend', imageURL);
