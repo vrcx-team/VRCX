@@ -295,7 +295,9 @@ speechSynthesis.getVoices();
     API.eventHandlers = new Map();
 
     API.$emit = function (name, ...args) {
-        // console.log(name, ...args);
+        if ($app.debug) {
+            console.log(name, ...args);
+        }
         var handlers = this.eventHandlers.get(name);
         if (typeof handlers === 'undefined') {
             return;
@@ -375,6 +377,9 @@ speechSynthesis.getVoices();
         }).then((response) => {
             try {
                 response.data = JSON.parse(response.data);
+                if ($app.debug) {
+                    console.log(init, response);
+                }
                 return response;
             } catch (e) {
             }
@@ -3600,6 +3605,8 @@ speechSynthesis.getVoices();
         }
         setTimeout(() => this.updateLoop(), 500);
     };
+
+    $app.debug = false;
 
     $app.data.sharedFeed = {
         gameLog: {
