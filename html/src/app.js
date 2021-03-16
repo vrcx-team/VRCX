@@ -3666,6 +3666,73 @@ speechSynthesis.getVoices();
         }
         var wristFeed = [];
         wristFeed = wristFeed.concat(feeds.gameLog.wrist, feeds.feedTable.wrist, feeds.notificationTable.wrist, feeds.friendLogTable.wrist, feeds.playerModerationTable.wrist);
+        var notyFeed = [];
+        notyFeed = notyFeed.concat(feeds.gameLog.noty, feeds.feedTable.noty, feeds.notificationTable.noty, feeds.friendLogTable.noty, feeds.playerModerationTable.noty);
+        // OnPlayerJoining
+        var locationBias = Date.now() - 15000; //15 seconds
+        if ((this.isGameRunning) && (this.lastLocation.date < locationBias) &&
+            ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') ||
+            (this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP'))) {
+            var joiningMap = [];
+            var bias = new Date(Date.now() - 120000).toJSON(); //2 minutes
+            var feedTable = this.feedTable.data;
+            for (var i = feedTable.length - 1; i > -1; i--) {
+                var ctx = feedTable[i];
+                if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation.location)) {
+                    if (joiningMap[ctx.displayName]) {
+                        continue;
+                    }
+                    var joining = true;
+                    var gameLogTable = this.gameLogTable.data;
+                    for (var k = gameLogTable.length - 1; k > -1; k--) {
+                        var gameLogItem = gameLogTable[k];
+                        if (gameLogItem.type === 'Notification') {
+                            continue;
+                        }
+                        if ((gameLogItem.type === 'OnPlayerJoined') && (gameLogItem.data === ctx.displayName)) {
+                            joining = false;
+                            break;
+                        }
+                        if ((gameLogItem.created_at < bias) ||
+                            (gameLogItem.type === 'Location')) {
+                            break;
+                        }
+                    }
+                    if (joining) {
+                        for (var i = feedTable.length - 1; i > -1; i--) {
+                            var feedItem = feedTable[i];
+                            if (((feedItem.type === 'Friend') || ((feedItem.type === 'Status') && (feedItem.status[0].status === 'active'))) &&
+                                (feedItem.displayName === ctx.displayName)) {
+                                joining = false;
+                                break;
+                            }
+                            if (feedItem.created_at < bias) {
+                                break;
+                            }
+                        }
+                    }
+                    if (joining) {
+                        var onPlayerJoining = {
+                            ...ctx,
+                            type: 'OnPlayerJoining'
+                        };
+                        if ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') ||
+                            ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') && (ctx.isFavorite))) {
+                            wristFeed.push(onPlayerJoining);
+                            i++;
+                        }
+                        if ((this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') ||
+                            ((this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP') && (ctx.isFavorite))) {
+                            notyFeed.push(onPlayerJoining);
+                        }
+                        joiningMap[ctx.displayName] = ctx.created_at;
+                    }
+                }
+                if (ctx.created_at < bias) {
+                    break;
+                }
+            }
+        }
         wristFeed.sort(function (a, b) {
             if (a.created_at < b.created_at) {
                 return 1;
@@ -3676,55 +3743,6 @@ speechSynthesis.getVoices();
             return 0;
         });
         wristFeed.splice(20);
-        var notyFeed = [];
-        notyFeed = notyFeed.concat(feeds.gameLog.noty, feeds.feedTable.noty, feeds.notificationTable.noty, feeds.friendLogTable.noty, feeds.playerModerationTable.noty);
-        // OnPlayerJoining
-        if ((this.isGameRunning) && ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') ||
-            (this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP'))) {
-            var bias = new Date(Date.now() - 120000).toJSON(); //2 minutes
-            var locationBias = new Date(Date.now() - 15000).toJSON(); //15 seconds
-            for (var i = 0; i < wristFeed.length; i++) {
-                var ctx = wristFeed[i];
-                if ((ctx.created_at < bias) || (ctx.type === 'Location')) {
-                    break;
-                }
-                if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation.location)) {
-                    var joining = true;
-                    for (var k = 0; k < wristFeed.length; k++) {
-                        var feedItem = wristFeed[k];
-                        if ((this.hideOnPlayerJoined) && (feedItem.type === 'Location') &&
-                            (feedItem.created_at < locationBias)) {
-                            joining = false;
-                            break;
-                        }
-                        if ((feedItem.data === ctx.displayName) ||
-                            (((feedItem.type === 'Friend') || (feedItem.type === 'Status')) && (feedItem.displayName === ctx.displayName))) {
-                            joining = false;
-                            break;
-                        }
-                        if ((feedItem.created_at < bias) ||
-                            (feedItem.type === 'Location')) {
-                            break;
-                        }
-                    }
-                    if (joining) {
-                        var onPlayerJoining = {
-                            ...ctx,
-                            type: 'OnPlayerJoining'
-                        };
-                        if ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') ||
-                            ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') && (ctx.isFavorite))) {
-                            wristFeed.splice(i, 0, onPlayerJoining);
-                            i++;
-                        }
-                        if ((this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') ||
-                            ((this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP') && (ctx.isFavorite))) {
-                            notyFeed.push(onPlayerJoining);
-                        }
-                    }
-                }
-            }
-        }
         notyFeed.sort(function (a, b) {
             if (a.created_at < b.created_at) {
                 return 1;
