@@ -5196,9 +5196,6 @@ speechSynthesis.getVoices();
                 }
                 return 0;
             });
-            if (results.length > 4) {
-                results.length = 4;
-            }
             results.push({
                 value: `search:${query}`,
                 label: query
