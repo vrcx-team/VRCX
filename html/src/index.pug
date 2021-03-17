@@ -944,7 +944,7 @@ html
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Note
-                                        el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" placeholder="Click to add a note" size="mini" resize="none")
+                                        el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" :autosize="{ minRows: 2, maxRows: 20 }" placeholder="Click to add a note" size="mini" resize="none")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Bio
