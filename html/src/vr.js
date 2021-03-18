@@ -698,8 +698,8 @@ speechSynthesis.getVoices();
                 date: 0,
                 location: '',
                 name: '',
-                playerCount: 0,
-                friendCount: 0
+                playerList: [],
+                friendList: []
             },
             lastLocationTimer: '',
             wristFeedLastEntry: '',

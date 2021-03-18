@@ -3767,15 +3767,22 @@ speechSynthesis.getVoices();
         var wristFilter = this.sharedFeedFilters.wrist;
         var notyFilter = this.sharedFeedFilters.noty;
         var locationChange = false;
-        var playerCountDone = false;
-        var playerCount = 0;
-        var friendCount = 0;
-        while ((w < 20) || (n < 5) || ((!locationChange) && (this.hideOnPlayerJoined)) || !playerCountDone) {
+        var playerCountIndex = 0;
+        var playerList = [];
+        var friendList = [];
+        while ((w < 20) || (n < 5) || ((!locationChange) && (this.hideOnPlayerJoined))) {
             var ctx = data[--i];
             if ((i <= -1) || (ctx.created_at < bias)) {
                 break;
             }
             if (ctx.type === 'Notification') {
+                continue;
+            }
+            if ((playerCountIndex === 0) && (ctx.type === 'Location')) {
+                playerCountIndex = i;
+            }
+            if (((ctx.type === 'OnPlayerJoined') || (ctx.type === 'OnPlayerLeft')) &&
+                (ctx.data === API.currentUser.displayName)) {
                 continue;
             }
             // on Location change remove OnPlayerJoined
@@ -3814,26 +3821,6 @@ speechSynthesis.getVoices();
                     break;
                 }
             }
-            // instance player count
-            if (ctx.type === 'Location') {
-                playerCountDone = true;
-            }
-            if ((!playerCountDone) && (ctx.type === 'OnPlayerJoined')) {
-                playerCount++;
-                if (isFriend) {
-                    friendCount++;
-                }
-            }
-            if ((!playerCountDone) && (ctx.type === 'OnPlayerLeft')) {
-                playerCount--;
-                if (isFriend) {
-                    friendCount--;
-                }
-            }
-            if (((ctx.type === 'OnPlayerJoined') || (ctx.type === 'OnPlayerLeft')) &&
-                (ctx.data === API.currentUser.displayName)) {
-                continue;
-            }
             if ((w < 20) && (wristFilter[ctx.type]) &&
                 ((wristFilter[ctx.type] === 'On') ||
                 (wristFilter[ctx.type] === 'Everyone') ||
@@ -3859,8 +3846,35 @@ speechSynthesis.getVoices();
                 ++n;
             }
         }
-        this.lastLocation.playerCount = playerCount;
-        this.lastLocation.friendCount = friendCount;
+        // instance player list
+        for (var i = playerCountIndex + 1; i < data.length; i++) {
+            var ctx = data[i];
+            if (ctx.type === 'OnPlayerJoined') {
+                playerList.push(ctx.data);
+                var isFriend = false;
+                for (var ref of API.cachedUsers.values()) {
+                    if (ref.displayName === ctx.data) {
+                        isFriend = this.friends.has(ref.id);
+                        break;
+                    }
+                }
+                if (isFriend) {
+                    friendList.push(ctx.data);
+                }
+            }
+            if (ctx.type === 'OnPlayerLeft') {
+                var index = playerList.indexOf(ctx.data);
+                if (index > -1) {
+                    playerList.splice(index, 1);
+                }
+                var index = friendList.indexOf(ctx.data);
+                if (index > -1) {
+                    friendList.splice(index, 1);
+                }
+            }
+        }
+        this.lastLocation.playerList = playerList;
+        this.lastLocation.friendList = friendList;
         sharedRepository.setObject('last_location', this.lastLocation);
         this.sharedFeed.gameLog.wrist = wristArr;
         this.sharedFeed.gameLog.noty = notyArr;
@@ -5411,8 +5425,8 @@ speechSynthesis.getVoices();
         date: 0,
         location: '',
         name: '',
-        playerCount: 0,
-        friendCount: 0
+        playerList: [],
+        friendList: []
     };
     $app.data.lastLocation$ = {};
     $app.data.discordActive = configRepository.getBool('discordActive');
@@ -5471,8 +5485,8 @@ speechSynthesis.getVoices();
             date: 0,
             location: '',
             name: '',
-            playerCount: 0,
-            friendCount: 0
+            playerList: [],
+            friendList: []
         };
     };
 
@@ -6843,8 +6857,8 @@ speechSynthesis.getVoices();
             date: 0,
             location: '',
             name: '',
-            playerCount: 0,
-            friendCount: 0
+            playerList: [],
+            friendList: []
         };
         if (this.isGameRunning) {
             API.currentUser.$online_for = Date.now();
