@@ -755,6 +755,9 @@ html
             //- friends
             .x-aside-container
                 el-select(v-model="quickSearch" clearable placeholder="Search" filterable remote :remote-method="quickSearchRemoteMethod" popper-class="x-quick-search" @change="quickSearchChange" @visible-change="quickSearchVisibleChange" style="flex:none;padding:10px")
+                    .el-select-dropdown__item
+                        .x-friend-item
+                            span Results: #[span(v-text="quickSearchItems.length - 1" style="font-weight:bold")]
                     el-option(v-for="item in quickSearchItems" :key="item.value" :value="item.value" :label="item.label")
                         .x-friend-item
                             template(v-if="item.ref")
