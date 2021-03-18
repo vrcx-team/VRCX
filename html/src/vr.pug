@@ -243,7 +243,7 @@ html
             .x-containerbottom
                 div(style="display:flex;flex-direction:row")
                     template(v-if="devices.length")
-                        div(v-for="device in devices" style="flex:none;text-align:center;width:64px")
+                        div(v-for="device in devices" style="flex:none;text-align:center;width:58px;height:74px")
                             template(v-if="device[0] === 'tracker'")
                                 img(v-if="device[1] !== 'connected'" src="images/tracker_status_off.png" style="width:32px;height:32px")
                                 img(v-else-if="device[2] < 20" src="images/tracker_status_ready_low.png" style="width:32px;height:32px")
@@ -282,7 +282,7 @@ html
                                 span {{ device[2] }}%
             .x-containerbottom
                 template(v-if="lastLocation.date != 0")
-                span(style="float:right") Timer: {{ lastLocationTimer }}
+                    span(style="float:right") Timer: {{ lastLocationTimer }}
                     span(style="display:inline-block") Players: {{ lastLocation.playerList.length }} 
                     span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
                 br
