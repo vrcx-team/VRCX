@@ -3693,22 +3693,9 @@ speechSynthesis.getVoices();
                             joining = false;
                             break;
                         }
-                        if ((gameLogItem.created_at < bias) ||
-                            (gameLogItem.type === 'Location')) {
+                        if ((gameLogItem.type === 'Location') ||
+                            (gameLogItem.type === 'OnPlayerLeft') && (gameLogItem.data === ctx.displayName)) {
                             break;
-                        }
-                    }
-                    if (joining) {
-                        for (var i = feedTable.length - 1; i > -1; i--) {
-                            var feedItem = feedTable[i];
-                            if (((feedItem.type === 'Friend') || ((feedItem.type === 'Status') && (feedItem.status[0].status === 'active'))) &&
-                                (feedItem.displayName === ctx.displayName)) {
-                                joining = false;
-                                break;
-                            }
-                            if (feedItem.created_at < bias) {
-                                break;
-                            }
                         }
                     }
                     if (joining) {
@@ -6675,7 +6662,7 @@ speechSynthesis.getVoices();
         sharedFeedFilters.noty.Location = 'Off';
         sharedFeedFilters.noty.OnPlayerJoined = 'VIP';
         sharedFeedFilters.noty.OnPlayerLeft = 'VIP';
-        sharedFeedFilters.noty.OnPlayerJoining = 'VIP';
+        sharedFeedFilters.noty.OnPlayerJoining = 'Off';
         sharedFeedFilters.noty.Online = 'VIP';
         sharedFeedFilters.noty.Offline = 'VIP';
         sharedFeedFilters.noty.GPS = 'Off';
