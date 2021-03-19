@@ -3873,9 +3873,17 @@ speechSynthesis.getVoices();
                 }
             }
         }
-        this.lastLocation.playerList = playerList;
-        this.lastLocation.friendList = friendList;
-        sharedRepository.setObject('last_location', this.lastLocation);
+        if (this.isGameRunning) {
+            this.lastLocation.playerList = playerList;
+            this.lastLocation.friendList = friendList;
+            sharedRepository.setObject('last_location', this.lastLocation);
+        }
+        if (this.worldDialog.visible) {
+            this.applyWorldDialogInstances();
+        }
+        if (this.userDialog.visible) {
+            this.applyUserDialogLocation();
+        }
         this.sharedFeed.gameLog.wrist = wristArr;
         this.sharedFeed.gameLog.noty = notyArr;
         this.sharedFeed.pendingUpdate = true;
@@ -5520,7 +5528,9 @@ speechSynthesis.getVoices();
                         this.lastLocation = {
                             date: Date.parse(gameLog.dt),
                             location: gameLog.location,
-                            name: gameLog.worldName
+                            name: gameLog.worldName,
+                            playerList: [],
+                            friendList: []
                         };
                     }
                     tableData = {
@@ -7436,6 +7446,16 @@ speechSynthesis.getVoices();
             users.push((typeof ref === 'undefined')
                 ? API.currentUser
                 : ref);
+            var playersInInstance = this.lastLocation.friendList;
+            for (var i = 0; i < playersInInstance.length; i++) {
+                var player = playersInInstance[i];
+                for (var ref of API.cachedUsers.values()) {
+                    if (ref.displayName === player) {
+                        users.push(ref);
+                        break;
+                    }
+                }
+            }
         }
         users.sort(compareByDisplayName);
         D.users = users;
@@ -7960,6 +7980,16 @@ speechSynthesis.getVoices();
                 instance.users.push((typeof ref === 'undefined')
                     ? API.currentUser
                     : ref);
+                var playersInInstance = this.lastLocation.friendList;
+                for (var i = 0; i < playersInInstance.length; i++) {
+                    var player = playersInInstance[i];
+                    for (var ref of API.cachedUsers.values()) {
+                        if (ref.displayName === player) {
+                            instance.users.push(ref);
+                            break;
+                        }
+                    }
+                }
             }
         }
         var rooms = [];
