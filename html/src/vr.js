@@ -744,11 +744,14 @@ speechSynthesis.getVoices();
         this.currentUserStatus = sharedRepository.getString('current_user_status');
         this.isGameRunning = sharedRepository.getBool('is_game_running');
         this.isGameNoVR = sharedRepository.getBool('is_Game_No_VR');
-        this.lastLocation = sharedRepository.getObject('last_location');
-        if (this.lastLocation.date !== 0) {
-            this.lastLocationTimer = timeToText(Date.now() - this.lastLocation.date);
-        } else {
-            this.lastLocationTimer = '';
+        var lastLocation = sharedRepository.getObject('last_location');
+        if (lastLocation) {
+            this.lastLocation = lastLocation;
+            if (this.lastLocation.date !== 0) {
+                this.lastLocationTimer = timeToText(Date.now() - this.lastLocation.date);
+            } else {
+                this.lastLocationTimer = '';
+            }
         }
         var newConfig = sharedRepository.getObject('VRConfigVars');
         if (newConfig) {
