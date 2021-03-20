@@ -7990,14 +7990,24 @@ speechSynthesis.getVoices();
                 instance.users.push((typeof ref === 'undefined')
                     ? API.currentUser
                     : ref);
-                var playersInInstance = this.lastLocation.friendList;
-                for (var i = 0; i < playersInInstance.length; i++) {
-                    var player = playersInInstance[i];
-                    for (var ref of API.cachedUsers.values()) {
-                        if (ref.displayName === player) {
-                            instance.users.push(ref);
+                var friendsInInstance = this.lastLocation.friendList;
+                for (var i = 0; i < friendsInInstance.length; i++) {
+                    var addUser = true;
+                    var player = friendsInInstance[i];
+                    for (var k = 0; k < instance.users.length; k++) {
+                        var user = instance.users[k];
+                        if (user.displayName === player) {
+                            addUser = false;
                             break;
                         }
+                    }
+                    if (addUser) {
+                        for (var ref of API.cachedUsers.values()) {
+                            if (ref.displayName === player) {
+                                instance.users.push(ref);
+                            break;
+                        }
+                    }
                     }
                 }
             }
