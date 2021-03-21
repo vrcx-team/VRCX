@@ -1570,7 +1570,7 @@ speechSynthesis.getVoices();
 
     API.refreshFriends = function () {
         var params = {
-            n: 100,
+            n: 50,
             offset: 0,
             offline: false
         };
@@ -2003,7 +2003,7 @@ speechSynthesis.getVoices();
             fn: 'getNotifications',
             N: -1,
             params: {
-                n: 100,
+                n: 50,
                 offset: 0
             },
             done(ok) {
@@ -2659,7 +2659,7 @@ speechSynthesis.getVoices();
                             fn,
                             N,
                             params: {
-                                n: 100,
+                                n: 50,
                                 offset: 0,
                                 tag
                             }
@@ -2670,7 +2670,7 @@ speechSynthesis.getVoices();
                         fn,
                         N,
                         params: {
-                            n: 100,
+                            n: 50,
                             offset: 0
                         }
                     });
@@ -2689,7 +2689,7 @@ speechSynthesis.getVoices();
             fn: 'getFavorites',
             N: -1,
             params: {
-                n: 100,
+                n: 50,
                 offset: 0
             },
             done(ok) {
@@ -2890,7 +2890,7 @@ speechSynthesis.getVoices();
             fn: 'getFavoriteGroups',
             N: -1,
             params: {
-                n: 100,
+                n: 50,
                 offset: 0
             },
             done(ok) {
@@ -7515,7 +7515,7 @@ speechSynthesis.getVoices();
         }
         D.isWorldsLoading = true;
         var params = {
-            n: 100,
+            n: 50,
             offset: 0,
             sort: 'updated',
             order: 'descending',
@@ -7562,7 +7562,7 @@ speechSynthesis.getVoices();
         }
         D.isAvatarsLoading = true;
         var params = {
-            n: 100,
+            n: 50,
             offset: 0,
             sort: 'updated',
             order: 'descending',
@@ -7753,7 +7753,7 @@ speechSynthesis.getVoices();
                     }
                     D.loading = true;
                     var params = {
-                        n: 100,
+                        n: 50,
                         offset: 0,
                         sort: 'updated',
                         order: 'descending',
@@ -8301,7 +8301,7 @@ speechSynthesis.getVoices();
                     }
                 }
                 var params = {
-                    n: 100,
+                    n: 50,
                     offset: 0,
                     sort: 'updated',
                     order: 'descending',
@@ -8855,7 +8855,7 @@ speechSynthesis.getVoices();
 
     $app.methods.displayVRCPlusIconsTable = function () {
         var params = {
-            n: 100,
+            n: 50,
             tag: 'icon'
         };
         API.refreshVRCPlusIconsTableData(params);
