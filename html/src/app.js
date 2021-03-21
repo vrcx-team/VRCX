@@ -3669,7 +3669,7 @@ speechSynthesis.getVoices();
         var notyFeed = [];
         notyFeed = notyFeed.concat(feeds.gameLog.noty, feeds.feedTable.noty, feeds.notificationTable.noty, feeds.friendLogTable.noty, feeds.playerModerationTable.noty);
         // OnPlayerJoining
-        var locationBias = Date.now() - 15000; //15 seconds
+        var locationBias = Date.now() - 30000; //30 seconds
         if ((this.isGameRunning) && (this.lastLocation.date < locationBias) &&
             ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') ||
             (this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP'))) {
@@ -3683,18 +3683,11 @@ speechSynthesis.getVoices();
                         continue;
                     }
                     var joining = true;
-                    var gameLogTable = this.gameLogTable.data;
-                    for (var k = gameLogTable.length - 1; k > -1; k--) {
-                        var gameLogItem = gameLogTable[k];
-                        if (gameLogItem.type === 'Notification') {
-                            continue;
-                        }
-                        if ((gameLogItem.type === 'OnPlayerJoined') && (gameLogItem.data === ctx.displayName)) {
+                    var playersInInstance = this.lastLocation.playerList;
+                    for (var i = 0; i < playersInInstance.length; i++) {
+                        var player = playersInInstance[i];
+                        if (player === ctx.displayName) {
                             joining = false;
-                            break;
-                        }
-                        if ((gameLogItem.type === 'Location') ||
-                            (gameLogItem.type === 'OnPlayerLeft') && (gameLogItem.data === ctx.displayName)) {
                             break;
                         }
                     }
@@ -3712,8 +3705,8 @@ speechSynthesis.getVoices();
                             ((this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP') && (ctx.isFavorite))) {
                             notyFeed.push(onPlayerJoining);
                         }
-                        joiningMap[ctx.displayName] = ctx.created_at;
                     }
+                    joiningMap[ctx.displayName] = ctx.created_at;
                 }
                 if (ctx.created_at < bias) {
                     break;
