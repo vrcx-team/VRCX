@@ -1149,6 +1149,7 @@ html
                                 div(style="margin-top:5px")
                                     el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini") Public
                                     el-tag(v-else type="danger" effect="plain" size="mini") Private
+                                    el-tag(v-if="/quest/.test(avatarDialog.ref.tags)" type="info" effect="plain" size="mini" style="margin-left:5px") Fallback
                                     el-tag(type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-left:5px")
                                 div(style="margin-top:5px")
                                     span(v-show="avatarDialog.ref.name !== avatarDialog.ref.description" v-text="avatarDialog.ref.description" style="font-size:12px")
@@ -1159,7 +1160,7 @@ html
                                     el-button(type="default" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-check" command="Select Avatar") Select Avatar
-                                        el-dropdown-item(v-if="avatarDialog.ref.tags && avatarDialog.ref.tags.includes('admin_quest_fallback_basic')" icon="el-icon-check" command="Select Fallback Avatar") Select Fallback Avatar
+                                        el-dropdown-item(v-if="/quest/.test(avatarDialog.ref.tags)" icon="el-icon-check" command="Select Fallback Avatar") Select Fallback Avatar
                                         template(v-if="avatarDialog.ref.authorId === API.currentUser.id")
                                             el-dropdown-item(v-if="avatarDialog.ref.releaseStatus === 'public'" icon="el-icon-user-solid" command="Make Private" divided) Make Private
                                             el-dropdown-item(v-else icon="el-icon-user" command="Make Public" divided) Make Public
