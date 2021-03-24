@@ -1869,6 +1869,20 @@ speechSynthesis.getVoices();
         });
     };
 
+    API.selectFallbackAvatar = function (params) {
+        return this.call(`avatars/${params.avatarId}/selectfallback`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('AVATAR:SELECT', args);
+            return args;
+        });
+    };
+
     // API: Notification
 
     API.cachedNotifications = new Map();
@@ -7787,6 +7801,16 @@ speechSynthesis.getVoices();
                     type: 'error'
                 });
             }
+        } else if (command === 'Show Fallback Avatar Details') {
+            var { fallbackAvatar } = D.ref;
+            if (fallbackAvatar) {
+                this.showAvatarDialog(fallbackAvatar);
+            } else {
+                this.$message({
+                    message: 'No fallback avatar set',
+                    type: 'error'
+                });
+            }
         } else {
             this.$confirm(`Continue? ${command}`, 'Confirm', {
                 confirmButtonText: 'Confirm',
@@ -8247,12 +8271,23 @@ speechSynthesis.getVoices();
                                     message: 'Avatar changed',
                                     type: 'success'
                                 });
-                                return args;
-                            });
-                            break;
-                        case 'Make Public':
-                            API.saveAvatar({
-                                id: D.id,
+                                    return args;
+                                });
+                                break;
+                            case 'Select Fallback Avatar':
+                                API.selectFallbackAvatar({
+                                    avatarId: D.id
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'Fallback avatar changed',
+                                        type: 'success'
+                                    });
+                                    return args;
+                                });
+                                break;
+                            case 'Make Public':
+                                API.saveAvatar({
+                                    id: D.id,
                                 releaseStatus: 'public'
                             }).then((args) => {
                                 this.$message({
