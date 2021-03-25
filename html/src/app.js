@@ -7479,9 +7479,17 @@ speechSynthesis.getVoices();
         if (this.isGameRunning &&
             this.lastLocation.location === L.tag) {
             var ref = API.cachedUsers.get(API.currentUser.id);
-            users.push((typeof ref === 'undefined')
-                ? API.currentUser
-                : ref);
+            if (typeof ref === 'undefined') {
+                ref = API.currentUser;
+            }
+            var playersInInstance = this.lastLocation.playerList;
+            for (var i = 0; i < playersInInstance.length; i++) {
+                var player = playersInInstance[i];
+                if (ref.displayName === player) {
+                   users.push(ref);
+                   break;
+                }
+            }
             var friendsInInstance = this.lastLocation.friendList;
             for (var i = 0; i < friendsInInstance.length; i++) {
                 var addUser = true;
@@ -8033,9 +8041,17 @@ speechSynthesis.getVoices();
                     instances[instance.id] = instance;
                 }
                 var ref = API.cachedUsers.get(API.currentUser.id);
-                instance.users.push((typeof ref === 'undefined')
-                    ? API.currentUser
-                    : ref);
+                if (typeof ref === 'undefined') {
+                    ref = API.currentUser;
+                }
+                var playerInInstance = this.lastLocation.playerList;
+                for (var i = 0; i < playerInInstance.length; i++) {
+                    var player = playerInInstance[i];
+                    if (ref.displayName === player) {
+                       instance.users.push(ref);
+                       break;
+                    }
+                }
                 var friendsInInstance = this.lastLocation.friendList;
                 for (var i = 0; i < friendsInInstance.length; i++) {
                     var addUser = true;
