@@ -45,7 +45,13 @@ Screenshots
 ![noty1](https://user-images.githubusercontent.com/25771678/63169808-ae06d980-c072-11e9-93e9-fcc13312872b.PNG)
 ![noty2](https://user-images.githubusercontent.com/25771678/63169810-ae9f7000-c072-11e9-818b-dd419213420b.PNG)
 
-# How to build VRCX
+# How to install VRCX
+
+* Download latest release [zip](https://github.com/pypy-vrc/VRCX/releases/latest).
+* Extract entire zip archive.
+* Run `VRCX.exe`.
+
+# How to build VRCX from source
 
 * Get source code
     * Download latest source code [zip](https://github.com/pypy-vrc/VRCX/archive/master.zip) or clone repo with `git clone`.
