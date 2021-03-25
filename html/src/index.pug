@@ -1156,7 +1156,7 @@ html
                             div(style="flex:none;margin-left:10px")
                                 el-button(v-if="avatarDialog.isFavorite" type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Delete Favorite')")
                                 el-button(v-else type="default" icon="el-icon-star-off" circle @click="avatarDialogCommand('Add Favorite')")
-                                el-dropdown(trigger="click" @command="avatarDialogCommand" size="small")
+                                el-dropdown(trigger="click" @command="avatarDialogCommand" size="small" style="margin-left:5px")
                                     el-button(type="default" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-check" command="Select Avatar") Select Avatar
