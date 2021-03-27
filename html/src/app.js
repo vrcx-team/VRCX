@@ -408,12 +408,13 @@ speechSynthesis.getVoices();
                 this.$throw(
                     data.error.status_code || status,
                     data.error.message,
-                    data.error.data
+                    endpoint
                 );
             } else if (typeof data.error === 'string') {
                 this.$throw(
                     data.status_code || status,
-                    data.error
+                    data.error,
+                    endpoint
                 );
             }
             this.$throw(status, data);
