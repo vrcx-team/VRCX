@@ -378,7 +378,7 @@ speechSynthesis.getVoices();
             try {
                 response.data = JSON.parse(response.data);
                 if ($app.debug) {
-                    console.log(init, response);
+                    console.log(init, response.data);
                 }
                 return response;
             } catch (e) {
@@ -3547,7 +3547,8 @@ speechSynthesis.getVoices();
     var $app = {
         data: {
             API,
-            nextRefresh: 0,
+            nextCurrentUserRefresh: 0,
+            nextFriendsRefresh: 0,
             isGameRunning: false,
             isGameNoVR: false,
             appVersion: 'VRCX 2021.03.08',
@@ -3636,13 +3637,16 @@ speechSynthesis.getVoices();
     $app.methods.updateLoop = function () {
         try {
             if (API.isLoggedIn === true) {
-                if (--this.nextRefresh <= 0) {
-                    this.nextRefresh = 60;
+                if (--this.nextCurrentUserRefresh <= 0) {
+                    this.nextCurrentUserRefresh = 120;  // 1min
                     API.getCurrentUser().catch((err1) => {
                         throw err1;
                     });
                 }
-                this.checkActiveFriends();
+                if (--this.nextFriendsRefresh <= 0) {
+                    this.nextFriendsRefresh = 7200; // 1hour
+                    API.refreshFriends();
+                }
                 AppApi.CheckGameRunning().then(([isGameRunning, isGameNoVR]) => {
                     if (isGameRunning !== this.isGameRunning) {
                         this.isGameRunning = isGameRunning;
@@ -4839,10 +4843,6 @@ speechSynthesis.getVoices();
             if (map.has(id) === false) {
                 this.deleteFriend(id);
             }
-        }
-        // called from API.login(), API.loginWithSteam(), API.getCurrentUser()
-        if (origin) {
-            API.refreshFriends();
         }
     };
 
