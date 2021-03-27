@@ -3737,14 +3737,7 @@ speechSynthesis.getVoices();
                     }
                     var joining = true;
                     var playersInInstance = this.lastLocation.playerList;
-                    for (var i = 0; i < playersInInstance.length; i++) {
-                        var player = playersInInstance[i];
-                        if (player === ctx.displayName) {
-                            joining = false;
-                            break;
-                        }
-                    }
-                    if (joining) {
+                    if (!playersInInstance.includes(ctx.displayName)) {
                         var onPlayerJoining = {
                             ...ctx,
                             type: 'OnPlayerJoining'
@@ -7478,17 +7471,10 @@ speechSynthesis.getVoices();
         }
         if (this.isGameRunning &&
             this.lastLocation.location === L.tag) {
-            var ref = API.cachedUsers.get(API.currentUser.id);
-            if (typeof ref === 'undefined') {
-                ref = API.currentUser;
-            }
+            var ref = API.currentUser;
             var playersInInstance = this.lastLocation.playerList;
-            for (var i = 0; i < playersInInstance.length; i++) {
-                var player = playersInInstance[i];
-                if (ref.displayName === player) {
-                   users.push(ref);
-                   break;
-                }
+            if (playersInInstance.includes(ref.displayName)) {
+                users.push(ref);
             }
             var friendsInInstance = this.lastLocation.friendList;
             for (var i = 0; i < friendsInInstance.length; i++) {
@@ -8040,17 +8026,10 @@ speechSynthesis.getVoices();
                     };
                     instances[instance.id] = instance;
                 }
-                var ref = API.cachedUsers.get(API.currentUser.id);
-                if (typeof ref === 'undefined') {
-                    ref = API.currentUser;
-                }
-                var playerInInstance = this.lastLocation.playerList;
-                for (var i = 0; i < playerInInstance.length; i++) {
-                    var player = playerInInstance[i];
-                    if (ref.displayName === player) {
-                       instance.users.push(ref);
-                       break;
-                    }
+                var ref = API.currentUser;
+                var playersInInstance = this.lastLocation.playerList;
+                if (playersInInstance.includes(ref.displayName)) {
+                    instance.users.push(ref);
                 }
                 var friendsInInstance = this.lastLocation.friendList;
                 for (var i = 0; i < friendsInInstance.length; i++) {
