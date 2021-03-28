@@ -61,6 +61,7 @@ html
                     +menuitem('friendLog', 'Friend Log', 'el-icon-notebook-2')
                     +menuitem('moderation', 'Moderation', 'el-icon-finished')
                     +menuitem('notification', 'Notification', 'el-icon-bell')
+                    +menuitem('friendsList', 'Friends List', 'el-icon-s-management')
                     +menuitem('profile', 'Profile', 'el-icon-user')
                     +menuitem('settings', 'Settings', 'el-icon-s-tools')
 
@@ -584,6 +585,71 @@ html
                                 span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
                                 span(v-if="!scope.data.children" v-text="scope.data.value")
 
+            //- friends list
+            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'friendsList'")
+                div.options-container(style="margin-top:0")
+                    span.header Friends List
+                    div(style="float:right;font-size:13px")
+                        span Load missing entries, don't click this unless you understand the risks:
+                        template(v-if="friendsListLoading")
+                            span(v-text="friendsListLoadingProgress" style="margin-left:5px")
+                            el-tooltip(placement="top")
+                                template(#content)
+                                    span Cancel
+                                el-button(@click="friendsListLoading = false" size="mini" icon="el-icon-loading" circle style="margin-left:5px")
+                        template(v-else)
+                            el-tooltip(placement="top")
+                                template(#content)
+                                    span Load
+                                el-button(@click="friendsListLoadUsers" size="mini" icon="el-icon-refresh-left" circle style="margin-left:5px")
+                    div(style="margin:10px 0 0 10px;display:flex;align-items:center")
+                        div(style="flex:none;margin-right:10px")
+                            el-switch(v-model="friendsListSearchFilterVIP" @change="friendsListSearchChange" active-color="#13ce66")
+                        el-input(v-model="friendsListSearch" placeholder="Search" @change="friendsListSearchChange" clearable style="flex:1")
+                        el-select(v-model="friendsListSearchFilters" multiple clearable collapse-tags style="flex:none;width:200px;margin:0 10px" @change="friendsListSearchChange" placeholder="Filter")
+                            el-option(v-once v-for="type in ['User Name', 'Display Name', 'Status', 'Bio', 'Memo']" :key="type" :label="type" :value="type")
+                        el-tooltip(placement="top")
+                            template(#content)
+                                span Refresh
+                            el-button(type="default" @click="friendsListSearchChange" icon="el-icon-refresh" circle style="flex:none")
+                        el-tooltip(placement="top")
+                            template(#content)
+                                span Clear results
+                            el-button(type="default" @click="friendsListTable.data = []" icon="el-icon-delete" circle style="flex:none;margin-left:5px")
+                    data-tables(v-bind="friendsListTable" @row-click="selectFriendsListRow" style="margin-top:10px;cursor:pointer")
+                        el-table-column(label="No." width="70" prop="$friendNum" sortable="custom")
+                        el-table-column(label="Avatar" width="70" prop="photo")
+                            template(v-once #default="scope")
+                                el-popover(v-if="displayVRCPlusIconsAsAvatar && scope.row.userIcon" placement="right" height="500px" trigger="hover")
+                                    img.friends-list-avatar(slot="reference" v-lazy="scope.row.userIcon")
+                                    img.friends-list-avatar(v-lazy="scope.row.userIcon" style="height:500px;cursor:pointer" @click="openExternalLink(scope.row.userIcon)")
+                                el-popover(v-else placement="right" height="500px" trigger="hover")
+                                    img.friends-list-avatar(slot="reference" v-lazy="scope.row.currentAvatarThumbnailImageUrl")
+                                    img.friends-list-avatar(v-lazy="scope.row.currentAvatarImageUrl" style="height:500px;cursor:pointer" @click="openExternalLink(scope.row.currentAvatarImageUrl)")
+                        el-table-column(label="Display Name" min-width="130" prop="displayName" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'displayName')")
+                        el-table-column(label="User Name" min-width="120" prop="username" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'username')")
+                        el-table-column(label="Rank" width="110" prop="$trustNum" sortable="custom")
+                            template(v-once #default="scope")
+                                span.name(v-text="scope.row.$trustLevel" :class="scope.row.$trustClass")
+                        el-table-column(label="Status" min-width="180" prop="statusDescription" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'statusDescription')")
+                        el-table-column(label="Language" width="100" prop="$languages")
+                            template(v-once #default="scope")
+                                el-tooltip(v-for="item in scope.row.$languages" :key="item.key" placement="top")
+                                    template(#content)
+                                        span {{ item.value }} ({{ item.key }})
+                                    span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-left:5px")
+                        el-table-column(label="Bio Links" width="100" prop="bioLinks")
+                            template(v-once #default="scope")
+                                el-tooltip(v-if="link" v-for="(link, index) in scope.row.bioLinks" :key="index")
+                                    template(#content)
+                                        span(v-text="link")
+                                    img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
+                        el-table-column(label="Last Login" width="170" prop="last_login" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'last_login')")
+                        el-table-column(label="Date Joined" width="120" prop="date_joined" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'date_joined')")
+                        el-table-column(label="Unfriend" width="70" align="right")
+                            template(v-once #default="scope")
+                                el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(scope.row.id)")
+
             //- settings
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'settings'")
                 div.options-container(style="margin-top:0")       
@@ -753,11 +819,8 @@ html
                         el-button(@click="ossDialog = true" size="small") Open Source Software Notice
 
             //- friends
-            .x-aside-container
+            .x-aside-container(v-show="$refs.menu && $refs.menu.activeIndex !== 'friendsList'")
                 el-select(v-model="quickSearch" clearable placeholder="Search" filterable remote :remote-method="quickSearchRemoteMethod" popper-class="x-quick-search" @change="quickSearchChange" @visible-change="quickSearchVisibleChange" style="flex:none;padding:10px")
-                    .el-select-dropdown__item
-                        .x-friend-item
-                            span Results: #[span(v-text="quickSearchItems.length - 1" style="font-weight:bold")]
                     el-option(v-for="item in quickSearchItems" :key="item.value" :value="item.value" :label="item.label")
                         .x-friend-item
                             template(v-if="item.ref")

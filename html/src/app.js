@@ -5238,6 +5238,9 @@ speechSynthesis.getVoices();
                 }
                 return 0;
             });
+            if (results.length > 4) {
+                results.length = 4;
+            }
             results.push({
                 value: `search:${query}`,
                 label: query
@@ -5249,9 +5252,8 @@ speechSynthesis.getVoices();
     $app.methods.quickSearchChange = function (value) {
         if (value) {
             if (value.startsWith('search:')) {
-                this.searchText = value.substr(7);
-                this.search();
-                this.$refs.menu.activeIndex = 'search';
+                this.friendsListSearch = value.substr(7);
+                this.$refs.menu.activeIndex = 'friendsList';
             } else {
                 this.showUserDialog(value);
             }
@@ -6617,6 +6619,19 @@ speechSynthesis.getVoices();
         tableProps: {
             stripe: true,
             size: 'mini'
+        },
+        layout: 'table'
+    };
+    $app.data.friendsListTable = {
+        visible: false,
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini',
+            defaultSort: {
+                prop: '$friendNum',
+                order: 'descending'
+            }
         },
         layout: 'table'
     };
@@ -9142,7 +9157,6 @@ speechSynthesis.getVoices();
         } else if (ctx.ref.$offline_for) {
             return timeToText(Date.now() - ctx.ref.$offline_for);
         }
-
         return '-';
     };
 
@@ -9754,6 +9768,138 @@ speechSynthesis.getVoices();
         this.$nextTick(() => adjustDialogZ(this.$refs.sendInviteRequestDialog.$el));
         this.clearInviteImageUpload();
         this.sendInviteRequestDialogVisible = true;
+    };
+
+    // App: Friends List
+
+    API.$on('LOGIN', function () {
+        $app.friendsListTable.data = [];
+    });
+
+    $app.methods.selectFriendsListRow = function (val) {
+        if (val === null) {
+            return;
+        }
+        this.showUserDialog(val.id);
+    };
+
+    $app.data.friendsListSearch = '';
+    $app.data.friendsListSearchFilterVIP = false;
+    $app.data.friendsListSearchFilters = [ 'User Name', 'Display Name', 'Status', 'Bio', 'Memo' ];
+
+    $app.methods.friendsListSearchChange = function () {
+        var filters = this.friendsListSearchFilters;
+        var results = [];
+        if (this.friendsListSearch) {
+            var query = this.friendsListSearch.toUpperCase();
+        }
+        for (var ctx of this.friends.values()) {
+            if (typeof ctx.ref === 'undefined') {
+                continue;
+            }
+            if (this.friendsListSearchFilterVIP &&
+                !ctx.isVIP) {
+                continue;
+            }
+            if (query && filters) {
+                var match = false;
+                if (!match &&
+                    filters.includes('User Name')) {
+                    var uname = String(ctx.ref.username);
+                    match = uname.toUpperCase().includes(query) &&
+                        !uname.startsWith('steam_');
+                }
+                if (!match &&
+                    filters.includes('Display Name') &&
+                    ctx.ref.displayName) {
+                    match = String(ctx.ref.displayName).toUpperCase().includes(query);
+                }
+                if (!match &&
+                    filters.includes('Memo') &&
+                    ctx.memo) {
+                    match = String(ctx.memo).toUpperCase().includes(query);
+                }
+                if (!match &&
+                    filters.includes('Bio') &&
+                    ctx.ref.bio) {
+                    match = String(ctx.ref.bio).toUpperCase().includes(query);
+                }
+                if (!match &&
+                    filters.includes('Status') &&
+                    ctx.ref.statusDescription) {
+                    match = String(ctx.ref.statusDescription).toUpperCase().includes(query);
+                }
+                if (!match) {
+                    continue;
+                }
+            }
+            ctx.ref.$friendNum = ctx.no;
+            switch (ctx.ref.$trustLevel) {
+                case 'Nuisance':
+                    ctx.ref.$trustNum = '0';
+                    break;
+                case 'Visitor':
+                    ctx.ref.$trustNum = '1';
+                    break;
+                case 'New User':
+                    ctx.ref.$trustNum = '2';
+                    break;
+                case 'User':
+                    ctx.ref.$trustNum = '3';
+                    break;
+                case 'Known User':
+                    ctx.ref.$trustNum = '4';
+                    break;
+                case 'Trusted User':
+                    ctx.ref.$trustNum = '5';
+                    break;
+                case 'Veteran User':
+                    ctx.ref.$trustNum = '6';
+                    break;
+                case 'Legendary User':
+                    ctx.ref.$trustNum = '7';
+                    break;
+                case 'VRChat Team':
+                    ctx.ref.$trustNum = '8';
+                    break;
+            }
+            results.push(ctx.ref);
+        }
+        this.friendsListTable.data = results;
+    };
+
+    $app.watch.friendsListSearch = $app.methods.friendsListSearchChange;
+    $app.data.friendsListLoading = false;
+    $app.data.friendsListLoadingProgress = '';
+
+    $app.methods.friendsListLoadUsers = async function () {
+        this.friendsListLoading = true;
+        var i = 0;
+        var toFetch = [];
+        for (var ctx of this.friends.values()) {
+            if (!ctx.ref.date_joined) {
+                toFetch.push(ctx.id);
+            }
+        }
+        var length = toFetch.length;
+        for (var userId of toFetch) {
+            if (!this.friendsListLoading) {
+                this.friendsListLoadingProgress = '';
+                return;
+            }
+            i++;
+            this.friendsListLoadingProgress = `${i}/${length}`;
+            await API.getUser({
+                userId: userId
+            });
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        this.friendsListLoadingProgress = '';
+        this.friendsListLoading = false;
+    };
+
+    $app.methods.sortAlphabetically = function (a, b, field) {
+        return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
     };
 
     $app = new Vue($app);

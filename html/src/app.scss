@@ -282,9 +282,10 @@ a {
     margin-right: 8px;
 }
 
-.x-friend-item > img.avatar {
+.x-friend-item > img.avatar,
+img.friends-list-avatar {
     width: unset;
-    height: 37.5px;
+    height: 22.5px;
     margin-right: 0;
     margin-left: 5px;
     border-radius: 2px;
