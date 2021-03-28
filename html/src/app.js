@@ -4991,6 +4991,9 @@ speechSynthesis.getVoices();
                 });
             }
         } else {
+            if (ctx.state === 'online' && ref.state === 'active' && state === 'active') {
+                return;
+            }
             if (ctx.state === 'online') {
                 if (ctx.isVIP) {
                     removeFromArray(this.friendsGroup0_, ctx);
