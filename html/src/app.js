@@ -3786,6 +3786,12 @@ speechSynthesis.getVoices();
         notyFeed.splice(5);
         sharedRepository.setArray('wristFeed', wristFeed);
         sharedRepository.setArray('notyFeed', notyFeed);
+        if (this.userDialog.visible) {
+            this.applyUserDialogLocation();
+        }
+        if (this.worldDialog.visible) {
+            this.applyWorldDialogInstances();
+        }
         this.playNoty(notyFeed);
         feeds.pendingUpdate = false;
     };
@@ -7522,7 +7528,15 @@ speechSynthesis.getVoices();
         users.sort(compareByDisplayName);
         D.users = users;
         D.instance = {};
-        if (L.worldId) {
+        if (!L.worldId) {
+            return;
+        }
+        if (this.lastLocation.location === L.tag) {
+            D.instance = {
+                id: L.tag,
+                occupants: this.lastLocation.playerList.length
+            };
+        } else {
             var applyInstance = function (instances) {
                 for (var [id, occupants] of instances) {
                     if (id === L.instanceId) {
@@ -8048,6 +8062,7 @@ speechSynthesis.getVoices();
                     };
                     instances[instance.id] = instance;
                 }
+                instances[instance.id].occupants = this.lastLocation.playerList.length;
                 var ref = API.cachedUsers.get(API.currentUser.id);
                 if (typeof ref === 'undefined') {
                     ref = API.currentUser;
