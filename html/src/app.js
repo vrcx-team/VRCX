@@ -9892,7 +9892,7 @@ speechSynthesis.getVoices();
         var i = 0;
         var toFetch = [];
         for (var ctx of this.friends.values()) {
-            if (!ctx.ref.date_joined) {
+            if (ctx.ref && !ctx.ref.date_joined) {
                 toFetch.push(ctx.id);
             }
         }
