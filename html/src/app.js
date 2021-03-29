@@ -5179,6 +5179,10 @@ speechSynthesis.getVoices();
             } else if (user.status === 'active') {
                 // Online
                 style.active = true;
+            } else if ((!this.friendsGroup0_.filter(e => e.id === user.id).length > 0) &&
+                (!this.friendsGroup1_.filter(e => e.id === user.id).length > 0)) {
+                // Offline
+                style.offline = true;
             } else if (user.status === 'join me') {
                 // Join Me
                 style.joinme = true;
