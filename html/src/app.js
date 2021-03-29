@@ -865,6 +865,8 @@ speechSynthesis.getVoices();
             last_platform: json.last_platform,
             date_joined: json.date_joined,
             allowAvatarCopying: json.allowAvatarCopying,
+            userIcon: json.userIcon,
+            fallbackAvatar: json.fallbackAvatar,
             isFriend: false,
             location: $app.lastLocation.location
         });
@@ -4753,11 +4755,15 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.methods.checkActiveFriends = function () {
-        if (Array.isArray(API.currentUser.activeFriends) === false) {
+    API.$on('USER:CURRENT', function (args) {
+        $app.checkActiveFriends(args.json);
+    });
+
+    $app.methods.checkActiveFriends = function (ref) {
+        if (Array.isArray(ref.activeFriends) === false || !this.appInit) {
             return;
         }
-        for (var userId of API.currentUser.activeFriends) {
+        for (var userId of ref.activeFriends) {
             if (this.pendingActiveFriends.has(userId)) {
                 continue;
             }
