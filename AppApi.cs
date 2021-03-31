@@ -12,6 +12,7 @@ using System.Management;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
+using System.Security.Cryptography;
 using System.Net;
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
@@ -25,6 +26,13 @@ namespace VRCX
         static AppApi()
         {
             Instance = new AppApi();
+        }
+
+        public string MD5File(string Blob)
+        {
+            byte[] fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
+            byte[] md5 = MD5.Create().ComputeHash(fileData);
+            return System.Convert.ToBase64String(md5);
         }
 
         public void ShowDevTools()

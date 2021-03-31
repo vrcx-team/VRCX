@@ -362,7 +362,7 @@ speechSynthesis.getVoices();
             if (typeof req !== 'undefined') {
                 return req;
             }
-        } else if (init.uploadImage) {
+        } else if (init.uploadImage || init.uploadImagePUT) {
         } else {
             init.headers = {
                 'Content-Type': 'application/json;charset=utf-8',
@@ -8355,6 +8355,9 @@ speechSynthesis.getVoices();
             case 'Rename':
                 this.promptRenameAvatar(D);
                 break;
+            case 'Upload Image':
+                document.getElementById('AvatarImageUploadButton').click();
+                break;
             case 'Change Description':
                 this.promptChangeDescription(D);
                 break;
@@ -9114,7 +9117,7 @@ speechSynthesis.getVoices();
         if (!files.length) {
             return;
         }
-        if (files[0].size >= 10485760) { //10MB
+        if (files[0].size >= 10000000) { //10MB
             $app.$message({
                 message: 'File size too large',
                 type: 'error'
@@ -9176,7 +9179,7 @@ speechSynthesis.getVoices();
         if (!files.length) {
             return;
         }
-        if (files[0].size >= 10485760) { //10MB
+        if (files[0].size >= 10000000) { //10MB
             $app.$message({
                 message: 'File size too large',
                 type: 'error'
@@ -9955,6 +9958,267 @@ speechSynthesis.getVoices();
     $app.methods.sortAlphabetically = function (a, b, field) {
         return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
     };
+
+    $app.methods.md5 = async function (file) {
+        var response = await AppApi.MD5File(file);
+        return response;
+    };
+
+    $app.methods.onFileChangeAvatarImage = function (e) {
+        var clearFile = function () {
+            if (document.querySelector('#AvatarImageUploadButton')) {
+                document.querySelector('#AvatarImageUploadButton').value = '';
+            }
+        };
+        var files = e.target.files || e.dataTransfer.files;
+        if ((!files.length) || (!this.avatarDialog.visible) || (this.avatarDialog.loading)) {
+            clearFile();
+            return;
+        }
+        if (files[0].size >= 10000000) { //10MB
+            $app.$message({
+                message: 'File size too large',
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        if (!files[0].type.match(/image.*/)) {
+            $app.$message({
+                message: 'File isn\'t an image',
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        this.avatarDialog.loading = true;
+        var r = new FileReader();
+        r.onload = async function (file) {
+            var base64Body = btoa(r.result);
+            var fileSize = file.total;
+            var md5 = await $app.md5(base64Body);
+            var avatarId = $app.avatarDialog.id;
+            var { imageUrl } = $app.avatarDialog.ref;
+            var url = new URL(imageUrl);
+            var pathArray = url.pathname.split('/');
+            var fileId = pathArray[4];
+            var signatureMd5 = await $app.md5(btoa(Math.random().toString(36).substring(7))); // lol...
+            var signatureSize = Math.floor(Math.random() * (10000 - 500 + 1)) + 500;
+            $app.avatarImage = {
+                file: base64Body,
+                fileMd5: md5,
+                fileId: fileId,
+                avatarId: avatarId
+            };
+            var params = {
+                fileMd5: md5,
+                fileSizeInBytes: fileSize,
+                signatureMd5: signatureMd5,
+                signatureSizeInBytes: signatureSize
+            };
+            API.uploadAvatarImage(params, fileId);
+        };
+        r.readAsBinaryString(files[0]);
+        clearFile();
+    };
+
+    API.getAvatarImages = function (params) {
+        return this.call(`file/${params.fileId}`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            return args;
+        });
+    };
+
+    API.uploadAvatarImage = async function (params, fileId) {
+        try {
+            return await this.call(`file/${fileId}`, {
+                method: 'POST',
+                params
+            }).then((json) => {
+                var args = {
+                    json,
+                    params
+                };
+                this.$emit('AVATARIMAGE:STAGE1', args);
+                return args;
+            });
+        } catch (err) {
+            console.error(err);
+            this.uploadAvatarFailCleanup(fileId);
+        }
+    };
+
+    API.uploadAvatarFailCleanup = async function (fileId) {
+        var args = await this.call(`file/${fileId}`, {
+            method: 'GET'
+        }).then((json) => {
+            return json;
+        });
+        var fileId = json.id;
+        var fileVersion = json.versions[json.versions.length - 1].version;
+        await this.call(`file/${fileId}/${fileVersion}/signature/finish`, {
+            method: 'PUT'
+        });
+        await this.call(`file/${fileId}/${fileVersion}/file/finish`, {
+            method: 'PUT'
+        });
+        $app.avatarDialog.loading = false;
+    };
+
+    API.$on('AVATARIMAGE:STAGE1', function (args) {
+        var fileId = args.json.id;
+        var fileVersion = args.json.versions[args.json.versions.length - 1].version;
+        var parmas = {
+            fileId,
+            fileVersion
+        };
+        this.uploadAvatarImageStage2(parmas);
+    });
+
+    API.uploadAvatarImageStage2 = async function (params) {
+        try {
+            return await this.call(`file/${params.fileId}/${params.fileVersion}/file/start`, {
+                method: 'PUT'
+            }).then((json) => {
+                var args = {
+                    json,
+                    params
+                };
+                this.$emit('AVATARIMAGE:STAGE2', args);
+                return args;
+            });
+        } catch (err) {
+            console.error(err);
+            this.uploadAvatarFailCleanup(params.fileId);
+        }
+    };
+
+    API.$on('AVATARIMAGE:STAGE2', function (args) {
+        var { url } = args.json;
+        var { fileId, fileVersion } = args.params;
+        var parmas = {
+            url,
+            fileId,
+            fileVersion
+        };
+        this.uploadAvatarImageStage3(parmas);
+    });
+
+    API.uploadAvatarImageStage3 = function (params) {
+        return webApiService.execute({
+            url: params.url,
+            uploadImagePUT: true,
+            imageData: $app.avatarImage.file,
+            headers: {
+                'Content-MD5': $app.avatarImage.fileMd5
+            }
+        }).then((json) => {
+            if (json.status !== 200) {
+                $app.avatarDialog.loading = false;
+                this.$throw('Avatar image upload failed', json);
+            }
+            var args = {
+                json,
+                params
+            };
+            this.$emit('AVATARIMAGE:STAGE3', args);
+            return args;
+        });
+    };
+
+    API.$on('AVATARIMAGE:STAGE3', function (args) {
+        var { fileId, fileVersion } = args.params;
+        var parmas = {
+            fileId,
+            fileVersion
+        };
+        this.uploadAvatarImageStage4(parmas);
+    });
+
+    API.uploadAvatarImageStage4 = function (params) {
+        return this.call(`file/${params.fileId}/${params.fileVersion}/file/finish`, {
+            method: 'PUT',
+            params: {
+                maxParts: 0,
+                nextPartNumber: 0
+            }
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('AVATARIMAGE:STAGE4', args);
+            return args;
+        });
+    };
+
+    API.$on('AVATARIMAGE:STAGE4', function (args) {
+        var { fileId, fileVersion } = args.params;
+        var parmas = {
+            fileId,
+            fileVersion
+        };
+        this.uploadAvatarImageStage5(parmas);
+    });
+
+    API.uploadAvatarImageStage5 = function (params) {
+        return this.call(`file/${params.fileId}/${params.fileVersion}/signature/finish`, {
+            method: 'PUT',
+            params: {
+                maxParts: 0,
+                nextPartNumber: 0
+            }
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('AVATARIMAGE:STAGE5', args);
+            return args;
+        });
+    };
+
+    API.$on('AVATARIMAGE:STAGE5', function (args) {
+        var { fileId, fileVersion } = args.params;
+        var parmas = {
+            id: $app.avatarImage.avatarId,
+            imageUrl: `https://api.vrchat.cloud/api/1/file/${fileId}/${fileVersion}/file`
+        };
+        this.uploadAvatarImageStage6(parmas);
+    });
+
+    API.uploadAvatarImageStage6 = function (params) {
+        return this.call(`avatars/${params.id}`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('AVATARIMAGE:STAGE6', args);
+            this.$emit('AVATAR', args);
+            return args;
+        });
+    };
+
+    API.$on('AVATARIMAGE:STAGE6', function (args) {
+        $app.avatarDialog.loading = false;
+        if (args.json.imageUrl === args.params.imageUrl) {
+            $app.$message({
+                message: 'Avatar image uploaded',
+                type: 'success'
+            });
+        } else {
+            this.$throw(0, 'Avatar image change failed');
+        }
+    });
 
     $app = new Vue($app);
     window.$app = $app;
