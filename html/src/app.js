@@ -3741,31 +3741,52 @@ speechSynthesis.getVoices();
             var feedTable = this.feedTable.data;
             for (var i = feedTable.length - 1; i > -1; i--) {
                 var ctx = feedTable[i];
+                if (ctx.created_at < bias) {
+                    break;
+                }
                 if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation.location)) {
                     if (joiningMap[ctx.displayName]) {
                         continue;
                     }
+                    joiningMap[ctx.displayName] = ctx.created_at;
+                    if (API.cachedUsers.has(ctx.userId)) {
+                        var user = API.cachedUsers.get(ctx.userId);
+                        if (ctx.location[0] !== user.location) {
+                            continue;
+                        }
+                    }
                     var joining = true;
-                    var playersInInstance = this.lastLocation.playerList;
-                    if (!playersInInstance.includes(ctx.displayName)) {
+                    var gameLogTable = this.gameLogTable.data;
+                    for (var k = gameLogTable.length - 1; k > -1; k--) {
+                        var gameLogItem = gameLogTable[k];
+                        console.log(gameLogItem);
+                        if (gameLogItem.type === 'Notification') {
+                            continue;
+                        }
+                        if ((gameLogItem.type === 'Location') || (gameLogItem.created_at < bias)) {
+                            console.log('break');
+                            break;
+                        }
+                        if ((gameLogItem.type === 'OnPlayerJoined') && (gameLogItem.data === ctx.displayName)) {
+                            console.log('joining');
+                            joining = false;
+                            break;
+                        }
+                    }
+                    if (joining) {
                         var onPlayerJoining = {
                             ...ctx,
                             type: 'OnPlayerJoining'
                         };
                         if ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') ||
                             ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') && (ctx.isFavorite))) {
-                            wristFeed.push(onPlayerJoining);
-                            i++;
+                            wristFeed.unshift(onPlayerJoining);
                         }
                         if ((this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') ||
                             ((this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP') && (ctx.isFavorite))) {
-                            notyFeed.push(onPlayerJoining);
+                            notyFeed.unshift(onPlayerJoining);
                         }
                     }
-                    joiningMap[ctx.displayName] = ctx.created_at;
-                }
-                if (ctx.created_at < bias) {
-                    break;
                 }
             }
         }
