@@ -5194,9 +5194,15 @@ speechSynthesis.getVoices();
     $app.methods.userStatusClass = function (user) {
         var style = {};
         if (typeof user !== 'undefined') {
+            var id = '';
+            if (user.id) {
+                id = user.id;
+            } else if (user.userId) {
+                id = user.userId;
+            }
             if ((user.location === 'offline') ||
-                ((!this.friendsGroup0_.filter(e => e.id === user.id).length > 0) &&
-                (!this.friendsGroup1_.filter(e => e.id === user.id).length > 0))) {
+                ((id) && (!this.friendsGroup0_.filter(e => e.id === id).length > 0) &&
+                (!this.friendsGroup1_.filter(e => e.id === id).length > 0))) {
                 // Offline
                 style.offline = true;
             } else if (user.status === 'active') {
