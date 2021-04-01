@@ -153,11 +153,11 @@ namespace VRCX
                     }
                 }
 
-                if (options.TryGetValue("uploadImagePUT", out object uploadImagePUT) == true)
+                if (options.TryGetValue("uploadFilePUT", out object uploadImagePUT) == true)
                 {
                     request.Method = "PUT";
-                    request.ContentType = "image/png";
-                    var imageData = options["imageData"] as string;
+                    request.ContentType = options["fileMIME"] as string;
+                    var imageData = options["fileData"] as string;
                     byte[] sentData = Convert.FromBase64CharArray(imageData.ToCharArray(), 0, imageData.Length);
                     request.ContentLength = sentData.Length;
                     using (System.IO.Stream sendStream = request.GetRequestStream())

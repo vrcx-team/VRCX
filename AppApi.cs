@@ -16,6 +16,7 @@ using System.Security.Cryptography;
 using System.Net;
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
+using librsync.net;
 
 namespace VRCX
 {
@@ -33,6 +34,22 @@ namespace VRCX
             byte[] fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
             byte[] md5 = MD5.Create().ComputeHash(fileData);
             return System.Convert.ToBase64String(md5);
+        }
+
+        public string SignFile(string Blob)
+        {
+            byte[] fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
+            Stream sig = Librsync.ComputeSignature(new MemoryStream(fileData));
+            var memoryStream = new MemoryStream();
+            sig.CopyTo(memoryStream);
+            byte[] sigBytes = memoryStream.ToArray();
+            return System.Convert.ToBase64String(sigBytes);
+        }
+
+        public string FileLength(string Blob)
+        {
+            byte[] fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
+            return fileData.Length.ToString();
         }
 
         public void ShowDevTools()
