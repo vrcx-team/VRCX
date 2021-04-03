@@ -1016,10 +1016,10 @@ html
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Avatar Name
-                                        div(@click="userDialogCommand('Show Avatar Details')" style="cursor:pointer;width:fit-content")
-                                            span.extra(v-text="userDialog.$avatarInfo.name" style="display:inline-block;margin-right:5px")
-                                            span.extra(v-if="userDialog.$avatarInfo.id === userDialog.id" style="display:inline-block;color:#E6A23C" ) (own)
-                                            span.extra(v-else-if="userDialog.$avatarInfo.name" style="display:inline-block;color:#67C23A") ‎(public)
+                                        .extra(@click="userDialogCommand('Show Avatar Details')" style="cursor:pointer;width:fit-content")
+                                            span(v-text="userDialog.$avatarInfo.name" style="display:inline-block;margin-right:5px")
+                                            span(v-if="userDialog.$avatarInfo.id === userDialog.id" style="display:inline-block;color:#E6A23C" ) (own)
+                                            span(v-else-if="userDialog.$avatarInfo.name" style="display:inline-block;color:#67C23A") ‎(public)
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Bio
