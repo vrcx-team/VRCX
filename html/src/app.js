@@ -3755,20 +3755,21 @@ speechSynthesis.getVoices();
                             continue;
                         }
                     }
+                    var playersInInstance = this.lastLocation.playerList;
+                    if (playersInInstance.includes(ctx.displayName)) {
+                        continue;
+                    }
                     var joining = true;
                     var gameLogTable = this.gameLogTable.data;
                     for (var k = gameLogTable.length - 1; k > -1; k--) {
                         var gameLogItem = gameLogTable[k];
-                        console.log(gameLogItem);
                         if (gameLogItem.type === 'Notification') {
                             continue;
                         }
                         if ((gameLogItem.type === 'Location') || (gameLogItem.created_at < bias)) {
-                            console.log('break');
                             break;
                         }
                         if ((gameLogItem.type === 'OnPlayerJoined') && (gameLogItem.data === ctx.displayName)) {
-                            console.log('joining');
                             joining = false;
                             break;
                         }
