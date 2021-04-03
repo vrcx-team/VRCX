@@ -7453,6 +7453,8 @@ speechSynthesis.getVoices();
     $app.methods.showUserDialog = function (userId) {
         this.$nextTick(() => adjustDialogZ(this.$refs.userDialog.$el));
         var D = this.userDialog;
+        D.currentAvatarThumbnailImageUrl = '';
+        D.userIcon = '';
         D.id = userId;
         D.treeData = [];
         D.memo = this.loadMemo(userId);
