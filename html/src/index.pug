@@ -1012,7 +1012,14 @@ html
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Note
-                                        el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" :autosize="{ minRows: 2, maxRows: 20 }" placeholder="Click to add a note" size="mini" resize="none")
+                                        el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" placeholder="Click to add a note" size="mini" resize="none")
+                                .x-friend-item(style="width:100%;cursor:default")
+                                    .detail
+                                        span.name Avatar Name
+                                        div(@click="userDialogCommand('Show Avatar Details')" style="cursor:pointer;width:fit-content")
+                                            span.extra(v-text="userDialog.$avatarInfo.name" style="display:inline-block;margin-right:5px")
+                                            span.extra(v-if="userDialog.$avatarInfo.id === userDialog.id" style="display:inline-block;color:#E6A23C" ) (own)
+                                            span.extra(v-else-if="userDialog.$avatarInfo.name" style="display:inline-block;color:#67C23A") ‎(public)
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Bio
@@ -1229,6 +1236,7 @@ html
                                             el-dropdown-item(v-else icon="el-icon-user" command="Make Public" divided) Make Public
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
+                                            el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
                                             el-dropdown-item(icon="el-icon-upload2" command="Upload Image") Upload Image
                                                 input(type="file" multiple accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
                                             el-dropdown-item(icon="el-icon-user" command="Delete" style="color:#F56C6C" divided) Delete
@@ -1674,6 +1682,13 @@ html
                 template(#footer)
                     el-button(type="small" @click="cancelEditAndSendInvite") Cancel
                     el-button(type="primary" size="small" @click="saveEditAndSendInvite") Send
+                    
+            //- dialog: Change avatar image
+            el-dialog.x-dialog(ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" title="Change Avatar Image" width="800px")
+                div(v-loading="changeAvatarImageDialogLoading")
+                    div(style="display:inline-block" v-for="image in changeAvatarImageTable" :key="image.version" v-if="image.file")
+                        .x-change-avatar-item(@click="setAvatarImage(image)" :class="{ 'current-avatar-image': compareCurrentAvatarImage(image) }")
+                            img.avatar(v-lazy="image.file.url")
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:visible.sync="ossDialog" title="Open Source Software Notice" width="650px")

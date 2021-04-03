@@ -7265,7 +7265,11 @@ speechSynthesis.getVoices();
         avatarReleaseStatus: 'all',
 
         treeData: [],
-        memo: ''
+        memo: '',
+        $avatarInfo: {
+            id: '',
+            name: '',
+        }
     };
 
     $app.watch['userDialog.memo'] = function () {
@@ -7508,6 +7512,7 @@ speechSynthesis.getVoices();
                 if (args.cache) {
                     API.getUser(args.params);
                 }
+                this.getAvatarName(args);
             }
             return args;
         });
@@ -8363,6 +8368,9 @@ speechSynthesis.getVoices();
                 break;
             case 'Upload Image':
                 document.getElementById('AvatarImageUploadButton').click();
+                break;
+            case 'Change Image':
+                this.displayAvatarImages();
                 break;
             case 'Change Description':
                 this.promptChangeDescription(D);
@@ -9980,6 +9988,8 @@ speechSynthesis.getVoices();
         return response;
     };
 
+    // Upload avatar image
+
     $app.methods.onFileChangeAvatarImage = function (e) {
         var clearFile = function () {
             if (document.querySelector('#AvatarImageUploadButton')) {
@@ -10041,19 +10051,6 @@ speechSynthesis.getVoices();
         clearFile();
     };
 
-    API.getAvatarImages = function (params) {
-        return this.call(`file/${params.fileId}`, {
-            method: 'GET',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            return args;
-        });
-    };
-
     API.uploadAvatarImage = async function (params, fileId) {
         try {
             return await this.call(`file/${fileId}`, {
@@ -10064,7 +10061,7 @@ speechSynthesis.getVoices();
                     json,
                     params
                 };
-                this.$emit('AVATARIMAGE:STAGE1', args);
+                this.$emit('AVATARIMAGE:INIT', args);
                 return args;
             });
         } catch (err) {
@@ -10074,7 +10071,7 @@ speechSynthesis.getVoices();
     };
 
     API.uploadAvatarFailCleanup = async function (fileId) {
-        var args = await this.call(`file/${fileId}`, {
+        var json = await this.call(`file/${fileId}`, {
             method: 'GET'
         }).then((json) => {
             return json;
@@ -10090,17 +10087,17 @@ speechSynthesis.getVoices();
         $app.avatarDialog.loading = false;
     };
 
-    API.$on('AVATARIMAGE:STAGE1', function (args) {
+    API.$on('AVATARIMAGE:INIT', function (args) {
         var fileId = args.json.id;
         var fileVersion = args.json.versions[args.json.versions.length - 1].version;
         var params = {
             fileId,
             fileVersion
         };
-        this.uploadAvatarImageStage2(params);
+        this.uploadAvatarImageFileStart(params);
     });
 
-    API.uploadAvatarImageStage2 = async function (params) {
+    API.uploadAvatarImageFileStart = async function (params) {
         try {
             return await this.call(`file/${params.fileId}/${params.fileVersion}/file/start`, {
                 method: 'PUT'
@@ -10109,7 +10106,7 @@ speechSynthesis.getVoices();
                     json,
                     params
                 };
-                this.$emit('AVATARIMAGE:STAGE2', args);
+                this.$emit('AVATARIMAGE:FILESTART', args);
                 return args;
             });
         } catch (err) {
@@ -10118,7 +10115,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    API.$on('AVATARIMAGE:STAGE2', function (args) {
+    API.$on('AVATARIMAGE:FILESTART', function (args) {
         var { url } = args.json;
         var { fileId, fileVersion } = args.params;
         var params = {
@@ -10126,10 +10123,10 @@ speechSynthesis.getVoices();
             fileId,
             fileVersion
         };
-        this.uploadAvatarImageStage3(params);
+        this.uploadAvatarImageFileAWS(params);
     });
 
-    API.uploadAvatarImageStage3 = function (params) {
+    API.uploadAvatarImageFileAWS = function (params) {
         return webApiService.execute({
             url: params.url,
             uploadFilePUT: true,
@@ -10147,21 +10144,21 @@ speechSynthesis.getVoices();
                 json,
                 params
             };
-            this.$emit('AVATARIMAGE:STAGE3', args);
+            this.$emit('AVATARIMAGE:FILEAWS', args);
             return args;
         });
     };
 
-    API.$on('AVATARIMAGE:STAGE3', function (args) {
+    API.$on('AVATARIMAGE:FILEAWS', function (args) {
         var { fileId, fileVersion } = args.params;
         var params = {
             fileId,
             fileVersion
         };
-        this.uploadAvatarImageStage4(params);
+        this.uploadAvatarImageFileFinish(params);
     });
 
-    API.uploadAvatarImageStage4 = function (params) {
+    API.uploadAvatarImageFileFinish = function (params) {
         return this.call(`file/${params.fileId}/${params.fileVersion}/file/finish`, {
             method: 'PUT',
             params: {
@@ -10173,21 +10170,21 @@ speechSynthesis.getVoices();
                 json,
                 params
             };
-            this.$emit('AVATARIMAGE:STAGE4', args);
+            this.$emit('AVATARIMAGE:FILEFINISH', args);
             return args;
         });
     };
 
-    API.$on('AVATARIMAGE:STAGE4', function (args) {
+    API.$on('AVATARIMAGE:FILEFINISH', function (args) {
         var { fileId, fileVersion } = args.params;
         var params = {
             fileId,
             fileVersion
         };
-        this.uploadAvatarImageStage5(params);
+        this.uploadAvatarImageSigStart(params);
     });
 
-    API.uploadAvatarImageStage5 = async function (params) {
+    API.uploadAvatarImageSigStart = async function (params) {
         try {
             return await this.call(`file/${params.fileId}/${params.fileVersion}/signature/start`, {
                 method: 'PUT'
@@ -10196,7 +10193,7 @@ speechSynthesis.getVoices();
                     json,
                     params
                 };
-                this.$emit('AVATARIMAGE:STAGE5', args);
+                this.$emit('AVATARIMAGE:SIGSTART', args);
                 return args;
             });
         } catch (err) {
@@ -10205,7 +10202,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    API.$on('AVATARIMAGE:STAGE5', function (args) {
+    API.$on('AVATARIMAGE:SIGSTART', function (args) {
         var { url } = args.json;
         var { fileId, fileVersion } = args.params;
         var params = {
@@ -10213,10 +10210,10 @@ speechSynthesis.getVoices();
             fileId,
             fileVersion
         };
-        this.uploadAvatarImageStage6(params);
+        this.uploadAvatarImageSigAWS(params);
     });
 
-    API.uploadAvatarImageStage6 = function (params) {
+    API.uploadAvatarImageSigAWS = function (params) {
         return webApiService.execute({
             url: params.url,
             uploadFilePUT: true,
@@ -10234,21 +10231,21 @@ speechSynthesis.getVoices();
                 json,
                 params
             };
-            this.$emit('AVATARIMAGE:STAGE6', args);
+            this.$emit('AVATARIMAGE:SIGAWS', args);
             return args;
         });
     };
 
-    API.$on('AVATARIMAGE:STAGE6', function (args) {
+    API.$on('AVATARIMAGE:SIGAWS', function (args) {
         var { fileId, fileVersion } = args.params;
         var params = {
             fileId,
             fileVersion
         };
-        this.uploadAvatarImageStage7(params);
+        this.uploadAvatarImageSigFinish(params);
     });
 
-    API.uploadAvatarImageStage7 = function (params) {
+    API.uploadAvatarImageSigFinish = function (params) {
         return this.call(`file/${params.fileId}/${params.fileVersion}/signature/finish`, {
             method: 'PUT',
             params: {
@@ -10260,21 +10257,21 @@ speechSynthesis.getVoices();
                 json,
                 params
             };
-            this.$emit('AVATARIMAGE:STAGE7', args);
+            this.$emit('AVATARIMAGE:SIGFINISH', args);
             return args;
         });
     };
 
-    API.$on('AVATARIMAGE:STAGE7', function (args) {
+    API.$on('AVATARIMAGE:SIGFINISH', function (args) {
         var { fileId, fileVersion } = args.params;
         var parmas = {
             id: $app.avatarImage.avatarId,
             imageUrl: `https://api.vrchat.cloud/api/1/file/${fileId}/${fileVersion}/file`
         };
-        this.uploadAvatarImageStage8(parmas);
+        this.setAvatarImage(parmas);
     });
 
-    API.uploadAvatarImageStage8 = function (params) {
+    API.setAvatarImage = function (params) {
         return this.call(`avatars/${params.id}`, {
             method: 'PUT',
             params
@@ -10283,23 +10280,139 @@ speechSynthesis.getVoices();
                 json,
                 params
             };
-            this.$emit('AVATARIMAGE:STAGE8', args);
+            this.$emit('AVATARIMAGE:SET', args);
             this.$emit('AVATAR', args);
             return args;
         });
     };
 
-    API.$on('AVATARIMAGE:STAGE8', function (args) {
+    API.$on('AVATARIMAGE:SET', function (args) {
         $app.avatarDialog.loading = false;
         if (args.json.imageUrl === args.params.imageUrl) {
             $app.$message({
-                message: 'Avatar image uploaded',
+                message: 'Avatar image changed',
                 type: 'success'
             });
         } else {
             this.$throw(0, 'Avatar image change failed');
         }
     });
+
+    // Set avatar image
+
+    $app.methods.displayAvatarImages = function () {
+        this.changeAvatarImageTableFileId = '';
+        this.changeAvatarImageTable = '';
+        if (this.avatarDialog.visible) {
+            var { imageUrl } = this.avatarDialog.ref;
+        } else if (this.userDialog.visible) {
+            var imageUrl = this.userDialog.ref.currentAvatarImageUrl;
+        } else {
+            return;
+        }
+        var url = new URL(imageUrl);
+        var pathArray = url.pathname.split('/');
+        var fileId = pathArray[4];
+        var params = {
+            fileId
+        };
+        this.changeAvatarImageDialogVisible = true;
+        this.$nextTick(() => adjustDialogZ(this.$refs.changeAvatarImageDialog.$el));
+        API.getAvatarImages(params).then((args) => {
+            this.changeAvatarImageTableFileId = args.json.id;
+            var images = args.json.versions;
+            var imageArray = [];
+            images.forEach((image) => {
+                if (image.file) {
+                    imageArray.push(image.file.url);
+                }
+            });
+            this.changeAvatarImageTable = images;
+        });
+    };
+
+    API.getAvatarImages = function (params) {
+        return this.call(`file/${params.fileId}`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            return args;
+        });
+    };
+
+    $app.methods.setAvatarImage = function (image) {
+        this.changeAvatarImageDialogLoading = true;
+        var parmas = {
+            id: $app.avatarDialog.id,
+            imageUrl: `https://api.vrchat.cloud/api/1/file/${$app.changeAvatarImageTableFileId}/${image.version}/file`
+        };
+        API.setAvatarImage(parmas).finally(() => {
+            this.changeAvatarImageDialogLoading = false;
+            $app.changeAvatarImageDialogVisible = false;
+        });
+    };
+
+    $app.methods.compareCurrentAvatarImage = function (image) {
+        if (`https://api.vrchat.cloud/api/1/file/${$app.changeAvatarImageTableFileId}/${image.version}/file` === this.avatarDialog.ref.imageUrl) {
+            return true;
+        }
+        return false;
+    }
+
+    $app.data.changeAvatarImageDialogVisible = false;
+    $app.data.changeAvatarImageDialogLoading = false;
+    $app.data.changeAvatarImageTable = {};
+    $app.data.changeAvatarImageTableFileId = '';
+
+    API.$on('LOGIN', function () {
+        $app.changeAvatarImageTable = {};
+        $app.changeAvatarImageDialogVisible = false;
+    });
+
+    // Avatar names
+
+    API.cachedAvatarNames = new Map();
+
+    $app.methods.getAvatarName = function (args) {
+        var D = this.userDialog;
+        if (!D.visible) {
+            return;
+        }
+        var imageUrl = D.ref.currentAvatarImageUrl;
+        var url = new URL(imageUrl);
+        var pathArray = url.pathname.split('/');
+        var fileId = pathArray[4];
+        if (API.cachedAvatarNames.has(fileId)) {
+            D.$avatarInfo = API.cachedAvatarNames.get(fileId);
+            return;
+        }
+        D.$avatarInfo = {
+            id: '',
+            name: ''
+        };
+        var params = {
+            fileId
+        };
+        API.getAvatarImages(params).then((args) => {
+            var name = '';
+            var imageName = args.json.name;
+            var avatarNameRegex = /Avatar - (.*) - Image -/g.exec(imageName);
+            if (avatarNameRegex[1]) {
+                name = avatarNameRegex[1];
+            }
+            var id = args.json.ownerId;
+            var avatarInfo = {
+                id,
+                name
+            };
+            API.cachedAvatarNames.set(fileId, avatarInfo);
+            D.$avatarInfo = avatarInfo;
+        });
+    };
 
     $app = new Vue($app);
     window.$app = $app;
