@@ -7539,21 +7539,12 @@ speechSynthesis.getVoices();
             }
         }
         var users = [];
-        if (L.isOffline === false) {
-            for (var { ref } of this.friends.values()) {
-                if (typeof ref !== 'undefined' &&
-                    ref.location === L.tag) {
-                    users.push(ref);
-                }
-            }
-        }
-        if (this.isGameRunning &&
-            this.lastLocation.location === L.tag) {
+        var playersInInstance = this.lastLocation.playerList;
+        if ((this.lastLocation.location === L.tag) && (playersInInstance.length > 0)) {
             var ref = API.cachedUsers.get(API.currentUser.id);
             if (typeof ref === 'undefined') {
                 ref = API.currentUser;
             }
-            var playersInInstance = this.lastLocation.playerList;
             if (playersInInstance.includes(ref.displayName)) {
                 users.push(ref);
             }
@@ -7574,6 +7565,15 @@ speechSynthesis.getVoices();
                             users.push(ref);
                         break;
                     }
+                    }
+                }
+            }
+        } else {
+            if (L.isOffline === false) {
+                for (var { ref } of this.friends.values()) {
+                    if (typeof ref !== 'undefined' &&
+                        ref.location === L.tag) {
+                        users.push(ref);
                     }
                 }
             }
@@ -8085,45 +8085,26 @@ speechSynthesis.getVoices();
                 users: []
             };
         }
-        for (var { ref } of this.friends.values()) {
-            if (typeof ref === 'undefined' ||
-                typeof ref.$location === 'undefined' ||
-                ref.$location.worldId !== D.id) {
-                continue;
-            }
-            var { instanceId } = ref.$location;
-            var instance = instances[instanceId];
+        var lastLocation$ = API.parseLocation(this.lastLocation.location);
+        var playersInInstance = this.lastLocation.playerList;
+        if ((lastLocation$.worldId === D.id) && (playersInInstance.length > 0)) {
+            var instance = instances[lastLocation$.instanceId];
             if (typeof instance === 'undefined') {
                 instance = {
-                    id: instanceId,
-                    occupants: 0,
-                    users: []
-                };
-                instances[instanceId] = instance;
-            }
-            instance.users.push(ref);
-        }
-        if (this.isGameRunning) {
-            var lastLocation$ = API.parseLocation(this.lastLocation.location);
-            if (lastLocation$.worldId === D.id) {
-                var instance = instances[lastLocation$.instanceId];
-                if (typeof instance === 'undefined') {
-                    instance = {
                         id: lastLocation$.instanceId,
                         occupants: 1,
                         users: []
-                    };
-                    instances[instance.id] = instance;
-                }
-                instances[instance.id].occupants = this.lastLocation.playerList.length;
-                var ref = API.cachedUsers.get(API.currentUser.id);
-                if (typeof ref === 'undefined') {
-                    ref = API.currentUser;
-                }
-                var playersInInstance = this.lastLocation.playerList;
-                if (playersInInstance.includes(ref.displayName)) {
-                    instance.users.push(ref);
-                }
+                };
+                instances[instance.id] = instance;
+            }
+            instances[instance.id].occupants = playersInInstance.length;
+            var ref = API.cachedUsers.get(API.currentUser.id);
+            if (typeof ref === 'undefined') {
+                ref = API.currentUser;
+            }
+            if (playersInInstance.includes(ref.displayName)) {
+                instance.users.push(ref);
+            }
                 var friendsInInstance = this.lastLocation.friendList;
                 for (var i = 0; i < friendsInInstance.length; i++) {
                     var addUser = true;
@@ -8142,8 +8123,26 @@ speechSynthesis.getVoices();
                             break;
                         }
                     }
-                    }
                 }
+            }
+        } else {
+            for (var { ref } of this.friends.values()) {
+                if (typeof ref === 'undefined' ||
+                    typeof ref.$location === 'undefined' ||
+                    ref.$location.worldId !== D.id) {
+                    continue;
+                }
+                var { instanceId } = ref.$location;
+                var instance = instances[instanceId];
+                if (typeof instance === 'undefined') {
+                    instance = {
+                        id: instanceId,
+                        occupants: 0,
+                        users: []
+                    };
+                    instances[instanceId] = instance;
+                }
+                instance.users.push(ref);
             }
         }
         var rooms = [];
