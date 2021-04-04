@@ -3559,7 +3559,7 @@ speechSynthesis.getVoices();
             nextFriendsRefresh: 0,
             isGameRunning: false,
             isGameNoVR: false,
-            appVersion: 'VRCX 2021.03.08',
+            appVersion: 'VRCX 2021.04.04',
             latestAppVersion: '',
             ossDialog: false,
             exportFriendsListDialog: false,
