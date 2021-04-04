@@ -10416,6 +10416,55 @@ speechSynthesis.getVoices();
         });
     };
 
+    $app.data.discordNamesDialogVisible = false;
+    $app.data.discordNamesContent = '';
+
+    $app.methods.showDiscordNamesDialog = function () {
+        var { friends } = API.currentUser;
+        if (Array.isArray(friends) === false) {
+            return;
+        }
+        var lines = [
+            'DisplayName,DiscordName'
+        ];
+        var _ = function (str) {
+            if (/[\x00-\x1f,"]/.test(str) === true) {
+                str = `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+        };
+        for (var userId of friends) {
+            var { ref } = this.friends.get(userId);
+            var discord = '';
+            if (typeof ref === 'undefined') {
+                continue;
+            }
+            var name = ref.displayName;
+            if (ref.statusDescription) {
+                var statusRegex = /(?:^|\n*)(?:(?:[^\n:]|\|)*(?::|˸|discord)[\t\v\f\r]*)?([^\n]*(#|＃)(?: )?\d{4})/gi.exec(ref.statusDescription);
+                if (statusRegex) {
+                    discord = statusRegex[1];
+                }
+            }
+            if ((!discord) && (ref.bio)) {
+                var bioRegex = /(?:^|\n*)(?:(?:[^\n:]|\|)*(?::|˸|discord)[\t\v\f\r]*)?([^\n]*(#|＃)(?: )?\d{4})/gi.exec(ref.bio);
+                if (bioRegex) {
+                    discord = bioRegex[1];
+                }
+            }
+            if (!discord) {
+                continue;
+            }
+            discord = discord.replace('＃', '#');
+            if (discord.substring(0, 1) === '#') {
+                discord = `${_(name)}${_(discord)}`;
+            }
+            lines.push(`${_(name)},${_(discord)}`);
+        }
+        this.discordNamesContent = lines.join('\n');
+        this.discordNamesDialogVisible = true;
+    };
+
     $app = new Vue($app);
     window.$app = $app;
 }());
