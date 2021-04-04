@@ -9,6 +9,7 @@ import Vue from 'vue';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 
+import {appVersion} from './constants.js';
 import sharedRepository from './repository/shared.js';
 import configRepository from './repository/config.js';
 import webApiService from './service/webapi.js';
@@ -188,6 +189,10 @@ speechSynthesis.getVoices();
                 ? JSON.stringify(params)
                 : '{}';
         }
+        init.headers = {
+            'User-Agent': appVersion,
+            ...init.headers
+        };
         var req = webApiService.execute(init).catch((err) => {
             this.$throw(0, err);
         }).then((response) => {

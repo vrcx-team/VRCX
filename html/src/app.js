@@ -16,6 +16,7 @@ import '../node_modules/vue-swatches/dist/vue-swatches.css';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 
+import {appVersion} from './constants.js';
 import sharedRepository from './repository/shared.js';
 import configRepository from './repository/config.js';
 import webApiService from './service/webapi.js';
@@ -373,7 +374,7 @@ speechSynthesis.getVoices();
                 : '{}';
         }
         init.headers = {
-            'User-Agent': $app.appVersion,
+            'User-Agent': appVersion,
             ...init.headers
         };
         var req = webApiService.execute(init).catch((err) => {
@@ -3559,7 +3560,7 @@ speechSynthesis.getVoices();
             nextFriendsRefresh: 0,
             isGameRunning: false,
             isGameNoVR: false,
-            appVersion: 'VRCX 2021.04.04',
+            appVersion,
             latestAppVersion: '',
             ossDialog: false,
             exportFriendsListDialog: false,
