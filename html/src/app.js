@@ -10403,7 +10403,7 @@ speechSynthesis.getVoices();
             var name = '';
             var imageName = args.json.name;
             var avatarNameRegex = /Avatar - (.*) - Image -/g.exec(imageName);
-            if (avatarNameRegex[1]) {
+            if (avatarNameRegex) {
                 name = avatarNameRegex[1];
             }
             var id = args.json.ownerId;
