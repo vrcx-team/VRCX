@@ -1018,9 +1018,9 @@ html
                                     .detail
                                         span.name Avatar Name
                                         .extra(@click="userDialogCommand('Show Avatar Details')" style="cursor:pointer;width:fit-content")
-                                            span(v-text="userDialog.$avatarInfo.name" style="display:inline-block;margin-right:5px")
-                                            span(v-if="userDialog.$avatarInfo.id === userDialog.id" style="display:inline-block;color:#E6A23C" ) (own)
-                                            span(v-else-if="userDialog.$avatarInfo.name && userDialog.$avatarInfo.id" style="display:inline-block;color:#67C23A") ‎(public)
+                                            span(v-text="userDialog.$avatarInfo.avatarName" style="display:inline-block;margin-right:5px")
+                                            span(v-if="userDialog.$avatarInfo.ownerId === userDialog.id" style="display:inline-block;color:#E6A23C" ) (own)
+                                            span(v-else-if="userDialog.$avatarInfo.avatarName && userDialog.$avatarInfo.ownerId" style="display:inline-block;color:#67C23A") ‎(public)
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Bio
