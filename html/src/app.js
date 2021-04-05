@@ -4975,6 +4975,11 @@ speechSynthesis.getVoices();
                 // AddFriend (CurrentUser) 이후,
                 // 서버에서 오는 순서라고 보면 될 듯.
                 if (ctx.state === 'online') {
+                    if (this.appInit) {
+                        API.getUser({
+                            userId: id
+                        });
+                    }
                     if (ctx.isVIP) {
                         removeFromArray(this.friendsGroupA_, ctx);
                         this.friendsGroupA_.push(ctx);
@@ -5106,6 +5111,9 @@ speechSynthesis.getVoices();
                     ctx.ref.$location_at = Date.now();
                     ctx.ref.$online_for = Date.now();
                     ctx.ref.$offline_for = '';
+                    API.getUser({
+                        userId: id
+                    });
                 }
             }
         }
