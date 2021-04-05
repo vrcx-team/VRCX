@@ -608,7 +608,7 @@ html
                             el-switch(v-model="friendsListSearchFilterVIP" @change="friendsListSearchChange" active-color="#13ce66")
                         el-input(v-model="friendsListSearch" placeholder="Search" @change="friendsListSearchChange" clearable style="flex:1")
                         el-select(v-model="friendsListSearchFilters" multiple clearable collapse-tags style="flex:none;width:200px;margin:0 10px" @change="friendsListSearchChange" placeholder="Filter")
-                            el-option(v-once v-for="type in ['User Name', 'Display Name', 'Status', 'Bio', 'Memo']" :key="type" :label="type" :value="type")
+                            el-option(v-once v-for="type in ['Display Name', 'User Name', 'Rank', 'Status', 'Bio', 'Memo']" :key="type" :label="type" :value="type")
                         el-tooltip(placement="top")
                             template(#content)
                                 span Refresh
@@ -633,7 +633,7 @@ html
                             template(v-once #default="scope")
                                 span.name(v-text="scope.row.$trustLevel" :class="scope.row.$trustClass")
                         el-table-column(label="Status" min-width="180" prop="statusDescription" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'statusDescription')")
-                        el-table-column(label="Language" width="100" prop="$languages")
+                        el-table-column(label="Language" width="100" prop="$languages" sortable :sort-method="(a, b) => sortLanguages(a, b)")
                             template(v-once #default="scope")
                                 el-tooltip(v-for="item in scope.row.$languages" :key="item.key" placement="top")
                                     template(#content)
