@@ -138,6 +138,11 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | 🛑 #[span.name(v-text="feed.data")]
+                            div(v-else-if="feed.type === 'VideoPlay'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 🎵 #[span.name(v-text="feed.data")]
                     template(v-else)
                         template(v-for="feed in wristFeed")
                             .x-friend-item(v-if="feed.type === 'GPS'" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
@@ -260,6 +265,11 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | Event: #[span.name(v-text="feed.data")]
+                            div(v-else-if="feed.type === 'VideoPlay'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | Now playing: #[span.name(v-text="feed.data")]
             .x-containerbottom
                 div(style="display:flex;flex-direction:row")
                     template(v-if="devices.length")
