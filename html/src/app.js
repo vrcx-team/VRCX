@@ -3781,16 +3781,20 @@ speechSynthesis.getVoices();
                         }
                     }
                     if (joining) {
+                        var isFriend = this.friends.has(ctx.userId);
+                        var isFavorite = API.cachedFavoritesByObjectId.has(ctx.userId);
                         var onPlayerJoining = {
                             ...ctx,
+                            isFriend,
+                            isFavorite,
                             type: 'OnPlayerJoining'
                         };
                         if ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') ||
-                            ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') && (ctx.isFavorite))) {
+                            ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') && (isFavorite))) {
                             wristFeed.unshift(onPlayerJoining);
                         }
                         if ((this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') ||
-                            ((this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP') && (ctx.isFavorite))) {
+                            ((this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP') && (isFavorite))) {
                             notyFeed.unshift(onPlayerJoining);
                         }
                     }
