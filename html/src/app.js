@@ -4371,6 +4371,9 @@ speechSynthesis.getVoices();
             case 'Event':
                 this.speak(noty.data);
                 break;
+            case 'VideoPlay':
+                this.speak(`Now playing: ${noty.data}`);
+                break;
             default:
                 break;
         }
@@ -4448,6 +4451,9 @@ speechSynthesis.getVoices();
             case 'Event':
                 AppApi.XSNotification('VRCX', noty.data, timeout, image);
                 break;
+            case 'VideoPlay':
+                AppApi.XSNotification('VRCX', `Now playing: ${noty.data}`, timeout, image);
+                break;
             default:
                 break;
         }
@@ -4522,7 +4528,10 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification(noty.data, `has spawned a portal`, image);
                 break;
             case 'Event':
-                AppApi.DesktopNotification('Event', noty.data, '');
+                AppApi.DesktopNotification('Event', noty.data, image);
+                break;
+            case 'VideoPlay':
+                AppApi.DesktopNotification('Now playing', noty.data, image);
                 break;
             default:
                 break;
@@ -5783,12 +5792,19 @@ speechSynthesis.getVoices();
                     };
                     break;
 
-
                 case 'event':
                     tableData = {
                         created_at: gameLog.dt,
                         type: 'Event',
                         data: gameLog.event
+                    };
+                    break;
+
+                case 'video-play':
+                    tableData = {
+                        created_at: gameLog.dt,
+                        type: 'VideoPlay',
+                        data: gameLog.videoURL
                     };
                     break;
 
@@ -6957,6 +6973,7 @@ speechSynthesis.getVoices();
         sharedFeedFilters.noty.unmute = 'On';
         sharedFeedFilters.noty.PortalSpawn = 'Everyone';
         sharedFeedFilters.noty.Event = 'On';
+        sharedFeedFilters.noty.VideoPlay = 'Off';
         sharedFeedFilters.wrist.Location = 'On';
         sharedFeedFilters.wrist.OnPlayerJoined = 'Everyone';
         sharedFeedFilters.wrist.OnPlayerLeft = 'Everyone';
@@ -6981,6 +6998,7 @@ speechSynthesis.getVoices();
         sharedFeedFilters.wrist.unmute = 'On';
         sharedFeedFilters.wrist.PortalSpawn = 'Everyone';
         sharedFeedFilters.wrist.Event = 'On';
+        sharedFeedFilters.wrist.VideoPlay = 'On';
 
         configRepository.setString('sharedFeedFilters', JSON.stringify(sharedFeedFilters));
     }

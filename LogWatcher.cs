@@ -193,6 +193,7 @@ namespace VRCX
                                         ParseLogLocation(fileInfo, logContext, line, offset) == true ||
                                         ParseLogPortalSpawn(fileInfo, logContext, line, offset) == true ||
                                         ParseLogJoinBlocked(fileInfo, logContext, line, offset) == true ||
+                                        ParseLogVideoPlay(fileInfo, logContext, line, offset) == true ||
                                         ParseLogVideoError(fileInfo, logContext, line, offset) == true)
                                     {
                                         continue;
@@ -444,6 +445,34 @@ namespace VRCX
                 ConvertLogTimeToISO8601(line),
                 "event",
                 "VideoError: " + data
+            });
+
+            return true;
+        }
+
+        private bool ParseLogVideoPlay(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2021.04.20 13:37:69 Log        -  [Video Playback] Attempting to resolve URL 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+
+            if (string.Compare(line, offset, "Attempting to resolve URL '", 0, 27, StringComparison.Ordinal) != 0)
+            {
+                return false;
+            }
+
+            var pos = line.LastIndexOf("'");
+            if (pos < 0)
+            {
+                return false;
+            }
+            var data = line.Substring(78);
+            data = data.Remove(data.Length - 1);
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "video-play",
+                data
             });
 
             return true;

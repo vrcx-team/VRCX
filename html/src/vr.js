@@ -958,6 +958,9 @@ speechSynthesis.getVoices();
                     case 'Event':
                         text = noty.data;
                         break;
+                    case 'VideoPlay':
+                        text = `<strong>Now playing:</strong> ${noty.data}`;
+                        break;
                     default:
                         break;
                 }
