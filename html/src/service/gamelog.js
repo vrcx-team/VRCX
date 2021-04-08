@@ -28,6 +28,14 @@ function parseRawGameLog(dt, type, args) {
             gameLog.json = args[0];
             break;
 
+        case 'portal-spawn':
+            gameLog.userDisplayName = args[0];
+            break;
+
+        case 'event':
+            gameLog.event = args[0];
+            break;
+
         default:
             break;
     }

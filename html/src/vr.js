@@ -952,6 +952,12 @@ speechSynthesis.getVoices();
                     case 'unmute':
                         text = `<strong>${noty.sourceDisplayName}</strong> has unmuted you`;
                         break;
+                    case 'PortalSpawn':
+                        text = `<strong>${noty.data}</strong> has spawned a portal`;
+                        break;
+                    case 'Event':
+                        text = noty.data;
+                        break;
                     default:
                         break;
                 }

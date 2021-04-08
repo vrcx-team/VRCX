@@ -167,7 +167,7 @@ html
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
                             el-select(v-model="gameLogTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
-                                el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'Notification']" :key="type" :label="type" :value="type")
+                                el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'Notification', 'PortalSpawn', 'Event']" :key="type" :label="type" :value="type")
                             el-input(v-model="gameLogTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
                             el-button(type="default" @click="resetGameLog()" icon="el-icon-refresh" circle style="flex:none")
                     el-table-column(type="expand")
@@ -184,7 +184,10 @@ html
                     el-table-column(label="Detail" prop="data")
                         template(v-once #default="scope")
                             location(v-if="scope.row.type === 'Location'" :location="scope.row.data[0]" :hint="scope.row.data[1]")
-                            span.x-link(v-else-if="scope.row.type !== 'Notification'" v-text="scope.row.data" @click="lookupUser(scope.row.data)")
+                            template(v-else-if="scope.row.type === 'Event'")
+                                span(v-text="scope.row.data")
+                            template(v-else-if="scope.row.type === 'Notification'")
+                            span.x-link(v-else v-text="scope.row.data" @click="lookupUser(scope.row.data)")
 
             //- search
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'search'")
@@ -1510,6 +1513,12 @@ html
                     // div
                     //     span.toggle-name Unmute
                     //     toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestunmute" v-model="sharedFeedFilters.noty.unmute" class="toggle-switch")
+                    div
+                        span.toggle-name Portal Spawn
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGrouprequestPortalSpawn" v-model="sharedFeedFilters.noty.PortalSpawn" class="toggle-switch")
+                    div
+                        span.toggle-name Events
+                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestEvent" v-model="sharedFeedFilters.noty.Event" class="toggle-switch")
                 template(#footer)
                     el-button(type="small" @click="cancelSharedFeedFilters") Cancel
                     el-button(type="primary" size="small" style="margin-left:10px" @click="saveSharedFeedFilters") Save
@@ -1583,6 +1592,12 @@ html
                     // div
                     //     span.toggle-name Unmute
                     //     toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestunmute" v-model="sharedFeedFilters.wrist.unmute" class="toggle-switch")
+                    div
+                        span.toggle-name Portal Spawn
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGrouprequestPortalSpawn" v-model="sharedFeedFilters.wrist.PortalSpawn" class="toggle-switch")
+                    div
+                        span.toggle-name Events
+                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestEvent" v-model="sharedFeedFilters.wrist.Event" class="toggle-switch")
                 template(#footer)
                     el-button(type="small" @click="cancelSharedFeedFilters") Cancel
                     el-button(type="primary" size="small" @click="saveSharedFeedFilters") Save
