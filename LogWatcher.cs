@@ -193,7 +193,7 @@ namespace VRCX
                                         ParseLogLocation(fileInfo, logContext, line, offset) == true ||
                                         ParseLogPortalSpawn(fileInfo, logContext, line, offset) == true ||
                                         ParseLogJoinBlocked(fileInfo, logContext, line, offset) == true ||
-                                        ParseLogVideoError(fileInfo, logContext, line, offset) == true ||
+                                        ParseLogVideoError(fileInfo, logContext, line, offset) == true)
                                     {
                                         continue;
                                     }
