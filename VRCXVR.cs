@@ -136,9 +136,14 @@ namespace VRCX
 
             while (_thread != null)
             {
-                _browser1.RenderToTexture(_texture1);
-                _browser2.RenderToTexture(_texture2);
-
+                if ("true".Equals(SharedVariable.Instance.Get("config:vrcx_overlaywrist")))
+                {
+                    _browser1.RenderToTexture(_texture1);
+                }
+                if ("true".Equals(SharedVariable.Instance.Get("config:vrcx_overlaynotifications")))
+                {
+                    _browser2.RenderToTexture(_texture2);
+                }
                 try
                 {
                     Thread.Sleep(16);

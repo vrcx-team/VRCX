@@ -747,40 +747,48 @@ html
                     div.options-container-item
                         span.name Force Run (Opens SteamVR)
                         el-switch(v-model="openVRAlways" :disabled="!openVR")
-                    div.options-container-item
-                        span.name(style="min-width:137px") Overlay Button
-                        el-switch(v-model="overlaybutton" inactive-text="Grip" active-text="Menu" :disabled="!openVR")
                     br
                     span.sub-header Display Options
-                    div.options-container-item
-                        span.name Minimal Feed Icons
-                        el-switch(v-model="minimalFeed" :disabled="!openVR")
-                    div.options-container-item
-                        span.name Hide VR Devices
-                        el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR")
                     div.options-container-item
                         span.name Hide Private Worlds
                         el-switch(v-model="hidePrivateFromFeed")
                     div.options-container-item
                         span.name Hide Joins When Joining
                         el-switch(v-model="hideOnPlayerJoined")
-                    div.options-container-item
-                        el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog()" :disabled="!openVR") Wrist Feed Filters
-                        el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()") Notification Filters
                     br
-                    span.sub-header VR Notifications
+                    span.sub-header Wrist Feed
+                    div.options-container-item
+                        span.name Wrist Feed Overlay
+                        el-switch(v-model="overlayWrist" :disabled="!openVR")
+                    div.options-container-item
+                        span.name(style="min-width:137px") Overlay Button
+                        el-switch(v-model="overlaybutton" inactive-text="Grip" active-text="Menu" :disabled="!openVR || !overlayWrist")
+                    div.options-container-item
+                        span.name Minimal Feed Icons
+                        el-switch(v-model="minimalFeed" :disabled="!openVR || !overlayWrist")
+                    div.options-container-item
+                        span.name Hide VR Devices
+                        el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR || !overlayWrist")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog()" :disabled="!openVR || !overlayWrist") Wrist Feed Filters
+                    br
+                    span.sub-header Notifications
                     div.options-container-item
                         span.name Overlay Notifications
                         el-switch(v-model="overlayNotifications" :disabled="!openVR")
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()" :disabled="!overlayNotifications || !openVR") Notification Timeout
                         el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog()" :disabled="!overlayNotifications || !openVR") Notification Position
-                    br
-                    span.sub-header Desktop Notifications
                     div.options-container-item
-                        span.name When to display notifications:
+                        span.name XSOverlay Notifications
+                        el-switch(v-model="xsNotifications")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()" :disabled="(!overlayNotifications || !openVR) && !xsNotifications") Notification Timeout
+                    div.options-container-item
+                        span.name Desktop Notifications, When to display:
                         br
                         toggle-switch(:options="desktopToastToggleSwitchOption" group="desktopToastToggleSwitchOption" v-model="desktopToast" class="toggle-switch")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()") Notification Filters
                     br
                     span.sub-header TTS Options
                     div.options-container-item

@@ -4242,12 +4242,58 @@ speechSynthesis.getVoices();
             if ((this.notificationTTS) && (this.isGameRunning)) {
                 this.playNotyTTS(noty, message);
             }
+            var imageURL = await this.notyGetImage(noty);
+            var image = false;
+            if ((imageURL) &&
+                (((this.desktopToast === 'Always') ||
+                ((this.desktopToast === 'Game Closed') && (!this.isGameRunning)) ||
+                ((this.desktopToast === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) ||
+                ((this.xsNotifications) && (this.isGameRunning) && (!this.isGameNoVR)))) {
+                var image = await AppApi.CacheImage(imageURL, appVersion);
+            }
+            if ((this.xsNotifications) && (this.isGameRunning) && (!this.isGameNoVR)) {
+                this.displayXSNotification(noty, message, image);
+            }
             if ((this.desktopToast === 'Always') ||
                 ((this.desktopToast === 'Game Closed') && (!this.isGameRunning)) ||
                 ((this.desktopToast === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) {
-                this.displayDesktopToast(noty, message);
+                this.displayDesktopToast(noty, message, image);
             }
         }
+    };
+
+    $app.methods.notyGetImage = async function (noty) {
+        var imageURL = '';
+        var userId = '';
+        if (noty.userId) {
+            userId = noty.userId;
+        } else if (noty.senderUserId) {
+            userId = noty.senderUserId;
+        } else if (noty.sourceUserId) {
+            userId = noty.sourceUserId;
+        } else if (noty.data) {
+            for (var ref of API.cachedUsers.values()) {
+                if (ref.displayName === noty.data) {
+                    userId = ref.id;
+                    break;
+                }
+            }
+        }
+        if ((noty.details) && (noty.details.imageUrl)) {
+            imageURL = noty.details.imageUrl;
+        } else if (userId) {
+            imageURL = await API.getCachedUser({
+                userId: userId
+            }).catch((err) => {
+                throw err;
+            }).then((args) => {
+                if ((this.displayVRCPlusIconsAsAvatar) && (args.json.userIcon)) {
+                    return args.json.userIcon;
+                }
+                return args.json.currentAvatarThumbnailImageUrl;
+            });
+        }
+        return imageURL;
     };
 
     $app.methods.playNotyTTS = async function (noty, message) {
@@ -4320,100 +4366,141 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.displayDesktopToast = async function (noty, message) {
-        var imageURL = '';
-        var userId = '';
-        if (noty.userId) {
-            userId = noty.userId;
-        } else if (noty.senderUserId) {
-            userId = noty.senderUserId;
-        } else if (noty.sourceUserId) {
-            userId = noty.sourceUserId;
-        } else if (noty.data) {
-            for (var ref of API.cachedUsers.values()) {
-                if (ref.displayName === noty.data) {
-                    userId = ref.id;
-                    break;
-                }
-            }
-        }
-        if ((noty.details) && (noty.details.imageUrl)) {
-            imageURL = noty.details.imageUrl;
-        } else if (userId) {
-            imageURL = await API.getCachedUser({
-                userId: userId
-            }).catch((err) => {
-                throw err;
-            }).then((args) => {
-                if ((this.displayVRCPlusIconsAsAvatar) && (args.json.userIcon)) {
-                    return args.json.userIcon;
-                }
-                return args.json.currentAvatarThumbnailImageUrl;
-            });
-        }
+    $app.methods.displayXSNotification = async function (noty, message, image) {
+        var timeout = parseInt(this.notificationTimeout) / 1000;
         switch (noty.type) {
             case 'OnPlayerJoined':
-                AppApi.DesktopNotification(noty.data, 'has joined', imageURL);
+                AppApi.XSNotification('VRCX', `${noty.data} has joined`, timeout, image);
                 break;
             case 'OnPlayerLeft':
-                AppApi.DesktopNotification(noty.data, 'has left', imageURL);
+                AppApi.XSNotification('VRCX', `${noty.data} has left`, timeout, image);
                 break;
             case 'OnPlayerJoining':
-                AppApi.DesktopNotification(noty.displayName, 'is joining', imageURL);
+                AppApi.XSNotification('VRCX', `${noty.displayName} is joining`, timeout, image);
                 break;
             case 'GPS':
-                AppApi.DesktopNotification(noty.displayName, `is in ${await this.displayLocation(noty.location[0])}`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.displayName} is in ${await this.displayLocation(noty.location[0])}`, timeout, image);
                 break;
             case 'Online':
-                AppApi.DesktopNotification(noty.displayName, 'has logged in', imageURL);
+                AppApi.XSNotification('VRCX', `${noty.displayName} has logged in`, timeout, image);
                 break;
             case 'Offline':
-                AppApi.DesktopNotification(noty.displayName, 'has logged out', imageURL);
+                AppApi.XSNotification('VRCX', `${noty.displayName} has logged out`, timeout, image);
                 break;
             case 'Status':
-                AppApi.DesktopNotification(noty.displayName, `status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.displayName} status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, timeout, image);
                 break;
             case 'invite':
-                AppApi.DesktopNotification(noty.senderUsername, `has invited you to ${noty.details.worldName}${message}`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.senderUsername} has invited you to ${noty.details.worldName}${message}`, timeout, image);
                 break;
             case 'requestInvite':
-                AppApi.DesktopNotification(noty.senderUsername, `has requested an invite${message}`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.senderUsername} has requested an invite${message}`, timeout, image);
                 break;
             case 'inviteResponse':
-                AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite${message}`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.senderUsername} has responded to your invite${message}`, timeout, image);
                 break;
             case 'requestInviteResponse':
-                AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite request${message}`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.senderUsername} has responded to your invite request${message}`, timeout, image);
                 break;
             case 'friendRequest':
-                AppApi.DesktopNotification(noty.senderUsername, 'has sent you a friend request', imageURL);
+                AppApi.XSNotification('VRCX', `${noty.senderUsername} has sent you a friend request`, timeout, image);
                 break;
             case 'Friend':
-                AppApi.DesktopNotification(noty.displayName, 'is now your friend', imageURL);
+                AppApi.XSNotification('VRCX', `${noty.displayName} is now your friend`, timeout, image);
                 break;
             case 'Unfriend':
-                AppApi.DesktopNotification(noty.displayName, 'is no longer your friend', imageURL);
+                AppApi.XSNotification('VRCX', `${noty.displayName} is no longer your friend`, timeout, image);
                 break;
             case 'TrustLevel':
-                AppApi.DesktopNotification(noty.displayName, `trust level is now ${noty.trustLevel}`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.displayName} trust level is now ${noty.trustLevel}`, timeout, image);
                 break;
             case 'DisplayName':
-                AppApi.DesktopNotification(noty.previousDisplayName, `changed their name to ${noty.displayName}`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.previousDisplayName} changed their name to ${noty.displayName}`, timeout, image);
                 break;
             case 'showAvatar':
-                AppApi.DesktopNotification(noty.sourceDisplayName, `has shown your avatar`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.sourceDisplayName} has shown your avatar`, timeout, image);
                 break;
             case 'hideAvatar':
-                AppApi.DesktopNotification(noty.sourceDisplayName, `has hidden your avatar`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.sourceDisplayName} has hidden your avatar`, timeout, image);
                 break;
             case 'block':
-                AppApi.DesktopNotification(noty.sourceDisplayName, `has blocked you`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.sourceDisplayName} has blocked you`, timeout, image);
                 break;
             case 'mute':
-                AppApi.DesktopNotification(noty.sourceDisplayName, `has muted you`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.sourceDisplayName} has muted you`, timeout, image);
                 break;
             case 'unmute':
-                AppApi.DesktopNotification(noty.sourceDisplayName, `has unmuted you`, imageURL);
+                AppApi.XSNotification('VRCX', `${noty.sourceDisplayName} has unmuted you`, timeout, image);
+                break;
+            default:
+                break;
+        }
+    };
+
+    $app.methods.displayDesktopToast = async function (noty, message, image) {
+        switch (noty.type) {
+            case 'OnPlayerJoined':
+                AppApi.DesktopNotification(noty.data, 'has joined', image);
+                break;
+            case 'OnPlayerLeft':
+                AppApi.DesktopNotification(noty.data, 'has left', image);
+                break;
+            case 'OnPlayerJoining':
+                AppApi.DesktopNotification(noty.displayName, 'is joining', image);
+                break;
+            case 'GPS':
+                AppApi.DesktopNotification(noty.displayName, `is in ${await this.displayLocation(noty.location[0])}`, image);
+                break;
+            case 'Online':
+                AppApi.DesktopNotification(noty.displayName, 'has logged in', image);
+                break;
+            case 'Offline':
+                AppApi.DesktopNotification(noty.displayName, 'has logged out', image);
+                break;
+            case 'Status':
+                AppApi.DesktopNotification(noty.displayName, `status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, image);
+                break;
+            case 'invite':
+                AppApi.DesktopNotification(noty.senderUsername, `has invited you to ${noty.details.worldName}${message}`, image);
+                break;
+            case 'requestInvite':
+                AppApi.DesktopNotification(noty.senderUsername, `has requested an invite${message}`, image);
+                break;
+            case 'inviteResponse':
+                AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite${message}`, image);
+                break;
+            case 'requestInviteResponse':
+                AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite request${message}`, image);
+                break;
+            case 'friendRequest':
+                AppApi.DesktopNotification(noty.senderUsername, 'has sent you a friend request', image);
+                break;
+            case 'Friend':
+                AppApi.DesktopNotification(noty.displayName, 'is now your friend', image);
+                break;
+            case 'Unfriend':
+                AppApi.DesktopNotification(noty.displayName, 'is no longer your friend', image);
+                break;
+            case 'TrustLevel':
+                AppApi.DesktopNotification(noty.displayName, `trust level is now ${noty.trustLevel}`, image);
+                break;
+            case 'DisplayName':
+                AppApi.DesktopNotification(noty.previousDisplayName, `changed their name to ${noty.displayName}`, image);
+                break;
+            case 'showAvatar':
+                AppApi.DesktopNotification(noty.sourceDisplayName, `has shown your avatar`, image);
+                break;
+            case 'hideAvatar':
+                AppApi.DesktopNotification(noty.sourceDisplayName, `has hidden your avatar`, image);
+                break;
+            case 'block':
+                AppApi.DesktopNotification(noty.sourceDisplayName, `has blocked you`, image);
+                break;
+            case 'mute':
+                AppApi.DesktopNotification(noty.sourceDisplayName, `has muted you`, image);
+                break;
+            case 'unmute':
+                AppApi.DesktopNotification(noty.sourceDisplayName, `has unmuted you`, image);
                 break;
             default:
                 break;
@@ -6710,6 +6797,8 @@ speechSynthesis.getVoices();
     $app.data.hideOnPlayerJoined = configRepository.getBool('VRCX_hideOnPlayerJoined');
     $app.data.hideDevicesFromFeed = configRepository.getBool('VRCX_hideDevicesFromFeed');
     $app.data.overlayNotifications = configRepository.getBool('VRCX_overlayNotifications');
+    $app.data.overlayWrist = configRepository.getBool('VRCX_overlayWrist');
+    $app.data.xsNotifications = configRepository.getBool('VRCX_xsNotifications');
     $app.data.desktopToast = configRepository.getString('VRCX_desktopToast');
     $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
     $app.data.displayVRCPlusIconsAsAvatar = configRepository.getBool('displayVRCPlusIconsAsAvatar');
@@ -6717,6 +6806,9 @@ speechSynthesis.getVoices();
     $app.data.notificationTTSVoice = configRepository.getString('VRCX_notificationTTSVoice');
     $app.data.notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
     var saveOpenVROption = function () {
+        if ((this.openVR) && (!this.overlayNotifications) && (!this.overlayWrist)) {
+            this.openVR = false;
+        }
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
         configRepository.setBool('VRCX_overlaybutton', this.overlaybutton);
@@ -6724,6 +6816,8 @@ speechSynthesis.getVoices();
         configRepository.setBool('VRCX_hideOnPlayerJoined', this.hideOnPlayerJoined);
         configRepository.setBool('VRCX_hideDevicesFromFeed', this.hideDevicesFromFeed);
         configRepository.setBool('VRCX_overlayNotifications', this.overlayNotifications);
+        configRepository.setBool('VRCX_overlayWrist', this.overlayWrist);
+        configRepository.setBool('VRCX_xsNotifications', this.xsNotifications);
         configRepository.setString('VRCX_desktopToast', this.desktopToast);
         configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
         configRepository.setBool('displayVRCPlusIconsAsAvatar', this.displayVRCPlusIconsAsAvatar);
@@ -6745,6 +6839,8 @@ speechSynthesis.getVoices();
     $app.watch.hideOnPlayerJoined = saveOpenVROption;
     $app.watch.hideDevicesFromFeed = saveOpenVROption;
     $app.watch.overlayNotifications = saveOpenVROption;
+    $app.watch.overlayWrist = saveOpenVROption;
+    $app.watch.xsNotifications = saveOpenVROption;
     $app.watch.desktopToast = saveOpenVROption;
     $app.watch.minimalFeed = saveOpenVROption;
     $app.watch.displayVRCPlusIconsAsAvatar = saveOpenVROption;
@@ -7016,7 +7112,6 @@ speechSynthesis.getVoices();
             notificationTTS: this.notificationTTS,
             notificationTTSVoice: this.notificationTTSVoice,
             overlayNotifications: this.overlayNotifications,
-            desktopToast: this.desktopToast,
             hideDevicesFromFeed: this.hideDevicesFromFeed,
             minimalFeed: this.minimalFeed,
             displayVRCPlusIconsAsAvatar: this.displayVRCPlusIconsAsAvatar,
