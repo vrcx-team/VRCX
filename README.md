@@ -6,9 +6,9 @@ VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRCha
 
 pypy is not responsible for any problems caused by VRCX. ***Use at your own risk!***
 
-![vrchat api](https://untnd.me/4dxw4sC1q)
+![vrchat api](https://user-images.githubusercontent.com/11171153/114227156-b559c400-99c8-11eb-9df6-ee6615b8118e.png)
 
-*VRChat's official stance on usage of the API, listed in the #faq channel.*
+*VRChat's official stance on usage of the API, as listed in their Discord #faq channel.*
 
 Special comments about VRChatRPC.DLL
 -
