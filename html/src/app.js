@@ -6947,60 +6947,63 @@ speechSynthesis.getVoices();
     }
     if (!configRepository.getString('sharedFeedFilters')) {
         var sharedFeedFilters = {
-            noty: {},
-            wrist: {}
+            noty: {
+                Location: 'Off',
+                OnPlayerJoined: 'VIP',
+                OnPlayerLeft: 'VIP',
+                OnPlayerJoining: 'Off',
+                Online: 'VIP',
+                Offline: 'VIP',
+                GPS: 'Off',
+                Status: 'Off',
+                invite: 'Friends',
+                requestInvite: 'Friends',
+                inviteResponse: 'Friends',
+                requestInviteResponse: 'Friends',
+                friendRequest: 'On',
+                Friend: 'On',
+                Unfriend: 'On',
+                DisplayName: 'VIP',
+                TrustLevel: 'VIP',
+                showAvatar: 'On',
+                hideAvatar: 'On',
+                block: 'On',
+                mute: 'On',
+                unmute: 'On',
+                PortalSpawn: 'Everyone',
+                ItemDestroy: 'Off',
+                Event: 'On',
+                VideoPlay: 'On'
+            },
+            wrist: {
+                Location: 'On',
+                OnPlayerJoined: 'Everyone',
+                OnPlayerLeft: 'Everyone',
+                OnPlayerJoining: 'Friends',
+                Online: 'Friends',
+                Offline: 'Friends',
+                GPS: 'Friends',
+                Status: 'Friends',
+                invite: 'Friends',
+                requestInvite: 'Friends',
+                inviteResponse: 'Friends',
+                requestInviteResponse: 'Friends',
+                friendRequest: 'On',
+                Friend: 'On',
+                Unfriend: 'On',
+                DisplayName: 'Friends',
+                TrustLevel: 'Friends',
+                showAvatar: 'On',
+                hideAvatar: 'On',
+                block: 'On',
+                mute: 'On',
+                unmute: 'On',
+                PortalSpawn: 'Everyone',
+                ItemDestroy: 'Everyone',
+                Event: 'On',
+                VideoPlay: 'On'
+            }
         };
-        sharedFeedFilters.noty.Location = 'Off';
-        sharedFeedFilters.noty.OnPlayerJoined = 'VIP';
-        sharedFeedFilters.noty.OnPlayerLeft = 'VIP';
-        sharedFeedFilters.noty.OnPlayerJoining = 'Off';
-        sharedFeedFilters.noty.Online = 'VIP';
-        sharedFeedFilters.noty.Offline = 'VIP';
-        sharedFeedFilters.noty.GPS = 'Off';
-        sharedFeedFilters.noty.Status = 'Off';
-        sharedFeedFilters.noty.invite = 'Friends';
-        sharedFeedFilters.noty.requestInvite = 'Friends';
-        sharedFeedFilters.noty.inviteResponse = 'Friends';
-        sharedFeedFilters.noty.requestInviteResponse = 'Friends';
-        sharedFeedFilters.noty.friendRequest = 'On';
-        sharedFeedFilters.noty.Friend = 'On';
-        sharedFeedFilters.noty.Unfriend = 'On';
-        sharedFeedFilters.noty.DisplayName = 'VIP';
-        sharedFeedFilters.noty.TrustLevel = 'VIP';
-        sharedFeedFilters.noty.showAvatar = 'On';
-        sharedFeedFilters.noty.hideAvatar = 'On';
-        sharedFeedFilters.noty.block = 'On';
-        sharedFeedFilters.noty.mute = 'On';
-        sharedFeedFilters.noty.unmute = 'On';
-        sharedFeedFilters.noty.PortalSpawn = 'Everyone';
-        sharedFeedFilters.noty.Event = 'On';
-        sharedFeedFilters.noty.VideoPlay = 'Off';
-        sharedFeedFilters.wrist.Location = 'On';
-        sharedFeedFilters.wrist.OnPlayerJoined = 'Everyone';
-        sharedFeedFilters.wrist.OnPlayerLeft = 'Everyone';
-        sharedFeedFilters.wrist.OnPlayerJoining = 'Friends';
-        sharedFeedFilters.wrist.Online = 'Friends';
-        sharedFeedFilters.wrist.Offline = 'Friends';
-        sharedFeedFilters.wrist.GPS = 'Friends';
-        sharedFeedFilters.wrist.Status = 'Friends';
-        sharedFeedFilters.wrist.invite = 'Friends';
-        sharedFeedFilters.wrist.requestInvite = 'Friends';
-        sharedFeedFilters.wrist.inviteResponse = 'Friends';
-        sharedFeedFilters.wrist.requestInviteResponse = 'Friends';
-        sharedFeedFilters.wrist.friendRequest = 'On';
-        sharedFeedFilters.wrist.Friend = 'On';
-        sharedFeedFilters.wrist.Unfriend = 'On';
-        sharedFeedFilters.wrist.DisplayName = 'Friends';
-        sharedFeedFilters.wrist.TrustLevel = 'Friends';
-        sharedFeedFilters.wrist.showAvatar = 'On';
-        sharedFeedFilters.wrist.hideAvatar = 'On';
-        sharedFeedFilters.wrist.block = 'On';
-        sharedFeedFilters.wrist.mute = 'On';
-        sharedFeedFilters.wrist.unmute = 'On';
-        sharedFeedFilters.wrist.PortalSpawn = 'Everyone';
-        sharedFeedFilters.wrist.Event = 'On';
-        sharedFeedFilters.wrist.VideoPlay = 'On';
-
         configRepository.setString('sharedFeedFilters', JSON.stringify(sharedFeedFilters));
     }
     $app.data.sharedFeedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));
