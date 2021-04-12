@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -8,13 +8,14 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>VRCX</RootNamespace>
     <AssemblyName>VRCX</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,7 +30,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -80,8 +80,7 @@
     <Reference Include="Blake2Sharp">
       <HintPath>librsync.net\Blake2Sharp.dll</HintPath>
     </Reference>
-    <Reference Include="librsync.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="librsync.net">
       <HintPath>librsync.net\librsync.net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -166,7 +165,7 @@
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.2%28x86 및 x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -177,19 +176,19 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.OffScreen">
-      <Version>86.0.241</Version>
+      <Version>89.0.170</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
-      <Version>86.0.241</Version>
+      <Version>89.0.170</Version>
     </PackageReference>
     <PackageReference Include="DiscordRichPresence">
-      <Version>1.0.169</Version>
+      <Version>1.0.175</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
-      <Version>6.1.1</Version>
+      <Version>7.0.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
+      <Version>13.0.1</Version>
     </PackageReference>
     <PackageReference Include="SharpDX.D3DCompiler">
       <Version>4.2.0</Version>
@@ -209,8 +208,8 @@
     <PackageReference Include="System.Data.SQLite.Core">
       <Version>1.0.113.7</Version>
     </PackageReference>
-    <PackageReference Include="XSNotifications">
-      <Version>0.1.1</Version>
+    <PackageReference Include="System.Text.Json">
+      <Version>5.0.2</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -17,8 +17,8 @@ using System.Net;
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
 using librsync.net;
-using XSNotifications;
-using XSNotifications.Enum;
+using System.Net.Sockets;
+using System.Text.Json.Serialization;
 
 namespace VRCX
 {
@@ -245,6 +245,22 @@ namespace VRCX
             ToastNotificationManager.CreateToastNotifier("VRCX").Show(toast);
         }
 
+        private struct XSOMessage
+        {
+            public int messageType { get; set; }
+            public int index { get; set; }
+            public float volume { get; set; }
+            public string audioPath { get; set; }
+            public float timeout { get; set; }
+            public string title { get; set; }
+            public string content { get; set; }
+            public string icon { get; set; }
+            public float height { get; set; }
+            public float opacity { get; set; }
+            public bool useBase64Icon { get; set; }
+            public string sourceApp { get; set; }
+        }
+
         public void XSNotification(string Title, string Content, int Timeout, bool Image)
         {
             bool UseBase64Icon = true;
@@ -254,17 +270,24 @@ namespace VRCX
                 UseBase64Icon = false;
                 Icon = Path.Combine(Program.BaseDirectory, "cache\\toast");
             }
-            new XSNotifier().SendNotification(new XSNotification()
-            {
-                Height = 110.0f,
-                SourceApp = "VRCX",
-                AudioPath = "",
-                Title = Title,
-                Content = Content,
-                Timeout = Timeout,
-                UseBase64Icon = UseBase64Icon,
-                Icon = Icon
-            });
+
+            IPAddress broadcastIP = IPAddress.Parse("127.0.0.1");
+            Socket broadcastSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            IPEndPoint endPoint = new IPEndPoint(broadcastIP, 42069);
+
+            XSOMessage msg = new XSOMessage();
+            msg.messageType = 1;
+            msg.title = Title;
+            msg.content = Content;
+            msg.height = 110f;
+            msg.sourceApp = "VRCX";
+            msg.timeout = Timeout;
+            msg.audioPath = "";
+            msg.useBase64Icon = UseBase64Icon;
+            msg.icon = Icon;
+
+            byte[] byteBuffer = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(msg);
+            broadcastSocket.SendTo(byteBuffer, endPoint);
         }
 
         public void SetStartup(bool enabled)
