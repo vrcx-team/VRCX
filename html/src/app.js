@@ -7870,14 +7870,9 @@ speechSynthesis.getVoices();
             offset: 0,
             sort: 'updated',
             order: 'descending',
-            // user: 'friends',
-            userId: D.id,
-            releaseStatus: 'public'
+            releaseStatus: 'all',
+            user: 'me',
         };
-        if (params.userId === API.currentUser.id) {
-            params.user = 'me';
-            params.releaseStatus = 'all';
-        }
         var map = new Map();
         for (var ref of API.cachedAvatars.values()) {
             if (ref.authorId === D.id) {
@@ -7897,10 +7892,8 @@ speechSynthesis.getVoices();
                 }
             },
             done: () => {
-                if (D.id === params.userId) {
-                    var array = Array.from(map.values());
-                    this.setUserDialogAvatars(array);
-                }
+                var array = Array.from(map.values());
+                this.setUserDialogAvatars(array);
                 D.isAvatarsLoading = false;
             }
         });
@@ -8044,7 +8037,7 @@ speechSynthesis.getVoices();
                     return _args;
                 });
             });
-        } else if (command === 'Show Avatar Details') {
+        } else if (command === 'Show Avatar Author') {
             var { currentAvatarImageUrl } = D.ref;
             for (var ref of API.cachedAvatars.values()) {
                 if (ref.imageUrl === currentAvatarImageUrl) {
@@ -8060,42 +8053,14 @@ speechSynthesis.getVoices();
                     var args = API.getAvatarImages({fileId: fileId});
                     var ownerId = args.json.ownerId;
                 }
-                D.loading = true;
-                var params = {
-                    n: 50,
-                        offset: 0,
-                        sort: 'updated',
-                        order: 'descending',
-                        // user: 'friends',
-                        userId: ownerId,
-                        releaseStatus: 'public'
-                    };
-                    if (params.userId === API.currentUser.id) {
-                        params.user = 'me';
-                        params.releaseStatus = 'all';
-                    }
-                    API.bulk({
-                        fn: 'getAvatars',
-                        N: -1,
-                        params,
-                        done: () => {
-                            D.loading = false;
-                            for (var ref2 of API.cachedAvatars.values()) {
-                                if (ref2.imageUrl === currentAvatarImageUrl) {
-                                    this.showAvatarDialog(ref2.id);
-                                    return;
-                                }
-                            }
-                            if (ownerId === D.id) {
-                                this.$message({
-                                    message: 'It\'s personal (own) avatar',
+                if (ownerId === D.id) {
+                    this.$message({
+                        message: 'It\'s personal (own) avatar',
                                     type: 'warning'
                                 });
-                                return;
-                            }
-                        this.showUserDialog(ownerId);
-                    }
-                });
+                    return;
+                }
+                this.showUserDialog(ownerId);
             } else {
                 this.$message({
                     message: 'Sorry, the author is unknown',
