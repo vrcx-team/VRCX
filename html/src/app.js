@@ -3290,7 +3290,6 @@ speechSynthesis.getVoices();
                         userId: content.userId
                     }
                 });
-                $app.APILastOnline.set(content.userId, Date.now());
                 break;
 
             case 'friend-active':
@@ -3735,8 +3734,6 @@ speechSynthesis.getVoices();
     };
 
     $app.data.debug = false;
-
-    $app.data.APILastOnline = new Map();
 
     $app.data.sharedFeed = {
         gameLog: {
@@ -5223,15 +5220,6 @@ speechSynthesis.getVoices();
                 });
             }
         } else {
-            if (ctx.state === 'online' && state === 'active') {
-                await new Promise(resolve => setTimeout(resolve, 50000));
-                if (this.APILastOnline.has(id)) {
-                    var date = this.APILastOnline.get(id);
-                    if (date > Date.now() - 60000) {
-                        return;
-                    }
-                }
-            }
             if (ctx.state === 'online') {
                 if (ctx.isVIP) {
                     removeFromArray(this.friendsGroup0_, ctx);
