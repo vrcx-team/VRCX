@@ -8160,18 +8160,27 @@ speechSynthesis.getVoices();
             if (fileId) {
                 if (API.cachedAvatarNames.has(fileId)) {
                     var { ownerId } = API.cachedAvatarNames.get(fileId);
+                    if (ownerId === D.id) {
+                        this.$message({
+                            message: 'It\'s personal (own) avatar',
+                            type: 'warning'
+                        });
+                        return;
+                    }
+                    this.showUserDialog(ownerId);
                 } else {
-                    var args = API.getAvatarImages({fileId: fileId});
-                    var ownerId = args.json.ownerId;
-                }
-                if (ownerId === D.id) {
-                    this.$message({
-                        message: 'It\'s personal (own) avatar',
+                    API.getAvatarImages({fileId}).then((args) => {
+                        var ownerId = args.json.ownerId;
+                        if (ownerId === D.id) {
+                            this.$message({
+                                message: 'It\'s personal (own) avatar',
                                     type: 'warning'
                                 });
-                    return;
+                            return;
+                        }
+                        this.showUserDialog(ownerId);
+                    });
                 }
-                this.showUserDialog(ownerId);
             } else {
                 this.$message({
                     message: 'Sorry, the author is unknown',
@@ -8741,50 +8750,37 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.showAvatarAuthorDialog = function (refUserId, currentAvatarImageUrl) {
-        var id = extractFileId(currentAvatarImageUrl);
-        if (id) {
-            API.call(`file/${id}`).then(({ ownerId }) => {
-                for (var ref of API.cachedAvatars.values()) {
-                    if (ref.imageUrl === currentAvatarImageUrl) {
-                        this.showAvatarDialog(ref.id);
-                        return;
-                    }
+        for (var ref of API.cachedAvatars.values()) {
+            if (ref.imageUrl === currentAvatarImageUrl) {
+                this.showAvatarDialog(ref.id);
+                return;
+            }
+        }
+        var fileId = extractFileId(currentAvatarImageUrl);
+        if (fileId) {
+            if (API.cachedAvatarNames.has(fileId)) {
+                var { ownerId } = API.cachedAvatarNames.get(fileId);
+                if (ownerId === refUserId) {
+                    this.$message({
+                        message: 'It\'s personal (own) avatar',
+                        type: 'warning'
+                    });
+                    return;
                 }
-                var params = {
-                    n: 50,
-                    offset: 0,
-                    sort: 'updated',
-                    order: 'descending',
-                    // user: 'friends',
-                    userId: ownerId,
-                    releaseStatus: 'public'
-                };
-                if (params.userId === API.currentUser.id) {
-                    params.user = 'me';
-                    params.releaseStatus = 'all';
-                }
-                API.bulk({
-                    fn: 'getAvatars',
-                    N: -1,
-                    params,
-                    done: () => {
-                        for (var ref2 of API.cachedAvatars.values()) {
-                            if (ref2.imageUrl === currentAvatarImageUrl) {
-                                this.showAvatarDialog(ref2.id);
-                                return;
-                            }
-                        }
-                        if (ownerId === refUserId) {
-                            this.$message({
-                                message: 'It\'s personal (own) avatar',
+                this.showUserDialog(ownerId);
+            } else {
+                API.getAvatarImages({fileId}).then((args) => {
+                    var ownerId = args.json.ownerId;
+                    if (ownerId === refUserId) {
+                        this.$message({
+                            message: 'It\'s personal (own) avatar',
                                 type: 'warning'
                             });
-                            return;
-                        }
-                        this.showUserDialog(ownerId);
+                        return;
                     }
+                    this.showUserDialog(ownerId);
                 });
-            });
+            }
         } else {
             this.$message({
                 message: 'Sorry, the author is unknown',
