@@ -1139,6 +1139,9 @@ html
                                         el-dropdown-item(icon="el-icon-s-flag" command="New Instance" divided) New Instance
                                         el-dropdown-item(v-if="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id" icon="el-icon-magic-stick" command="Reset Home" divided) Reset Home
                                         el-dropdown-item(v-else icon="el-icon-s-home" command="Make Home" divided) Make Home
+                                        el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
+                                        el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
+                                        el-dropdown-item(v-if="API.currentUser.id === worldDialog.ref.authorId" icon="el-icon-delete" command="Delete" style="color:#F56C6C" divided) Delete
                     el-tabs
                         el-tab-pane(label="Instances")
                             div.
