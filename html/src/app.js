@@ -7873,12 +7873,12 @@ speechSynthesis.getVoices();
             releaseStatus: 'all',
             user: 'me',
         };
-        var map = new Map();
         for (var ref of API.cachedAvatars.values()) {
             if (ref.authorId === D.id) {
-                map.set(ref.id, ref);
+                API.cachedAvatars.delete(ref.id);
             }
         }
+        var map = new Map();
         API.bulk({
             fn: 'getAvatars',
             N: -1,
