@@ -1087,10 +1087,10 @@ html
                                 el-radio-group(v-model="userDialog.avatarSorting" size="mini" style="margin-left:30px" @change="changeUserDialogAvatarSorting")
                                 el-radio(label="name") by name
                                 el-radio(label="update") by update
-                            el-radio-group(v-model="userDialog.avatarReleaseStatus" size="mini" style="margin-left:60px")
-                                el-radio(label="all") all
-                                el-radio(label="public") public
-                                el-radio(label="private") private
+                                el-radio-group(v-model="userDialog.avatarReleaseStatus" size="mini" style="margin-left:60px")
+                                    el-radio(label="all") all
+                                    el-radio(label="public") public
+                                    el-radio(label="private") private
                             .x-friend-list(v-loading="userDialog.isAvatarsLoading" style="margin-top:10px;min-height:60px")
                                 .x-friend-item(v-for="avatar in userDialogAvatars" :key="avatar.id" @click="showAvatarDialog(avatar.id)")
                                     .avatar
