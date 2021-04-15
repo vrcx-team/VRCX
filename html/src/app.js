@@ -4318,7 +4318,30 @@ speechSynthesis.getVoices();
                 ((this.desktopToast === 'Game Closed') && (!this.isGameRunning)) ||
                 ((this.desktopToast === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) ||
                 ((this.xsNotifications) && (this.isGameRunning) && (!this.isGameNoVR)))) {
-                var image = await AppApi.CacheImage(imageURL, appVersion);
+                try {
+                    await fetch(imageURL, {
+                        method: 'GET',
+                        redirect: 'follow',
+                        headers: {
+                            'User-Agent': appVersion
+                        }
+                    }).then(response => {
+                        return response.arrayBuffer();
+                    }).then(buffer => {
+                        var binary = '';
+                        var bytes = new Uint8Array(buffer);
+                        var length = bytes.byteLength;
+                        for (var i = 0; i < length; i++) {
+                            binary += String.fromCharCode(bytes[i]);
+                        }
+                        var imageData = btoa(binary);
+                        AppApi.CacheImage(imageData);
+                    });
+                    image = true;
+                } catch (err) {
+                    console.error(err);
+                    image = false;
+                }
             }
             if ((this.xsNotifications) && (this.isGameRunning) && (!this.isGameNoVR)) {
                 this.displayXSNotification(noty, message, image);

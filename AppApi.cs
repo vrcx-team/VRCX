@@ -210,22 +210,10 @@ namespace VRCX
             return CpuMonitor.Instance.CpuUsage;
         }
 
-        public bool CacheImage(string ImageURL, string AppVersion)
+        public void CacheImage(string Base64File)
         {
             String Icon = Path.Combine(Program.BaseDirectory, "cache\\toast");
-            try
-            {
-                using (var client = new WebClient())
-                {
-                    client.Headers.Add("user-agent", AppVersion);
-                    client.DownloadFile(ImageURL, Icon);
-                }
-            }
-            catch (WebException)
-            {
-                return false;
-            }
-            return true;
+            File.WriteAllBytes(Icon, Convert.FromBase64String(Base64File));
         }
 
         public void DesktopNotification(string BoldText, string Text, bool Image)
