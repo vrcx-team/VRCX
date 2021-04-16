@@ -3759,11 +3759,6 @@ speechSynthesis.getVoices();
             noty: [],
             lastEntryDate: ''
         },
-        playerModerationTable: {
-            wrist: [],
-            noty: [],
-            lastEntryDate: ''
-        },
         pendingUpdate: false
     };
 
@@ -3789,15 +3784,14 @@ speechSynthesis.getVoices();
         this.updateSharedFeedFeedTable(forceUpdate);
         this.updateSharedFeedNotificationTable(forceUpdate);
         this.updateSharedFeedFriendLogTable(forceUpdate);
-        //this.updateSharedFeedPlayerModerationTable(forceUpdate);
         var feeds = this.sharedFeed;
         if (!feeds.pendingUpdate) {
             return;
         }
         var wristFeed = [];
-        wristFeed = wristFeed.concat(feeds.gameLog.wrist, feeds.feedTable.wrist, feeds.notificationTable.wrist, feeds.friendLogTable.wrist, feeds.playerModerationTable.wrist);
+        wristFeed = wristFeed.concat(feeds.gameLog.wrist, feeds.feedTable.wrist, feeds.notificationTable.wrist, feeds.friendLogTable.wrist);
         var notyFeed = [];
-        notyFeed = notyFeed.concat(feeds.gameLog.noty, feeds.feedTable.noty, feeds.notificationTable.noty, feeds.friendLogTable.noty, feeds.playerModerationTable.noty);
+        notyFeed = notyFeed.concat(feeds.gameLog.noty, feeds.feedTable.noty, feeds.notificationTable.noty, feeds.friendLogTable.noty);
         // OnPlayerJoining
         var locationBias = Date.now() - 30000; //30 seconds
         if ((this.isGameRunning) && (this.lastLocation.date < locationBias) &&
@@ -4438,21 +4432,6 @@ speechSynthesis.getVoices();
             case 'DisplayName':
                 this.speak(`${noty.previousDisplayName} changed their name to ${noty.displayName}`);
                 break;
-            case 'showAvatar':
-                this.speak(`${noty.sourceDisplayName} has shown your avatar`);
-                break;
-            case 'hideAvatar':
-                this.speak(`${noty.sourceDisplayName} has hidden your avatar`);
-                break;
-            case 'block':
-                this.speak(`${noty.sourceDisplayName} has blocked you`);
-                break;
-            case 'mute':
-                this.speak(`${noty.sourceDisplayName} has muted you`);
-                break;
-            case 'unmute':
-                this.speak(`${noty.sourceDisplayName} has unmuted you`);
-                break;
             case 'PortalSpawn':
                 this.speak(`${noty.data} has spawned a portal`);
                 break;
@@ -4518,21 +4497,6 @@ speechSynthesis.getVoices();
             case 'DisplayName':
                 AppApi.XSNotification('VRCX', `${noty.previousDisplayName} changed their name to ${noty.displayName}`, timeout, image);
                 break;
-            case 'showAvatar':
-                AppApi.XSNotification('VRCX', `${noty.sourceDisplayName} has shown your avatar`, timeout, image);
-                break;
-            case 'hideAvatar':
-                AppApi.XSNotification('VRCX', `${noty.sourceDisplayName} has hidden your avatar`, timeout, image);
-                break;
-            case 'block':
-                AppApi.XSNotification('VRCX', `${noty.sourceDisplayName} has blocked you`, timeout, image);
-                break;
-            case 'mute':
-                AppApi.XSNotification('VRCX', `${noty.sourceDisplayName} has muted you`, timeout, image);
-                break;
-            case 'unmute':
-                AppApi.XSNotification('VRCX', `${noty.sourceDisplayName} has unmuted you`, timeout, image);
-                break;
             case 'PortalSpawn':
                 AppApi.XSNotification('VRCX', `${noty.data} has spawned a portal`, timeout, image);
                 break;
@@ -4596,21 +4560,6 @@ speechSynthesis.getVoices();
                 break;
             case 'DisplayName':
                 AppApi.DesktopNotification(noty.previousDisplayName, `changed their name to ${noty.displayName}`, image);
-                break;
-            case 'showAvatar':
-                AppApi.DesktopNotification(noty.sourceDisplayName, `has shown your avatar`, image);
-                break;
-            case 'hideAvatar':
-                AppApi.DesktopNotification(noty.sourceDisplayName, `has hidden your avatar`, image);
-                break;
-            case 'block':
-                AppApi.DesktopNotification(noty.sourceDisplayName, `has blocked you`, image);
-                break;
-            case 'mute':
-                AppApi.DesktopNotification(noty.sourceDisplayName, `has muted you`, image);
-                break;
-            case 'unmute':
-                AppApi.DesktopNotification(noty.sourceDisplayName, `has unmuted you`, image);
                 break;
             case 'PortalSpawn':
                 AppApi.DesktopNotification(noty.data, `has spawned a portal`, image);
@@ -7049,11 +6998,6 @@ speechSynthesis.getVoices();
                 Unfriend: 'On',
                 DisplayName: 'VIP',
                 TrustLevel: 'VIP',
-                showAvatar: 'On',
-                hideAvatar: 'On',
-                block: 'On',
-                mute: 'On',
-                unmute: 'On',
                 PortalSpawn: 'Everyone',
                 ItemDestroy: 'Off',
                 Event: 'On',
@@ -7077,11 +7021,6 @@ speechSynthesis.getVoices();
                 Unfriend: 'On',
                 DisplayName: 'Friends',
                 TrustLevel: 'Friends',
-                showAvatar: 'On',
-                hideAvatar: 'On',
-                block: 'On',
-                mute: 'On',
-                unmute: 'On',
                 PortalSpawn: 'Everyone',
                 ItemDestroy: 'Everyone',
                 Event: 'On',
