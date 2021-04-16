@@ -3922,21 +3922,25 @@ speechSynthesis.getVoices();
             if ((playerCountIndex === 0) && (ctx.type === 'Location')) {
                 playerCountIndex = i;
             }
-            if (((ctx.type === 'OnPlayerJoined') || (ctx.type === 'OnPlayerLeft')) &&
+            if (((ctx.type === 'OnPlayerJoined') ||
+                (ctx.type === 'OnPlayerLeft') ||
+                (ctx.type === 'PortalSpawn')) &&
                 (ctx.data === API.currentUser.displayName)) {
                 continue;
             }
             // on Location change remove OnPlayerJoined
-            if ((ctx.type === 'Location') && (this.hideOnPlayerJoined)) {
+            if (ctx.type === 'Location') {
                 var locationBias = new Date(Date.parse(ctx.created_at) + 15000).toJSON(); //15 seconds
-                for (var k = w - 1; k > -1; k--) {
-                    var feedItem = wristArr[k];
-                    if ((feedItem.created_at > locationBias) || (feedItem.type === 'Location')) {
+                if (this.hideOnPlayerJoined) {
+                    for (var k = w - 1; k > -1; k--) {
+                        var feedItem = wristArr[k];
+                        if ((feedItem.created_at > locationBias) || (feedItem.type === 'Location')) {
                         break;
                     }
                     if (feedItem.type === 'OnPlayerJoined') {
                         wristArr.splice(k, 1);
-                        w--;
+                            w--;
+                        }
                     }
                 }
                 for (var k = n - 1; k > -1; k--) {
@@ -4294,9 +4298,9 @@ speechSynthesis.getVoices();
                 continue;
             }
             var message = '';
-            for (i = 0; i < messageList.length; i++) {
-                if (typeof noty.details !== 'undefined' && typeof noty.details[messageList[i]] !== 'undefined') {
-                    message = noty.details[messageList[i]];
+            for (var k = 0; k < messageList.length; k++) {
+                if (typeof noty.details !== 'undefined' && typeof noty.details[messageList[k]] !== 'undefined') {
+                    message = noty.details[messageList[k]];
                 }
             }
             if (message) {
@@ -8351,14 +8355,15 @@ speechSynthesis.getVoices();
                     }
                 }
             }
-        } else {
-            for (var { ref } of this.friends.values()) {
-                if (typeof ref === 'undefined' ||
-                    typeof ref.$location === 'undefined' ||
-                    ref.$location.worldId !== D.id) {
-                    continue;
-                }
-                var { instanceId } = ref.$location;
+        }
+        for (var { ref } of this.friends.values()) {
+            if (typeof ref === 'undefined' ||
+                typeof ref.$location === 'undefined' ||
+                ref.$location.worldId !== D.id ||
+                ref.$location.instanceId === lastLocation$.instanceId) {
+                continue;
+            }
+            var { instanceId } = ref.$location;
                 var instance = instances[instanceId];
                 if (typeof instance === 'undefined') {
                     instance = {
@@ -8367,9 +8372,8 @@ speechSynthesis.getVoices();
                         users: []
                     };
                     instances[instanceId] = instance;
-                }
-                instance.users.push(ref);
             }
+            instance.users.push(ref);
         }
         var rooms = [];
         for (var instance of Object.values(instances)) {
