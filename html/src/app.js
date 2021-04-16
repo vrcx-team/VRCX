@@ -3875,7 +3875,7 @@ speechSynthesis.getVoices();
             }
             return 0;
         });
-        notyFeed.splice(5);
+        notyFeed.splice(1);
         sharedRepository.setArray('wristFeed', wristFeed);
         sharedRepository.setArray('notyFeed', notyFeed);
         if (this.userDialog.visible) {
@@ -3979,7 +3979,7 @@ speechSynthesis.getVoices();
                 });
                 ++w;
             }
-            if ((n < 5) && (notyFilter[ctx.type]) &&
+            if ((n < 1) && (notyFilter[ctx.type]) &&
                 ((notyFilter[ctx.type] === 'On') ||
                 (notyFilter[ctx.type] === 'Everyone') ||
                 ((notyFilter[ctx.type] === 'Friends') && (isFriend)) ||
@@ -4074,7 +4074,7 @@ speechSynthesis.getVoices();
                 });
                 ++w;
             }
-            if ((n < 5) && (notyFilter[ctx.type]) &&
+            if ((n < 1) && (notyFilter[ctx.type]) &&
                 ((notyFilter[ctx.type] === 'Friends') ||
                 ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
                 notyArr.push({
@@ -4131,7 +4131,7 @@ speechSynthesis.getVoices();
                 });
                 ++w;
             }
-            if ((n < 5) && (notyFilter[ctx.type]) &&
+            if ((n < 1) && (notyFilter[ctx.type]) &&
                 ((notyFilter[ctx.type] === 'On') ||
                 (notyFilter[ctx.type] === 'Friends') ||
                 ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
@@ -4189,7 +4189,7 @@ speechSynthesis.getVoices();
                 });
                 ++w;
             }
-            if ((n < 5) && (notyFilter[ctx.type]) &&
+            if ((n < 1) && (notyFilter[ctx.type]) &&
                 ((notyFilter[ctx.type] === 'On') ||
                 (notyFilter[ctx.type] === 'Friends') ||
                 ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
@@ -4206,65 +4206,33 @@ speechSynthesis.getVoices();
         this.sharedFeed.pendingUpdate = true;
     };
 
-    $app.methods.updateSharedFeedPlayerModerationTable = function (forceUpdate) {
-        // showAvatar, hideAvatar, block, mute, unmute
-        var { data } = this.playerModerationTable;
-        var i = data.length;
-        if (i > 0) {
-            if ((data[i - 1].created === this.sharedFeed.playerModerationTable.lastEntryDate) &&
-                (forceUpdate === false)) {
-                return;
-            }
-            this.sharedFeed.playerModerationTable.lastEntryDate = data[i - 1].created;
-        } else {
-            return;
-        }
-        var bias = new Date(Date.now() - 86400000).toJSON(); //24 hours
-        var wristArr = [];
-        var notyArr = [];
-        var w = 0;
-        var n = 0;
-        var wristFilter = this.sharedFeedFilters.wrist;
-        var notyFilter = this.sharedFeedFilters.noty;
-        for (var i = data.length - 1; i > -1; i--) {
-            var ctx = data[i];
-            if (ctx.created < bias) {
-                break;
-            }
-            if (ctx.sourceUserId === API.currentUser.id) {
-                continue;
-            }
-            var isFriend = this.friends.has(ctx.sourceUserId);
-            var isFavorite = API.cachedFavoritesByObjectId.has(ctx.sourceUserId);
-            if ((w < 20) && (wristFilter[ctx.type]) &&
-                (wristFilter[ctx.type] === 'On')) {
-                wristArr.push({
-                    ...ctx,
-                    created_at: ctx.created,
-                    isFriend,
-                    isFavorite
-                });
-                ++w;
-            }
-            if ((n < 5) && (notyFilter[ctx.type]) &&
-                (notyFilter[ctx.type] === 'On')) {
-                notyArr.push({
-                    ...ctx,
-                    created_at: ctx.created,
-                    isFriend,
-                    isFavorite
-                });
-                ++n;
-            }
-        }
-        this.sharedFeed.playerModerationTable.wrist = wristArr;
-        this.sharedFeed.playerModerationTable.noty = notyArr;
-        this.sharedFeed.pendingUpdate = true;
-    };
-
     $app.data.notyMap = [];
 
-    $app.methods.playNoty = async function (notyFeed) {
+    $app.methods.playNoty = function (notyFeed) {
+        var playNotificationTTS = false;
+        if ((this.notificationTTS === 'Always') ||
+            ((this.notificationTTS === 'Outside VR') && ((this.isGameNoVR) || (!this.isGameRunning))) ||
+            ((this.notificationTTS === 'Inside VR') && (!this.isGameNoVR) && (this.isGameRunning)) ||
+            ((this.notificationTTS === 'Game Closed') && (!this.isGameRunning)) ||
+            ((this.notificationTTS === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) {
+            playNotificationTTS = true;
+        }
+        var playDesktopToast = false;
+        if ((this.desktopToast === 'Always') ||
+            ((this.desktopToast === 'Outside VR') && ((this.isGameNoVR) || (!this.isGameRunning))) ||
+            ((this.desktopToast === 'Inside VR') && (!this.isGameNoVR) && (this.isGameRunning)) ||
+            ((this.desktopToast === 'Game Closed') && (!this.isGameRunning)) ||
+            ((this.desktopToast === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) {
+            playDesktopToast = true;
+        }
+        var playXSNotification = false;
+        if ((this.xsNotifications) && (this.isGameRunning) && (!this.isGameNoVR)) {
+            playXSNotification = true;
+        }
+        if ((this.currentUserStatus === 'busy') ||
+            (!this.notyInit)) {
+            return;
+        }
         var notyToPlay = [];
         notyFeed.forEach((feed) => {
             var displayName = '';
@@ -4285,10 +4253,6 @@ speechSynthesis.getVoices();
                 notyToPlay.push(feed);
             }
         });
-        // disable notifications when busy
-        if ((this.currentUserStatus === 'busy') || (!this.notyInit)) {
-            return;
-        }
         var bias = new Date(Date.now() - 60000).toJSON();
         var noty = {};
         var messageList = ['inviteMessage', 'requestMessage', 'responseMessage'];
@@ -4306,48 +4270,18 @@ speechSynthesis.getVoices();
             if (message) {
                 message = `, ${message}`;
             }
-            if ((this.notificationTTS) && (this.isGameRunning)) {
+            if (playNotificationTTS) {
                 this.playNotyTTS(noty, message);
             }
-            var imageURL = await this.notyGetImage(noty);
-            var image = false;
-            if ((imageURL) &&
-                (((this.desktopToast === 'Always') ||
-                ((this.desktopToast === 'Game Closed') && (!this.isGameRunning)) ||
-                ((this.desktopToast === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) ||
-                ((this.xsNotifications) && (this.isGameRunning) && (!this.isGameNoVR)))) {
-                try {
-                    await fetch(imageURL, {
-                        method: 'GET',
-                        redirect: 'follow',
-                        headers: {
-                            'User-Agent': appVersion
-                        }
-                    }).then(response => {
-                        return response.arrayBuffer();
-                    }).then(buffer => {
-                        var binary = '';
-                        var bytes = new Uint8Array(buffer);
-                        var length = bytes.byteLength;
-                        for (var i = 0; i < length; i++) {
-                            binary += String.fromCharCode(bytes[i]);
-                        }
-                        var imageData = btoa(binary);
-                        AppApi.CacheImage(imageData);
-                    });
-                    image = true;
-                } catch (err) {
-                    console.error(err);
-                    image = false;
-                }
-            }
-            if ((this.xsNotifications) && (this.isGameRunning) && (!this.isGameNoVR)) {
-                this.displayXSNotification(noty, message, image);
-            }
-            if ((this.desktopToast === 'Always') ||
-                ((this.desktopToast === 'Game Closed') && (!this.isGameRunning)) ||
-                ((this.desktopToast === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) {
-                this.displayDesktopToast(noty, message, image);
+            if ((playDesktopToast) || (playXSNotification)) {
+                this.notyGetImage(noty).then((image) => {
+                    if (playXSNotification) {
+                        this.displayXSNotification(noty, message, image);
+                    }
+                    if (playDesktopToast) {
+                        this.displayDesktopToast(noty, message, image);
+                    }
+                });
             }
         }
     };
@@ -4375,7 +4309,8 @@ speechSynthesis.getVoices();
             imageURL = await API.getCachedUser({
                 userId: userId
             }).catch((err) => {
-                throw err;
+                console.error(err);
+                return false;
             }).then((args) => {
                 if ((this.displayVRCPlusIconsAsAvatar) && (args.json.userIcon)) {
                     return args.json.userIcon;
@@ -4383,7 +4318,33 @@ speechSynthesis.getVoices();
                 return args.json.currentAvatarThumbnailImageUrl;
             });
         }
-        return imageURL;
+        if (!imageURL) {
+            return false;
+        }
+        try {
+            await fetch(imageURL, {
+                method: 'GET',
+                redirect: 'follow',
+                headers: {
+                    'User-Agent': appVersion
+                }
+            }).then(response => {
+                return response.arrayBuffer();
+            }).then(buffer => {
+                var binary = '';
+                var bytes = new Uint8Array(buffer);
+                var length = bytes.byteLength;
+                for (var i = 0; i < length; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                var imageData = btoa(binary);
+                AppApi.CacheImage(imageData);
+            });
+            return true;
+        } catch (err) {
+            console.error(err);
+            return false;
+        }
     };
 
     $app.methods.playNotyTTS = async function (noty, message) {
@@ -6898,7 +6859,7 @@ speechSynthesis.getVoices();
     $app.data.desktopToast = configRepository.getString('VRCX_desktopToast');
     $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
     $app.data.displayVRCPlusIconsAsAvatar = configRepository.getBool('displayVRCPlusIconsAsAvatar');
-    $app.data.notificationTTS = configRepository.getBool('VRCX_notificationTTS');
+    $app.data.notificationTTS = configRepository.getString('VRCX_notificationTTS');
     $app.data.notificationTTSVoice = configRepository.getString('VRCX_notificationTTSVoice');
     $app.data.notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
     var saveOpenVROption = function () {
@@ -6918,11 +6879,11 @@ speechSynthesis.getVoices();
     };
     $app.data.TTSvoices = speechSynthesis.getVoices();
     var saveNotificationTTS = function () {
-        configRepository.setBool('VRCX_notificationTTS', this.notificationTTS);
         speechSynthesis.cancel();
-        if (this.notificationTTS) {
+        if ((configRepository.getString('VRCX_notificationTTS') === 'Never') && (this.notificationTTS !== 'Never')) {
             this.speak('Notification text-to-speech enabled');
         }
+        configRepository.setString('VRCX_notificationTTS', this.notificationTTS);
         this.updateVRConfigVars();
     };
     $app.watch.openVR = saveOpenVROption;
@@ -6981,6 +6942,10 @@ speechSynthesis.getVoices();
     if (!configRepository.getString('VRCX_desktopToast')) {
         $app.data.desktopToast = 'Never';
         configRepository.setString('VRCX_desktopToast', $app.data.desktopToast);
+    }
+    if (!configRepository.getString('VRCX_notificationTTS')) {
+        $app.data.notificationTTS = 'Never';
+        configRepository.setString('VRCX_notificationTTS', $app.data.notificationTTS);
     }
     if (!configRepository.getString('sharedFeedFilters')) {
         var sharedFeedFilters = {
@@ -7081,16 +7046,16 @@ speechSynthesis.getVoices();
             labels: [{ name: 'Off' }, { name: 'On' }]
         }
     };
-    $app.data.desktopToastToggleSwitchOption = {
+    $app.data.whenToPlayToggleSwitchOption = {
         layout: toggleSwitchLayout,
         size: {
             height: 1.5,
-            width: 22,
+            width: 33,
             padding: 0.1,
             fontSize: 0.75
         },
         items: {
-            labels: [{ name: 'Never' }, { name: 'Desktop Mode' }, { name: 'Game Closed' }, { name: 'Always' }]
+            labels: [{ name: 'Never' }, { name: 'Desktop Mode' }, { name: 'Outside VR' }, { name: 'Inside VR' }, { name: 'Game Closed' }, { name: 'Always' }]
         }
     };
 

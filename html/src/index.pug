@@ -791,14 +791,15 @@ html
                     div.options-container-item
                         span.name Desktop Notifications, When to display:
                         br
-                        toggle-switch(:options="desktopToastToggleSwitchOption" group="desktopToastToggleSwitchOption" v-model="desktopToast" class="toggle-switch")
+                        toggle-switch(:options="whenToPlayToggleSwitchOption" group="whenToPlayDesktopNotificationsToggleSwitchOption" v-model="desktopToast" class="toggle-switch")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()") Notification Filters
                     br
                     span.sub-header TTS Options
                     div.options-container-item
-                        span.name Notification TTS
-                        el-switch(v-model="notificationTTS")
+                        span.name Notification TTS, When to play:
+                        br
+                        toggle-switch(:options="whenToPlayToggleSwitchOption" group="whenToPlayNotificationTTSToggleSwitchOption" v-model="notificationTTS" class="toggle-switch")
                     div.options-container-item
                         span.name Text-to-Speech Voice
                         el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
