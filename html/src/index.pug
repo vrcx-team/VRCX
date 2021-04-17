@@ -596,7 +596,7 @@ html
                 div.options-container(style="margin-top:0")
                     span.header Friends List
                     div(style="float:right;font-size:13px")
-                        span Load missing entries, don't click this unless you understand the risks:
+                        span Load missing entries, spams API use at your own risk:
                         template(v-if="friendsListLoading")
                             span(v-text="friendsListLoadingProgress" style="margin-left:5px")
                             el-tooltip(placement="top")
@@ -752,14 +752,9 @@ html
                     div.options-container-item
                         span.name Force Run (Opens SteamVR)
                         el-switch(v-model="openVRAlways" :disabled="!openVR")
-                    br
-                    span.sub-header Display Options
                     div.options-container-item
                         span.name Hide Private Worlds
                         el-switch(v-model="hidePrivateFromFeed")
-                    div.options-container-item
-                        span.name Hide Joins When Joining
-                        el-switch(v-model="hideOnPlayerJoined")
                     br
                     span.sub-header Wrist Feed
                     div.options-container-item
@@ -774,6 +769,9 @@ html
                     div.options-container-item
                         span.name Hide VR Devices
                         el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR || !overlayWrist")
+                    div.options-container-item
+                        span.name Hide Joins When Joining
+                        el-switch(v-model="hideOnPlayerJoined")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog()" :disabled="!openVR || !overlayWrist") Wrist Feed Filters
                     br
