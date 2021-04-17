@@ -1,4 +1,4 @@
-﻿using CefSharp;
+using CefSharp;
 using CefSharp.WinForms;
 using System;
 using System.IO;
@@ -41,7 +41,7 @@ namespace VRCX
             cefSettings.CefCommandLineArgs.Add("disable-extensions");
             cefSettings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
             // cefSettings.CefCommandLineArgs.Add("allow-universal-access-from-files");
-            // cefSettings.CefCommandLineArgs.Add("disable-web-security");
+            cefSettings.CefCommandLineArgs.Add("disable-web-security");
             cefSettings.SetOffScreenRenderingBestPerformanceArgs();
 
             CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO
