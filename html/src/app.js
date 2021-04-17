@@ -7733,6 +7733,11 @@ speechSynthesis.getVoices();
                     API.getUser(args.params);
                 }
                 this.getAvatarName(args);
+                if (D.ref.$location.worldId) {
+                    API.getWorld({
+                        worldId: D.ref.$location.worldId
+                    });
+                }
             }
             return args;
         });
