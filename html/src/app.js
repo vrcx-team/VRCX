@@ -3232,8 +3232,6 @@ speechSynthesis.getVoices();
 
     API.$on('PIPELINE', function (args) {
         var { type, content } = args.json;
-        delete content.state;
-        delete content.status;
         switch (type) {
             case 'notification':
                 this.$emit('NOTIFICATION', {
