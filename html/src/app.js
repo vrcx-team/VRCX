@@ -3232,6 +3232,9 @@ speechSynthesis.getVoices();
 
     API.$on('PIPELINE', function (args) {
         var { type, content } = args.json;
+        if (typeof content.user !== 'undefined') {
+            delete content.user.state;
+        }
         switch (type) {
             case 'notification':
                 this.$emit('NOTIFICATION', {
