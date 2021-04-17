@@ -385,23 +385,22 @@ img.friends-list-avatar {
     object-fit: cover;
 }
 
-.x-change-avatar-item {
-    cursor: pointer;
+.x-change-image-item {
     display: inline-block;
     padding: 4px 4px 0 4px;
 }
 
-.x-change-avatar-item:hover {
+.x-change-image-item:hover {
     background: #f0f0f0;
     border-radius: 2px;
 }
 
-.x-change-avatar-item > img {
+.x-change-image-item > img {
     width: 240px;
     height: 180px;
 }
 
-.current-avatar-image {
+.current-image {
     border: 2px solid #67c23a;
     padding: 2px 2px 0 2px;
 }

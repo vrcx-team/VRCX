@@ -987,6 +987,7 @@ html
                                             el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") Send Friend Request
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) Show Avatar Author
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") Show Fallback Avatar Details
+                                            el-dropdown-item(icon="el-icon-picture-outline" command="Previous Images") Show Avatar Previous Images
                                             el-dropdown-item(v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided style="color:#F56C6C") Unblock
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided) Block
                                             el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") Unmute
@@ -1138,9 +1139,13 @@ html
                                         el-dropdown-item(icon="el-icon-s-flag" command="New Instance" divided) New Instance
                                         el-dropdown-item(v-if="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id" icon="el-icon-magic-stick" command="Reset Home" divided) Reset Home
                                         el-dropdown-item(v-else icon="el-icon-s-home" command="Make Home" divided) Make Home
-                                        el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
-                                        el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
-                                        el-dropdown-item(v-if="API.currentUser.id === worldDialog.ref.authorId" icon="el-icon-delete" command="Delete" style="color:#F56C6C" divided) Delete
+                                        template(v-if="API.currentUser.id !== worldDialog.ref.authorId")
+                                            el-dropdown-item(icon="el-icon-picture-outline" command="Previous Images") Previous Images
+                                        template(v-else)
+                                            el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
+                                            el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
+                                            el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
+                                            el-dropdown-item(icon="el-icon-delete" command="Delete" style="color:#F56C6C" divided) Delete
                     el-tabs
                         el-tab-pane(label="Instances")
                             div.
@@ -1248,6 +1253,7 @@ html
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-check" command="Select Avatar") Select Avatar
                                         el-dropdown-item(v-if="/quest/.test(avatarDialog.ref.tags)" icon="el-icon-check" command="Select Fallback Avatar") Select Fallback Avatar
+                                        el-dropdown-item(v-if="avatarDialog.ref.authorId !== API.currentUser.id" icon="el-icon-picture-outline" command="Previous Images") Previous Images
                                         template(v-if="avatarDialog.ref.authorId === API.currentUser.id")
                                             el-dropdown-item(v-if="avatarDialog.ref.releaseStatus === 'public'" icon="el-icon-user-solid" command="Make Private" divided) Make Private
                                             el-dropdown-item(v-else icon="el-icon-user" command="Make Public" divided) Make Public
@@ -1697,9 +1703,23 @@ html
             //- dialog: Change avatar image
             el-dialog.x-dialog(ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" title="Change Avatar Image" width="800px")
                 div(v-loading="changeAvatarImageDialogLoading")
-                    div(style="display:inline-block" v-for="image in changeAvatarImageTable" :key="image.version" v-if="image.file")
-                        .x-change-avatar-item(@click="setAvatarImage(image)" :class="{ 'current-avatar-image': compareCurrentAvatarImage(image) }")
-                            img.avatar(v-lazy="image.file.url")
+                    div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
+                        .x-change-image-item(@click="setAvatarImage(image)" style="cursor:pointer" :class="{ 'current-image': compareCurrentImage(image) }")
+                            img.image(v-lazy="image.file.url")
+                            
+            //- dialog: Change world image
+            el-dialog.x-dialog(ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" title="Change World Image" width="800px")
+                div(v-loading="changeWorldImageDialogLoading")
+                    div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
+                        .x-change-image-item(@click="setWorldImage(image)" style="cursor:pointer" :class="{ 'current-image': compareCurrentImage(image) }")
+                            img.image(v-lazy="image.file.url")
+                            
+            //- dialog: Display previous avatar/world images
+            el-dialog.x-dialog(ref="previousImagesDialog" :visible.sync="previousImagesDialogVisible" title="Previous Images" width="800px")
+                div
+                    div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
+                        .x-change-image-item
+                            img.image(v-lazy="image.file.url")
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:visible.sync="ossDialog" title="Open Source Software Notice" width="650px")

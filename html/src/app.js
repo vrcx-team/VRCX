@@ -8133,6 +8133,8 @@ speechSynthesis.getVoices();
                     type: 'error'
                 });
             }
+        } else if (command === 'Previous Images') {
+            this.displayPreviousImages('User');
         } else {
             this.$confirm(`Continue? ${command}`, 'Confirm', {
                 confirmButtonText: 'Confirm',
@@ -8413,6 +8415,12 @@ speechSynthesis.getVoices();
             case 'Rename':
                 this.promptRenameWorld(D);
                 break;
+            case 'Change Image':
+                this.displayPreviousImages('World', 'Change');
+                break;
+            case 'Previous Images':
+                this.displayPreviousImages('World', 'Display');
+                break;
             case 'Change Description':
                 this.promptChangeWorldDescription(D);
                 break;
@@ -8595,7 +8603,10 @@ speechSynthesis.getVoices();
                 document.getElementById('AvatarImageUploadButton').click();
                 break;
             case 'Change Image':
-                this.displayAvatarImages();
+                this.displayPreviousImages('Avatar', 'Change');
+                break;
+            case 'Previous Images':
+                this.displayPreviousImages('Avatar', 'Display');
                 break;
             case 'Change Description':
                 this.promptChangeAvatarDescription(D);
@@ -10533,17 +10544,44 @@ speechSynthesis.getVoices();
         }
     });
 
-    // Set avatar image
+    API.setWorldImage = function (params) {
+        return this.call(`worlds/${params.id}`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('WORLDIMAGE:SET', args);
+            this.$emit('WORLD', args);
+            return args;
+        });
+    };
 
-    $app.methods.displayAvatarImages = function () {
-        this.changeAvatarImageTableFileId = '';
-        this.changeAvatarImageTable = '';
-        if (this.avatarDialog.visible) {
-            var { imageUrl } = this.avatarDialog.ref;
-        } else if (this.userDialog.visible) {
-            var imageUrl = this.userDialog.ref.currentAvatarImageUrl;
+    API.$on('WORLDIMAGE:SET', function (args) {
+        $app.worldDialog.loading = false;
+        if (args.json.imageUrl === args.params.imageUrl) {
+            $app.$message({
+                message: 'World image changed',
+                type: 'success'
+            });
         } else {
-            return;
+            this.$throw(0, 'World image change failed');
+        }
+    });
+
+    // Set avatar/world image
+
+    $app.methods.displayPreviousImages = function (type, command) {
+        this.previousImagesTableFileId = '';
+        this.previousImagesTable = '';
+        if (type === 'Avatar') {
+            var { imageUrl } = this.avatarDialog.ref;
+        } else if (type === 'World') {
+            var { imageUrl } = this.worldDialog.ref;
+        } else if (type === 'User') {
+            var imageUrl = this.userDialog.ref.currentAvatarImageUrl;
         }
         var fileId = extractFileId(imageUrl);
         if (!fileId) {
@@ -10552,20 +10590,73 @@ speechSynthesis.getVoices();
         var params = {
             fileId
         };
-        this.changeAvatarImageDialogVisible = true;
-        this.$nextTick(() => adjustDialogZ(this.$refs.changeAvatarImageDialog.$el));
-        API.getAvatarImages(params).then((args) => {
-            this.changeAvatarImageTableFileId = args.json.id;
-            var images = args.json.versions;
-            var imageArray = [];
-            images.forEach((image) => {
-                if (image.file) {
-                    imageArray.push(image.file.url);
-                }
+        if (type === 'Avatar') {
+            if (command === 'Display') {
+                this.previousImagesDialogVisible = true;
+                this.$nextTick(() => adjustDialogZ(this.$refs.previousImagesDialog.$el));
+            } else if (command === 'Change') {
+                this.changeAvatarImageDialogVisible = true;
+                this.$nextTick(() => adjustDialogZ(this.$refs.changeAvatarImageDialog.$el));
+            }
+            API.getAvatarImages(params).then((args) => {
+                this.previousImagesTableFileId = args.json.id;
+                var images = args.json.versions;
+                var imageArray = [];
+                images.forEach((image) => {
+                    if (image.file) {
+                        imageArray.push(image.file.url);
+                    }
+                });
+                this.previousImagesTable = images;
             });
-            this.changeAvatarImageTable = images;
-        });
+        } else if (type === 'World') {
+            if (command === 'Display') {
+                this.previousImagesDialogVisible = true;
+                this.$nextTick(() => adjustDialogZ(this.$refs.previousImagesDialog.$el));
+            } else if (command === 'Change') {
+                this.changeWorldImageDialogVisible = true;
+                this.$nextTick(() => adjustDialogZ(this.$refs.changeWorldImageDialog.$el));
+            }
+            API.getWorldImages(params).then((args) => {
+                this.previousImagesTableFileId = args.json.id;
+                var images = args.json.versions;
+                var imageArray = [];
+                images.forEach((image) => {
+                if (image.file) {
+                        imageArray.push(image.file.url);
+                    }
+                });
+                this.previousImagesTable = images;
+            });
+        } else if (type === 'User') {
+            this.previousImagesDialogVisible = true;
+            this.$nextTick(() => adjustDialogZ(this.$refs.previousImagesDialog.$el));
+            API.getAvatarImages(params).then((args) => {
+                this.previousImagesTableFileId = args.json.id;
+                var images = args.json.versions;
+                var imageArray = [];
+                images.forEach((image) => {
+                    if (image.file) {
+                        imageArray.push(image.file.url);
+                    }
+                });
+                this.previousImagesTable = images;
+            });
+        }
     };
+
+    $app.data.previousImagesDialogVisible = false;
+    $app.data.changeAvatarImageDialogVisible = false;
+    $app.data.changeAvatarImageDialogLoading = false;
+    $app.data.changeWorldImageDialogVisible = false;
+    $app.data.changeWorldImageDialogLoading = false;
+    $app.data.previousImagesTable = {};
+    $app.data.previousImagesFileId = '';
+
+    API.$on('LOGIN', function () {
+        $app.previousImagesTable = {};
+        $app.previousImagesDialogVisible = false;
+    });
 
     API.getAvatarImages = async function (params) {
         return await this.call(`file/${params.fileId}`, {
@@ -10577,6 +10668,20 @@ speechSynthesis.getVoices();
                 params
             };
             this.$emit('AVATARIMAGE:GET', args);
+            return args;
+        });
+    };
+
+    API.getWorldImages = async function (params) {
+        return await this.call(`file/${params.fileId}`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('WORLDIMAGE:GET', args);
             return args;
         });
     };
@@ -10605,31 +10710,33 @@ speechSynthesis.getVoices();
     $app.methods.setAvatarImage = function (image) {
         this.changeAvatarImageDialogLoading = true;
         var parmas = {
-            id: $app.avatarDialog.id,
-            imageUrl: `https://api.vrchat.cloud/api/1/file/${$app.changeAvatarImageTableFileId}/${image.version}/file`
+            id: this.avatarDialog.id,
+            imageUrl: `https://api.vrchat.cloud/api/1/file/${this.previousImagesTableFileId}/${image.version}/file`
         };
         API.setAvatarImage(parmas).finally(() => {
             this.changeAvatarImageDialogLoading = false;
-            $app.changeAvatarImageDialogVisible = false;
+            this.changeAvatarImageDialogVisible = false;
         });
     };
 
-    $app.methods.compareCurrentAvatarImage = function (image) {
-        if (`https://api.vrchat.cloud/api/1/file/${$app.changeAvatarImageTableFileId}/${image.version}/file` === this.avatarDialog.ref.imageUrl) {
+    $app.methods.setWorldImage = function (image) {
+        this.changeWorldImageDialogLoading = true;
+        var parmas = {
+            id: this.worldDialog.id,
+            imageUrl: `https://api.vrchat.cloud/api/1/file/${this.previousImagesTableFileId}/${image.version}/file`
+        };
+        API.setWorldImage(parmas).finally(() => {
+            this.changeWorldImageDialogLoading = false;
+            this.changeWorldImageDialogVisible = false;
+        });
+    };
+
+    $app.methods.compareCurrentImage = function (image) {
+        if (`https://api.vrchat.cloud/api/1/file/${this.previousImagesTableFileId}/${image.version}/file` === this.avatarDialog.ref.imageUrl) {
             return true;
         }
         return false;
-    }
-
-    $app.data.changeAvatarImageDialogVisible = false;
-    $app.data.changeAvatarImageDialogLoading = false;
-    $app.data.changeAvatarImageTable = {};
-    $app.data.changeAvatarImageTableFileId = '';
-
-    API.$on('LOGIN', function () {
-        $app.changeAvatarImageTable = {};
-        $app.changeAvatarImageDialogVisible = false;
-    });
+    };
 
     // Avatar names
 
