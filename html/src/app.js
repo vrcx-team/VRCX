@@ -3232,6 +3232,8 @@ speechSynthesis.getVoices();
 
     API.$on('PIPELINE', function (args) {
         var { type, content } = args.json;
+        delete content.state;
+        delete content.status;
         switch (type) {
             case 'notification':
                 this.$emit('NOTIFICATION', {
@@ -5335,10 +5337,17 @@ speechSynthesis.getVoices();
             } else if (user.userId) {
                 id = user.userId;
             }
-            if ((user.location === 'offline') ||
-                ((id) && (id !== API.currentUser.id) &&
+            if ((!user.isFriend) && (id) && (id !== API.currentUser.id)) {
+                return;
+            }
+            //temp fix
+            if ((user.status !== 'active') && (id) && (id !== API.currentUser.id) &&
                 (!this.friendsGroup0_.filter(e => e.id === id).length > 0) &&
-                (!this.friendsGroup1_.filter(e => e.id === id).length > 0))) {
+                (!this.friendsGroup1_.filter(e => e.id === id).length > 0)) {
+                // Offline
+                style.offline = true;
+            } else if ((user.location === 'offline') ||
+                ((user.state === 'active') && (user.location === 'private'))) {
                 // Offline
                 style.offline = true;
             } else if (user.status === 'active') {
@@ -7795,6 +7804,9 @@ speechSynthesis.getVoices();
                 for (var { ref } of this.friends.values()) {
                     if (typeof ref !== 'undefined' &&
                         ref.location === L.tag) {
+                        if ((ref.state === 'active') && (ref.location === 'private')) {
+                            continue;
+                        }
                         users.push(ref);
                     }
                 }
