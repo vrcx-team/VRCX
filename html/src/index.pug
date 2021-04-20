@@ -1083,6 +1083,7 @@ html
                         el-tab-pane(label="Avatars")
                             template(v-if="userDialog.ref.id === API.currentUser.id")
                                 el-button(type="default" :loading="userDialog.isAvatarsLoading" @click="refreshUserDialogAvatars()" size="mini" icon="el-icon-refresh" circle)
+                            template(v-if="userDialogAvatars.length > 0")
                                 span(style="margin-left:5px") Total {{ userDialogAvatars.length }}
                                 el-radio-group(v-model="userDialog.avatarSorting" size="mini" style="margin-left:30px" @change="changeUserDialogAvatarSorting")
                                     el-radio(label="name") by name

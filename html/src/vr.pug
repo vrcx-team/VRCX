@@ -262,9 +262,14 @@ html
                                 span {{ device[2] }}%
             .x-containerbottom
                 template(v-if="lastLocation.date != 0")
-                    span(style="float:right") Timer: {{ lastLocationTimer }}
-                    span(style="display:inline-block") Players: {{ lastLocation.playerList.length }} 
-                    span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
+                    template(v-if="config && config.minimalFeed")
+                        span(style="float:right") {{ lastLocationTimer }}
+                        span(style="display:inline-block") {{ lastLocation.playerList.length }} 
+                        span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
+                    template(v-else)
+                        span(style="float:right") Timer: {{ lastLocationTimer }}
+                        span(style="display:inline-block") Players: {{ lastLocation.playerList.length }} 
+                        span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
                 br
                 span(style="float:right") {{ currentTime | formatDate('YYYY-MM-DD HH:MI:SS AMPM') }}
                 span CPU {{ cpuUsage }}%

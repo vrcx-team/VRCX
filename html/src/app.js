@@ -3712,7 +3712,7 @@ speechSynthesis.getVoices();
         try {
             if (API.isLoggedIn === true) {
                 if (--this.nextCurrentUserRefresh <= 0) {
-                    this.nextCurrentUserRefresh = 120;  // 1min
+                    this.nextCurrentUserRefresh = 60;  // 30secs
                     API.getCurrentUser().catch((err1) => {
                         throw err1;
                     });
@@ -4415,7 +4415,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.displayXSNotification = async function (noty, message, image) {
-        var timeout = parseInt(this.notificationTimeout) / 1000;
+        var timeout = parseInt(parseInt(this.notificationTimeout) / 1000);
         switch (noty.type) {
             case 'OnPlayerJoined':
                 AppApi.XSNotification('VRCX', `${noty.data} has joined`, timeout, image);
@@ -7743,9 +7743,13 @@ speechSynthesis.getVoices();
                     API.getUser(args.params);
                 }
                 this.getAvatarName(args);
-                if (D.ref.$location.worldId) {
+                var L = API.parseLocation(D.ref.location);
+                if ((L.worldId) &&
+                    (this.lastLocation.location !== L.tag) &&
+                    ((L.accessType === 'public') ||
+                    (this.friends.has(L.userId)))) {
                     API.getWorld({
-                        worldId: D.ref.$location.worldId
+                        worldId: L.worldId
                     });
                 }
             }
@@ -7919,12 +7923,15 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.methods.refreshUserDialogAvatars = function () {
+    $app.methods.refreshUserDialogAvatars = function (fileId) {
         var D = this.userDialog;
         if (D.isAvatarsLoading) {
             return;
         }
         D.isAvatarsLoading = true;
+        if (fileId) {
+            D.loading = true;
+        }
         var params = {
             n: 50,
             offset: 0,
@@ -7955,6 +7962,19 @@ speechSynthesis.getVoices();
                 var array = Array.from(map.values());
                 this.setUserDialogAvatars(array);
                 D.isAvatarsLoading = false;
+                if (fileId) {
+                    D.loading = false;
+                    for (var ref of array) {
+                        if (extractFileId(ref.imageUrl) === fileId) {
+                            this.showAvatarDialog(ref.id);
+                            return;
+                        }
+                    }
+                    this.$message({
+                        message: 'Own avatar not found',
+                        type: 'error'
+                    });
+                }
             }
         });
     };
@@ -8099,43 +8119,7 @@ speechSynthesis.getVoices();
             });
         } else if (command === 'Show Avatar Author') {
             var { currentAvatarImageUrl } = D.ref;
-            for (var ref of API.cachedAvatars.values()) {
-                if (ref.imageUrl === currentAvatarImageUrl) {
-                    this.showAvatarDialog(ref.id);
-                    return;
-                }
-            }
-            var fileId = extractFileId(currentAvatarImageUrl);
-            if (fileId) {
-                if (API.cachedAvatarNames.has(fileId)) {
-                    var { ownerId } = API.cachedAvatarNames.get(fileId);
-                    if (ownerId === D.id) {
-                        this.$message({
-                            message: 'It\'s personal (own) avatar',
-                            type: 'warning'
-                        });
-                        return;
-                    }
-                    this.showUserDialog(ownerId);
-                } else {
-                    API.getAvatarImages({fileId}).then((args) => {
-                        var ownerId = args.json.ownerId;
-                        if (ownerId === D.id) {
-                            this.$message({
-                                message: 'It\'s personal (own) avatar',
-                                    type: 'warning'
-                                });
-                            return;
-                        }
-                        this.showUserDialog(ownerId);
-                    });
-                }
-            } else {
-                this.$message({
-                    message: 'Sorry, the author is unknown',
-                    type: 'error'
-                });
-            }
+            this.showAvatarAuthorDialog(D.id, currentAvatarImageUrl)
         } else if (command === 'Show Fallback Avatar Details') {
             var { fallbackAvatar } = D.ref;
             if (fallbackAvatar) {
@@ -8710,19 +8694,33 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.showAvatarAuthorDialog = function (refUserId, currentAvatarImageUrl) {
+        var fileId = extractFileId(currentAvatarImageUrl);
+        if (!fileId) {
+            this.$message({
+                message: 'Sorry, the author is unknown',
+                type: 'error'
+            });
+            return;
+        }
+        if (refUserId === API.currentUser.id) {
+            this.showAvatarDialog(API.currentUser.currentAvatar);
+            return;
+        }
         for (var ref of API.cachedAvatars.values()) {
-            if (ref.imageUrl === currentAvatarImageUrl) {
+            if (extractFileId(ref.imageUrl) === fileId) {
                 this.showAvatarDialog(ref.id);
                 return;
             }
         }
-        var fileId = extractFileId(currentAvatarImageUrl);
-        if (fileId) {
-            if (API.cachedAvatarNames.has(fileId)) {
-                var { ownerId } = API.cachedAvatarNames.get(fileId);
-                if (ownerId === refUserId) {
-                    this.$message({
-                        message: 'It\'s personal (own) avatar',
+        if (API.cachedAvatarNames.has(fileId)) {
+            var { ownerId } = API.cachedAvatarNames.get(fileId);
+            if (ownerId === API.currentUser.id) {
+                this.refreshUserDialogAvatars(fileId);
+                return;
+            }
+            if (ownerId === refUserId) {
+                this.$message({
+                    message: 'It\'s personal (own) avatar',
                         type: 'warning'
                     });
                     return;
@@ -8738,13 +8736,7 @@ speechSynthesis.getVoices();
                             });
                         return;
                     }
-                    this.showUserDialog(ownerId);
-                });
-            }
-        } else {
-            this.$message({
-                message: 'Sorry, the author is unknown',
-                type: 'error'
+                this.showUserDialog(ownerId);
             });
         }
     };
