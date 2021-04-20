@@ -3,7 +3,9 @@
   "scripts": {
     "dev": "webpack --config webpack.config.js --mode development",
     "watch": "webpack --config webpack.config.js --mode development --watch",
-    "prod": "webpack --config webpack.config.js --mode production"
+    "prod": "webpack --config webpack.config.js --mode production",
+    "development": "npm run dev",
+    "production": "npm run prod"
   },
   "repository": {
     "type": "git",
