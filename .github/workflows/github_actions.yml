@@ -38,4 +38,4 @@ jobs:
     - name: Restore dependencies
       run: npm ci
     - name: Build
-      run: npm run production
+      run: npm run prod
