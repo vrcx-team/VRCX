@@ -1110,7 +1110,7 @@ html
                                         span(v-if="!scope.data.children" v-text="scope.data.value")
 
             //- dialog: world
-            el-dialog.x-dialog.x-world-dialog(ref="worldDialog" :visible.sync="worldDialog.visible" :show-close="false" width="600px")
+            el-dialog.x-dialog.x-world-dialog(ref="worldDialog" :visible.sync="worldDialog.visible" :show-close="false" width="770px")
                 div(v-loading="worldDialog.loading")
                     div(style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click")
@@ -1274,15 +1274,17 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Last Updated
-                                        span.extra {{ avatarDialog.fileCreatedAt | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                        span.extra {{ avatarDialog.ref.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Version
-                                        span.extra(v-text="avatarDialog.ref.version")
+                                        span.extra(v-if="avatarDialog.ref.version !== 0" v-text="avatarDialog.ref.version")
+                                        span.extra(v-else) -
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Platform
-                                        span.extra(v-text="avatarDialogPlatform")
+                                        span.extra(v-if="avatarDialogPlatform" v-text="avatarDialogPlatform")
+                                        span.extra(v-else) -
                         el-tab-pane(label="JSON")
                             el-button(type="default" @click="refreshAvatarDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
                             el-tree(:data="avatarDialog.treeData" style="margin-top:5px;font-size:12px")
