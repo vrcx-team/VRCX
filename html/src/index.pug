@@ -188,6 +188,8 @@ html
                                 span(v-text="scope.row.data")
                             template(v-else-if="scope.row.type === 'VideoPlay'")
                                 span.x-link(v-text="scope.row.data" @click="openExternalLink(scope.row.data)")
+                                template(v-if="scope.row.displayName")
+                                    span.x-link(@click="lookupUser(scope.row.displayName)")  ({{ scope.row.displayName }})
                             template(v-else-if="scope.row.type === 'Notification'")
                             span.x-link(v-else v-text="scope.row.data" @click="lookupUser(scope.row.data)")
 

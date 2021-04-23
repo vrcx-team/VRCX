@@ -38,6 +38,7 @@ function parseRawGameLog(dt, type, args) {
 
         case 'video-play':
             gameLog.videoURL = args[0];
+            gameLog.displayName = args[1];
             break;
 
         default:

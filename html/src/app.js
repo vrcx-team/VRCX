@@ -5784,7 +5784,8 @@ speechSynthesis.getVoices();
                     tableData = {
                         created_at: gameLog.dt,
                         type: 'VideoPlay',
-                        data: gameLog.videoURL
+                        data: gameLog.videoURL,
+                        displayName: gameLog.displayName
                     };
                     break;
 
