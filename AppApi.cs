@@ -139,8 +139,8 @@ namespace VRCX
             {
                 using (var key = Registry.ClassesRoot.OpenSubKey(@"VRChat\shell\open\command"))
                 {
-                    // "C:\Program Files (x86)\Steam\steamapps\common\VRChat\launch.bat" "C:\Program Files (x86)\Steam\steamapps\common\VRChat" "%1"
-                    var match = Regex.Match(key.GetValue(string.Empty) as string, "^\"(.+?)\\\\launch.bat\"");
+                    // "C:\Program Files (x86)\Steam\steamapps\common\VRChat\launch.exe" "%1" %*
+                    var match = Regex.Match(key.GetValue(string.Empty) as string, "(?!\")(.+?\\\\VRChat.*)(!?\\\\launch.exe\")");
                     if (match.Success == true)
                     {
                         var path = match.Groups[1].Value;
