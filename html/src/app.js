@@ -8552,8 +8552,16 @@ speechSynthesis.getVoices();
                 if ((args.cache) && (D.ref.authorId === API.currentUser.id)) {
                     API.getAvatar(args.params);
                 } else {
+                    var id = extractFileId(args.ref.assetUrl);
                     var fileId = extractFileId(D.ref.imageUrl);
-                    if ((fileId) && (!D.ref.created_at)) {
+                    if (id) {
+                        D.fileSize = 'Loading';
+                        API.call(`file/${id}`).then((json) => {
+                            var ref = json.versions[json.versions.length - 1];
+                            D.ref.created_at = ref.created_at;
+                            D.fileSize = `${(ref.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
+                        });
+                    } else if ((fileId) && (!D.ref.created_at)) {
                         if (API.cachedAvatarNames.has(fileId)) {
                             var avatarInfo = API.cachedAvatarNames.get(fileId);
                             D.ref.created_at = avatarInfo.fileCreatedAt;
@@ -8685,7 +8693,7 @@ speechSynthesis.getVoices();
             });
             return;
         }
-        if (refUserId === API.currentUser.id) {
+        if ((refUserId === API.currentUser.id) && (API.cachedAvatars.has(API.currentUser.currentAvatar))) {
             this.showAvatarDialog(API.currentUser.currentAvatar);
             return;
         }
