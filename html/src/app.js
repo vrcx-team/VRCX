@@ -2585,6 +2585,12 @@ speechSynthesis.getVoices();
         });
     });
 
+    API.$on('FAVORITE:ADD', function (args) {
+        if ((args.params.type === 'avatar') && (!API.cachedAvatars.has(args.params.favoriteId))) {
+            this.refreshFavoriteAvatars(args.params.tags);
+        }
+    });
+
     API.$on('FAVORITE:DELETE', function (args) {
         var ref = this.cachedFavoritesByObjectId.get(args.params.objectId);
         if (typeof ref === 'undefined') {
@@ -2742,6 +2748,15 @@ speechSynthesis.getVoices();
         }
     };
 
+    API.refreshFavoriteAvatars = function (tag) {
+        var params = {
+            n: 100,
+            offset: 0,
+            tag
+        };
+        this.getFavoriteAvatars(params);
+    };
+
     API.refreshFavoriteItems = function () {
         var types = {
             'world': [0, 'getFavoriteWorlds'],
@@ -2770,7 +2785,7 @@ speechSynthesis.getVoices();
                             fn,
                             N,
                             params: {
-                                n: 50,
+                                n: 100,
                                 offset: 0,
                                 tag
                             }
@@ -7415,6 +7430,22 @@ speechSynthesis.getVoices();
         });
     };
 
+    $app.methods.promptAddAvatarFavoriteDialog = function () {
+        this.$prompt('Enter a Avatar ID (UUID)', 'Avatar Favorite', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputPattern: /\S+/,
+            inputErrorMessage: 'Avatar ID is required',
+            callback: (action, instance) => {
+                if (action === 'confirm' &&
+                    instance.inputValue) {
+                    this.showFavoriteDialog('avatar', instance.inputValue);
+                }
+            }
+        });
+    };
+
     // App: Dialog
 
     var adjustDialogZ = (el) => {
@@ -8782,6 +8813,14 @@ speechSynthesis.getVoices();
         }).then((args) => {
             D.visible = false;
             return args;
+        });
+    };
+
+    $app.methods.addFavoriteAvatar = function (ref, group) {
+        API.addFavorite({
+            type: 'avatar',
+            favoriteId: ref.id,
+            tags: group.name
         });
     };
 
