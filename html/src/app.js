@@ -1870,27 +1870,6 @@ speechSynthesis.getVoices();
 
     /*
         params: {
-            avatarId: string
-        }
-    */
-    API.getCachedAvatar = function (params) {
-        return new Promise((resolve, reject) => {
-            var ref = this.cachedAvatars.get(params.avatarId);
-            if (typeof ref === 'undefined') {
-                this.getAvatar(params).catch(reject).then(resolve);
-            } else {
-                resolve({
-                    cache: true,
-                    json: ref,
-                    params,
-                    ref
-                });
-            }
-        });
-    };
-
-    /*
-        params: {
             n: number,
             offset: number,
             search: string,
@@ -8565,48 +8544,44 @@ speechSynthesis.getVoices();
         this.$nextTick(() => adjustDialogZ(this.$refs.avatarDialog.$el));
         var D = this.avatarDialog;
         D.id = avatarId;
+        var ref = API.cachedAvatars.get(avatarId);
+        if (!ref) {
+            D.visible = false;
+            this.$message({
+                message: 'Avatar cache unavailable',
+                type: 'error'
+            });
+            return;
+        }
         D.treeData = [];
         D.fileSize = 'Unknown';
         D.visible = true;
-        D.loading = true;
-        API.getCachedAvatar({
-            avatarId
-        }).catch((err) => {
-            D.loading = false;
-            D.visible = false;
-            throw err;
-        }).then((args) => {
-            if ((D.visible) && (D.id === args.ref.id)) {
-                D.loading = false;
-                D.ref = args.ref;
-                D.isFavorite = API.cachedFavoritesByObjectId.has(D.ref.id);
-                if ((args.cache) && (D.ref.authorId === API.currentUser.id)) {
-                    API.getAvatar(args.params);
+        D.ref = ref;
+        D.isFavorite = API.cachedFavoritesByObjectId.has(avatarId);
+        if (D.ref.authorId === API.currentUser.id) {
+            API.getAvatar({avatarId});
+        } else {
+            var id = extractFileId(D.ref.assetUrl);
+            var fileId = extractFileId(D.ref.imageUrl);
+            if (id) {
+                D.fileSize = 'Loading';
+                API.call(`file/${id}`).then((json) => {
+                    var fileRef = json.versions[json.versions.length - 1];
+                    D.ref.created_at = fileRef.created_at;
+                    D.fileSize = `${(fileRef.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
+                });
+            } else if ((fileId) && (!D.ref.created_at)) {
+                if (API.cachedAvatarNames.has(fileId)) {
+                    var avatarInfo = API.cachedAvatarNames.get(fileId);
+                    D.ref.created_at = avatarInfo.fileCreatedAt;
                 } else {
-                    var id = extractFileId(args.ref.assetUrl);
-                    var fileId = extractFileId(D.ref.imageUrl);
-                    if (id) {
-                        D.fileSize = 'Loading';
-                        API.call(`file/${id}`).then((json) => {
-                            var ref = json.versions[json.versions.length - 1];
-                            D.ref.created_at = ref.created_at;
-                            D.fileSize = `${(ref.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
-                        });
-                    } else if ((fileId) && (!D.ref.created_at)) {
-                        if (API.cachedAvatarNames.has(fileId)) {
-                            var avatarInfo = API.cachedAvatarNames.get(fileId);
-                            D.ref.created_at = avatarInfo.fileCreatedAt;
-                        } else {
-                            API.getAvatarImages({fileId}).then((args) => {
-                                var avatarInfo = this.storeAvatarImage(args);
-                                D.ref.created_at = avatarInfo.fileCreatedAt;
-                            });
-                        }
-                    }
+                    API.getAvatarImages({fileId}).then((args) => {
+                        var avatarInfo = this.storeAvatarImage(args);
+                        D.ref.created_at = avatarInfo.fileCreatedAt;
+                    });
                 }
             }
-            return args;
-        });
+        }
     };
 
     $app.methods.avatarDialogCommand = function (command) {
@@ -8821,6 +8796,18 @@ speechSynthesis.getVoices();
             type: 'avatar',
             favoriteId: ref.id,
             tags: group.name
+        });
+    };
+
+    $app.methods.moveFavorite = function (ref, group, type) {
+        API.deleteFavorite({
+            objectId: ref.id
+        }).then(() => {
+            API.addFavorite({
+                type,
+                favoriteId: ref.id,
+                tags: group.name
+            });
         });
     };
 
