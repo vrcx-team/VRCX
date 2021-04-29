@@ -250,7 +250,7 @@ html
                             el-button(v-if="searchAvatarResults.length" @click="moreSearchAvatar(1)" icon="el-icon-right" size="small") Next
 
             //- favorite
-            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'favorite'")
+            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'favorite'" v-if="$refs.menu && $refs.menu.activeIndex === 'favorite'")
                 el-button(type="default" :loading="API.isFavoriteLoading" @click="API.refreshFavorites()" size="small" icon="el-icon-refresh" circle style="position:relative;float:right;z-index:1")
                 el-tabs(type="card" v-loading="API.isFavoriteLoading")
                     el-tab-pane(label="Friend")
@@ -637,7 +637,7 @@ html
                                 span(v-if="!scope.data.children" v-text="scope.data.value")
 
             //- friends list
-            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'friendsList'")
+            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'friendsList'" v-if="$refs.menu && $refs.menu.activeIndex === 'friendsList'")
                 div.options-container(style="margin-top:0")
                     span.header Friends List
                     div(style="float:right;font-size:13px")
