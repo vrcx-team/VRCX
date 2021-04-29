@@ -1,6 +1,5 @@
 @echo off
-for /f %%a in ('wmic os get LocalDateTime ^| find "."') do set DTS=%%a
-set TODAY=%DTS:~0,4%%DTS:~4,2%%DTS:~6,2%
+for /f %%a in ('powershell -Command "Get-Date -format yyyyMMdd"') do set TODAY=%%a
 set ZIP_NAME=VRCX_%TODAY%.zip
 echo %ZIP_NAME%
 rem using 7-Zip (https://www.7-zip.org)

@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set TODAY=%DATE:~0,4%%DATE:~5,2%%DATE:~8,2%
+for /f %%a in ('powershell -Command "Get-Date -format yyyyMMdd"') do set TODAY=%%a
 set ZIP_NAME=VRCX_%TODAY%.zip
 echo %ZIP_NAME%
 rem using bandizip (https://www.bandisoft.com/bandizip)

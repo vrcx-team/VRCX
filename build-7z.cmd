@@ -9,7 +9,7 @@ call npm run production
 cd ..
 mklink /J "%~dp0\bin\x64\Release\html" "%~dp0\html\dist"
 setlocal
-set TODAY=%DATE:~0,4%%DATE:~5,2%%DATE:~8,2%
+for /f %%a in ('powershell -Command "Get-Date -format yyyyMMdd"') do set TODAY=%%a
 set ZIP_NAME=VRCX_%TODAY%.zip
 echo %ZIP_NAME%
 rem using 7-Zip (https://www.7-zip.org)
