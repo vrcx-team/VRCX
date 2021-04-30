@@ -10884,6 +10884,7 @@ speechSynthesis.getVoices();
         if (obj.label === 'Avatars') {
             this.setUserDialogAvatars(userId);
             if (this.userDialogLastAvatar !== userId) {
+                this.userDialogLastAvatar = userId;
                 if ((userId === API.currentUser.id) && (this.userDialog.avatars.length === 0)) {
                     this.refreshUserDialogAvatars();
                 }
