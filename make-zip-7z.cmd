@@ -1,4 +1,5 @@
 @echo off
+setlocal
 for /f %%a in ('powershell -Command "Get-Date -format yyyyMMdd"') do set TODAY=%%a
 set ZIP_NAME=VRCX_%TODAY%.zip
 echo %ZIP_NAME%

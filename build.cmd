@@ -1,4 +1,5 @@
 @echo off
+setlocal
 cd /d %~dp0
 msbuild -t:restore -p:RestorePackagesConfig=true
 msbuild VRCX.sln /p:Configuration=Release /p:Platform=x64 -m
@@ -7,7 +8,6 @@ call npm ci
 call npm run production
 cd ..
 mklink /J "%~dp0\bin\x64\Release\html" "%~dp0\html\dist"
-setlocal
 for /f %%a in ('powershell -Command "Get-Date -format yyyyMMdd"') do set TODAY=%%a
 set ZIP_NAME=VRCX_%TODAY%.zip
 echo %ZIP_NAME%
