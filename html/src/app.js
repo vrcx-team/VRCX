@@ -1421,7 +1421,7 @@ speechSynthesis.getVoices();
                 }
             }
             var array = Array.from(map.values());
-            $app.setUserDialogWorlds(array);
+            $app.sortUserDialogWorlds(array);
         }
     });
 
@@ -1816,7 +1816,7 @@ speechSynthesis.getVoices();
                 }
             }
             var array = Array.from(map.values());
-            $app.setUserDialogAvatars(array);
+            $app.sortUserDialogAvatars(array);
         }
     });
 
@@ -7667,6 +7667,8 @@ speechSynthesis.getVoices();
         D.memo = this.loadMemo(userId);
         D.visible = true;
         D.loading = true;
+        D.avatars = [];
+        D.worlds = [];
         API.getCachedUser({
             userId
         }).catch((err) => {
@@ -7699,23 +7701,27 @@ speechSynthesis.getVoices();
                 }
                 D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
                 this.applyUserDialogLocation();
-                var worlds = [];
-                for (var ref of API.cachedWorlds.values()) {
-                    if (ref.authorId === D.id) {
-                        worlds.push(ref);
+                if (this.$refs.userDialogTabs.currentName === '0') {
+                    this.userDialogLastActiveTab = 'Info';
+                } else if (this.$refs.userDialogTabs.currentName === '1') {
+                    this.userDialogLastActiveTab = 'Worlds';
+                    this.setUserDialogWorlds(userId);
+                    if (this.userDialogLastWorld !== userId) {
+                        this.userDialogLastWorld = userId;
+                        this.refreshUserDialogWorlds();
                     }
-                }
-                this.setUserDialogWorlds(worlds);
-                var avatars = [];
-                for (var ref of API.cachedAvatars.values()) {
-                    if (ref.authorId === D.id) {
-                        avatars.push(ref);
+                } else if (this.$refs.userDialogTabs.currentName === '2') {
+                    this.userDialogLastActiveTab = 'Avatars';
+                    this.setUserDialogAvatars(userId);
+                    if (this.userDialogLastAvatar !== userId) {
+                        this.userDialogLastAvatar = userId;
+                        if ((userId === API.currentUser.id) && (D.avatars.length === 0)) {
+                            this.refreshUserDialogAvatars();
+                        }
                     }
+                } else if (this.$refs.userDialogTabs.currentName === '3') {
+                    this.userDialogLastActiveTab = 'JSON';
                 }
-                this.setUserDialogAvatars(avatars);
-                D.avatars = avatars;
-                D.isWorldsLoading = false;
-                D.isAvatarsLoading = false;
                 API.getFriendStatus({
                     userId: D.id
                 });
@@ -7836,7 +7842,17 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.setUserDialogWorlds = function (array) {
+    $app.methods.setUserDialogWorlds = function (userId) {
+        var worlds = [];
+        for (var ref of API.cachedWorlds.values()) {
+            if (ref.authorId === userId) {
+                worlds.push(ref);
+            }
+        }
+        this.sortUserDialogWorlds(worlds);
+    };
+
+    $app.methods.sortUserDialogWorlds = function (array) {
         var D = this.userDialog;
         if (D.worldSorting === 'update') {
             array.sort(compareByUpdatedAt);
@@ -7846,7 +7862,17 @@ speechSynthesis.getVoices();
         D.worlds = array;
     };
 
-    $app.methods.setUserDialogAvatars = function (array) {
+    $app.methods.setUserDialogAvatars = function (userId) {
+        var avatars = [];
+        for (var ref of API.cachedAvatars.values()) {
+            if (ref.authorId === userId) {
+                avatars.push(ref);
+            }
+        }
+        this.sortUserDialogAvatars(avatars);
+    };
+
+    $app.methods.sortUserDialogAvatars = function (array) {
         var D = this.userDialog;
         if (D.avatarSorting === 'update') {
             array.sort(compareByUpdatedAt);
@@ -7896,7 +7922,7 @@ speechSynthesis.getVoices();
             done: () => {
                 if (D.id === params.userId) {
                     var array = Array.from(map.values());
-                    this.setUserDialogWorlds(array);
+                    this.sortUserDialogWorlds(array);
                 }
                 D.isWorldsLoading = false;
             }
@@ -7940,7 +7966,7 @@ speechSynthesis.getVoices();
             },
             done: () => {
                 var array = Array.from(map.values());
-                this.setUserDialogAvatars(array);
+                this.sortUserDialogAvatars(array);
                 D.isAvatarsLoading = false;
                 if (fileId) {
                     D.loading = false;
@@ -8133,12 +8159,12 @@ speechSynthesis.getVoices();
 
     $app.methods.changeUserDialogWorldSorting = function () {
         var D = this.userDialog;
-        this.setUserDialogWorlds(D.worlds);
+        this.sortUserDialogWorlds(D.worlds);
     };
 
     $app.methods.changeUserDialogAvatarSorting = function () {
         var D = this.userDialog;
-        this.setUserDialogAvatars(D.avatars);
+        this.sortUserDialogAvatars(D.avatars);
     };
 
     $app.computed.userDialogAvatars = function () {
@@ -10842,6 +10868,34 @@ speechSynthesis.getVoices();
         }
         this.discordNamesContent = lines.join('\n');
         this.discordNamesDialogVisible = true;
+    };
+
+    // userDialog world/avatar tab click
+
+    $app.data.userDialogLastActiveTab = '';
+    $app.data.userDialogLastAvatar = '';
+    $app.data.userDialogLastWorld = '';
+
+    $app.methods.userDialogTabClick = function (obj) {
+        var userId = this.userDialog.id;
+        if (this.userDialogLastActiveTab === obj.label) {
+            return;
+        }
+        if (obj.label === 'Avatars') {
+            this.setUserDialogAvatars(userId);
+            if (this.userDialogLastAvatar !== userId) {
+                if ((userId === API.currentUser.id) && (this.userDialog.avatars.length === 0)) {
+                    this.refreshUserDialogAvatars();
+                }
+            }
+        } else if (obj.label === 'Worlds') {
+            this.setUserDialogWorlds(userId);
+            if (this.userDialogLastWorld !== userId) {
+                this.userDialogLastWorld = userId;
+                this.refreshUserDialogWorlds();
+            }
+        }
+        this.userDialogLastActiveTab = obj.label;
     };
 
     $app = new Vue($app);
