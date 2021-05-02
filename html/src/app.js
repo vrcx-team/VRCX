@@ -5149,6 +5149,38 @@ speechSynthesis.getVoices();
                 removeFromArray(this.friendsGroup3_, ctx);
                 removeFromArray(this.friendsGroupD_, ctx);
             }
+            if (typeof ctx.ref !== 'undefined') {
+                if ((ctx.ref.$offline_for === '') &&
+                    ((state === 'offline') || (state === 'active')) &&
+                    (ctx.state === 'online')) {
+                    ctx.ref.$online_for = '';
+                ctx.ref.$offline_for = Date.now();
+                if (ctx.state === 'online') {
+                    var ts = Date.now();
+                    var time = ts - ctx.ref.$location_at;
+                    this.addFeed('Offline', ctx.ref, {
+                        location: (ctx.ref.location === 'offline') ? '' : ctx.ref.location,
+                        time: time
+                        });
+                    }
+                }
+                if ((state === 'online')) {
+                    ctx.ref.$location_at = Date.now();
+                    ctx.ref.$online_for = Date.now();
+                    ctx.ref.$offline_for = '';
+                API.getUser({
+                    userId: id
+                }).then((args) => {
+                    this.addFeed('Online', args.ref, {
+                        location: args.ref.location
+                    });
+                }).catch(() => {
+                    this.addFeed('Online', ctx.ref, {
+                        location: ctx.ref.location
+                        });
+                    });
+                }
+            }
             // changing property triggers Vue
             // so, we need compare and set
             if (ctx.state !== state) {
@@ -5183,23 +5215,6 @@ speechSynthesis.getVoices();
                 this.sortFriendsGroup3 = true;
                 this.friendsGroup3_.push(ctx);
                 this.friendsGroupD_.unshift(ctx);
-            }
-            if (typeof ctx.ref !== 'undefined') {
-                if ((ctx.ref.$offline_for === '') &&
-                    ((ctx.state === 'offline') && ctx.ref.state === '') ||
-                    (((ctx.state === 'offline') || (ctx.state === 'active')) &&
-                        ((ctx.ref.state === 'online')))) {
-                    ctx.ref.$online_for = '';
-                    ctx.ref.$offline_for = Date.now();
-                }
-                if (ctx.state === 'online') {
-                    ctx.ref.$location_at = Date.now();
-                    ctx.ref.$online_for = Date.now();
-                    ctx.ref.$offline_for = '';
-                    API.getUser({
-                        userId: id
-                    });
-                }
             }
         }
     };
@@ -5478,25 +5493,16 @@ speechSynthesis.getVoices();
         if ($app.friends.has(ref.id) === false) {
             return;
         }
-        if (props.location) {
-            if (props.location[0] === 'offline') {
-                $app.addFeed('Offline', ref, {
-                    location: props.location[1],
-                    time: props.location[2]
-                });
-            } else if (props.location[1] === 'offline') {
-                $app.addFeed('Online', ref, {
-                    location: props.location[0]
-                });
-            } else {
-                $app.addFeed('GPS', ref, {
-                    location: [
-                        props.location[0],
+        if ((props.location) &&
+            (props.location[0] !== 'offline') &&
+            (props.location[1] !== 'offline')) {
+            $app.addFeed('GPS', ref, {
+                location: [
+                    props.location[0],
                         props.location[1]
                     ],
-                    time: props.location[2]
-                });
-            }
+                time: props.location[2]
+            });
         }
         if (props.currentAvatarImageUrl ||
             props.currentAvatarThumbnailImageUrl) {
