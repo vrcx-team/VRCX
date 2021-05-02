@@ -10905,6 +10905,83 @@ speechSynthesis.getVoices();
         this.userDialogLastActiveTab = obj.label;
     };
 
+    // VRChat Config JSON
+
+    $app.data.VRChatConfigFile = {};
+
+    $app.data.VRChatConfigList = {
+        cache_size: 'Max Cache Size in Gigabytes (minimum 20)',
+        cache_expiry_delay: 'Expire Cache in Days (minimum 30)',
+        dynamic_bone_max_affected_transform_count: 'Dynamic Bones Limit Max Transforms (0 disables all components)',
+        dynamic_bone_max_collider_check_count: 'Dynamic Bones Limit Max Collider Collisions (0 disables all components)'
+    };
+
+    $app.methods.ReadVRChatConfigFile = async function () {
+        this.VRChatConfigFile = {};
+        var config = await AppApi.ReadConfigFile();
+        if (config) {
+            this.VRChatConfigFile = JSON.parse(config);
+        }
+    };
+
+    $app.methods.WriteVRChatConfigFile = async function () {
+        var json = JSON.stringify(this.VRChatConfigFile, null, "\t");
+        AppApi.WriteConfigFile(json);
+    };
+
+
+    $app.data.VRChatConfigDialog = {
+        visible: false,
+        cameraRes: false,
+        screenshotRes: false
+    };
+
+    API.$on('LOGOUT', function () {
+        $app.VRChatConfigDialog.visible = false;
+    });
+
+    $app.methods.showVRChatConfig = async function () {
+        await this.ReadVRChatConfigFile();
+        this.$nextTick(() => adjustDialogZ(this.$refs.VRChatConfigDialog.$el));
+        this.VRChatConfigDialog = {
+            cameraRes: false,
+            screenshotRes: false,
+            visible: true
+        }
+        if ((this.VRChatConfigFile.camera_res_height === 2160) &&
+            (this.VRChatConfigFile.camera_res_width === 3840)) {
+            this.VRChatConfigDialog.cameraRes = true;
+        }
+        if ((this.VRChatConfigFile.screenshot_res_height === 2160) &&
+            (this.VRChatConfigFile.screenshot_res_width === 3840)) {
+            this.VRChatConfigDialog.screenshotRes = true;
+        }
+    };
+
+    $app.methods.SaveVRChatConfigFile = function () {
+        if (this.VRChatConfigDialog.cameraRes) {
+            this.VRChatConfigFile.camera_res_height = 2160;
+            this.VRChatConfigFile.camera_res_width = 3840;
+        } else {
+            delete this.VRChatConfigFile.camera_res_height;
+            delete this.VRChatConfigFile.camera_res_width;
+        }
+        if (this.VRChatConfigDialog.screenshotRes) {
+            this.VRChatConfigFile.screenshot_res_height = 2160;
+            this.VRChatConfigFile.screenshot_res_width = 3840;
+        } else {
+            delete this.VRChatConfigFile.screenshot_res_height;
+            delete this.VRChatConfigFile.screenshot_res_width;
+        }
+        for (var item in this.VRChatConfigFile) {
+            if (!this.VRChatConfigFile[item]) {
+                delete this.VRChatConfigFile[item];
+            }
+        }
+        this.VRChatConfigDialog.visible = false;
+        this.WriteVRChatConfigFile();
+    };
+
     $app = new Vue($app);
     window.$app = $app;
 }());

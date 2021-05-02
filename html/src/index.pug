@@ -866,6 +866,7 @@ html
                     div.options-container-item
                         el-button-group
                             el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
+                            el-button(size="small" icon="el-icon-s-operation" @click="showVRChatConfig()") VRChat config.json
                 div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                     span.header Legal Notice
                     div.options-container-item
@@ -1465,6 +1466,24 @@ html
                         el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/launch-options')") VRChat Docs
                         el-button(size="small" @click="openExternalLink('https://docs.unity3d.com/Manual/CommandLineArguments.html')") Unity Manual
                         el-button(type="primary" size="small" :disabled="launchOptionsDialog.loading" @click="updateLaunchOptions" style="margin-left:auto") OK
+                        
+            //- dialog: VRChat Config JSON
+            el-dialog.x-dialog(ref="VRChatConfigDialog" :visible.sync="VRChatConfigDialog.visible" title="VRChat Config JSON" width="420px")
+                div(style='font-size:12px;')
+                    | These options are for advanced users only. #[br]
+                    | Leave field empty to set as default.
+                br
+                div(style="display:inline-block" v-for="(name, value) in VRChatConfigList" :key="value")
+                    span(v-text="name" style="word-break:keep-all")
+                    |:
+                    el-input(v-model="VRChatConfigFile[value]" size="mini" style="margin-top:10px")
+                el-checkbox(v-model="VRChatConfigFile.disableRichPresence" style="margin-top:5px;display:block") Disable Discord Rich Presence
+                el-checkbox(v-model="VRChatConfigDialog.cameraRes" style="margin-top:5px") 4K Camera
+                el-checkbox(v-model="VRChatConfigDialog.screenshotRes" style="margin-top:5px") 4K Screenshots
+                template(#footer)
+                    el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')") VRChat Docs
+                    el-button(size="small" @click="VRChatConfigDialog.visible = false") Cancel
+                    el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="SaveVRChatConfigFile") Save
 
             //- dialog: launch
             el-dialog.x-dialog(ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="400px")

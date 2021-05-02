@@ -54,6 +54,25 @@ namespace VRCX
             return fileData.Length.ToString();
         }
 
+        public string ReadConfigFile()
+        {
+            var logPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat\";
+            var configFile = Path.Combine(logPath, @"config.json");
+            if (!Directory.Exists(logPath) || !File.Exists(configFile))
+            {
+                return "";
+            }
+            var json = System.IO.File.ReadAllText(configFile);
+            return json;
+        }
+
+        public void WriteConfigFile(string json)
+        {
+            var logPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat\";
+            var configFile = Path.Combine(logPath, @"config.json");
+            System.IO.File.WriteAllText(configFile, json);
+        }
+
         public void ShowDevTools()
         {
             MainForm.Instance.Browser.ShowDevTools();
