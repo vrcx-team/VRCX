@@ -511,7 +511,6 @@ speechSynthesis.getVoices();
 
     // FIXME : extra를 없애줘
     API.$throw = function (code, error, extra) {
-        Noty.closeAll();
         var text = [];
         if (code > 0) {
             var status = this.statusCodes[code];
@@ -529,7 +528,10 @@ speechSynthesis.getVoices();
         }
         text = text.map((s) => escapeTag(s)).join('<br>');
         if (text.length) {
-            new Noty({
+            if (this.errorNoty) {
+                this.errorNoty.close();
+            }
+            this.errorNoty = new Noty({
                 type: 'error',
                 text
             }).show();
