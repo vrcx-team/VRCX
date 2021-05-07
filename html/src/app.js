@@ -10912,9 +10912,9 @@ speechSynthesis.getVoices();
     $app.data.VRChatConfigFile = {};
 
     $app.data.VRChatConfigList = {
-        cache_size: { name: 'Max Cache Size in Gigabytes (minimum 20)', default: '20' },
-        cache_expiry_delay: { name: 'Expire Cache in Days (minimum 30)', default: '30' },
-        cache_directory: { name: 'Custom Cache Directory Location', default: '%AppData%\\..\\LocalLow\\VRChat\\vrchat' },
+        cache_size: { name: 'Max Cache Size [GB] (minimum 20)', default: '20' },
+        cache_expiry_delay: { name: 'Cache Expiry [Days] (minimum 30)', default: '30' },
+        cache_directory: { name: 'Custom Cache Folder Location', default: '%AppData%\\..\\LocalLow\\VRChat\\vrchat' },
         dynamic_bone_max_affected_transform_count: { name: 'Dynamic Bones Limit Max Transforms (0 disables all components)', default: '32' },
         dynamic_bone_max_collider_check_count: { name: 'Dynamic Bones Limit Max Collider Collisions (0 disables all components)', default: '8' }
     };
