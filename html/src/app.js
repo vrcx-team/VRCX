@@ -10919,11 +10919,19 @@ speechSynthesis.getVoices();
         dynamic_bone_max_collider_check_count: { name: 'Dynamic Bones Limit Max Collider Collisions (0 disables all components)', default: '8' }
     };
 
-    $app.methods.ReadVRChatConfigFile = async function () {
+    $app.methods.readVRChatConfigFile = async function () {
         this.VRChatConfigFile = {};
         var config = await AppApi.ReadConfigFile();
         if (config) {
-            this.VRChatConfigFile = JSON.parse(config);
+            try {
+                this.VRChatConfigFile = JSON.parse(config);
+            } catch {
+                this.$message({
+                    message: 'Invalid JSON in config.json',
+                    type: 'error'
+                });
+                throw new Error('Invalid JSON in config.json');
+            }
         }
     };
 
@@ -10931,7 +10939,6 @@ speechSynthesis.getVoices();
         var json = JSON.stringify(this.VRChatConfigFile, null, "\t");
         AppApi.WriteConfigFile(json);
     };
-
 
     $app.data.VRChatConfigDialog = {
         visible: false,
@@ -10944,7 +10951,7 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.showVRChatConfig = async function () {
-        await this.ReadVRChatConfigFile();
+        await this.readVRChatConfigFile();
         this.$nextTick(() => adjustDialogZ(this.$refs.VRChatConfigDialog.$el));
         this.VRChatConfigDialog = {
             cameraRes: false,
