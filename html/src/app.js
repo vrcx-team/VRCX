@@ -34,7 +34,8 @@ speechSynthesis.getVoices();
         'VRCXStorage',
         'SQLite',
         'LogWatcher',
-        'Discord'
+        'Discord',
+        'AssetBundleCacher'
     );
 
     await configRepository.init();
@@ -3207,6 +3208,9 @@ speechSynthesis.getVoices();
                         notificationId: content.id
                     }
                 });
+                if (content.type === 'invite') {
+                    $app.inviteDownloadWorldCache(content);
+                }
                 break;
 
             case 'friend-add':
@@ -5505,6 +5509,7 @@ speechSynthesis.getVoices();
                     ],
                 time: props.location[2]
             });
+            $app.feedDownloadWorldCache(ref);
         }
         if (props.currentAvatarImageUrl ||
             props.currentAvatarThumbnailImageUrl) {
@@ -6827,6 +6832,22 @@ speechSynthesis.getVoices();
         },
         layout: 'table'
     };
+    $app.data.downloadHistoryTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        layout: 'table'
+    };
+    $app.data.downloadQueueTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        layout: 'table'
+    };
     $app.data.visits = 0;
     $app.data.openVR = configRepository.getBool('openVR');
     $app.data.openVRAlways = configRepository.getBool('openVRAlways');
@@ -6843,6 +6864,8 @@ speechSynthesis.getVoices();
     $app.data.notificationTTS = configRepository.getString('VRCX_notificationTTS');
     $app.data.notificationTTSVoice = configRepository.getString('VRCX_notificationTTSVoice');
     $app.data.notificationTimeout = configRepository.getString('VRCX_notificationTimeout');
+    $app.data.worldAutoCacheInvite = configRepository.getString('VRCX_worldAutoCacheInvite');
+    $app.data.worldAutoCacheGPS = configRepository.getString('VRCX_worldAutoCacheGPS');
     var saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -6856,6 +6879,8 @@ speechSynthesis.getVoices();
         configRepository.setString('VRCX_desktopToast', this.desktopToast);
         configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
         configRepository.setBool('displayVRCPlusIconsAsAvatar', this.displayVRCPlusIconsAsAvatar);
+        configRepository.setString('VRCX_worldAutoCacheInvite', this.worldAutoCacheInvite);
+        configRepository.setString('VRCX_worldAutoCacheGPS', this.worldAutoCacheGPS);
         this.updateVRConfigVars();
     };
     $app.data.TTSvoices = speechSynthesis.getVoices();
@@ -6879,6 +6904,8 @@ speechSynthesis.getVoices();
     $app.watch.desktopToast = saveOpenVROption;
     $app.watch.minimalFeed = saveOpenVROption;
     $app.watch.displayVRCPlusIconsAsAvatar = saveOpenVROption;
+    $app.watch.worldAutoCacheInvite = saveOpenVROption;
+    $app.watch.worldAutoCacheGPS = saveOpenVROption;
     $app.watch.notificationTTS = saveNotificationTTS;
     $app.data.isDarkMode = configRepository.getBool('isDarkMode');
     $appDarkStyle.disabled = $app.data.isDarkMode === false;
@@ -6927,6 +6954,14 @@ speechSynthesis.getVoices();
     if (!configRepository.getString('VRCX_notificationTTS')) {
         $app.data.notificationTTS = 'Never';
         configRepository.setString('VRCX_notificationTTS', $app.data.notificationTTS);
+    }
+    if (!configRepository.getString('VRCX_worldAutoCacheInvite')) {
+        $app.data.worldAutoCacheInvite = 'Never';
+        configRepository.setString('VRCX_worldAutoCacheInvite', $app.data.worldAutoCacheInvite);
+    }
+    if (!configRepository.getString('VRCX_worldAutoCacheGPS')) {
+        $app.data.worldAutoCacheGPS = 'Never';
+        configRepository.setString('VRCX_worldAutoCacheGPS', $app.data.worldAutoCacheGPS);
     }
     if (!configRepository.getString('sharedFeedFilters')) {
         var sharedFeedFilters = {
@@ -7039,6 +7074,18 @@ speechSynthesis.getVoices();
             labels: [{ name: 'Never' }, { name: 'Desktop Mode' }, { name: 'Outside VR' }, { name: 'Inside VR' }, { name: 'Game Closed' }, { name: 'Always' }]
         }
     };
+    $app.data.worldCacheToggleSwitchOption = {
+        layout: toggleSwitchLayout,
+        size: {
+            height: 1.5,
+            width: 23,
+            padding: 0.1,
+            fontSize: 0.75
+        },
+        items: {
+            labels: [{ name: 'Never' }, { name: 'Game Closed' }, { name: 'Game Running' }, { name: 'Always' }]
+        }
+    };
 
     if (!configRepository.getString('VRCX_trustColor')) {
         var trustColor = {
@@ -7137,6 +7184,7 @@ speechSynthesis.getVoices();
 
     var lastLocationStateChange = function () {
         sharedRepository.setObject('last_location', $app.lastLocation);
+        $app.checkVRChatCacheDownload($app.lastLocation.location);
     };
     $app.watch['lastLocation.location'] = lastLocationStateChange;
 
@@ -8270,6 +8318,12 @@ speechSynthesis.getVoices();
                 D.ref = args.ref;
                 D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
                 D.rooms = [];
+                this.checkVRChatCache(D.ref).then((cacheSize) => {
+                    if (cacheSize > 0) {
+                        D.inCache = true;
+                        D.cacheSize = `${(cacheSize / 1048576).toFixed(2)} MiB`;
+                    }
+                });
                 this.applyWorldDialogInstances();
                 if (args.cache) {
                     API.getWorld(args.params);
@@ -10966,6 +11020,9 @@ speechSynthesis.getVoices();
             (this.VRChatConfigFile.screenshot_res_width === 3840)) {
             this.VRChatConfigDialog.screenshotRes = true;
         }
+        if (!this.VRChatUsedCacheSize) {
+            this.getVRChatCacheSize();
+        }
     };
 
     $app.methods.SaveVRChatConfigFile = function () {
@@ -10991,6 +11048,329 @@ speechSynthesis.getVoices();
         this.VRChatConfigDialog.visible = false;
         this.WriteVRChatConfigFile();
     };
+
+    $app.methods.getVRChatCacheDir = async function () {
+        await this.readVRChatConfigFile();
+        var cacheDirectory = '';
+        if (this.VRChatConfigFile.cache_directory) {
+            cacheDirectory = this.VRChatConfigFile.cache_directory;
+        }
+        return cacheDirectory;
+    };
+
+    $app.methods.checkVRChatCache = async function (ref) {
+        return await AssetBundleCacher.CheckVRChatCache(ref.id, ref.version, await this.getVRChatCacheDir());
+    };
+
+    $app.methods.queueCacheDownload = function (ref, type) {
+        if (!this.downloadQueue.has(ref.id)) {
+            var date = new Date().toJSON();
+            var userId = API.currentUser.id;
+            var location = ref.id;
+            this.downloadQueue.set(ref.id, {ref, type, date, userId, location});
+            this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
+        }
+        if (!this.downloadInProgress) {
+            this.downloadVRChatCache();
+        }
+    };
+
+    $app.methods.downloadVRChatCache = async function () {
+        if (this.downloadQueue.size === 0) {
+            return;
+        }
+        this.downloadProgress = 0;
+        this.downloadProgressBarLoading = false;
+        this.downloadInProgress = true;
+        this.downloadCurrent = this.downloadQueue.values().next().value;
+        this.downloadCurrent.id = this.downloadQueue.keys().next().value;
+        var { ref, type } = this.downloadCurrent;
+        this.downloadQueue.delete(ref.id);
+        this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
+        await AssetBundleCacher.DownloadCacheFile(ref.assetUrl, ref.id, ref.version, appVersion, await this.getVRChatCacheDir());
+        this.downloadVRChatCacheProgress();
+    };
+
+    $app.methods.checkVRChatCacheDownload = function (lastLocation) {
+        var L = API.parseLocation(lastLocation);
+        if (L.worldId) {
+            if (this.downloadCurrent.id === L.worldId) {
+                this.cancelVRChatCacheDownload(L.worldId);
+            } else {
+                if (this.downloadQueue.has(L.worldId)) {
+                    this.downloadQueue.delete(L.worldId);
+                    this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
+                }
+            }
+        }
+    };
+
+    $app.methods.cancelVRChatCacheDownload = function (worldId) {
+        if (this.downloadCurrent.id === worldId) {
+            AssetBundleCacher.CancelDownload();
+        }
+        if (this.downloadQueue.has(worldId)) {
+            this.downloadQueue.delete(worldId);
+            this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
+        }
+    };
+
+    $app.methods.cancelAllVRChatCacheDownload = function () {
+        if (typeof this.downloadCurrent.id !== 'undefined') {
+            this.cancelVRChatCacheDownload(this.downloadCurrent.id);
+        }
+        for (var queue of this.downloadQueue.values()) {
+            this.cancelVRChatCacheDownload(queue.ref.id);
+        }
+    };
+
+    $app.methods.inviteDownloadWorldCache = function (invite) {
+        if ((this.worldAutoCacheInvite === 'Always') ||
+            ((this.worldAutoCacheInvite === 'Game Closed') && (!this.isGameRunning)) ||
+            ((this.worldAutoCacheInvite === 'Game Running') && (this.isGameRunning))) {
+            this.autoDownloadWorldCache(invite.details.worldId, 'Invite', invite.senderUserId);
+        }
+    };
+
+    $app.methods.feedDownloadWorldCache = function (feed) {
+        if ((this.worldAutoCacheGPS === 'Always') ||
+            ((this.worldAutoCacheGPS === 'Game Closed') && (!this.isGameRunning)) ||
+            ((this.worldAutoCacheGPS === 'Game Running') && (this.isGameRunning))) {
+            if ((feed.location === 'offline') ||
+                (feed.location === 'private') ||
+                (!API.cachedFavoritesByObjectId.has(feed.id))) {
+                return;
+            }
+            this.autoDownloadWorldCache(feed.location, 'GPS', feed.id);
+        }
+    };
+
+    $app.methods.autoDownloadWorldCache = function (location, type, userId) {
+        var L = API.parseLocation(location);
+        if ((!L.worldId) ||
+            (this.downloadQueue.has(L.worldId)) ||
+            (this.downloadCurrent.id === L.worldId)) {
+            return;
+        }
+        API.getCachedWorld({
+            worldId: L.worldId
+        }).then((args) => {
+            var { ref } = args;
+            var date = new Date().toJSON();
+            this.checkVRChatCache(ref).then((cacheSize) => {
+                if (cacheSize === -1) {
+                    this.downloadQueue.set(ref.id, {ref, type, date, userId, location});
+                    this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
+                    if (!this.downloadInProgress) {
+                        this.downloadVRChatCache();
+                    }
+                }
+            });
+        });
+    };
+
+    $app.data.downloadProgressBarOptions = {
+        color: "#409EFF",
+        "empty-color": "#346CA6",
+        size: 50,
+        thickness: 4,
+        "empty-thickness": 2,
+        "line-mode": "normal 5",
+        animation: "rs 500 200",
+        "font-size": "20px",
+        "font-color": "white",
+    };
+
+    $app.data.downloadProgress = 0;
+    $app.data.downloadInProgress = false;
+    $app.data.downloadProgressBarLoading = false;
+    $app.data.downloadQueue = new Map();
+    $app.data.downloadCurrent = {};
+
+    $app.methods.downloadVRChatCacheProgress = async function () {
+        var downloadProgress = await AssetBundleCacher.CheckDownloadProgress();
+        switch (downloadProgress) {
+            case -1:
+                this.downloadProgress = 100;
+                this.downloadProgressBarLoading = true;
+                break;
+            case -3:
+                var D = this.worldDialog;
+                if ((D.visible) && (D.id === this.downloadCurrent.id)) {
+                    D.inCache = false;
+                    D.cacheSize = 0;
+                    this.checkVRChatCache(D.ref).then((cacheSize) => {
+                        if (cacheSize > 0) {
+                            D.inCache = true;
+                            D.cacheSize = `${(cacheSize / 1048576).toFixed(2)} MiB`;
+                        }
+                    });
+                }
+                if (this.downloadCurrent.type === 'manual') {
+                    this.$message({
+                        message: 'World cache complete',
+                        type: 'success'
+                    });
+                }
+                this.downloadCurrent.status = 'Success';
+                this.downloadHistoryTable.data.unshift(this.downloadCurrent);
+                this.downloadCurrent = {};
+                this.downloadProgress = 0;
+                this.downloadInProgress = false;
+                this.downloadVRChatCache();
+                return;
+            case -4:
+                this.$message({
+                    message: 'Download canceled',
+                    type: 'info'
+                });
+                this.downloadCurrent.status = 'Canceled';
+                this.downloadHistoryTable.data.unshift(this.downloadCurrent);
+                this.downloadCurrent = {};
+                this.downloadProgress = 0;
+                this.downloadInProgress = false;
+                this.downloadVRChatCache();
+                return;
+            case -10:
+                this.$message({
+                    message: 'AssetBundleCacher can\'t be located',
+                    type: 'error'
+                });
+                this.downloadCurrent = {};
+                this.downloadQueue = new Map();
+                this.downloadQueueTable.data = [];
+                this.downloadProgress = 0;
+                this.downloadInProgress = false;
+                return;
+            case -11:
+                this.$message({
+                    message: 'VRChat can\'t be located',
+                    type: 'error'
+                });
+                this.downloadCurrent = {};
+                this.downloadQueue = new Map();
+                this.downloadQueueTable.data = [];
+                this.downloadProgress = 0;
+                this.downloadInProgress = false;
+                return;
+            case -12:
+                var D = this.worldDialog;
+                if ((D.visible) && (D.id === this.downloadCurrent.id)) {
+                    D.inCache = false;
+                    D.cacheSize = 0;
+                    this.checkVRChatCache(D.ref).then((cacheSize) => {
+                        if (cacheSize > 0) {
+                            D.inCache = true;
+                            D.cacheSize = `${(cacheSize / 1048576).toFixed(2)} MiB`;
+                        }
+                    });
+                }
+                if (this.downloadCurrent.type === 'manual') {
+                    this.$message({
+                        message: 'File already in cache',
+                        type: 'warning'
+                    });
+                }
+                this.downloadCurrent.status = 'Already in cache';
+                this.downloadHistoryTable.data.unshift(this.downloadCurrent);
+                this.downloadCurrent = {};
+                this.downloadProgress = 0;
+                this.downloadInProgress = false;
+                this.downloadVRChatCache();
+                return;
+            case -13:
+                this.$message({
+                    message: 'Failed to process file',
+                    type: 'error'
+                });
+                this.downloadCurrent.status = 'Failed to process';
+                this.downloadHistoryTable.data.unshift(this.downloadCurrent);
+                this.downloadCurrent = {};
+                this.downloadProgress = 0;
+                this.downloadInProgress = false;
+                this.downloadVRChatCache();
+                return;
+            case -14:
+                this.$message({
+                    message: 'Failed to move file into cache',
+                    type: 'error'
+                });
+                this.downloadCurrent.status = 'Failed to move into cache';
+                this.downloadHistoryTable.data.unshift(this.downloadCurrent);
+                this.downloadCurrent = {};
+                this.downloadProgress = 0;
+                this.downloadInProgress = false;
+                this.downloadVRChatCache();
+                return;
+            default:
+                this.downloadProgress = downloadProgress;
+        }
+        setTimeout(() => this.downloadVRChatCacheProgress(), 150);
+    };
+
+    $app.methods.showDownloadDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.downloadDialog.$el));
+        this.downloadDialog.visible = true;
+    };
+
+    $app.data.downloadDialog = {
+        visible: false
+    };
+
+    $app.methods.downloadProgressText = function () {
+        if (this.downloadProgressBarLoading) {
+            return 'Processing';
+        }
+        if (this.downloadProgress >= 0) {
+            return this.downloadProgress + '%';
+        }
+        return '';
+    };
+
+    $app.methods.getDisplayName = function (userId) {
+        if (userId) {
+            var ref = API.cachedUsers.get(userId);
+            if (ref.displayName) {
+                return ref.displayName;
+            }
+        }
+        return '';
+    };
+
+    $app.methods.deleteVRChatCache = async function () {
+        await this.readVRChatConfigFile();
+        var cacheDirectory = '';
+        if (this.VRChatConfigFile.cache_directory) {
+            cacheDirectory = this.VRChatConfigFile.cache_directory;
+        }
+        await AssetBundleCacher.DeleteCache(cacheDirectory);
+        this.getVRChatCacheSize();
+    };
+
+    $app.data.VRChatUsedCacheSize = '';
+    $app.data.VRChatTotalCacheSize = '';
+    $app.data.VRChatCacheSizeLoading = false;
+
+    $app.methods.getVRChatCacheSize = async function () {
+        this.VRChatCacheSizeLoading = true;
+        await this.readVRChatConfigFile();
+        var cacheDirectory = '';
+        if (this.VRChatConfigFile.cache_directory) {
+            cacheDirectory = this.VRChatConfigFile.cache_directory;
+        }
+        var totalCacheSize = 20;
+        if (this.VRChatConfigFile.cache_size) {
+            totalCacheSize = this.VRChatConfigFile.cache_size;
+        }
+        this.VRChatTotalCacheSize = totalCacheSize;
+        var usedCacheSize = await AssetBundleCacher.GetCacheSize(cacheDirectory);
+        this.VRChatUsedCacheSize = (usedCacheSize / 1073741824).toFixed(2);
+        this.VRChatCacheSizeLoading = false;
+    };
+
+    API.$on('LOGIN', function () {
+        $app.downloadDialog.visible = false;
+    });
 
     $app = new Vue($app);
     window.$app = $app;

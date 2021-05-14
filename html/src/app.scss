@@ -482,6 +482,11 @@ i.x-user-status.busy {
     height: auto;
 }
 
+.el-progress-bar {
+    padding-right: 80px;
+    margin-right: -85px;
+}
+
 .x-user-dialog .el-textarea__inner {
     padding: 0;
     background: none;

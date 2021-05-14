@@ -45,9 +45,13 @@ html
                             p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
                             p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
                             p pypy is not responsible for any problems caused by VRCX. Use at your own risk!
-
+                        
             //- menu
             .x-menu-container
+                //- download progress
+                div(v-if="downloadInProgress" @click="showDownloadDialog" style="margin:7px;height:50px;cursor:pointer")
+                    el-progress(type="circle" width="50" stroke-width="3" :percentage="downloadProgress" :format="downloadProgressText")
+                            
                 el-menu(ref="menu" collapse @select="selectMenu")
                     mixin menuitem(index, name, icon)
                         el-menu-item(index=index)
@@ -848,7 +852,20 @@ html
                         el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
                             el-button(v-text="TTSvoices[notificationTTSVoice].name" size="mini" :disabled="!notificationTTS")
                             el-dropdown-menu(#default="dropdown")
-                                el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")     
+                                el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")
+                div.options-container
+                    span.header Auto Cache Worlds
+                    div.options-container-item
+                        span.name Download on invite:
+                        br
+                        toggle-switch(:options="worldCacheToggleSwitchOption" group="worldCacheInviteToggleSwitchOption" v-model="worldAutoCacheInvite" class="toggle-switch")
+                    div.options-container-item
+                        span.name Download on VIP GPS:
+                        br
+                        toggle-switch(:options="worldCacheToggleSwitchOption" group="worldCacheGPSToggleSwitchOption" v-model="worldAutoCacheGPS" class="toggle-switch")
+                    div.options-container-item
+                        el-button-group
+                            el-button(size="small" icon="el-icon-download" @click="showDownloadDialog()") Download History
                 div.options-container
                     span.header Application
                     div.options-container-item
@@ -1178,8 +1195,9 @@ html
                                 div(style="margin-top:5px")
                                     span(v-show="worldDialog.ref.name !== worldDialog.ref.description" v-text="worldDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
-                                el-button(v-if="worldDialog.isFavorite" type="warning" icon="el-icon-star-on" circle @click="worldDialogCommand('Delete Favorite')")
-                                el-button(v-else type="default" icon="el-icon-star-off" circle @click="worldDialogCommand('Add Favorite')")
+                                el-button(v-if="!worldDialog.inCache && !downloadQueue.has(worldDialog.id) && downloadCurrent.id !== worldDialog.id" icon="el-icon-download" circle @click="queueCacheDownload(worldDialog.ref, 'Manual')")
+                                el-button(v-if="worldDialog.isFavorite" type="warning" icon="el-icon-star-on" circle @click="worldDialogCommand('Delete Favorite')" style="margin-left:5px")
+                                el-button(v-else type="default" icon="el-icon-star-off" circle @click="worldDialogCommand('Add Favorite')" style="margin-left:5px")
                                 el-dropdown(trigger="click" @command="worldDialogCommand" size="small" style="margin-left:5px")
                                     el-button(type="default" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
@@ -1475,10 +1493,24 @@ html
                     | These options are for advanced users only. #[br]
                     | Leave field empty to set as default, game restart required to apply settings.
                 br
-                div(style="display:inline-block" v-for="(item, value) in VRChatConfigList" :key="value")
+                span Cache Size:  
+                span(v-text="VRChatUsedCacheSize")
+                span /
+                span(v-text="VRChatTotalCacheSize")
+                span GB
+                el-tooltip(placement="top")
+                    template(#content)
+                        span Refresh
+                    el-button(type="default" :loading="VRChatCacheSizeLoading" @click="getVRChatCacheSize" size="small" icon="el-icon-refresh" circle style="margin-left:5px")
+                el-tooltip(placement="top")
+                    template(#content)
+                        span Clear Cache
+                    el-button(type="default" @click="deleteVRChatCache" :disabled="isGameRunning" size="small" icon="el-icon-delete" circle style="margin-left:5px")
+                br
+                div(style="display:inline-block;margin-top:10px" v-for="(item, value) in VRChatConfigList" :key="value")
                     span(v-text="item.name" style="word-break:keep-all")
                     |:
-                    el-input(v-model="VRChatConfigFile[value]" :placeholder="item.default" size="mini" style="margin-top:10px")
+                    el-input(v-model="VRChatConfigFile[value]" :placeholder="item.default" size="mini")
                 el-checkbox(v-model="VRChatConfigFile.disableRichPresence" style="margin-top:5px;display:block") Disable Discord Rich Presence
                 el-checkbox(v-model="VRChatConfigDialog.cameraRes" style="margin-top:5px") 4K Camera
                 el-checkbox(v-model="VRChatConfigDialog.screenshotRes" style="margin-top:5px") 4K Screenshots
@@ -1486,6 +1518,39 @@ html
                     el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')") VRChat Docs
                     el-button(size="small" @click="VRChatConfigDialog.visible = false") Cancel
                     el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="SaveVRChatConfigFile") Save
+                    
+            //- dialog: Cache Download
+            el-dialog.x-dialog(ref="downloadDialog" :visible.sync="downloadDialog.visible" title="Download History" width="770px")
+                div(v-if="downloadInProgress")
+                    span.x-link(v-if="downloadCurrent.ref" @click="showWorldDialog(downloadCurrent.location)" v-text="downloadCurrent.ref.name")
+                    el-button(type="text" icon="el-icon-close" size="mini" @click="cancelVRChatCacheDownload(downloadCurrent.id)" style="margin-left:5px")
+                    el-progress(:percentage="downloadProgress" :format="downloadProgressText")
+                template(v-if="downloadQueueTable.data.length >= 1")
+                    span(style="margin-top:15px") Queue:
+                    data-tables(v-bind="downloadQueueTable" style="margin-top:10px")
+                        el-table-column(label="World Name" prop="name")
+                            template(v-once #default="scope")
+                                span.x-link(v-text="scope.row.ref.name" @click="showWorldDialog(scope.row.location)")
+                        el-table-column(label="User Name" prop="name" width="150")
+                            template(v-once #default="scope")
+                                span.x-link(v-text="getDisplayName(scope.row.userId)" @click="showUserDialog(scope.row.userId)")
+                        el-table-column(label="Type" prop="type" width="70")
+                        el-table-column(label="Cancel" width="60" align="right")
+                            template(v-once #default="scope")
+                                el-button(type="text" icon="el-icon-close" size="mini" @click="cancelVRChatCacheDownload(scope.row.ref.id)")
+                span(style="margin-top:15px") History:
+                data-tables(v-bind="downloadHistoryTable" style="margin-top:10px")
+                    el-table-column(label="World Name" prop="name")
+                        template(v-once #default="scope")
+                            span.x-link(v-text="scope.row.ref.name" @click="showWorldDialog(scope.row.location)")
+                    el-table-column(label="User Name" prop="name" width="150")
+                        template(v-once #default="scope")
+                            span.x-link(v-text="getDisplayName(scope.row.userId)" @click="showUserDialog(scope.row.userId)")
+                    el-table-column(label="Type" prop="type" width="70")
+                    el-table-column(label="Status" prop="status" width="80")
+                template(#footer)
+                    el-button(v-if="downloadQueue.size >= 1" size="small" @click="cancelAllVRChatCacheDownload") Cancel All
+                    el-button(size="small" @click="downloadDialog.visible = false") Close
 
             //- dialog: launch
             el-dialog.x-dialog(ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="400px")

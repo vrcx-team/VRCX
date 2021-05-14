@@ -97,6 +97,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetBundleCacher.cs" />
     <Compile Include="CefService.cs" />
     <Compile Include="Discord.cs" />
     <Compile Include="CpuMonitor.cs" />
@@ -214,6 +215,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(ProjectDir)OpenVR\win64\openvr_api.dll" .</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "$(ProjectDir)OpenVR\win64\openvr_api.dll" .
+xcopy /y /E "$(ProjectDir)AssetBundleCacher" ".\AssetBundleCacher\"</PostBuildEvent>
   </PropertyGroup>
 </Project>
