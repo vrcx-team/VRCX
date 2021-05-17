@@ -3439,6 +3439,13 @@ speechSynthesis.getVoices();
             : '';
     };
 
+    var extractFileVersion = (s) => {
+        var match = /(?:\/file_[0-9A-Za-z-]+\/)([0-9]+)/gi.exec(s);
+        return match
+            ? match[1]
+            : '';
+    };
+
     var buildTreeData = (json) => {
         var node = [];
         for (var key in json) {
@@ -8265,17 +8272,34 @@ speechSynthesis.getVoices();
             return;
         }
         D.ref = ref;
+        $app.applyWorldDialogInstances();
         if (D.fileSize === 'Loading') {
-            var id = extractFileId(ref.assetUrl);
-            if (id) {
-                this.call(`file/${id}`).then(function (json) {
-                    var ctx = json.versions[json.versions.length - 1];
-                    D.fileCreatedAt = ctx.created_at;
-                    D.fileSize = `${(ctx.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
+            var assetUrl = '';
+            for (var i = ref.unityPackages.length - 1; i > -1; i--) {
+                var unityPackage = ref.unityPackages[i];
+                if ((unityPackage.platform === 'standalonewindows') &&
+                    (unityPackage.unitySortNumber <= 20180420000)) {
+                    assetUrl = unityPackage.assetUrl;
+                    break;
+                }
+            }
+            var fileId = extractFileId(assetUrl);
+            var fileVersion = extractFileVersion(assetUrl);
+            if (fileId) {
+                API.getBundles(fileId).then((args) => {
+                    var { versions } = args.json;
+                    var ctx = '';
+                    for (var i = versions.length - 1; i > -1; i--) {
+                        var version = versions[i];
+                        if (version.version == fileVersion) {
+                            D.fileCreatedAt = version.created_at;
+                            D.fileSize = `${(version.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
+                            break;
+                        }
+                    }
                 });
             }
         }
-        $app.applyWorldDialogInstances();
     });
 
     API.$on('FAVORITE', function (args) {
@@ -8595,15 +8619,36 @@ speechSynthesis.getVoices();
             D.id !== args.ref.id) {
             return;
         }
-        D.ref = args.ref;
-        if (D.fileSize === 'Unknown') {
-            var id = extractFileId(args.ref.assetUrl);
-            if (id) {
-                D.fileSize = 'Loading';
-                this.call(`file/${id}`).then((json) => {
-                    var ref = json.versions[json.versions.length - 1];
-                    D.ref.created_at = ref.created_at;
-                    D.fileSize = `${(ref.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
+        var { ref } = args;
+        D.ref = ref;
+        if (D.fileSize === 'Loading') {
+            var assetUrl = '';
+            for (var i = ref.unityPackages.length - 1; i > -1; i--) {
+                var unityPackage = ref.unityPackages[i];
+                if ((unityPackage.platform === 'standalonewindows') &&
+                    (unityPackage.unitySortNumber <= 20180420000)) {
+                    assetUrl = unityPackage.assetUrl;
+                    break;
+                }
+            }
+            var fileId = extractFileId(assetUrl);
+            var fileVersion = extractFileVersion(assetUrl);
+            if (!fileId) {
+                var fileId = extractFileId(ref.assetUrl);
+                var fileVersion = extractFileVersion(ref.assetUrl);
+            }
+            if (fileId) {
+                API.getBundles(fileId).then((args) => {
+                    var { versions } = args.json;
+                    var ctx = '';
+                    for (var i = versions.length - 1; i > -1; i--) {
+                        var version = versions[i];
+                        if (version.version == fileVersion) {
+                            D.ref.created_at = version.created_at;
+                            D.fileSize = `${(version.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
+                            break;
+                        }
+                    }
                 });
             }
         }
@@ -8648,23 +8693,45 @@ speechSynthesis.getVoices();
         D.ref = ref;
         D.isFavorite = API.cachedFavoritesByObjectId.has(avatarId);
         if (D.ref.authorId === API.currentUser.id) {
+            D.fileSize = 'Loading';
             API.getAvatar({avatarId});
         } else {
-            var id = extractFileId(D.ref.assetUrl);
-            var fileId = extractFileId(D.ref.imageUrl);
-            if (id) {
+            var assetUrl = '';
+            for (var i = ref.unityPackages.length - 1; i > -1; i--) {
+                var unityPackage = ref.unityPackages[i];
+                if ((unityPackage.platform === 'standalonewindows') &&
+                    (unityPackage.unitySortNumber <= 20180420000)) {
+                    assetUrl = unityPackage.assetUrl;
+                    break;
+                }
+            }
+            var fileId = extractFileId(assetUrl);
+            var fileVersion = extractFileVersion(assetUrl);
+            if (!fileId) {
+                var fileId = extractFileId(ref.assetUrl);
+                var fileVersion = extractFileVersion(ref.assetUrl);
+            }
+            var imageId = extractFileId(ref.thumbnailImageUrl);
+            if (fileId) {
                 D.fileSize = 'Loading';
-                API.call(`file/${id}`).then((json) => {
-                    var fileRef = json.versions[json.versions.length - 1];
-                    D.ref.created_at = fileRef.created_at;
-                    D.fileSize = `${(fileRef.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
+                API.getBundles(fileId).then((args) => {
+                    var { versions } = args.json;
+                    var ctx = '';
+                    for (var i = versions.length - 1; i > -1; i--) {
+                        var version = versions[i];
+                        if (version.version == fileVersion) {
+                            D.ref.created_at = version.created_at;
+                            D.fileSize = `${(version.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
+                            break;
+                        }
+                    }
                 });
-            } else if ((fileId) && (!D.ref.created_at)) {
-                if (API.cachedAvatarNames.has(fileId)) {
-                    var avatarInfo = API.cachedAvatarNames.get(fileId);
+            } else if ((imageId) && (!D.ref.created_at)) {
+                if (API.cachedAvatarNames.has(imageId)) {
+                    var avatarInfo = API.cachedAvatarNames.get(imageId);
                     D.ref.created_at = avatarInfo.fileCreatedAt;
                 } else {
-                    API.getAvatarImages({fileId}).then((args) => {
+                    API.getAvatarImages({fileId: imageId}).then((args) => {
                         var avatarInfo = this.storeAvatarImage(args);
                         D.ref.created_at = avatarInfo.fileCreatedAt;
                     });
@@ -11092,7 +11159,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    API.getWorldBundles = async function (fileId) {
+    API.getBundles = async function (fileId) {
         return this.call(`file/${fileId}`, {
             method: 'GET'
         }).then((json) => {
@@ -11115,14 +11182,45 @@ speechSynthesis.getVoices();
         var { ref, type } = this.downloadCurrent;
         this.downloadQueue.delete(ref.id);
         this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
-
-        var fileId = extractFileId(ref.assetUrl);
-        var args = await API.getWorldBundles(fileId);
+        var assetUrl = '';
+        for (var i = ref.unityPackages.length - 1; i > -1; i--) {
+            var unityPackage = ref.unityPackages[i];
+            if ((unityPackage.platform === 'standalonewindows') &&
+                (unityPackage.unitySortNumber <= 20180420000)) {
+                assetUrl = unityPackage.assetUrl;
+                break;
+            }
+        }
+        var fileId = extractFileId(assetUrl);
+        var fileVersion = extractFileVersion(assetUrl);
+        if (!fileId) {
+            this.downloadCurrent.status = 'Invalid asset url';
+            this.downloadHistoryTable.data.unshift(this.downloadCurrent);
+            this.downloadCurrent = {};
+            this.downloadInProgress = false;
+            this.downloadVRChatCache();
+            return;
+        }
+        var args = await API.getBundles(fileId);
         var { versions } = args.json;
-        var version = versions[versions.length - 1];
-        var { url, md5, sizeInBytes } = version.file;
+        var file = '';
+        for (var i = versions.length - 1; i > -1; i--) {
+            var version = versions[i];
+            if (version.version == fileVersion) {
+                file = version.file;
+                break;
+            }
+        }
+        if (!file) {
+            this.downloadCurrent.status = 'Missing asset version';
+            this.downloadHistoryTable.data.unshift(this.downloadCurrent);
+            this.downloadCurrent = {};
+            this.downloadInProgress = false;
+            this.downloadVRChatCache();
+            return;
+        }
+        var { url, md5, sizeInBytes } = file;
         var cacheDir = await this.getVRChatCacheDir();
-        console.log('start', ref.name, md5);
         await AssetBundleCacher.DownloadCacheFile(cacheDir, url, ref.id, ref.version, sizeInBytes, md5, appVersion);
         this.downloadVRChatCacheProgress();
     };

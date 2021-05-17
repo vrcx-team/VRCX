@@ -240,7 +240,7 @@ namespace VRCX
                     File.Delete(Path.Combine(VRChatCacheLocation, "Cache-WindowsPlayer", "__info"));
                 File.Move(Path.Combine(AssetBundleCacherTemp, "__info"), Path.Combine(VRChatCacheLocation, "Cache-WindowsPlayer", "__info"));
                 Directory.Delete(Path.Combine(VRChatCacheLocation, "AssetBundleCacher\\Cache", AssetId), true);
-                //File.Delete(Path.Combine(VRChatCacheLocation, "AssetBundleCacher", AssetId));
+                File.Delete(Path.Combine(VRChatCacheLocation, "AssetBundleCacher", AssetId));
             }
             catch
             {
