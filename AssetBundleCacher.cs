@@ -32,6 +32,8 @@ namespace VRCX
         public static bool DownloadCanceled;
         public static string AssetId;
         public static string AssetVersion;
+        public static int AssetSize;
+        public static string AssetMd5;
         public static WebClient client;
         public static Process process;
 
@@ -81,7 +83,7 @@ namespace VRCX
             return -1;
         }
 
-        public void DownloadCacheFile(string url, string id, int version, string AppVersion, string cacheDir)
+        public void DownloadCacheFile(string cacheDir, string url, string id, int version, int sizeInBytes, string md5, string AppVersion)
         {
             if (!File.Exists(Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\AssetBundleCacher.exe")))
             {
@@ -121,6 +123,8 @@ namespace VRCX
                 DownloadProgress = -12;
                 return;
             }
+            AssetSize = sizeInBytes;
+            AssetMd5 = md5;
             AssetId = GetAssetId(id);
             AssetVersion = GetAssetVersion(version);
             var DownloadTempLocation = Path.Combine(VRChatCacheLocation, "AssetBundleCacher", AssetId);
@@ -172,11 +176,38 @@ namespace VRCX
                 return;
             }
             DownloadProgress = -1;
+            if (!File.Exists(Path.Combine(VRChatCacheLocation, "AssetBundleCacher", AssetId)))
+            {
+                DownloadProgress = -15;
+                return;
+            }
+            FileInfo data = new FileInfo(Path.Combine(VRChatCacheLocation, "AssetBundleCacher", AssetId));
+            if (data.Length != AssetSize)
+            {
+                DownloadProgress = -15;
+                return;
+            }
+            using (var stream = File.OpenRead(Path.Combine(VRChatCacheLocation, "AssetBundleCacher", AssetId)))
+            {
+                byte[] md5AsBytes = MD5.Create().ComputeHash(stream);
+                var md5 = System.Convert.ToBase64String(md5AsBytes);
+                if (md5 != AssetMd5)
+                {
+                    DownloadProgress = -15;
+                    return;
+                }
+            }
             process = new Process();
             process.StartInfo.FileName = Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\AssetBundleCacher.exe");
             process.StartInfo.Arguments = AssetBundleCacherArgs;
             process.Start();
             process.WaitForExit(1000 * 60 * 2); //2mins
+            if (process.ExitCode != 0)
+            {
+                DownloadProgress = -13;
+                return;
+            }
+
             if (DownloadCanceled)
             {
                 if (File.Exists(Path.Combine(VRChatCacheLocation, "AssetBundleCacher", AssetId)))
@@ -209,7 +240,7 @@ namespace VRCX
                     File.Delete(Path.Combine(VRChatCacheLocation, "Cache-WindowsPlayer", "__info"));
                 File.Move(Path.Combine(AssetBundleCacherTemp, "__info"), Path.Combine(VRChatCacheLocation, "Cache-WindowsPlayer", "__info"));
                 Directory.Delete(Path.Combine(VRChatCacheLocation, "AssetBundleCacher\\Cache", AssetId), true);
-                File.Delete(Path.Combine(VRChatCacheLocation, "AssetBundleCacher", AssetId));
+                //File.Delete(Path.Combine(VRChatCacheLocation, "AssetBundleCacher", AssetId));
             }
             catch
             {
@@ -219,7 +250,14 @@ namespace VRCX
             DownloadProgress = -3;
         }
 
-        public void DeleteCache(string cacheDir)
+        public void DeleteCache(string cacheDir, string id, int version)
+        {
+            var FullLocation = GetVRChatCacheLocation(id, version, cacheDir);
+            if (Directory.Exists(FullLocation))
+                Directory.Delete(FullLocation, true);
+        }
+
+        public void DeleteAllCache(string cacheDir)
         {
             var cachePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat\Cache-WindowsPlayer";
             if (cacheDir != String.Empty && Directory.Exists(cacheDir))

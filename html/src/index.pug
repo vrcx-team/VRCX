@@ -860,9 +860,15 @@ html
                         br
                         toggle-switch(:options="worldCacheToggleSwitchOption" group="worldCacheInviteToggleSwitchOption" v-model="worldAutoCacheInvite" class="toggle-switch")
                     div.options-container-item
+                        el-switch(v-model="worldAutoCacheInviteFilter" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheInvite == 'Never'")
+                    br
+                    div.options-container-item
                         span.name Download on VIP GPS:
                         br
                         toggle-switch(:options="worldCacheToggleSwitchOption" group="worldCacheGPSToggleSwitchOption" v-model="worldAutoCacheGPS" class="toggle-switch")
+                    div.options-container-item
+                        el-switch(v-model="worldAutoCacheGPSFilter" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheGPS == 'Never'")
+                    br
                     div.options-container-item
                         el-button-group
                             el-button(size="small" icon="el-icon-download" @click="showDownloadDialog()") Download History
@@ -1195,7 +1201,9 @@ html
                                 div(style="margin-top:5px")
                                     span(v-show="worldDialog.ref.name !== worldDialog.ref.description" v-text="worldDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
-                                el-button(v-if="!worldDialog.inCache && !downloadQueue.has(worldDialog.id) && downloadCurrent.id !== worldDialog.id" icon="el-icon-download" circle @click="queueCacheDownload(worldDialog.ref, 'Manual')")
+                                el-button(v-if="worldDialog.inCache" icon="el-icon-delete" circle @click="deleteVRChatCache(worldDialog.ref)")
+                                el-button(v-else-if="downloadCurrent.id === worldDialog.id || downloadQueue.has(worldDialog.id)" icon="el-icon-loading" circle @click="showDownloadDialog")
+                                el-button(v-else icon="el-icon-download" circle @click="queueCacheDownload(worldDialog.ref, 'Manual')")
                                 el-button(v-if="worldDialog.isFavorite" type="warning" icon="el-icon-star-on" circle @click="worldDialogCommand('Delete Favorite')" style="margin-left:5px")
                                 el-button(v-else type="default" icon="el-icon-star-off" circle @click="worldDialogCommand('Add Favorite')" style="margin-left:5px")
                                 el-dropdown(trigger="click" @command="worldDialogCommand" size="small" style="margin-left:5px")
@@ -1505,7 +1513,7 @@ html
                 el-tooltip(placement="top")
                     template(#content)
                         span Clear Cache
-                    el-button(type="default" @click="deleteVRChatCache" :disabled="isGameRunning" size="small" icon="el-icon-delete" circle style="margin-left:5px")
+                    el-button(type="default" @click="deleteAllVRChatCache" :disabled="isGameRunning" size="small" icon="el-icon-delete" circle style="margin-left:5px")
                 br
                 div(style="display:inline-block;margin-top:10px" v-for="(item, value) in VRChatConfigList" :key="value")
                     span(v-text="item.name" style="word-break:keep-all")
