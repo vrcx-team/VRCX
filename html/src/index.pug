@@ -1038,6 +1038,7 @@ html
                                     el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                                     el-dropdown-menu(#default="dropdown")
                                         template(v-if="userDialog.ref.id === API.currentUser.id")
+                                            el-dropdown-item(icon="el-icon-check" command="Select Avatar") Select Avatar By ID
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author") Show Avatar Author
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") Show Fallback Avatar Details
                                             el-dropdown-item(icon="el-icon-edit" command="Edit Social Status" divided) Social Status
@@ -1336,10 +1337,15 @@ html
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
                                             el-dropdown-item(icon="el-icon-upload2" command="Upload Image") Upload Image
                                                 input(type="file" multiple accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
+                                            el-dropdown-item(v-if="avatarDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") Download Unity Package
                                             el-dropdown-item(icon="el-icon-user" command="Delete" style="color:#F56C6C" divided) Delete
                     el-tabs
                         el-tab-pane(label="Info")
                             .x-friend-list
+                                .x-friend-item(style="width:100%;cursor:default")
+                                    .detail
+                                        span.name Avatar ID
+                                        span.extra(v-text="avatarDialog.id")
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Created
