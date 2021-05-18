@@ -863,7 +863,7 @@ html
                         el-switch(v-model="worldAutoCacheInviteFilter" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheInvite == 'Never'")
                     br
                     div.options-container-item
-                        span.name Download on VIP GPS:
+                        span.name Download on GPS:
                         br
                         toggle-switch(:options="worldCacheToggleSwitchOption" group="worldCacheGPSToggleSwitchOption" v-model="worldAutoCacheGPS" class="toggle-switch")
                     div.options-container-item
@@ -1554,6 +1554,9 @@ html
                                 el-button(type="text" icon="el-icon-close" size="mini" @click="cancelVRChatCacheDownload(scope.row.ref.id)")
                 span(style="margin-top:15px") History:
                 data-tables(v-bind="downloadHistoryTable" style="margin-top:10px")
+                    el-table-column(label="Time" prop="date" width="90")
+                        template(v-once #default="scope")
+                            timer(:epoch="scope.row.date")
                     el-table-column(label="World Name" prop="name")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.ref.name" @click="showWorldDialog(scope.row.location)")

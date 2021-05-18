@@ -6845,7 +6845,11 @@ speechSynthesis.getVoices();
             stripe: true,
             size: 'mini'
         },
-        layout: 'table'
+        pageSize: 10,
+        paginationProps: {
+            small: true,
+            layout: 'prev,pager,next'
+        }
     };
     $app.data.downloadQueueTable = {
         data: [],
@@ -11312,10 +11316,9 @@ speechSynthesis.getVoices();
             worldId: L.worldId
         }).then((args) => {
             var { ref } = args;
-            var date = new Date().toJSON();
             this.checkVRChatCache(ref).then((cacheSize) => {
                 if (cacheSize === -1) {
-                    this.downloadQueue.set(ref.id, {ref, type, date, userId, location});
+                    this.downloadQueue.set(ref.id, {ref, type, userId, location});
                     this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
                     if (!this.downloadInProgress) {
                         this.downloadVRChatCache();
@@ -11323,18 +11326,6 @@ speechSynthesis.getVoices();
                 }
             });
         });
-    };
-
-    $app.data.downloadProgressBarOptions = {
-        color: "#409EFF",
-        "empty-color": "#346CA6",
-        size: 50,
-        thickness: 4,
-        "empty-thickness": 2,
-        "line-mode": "normal 5",
-        animation: "rs 500 200",
-        "font-size": "20px",
-        "font-color": "white",
     };
 
     $app.data.downloadProgress = 0;
@@ -11361,6 +11352,7 @@ speechSynthesis.getVoices();
                     });
                 }
                 this.downloadCurrent.status = 'Success';
+                this.downloadCurrent.date = Date.now();
                 this.downloadHistoryTable.data.unshift(this.downloadCurrent);
                 this.downloadCurrent = {};
                 this.downloadProgress = 0;
@@ -11373,6 +11365,7 @@ speechSynthesis.getVoices();
                     type: 'info'
                 });
                 this.downloadCurrent.status = 'Canceled';
+                this.downloadCurrent.date = Date.now();
                 this.downloadHistoryTable.data.unshift(this.downloadCurrent);
                 this.downloadCurrent = {};
                 this.downloadProgress = 0;
@@ -11412,6 +11405,7 @@ speechSynthesis.getVoices();
                     });
                 }
                 this.downloadCurrent.status = 'Already in cache';
+                this.downloadCurrent.date = Date.now();
                 this.downloadHistoryTable.data.unshift(this.downloadCurrent);
                 this.downloadCurrent = {};
                 this.downloadProgress = 0;
@@ -11424,6 +11418,7 @@ speechSynthesis.getVoices();
                     type: 'error'
                 });
                 this.downloadCurrent.status = 'Failed to process';
+                this.downloadCurrent.date = Date.now();
                 this.downloadHistoryTable.data.unshift(this.downloadCurrent);
                 this.downloadCurrent = {};
                 this.downloadProgress = 0;
@@ -11436,6 +11431,7 @@ speechSynthesis.getVoices();
                     type: 'error'
                 });
                 this.downloadCurrent.status = 'Failed to move into cache';
+                this.downloadCurrent.date = Date.now();
                 this.downloadHistoryTable.data.unshift(this.downloadCurrent);
                 this.downloadCurrent = {};
                 this.downloadProgress = 0;
@@ -11448,6 +11444,7 @@ speechSynthesis.getVoices();
                     type: 'error'
                 });
                 this.downloadCurrent.status = 'Download failed';
+                this.downloadCurrent.date = Date.now();
                 this.downloadHistoryTable.data.unshift(this.downloadCurrent);
                 this.downloadCurrent = {};
                 this.downloadProgress = 0;
