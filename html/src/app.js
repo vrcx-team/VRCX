@@ -6901,7 +6901,13 @@ speechSynthesis.getVoices();
         pageSize: 10,
         paginationProps: {
             small: true,
-            layout: 'prev,pager,next'
+            layout: 'prev,pager,next',
+            pageSizes: [
+                10,
+                25,
+                50,
+                100
+            ]
         }
     };
     $app.data.downloadQueueTable = {
