@@ -4647,6 +4647,59 @@ speechSynthesis.getVoices();
         this.exportFriendsListDialog = true;
     };
 
+    $app.data.exportAvatarsListDialog = false;
+    $app.data.exportAvatarsListContent = '';
+
+    $app.methods.showExportAvatarsListDialog = function () {
+        for (var ref of API.cachedAvatars.values()) {
+            if (ref.authorId === API.currentUser.id) {
+                API.cachedAvatars.delete(ref.id);
+            }
+        }
+        var params = {
+            n: 50,
+            offset: 0,
+            sort: 'updated',
+            order: 'descending',
+            releaseStatus: 'all',
+            user: 'me',
+        };
+        var map = new Map();
+        API.bulk({
+            fn: 'getAvatars',
+            N: -1,
+            params,
+            handle: (args) => {
+                for (var json of args.json) {
+                    var $ref = API.cachedAvatars.get(json.id);
+                    if (typeof $ref !== 'undefined') {
+                        map.set($ref.id, $ref);
+                    }
+                }
+            },
+            done: () => {
+                var avatars = Array.from(map.values());
+                if (Array.isArray(avatars) === false) {
+                    return;
+                }
+                var lines = [
+                    'AvatarID,AvatarName'
+                ];
+                var _ = function (str) {
+                    if (/[\x00-\x1f,"]/.test(str) === true) {
+                        str = `"${str.replace(/"/g, '""')}"`;
+                    }
+                    return str;
+                };
+                for (var avatar of avatars) {
+                    lines.push(`${_(avatar.id)},${_(avatar.name)}`);
+                }
+                this.exportAvatarsListContent = lines.join('\n');
+                this.exportAvatarsListDialog = true;
+            }
+        });
+    };
+
     API.$on('USER:2FA', function () {
         $app.promptTOTP();
     });

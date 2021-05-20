@@ -481,6 +481,7 @@ html
                     div(style="margin-top:10px")
                         el-button(size="small" icon="el-icon-switch-button" @click="logout()") Logout
                         el-button(size="small" icon="el-icon-printer" @click="showExportFriendsListDialog()") Export Friends List
+                        el-button(size="small" icon="el-icon-user" @click="showExportAvatarsListDialog()") Export Own Avatars
                         el-button(size="small" icon="el-icon-chat-dot-round" @click="showDiscordNamesDialog()") Discord Names
                 div.options-container
                     span.header Game Info
@@ -1580,6 +1581,10 @@ html
             //- dialog: export friends list
             el-dialog.x-dialog(:visible.sync="exportFriendsListDialog" title="Export Friends List" width="650px")
                 el-input(type="textarea" v-model="exportFriendsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+
+            //- dialog: export avatars list
+            el-dialog.x-dialog(:visible.sync="exportAvatarsListDialog" title="Export Own Avatars" width="650px")
+                el-input(type="textarea" v-model="exportAvatarsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: Discord username list
             el-dialog.x-dialog(:visible.sync="discordNamesDialogVisible" title="Discord Names" width="650px")
