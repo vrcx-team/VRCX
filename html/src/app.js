@@ -11189,8 +11189,12 @@ speechSynthesis.getVoices();
             delete this.VRChatConfigFile.screenshot_res_width;
         }
         for (var item in this.VRChatConfigFile) {
-            if (!this.VRChatConfigFile[item]) {
+            if (this.VRChatConfigFile[item] === '') {
                 delete this.VRChatConfigFile[item];
+            } else if ((typeof this.VRChatConfigFile[item] === 'boolean') && (this.VRChatConfigFile[item] === false)) {
+                delete this.VRChatConfigFile[item];
+            } else if ((typeof this.VRChatConfigFile[item] === 'string') && (!isNaN(this.VRChatConfigFile[item]))) {
+                this.VRChatConfigFile[item] = parseInt(this.VRChatConfigFile[item]);
             }
         }
         this.VRChatConfigDialog.visible = false;
