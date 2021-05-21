@@ -1669,6 +1669,18 @@ html
                     div
                         span.toggle-name Video Play
                         toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestVideoPlay" v-model="sharedFeedFilters.noty.VideoPlay" class="toggle-switch")
+                    div
+                        span.toggle-name Blocked Player Joins
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGrouprequestBlockedOnPlayerJoined" v-model="sharedFeedFilters.noty.BlockedOnPlayerJoined" class="toggle-switch")
+                    div
+                        span.toggle-name Blocked Player Leaves
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGrouprequestBlockedOnPlayerLeft" v-model="sharedFeedFilters.noty.BlockedOnPlayerLeft" class="toggle-switch")
+                    div
+                        span.toggle-name Muted Player Joins
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGrouprequestMutedOnPlayerJoined" v-model="sharedFeedFilters.noty.MutedOnPlayerJoined" class="toggle-switch")
+                    div
+                        span.toggle-name Muted Player Leaves
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGrouprequestMutedOnPlayerLeft" v-model="sharedFeedFilters.noty.MutedOnPlayerLeft" class="toggle-switch")
                 template(#footer)
                     el-button(type="small" @click="cancelSharedFeedFilters") Cancel
                     el-button(type="primary" size="small" style="margin-left:10px" @click="saveSharedFeedFilters") Save
@@ -1736,6 +1748,18 @@ html
                     div
                         span.toggle-name Video Play
                         toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestVideoPlay" v-model="sharedFeedFilters.wrist.VideoPlay" class="toggle-switch")
+                    div
+                        span.toggle-name Blocked Player Joins
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGrouprequestBlockedOnPlayerJoined" v-model="sharedFeedFilters.wrist.BlockedOnPlayerJoined" class="toggle-switch")
+                    div
+                        span.toggle-name Blocked Player Leaves
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGrouprequestBlockedOnPlayerLeft" v-model="sharedFeedFilters.wrist.BlockedOnPlayerLeft" class="toggle-switch")
+                    div
+                        span.toggle-name Muted Player Joins
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGrouprequestMutedOnPlayerJoined" v-model="sharedFeedFilters.wrist.MutedOnPlayerJoined" class="toggle-switch")
+                    div
+                        span.toggle-name Muted Player Leaves
+                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGrouprequestMutedOnPlayerLeft" v-model="sharedFeedFilters.wrist.MutedOnPlayerLeft" class="toggle-switch")
                 template(#footer)
                     el-button(type="small" @click="cancelSharedFeedFilters") Cancel
                     el-button(type="primary" size="small" @click="saveSharedFeedFilters") Save

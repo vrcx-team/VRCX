@@ -118,6 +118,26 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | 🎵 #[span.name(v-text="feed.data")]
+                            div(v-else-if="feed.type === 'BlockedOnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | ▶️ 🚫 #[span.name(v-text="feed.displayName")]
+                            div(v-else-if="feed.type === 'BlockedOnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | ◀️ 🚫 #[span.name(v-text="feed.displayName")]
+                            div(v-else-if="feed.type === 'MutedOnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | ▶️ 🔇 #[span.name(v-text="feed.displayName")]
+                            div(v-else-if="feed.type === 'MutedOnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | ◀️ 🔇 #[span.name(v-text="feed.displayName")]
                     template(v-else)
                         template(v-for="feed in wristFeed")
                             .x-friend-item(v-if="feed.type === 'GPS'" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
@@ -220,6 +240,26 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | Now playing: #[span.name(v-text="feed.data")]
+                            div(v-else-if="feed.type === 'BlockedOnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | Blocked user #[span.name(v-text="feed.displayName")] has joined
+                            div(v-else-if="feed.type === 'BlockedOnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | Blocked user #[span.name(v-text="feed.displayName")] has left
+                            div(v-else-if="feed.type === 'MutedOnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | Muted user #[span.name(v-text="feed.displayName")] has joined
+                            div(v-else-if="feed.type === 'MutedOnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | Muted user #[span.name(v-text="feed.displayName")] has left
             .x-containerbottom
                 div(style="display:flex;flex-direction:row")
                     template(v-if="devices.length")
