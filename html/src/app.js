@@ -210,13 +210,16 @@ speechSynthesis.getVoices();
     };
     Vue.filter('timeToText', timeToText);
 
+    const loadimage = require('./blank.png');
     Vue.use(VueLazyload, {
         preLoad: 1,
         observer: true,
         observerOptions: {
             rootMargin: '0px',
             threshold: 0.1
-        }
+        },
+        error: './assets/blank.png',
+        loading: './assets/blank.png'
     });
 
     Vue.use(DataTables);
