@@ -8413,7 +8413,7 @@ speechSynthesis.getVoices();
                 });
             }
         } else if (command === 'Previous Images') {
-            this.displayPreviousImages('User');
+            this.displayPreviousImages('User', 'Display');
         }  else if (command === 'Select Avatar') {
             this.promptSelectAvatarDialog();
         } else {
@@ -10980,59 +10980,57 @@ speechSynthesis.getVoices();
         var params = {
             fileId
         };
+        if (command === 'Display') {
+            this.previousImagesDialogVisible = true;
+            this.$nextTick(() => adjustDialogZ(this.$refs.previousImagesDialog.$el));
+        }
         if (type === 'Avatar') {
-            if (command === 'Display') {
-                this.previousImagesDialogVisible = true;
-                this.$nextTick(() => adjustDialogZ(this.$refs.previousImagesDialog.$el));
-            } else if (command === 'Change') {
+            if (command === 'Change') {
                 this.changeAvatarImageDialogVisible = true;
                 this.$nextTick(() => adjustDialogZ(this.$refs.changeAvatarImageDialog.$el));
             }
             API.getAvatarImages(params).then((args) => {
                 this.previousImagesTableFileId = args.json.id;
                 var images = args.json.versions;
-                var imageArray = [];
-                images.forEach((image) => {
-                    if (image.file) {
-                        imageArray.push(image.file.url);
-                    }
-                });
-                this.previousImagesTable = images;
+                this.checkPreviousImageAvailable(images, command);
             });
         } else if (type === 'World') {
-            if (command === 'Display') {
-                this.previousImagesDialogVisible = true;
-                this.$nextTick(() => adjustDialogZ(this.$refs.previousImagesDialog.$el));
-            } else if (command === 'Change') {
+            if (command === 'Change') {
                 this.changeWorldImageDialogVisible = true;
                 this.$nextTick(() => adjustDialogZ(this.$refs.changeWorldImageDialog.$el));
             }
             API.getWorldImages(params).then((args) => {
                 this.previousImagesTableFileId = args.json.id;
                 var images = args.json.versions;
-                var imageArray = [];
-                images.forEach((image) => {
-                if (image.file) {
-                        imageArray.push(image.file.url);
-                    }
-                });
-                this.previousImagesTable = images;
+                this.checkPreviousImageAvailable(images, command);
             });
         } else if (type === 'User') {
-            this.previousImagesDialogVisible = true;
-            this.$nextTick(() => adjustDialogZ(this.$refs.previousImagesDialog.$el));
             API.getAvatarImages(params).then((args) => {
                 this.previousImagesTableFileId = args.json.id;
                 var images = args.json.versions;
-                var imageArray = [];
-                images.forEach((image) => {
-                    if (image.file) {
-                        imageArray.push(image.file.url);
-                    }
-                });
-                this.previousImagesTable = images;
+                this.checkPreviousImageAvailable(images, command);
             });
         }
+    };
+
+    $app.methods.checkPreviousImageAvailable = async function (images, command) {
+        this.previousImagesTable = [];
+        for (var image of images) {
+            if ((image.file) && (image.file.url)) {
+                var response = await fetch(image.file.url, {
+                    method: 'HEAD',
+                    redirect: 'follow',
+                    headers: {
+                        'User-Agent': appVersion
+                    }
+                }).catch(error => {
+                    console.log(error);
+                });
+                if (response.status === 200) {
+                    this.previousImagesTable.push(image);
+                }
+            }
+        };
     };
 
     $app.data.previousImagesDialogVisible = false;
