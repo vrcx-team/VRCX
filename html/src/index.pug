@@ -119,7 +119,7 @@ html
                                 template(v-else-if="scope.row.type === 'Status'")
                                     el-tooltip(placement="top")
                                         template(#content)
-                                            span(v-if="scope.row.status[1].status === 'active'") Online
+                                            span(v-if="scope.row.status[1].status === 'active'") Active
                                             span(v-else-if="scope.row.status[1].status === 'join me'") Join Me
                                             span(v-else-if="scope.row.status[1].status === 'ask me'") Ask Me
                                             span(v-else-if="scope.row.status[1].status === 'busy'") Do Not Disturb
@@ -131,7 +131,7 @@ html
                                         i.el-icon-right
                                     el-tooltip(placement="top")
                                         template(#content)
-                                            span(v-if="scope.row.status[0].status === 'active'") Online
+                                            span(v-if="scope.row.status[0].status === 'active'") Active
                                             span(v-else-if="scope.row.status[0].status === 'join me'") Join Me
                                             span(v-else-if="scope.row.status[0].status === 'ask me'") Ask Me
                                             span(v-else-if="scope.row.status[0].status === 'busy'") Do Not Disturb
@@ -1001,7 +1001,8 @@ html
                                 div
                                     el-tooltip(v-if="userDialog.ref.status" placement="top")
                                         template(#content)
-                                            span(v-if="userDialog.ref.location === 'offline'") Offline
+                                            span(v-if="userDialog.ref.state === 'active'") Active
+                                            span(v-else-if="userDialog.ref.location === 'offline'") Offline
                                             span(v-else-if="userDialog.ref.status === 'active'") Online
                                             span(v-else-if="userDialog.ref.status === 'join me'") Join Me
                                             span(v-else-if="userDialog.ref.status === 'ask me'") Ask Me

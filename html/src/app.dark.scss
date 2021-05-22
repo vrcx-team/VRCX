@@ -318,6 +318,7 @@ button {
 }
 
 .x-friend-item > .avatar.active::after,
+.x-friend-item > .avatar.online::after,
 .x-friend-item > .avatar.joinme::after,
 .x-friend-item > .avatar.askme::after,
 .x-friend-item > .avatar.busy::after {

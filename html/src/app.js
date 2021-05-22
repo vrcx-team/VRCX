@@ -5473,15 +5473,17 @@ speechSynthesis.getVoices();
             if ((user.status !== 'active') && (id) && (id !== API.currentUser.id) &&
                 (!this.friendsGroup0_.filter(e => e.id === id).length > 0) &&
                 (!this.friendsGroup1_.filter(e => e.id === id).length > 0)) {
+                // Active
+                style.active = true;
+            } else if (user.location === 'offline') {
                 // Offline
                 style.offline = true;
-            } else if ((user.location === 'offline') ||
-                ((user.state === 'active') && (user.location === 'private'))) {
-                // Offline
-                style.offline = true;
+            } else if (user.state === 'active') {
+                // Active
+                style.active = true;
             } else if (user.status === 'active') {
                 // Online
-                style.active = true;
+                style.online = true;
             } else if (user.status === 'join me') {
                 // Join Me
                 style.joinme = true;
@@ -5646,7 +5648,8 @@ speechSynthesis.getVoices();
         }
         if ((props.location) &&
             (props.location[0] !== 'offline') &&
-            (props.location[1] !== 'offline')) {
+            (props.location[0] !== '') &&
+            ((props.location[1] !== 'offline') && (props.location[0] !== 'private'))) {
             $app.addFeed('GPS', ref, {
                 location: [
                     props.location[0],
@@ -11449,7 +11452,8 @@ speechSynthesis.getVoices();
         if ((this.worldAutoCacheGPS === 'Always') ||
             ((this.worldAutoCacheGPS === 'Game Closed') && (!this.isGameRunning)) ||
             ((this.worldAutoCacheGPS === 'Game Running') && (this.isGameRunning))) {
-            if ((feed.location === 'offline') ||
+            if ((feed.location === '') ||
+                (feed.location === 'offline') ||
                 (feed.location === 'private') ||
                 ((!this.worldAutoCacheGPSFilter) &&
                 (!API.cachedFavoritesByObjectId.has(feed.id)))) {

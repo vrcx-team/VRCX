@@ -307,6 +307,7 @@ img.friends-list-avatar {
 }
 
 .x-friend-item > .avatar.active::after,
+.x-friend-item > .avatar.online::after,
 .x-friend-item > .avatar.joinme::after,
 .x-friend-item > .avatar.askme::after,
 .x-friend-item > .avatar.busy::after {
@@ -322,6 +323,10 @@ img.friends-list-avatar {
 }
 
 .x-friend-item > .avatar.active::after {
+    background: #dfca43;
+}
+
+.x-friend-item > .avatar.online::after {
     background: #67c23a;
 }
 
@@ -439,6 +444,10 @@ i.x-user-status {
 }
 
 i.x-user-status.active {
+    background: #dfca43;
+}
+
+i.x-user-status.online {
     background: #67c23a;
 }
 
