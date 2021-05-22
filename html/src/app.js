@@ -386,7 +386,7 @@ speechSynthesis.getVoices();
         }).then((response) => {
             try {
                 response.data = JSON.parse(response.data);
-                if ($app.debug) {
+                if ($app.debugWebRequests) {
                     console.log(init, response.data);
                 }
                 return response;
@@ -3390,6 +3390,14 @@ speechSynthesis.getVoices();
                 try {
                     var json = JSON.parse(data);
                     json.content = JSON.parse(json.content);
+                    if ($app.debugWebSocket) {
+                        var displayName = '';
+                        if (this.cachedUsers.has(json.content.userId)) {
+                            var user = this.cachedUsers.get(json.content.userId);
+                            displayName = user.displayName;
+                        }
+                        console.log('WebSocket', json.type, displayName, json.content);
+                    }
                     this.$emit('PIPELINE', {
                         json
                     });
@@ -3713,6 +3721,8 @@ speechSynthesis.getVoices();
     };
 
     $app.data.debug = false;
+    $app.data.debugWebRequests = false;
+    $app.data.debugWebSocket = false;
 
     $app.data.APILastOnline = new Map();
 
