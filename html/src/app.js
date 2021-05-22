@@ -5472,10 +5472,14 @@ speechSynthesis.getVoices();
             //temp fix
             if ((user.status !== 'active') && (user.location === 'private') && (user.state === '') &&
                 (id) && (id !== API.currentUser.id) &&
-                (!API.currentUser.onlineFriends.includes(id)) &&
-                (!API.currentUser.activeFriends.includes(id))) {
-                // Offline
-                style.offline = true;
+                (!API.currentUser.onlineFriends.includes(id))) {
+                if (API.currentUser.activeFriends.includes(id)) {
+                    // Active
+                    style.active = true;
+                } else {
+                    // Offline
+                    style.offline = true;
+                }
             } else if (user.location === 'offline') {
                 // Offline
                 style.offline = true;
