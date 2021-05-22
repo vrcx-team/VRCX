@@ -3889,6 +3889,7 @@ speechSynthesis.getVoices();
         var playerCountIndex = 0;
         var playerList = [];
         var friendList = [];
+        var currentUserLeaveTime = '';
         for (var i = data.length - 1; i > -1; i--) {
             var ctx = data[i];
             if (ctx.created_at < bias) {
@@ -3900,6 +3901,33 @@ speechSynthesis.getVoices();
             if ((playerCountIndex === 0) && (ctx.type === 'Location')) {
                 playerCountIndex = i;
             }
+            // on Location change remove OnPlayerLeft
+            if (ctx.type === 'OnPlayerLeft') {
+                if (ctx.created_at === currentUserLeaveTime) {
+                    continue;
+                }
+                if (ctx.data === API.currentUser.displayName) {
+                    currentUserLeaveTime = ctx.created_at;
+                    for (var k = w - 1; k > -1; k--) {
+                        var feedItem = wristArr[k];
+                        if ((feedItem.created_at === currentUserLeaveTime) &&
+                            (feedItem.type === 'OnPlayerLeft')) {
+                            wristArr.splice(k, 1);
+                            w--;
+                        }
+                    }
+                    for (var k = n - 1; k > -1; k--) {
+                        var feedItem = notyArr[k];
+                        if ((feedItem.created_at === currentUserLeaveTime) &&
+                            (feedItem.type === 'OnPlayerLeft')) {
+                            notyArr.splice(k, 1);
+                            n--;
+                        }
+                    }
+                    continue;
+                }
+            }
+            // remove current user
             if (((ctx.type === 'OnPlayerJoined') ||
                 (ctx.type === 'OnPlayerLeft') ||
                 (ctx.type === 'PortalSpawn')) &&
@@ -3945,6 +3973,7 @@ speechSynthesis.getVoices();
                     }
                 }
             }
+            //BlockedOnPlayerJoined, BlockedOnPlayerLeft, MutedOnPlayerJoined, MutedOnPlayerLeft
             if ((ctx.type === 'OnPlayerJoined') ||
                 (ctx.type === 'OnPlayerLeft')) {
                 for (var ref of this.playerModerationTable.data) {
