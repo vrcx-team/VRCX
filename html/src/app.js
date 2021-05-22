@@ -5470,11 +5470,12 @@ speechSynthesis.getVoices();
                 return;
             }
             //temp fix
-            if ((user.status !== 'active') && (id) && (id !== API.currentUser.id) &&
-                (!this.friendsGroup0_.filter(e => e.id === id).length > 0) &&
-                (!this.friendsGroup1_.filter(e => e.id === id).length > 0)) {
-                // Active
-                style.active = true;
+            if ((user.status !== 'active') && (user.location === 'private') && (user.state === '') &&
+                (id) && (id !== API.currentUser.id) &&
+                (!API.currentUser.onlineFriends.includes(id)) &&
+                (!API.currentUser.activeFriends.includes(id))) {
+                // Offline
+                style.offline = true;
             } else if (user.location === 'offline') {
                 // Offline
                 style.offline = true;
