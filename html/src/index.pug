@@ -869,6 +869,10 @@ html
                     div.options-container-item
                         el-button-group
                             el-button(size="small" icon="el-icon-download" @click="showDownloadDialog()") Download History
+                    br
+                    div.options-container-item
+                        span.name(style="min-width:250px") Auto sweep cache when closing VRChat
+                        el-switch(v-model="autoSweepVRChatCache")
                 div.options-container
                     span.header Application
                     div.options-container-item
@@ -1522,6 +1526,9 @@ html
                     template(#content)
                         span Clear Cache
                     el-button(type="default" @click="deleteAllVRChatCache" :disabled="isGameRunning" size="small" icon="el-icon-delete" circle style="margin-left:5px")
+                br
+                span Delete all old versions from cache
+                el-button(size="small" style="margin-left:5px" icon="el-icon-folder-delete" @click="sweepVRChatCache()") Sweep Cache
                 br
                 div(style="display:inline-block;margin-top:10px" v-for="(item, value) in VRChatConfigList" :key="value")
                     span(v-text="item.name" style="word-break:keep-all")

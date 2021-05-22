@@ -238,7 +238,6 @@ namespace VRCX
                 Directory.Move(CacheSource, CacheDestinationLocation);
                 if (File.Exists(Path.Combine(VRChatCacheLocation, "Cache-WindowsPlayer", "__info")))
                     File.Delete(Path.Combine(VRChatCacheLocation, "Cache-WindowsPlayer", "__info"));
-                File.Move(Path.Combine(AssetBundleCacherTemp, "__info"), Path.Combine(VRChatCacheLocation, "Cache-WindowsPlayer", "__info"));
                 Directory.Delete(Path.Combine(VRChatCacheLocation, "AssetBundleCacher\\Cache", AssetId), true);
                 File.Delete(Path.Combine(VRChatCacheLocation, "AssetBundleCacher", AssetId));
             }
@@ -266,6 +265,37 @@ namespace VRCX
             {
                 Directory.Delete(cachePath, true);
                 Directory.CreateDirectory(cachePath);
+            }
+        }
+
+        public void SweepCache(string cacheDir)
+        {
+            var cachePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat\Cache-WindowsPlayer";
+            if (cacheDir != String.Empty && Directory.Exists(cacheDir))
+                cachePath = Path.Combine(cacheDir, @"Cache-WindowsPlayer");
+            if (!Directory.Exists(cachePath))
+                return;
+            var directories = new DirectoryInfo(cachePath);
+            DirectoryInfo[] cacheDirectories = directories.GetDirectories();
+            foreach (DirectoryInfo cacheDirectory in cacheDirectories)
+            {
+                var VersionDirectories = cacheDirectory.GetDirectories().OrderBy(d => Convert.ToInt32(d.Name, 16));
+                int i = 0;
+                foreach (DirectoryInfo VersionDirectory in VersionDirectories)
+                {
+                    i++;
+                    if (VersionDirectory.GetDirectories().Length + VersionDirectory.GetFiles().Length == 0)
+                    {
+                        VersionDirectory.Delete();
+                    }
+                    else if (i < VersionDirectories.Count())
+                    {
+                        if (!File.Exists(Path.Combine(VersionDirectory.FullName, "__lock")))
+                            VersionDirectory.Delete(true);
+                    }
+                }
+                if (cacheDirectory.GetDirectories().Length + cacheDirectory.GetFiles().Length == 0)
+                    cacheDirectory.Delete();
             }
         }
 
