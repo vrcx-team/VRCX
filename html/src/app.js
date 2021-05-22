@@ -2326,7 +2326,6 @@ speechSynthesis.getVoices();
 
     API.$on('LOGIN', function () {
         this.cachedPlayerModerations.clear();
-        $app.playerModerationTable.lastRunLength = 0;
         this.isPlayerModerationsLoading = false;
         this.refreshPlayerModerations();
     });
@@ -2436,11 +2435,6 @@ speechSynthesis.getVoices();
             this.isPlayerModerationsLoading = false;
         }).then(() => {
             this.deleteExpiredPlayerModerations();
-            if (($app.playerModerationTable.data.length !== $app.playerModerationTable.lastRunLength) &&
-                ($app.playerModerationTable.lastRunLength > 0)) {
-                $app.notifyMenu('moderation');
-            }
-            $app.playerModerationTable.lastRunLength = $app.playerModerationTable.data.length;
         });
     };
 
