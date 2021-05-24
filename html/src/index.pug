@@ -1154,6 +1154,18 @@ html
                                     .detail
                                         span.name(v-text="world.name")
                                         span.extra(v-if="world.occupants") ({{ world.occupants }})
+                        el-tab-pane(label="Favorite Worlds")
+                            div(v-loading="userDialog.isFavoriteWorldsLoading" style="min-height:60px")
+                                template(v-for="(list, index) in userFavoriteWorlds" v-if="list")
+                                    span(style="font-weight:bold;font-size:16px") Favorites {{ index + 1 }}
+                                    span(style="color:#909399;font-size:12px;margin-left:10px") {{ list.length }}/32
+                                    .x-friend-list(style="margin-top:5px;margin-bottom:20px;min-height:60px")
+                                        .x-friend-item(v-for="world in list" :key="world.id" @click="showWorldDialog(world.id)")
+                                            .avatar
+                                                img(v-lazy="world.thumbnailImageUrl")
+                                            .detail
+                                                span.name(v-text="world.name")
+                                                span.extra(v-if="world.occupants") ({{ world.occupants }})
                         el-tab-pane(label="Avatars")
                             template(v-if="userDialog.ref.id === API.currentUser.id")
                                 el-button(type="default" :loading="userDialog.isAvatarsLoading" @click="refreshUserDialogAvatars()" size="mini" icon="el-icon-refresh" circle)
