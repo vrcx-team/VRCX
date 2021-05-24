@@ -7526,16 +7526,22 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptWorldDialog = function () {
-        this.$prompt('Enter a World ID (UUID)', 'Direct Access', {
+        this.$prompt('Enter a World URL or ID (UUID)', 'Direct Access', {
             distinguishCancelAndClose: true,
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
             inputPattern: /\S+/,
-            inputErrorMessage: 'World ID is required',
+            inputErrorMessage: 'World URL/ID is required',
             callback: (action, instance) => {
                 if (action === 'confirm' &&
                     instance.inputValue) {
-                    this.showWorldDialog(instance.inputValue);
+                    var testUrl = instance.inputValue.substring(0, 15);
+                    if (testUrl === 'https://vrchat.') {
+                        var worldInstance = this.parseLocationUrl(instance.inputValue);
+                        this.showWorldDialog(worldInstance);
+                    } else {
+                        this.showWorldDialog(instance.inputValue);
+                    }
                 }
             }
         });
@@ -9450,19 +9456,19 @@ speechSynthesis.getVoices();
             }
             nonce = nonce.join('').substr(0, 64);
             */
-            tags.push(`~nonce(${uuidv4()})`);
             if (D.accessType === 'invite+') {
                 tags.push('~canRequestInvite');
             }
+            tags.push(`~nonce(${uuidv4()})`);
         }
         D.instanceId = tags.join('');
     };
 
     var getLaunchURL = function (worldId, instanceId) {
         if (instanceId) {
-            return `https://vrchat.net/launch?worldId=${encodeURIComponent(worldId)}&instanceId=${encodeURIComponent(instanceId)}`;
+            return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(worldId)}&instanceId=${encodeURIComponent(instanceId)}`;
         }
-        return `https://vrchat.net/launch?worldId=${encodeURIComponent(worldId)}`;
+        return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(worldId)}`;
     };
 
     var updateLocationURL = function () {
@@ -11739,6 +11745,14 @@ speechSynthesis.getVoices();
     API.$on('LOGIN', function () {
         $app.downloadDialog.visible = false;
     });
+
+    // Parse location URL
+    $app.methods.parseLocationUrl = function (url) {
+        var urlParams = new URLSearchParams(url.search);
+        var worldId = urlParams.get('worldId');
+        var instanceId = urlParams.get('instanceId');
+        return `${worldId}:${instanceId}`;
+    };
 
     $app = new Vue($app);
     window.$app = $app;
