@@ -101,13 +101,13 @@ button {
     color: #c5cad6;
 }
 
-.el-button:not(.el-button--text) {
+.el-button:not(.el-button--text, .el-button--primary) {
     background-color: #353535;
     border-color: #404040;
 }
 
-.el-button:not(.el-button--text):focus,
-.el-button:not(.el-button--text):hover {
+.el-button:not(.el-button--text, .el-button--primary):focus,
+.el-button:not(.el-button--text, .el-button--primary):hover {
     color: #000;
     background-color: #737373;
     border-color: #656565;
