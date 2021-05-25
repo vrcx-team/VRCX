@@ -2601,6 +2601,7 @@ speechSynthesis.getVoices();
         args.ref = ref;
         if (ref.$groupRef !== null) {
             ref.$groupRef.displayName = ref.displayName;
+            ref.$groupRef.visibility = ref.visibility;
         }
     });
 
@@ -2849,7 +2850,8 @@ speechSynthesis.getVoices();
                 name: `group_${i}`,
                 displayName: `Group ${i + 1}`,
                 capacity: 32,
-                count: 0
+                count: 0,
+                visibility: 'private'
             });
         }
         // 128 = ['worlds1', 'worlds2', 'worlds3', 'worlds4'] x 32
@@ -2862,7 +2864,8 @@ speechSynthesis.getVoices();
                 name: `worlds${i + 1}`,
                 displayName: `Group ${i + 1}`,
                 capacity: 32,
-                count: 0
+                count: 0,
+                visibility: 'private'
             });
         }
         // 100 = ['avatars1'] x 25
@@ -2885,7 +2888,8 @@ speechSynthesis.getVoices();
                 name: `avatars${i + 1}`,
                 displayName: avatarGroupNames[i],
                 capacity: 25,
-                count: 0
+                count: 0,
+                visibility: 'private'
             });
         }
         var types = {
@@ -2910,6 +2914,7 @@ speechSynthesis.getVoices();
                     if (ref.type !== 'avatar') {
                         group.displayName = ref.displayName;
                     }
+                    group.visibility = ref.visibility;
                     ref.$groupRef = group;
                     assigns.add(ref.id);
                     break;
@@ -6472,7 +6477,10 @@ speechSynthesis.getVoices();
                         group: ctx.name,
                         displayName: instance.inputValue
                     }).then((args) => {
-                        this.$message('Group updated!');
+                        this.$message({
+                            message: 'Group renamed',
+                            type: 'success'
+                        });
                         return args;
                     });
                 }
@@ -11805,25 +11813,62 @@ speechSynthesis.getVoices();
     $app.methods.getUserFavoriteWorlds = async function (userId) {
         this.userDialog.isFavoriteWorldsLoading = true;
         this.userFavoriteWorlds = [];
-        var worldListCount = 4;
         var worldLists = [];
-        for (var i = 0; i < worldListCount; ++i) {
-            worldLists[i] = [];
+        var params = {
+            ownerId: userId
+        };
+        var json = await API.call('favorite/groups', {
+            method: 'GET',
+            params
+        });
+        for (var i = 0; i < json.length; ++i) {
+            var list = json[i];
+            if (list.type !== 'world') {
+                continue;
+            }
             var params = {
                 n: 50,
                 offset: 0,
                 userId,
-                tag: `worlds${i + 1}`
+                tag: list.name
             };
             try {
                 var args = await API.getFavoriteWorlds(params);
-                worldLists[i] = args.json;
+                worldLists.push([list.displayName, list.visibility, args.json]);
             } catch (err) {
-                worldLists[i] = null;
             }
         }
         this.userFavoriteWorlds = worldLists;
         this.userDialog.isFavoriteWorldsLoading = false;
+    };
+
+    $app.data.worldGroupVisibilityOptions = [ 'private', 'friends', 'public' ];
+
+    $app.methods.userFavoriteWorldsStatus = function (visibility) {
+        var style = {};
+        if (visibility === 'public') {
+            style.online = true;
+        } else if (visibility === 'friends') {
+            style.joinme = true;
+        } else {
+            style.busy = true;
+        }
+        return style;
+    };
+
+    $app.methods.changeWorldGroupVisibility = function (name, visibility) {
+        var params = {
+            type: 'world',
+            group: name,
+            visibility
+        };
+        API.saveFavoriteGroup(params).then((args) => {
+            this.$message({
+                message: 'Group visibility changed',
+                type: 'success'
+            });
+            return args;
+        });
     };
 
     $app = new Vue($app);

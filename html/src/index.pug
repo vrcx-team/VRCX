@@ -259,8 +259,14 @@ html
                                 template(slot="title")
                                     span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
                                     span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
-                                    el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
-                                    el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                                    el-tooltip(placement="top")
+                                        template(#content)
+                                            span Rename
+                                        el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
+                                    el-tooltip(placement="right")
+                                        template(#content)
+                                            span Clear
+                                        el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                 .x-friend-list(v-if="group.count" style="margin-top:10px")
                                     div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in favoriteFriends" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showUserDialog(favorite.id)")
                                         .x-friend-item
@@ -292,9 +298,23 @@ html
                             el-collapse-item(v-for="group in API.favoriteWorldGroups" :key="group.name")
                                 template(slot="title")
                                     span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
+                                    i.x-user-status(style="margin-left:5px" :class="userFavoriteWorldsStatus(group.visibility)")
                                     span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
-                                    el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
-                                    el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                                    el-tooltip(placement="top")
+                                        template(#content)
+                                            span Change visibility
+                                        el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:10px")
+                                            el-button(type="default" icon="el-icon-view" size="mini" circle)
+                                            el-dropdown-menu(#default="dropdown")
+                                                el-dropdown-item(v-if="group.visibility !== visibility" v-for="visibility in worldGroupVisibilityOptions" :key="visibility" style="display:block;margin:10px 0" v-text="visibility" @click.native="changeWorldGroupVisibility(group.name, visibility)")
+                                    el-tooltip(placement="top")
+                                        template(#content)
+                                            span Rename
+                                        el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:5px")
+                                    el-tooltip(placement="right")
+                                        template(#content)
+                                            span Clear
+                                        el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                 .x-friend-list(v-if="group.count" style="margin-top:10px")
                                     div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in favoriteWorlds" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showWorldDialog(favorite.id)")
                                         .x-friend-item
@@ -330,7 +350,10 @@ html
                                 template(slot="title")
                                     span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
                                     span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
-                                    el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                                    el-tooltip(placement="right")
+                                        template(#content)
+                                            span Clear
+                                        el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                 .x-friend-list(v-if="group.count" style="margin-top:10px")
                                     div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in favoriteAvatars" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showAvatarDialog(favorite.id)")
                                         .x-friend-item
@@ -1157,10 +1180,11 @@ html
                         el-tab-pane(label="Favorite Worlds")
                             div(v-loading="userDialog.isFavoriteWorldsLoading" style="min-height:60px")
                                 template(v-for="(list, index) in userFavoriteWorlds" v-if="list")
-                                    span(style="font-weight:bold;font-size:16px") Favorites {{ index + 1 }}
-                                    span(style="color:#909399;font-size:12px;margin-left:10px") {{ list.length }}/32
+                                    span(style="font-weight:bold;font-size:16px") {{ list[0] }}
+                                    i.x-user-status(style="margin-left:5px" :class="userFavoriteWorldsStatus(list[1])")
+                                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ list[2].length }}/32
                                     .x-friend-list(style="margin-top:5px;margin-bottom:20px;min-height:60px")
-                                        .x-friend-item(v-for="world in list" :key="world.id" @click="showWorldDialog(world.id)")
+                                        .x-friend-item(v-for="world in list[2]" :key="world.id" @click="showWorldDialog(world.id)")
                                             .avatar
                                                 img(v-lazy="world.thumbnailImageUrl")
                                             .detail
