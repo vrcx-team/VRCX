@@ -124,6 +124,11 @@ namespace VRCX
                             return;
                         }
                     }
+                    else
+                    {
+                        DownloadProgress = -11;
+                        return;
+                    }
                 }
             }
             DownloadProgress = 0;

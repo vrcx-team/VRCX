@@ -11725,7 +11725,21 @@ speechSynthesis.getVoices();
             cacheDirectory = this.VRChatConfigFile.cache_directory;
         }
         await AssetBundleCacher.DeleteCache(cacheDirectory, ref.id, ref.version);
+        this.getVRChatCacheSize();
         this.updateVRChatCache();
+    };
+
+    $app.methods.showDeleteAllVRChatCacheConfirm = function () {
+        this.$confirm(`Continue? Delete all VRChat cache`, 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    this.deleteAllVRChatCache();
+                }
+            }
+        });
     };
 
     $app.methods.deleteAllVRChatCache = async function () {

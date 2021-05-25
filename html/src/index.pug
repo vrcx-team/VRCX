@@ -204,7 +204,7 @@ html
                             .x-friend-item(v-for="user in searchUserResults" :key="user.id" @click="showUserDialog(user.id)")
                                 template(v-once)
                                     .avatar
-                                        //img(v-if="user.userIcon" v-lazy="user.userIcon") No userIcon from search, API bug?
+                                        img(v-if="user.userIcon" v-lazy="user.userIcon")
                                         img(v-lazy="user.currentAvatarThumbnailImageUrl")
                                     .detail
                                         span.name(v-text="user.displayName" :class="user.trustClass")
@@ -1501,7 +1501,7 @@ html
                     el-form-item(label="Location")
                         el-input(v-model="newInstanceDialog.location" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                     el-form-item(label="URL")
-                        el-input(ref="wtf" v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+                        el-input(v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                 template(#footer)
                     el-button(size="small" @click="makeHome(newInstanceDialog.location)") Make Home
                     el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)") Invite
@@ -1537,7 +1537,7 @@ html
                 el-tooltip(placement="top")
                     template(#content)
                         span Clear Cache
-                    el-button(type="default" @click="deleteAllVRChatCache" :disabled="isGameRunning" size="small" icon="el-icon-delete" circle style="margin-left:5px")
+                    el-button(type="default" @click="showDeleteAllVRChatCacheConfirm" :disabled="isGameRunning" size="small" icon="el-icon-delete" circle style="margin-left:5px")
                 br
                 span Delete all old versions from cache
                 el-button(size="small" style="margin-left:5px" icon="el-icon-folder-delete" @click="sweepVRChatCache()") Sweep Cache
