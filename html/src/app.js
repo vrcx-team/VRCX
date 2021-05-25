@@ -1240,6 +1240,9 @@ speechSynthesis.getVoices();
             if (ref.location !== ref.$location.tag) {
                 ref.$location = this.parseLocation(ref.location);
             }
+            if (ref.statusDescription) {
+                ref.statusDescription = ref.statusDescription.substring(0, 32);
+            }
             ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);

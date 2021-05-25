@@ -1470,7 +1470,7 @@ html
                 div(v-loading="socialStatusDialog.loading")
                     el-select(v-model="socialStatusDialog.status" style="dispaly:block")
                         el-option(label="Online" value="active").
-                            #[i.x-user-status.active] Online
+                            #[i.x-user-status.online] Online
                         el-option(label="Join Me" value="join me").
                             #[i.x-user-status.joinme] Join Me
                         el-option(label="Ask Me" value="ask me").
@@ -1479,7 +1479,7 @@ html
                             #[i.x-user-status.busy] Do Not Disturb
                         el-option(label="Offline" value="offline").
                             #[i.x-user-status.offline] Offline
-                    el-input(v-model="socialStatusDialog.statusDescription" placeholder="Status" style="dispaly:block;margin-top:10px")
+                    el-input(v-model="socialStatusDialog.statusDescription" placeholder="Status" maxlength="32" show-word-limit style="dispaly:block;margin-top:10px")
                 template(#footer)
                     el-button(type="primary" size="small" :disabled="socialStatusDialog.loading" @click="saveSocialStatus") Update
 
