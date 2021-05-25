@@ -1101,6 +1101,7 @@ html
                                         template(#default v-if="userDialog.instance.occupants")  ({{ userDialog.instance.occupants }})
                                     launch(:location="userDialog.ref.location" style="margin-left:5px")
                                     invite-yourself(:location="userDialog.ref.location" style="margin-left:5px")
+                                    el-button(v-if="copyLocationCheck(userDialog.ref.location)" @click="copyLocation(userDialog.ref.location)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                                 .x-friend-list(style="flex:1;margin-top:10px")
                                     .x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)")
                                         template(v-if="userDialog.$location.user")
@@ -1270,6 +1271,7 @@ html
                                     span.x-link(@click="showLaunchDialog(room.$location.tag)").
                                         \#{{ room.$location.instanceName }} {{ room.$location.accessType }} #[template(v-if="room.occupants") ({{ room.occupants }})]
                                     invite-yourself(:location="room.$location.tag" style="margin-left:5px")
+                                    el-button(v-if="copyLocationCheck(room.$location.tag)" @click="copyLocation(room.$location.tag)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                                 .x-friend-list(style="margin:10px 0" v-if="room.$location.userId || room.users.length")
                                     .x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)")
                                         template(v-if="room.$location.user")
@@ -1528,8 +1530,9 @@ html
                         el-input(v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                 template(#footer)
                     el-button(size="small" @click="makeHome(newInstanceDialog.location)") Make Home
-                    el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)") Invite
                     el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location)") Launch
+                    el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.url)") Copy URL
+                    el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)") Invite
 
             //- dialog: launch options
             el-dialog.x-dialog(ref="launchOptionsDialog" :visible.sync="launchOptionsDialog.visible" title="Launch Options" width="400px")
@@ -1619,8 +1622,8 @@ html
                 div #[span(v-text="launchDialog.url" style="word-break:break-all;font-size:12px")]
                 template(#footer)
                     el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop (No VR)
-                    el-button(size="small" @click="showInviteDialog(launchDialog.location)") Invite
                     el-button(type="primary" size="small" @click="launchGame(locationToLaunchArg(launchDialog.location))") Launch
+                    el-button(size="small" @click="showInviteDialog(launchDialog.location)") Invite
                 
             //- dialog: export friends list
             el-dialog.x-dialog(:visible.sync="exportFriendsListDialog" title="Export Friends List" width="650px")

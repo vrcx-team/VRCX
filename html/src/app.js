@@ -682,7 +682,7 @@ speechSynthesis.getVoices();
     };
 
     Vue.component('launch', {
-        template: '<el-button @click="confirm" size="mini" icon="el-icon-link" circle></el-button>',
+        template: '<el-button @click="confirm" size="mini" icon="el-icon-info" circle></el-button>',
         props: {
             location: String
         },
@@ -9666,6 +9666,51 @@ speechSynthesis.getVoices();
         }
         AppApi.StartGame(args.join(' '));
         D.visible = false;
+    };
+
+    // App: Copy To Clipboard
+
+    $app.methods.copyToClipboard = function (text) {
+        var textArea = document.createElement("textarea");
+        textArea.id = 'copy_to_clipboard';
+        textArea.value = text;
+        textArea.style.top = '0';
+        textArea.style.left = '0';
+        textArea.style.position = 'fixed';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.getElementById('copy_to_clipboard').remove();
+    };
+
+    $app.methods.copyInstanceUrl = function (url) {
+        this.copyToClipboard(url);
+        this.$message({
+            message: 'Instance URL copied to clipboard',
+            type: 'success'
+        });
+        this.launchDialog.visible = false;
+        this.newInstanceDialog.visible = false;
+    };
+
+    $app.methods.copyLocation = function (location) {
+        var L = API.parseLocation(location);
+        var url = getLaunchURL(L.worldId, L.instanceId);
+        this.copyToClipboard(url);
+        this.$message({
+            message: 'Instance URL copied to clipboard',
+            type: 'success'
+        });
+    };
+
+    $app.methods.copyLocationCheck = function (location) {
+        if ((location === '') ||
+            (location === 'offline') ||
+            (location === 'private')) {
+            return false;
+        }
+        return true;
     };
 
     // App: VRCPlus Icons
