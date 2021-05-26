@@ -5355,16 +5355,20 @@ speechSynthesis.getVoices();
                     (ctx.state === 'online')) {
                     ctx.ref.$online_for = '';
                 ctx.ref.$offline_for = Date.now();
-                if (ctx.state === 'online') {
-                    var ts = Date.now();
-                    var time = ts - ctx.ref.$location_at;
-                    this.addFeed('Offline', ctx.ref, {
-                        location: (ctx.ref.location === 'offline') ? '' : ctx.ref.location,
-                        time: time
+                    if (ctx.state === 'online') {
+                        var ts = Date.now();
+                        var time = ts - ctx.ref.$location_at;
+                        API.getUser({
+                            userId: id
+                        });
+                        this.addFeed('Offline', ctx.ref, {
+                            location: (ctx.ref.location === 'offline') ? '' : ctx.ref.location,
+                            time: time
                         });
                     }
                 }
                 if ((state === 'online')) {
+                if (state === 'online') {
                     ctx.ref.$location_at = Date.now();
                     ctx.ref.$online_for = Date.now();
                     ctx.ref.$offline_for = '';
