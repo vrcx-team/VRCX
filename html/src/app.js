@@ -2113,20 +2113,25 @@ speechSynthesis.getVoices();
         }
         this.isNotificationsLoading = true;
         this.expireNotifications();
-        this.bulk({
-            fn: 'getNotifications',
-            N: -1,
-            params: {
-                n: 50,
-                offset: 0
-            },
-            done(ok) {
-                if (ok) {
-                    this.deleteExpiredNotifcations();
-                }
-                this.isNotificationsLoading = false;
-            }
+        this.expireNotifications();
+        this.getNotifications({ n: 100 }).then(() => {
+            this.deleteExpiredNotifcations();
+            this.isNotificationsLoading = false;
         });
+        // this.bulk({
+        //     fn: 'getNotifications',
+        //     N: -1,
+        //     params: {
+        //         n: 50,
+        //         offset: 0
+        //     },
+        //     done(ok) {
+        //         if (ok) {
+        //             this.deleteExpiredNotifcations();
+        //         }
+        //         this.isNotificationsLoading = false;
+        //     }
+        // });
     };
 
     /*
