@@ -5354,7 +5354,7 @@ speechSynthesis.getVoices();
                     ((state === 'offline') || (state === 'active')) &&
                     (ctx.state === 'online')) {
                     ctx.ref.$online_for = '';
-                ctx.ref.$offline_for = Date.now();
+                    ctx.ref.$offline_for = Date.now();
                     if (ctx.state === 'online') {
                         var ts = Date.now();
                         var time = ts - ctx.ref.$location_at;
@@ -5367,20 +5367,19 @@ speechSynthesis.getVoices();
                         });
                     }
                 }
-                if ((state === 'online')) {
                 if (state === 'online') {
                     ctx.ref.$location_at = Date.now();
                     ctx.ref.$online_for = Date.now();
                     ctx.ref.$offline_for = '';
-                API.getUser({
-                    userId: id
-                }).then((args) => {
-                    this.addFeed('Online', args.ref, {
-                        location: args.ref.location
-                    });
-                }).catch(() => {
-                    this.addFeed('Online', ctx.ref, {
-                        location: ctx.ref.location
+                    API.getUser({
+                        userId: id
+                    }).then((args) => {
+                        this.addFeed('Online', args.ref, {
+                            location: args.ref.location
+                        });
+                    }).catch(() => {
+                        this.addFeed('Online', ctx.ref, {
+                            location: ctx.ref.location
                         });
                     });
                 }
