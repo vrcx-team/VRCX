@@ -1602,6 +1602,30 @@ speechSynthesis.getVoices();
         });
     };
 
+    API.getInstance = function (params) {
+        return this.call(`instances/${params.worldId}:${params.instanceId}`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('INSTANCE', args);
+            return args;
+        });
+    };
+
+    API.$on('INSTANCE', function (args) {
+        var { json } = args;
+        var D = $app.userDialog;
+        if (D.ref.location === json.id) {
+            D.instance = {
+                id: json.id,
+                occupants: json.n_users
+            };
+        }
+    });
+
     // API: Friend
 
     API.friends200 = new Set();
@@ -8011,6 +8035,7 @@ speechSynthesis.getVoices();
         D.loading = true;
         D.avatars = [];
         D.worlds = [];
+        D.instance = {};
         API.getCachedUser({
             userId
         }).catch((err) => {
@@ -8080,11 +8105,10 @@ speechSynthesis.getVoices();
                 this.getAvatarName(args);
                 var L = API.parseLocation(D.ref.location);
                 if ((L.worldId) &&
-                    (this.lastLocation.location !== L.tag) &&
-                    ((L.accessType === 'public') ||
-                    (this.friends.has(L.userId)))) {
-                    API.getWorld({
-                        worldId: L.worldId
+                    (this.lastLocation.location !== L.tag)) {
+                    API.getInstance({
+                        worldId: L.worldId,
+                        instanceId: L.instanceId
                     });
                 }
             }
@@ -8154,7 +8178,6 @@ speechSynthesis.getVoices();
         }
         users.sort(compareByDisplayName);
         D.users = users;
-        D.instance = {};
         if (!L.worldId) {
             return;
         }
@@ -8163,31 +8186,6 @@ speechSynthesis.getVoices();
                 id: L.tag,
                 occupants: this.lastLocation.playerList.length
             };
-        } else {
-            var applyInstance = function (instances) {
-                for (var [id, occupants] of instances) {
-                    if (id === L.instanceId) {
-                        D.instance = {
-                            id,
-                            occupants
-                        };
-                        break;
-                    }
-                }
-            };
-            var ref = API.cachedWorlds.get(L.worldId);
-            if (typeof ref === 'undefined') {
-                API.getWorld({
-                    worldId: L.worldId
-                }).then((args) => {
-                    if (args.ref.id === L.worldId) {
-                        applyInstance(args.ref.instances);
-                    }
-                    return true;
-                });
-            } else {
-                applyInstance(ref.instances);
-            }
         }
     };
 
