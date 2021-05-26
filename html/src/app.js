@@ -3274,7 +3274,6 @@ speechSynthesis.getVoices();
                         userId: content.userId
                     }
                 });
-                $app.APILastOnline.set(content.userId, Date.now());
                 break;
 
             case 'friend-active':
@@ -5136,6 +5135,9 @@ speechSynthesis.getVoices();
     });
 
     API.$on('FRIEND:STATE', function (args) {
+        if (args.json.state === 'online') {
+            $app.APILastOnline.set(args.params.userId, Date.now());
+        }
         $app.updateFriend(args.params.userId, args.json.state);
     });
 
@@ -11573,6 +11575,13 @@ speechSynthesis.getVoices();
             this.cancelVRChatCacheDownload(queue.ref.id);
         }
     };
+
+    API.$on('NOTIFICATION', function (args) {
+        var { json } = args;
+        if (json.type === 'invite') {
+            $app.inviteDownloadWorldCache(json);
+        }
+    });
 
     $app.methods.inviteDownloadWorldCache = function (invite) {
         if ((this.worldAutoCacheInvite === 'Always') ||
