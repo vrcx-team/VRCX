@@ -2051,7 +2051,7 @@ speechSynthesis.getVoices();
             ref = {
                 id: '',
                 senderUserId: '',
-                senderDisplayName: '',
+                senderUsername: '',
                 type: '',
                 message: '',
                 details: {},
@@ -4309,8 +4309,8 @@ speechSynthesis.getVoices();
             var displayName = '';
             if (feed.displayName) {
                 displayName = feed.displayName;
-            } else if (feed.senderDisplayName) {
-                displayName = feed.senderDisplayName;
+            } else if (feed.senderUsername) {
+                displayName = feed.senderUsername;
             } else if (feed.sourceDisplayName) {
                 displayName = feed.sourceDisplayName;
             } else if (feed.data) {
@@ -4442,19 +4442,19 @@ speechSynthesis.getVoices();
                 this.speak(`${noty.displayName} status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`);
                 break;
             case 'invite':
-                this.speak(`${noty.senderDisplayName} has invited you to ${noty.details.worldName}${message}`);
+                this.speak(`${noty.senderUsername} has invited you to ${noty.details.worldName}${message}`);
                 break;
             case 'requestInvite':
-                this.speak(`${noty.senderDisplayName} has requested an invite${message}`);
+                this.speak(`${noty.senderUsername} has requested an invite${message}`);
                 break;
             case 'inviteResponse':
-                this.speak(`${noty.senderDisplayName} has responded to your invite${message}`);
+                this.speak(`${noty.senderUsername} has responded to your invite${message}`);
                 break;
             case 'requestInviteResponse':
-                this.speak(`${noty.senderDisplayName} has responded to your invite request${message}`);
+                this.speak(`${noty.senderUsername} has responded to your invite request${message}`);
                 break;
             case 'friendRequest':
-                this.speak(`${noty.senderDisplayName} has sent you a friend request`);
+                this.speak(`${noty.senderUsername} has sent you a friend request`);
                 break;
             case 'Friend':
                 this.speak(`${noty.displayName} is now your friend`);
@@ -4519,19 +4519,19 @@ speechSynthesis.getVoices();
                 AppApi.XSNotification('VRCX', `${noty.displayName} status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, timeout, image);
                 break;
             case 'invite':
-                AppApi.XSNotification('VRCX', `${noty.senderDisplayName} has invited you to ${noty.details.worldName}${message}`, timeout, image);
+                AppApi.XSNotification('VRCX', `${noty.senderUsername} has invited you to ${noty.details.worldName}${message}`, timeout, image);
                 break;
             case 'requestInvite':
-                AppApi.XSNotification('VRCX', `${noty.senderDisplayName} has requested an invite${message}`, timeout, image);
+                AppApi.XSNotification('VRCX', `${noty.senderUsername} has requested an invite${message}`, timeout, image);
                 break;
             case 'inviteResponse':
-                AppApi.XSNotification('VRCX', `${noty.senderDisplayName} has responded to your invite${message}`, timeout, image);
+                AppApi.XSNotification('VRCX', `${noty.senderUsername} has responded to your invite${message}`, timeout, image);
                 break;
             case 'requestInviteResponse':
-                AppApi.XSNotification('VRCX', `${noty.senderDisplayName} has responded to your invite request${message}`, timeout, image);
+                AppApi.XSNotification('VRCX', `${noty.senderUsername} has responded to your invite request${message}`, timeout, image);
                 break;
             case 'friendRequest':
-                AppApi.XSNotification('VRCX', `${noty.senderDisplayName} has sent you a friend request`, timeout, image);
+                AppApi.XSNotification('VRCX', `${noty.senderUsername} has sent you a friend request`, timeout, image);
                 break;
             case 'Friend':
                 AppApi.XSNotification('VRCX', `${noty.displayName} is now your friend`, timeout, image);
@@ -4595,19 +4595,19 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification(noty.displayName, `status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, image);
                 break;
             case 'invite':
-                AppApi.DesktopNotification(noty.senderDisplayName, `has invited you to ${noty.details.worldName}${message}`, image);
+                AppApi.DesktopNotification(noty.senderUsername, `has invited you to ${noty.details.worldName}${message}`, image);
                 break;
             case 'requestInvite':
-                AppApi.DesktopNotification(noty.senderDisplayName, `has requested an invite${message}`, image);
+                AppApi.DesktopNotification(noty.senderUsername, `has requested an invite${message}`, image);
                 break;
             case 'inviteResponse':
-                AppApi.DesktopNotification(noty.senderDisplayName, `has responded to your invite${message}`, image);
+                AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite${message}`, image);
                 break;
             case 'requestInviteResponse':
-                AppApi.DesktopNotification(noty.senderDisplayName, `has responded to your invite request${message}`, image);
+                AppApi.DesktopNotification(noty.senderUsername, `has responded to your invite request${message}`, image);
                 break;
             case 'friendRequest':
-                AppApi.DesktopNotification(noty.senderDisplayName, 'has sent you a friend request', image);
+                AppApi.DesktopNotification(noty.senderUsername, 'has sent you a friend request', image);
                 break;
             case 'Friend':
                 AppApi.DesktopNotification(noty.displayName, 'is now your friend', image);
@@ -6872,7 +6872,7 @@ speechSynthesis.getVoices();
                 filterFn: (row, filter) => filter.value.some((v) => v === row.type)
             },
             {
-                prop: 'senderDisplayName',
+                prop: 'senderUsername',
                 value: ''
             }
         ],

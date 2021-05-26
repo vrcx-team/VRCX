@@ -782,8 +782,8 @@ speechSynthesis.getVoices();
             var displayName = '';
             if (feed.displayName) {
                 displayName = feed.displayName;
-            } else if (feed.senderDisplayName) {
-                displayName = feed.senderDisplayName;
+            } else if (feed.senderUsername) {
+                displayName = feed.senderUsername;
             } else if (feed.sourceDisplayName) {
                 displayName = feed.sourceDisplayName;
             } else if (feed.data) {
@@ -853,8 +853,8 @@ speechSynthesis.getVoices();
             var displayName = '';
             if (feed.displayName) {
                 displayName = feed.displayName;
-            } else if (feed.senderDisplayName) {
-                displayName = feed.senderDisplayName;
+            } else if (feed.senderUsername) {
+                displayName = feed.senderUsername;
             } else if (feed.sourceDisplayName) {
                 displayName = feed.sourceDisplayName;
             } else if (feed.data) {
@@ -911,19 +911,19 @@ speechSynthesis.getVoices();
                         text = `<strong>${noty.displayName}</strong> status is now <i>${noty.status[0].status}</i> ${noty.status[0].statusDescription}`;
                         break;
                     case 'invite':
-                        text = `<strong>${noty.senderDisplayName}</strong> has invited you to ${noty.details.worldName} ${message}`;
+                        text = `<strong>${noty.senderUsername}</strong> has invited you to ${noty.details.worldName} ${message}`;
                         break;
                     case 'requestInvite':
-                        text = `<strong>${noty.senderDisplayName}</strong> has requested an invite ${message}`;
+                        text = `<strong>${noty.senderUsername}</strong> has requested an invite ${message}`;
                         break;
                     case 'inviteResponse':
-                        text = `<strong>${noty.senderDisplayName}</strong> has responded to your invite ${message}`;
+                        text = `<strong>${noty.senderUsername}</strong> has responded to your invite ${message}`;
                         break;
                     case 'requestInviteResponse':
-                        text = `<strong>${noty.senderDisplayName}</strong> has responded to your invite request ${message}`;
+                        text = `<strong>${noty.senderUsername}</strong> has responded to your invite request ${message}`;
                         break;
                     case 'friendRequest':
-                        text = `<strong>${noty.senderDisplayName}</strong> has sent you a friend request`;
+                        text = `<strong>${noty.senderUsername}</strong> has sent you a friend request`;
                         break;
                     case 'Friend':
                         text = `<strong>${noty.displayName}</strong> is now your friend`;
