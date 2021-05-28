@@ -871,27 +871,29 @@ html
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")
                 div.options-container
-                    span.header Auto Cache Worlds
+                    span.header VRChat Cache Management
+                    br
+                    span.sub-header Auto Cache Worlds
+                    br
                     div.options-container-item
                         span.name Download on invite:
                         br
                         toggle-switch(:options="worldCacheToggleSwitchOption" group="worldCacheInviteToggleSwitchOption" v-model="worldAutoCacheInvite" class="toggle-switch")
                     div.options-container-item
                         el-switch(v-model="worldAutoCacheInviteFilter" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheInvite == 'Never'")
-                    br
                     div.options-container-item
                         span.name Download on GPS:
                         br
                         toggle-switch(:options="worldCacheToggleSwitchOption" group="worldCacheGPSToggleSwitchOption" v-model="worldAutoCacheGPS" class="toggle-switch")
                     div.options-container-item
                         el-switch(v-model="worldAutoCacheGPSFilter" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheGPS == 'Never'")
-                    br
                     div.options-container-item
                         el-button-group
                             el-button(size="small" icon="el-icon-download" @click="showDownloadDialog()") Download History
                     br
+                    span.sub-header Automatically Manage Cache When Closing VRChat
                     div.options-container-item
-                        span.name(style="min-width:250px") Auto sweep cache when closing VRChat
+                        span.name(style="min-width:300px") Auto delete old versions from cache
                         el-switch(v-model="autoSweepVRChatCache")
                 div.options-container
                     span.header Application
