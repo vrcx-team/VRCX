@@ -839,9 +839,6 @@ html
                         span.name Hide VR Devices
                         el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
-                        span.name Hide Joins When Joining
-                        el-switch(v-model="hideOnPlayerJoined" :disabled="!openVR || !overlayWrist")
-                    div.options-container-item
                         el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog()" :disabled="!openVR || !overlayWrist") Wrist Feed Filters
                     br
                     span.sub-header Notifications

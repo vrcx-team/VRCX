@@ -3944,6 +3944,7 @@ speechSynthesis.getVoices();
         var playerCountIndex = 0;
         var playerList = [];
         var friendList = [];
+        var currentUserJoinTime = '';
         var currentUserLeaveTime = '';
         for (var i = data.length - 1; i > -1; i--) {
             var ctx = data[i];
@@ -3982,38 +3983,38 @@ speechSynthesis.getVoices();
                     continue;
                 }
             }
+            // on Location change remove OnPlayerJoined
+            if (ctx.type === 'OnPlayerJoined') {
+                if (ctx.created_at === currentUserJoinTime) {
+                    continue;
+                }
+                if (ctx.data === API.currentUser.displayName) {
+                    currentUserJoinTime = ctx.created_at;
+                    for (var k = w - 1; k > -1; k--) {
+                        var feedItem = wristArr[k];
+                        if ((feedItem.created_at === currentUserJoinTime) &&
+                            (feedItem.type === 'OnPlayerJoined')) {
+                            wristArr.splice(k, 1);
+                            w--;
+                        }
+                    }
+                    for (var k = n - 1; k > -1; k--) {
+                        var feedItem = notyArr[k];
+                        if ((feedItem.created_at === currentUserJoinTime) &&
+                            (feedItem.type === 'OnPlayerJoined')) {
+                            notyArr.splice(k, 1);
+                            n--;
+                        }
+                    }
+                    continue;
+                }
+            }
             // remove current user
             if (((ctx.type === 'OnPlayerJoined') ||
                 (ctx.type === 'OnPlayerLeft') ||
                 (ctx.type === 'PortalSpawn')) &&
                 (ctx.data === API.currentUser.displayName)) {
                 continue;
-            }
-            // on Location change remove OnPlayerJoined
-            if (ctx.type === 'Location') {
-                var locationBias = new Date(Date.parse(ctx.created_at) + 15000).toJSON(); //15 seconds
-                if (this.hideOnPlayerJoined) {
-                    for (var k = w - 1; k > -1; k--) {
-                        var feedItem = wristArr[k];
-                        if ((feedItem.created_at > locationBias) || (feedItem.type === 'Location')) {
-                        break;
-                    }
-                    if (feedItem.type === 'OnPlayerJoined') {
-                        wristArr.splice(k, 1);
-                            w--;
-                        }
-                    }
-                }
-                for (var k = n - 1; k > -1; k--) {
-                    var feedItem = notyArr[k];
-                    if (feedItem.created_at > locationBias) {
-                        break;
-                    }
-                    if (feedItem.type === 'OnPlayerJoined') {
-                        notyArr.splice(k, 1);
-                        n--;
-                    }
-                }
             }
             var isFriend = false;
             var isFavorite = false;
@@ -7129,7 +7130,6 @@ speechSynthesis.getVoices();
     $app.data.openVRAlways = configRepository.getBool('openVRAlways');
     $app.data.overlaybutton = configRepository.getBool('VRCX_overlaybutton');
     $app.data.hidePrivateFromFeed = configRepository.getBool('VRCX_hidePrivateFromFeed');
-    $app.data.hideOnPlayerJoined = configRepository.getBool('VRCX_hideOnPlayerJoined');
     $app.data.hideDevicesFromFeed = configRepository.getBool('VRCX_hideDevicesFromFeed');
     $app.data.overlayNotifications = configRepository.getBool('VRCX_overlayNotifications');
     $app.data.overlayWrist = configRepository.getBool('VRCX_overlayWrist');
@@ -7150,7 +7150,6 @@ speechSynthesis.getVoices();
         configRepository.setBool('openVRAlways', this.openVRAlways);
         configRepository.setBool('VRCX_overlaybutton', this.overlaybutton);
         configRepository.setBool('VRCX_hidePrivateFromFeed', this.hidePrivateFromFeed);
-        configRepository.setBool('VRCX_hideOnPlayerJoined', this.hideOnPlayerJoined);
         configRepository.setBool('VRCX_hideDevicesFromFeed', this.hideDevicesFromFeed);
         configRepository.setBool('VRCX_overlayNotifications', this.overlayNotifications);
         configRepository.setBool('VRCX_overlayWrist', this.overlayWrist);
@@ -7178,7 +7177,6 @@ speechSynthesis.getVoices();
     $app.watch.openVRAlways = saveOpenVROption;
     $app.watch.overlaybutton = saveOpenVROption;
     $app.watch.hidePrivateFromFeed = saveOpenVROption;
-    $app.watch.hideOnPlayerJoined = saveOpenVROption;
     $app.watch.hideDevicesFromFeed = saveOpenVROption;
     $app.watch.overlayNotifications = saveOpenVROption;
     $app.watch.overlayWrist = saveOpenVROption;
