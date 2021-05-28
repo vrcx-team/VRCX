@@ -1602,6 +1602,12 @@ speechSynthesis.getVoices();
         });
     };
 
+    /*
+        params: {
+            worldId: string,
+            instanceId: string
+        }
+    */
     API.getInstance = function (params) {
         return this.call(`instances/${params.worldId}:${params.instanceId}`, {
             method: 'GET'
@@ -5385,38 +5391,36 @@ speechSynthesis.getVoices();
                 removeFromArray(this.friendsGroup3_, ctx);
                 removeFromArray(this.friendsGroupD_, ctx);
             }
-            if (typeof ctx.ref !== 'undefined') {
-                if ((ctx.ref.$offline_for === '') &&
+            var { location, $location_at } = ref;
+            var args = await API.getUser({
+                userId: id
+            });
+            if ((typeof args !== 'undefined') &&
+                (typeof args.ref !== 'undefined')) {
+                state = args.ref.state;
+                ctx.ref = args.ref;
+            }
+            if (ctx.state !== state) {
+                if ((typeof ctx.ref.$offline_for !== 'undefined') &&
+                    (ctx.ref.$offline_for === '') &&
                     ((state === 'offline') || (state === 'active')) &&
                     (ctx.state === 'online')) {
                     ctx.ref.$online_for = '';
                     ctx.ref.$offline_for = Date.now();
                     if (ctx.state === 'online') {
                         var ts = Date.now();
-                        var time = ts - ctx.ref.$location_at;
-                        API.getUser({
-                            userId: id
-                        });
+                        var time = ts - $location_at;
                         this.addFeed('Offline', ctx.ref, {
-                            location: (ctx.ref.location === 'offline') ? '' : ctx.ref.location,
-                            time: time
+                            location: (location === 'offline') ? '' : location,
+                            time
                         });
                     }
-                }
-                if (state === 'online') {
+                } else if (state === 'online') {
                     ctx.ref.$location_at = Date.now();
                     ctx.ref.$online_for = Date.now();
                     ctx.ref.$offline_for = '';
-                    API.getUser({
-                        userId: id
-                    }).then((args) => {
-                        this.addFeed('Online', args.ref, {
-                            location: args.ref.location
-                        });
-                    }).catch(() => {
-                        this.addFeed('Online', ctx.ref, {
-                            location: ctx.ref.location
-                        });
+                    this.addFeed('Online', ctx.ref, {
+                        location: ctx.ref.location
                     });
                 }
             }
@@ -5428,13 +5432,11 @@ speechSynthesis.getVoices();
             if (ctx.isVIP !== isVIP) {
                 ctx.isVIP = isVIP;
             }
-            if (typeof ref !== 'undefined') {
-                if (ctx.ref !== ref) {
-                    ctx.ref = ref;
-                }
-                if (ctx.name !== ref.displayName) {
-                    ctx.name = ref.displayName;
-                }
+            if (ctx.ref.state === '') {
+                ctx.ref.state = 'offline';
+            }
+            if (ctx.name !== ctx.ref.displayName) {
+                ctx.name = ctx.ref.displayName;
             }
             if (ctx.state === 'online') {
                 if (ctx.isVIP) {
