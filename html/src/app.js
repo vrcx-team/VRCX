@@ -7127,6 +7127,14 @@ speechSynthesis.getVoices();
         },
         layout: 'table'
     };
+    $app.data.socialStatusHistoryTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        layout: 'table'
+    };
     $app.data.visits = 0;
     $app.data.openVR = configRepository.getBool('openVR');
     $app.data.openVRAlways = configRepository.getBool('openVRAlways');
@@ -9380,9 +9388,27 @@ speechSynthesis.getVoices();
     $app.methods.showSocialStatusDialog = function () {
         this.$nextTick(() => adjustDialogZ(this.$refs.socialStatusDialog.$el));
         var D = this.socialStatusDialog;
+        var { statusHistory } = API.currentUser;
+        var statusHistoryArray = [];
+        for (var i = 0; i < statusHistory.length; ++i) {
+            var addStatus = {
+                no: i + 1,
+                status: statusHistory[i]
+            }
+            statusHistoryArray.push(addStatus);
+        }
+        this.socialStatusHistoryTable.data = statusHistoryArray;
         D.status = API.currentUser.status;
         D.statusDescription = API.currentUser.statusDescription;
         D.visible = true;
+    };
+
+    $app.methods.setSocialStatusFromHistory = function (val) {
+        if (val === null) {
+            return;
+        }
+        var D = this.socialStatusDialog;
+        D.statusDescription = val.status;
     };
 
     // App: Language Dialog
