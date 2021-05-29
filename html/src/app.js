@@ -5471,6 +5471,21 @@ speechSynthesis.getVoices();
         this.updateFriendInProgress.delete(id);
     };
 
+    $app.methods.updateFriendGPS = function (userId) {
+        var ctx = this.friends.get(userId);
+        if ((typeof ctx.ref !== 'undefined') &&
+            (ctx.ref.location !== 'private') &&
+            (ctx.state === 'online')) {
+            if (ctx.isVIP) {
+                removeFromArray(this.friendsGroupA_, ctx);
+                this.friendsGroupA_.unshift(ctx);
+            } else {
+                removeFromArray(this.friendsGroupB_, ctx);
+                this.friendsGroupB_.unshift(ctx);
+            }
+        }
+    };
+
     // ascending
     var compareByName = function (a, b) {
         var A = String(a.name).toUpperCase();
@@ -5760,9 +5775,10 @@ speechSynthesis.getVoices();
                 location: [
                     props.location[0],
                         props.location[1]
-                    ],
+                ],
                 time: props.location[2]
             });
+            $app.updateFriendGPS(ref.id);
             $app.feedDownloadWorldCache(ref);
         }
         if (props.currentAvatarImageUrl ||
