@@ -5285,7 +5285,7 @@ speechSynthesis.getVoices();
 
     $app.data.updateFriendInProgress = new Set();
 
-    $app.methods.updateFriend = async function (id, state, origin) {
+    $app.methods.updateFriend = async function (id, newState, origin) {
         var ctx = this.friends.get(id);
         if (typeof ctx === 'undefined') {
             return;
@@ -5296,8 +5296,8 @@ speechSynthesis.getVoices();
         this.updateFriendInProgress.add(id);
         var ref = API.cachedUsers.get(id);
         var isVIP = API.cachedFavoritesByObjectId.has(id);
-        if (typeof state === 'undefined' ||
-            ctx.state === state) {
+        if (typeof newState === 'undefined' ||
+            ctx.state === newState) {
             // this is should be: undefined -> user
             if (ctx.ref !== ref) {
                 ctx.ref = ref;
@@ -5372,7 +5372,7 @@ speechSynthesis.getVoices();
                 });
             }
         } else {
-            if (ctx.state === 'online' && state === 'active') {
+            if (ctx.state === 'online' && newState === 'active') {
                 this.updateFriendInProgress.delete(id);
                 await new Promise(resolve => setTimeout(resolve, 50000));
                 if (this.APILastOnline.has(id)) {
@@ -5380,6 +5380,46 @@ speechSynthesis.getVoices();
                     if (date > Date.now() - 60000) {
                         return;
                     }
+                }
+            }
+            var location = '';
+            var $location_at = '';
+            if ((typeof ref !== 'undefined') &&
+                (typeof ref.location !== 'undefined')) {
+                var { location, $location_at } = ref;
+            }
+            var args = await API.getUser({
+                userId: id
+            }).catch((err) => {
+                this.updateFriendInProgress.remove(id);
+            });
+            if ((typeof args !== 'undefined') &&
+                (typeof args.ref !== 'undefined')) {
+                newState = args.ref.state;
+                ctx.ref = args.ref;
+            }
+            if (ctx.state !== newState) {
+                if ((typeof ctx.ref.$offline_for !== 'undefined') &&
+                    (ctx.ref.$offline_for === '') &&
+                    ((newState === 'offline') || (newState === 'active')) &&
+                    (ctx.state === 'online')) {
+                    ctx.ref.$online_for = '';
+                    ctx.ref.$offline_for = Date.now();
+                    if (ctx.state === 'online') {
+                        var ts = Date.now();
+                        var time = ts - $location_at;
+                        this.addFeed('Offline', ctx.ref, {
+                            location: (location === 'offline') ? '' : location,
+                            time
+                        });
+                    }
+                } else if (newState === 'online') {
+                    ctx.ref.$location_at = Date.now();
+                    ctx.ref.$online_for = Date.now();
+                    ctx.ref.$offline_for = '';
+                    this.addFeed('Online', ctx.ref, {
+                        location: ctx.ref.location
+                    });
                 }
             }
             if (ctx.state === 'online') {
@@ -5397,62 +5437,8 @@ speechSynthesis.getVoices();
                 removeFromArray(this.friendsGroup3_, ctx);
                 removeFromArray(this.friendsGroupD_, ctx);
             }
-            var location = '';
-            var $location_at = '';
-            if ((typeof ref !== 'undefined') &&
-                (typeof ref.location !== 'undefined')) {
-                var { location, $location_at } = ref;
-            }
-            var args = await API.getUser({
-                userId: id
-            }).catch((err) => {
-                this.updateFriendInProgress.remove(id);
-            });
-            if ((typeof args !== 'undefined') &&
-                (typeof args.ref !== 'undefined')) {
-                state = args.ref.state;
-                ctx.ref = args.ref;
-            }
-            if (ctx.state !== state) {
-                if ((typeof ctx.ref.$offline_for !== 'undefined') &&
-                    (ctx.ref.$offline_for === '') &&
-                    ((state === 'offline') || (state === 'active')) &&
-                    (ctx.state === 'online')) {
-                    ctx.ref.$online_for = '';
-                    ctx.ref.$offline_for = Date.now();
-                    if (ctx.state === 'online') {
-                        var ts = Date.now();
-                        var time = ts - $location_at;
-                        this.addFeed('Offline', ctx.ref, {
-                            location: (location === 'offline') ? '' : location,
-                            time
-                        });
-                    }
-                } else if (state === 'online') {
-                    ctx.ref.$location_at = Date.now();
-                    ctx.ref.$online_for = Date.now();
-                    ctx.ref.$offline_for = '';
-                    this.addFeed('Online', ctx.ref, {
-                        location: ctx.ref.location
-                    });
-                }
-            }
-            // changing property triggers Vue
-            // so, we need compare and set
-            if (ctx.state !== state) {
-                ctx.state = state;
-            }
-            if (ctx.isVIP !== isVIP) {
-                ctx.isVIP = isVIP;
-            }
-            if (ctx.ref.state === '') {
-                ctx.ref.state = 'offline';
-            }
-            if (ctx.name !== ctx.ref.displayName) {
-                ctx.name = ctx.ref.displayName;
-            }
-            if (ctx.state === 'online') {
-                if (ctx.isVIP) {
+            if (newState === 'online') {
+                if (isVIP) {
                     this.sortFriendsGroup0 = true;
                     this.friendsGroup0_.push(ctx);
                     this.friendsGroupA_.unshift(ctx);
@@ -5461,7 +5447,7 @@ speechSynthesis.getVoices();
                     this.friendsGroup1_.push(ctx);
                     this.friendsGroupB_.unshift(ctx);
                 }
-            } else if (ctx.state === 'active') {
+            } else if (newState === 'active') {
                 this.sortFriendsGroup2 = true;
                 this.friendsGroup2_.push(ctx);
                 this.friendsGroupC_.unshift(ctx);
@@ -5469,6 +5455,17 @@ speechSynthesis.getVoices();
                 this.sortFriendsGroup3 = true;
                 this.friendsGroup3_.push(ctx);
                 this.friendsGroupD_.unshift(ctx);
+            }
+            // changing property triggers Vue
+            // so, we need compare and set
+            if (ctx.state !== newState) {
+                ctx.state = newState;
+            }
+            if (ctx.name !== ctx.ref.displayName) {
+                ctx.name = ctx.ref.displayName;
+            }
+            if (ctx.isVIP !== isVIP) {
+                ctx.isVIP = isVIP;
             }
         }
         this.updateFriendInProgress.delete(id);
