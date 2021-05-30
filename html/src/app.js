@@ -3251,10 +3251,10 @@ speechSynthesis.getVoices();
                 });
                 break;
 
-            case 'notification-see':
+            case 'see-notification':
                 this.$emit('NOTIFICATION:SEE', {
                     params: {
-                        notificationId: content.notificationId
+                        notificationId: content
                     }
                 });
                 break;
@@ -3437,7 +3437,10 @@ speechSynthesis.getVoices();
             socket.onmessage = ({ data }) => {
                 try {
                     var json = JSON.parse(data);
-                    json.content = JSON.parse(json.content);
+                    try {
+                        json.content = JSON.parse(json.content);
+                    } catch (err) {
+                    }
                     if ($app.debugWebSocket) {
                         var displayName = '';
                         if (this.cachedUsers.has(json.content.userId)) {
