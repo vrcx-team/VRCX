@@ -7654,7 +7654,14 @@ speechSynthesis.getVoices();
                     var testUrl = instance.inputValue.substring(0, 15);
                     if (testUrl === 'https://vrchat.') {
                         var worldInstance = this.parseLocationUrl(instance.inputValue);
-                        this.showWorldDialog(worldInstance);
+                        if (worldInstance) {
+                            this.showWorldDialog(worldInstance);
+                        } else {
+                            this.$message({
+                                message: 'Invalid URL',
+                                type: 'error'
+                            });
+                        }
                     } else {
                         this.showWorldDialog(instance.inputValue);
                     }
@@ -11929,11 +11936,16 @@ speechSynthesis.getVoices();
 
     // Parse location URL
 
-    $app.methods.parseLocationUrl = function (url) {
+    $app.methods.parseLocationUrl = function (location) {
+        var url = new URL(location);
         var urlParams = new URLSearchParams(url.search);
         var worldId = urlParams.get('worldId');
         var instanceId = urlParams.get('instanceId');
-        return `${worldId}:${instanceId}`;
+        if (instanceId) {
+            return `${worldId}:${instanceId}`;
+        } else if (worldId) {
+            return worldId;
+        }
     };
 
     // userDialog Favorite Worlds
