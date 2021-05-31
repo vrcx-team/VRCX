@@ -1621,11 +1621,26 @@ speechSynthesis.getVoices();
     API.$on('INSTANCE', function (args) {
         var { json } = args;
         var D = $app.userDialog;
-        if (D.ref.location === json.id) {
+        if (($app.userDialog.visible) &&
+            (D.ref.location === json.id)) {
             D.instance = {
                 id: json.id,
                 occupants: json.n_users
             };
+        }
+    });
+
+    API.$on('INSTANCE', function (args) {
+        var { json } = args;
+        var D = $app.worldDialog;
+        if (($app.worldDialog.visible) &&
+            ($app.worldDialog.id === json.worldId)) {
+            for (var instance of D.rooms) {
+                if (instance.id === json.instanceId) {
+                    instance.occupants = json.n_users;
+                    break;
+                }
+            }
         }
     });
 
@@ -8209,16 +8224,11 @@ speechSynthesis.getVoices();
                     }
                 }
             }
-        } else {
-            if (L.isOffline === false) {
-                for (var { ref } of this.friends.values()) {
-                    if (typeof ref !== 'undefined' &&
-                        ref.location === L.tag) {
-                        if ((ref.state === 'active') && (ref.location === 'private')) {
-                            continue;
-                        }
-                        users.push(ref);
-                    }
+        } else if (L.isOffline === false) {
+            for (var { ref } of this.friends.values()) {
+                if ((typeof ref !== 'undefined') &&
+                    (ref.location === L.tag)) {
+                    users.push(ref);
                 }
             }
         }
@@ -8470,7 +8480,56 @@ speechSynthesis.getVoices();
         if (D.visible === false) {
             return;
         }
-        if (command === 'Add Favorite') {
+        if (command === 'Refresh') {
+            D.loading = true;
+            API.getUser({
+                userId: D.id
+            }).catch((err) => {
+                D.loading = false;
+                D.visible = false;
+                throw err;
+            }).then((args) => {
+                if (D.id === args.ref.id) {
+                    D.loading = false;
+                    D.ref = args.ref;
+                    D.friend = this.friends.get(D.id);
+                    D.isFriend = Boolean(D.friend);
+                    D.incomingRequest = false;
+                    D.outgoingRequest = false;
+                    D.isBlock = false;
+                    D.isMute = false;
+                    D.isHideAvatar = false;
+                    for (var ref of API.cachedPlayerModerations.values()) {
+                        if (ref.$isDeleted === false &&
+                            ref.targetUserId === D.id &&
+                            ref.sourceUserId === API.currentUser.id) {
+                            if (ref.type === 'block') {
+                                D.isBlock = true;
+                            } else if (ref.type === 'mute') {
+                                D.isMute = true;
+                            } else if (ref.type === 'hideAvatar') {
+                                D.isHideAvatar = true;
+                            }
+                        }
+                    }
+                    D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
+                    this.applyUserDialogLocation();
+                    API.getFriendStatus({
+                        userId: D.id
+                    });
+                    this.getAvatarName(args);
+                    var L = API.parseLocation(D.ref.location);
+                    if ((L.worldId) &&
+                        (this.lastLocation.location !== L.tag)) {
+                        API.getInstance({
+                            worldId: L.worldId,
+                            instanceId: L.instanceId
+                        });
+                    }
+                }
+                return args;
+            });
+        } else if (command === 'Add Favorite') {
             this.showFavoriteDialog('friend', D.id);
         } else if (command === 'Edit Social Status') {
             this.showSocialStatusDialog();
@@ -8599,6 +8658,18 @@ speechSynthesis.getVoices();
         }
         D.ref = ref;
         $app.applyWorldDialogInstances();
+        for (var room of D.rooms) {
+            if (room.occupants === 0) {
+                API.getInstance({
+                    worldId: D.id,
+                    instanceId: room.id
+                });
+            }
+        }
+        D.rooms.sort(function (a, b) {
+            return b.users.length - a.users.length ||
+                b.occupants - a.occupants;
+        });
         if (D.fileSize === 'Loading') {
             var assetUrl = '';
             for (var i = ref.unityPackages.length - 1; i > -1; i--) {
@@ -8675,7 +8746,6 @@ speechSynthesis.getVoices();
                 D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
                 D.rooms = [];
                 this.updateVRChatCache();
-                this.applyWorldDialogInstances();
                 if (args.cache) {
                     API.getWorld(args.params);
                 }
@@ -8709,13 +8779,12 @@ speechSynthesis.getVoices();
             var instance = instances[lastLocation$.instanceId];
             if (typeof instance === 'undefined') {
                 instance = {
-                        id: lastLocation$.instanceId,
-                        occupants: 1,
-                        users: []
+                    id: lastLocation$.instanceId,
+                    occupants: playersInInstance.length,
+                    users: []
                 };
                 instances[instance.id] = instance;
             }
-            instances[instance.id].occupants = playersInInstance.length;
             var ref = API.cachedUsers.get(API.currentUser.id);
             if (typeof ref === 'undefined') {
                 ref = API.currentUser;
@@ -8810,14 +8879,10 @@ speechSynthesis.getVoices();
                 throw err;
             }).then((args) => {
                 if (D.id === args.ref.id) {
-                    D.loading = false;
-                    D.ref = args.ref;
-                    D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
-                    D.rooms = [];
-                    this.applyWorldDialogInstances();
-                    if (args.cache) {
-                        API.getWorld(args.params);
-                    }
+                        D.loading = false;
+                        D.ref = args.ref;
+                        D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
+                        this.updateVRChatCache();
                     }
                     return args;
                 });
@@ -12014,6 +12079,16 @@ speechSynthesis.getVoices();
             });
             return args;
         });
+    };
+
+    $app.methods.refreshInstancePlayerCount = function (instance) {
+        var L = API.parseLocation(instance);
+        if (L.worldId) {
+            API.getInstance({
+                worldId: L.worldId,
+                instanceId: L.instanceId
+            });
+        }
     };
 
     $app = new Vue($app);

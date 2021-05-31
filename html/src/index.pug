@@ -868,13 +868,13 @@ html
                     div.options-container-item
                         el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()") Notification Filters
                     br
-                    span.sub-header TTS Options
+                    span.sub-header Text-To-Speach Options
                     div.options-container-item
                         span.name Notification TTS, When to play:
                         br
                         toggle-switch(:options="whenToPlayToggleSwitchOption" group="whenToPlayNotificationTTSToggleSwitchOption" v-model="notificationTTS" class="toggle-switch")
                     div.options-container-item
-                        span.name Text-to-Speech Voice
+                        span.name TTS Voice
                         el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
                             el-button(v-text="TTSvoices[notificationTTSVoice].name" size="mini" :disabled="!notificationTTS")
                             el-dropdown-menu(#default="dropdown")
@@ -1076,8 +1076,9 @@ html
                                 el-dropdown(trigger="click" @command="userDialogCommand" size="small")
                                     el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                                     el-dropdown-menu(#default="dropdown")
+                                        el-dropdown-item(icon="el-icon-refresh" command="Refresh") Refresh
                                         template(v-if="userDialog.ref.id === API.currentUser.id")
-                                            el-dropdown-item(icon="el-icon-check" command="Select Avatar") Select Avatar By ID
+                                            el-dropdown-item(icon="el-icon-check" command="Select Avatar" divided) Select Avatar By ID
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author") Show Avatar Author
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") Show Fallback Avatar Details
                                             el-dropdown-item(icon="el-icon-edit" command="Edit Social Status" divided) Social Status
@@ -1086,11 +1087,11 @@ html
                                             el-dropdown-item(icon="el-icon-switch-button" command="Logout" divided) Logout
                                         template(v-else)
                                             template(v-if="userDialog.isFriend")
+                                                el-dropdown-item(icon="el-icon-postcard" command="Request Invite" divided) Request Invite
+                                                el-dropdown-item(icon="el-icon-postcard" command="Request Invite Message") Request Invite With Message
                                                 template(v-if="lastLocation.location && isGameRunning")
                                                     el-dropdown-item(icon="el-icon-message" command="Invite") Invite
                                                     el-dropdown-item(icon="el-icon-message" command="Invite Message") Invite With Message
-                                                el-dropdown-item(icon="el-icon-postcard" command="Request Invite") Request Invite
-                                                el-dropdown-item(icon="el-icon-postcard" command="Request Invite Message") Request Invite With Message
                                             template(v-else-if="userDialog.incomingRequest")
                                                 el-dropdown-item(icon="el-icon-check" command="Accept Friend Request") Accept Friend Request
                                                 el-dropdown-item(icon="el-icon-close" command="Decline Friend Request") Decline Friend Request
@@ -1113,6 +1114,7 @@ html
                                 div(style="flex:none")
                                     location(:location="userDialog.ref.location")
                                         template(#default v-if="userDialog.instance.occupants")  ({{ userDialog.instance.occupants }})
+                                    el-button(v-if="userDialog.ref.location !== lastLocation.location && userDialog.ref.location !== 'private' && userDialog.ref.location !== 'offline'" @click="refreshInstancePlayerCount(userDialog.ref.location)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                     launch(:location="userDialog.ref.location" style="margin-left:5px")
                                     invite-yourself(:location="userDialog.ref.location" style="margin-left:5px")
                                     el-button(v-if="copyLocationCheck(userDialog.ref.location)" @click="copyLocation(userDialog.ref.location)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
@@ -1287,6 +1289,7 @@ html
                                 div(style="margin:5px 0")
                                     span.x-link(@click="showLaunchDialog(room.$location.tag)").
                                         \#{{ room.$location.instanceName }} {{ room.$location.accessType }} #[template(v-if="room.occupants") ({{ room.occupants }})]
+                                    el-button(v-if="room.$location.tag !== lastLocation.location && room.$location.tag !== 'private' && room.$location.tag !== 'offline'"  @click="refreshInstancePlayerCount(room.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                     invite-yourself(:location="room.$location.tag" style="margin-left:5px")
                                     el-button(v-if="copyLocationCheck(room.$location.tag)" @click="copyLocation(room.$location.tag)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                                 .x-friend-list(style="margin:10px 0" v-if="room.$location.userId || room.users.length")
