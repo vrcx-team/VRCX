@@ -218,6 +218,7 @@ html
                             el-button(size="small") Search by Category #[i.el-icon-arrow-down.el-icon--right]
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-for="row in API.cachedConfig.dynamicWorldRows" :key="row.index" v-text="row.name" :command="row")
+                        el-checkbox(v-model="searchWorldLabs" style="margin-left:10px") Include community labs
                         .x-friend-list
                             .x-friend-item(v-for="world in searchWorldResults" :key="world.id" @click="showWorldDialog(world.id)")
                                 template(v-once)

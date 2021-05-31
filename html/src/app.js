@@ -6256,6 +6256,8 @@ speechSynthesis.getVoices();
         });
     };
 
+    $app.data.searchWorldLabs = false;
+
     $app.methods.searchWorld = function (ref) {
         this.searchWorldOption = '';
         var params = {
@@ -6309,8 +6311,8 @@ speechSynthesis.getVoices();
             params.user = 'me';
             params.releaseStatus = 'all';
         }
-        if (ref.tag) {
-            params.tag = ref.tag;
+        if (!this.searchWorldLabs) {
+            params.tag = 'system_approved';
         }
         // TODO: option.platform
         this.searchWorldParams = params;
