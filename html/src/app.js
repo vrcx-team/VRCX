@@ -3980,14 +3980,15 @@ speechSynthesis.getVoices();
             }
             // on Location change remove OnPlayerLeft
             if (ctx.type === 'OnPlayerLeft') {
-                if (ctx.created_at === currentUserLeaveTime) {
+                if (ctx.created_at.slice(0, -4) === currentUserLeaveTime) {
                     continue;
                 }
                 if (ctx.data === API.currentUser.displayName) {
-                    currentUserLeaveTime = ctx.created_at;
+                    var { created_at } = ctx;
+                    currentUserLeaveTime = created_at.slice(0, -4);
                     for (var k = w - 1; k > -1; k--) {
                         var feedItem = wristArr[k];
-                        if ((feedItem.created_at === currentUserLeaveTime) &&
+                        if ((feedItem.created_at.slice(0, -4) === currentUserLeaveTime) &&
                             (feedItem.type === 'OnPlayerLeft')) {
                             wristArr.splice(k, 1);
                             w--;
@@ -3995,7 +3996,7 @@ speechSynthesis.getVoices();
                     }
                     for (var k = n - 1; k > -1; k--) {
                         var feedItem = notyArr[k];
-                        if ((feedItem.created_at === currentUserLeaveTime) &&
+                        if ((feedItem.created_at.slice(0, -4) === currentUserLeaveTime) &&
                             (feedItem.type === 'OnPlayerLeft')) {
                             notyArr.splice(k, 1);
                             n--;
@@ -4006,14 +4007,15 @@ speechSynthesis.getVoices();
             }
             // on Location change remove OnPlayerJoined
             if (ctx.type === 'OnPlayerJoined') {
-                if (ctx.created_at === currentUserJoinTime) {
+                if (ctx.created_at.slice(0, -4) === currentUserJoinTime) {
                     continue;
                 }
                 if (ctx.data === API.currentUser.displayName) {
-                    currentUserJoinTime = ctx.created_at;
+                    var { created_at } = ctx;
+                    currentUserJoinTime = created_at.slice(0, -4);
                     for (var k = w - 1; k > -1; k--) {
                         var feedItem = wristArr[k];
-                        if ((feedItem.created_at === currentUserJoinTime) &&
+                        if ((feedItem.created_at.slice(0, -4) === currentUserJoinTime) &&
                             (feedItem.type === 'OnPlayerJoined')) {
                             wristArr.splice(k, 1);
                             w--;
@@ -4021,7 +4023,7 @@ speechSynthesis.getVoices();
                     }
                     for (var k = n - 1; k > -1; k--) {
                         var feedItem = notyArr[k];
-                        if ((feedItem.created_at === currentUserJoinTime) &&
+                        if ((feedItem.created_at.slice(0, -4) === currentUserJoinTime) &&
                             (feedItem.type === 'OnPlayerJoined')) {
                             notyArr.splice(k, 1);
                             n--;
