@@ -764,6 +764,12 @@ html
                 div.options-container
                     span.header Side Pannel Sorting Options
                     div.options-container-item
+                        span.name Sort Private to bottom
+                        el-switch(v-model="orderFriendsGroupPrivate")
+                    div.options-container-item
+                        span.name Sort GPS to top
+                        el-switch(v-model="orderFriendsGroupGPS")
+                    div.options-container-item
                         span.name VIP
                         el-switch(v-model="orderFriendsGroup0" inactive-text="by name" active-text="by state")
                     div.options-container-item
