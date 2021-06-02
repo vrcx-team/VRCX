@@ -371,22 +371,21 @@ img.friends-list-avatar {
 
 .x-friend-item > .vrcplus-icon {
     border: 4px solid #dcdfe6;
-    border-radius: 50%;
-    margin: 0;
-    width: 120px;
-    height: 120px;
+    border-radius: 20px;
+    width: 200px;
+    height: 200px;
     cursor: pointer;
 }
 
 .x-friend-item > .current-vrcplus-icon {
     border: 4px solid #67c23a;
-    border-radius: 50%;
+    cursor: default;
 }
 
 .x-friend-item > .vrcplus-icon > img {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
+    border-radius: 15px;
     object-fit: cover;
 }
 

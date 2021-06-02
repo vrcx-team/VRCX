@@ -7141,6 +7141,7 @@ speechSynthesis.getVoices();
         layout: 'table'
     };
     $app.data.VRCPlusIconsTable = {};
+    $app.data.galleryTable = {};
     $app.data.inviteMessageTable = {
         visible: false,
         data: [],
@@ -8648,8 +8649,10 @@ speechSynthesis.getVoices();
             }
         } else if (command === 'Previous Images') {
             this.displayPreviousImages('User', 'Display');
-        }  else if (command === 'Select Avatar') {
+        } else if (command === 'Select Avatar') {
             this.promptSelectAvatarDialog();
+        } else if (command === 'Manage Gallery') {
+            this.showGalleryDialog();
         } else {
             this.$confirm(`Continue? ${command}`, 'Confirm', {
                 confirmButtonText: 'Confirm',
@@ -9947,15 +9950,16 @@ speechSynthesis.getVoices();
         $app.VRCPlusIconsTable = {};
     });
 
-    $app.methods.displayVRCPlusIconsTable = function () {
+    $app.methods.refreshVRCPlusIconsTable = function () {
+        this.galleryDialogIconsLoading = true;
         var params = {
-            n: 50,
+            n: 100,
             tag: 'icon'
         };
-        API.refreshVRCPlusIconsTableData(params);
+        API.getFileList(params);
     };
 
-    API.refreshVRCPlusIconsTableData = function (params) {
+    API.getFileList = function (params) {
         return this.call('files', {
             method: 'GET',
             params
@@ -9964,20 +9968,27 @@ speechSynthesis.getVoices();
                 json,
                 params
             };
-            this.$emit('VRCPLUSICON:LIST', args);
+            this.$emit('FILES:LIST', args);
             return args;
         });
     };
 
-    API.$on('VRCPLUSICON:LIST', function (args) {
-        $app.VRCPlusIconsTable = args.json;
+    API.$on('FILES:LIST', function (args) {
+        if (args.params.tag === 'icon') {
+            $app.VRCPlusIconsTable = args.json;
+            $app.galleryDialogIconsLoading = false;
+        }
     });
 
-    $app.methods.setVRCPlusIcon = function (userIcon) {
-        if (userIcon !== '') {
-            userIcon = `https://api.vrchat.cloud/api/1/file/${userIcon}/1`;
+    $app.methods.setVRCPlusIcon = function (fileId) {
+        var userIcon = '';
+        if (fileId) {
+            userIcon = `https://api.vrchat.cloud/api/1/file/${fileId}/1`;
         }
-        API.setVRCPlusIcon({
+        if (userIcon === API.currentUser.userIcon) {
+            return;
+        }
+        API.saveCurrentUser({
             userIcon
         }).then((args) => {
             this.$message({
@@ -9988,22 +9999,8 @@ speechSynthesis.getVoices();
         });
     };
 
-    API.setVRCPlusIcon = function (params) {
-        return this.call(`users/${this.currentUser.id}`, {
-            method: 'PUT',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('USER:CURRENT:SAVE', args);
-            return args;
-        });
-    };
-
-    $app.methods.deleteVRCPlusIcon = function (userIcon) {
-        API.deleteVRCPlusIcon(userIcon).then((args) => {
+    $app.methods.deleteVRCPlusIcon = function (fileId) {
+        API.deleteFile(fileId).then((args) => {
             API.$emit('VRCPLUSICON:DELETE', args);
             return args;
         });
@@ -10013,32 +10010,29 @@ speechSynthesis.getVoices();
         var array = $app.VRCPlusIconsTable;
         var { length } = array;
         for (var i = 0; i < length; ++i) {
-            if (args.userIcon === array[i].id) {
+            if (args.fileId === array[i].id) {
                 array.splice(i, 1);
                 break;
             }
         }
     });
 
-    API.deleteVRCPlusIcon = function (userIcon) {
-        return this.call(`file/${userIcon}`, {
+    API.deleteFile = function (fileId) {
+        return this.call(`file/${fileId}`, {
             method: 'DELETE'
         }).then((json) => {
             var args = {
                 json,
-                userIcon
+                fileId
             };
             return args;
         });
     };
 
     $app.methods.compareCurrentVRCPlusIcon = function (userIcon) {
-        try {
-            var currentUserIcon = extractFileId(API.currentUser.userIcon);
-            if (userIcon === currentUserIcon) {
-                return true;
-            }
-        } catch (err) {
+        var currentUserIcon = extractFileId(API.currentUser.userIcon);
+        if (userIcon === currentUserIcon) {
+            return true;
         }
         return false;
     };
@@ -12156,6 +12150,149 @@ speechSynthesis.getVoices();
             });
         }
     };
+
+    // gallery
+
+    $app.data.galleryDialog = {};
+    $app.data.galleryDialogVisible = false;
+    $app.data.galleryDialogGalleryLoading = false;
+    $app.data.galleryDialogIconsLoading = false;
+
+    API.$on('LOGIN', function () {
+        $app.galleryTable = {};
+    });
+
+    $app.methods.showGalleryDialog = function () {
+        this.galleryDialogVisible = true;
+        this.refreshGalleryTable();
+        this.refreshVRCPlusIconsTable();
+    };
+
+    $app.methods.refreshGalleryTable = function () {
+        this.galleryDialogGalleryLoading = true;
+        var params = {
+            n: 100,
+            tag: 'gallery'
+        };
+        API.getFileList(params);
+    };
+
+    API.$on('FILES:LIST', function (args) {
+        if (args.params.tag === 'gallery') {
+            $app.galleryTable = args.json;
+            $app.galleryDialogGalleryLoading = false;
+        }
+    });
+
+    $app.methods.setProfilePicOverride = function (fileId) {
+        var profilePicOverride = '';
+        if (fileId) {
+            profilePicOverride = `https://api.vrchat.cloud/api/1/file/${fileId}/1`;
+        }
+        if (profilePicOverride === API.currentUser.profilePicOverride) {
+            return;
+        }
+        API.saveCurrentUser({
+            profilePicOverride
+        }).then((args) => {
+            this.$message({
+                message: 'Profile picture changed',
+                type: 'success'
+            });
+            return args;
+        });
+    };
+
+    $app.methods.deleteGalleryImage = function (fileId) {
+        API.deleteFile(fileId).then((args) => {
+            API.$emit('GALLERYIMAGE:DELETE', args);
+            return args;
+        });
+    };
+
+    API.$on('GALLERYIMAGE:DELETE', function (args) {
+        var array = $app.galleryTable;
+        var { length } = array;
+        for (var i = 0; i < length; ++i) {
+            if (args.fileId === array[i].id) {
+                array.splice(i, 1);
+                break;
+            }
+        }
+    });
+
+    $app.methods.compareCurrentProfilePic = function (fileId) {
+        var currentProfilePicOverride = extractFileId(API.currentUser.profilePicOverride);
+        if (fileId === currentProfilePicOverride) {
+            return true;
+        }
+        return false;
+    };
+
+    $app.methods.onFileChangeGallery = function (e) {
+        var clearFile = function () {
+            if (document.querySelector('#GalleryUploadButton')) {
+                document.querySelector('#GalleryUploadButton').value = '';
+            }
+        };
+        var files = e.target.files || e.dataTransfer.files;
+        if (!files.length) {
+            return;
+        }
+        if (files[0].size >= 10000000) { //10MB
+            $app.$message({
+                message: 'File size too large',
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        if (!files[0].type.match(/image.*/)) {
+            $app.$message({
+                message: 'File isn\'t an image',
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        var r = new FileReader();
+        r.onload = function () {
+            var base64Body = btoa(r.result);
+            API.uploadGalleryImage(base64Body).then((args) => {
+                $app.$message({
+                    message: 'Gallery image uploaded',
+                    type: 'success'
+                });
+                return args;
+            });
+        };
+        r.readAsBinaryString(files[0]);
+        clearFile();
+    };
+
+    $app.methods.displayGalleryUpload = function () {
+        document.getElementById('GalleryUploadButton').click();
+    };
+
+    API.uploadGalleryImage = function (params) {
+        return this.call('gallery', {
+            uploadImage: true,
+            imageData: params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GALLERYIMAGE:ADD', args);
+            return args;
+        });
+    };
+
+    API.$on('GALLERYIMAGE:ADD', function (args) {
+        if (Object.keys($app.galleryTable).length !== 0) {
+            $app.galleryTable.push(args.json);
+        }
+    });
 
     $app = new Vue($app);
     window.$app = $app;
