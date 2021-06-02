@@ -9724,6 +9724,36 @@ speechSynthesis.getVoices();
         D.instanceId = tags.join('');
     };
 
+    $app.methods.selfInvite = function (location) {
+        var L = API.parseLocation(location);
+        if (L.isOffline ||
+            L.isPrivate ||
+            L.worldId === '') {
+            return;
+        }
+        API.getCachedWorld({
+            worldId: L.worldId
+        }).then((args) => {
+            if (API.currentUser.status === 'busy') {
+                this.$message({
+                    message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
+                    type: 'error'
+                });
+                return;
+            }
+            API.sendInvite({
+                instanceId: L.tag,
+                worldId: L.tag,
+                worldName: args.ref.name
+            }, API.currentUser.id).finally(() => {
+                this.$message({
+                    message: 'Invite sent to yourself',
+                    type: 'success'
+                });
+            });
+        });
+    };
+
     var getLaunchURL = function (worldId, instanceId) {
         if (instanceId) {
             return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(worldId)}&instanceId=${encodeURIComponent(instanceId)}`;
@@ -9740,8 +9770,12 @@ speechSynthesis.getVoices();
         }
         D.url = getLaunchURL(D.worldId, D.instanceId);
     };
+    var saveAccessType = function () {
+        configRepository.setString('instanceDialogAccessType', this.newInstanceDialog.accessType);
+    };
     $app.watch['newInstanceDialog.worldId'] = updateLocationURL;
     $app.watch['newInstanceDialog.instanceId'] = updateLocationURL;
+    $app.watch['newInstanceDialog.accessType'] = saveAccessType;
 
     $app.methods.showNewInstanceDialog = function (tag) {
         this.$nextTick(() => adjustDialogZ(this.$refs.newInstanceDialog.$el));
@@ -9754,6 +9788,9 @@ speechSynthesis.getVoices();
         var D = this.newInstanceDialog;
         D.worldId = L.worldId;
         D.accessType = 'public';
+        if (configRepository.getString('instanceDialogAccessType') !== null) {
+            D.accessType = configRepository.getString('instanceDialogAccessType');
+        }
         this.buildInstance();
         D.visible = true;
     };
