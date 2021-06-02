@@ -274,7 +274,7 @@ html
                                         .x-friend-item
                                             template(v-if="favorite.ref")
                                                 .avatar(:class="userStatusClass(favorite.ref)")
-                                                    img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                                    img(v-if="displayProfilePicOverrideAsAvatar && favorite.ref.profilePicOverride" v-lazy="favorite.ref.profilePicOverride")
                                                     img(v-else-if="displayVRCPlusIconsAsAvatar && favorite.ref.userIcon" v-lazy="favorite.ref.userIcon")
                                                     img(v-else v-lazy="favorite.ref.currentAvatarThumbnailImageUrl")
                                                 .detail
