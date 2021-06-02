@@ -8965,6 +8965,9 @@ speechSynthesis.getVoices();
             case 'Rename':
                 this.promptRenameWorld(D);
                 break;
+            case 'Upload Image':
+                document.getElementById('WorldImageUploadButton').click();
+                break;
             case 'Change Image':
                 this.displayPreviousImages('World', 'Change');
                 break;
@@ -11260,6 +11263,310 @@ speechSynthesis.getVoices();
             };
             this.$emit('AVATARIMAGE:SET', args);
             this.$emit('AVATAR', args);
+            return args;
+        });
+    };
+
+    // Upload world image
+
+    $app.methods.onFileChangeWorldImage = function (e) {
+        var clearFile = function () {
+            if (document.querySelector('#WorldImageUploadButton')) {
+                document.querySelector('#WorldImageUploadButton').value = '';
+            }
+        };
+        var files = e.target.files || e.dataTransfer.files;
+        if ((!files.length) || (!this.worldDialog.visible) || (this.worldDialog.loading)) {
+            clearFile();
+            return;
+        }
+        if (files[0].size >= 10000000) { //10MB
+            $app.$message({
+                message: 'File size too large',
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        if (!files[0].type.match(/image.png/)) {
+            $app.$message({
+                message: 'File isn\'t a png',
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        this.worldDialog.loading = true;
+        var r = new FileReader();
+        r.onload = async function (file) {
+            var base64File = btoa(r.result);
+            var fileMd5 = await $app.genMd5(base64File);
+            var fileSizeInBytes = file.total;
+            var base64SignatureFile = await $app.genSig(base64File);
+            var signatureMd5 = await $app.genMd5(base64SignatureFile);
+            var signatureSizeInBytes = await $app.genLength(base64SignatureFile);
+            var worldId = $app.worldDialog.id;
+            var { imageUrl } = $app.worldDialog.ref;
+            var fileId = extractFileId(imageUrl);
+            if (!fileId) {
+                $app.$message({
+                    message: 'Current world image invalid',
+                    type: 'error'
+                });
+                clearFile();
+                return;
+            }
+            $app.worldImage = {
+                base64File,
+                fileMd5,
+                base64SignatureFile,
+                signatureMd5,
+                fileId,
+                worldId
+            };
+            var params = {
+                fileMd5,
+                fileSizeInBytes,
+                signatureMd5,
+                signatureSizeInBytes
+            };
+            API.uploadWorldImage(params, fileId);
+        };
+        r.readAsBinaryString(files[0]);
+        clearFile();
+    };
+
+    API.uploadWorldImage = async function (params, fileId) {
+        try {
+            return await this.call(`file/${fileId}`, {
+                method: 'POST',
+                params
+            }).then((json) => {
+                var args = {
+                    json,
+                    params
+                };
+                this.$emit('WORLDIMAGE:INIT', args);
+                return args;
+            });
+        } catch (err) {
+            console.error(err);
+            this.uploadWorldFailCleanup(fileId);
+        }
+    };
+
+    API.uploadWorldFailCleanup = async function (fileId) {
+        var json = await this.call(`file/${fileId}`, {
+            method: 'GET'
+        }).then((json) => {
+            return json;
+        });
+        var fileId = json.id;
+        var fileVersion = json.versions[json.versions.length - 1].version;
+        this.call(`file/${fileId}/${fileVersion}/signature/finish`, {
+            method: 'PUT'
+        });
+        this.call(`file/${fileId}/${fileVersion}/file/finish`, {
+            method: 'PUT'
+        });
+        $app.worldDialog.loading = false;
+    };
+
+    API.$on('WORLDIMAGE:INIT', function (args) {
+        var fileId = args.json.id;
+        var fileVersion = args.json.versions[args.json.versions.length - 1].version;
+        var params = {
+            fileId,
+            fileVersion
+        };
+        this.uploadWorldImageFileStart(params);
+    });
+
+    API.uploadWorldImageFileStart = async function (params) {
+        try {
+            return await this.call(`file/${params.fileId}/${params.fileVersion}/file/start`, {
+                method: 'PUT'
+            }).then((json) => {
+                var args = {
+                    json,
+                    params
+                };
+                this.$emit('WORLDIMAGE:FILESTART', args);
+                return args;
+            });
+        } catch (err) {
+            console.error(err);
+            this.uploadWorldFailCleanup(params.fileId);
+        }
+    };
+
+    API.$on('WORLDIMAGE:FILESTART', function (args) {
+        var { url } = args.json;
+        var { fileId, fileVersion } = args.params;
+        var params = {
+            url,
+            fileId,
+            fileVersion
+        };
+        this.uploadWorldImageFileAWS(params);
+    });
+
+    API.uploadWorldImageFileAWS = function (params) {
+        return webApiService.execute({
+            url: params.url,
+            uploadFilePUT: true,
+            fileData: $app.worldImage.base64File,
+            fileMIME: 'image/png',
+            headers: {
+                'Content-MD5': $app.worldImage.fileMd5
+            }
+        }).then((json) => {
+            if (json.status !== 200) {
+                $app.worldDialog.loading = false;
+                this.$throw('World image upload failed', json);
+            }
+            var args = {
+                json,
+                params
+            };
+            this.$emit('WORLDIMAGE:FILEAWS', args);
+            return args;
+        });
+    };
+
+    API.$on('WORLDIMAGE:FILEAWS', function (args) {
+        var { fileId, fileVersion } = args.params;
+        var params = {
+            fileId,
+            fileVersion
+        };
+        this.uploadWorldImageFileFinish(params);
+    });
+
+    API.uploadWorldImageFileFinish = function (params) {
+        return this.call(`file/${params.fileId}/${params.fileVersion}/file/finish`, {
+            method: 'PUT',
+            params: {
+                maxParts: 0,
+                nextPartNumber: 0
+            }
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('WORLDIMAGE:FILEFINISH', args);
+            return args;
+        });
+    };
+
+    API.$on('WORLDIMAGE:FILEFINISH', function (args) {
+        var { fileId, fileVersion } = args.params;
+        var params = {
+            fileId,
+            fileVersion
+        };
+        this.uploadWorldImageSigStart(params);
+    });
+
+    API.uploadWorldImageSigStart = async function (params) {
+        try {
+            return await this.call(`file/${params.fileId}/${params.fileVersion}/signature/start`, {
+                method: 'PUT'
+            }).then((json) => {
+                var args = {
+                    json,
+                    params
+                };
+                this.$emit('WORLDIMAGE:SIGSTART', args);
+                return args;
+            });
+        } catch (err) {
+            console.error(err);
+            this.uploadWorldFailCleanup(params.fileId);
+        }
+    };
+
+    API.$on('WORLDIMAGE:SIGSTART', function (args) {
+        var { url } = args.json;
+        var { fileId, fileVersion } = args.params;
+        var params = {
+            url,
+            fileId,
+            fileVersion
+        };
+        this.uploadWorldImageSigAWS(params);
+    });
+
+    API.uploadWorldImageSigAWS = function (params) {
+        return webApiService.execute({
+            url: params.url,
+            uploadFilePUT: true,
+            fileData: $app.worldImage.base64SignatureFile,
+            fileMIME: 'application/x-rsync-signature',
+            headers: {
+                'Content-MD5': $app.worldImage.signatureMd5
+            }
+        }).then((json) => {
+            if (json.status !== 200) {
+                $app.worldDialog.loading = false;
+                this.$throw('World image upload failed', json);
+            }
+            var args = {
+                json,
+                params
+            };
+            this.$emit('WORLDIMAGE:SIGAWS', args);
+            return args;
+        });
+    };
+
+    API.$on('WORLDIMAGE:SIGAWS', function (args) {
+        var { fileId, fileVersion } = args.params;
+        var params = {
+            fileId,
+            fileVersion
+        };
+        this.uploadWorldImageSigFinish(params);
+    });
+
+    API.uploadWorldImageSigFinish = function (params) {
+        return this.call(`file/${params.fileId}/${params.fileVersion}/signature/finish`, {
+            method: 'PUT',
+            params: {
+                maxParts: 0,
+                nextPartNumber: 0
+            }
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('WORLDIMAGE:SIGFINISH', args);
+            return args;
+        });
+    };
+
+    API.$on('WORLDIMAGE:SIGFINISH', function (args) {
+        var { fileId, fileVersion } = args.params;
+        var parmas = {
+            id: $app.worldImage.worldId,
+            imageUrl: `https://api.vrchat.cloud/api/1/file/${fileId}/${fileVersion}/file`
+        };
+        this.setWorldImage(parmas);
+    });
+
+    API.setWorldImage = function (params) {
+        return this.call(`worlds/${params.id}`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('WORLDIMAGE:SET', args);
+            this.$emit('WORLD', args);
             return args;
         });
     };

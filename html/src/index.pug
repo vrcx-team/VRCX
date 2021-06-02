@@ -1260,6 +1260,8 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
+                                            el-dropdown-item(icon="el-icon-upload2" command="Upload Image") Upload Image
+                                                input(type="file" multiple accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
                                             el-dropdown-item(icon="el-icon-delete" command="Delete" style="color:#F56C6C" divided) Delete
                     el-tabs
                         el-tab-pane(label="Instances")
