@@ -1261,7 +1261,7 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
                                             el-dropdown-item(icon="el-icon-upload2" command="Upload Image") Upload Image
-                                                input(type="file" multiple accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
+                                                input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
                                             el-dropdown-item(icon="el-icon-delete" command="Delete" style="color:#F56C6C" divided) Delete
                     el-tabs
                         el-tab-pane(label="Instances")
@@ -1386,7 +1386,7 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
                                             el-dropdown-item(icon="el-icon-upload2" command="Upload Image") Upload Image
-                                                input(type="file" multiple accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
+                                                input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
                                             el-dropdown-item(v-if="avatarDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") Download Unity Package
                                             el-dropdown-item(icon="el-icon-user" command="Delete" style="color:#F56C6C" divided) Delete
                     el-tabs
@@ -1471,8 +1471,8 @@ html
                                         span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustClass")
                                 span(v-else v-text="friend.id")
                 template(#footer)
+                    el-button(size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="showSendInviteDialog()") Invite With Message
                     el-button(type="primary" size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="sendInvite()") Invite
-                    el-button(type="primary" size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="showSendInviteDialog()") Invite With Message
 
             //- dialog: social status
             el-dialog.x-dialog(ref="socialStatusDialog" :visible.sync="socialStatusDialog.visible" title="Social Status" width="400px")
@@ -1548,8 +1548,8 @@ html
                 template(#footer)
                     el-button(size="small" @click="makeHome(newInstanceDialog.location)") Make Home
                     el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.url)") Copy URL
-                    el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)") Invite
                     el-button(size="small" @click="selfInvite(newInstanceDialog.location)") Self Invite
+                    el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)") Invite
                     el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location)") Launch
 
             //- dialog: launch options
@@ -1854,7 +1854,7 @@ html
             //- dialog Table: Send Invite Response Message
             el-dialog.x-dialog(ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" title="Send Invite Response Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" multiple accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-bind="inviteResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                     el-table-column(label="Message" prop="message")
@@ -1871,7 +1871,7 @@ html
             //- dialog Table: Send Invite Request Response Message
             el-dialog.x-dialog(ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" title="Send Invite Request Response Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" multiple accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-bind="inviteRequestResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                     el-table-column(label="Message" prop="message")
@@ -1896,7 +1896,7 @@ html
             //- dialog Table: Send Invite Message
             el-dialog.x-dialog(ref="sendInviteDialog" :visible.sync="sendInviteDialogVisible" title="Send Invite Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" multiple accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-bind="inviteMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                     el-table-column(label="Message" prop="message")
@@ -1913,7 +1913,7 @@ html
             //- dialog Table: Send Invite Request Message
             el-dialog.x-dialog(ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" title="Send Invite Request Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" multiple accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-bind="inviteRequestMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                     el-table-column(label="Message" prop="message")
@@ -1966,12 +1966,12 @@ html
                             img.image(v-lazy="image.file.url")
                             
             //- dialog: Gallery/VRCPlusIcons
-            el-dialog.x-dialog(ref="galleryDialog" :visible.sync="galleryDialogVisible" title="Gallery and Icons" width="1130px")
+            el-dialog.x-dialog(ref="galleryDialog" :visible.sync="galleryDialogVisible" title="Gallery and Icons" width="auto" style="margin:15vh")
                 el-tabs(type="card")
                     el-tab-pane(v-loading="galleryDialogGalleryLoading")
                         span(slot="label") Gallery
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
-                        input(type="file" multiple accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                        input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
                         el-button-group
                             el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") Refresh
                             el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") Upload
@@ -1986,7 +1986,7 @@ html
                     el-tab-pane(v-loading="galleryDialogIconsLoading")
                         span(slot="label") Icons
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ VRCPlusIconsTable.length }}/64
-                        input(type="file" multiple accept="image/*" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
+                        input(type="file" accept="image/*" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
                         el-button-group
                             el-button(type="default" size="small" @click="refreshVRCPlusIconsTable" icon="el-icon-refresh") Refresh
                             el-button(type="default" size="small" @click="displayVRCPlusIconUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") Upload
