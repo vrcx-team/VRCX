@@ -699,6 +699,7 @@ speechSynthesis.getVoices();
             config: {},
             isGameRunning: false,
             isGameNoVR: false,
+            downloadProgress: 0,
             lastLocation: {
                 date: 0,
                 location: '',
@@ -749,6 +750,7 @@ speechSynthesis.getVoices();
         this.currentUserStatus = sharedRepository.getString('current_user_status');
         this.isGameRunning = sharedRepository.getBool('is_game_running');
         this.isGameNoVR = sharedRepository.getBool('is_Game_No_VR');
+        this.downloadProgress = sharedRepository.getInt('downloadProgress');
         var lastLocation = sharedRepository.getObject('last_location');
         if (lastLocation) {
             this.lastLocation = lastLocation;
