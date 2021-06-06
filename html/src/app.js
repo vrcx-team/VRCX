@@ -7966,7 +7966,7 @@ speechSynthesis.getVoices();
     $app.methods.getFaviconUrl = function (resource) {
         try {
             var url = new URL(resource);
-            return `https://www.google.com/s2/favicons?domain=${url.origin}`;
+            return `https://icons.duckduckgo.com/ip2/${url.host}.ico`;
         } catch (err) {
             return '';
         }
