@@ -11901,11 +11901,11 @@ speechSynthesis.getVoices();
     $app.data.VRChatConfigFile = {};
 
     $app.data.VRChatConfigList = {
-        cache_size: { name: 'Max Cache Size [GB] (minimum 20)', default: '20' },
-        cache_expiry_delay: { name: 'Cache Expiry [Days] (minimum 30)', default: '30' },
+        cache_size: { name: 'Max Cache Size [GB] (minimum 20)', default: '20', type: 'number', min: 20 },
+        cache_expiry_delay: { name: 'Cache Expiry [Days] (minimum 30)', default: '30', type: 'number', min: 30 },
         cache_directory: { name: 'Custom Cache Folder Location', default: '%AppData%\\..\\LocalLow\\VRChat\\vrchat' },
-        dynamic_bone_max_affected_transform_count: { name: 'Dynamic Bones Limit Max Transforms (0 always disable transforms)', default: '32' },
-        dynamic_bone_max_collider_check_count: { name: 'Dynamic Bones Limit Max Collider Collisions (0 always disable colliders)', default: '8' }
+        dynamic_bone_max_affected_transform_count: { name: 'Dynamic Bones Limit Max Transforms (0 always disable transforms)', default: '32', type: 'number', min: 0 },
+        dynamic_bone_max_collider_check_count: { name: 'Dynamic Bones Limit Max Collider Collisions (0 always disable colliders)', default: '8', type: 'number', min: 0 }
     };
 
     $app.methods.readVRChatConfigFile = async function () {
