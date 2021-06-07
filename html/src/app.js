@@ -3847,7 +3847,7 @@ speechSynthesis.getVoices();
         var locationBias = Date.now() - 30000; //30 seconds
         if ((this.isGameRunning) && (this.lastLocation.date < locationBias) &&
             ((this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP') ||
-            (this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP'))) {
+                (this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends') || (this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP'))) {
             var joiningMap = [];
             var bias = new Date(Date.now() - 120000).toJSON(); //2 minutes
             var feedTable = this.feedTable.data;
@@ -4066,8 +4066,8 @@ speechSynthesis.getVoices();
                         var created_at = ctx.created_at;
                         if ((wristFilter[type]) &&
                             ((wristFilter[type] === 'Everyone') ||
-                            ((wristFilter[type] === 'Friends') && (isFriend)) ||
-                            ((wristFilter[type] === 'VIP') && (isFavorite)))) {
+                                ((wristFilter[type] === 'Friends') && (isFriend)) ||
+                                ((wristFilter[type] === 'VIP') && (isFavorite)))) {
                             wristArr.unshift({
                                 created_at,
                                 type,
@@ -4079,8 +4079,8 @@ speechSynthesis.getVoices();
                         }
                         if ((notyFilter[type]) &&
                             ((notyFilter[type] === 'Everyone') ||
-                            ((notyFilter[type] === 'Friends') && (isFriend)) ||
-                            ((notyFilter[type] === 'VIP') && (isFavorite)))) {
+                                ((notyFilter[type] === 'Friends') && (isFriend)) ||
+                                ((notyFilter[type] === 'VIP') && (isFavorite)))) {
                             notyArr.unshift({
                                 created_at,
                                 type,
@@ -4095,9 +4095,9 @@ speechSynthesis.getVoices();
             }
             if ((w < 20) && (wristFilter[ctx.type]) &&
                 ((wristFilter[ctx.type] === 'On') ||
-                (wristFilter[ctx.type] === 'Everyone') ||
-                ((wristFilter[ctx.type] === 'Friends') && (isFriend)) ||
-                ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                    (wristFilter[ctx.type] === 'Everyone') ||
+                    ((wristFilter[ctx.type] === 'Friends') && (isFriend)) ||
+                    ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
                 wristArr.push({
                     ...ctx,
                     isFriend,
@@ -4107,9 +4107,9 @@ speechSynthesis.getVoices();
             }
             if ((n < 1) && (notyFilter[ctx.type]) &&
                 ((notyFilter[ctx.type] === 'On') ||
-                (notyFilter[ctx.type] === 'Everyone') ||
-                ((notyFilter[ctx.type] === 'Friends') && (isFriend)) ||
-                ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                    (notyFilter[ctx.type] === 'Everyone') ||
+                    ((notyFilter[ctx.type] === 'Friends') && (isFriend)) ||
+                    ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
                 notyArr.push({
                     ...ctx,
                     isFriend,
@@ -4192,7 +4192,7 @@ speechSynthesis.getVoices();
             var isFavorite = API.cachedFavoritesByObjectId.has(ctx.userId);
             if ((w < 20) && (wristFilter[ctx.type]) &&
                 ((wristFilter[ctx.type] === 'Friends') ||
-                ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                    ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
                 wristArr.push({
                     ...ctx,
                     isFriend,
@@ -4202,7 +4202,7 @@ speechSynthesis.getVoices();
             }
             if ((n < 1) && (notyFilter[ctx.type]) &&
                 ((notyFilter[ctx.type] === 'Friends') ||
-                ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                    ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
                 notyArr.push({
                     ...ctx,
                     isFriend,
@@ -4248,8 +4248,8 @@ speechSynthesis.getVoices();
             var isFavorite = API.cachedFavoritesByObjectId.has(ctx.senderUserId);
             if ((w < 20) && (wristFilter[ctx.type]) &&
                 ((wristFilter[ctx.type] === 'On') ||
-                (wristFilter[ctx.type] === 'Friends') ||
-                ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                    (wristFilter[ctx.type] === 'Friends') ||
+                    ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
                 wristArr.push({
                     ...ctx,
                     isFriend,
@@ -4259,8 +4259,8 @@ speechSynthesis.getVoices();
             }
             if ((n < 1) && (notyFilter[ctx.type]) &&
                 ((notyFilter[ctx.type] === 'On') ||
-                (notyFilter[ctx.type] === 'Friends') ||
-                ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                    (notyFilter[ctx.type] === 'Friends') ||
+                    ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
                 notyArr.push({
                     ...ctx,
                     isFriend,
@@ -4306,8 +4306,8 @@ speechSynthesis.getVoices();
             var isFavorite = API.cachedFavoritesByObjectId.has(ctx.userId);
             if ((w < 20) && (wristFilter[ctx.type]) &&
                 ((wristFilter[ctx.type] === 'On') ||
-                (wristFilter[ctx.type] === 'Friends') ||
-                ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                    (wristFilter[ctx.type] === 'Friends') ||
+                    ((wristFilter[ctx.type] === 'VIP') && (isFavorite)))) {
                 wristArr.push({
                     ...ctx,
                     isFriend,
@@ -4317,8 +4317,8 @@ speechSynthesis.getVoices();
             }
             if ((n < 1) && (notyFilter[ctx.type]) &&
                 ((notyFilter[ctx.type] === 'On') ||
-                (notyFilter[ctx.type] === 'Friends') ||
-                ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
+                    (notyFilter[ctx.type] === 'Friends') ||
+                    ((notyFilter[ctx.type] === 'VIP') && (isFavorite)))) {
                 notyArr.push({
                     ...ctx,
                     isFriend,
@@ -5842,7 +5842,7 @@ speechSynthesis.getVoices();
             $app.addFeed('GPS', ref, {
                 location: [
                     props.location[0],
-                        props.location[1]
+                    props.location[1]
                 ],
                 time: props.location[2]
             });
@@ -7301,13 +7301,24 @@ speechSynthesis.getVoices();
     $app.watch.worldAutoCacheGPSFilter = saveOpenVROption;
     $app.watch.autoSweepVRChatCache = saveOpenVROption;
     $app.watch.notificationTTS = saveNotificationTTS;
-    $app.data.isDarkMode = configRepository.getBool('isDarkMode');
+    $app.data.themeMode = configRepository.getString('VRCX_ThemeMode');
+    if (!$app.data.themeMode) $app.data.themeMode = 'system';
+    var systemIsDarkMode = _ => window.matchMedia('(prefers-color-scheme: dark)').matches;
+    $app.data.isDarkMode = $app.data.themeMode === 'system' ? systemIsDarkMode() : configRepository.getBool('isDarkMode');
     $appDarkStyle.disabled = $app.data.isDarkMode === false;
     $app.watch.isDarkMode = function () {
         configRepository.setBool('isDarkMode', this.isDarkMode);
         $appDarkStyle.disabled = this.isDarkMode === false;
         this.updateVRConfigVars();
     };
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        $app._data.isDarkMode = e && e.matches;
+    })
+    $app.watch.themeMode = function () {
+        configRepository.setString('VRCX_ThemeMode', this.themeMode)
+        if (this.themeMode === 'system') this.isDarkMode = systemIsDarkMode();
+        else this.isDarkMode = this.themeMode === 'dark';
+    }
     $app.data.isStartAtWindowsStartup = configRepository.getBool('VRCX_StartAtWindowsStartup');
     $app.data.isStartAsMinimizedState = (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true');
     $app.data.isCloseToTray = configRepository.getBool('VRCX_CloseToTray');
@@ -7416,7 +7427,7 @@ speechSynthesis.getVoices();
         backgroundColor: 'white',
         selectedBackgroundColor: '#409eff',
         selectedColor: 'white',
-            color: '#409eff',
+        color: '#409eff',
         borderColor: '#409eff',
         fontWeight: 'bold',
         fontFamily: '"Noto Sans JP", "Noto Sans KR", "Meiryo UI", "Malgun Gothic", "Segoe UI", "sans-serif"'
@@ -8270,8 +8281,8 @@ speechSynthesis.getVoices();
                     for (var ref of API.cachedUsers.values()) {
                         if (ref.displayName === player) {
                             users.push(ref);
-                        break;
-                    }
+                            break;
+                        }
                     }
                 }
             }
@@ -8848,21 +8859,21 @@ speechSynthesis.getVoices();
             if (playersInInstance.includes(ref.displayName)) {
                 instance.users.push(ref);
             }
-                var friendsInInstance = this.lastLocation.friendList;
-                for (var i = 0; i < friendsInInstance.length; i++) {
-                    var addUser = true;
-                    var player = friendsInInstance[i];
-                    for (var k = 0; k < instance.users.length; k++) {
-                        var user = instance.users[k];
-                        if (user.displayName === player) {
-                            addUser = false;
-                            break;
-                        }
+            var friendsInInstance = this.lastLocation.friendList;
+            for (var i = 0; i < friendsInInstance.length; i++) {
+                var addUser = true;
+                var player = friendsInInstance[i];
+                for (var k = 0; k < instance.users.length; k++) {
+                    var user = instance.users[k];
+                    if (user.displayName === player) {
+                        addUser = false;
+                        break;
                     }
-                    if (addUser) {
-                        for (var ref of API.cachedUsers.values()) {
-                            if (ref.displayName === player) {
-                                instance.users.push(ref);
+                }
+                if (addUser) {
+                    for (var ref of API.cachedUsers.values()) {
+                        if (ref.displayName === player) {
+                            instance.users.push(ref);
                             break;
                         }
                     }
@@ -8877,14 +8888,14 @@ speechSynthesis.getVoices();
                 continue;
             }
             var { instanceId } = ref.$location;
-                var instance = instances[instanceId];
-                if (typeof instance === 'undefined') {
-                    instance = {
-                        id: instanceId,
-                        occupants: 0,
-                        users: []
-                    };
-                    instances[instanceId] = instance;
+            var instance = instances[instanceId];
+            if (typeof instance === 'undefined') {
+                instance = {
+                    id: instanceId,
+                    occupants: 0,
+                    users: []
+                };
+                instances[instanceId] = instance;
             }
             instance.users.push(ref);
         }
@@ -8940,12 +8951,12 @@ speechSynthesis.getVoices();
                 D.loading = true;
                 API.getWorld({
                     worldId: D.id
-            }).catch((err) => {
-                D.loading = false;
-                D.visible = false;
-                throw err;
-            }).then((args) => {
-                if (D.id === args.ref.id) {
+                }).catch((err) => {
+                    D.loading = false;
+                    D.visible = false;
+                    throw err;
+                }).then((args) => {
+                    if (D.id === args.ref.id) {
                         D.loading = false;
                         D.ref = args.ref;
                         D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
@@ -8979,36 +8990,36 @@ speechSynthesis.getVoices();
                 this.$confirm(`Continue? ${command}`, 'Confirm', {
                     confirmButtonText: 'Confirm',
                     cancelButtonText: 'Cancel',
-                type: 'info',
-                callback: (action) => {
-                    if (action !== 'confirm') {
-                        return;
-                    }
-                    switch (command) {
-                        case 'Delete Favorite':
-                            API.deleteFavorite({
-                                objectId: D.id
-                            });
-                            break;
-                        case 'Make Home':
-                            API.saveCurrentUser({
-                                homeLocation: D.id
-                            }).then((args) => {
-                                this.$message({
-                                    message: 'Home world updated',
-                                    type: 'success'
+                    type: 'info',
+                    callback: (action) => {
+                        if (action !== 'confirm') {
+                            return;
+                        }
+                        switch (command) {
+                            case 'Delete Favorite':
+                                API.deleteFavorite({
+                                    objectId: D.id
                                 });
-                                return args;
-                            });
-                            break;
-                        case 'Reset Home':
-                            API.saveCurrentUser({
-                                homeLocation: ''
-                            }).then((args) => {
-                                this.$message({
-                                    message: 'Home world has been reset',
-                                    type: 'success'
+                                break;
+                            case 'Make Home':
+                                API.saveCurrentUser({
+                                    homeLocation: D.id
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'Home world updated',
+                                        type: 'success'
+                                    });
+                                    return args;
                                 });
+                                break;
+                            case 'Reset Home':
+                                API.saveCurrentUser({
+                                    homeLocation: ''
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'Home world has been reset',
+                                        type: 'success'
+                                    });
                                     return args;
                                 });
                                 break;
@@ -9232,25 +9243,25 @@ speechSynthesis.getVoices();
                 this.$confirm(`Continue? ${command}`, 'Confirm', {
                     confirmButtonText: 'Confirm',
                     cancelButtonText: 'Cancel',
-                type: 'info',
-                callback: (action) => {
-                    if (action !== 'confirm') {
-                        return;
-                    }
-                    switch (command) {
-                        case 'Delete Favorite':
-                            API.deleteFavorite({
-                                objectId: D.id
-                            });
-                            break;
-                        case 'Select Avatar':
-                            API.selectAvatar({
-                                avatarId: D.id
-                            }).then((args) => {
-                                this.$message({
-                                    message: 'Avatar changed',
-                                    type: 'success'
+                    type: 'info',
+                    callback: (action) => {
+                        if (action !== 'confirm') {
+                            return;
+                        }
+                        switch (command) {
+                            case 'Delete Favorite':
+                                API.deleteFavorite({
+                                    objectId: D.id
                                 });
+                                break;
+                            case 'Select Avatar':
+                                API.selectAvatar({
+                                    avatarId: D.id
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'Avatar changed',
+                                        type: 'success'
+                                    });
                                     return args;
                                 });
                                 break;
@@ -9268,24 +9279,24 @@ speechSynthesis.getVoices();
                             case 'Make Public':
                                 API.saveAvatar({
                                     id: D.id,
-                                releaseStatus: 'public'
-                            }).then((args) => {
-                                this.$message({
-                                    message: 'Avatar updated to public',
-                                    type: 'success'
+                                    releaseStatus: 'public'
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'Avatar updated to public',
+                                        type: 'success'
+                                    });
+                                    return args;
                                 });
-                                return args;
-                            });
-                            break;
-                        case 'Make Private':
-                            API.saveAvatar({
-                                id: D.id,
-                                releaseStatus: 'private'
-                            }).then((args) => {
-                                this.$message({
-                                    message: 'Avatar updated to private',
-                                    type: 'success'
-                                });
+                                break;
+                            case 'Make Private':
+                                API.saveAvatar({
+                                    id: D.id,
+                                    releaseStatus: 'private'
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'Avatar updated to private',
+                                        type: 'success'
+                                    });
                                     return args;
                                 });
                                 break;
@@ -9338,21 +9349,21 @@ speechSynthesis.getVoices();
             if (ownerId === refUserId) {
                 this.$message({
                     message: 'It\'s personal (own) avatar',
+                    type: 'warning'
+                });
+                return;
+            }
+            this.showUserDialog(ownerId);
+        } else {
+            API.getAvatarImages({fileId}).then((args) => {
+                var ownerId = args.json.ownerId;
+                if (ownerId === refUserId) {
+                    this.$message({
+                        message: 'It\'s personal (own) avatar',
                         type: 'warning'
                     });
                     return;
                 }
-                this.showUserDialog(ownerId);
-            } else {
-                API.getAvatarImages({fileId}).then((args) => {
-                    var ownerId = args.json.ownerId;
-                    if (ownerId === refUserId) {
-                        this.$message({
-                            message: 'It\'s personal (own) avatar',
-                                type: 'warning'
-                            });
-                        return;
-                    }
                 this.showUserDialog(ownerId);
             });
         }
@@ -12157,7 +12168,7 @@ speechSynthesis.getVoices();
                 (feed.location === 'offline') ||
                 (feed.location === 'private') ||
                 ((!this.worldAutoCacheGPSFilter) &&
-                (!API.cachedFavoritesByObjectId.has(feed.id)))) {
+                    (!API.cachedFavoritesByObjectId.has(feed.id)))) {
                 return;
             }
             this.autoDownloadWorldCache(feed.location, 'GPS', feed.id);

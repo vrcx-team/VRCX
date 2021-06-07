@@ -725,8 +725,11 @@ html
                 div.options-container
                     span.header Appearance
                     div.options-container-item
-                        span.name Dark Mode
-                        el-switch(v-model="isDarkMode")
+                        span.name Theme mode
+                        el-radio-group(v-model="themeMode" size="mini")
+                            el-radio-button(label="system") System
+                            el-radio-button(label="light") Light
+                            el-radio-button(label="dark") Dark
                     div.options-container-item
                         span.name Profile Picture Override
                         el-switch(v-model="displayProfilePicOverrideAsAvatar")
