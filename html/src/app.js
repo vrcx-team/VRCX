@@ -7302,7 +7302,9 @@ speechSynthesis.getVoices();
     $app.watch.autoSweepVRChatCache = saveOpenVROption;
     $app.watch.notificationTTS = saveNotificationTTS;
     $app.data.themeMode = configRepository.getString('VRCX_ThemeMode');
-    if (!$app.data.themeMode) $app.data.themeMode = 'system';
+    if (!$app.data.themeMode) {
+        $app.data.themeMode = 'system';
+    }
     var systemIsDarkMode = _ => window.matchMedia('(prefers-color-scheme: dark)').matches;
     $app.data.isDarkMode = $app.data.themeMode === 'system' ? systemIsDarkMode() : configRepository.getBool('isDarkMode');
     $appDarkStyle.disabled = $app.data.isDarkMode === false;
@@ -7315,9 +7317,12 @@ speechSynthesis.getVoices();
         $app._data.isDarkMode = e && e.matches;
     })
     $app.watch.themeMode = function () {
-        configRepository.setString('VRCX_ThemeMode', this.themeMode)
-        if (this.themeMode === 'system') this.isDarkMode = systemIsDarkMode();
-        else this.isDarkMode = this.themeMode === 'dark';
+        configRepository.setString('VRCX_ThemeMode', this.themeMode);
+        if (this.themeMode === 'system') {
+            this.isDarkMode = systemIsDarkMode();
+        } else {
+            this.isDarkMode = this.themeMode === 'dark';
+        }
     }
     $app.data.isStartAtWindowsStartup = configRepository.getBool('VRCX_StartAtWindowsStartup');
     $app.data.isStartAsMinimizedState = (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true');
