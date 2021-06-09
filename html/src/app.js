@@ -7711,7 +7711,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptUserDialog = function () {
-        this.$prompt('Enter a User ID (UUID)', 'Direct Access', {
+        this.$prompt('Enter a User URL or ID (UUID)', 'Direct Access', {
             distinguishCancelAndClose: true,
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
@@ -7720,7 +7720,21 @@ speechSynthesis.getVoices();
             callback: (action, instance) => {
                 if (action === 'confirm' &&
                     instance.inputValue) {
-                    this.showUserDialog(instance.inputValue);
+                    var testUrl = instance.inputValue.substring(0, 15);
+                    if (testUrl === 'https://vrchat.') {
+                        var userId = this.parseUserUrl(instance.inputValue);
+                        if (userId) {
+                            this.showUserDialog(userId);
+                        } else {
+                            this.$message({
+                                message: 'Invalid URL',
+                                type: 'error'
+                            });
+                            return;
+                        }
+                    } else {
+                        this.showUserDialog(instance.inputValue);
+                    }
                 }
             }
         });
@@ -7746,6 +7760,7 @@ speechSynthesis.getVoices();
                                 message: 'Invalid URL',
                                 type: 'error'
                             });
+                            return;
                         }
                     } else {
                         this.showWorldDialog(instance.inputValue);
@@ -7908,11 +7923,25 @@ speechSynthesis.getVoices();
             callback: (action, instance) => {
                 if (action === 'confirm' &&
                     instance.inputValue) {
-                    if (API.cachedAvatars.has(instance.inputValue)) {
-                        this.showAvatarDialog(instance.inputValue);
+                    var avatarId = instance.inputValue;
+                    var testUrl = instance.inputValue.substring(0, 15);
+                    if (testUrl === 'https://vrchat.') {
+                        var urlAvatarId = this.parseAvatarUrl(instance.inputValue);
+                        if (urlAvatarId) {
+                            avatarId = urlAvatarId;
+                        } else {
+                            this.$message({
+                                message: 'Invalid URL',
+                                type: 'error'
+                            });
+                            return;
+                        }
+                    }
+                    if (API.cachedAvatars.has(avatarId)) {
+                        this.showAvatarDialog(avatarId);
                         return;
                     }
-                    this.showFavoriteDialog('avatar', instance.inputValue);
+                    this.showFavoriteDialog('avatar', avatarId);
                 }
             }
         });
@@ -8001,6 +8030,7 @@ speechSynthesis.getVoices();
         }
         D.ref = ref;
         $app.applyUserDialogLocation();
+        $app.getAvatarName(ref.currentAvatarImageUrl);
     });
 
     API.$on('WORLD', function (args) {
@@ -8230,7 +8260,7 @@ speechSynthesis.getVoices();
                 if (args.cache) {
                     API.getUser(args.params);
                 }
-                this.getAvatarName(args);
+                this.getAvatarName(args.ref.currentAvatarImageUrl);
                 var L = API.parseLocation(D.ref.location);
                 if ((L.worldId) &&
                     (this.lastLocation.location !== L.tag)) {
@@ -8590,7 +8620,7 @@ speechSynthesis.getVoices();
                     API.getFriendStatus({
                         userId: D.id
                     });
-                    this.getAvatarName(args);
+                    this.getAvatarName(args.ref.currentAvatarImageUrl);
                     var L = API.parseLocation(D.ref.location);
                     if ((L.worldId) &&
                         (this.lastLocation.location !== L.tag)) {
@@ -11799,7 +11829,7 @@ speechSynthesis.getVoices();
 
     API.cachedAvatarNames = new Map();
 
-    $app.methods.getAvatarName = function (args) {
+    $app.methods.getAvatarName = function (imageUrl) {
         var D = this.userDialog;
         D.$avatarInfo = {
             ownerId: '',
@@ -11808,7 +11838,6 @@ speechSynthesis.getVoices();
         if (!D.visible) {
             return;
         }
-        var imageUrl = D.ref.currentAvatarImageUrl;
         var fileId = extractFileId(imageUrl);
         if (!fileId) {
             return;
@@ -12438,6 +12467,28 @@ speechSynthesis.getVoices();
             return `${worldId}:${instanceId}`;
         } else if (worldId) {
             return worldId;
+        }
+    };
+
+    // Parse User URL
+
+    $app.methods.parseUserUrl = function (user) {
+        var url = new URL(user);
+        var urlPath = url.pathname;
+        if ('/user/' === urlPath.substring(5, 11)) {
+            var userId = urlPath.substring(11);
+            return userId;
+        }
+    };
+
+    // Parse Avatar URL
+
+    $app.methods.parseAvatarUrl = function (avatar) {
+        var url = new URL(avatar);
+        var urlPath = url.pathname;
+        if ('/avatar/' === urlPath.substring(5, 13)) {
+            var avatarId = urlPath.substr(13);
+            return avatarId;
         }
     };
 

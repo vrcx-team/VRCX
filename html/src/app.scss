@@ -399,7 +399,8 @@ img.friends-list-avatar {
     border-radius: 2px;
 }
 
-.x-change-image-item > img {
+.x-change-image-item > img,
+.x-change-image-item > .el-popover__reference-wrapper > img {
     width: 240px;
     height: 180px;
 }

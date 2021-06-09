@@ -1970,8 +1970,9 @@ html
             el-dialog.x-dialog(ref="previousImagesDialog" :visible.sync="previousImagesDialogVisible" title="Previous Images" width="800px")
                 div
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
-                        .x-change-image-item
-                            img.image(v-lazy="image.file.url")
+                        el-popover.x-change-image-item(placement="right" width="500px" trigger="click")
+                            img.x-link(slot="reference" v-lazy="image.file.url")
+                            img.x-link(v-lazy="image.file.url" style="width:500px;height:375px" @click="openExternalLink(image.file.url)")
                             
             //- dialog: Gallery/VRCPlusIcons
             el-dialog.x-dialog(ref="galleryDialog" :visible.sync="galleryDialogVisible" title="Gallery and Icons" width="100%")
