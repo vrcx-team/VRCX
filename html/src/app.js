@@ -1183,6 +1183,12 @@ speechSynthesis.getVoices();
             json.$online_for = API.currentUser.$online_for;
             json.$offline_for = API.currentUser.$offline_for;
         }
+        if (typeof json.statusDescription !== 'undefined') {
+            json.statusDescription = $app.replaceBioSymbols(json.statusDescription);
+        }
+        if (typeof json.bio !== 'undefined') {
+            json.bio = $app.replaceBioSymbols(json.bio);
+        }
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
@@ -12709,6 +12715,46 @@ speechSynthesis.getVoices();
             $app.galleryTable.push(args.json);
         }
     });
+
+    $app.methods.replaceBioSymbols = function (text) {
+        if (!text) {
+            return;
+        }
+        var symbolList = {
+            '@': '＠',
+            '#': '＃',
+            '$': '＄',
+            '%': '％',
+            '&': '＆',
+            '=': '＝',
+            '+': '＋',
+            '/': '⁄',
+            '\\': '＼',
+            ';': ';',
+            ':': '˸',
+            ',': '‚',
+            '?': '？',
+            '!': 'ǃ',
+            '"': '＂',
+            '<': '≺',
+            '>': '≻',
+            '.': '․',
+            '^': '＾',
+            '{': '｛',
+            '}': '｝',
+            '[': '［',
+            ']': '］',
+            '(': '（',
+            ')': '）',
+            '|': '｜',
+            '*': '∗'
+        };
+        for (var key in symbolList) {
+            var regex = new RegExp(symbolList[key], "g");
+            text = text.replace(regex, key);
+        }
+        return text;
+    };
 
     $app = new Vue($app);
     window.$app = $app;
