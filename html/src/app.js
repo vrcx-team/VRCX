@@ -297,7 +297,12 @@ speechSynthesis.getVoices();
         tur: 'tr',
         ara: 'ae',
         ron: 'ro',
-        vie: 'vn'
+        vie: 'vn',
+        ase: 'us',
+        bfi: 'gb',
+        dse: 'nl',
+        fsl: 'fr',
+        kvk: 'kr'
     };
 
     //
