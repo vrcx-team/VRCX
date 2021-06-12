@@ -298,11 +298,13 @@ img.friends-list-avatar {
     object-fit: cover;
 }
 
-.x-friend-item > .avatar.offline > img {
+.x-friend-item > .avatar.offline > img,
+.x-friend-item > .avatar.active > img {
     filter: grayscale(1);
 }
 
-.x-friend-item:hover > .avatar.offline > img {
+.x-friend-item:hover > .avatar.offline > img,
+.x-friend-item:hover > .avatar.active > img {
     filter: none;
 }
 

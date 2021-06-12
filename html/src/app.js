@@ -740,26 +740,16 @@ speechSynthesis.getVoices();
                     L.worldId === '') {
                     return;
                 }
-                API.getCachedWorld({
-                    worldId: L.worldId
-                }).then((args) => {
-                    if (API.currentUser.status === 'busy') {
-                        this.$message({
-                            message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
+                if (API.currentUser.status === 'busy') {
+                    this.$message({
+                        message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
                             type: 'error'
-                        });
-                        return;
-                    }
-                    API.sendInvite({
-                        instanceId: L.tag,
-                        worldId: L.tag,
-                        worldName: args.ref.name
-                    }, API.currentUser.id).finally(() => {
-                        this.$message({
-                            message: 'Invite sent to yourself',
-                            type: 'success'
-                        });
                     });
+                    return;
+                }
+                API.selfInvite({
+                    instanceId: L.instanceId,
+                    worldId: L.worldId
                 });
             }
         },
@@ -1193,6 +1183,9 @@ speechSynthesis.getVoices();
             json.statusDescription = API.currentUser.statusDescription;
             json.state = API.currentUser.state;
             json.last_login = API.currentUser.last_login;
+            if ((typeof json.location !== 'undefined') && (json.location === 'offline')) {
+                json.location = '';
+            }
             if ($app.lastLocation.location) {
                 json.location = $app.lastLocation.location;
                 json.$location_at = $app.lastLocation.date;
@@ -1634,6 +1627,24 @@ speechSynthesis.getVoices();
                 params
             };
             this.$emit('INSTANCE', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            worldId: string,
+            instanceId: string
+        }
+    */
+    API.selfInvite = function (params) {
+        return this.call(`instances/${params.worldId}:${params.instanceId}/invite`, {
+            method: 'POST'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
             return args;
         });
     };
@@ -3287,6 +3298,14 @@ speechSynthesis.getVoices();
                 break;
 
             case 'see-notification':
+                this.$emit('NOTIFICATION:SEE', {
+                    params: {
+                        notificationId: content
+                    }
+                });
+                break;
+
+            case 'hide-notification':
                 this.$emit('NOTIFICATION:SEE', {
                     params: {
                         notificationId: content
@@ -9812,27 +9831,16 @@ speechSynthesis.getVoices();
             L.worldId === '') {
             return;
         }
-        API.getCachedWorld({
-            worldId: L.worldId
-        }).then((args) => {
-            if (API.currentUser.status === 'busy') {
-                this.$message({
-                    message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
+        if (API.currentUser.status === 'busy') {
+            this.$message({
+                message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
                     type: 'error'
-                });
-                return;
-            }
-            API.sendInvite({
-                instanceId: L.tag,
-                worldId: L.tag,
-                worldName: args.ref.name
-            }, API.currentUser.id).finally(() => {
-                this.newInstanceDialog.visible = false;
-                this.$message({
-                    message: 'Invite sent to yourself',
-                    type: 'success'
-                });
             });
+            return;
+        }
+        API.selfInvite({
+            instanceId: L.instanceId,
+            worldId: L.worldId
         });
     };
 
