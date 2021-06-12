@@ -626,6 +626,7 @@ speechSynthesis.getVoices();
             instanceId: '',
             instanceName: '',
             accessType: '',
+            region: '',
             userId: null,
             hiddenId: null,
             privateId: null,
@@ -661,6 +662,8 @@ speechSynthesis.getVoices();
                             ctx.friendsId = value;
                         } else if (key === 'canRequestInvite') {
                             ctx.canRequestInvite = true;
+                        } else if (key === 'region') {
+                            ctx.region = value;
                         }
                     } else {
                         ctx.instanceName = s;
@@ -9755,6 +9758,7 @@ speechSynthesis.getVoices();
         worldId: '',
         instanceId: '',
         accessType: '',
+        region: '',
         location: '',
         url: ''
     };
@@ -9786,6 +9790,16 @@ speechSynthesis.getVoices();
             if (D.accessType === 'invite+') {
                 tags.push('~canRequestInvite');
             }
+
+        }
+        if (D.region !== 'USA') {
+            if (D.region === 'Europe') {
+                tags.push(`~region(eu)`);
+            } else if (D.region === 'Japan') {
+                tags.push(`~region(jp)`);
+            }
+        }
+        if (D.accessType !== 'public') {
             tags.push(`~nonce(${uuidv4()})`);
         }
         D.instanceId = tags.join('');
@@ -9841,9 +9855,13 @@ speechSynthesis.getVoices();
     var saveAccessType = function () {
         configRepository.setString('instanceDialogAccessType', this.newInstanceDialog.accessType);
     };
+    var saveRegion = function () {
+        configRepository.setString('instanceRegion', this.newInstanceDialog.region);
+    };
     $app.watch['newInstanceDialog.worldId'] = updateLocationURL;
     $app.watch['newInstanceDialog.instanceId'] = updateLocationURL;
     $app.watch['newInstanceDialog.accessType'] = saveAccessType;
+    $app.watch['newInstanceDialog.region'] = saveRegion;
 
     $app.methods.showNewInstanceDialog = function (tag) {
         this.$nextTick(() => adjustDialogZ(this.$refs.newInstanceDialog.$el));
@@ -9858,6 +9876,10 @@ speechSynthesis.getVoices();
         D.accessType = 'public';
         if (configRepository.getString('instanceDialogAccessType') !== null) {
             D.accessType = configRepository.getString('instanceDialogAccessType');
+        }
+        D.region = 'USA';
+        if (configRepository.getString('instanceRegion') !== null) {
+            D.region = configRepository.getString('instanceRegion');
         }
         this.buildInstance();
         D.visible = true;
