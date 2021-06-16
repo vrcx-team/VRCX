@@ -382,6 +382,7 @@ speechSynthesis.getVoices();
             instanceId: '',
             instanceName: '',
             accessType: '',
+            region: '',
             userId: null,
             hiddenId: null,
             privateId: null,
@@ -417,6 +418,8 @@ speechSynthesis.getVoices();
                             ctx.friendsId = value;
                         } else if (key === 'canRequestInvite') {
                             ctx.canRequestInvite = true;
+                        } else if (key === 'region') {
+                            ctx.region = value;
                         }
                     } else {
                         ctx.instanceName = s;

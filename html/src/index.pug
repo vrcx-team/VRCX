@@ -85,17 +85,19 @@ html
                         template(v-once #default="scope")
                             div(style="position:relative;font-size:14px")
                                 template(v-if="scope.row.type === 'GPS'")
-                                    location(:location="scope.row.location[1]")
-                                    el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ scope.row.time | timeToText }}
-                                    br
-                                    span
-                                        i.el-icon-right
-                                    location(:location="scope.row.location[0]")
+                                    template(v-if="scope.row.location[1]")
+                                        location(:location="scope.row.location[1]")
+                                        el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ scope.row.time | timeToText }}
+                                        br
+                                        span
+                                            i.el-icon-right
+                                    location(v-if="scope.row.location[0]" :location="scope.row.location[0]")
                                 template(v-else-if="scope.row.type === 'Offline'")
-                                    location(:location="scope.row.location")
-                                    el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ scope.row.time | timeToText }}
+                                    template(v-if="scope.row.location")
+                                        location(:location="scope.row.location")
+                                        el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ scope.row.time | timeToText }}
                                 template(v-else-if="scope.row.type === 'Online'")
-                                    location(:location="scope.row.location")
+                                    location(v-if="scope.row.location" :location="scope.row.location")
                                 template(v-else-if="scope.row.type === 'Avatar'")
                                     template(v-if="scope.row.avatar[0] === Object(scope.row.avatar[0])")
                                         //- high resolution (v2) 2020.07.12~
@@ -152,9 +154,9 @@ html
                     el-table-column(label="Detail")
                         template(v-once #default="scope")
                             template(v-if="scope.row.type === 'GPS'")
-                                location(:location="scope.row.location[0]")
+                                location(v-if="scope.row.location[0]" :location="scope.row.location[0]")
                             template(v-else-if="scope.row.type === 'Offline' || scope.row.type === 'Online'")
-                                location(:location="scope.row.location")
+                                location(v-if="scope.row.location" :location="scope.row.location")
                             template(v-else-if="scope.row.type === 'Status'")
                                 el-tooltip(placement="top")
                                     template(#content)

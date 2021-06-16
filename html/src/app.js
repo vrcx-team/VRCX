@@ -4172,6 +4172,9 @@ speechSynthesis.getVoices();
                         break;
                     }
                 }
+                if (ctx.data === API.currentUser.displayName) {
+                    isFriend = true;
+                }
                 if (isFriend) {
                     friendList.push(ctx.data);
                 }
@@ -8364,10 +8367,13 @@ speechSynthesis.getVoices();
                 }
             }
         } else if (L.isOffline === false) {
-            for (var { ref } of this.friends.values()) {
-                if ((typeof ref !== 'undefined') &&
-                    (ref.location === L.tag)) {
-                    users.push(ref);
+            for (var friend of this.friends.values()) {
+                if ((typeof friend.ref !== 'undefined') &&
+                    (friend.ref.location === L.tag)) {
+                    if ((friend.state !== 'online') && (friend.ref.location === 'private')) {
+                        continue;
+                    }
+                    users.push(friend.ref);
                 }
             }
         }
@@ -9809,7 +9815,6 @@ speechSynthesis.getVoices();
             if (D.accessType === 'invite+') {
                 tags.push('~canRequestInvite');
             }
-
         }
         if (D.region !== 'USA') {
             if (D.region === 'Europe') {
@@ -12510,6 +12515,11 @@ speechSynthesis.getVoices();
 
     $app.methods.parseLocationUrl = function (location) {
         var url = new URL(location);
+        var urlPath = url.pathname;
+        if ('/world/' === urlPath.substring(5, 12)) {
+            var worldId = urlPath.substring(12);
+            return worldId;
+        }
         var urlParams = new URLSearchParams(url.search);
         var worldId = urlParams.get('worldId');
         var instanceId = urlParams.get('instanceId');
