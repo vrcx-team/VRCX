@@ -21,6 +21,7 @@ import sharedRepository from './repository/shared.js';
 import configRepository from './repository/config.js';
 import webApiService from './service/webapi.js';
 import gameLogService from './service/gamelog.js';
+import security from './security.js';
 
 speechSynthesis.getVoices();
 
@@ -743,7 +744,7 @@ speechSynthesis.getVoices();
                 if (API.currentUser.status === 'busy') {
                     this.$message({
                         message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
-                            type: 'error'
+                        type: 'error'
                     });
                     return;
                 }
@@ -3728,16 +3729,20 @@ speechSynthesis.getVoices();
             this.updateGameLogLoop();
             this.$nextTick(function () {
                 this.$el.style.display = '';
-                this.loginForm.loading = true;
-                API.getConfig().catch((err) => {
-                    this.loginForm.loading = false;
-                    throw err;
-                }).then((args) => {
-                    API.getCurrentUser().finally(() => {
+                if (!this.enablePrimaryPassword) {
+                    this.loginForm.loading = true;
+                    API.getConfig().catch((err) => {
                         this.loginForm.loading = false;
+                        throw err;
+                    }).then((args) => {
+                        API.getCurrentUser().finally(() => {
+                            this.loginForm.loading = false;
+                        });
+                        return args;
                     });
-                    return args;
-                });
+                } else {
+                    this.loginForm.loading = false;
+                }
             });
         }
     };
@@ -4962,6 +4967,81 @@ speechSynthesis.getVoices();
         $app.updateStoredUser(this.currentUser);
     });
 
+    $app.methods.checkPrimaryPassword = function (args) {
+        return new Promise((resolve, reject) => {
+            if (!this.enablePrimaryPassword) {
+                return resolve(args.password);
+            }
+            $app.$prompt(
+                'Please enter your Primary Password.',
+                'Primary Password Required',
+                {
+                    inputType: "password",
+                    inputPattern: /[\s\S]{1,32}/
+                },
+            ).then(({value}) => {
+                security.decrypt(args.password, value).then(pwd => {
+                    return resolve(pwd);
+                }).catch(_ => {
+                    return reject();
+                })
+            }).catch(_=>{
+                return reject();
+            })
+        })
+    }
+
+    $app.data.enablePrimaryPassword = !!configRepository.getBool('enablePrimaryPassword');
+    $app.data.enablePrimaryPasswordDialog = {
+        visible: false,
+        password: '',
+        rePassword: '',
+        beforeClose: function (done) {
+            $app._data.enablePrimaryPassword = false;
+            done();
+        }
+    };
+    $app.methods.enablePrimaryPasswordChange = function () {
+        this.enablePrimaryPasswordDialog.password = '';
+        this.enablePrimaryPasswordDialog.rePassword = '';
+        if (this.enablePrimaryPassword) {
+            this.enablePrimaryPasswordDialog.visible = true;
+        } else {
+            $app.$prompt(
+                'Please enter your Primary Password.',
+                'Primary Password Required',
+                {
+                    inputType: "password",
+                    inputPattern: /[\s\S]{1,32}/
+                },
+            ).then(({value}) => {
+                for (let name in this.loginForm.savedCredentials) {
+                    security.decrypt(this.loginForm.savedCredentials[name].loginParmas.password, value).then(plaintext => {
+                        this.loginForm.savedCredentials[name].loginParmas.password = plaintext;
+                    }).catch(_ => {
+                        this.enablePrimaryPassword = true;
+                    })
+                }
+                this.savePrimaryPassword();
+            }).catch(_ => {
+                this.enablePrimaryPassword = true;
+                this.savePrimaryPassword();
+            })
+        }
+    }
+    $app.methods.savePrimaryPassword = function () {
+        configRepository.setBool('enablePrimaryPassword', this.enablePrimaryPassword);
+        this.enablePrimaryPasswordDialog.visible = false;
+        if(this.enablePrimaryPassword) {
+            let key = this.enablePrimaryPasswordDialog.password;
+            for (let name in this.loginForm.savedCredentials) {
+                security.encrypt(this.loginForm.savedCredentials[name].loginParmas.password, key).then(plaintext => {
+                    this.loginForm.savedCredentials[name].loginParmas.password = plaintext;
+                })
+            }
+        }
+    }
+
     $app.methods.updateStoredUser = function (currentUser) {
         var savedCredentialsArray = {};
         if (configRepository.getString('savedCredentials') !== null) {
@@ -4982,21 +5062,28 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.relogin = function (loginParmas) {
-        this.loginForm.loading = true;
-        return API.getConfig().catch((err) => {
-            this.loginForm.loading = false;
-            throw err;
-        }).then(() => {
-            API.login({
-                username: loginParmas.username,
-                password: loginParmas.password
-            }).catch((err2) => {
-                API.logout();
-                throw err2;
-            }).finally(() => {
-                this.loginForm.loading = false;
-            });
-        });
+        return new Promise((resolve, reject) => {
+            this.checkPrimaryPassword(loginParmas).then(pwd => {
+                this.loginForm.loading = true;
+                return API.getConfig().catch((err) => {
+                    this.loginForm.loading = false;
+                    return reject(err);
+                }).then(() => {
+                    API.login({
+                        username: loginParmas.username,
+                        password: pwd
+                    }).catch((err2) => {
+                        this.loginForm.loading = false;
+                        API.logout();
+                        return reject(err2);
+                    }).then(() => {
+                        return resolve();
+                    });
+                });
+            }).catch(_ => {
+                return reject();
+            })
+        })
     };
 
     $app.methods.deleteSavedLogin = function (username) {
@@ -9839,7 +9926,7 @@ speechSynthesis.getVoices();
         if (API.currentUser.status === 'busy') {
             this.$message({
                 message: 'You can\'t invite yourself in \'Do Not Disturb\' mode',
-                    type: 'error'
+                type: 'error'
             });
             return;
         }

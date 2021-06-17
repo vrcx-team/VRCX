@@ -738,6 +738,9 @@ html
                     div.options-container-item
                         span.name VRCPlus Profile Icons
                         el-switch(v-model="displayVRCPlusIconsAsAvatar")
+                    div.options-container-item
+                        span.name Use a Primary Password
+                        el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange")
                 div.options-container
                     span.header Side Pannel Sorting Options
                     div.options-container-item
@@ -2377,4 +2380,37 @@ html
                             LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                             SOFTWARE.
+            
+            //- dialog: Enable primary password
+            el-dialog.x-dialog(
+                :visible.sync="enablePrimaryPasswordDialog.visible"
+                :before-close="enablePrimaryPasswordDialog.beforeClose"
+                ref="primaryPasswordDialog"
+                :close-on-click-modal="false"
+                title="Primary Password Required"
+                width="400px"
+            )
+                el-input(
+                    v-model="enablePrimaryPasswordDialog.password"
+                    placeholder="Input new password"
+                    type="password"
+                    size="mini"
+                    maxlength="32"
+                    show-password
+                    autofocus
+                )
+                el-input(
+                    v-model="enablePrimaryPasswordDialog.rePassword"
+                    placeholder="Re-input password"
+                    type="password"
+                    style="margin-top:5px"
+                    size="mini"
+                    maxlength="32"
+                    show-password
+                )
+                template(#footer)
+                    el-button(
+                        type="primary" size="small" @click="savePrimaryPassword"
+                        :disabled="enablePrimaryPasswordDialog.password.length===0||enablePrimaryPasswordDialog.password!==enablePrimaryPasswordDialog.rePassword"
+                    ) OK
         script(src="app.js")
