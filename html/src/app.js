@@ -5011,7 +5011,7 @@ speechSynthesis.getVoices();
         if (this.enablePrimaryPassword) {
             this.enablePrimaryPasswordDialog.visible = true;
         } else {
-            $app.$prompt(
+            this.$prompt(
                 'Please enter your Primary Password.',
                 'Primary Password Required',
                 {
@@ -5031,22 +5031,22 @@ speechSynthesis.getVoices();
             }).catch(_ => {
                 this.enablePrimaryPassword = true;
                 configRepository.setBool('enablePrimaryPassword', true);
-            })
+            });
         }
-    }
+    };
     $app.methods.setPrimaryPassword = function () {
         configRepository.setBool('enablePrimaryPassword', this.enablePrimaryPassword);
         this.enablePrimaryPasswordDialog.visible = false;
-        if(this.enablePrimaryPassword) {
+        if (this.enablePrimaryPassword) {
             let key = this.enablePrimaryPasswordDialog.password;
             for (let name in this.loginForm.savedCredentials) {
                 security.encrypt(this.loginForm.savedCredentials[name].loginParmas.password, key).then(ct => {
                     $app.saveCredentials = { username: name, password: ct};
                     this.updateStoredUser(this.loginForm.savedCredentials[name].user);
-                })
+                });
             }
         }
-    }
+    };
 
     $app.methods.updateStoredUser = function (currentUser) {
         var savedCredentialsArray = {};
@@ -5089,9 +5089,13 @@ speechSynthesis.getVoices();
                     });
                 });
             }).catch(_ => {
+                this.$message({
+                    message: 'Incorrect primary password',
+                    type: 'error'
+                });
                 return reject();
-            })
-        })
+            });
+        });
     };
 
     $app.methods.deleteSavedLogin = function (username) {
@@ -5099,10 +5103,10 @@ speechSynthesis.getVoices();
         delete savedCredentialsArray[username];
         // Disable primary password when no account is available.
         if (Object.keys(savedCredentialsArray).length === 0) {
-            $app.enablePrimaryPassword = false;
+            this.enablePrimaryPassword = false;
             configRepository.setBool('enablePrimaryPassword', false);
         }
-        $app.loginForm.savedCredentials = savedCredentialsArray;
+        this.loginForm.savedCredentials = savedCredentialsArray;
         var jsonCredentialsArray = JSON.stringify(savedCredentialsArray);
         configRepository.setString('savedCredentials', jsonCredentialsArray);
         new Noty({
