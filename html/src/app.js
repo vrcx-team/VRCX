@@ -5021,12 +5021,13 @@ speechSynthesis.getVoices();
             ).then(({value}) => {
                 for (let name in this.loginForm.savedCredentials) {
                     security.decrypt(this.loginForm.savedCredentials[name].loginParmas.password, value).then(pt => {
-                        $app.saveCredentials = { username: name, password: pt };
+                        this.saveCredentials = { username: name, password: pt };
                         this.updateStoredUser(this.loginForm.savedCredentials[name].user);
+                        configRepository.setBool('enablePrimaryPassword', false);
                     }).catch(_ => {
                         this.enablePrimaryPassword = true;
                         configRepository.setBool('enablePrimaryPassword', true);
-                    })
+                    });
                 }
             }).catch(_ => {
                 this.enablePrimaryPassword = true;
@@ -5041,7 +5042,7 @@ speechSynthesis.getVoices();
             let key = this.enablePrimaryPasswordDialog.password;
             for (let name in this.loginForm.savedCredentials) {
                 security.encrypt(this.loginForm.savedCredentials[name].loginParmas.password, key).then(ct => {
-                    $app.saveCredentials = { username: name, password: ct};
+                    this.saveCredentials = { username: name, password: ct};
                     this.updateStoredUser(this.loginForm.savedCredentials[name].user);
                 });
             }
@@ -9413,16 +9414,6 @@ speechSynthesis.getVoices();
                         }
                     }
                 });
-            } else if ((imageId) && (!D.ref.created_at)) {
-                if (API.cachedAvatarNames.has(imageId)) {
-                    var avatarInfo = API.cachedAvatarNames.get(imageId);
-                    D.ref.created_at = avatarInfo.fileCreatedAt;
-                } else {
-                    API.getAvatarImages({fileId: imageId}).then((args) => {
-                        var avatarInfo = this.storeAvatarImage(args);
-                        D.ref.created_at = avatarInfo.fileCreatedAt;
-                    });
-                }
             }
         }
     };
