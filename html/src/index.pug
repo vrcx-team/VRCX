@@ -1323,7 +1323,8 @@ html
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name World ID
-                                        span.extra(v-text="worldDialog.id")
+                                        span.extra {{ worldDialog.id }}
+                                            el-button(@click="copyWorld(worldDialog.id)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Players
@@ -1417,7 +1418,8 @@ html
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Avatar ID
-                                        span.extra(v-text="avatarDialog.id")
+                                        span.extra {{ avatarDialog.id }}
+                                            el-button(@click="copyAvatar(avatarDialog.id)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Created

@@ -10212,6 +10212,22 @@ speechSynthesis.getVoices();
         return true;
     };
 
+    $app.methods.copyAvatar = function (avatarId) {
+        this.copyToClipboard(`https://vrchat.com/home/avatar/${avatarId}`);
+        this.$message({
+            message: 'Avatar URL copied to clipboard',
+            type: 'success'
+        });
+    };
+
+    $app.methods.copyWorld = function (worldId) {
+        this.$message({
+            message: 'World URL copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(`https://vrchat.com/home/world/${worldId}`);
+    };
+
     // App: VRCPlus Icons
 
     API.$on('LOGIN', function () {
