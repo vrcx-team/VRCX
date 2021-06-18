@@ -6179,6 +6179,11 @@ speechSynthesis.getVoices();
                 filterFn: (row, filter) => filter.value.some((v) => v === row.type)
             },
             {
+                prop: 'type',
+                value: true,
+                filterFn: (row, filter) => row.type !== 'Notification'
+            },
+            {
                 prop: 'data',
                 value: ''
             },

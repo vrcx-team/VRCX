@@ -193,6 +193,7 @@ namespace VRCX
                                     if (ParseLogOnPlayerJoinedOrLeft(fileInfo, logContext, line, offset) == true ||
                                         ParseLogLocation(fileInfo, logContext, line, offset) == true ||
                                         ParseLogPortalSpawn(fileInfo, logContext, line, offset) == true ||
+                                        ParseLogNotification(fileInfo, logContext, line, offset) == true ||
                                         ParseLogJoinBlocked(fileInfo, logContext, line, offset) == true ||
                                         ParseLogAvatarPedestalChange(fileInfo, logContext, line, offset) == true ||
                                         ParseLogVideoPlay(fileInfo, logContext, line, offset) == true ||
@@ -204,8 +205,7 @@ namespace VRCX
                                 continue;
                             }
 
-                            if (ParseLogNotification(fileInfo, logContext, line, 34) == true ||
-                                ParseLogShaderKeywordsLimit(fileInfo, logContext, line, 34) == true ||
+                            if (ParseLogShaderKeywordsLimit(fileInfo, logContext, line, 34) == true ||
                                 ParseLogSDK2VideoPlay(fileInfo, logContext, line, 34) == true)
                             {
                                 continue;
@@ -546,7 +546,7 @@ namespace VRCX
 
         private bool ParseLogNotification(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
-            // 2021.01.03 05:48:58 Log        -  Received Notification: < Notification from username:pypy, sender user id:usr_4f76a584-9d4b-46f6-8209-8305eb683661 to of type: friendRequest, id: not_3a8f66eb-613c-4351-bee3-9980e6b5652c, created at: 01/14/2021 15:38:40 UTC, details: {{}}, type:friendRequest, m seen:False, message: ""> received at 01/02/2021 16:48:58 UTC
+            // 2021.01.03 05:48:58 Log        -  [API] Received Notification: < Notification from username:pypy, sender user id:usr_4f76a584-9d4b-46f6-8209-8305eb683661 to of type: friendRequest, id: not_3a8f66eb-613c-4351-bee3-9980e6b5652c, created at: 01/14/2021 15:38:40 UTC, details: {{}}, type:friendRequest, m seen:False, message: ""> received at 01/02/2021 16:48:58 UTC
 
             if (string.Compare(line, offset, "Received Notification: <", 0, 24, StringComparison.Ordinal) != 0)
             {
