@@ -110,16 +110,23 @@ button {
     color: #c5cad6;
 }
 
-.el-button:not(.el-button--text, .el-button--primary) {
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled) {
     background-color: #353535;
     border-color: #404040;
 }
 
-.el-button:not(.el-button--text, .el-button--primary):focus,
-.el-button:not(.el-button--text, .el-button--primary):hover {
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled):focus,
+.el-button:not(.el-button--text, .el-button--primary, .is-disabled):hover {
     color: #000;
     background-color: #737373;
     border-color: #656565;
+}
+
+.el-button.is-disabled,
+.el-button.is-disabled:focus,
+.el-button.is-disabled:hover {
+    background-color: #292929;
+    border-color: #3d3d3d;
 }
 
 .el-tabs__item {

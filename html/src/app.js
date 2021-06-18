@@ -12938,6 +12938,17 @@ speechSynthesis.getVoices();
         return text;
     };
 
+    $app.methods.checkCanInvite = function (location) {
+        var L = API.parseLocation(location);
+        if ((L.accessType === 'invite') || (L.accessType === 'friends')) {
+            if (L.userId === API.currentUser.id) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    };
+
     $app = new Vue($app);
     window.$app = $app;
 }());
