@@ -5160,6 +5160,34 @@ speechSynthesis.getVoices();
                     this.loginForm.loading = false;
                     throw err;
                 }).then((args) => {
+                    if (this.loginForm.saveCredentials && this.enablePrimaryPassword) {
+                        $app.$prompt(
+                            'Please enter your Primary Password.',
+                            'Primary Password Required',
+                            {
+                                inputType: "password",
+                                inputPattern: /[\s\S]{1,32}/
+                            },
+                        ).then(({ value }) => {
+                            let saveCredential = this.loginForm.savedCredentials[Object.keys(this.loginForm.savedCredentials)[0]];
+                            security.decrypt(saveCredential.loginParmas.password, value).then(_ => {
+                                security.encrypt(this.loginForm.password, value).then(pwd => {
+                                    API.login({
+                                        username: this.loginForm.username,
+                                        password: this.loginForm.password,
+                                        saveCredentials: this.loginForm.saveCredentials,
+                                        cipher: pwd
+                                    }).finally(() => {
+                                        this.loginForm.username = '';
+                                        this.loginForm.password = '';
+                                    });
+                                })
+                            })
+                        }).finally(() => {
+                            this.loginForm.loading = false;
+                        });
+                        return args
+                    }
                     API.login({
                         username: this.loginForm.username,
                         password: this.loginForm.password,
