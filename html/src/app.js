@@ -926,12 +926,16 @@ speechSynthesis.getVoices();
         }
     */
     API.login = function (params) {
-        var { username, password, saveCredentials } = params;
+        var { username, password, saveCredentials, cipher } = params;
         username = encodeURIComponent(username);
         password = encodeURIComponent(password);
         var auth = btoa(`${username}:${password}`);
         if (saveCredentials) {
             delete params.saveCredentials;
+            if (cipher) {
+                params.password = cipher;
+                delete params.cipher;
+            }
             $app.saveCredentials = params;
         }
         return this.call(`auth/user?apiKey=${this.cachedConfig.clientApiKey}`, {
@@ -5016,27 +5020,29 @@ speechSynthesis.getVoices();
                 },
             ).then(({value}) => {
                 for (let name in this.loginForm.savedCredentials) {
-                    security.decrypt(this.loginForm.savedCredentials[name].loginParmas.password, value).then(plaintext => {
-                        this.loginForm.savedCredentials[name].loginParmas.password = plaintext;
+                    security.decrypt(this.loginForm.savedCredentials[name].loginParmas.password, value).then(pt => {
+                        $app.saveCredentials = { username: name, password: pt };
+                        this.updateStoredUser(this.loginForm.savedCredentials[name].user);
                     }).catch(_ => {
                         this.enablePrimaryPassword = true;
+                        configRepository.setBool('enablePrimaryPassword', true);
                     })
                 }
-                this.savePrimaryPassword();
             }).catch(_ => {
                 this.enablePrimaryPassword = true;
-                this.savePrimaryPassword();
+                configRepository.setBool('enablePrimaryPassword', true);
             })
         }
     }
-    $app.methods.savePrimaryPassword = function () {
+    $app.methods.setPrimaryPassword = function () {
         configRepository.setBool('enablePrimaryPassword', this.enablePrimaryPassword);
         this.enablePrimaryPasswordDialog.visible = false;
         if(this.enablePrimaryPassword) {
             let key = this.enablePrimaryPasswordDialog.password;
             for (let name in this.loginForm.savedCredentials) {
-                security.encrypt(this.loginForm.savedCredentials[name].loginParmas.password, key).then(plaintext => {
-                    this.loginForm.savedCredentials[name].loginParmas.password = plaintext;
+                security.encrypt(this.loginForm.savedCredentials[name].loginParmas.password, key).then(ct => {
+                    $app.saveCredentials = { username: name, password: ct};
+                    this.updateStoredUser(this.loginForm.savedCredentials[name].user);
                 })
             }
         }
@@ -5071,12 +5077,14 @@ speechSynthesis.getVoices();
                 }).then(() => {
                     API.login({
                         username: loginParmas.username,
-                        password: pwd
+                        password: pwd,
+                        cipher: loginParmas.password
                     }).catch((err2) => {
                         this.loginForm.loading = false;
                         API.logout();
                         return reject(err2);
                     }).then(() => {
+                        this.loginForm.loading = false;
                         return resolve();
                     });
                 });
@@ -5089,6 +5097,11 @@ speechSynthesis.getVoices();
     $app.methods.deleteSavedLogin = function (username) {
         var savedCredentialsArray = JSON.parse(configRepository.getString('savedCredentials'));
         delete savedCredentialsArray[username];
+        // Disable primary password when no account is available.
+        if (Object.keys(savedCredentialsArray).length === 0) {
+            $app.enablePrimaryPassword = false;
+            configRepository.setBool('enablePrimaryPassword', false);
+        }
         $app.loginForm.savedCredentials = savedCredentialsArray;
         var jsonCredentialsArray = JSON.stringify(savedCredentialsArray);
         configRepository.setString('savedCredentials', jsonCredentialsArray);
