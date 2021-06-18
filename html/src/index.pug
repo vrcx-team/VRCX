@@ -740,7 +740,7 @@ html
                         el-switch(v-model="displayVRCPlusIconsAsAvatar")
                     div.options-container-item
                         span.name Use a Primary Password
-                        el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange")
+                        el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange" :disabled="!loginForm.savedCredentials[API.currentUser.username]")
                 div.options-container
                     span.header Side Pannel Sorting Options
                     div.options-container-item
@@ -2410,7 +2410,7 @@ html
                 )
                 template(#footer)
                     el-button(
-                        type="primary" size="small" @click="savePrimaryPassword"
+                        type="primary" size="small" @click="setPrimaryPassword"
                         :disabled="enablePrimaryPasswordDialog.password.length===0||enablePrimaryPasswordDialog.password!==enablePrimaryPasswordDialog.rePassword"
                     ) OK
         script(src="app.js")
