@@ -9962,12 +9962,12 @@ speechSynthesis.getVoices();
                 tags.push('~canRequestInvite');
             }
         }
-        if (D.region !== 'USA') {
-            if (D.region === 'Europe') {
-                tags.push(`~region(eu)`);
-            } else if (D.region === 'Japan') {
-                tags.push(`~region(jp)`);
-            }
+        if (D.region === 'USA') {
+            tags.push(`~region(us)`);
+        } else if (D.region === 'Europe') {
+            tags.push(`~region(eu)`);
+        } else if (D.region === 'Japan') {
+            tags.push(`~region(jp)`);
         }
         if (D.accessType !== 'public') {
             tags.push(`~nonce(${uuidv4()})`);
