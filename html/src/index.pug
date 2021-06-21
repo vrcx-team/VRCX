@@ -76,11 +76,13 @@ html
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
                             div(style="flex:none;margin-right:10px")
-                                el-switch(v-model="feedTable.filters[2].value" active-color="#13ce66")
+                                el-tooltip(placement="bottom" content="Filter VIP only" :disabled="hideTooltips")
+                                    el-switch(v-model="feedTable.filters[2].value" active-color="#13ce66")
                             el-select(v-model="feedTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
                                 el-option(v-once v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar']" :key="type" :label="type" :value="type")
                             el-input(v-model="feedTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
-                            el-button(type="default" @click="clearFeed()" icon="el-icon-delete" circle style="flex:none")
+                            el-tooltip(placement="bottom" content="Clear feed" :disabled="hideTooltips")
+                                el-button(type="default" @click="clearFeed()" icon="el-icon-delete" circle style="flex:none")
                     el-table-column(type="expand" width="20")
                         template(v-once #default="scope")
                             div(style="position:relative;font-size:14px")
@@ -176,7 +178,8 @@ html
                             el-select(v-model="gameLogTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
                                 el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'PortalSpawn', 'Event', 'VideoPlay']" :key="type" :label="type" :value="type")
                             el-input(v-model="gameLogTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
-                            el-button(type="default" @click="resetGameLog()" icon="el-icon-refresh" circle style="flex:none")
+                            el-tooltip(placement="bottom" content="Reset game log" :disabled="hideTooltips")
+                                el-button(type="default" @click="resetGameLog()" icon="el-icon-refresh" circle style="flex:none")
                     el-table-column(label="Date" prop="created_at" sortable="custom" width="90")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
@@ -200,7 +203,8 @@ html
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'search'")
                 div(style="margin:0 0 10px;display:flex;align-items:center")
                     el-input(v-model="searchText" clearable placeholder="Search" @keyup.native.13="search()" style="flex:1")
-                    el-button(type="default" @click="clearSearch()" icon="el-icon-delete" circle style="flex:none;margin-left:10px")
+                    el-tooltip(placement="bottom" content="Clear search results" :disabled="hideTooltips")
+                        el-button(type="default" @click="clearSearch()" icon="el-icon-delete" circle style="flex:none;margin-left:10px")
                 el-tabs(ref="searchTab" type="card" style="margin-top:15px")
                     el-tab-pane(label="User" v-loading="isSearchUserLoading" style="min-height:60px")
                         .x-friend-list
@@ -255,7 +259,8 @@ html
 
             //- favorite
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'favorite'" v-if="$refs.menu && $refs.menu.activeIndex === 'favorite'")
-                el-button(type="default" :loading="API.isFavoriteLoading" @click="API.refreshFavorites()" size="small" icon="el-icon-refresh" circle style="position:relative;float:right;z-index:1")
+                el-tooltip(placement="bottom" content="Refresh all favorites" :disabled="hideTooltips")
+                    el-button(type="default" :loading="API.isFavoriteLoading" @click="API.refreshFavorites()" size="small" icon="el-icon-refresh" circle style="position:relative;float:right;z-index:1")
                 el-tabs(type="card" v-loading="API.isFavoriteLoading")
                     el-tab-pane(label="Friends")
                         el-collapse(style="border:0")
@@ -263,13 +268,9 @@ html
                                 template(slot="title")
                                     span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
                                     span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
-                                    el-tooltip(placement="top")
-                                        template(#content)
-                                            span Rename
+                                    el-tooltip(placement="top" content="Rename" :disabled="hideTooltips")
                                         el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
-                                    el-tooltip(placement="right")
-                                        template(#content)
-                                            span Clear
+                                    el-tooltip(placement="right" content="Clear" :disabled="hideTooltips")
                                         el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                 .x-friend-list(v-if="group.count" style="margin-top:10px")
                                     div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in favoriteFriends" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showUserDialog(favorite.id)")
@@ -283,17 +284,13 @@ html
                                                     span.name(v-text="favorite.ref.displayName" :class="favorite.ref.$trustClass")
                                                     location.extra(v-if="favorite.ref.location !== 'offline'" :location="favorite.ref.location" :link="false")
                                                     span(v-else v-text="favorite.ref.statusDescription")
-                                                el-tooltip(placement="left")
-                                                    template(#content)
-                                                        span Move
+                                                el-tooltip(placement="left" content="Move" :disabled="hideTooltips")
                                                     el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
                                                         el-button(type="default" icon="el-icon-back" size="mini" circle)
                                                         el-dropdown-menu(#default="dropdown")
                                                             template(v-if="groupAPI.name !== group.name" v-for="groupAPI in API.favoriteFriendGroups" :key="groupAPI.name")
                                                                 el-dropdown-item(style="display:block;margin:10px 0" @click.native="moveFavorite(favorite.ref, groupAPI, 'friend')" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
-                                                el-tooltip(placement="right")
-                                                    template(#content)
-                                                        span Unfavorite
+                                                el-tooltip(placement="right" content="Unfavorite" :disabled="hideTooltips")
                                                     el-button(@click.stop="deleteFavorite(favorite.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                             template(v-else)
                                                 span(v-text="favorite.name || favorite.id")
@@ -305,20 +302,14 @@ html
                                     span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
                                     i.x-user-status(style="margin-left:5px" :class="userFavoriteWorldsStatus(group.visibility)")
                                     span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
-                                    el-tooltip(placement="top")
-                                        template(#content)
-                                            span Change visibility
+                                    el-tooltip(placement="top" content="Change visibility" :disabled="hideTooltips")
                                         el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:10px")
                                             el-button(type="default" icon="el-icon-view" size="mini" circle)
                                             el-dropdown-menu(#default="dropdown")
                                                 el-dropdown-item(v-if="group.visibility !== visibility" v-for="visibility in worldGroupVisibilityOptions" :key="visibility" style="display:block;margin:10px 0" v-text="visibility" @click.native="changeWorldGroupVisibility(group.name, visibility)")
-                                    el-tooltip(placement="top")
-                                        template(#content)
-                                            span Rename
+                                    el-tooltip(placement="top" content="Rename" :disabled="hideTooltips")
                                         el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:5px")
-                                    el-tooltip(placement="right")
-                                        template(#content)
-                                            span Clear
+                                    el-tooltip(placement="right" content="Clear" :disabled="hideTooltips")
                                         el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                 .x-friend-list(v-if="group.count" style="margin-top:10px")
                                     div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in favoriteWorlds" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showWorldDialog(favorite.id)")
@@ -330,34 +321,26 @@ html
                                                     span.name(v-text="favorite.ref.name")
                                                     span.extra(v-if="favorite.ref.occupants") {{ favorite.ref.authorName }} ({{ favorite.ref.occupants }})
                                                     span.extra(v-else v-text="favorite.ref.authorName")
-                                                el-tooltip(placement="left")
-                                                    template(#content)
-                                                        span Move
+                                                el-tooltip(placement="left" content="Move" :disabled="hideTooltips")
                                                     el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
                                                         el-button(type="default" icon="el-icon-back" size="mini" circle)
                                                         el-dropdown-menu(#default="dropdown")
                                                             template(v-if="groupAPI.name !== group.name" v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
                                                                 el-dropdown-item(style="display:block;margin:10px 0" @click.native="moveFavorite(favorite.ref, groupAPI, 'world')" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
-                                                el-tooltip(placement="right")
-                                                    template(#content)
-                                                        span Unfavorite
+                                                el-tooltip(placement="right" content="Unfavorite" :disabled="hideTooltips")
                                                     el-button(@click.stop="deleteFavorite(favorite.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                             template(v-else)
                                                 span(v-text="favorite.name || favorite.id")
                                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="deleteFavorite(favorite.id)" style="margin-left:5px")
                     el-tab-pane(label="Avatars")
-                        el-tooltip(placement="top")
-                            template(#content)
-                                span Add favorite
+                        el-tooltip(placement="top" content="Add favorite" :disabled="hideTooltips")
                             el-button(style="margin-left:5px" icon="el-icon-plus" size="small" @click="promptAddAvatarFavoriteDialog" circle)
                         el-collapse(style="border:0")
                             el-collapse-item(v-for="group in API.favoriteAvatarGroups" :key="group.name")
                                 template(slot="title")
                                     span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
                                     span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
-                                    el-tooltip(placement="right")
-                                        template(#content)
-                                            span Clear
+                                    el-tooltip(placement="right" content="Clear" :disabled="hideTooltips")
                                         el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                 .x-friend-list(v-if="group.count" style="margin-top:10px")
                                     div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in favoriteAvatars" v-if="favorite.groupKey === group.key" :key="favorite.id" @click="showAvatarDialog(favorite.id)")
@@ -368,17 +351,13 @@ html
                                                 .detail
                                                     span.name(v-text="favorite.ref.name")
                                                     span.extra(v-text="favorite.ref.authorName")
-                                                el-tooltip(placement="left")
-                                                    template(#content)
-                                                        span Move
+                                                el-tooltip(placement="left" content="Move" :disabled="hideTooltips")
                                                     el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
                                                         el-button(type="default" icon="el-icon-back" size="mini" circle)
                                                         el-dropdown-menu(#default="dropdown")
                                                             template(v-if="groupAPI.name !== group.name" v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
                                                                 el-dropdown-item(style="display:block;margin:10px 0" @click.native="moveFavorite(favorite.ref, groupAPI, 'avatar')" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }} / {{ groupAPI.capacity }})
-                                                el-tooltip(placement="right")
-                                                    template(#content)
-                                                        span Unfavorite
+                                                el-tooltip(placement="right" content="Unfavorite" :disabled="hideTooltips")
                                                     el-button(@click.stop="deleteFavorite(favorite.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                             template(v-else)
                                                 .detail
@@ -420,7 +399,8 @@ html
                             el-select(v-model="playerModerationTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
                                 el-option(v-once v-for="type in ['block', 'mute', 'unmute', 'hideAvatar', 'showAvatar']" :key="type" :label="type" :value="type")
                             el-input(v-model="playerModerationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
-                            el-button(type="default" :loading="API.isPlayerModerationsLoading" @click="API.refreshPlayerModerations()" icon="el-icon-refresh" circle style="flex:none")
+                            el-tooltip(placement="bottom" content="Refresh" :disabled="hideTooltips")
+                                el-button(type="default" :loading="API.isPlayerModerationsLoading" @click="API.refreshPlayerModerations()" icon="el-icon-refresh" circle style="flex:none")
                     el-table-column(label="Date" prop="created" sortable="custom" width="100")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
@@ -446,7 +426,8 @@ html
                             el-select(v-model="notificationTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
                                 el-option(v-once v-for="type in ['requestInvite', 'invite', 'requestInviteResponse', 'inviteResponse', 'friendRequest', 'message']" :key="type" :label="type" :value="type")
                             el-input(v-model="notificationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
-                            el-button(type="default" :loading="API.isNotificationsLoading" @click="API.refreshNotifications()" icon="el-icon-refresh" circle style="flex:none")
+                            el-tooltip(placement="bottom" content="Refresh" :disabled="hideTooltips")
+                                el-button(type="default" :loading="API.isNotificationsLoading" @click="API.refreshNotifications()" icon="el-icon-refresh" circle style="flex:none")
                     el-table-column(label="Date" prop="created_at" sortable="custom" width="100")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
@@ -526,13 +507,9 @@ html
                             el-button(size="small" @click="promptAddAvatarFavoriteDialog()") Avatar
                 div.options-container
                     span.header Invite Messages
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Refresh
+                    el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteMessageTable.visible = true; refreshInviteMessageTable('message')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Clear results
+                    el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                     data-tables(v-if="inviteMessageTable.visible" v-bind="inviteMessageTable" style="margin-top:10px")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
@@ -545,13 +522,9 @@ html
                                 el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditInviteMessageDialog('message', scope.row)")
                 div.options-container
                     span.header Invite Response Messages
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Refresh
+                    el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteResponseMessageTable.visible = true; refreshInviteMessageTable('response')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Clear results
+                    el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteResponseMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                     data-tables(v-if="inviteResponseMessageTable.visible" v-bind="inviteResponseMessageTable" style="margin-top:10px")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
@@ -564,13 +537,9 @@ html
                                 el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditInviteMessageDialog('response', scope.row)")
                 div.options-container
                     span.header Invite Request Messages
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Refresh
+                    el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteRequestMessageTable.visible = true; refreshInviteMessageTable('request')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Clear results
+                    el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteRequestMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                     data-tables(v-if="inviteRequestMessageTable.visible" v-bind="inviteRequestMessageTable" style="margin-top:10px")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
@@ -583,13 +552,9 @@ html
                                 el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditInviteMessageDialog('request', scope.row)")
                 div.options-container
                     span.header Invite Request Response Messages
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Refresh
+                    el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteRequestResponseMessageTable.visible = true; refreshInviteMessageTable('requestResponse')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Clear results
+                    el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteRequestResponseMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                     data-tables(v-if="inviteRequestResponseMessageTable.visible" v-bind="inviteRequestResponseMessageTable" style="margin-top:10px")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
@@ -609,13 +574,9 @@ html
                         el-table-column(label="Name" prop="displayName")
                 div.options-container
                     span.header Config JSON
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Refresh
+                    el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="refreshConfigTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Clear results
+                    el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
                         el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                     el-tree(v-if="configTreeData.length > 0" :data="configTreeData" style="margin-top:10px;font-size:12px")
                         template(#default="scope")
@@ -624,13 +585,9 @@ html
                                 span(v-if="!scope.data.children" v-text="scope.data.value")
                 div.options-container
                     span.header Current User JSON
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Refresh
+                    el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
-                    el-tooltip(placement="top")
-                        template(#content)
-                            span Clear results
+                    el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
                         el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
                     el-tree(v-if="currentUserTreeData.length > 0" :data="currentUserTreeData" style="margin-top:10px;font-size:12px")
                         template(#default="scope")
@@ -646,28 +603,21 @@ html
                         span Load missing entries, spams API use at your own risk:
                         template(v-if="friendsListLoading")
                             span(v-text="friendsListLoadingProgress" style="margin-left:5px")
-                            el-tooltip(placement="top")
-                                template(#content)
-                                    span Cancel
+                            el-tooltip(placement="top" content="Cancel" :disabled="hideTooltips")
                                 el-button(@click="friendsListLoading = false" size="mini" icon="el-icon-loading" circle style="margin-left:5px")
                         template(v-else)
-                            el-tooltip(placement="top")
-                                template(#content)
-                                    span Load
+                            el-tooltip(placement="top" content="Load" :disabled="hideTooltips")
                                 el-button(@click="friendsListLoadUsers" size="mini" icon="el-icon-refresh-left" circle style="margin-left:5px")
                     div(style="margin:10px 0 0 10px;display:flex;align-items:center")
                         div(style="flex:none;margin-right:10px")
-                            el-switch(v-model="friendsListSearchFilterVIP" @change="friendsListSearchChange" active-color="#13ce66")
+                            el-tooltip(placement="bottom" content="Filter VIP only" :disabled="hideTooltips")
+                                el-switch(v-model="friendsListSearchFilterVIP" @change="friendsListSearchChange" active-color="#13ce66")
                         el-input(v-model="friendsListSearch" placeholder="Search" @change="friendsListSearchChange" clearable style="flex:1")
                         el-select(v-model="friendsListSearchFilters" multiple clearable collapse-tags style="flex:none;width:200px;margin:0 10px" @change="friendsListSearchChange" placeholder="Filter")
                             el-option(v-once v-for="type in ['Display Name', 'User Name', 'Rank', 'Status', 'Bio', 'Memo']" :key="type" :label="type" :value="type")
-                        el-tooltip(placement="top")
-                            template(#content)
-                                span Refresh
+                        el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                             el-button(type="default" @click="friendsListSearchChange" icon="el-icon-refresh" circle style="flex:none")
-                        el-tooltip(placement="top")
-                            template(#content)
-                                span Clear results
+                        el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
                             el-button(type="default" @click="friendsListTable.data = []" icon="el-icon-delete" circle style="flex:none;margin-left:5px")
                     data-tables(v-bind="friendsListTable" @row-click="selectFriendsListRow" style="margin-top:10px;cursor:pointer")
                         el-table-column(label="No." width="70" prop="$friendNum" sortable="custom")
@@ -738,6 +688,9 @@ html
                     div.options-container-item
                         span.name VRCPlus Profile Icons
                         el-switch(v-model="displayVRCPlusIconsAsAvatar")
+                    div.options-container-item
+                        span.name Disable Tooltips
+                        el-switch(v-model="hideTooltips")
                     div.options-container-item
                         span.name Use a Primary Password
                         el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange" :disabled="!loginForm.savedCredentials[API.currentUser.username]")
@@ -933,7 +886,8 @@ html
                                     img.avatar(v-else-if="displayVRCPlusIconsAsAvatar && item.ref.userIcon" v-lazy="item.ref.userIcon")
                                     img.avatar(v-else v-lazy="item.ref.currentAvatarThumbnailImageUrl")
                                 span(v-else) Search More: #[span(v-text="item.label" style="font-weight:bold")]
-                    el-button(type="default" @click="API.getCurrentUser(); API.refreshFriends()" size="mini" icon="el-icon-refresh" circle)
+                    el-tooltip(placement="bottom" content="Refresh friends" :disabled="hideTooltips")
+                        el-button(type="default" @click="API.getCurrentUser(); API.refreshFriends()" size="mini" icon="el-icon-refresh" circle)
                 .x-friend-list(style="padding-bottom:10px")
                     .x-friend-group
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroupMe }")
@@ -1061,8 +1015,10 @@ html
                                     img.x-link(slot="reference" v-lazy="userDialog.ref.userIcon" style="flex:none;width:120px;height:120px;border-radius:4px")
                                     img.x-link(v-lazy="userDialog.ref.userIcon" style="width:500px;height:500px;" @click="openExternalLink(userDialog.ref.userIcon)")
                             div(style="flex:none")
-                                el-button(v-if="userDialog.isFavorite" @click="userDialogCommand('Delete Favorite')" type="warning" icon="el-icon-star-on" circle)
-                                el-button(v-else type="default" @click="userDialogCommand('Add Favorite')" icon="el-icon-star-off" circle)
+                                el-tooltip(v-if="userDialog.isFavorite" placement="top" content="Remove from favorites" :disabled="hideTooltips")
+                                    el-button(@click="userDialogCommand('Delete Favorite')" type="warning" icon="el-icon-star-on" circle)
+                                el-tooltip(v-else placement="top" content="Add to favorites" :disabled="hideTooltips")
+                                    el-button(type="default" @click="userDialogCommand('Add Favorite')" icon="el-icon-star-off" circle)
                                 el-dropdown(trigger="click" @command="userDialogCommand" size="small")
                                     el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                                     el-dropdown-menu(#default="dropdown")
@@ -1105,10 +1061,14 @@ html
                                 div(style="flex:none")
                                     location(:location="userDialog.ref.location")
                                     template(v-if="userDialog.ref.location && userDialog.ref.location !== 'private' && userDialog.ref.location !== 'offline'")
-                                        launch(:location="userDialog.ref.location" style="margin-left:5px")
-                                        invite-yourself(:location="userDialog.ref.location" style="margin-left:5px")
-                                        el-button(v-if="copyLocationCheck(userDialog.ref.location)" @click="copyLocation(userDialog.ref.location)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
-                                        el-button(@click="refreshInstancePlayerCount(userDialog.ref.location)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
+                                        el-tooltip(placement="top" content="Launch/Invite" :disabled="hideTooltips")
+                                            launch(:location="userDialog.ref.location" style="margin-left:5px")
+                                        el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
+                                            invite-yourself(:location="userDialog.ref.location" style="margin-left:5px")
+                                        el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                                            el-button(v-if="copyLocationCheck(userDialog.ref.location)" @click="copyLocation(userDialog.ref.location)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                                        el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
+                                            el-button(@click="refreshInstancePlayerCount(userDialog.ref.location)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                         span(v-if="userDialog.instance.occupants" style="margin-left:5px") {{ userDialog.instance.occupants }}  #[template(v-if="userDialog.users.length > 0") ({{ userDialog.users.length }})]
                                 .x-friend-list(style="flex:1;margin-top:10px")
                                     .x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)")
@@ -1256,11 +1216,16 @@ html
                                 div(style="margin-top:5px")
                                     span(v-show="worldDialog.ref.name !== worldDialog.ref.description" v-text="worldDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
-                                el-button(v-if="worldDialog.inCache" icon="el-icon-delete" circle @click="deleteVRChatCache(worldDialog.ref)")
-                                el-button(v-else-if="downloadCurrent.id === worldDialog.id || downloadQueue.has(worldDialog.id)" icon="el-icon-loading" circle @click="showDownloadDialog")
-                                el-button(v-else icon="el-icon-download" circle @click="queueCacheDownload(worldDialog.ref, 'Manual')")
-                                el-button(v-if="worldDialog.isFavorite" type="warning" icon="el-icon-star-on" circle @click="worldDialogCommand('Delete Favorite')" style="margin-left:5px")
-                                el-button(v-else type="default" icon="el-icon-star-off" circle @click="worldDialogCommand('Add Favorite')" style="margin-left:5px")
+                                el-tooltip(v-if="worldDialog.inCache" placement="top" content="Delete world from cache" :disabled="hideTooltips")
+                                    el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(worldDialog.ref)")
+                                el-tooltip(v-else-if="downloadCurrent.id === worldDialog.id || downloadQueue.has(worldDialog.id)" placement="top" content="Show download progress" :disabled="hideTooltips")
+                                    el-button(icon="el-icon-loading" circle @click="showDownloadDialog")
+                                el-tooltip(v-else placement="top" content="Download world to cache" :disabled="hideTooltips")
+                                    el-button(icon="el-icon-download" circle @click="queueCacheDownload(worldDialog.ref, 'Manual')")
+                                el-tooltip(v-if="worldDialog.isFavorite" placement="top" content="Remove from favorites" :disabled="hideTooltips")
+                                    el-button(type="warning" icon="el-icon-star-on" circle @click="worldDialogCommand('Delete Favorite')" style="margin-left:5px")
+                                el-tooltip(v-else placement="top" content="Add to favorites" :disabled="hideTooltips")
+                                    el-button(type="default" icon="el-icon-star-off" circle @click="worldDialogCommand('Add Favorite')" style="margin-left:5px")
                                 el-dropdown(trigger="click" @command="worldDialogCommand" size="small" style="margin-left:5px")
                                     el-button(type="default" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
@@ -1290,9 +1255,12 @@ html
                                         span.famfamfam-flags(v-if="room.$location.region === 'eu'" class="europeanunion" style="display:inline-block;margin-left:5px")
                                         span.famfamfam-flags(v-else-if="room.$location.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
                                         span.famfamfam-flags(v-else class="us" style="display:inline-block;margin-left:5px")
-                                    invite-yourself(:location="room.$location.tag" style="margin-left:5px")
-                                    el-button(v-if="copyLocationCheck(room.$location.tag)" @click="copyLocation(room.$location.tag)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
-                                    el-button(@click="refreshInstancePlayerCount(room.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
+                                    el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
+                                        invite-yourself(:location="room.$location.tag" style="margin-left:5px")
+                                    el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                                        el-button(v-if="copyLocationCheck(room.$location.tag)" @click="copyLocation(room.$location.tag)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                                    el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
+                                        el-button(@click="refreshInstancePlayerCount(room.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                     span(v-if="room.occupants" style="margin-left:5px") {{ room.occupants }}  #[template(v-if="room.users.length > 0") ({{ room.users.length }})]
                                 .x-friend-list(style="margin:10px 0" v-if="room.$location.userId || room.users.length")
                                     .x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)")
@@ -1320,7 +1288,8 @@ html
                                     .detail
                                         span.name World ID
                                         span.extra {{ worldDialog.id }}
-                                            el-button(@click="copyWorld(worldDialog.id)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                                            el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                                                el-button(@click="copyWorld(worldDialog.id)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Players
@@ -1390,8 +1359,10 @@ html
                                 div(style="margin-top:5px")
                                     span(v-show="avatarDialog.ref.name !== avatarDialog.ref.description" v-text="avatarDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
-                                el-button(v-if="avatarDialog.isFavorite" type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Delete Favorite')")
-                                el-button(v-else type="default" icon="el-icon-star-off" circle @click="avatarDialogCommand('Add Favorite')")
+                                el-tooltip(v-if="avatarDialog.isFavorite" placement="top" content="Remove from favorites" :disabled="hideTooltips")
+                                    el-button(type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Delete Favorite')")
+                                el-tooltip(v-else placement="top" content="Add to favorites" :disabled="hideTooltips")
+                                    el-button(type="default" icon="el-icon-star-off" circle @click="avatarDialogCommand('Add Favorite')")
                                 el-dropdown(trigger="click" @command="avatarDialogCommand" size="small" style="margin-left:5px")
                                     el-button(type="default" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
@@ -1415,7 +1386,8 @@ html
                                     .detail
                                         span.name Avatar ID
                                         span.extra {{ avatarDialog.id }}
-                                            el-button(@click="copyAvatar(avatarDialog.id)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                                            el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                                                el-button(@click="copyAvatar(avatarDialog.id)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Created
@@ -1599,16 +1571,13 @@ html
                 span /
                 span(v-text="VRChatTotalCacheSize")
                 span GB
-                el-tooltip(placement="top")
-                    template(#content)
-                        span Refresh
+                el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                     el-button(type="default" :loading="VRChatCacheSizeLoading" @click="getVRChatCacheSize" size="small" icon="el-icon-refresh" circle style="margin-left:5px")
-                el-tooltip(placement="top")
-                    template(#content)
-                        span Clear Cache
-                    el-button(type="default" @click="showDeleteAllVRChatCacheConfirm" :disabled="isGameRunning" size="small" icon="el-icon-delete" circle style="margin-left:5px")
                 br
-                span Delete all old versions from cache
+                span Delete all cache
+                el-button(size="small" style="margin-left:5px" icon="el-icon-delete" @click="sweepVRChatCache()") Delete Cache
+                br
+                span Delete old versions from cache
                 el-button(size="small" style="margin-left:5px" icon="el-icon-folder-delete" @click="sweepVRChatCache()") Sweep Cache
                 br
                 div(style="display:inline-block;margin-top:10px" v-for="(item, value) in VRChatConfigList" :key="value")
