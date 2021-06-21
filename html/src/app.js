@@ -9035,6 +9035,9 @@ speechSynthesis.getVoices();
         D.fileSize = 'Loading';
         D.visible = true;
         D.loading = true;
+        D.inCache = false;
+        D.cacheSize = 0;
+        D.rooms = [];
         API.getCachedWorld({
             worldId: L.worldId
         }).catch((err) => {
@@ -9046,7 +9049,6 @@ speechSynthesis.getVoices();
                 D.loading = false;
                 D.ref = args.ref;
                 D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
-                D.rooms = [];
                 this.updateVRChatCache();
                 if (args.cache) {
                     API.getWorld(args.params);
