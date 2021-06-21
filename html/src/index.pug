@@ -1035,7 +1035,7 @@ html
                                             template(v-if="userDialog.isFriend")
                                                 el-dropdown-item(icon="el-icon-postcard" command="Request Invite" divided) Request Invite
                                                 el-dropdown-item(icon="el-icon-postcard" command="Request Invite Message") Request Invite With Message
-                                                template(v-if="lastLocation.location && isGameRunning && !checkCanInvite(this.lastLocation.location)")
+                                                template(v-if="lastLocation.location && isGameRunning && !checkCanInvite(lastLocation.location)")
                                                     el-dropdown-item(icon="el-icon-message" command="Invite") Invite
                                                     el-dropdown-item(icon="el-icon-message" command="Invite Message") Invite With Message
                                             template(v-else-if="userDialog.incomingRequest")
