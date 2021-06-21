@@ -468,6 +468,7 @@ speechSynthesis.getVoices();
         },
         methods: {
             parse() {
+                this.text = this.location;
                 var L = API.parseLocation(this.location);
                 if (L.isOffline) {
                     this.text = 'Offline';
