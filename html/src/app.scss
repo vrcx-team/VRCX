@@ -574,3 +574,18 @@ i.x-user-status.busy {
     background-color: #e6a23c !important;
     border-color: #e6a23c !important;
 }
+
+.avatar-info-own {
+    display: inline-block;
+    color: #e6a23c;
+}
+
+.avatar-info-public {
+    display: inline-block;
+    color: #67c23a;
+}
+
+.avatar-info-unknown {
+    display: inline-block;
+    color: #f56c6c;
+}

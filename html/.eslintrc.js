@@ -18,7 +18,8 @@ module.exports = {
         Discord: 'readonly',
         AppApi: 'readonly',
         SharedVariable: 'readonly',
-        WebApi: 'readonly'
+        WebApi: 'readonly',
+        AssetBundleCacher: 'readonly'
     },
     extends: 'eslint:all',
     rules: {

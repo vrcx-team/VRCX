@@ -168,6 +168,8 @@ html
                                         span(v-else) Offline
                                     i.x-user-status(:class="userStatusClass(scope.row.status[0])")
                                 span(v-text="scope.row.status[0].statusDescription")
+                            template(v-else-if="scope.row.type === 'Avatar'")
+                                avatar-info(:imageurl="scope.row.avatar[0].currentAvatarImageUrl" :userid="scope.row.userId")
 
             //- gameLog
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'gameLog'")
@@ -1101,10 +1103,7 @@ html
                                             el-popover(v-if="displayProfilePicOverrideAsAvatar && userDialog.ref.profilePicOverride" placement="right" width="500px" trigger="click" style="display:inline-block;margin-right:5px")
                                                 img.x-link(slot="reference" v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="flex:none;width:80px;height:60px;border-radius:4px;object-fit:cover")
                                                 img.x-link(v-lazy="userDialog.ref.currentAvatarImageUrl" style="width:500px;height:375px;object-fit:cover" @click="openExternalLink(userDialog.ref.currentAvatarImageUrl)")
-                                            div(@click="userDialogCommand('Show Avatar Author')" style="cursor:pointer;width:fit-content;display:inline-block;vertical-align:top")
-                                                span(v-text="userDialog.$avatarInfo.avatarName" style="display:inline-block;margin-right:5px")
-                                                span(v-if="userDialog.$avatarInfo.ownerId === userDialog.id" style="display:inline-block;color:#E6A23C" ) (own)
-                                                span(v-else-if="userDialog.$avatarInfo.avatarName && userDialog.$avatarInfo.ownerId" style="display:inline-block;color:#67C23A") ‎(public)
+                                            avatar-info(:imageurl="userDialog.ref.currentAvatarImageUrl" :userid="userDialog.id")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Bio
