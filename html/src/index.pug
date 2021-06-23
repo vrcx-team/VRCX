@@ -876,7 +876,7 @@ html
             //- friends
             .x-aside-container(v-show="$refs.menu && $refs.menu.activeIndex !== 'friendsList'")
                 div(style="display:inline-block")
-                    el-select(v-model="quickSearch" clearable placeholder="Search" filterable remote :remote-method="quickSearchRemoteMethod" popper-class="x-quick-search" @change="quickSearchChange" @visible-change="quickSearchVisibleChange" style="flex:none;padding:10px;width:177px")
+                    el-select(v-model="quickSearch" clearable placeholder="Search" filterable remote :remote-method="quickSearchRemoteMethod" popper-class="x-quick-search" @change="quickSearchChange" @visible-change="quickSearchVisibleChange" style="flex:none;padding:10px;width:139px")
                         el-option(v-for="item in quickSearchItems" :key="item.value" :value="item.value" :label="item.label")
                             .x-friend-item
                                 template(v-if="item.ref")
@@ -887,6 +887,8 @@ html
                                     img.avatar(v-else-if="displayVRCPlusIconsAsAvatar && item.ref.userIcon" v-lazy="item.ref.userIcon")
                                     img.avatar(v-else v-lazy="item.ref.currentAvatarThumbnailImageUrl")
                                 span(v-else) Search More: #[span(v-text="item.label" style="font-weight:bold")]
+                    el-tooltip(placement="bottom" content="Direct access ID/URL" :disabled="hideTooltips")
+                        el-button(type="default" @click="promptOmniDirectDialog()" size="mini" icon="el-icon-discover" circle)
                     el-tooltip(placement="bottom" content="Refresh friends" :disabled="hideTooltips")
                         el-button(type="default" @click="API.getCurrentUser(); API.refreshFriends()" size="mini" icon="el-icon-refresh" circle)
                 .x-friend-list(style="padding-bottom:10px")

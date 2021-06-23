@@ -7960,7 +7960,7 @@ speechSynthesis.getVoices();
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
             inputPattern: /\S+/,
-            inputErrorMessage: 'User ID is required',
+            inputErrorMessage: 'User URL/ID is required',
             callback: (action, instance) => {
                 if (action === 'confirm' &&
                     instance.inputValue) {
@@ -8015,12 +8015,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptSelectAvatarDialog = function () {
-        this.$prompt('Enter a Avatar ID (UUID)', 'Select avatar', {
+        this.$prompt('Enter a Avatar URL or ID (UUID)', 'Select avatar', {
             distinguishCancelAndClose: true,
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
             inputPattern: /\S+/,
-            inputErrorMessage: 'Avatar ID is required',
+            inputErrorMessage: 'Avatar URL/ID is required',
             callback: (action, instance) => {
                 if (action === 'confirm' &&
                     instance.inputValue) {
@@ -8033,6 +8033,71 @@ speechSynthesis.getVoices();
                         });
                         return args;
                     });
+                }
+            }
+        });
+    };
+
+    $app.methods.promptOmniDirectDialog = function () {
+        this.$prompt('Enter a User/World/Instance/Avatar URL or ID (UUID)', 'Direct Access', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputPattern: /\S+/,
+            inputErrorMessage: 'URL/ID is required',
+            callback: (action, instance) => {
+                if (action === 'confirm' &&
+                    instance.inputValue) {
+                    var input = instance.inputValue;
+                    var testUrl = input.substring(0, 15);
+                    if (testUrl === 'https://vrchat.') {
+                        var url = new URL(input);
+                        var urlPath = url.pathname;
+                        if ('/user/' === urlPath.substring(5, 11)) {
+                            var userId = urlPath.substring(11);
+                            this.showUserDialog(userId);
+                        } else if ('/avatar/' === urlPath.substring(5, 13)) {
+                            var avatarId = urlPath.substring(13);
+                            if (API.cachedAvatars.has(avatarId)) {
+                                this.showAvatarDialog(avatarId);
+                            } else {
+                                this.showFavoriteDialog('avatar', avatarId);
+                            }
+                        } else if ('/world/' === urlPath.substring(5, 12)) {
+                            var worldId = urlPath.substring(12);
+                            this.showWorldDialog(worldId);
+                        } else if ('/launch' === urlPath.substring(5, 12)) {
+                            var urlParams = new URLSearchParams(url.search);
+                            var worldId = urlParams.get('worldId');
+                            var instanceId = urlParams.get('instanceId');
+                            if (instanceId) {
+                                var location = `${worldId}:${instanceId}`;
+                                this.showWorldDialog(location);
+                            } else if (worldId) {
+                                this.showWorldDialog(worldId);
+                            }
+                        } else {
+                            this.$message({
+                                message: 'Invalid URL',
+                                type: 'error'
+                            });
+                        }
+                    } else if (input.substring(0, 4) === 'usr_') {
+                        this.showUserDialog(input);
+                    } else if (input.substring(0, 5) === 'wrld_') {
+                        this.showWorldDialog(input);
+                    } else if (input.substring(0, 5) === 'avtr_') {
+                        if (API.cachedAvatars.has(input)) {
+                            this.showAvatarDialog(input);
+                        } else {
+                            this.showFavoriteDialog('avatar', input);
+                        }
+                    } else {
+                        this.$message({
+                            message: 'Invalid ID/URL',
+                            type: 'error'
+                        });
+                    }
                 }
             }
         });
@@ -10273,9 +10338,9 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.copyAvatar = function (avatarId) {
-        this.copyToClipboard(`https://vrchat.com/home/avatar/${avatarId}`);
+        this.copyToClipboard(avatarId);
         this.$message({
-            message: 'Avatar URL copied to clipboard',
+            message: 'Avatar ID copied to clipboard',
             type: 'success'
         });
     };
@@ -12712,14 +12777,15 @@ speechSynthesis.getVoices();
         if ('/world/' === urlPath.substring(5, 12)) {
             var worldId = urlPath.substring(12);
             return worldId;
-        }
-        var urlParams = new URLSearchParams(url.search);
-        var worldId = urlParams.get('worldId');
-        var instanceId = urlParams.get('instanceId');
+        } else if ('/launch' === urlPath.substring(5, 12)) {
+            var urlParams = new URLSearchParams(url.search);
+            var worldId = urlParams.get('worldId');
+            var instanceId = urlParams.get('instanceId');
         if (instanceId) {
             return `${worldId}:${instanceId}`;
-        } else if (worldId) {
-            return worldId;
+            } else if (worldId) {
+                return worldId;
+            }
         }
     };
 
@@ -12740,7 +12806,7 @@ speechSynthesis.getVoices();
         var url = new URL(avatar);
         var urlPath = url.pathname;
         if ('/avatar/' === urlPath.substring(5, 13)) {
-            var avatarId = urlPath.substr(13);
+            var avatarId = urlPath.substring(13);
             return avatarId;
         }
     };
