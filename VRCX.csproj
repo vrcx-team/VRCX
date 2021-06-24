@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -158,13 +158,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.Common">
-      <Version>90.6.50</Version>
+      <Version>91.1.210</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.OffScreen">
-      <Version>90.6.50</Version>
+      <Version>91.1.210</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
-      <Version>90.6.50</Version>
+      <Version>91.1.210</Version>
     </PackageReference>
     <PackageReference Include="DiscordRichPresence">
       <Version>1.0.175</Version>
@@ -191,7 +191,7 @@
       <Version>4.2.0</Version>
     </PackageReference>
     <PackageReference Include="System.Data.SQLite.Core">
-      <Version>1.0.113.7</Version>
+      <Version>1.0.114.3</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
       <Version>5.0.2</Version>
