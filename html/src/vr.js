@@ -502,7 +502,7 @@ speechSynthesis.getVoices();
                     }
                 }
                 this.region = '';
-                if ((this.location !== '') && (!L.isOffline) && (!L.isPrivate)) {
+                if ((this.location !== '') && (L.instanceId) && (!L.isOffline) && (!L.isPrivate)) {
                     if (L.region === 'eu') {
                         this.region = 'europeanunion';
                     } else if (L.region === 'jp') {
