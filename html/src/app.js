@@ -883,6 +883,9 @@ speechSynthesis.getVoices();
         watch: {
             imageurl() {
                 this.parse();
+            },
+            userid() {
+                this.parse();
             }
         },
         mounted() {
@@ -6060,6 +6063,13 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.methods.saveFeedTableFilters = function () {
+        configRepository.setString('VRCX_feedTableFilters', JSON.stringify(this.feedTable.filters[0].value));
+    };
+    if (configRepository.getString('VRCX_feedTableFilters')) {
+        $app.data.feedTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_feedTableFilters'));
+    }
+
     API.$on('LOGIN', function (args) {
         $app.feedTable.data = VRCXStorage.GetArray(`${args.ref.id}_feedTable`);
         $app.sweepFeed();
@@ -6237,11 +6247,6 @@ speechSynthesis.getVoices();
                 filterFn: (row, filter) => filter.value.some((v) => v === row.type)
             },
             {
-                prop: 'type',
-                value: true,
-                filterFn: (row, filter) => row.type !== 'Notification'
-            },
-            {
                 prop: 'data',
                 value: ''
             },
@@ -6249,6 +6254,11 @@ speechSynthesis.getVoices();
                 prop: 'data',
                 value: true,
                 filterFn: (row, filter) => row.data !== API.currentUser.displayName
+            },
+            {
+                prop: 'type',
+                value: true,
+                filterFn: (row, filter) => row.type !== 'Notification'
             }
         ],
         tableProps: {
@@ -6271,6 +6281,13 @@ speechSynthesis.getVoices();
             ]
         }
     };
+
+    $app.methods.saveGameLogTableFilters = function () {
+        configRepository.setString('VRCX_gameLogTableFilters', JSON.stringify(this.gameLogTable.filters[0].value));
+    };
+    if (configRepository.getString('VRCX_gameLogTableFilters')) {
+        $app.data.gameLogTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_gameLogTableFilters'));
+    }
 
     $app.methods.resetGameLog = async function () {
         await gameLogService.reset();
@@ -11181,10 +11198,13 @@ speechSynthesis.getVoices();
 
     $app.data.friendsListSearch = '';
     $app.data.friendsListSearchFilterVIP = false;
-    $app.data.friendsListSearchFilters = [ 'Display Name', 'User Name', 'Rank', 'Status', 'Bio', 'Memo' ];
+    $app.data.friendsListSearchFilters = [];
 
     $app.methods.friendsListSearchChange = function () {
-        var filters = this.friendsListSearchFilters;
+        var filters = [...this.friendsListSearchFilters];
+        if (filters.length === 0) {
+            filters = [ 'Display Name', 'User Name', 'Rank', 'Status', 'Bio', 'Memo' ];
+        }
         var results = [];
         if (this.friendsListSearch) {
             var query = this.friendsListSearch.toUpperCase();
