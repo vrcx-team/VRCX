@@ -9133,6 +9133,8 @@ speechSynthesis.getVoices();
                             break;
                         }
                     }
+                }).catch((err) => {
+                    D.fileSize = 'Error';
                 });
             }
         }
@@ -9492,6 +9494,8 @@ speechSynthesis.getVoices();
                             break;
                         }
                     }
+                }).catch((err) => {
+                    D.fileSize = 'Error';
                 });
             }
         }
@@ -9568,6 +9572,8 @@ speechSynthesis.getVoices();
                             break;
                         }
                     }
+                }).catch((err) => {
+                    D.fileSize = 'Error';
                 });
             }
         }
@@ -12453,13 +12459,24 @@ speechSynthesis.getVoices();
         var fileVersion = extractFileVersion(assetUrl);
         if (!fileId) {
             this.downloadCurrent.status = 'Invalid asset url';
+            this.downloadCurrent.date = Date.now();
             this.downloadHistoryTable.data.unshift(this.downloadCurrent);
             this.downloadCurrent = {};
             this.downloadInProgress = false;
             this.downloadVRChatCache();
             return;
         }
-        var args = await API.getBundles(fileId);
+        try {
+            var args = await API.getBundles(fileId);
+        } catch (err) {
+            this.downloadCurrent.status = 'API request failed';
+            this.downloadCurrent.date = Date.now();
+            this.downloadHistoryTable.data.unshift(this.downloadCurrent);
+            this.downloadCurrent = {};
+            this.downloadInProgress = false;
+            this.downloadVRChatCache();
+            return;
+        }
         var { versions } = args.json;
         var file = '';
         for (var i = versions.length - 1; i > -1; i--) {
@@ -12471,6 +12488,7 @@ speechSynthesis.getVoices();
         }
         if (!file) {
             this.downloadCurrent.status = 'Missing asset version';
+            this.downloadCurrent.date = Date.now();
             this.downloadHistoryTable.data.unshift(this.downloadCurrent);
             this.downloadCurrent = {};
             this.downloadInProgress = false;
