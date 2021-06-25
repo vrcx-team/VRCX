@@ -783,6 +783,9 @@ html
                         span.name(style="min-width:137px") Overlay Button
                         el-switch(v-model="overlaybutton" inactive-text="Grip" active-text="Menu" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
+                        span.name Background Color
+                        el-switch(v-model="vrBackgroundEnabled" :disabled="!openVR || !overlayWrist")
+                    div.options-container-item
                         span.name Minimal Feed Icons
                         el-switch(v-model="minimalFeed" :disabled="!openVR || !overlayWrist")
                     div.options-container-item

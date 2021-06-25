@@ -7513,6 +7513,7 @@ speechSynthesis.getVoices();
     $app.data.worldAutoCacheInviteFilter = configRepository.getBool('VRCX_worldAutoCacheInviteFilter');
     $app.data.worldAutoCacheGPSFilter = configRepository.getBool('VRCX_worldAutoCacheGPSFilter');
     $app.data.autoSweepVRChatCache = configRepository.getBool('VRCX_autoSweepVRChatCache');
+    $app.data.vrBackgroundEnabled = configRepository.getBool('VRCX_vrBackgroundEnabled');
     var saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -7532,6 +7533,7 @@ speechSynthesis.getVoices();
         configRepository.setBool('VRCX_worldAutoCacheInviteFilter', this.worldAutoCacheInviteFilter);
         configRepository.setBool('VRCX_worldAutoCacheGPSFilter', this.worldAutoCacheGPSFilter);
         configRepository.setBool('VRCX_autoSweepVRChatCache', this.autoSweepVRChatCache);
+        configRepository.setBool('VRCX_vrBackgroundEnabled', this.vrBackgroundEnabled);
         this.updateVRConfigVars();
     };
     $app.data.TTSvoices = speechSynthesis.getVoices();
@@ -7561,6 +7563,7 @@ speechSynthesis.getVoices();
     $app.watch.worldAutoCacheInviteFilter = saveOpenVROption;
     $app.watch.worldAutoCacheGPSFilter = saveOpenVROption;
     $app.watch.autoSweepVRChatCache = saveOpenVROption;
+    $app.watch.vrBackgroundEnabled = saveOpenVROption;
     $app.watch.notificationTTS = saveNotificationTTS;
     $app.data.themeMode = configRepository.getString('VRCX_ThemeMode');
     if (!$app.data.themeMode) {
@@ -7629,6 +7632,10 @@ speechSynthesis.getVoices();
     if (!configRepository.getString('VRCX_worldAutoCacheGPS')) {
         $app.data.worldAutoCacheGPS = 'Never';
         configRepository.setString('VRCX_worldAutoCacheGPS', $app.data.worldAutoCacheGPS);
+    }
+    if (!configRepository.getBool('VRCX_vrBackgroundEnabled')) {
+        $app.data.vrBackgroundEnabled = false;
+        configRepository.setBool('VRCX_vrBackgroundEnabled', $app.data.vrBackgroundEnabled);
     }
     if (!configRepository.getString('sharedFeedFilters')) {
         var sharedFeedFilters = {
@@ -7876,7 +7883,8 @@ speechSynthesis.getVoices();
             minimalFeed: this.minimalFeed,
             notificationPosition: this.notificationPosition,
             notificationTimeout: this.notificationTimeout,
-            notificationTheme
+            notificationTheme,
+            backgroundEnabled: this.vrBackgroundEnabled
         };
         sharedRepository.setObject('VRConfigVars', VRConfigVars);
         this.updateSharedFeed(true);

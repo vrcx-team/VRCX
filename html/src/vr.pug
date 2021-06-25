@@ -12,7 +12,7 @@ html
         link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP|Noto+Sans+KR&display=swap")
         link(rel="stylesheet" href="vr.css")
     body
-        .x-app#x-app(v-if="appType === '1'" class="x-app-type")
+        .x-app#x-app(v-if="appType === '1'" class="x-app-type" :class="{ background: config && config.backgroundEnabled }")
             .x-container(style="flex:1")
                 .x-friend-list(ref="list" style="color:#aaa")
                     template(v-if="config && config.minimalFeed")
