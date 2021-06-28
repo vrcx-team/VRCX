@@ -1,23 +1,27 @@
 import sqliteService from '../service/sqlite.js';
 
 class Database {
-    async init() {
+    async init(userId) {
+        Database.userId = userId.replaceAll('-', '').replaceAll('_', '');
         await sqliteService.executeNonQuery(
-            'CREATE TABLE IF NOT EXISTS feed_gps (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, location TEXT, world_name TEXT, previous_location TEXT, time INTEGER)'
+            `CREATE TABLE IF NOT EXISTS ${Database.userId}_feed_gps (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, location TEXT, world_name TEXT, previous_location TEXT, time INTEGER)`
         );
         await sqliteService.executeNonQuery(
-            'CREATE TABLE IF NOT EXISTS feed_status (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, status TEXT, status_description TEXT, previous_status TEXT, previous_status_description TEXT)'
+            `CREATE TABLE IF NOT EXISTS ${Database.userId}_feed_status (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, status TEXT, status_description TEXT, previous_status TEXT, previous_status_description TEXT)`
         );
         await sqliteService.executeNonQuery(
-            'CREATE TABLE IF NOT EXISTS feed_avatar (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, owner_id TEXT, avatar_name TEXT, current_avatar_image_url TEXT, current_avatar_thumbnail_image_url TEXT, previous_current_avatar_image_url TEXT, previous_current_avatar_thumbnail_image_url TEXT)'
+            `CREATE TABLE IF NOT EXISTS ${Database.userId}_feed_avatar (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, owner_id TEXT, avatar_name TEXT, current_avatar_image_url TEXT, current_avatar_thumbnail_image_url TEXT, previous_current_avatar_image_url TEXT, previous_current_avatar_thumbnail_image_url TEXT)`
         );
         await sqliteService.executeNonQuery(
-            'CREATE TABLE IF NOT EXISTS feed_online_offline (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, type TEXT, location TEXT, world_name TEXT, time INTEGER)'
+            `CREATE TABLE IF NOT EXISTS ${Database.userId}_feed_online_offline (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, type TEXT, location TEXT, world_name TEXT, time INTEGER)`
         );
     }
 
     async getFeedDatabase() {
         var feedDatabase = [];
+        var date = new Date();
+        date.setDate(date.getDate() - 3);  // 3 day limit
+        var dateOffset = date.toJSON();
         await sqliteService.execute((dbRow) => {
             var row = {
                 created_at: dbRow[1],
@@ -30,7 +34,7 @@ class Database {
                 time: dbRow[7]
             };
             feedDatabase.unshift(row);
-        }, 'SELECT * FROM feed_gps');
+        }, `SELECT * FROM ${Database.userId}_feed_gps WHERE created_at >= date('${dateOffset}')`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 created_at: dbRow[1],
@@ -43,7 +47,7 @@ class Database {
                 previousStatusDescription: dbRow[7]
             };
             feedDatabase.unshift(row);
-        }, 'SELECT * FROM feed_status');
+        }, `SELECT * FROM ${Database.userId}_feed_status WHERE created_at >= date('${dateOffset}')`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 created_at: dbRow[1],
@@ -58,7 +62,7 @@ class Database {
                 previousCurrentAvatarThumbnailImageUrl: dbRow[9]
             };
             feedDatabase.unshift(row);
-        }, 'SELECT * FROM feed_avatar');
+        }, `SELECT * FROM ${Database.userId}_feed_avatar WHERE created_at >= date('${dateOffset}')`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 created_at: dbRow[1],
@@ -70,7 +74,7 @@ class Database {
                 time: dbRow[7]
             };
             feedDatabase.unshift(row);
-        }, 'SELECT * FROM feed_online_offline');
+        }, `SELECT * FROM ${Database.userId}_feed_online_offline WHERE created_at >= date('${dateOffset}')`);
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
             var B = b.created_at;
@@ -88,7 +92,7 @@ class Database {
 
     addGPSToDatabase(entry) {
         sqliteService.executeNonQuery(
-            'INSERT OR IGNORE INTO feed_gps (created_at, user_id, display_name, location, world_name, previous_location, time) VALUES (@created_at, @user_id, @display_name, @location, @world_name, @previous_location, @time)',
+            `INSERT OR IGNORE INTO ${Database.userId}_feed_gps (created_at, user_id, display_name, location, world_name, previous_location, time) VALUES (@created_at, @user_id, @display_name, @location, @world_name, @previous_location, @time)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -103,7 +107,7 @@ class Database {
 
     addStatusToDatabase(entry) {
         sqliteService.executeNonQuery(
-            'INSERT OR IGNORE INTO feed_status (created_at, user_id, display_name, status, status_description, previous_status, previous_status_description) VALUES (@created_at, @user_id, @display_name, @status, @status_description, @previous_status, @previous_status_description)',
+            `INSERT OR IGNORE INTO ${Database.userId}_feed_status (created_at, user_id, display_name, status, status_description, previous_status, previous_status_description) VALUES (@created_at, @user_id, @display_name, @status, @status_description, @previous_status, @previous_status_description)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -118,7 +122,7 @@ class Database {
 
     addAvatarToDatabase(entry) {
         sqliteService.executeNonQuery(
-            'INSERT OR IGNORE INTO feed_avatar (created_at, user_id, display_name, owner_id, avatar_name, current_avatar_image_url, current_avatar_thumbnail_image_url, previous_current_avatar_image_url, previous_current_avatar_thumbnail_image_url) VALUES (@created_at, @user_id, @display_name, @owner_id, @avatar_name, @current_avatar_image_url, @current_avatar_thumbnail_image_url, @previous_current_avatar_image_url, @previous_current_avatar_thumbnail_image_url)',
+            `INSERT OR IGNORE INTO ${Database.userId}_feed_avatar (created_at, user_id, display_name, owner_id, avatar_name, current_avatar_image_url, current_avatar_thumbnail_image_url, previous_current_avatar_image_url, previous_current_avatar_thumbnail_image_url) VALUES (@created_at, @user_id, @display_name, @owner_id, @avatar_name, @current_avatar_image_url, @current_avatar_thumbnail_image_url, @previous_current_avatar_image_url, @previous_current_avatar_thumbnail_image_url)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -135,7 +139,7 @@ class Database {
 
     addOnlineOfflineToDatabase(entry) {
         sqliteService.executeNonQuery(
-            'INSERT OR IGNORE INTO feed_online_offline (created_at, user_id, display_name, type, location, world_name, time) VALUES (@created_at, @user_id, @display_name, @type, @location, @world_name, @time)',
+            `INSERT OR IGNORE INTO ${Database.userId}_feed_online_offline (created_at, user_id, display_name, type, location, world_name, time) VALUES (@created_at, @user_id, @display_name, @type, @location, @world_name, @time)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,

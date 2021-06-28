@@ -41,7 +41,6 @@ speechSynthesis.getVoices();
     );
 
     await configRepository.init();
-    await database.init();
 
     if (configRepository.getBool('migrate_config_20201101') === null) {
         var legacyConfigKeys = [
@@ -5665,39 +5664,34 @@ speechSynthesis.getVoices();
                             location = '';
                         }
                         var worldName = await this.getWorldName(location);
-                        this.addFeed('Offline', ctx.ref, {
-                            location,
-                            worldName,
-                            time
-                        });
-                        database.addOnlineOfflineToDatabase({
+                        var feed = {
                             created_at: new Date().toJSON(),
+                            type: 'Offline',
                             userId: ctx.ref.id,
                             displayName: ctx.ref.displayName,
-                            type: 'Offline',
                             location,
                             worldName,
                             time
-                        });
+                        };
+                        this.addFeed(feed);
+                        database.addOnlineOfflineToDatabase(feed);
                     }
                 } else if (newState === 'online') {
                     ctx.ref.$location_at = Date.now();
                     ctx.ref.$online_for = Date.now();
                     ctx.ref.$offline_for = '';
                     var worldName = await this.getWorldName(ctx.ref.location);
-                    this.addFeed('Online', ctx.ref, {
-                        location: ctx.ref.location,
-                        worldName
-                    });
-                    database.addOnlineOfflineToDatabase({
+                    var feed = {
                         created_at: new Date().toJSON(),
+                        type: 'Online',
                         userId: ctx.ref.id,
                         displayName: ctx.ref.displayName,
-                        type: 'Online',
                         location,
                         worldName,
                         time: ''
-                    });
+                    };
+                    this.addFeed(feed);
+                    database.addOnlineOfflineToDatabase(feed);
                 }
             }
             if (ctx.state === 'online') {
@@ -6118,9 +6112,11 @@ speechSynthesis.getVoices();
     }
 
     API.$on('LOGIN', async function (args) {
+        await database.init(args.json.id);
         $app.feedTable.data = await database.getFeedDatabase();
-        //$app.feedTable.data = VRCXStorage.GetArray(`${args.ref.id}_feedTable`);
-        //$app.sweepFeed();
+        $app.sweepFeed();
+        //remove old table
+        VRCXStorage.Remove(`${args.ref.id}_feedTable`);
     });
 
     API.$on('USER:UPDATE', async function (args) {
@@ -6134,39 +6130,40 @@ speechSynthesis.getVoices();
             (props.location[1] !== 'offline') &&
             (props.location[1] !== '')) {
             var worldName = await $app.getWorldName(props.location[0]);
-            $app.addFeed('GPS', ref, {
-                location: props.location[0],
-                worldName,
-                previousLocation: props.location[1],
-                time: props.location[2]
-            });
-            database.addGPSToDatabase({
+            var feed = {
                 created_at: new Date().toJSON(),
+                type: 'GPS',
                 userId: ref.id,
                 displayName: ref.displayName,
                 location: props.location[0],
                 worldName,
                 previousLocation: props.location[1],
                 time: props.location[2]
-            });
+            };
+            $app.addFeed(feed);
+            database.addGPSToDatabase(feed);
             $app.updateFriendGPS(ref.id);
             $app.feedDownloadWorldCache(ref.id, props.location[0]);
         }
         if (props.currentAvatarImageUrl ||
             props.currentAvatarThumbnailImageUrl) {
+            var currentAvatarImageUrl = '';
+            var previousCurrentAvatarImageUrl = '';
+            var currentAvatarThumbnailImageUrl = '';
+            var previousCurrentAvatarThumbnailImageUrl = '';
             if (props.currentAvatarImageUrl) {
-                var currentAvatarImageUrl = props.currentAvatarImageUrl[0];
-                var previousCurrentAvatarImageUrl = props.currentAvatarImageUrl[1];
+                currentAvatarImageUrl = props.currentAvatarImageUrl[0];
+                previousCurrentAvatarImageUrl = props.currentAvatarImageUrl[1];
             } else {
-                var currentAvatarImageUrl = ref.currentAvatarImageUrl;
-                var previousCurrentAvatarImageUrl = ref.currentAvatarImageUrl;
+                currentAvatarImageUrl = ref.currentAvatarImageUrl;
+                previousCurrentAvatarImageUrl = ref.currentAvatarImageUrl;
             }
             if (props.currentAvatarThumbnailImageUrl) {
-                var currentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[0];
-                var previousCurrentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[1];
+                currentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[0];
+                previousCurrentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[1];
             } else {
-                var currentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
-                var previousCurrentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
+                currentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
+                previousCurrentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
             }
             var avatarInfo = {
                 ownerId: '',
@@ -6176,16 +6173,9 @@ speechSynthesis.getVoices();
                 avatarInfo = await $app.getAvatarName(currentAvatarImageUrl);
             } catch (err) {
             }
-            $app.addFeed('Avatar', ref, {
-                ownerId: avatarInfo.ownerId,
-                avatarName: avatarInfo.avatarName,
-                currentAvatarImageUrl,
-                currentAvatarThumbnailImageUrl,
-                previousCurrentAvatarImageUrl,
-                previousCurrentAvatarThumbnailImageUrl
-            });
-            database.addAvatarToDatabase({
+            var feed = {
                 created_at: new Date().toJSON(),
+                type: 'Avatar',
                 userId: ref.id,
                 displayName: ref.displayName,
                 ownerId: avatarInfo.ownerId,
@@ -6194,63 +6184,56 @@ speechSynthesis.getVoices();
                 currentAvatarThumbnailImageUrl,
                 previousCurrentAvatarImageUrl,
                 previousCurrentAvatarThumbnailImageUrl
-            });
+            };
+            $app.addFeed(feed);
+            database.addAvatarToDatabase(feed);
         }
         if (props.status ||
             props.statusDescription) {
+            var status = '';
+            var previousStatus = '';
+            var statusDescription = '';
+            var previousStatusDescription = '';
             if (props.status) {
-                var status = props.status[0];
-                var previousStatus = props.status[1];
+                if (props.status[0]) {
+                    status = props.status[0];
+                }
+                if (props.status[1]) {
+                    previousStatus = props.status[1];
+                }
             } else {
-                var status = ref.status;
-                var previousStatus = ref.status;
+                status = ref.status;
+                previousStatus = ref.status;
             }
             if (props.statusDescription) {
-                var statusDescription = props.statusDescription[0];
-                var previousStatusDescription = props.statusDescription[1];
+                if (props.statusDescription[0]) {
+                    statusDescription = props.statusDescription[0];
+                }
+                if (props.statusDescription[1]) {
+                    previousStatusDescription = props.statusDescription[1];
+                }
             } else {
-                var statusDescription = ref.statusDescription;
-                var previousStatusDescription = ref.statusDescription;
+                statusDescription = ref.statusDescription;
+                previousStatusDescription = ref.statusDescription;
             }
-            $app.addFeed('Status', ref, {
-                status,
-                statusDescription,
-                previousStatus,
-                previousStatusDescription
-            });
-            database.addStatusToDatabase({
+            var feed = {
                 created_at: new Date().toJSON(),
+                type: 'Status',
                 userId: ref.id,
                 displayName: ref.displayName,
                 status,
                 statusDescription,
                 previousStatus,
                 previousStatusDescription
-            });
+            };
+            $app.addFeed(feed);
+            database.addStatusToDatabase(feed);
         }
     });
 
-    var saveFeedTimer = null;
-    $app.methods.saveFeed = function () {
-        if (saveFeedTimer !== null) {
-            return;
-        }
-        saveFeedTimer = setTimeout(() => {
-            saveFeedTimer = null;
-            VRCXStorage.SetArray(`${API.currentUser.id}_feedTable`, this.feedTable.data);
-        }, 1);
-    };
-
-    $app.methods.addFeed = function (type, ref, extra) {
-        this.feedTable.data.push({
-            created_at: new Date().toJSON(),
-            type,
-            userId: ref.id,
-            displayName: ref.displayName,
-            ...extra
-        });
-        //this.sweepFeed();
-        //this.saveFeed();
+    $app.methods.addFeed = function (feed) {
+        this.feedTable.data.push(feed);
+        this.sweepFeed();
         this.updateSharedFeed(false);
         this.notifyMenu('feed');
     };
