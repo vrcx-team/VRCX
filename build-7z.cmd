@@ -1,6 +1,11 @@
 @echo off
 setlocal
-set ZIP_BIN="C:\Program Files\7-Zip\7z.exe"
+where /q 7z
+IF ERRORLEVEL 1 (
+    set ZIP_BIN="C:\Program Files\7-Zip\7z.exe"
+) ELSE (
+    set ZIP_BIN=7z
+)
 cd /d %~dp0
 msbuild -t:restore -p:RestorePackagesConfig=true
 msbuild VRCX.sln /p:Configuration=Release /p:Platform=x64 -m
