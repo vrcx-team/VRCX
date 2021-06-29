@@ -15,6 +15,9 @@ class Database {
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${Database.userId}_feed_online_offline (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, type TEXT, location TEXT, world_name TEXT, time INTEGER)`
         );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
+        );
     }
 
     async getFeedDatabase() {
@@ -88,6 +91,38 @@ class Database {
         };
         feedDatabase.sort(compareByCreatedAt);
         return feedDatabase;
+    }
+
+    async getMemo(userId) {
+        var row = {};
+        await sqliteService.execute((dbRow, userId) => {
+            row = {
+                userId: dbRow[0],
+                editedAt: dbRow[1],
+                memo: dbRow[2]
+            };
+        }, `SELECT * FROM memos WHERE user_id = '${userId}'`);
+        return row;
+    }
+
+    setMemo(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO memos (user_id, edited_at, memo) VALUES (@user_id, @edited_at, @memo)`,
+            {
+                '@user_id': entry.userId,
+                '@edited_at': entry.editedAt,
+                '@memo': entry.memo
+            }
+        );
+    }
+
+    deleteMemo(userId) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM memos WHERE user_id = @user_id`,
+            {
+                '@user_id': userId
+            }
+        );
     }
 
     addGPSToDatabase(entry) {

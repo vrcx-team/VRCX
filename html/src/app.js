@@ -5284,17 +5284,40 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.loadMemo = function (id) {
-        var key = `memo_${id}`;
-        return VRCXStorage.Get(key);
+    $app.methods.migrateMemos = function () {
+        //move memos from json to SQLite
+        var json = JSON.parse(VRCXStorage.GetAll());
+        for (var line in json) {
+            if (line.substring(0, 8) === 'memo_usr') {
+                var userId = line.substring(5);
+                var memo = json[line];
+                if (memo) {
+                    console.log(userId);
+                    this.saveMemo(userId, memo);
+                    VRCXStorage.Remove(`memo_${userId}`);
+                }
+            }
+        }
+    };
+
+    $app.methods.loadMemo = async function (userId) {
+        try {
+            var row = await database.getMemo(userId);
+            return row.memo;
+        } catch (err) {
+        }
+        return '';
     };
 
     $app.methods.saveMemo = function (id, memo) {
-        var key = `memo_${id}`;
         if (memo) {
-            VRCXStorage.Set(key, String(memo));
+            database.setMemo({
+                userId: id,
+                editedAt: new Date().toJSON(),
+                memo
+            });
         } else {
-            VRCXStorage.Remove(key);
+            database.deleteMemo(id);
         }
         var ref = this.friends.get(id);
         if (ref) {
@@ -5478,8 +5501,11 @@ speechSynthesis.getVoices();
             ref,
             name: '',
             no: ++this.friendsNo,
-            memo: this.loadMemo(id)
+            memo: ''
         };
+        this.loadMemo(id).then((memo) => {
+            ctx.memo = memo;
+        });
         if (typeof ref === 'undefined') {
             ref = this.friendLog[id];
             if (typeof ref !== 'undefined' &&
@@ -6117,6 +6143,7 @@ speechSynthesis.getVoices();
         $app.sweepFeed();
         //remove old table
         VRCXStorage.Remove(`${args.ref.id}_feedTable`);
+        $app.migrateMemos();
     });
 
     API.$on('USER:UPDATE', async function (args) {
@@ -8591,7 +8618,13 @@ speechSynthesis.getVoices();
         D.userIcon = '';
         D.id = userId;
         D.treeData = [];
-        D.memo = this.loadMemo(userId);
+        this.loadMemo(userId).then((memo) => {
+            D.memo = memo;
+            var ref = this.friends.get(userId);
+            if (ref) {
+                ref.memo = String(memo || '');
+            }
+        });
         D.visible = true;
         D.loading = true;
         D.avatars = [];
