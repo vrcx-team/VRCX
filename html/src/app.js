@@ -2455,20 +2455,6 @@ speechSynthesis.getVoices();
         return '';
     };
 
-    API.parseInviteLocation = function (ref) {
-        try {
-            var L = API.parseLocation(ref.details.worldId);
-            if (L.worldId && L.instanceId) {
-                return `${ref.details.worldName} #${L.instanceName} ${L.accessType}`;
-            }
-            return ref.message ||
-                ref.details.worldId ||
-                ref.details.worldName;
-        } catch (err) {
-            return '';
-        }
-    };
-
     // API: PlayerModeration
 
     API.cachedPlayerModerations = new Map();
