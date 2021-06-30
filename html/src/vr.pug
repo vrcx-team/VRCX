@@ -21,7 +21,7 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.displayName")] #[location(:location="feed.location[0]")]
+                                        | #[span.name(v-text="feed.displayName")] #[location(:location="feed.location" :hint="feed.worldName")]
                             div(v-else-if="feed.type === 'Offline'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -36,7 +36,7 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.displayName")] #[i.x-user-status(:class="userStatusClass(feed.status[0])")] {{feed.status[0].statusDescription}}
+                                        | #[span.name(v-text="feed.displayName")] #[i.x-user-status(:class="statusClass(feed.status)")] {{feed.statusDescription}}
                             div(v-else-if="feed.type === 'OnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra

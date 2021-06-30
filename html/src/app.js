@@ -22,6 +22,7 @@ import configRepository from './repository/config.js';
 import webApiService from './service/webapi.js';
 import gameLogService from './service/gamelog.js';
 import security from './security.js';
+import database from './repository/database.js';
 
 speechSynthesis.getVoices();
 
@@ -40,6 +41,7 @@ speechSynthesis.getVoices();
     );
 
     await configRepository.init();
+    await database.init();
 
     if (configRepository.getBool('migrate_config_20201101') === null) {
         var legacyConfigKeys = [
@@ -849,7 +851,9 @@ speechSynthesis.getVoices();
         template: '<div @click="confirm" style="cursor:pointer;width:fit-content;display:inline-block;vertical-align:top"><span style="display:inline-block;margin-right:5px">{{ avatarName }}</span><span :class="color">{{ avatarType }}</span></div>',
         props: {
             imageurl: String,
-            userid: String
+            userid: String,
+            hintownerid: String,
+            hintavatarname: String
         },
         data() {
             return {
@@ -860,15 +864,25 @@ speechSynthesis.getVoices();
         },
         methods: {
             async parse() {
+                this.ownerId = '';
                 this.avatarName = '';
                 this.avatarType = '';
                 this.color = '';
-                var avatarInfo = await $app.getAvatarName(this.imageurl);
-                this.avatarName = avatarInfo.avatarName;
-                if ((typeof this.userid === 'undefined') || (!avatarInfo.ownerId)) {
+                if (this.hintownerid) {
+                    this.avatarName = this.hintavatarname;
+                    this.ownerId = this.hintownerid;
+                } else {
+                    try {
+                        var avatarInfo = await $app.getAvatarName(this.imageurl);
+                        this.avatarName = avatarInfo.avatarName;
+                        this.ownerId = avatarInfo.ownerId;
+                    } catch (err) {
+                    }
+                }
+                if ((typeof this.userid === 'undefined') || (!this.ownerId)) {
                     this.color = 'avatar-info-unknown';
                     this.avatarType = '(unknown)';
-                } else if (avatarInfo.ownerId === this.userid) {
+                } else if (this.ownerId === this.userid) {
                     this.color = 'avatar-info-own';
                     this.avatarType = '(own)';
                 } else {
@@ -3953,14 +3967,14 @@ speechSynthesis.getVoices();
                 if (ctx.created_at < bias) {
                     break;
                 }
-                if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation.location)) {
+                if ((ctx.type === 'GPS') && (ctx.location === this.lastLocation.location)) {
                     if (joiningMap[ctx.displayName]) {
                         continue;
                     }
                     joiningMap[ctx.displayName] = ctx.created_at;
                     if (API.cachedUsers.has(ctx.userId)) {
                         var user = API.cachedUsers.get(ctx.userId);
-                        if (ctx.location[0] !== user.location) {
+                        if (ctx.location !== user.location) {
                             continue;
                         }
                     }
@@ -4285,7 +4299,7 @@ speechSynthesis.getVoices();
             }
             // hide private worlds from feeds
             if ((this.hidePrivateFromFeed) &&
-                (ctx.type === 'GPS') && (ctx.location[0] === 'private')) {
+                (ctx.type === 'GPS') && (ctx.location === 'private')) {
                 continue;
             }
             var isFriend = this.friends.has(ctx.userId);
@@ -4575,7 +4589,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.playNotyTTS = async function (noty, message) {
+    $app.methods.playNotyTTS = function (noty, message) {
         switch (noty.type) {
             case 'OnPlayerJoined':
                 this.speak(`${noty.data} has joined`);
@@ -4587,7 +4601,7 @@ speechSynthesis.getVoices();
                 this.speak(`${noty.displayName} is joining`);
                 break;
             case 'GPS':
-                this.speak(`${noty.displayName} is in ${await this.displayLocation(noty.location[0])}`);
+                this.speak(`${noty.displayName} is in ${this.displayLocation(noty.location, noty.worldName)}`);
                 break;
             case 'Online':
                 this.speak(`${noty.displayName} has logged in`);
@@ -4596,7 +4610,7 @@ speechSynthesis.getVoices();
                 this.speak(`${noty.displayName} has logged out`);
                 break;
             case 'Status':
-                this.speak(`${noty.displayName} status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`);
+                this.speak(`${noty.displayName} status is now ${noty.status} ${noty.statusDescription}`);
                 break;
             case 'invite':
                 this.speak(`${noty.senderUsername} has invited you to ${noty.details.worldName}${message}`);
@@ -4651,7 +4665,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.displayXSNotification = async function (noty, message, image) {
+    $app.methods.displayXSNotification = function (noty, message, image) {
         var timeout = parseInt(parseInt(this.notificationTimeout) / 1000);
         switch (noty.type) {
             case 'OnPlayerJoined':
@@ -4664,7 +4678,7 @@ speechSynthesis.getVoices();
                 AppApi.XSNotification('VRCX', `${noty.displayName} is joining`, timeout, image);
                 break;
             case 'GPS':
-                AppApi.XSNotification('VRCX', `${noty.displayName} is in ${await this.displayLocation(noty.location[0])}`, timeout, image);
+                AppApi.XSNotification('VRCX', `${noty.displayName} is in ${this.displayLocation(noty.location, noty.worldName)}`, timeout, image);
                 break;
             case 'Online':
                 AppApi.XSNotification('VRCX', `${noty.displayName} has logged in`, timeout, image);
@@ -4673,7 +4687,7 @@ speechSynthesis.getVoices();
                 AppApi.XSNotification('VRCX', `${noty.displayName} has logged out`, timeout, image);
                 break;
             case 'Status':
-                AppApi.XSNotification('VRCX', `${noty.displayName} status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, timeout, image);
+                AppApi.XSNotification('VRCX', `${noty.displayName} status is now ${noty.status} ${noty.statusDescription}`, timeout, image);
                 break;
             case 'invite':
                 AppApi.XSNotification('VRCX', `${noty.senderUsername} has invited you to ${noty.details.worldName}${message}`, timeout, image);
@@ -4728,7 +4742,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.displayDesktopToast = async function (noty, message, image) {
+    $app.methods.displayDesktopToast = function (noty, message, image) {
         switch (noty.type) {
             case 'OnPlayerJoined':
                 AppApi.DesktopNotification(noty.data, 'has joined', image);
@@ -4740,7 +4754,7 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification(noty.displayName, 'is joining', image);
                 break;
             case 'GPS':
-                AppApi.DesktopNotification(noty.displayName, `is in ${await this.displayLocation(noty.location[0])}`, image);
+                AppApi.DesktopNotification(noty.displayName, `is in ${this.displayLocation(noty.location, noty.worldName)}`, image);
                 break;
             case 'Online':
                 AppApi.DesktopNotification(noty.displayName, 'has logged in', image);
@@ -4749,7 +4763,7 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification(noty.displayName, 'has logged out', image);
                 break;
             case 'Status':
-                AppApi.DesktopNotification(noty.displayName, `status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, image);
+                AppApi.DesktopNotification(noty.displayName, `status is now ${noty.status} ${noty.statusDescription}`, image);
                 break;
             case 'invite':
                 AppApi.DesktopNotification(noty.senderUsername, `has invited you to ${noty.details.worldName}${message}`, image);
@@ -4804,7 +4818,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.displayLocation = async function (location) {
+    $app.methods.displayLocation = function (location, worldName) {
         var text = '';
         var L = API.parseLocation(location);
         if (L.isOffline) {
@@ -4812,23 +4826,10 @@ speechSynthesis.getVoices();
         } else if (L.isPrivate) {
             text = 'Private';
         } else if (L.worldId) {
-            var ref = API.cachedWorlds.get(L.worldId);
-            if (typeof ref === 'undefined') {
-                await API.getWorld({
-                    worldId: L.worldId
-                }).then((args) => {
-                    if (L.tag === location) {
-                        if (L.instanceId) {
-                            text = `${args.json.name} ${L.accessType}`;
-                        } else {
-                            text = args.json.name;
-                        }
-                    }
-                });
-            } else if (L.instanceId) {
-                text = `${ref.name} ${L.accessType}`;
+            if (L.instanceId) {
+                text = `${worldName} ${L.accessType}`;
             } else {
-                text = ref.name;
+                text = worldName;
             }
         }
         return text;
@@ -5660,8 +5661,22 @@ speechSynthesis.getVoices();
                     if (ctx.state === 'online') {
                         var ts = Date.now();
                         var time = ts - $location_at;
+                        if (location === 'offline') {
+                            location = '';
+                        }
+                        var worldName = await this.getWorldName(location);
                         this.addFeed('Offline', ctx.ref, {
-                            location: (location === 'offline') ? '' : location,
+                            location,
+                            worldName,
+                            time
+                        });
+                        database.addOnlineOfflineToDatabase({
+                            created_at: new Date().toJSON(),
+                            userId: ctx.ref.id,
+                            displayName: ctx.ref.displayName,
+                            type: 'Offline',
+                            location,
+                            worldName,
                             time
                         });
                     }
@@ -5669,8 +5684,19 @@ speechSynthesis.getVoices();
                     ctx.ref.$location_at = Date.now();
                     ctx.ref.$online_for = Date.now();
                     ctx.ref.$offline_for = '';
+                    var worldName = await this.getWorldName(ctx.ref.location);
                     this.addFeed('Online', ctx.ref, {
-                        location: ctx.ref.location
+                        location: ctx.ref.location,
+                        worldName
+                    });
+                    database.addOnlineOfflineToDatabase({
+                        created_at: new Date().toJSON(),
+                        userId: ctx.ref.id,
+                        displayName: ctx.ref.displayName,
+                        type: 'Online',
+                        location,
+                        worldName,
+                        time: ''
                     });
                 }
             }
@@ -5721,6 +5747,21 @@ speechSynthesis.getVoices();
             }
         }
         this.updateFriendInProgress.delete(id);
+    };
+
+    $app.methods.getWorldName = async function (location) {
+        var worldName = '';
+        try {
+            var L = API.parseLocation(location);
+            if (L.worldId) {
+                var args = await API.getCachedWorld({
+                    worldId: L.worldId
+                });
+                worldName = args.ref.name;
+            }
+        } catch (err) {
+        }
+        return worldName;
     };
 
     $app.methods.updateFriendGPS = function (userId) {
@@ -5911,6 +5952,26 @@ speechSynthesis.getVoices();
         return style;
     };
 
+    $app.methods.statusClass = function (status) {
+        var style = {};
+        if (typeof status !== 'undefined') {
+            if (status === 'active') {
+                // Online
+                style.online = true;
+            } else if (status === 'join me') {
+                // Join Me
+                style.joinme = true;
+            } else if (status === 'ask me') {
+                // Ask Me
+                style.askme = true;
+            } else if (status === 'busy') {
+                // Do Not Disturb
+                style.busy = true;
+            }
+        }
+        return style;
+    };
+
     $app.methods.confirmDeleteFriend = function (id) {
         this.$confirm('Continue? Unfriend', 'Confirm', {
             confirmButtonText: 'Confirm',
@@ -6056,12 +6117,13 @@ speechSynthesis.getVoices();
         $app.data.feedTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_feedTableFilters'));
     }
 
-    API.$on('LOGIN', function (args) {
-        $app.feedTable.data = VRCXStorage.GetArray(`${args.ref.id}_feedTable`);
-        $app.sweepFeed();
+    API.$on('LOGIN', async function (args) {
+        $app.feedTable.data = await database.getFeedDatabase();
+        //$app.feedTable.data = VRCXStorage.GetArray(`${args.ref.id}_feedTable`);
+        //$app.sweepFeed();
     });
 
-    API.$on('USER:UPDATE', function (args) {
+    API.$on('USER:UPDATE', async function (args) {
         var { ref, props } = args;
         if ($app.friends.has(ref.id) === false) {
             return;
@@ -6071,60 +6133,99 @@ speechSynthesis.getVoices();
             (props.location[0] !== '') &&
             (props.location[1] !== 'offline') &&
             (props.location[1] !== '')) {
+            var worldName = await $app.getWorldName(props.location[0]);
             $app.addFeed('GPS', ref, {
-                location: [
-                    props.location[0],
-                    props.location[1]
-                ],
+                location: props.location[0],
+                worldName,
+                previousLocation: props.location[1],
+                time: props.location[2]
+            });
+            database.addGPSToDatabase({
+                created_at: new Date().toJSON(),
+                userId: ref.id,
+                displayName: ref.displayName,
+                location: props.location[0],
+                worldName,
+                previousLocation: props.location[1],
                 time: props.location[2]
             });
             $app.updateFriendGPS(ref.id);
-            $app.feedDownloadWorldCache(ref);
+            $app.feedDownloadWorldCache(ref.id, props.location[0]);
         }
         if (props.currentAvatarImageUrl ||
             props.currentAvatarThumbnailImageUrl) {
+            if (props.currentAvatarImageUrl) {
+                var currentAvatarImageUrl = props.currentAvatarImageUrl[0];
+                var previousCurrentAvatarImageUrl = props.currentAvatarImageUrl[1];
+            } else {
+                var currentAvatarImageUrl = ref.currentAvatarImageUrl;
+                var previousCurrentAvatarImageUrl = ref.currentAvatarImageUrl;
+            }
+            if (props.currentAvatarThumbnailImageUrl) {
+                var currentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[0];
+                var previousCurrentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[1];
+            } else {
+                var currentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
+                var previousCurrentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
+            }
+            var avatarInfo = {
+                ownerId: '',
+                avatarName: ''
+            }
+            try {
+                avatarInfo = await $app.getAvatarName(currentAvatarImageUrl);
+            } catch (err) {
+            }
             $app.addFeed('Avatar', ref, {
-                avatar: [
-                    {
-                        currentAvatarImageUrl: props.currentAvatarImageUrl
-                            ? props.currentAvatarImageUrl[0]
-                            : ref.currentAvatarImageUrl,
-                        currentAvatarThumbnailImageUrl: props.currentAvatarThumbnailImageUrl
-                            ? props.currentAvatarThumbnailImageUrl[0]
-                            : ref.currentAvatarThumbnailImageUrl
-                    },
-                    {
-                        currentAvatarImageUrl: props.currentAvatarImageUrl
-                            ? props.currentAvatarImageUrl[1]
-                            : ref.currentAvatarImageUrl,
-                        currentAvatarThumbnailImageUrl: props.currentAvatarThumbnailImageUrl
-                            ? props.currentAvatarThumbnailImageUrl[1]
-                            : ref.currentAvatarThumbnailImageUrl
-                    }
-                ]
+                ownerId: avatarInfo.ownerId,
+                avatarName: avatarInfo.avatarName,
+                currentAvatarImageUrl,
+                currentAvatarThumbnailImageUrl,
+                previousCurrentAvatarImageUrl,
+                previousCurrentAvatarThumbnailImageUrl
+            });
+            database.addAvatarToDatabase({
+                created_at: new Date().toJSON(),
+                userId: ref.id,
+                displayName: ref.displayName,
+                ownerId: avatarInfo.ownerId,
+                avatarName: avatarInfo.avatarName,
+                currentAvatarImageUrl,
+                currentAvatarThumbnailImageUrl,
+                previousCurrentAvatarImageUrl,
+                previousCurrentAvatarThumbnailImageUrl
             });
         }
         if (props.status ||
             props.statusDescription) {
+            if (props.status) {
+                var status = props.status[0];
+                var previousStatus = props.status[1];
+            } else {
+                var status = ref.status;
+                var previousStatus = ref.status;
+            }
+            if (props.statusDescription) {
+                var statusDescription = props.statusDescription[0];
+                var previousStatusDescription = props.statusDescription[1];
+            } else {
+                var statusDescription = ref.statusDescription;
+                var previousStatusDescription = ref.statusDescription;
+            }
             $app.addFeed('Status', ref, {
-                status: [
-                    {
-                        status: props.status
-                            ? props.status[0]
-                            : ref.status,
-                        statusDescription: props.statusDescription
-                            ? props.statusDescription[0]
-                            : ref.statusDescription
-                    },
-                    {
-                        status: props.status
-                            ? props.status[1]
-                            : ref.status,
-                        statusDescription: props.statusDescription
-                            ? props.statusDescription[1]
-                            : ref.statusDescription
-                    }
-                ]
+                status,
+                statusDescription,
+                previousStatus,
+                previousStatusDescription
+            });
+            database.addStatusToDatabase({
+                created_at: new Date().toJSON(),
+                userId: ref.id,
+                displayName: ref.displayName,
+                status,
+                statusDescription,
+                previousStatus,
+                previousStatusDescription
             });
         }
     });
@@ -6148,8 +6249,8 @@ speechSynthesis.getVoices();
             displayName: ref.displayName,
             ...extra
         });
-        this.sweepFeed();
-        this.saveFeed();
+        //this.sweepFeed();
+        //this.saveFeed();
         this.updateSharedFeed(false);
         this.notifyMenu('feed');
     };
@@ -12539,18 +12640,18 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.feedDownloadWorldCache = function (feed) {
+    $app.methods.feedDownloadWorldCache = function (id, location) {
         if ((this.worldAutoCacheGPS === 'Always') ||
             ((this.worldAutoCacheGPS === 'Game Closed') && (!this.isGameRunning)) ||
             ((this.worldAutoCacheGPS === 'Game Running') && (this.isGameRunning))) {
-            if ((feed.location === '') ||
-                (feed.location === 'offline') ||
-                (feed.location === 'private') ||
+            if ((location === '') ||
+                (location === 'offline') ||
+                (location === 'private') ||
                 ((!this.worldAutoCacheGPSFilter) &&
-                    (!API.cachedFavoritesByObjectId.has(feed.id)))) {
+                    (!API.cachedFavoritesByObjectId.has(id)))) {
                 return;
             }
-            this.autoDownloadWorldCache(feed.location, 'GPS', feed.id);
+            this.autoDownloadWorldCache(location, 'GPS', id);
         }
     };
 

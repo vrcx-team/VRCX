@@ -481,24 +481,10 @@ speechSynthesis.getVoices();
                         this.text = this.hint;
                     }
                 } else if (L.worldId) {
-                    var ref = API.cachedWorlds.get(L.worldId);
-                    if (typeof ref === 'undefined') {
-                        API.getWorld({
-                            worldId: L.worldId
-                        }).then((args) => {
-                            if (L.tag === this.location) {
-                                if (L.instanceId) {
-                                    this.text = `${args.json.name} #${L.instanceName} ${L.accessType}`;
-                                } else {
-                                    this.text = args.json.name;
-                                }
-                            }
-                            return args;
-                        });
-                    } else if (L.instanceId) {
-                        this.text = `${ref.name} #${L.instanceName} ${L.accessType}`;
+                    if (L.instanceId) {
+                        this.text = ` #${L.instanceName} ${L.accessType}`;
                     } else {
-                        this.text = ref.name;
+                        this.text = this.location;
                     }
                 }
                 this.region = '';
@@ -864,7 +850,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.updateSharedFeedNoty = async function (notyFeed) {
+    $app.methods.updateSharedFeedNoty = function (notyFeed) {
         var notyToPlay = [];
         notyFeed.forEach((feed) => {
             var displayName = '';
@@ -916,7 +902,7 @@ speechSynthesis.getVoices();
                         text = `<strong>${noty.displayName}</strong> is joining`;
                         break;
                     case 'GPS':
-                        text = `<strong>${noty.displayName}</strong> is in ${await this.displayLocation(noty.location[0])}`;
+                        text = `<strong>${noty.displayName}</strong> is in ${this.displayLocation(noty.location, noty.worldName)}`;
                         break;
                     case 'Online':
                         text = `<strong>${noty.displayName}</strong> has logged in`;
@@ -925,7 +911,7 @@ speechSynthesis.getVoices();
                         text = `<strong>${noty.displayName}</strong> has logged out`;
                         break;
                     case 'Status':
-                        text = `<strong>${noty.displayName}</strong> status is now <i>${noty.status[0].status}</i> ${noty.status[0].statusDescription}`;
+                        text = `<strong>${noty.displayName}</strong> status is now <i>${noty.status}</i> ${noty.statusDescription}`;
                         break;
                     case 'invite':
                         text = `<strong>${noty.senderUsername}</strong> has invited you to ${noty.details.worldName} ${message}`;
@@ -991,25 +977,19 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.userStatusClass = function (user) {
+    $app.methods.statusClass = function (status) {
         var style = {};
-        if (typeof user !== 'undefined') {
-            if (user.location === 'offline') {
-                // Offline
-                style.offline = true;
-            } else if (user.state === 'active') {
-                // Active
-                style.active = true;
-            } else if (user.status === 'active') {
+        if (typeof status !== 'undefined') {
+            if (status === 'active') {
                 // Online
                 style.online = true;
-            } else if (user.status === 'join me') {
+            } else if (status === 'join me') {
                 // Join Me
                 style.joinme = true;
-            } else if (user.status === 'ask me') {
+            } else if (status === 'ask me') {
                 // Ask Me
                 style.askme = true;
-            } else if (user.status === 'busy') {
+            } else if (status === 'busy') {
                 // Do Not Disturb
                 style.busy = true;
             }
@@ -1017,7 +997,7 @@ speechSynthesis.getVoices();
         return style;
     };
 
-    $app.methods.displayLocation = async function (location) {
+    $app.methods.displayLocation = function (location, worldName) {
         var text = '';
         var L = API.parseLocation(location);
         if (L.isOffline) {
@@ -1025,23 +1005,10 @@ speechSynthesis.getVoices();
         } else if (L.isPrivate) {
             text = 'Private';
         } else if (L.worldId) {
-            var ref = API.cachedWorlds.get(L.worldId);
-            if (typeof ref === 'undefined') {
-                await API.getWorld({
-                    worldId: L.worldId
-                }).then((args) => {
-                    if (L.tag === location) {
-                        if (L.instanceId) {
-                            text = `${args.json.name} ${L.accessType}`;
-                        } else {
-                            text = args.json.name;
-                        }
-                    }
-                });
-            } else if (L.instanceId) {
-                text = `${ref.name} ${L.accessType}`;
+            if (L.instanceId) {
+                text = `${worldName} ${L.accessType}`;
             } else {
-                text = ref.name;
+                text = worldName;
             }
         }
         return text;
