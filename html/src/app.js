@@ -1086,33 +1086,43 @@ speechSynthesis.getVoices();
             ref.$isTroll = true;
         }
         if (tags.includes('system_legend')) {
-            ref.$trustLevel = 'Legendary User';
-            ref.$trustClass = 'x-tag-legendary';
-        } else if (tags.includes('system_trust_legend')) {
+            ref.$isLegend = true;
+        }
+        if (tags.includes('system_trust_legend')) {
             ref.$trustLevel = 'Veteran User';
             ref.$trustClass = 'x-tag-legend';
+            ref.$trustNum = 6;
         } else if (tags.includes('system_trust_veteran')) {
             ref.$trustLevel = 'Trusted User';
             ref.$trustClass = 'x-tag-veteran';
+            ref.$trustNum = 5;
         } else if (tags.includes('system_trust_trusted')) {
             ref.$trustLevel = 'Known User';
             ref.$trustClass = 'x-tag-trusted';
+            ref.$trustNum = 4;
         } else if (tags.includes('system_trust_known')) {
             ref.$trustLevel = 'User';
             ref.$trustClass = 'x-tag-known';
+            ref.$trustNum = 3;
         } else if (tags.includes('system_trust_basic')) {
             ref.$trustLevel = 'New User';
             ref.$trustClass = 'x-tag-basic';
+            ref.$trustNum = 2;
         } else {
             ref.$trustLevel = 'Visitor';
             ref.$trustClass = 'x-tag-untrusted';
+            ref.$trustNum = 1;
         }
+        ref.$trustColor = ref.$trustClass;
         if (ref.$isModerator) {
-            ref.$trustLevel = 'VRChat Team';
-            ref.$trustClass = 'x-tag-vip';
+            ref.$trustColor = 'x-tag-vip';
+            ref.$trustNum = 8;
         } else if (ref.$isTroll) {
-            ref.$trustLevel = 'Nuisance';
-            ref.$trustClass = 'x-tag-troll';
+            ref.$trustColor = 'x-tag-troll';
+            ref.$trustNum = 0;
+        } else if (ref.$isLegend) {
+            ref.$trustColor = 'x-tag-legendary';
+            ref.$trustNum = 7;
         }
     };
 
@@ -1180,6 +1190,8 @@ speechSynthesis.getVoices();
                 $isTroll: false,
                 $trustLevel: 'Visitor',
                 $trustClass: 'x-tag-untrusted',
+                $trustColor: 'x-tag-untrusted',
+                $trustNum: 1,
                 $languages: [],
                 //
                 ...json
@@ -1290,6 +1302,8 @@ speechSynthesis.getVoices();
                 $isTroll: false,
                 $trustLevel: 'Visitor',
                 $trustClass: 'x-tag-untrusted',
+                $trustColor: 'x-tag-untrusted',
+                $trustNum: 1,
                 $languages: [],
                 //
                 ...json
@@ -7118,7 +7132,7 @@ speechSynthesis.getVoices();
         }
         if (ref.$trustLevel &&
             ctx.trustLevel !== ref.$trustLevel) {
-            if (ctx.trustLevel) {
+            if ((ctx.trustLevel) && (ctx.trustLevel !== 'Legendary User')) { // TODO: remove
                 this.friendLogTable.data.push({
                     created_at: new Date().toJSON(),
                     type: 'TrustLevel',
@@ -11248,35 +11262,6 @@ speechSynthesis.getVoices();
                 }
             }
             ctx.ref.$friendNum = ctx.no;
-            switch (ctx.ref.$trustLevel) {
-                case 'Nuisance':
-                    ctx.ref.$trustNum = '0';
-                    break;
-                case 'Visitor':
-                    ctx.ref.$trustNum = '1';
-                    break;
-                case 'New User':
-                    ctx.ref.$trustNum = '2';
-                    break;
-                case 'User':
-                    ctx.ref.$trustNum = '3';
-                    break;
-                case 'Known User':
-                    ctx.ref.$trustNum = '4';
-                    break;
-                case 'Trusted User':
-                    ctx.ref.$trustNum = '5';
-                    break;
-                case 'Veteran User':
-                    ctx.ref.$trustNum = '6';
-                    break;
-                case 'Legendary User':
-                    ctx.ref.$trustNum = '7';
-                    break;
-                case 'VRChat Team':
-                    ctx.ref.$trustNum = '8';
-                    break;
-            }
             results.push(ctx.ref);
         }
         this.friendsListTable.data = results;

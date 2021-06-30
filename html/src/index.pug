@@ -282,7 +282,7 @@ html
                                                     img(v-else-if="displayVRCPlusIconsAsAvatar && favorite.ref.userIcon" v-lazy="favorite.ref.userIcon")
                                                     img(v-else v-lazy="favorite.ref.currentAvatarThumbnailImageUrl")
                                                 .detail
-                                                    span.name(v-text="favorite.ref.displayName" :class="favorite.ref.$trustClass")
+                                                    span.name(v-text="favorite.ref.displayName" :class="favorite.ref.$trustColor")
                                                     location.extra(v-if="favorite.ref.location !== 'offline'" :location="favorite.ref.location" :link="false")
                                                     span(v-else v-text="favorite.ref.statusDescription")
                                                 el-tooltip(placement="left" content="Move" :disabled="hideTooltips")
@@ -637,7 +637,7 @@ html
                         el-table-column(label="User Name" min-width="120" prop="username" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'username')")
                         el-table-column(label="Rank" width="110" prop="$trustNum" sortable="custom")
                             template(v-once #default="scope")
-                                span.name(v-text="scope.row.$trustLevel" :class="scope.row.$trustClass")
+                                span.name(v-text="scope.row.$trustLevel" :class="scope.row.$trustColor")
                         el-table-column(label="Status" min-width="180" prop="statusDescription" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'statusDescription')")
                         el-table-column(label="Language" width="100" prop="$languages" sortable :sort-method="(a, b) => sortLanguages(a, b)")
                             template(v-once #default="scope")
@@ -738,7 +738,7 @@ html
                                     span.color-picker(slot="trigger") #[i.el-icon-s-open] Veteran User
                             div
                                 v-swatches(v-model="trustColor.legendary" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-legendary")
-                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Legendary User
+                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Early User
                             div
                                 v-swatches(v-model="trustColor.vip" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-vip")
                                     span.color-picker(slot="trigger") #[i.el-icon-s-open] VRChat Team
@@ -884,7 +884,7 @@ html
                             .x-friend-item
                                 template(v-if="item.ref")
                                     .detail
-                                        span.name(v-text="item.ref.displayName" :class="item.ref.$trustClass")
+                                        span.name(v-text="item.ref.displayName" :class="item.ref.$trustColor")
                                         location.extra(:location="item.ref.location" :link="false")
                                     img.avatar(v-if="displayProfilePicOverrideAsAvatar && item.ref.profilePicOverride" v-lazy="item.ref.profilePicOverride")
                                     img.avatar(v-else-if="displayVRCPlusIconsAsAvatar && item.ref.userIcon" v-lazy="item.ref.userIcon")
@@ -905,7 +905,7 @@ html
                                 img(v-else-if="displayVRCPlusIconsAsAvatar && API.currentUser.userIcon" v-lazy="API.currentUser.userIcon")
                                 img(v-else v-lazy="API.currentUser.currentAvatarThumbnailImageUrl")
                             .detail
-                                span.name(v-text="API.currentUser.displayName" :class="API.currentUser.$trustClass")
+                                span.name(v-text="API.currentUser.displayName" :class="API.currentUser.$trustColor")
                                 location.extra(v-if="isGameRunning === true" :location="lastLocation.location" :link="false")
                                 span.extra(v-else v-text="API.currentUser.statusDescription" :link="false")
                     .x-friend-group(v-show="friendsGroup0.length")
@@ -919,8 +919,8 @@ html
                                     img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                     img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                 .detail
-                                    span.name(v-if="friend.memo" :class="friend.ref.$trustClass") {{ friend.ref.displayName }} ({{ friend.memo }})
-                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustClass")
+                                    span.name(v-if="friend.memo" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.memo }})
+                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
                                     location.extra(:location="friend.ref.location" :link="false")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
@@ -936,8 +936,8 @@ html
                                     img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                     img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                 .detail
-                                    span.name(v-if="friend.memo" :class="friend.ref.$trustClass") {{ friend.ref.displayName }} ({{ friend.memo }})
-                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustClass")
+                                    span.name(v-if="friend.memo" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.memo }})
+                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
                                     location.extra(:location="friend.ref.location" :link="false")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
@@ -953,8 +953,8 @@ html
                                     img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                     img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                 .detail
-                                    span.name(v-if="friend.memo" :class="friend.ref.$trustClass") {{ friend.ref.displayName }} ({{ friend.memo }})
-                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustClass")
+                                    span.name(v-if="friend.memo" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.memo }})
+                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
                                     span.extra(v-text="friend.ref.statusDescription" :link="false")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
@@ -970,8 +970,8 @@ html
                                     img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                     img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                 .detail
-                                    span.name(v-if="friend.memo" :class="friend.ref.$trustClass") {{ friend.ref.displayName }} ({{ friend.memo }})
-                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustClass")
+                                    span.name(v-if="friend.memo" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.memo }})
+                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
                                     span.extra(v-text="friend.ref.statusDescription")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
@@ -1011,9 +1011,11 @@ html
                                 div(style="margin-top:5px")
                                     el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel")
                                     el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-left:5px") Friend No.{{userDialog.friend.no}}
-                                    el-tag.x-tag-vrcplus(type="info" effect="plain" size="mini" v-if="userDialog.ref.$isVRCPlus" style="margin-left:5px") VRC+
-                                    el-tag.x-tag-platform-pc(type="info" effect="plain" size="mini" v-if="userDialog.ref.last_platform === 'standalonewindows'" style="margin-left:5px") PC
-                                    el-tag.x-tag-platform-quest(type="info" effect="plain" size="mini" v-if="userDialog.ref.last_platform === 'android'" style="margin-left:5px") Quest
+                                    el-tag.x-tag-legendary(v-if="userDialog.ref.$isLegend" type="info" effect="plain" size="mini" style="margin-left:5px") Early User
+                                    el-tag.x-tag-vip(v-if="userDialog.ref.$isModerator" type="info" effect="plain" size="mini" style="margin-left:5px") VRChat Team
+                                    el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-left:5px") VRC+
+                                    el-tag.x-tag-platform-pc(v-if="userDialog.ref.last_platform === 'standalonewindows'" type="info" effect="plain" size="mini" style="margin-left:5px") PC
+                                    el-tag.x-tag-platform-quest(v-else-if="userDialog.ref.last_platform === 'android'" type="info" effect="plain" size="mini" style="margin-left:5px") Quest
                                 div(style="margin-top:5px")
                                     span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
                             div(v-if="userDialog.ref.userIcon" style="flex:none;margin-right:10px")
@@ -1084,7 +1086,7 @@ html
                                                 img(v-else-if="displayVRCPlusIconsAsAvatar && userDialog.$location.user.userIcon" v-lazy="userDialog.$location.user.userIcon")
                                                 img(v-else v-lazy="userDialog.$location.user.currentAvatarThumbnailImageUrl")
                                             .detail
-                                                span.name(v-text="userDialog.$location.user.displayName" :class="userDialog.$location.user.$trustClass")
+                                                span.name(v-text="userDialog.$location.user.displayName" :class="userDialog.$location.user.$trustColor")
                                                 span.extra Instance Creator
                                         span(v-else v-text="userDialog.$location.userId")
                                     .x-friend-item(v-for="user in userDialog.users" :key="user.id" @click="showUserDialog(user.id)")
@@ -1093,7 +1095,7 @@ html
                                             img(v-else-if="displayVRCPlusIconsAsAvatar && user.userIcon" v-lazy="user.userIcon")
                                             img(v-else v-lazy="user.currentAvatarThumbnailImageUrl")
                                         .detail
-                                            span.name(v-text="user.displayName" :class="user.$trustClass")
+                                            span.name(v-text="user.displayName" :class="user.$trustColor")
                                             span.extra
                                                 timer(:epoch="user.$location_at")
                             .x-friend-list(style="max-height:none")
@@ -1273,7 +1275,7 @@ html
                                                 img(v-else-if="displayVRCPlusIconsAsAvatar && room.$location.user.userIcon" v-lazy="room.$location.user.userIcon")
                                                 img(v-else v-lazy="room.$location.user.currentAvatarThumbnailImageUrl")
                                             .detail
-                                                span.name(v-text="room.$location.user.displayName" :class="room.$location.user.$trustClass")
+                                                span.name(v-text="room.$location.user.displayName" :class="room.$location.user.$trustColor")
                                                 span.extra Instance Creator
                                         span(v-else v-text="room.$location.userId")
                                     .x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)")
@@ -1282,7 +1284,7 @@ html
                                             img(v-else-if="displayVRCPlusIconsAsAvatar && user.userIcon" v-lazy="user.userIcon")
                                             img(v-else v-lazy="user.currentAvatarThumbnailImageUrl")
                                         .detail
-                                            span.name(v-text="user.displayName" :class="user.$trustClass")
+                                            span.name(v-text="user.displayName" :class="user.$trustColor")
                                             span.extra
                                                 timer(:epoch="user.$location_at")
                         el-tab-pane(label="Info")
@@ -1443,7 +1445,7 @@ html
                                         img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                         img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                     .detail
-                                        span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustClass")
+                                        span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
                                 span(v-else v-text="friend.id")
                         el-option-group(v-if="friendsGroup1.length" label="ONLINE")
                             el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
@@ -1453,7 +1455,7 @@ html
                                         img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                         img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                     .detail
-                                        span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustClass")
+                                        span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
                                 span(v-else v-text="friend.id")
                         el-option-group(v-if="friendsGroup2.length" label="ACTIVE")
                             el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
@@ -1463,7 +1465,7 @@ html
                                         img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                         img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                     .detail
-                                        span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustClass")
+                                        span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
                                 span(v-else v-text="friend.id")
                 template(#footer)
                     el-button(size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="showSendInviteDialog()") Invite With Message
