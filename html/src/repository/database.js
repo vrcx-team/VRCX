@@ -16,6 +16,12 @@ class Database {
             `CREATE TABLE IF NOT EXISTS ${Database.userId}_feed_online_offline (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, type TEXT, location TEXT, world_name TEXT, time INTEGER)`
         );
         await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${Database.userId}_friend_log_current (user_id TEXT PRIMARY KEY, display_name TEXT, trust_level TEXT)`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${Database.userId}_friend_log_history (id INTEGER PRIMARY KEY, created_at TEXT, type TEXT, user_id TEXT, display_name TEXT, previous_display_name TEXT, trust_level TEXT, previous_trust_level TEXT)`
+        );
+        await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
         );
     }
@@ -27,6 +33,7 @@ class Database {
         var dateOffset = date.toJSON();
         await sqliteService.execute((dbRow) => {
             var row = {
+                rowId: dbRow[0],
                 created_at: dbRow[1],
                 userId: dbRow[2],
                 displayName: dbRow[3],
@@ -40,6 +47,7 @@ class Database {
         }, `SELECT * FROM ${Database.userId}_feed_gps WHERE created_at >= date('${dateOffset}')`);
         await sqliteService.execute((dbRow) => {
             var row = {
+                rowId: dbRow[0],
                 created_at: dbRow[1],
                 userId: dbRow[2],
                 displayName: dbRow[3],
@@ -53,6 +61,7 @@ class Database {
         }, `SELECT * FROM ${Database.userId}_feed_status WHERE created_at >= date('${dateOffset}')`);
         await sqliteService.execute((dbRow) => {
             var row = {
+                rowId: dbRow[0],
                 created_at: dbRow[1],
                 userId: dbRow[2],
                 displayName: dbRow[3],
@@ -68,6 +77,7 @@ class Database {
         }, `SELECT * FROM ${Database.userId}_feed_avatar WHERE created_at >= date('${dateOffset}')`);
         await sqliteService.execute((dbRow) => {
             var row = {
+                rowId: dbRow[0],
                 created_at: dbRow[1],
                 userId: dbRow[2],
                 displayName: dbRow[3],
@@ -121,6 +131,84 @@ class Database {
             `DELETE FROM memos WHERE user_id = @user_id`,
             {
                 '@user_id': userId
+            }
+        );
+    }
+
+    async getFriendLogCurrent() {
+        var friendLogCurrent = [];
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                userId: dbRow[0],
+                displayName: dbRow[1],
+                trustLevel: dbRow[2]
+            };
+            friendLogCurrent.unshift(row);
+        }, `SELECT * FROM ${Database.userId}_friend_log_current`);
+        return friendLogCurrent;
+    }
+
+    setFriendLogCurrent(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO ${Database.userId}_friend_log_current (user_id, display_name, trust_level) VALUES (@user_id, @display_name, @trust_level)`,
+            {
+                '@user_id': entry.userId,
+                '@display_name': entry.displayName,
+                '@trust_level': entry.trustLevel
+            }
+        );
+    }
+
+    deleteFriendLogCurrent(userId) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM ${Database.userId}_friend_log_current WHERE user_id = @user_id`,
+            {
+                '@user_id': userId
+            }
+        );
+    }
+
+    async getFriendLogHistory() {
+        var friendLogHistory = [];
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                rowId: dbRow[0],
+                created_at: dbRow[1],
+                type: dbRow[2],
+                userId: dbRow[3],
+                displayName: dbRow[4]
+            };
+            if (row.type === 'DisplayName') {
+                row.previousDisplayName = dbRow[5];
+            } else if (row.type === 'TrustLevel') {
+                row.trustLevel = dbRow[6];
+                row.previousTrustLevel = dbRow[7];
+            }
+            friendLogHistory.unshift(row);
+        }, `SELECT * FROM ${Database.userId}_friend_log_history`);
+        return friendLogHistory;
+    }
+
+    addFriendLogHistory(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO ${Database.userId}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level) VALUES (@created_at, @type, @user_id, @display_name, @previous_display_name, @trust_level, @previous_trust_level)`,
+            {
+                '@created_at': entry.created_at,
+                '@type': entry.type,
+                '@user_id': entry.userId,
+                '@display_name': entry.displayName,
+                '@previous_display_name': entry.previousDisplayName,
+                '@trust_level': entry.trustLevel,
+                '@previous_trust_level': entry.previousTrustLevel
+            }
+        );
+    }
+
+    deleteFriendLogHistory(rowId) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM ${Database.userId}_friend_log_history WHERE id = @row_id`,
+            {
+                '@row_id': rowId
             }
         );
     }

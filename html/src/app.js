@@ -5285,14 +5285,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.migrateMemos = function () {
-        //move memos from json to SQLite
         var json = JSON.parse(VRCXStorage.GetAll());
         for (var line in json) {
             if (line.substring(0, 8) === 'memo_usr') {
                 var userId = line.substring(5);
                 var memo = json[line];
                 if (memo) {
-                    console.log(userId);
                     this.saveMemo(userId, memo);
                     VRCXStorage.Remove(`memo_${userId}`);
                 }
@@ -5428,7 +5426,6 @@ speechSynthesis.getVoices();
     });
 
     API.$on('USER:CURRENT', function (args) {
-        // initFriendship()이 LOGIN에서 처리되기 때문에
         // USER:CURRENT에서 처리를 함
         $app.refreshFriends(args.ref, args.origin);
     });
@@ -5507,7 +5504,7 @@ speechSynthesis.getVoices();
             ctx.memo = memo;
         });
         if (typeof ref === 'undefined') {
-            ref = this.friendLog[id];
+            ref = this.friendLog.get(id);
             if (typeof ref !== 'undefined' &&
                 ref.displayName) {
                 ctx.name = ref.displayName;
@@ -6141,9 +6138,14 @@ speechSynthesis.getVoices();
         await database.init(args.json.id);
         $app.feedTable.data = await database.getFeedDatabase();
         $app.sweepFeed();
-        //remove old table
-        VRCXStorage.Remove(`${args.ref.id}_feedTable`);
+        //remove old data from json file and migrate them to SQLite
+        VRCXStorage.Remove(`${args.json.id}_feedTable`);
         $app.migrateMemos();
+        if (VRCXStorage.Get(`${args.json.id}_friendLogUpdatedAt`)) {
+            $app.migrateFriendLog(args.json.id);
+        } else {
+            $app.initFriendLog();
+        }
     });
 
     API.$on('USER:UPDATE', async function (args) {
@@ -6852,7 +6854,7 @@ speechSynthesis.getVoices();
                 if (type === 'friend') {
                     var ref = API.cachedUsers.get(objectId);
                     if (typeof ref === 'undefined') {
-                        ref = this.friendLog[objectId];
+                        ref = this.friendLog.get(objectId);
                         if (typeof ref !== 'undefined' &&
                             ref.displayName) {
                             ctx.name = ref.displayName;
@@ -7032,7 +7034,7 @@ speechSynthesis.getVoices();
 
     // App: friendLog
 
-    $app.data.friendLog = {};
+    $app.data.friendLog = new Map();
     $app.data.friendLogTable = {
         data: [],
         filters: [
@@ -7067,10 +7069,6 @@ speechSynthesis.getVoices();
         }
     };
 
-    API.$on('LOGIN', function (args) {
-        $app.initFriendship(args.ref);
-    });
-
     API.$on('USER:CURRENT', function (args) {
         $app.updateFriendships(args.ref);
     });
@@ -7092,13 +7090,14 @@ speechSynthesis.getVoices();
         if (typeof ref === 'undefined') {
             return;
         }
-        $app.friendLogTable.data.push({
+        var friendLogHistory = {
             created_at: new Date().toJSON(),
             type: 'FriendRequest',
             userId: ref.id,
             displayName: ref.displayName
-        });
-        $app.saveFriendLog();
+        };
+        $app.friendLogTable.data.push(friendLogHistory);
+        database.addFriendLogHistory(friendLogHistory);
     });
 
     API.$on('FRIEND:REQUEST:CANCEL', function (args) {
@@ -7106,56 +7105,54 @@ speechSynthesis.getVoices();
         if (typeof ref === 'undefined') {
             return;
         }
-        $app.friendLogTable.data.push({
+        var friendLogHistory = {
             created_at: new Date().toJSON(),
             type: 'CancelFriendRequst',
             userId: ref.id,
             displayName: ref.displayName
-        });
-        $app.saveFriendLog();
+        };
+        $app.friendLogTable.data.push(friendLogHistory);
+        database.addFriendLogHistory(friendLogHistory);
     });
 
-    var saveFriendLogTimer = null;
-    $app.methods.saveFriendLog = function () {
-        if (saveFriendLogTimer !== null) {
-            return;
+    $app.data.friendLogInitStatus = false;
+
+    $app.methods.migrateFriendLog = function (userId) {
+        this.friendLog = new Map();
+        var oldFriendLog = VRCXStorage.GetObject(`${userId}_friendLog`);
+        for (var i in oldFriendLog) {
+            var friend = oldFriendLog[i];
+            var row = {
+                userId: friend.id,
+                displayName: friend.displayName,
+                trustLevel: friend.trustLevel
+            };
+            this.friendLog.set(friend.id, row);
+            database.setFriendLogCurrent(row);
         }
-        this.updateSharedFeed(true);
-        saveFriendLogTimer = setTimeout(() => {
-            saveFriendLogTimer = null;
-            VRCXStorage.SetObject(`${API.currentUser.id}_friendLog`, this.friendLog);
-            VRCXStorage.SetArray(`${API.currentUser.id}_friendLogTable`, this.friendLogTable.data);
-            VRCXStorage.Set(`${API.currentUser.id}_friendLogUpdatedAt`, new Date().toJSON());
-        }, 1);
+        VRCXStorage.Remove(`${userId}_friendLog`);
+        this.friendLogTable.data = VRCXStorage.GetArray(`${userId}_friendLogTable`);
+        for (var line of this.friendLogTable.data) {
+            database.addFriendLogHistory(line);
+        }
+        VRCXStorage.Remove(`${userId}_friendLogTable`);
+        VRCXStorage.Remove(`${userId}_friendLogUpdatedAt`);
+        this.friendLogInitStatus = true;
     };
 
-    $app.methods.initFriendship = function (ref) {
-        if (VRCXStorage.Get(`${ref.id}_friendLogUpdatedAt`)) {
-            this.friendLog = VRCXStorage.GetObject(`${ref.id}_friendLog`);
-            this.friendLogTable.data = VRCXStorage.GetArray(`${ref.id}_friendLogTable`);
-        } else {
-            var friendLog = {};
-            for (var id of ref.friends) {
-                // DO NOT set displayName,
-                // it's flag about it's new friend
-                var ctx = {
-                    id
-                };
-                var user = API.cachedUsers.get(id);
-                if (typeof user !== 'undefined') {
-                    ctx.displayName = user.displayName;
-                    ctx.trustLevel = user.$trustLevel;
-                }
-                friendLog[id] = ctx;
-            }
-            this.friendLog = friendLog;
-            this.friendLogTable.data = [];
-            this.saveFriendLog();
+    $app.methods.initFriendLog = async function () {
+        this.friendLog = new Map();
+        var friendLogCurrentArray = await database.getFriendLogCurrent();
+        for (var friend of friendLogCurrentArray) {
+            this.friendLog.set(friend.userId, friend);
         }
+        this.friendLogTable.data = [];
+        this.friendLogTable.data = await database.getFriendLogHistory();
+        this.friendLogInitStatus = true;
     };
 
     $app.methods.addFriendship = function (id) {
-        if (typeof this.friendLog[id] !== 'undefined') {
+        if ((!this.friendLogInitStatus) || (this.friendLog.has(id))) {
             return;
         }
         var ctx = {
@@ -7163,35 +7160,44 @@ speechSynthesis.getVoices();
             displayName: null,
             trustLevel: null
         };
-        Vue.set(this.friendLog, id, ctx);
         var ref = API.cachedUsers.get(id);
         if (typeof ref !== 'undefined') {
             ctx.displayName = ref.displayName;
             ctx.trustLevel = ref.$trustLevel;
-            this.friendLogTable.data.push({
+            var friendLogHistory = {
                 created_at: new Date().toJSON(),
                 type: 'Friend',
-                userId: ref.id,
+                userId: id,
                 displayName: ctx.displayName
-            });
+            };
+            this.friendLogTable.data.push(friendLogHistory);
+            database.addFriendLogHistory(friendLogHistory);
         }
-        this.saveFriendLog();
+        var friendLogCurrent = {
+            userId: id,
+            displayName: ctx.displayName,
+            trustLevel: ctx.trustLevel
+        };
+        this.friendLog.set(id, friendLogCurrent);
+        database.setFriendLogCurrent(friendLogCurrent);
         this.notifyMenu('friendLog');
     };
 
     $app.methods.deleteFriendship = function (id) {
-        var ctx = this.friendLog[id];
+        var ctx = this.friendLog.get(id);
         if (typeof ctx === 'undefined') {
             return;
         }
-        Vue.delete(this.friendLog, id);
-        this.friendLogTable.data.push({
+        var friendLogHistory = {
             created_at: new Date().toJSON(),
             type: 'Unfriend',
             userId: id,
             displayName: ctx.displayName
-        });
-        this.saveFriendLog();
+        };
+        this.friendLogTable.data.push(friendLogHistory);
+        database.addFriendLogHistory(friendLogHistory);
+        this.friendLog.delete(id);
+        database.deleteFriendLogCurrent(id);
         this.notifyMenu('friendLog');
     };
 
@@ -7209,46 +7215,60 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateFriendship = function (ref) {
-        var ctx = this.friendLog[ref.id];
-        if (typeof ctx === 'undefined') {
+        var ctx = this.friendLog.get(ref.id);
+        if ((!this.friendLogInitStatus) || (typeof ctx === 'undefined')) {
             return;
         }
         if (ctx.displayName !== ref.displayName) {
             if (ctx.displayName) {
-                this.friendLogTable.data.push({
+                var friendLogHistory = {
                     created_at: new Date().toJSON(),
                     type: 'DisplayName',
                     userId: ref.id,
                     displayName: ref.displayName,
                     previousDisplayName: ctx.displayName
-                });
+                };
+                this.friendLogTable.data.push(friendLogHistory);
+                database.addFriendLogHistory(friendLogHistory);
             } else if (ctx.displayName === null) {
-                this.friendLogTable.data.push({
+                var friendLogHistory = {
                     created_at: new Date().toJSON(),
                     type: 'Friend',
                     userId: ref.id,
                     displayName: ref.displayName
-                });
+                };
+                this.friendLogTable.data.push(friendLogHistory);
+                database.addFriendLogHistory(friendLogHistory);
             }
             ctx.displayName = ref.displayName;
-            this.saveFriendLog();
             this.notifyMenu('friendLog');
         }
         if (ref.$trustLevel &&
             ctx.trustLevel !== ref.$trustLevel) {
             if (ctx.trustLevel) {
-                this.friendLogTable.data.push({
+                var friendLogHistory = {
                     created_at: new Date().toJSON(),
                     type: 'TrustLevel',
                     userId: ref.id,
                     displayName: ref.displayName,
                     trustLevel: ref.$trustLevel,
                     previousTrustLevel: ctx.trustLevel
-                });
+                };
+                this.friendLogTable.data.push(friendLogHistory);
+                database.addFriendLogHistory(friendLogHistory);
             }
             ctx.trustLevel = ref.$trustLevel;
-            this.saveFriendLog();
             this.notifyMenu('friendLog');
+        }
+        if ((ctx.displayName !== ref.displayName) ||
+            ((ref.$trustLevel) && (ctx.trustLevel !== ref.$trustLevel))) {
+            var friendLogCurrent = {
+                userId: ref.id,
+                displayName: ref.displayName,
+                trustLevel: ref.trustLevel
+            };
+            this.friendLog.set(ref.id, friendLogCurrent);
+            database.setFriendLogCurrent(friendLogCurrent);
         }
     };
 
@@ -7261,7 +7281,7 @@ speechSynthesis.getVoices();
             callback: (action) => {
                 if (action === 'confirm' &&
                     removeFromArray(this.friendLogTable.data, row)) {
-                    this.saveFriendLog();
+                    database.deleteFriendLogHistory(row.rowId);
                 }
             }
         });
