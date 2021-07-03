@@ -7132,7 +7132,8 @@ speechSynthesis.getVoices();
         }
         if (ref.$trustLevel &&
             ctx.trustLevel !== ref.$trustLevel) {
-            if ((ctx.trustLevel) && (ctx.trustLevel !== 'Legendary User')) { // TODO: remove
+            if ((ctx.trustLevel) &&
+                (ctx.trustLevel !== 'Legendary User') && (ctx.trustLevel !== 'VRChat Team') && (ctx.trustLevel !== 'Nuisance')) { // TODO: remove
                 this.friendLogTable.data.push({
                     created_at: new Date().toJSON(),
                     type: 'TrustLevel',
