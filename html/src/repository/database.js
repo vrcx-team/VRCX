@@ -103,6 +103,14 @@ class Database {
         return feedDatabase;
     }
 
+    begin() {
+        sqliteService.executeNonQuery('BEGIN');
+    }
+
+    commit() {
+        sqliteService.executeNonQuery('COMMIT');
+    }
+
     async getMemo(userId) {
         var row = {};
         await sqliteService.execute((dbRow, userId) => {
@@ -159,6 +167,25 @@ class Database {
         );
     }
 
+    setFriendLogCurrentArray(inputData) {
+        var sqlValues = '';
+        var items = ['userId', 'displayName', 'trustLevel'];
+        for (var line of inputData) {
+            for (var item of items) {
+                if (typeof line[item] !== 'undefined') {
+                    line[item] = line[item].replace(/'/g, "\''");
+                } else {
+                    line[item] = '';
+                }
+            }
+            sqlValues += `('${line.userId}', '${line.displayName}', '${line.trustLevel}'), `;
+        }
+        sqlValues = sqlValues.slice(0, -2);
+        sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO ${Database.userId}_friend_log_current (user_id, display_name, trust_level) VALUES ${sqlValues}`
+        );
+    }
+
     deleteFriendLogCurrent(userId) {
         sqliteService.executeNonQuery(
             `DELETE FROM ${Database.userId}_friend_log_current WHERE user_id = @user_id`,
@@ -201,6 +228,36 @@ class Database {
                 '@trust_level': entry.trustLevel,
                 '@previous_trust_level': entry.previousTrustLevel
             }
+        );
+    }
+
+    addFriendLogHistoryArray(inputData) {
+        var sqlValues = '';
+        var items = ['created_at', 'type', 'userId', 'displayName', 'previousDisplayName', 'trustLevel', 'previousTrustLevel'];
+        for (var i = 0; i < inputData.length; ++i) {
+            var line = inputData[i];
+            sqlValues +=  '(';
+            for (var k = 0; k < items.length; ++k) {
+                var item = items[k];
+                var field = '';
+                if (typeof line[item] !== 'undefined') {
+                    field = `'${line[item].replace(/'/g, "\''")}'`;
+                } else {
+                    field = null;
+                }
+                sqlValues += field;
+                if (k < items.length - 1) {
+                    sqlValues += ', ';
+                }
+            }
+            sqlValues +=  ')';
+            if (i < inputData.length - 1) {
+                sqlValues += ', ';
+            }
+            //sqlValues `('${line.created_at}', '${line.type}', '${line.userId}', '${line.displayName}', '${line.previousDisplayName}', '${line.trustLevel}', '${line.previousTrustLevel}'), `
+        }
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO ${Database.userId}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level) VALUES ${sqlValues}`
         );
     }
 

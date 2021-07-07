@@ -1755,21 +1755,6 @@ speechSynthesis.getVoices();
 
     // API: Friend
 
-    API.friends200 = new Set();
-    API.friends404 = new Map();
-    API.isFriendsLoading = false;
-
-    API.$on('LOGIN', function () {
-        this.friends200.clear();
-        this.friends404.clear();
-        this.isFriendsLoading = false;
-    });
-
-    API.$on('USER', function (args) {
-        this.friends200.add(args.ref.id);
-        this.friends404.delete(args.ref.id);
-    });
-
     API.$on('FRIEND:LIST', function (args) {
         for (var json of args.json) {
             this.$emit('USER', {
@@ -1781,65 +1766,45 @@ speechSynthesis.getVoices();
         }
     });
 
-    API.isAllFriendsRetrived = function (flag) {
-        if (flag) {
-            for (var id of this.currentUser.friends) {
-                if (this.friends200.has(id) === false) {
-                    var n = this.friends404.get(id) || 0;
-                    if (n < 2) {
-                        this.friends404.set(id, n + 1);
-                    }
-                }
-            }
-        } else {
-            for (var id of this.currentUser.friends) {
-                if (this.friends200.has(id) === false ||
-                    this.friends404.get(id) < 2) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    API.refreshFriends = async function () {
+        var onlineFriends = await this.refreshOnlineFriends();
+        var offlineFriends = await this.refreshOfflineFriends();
+        return onlineFriends.concat(offlineFriends);
     };
 
-    API.refreshFriends = function () {
+    API.refreshOnlineFriends = async function () {
+        var friends = [];
         var params = {
             n: 50,
             offset: 0,
             offline: false
         };
-        var N = this.currentUser.onlineFriends.length;
-        if (N === 0) {
-            N = this.currentUser.friends.length;
-            if (N === 0 ||
-                this.isAllFriendsRetrived(false)) {
-                return;
-            }
-            params.offline = true;
+        var N = this.currentUser.onlineFriends.length + this.currentUser.activeFriends.length;
+        var count = Math.trunc(N / 50);
+        for (var i = count; i > -1; i--) {
+            var args = await this.getFriends(params);
+            friends = friends.concat(args.json);
+            params.offset += 50;
         }
-        if (this.isFriendsLoading) {
-            return;
+        return friends;
+    };
+
+    API.refreshOfflineFriends = async function () {
+        var friends = [];
+        var params = {
+            n: 50,
+            offset: 0,
+            offline: true
+        };
+        var onlineCount = this.currentUser.onlineFriends.length + this.currentUser.activeFriends.length;
+        var N = this.currentUser.friends.length - onlineCount;
+        var count = Math.trunc(N / 50);
+        for (var i = count; i > -1; i--) {
+            var args = await this.getFriends(params);
+            friends = friends.concat(args.json);
+            params.offset += 50;
         }
-        this.isFriendsLoading = true;
-        this.bulk({
-            fn: 'getFriends',
-            N,
-            params,
-            done(ok, options) {
-                if (this.isAllFriendsRetrived(params.offline)) {
-                    this.isFriendsLoading = false;
-                    return;
-                }
-                var { length } = this.currentUser.friends;
-                options.N = length - params.offset;
-                if (options.N <= 0) {
-                    options.N = length;
-                }
-                params.offset = 0;
-                params.offline = true;
-                this.bulk(options);
-            }
-        });
+        return friends;
     };
 
     /*
@@ -5284,18 +5249,20 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.migrateMemos = function () {
+    $app.methods.migrateMemos = async function () {
         var json = JSON.parse(VRCXStorage.GetAll());
+        database.begin();
         for (var line in json) {
             if (line.substring(0, 8) === 'memo_usr') {
                 var userId = line.substring(5);
                 var memo = json[line];
                 if (memo) {
-                    this.saveMemo(userId, memo);
+                    await this.saveMemo(userId, memo);
                     VRCXStorage.Remove(`memo_${userId}`);
                 }
             }
         }
+        database.commit();
     };
 
     $app.methods.loadMemo = async function (userId) {
@@ -6134,16 +6101,20 @@ speechSynthesis.getVoices();
     }
 
     API.$on('LOGIN', async function (args) {
+        $app.friendLogInitStatus = false;
         await database.init(args.json.id);
         $app.feedTable.data = await database.getFeedDatabase();
         $app.sweepFeed();
-        //remove old data from json file and migrate them to SQLite
-        VRCXStorage.Remove(`${args.json.id}_feedTable`);
-        $app.migrateMemos();
-        if (VRCXStorage.Get(`${args.json.id}_friendLogUpdatedAt`)) {
-            $app.migrateFriendLog(args.json.id);
+        if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
+            $app.getFriendLog();
         } else {
             $app.initFriendLog();
+        }
+        //remove old data from json file and migrate them to SQLite
+        if (VRCXStorage.Get(`${args.json.id}_friendLogUpdatedAt`)) {
+            VRCXStorage.Remove(`${args.json.id}_feedTable`);
+            $app.migrateMemos();
+            $app.migrateFriendLog(args.json.id);
         }
     });
 
@@ -7116,9 +7087,36 @@ speechSynthesis.getVoices();
 
     $app.data.friendLogInitStatus = false;
 
+    $app.methods.initFriendLog = async function () {
+        if (this.friendLogInitStatus) {
+            return;
+        }
+        if (configRepository.getBool(`friendLogInit_${API.currentUser.id}`)) {
+            this.friendLogInitStatus = true;
+            return;
+        }
+        var sqlValues = [];
+        var friends = await API.refreshFriends();
+        for (var friend of friends) {
+            var ref = API.applyUser(friend);
+            var row = {
+                userId: ref.id,
+                displayName: ref.displayName,
+                trustLevel: ref.$trustLevel
+            };
+            this.friendLog.set(friend.id, row);
+            sqlValues.unshift(row);
+        }
+        database.setFriendLogCurrentArray(sqlValues);
+        configRepository.setBool(`friendLogInit_${API.currentUser.id}`, true);
+        this.friendLogInitStatus = true;
+    };
+
     $app.methods.migrateFriendLog = function (userId) {
+        VRCXStorage.Remove(`${userId}_friendLogUpdatedAt`);
         this.friendLog = new Map();
         var oldFriendLog = VRCXStorage.GetObject(`${userId}_friendLog`);
+        var friendLogCurrentValues = [];
         for (var i in oldFriendLog) {
             var friend = oldFriendLog[i];
             var row = {
@@ -7127,19 +7125,18 @@ speechSynthesis.getVoices();
                 trustLevel: friend.trustLevel
             };
             this.friendLog.set(friend.id, row);
-            database.setFriendLogCurrent(row);
+            friendLogCurrentValues.unshift(row);
         }
+        database.setFriendLogCurrentArray(friendLogCurrentValues);
         VRCXStorage.Remove(`${userId}_friendLog`);
         this.friendLogTable.data = VRCXStorage.GetArray(`${userId}_friendLogTable`);
-        for (var line of this.friendLogTable.data) {
-            database.addFriendLogHistory(line);
-        }
+        database.addFriendLogHistoryArray(this.friendLogTable.data);
         VRCXStorage.Remove(`${userId}_friendLogTable`);
-        VRCXStorage.Remove(`${userId}_friendLogUpdatedAt`);
+        configRepository.setBool(`friendLogInit_${API.currentUser.id}`, true);
         this.friendLogInitStatus = true;
     };
 
-    $app.methods.initFriendLog = async function () {
+    $app.methods.getFriendLog = async function () {
         this.friendLog = new Map();
         var friendLogCurrentArray = await database.getFriendLogCurrent();
         for (var friend of friendLogCurrentArray) {
@@ -7239,14 +7236,14 @@ speechSynthesis.getVoices();
                 };
                 this.friendLogTable.data.push(friendLogHistory);
                 database.addFriendLogHistory(friendLogHistory);
-                var friendLogCurrent = {
-                    userId: ref.id,
-                    displayName: ref.displayName,
-                    trustLevel: ref.$trustLevel
-                };
-                this.friendLog.set(ref.id, friendLogCurrent);
-                database.setFriendLogCurrent(friendLogCurrent);
             }
+            var friendLogCurrent = {
+                userId: ref.id,
+                displayName: ref.displayName,
+                trustLevel: ref.$trustLevel
+            };
+            this.friendLog.set(ref.id, friendLogCurrent);
+            database.setFriendLogCurrent(friendLogCurrent);
             ctx.displayName = ref.displayName;
             this.notifyMenu('friendLog');
         }
