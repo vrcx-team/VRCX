@@ -1114,15 +1114,17 @@ speechSynthesis.getVoices();
             ref.$trustNum = 1;
         }
         ref.$trustColor = ref.$trustClass;
+        if (ref.$isTroll) {
+            ref.$trustColor = 'x-tag-troll';
+            ref.$trustNum += 0.1;
+        }
+        if (ref.$isLegend) {
+            ref.$trustColor = 'x-tag-legendary';
+            ref.$trustNum += 0.2;
+        }
         if (ref.$isModerator) {
             ref.$trustColor = 'x-tag-vip';
-            ref.$trustNum = 8;
-        } else if (ref.$isTroll) {
-            ref.$trustColor = 'x-tag-troll';
-            ref.$trustNum = 0;
-        } else if (ref.$isLegend) {
-            ref.$trustColor = 'x-tag-legendary';
-            ref.$trustNum = 7;
+            ref.$trustNum += 0.3;
         }
     };
 
