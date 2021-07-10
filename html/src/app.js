@@ -415,7 +415,7 @@ speechSynthesis.getVoices();
                 }
                 return data;
             }
-            if ((status === 401) && (data.error.message === '"Missing Credentials"') && ($app.isAutoLogin)) {
+            if ((status === 401) && (data.error.message === '"Missing Credentials"')) {
                 if (endpoint.substring(0, 10) === 'auth/user?') {
                     this.$emit('AUTOLOGIN');
                 }
@@ -5742,9 +5742,11 @@ speechSynthesis.getVoices();
             (ctx.state === 'online')) {
             if (ctx.isVIP) {
                 removeFromArray(this.friendsGroupA_, ctx);
+                this.sortFriendsGroup1 = true;
                 this.friendsGroupA_.unshift(ctx);
             } else {
                 removeFromArray(this.friendsGroupB_, ctx);
+                this.sortFriendsGroup0 = true;
                 this.friendsGroupB_.unshift(ctx);
             }
         }
@@ -6287,6 +6289,7 @@ speechSynthesis.getVoices();
 
     $app.methods.resetGameLog = async function () {
         await gameLogService.reset();
+        await gameLogService.poll();
         this.gameLogTable.data = [];
         this.lastLocation = {
             date: 0,
@@ -7588,18 +7591,15 @@ speechSynthesis.getVoices();
     $app.data.isStartAtWindowsStartup = configRepository.getBool('VRCX_StartAtWindowsStartup');
     $app.data.isStartAsMinimizedState = (VRCXStorage.Get('VRCX_StartAsMinimizedState') === 'true');
     $app.data.isCloseToTray = configRepository.getBool('VRCX_CloseToTray');
-    $app.data.isAutoLogin = configRepository.getBool('VRCX_AutoLogin');
     var saveVRCXWindowOption = function () {
         configRepository.setBool('VRCX_StartAtWindowsStartup', this.isStartAtWindowsStartup);
         VRCXStorage.Set('VRCX_StartAsMinimizedState', this.isStartAsMinimizedState.toString());
         configRepository.setBool('VRCX_CloseToTray', this.isCloseToTray);
         AppApi.SetStartup(this.isStartAtWindowsStartup);
-        configRepository.setBool('VRCX_AutoLogin', this.isAutoLogin);
     };
     $app.watch.isStartAtWindowsStartup = saveVRCXWindowOption;
     $app.watch.isStartAsMinimizedState = saveVRCXWindowOption;
     $app.watch.isCloseToTray = saveVRCXWindowOption;
-    $app.watch.isAutoLogin = saveVRCXWindowOption;
 
     // setting defaults
     if (!configRepository.getString('VRCX_notificationPosition')) {
