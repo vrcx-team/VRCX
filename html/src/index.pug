@@ -334,8 +334,6 @@ html
                                                 span(v-text="favorite.name || favorite.id")
                                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="deleteFavorite(favorite.id)" style="margin-left:5px")
                     el-tab-pane(label="Avatars")
-                        el-tooltip(placement="top" content="Add favorite" :disabled="hideTooltips")
-                            el-button(style="margin-left:5px" icon="el-icon-plus" size="small" @click="promptAddAvatarFavoriteDialog" circle)
                         el-collapse(style="border:0")
                             el-collapse-item(v-for="group in API.favoriteAvatarGroups" :key="group.name")
                                 template(slot="title")
@@ -505,7 +503,7 @@ html
                         el-button-group
                             el-button(size="small" @click="promptUserDialog()") User
                             el-button(size="small" @click="promptWorldDialog()") World/Instance
-                            el-button(size="small" @click="promptAddAvatarFavoriteDialog()") Avatar
+                            el-button(size="small" @click="promptAvatarDialog()") Avatar
                 div.options-container
                     span.header Invite Messages
                     el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
@@ -1030,7 +1028,6 @@ html
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") Refresh
                                         template(v-if="userDialog.ref.id === API.currentUser.id")
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Manage Gallery" divided) Manage Gallery/Icons
-                                            el-dropdown-item(icon="el-icon-check" command="Select Avatar") Select Avatar By ID
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author") Show Avatar Author
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") Show Fallback Avatar Details
                                             el-dropdown-item(icon="el-icon-edit" command="Edit Social Status" divided) Social Status
@@ -1356,8 +1353,8 @@ html
                                 div(style="margin-top:5px")
                                     el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini") Public
                                     el-tag(v-else type="danger" effect="plain" size="mini") Private
-                                    el-tag(v-if="/quest/.test(avatarDialog.ref.tags)" type="info" effect="plain" size="mini" style="margin-left:5px") Fallback
-                                    el-tag(type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-left:5px")
+                                    el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-left:5px") Fallback
+                                    el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-left:5px")
                                 div(style="margin-top:5px")
                                     span(v-show="avatarDialog.ref.name !== avatarDialog.ref.description" v-text="avatarDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")

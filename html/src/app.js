@@ -421,6 +421,13 @@ speechSynthesis.getVoices();
                 }
                 throw new Error('401: Missing Credentials');
             }
+            if ((status === 404) && (endpoint.substring(0, 8) === 'avatars/')) {
+                $app.$message({
+                   message: 'Avatar private or deleted',
+                   type: 'error'
+                });
+                throw new Error('404: Can\'t find avatarǃ');
+            }
             if (data.error === Object(data.error)) {
                 this.$throw(
                     data.error.status_code || status,
@@ -8036,8 +8043,8 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.methods.promptSelectAvatarDialog = function () {
-        this.$prompt('Enter a Avatar URL or ID (UUID)', 'Select avatar', {
+    $app.methods.promptAvatarDialog = function () {
+        this.$prompt('Enter a Avatar ID (UUID)', 'Direct Access', {
             distinguishCancelAndClose: true,
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
@@ -8046,15 +8053,21 @@ speechSynthesis.getVoices();
             callback: (action, instance) => {
                 if (action === 'confirm' &&
                     instance.inputValue) {
-                    API.selectAvatar({
-                        avatarId: instance.inputValue
-                    }).then((args) => {
-                        this.$message({
-                            message: 'Avatar changed',
-                            type: 'success'
-                        });
-                        return args;
-                    });
+                    var testUrl = instance.inputValue.substring(0, 15);
+                    if (testUrl === 'https://vrchat.') {
+                        var avatarId = this.parseAvatarUrl(instance.inputValue);
+                        if (avatarId) {
+                            this.showAvatarDialog(avatarId);
+                        } else {
+                            this.$message({
+                                message: 'Invalid URL',
+                                type: 'error'
+                            });
+                            return;
+                        }
+                    } else {
+                        this.showAvatarDialog(instance.inputValue);
+                    }
                 }
             }
         });
@@ -8080,11 +8093,7 @@ speechSynthesis.getVoices();
                             this.showUserDialog(userId);
                         } else if ('/avatar/' === urlPath.substring(5, 13)) {
                             var avatarId = urlPath.substring(13);
-                            if (API.cachedAvatars.has(avatarId)) {
-                                this.showAvatarDialog(avatarId);
-                            } else {
-                                this.showFavoriteDialog('avatar', avatarId);
-                            }
+                            this.showAvatarDialog(avatarId);
                         } else if ('/world/' === urlPath.substring(5, 12)) {
                             var worldId = urlPath.substring(12);
                             this.showWorldDialog(worldId);
@@ -8109,11 +8118,7 @@ speechSynthesis.getVoices();
                     } else if (input.substring(0, 5) === 'wrld_') {
                         this.showWorldDialog(input);
                     } else if (input.substring(0, 5) === 'avtr_') {
-                        if (API.cachedAvatars.has(input)) {
-                            this.showAvatarDialog(input);
-                        } else {
-                            this.showFavoriteDialog('avatar', input);
-                        }
+                        this.showAvatarDialog(input);
                     } else {
                         this.$message({
                             message: 'Invalid ID/URL',
@@ -8239,40 +8244,6 @@ speechSynthesis.getVoices();
                         });
                         return args;
                     });
-                }
-            }
-        });
-    };
-
-    $app.methods.promptAddAvatarFavoriteDialog = function () {
-        this.$prompt('Enter a Avatar ID (UUID)', 'Avatar Favorite', {
-            distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
-            inputPattern: /\S+/,
-            inputErrorMessage: 'Avatar ID is required',
-            callback: (action, instance) => {
-                if (action === 'confirm' &&
-                    instance.inputValue) {
-                    var avatarId = instance.inputValue;
-                    var testUrl = instance.inputValue.substring(0, 15);
-                    if (testUrl === 'https://vrchat.') {
-                        var urlAvatarId = this.parseAvatarUrl(instance.inputValue);
-                        if (urlAvatarId) {
-                            avatarId = urlAvatarId;
-                        } else {
-                            this.$message({
-                                message: 'Invalid URL',
-                                type: 'error'
-                            });
-                            return;
-                        }
-                    }
-                    if (API.cachedAvatars.has(avatarId)) {
-                        this.showAvatarDialog(avatarId);
-                        return;
-                    }
-                    this.showFavoriteDialog('avatar', avatarId);
                 }
             }
         });
@@ -9024,8 +8995,6 @@ speechSynthesis.getVoices();
             }
         } else if (command === 'Previous Images') {
             this.displayPreviousImages('User', 'Display');
-        } else if (command === 'Select Avatar') {
-            this.promptSelectAvatarDialog();
         } else if (command === 'Manage Gallery') {
             this.showGalleryDialog();
         } else {
@@ -9446,6 +9415,7 @@ speechSynthesis.getVoices();
         id: '',
         ref: {},
         isFavorite: false,
+        isQuestFallback: false,
         treeData: [],
         fileCreatedAt: '',
         fileSize: ''
@@ -9453,49 +9423,6 @@ speechSynthesis.getVoices();
 
     API.$on('LOGOUT', function () {
         $app.avatarDialog.visible = false;
-    });
-
-    API.$on('AVATAR', function (args) {
-        var D = $app.avatarDialog;
-        if (D.visible === false ||
-            D.id !== args.ref.id) {
-            return;
-        }
-        var { ref } = args;
-        D.ref = ref;
-        if (D.fileSize === 'Loading') {
-            var assetUrl = '';
-            for (var i = ref.unityPackages.length - 1; i > -1; i--) {
-                var unityPackage = ref.unityPackages[i];
-                if ((unityPackage.platform === 'standalonewindows') &&
-                    (unityPackage.unitySortNumber <= 20180420000)) {
-                    assetUrl = unityPackage.assetUrl;
-                    break;
-                }
-            }
-            var fileId = extractFileId(assetUrl);
-            var fileVersion = extractFileVersion(assetUrl);
-            if (!fileId) {
-                var fileId = extractFileId(ref.assetUrl);
-                var fileVersion = extractFileVersion(ref.assetUrl);
-            }
-            if (fileId) {
-                API.getBundles(fileId).then((args) => {
-                    var { versions } = args.json;
-                    var ctx = '';
-                    for (var i = versions.length - 1; i > -1; i--) {
-                        var version = versions[i];
-                        if (version.version == fileVersion) {
-                            D.ref.created_at = version.created_at;
-                            D.fileSize = `${(version.file.sizeInBytes / 1048576).toFixed(2)} MiB`;
-                            break;
-                        }
-                    }
-                }).catch((err) => {
-                    D.fileSize = 'Error';
-                });
-            }
-        }
     });
 
     API.$on('FAVORITE', function (args) {
@@ -9522,24 +9449,22 @@ speechSynthesis.getVoices();
         this.$nextTick(() => adjustDialogZ(this.$refs.avatarDialog.$el));
         var D = this.avatarDialog;
         D.id = avatarId;
-        var ref = API.cachedAvatars.get(avatarId);
-        if (!ref) {
-            D.visible = false;
-            this.$message({
-                message: 'Avatar cache unavailable',
-                type: 'error'
-            });
-            return;
-        }
         D.treeData = [];
-        D.fileSize = 'Unknown';
-        D.visible = true;
-        D.ref = ref;
+        D.fileSize = '';
+        D.isQuestFallback = false;
         D.isFavorite = API.cachedFavoritesByObjectId.has(avatarId);
-        if (D.ref.authorId === API.currentUser.id) {
-            D.fileSize = 'Loading';
-            API.getAvatar({avatarId});
-        } else {
+        var ref = API.cachedAvatars.get(avatarId);
+        if (typeof ref !== 'undefined') {
+            D.ref = ref;
+            D.visible = true;
+        }
+        API.getAvatar({avatarId}).then((args) => {
+            var { ref } = args;
+            D.ref = ref;
+            D.visible = true;
+            if (/quest/.test(ref.tags)) {
+                D.isQuestFallback = true;
+            }
             var assetUrl = '';
             for (var i = ref.unityPackages.length - 1; i > -1; i--) {
                 var unityPackage = ref.unityPackages[i];
@@ -9556,6 +9481,7 @@ speechSynthesis.getVoices();
                 var fileVersion = extractFileVersion(ref.assetUrl);
             }
             var imageId = extractFileId(ref.thumbnailImageUrl);
+            D.fileSize = '';
             if (fileId) {
                 D.fileSize = 'Loading';
                 API.getBundles(fileId).then((args) => {
@@ -9573,7 +9499,7 @@ speechSynthesis.getVoices();
                     D.fileSize = 'Error';
                 });
             }
-        }
+        });
     };
 
     $app.methods.avatarDialogCommand = function (command) {
@@ -10366,11 +10292,11 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.copyAvatar = function (avatarId) {
-        this.copyToClipboard(avatarId);
         this.$message({
-            message: 'Avatar ID copied to clipboard',
+            message: 'Avatar URL copied to clipboard',
             type: 'success'
         });
+        this.copyToClipboard(`https://vrchat.com/home/avatar/${avatarId}`);
     };
 
     $app.methods.copyWorld = function (worldId) {
