@@ -10082,8 +10082,7 @@ speechSynthesis.getVoices();
         } else {
             tags.push((99999 * Math.random() + 1).toFixed(0));
         }
-        if ((D.userId) &&
-            (D.accessType !== 'friends') && (D.accessType !== 'invite')) {
+        if (D.userId) {
             var userId = D.userId;
         } else {
             D.userId = API.currentUser.id;

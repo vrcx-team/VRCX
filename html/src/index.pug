@@ -1547,7 +1547,7 @@ html
                     el-form-item(label="Instance ID")
                         el-input(v-model="newInstanceDialog.instanceName" maxlength="16" placeholder="Random" show-word-limit size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                     el-form-item(label="Instance Creator")
-                        el-select(v-model="newInstanceDialog.userId" clearable placeholder="Choose User" filterable style="width:100%" :disabled="newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite'")
+                        el-select(v-model="newInstanceDialog.userId" clearable placeholder="Choose User" filterable style="width:100%")
                             el-option-group(v-if="API.currentUser" label="ME")
                                 el-option.x-friend-item(:label="API.currentUser.displayName" :value="API.currentUser.id" style="height:auto")
                                     .avatar(:class="userStatusClass(API.currentUser)")
@@ -1603,7 +1603,7 @@ html
                 template(#footer)
                     el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.url)") Copy URL
                     el-button(size="small" @click="selfInvite(newInstanceDialog.location)") Self Invite
-                    el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)") Invite
+                    el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)" :disabled="(newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') && newInstanceDialog.userId !== API.currentUser.id") Invite
                     el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location)") Launch
 
             //- dialog: launch options
@@ -2502,30 +2502,6 @@ html
                             MIT License
                             
                             Copyright (c) 2018 - Present Diego Jara
-                            
-                            Permission is hereby granted, free of charge, to any person obtaining a copy
-                            of this software and associated documentation files (the "Software"), to deal
-                            in the Software without restriction, including without limitation the rights
-                            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-                            copies of the Software, and to permit persons to whom the Software is
-                            furnished to do so, subject to the following conditions:
-                            
-                            The above copyright notice and this permission notice shall be included in all
-                            copies or substantial portions of the Software.
-                            
-                            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-                            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-                            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-                            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-                            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-                            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                            SOFTWARE.
-                    div(style="margin-top:15px")
-                        p(style="font-weight:bold") vuejs-toggle-switch
-                        pre(style="font-size:12px;white-space:pre-line").
-                            MIT License
-                            
-                            Copyright (c) 2018 Lars-Martin Hejll
                             
                             Permission is hereby granted, free of charge, to any person obtaining a copy
                             of this software and associated documentation files (the "Software"), to deal
