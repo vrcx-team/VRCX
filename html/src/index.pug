@@ -87,61 +87,49 @@ html
                         template(v-once #default="scope")
                             div(style="position:relative;font-size:14px")
                                 template(v-if="scope.row.type === 'GPS'")
-                                    location(v-if="scope.row.location[1]" :location="scope.row.location[1]")
+                                    location(v-if="scope.row.previousLocation" :location="scope.row.previousLocation")
                                     el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ scope.row.time | timeToText }}
                                     br
                                     span
-                                            i.el-icon-right
-                                    location(v-if="scope.row.location[0]" :location="scope.row.location[0]")
+                                        i.el-icon-right
+                                    location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName")
                                 template(v-else-if="scope.row.type === 'Offline'")
                                     template(v-if="scope.row.location")
-                                        location(:location="scope.row.location")
+                                        location(:location="scope.row.location" :hint="scope.row.worldName")
                                         el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ scope.row.time | timeToText }}
                                 template(v-else-if="scope.row.type === 'Online'")
-                                    location(v-if="scope.row.location" :location="scope.row.location")
+                                    location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName")
                                 template(v-else-if="scope.row.type === 'Avatar'")
-                                    template(v-if="scope.row.avatar[0] === Object(scope.row.avatar[0])")
-                                        //- high resolution (v2) 2020.07.12~
-                                        el-popover(placement="right" width="500px" trigger="click")
-                                            img.x-link(slot="reference" v-lazy="scope.row.avatar[1].currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                                            img.x-link(v-lazy="scope.row.avatar[1].currentAvatarImageUrl" style="width:500px;height:375px" @click="showAvatarAuthorDialog(scope.row.userId, scope.row.avatar[1].currentAvatarImageUrl)")
-                                        span(style="position:relative;top:-50px;margin:0 5px")
-                                            i.el-icon-right
-                                        el-popover(placement="right" width="500px" trigger="click")
-                                            img.x-link(slot="reference" v-lazy="scope.row.avatar[0].currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                                            img.x-link(v-lazy="scope.row.avatar[0].currentAvatarImageUrl" style="width:500px;height:375px" @click="showAvatarAuthorDialog(scope.row.userId, scope.row.avatar[0].currentAvatarImageUrl)")
-                                    template(v-else)
-                                        //- legacy
-                                        el-popover(placement="right" width="500px" trigger="click")
-                                            img.x-link(slot="reference" v-lazy="scope.row.avatar[1]" style="flex:none;width:160px;height:120px;border-radius:4px")
-                                            img.x-link(v-lazy="scope.row.avatar[1]" style="width:500px;height:375px" @click="openExternalLink(scope.row.avatar[1])")
-                                        span(style="position:relative;top:-50px;margin:0 5px")
-                                            i.el-icon-right
-                                        el-popover(placement="right" width="500px" trigger="click")
-                                            img.x-link(slot="reference" v-lazy="scope.row.avatar[0]" style="flex:none;width:160px;height:120px;border-radius:4px")
-                                            img.x-link(v-lazy="scope.row.avatar[0]" style="width:500px;height:375px" @click="openExternalLink(scope.row.avatar[0])")
+                                    el-popover(placement="right" width="500px" trigger="click")
+                                        img.x-link(slot="reference" v-lazy="scope.row.previousCurrentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+                                        img.x-link(v-lazy="scope.row.previousCurrentAvatarImageUrl" style="width:500px;height:375px" @click="showAvatarAuthorDialog(scope.row.userId, scope.row.previousCurrentAvatarImageUrl)")
+                                    span(style="position:relative;top:-50px;margin:0 5px")
+                                        i.el-icon-right
+                                    el-popover(placement="right" width="500px" trigger="click")
+                                        img.x-link(slot="reference" v-lazy="scope.row.currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+                                        img.x-link(v-lazy="scope.row.currentAvatarImageUrl" style="width:500px;height:375px" @click="showAvatarAuthorDialog(scope.row.userId, scope.row.currentAvatarImageUrl)")
                                 template(v-else-if="scope.row.type === 'Status'")
                                     el-tooltip(placement="top")
                                         template(#content)
-                                            span(v-if="scope.row.status[1].status === 'active'") Active
-                                            span(v-else-if="scope.row.status[1].status === 'join me'") Join Me
-                                            span(v-else-if="scope.row.status[1].status === 'ask me'") Ask Me
-                                            span(v-else-if="scope.row.status[1].status === 'busy'") Do Not Disturb
+                                            span(v-if="scope.row.previousStatus === 'active'") Active
+                                            span(v-else-if="scope.row.previousStatus === 'join me'") Join Me
+                                            span(v-else-if="scope.row.previousStatus === 'ask me'") Ask Me
+                                            span(v-else-if="scope.row.previousStatus === 'busy'") Do Not Disturb
                                             span(v-else) Offline
-                                        i.x-user-status(:class="userStatusClass(scope.row.status[1])")
-                                    span(v-text="scope.row.status[1].statusDescription")
+                                        i.x-user-status(:class="statusClass(scope.row.previousStatus)")
+                                    span(v-text="scope.row.previousStatusDescription")
                                     br
                                     span
                                         i.el-icon-right
                                     el-tooltip(placement="top")
                                         template(#content)
-                                            span(v-if="scope.row.status[0].status === 'active'") Active
-                                            span(v-else-if="scope.row.status[0].status === 'join me'") Join Me
-                                            span(v-else-if="scope.row.status[0].status === 'ask me'") Ask Me
-                                            span(v-else-if="scope.row.status[0].status === 'busy'") Do Not Disturb
+                                            span(v-if="scope.row.status === 'active'") Active
+                                            span(v-else-if="scope.row.status === 'join me'") Join Me
+                                            span(v-else-if="scope.row.status === 'ask me'") Ask Me
+                                            span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
                                             span(v-else) Offline
-                                        i.x-user-status(:class="userStatusClass(scope.row.status[0])")
-                                    span(v-text="scope.row.status[0].statusDescription")
+                                        i.x-user-status(:class="statusClass(scope.row.status)")
+                                    span(v-text="scope.row.statusDescription")
                     el-table-column(label="Date" prop="created_at" sortable="custom" width="90")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
@@ -155,21 +143,21 @@ html
                     el-table-column(label="Detail")
                         template(v-once #default="scope")
                             template(v-if="scope.row.type === 'GPS'")
-                                location(v-if="scope.row.location[0]" :location="scope.row.location[0]")
+                                location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName")
                             template(v-else-if="scope.row.type === 'Offline' || scope.row.type === 'Online'")
-                                location(v-if="scope.row.location" :location="scope.row.location")
+                                location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName")
                             template(v-else-if="scope.row.type === 'Status'")
                                 el-tooltip(placement="top")
                                     template(#content)
-                                        span(v-if="scope.row.status[0].status === 'active'") Online
-                                        span(v-else-if="scope.row.status[0].status === 'join me'") Join Me
-                                        span(v-else-if="scope.row.status[0].status === 'ask me'") Ask Me
-                                        span(v-else-if="scope.row.status[0].status === 'busy'") Do Not Disturb
+                                        span(v-if="scope.row.status === 'active'") Online
+                                        span(v-else-if="scope.row.status === 'join me'") Join Me
+                                        span(v-else-if="scope.row.status === 'ask me'") Ask Me
+                                        span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
                                         span(v-else) Offline
-                                    i.x-user-status(:class="userStatusClass(scope.row.status[0])")
-                                span(v-text="scope.row.status[0].statusDescription")
+                                    i.x-user-status(:class="statusClass(scope.row.status)")
+                                span(v-text="scope.row.statusDescription")
                             template(v-else-if="scope.row.type === 'Avatar'")
-                                avatar-info(:imageurl="scope.row.avatar[0].currentAvatarImageUrl" :userid="scope.row.userId")
+                                avatar-info(:imageurl="scope.row.currentAvatarImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.ownerId" :hintavatarname="scope.row.avatarName")
 
             //- gameLog
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'gameLog'")

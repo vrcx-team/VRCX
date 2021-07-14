@@ -23,6 +23,7 @@ import configRepository from './repository/config.js';
 import webApiService from './service/webapi.js';
 import gameLogService from './service/gamelog.js';
 import security from './security.js';
+import database from './repository/database.js';
 
 speechSynthesis.getVoices();
 
@@ -849,7 +850,9 @@ speechSynthesis.getVoices();
         template: '<div @click="confirm" style="cursor:pointer;width:fit-content;display:inline-block;vertical-align:top"><span style="display:inline-block;margin-right:5px">{{ avatarName }}</span><span :class="color">{{ avatarType }}</span></div>',
         props: {
             imageurl: String,
-            userid: String
+            userid: String,
+            hintownerid: String,
+            hintavatarname: String
         },
         data() {
             return {
@@ -860,15 +863,25 @@ speechSynthesis.getVoices();
         },
         methods: {
             async parse() {
+                this.ownerId = '';
                 this.avatarName = '';
                 this.avatarType = '';
                 this.color = '';
-                var avatarInfo = await $app.getAvatarName(this.imageurl);
-                this.avatarName = avatarInfo.avatarName;
-                if ((typeof this.userid === 'undefined') || (!avatarInfo.ownerId)) {
+                if (this.hintownerid) {
+                    this.avatarName = this.hintavatarname;
+                    this.ownerId = this.hintownerid;
+                } else {
+                    try {
+                        var avatarInfo = await $app.getAvatarName(this.imageurl);
+                        this.avatarName = avatarInfo.avatarName;
+                        this.ownerId = avatarInfo.ownerId;
+                    } catch (err) {
+                    }
+                }
+                if ((typeof this.userid === 'undefined') || (!this.ownerId)) {
                     this.color = 'avatar-info-unknown';
                     this.avatarType = '(unknown)';
-                } else if (avatarInfo.ownerId === this.userid) {
+                } else if (this.ownerId === this.userid) {
                     this.color = 'avatar-info-own';
                     this.avatarType = '(own)';
                 } else {
@@ -1758,21 +1771,6 @@ speechSynthesis.getVoices();
 
     // API: Friend
 
-    API.friends200 = new Set();
-    API.friends404 = new Map();
-    API.isFriendsLoading = false;
-
-    API.$on('LOGIN', function () {
-        this.friends200.clear();
-        this.friends404.clear();
-        this.isFriendsLoading = false;
-    });
-
-    API.$on('USER', function (args) {
-        this.friends200.add(args.ref.id);
-        this.friends404.delete(args.ref.id);
-    });
-
     API.$on('FRIEND:LIST', function (args) {
         for (var json of args.json) {
             this.$emit('USER', {
@@ -1784,65 +1782,45 @@ speechSynthesis.getVoices();
         }
     });
 
-    API.isAllFriendsRetrived = function (flag) {
-        if (flag) {
-            for (var id of this.currentUser.friends) {
-                if (this.friends200.has(id) === false) {
-                    var n = this.friends404.get(id) || 0;
-                    if (n < 2) {
-                        this.friends404.set(id, n + 1);
-                    }
-                }
-            }
-        } else {
-            for (var id of this.currentUser.friends) {
-                if (this.friends200.has(id) === false ||
-                    this.friends404.get(id) < 2) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    API.refreshFriends = async function () {
+        var onlineFriends = await this.refreshOnlineFriends();
+        var offlineFriends = await this.refreshOfflineFriends();
+        return onlineFriends.concat(offlineFriends);
     };
 
-    API.refreshFriends = function () {
+    API.refreshOnlineFriends = async function () {
+        var friends = [];
         var params = {
             n: 50,
             offset: 0,
             offline: false
         };
-        var N = this.currentUser.onlineFriends.length;
-        if (N === 0) {
-            N = this.currentUser.friends.length;
-            if (N === 0 ||
-                this.isAllFriendsRetrived(false)) {
-                return;
-            }
-            params.offline = true;
+        var N = this.currentUser.onlineFriends.length + this.currentUser.activeFriends.length;
+        var count = Math.trunc(N / 50);
+        for (var i = count; i > -1; i--) {
+            var args = await this.getFriends(params);
+            friends = friends.concat(args.json);
+            params.offset += 50;
         }
-        if (this.isFriendsLoading) {
-            return;
+        return friends;
+    };
+
+    API.refreshOfflineFriends = async function () {
+        var friends = [];
+        var params = {
+            n: 50,
+            offset: 0,
+            offline: true
+        };
+        var onlineCount = this.currentUser.onlineFriends.length + this.currentUser.activeFriends.length;
+        var N = this.currentUser.friends.length - onlineCount;
+        var count = Math.trunc(N / 50);
+        for (var i = count; i > -1; i--) {
+            var args = await this.getFriends(params);
+            friends = friends.concat(args.json);
+            params.offset += 50;
         }
-        this.isFriendsLoading = true;
-        this.bulk({
-            fn: 'getFriends',
-            N,
-            params,
-            done(ok, options) {
-                if (this.isAllFriendsRetrived(params.offline)) {
-                    this.isFriendsLoading = false;
-                    return;
-                }
-                var { length } = this.currentUser.friends;
-                options.N = length - params.offset;
-                if (options.N <= 0) {
-                    options.N = length;
-                }
-                params.offset = 0;
-                params.offline = true;
-                this.bulk(options);
-            }
-        });
+        return friends;
     };
 
     /*
@@ -3970,14 +3948,14 @@ speechSynthesis.getVoices();
                 if (ctx.created_at < bias) {
                     break;
                 }
-                if ((ctx.type === 'GPS') && (ctx.location[0] === this.lastLocation.location)) {
+                if ((ctx.type === 'GPS') && (ctx.location === this.lastLocation.location)) {
                     if (joiningMap[ctx.displayName]) {
                         continue;
                     }
                     joiningMap[ctx.displayName] = ctx.created_at;
                     if (API.cachedUsers.has(ctx.userId)) {
                         var user = API.cachedUsers.get(ctx.userId);
-                        if (ctx.location[0] !== user.location) {
+                        if (ctx.location !== user.location) {
                             continue;
                         }
                     }
@@ -4302,7 +4280,7 @@ speechSynthesis.getVoices();
             }
             // hide private worlds from feeds
             if ((this.hidePrivateFromFeed) &&
-                (ctx.type === 'GPS') && (ctx.location[0] === 'private')) {
+                (ctx.type === 'GPS') && (ctx.location === 'private')) {
                 continue;
             }
             var isFriend = this.friends.has(ctx.userId);
@@ -4592,7 +4570,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.playNotyTTS = async function (noty, message) {
+    $app.methods.playNotyTTS = function (noty, message) {
         switch (noty.type) {
             case 'OnPlayerJoined':
                 this.speak(`${noty.data} has joined`);
@@ -4604,7 +4582,7 @@ speechSynthesis.getVoices();
                 this.speak(`${noty.displayName} is joining`);
                 break;
             case 'GPS':
-                this.speak(`${noty.displayName} is in ${await this.displayLocation(noty.location[0])}`);
+                this.speak(`${noty.displayName} is in ${this.displayLocation(noty.location, noty.worldName)}`);
                 break;
             case 'Online':
                 this.speak(`${noty.displayName} has logged in`);
@@ -4613,7 +4591,7 @@ speechSynthesis.getVoices();
                 this.speak(`${noty.displayName} has logged out`);
                 break;
             case 'Status':
-                this.speak(`${noty.displayName} status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`);
+                this.speak(`${noty.displayName} status is now ${noty.status} ${noty.statusDescription}`);
                 break;
             case 'invite':
                 this.speak(`${noty.senderUsername} has invited you to ${noty.details.worldName}${message}`);
@@ -4668,7 +4646,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.displayXSNotification = async function (noty, message, image) {
+    $app.methods.displayXSNotification = function (noty, message, image) {
         var timeout = parseInt(parseInt(this.notificationTimeout) / 1000);
         switch (noty.type) {
             case 'OnPlayerJoined':
@@ -4681,7 +4659,7 @@ speechSynthesis.getVoices();
                 AppApi.XSNotification('VRCX', `${noty.displayName} is joining`, timeout, image);
                 break;
             case 'GPS':
-                AppApi.XSNotification('VRCX', `${noty.displayName} is in ${await this.displayLocation(noty.location[0])}`, timeout, image);
+                AppApi.XSNotification('VRCX', `${noty.displayName} is in ${this.displayLocation(noty.location, noty.worldName)}`, timeout, image);
                 break;
             case 'Online':
                 AppApi.XSNotification('VRCX', `${noty.displayName} has logged in`, timeout, image);
@@ -4690,7 +4668,7 @@ speechSynthesis.getVoices();
                 AppApi.XSNotification('VRCX', `${noty.displayName} has logged out`, timeout, image);
                 break;
             case 'Status':
-                AppApi.XSNotification('VRCX', `${noty.displayName} status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, timeout, image);
+                AppApi.XSNotification('VRCX', `${noty.displayName} status is now ${noty.status} ${noty.statusDescription}`, timeout, image);
                 break;
             case 'invite':
                 AppApi.XSNotification('VRCX', `${noty.senderUsername} has invited you to ${noty.details.worldName}${message}`, timeout, image);
@@ -4745,7 +4723,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.displayDesktopToast = async function (noty, message, image) {
+    $app.methods.displayDesktopToast = function (noty, message, image) {
         switch (noty.type) {
             case 'OnPlayerJoined':
                 AppApi.DesktopNotification(noty.data, 'has joined', image);
@@ -4757,7 +4735,7 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification(noty.displayName, 'is joining', image);
                 break;
             case 'GPS':
-                AppApi.DesktopNotification(noty.displayName, `is in ${await this.displayLocation(noty.location[0])}`, image);
+                AppApi.DesktopNotification(noty.displayName, `is in ${this.displayLocation(noty.location, noty.worldName)}`, image);
                 break;
             case 'Online':
                 AppApi.DesktopNotification(noty.displayName, 'has logged in', image);
@@ -4766,7 +4744,7 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification(noty.displayName, 'has logged out', image);
                 break;
             case 'Status':
-                AppApi.DesktopNotification(noty.displayName, `status is now ${noty.status[0].status} ${noty.status[0].statusDescription}`, image);
+                AppApi.DesktopNotification(noty.displayName, `status is now ${noty.status} ${noty.statusDescription}`, image);
                 break;
             case 'invite':
                 AppApi.DesktopNotification(noty.senderUsername, `has invited you to ${noty.details.worldName}${message}`, image);
@@ -4821,7 +4799,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.displayLocation = async function (location) {
+    $app.methods.displayLocation = function (location, worldName) {
         var text = '';
         var L = API.parseLocation(location);
         if (L.isOffline) {
@@ -4829,23 +4807,10 @@ speechSynthesis.getVoices();
         } else if (L.isPrivate) {
             text = 'Private';
         } else if (L.worldId) {
-            var ref = API.cachedWorlds.get(L.worldId);
-            if (typeof ref === 'undefined') {
-                await API.getWorld({
-                    worldId: L.worldId
-                }).then((args) => {
-                    if (L.tag === location) {
-                        if (L.instanceId) {
-                            text = `${args.json.name} ${L.accessType}`;
-                        } else {
-                            text = args.json.name;
-                        }
-                    }
-                });
-            } else if (L.instanceId) {
-                text = `${ref.name} ${L.accessType}`;
+            if (L.instanceId) {
+                text = `${worldName} ${L.accessType}`;
             } else {
-                text = ref.name;
+                text = worldName;
             }
         }
         return text;
@@ -5301,17 +5266,40 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.loadMemo = function (id) {
-        var key = `memo_${id}`;
-        return VRCXStorage.Get(key);
+    $app.methods.migrateMemos = async function () {
+        var json = JSON.parse(VRCXStorage.GetAll());
+        database.begin();
+        for (var line in json) {
+            if (line.substring(0, 8) === 'memo_usr') {
+                var userId = line.substring(5);
+                var memo = json[line];
+                if (memo) {
+                    await this.saveMemo(userId, memo);
+                    VRCXStorage.Remove(`memo_${userId}`);
+                }
+            }
+        }
+        database.commit();
+    };
+
+    $app.methods.loadMemo = async function (userId) {
+        try {
+            var row = await database.getMemo(userId);
+            return row.memo;
+        } catch (err) {
+        }
+        return '';
     };
 
     $app.methods.saveMemo = function (id, memo) {
-        var key = `memo_${id}`;
         if (memo) {
-            VRCXStorage.Set(key, String(memo));
+            database.setMemo({
+                userId: id,
+                editedAt: new Date().toJSON(),
+                memo
+            });
         } else {
-            VRCXStorage.Remove(key);
+            database.deleteMemo(id);
         }
         var ref = this.friends.get(id);
         if (ref) {
@@ -5422,7 +5410,6 @@ speechSynthesis.getVoices();
     });
 
     API.$on('USER:CURRENT', function (args) {
-        // initFriendship()이 LOGIN에서 처리되기 때문에
         // USER:CURRENT에서 처리를 함
         $app.refreshFriends(args.ref, args.origin);
     });
@@ -5495,10 +5482,13 @@ speechSynthesis.getVoices();
             ref,
             name: '',
             no: ++this.friendsNo,
-            memo: this.loadMemo(id)
+            memo: ''
         };
+        this.loadMemo(id).then((memo) => {
+            ctx.memo = memo;
+        });
         if (typeof ref === 'undefined') {
-            ref = this.friendLog[id];
+            ref = this.friendLog.get(id);
             if (typeof ref !== 'undefined' &&
                 ref.displayName) {
                 ctx.name = ref.displayName;
@@ -5677,18 +5667,35 @@ speechSynthesis.getVoices();
                     if (ctx.state === 'online') {
                         var ts = Date.now();
                         var time = ts - $location_at;
-                        this.addFeed('Offline', ctx.ref, {
-                            location: (location === 'offline') ? '' : location,
+                        var worldName = await this.getWorldName(location);
+                        var feed = {
+                            created_at: new Date().toJSON(),
+                            type: 'Offline',
+                            userId: ctx.ref.id,
+                            displayName: ctx.ref.displayName,
+                            location,
+                            worldName,
                             time
-                        });
+                        };
+                        this.addFeed(feed);
+                        database.addOnlineOfflineToDatabase(feed);
                     }
                 } else if (newState === 'online') {
                     ctx.ref.$location_at = Date.now();
                     ctx.ref.$online_for = Date.now();
                     ctx.ref.$offline_for = '';
-                    this.addFeed('Online', ctx.ref, {
-                        location: ctx.ref.location
-                    });
+                    var worldName = await this.getWorldName(ctx.ref.location);
+                    var feed = {
+                        created_at: new Date().toJSON(),
+                        type: 'Online',
+                        userId: ctx.ref.id,
+                        displayName: ctx.ref.displayName,
+                        location,
+                        worldName,
+                        time: ''
+                    };
+                    this.addFeed(feed);
+                    database.addOnlineOfflineToDatabase(feed);
                 }
             }
             if (ctx.state === 'online') {
@@ -5738,6 +5745,23 @@ speechSynthesis.getVoices();
             }
         }
         this.updateFriendInProgress.delete(id);
+    };
+
+    $app.methods.getWorldName = async function (location) {
+        var worldName = '';
+        if (location !== 'offline') {
+            try {
+                var L = API.parseLocation(location);
+                if (L.worldId) {
+                var args = await API.getCachedWorld({
+                    worldId: L.worldId
+                });
+                worldName = args.ref.name;
+                }
+            } catch (err) {
+            }
+        }
+        return worldName;
     };
 
     $app.methods.updateFriendGPS = function (userId) {
@@ -5930,6 +5954,26 @@ speechSynthesis.getVoices();
         return style;
     };
 
+    $app.methods.statusClass = function (status) {
+        var style = {};
+        if (typeof status !== 'undefined') {
+            if (status === 'active') {
+                // Online
+                style.online = true;
+            } else if (status === 'join me') {
+                // Join Me
+                style.joinme = true;
+            } else if (status === 'ask me') {
+                // Ask Me
+                style.askme = true;
+            } else if (status === 'busy') {
+                // Do Not Disturb
+                style.busy = true;
+            }
+        }
+        return style;
+    };
+
     $app.methods.confirmDeleteFriend = function (id) {
         this.$confirm('Continue? Unfriend', 'Confirm', {
             confirmButtonText: 'Confirm',
@@ -6075,12 +6119,25 @@ speechSynthesis.getVoices();
         $app.data.feedTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_feedTableFilters'));
     }
 
-    API.$on('LOGIN', function (args) {
-        $app.feedTable.data = VRCXStorage.GetArray(`${args.ref.id}_feedTable`);
+    API.$on('LOGIN', async function (args) {
+        $app.friendLogInitStatus = false;
+        await database.init(args.json.id);
+        $app.feedTable.data = await database.getFeedDatabase();
         $app.sweepFeed();
+        if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
+            $app.getFriendLog();
+        } else {
+            $app.initFriendLog();
+        }
+        //remove old data from json file and migrate to SQLite
+        if (VRCXStorage.Get(`${args.json.id}_friendLogUpdatedAt`)) {
+            VRCXStorage.Remove(`${args.json.id}_feedTable`);
+            $app.migrateMemos();
+            $app.migrateFriendLog(args.json.id);
+        }
     });
 
-    API.$on('USER:UPDATE', function (args) {
+    API.$on('USER:UPDATE', async function (args) {
         var { ref, props } = args;
         if ($app.friends.has(ref.id) === false) {
             return;
@@ -6090,85 +6147,111 @@ speechSynthesis.getVoices();
             (props.location[0] !== '') &&
             (props.location[1] !== 'offline') &&
             (props.location[1] !== '')) {
-            $app.addFeed('GPS', ref, {
-                location: [
-                    props.location[0],
-                    props.location[1]
-                ],
+            var worldName = await $app.getWorldName(props.location[0]);
+            var feed = {
+                created_at: new Date().toJSON(),
+                type: 'GPS',
+                userId: ref.id,
+                displayName: ref.displayName,
+                location: props.location[0],
+                worldName,
+                previousLocation: props.location[1],
                 time: props.location[2]
-            });
+            };
+            $app.addFeed(feed);
+            database.addGPSToDatabase(feed);
             $app.updateFriendGPS(ref.id);
-            $app.feedDownloadWorldCache(ref);
+            $app.feedDownloadWorldCache(ref.id, props.location[0]);
         }
         if (props.currentAvatarImageUrl ||
             props.currentAvatarThumbnailImageUrl) {
-            $app.addFeed('Avatar', ref, {
-                avatar: [
-                    {
-                        currentAvatarImageUrl: props.currentAvatarImageUrl
-                            ? props.currentAvatarImageUrl[0]
-                            : ref.currentAvatarImageUrl,
-                        currentAvatarThumbnailImageUrl: props.currentAvatarThumbnailImageUrl
-                            ? props.currentAvatarThumbnailImageUrl[0]
-                            : ref.currentAvatarThumbnailImageUrl
-                    },
-                    {
-                        currentAvatarImageUrl: props.currentAvatarImageUrl
-                            ? props.currentAvatarImageUrl[1]
-                            : ref.currentAvatarImageUrl,
-                        currentAvatarThumbnailImageUrl: props.currentAvatarThumbnailImageUrl
-                            ? props.currentAvatarThumbnailImageUrl[1]
-                            : ref.currentAvatarThumbnailImageUrl
-                    }
-                ]
-            });
+            var currentAvatarImageUrl = '';
+            var previousCurrentAvatarImageUrl = '';
+            var currentAvatarThumbnailImageUrl = '';
+            var previousCurrentAvatarThumbnailImageUrl = '';
+            if (props.currentAvatarImageUrl) {
+                currentAvatarImageUrl = props.currentAvatarImageUrl[0];
+                previousCurrentAvatarImageUrl = props.currentAvatarImageUrl[1];
+            } else {
+                currentAvatarImageUrl = ref.currentAvatarImageUrl;
+                previousCurrentAvatarImageUrl = ref.currentAvatarImageUrl;
+            }
+            if (props.currentAvatarThumbnailImageUrl) {
+                currentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[0];
+                previousCurrentAvatarThumbnailImageUrl = props.currentAvatarThumbnailImageUrl[1];
+            } else {
+                currentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
+                previousCurrentAvatarThumbnailImageUrl = ref.currentAvatarThumbnailImageUrl;
+            }
+            var avatarInfo = {
+                ownerId: '',
+                avatarName: ''
+            }
+            try {
+                avatarInfo = await $app.getAvatarName(currentAvatarImageUrl);
+            } catch (err) {
+            }
+            var feed = {
+                created_at: new Date().toJSON(),
+                type: 'Avatar',
+                userId: ref.id,
+                displayName: ref.displayName,
+                ownerId: avatarInfo.ownerId,
+                avatarName: avatarInfo.avatarName,
+                currentAvatarImageUrl,
+                currentAvatarThumbnailImageUrl,
+                previousCurrentAvatarImageUrl,
+                previousCurrentAvatarThumbnailImageUrl
+            };
+            $app.addFeed(feed);
+            database.addAvatarToDatabase(feed);
         }
         if (props.status ||
             props.statusDescription) {
-            $app.addFeed('Status', ref, {
-                status: [
-                    {
-                        status: props.status
-                            ? props.status[0]
-                            : ref.status,
-                        statusDescription: props.statusDescription
-                            ? props.statusDescription[0]
-                            : ref.statusDescription
-                    },
-                    {
-                        status: props.status
-                            ? props.status[1]
-                            : ref.status,
-                        statusDescription: props.statusDescription
-                            ? props.statusDescription[1]
-                            : ref.statusDescription
-                    }
-                ]
-            });
+            var status = '';
+            var previousStatus = '';
+            var statusDescription = '';
+            var previousStatusDescription = '';
+            if (props.status) {
+                if (props.status[0]) {
+                    status = props.status[0];
+                }
+                if (props.status[1]) {
+                    previousStatus = props.status[1];
+                }
+            } else if (ref.status) {
+                status = ref.status;
+                previousStatus = ref.status;
+            }
+            if (props.statusDescription) {
+                if (props.statusDescription[0]) {
+                    statusDescription = props.statusDescription[0];
+                }
+                if (props.statusDescription[1]) {
+                    previousStatusDescription = props.statusDescription[1];
+                }
+            } else if (ref.statusDescription) {
+                statusDescription = ref.statusDescription;
+                previousStatusDescription = ref.statusDescription;
+            }
+            var feed = {
+                created_at: new Date().toJSON(),
+                type: 'Status',
+                userId: ref.id,
+                displayName: ref.displayName,
+                status,
+                statusDescription,
+                previousStatus,
+                previousStatusDescription
+            };
+            $app.addFeed(feed);
+            database.addStatusToDatabase(feed);
         }
     });
 
-    var saveFeedTimer = null;
-    $app.methods.saveFeed = function () {
-        if (saveFeedTimer !== null) {
-            return;
-        }
-        saveFeedTimer = setTimeout(() => {
-            saveFeedTimer = null;
-            VRCXStorage.SetArray(`${API.currentUser.id}_feedTable`, this.feedTable.data);
-        }, 1);
-    };
-
-    $app.methods.addFeed = function (type, ref, extra) {
-        this.feedTable.data.push({
-            created_at: new Date().toJSON(),
-            type,
-            userId: ref.id,
-            displayName: ref.displayName,
-            ...extra
-        });
+    $app.methods.addFeed = function (feed) {
+        this.feedTable.data.push(feed);
         this.sweepFeed();
-        this.saveFeed();
         this.updateSharedFeed(false);
         this.notifyMenu('feed');
     };
@@ -6761,7 +6844,7 @@ speechSynthesis.getVoices();
                 if (type === 'friend') {
                     var ref = API.cachedUsers.get(objectId);
                     if (typeof ref === 'undefined') {
-                        ref = this.friendLog[objectId];
+                        ref = this.friendLog.get(objectId);
                         if (typeof ref !== 'undefined' &&
                             ref.displayName) {
                             ctx.name = ref.displayName;
@@ -6941,7 +7024,7 @@ speechSynthesis.getVoices();
 
     // App: friendLog
 
-    $app.data.friendLog = {};
+    $app.data.friendLog = new Map();
     $app.data.friendLogTable = {
         data: [],
         filters: [
@@ -6976,10 +7059,6 @@ speechSynthesis.getVoices();
         }
     };
 
-    API.$on('LOGIN', function (args) {
-        $app.initFriendship(args.ref);
-    });
-
     API.$on('USER:CURRENT', function (args) {
         $app.updateFriendships(args.ref);
     });
@@ -7001,13 +7080,14 @@ speechSynthesis.getVoices();
         if (typeof ref === 'undefined') {
             return;
         }
-        $app.friendLogTable.data.push({
+        var friendLogHistory = {
             created_at: new Date().toJSON(),
             type: 'FriendRequest',
             userId: ref.id,
             displayName: ref.displayName
-        });
-        $app.saveFriendLog();
+        };
+        $app.friendLogTable.data.push(friendLogHistory);
+        database.addFriendLogHistory(friendLogHistory);
     });
 
     API.$on('FRIEND:REQUEST:CANCEL', function (args) {
@@ -7015,56 +7095,80 @@ speechSynthesis.getVoices();
         if (typeof ref === 'undefined') {
             return;
         }
-        $app.friendLogTable.data.push({
+        var friendLogHistory = {
             created_at: new Date().toJSON(),
             type: 'CancelFriendRequst',
             userId: ref.id,
             displayName: ref.displayName
-        });
-        $app.saveFriendLog();
+        };
+        $app.friendLogTable.data.push(friendLogHistory);
+        database.addFriendLogHistory(friendLogHistory);
     });
 
-    var saveFriendLogTimer = null;
-    $app.methods.saveFriendLog = function () {
-        if (saveFriendLogTimer !== null) {
+    $app.data.friendLogInitStatus = false;
+
+    $app.methods.initFriendLog = async function () {
+        if (this.friendLogInitStatus) {
             return;
         }
-        this.updateSharedFeed(true);
-        saveFriendLogTimer = setTimeout(() => {
-            saveFriendLogTimer = null;
-            VRCXStorage.SetObject(`${API.currentUser.id}_friendLog`, this.friendLog);
-            VRCXStorage.SetArray(`${API.currentUser.id}_friendLogTable`, this.friendLogTable.data);
-            VRCXStorage.Set(`${API.currentUser.id}_friendLogUpdatedAt`, new Date().toJSON());
-        }, 1);
+        if (configRepository.getBool(`friendLogInit_${API.currentUser.id}`)) {
+            this.friendLogInitStatus = true;
+            return;
+        }
+        var sqlValues = [];
+        var friends = await API.refreshFriends();
+        for (var friend of friends) {
+            var ref = API.applyUser(friend);
+            var row = {
+                userId: ref.id,
+                displayName: ref.displayName,
+                trustLevel: ref.$trustLevel
+            };
+            this.friendLog.set(friend.id, row);
+            sqlValues.unshift(row);
+        }
+        database.setFriendLogCurrentArray(sqlValues);
+        configRepository.setBool(`friendLogInit_${API.currentUser.id}`, true);
+        this.friendLogInitStatus = true;
     };
 
-    $app.methods.initFriendship = function (ref) {
-        if (VRCXStorage.Get(`${ref.id}_friendLogUpdatedAt`)) {
-            this.friendLog = VRCXStorage.GetObject(`${ref.id}_friendLog`);
-            this.friendLogTable.data = VRCXStorage.GetArray(`${ref.id}_friendLogTable`);
-        } else {
-            var friendLog = {};
-            for (var id of ref.friends) {
-                // DO NOT set displayName,
-                // it's flag about it's new friend
-                var ctx = {
-                    id
-                };
-                var user = API.cachedUsers.get(id);
-                if (typeof user !== 'undefined') {
-                    ctx.displayName = user.displayName;
-                    ctx.trustLevel = user.$trustLevel;
-                }
-                friendLog[id] = ctx;
-            }
-            this.friendLog = friendLog;
-            this.friendLogTable.data = [];
-            this.saveFriendLog();
+    $app.methods.migrateFriendLog = function (userId) {
+        VRCXStorage.Remove(`${userId}_friendLogUpdatedAt`);
+        this.friendLog = new Map();
+        var oldFriendLog = VRCXStorage.GetObject(`${userId}_friendLog`);
+        var friendLogCurrentValues = [];
+        for (var i in oldFriendLog) {
+            var friend = oldFriendLog[i];
+            var row = {
+                userId: friend.id,
+                displayName: friend.displayName,
+                trustLevel: friend.trustLevel
+            };
+            this.friendLog.set(friend.id, row);
+            friendLogCurrentValues.unshift(row);
         }
+        database.setFriendLogCurrentArray(friendLogCurrentValues);
+        VRCXStorage.Remove(`${userId}_friendLog`);
+        this.friendLogTable.data = VRCXStorage.GetArray(`${userId}_friendLogTable`);
+        database.addFriendLogHistoryArray(this.friendLogTable.data);
+        VRCXStorage.Remove(`${userId}_friendLogTable`);
+        configRepository.setBool(`friendLogInit_${API.currentUser.id}`, true);
+        this.friendLogInitStatus = true;
+    };
+
+    $app.methods.getFriendLog = async function () {
+        this.friendLog = new Map();
+        var friendLogCurrentArray = await database.getFriendLogCurrent();
+        for (var friend of friendLogCurrentArray) {
+            this.friendLog.set(friend.userId, friend);
+        }
+        this.friendLogTable.data = [];
+        this.friendLogTable.data = await database.getFriendLogHistory();
+        this.friendLogInitStatus = true;
     };
 
     $app.methods.addFriendship = function (id) {
-        if (typeof this.friendLog[id] !== 'undefined') {
+        if ((!this.friendLogInitStatus) || (this.friendLog.has(id))) {
             return;
         }
         var ctx = {
@@ -7072,35 +7176,45 @@ speechSynthesis.getVoices();
             displayName: null,
             trustLevel: null
         };
-        Vue.set(this.friendLog, id, ctx);
         var ref = API.cachedUsers.get(id);
         if (typeof ref !== 'undefined') {
             ctx.displayName = ref.displayName;
             ctx.trustLevel = ref.$trustLevel;
-            this.friendLogTable.data.push({
+            var friendLogHistory = {
                 created_at: new Date().toJSON(),
                 type: 'Friend',
-                userId: ref.id,
+                userId: id,
                 displayName: ctx.displayName
-            });
+            };
+            this.friendLogTable.data.push(friendLogHistory);
+            database.addFriendLogHistory(friendLogHistory);
+
+            var friendLogCurrent = {
+                userId: id,
+                displayName: ctx.displayName,
+                trustLevel: ctx.trustLevel
+            };
+            this.friendLog.set(id, friendLogCurrent);
+            database.setFriendLogCurrent(friendLogCurrent);
         }
-        this.saveFriendLog();
         this.notifyMenu('friendLog');
     };
 
     $app.methods.deleteFriendship = function (id) {
-        var ctx = this.friendLog[id];
+        var ctx = this.friendLog.get(id);
         if (typeof ctx === 'undefined') {
             return;
         }
-        Vue.delete(this.friendLog, id);
-        this.friendLogTable.data.push({
+        var friendLogHistory = {
             created_at: new Date().toJSON(),
             type: 'Unfriend',
             userId: id,
             displayName: ctx.displayName
-        });
-        this.saveFriendLog();
+        };
+        this.friendLogTable.data.push(friendLogHistory);
+        database.addFriendLogHistory(friendLogHistory);
+        this.friendLog.delete(id);
+        database.deleteFriendLogCurrent(id);
         this.notifyMenu('friendLog');
     };
 
@@ -7118,46 +7232,64 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateFriendship = function (ref) {
-        var ctx = this.friendLog[ref.id];
-        if (typeof ctx === 'undefined') {
+        var ctx = this.friendLog.get(ref.id);
+        if ((!this.friendLogInitStatus) || (typeof ctx === 'undefined')) {
             return;
         }
         if (ctx.displayName !== ref.displayName) {
             if (ctx.displayName) {
-                this.friendLogTable.data.push({
+                var friendLogHistory = {
                     created_at: new Date().toJSON(),
                     type: 'DisplayName',
                     userId: ref.id,
                     displayName: ref.displayName,
                     previousDisplayName: ctx.displayName
-                });
+                };
+                this.friendLogTable.data.push(friendLogHistory);
+                database.addFriendLogHistory(friendLogHistory);
             } else if (ctx.displayName === null) {
-                this.friendLogTable.data.push({
+                var friendLogHistory = {
                     created_at: new Date().toJSON(),
                     type: 'Friend',
                     userId: ref.id,
                     displayName: ref.displayName
-                });
+                };
+                this.friendLogTable.data.push(friendLogHistory);
+                database.addFriendLogHistory(friendLogHistory);
             }
+            var friendLogCurrent = {
+                userId: ref.id,
+                displayName: ref.displayName,
+                trustLevel: ref.$trustLevel
+            };
+            this.friendLog.set(ref.id, friendLogCurrent);
+            database.setFriendLogCurrent(friendLogCurrent);
             ctx.displayName = ref.displayName;
-            this.saveFriendLog();
             this.notifyMenu('friendLog');
         }
         if (ref.$trustLevel &&
             ctx.trustLevel !== ref.$trustLevel) {
             if ((ctx.trustLevel) &&
                 (ctx.trustLevel !== 'Legendary User') && (ctx.trustLevel !== 'VRChat Team') && (ctx.trustLevel !== 'Nuisance')) { // TODO: remove
-                this.friendLogTable.data.push({
+                var friendLogHistory = {
                     created_at: new Date().toJSON(),
                     type: 'TrustLevel',
                     userId: ref.id,
                     displayName: ref.displayName,
                     trustLevel: ref.$trustLevel,
                     previousTrustLevel: ctx.trustLevel
-                });
+                };
+                this.friendLogTable.data.push(friendLogHistory);
+                database.addFriendLogHistory(friendLogHistory);
+                var friendLogCurrent = {
+                    userId: ref.id,
+                    displayName: ref.displayName,
+                    trustLevel: ref.$trustLevel
+                };
+                this.friendLog.set(ref.id, friendLogCurrent);
+                database.setFriendLogCurrent(friendLogCurrent);
             }
             ctx.trustLevel = ref.$trustLevel;
-            this.saveFriendLog();
             this.notifyMenu('friendLog');
         }
     };
@@ -7171,7 +7303,7 @@ speechSynthesis.getVoices();
             callback: (action) => {
                 if (action === 'confirm' &&
                     removeFromArray(this.friendLogTable.data, row)) {
-                    this.saveFriendLog();
+                    database.deleteFriendLogHistory(row.rowId);
                 }
             }
         });
@@ -8489,7 +8621,13 @@ speechSynthesis.getVoices();
         D.userIcon = '';
         D.id = userId;
         D.treeData = [];
-        D.memo = this.loadMemo(userId);
+        this.loadMemo(userId).then((memo) => {
+            D.memo = memo;
+            var ref = this.friends.get(userId);
+            if (ref) {
+                ref.memo = String(memo || '');
+            }
+        });
         D.visible = true;
         D.loading = true;
         D.avatars = [];
@@ -12450,18 +12588,18 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.feedDownloadWorldCache = function (feed) {
+    $app.methods.feedDownloadWorldCache = function (id, location) {
         if ((this.worldAutoCacheGPS === 'Always') ||
             ((this.worldAutoCacheGPS === 'Game Closed') && (!this.isGameRunning)) ||
             ((this.worldAutoCacheGPS === 'Game Running') && (this.isGameRunning))) {
-            if ((feed.location === '') ||
-                (feed.location === 'offline') ||
-                (feed.location === 'private') ||
+            if ((location === '') ||
+                (location === 'offline') ||
+                (location === 'private') ||
                 ((!this.worldAutoCacheGPSFilter) &&
-                    (!API.cachedFavoritesByObjectId.has(feed.id)))) {
+                    (!API.cachedFavoritesByObjectId.has(id)))) {
                 return;
             }
-            this.autoDownloadWorldCache(feed.location, 'GPS', feed.id);
+            this.autoDownloadWorldCache(location, 'GPS', id);
         }
     };
 

@@ -1,4 +1,4 @@
-﻿// Copyright(c) 2019 pypy. All rights reserved.
+// Copyright(c) 2019 pypy. All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -120,6 +120,19 @@ namespace VRCX
             finally
             {
                 m_Lock.ExitWriteLock();
+            }
+        }
+
+        public string GetAll()
+        {
+            m_Lock.EnterReadLock();
+            try
+            {
+                return System.Text.Json.JsonSerializer.Serialize(m_Storage);
+            }
+            finally
+            {
+                m_Lock.ExitReadLock();
             }
         }
     }
