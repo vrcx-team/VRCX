@@ -9,7 +9,6 @@ import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
 import { DataTables } from 'vue-data-tables';
 // eslint-disable-next-line no-unused-vars
-import ToggleSwitch from 'vuejs-toggle-switch';
 import VSwatches from 'vue-swatches';
 Vue.component('v-swatches', VSwatches);
 import '../node_modules/vue-swatches/dist/vue-swatches.css';
@@ -1191,6 +1190,7 @@ speechSynthesis.getVoices();
                 currentAvatarImageUrl: '',
                 currentAvatarThumbnailImageUrl: '',
                 currentAvatar: '',
+                currentAvatarAssetUrl: '',
                 homeLocation: '',
                 twoFactorAuthEnabled: false,
                 status: '',
@@ -6114,9 +6114,11 @@ speechSynthesis.getVoices();
 
     $app.methods.saveFeedTableFilters = function () {
         configRepository.setString('VRCX_feedTableFilters', JSON.stringify(this.feedTable.filters[0].value));
+        configRepository.setBool('VRCX_feedTableVIPFilter', this.feedTable.filters[2].value);
     };
     if (configRepository.getString('VRCX_feedTableFilters')) {
         $app.data.feedTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_feedTableFilters'));
+        $app.data.feedTable.filters[2].value = configRepository.getBool('VRCX_feedTableVIPFilter');
     }
 
     API.$on('LOGIN', async function (args) {
@@ -7831,77 +7833,6 @@ speechSynthesis.getVoices();
         configRepository.setString('sharedFeedFilters', JSON.stringify(sharedFeedFilters));
     }
     $app.data.sharedFeedFilters = JSON.parse(configRepository.getString('sharedFeedFilters'));
-
-    var toggleSwitchLayout = {
-        backgroundColor: 'white',
-        selectedBackgroundColor: '#409eff',
-        selectedColor: 'white',
-        color: '#409eff',
-        borderColor: '#409eff',
-        fontWeight: 'bold',
-        fontFamily: '"Noto Sans JP", "Noto Sans KR", "Meiryo UI", "Malgun Gothic", "Segoe UI", "sans-serif"'
-    };
-
-    $app.data.toggleSwitchOptionsEveryone = {
-        layout: toggleSwitchLayout,
-        size: {
-            height: 1.5,
-            width: 15,
-            padding: 0.1,
-            fontSize: 0.75
-        },
-        items: {
-            labels: [{ name: 'Off' }, { name: 'VIP' }, { name: 'Friends' }, { name: 'Everyone' }]
-        }
-    };
-    $app.data.toggleSwitchOptionsFriends = {
-        layout: toggleSwitchLayout,
-        size: {
-            height: 1.5,
-            width: 11.25,
-            padding: 0.1,
-            fontSize: 0.75
-        },
-        items: {
-            labels: [{ name: 'Off' }, { name: 'VIP' }, { name: 'Friends' }]
-        }
-    };
-    $app.data.toggleSwitchOptionsOn = {
-        layout: toggleSwitchLayout,
-        size: {
-            height: 1.5,
-            width: 7.5,
-            padding: 0.1,
-            fontSize: 0.75
-        },
-        items: {
-            labels: [{ name: 'Off' }, { name: 'On' }]
-        }
-    };
-    $app.data.whenToPlayToggleSwitchOption = {
-        layout: toggleSwitchLayout,
-        size: {
-            height: 1.5,
-            width: 33,
-            padding: 0.1,
-            fontSize: 0.75
-        },
-        items: {
-            labels: [{ name: 'Never' }, { name: 'Desktop Mode' }, { name: 'Outside VR' }, { name: 'Inside VR' }, { name: 'Game Closed' }, { name: 'Always' }]
-        }
-    };
-    $app.data.worldCacheToggleSwitchOption = {
-        layout: toggleSwitchLayout,
-        size: {
-            height: 1.5,
-            width: 23,
-            padding: 0.1,
-            fontSize: 0.75
-        },
-        items: {
-            labels: [{ name: 'Never' }, { name: 'Game Closed' }, { name: 'Game Running' }, { name: 'Always' }]
-        }
-    };
 
     if (!configRepository.getString('VRCX_trustColor')) {
         var trustColor = {
@@ -10130,6 +10061,8 @@ speechSynthesis.getVoices();
         loading: false,
         worldId: '',
         instanceId: '',
+        instanceName: '',
+        userId: '',
         accessType: '',
         region: '',
         location: '',
@@ -10143,23 +10076,27 @@ speechSynthesis.getVoices();
     $app.methods.buildInstance = function () {
         var D = this.newInstanceDialog;
         var tags = [];
-        tags.push((99999 * Math.random() + 1).toFixed(0));
+        if (D.instanceName) {
+            D.instanceName = D.instanceName.replace(/[^A-Za-z0-9]/g, '');
+            tags.push(D.instanceName);
+        } else {
+            tags.push((99999 * Math.random() + 1).toFixed(0));
+        }
+        if ((D.userId) &&
+            (D.accessType !== 'friends') && (D.accessType !== 'invite')) {
+            var userId = D.userId;
+        } else {
+            D.userId = API.currentUser.id;
+            var userId = API.currentUser.id;
+        }
         if (D.accessType !== 'public') {
             if (D.accessType === 'friends+') {
-                tags.push(`~hidden(${API.currentUser.id})`);
+                tags.push(`~hidden(${userId})`);
             } else if (D.accessType === 'friends') {
-                tags.push(`~friends(${API.currentUser.id})`);
+                tags.push(`~friends(${userId})`);
             } else {
-                tags.push(`~private(${API.currentUser.id})`);
+                tags.push(`~private(${userId})`);
             }
-            // NOTE : crypto.getRandomValues()를 쓰면 안전한 대신 무겁겠지..
-            /*
-            var nonce = [];
-            for (var i = 0; i < 10; ++i) {
-                nonce.push(Math.random().toString(16).substr(2).toUpperCase());
-            }
-            nonce = nonce.join('').substr(0, 64);
-            */
             if (D.accessType === 'invite+') {
                 tags.push('~canRequestInvite');
             }
@@ -10205,7 +10142,7 @@ speechSynthesis.getVoices();
     };
 
     var updateLocationURL = function () {
-        var D = this.newInstanceDialog;
+        var D = $app.newInstanceDialog;
         if (D.instanceId) {
             D.location = `${D.worldId}:${D.instanceId}`;
         } else {
@@ -10213,16 +10150,23 @@ speechSynthesis.getVoices();
         }
         D.url = getLaunchURL(D.worldId, D.instanceId);
     };
-    var saveAccessType = function () {
+    var saveNewInstanceDialog = function () {
         configRepository.setString('instanceDialogAccessType', this.newInstanceDialog.accessType);
-    };
-    var saveRegion = function () {
         configRepository.setString('instanceRegion', this.newInstanceDialog.region);
+        configRepository.setString('instanceDialogInstanceName', this.newInstanceDialog.instanceName);
+        if (this.newInstanceDialog.userId === API.currentUser.id) {
+            configRepository.setString('instanceDialogUserId', '');
+        } else {
+            configRepository.setString('instanceDialogUserId', this.newInstanceDialog.userId);
+        }
+        $app.buildInstance();
+        updateLocationURL();
     };
     $app.watch['newInstanceDialog.worldId'] = updateLocationURL;
-    $app.watch['newInstanceDialog.instanceId'] = updateLocationURL;
-    $app.watch['newInstanceDialog.accessType'] = saveAccessType;
-    $app.watch['newInstanceDialog.region'] = saveRegion;
+    $app.watch['newInstanceDialog.instanceName'] = saveNewInstanceDialog;
+    $app.watch['newInstanceDialog.accessType'] = saveNewInstanceDialog;
+    $app.watch['newInstanceDialog.region'] = saveNewInstanceDialog;
+    $app.watch['newInstanceDialog.userId'] = saveNewInstanceDialog;
 
     $app.methods.showNewInstanceDialog = function (tag) {
         this.$nextTick(() => adjustDialogZ(this.$refs.newInstanceDialog.$el));
@@ -10241,6 +10185,14 @@ speechSynthesis.getVoices();
         D.region = 'USA';
         if (configRepository.getString('instanceRegion') !== null) {
             D.region = configRepository.getString('instanceRegion');
+        }
+        D.instanceName = '';
+        if (configRepository.getString('instanceDialogInstanceName') !== null) {
+            D.instanceName = configRepository.getString('instanceDialogInstanceName');
+        }
+        D.userId = '';
+        if (configRepository.getString('instanceDialogUserId') !== null) {
+            D.userId = configRepository.getString('instanceDialogUserId');
         }
         this.buildInstance();
         D.visible = true;

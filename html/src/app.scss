@@ -538,14 +538,13 @@ i.x-user-status.busy {
 }
 
 .toggle-list {
-    font-size: 12px;
+    font-size: 15px;
 }
 
 .toggle-list .toggle-name {
     display: inline-block;
-    min-width: 140px;
+    min-width: 170px;
     padding: 2px 5px 2px 0;
-    vertical-align: top;
     text-align: right;
 }
 
@@ -588,4 +587,8 @@ i.x-user-status.busy {
 .avatar-info-unknown {
     display: inline-block;
     color: #f56c6c;
+}
+
+.el-form-item {
+    margin-bottom: 4px;
 }

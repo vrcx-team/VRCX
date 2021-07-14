@@ -77,7 +77,7 @@ html
                         div(style="margin:0 0 10px;display:flex;align-items:center")
                             div(style="flex:none;margin-right:10px")
                                 el-tooltip(placement="bottom" content="Filter VIP only" :disabled="hideTooltips")
-                                    el-switch(v-model="feedTable.filters[2].value" active-color="#13ce66")
+                                    el-switch(v-model="feedTable.filters[2].value" @change="saveFeedTableFilters" active-color="#13ce66")
                             el-select(v-model="feedTable.filters[0].value" @change="saveFeedTableFilters" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
                                 el-option(v-once v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar']" :key="type" :label="type" :value="type")
                             el-input(v-model="feedTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
@@ -689,6 +689,7 @@ html
                     div.options-container-item
                         span.name Sort GPS to top
                         el-switch(v-model="orderFriendsGroupGPS")
+                        span.name(style="margin-left:5px") (online for only)
                     div.options-container-item
                         span.name VIP
                         el-switch(v-model="orderFriendsGroup0" inactive-text="alphabetical" active-text="online for")
@@ -794,7 +795,13 @@ html
                     div.options-container-item
                         span.name Desktop Notifications, When to display:
                         br
-                        toggle-switch(:options="whenToPlayToggleSwitchOption" group="whenToPlayDesktopNotificationsToggleSwitchOption" v-model="desktopToast" class="toggle-switch")
+                        el-radio-group(v-model="desktopToast" size="mini")
+                            el-radio-button(label="Never")
+                            el-radio-button(label="Desktop Mode")
+                            el-radio-button(label="Outside VR")
+                            el-radio-button(label="Inside VR")
+                            el-radio-button(label="Game Closed")
+                            el-radio-button(label="Always")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()") Notification Filters
                     br
@@ -802,7 +809,13 @@ html
                     div.options-container-item
                         span.name Notification TTS, When to play:
                         br
-                        toggle-switch(:options="whenToPlayToggleSwitchOption" group="whenToPlayNotificationTTSToggleSwitchOption" v-model="notificationTTS" class="toggle-switch")
+                        el-radio-group(v-model="notificationTTS" size="mini")
+                            el-radio-button(label="Never")
+                            el-radio-button(label="Desktop Mode")
+                            el-radio-button(label="Outside VR")
+                            el-radio-button(label="Inside VR")
+                            el-radio-button(label="Game Closed")
+                            el-radio-button(label="Always")
                     div.options-container-item
                         span.name TTS Voice
                         el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
@@ -817,13 +830,21 @@ html
                     div.options-container-item
                         span.name Download on invite:
                         br
-                        toggle-switch(:options="worldCacheToggleSwitchOption" group="worldCacheInviteToggleSwitchOption" v-model="worldAutoCacheInvite" class="toggle-switch")
+                        el-radio-group(v-model="worldAutoCacheInvite" size="mini")
+                            el-radio-button(label="Never")
+                            el-radio-button(label="Game Closed")
+                            el-radio-button(label="Game Running")
+                            el-radio-button(label="Always")
                     div.options-container-item
                         el-switch(v-model="worldAutoCacheInviteFilter" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheInvite == 'Never'")
                     div.options-container-item
                         span.name Download on GPS:
                         br
-                        toggle-switch(:options="worldCacheToggleSwitchOption" group="worldCacheGPSToggleSwitchOption" v-model="worldAutoCacheGPS" class="toggle-switch")
+                        el-radio-group(v-model="worldAutoCacheGPS" size="mini")
+                            el-radio-button(label="Never")
+                            el-radio-button(label="Game Closed")
+                            el-radio-button(label="Game Running")
+                            el-radio-button(label="Always")
                     div.options-container-item
                         el-switch(v-model="worldAutoCacheGPSFilter" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheGPS == 'Never'")
                     div.options-container-item
@@ -1226,7 +1247,7 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
-                                            el-dropdown-item(icon="el-icon-upload2" command="Upload Image") Upload Image
+                                            el-dropdown-item(icon="el-icon-upload2" command="Upload Image") Upload Image (1200x900)
                                                 input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
                                             el-dropdown-item(icon="el-icon-delete" command="Delete" style="color:#F56C6C" divided) Delete
                     el-tabs
@@ -1362,7 +1383,7 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
-                                            el-dropdown-item(icon="el-icon-upload2" command="Upload Image") Upload Image
+                                            el-dropdown-item(icon="el-icon-upload2" command="Upload Image") Upload Image (1200x900)
                                                 input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
                                             el-dropdown-item(v-if="avatarDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") Download Unity Package
                                             el-dropdown-item(icon="el-icon-user" command="Delete" style="color:#F56C6C" divided) Delete
@@ -1508,7 +1529,7 @@ html
 
             //- dialog: new instance
             el-dialog.x-dialog(ref="newInstanceDialog" :visible.sync="newInstanceDialog.visible" title="New Instance" width="600px")
-                el-form(:model="newInstanceDialog" label-width="100px")
+                el-form(:model="newInstanceDialog" label-width="130px")
                     el-form-item(label="Access Type")
                         el-radio-group(v-model="newInstanceDialog.accessType" size="mini" @change="buildInstance")
                             el-radio-button(label="public")
@@ -1524,7 +1545,57 @@ html
                     el-form-item(label="World ID")
                         el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                     el-form-item(label="Instance ID")
-                        el-input(v-model="newInstanceDialog.instanceId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+                        el-input(v-model="newInstanceDialog.instanceName" maxlength="16" placeholder="Random" show-word-limit size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+                    el-form-item(label="Instance Creator")
+                        el-select(v-model="newInstanceDialog.userId" clearable placeholder="Choose User" filterable style="width:100%" :disabled="newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite'")
+                            el-option-group(v-if="API.currentUser" label="ME")
+                                el-option.x-friend-item(:label="API.currentUser.displayName" :value="API.currentUser.id" style="height:auto")
+                                    .avatar(:class="userStatusClass(API.currentUser)")
+                                        img(v-if="displayProfilePicOverrideAsAvatar && API.currentUser.profilePicOverride" v-lazy="API.currentUser.profilePicOverride")
+                                        img(v-else-if="displayVRCPlusIconsAsAvatar && API.currentUser.userIcon" v-lazy="API.currentUser.userIcon")
+                                        img(v-else v-lazy="API.currentUser.currentAvatarThumbnailImageUrl")
+                                    .detail
+                                        span.name(v-text="API.currentUser.displayName")
+                            el-option-group(v-if="friendsGroup0.length" label="VIP")
+                                el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                    template(v-if="friend.ref")
+                                        .avatar(:class="userStatusClass(friend.ref)")
+                                            img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                            img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
+                                            img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
+                                        .detail
+                                            span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                    span(v-else v-text="friend.id")
+                            el-option-group(v-if="friendsGroup1.length" label="ONLINE")
+                                el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                    template(v-if="friend.ref")
+                                        .avatar(:class="userStatusClass(friend.ref)")
+                                            img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                            img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
+                                            img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
+                                        .detail
+                                            span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                    span(v-else v-text="friend.id")
+                            el-option-group(v-if="friendsGroup2.length" label="ACTIVE")
+                                el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                    template(v-if="friend.ref")
+                                        .avatar
+                                            img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                            img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
+                                            img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
+                                        .detail
+                                            span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                span(v-else v-text="friend.id")
+                            el-option-group(v-if="friendsGroup2.length" label="OFFLINE")
+                                el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                    template(v-if="friend.ref")
+                                        .avatar
+                                            img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                            img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
+                                            img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
+                                        .detail
+                                            span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                span(v-else v-text="friend.id")
                     el-form-item(label="Location")
                         el-input(v-model="newInstanceDialog.location" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                     el-form-item(label="URL")
@@ -1659,156 +1730,296 @@ html
                         el-button(type="primary" size="small" style="margin-left:auto" @click="notificationPositionDialog.visible = false") OK
 
             //- dialog: Noty feed filters
-            el-dialog.x-dialog(ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="450px")
+            el-dialog.x-dialog(ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="480px")
                 div.toggle-list
                     div
                         span.toggle-name OnPlayerJoining
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupOnPlayerJoining" v-model="sharedFeedFilters.noty.OnPlayerJoining" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.OnPlayerJoining" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name OnPlayerJoined
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGroupOnPlayerJoined" v-model="sharedFeedFilters.noty.OnPlayerJoined" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.OnPlayerJoined" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name OnPlayerLeft
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGroupOnPlayerLeft" v-model="sharedFeedFilters.noty.OnPlayerLeft" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.OnPlayerLeft" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name Online
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupOnline" v-model="sharedFeedFilters.noty.Online" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.Online" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Offline
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupOffline" v-model="sharedFeedFilters.noty.Offline" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.Offline" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name GPS
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupGPS" v-model="sharedFeedFilters.noty.GPS" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.GPS" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Status
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupStatus" v-model="sharedFeedFilters.noty.Status" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.Status" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Invite
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupinvite" v-model="sharedFeedFilters.noty.invite" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.invite" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Request Invite
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGrouprequestInvite" v-model="sharedFeedFilters.noty.requestInvite" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.requestInvite" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Invite Response
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGroupinviteResponse" v-model="sharedFeedFilters.noty.inviteResponse" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.inviteResponse" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Request Invite Response
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGrouprequestInviteResponse" v-model="sharedFeedFilters.noty.requestInviteResponse" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.requestInviteResponse" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Friend Request
-                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestfriendRequest" v-model="sharedFeedFilters.noty.friendRequest" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.friendRequest" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                     div
                         span.toggle-name New Friend
-                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestFriend" v-model="sharedFeedFilters.noty.Friend" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.Friend" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                     div
                         span.toggle-name Unfriend
-                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestUnfriend" v-model="sharedFeedFilters.noty.Unfriend" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.Unfriend" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                     div
                         span.toggle-name Display Name
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGrouprequestDisplayName" v-model="sharedFeedFilters.noty.DisplayName" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.DisplayName" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Trust Level
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchNotyGrouprequestTrustLevel" v-model="sharedFeedFilters.noty.TrustLevel" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.TrustLevel" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Portal Spawn
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGrouprequestPortalSpawn" v-model="sharedFeedFilters.noty.PortalSpawn" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.PortalSpawn" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name Events
-                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestEvent" v-model="sharedFeedFilters.noty.Event" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.Event" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                     div
                         span.toggle-name Video Play
                         toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestVideoPlay" v-model="sharedFeedFilters.noty.VideoPlay" class="toggle-switch")
                     div
                         span.toggle-name Blocked Player Joins
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGrouprequestBlockedOnPlayerJoined" v-model="sharedFeedFilters.noty.BlockedOnPlayerJoined" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.BlockedOnPlayerJoined" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name Blocked Player Leaves
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGrouprequestBlockedOnPlayerLeft" v-model="sharedFeedFilters.noty.BlockedOnPlayerLeft" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.BlockedOnPlayerLeft" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name Muted Player Joins
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGrouprequestMutedOnPlayerJoined" v-model="sharedFeedFilters.noty.MutedOnPlayerJoined" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.MutedOnPlayerJoined" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name Muted Player Leaves
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchNotyGrouprequestMutedOnPlayerLeft" v-model="sharedFeedFilters.noty.MutedOnPlayerLeft" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.MutedOnPlayerLeft" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                 template(#footer)
                     el-button(type="small" @click="cancelSharedFeedFilters") Cancel
                     el-button(type="primary" size="small" style="margin-left:10px" @click="saveSharedFeedFilters") Save
                     
             //- dialog: wrist feed filters
-            el-dialog.x-dialog(ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="450px")
+            el-dialog.x-dialog(ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="480px")
                 div.toggle-list
                     div
                         span.toggle-name Self Location
-                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGroupLocation" v-model="sharedFeedFilters.wrist.Location" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Location" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                     div
                         span.toggle-name OnPlayerJoining
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupOnPlayerJoining" v-model="sharedFeedFilters.wrist.OnPlayerJoining" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.OnPlayerJoining" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name OnPlayerJoined
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGroupOnPlayerJoined" v-model="sharedFeedFilters.wrist.OnPlayerJoined" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.OnPlayerJoined" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name OnPlayerLeft
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGroupOnPlayerLeft" v-model="sharedFeedFilters.wrist.OnPlayerLeft" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.OnPlayerLeft" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name Online
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupOnline" v-model="sharedFeedFilters.wrist.Online" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Online" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Offline
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupOffline" v-model="sharedFeedFilters.wrist.Offline" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Offline" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name GPS
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupGPS" v-model="sharedFeedFilters.wrist.GPS" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.GPS" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Status
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupStatus" v-model="sharedFeedFilters.wrist.Status" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Status" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Invite
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupinvite" v-model="sharedFeedFilters.wrist.invite" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.invite" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Request Invite
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGrouprequestInvite" v-model="sharedFeedFilters.wrist.requestInvite" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.requestInvite" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Invite Response
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGroupinviteResponse" v-model="sharedFeedFilters.wrist.inviteResponse" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.inviteResponse" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Request Invite Response
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGrouprequestInviteResponse" v-model="sharedFeedFilters.wrist.requestInviteResponse" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.requestInviteResponse" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Friend Request
-                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestfriendRequest" v-model="sharedFeedFilters.wrist.friendRequest" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.friendRequest" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                     div
                         span.toggle-name New Friend
-                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestFriend" v-model="sharedFeedFilters.wrist.Friend" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Friend" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                     div
                         span.toggle-name Unfriend
-                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestUnfriend" v-model="sharedFeedFilters.wrist.Unfriend" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Unfriend" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                     div
                         span.toggle-name Display Name
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGrouprequestDisplayName" v-model="sharedFeedFilters.wrist.DisplayName" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.DisplayName" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Trust Level
-                        toggle-switch(:options="toggleSwitchOptionsFriends" group="switchWristGrouprequestTrustLevel" v-model="sharedFeedFilters.wrist.TrustLevel" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.TrustLevel" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
                     div
                         span.toggle-name Portal Spawn
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGrouprequestPortalSpawn" v-model="sharedFeedFilters.wrist.PortalSpawn" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.PortalSpawn" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name Events
-                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestEvent" v-model="sharedFeedFilters.wrist.Event" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Event" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                     div
                         span.toggle-name Video Play
                         toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestVideoPlay" v-model="sharedFeedFilters.wrist.VideoPlay" class="toggle-switch")
                     div
                         span.toggle-name Blocked Player Joins
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGrouprequestBlockedOnPlayerJoined" v-model="sharedFeedFilters.wrist.BlockedOnPlayerJoined" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.BlockedOnPlayerJoined" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name Blocked Player Leaves
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGrouprequestBlockedOnPlayerLeft" v-model="sharedFeedFilters.wrist.BlockedOnPlayerLeft" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.BlockedOnPlayerLeft" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name Muted Player Joins
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGrouprequestMutedOnPlayerJoined" v-model="sharedFeedFilters.wrist.MutedOnPlayerJoined" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.MutedOnPlayerJoined" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div
                         span.toggle-name Muted Player Leaves
-                        toggle-switch(:options="toggleSwitchOptionsEveryone" group="switchWristGrouprequestMutedOnPlayerLeft" v-model="sharedFeedFilters.wrist.MutedOnPlayerLeft" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.wrist.MutedOnPlayerLeft" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                 template(#footer)
                     el-button(type="small" @click="cancelSharedFeedFilters") Cancel
                     el-button(type="primary" size="small" @click="saveSharedFeedFilters") Save
