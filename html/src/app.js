@@ -7797,7 +7797,7 @@ speechSynthesis.getVoices();
                 TrustLevel: 'VIP',
                 PortalSpawn: 'Everyone',
                 Event: 'On',
-                VideoPlay: 'On',
+                VideoPlay: 'Off',
                 BlockedOnPlayerJoined: 'Off',
                 BlockedOnPlayerLeft: 'Off',
                 MutedOnPlayerJoined: 'Off',

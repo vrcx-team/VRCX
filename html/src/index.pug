@@ -1841,7 +1841,9 @@ html
                             el-radio-button(label="On")
                     div
                         span.toggle-name Video Play
-                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchNotyGrouprequestVideoPlay" v-model="sharedFeedFilters.noty.VideoPlay" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.VideoPlay" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                     div
                         span.toggle-name Blocked Player Joins
                         el-radio-group(v-model="sharedFeedFilters.noty.BlockedOnPlayerJoined" size="mini")
@@ -1991,7 +1993,9 @@ html
                             el-radio-button(label="On")
                     div
                         span.toggle-name Video Play
-                        toggle-switch(:options="toggleSwitchOptionsOn" group="switchWristGrouprequestVideoPlay" v-model="sharedFeedFilters.wrist.VideoPlay" class="toggle-switch")
+                        el-radio-group(v-model="sharedFeedFilters.noty.VideoPlay" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                     div
                         span.toggle-name Blocked Player Joins
                         el-radio-group(v-model="sharedFeedFilters.wrist.BlockedOnPlayerJoined" size="mini")
