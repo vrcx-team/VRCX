@@ -7655,6 +7655,7 @@ speechSynthesis.getVoices();
     $app.data.worldAutoCacheGPSFilter = configRepository.getBool('VRCX_worldAutoCacheGPSFilter');
     $app.data.autoSweepVRChatCache = configRepository.getBool('VRCX_autoSweepVRChatCache');
     $app.data.vrBackgroundEnabled = configRepository.getBool('VRCX_vrBackgroundEnabled');
+    $app.data.asideWidth = configRepository.getInt('VRCX_asidewidth');
     var saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -7774,6 +7775,10 @@ speechSynthesis.getVoices();
     if (!configRepository.getBool('VRCX_vrBackgroundEnabled')) {
         $app.data.vrBackgroundEnabled = false;
         configRepository.setBool('VRCX_vrBackgroundEnabled', $app.data.vrBackgroundEnabled);
+    }
+    if (!configRepository.getInt('VRCX_asidewidth')) {
+        $app.data.asideWidth = 236;
+        configRepository.setInt('VRCX_asidewidth', $app.data.asideWidth);
     }
     if (!configRepository.getString('sharedFeedFilters')) {
         var sharedFeedFilters = {
@@ -13110,6 +13115,11 @@ speechSynthesis.getVoices();
             return true;
         }
         return false;
+    };
+
+    $app.methods.setAsideWidth = function () {
+        document.getElementById('aside').style.width = this.asideWidth + 'px';
+        configRepository.setInt('VRCX_asidewidth', this.asideWidth);
     };
 
     $app = new Vue($app);

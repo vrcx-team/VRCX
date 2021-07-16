@@ -682,7 +682,9 @@ html
                         span.name Use a Primary Password
                         el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange" :disabled="!loginForm.savedCredentials[API.currentUser.username]")
                 div.options-container
-                    span.header Side Panel Sorting Options
+                    span.header Side Panel
+                    br
+                    span.sub-header Sorting
                     div.options-container-item
                         span.name Sort Private to bottom
                         el-switch(v-model="orderFriendsGroupPrivate")
@@ -702,9 +704,13 @@ html
                     div.options-container-item
                         span.name Offline
                         el-switch(v-model="orderFriendsGroup3" inactive-text="alphabetical" active-text="online for")
-                    div.options-container
-                        span.header Trust Rank Colors
-                        div.options-container-item
+                    br
+                    span.sub-header Width
+                    div.options-container-item
+                        el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{236: ''}" :min="141" :max="500" style="width:300px")
+                div.options-container
+                    span.header Trust Rank Colors
+                    div.options-container-item
                             div
                                 v-swatches(v-model="trustColor.untrusted" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-untrusted")
                                     span.color-picker(slot="trigger") #[i.el-icon-s-open] Visitor
@@ -881,9 +887,9 @@ html
                         el-button(@click="ossDialog = true" size="small") Open Source Software Notice
 
             //- friends
-            .x-aside-container(v-show="$refs.menu && $refs.menu.activeIndex !== 'friendsList'")
-                div(style="display:inline-block")
-                    el-select(v-model="quickSearch" clearable placeholder="Search" filterable remote :remote-method="quickSearchRemoteMethod" popper-class="x-quick-search" @change="quickSearchChange" @visible-change="quickSearchVisibleChange" style="flex:none;padding:10px;width:139px")
+            .x-aside-container(v-show="$refs.menu && $refs.menu.activeIndex !== 'friendsList'" id="aside") 
+                div(style="display:flex;align-items:baseline")
+                    el-select(v-model="quickSearch" clearable placeholder="Search" filterable remote :remote-method="quickSearchRemoteMethod" popper-class="x-quick-search" @change="quickSearchChange" @visible-change="quickSearchVisibleChange" style="flex:1;padding:10px")
                         el-option(v-for="item in quickSearchItems" :key="item.value" :value="item.value" :label="item.label")
                             .x-friend-item
                                 template(v-if="item.ref")
