@@ -903,7 +903,7 @@ html
                     el-tooltip(placement="bottom" content="Direct access ID/URL" :disabled="hideTooltips")
                         el-button(type="default" @click="promptOmniDirectDialog()" size="mini" icon="el-icon-discover" circle)
                     el-tooltip(placement="bottom" content="Refresh friends" :disabled="hideTooltips")
-                        el-button(type="default" @click="API.getCurrentUser(); API.refreshFriends()" size="mini" icon="el-icon-refresh" circle)
+                        el-button(type="default" @click="API.getCurrentUser(); API.refreshFriends()" :loading="API.isRefreshFriendsLoading" size="mini" icon="el-icon-refresh" circle style="margin-right:10px")
                 .x-friend-list(style="padding-bottom:10px")
                     .x-friend-group
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroupMe }")

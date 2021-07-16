@@ -1782,10 +1782,15 @@ speechSynthesis.getVoices();
         }
     });
 
+    API.isRefreshFriendsLoading = false;
+
     API.refreshFriends = async function () {
+        this.isRefreshFriendsLoading = true;
         var onlineFriends = await this.refreshOnlineFriends();
         var offlineFriends = await this.refreshOfflineFriends();
-        return onlineFriends.concat(offlineFriends);
+        var friends = onlineFriends.concat(offlineFriends);
+        this.isRefreshFriendsLoading = false;
+        return friends;
     };
 
     API.refreshOnlineFriends = async function () {
@@ -2238,33 +2243,24 @@ speechSynthesis.getVoices();
         }
     };
 
-    API.refreshNotifications = function () {
-        // NOTE : 캐시 때문에 after=~ 로는 갱신이 안됨. 그래서 첨부터 불러옴
-        if (this.isNotificationsLoading) {
-            return;
-        }
+    API.refreshNotifications = async function () {
         this.isNotificationsLoading = true;
         this.expireNotifications();
-        this.expireNotifications();
-        this.getNotifications({ n: 100 }).then(() => {
-            this.deleteExpiredNotifcations();
-            this.isNotificationsLoading = false;
+        var params = {
+            n: 100,
+            offset: 0
+        };
+        var count = 50; //5000 max
+        for (var i = 0; i < count; i++) {
+            var args = await this.getNotifications(params);
             $app.unseenNotifications = [];
-        });
-        // this.bulk({
-        //     fn: 'getNotifications',
-        //     N: -1,
-        //     params: {
-        //         n: 50,
-        //         offset: 0
-        //     },
-        //     done(ok) {
-        //         if (ok) {
-        //             this.deleteExpiredNotifcations();
-        //         }
-        //         this.isNotificationsLoading = false;
-        //     }
-        // });
+            params.offset += 100;
+            if (args.json.length < 100) {
+                break;
+            }
+        }
+        this.deleteExpiredNotifcations();
+        this.isNotificationsLoading = false;
     };
 
     /*
