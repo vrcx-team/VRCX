@@ -357,20 +357,26 @@ namespace VRCX
         private bool ParseLogPortalSpawn(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2021.04.06 11:25:45 Log        -  [Network Processing] RPC invoked ConfigurePortal on (Clone [1600004] Portals/PortalInternalDynamic) for Natsumi-sama
+            // 2021.07.19 04:24:28 Log        -  [Behaviour] Will execute SendRPC/AlwaysBufferOne on (Clone [100004] Portals/PortalInternalDynamic) (UnityEngine.GameObject) for Natsumi-sama: S: "ConfigurePortal" I: 7 F: 0 B: 255 (local master owner)
 
-            if (string.Compare(line, offset, "[Network Processing] RPC invoked ConfigurePortal on (Clone [", 0, 60, StringComparison.Ordinal) != 0)
+            if (string.Compare(line, offset, "[Behaviour] Will execute SendRPC/AlwaysBufferOne on (Clone [", 0, 60, StringComparison.Ordinal) != 0)
             {
                 return false;
             }
 
-            var pos = line.LastIndexOf("] Portals/PortalInternalDynamic) for ");
+            var pos = line.LastIndexOf("] Portals/PortalInternalDynamic) (UnityEngine.GameObject) for ");
             if (pos < 0)
             {
                 return false;
             }
 
-            //var portalId = line.Substring(offset + 39, pos - (offset + 39));
-            var data = line.Substring(pos + 37);
+            var endPos = line.LastIndexOf(": S: \"ConfigurePortal\"");
+            if (endPos < 0)
+            {
+                return false;
+            }
+
+            var data = line.Substring(pos + 62, endPos - (pos + 62));
 
             AppendLog(new[]
             {
