@@ -825,7 +825,8 @@ html
                     div.options-container-item
                         span.name TTS Voice
                         el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
-                            el-button(v-text="TTSvoices[notificationTTSVoice].name" size="mini" :disabled="!notificationTTS")
+                            el-button(size="mini" :disabled="!notificationTTS")
+                                span {{ TTSvoices[notificationTTSVoice].name }} #[i.el-icon-arrow-down.el-icon--right]
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")
                 div.options-container
@@ -1639,7 +1640,7 @@ html
                     el-button(type="default" :loading="VRChatCacheSizeLoading" @click="getVRChatCacheSize" size="small" icon="el-icon-refresh" circle style="margin-left:5px")
                 br
                 span Delete all cache
-                el-button(size="small" style="margin-left:5px" icon="el-icon-delete" @click="sweepVRChatCache()") Delete Cache
+                el-button(size="small" style="margin-left:5px" icon="el-icon-delete" @click="showDeleteAllVRChatCacheConfirm()") Delete Cache
                 br
                 span Delete old versions from cache
                 el-button(size="small" style="margin-left:5px" icon="el-icon-folder-delete" @click="sweepVRChatCache()") Sweep Cache
@@ -1648,13 +1649,27 @@ html
                     span(v-text="item.name" style="word-break:keep-all")
                     |:
                     el-input(v-model="VRChatConfigFile[value]" :placeholder="item.default" size="mini" :type="item.type?item.type:'text'" :min="item.min" :max="item.max")
+                div(style="margin-top:10px")
+                    span Camera Resolution
+                    br
+                    el-dropdown(@command="(command) => setVRChatCameraResolution(command)" size="small" trigger="click" style="margin-top:5px")
+                        el-button(size="small")
+                            span #[span(v-text="getVRChatCameraResolution()")] #[i.el-icon-arrow-down.el-icon--right]
+                        el-dropdown-menu(#default="dropdown")
+                            el-dropdown-item(v-for="row in VRChatResolutions" :key="row.index" v-text="row.name" :command="row")
+                div(style="margin-top:10px")
+                    span Screenshot Resolution
+                    br
+                    el-dropdown(@command="(command) => setVRChatScreenshotResolution(command)" size="small" trigger="click" style="margin-top:5px")
+                        el-button(size="small")
+                            span #[span(v-text="getVRChatScreenshotResolution()")] #[i.el-icon-arrow-down.el-icon--right]
+                        el-dropdown-menu(#default="dropdown")
+                            el-dropdown-item(v-for="row in VRChatResolutions" :key="row.index" v-text="row.name" :command="row")
                 el-checkbox(v-model="VRChatConfigFile.disableRichPresence" style="margin-top:5px;display:block") Disable Discord Rich Presence
-                el-checkbox(v-model="VRChatConfigDialog.cameraRes" style="margin-top:5px") 4K Camera
-                el-checkbox(v-model="VRChatConfigDialog.screenshotRes" style="margin-top:5px") 4K Screenshots
                 template(#footer)
                     el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')") VRChat Docs
                     el-button(size="small" @click="VRChatConfigDialog.visible = false") Cancel
-                    el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="SaveVRChatConfigFile") Save
+                    el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="saveVRChatConfigFile") Save
                     
             //- dialog: Cache Download
             el-dialog.x-dialog(ref="downloadDialog" :visible.sync="downloadDialog.visible" title="Download History" width="770px")

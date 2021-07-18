@@ -12308,11 +12308,7 @@ speechSynthesis.getVoices();
         AppApi.WriteConfigFile(json);
     };
 
-    $app.data.VRChatConfigDialog = {
-        visible: false,
-        cameraRes: false,
-        screenshotRes: false
-    };
+    $app.data.VRChatConfigDialog.visible = false;
 
     API.$on('LOGIN', function () {
         $app.VRChatConfigDialog.visible = false;
@@ -12321,39 +12317,13 @@ speechSynthesis.getVoices();
     $app.methods.showVRChatConfig = async function () {
         await this.readVRChatConfigFile();
         this.$nextTick(() => adjustDialogZ(this.$refs.VRChatConfigDialog.$el));
-        this.VRChatConfigDialog = {
-            cameraRes: false,
-            screenshotRes: false,
-            visible: true
-        }
-        if ((this.VRChatConfigFile.camera_res_height === 2160) &&
-            (this.VRChatConfigFile.camera_res_width === 3840)) {
-            this.VRChatConfigDialog.cameraRes = true;
-        }
-        if ((this.VRChatConfigFile.screenshot_res_height === 2160) &&
-            (this.VRChatConfigFile.screenshot_res_width === 3840)) {
-            this.VRChatConfigDialog.screenshotRes = true;
-        }
+        this.VRChatConfigDialog.visible = true;
         if (!this.VRChatUsedCacheSize) {
             this.getVRChatCacheSize();
         }
     };
 
-    $app.methods.SaveVRChatConfigFile = function () {
-        if (this.VRChatConfigDialog.cameraRes) {
-            this.VRChatConfigFile.camera_res_height = 2160;
-            this.VRChatConfigFile.camera_res_width = 3840;
-        } else {
-            delete this.VRChatConfigFile.camera_res_height;
-            delete this.VRChatConfigFile.camera_res_width;
-        }
-        if (this.VRChatConfigDialog.screenshotRes) {
-            this.VRChatConfigFile.screenshot_res_height = 2160;
-            this.VRChatConfigFile.screenshot_res_width = 3840;
-        } else {
-            delete this.VRChatConfigFile.screenshot_res_height;
-            delete this.VRChatConfigFile.screenshot_res_width;
-        }
+    $app.methods.saveVRChatConfigFile = function () {
         for (var item in this.VRChatConfigFile) {
             if (this.VRChatConfigFile[item] === '') {
                 delete this.VRChatConfigFile[item];
@@ -12374,6 +12344,62 @@ speechSynthesis.getVoices();
             cacheDirectory = this.VRChatConfigFile.cache_directory;
         }
         return cacheDirectory;
+    };
+
+    $app.data.VRChatResolutions = [
+        { name: '1280x720 (720p)', width: 1280, height: 720 },
+        { name: '1920x1080 (Default 1080p)', width: '', height: '' },
+        { name: '2560x1440 (2K)', width: 2560, height: 1440 },
+        { name: '3840x2160 (4K)', width: 3840, height: 2160 }
+    ];
+
+    $app.methods.getVRChatResolution = function (res) {
+        switch (res) {
+            case '1280x720':
+                return '1280x720 (720p)';
+            break;
+            case '1920x1080':
+                return '1920x1080 (1080p)';
+            break;
+            case '2560x1440':
+                return '2560x1440 (2K)';
+            break;
+            case '3840x2160':
+                return '3840x2160 (4K)';
+            break;
+            default:
+                return `${res} (Custom)`;
+        }
+    };
+
+    $app.methods.getVRChatCameraResolution = function () {
+        if ((this.VRChatConfigFile.camera_res_height) &&
+            (this.VRChatConfigFile.camera_res_width)) {
+            var res = `${this.VRChatConfigFile.camera_res_width}x${this.VRChatConfigFile.camera_res_height}`;
+            return this.getVRChatResolution(res);
+        } else {
+            return '1920x1080 (1080p)';
+        }
+    };
+
+    $app.methods.getVRChatScreenshotResolution = function () {
+        if ((this.VRChatConfigFile.screenshot_res_height) &&
+            (this.VRChatConfigFile.screenshot_res_width)) {
+            var res = `${this.VRChatConfigFile.screenshot_res_width}x${this.VRChatConfigFile.screenshot_res_height}`;
+            return this.getVRChatResolution(res);
+        } else {
+            return '1920x1080 (1080p)';
+        }
+    };
+
+    $app.methods.setVRChatCameraResolution = function (res) {
+        this.VRChatConfigFile.camera_res_height = res.height;
+        this.VRChatConfigFile.camera_res_width = res.width;
+    };
+
+    $app.methods.setVRChatScreenshotResolution = function (res) {
+        this.VRChatConfigFile.screenshot_res_height = res.height;
+        this.VRChatConfigFile.screenshot_res_width = res.width;
     };
 
     // Asset Bundle Cacher
