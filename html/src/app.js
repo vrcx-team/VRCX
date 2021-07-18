@@ -12308,7 +12308,9 @@ speechSynthesis.getVoices();
         AppApi.WriteConfigFile(json);
     };
 
-    $app.data.VRChatConfigDialog.visible = false;
+    $app.data.VRChatConfigDialog = {
+        visible: false
+    };
 
     API.$on('LOGIN', function () {
         $app.VRChatConfigDialog.visible = false;
