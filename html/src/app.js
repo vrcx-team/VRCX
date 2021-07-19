@@ -4428,18 +4428,16 @@ speechSynthesis.getVoices();
     $app.methods.playNoty = function (notyFeed) {
         var playNotificationTTS = false;
         if ((this.notificationTTS === 'Always') ||
-            ((this.notificationTTS === 'Outside VR') && ((this.isGameNoVR) || (!this.isGameRunning))) ||
             ((this.notificationTTS === 'Inside VR') && (!this.isGameNoVR) && (this.isGameRunning)) ||
             ((this.notificationTTS === 'Game Closed') && (!this.isGameRunning)) ||
-            ((this.notificationTTS === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) {
+            ((this.notificationTTS === 'Game Running') && (this.isGameRunning))) {
             playNotificationTTS = true;
         }
         var playDesktopToast = false;
         if ((this.desktopToast === 'Always') ||
-            ((this.desktopToast === 'Outside VR') && ((this.isGameNoVR) || (!this.isGameRunning))) ||
             ((this.desktopToast === 'Inside VR') && (!this.isGameNoVR) && (this.isGameRunning)) ||
             ((this.desktopToast === 'Game Closed') && (!this.isGameRunning)) ||
-            ((this.desktopToast === 'Desktop Mode') && (this.isGameNoVR) && (this.isGameRunning))) {
+            ((this.desktopToast === 'Game Running') && (this.isGameRunning))) {
             playDesktopToast = true;
         }
         var playXSNotification = false;

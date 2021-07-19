@@ -678,9 +678,6 @@ html
                     div.options-container-item
                         span.name Disable Tooltips
                         el-switch(v-model="hideTooltips")
-                    div.options-container-item
-                        span.name Use a Primary Password
-                        el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange" :disabled="!loginForm.savedCredentials[API.currentUser.username]")
                 div.options-container
                     span.header Side Panel
                     br
@@ -803,10 +800,9 @@ html
                         br
                         el-radio-group(v-model="desktopToast" size="mini")
                             el-radio-button(label="Never")
-                            el-radio-button(label="Desktop Mode")
-                            el-radio-button(label="Outside VR")
                             el-radio-button(label="Inside VR")
                             el-radio-button(label="Game Closed")
+                            el-radio-button(label="Game Running")
                             el-radio-button(label="Always")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()") Notification Filters
@@ -817,10 +813,9 @@ html
                         br
                         el-radio-group(v-model="notificationTTS" size="mini")
                             el-radio-button(label="Never")
-                            el-radio-button(label="Desktop Mode")
-                            el-radio-button(label="Outside VR")
                             el-radio-button(label="Inside VR")
                             el-radio-button(label="Game Closed")
+                            el-radio-button(label="Game Running")
                             el-radio-button(label="Always")
                     div.options-container-item
                         span.name TTS Voice
@@ -864,6 +859,9 @@ html
                         el-switch(v-model="autoSweepVRChatCache")
                 div.options-container
                     span.header Application
+                    div.options-container-item
+                        span.name Use a Primary Password
+                        el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange" :disabled="!loginForm.savedCredentials[API.currentUser.username]")
                     div.options-container-item
                         span.name Start at Windows startup
                         el-switch(v-model="isStartAtWindowsStartup")
@@ -1617,7 +1615,7 @@ html
             el-dialog.x-dialog(ref="launchOptionsDialog" :visible.sync="launchOptionsDialog.visible" title="Launch Options" width="400px")
                 div(style='font-size:12px;')
                     | These options are for advanced users only. #[br]
-                    | to change fps: --fps=&lt;N&gt; ex) #[el-tag(size="mini") --fps=144]
+                    | to change fps: --fps=&lt;N&gt; e.g.) #[el-tag(size="mini") --fps=144]
                 el-input(type="textarea" v-model="launchOptionsDialog.arguments" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
                 template(#footer)
                     div(style="display:flex")
