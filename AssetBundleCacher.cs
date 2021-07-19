@@ -105,7 +105,18 @@ namespace VRCX
                 DownloadProgress = -10;
                 return;
             }
-            if (!File.Exists(Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\UnityPlayer.dll")))
+            // upgrade from Unity 2018 to 2019
+            var UnityPlayerDll = Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\UnityPlayer.dll");
+            if (File.Exists(UnityPlayerDll))
+            {
+                FileInfo UnityPlayerDllInfo = new FileInfo(UnityPlayerDll);
+                if (UnityPlayerDllInfo.Length == 23399880 || UnityPlayerDllInfo.Length == 37697480)
+                    File.Delete(UnityPlayerDll);
+                var UnityData = Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\AssetBundleCacher_Data\\data.unity3d");
+                if (File.Exists(UnityData))
+                    File.Delete(UnityData);
+            }
+            if (!File.Exists(UnityPlayerDll))
             {
                 using (var key = Registry.ClassesRoot.OpenSubKey(@"VRChat\shell\open\command"))
                 {
