@@ -42,12 +42,9 @@ module.exports = {
             },
             {
                 test: /\.(eot|png|svg|ttf|woff)/,
-                use: {
-                    loader: 'url-loader',
-                    options: {
-                        limit: false,
-                        name: 'assets/[name].[ext]'
-                    }
+                type: 'asset',
+                generator: {
+                    filename: 'assets/[name][ext]'
                 }
             }
         ]
