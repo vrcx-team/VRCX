@@ -540,10 +540,14 @@ i.x-user-status.busy {
     font-size: 15px;
 }
 
+.toggle-list .toggle-item {
+    margin-bottom: 5px;
+}
+
 .toggle-list .toggle-name {
     display: inline-block;
     min-width: 170px;
-    padding: 2px 5px 2px 0;
+    padding-right: 5px;
     text-align: right;
 }
 

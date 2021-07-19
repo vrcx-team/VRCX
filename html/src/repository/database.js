@@ -172,13 +172,14 @@ class Database {
         var items = ['userId', 'displayName', 'trustLevel'];
         for (var line of inputData) {
             for (var item of items) {
+                var field = {};
                 if (typeof line[item] !== 'undefined') {
-                    line[item] = line[item].replace(/'/g, "\''");
+                    field[item] = line[item].replace(/'/g, "\''");
                 } else {
-                    line[item] = '';
+                    field[item] = '';
                 }
             }
-            sqlValues += `('${line.userId}', '${line.displayName}', '${line.trustLevel}'), `;
+            sqlValues += `('${field.userId}', '${field.displayName}', '${field.trustLevel}'), `;
         }
         sqlValues = sqlValues.slice(0, -2);
         sqliteService.executeNonQuery(
