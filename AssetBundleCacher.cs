@@ -33,6 +33,7 @@ namespace VRCX
         public static string DownloadTempLocation;
         public static int DownloadProgress;
         public static bool DownloadCanceled;
+        public static bool IsUpdate;
         public static string AssetId;
         public static string AssetVersion;
         public static int AssetSize;
@@ -98,7 +99,7 @@ namespace VRCX
             return -1;
         }
 
-        public void DownloadCacheFile(string cacheDir, string url, string id, int version, int sizeInBytes, string md5, string AppVersion)
+        public void DownloadCacheFile(string cacheDir, string url, string id, int version, int sizeInBytes, string md5, string AppVersion, bool IsUpdate)
         {
             if (!File.Exists(Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\AssetBundleCacher.exe")))
             {
@@ -160,6 +161,11 @@ namespace VRCX
             Directory.CreateDirectory(AssetBundleCacherTemp);
             AssetBundleCacherArgs = $@" -url ""file:\\{DownloadTempLocation}"" -id ""{id}"" -ver {version} -batchmode -path ""{AssetBundleCacherTemp}""";
             DownloadCanceled = false;
+            if (IsUpdate)
+            {
+                AssetBundleCacher.IsUpdate = true;
+                DownloadTempLocation = Path.Combine(Program.BaseDirectory, "update.zip");
+            }
             client = new WebClient();
             client.Headers.Add("user-agent", AppVersion);
             client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
@@ -216,6 +222,11 @@ namespace VRCX
                 DownloadProgress = -15;
                 return;
             }
+            if (IsUpdate)
+            {
+                DownloadProgress = -16;
+                return;
+            }
             FileInfo data = new FileInfo(DownloadTempLocation);
             if (data.Length != AssetSize)
             {
@@ -242,7 +253,6 @@ namespace VRCX
                 DownloadProgress = -13;
                 return;
             }
-
             if (DownloadCanceled)
             {
                 if (File.Exists(DownloadTempLocation))

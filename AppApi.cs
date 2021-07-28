@@ -297,6 +297,30 @@ namespace VRCX
             broadcastSocket.SendTo(byteBuffer, endPoint);
         }
 
+        public void DownloadVRCXUpdate(string url, string AppVersion)
+        {
+            var Location = Path.Combine(Program.BaseDirectory, "update.zip");
+            WebClient client = new WebClient();
+            client.Headers.Add("user-agent", AppVersion);
+            client.DownloadFile(new System.Uri(url), Location);
+        }
+
+        public void RestartApplication()
+        {
+            System.Diagnostics.Process VRCXProcess = new System.Diagnostics.Process();
+            VRCXProcess.StartInfo.FileName = Path.Combine(Program.BaseDirectory, "VRCX.exe");
+            VRCXProcess.StartInfo.UseShellExecute = false;
+            VRCXProcess.Start();
+            System.Environment.Exit(0);
+        }
+
+        public bool checkForUpdateZip()
+        {
+            if (File.Exists(Path.Combine(Program.BaseDirectory, "update.zip")))
+                return true;
+            return false;
+        }
+
         public void SetStartup(bool enabled)
         {
             try

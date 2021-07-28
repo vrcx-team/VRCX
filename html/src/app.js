@@ -3749,6 +3749,7 @@ speechSynthesis.getVoices();
             API,
             nextCurrentUserRefresh: 0,
             nextFriendsRefresh: 0,
+            nextAppUpdateCheck: 0,
             isGameRunning: false,
             isGameNoVR: false,
             appVersion,
@@ -3762,7 +3763,6 @@ speechSynthesis.getVoices();
         watch: {},
         el: '#x-app',
         mounted() {
-            this.checkAppVersion();
             API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
             API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
             this.updateLoop();
@@ -3809,35 +3809,6 @@ speechSynthesis.getVoices();
         return style;
     };
 
-    $app.methods.checkAppVersion = async function () {
-        var response = await webApiService.execute({
-            url: 'https://api.github.com/repos/pypy-vrc/VRCX/releases/latest',
-            method: 'GET',
-            headers: {
-                'User-Agent': 'VRCX'
-            }
-        });
-        var json = JSON.parse(response.data);
-        if (json === Object(json) &&
-            json.name &&
-            json.published_at) {
-            this.latestAppVersion = `${json.name} (${formatDate(json.published_at, 'YYYY-MM-DD HH24:MI:SS')})`;
-            if (json.name > this.appVersion) {
-                new Noty({
-                    type: 'info',
-                    text: `Update available!!<br>${this.latestAppVersion}`,
-                    timeout: 60000,
-                    callbacks: {
-                        onClick: () => AppApi.OpenLink('https://github.com/pypy-vrc/VRCX/releases')
-                    }
-                }).show();
-                this.notifyMenu('settings');
-            }
-        } else {
-            this.latestAppVersion = 'Error occured';
-        }
-    };
-
     $app.methods.updateLoop = function () {
         try {
             if (API.isLoggedIn === true) {
@@ -3852,6 +3823,12 @@ speechSynthesis.getVoices();
                     API.refreshFriends();
                     if (this.isGameRunning) {
                         API.refreshPlayerModerations();
+                    }
+                }
+                if (--this.nextAppUpdateCheck <= 0) {
+                    this.nextAppUpdateCheck = 43200; // 6hours
+                    if (this.autoUpdateVRCX !== 'Off') {
+                        this.checkForVRCXUpdate();
                     }
                 }
                 AppApi.CheckGameRunning().then(([isGameRunning, isGameNoVR]) => {
@@ -7652,6 +7629,8 @@ speechSynthesis.getVoices();
     $app.data.autoSweepVRChatCache = configRepository.getBool('VRCX_autoSweepVRChatCache');
     $app.data.vrBackgroundEnabled = configRepository.getBool('VRCX_vrBackgroundEnabled');
     $app.data.asideWidth = configRepository.getInt('VRCX_asidewidth');
+    $app.data.autoUpdateVRCX = configRepository.getString('VRCX_autoUpdateVRCX');
+    $app.data.branch = configRepository.getString('VRCX_branch');
     var saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -7775,6 +7754,20 @@ speechSynthesis.getVoices();
     if (!configRepository.getInt('VRCX_asidewidth')) {
         $app.data.asideWidth = 236;
         configRepository.setInt('VRCX_asidewidth', $app.data.asideWidth);
+    }
+    if (!configRepository.getString('VRCX_autoUpdateVRCX')) {
+        $app.data.autoUpdateVRCX = 'Notify';
+        configRepository.setString('VRCX_autoUpdateVRCX', $app.data.autoUpdateVRCX);
+    }
+    if (!configRepository.getString('VRCX_branch')) {
+        $app.data.branch = 'Stable';
+        if (appVersion.substring(0, 24) === 'VRCX.PyPyDance.Companion') {
+            $app.data.branch = 'Beta';
+        }
+        configRepository.setString('VRCX_branch', $app.data.branch);
+    }
+    if (!configRepository.getString('VRCX_lastVRCXVersion')) {
+        configRepository.setString('VRCX_lastVRCXVersion', appVersion);
     }
     if (!configRepository.getString('sharedFeedFilters')) {
         var sharedFeedFilters = {
@@ -12461,6 +12454,12 @@ speechSynthesis.getVoices();
         var { ref, type } = this.downloadCurrent;
         this.downloadQueue.delete(ref.id);
         this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
+        if (this.downloadCurrent.id === 'VRCXUpdate') {
+            var url = this.downloadCurrent.updateZipUrl;
+            await AssetBundleCacher.DownloadCacheFile('', url, '', 0, 0, '', appVersion, true);
+            this.downloadVRChatCacheProgress();
+            return;
+        }
         var assetUrl = '';
         for (var i = ref.unityPackages.length - 1; i > -1; i--) {
             var unityPackage = ref.unityPackages[i];
@@ -12512,7 +12511,7 @@ speechSynthesis.getVoices();
         }
         var { url, md5, sizeInBytes } = file;
         var cacheDir = await this.getVRChatCacheDir();
-        await AssetBundleCacher.DownloadCacheFile(cacheDir, url, ref.id, ref.version, sizeInBytes, md5, appVersion);
+        await AssetBundleCacher.DownloadCacheFile(cacheDir, url, ref.id, ref.version, sizeInBytes, md5, appVersion, false);
         this.downloadVRChatCacheProgress();
     };
 
@@ -12628,7 +12627,7 @@ speechSynthesis.getVoices();
                 if (this.worldDialog.id === this.downloadCurrent.id) {
                     this.updateVRChatCache();
                 }
-                if (this.downloadCurrent.type === 'manual') {
+                if (this.downloadCurrent.type === 'Manual') {
                     this.$message({
                         message: 'World cache complete',
                         type: 'success'
@@ -12681,7 +12680,7 @@ speechSynthesis.getVoices();
                 if (this.worldDialog.id === this.downloadCurrent.id) {
                     this.updateVRChatCache();
                 }
-                if (this.downloadCurrent.type === 'manual') {
+                if (this.downloadCurrent.type === 'Manual') {
                     this.$message({
                         message: 'File already in cache',
                         type: 'warning'
@@ -12729,6 +12728,21 @@ speechSynthesis.getVoices();
                 this.downloadCurrent.status = 'Download failed';
                 this.downloadCurrent.date = Date.now();
                 this.downloadHistoryTable.data.unshift(this.downloadCurrent);
+                this.downloadCurrent = {};
+                this.downloadProgress = 0;
+                this.downloadInProgress = false;
+                this.downloadVRChatCache();
+                return;
+            case -16:
+                this.downloadCurrent.status = 'Success';
+                this.downloadCurrent.date = Date.now();
+                this.downloadHistoryTable.data.unshift(this.downloadCurrent);
+                if (this.downloadCurrent.autoInstall) {
+                    this.restartVRCX();
+                } else {
+                    this.downloadDialog.visible = false;
+                    this.showVRCXUpdateDialog();
+                }
                 this.downloadCurrent = {};
                 this.downloadProgress = 0;
                 this.downloadInProgress = false;
@@ -13144,6 +13158,130 @@ speechSynthesis.getVoices();
     $app.methods.setAsideWidth = function () {
         document.getElementById('aside').style.width = this.asideWidth + 'px';
         configRepository.setInt('VRCX_asidewidth', this.asideWidth);
+    };
+
+    // VRCX auto update
+
+    $app.data.VRCXUpdateDialog = {
+        visible: false,
+        updatePending: false,
+        release: '',
+        releases: []
+    };
+
+    $app.data.checkingForVRCXUpdate = false;
+
+    $app.data.branches = {
+        Stable: { name: 'Stable', urlReleases: 'https://api.github.com/repos/pypy-vrc/VRCX/releases', urlLatest: 'https://api.github.com/repos/pypy-vrc/VRCX/releases/latest' },
+        Beta: { name: 'Beta', urlReleases: 'https://api.github.com/repos/natsumi-sama/VRCX/releases', urlLatest: 'https://api.github.com/repos/natsumi-sama/VRCX/releases/latest' }
+    };
+
+    $app.methods.showVRCXUpdateDialog = async function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.VRCXUpdateDialog.$el));
+        var D = this.VRCXUpdateDialog;
+        D.visible = true;
+        D.updatePending = await AppApi.checkForUpdateZip();
+        this.loadBranchVersions();
+    };
+
+    $app.methods.downloadVRCXUpdate = function (updateZipUrl, name, type, autoInstall) {
+        var ref = {
+            id: 'VRCXUpdate',
+            name
+        };
+        this.downloadQueue.set('VRCXUpdate', { ref, type, updateZipUrl, autoInstall });
+        this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
+        if (!this.downloadInProgress) {
+            this.downloadVRChatCache();
+        }
+    };
+
+    $app.methods.installVRCXUpdate = function () {
+        for (var release of this.VRCXUpdateDialog.releases) {
+            if (release.name === this.VRCXUpdateDialog.release) {
+                var downloadUrl = release.assets[0].browser_download_url;
+                var name = release.name;
+                var type = 'Manual';
+                var autoInstall = false;
+                this.downloadVRCXUpdate(downloadUrl, name, type, autoInstall);
+                this.VRCXUpdateDialog.visible = false;
+                this.showDownloadDialog();
+            }
+        }
+    };
+
+    $app.methods.restartVRCX = function () {
+        AppApi.RestartApplication();
+    };
+
+    $app.methods.loadBranchVersions = async function () {
+        var D = this.VRCXUpdateDialog;
+        var url = this.branches[this.branch].urlReleases;
+        this.checkingForVRCXUpdate = true;
+        var response = await webApiService.execute({
+            url,
+            method: 'GET',
+            headers: {
+                'User-Agent': appVersion
+            }
+        });
+        this.checkingForVRCXUpdate = false;
+        var json = JSON.parse(response.data);
+        D.releases = json;
+        D.release = json[0].name;
+        if (configRepository.getString('VRCX_branch') !== this.branch) {
+            configRepository.setString('VRCX_branch', this.branch);
+        }
+    };
+
+    $app.methods.saveAutoUpdateVRCX = function () {
+        configRepository.setString('VRCX_autoUpdateVRCX', this.autoUpdateVRCX);
+    };
+
+    $app.methods.checkForVRCXUpdate = async function () {
+        if (await AppApi.checkForUpdateZip()) {
+            return;
+        }
+        var url = this.branches[this.branch].urlLatest;
+        this.checkingForVRCXUpdate = true;
+        var response = await webApiService.execute({
+            url,
+            method: 'GET',
+            headers: {
+                'User-Agent': appVersion
+            }
+        });
+        this.checkingForVRCXUpdate = false;
+        var json = JSON.parse(response.data);
+        if (json === Object(json) &&
+            json.name &&
+            json.published_at) {
+            this.latestAppVersion = `${json.name} (${formatDate(json.published_at, 'YYYY-MM-DD HH24:MI:SS')})`;
+            if (json.name > this.appVersion) {
+                if ((json.assets[0].content_type !== 'application/x-zip-compressed') || (json.assets[0].state !== 'uploaded')) {
+                    return;
+                }
+                this.notifyMenu('settings');
+                var downloadUrl = json.assets[0].browser_download_url;
+                var name = json.name;
+                var type = 'Auto';
+                if (this.autoUpdateVRCX === 'Notify') {
+                    this.showVRCXUpdateDialog();
+                } else if (this.autoUpdateVRCX === 'Auto Download') {
+                    if (downloadUrl) {
+                        var autoInstall = false;
+                        this.downloadVRCXUpdate(downloadUrl, name, type, autoInstall);
+                    }
+                } else if (this.autoUpdateVRCX === 'Auto Install') {
+                    if (downloadUrl) {
+                        var autoInstall = true;
+                        this.downloadVRCXUpdate(downloadUrl, name, type, autoInstall);
+                    }
+                }
+            }
+        } else {
+            this.latestAppVersion = 'Error occured';
+        }
     };
 
     $app = new Vue($app);

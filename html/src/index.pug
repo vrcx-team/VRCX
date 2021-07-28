@@ -652,7 +652,7 @@ html
                             .detail
                                 span.name Version
                                 span.extra(v-text="appVersion")
-                        .x-friend-item(@click="checkAppVersion()")
+                        .x-friend-item(style="cursor:default")
                             .detail
                                 span.name Latest Version
                                 span.extra(v-if="latestAppVersion" v-text="latestAppVersion")
@@ -661,6 +661,18 @@ html
                             .detail
                                 span.name Repository URL
                                 span.extra https://github.com/pypy-vrc/VRCX
+                div.options-container
+                    span.sub-header VRCX Updater
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") Check for update
+                    div.options-container-item
+                        span.name Auto update:
+                        br
+                        el-radio-group(v-model="autoUpdateVRCX" @change="saveAutoUpdateVRCX" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="Notify")
+                            el-radio-button(label="Auto Download")
+                            el-radio-button(label="Auto Install")
                 div.options-container
                     span.header Appearance
                     div.options-container-item
@@ -1678,7 +1690,7 @@ html
                 template(v-if="downloadQueueTable.data.length >= 1")
                     span(style="margin-top:15px") Queue:
                     data-tables(v-bind="downloadQueueTable" style="margin-top:10px")
-                        el-table-column(label="World Name" prop="name")
+                        el-table-column(label="Name" prop="name")
                             template(v-once #default="scope")
                                 span.x-link(v-text="scope.row.ref.name" @click="showWorldDialog(scope.row.location)")
                         el-table-column(label="User Name" prop="name" width="150")
@@ -1693,9 +1705,12 @@ html
                     el-table-column(label="Time" prop="date" width="90")
                         template(v-once #default="scope")
                             timer(:epoch="scope.row.date")
-                    el-table-column(label="World Name" prop="name")
+                    el-table-column(label="Name" prop="name")
                         template(v-once #default="scope")
-                            span.x-link(v-text="scope.row.ref.name" @click="showWorldDialog(scope.row.location)")
+                            template(v-if="scope.row.ref.id === 'VRCXUpdate'")
+                                el-button(size="small" @click="showVRCXUpdateDialog") VRCX Update
+                            template(v-else)
+                                span.x-link(v-text="scope.row.ref.name" @click="showWorldDialog(scope.row.location)")
                     el-table-column(label="User Name" prop="name" width="150")
                         template(v-once #default="scope")
                             span.x-link(v-text="getDisplayName(scope.row.userId)" @click="showUserDialog(scope.row.userId)")
@@ -1704,6 +1719,20 @@ html
                 template(#footer)
                     el-button(v-if="downloadQueue.size >= 1" size="small" @click="cancelAllVRChatCacheDownload") Cancel All
                     el-button(size="small" @click="downloadDialog.visible = false") Close
+                    
+            //- dialog: update VRCX
+            el-dialog.x-dialog(ref="VRCXUpdateDialog" :visible.sync="VRCXUpdateDialog.visible" title="VRCX Updater" width="400px")
+                div(v-loading="checkingForVRCXUpdate" style="margin-top:15px")  
+                    template(v-if="VRCXUpdateDialog.updatePending")
+                        span Update ready for install, restart VRCX to apply.
+                    template(v-else)
+                        el-select(v-model="branch" @change="loadBranchVersions" style="display:inline-block;width:150px;margin-right:15px")
+                            el-option(v-once v-for="branch in branches" :key="branch.name" :label="branch.name" :value="branch.name")
+                        el-select(v-model="VRCXUpdateDialog.release" style="display:inline-block;width:150px")
+                            el-option(v-for="item in VRCXUpdateDialog.releases" :key="item.name" :label="item.tag_name" :value="item.name")
+                template(#footer)
+                    el-button(v-if="!VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release !== appVersion" type="primary" size="small" @click="installVRCXUpdate") Download
+                    el-button(v-if="VRCXUpdateDialog.updatePending" type="primary" size="small" @click="restartVRCX") Install
 
             //- dialog: launch
             el-dialog.x-dialog(ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="400px")
