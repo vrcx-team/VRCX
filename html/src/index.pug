@@ -37,7 +37,7 @@ html
                             el-form-item(label="Password" prop="password" required)
                                 el-input(type="password" v-model="loginForm.password" name="password" placeholder="Password" clearable show-password)
                             el-checkbox(v-model="loginForm.saveCredentials") Save Credentials
-                            el-form-item(style="margin-top:35px")
+                            el-form-item(style="margin-top:15px")
                                 el-button(native-type="submit" type="primary" :loading="loginForm.loading" style="width:100%") Login
                             el-form-item
                                 el-button(:loading="loginForm.loading" style="width:100%" @click="loginWithSteam()") Login with Steam
@@ -1647,7 +1647,7 @@ html
                     span(v-text="item.name" style="word-break:keep-all")
                     |:
                     el-input(v-model="VRChatConfigFile[value]" :placeholder="item.default" size="mini" :type="item.type?item.type:'text'" :min="item.min" :max="item.max")
-                div(style="margin-top:10px")
+                div(style="display:inline-block;margin-top:10px")
                     span Camera Resolution
                     br
                     el-dropdown(@command="(command) => setVRChatCameraResolution(command)" size="small" trigger="click" style="margin-top:5px")
@@ -1655,7 +1655,7 @@ html
                             span #[span(v-text="getVRChatCameraResolution()")] #[i.el-icon-arrow-down.el-icon--right]
                         el-dropdown-menu(#default="dropdown")
                             el-dropdown-item(v-for="row in VRChatResolutions" :key="row.index" v-text="row.name" :command="row")
-                div(style="margin-top:10px")
+                div(style="display:inline-block;margin-top:10px;margin-left:10px")
                     span Screenshot Resolution
                     br
                     el-dropdown(@command="(command) => setVRChatScreenshotResolution(command)" size="small" trigger="click" style="margin-top:5px")

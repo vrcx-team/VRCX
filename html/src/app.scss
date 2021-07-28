@@ -577,6 +577,13 @@ i.x-user-status.busy {
     border-color: #e6a23c !important;
 }
 
+.avatar-info {
+    cursor: pointer;
+    width: fit-content;
+    display: inline-block;
+    vertical-align: top;
+}
+
 .avatar-info-own {
     display: inline-block;
     color: #e6a23c;

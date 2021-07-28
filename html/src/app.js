@@ -403,7 +403,7 @@ speechSynthesis.getVoices();
             if (response.status === 200) {
                 this.$throw(0, 'Invalid JSON response');
             }
-            this.$throw(response.status);
+            this.$throw(response.status, endpoint);
             return {};
         }).then(({ data, status }) => {
             if (status === 200) {
@@ -846,7 +846,7 @@ speechSynthesis.getVoices();
     });
 
     Vue.component('avatar-info', {
-        template: '<div @click="confirm" style="cursor:pointer;width:fit-content;display:inline-block;vertical-align:top"><span style="display:inline-block;margin-right:5px">{{ avatarName }}</span><span :class="color">{{ avatarType }}</span></div>',
+        template: '<div @click="confirm" class="avatar-info"><span style="display:inline-block;margin-right:5px">{{ avatarName }}</span><span :class="color">{{ avatarType }}</span></div>',
         props: {
             imageurl: String,
             userid: String,
@@ -5139,6 +5139,9 @@ speechSynthesis.getVoices();
     };
 
     API.$on('AUTOLOGIN', function () {
+        if ($app.enablePrimaryPassword) {
+            return;
+        }
         var user = $app.loginForm.savedCredentials[$app.loginForm.lastUserLoggedIn];
         if (typeof user !== 'undefined') {
             $app.relogin({
@@ -12426,7 +12429,7 @@ speechSynthesis.getVoices();
     $app.methods.queueCacheDownload = function (ref, type) {
         if (!this.downloadQueue.has(ref.id)) {
             var date = new Date().toJSON();
-            var userId = API.currentUser.id;
+            var userId = '';
             var location = ref.id;
             this.downloadQueue.set(ref.id, {ref, type, date, userId, location});
             this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
