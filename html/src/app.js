@@ -7187,7 +7187,6 @@ speechSynthesis.getVoices();
             };
             this.friendLogTable.data.push(friendLogHistory);
             database.addFriendLogHistory(friendLogHistory);
-
             var friendLogCurrent = {
                 userId: id,
                 displayName: ctx.displayName,
@@ -7195,8 +7194,8 @@ speechSynthesis.getVoices();
             };
             this.friendLog.set(id, friendLogCurrent);
             database.setFriendLogCurrent(friendLogCurrent);
+            this.notifyMenu('friendLog');
         }
-        this.notifyMenu('friendLog');
     };
 
     $app.methods.deleteFriendship = function (id) {
@@ -7287,9 +7286,9 @@ speechSynthesis.getVoices();
                 };
                 this.friendLog.set(ref.id, friendLogCurrent);
                 database.setFriendLogCurrent(friendLogCurrent);
+                this.notifyMenu('friendLog');
             }
             ctx.trustLevel = ref.$trustLevel;
-            this.notifyMenu('friendLog');
         }
     };
 
