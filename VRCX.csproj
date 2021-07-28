@@ -199,7 +199,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(ProjectDir)OpenVR\win64\openvr_api.dll" .
+    <PostBuildEvent>xcopy /y "$(ProjectDir)VRChatRPC\VRChatRPC.dll" .
+xcopy /y "$(ProjectDir)OpenVR\win64\openvr_api.dll" .
 xcopy /y /E "$(ProjectDir)AssetBundleCacher" ".\AssetBundleCacher\"</PostBuildEvent>
   </PropertyGroup>
 </Project>
