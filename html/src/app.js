@@ -5308,6 +5308,7 @@ speechSynthesis.getVoices();
     $app.data.orderFriendsGroup2 = configRepository.getBool('orderFriendGroup2');
     $app.data.orderFriendsGroup3 = configRepository.getBool('orderFriendGroup3');
     $app.data.orderFriendsGroupPrivate = configRepository.getBool('orderFriendGroupPrivate');
+    $app.data.orderFriendsGroupStatus = configRepository.getBool('orderFriendGroupPrivate');
     $app.data.orderFriendsGroupGPS = configRepository.getBool('orderFriendGroupGPS');
     var saveOrderFriendGroup = function () {
         configRepository.setBool('orderFriendGroup0', this.orderFriendsGroup0);
@@ -5315,6 +5316,7 @@ speechSynthesis.getVoices();
         configRepository.setBool('orderFriendGroup2', this.orderFriendsGroup2);
         configRepository.setBool('orderFriendGroup3', this.orderFriendsGroup3);
         configRepository.setBool('orderFriendGroupPrivate', this.orderFriendsGroupPrivate);
+        configRepository.setBool('orderFriendsGroupStatus', this.orderFriendsGroupStatus);
         configRepository.setBool('orderFriendGroupGPS', this.orderFriendsGroupGPS);
         this.sortFriendsGroup0 = true;
         this.sortFriendsGroup1 = true;
@@ -5324,6 +5326,7 @@ speechSynthesis.getVoices();
     $app.watch.orderFriendsGroup2 = saveOrderFriendGroup;
     $app.watch.orderFriendsGroup3 = saveOrderFriendGroup;
     $app.watch.orderFriendsGroupPrivate = saveOrderFriendGroup;
+    $app.watch.orderFriendsGroupStatus = saveOrderFriendGroup;
     $app.watch.orderFriendsGroupGPS = saveOrderFriendGroup;
 
     $app.methods.fetchActiveFriend = function (userId) {
@@ -5811,6 +5814,62 @@ speechSynthesis.getVoices();
         return 0;
     };
 
+    // status
+    var compareByStatus = function (a, b) {
+        if ((typeof a.ref === 'undefined') || (typeof b.ref === 'undefined')) {
+            return 0;
+        }
+        if (($app.orderFriendsGroupPrivate) && ((a.ref.location !== 'private') || (b.ref.location !== 'private'))) {
+            return 0;
+        }
+        if (a.ref.status === b.ref.status) {
+            return 0;
+        }
+        switch (b.ref.status) {
+            case 'join me':
+                switch (a.ref.status) {
+                    case 'active':
+                        return 1;
+                    case 'ask me':
+                        return 1;
+                    case 'busy':
+                        return 1;
+                }
+                break;
+            case 'active':
+                switch (a.ref.status) {
+                    case 'join me':
+                        return -1;
+                    case 'ask me':
+                        return 1;
+                    case 'busy':
+                        return 1;
+                }
+                break;
+            case 'ask me':
+                switch (a.ref.status) {
+                    case 'join me':
+                        return -1;
+                    case 'active':
+                        return -1;
+                    case 'busy':
+                        return 1;
+                }
+                break;
+            case 'busy':
+                switch (a.ref.status) {
+                    case 'join me':
+                        return -1;
+                    case 'active':
+                        return -1;
+                    case 'ask me':
+                        return -1;
+                }
+                break;
+        }
+        return 0;
+    };
+
     // location at
     var compareByLocationAt = function (a, b) {
         if (a.$location_at < b.$location_at) {
@@ -5828,6 +5887,9 @@ speechSynthesis.getVoices();
             if (this.orderFriendsGroupPrivate) {
                 this.friendsGroupA_.sort(compareByPrivate);
             }
+            if (this.orderFriendsGroupStatus) {
+                this.friendsGroupA_.sort(compareByStatus);
+            }
             return this.friendsGroupA_;
         }
         if (this.sortFriendsGroup0) {
@@ -5835,6 +5897,9 @@ speechSynthesis.getVoices();
             this.friendsGroup0_.sort(compareByName);
             if (this.orderFriendsGroupPrivate) {
                 this.friendsGroup0_.sort(compareByPrivate);
+            }
+            if (this.orderFriendsGroupStatus) {
+                this.friendsGroup0_.sort(compareByStatus);
             }
         }
         return this.friendsGroup0_;
@@ -5846,6 +5911,9 @@ speechSynthesis.getVoices();
             if (this.orderFriendsGroupPrivate) {
                 this.friendsGroupB_.sort(compareByPrivate);
             }
+            if (this.orderFriendsGroupStatus) {
+                this.friendsGroupB_.sort(compareByStatus);
+            }
             return this.friendsGroupB_;
         }
         if (this.sortFriendsGroup1) {
@@ -5853,6 +5921,9 @@ speechSynthesis.getVoices();
             this.friendsGroup1_.sort(compareByName);
             if (this.orderFriendsGroupPrivate) {
                 this.friendsGroup1_.sort(compareByPrivate);
+            }
+            if (this.orderFriendsGroupStatus) {
+                this.friendsGroup1_.sort(compareByStatus);
             }
         }
         return this.friendsGroup1_;
