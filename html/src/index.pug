@@ -1725,7 +1725,9 @@ html
                     
             //- dialog: update VRCX
             el-dialog.x-dialog(ref="VRCXUpdateDialog" :visible.sync="VRCXUpdateDialog.visible" title="VRCX Updater" width="400px")
-                div(v-loading="checkingForVRCXUpdate" style="margin-top:15px")  
+                div(v-loading="checkingForVRCXUpdate" style="margin-top:15px")
+                    template(v-if="!VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release === appVersion")
+                        span VRCX is up to date.
                     template(v-if="VRCXUpdateDialog.updatePending")
                         span Update ready for install, restart VRCX to apply.
                     template(v-else)
