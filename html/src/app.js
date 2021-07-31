@@ -3536,17 +3536,15 @@ speechSynthesis.getVoices();
                         json.content = JSON.parse(json.content);
                     } catch (err) {
                     }
-                    if ($app.debugWebSocket) {
-                        var displayName = '';
-                        if (this.cachedUsers.has(json.content.userId)) {
-                            var user = this.cachedUsers.get(json.content.userId);
-                            displayName = user.displayName;
-                        }
-                        console.log('WebSocket', json.type, displayName, json.content);
-                    }
                     this.$emit('PIPELINE', {
                         json
                     });
+                    if (($app.debugWebSocket) && (json.content) && (this.cachedUsers.has(json.content.userId))) {
+                        var displayName = '';
+                        var user = this.cachedUsers.get(json.content.userId);
+                        displayName = user.displayName;
+                        console.log('WebSocket', json.type, displayName, json.content);
+                    }
                 } catch (err) {
                     console.error(err);
                 }
@@ -5825,9 +5823,16 @@ speechSynthesis.getVoices();
         if (a.ref.status === b.ref.status) {
             return 0;
         }
-        switch (b.ref.status) {
+        if (a.ref.state === 'offline') {
+            return 1;
+        }
+        return $app.sortStatus(a.ref.status, b.ref.status);
+    };
+
+    $app.methods.sortStatus = function (a, b) {
+        switch (b) {
             case 'join me':
-                switch (a.ref.status) {
+                switch (a) {
                     case 'active':
                         return 1;
                     case 'ask me':
@@ -5837,7 +5842,7 @@ speechSynthesis.getVoices();
                 }
                 break;
             case 'active':
-                switch (a.ref.status) {
+                switch (a) {
                     case 'join me':
                         return -1;
                     case 'ask me':
@@ -5847,7 +5852,7 @@ speechSynthesis.getVoices();
                 }
                 break;
             case 'ask me':
-                switch (a.ref.status) {
+                switch (a) {
                     case 'join me':
                         return -1;
                     case 'active':
@@ -5857,7 +5862,7 @@ speechSynthesis.getVoices();
                 }
                 break;
             case 'busy':
-                switch (a.ref.status) {
+                switch (a) {
                     case 'join me':
                         return -1;
                     case 'active':
@@ -5866,8 +5871,10 @@ speechSynthesis.getVoices();
                         return -1;
                 }
                 break;
+            default:
+                return 0;
+                break;
         }
-        return 0;
     };
 
     // location at
