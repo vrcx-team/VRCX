@@ -8089,6 +8089,12 @@ speechSynthesis.getVoices();
         this.notificationTTSVoice = index;
         configRepository.setString('VRCX_notificationTTSVoice', this.notificationTTSVoice);
         var voices = speechSynthesis.getVoices();
+		if (voices.length === 0) {
+			return;
+		}
+        if (index > voices.length) {
+			index = 0;
+        }
         var voiceName = voices[index].name;
         speechSynthesis.cancel();
         this.speak(voiceName);

@@ -119,28 +119,20 @@ namespace VRCX
             }
             if (!File.Exists(UnityPlayerDll))
             {
-                using (var key = Registry.ClassesRoot.OpenSubKey(@"VRChat\shell\open\command"))
+                try
                 {
-                    // "C:\Program Files (x86)\Steam\steamapps\common\VRChat\launch.exe" "%1" %*
-                    var match = Regex.Match(key.GetValue(string.Empty) as string, "(?!\")(.+?\\\\VRChat.*)(!?\\\\launch.exe\")");
-                    if (match.Success == true)
+                    using (var key = Registry.ClassesRoot.OpenSubKey(@"VRChat\shell\open\command"))
                     {
+                        // "C:\Program Files (x86)\Steam\steamapps\common\VRChat\launch.exe" "%1" %*
+                        var match = Regex.Match(key.GetValue(string.Empty) as string, "(?!\")(.+?\\\\VRChat.*)(!?\\\\launch.exe\")");
                         var fileLocation = Path.Combine(match.Groups[1].Value, "UnityPlayer.dll");
-                        if (File.Exists(fileLocation))
-                        {
-                            File.Copy(fileLocation, Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\UnityPlayer.dll"));
-                        }
-                        else
-                        {
-                            DownloadProgress = -11;
-                            return;
-                        }
+                        File.Copy(fileLocation, Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\UnityPlayer.dll"));
                     }
-                    else
-                    {
-                        DownloadProgress = -11;
-                        return;
-                    }
+                }
+                catch
+                {
+                    DownloadProgress = -11;
+                    return;
                 }
             }
             DownloadProgress = 0;
