@@ -18,8 +18,8 @@ namespace VRCX
         {
             var cefSettings = new CefSettings
             {
-                CachePath = Path.Combine(Program.BaseDirectory, "cache"),
-                UserDataPath = Path.Combine(Program.BaseDirectory, "userdata"),
+                CachePath = Path.Combine(Program.AppDataDirectory, "cache"),
+                UserDataPath = Path.Combine(Program.AppDataDirectory, "userdata"),
                 IgnoreCertificateErrors = true,
                 LogSeverity = LogSeverity.Disable,
                 WindowlessRenderingEnabled = true,

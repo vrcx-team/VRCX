@@ -231,7 +231,7 @@ namespace VRCX
 
         public void CacheImage(string Base64File)
         {
-            String Icon = Path.Combine(Program.BaseDirectory, "cache\\toast");
+            String Icon = Path.Combine(Program.AppDataDirectory, "cache\\toast");
             File.WriteAllBytes(Icon, Convert.FromBase64String(Base64File));
         }
 
@@ -242,7 +242,7 @@ namespace VRCX
             String imagePath = Path.Combine(Program.BaseDirectory, "VRCX.ico");
             if (Image)
             {
-                imagePath = Path.Combine(Program.BaseDirectory, "cache\\toast");
+                imagePath = Path.Combine(Program.AppDataDirectory, "cache\\toast");
             }
             stringElements[0].AppendChild(toastXml.CreateTextNode(BoldText));
             stringElements[1].AppendChild(toastXml.CreateTextNode(Text));
@@ -275,7 +275,7 @@ namespace VRCX
             if (Image)
             {
                 UseBase64Icon = false;
-                Icon = Path.Combine(Program.BaseDirectory, "cache\\toast");
+                Icon = Path.Combine(Program.AppDataDirectory, "cache\\toast");
             }
 
             IPAddress broadcastIP = IPAddress.Parse("127.0.0.1");

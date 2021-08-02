@@ -1,4 +1,4 @@
-﻿using CefSharp;
+using CefSharp;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -22,7 +22,7 @@ namespace VRCX
         {
             m_ConnectionLock = new ReaderWriterLockSlim();
 
-            var dataSource = Path.Combine(Program.BaseDirectory, "VRCX.sqlite3");
+            var dataSource = Path.Combine(Program.AppDataDirectory, "VRCX.sqlite3");
             m_Connection = new SQLiteConnection($"Data Source=\"{dataSource}\";Version=3;PRAGMA locking_mode=NORMAL;PRAGMA busy_timeout=5000", true);
         }
 
