@@ -168,12 +168,15 @@ class Database {
     }
 
     setFriendLogCurrentArray(inputData) {
+        if (inputData.length === 0) {
+            return;
+        }
         var sqlValues = '';
         var items = ['userId', 'displayName', 'trustLevel'];
         for (var line of inputData) {
+            var field = {};
             for (var item of items) {
-                var field = {};
-                if (typeof line[item] !== 'undefined') {
+                if (typeof line[item] === 'string') {
                     field[item] = line[item].replace(/'/g, "\''");
                 } else {
                     field[item] = '';
@@ -233,6 +236,9 @@ class Database {
     }
 
     addFriendLogHistoryArray(inputData) {
+        if (inputData.length === 0) {
+            return;
+        }
         var sqlValues = '';
         var items = ['created_at', 'type', 'userId', 'displayName', 'previousDisplayName', 'trustLevel', 'previousTrustLevel'];
         for (var i = 0; i < inputData.length; ++i) {
@@ -241,7 +247,7 @@ class Database {
             for (var k = 0; k < items.length; ++k) {
                 var item = items[k];
                 var field = '';
-                if (typeof line[item] !== 'undefined') {
+                if (typeof line[item] === 'string') {
                     field = `'${line[item].replace(/'/g, "\''")}'`;
                 } else {
                     field = null;

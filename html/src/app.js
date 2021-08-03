@@ -6181,7 +6181,7 @@ speechSynthesis.getVoices();
         if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
             $app.getFriendLog();
         } else {
-            $app.initFriendLog();
+            $app.initFriendLog(args.json.id);
         }
         //remove old data from json file and migrate to SQLite
         if (VRCXStorage.Get(`${args.json.id}_friendLogUpdatedAt`)) {
@@ -7161,14 +7161,7 @@ speechSynthesis.getVoices();
 
     $app.data.friendLogInitStatus = false;
 
-    $app.methods.initFriendLog = async function () {
-        if (this.friendLogInitStatus) {
-            return;
-        }
-        if (configRepository.getBool(`friendLogInit_${API.currentUser.id}`)) {
-            this.friendLogInitStatus = true;
-            return;
-        }
+    $app.methods.initFriendLog = async function (userId) {
         var sqlValues = [];
         var friends = await API.refreshFriends();
         for (var friend of friends) {
@@ -7182,32 +7175,17 @@ speechSynthesis.getVoices();
             sqlValues.unshift(row);
         }
         database.setFriendLogCurrentArray(sqlValues);
-        configRepository.setBool(`friendLogInit_${API.currentUser.id}`, true);
+        configRepository.setBool(`friendLogInit_${userId}`, true);
         this.friendLogInitStatus = true;
     };
 
     $app.methods.migrateFriendLog = function (userId) {
         VRCXStorage.Remove(`${userId}_friendLogUpdatedAt`);
-        this.friendLog = new Map();
-        var oldFriendLog = VRCXStorage.GetObject(`${userId}_friendLog`);
-        var friendLogCurrentValues = [];
-        for (var i in oldFriendLog) {
-            var friend = oldFriendLog[i];
-            var row = {
-                userId: friend.id,
-                displayName: friend.displayName,
-                trustLevel: friend.trustLevel
-            };
-            this.friendLog.set(friend.id, row);
-            friendLogCurrentValues.unshift(row);
-        }
-        database.setFriendLogCurrentArray(friendLogCurrentValues);
         VRCXStorage.Remove(`${userId}_friendLog`);
         this.friendLogTable.data = VRCXStorage.GetArray(`${userId}_friendLogTable`);
         database.addFriendLogHistoryArray(this.friendLogTable.data);
         VRCXStorage.Remove(`${userId}_friendLogTable`);
-        configRepository.setBool(`friendLogInit_${API.currentUser.id}`, true);
-        this.friendLogInitStatus = true;
+        configRepository.setBool(`friendLogInit_${userId}`, true);
     };
 
     $app.methods.getFriendLog = async function () {
