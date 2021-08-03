@@ -156,7 +156,7 @@ namespace VRCX
             if (IsUpdate)
             {
                 AssetBundleCacher.IsUpdate = true;
-                DownloadTempLocation = Path.Combine(Program.BaseDirectory, "update.zip");
+                DownloadTempLocation = Path.Combine(Program.AppDataDirectory, "update.exe");
             }
             client = new WebClient();
             client.Headers.Add("user-agent", AppVersion);

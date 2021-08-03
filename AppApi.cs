@@ -299,7 +299,7 @@ namespace VRCX
 
         public void DownloadVRCXUpdate(string url, string AppVersion)
         {
-            var Location = Path.Combine(Program.BaseDirectory, "update.zip");
+            var Location = Path.Combine(Program.AppDataDirectory, "update.exe");
             WebClient client = new WebClient();
             client.Headers.Add("user-agent", AppVersion);
             client.DownloadFile(new System.Uri(url), Location);
@@ -316,7 +316,7 @@ namespace VRCX
 
         public bool checkForUpdateZip()
         {
-            if (File.Exists(Path.Combine(Program.BaseDirectory, "update.zip")))
+            if (File.Exists(Path.Combine(Program.AppDataDirectory, "update.exe")))
                 return true;
             return false;
         }

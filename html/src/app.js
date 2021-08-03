@@ -13234,8 +13234,8 @@ speechSynthesis.getVoices();
     $app.data.checkingForVRCXUpdate = false;
 
     $app.data.branches = {
-        Stable: { name: 'Stable', urlReleases: 'https://api.github.com/repos/pypy-vrc/VRCX/releases', urlLatest: 'https://api.github.com/repos/pypy-vrc/VRCX/releases/latest' },
-        Beta: { name: 'Beta', urlReleases: 'https://api.github.com/repos/natsumi-sama/VRCX/releases', urlLatest: 'https://api.github.com/repos/natsumi-sama/VRCX/releases/latest' }
+        Stable: { name: 'Stable', urlReleases: 'https://vrcx.pypy.moe/releases/pypy-vrc.json', urlLatest: 'https://vrcx.pypy.moe/releases/latest/pypy-vrc.json' },
+        Beta: { name: 'Beta', urlReleases: 'https://vrcx.pypy.moe/releases/natsumi-sama.json', urlLatest: 'https://vrcx.pypy.moe/releases/latest/natsumi-sama.json' }
     };
 
     $app.methods.showVRCXUpdateDialog = async function () {
@@ -13320,25 +13320,26 @@ speechSynthesis.getVoices();
             json.published_at) {
             this.latestAppVersion = `${json.name} (${formatDate(json.published_at, 'YYYY-MM-DD HH24:MI:SS')})`;
             if (json.name > this.appVersion) {
-                if ((json.assets[0].content_type !== 'application/x-zip-compressed') || (json.assets[0].state !== 'uploaded')) {
+                for (var asset of json.assets) {
+                    if ((asset.content_type === 'application/octet-stream') && (asset.state === 'uploaded')) {
+                        var downloadUrl = asset.browser_download_url;
+                        break;
+                    }
+                }
+                if (!downloadUrl) {
                     return;
                 }
                 this.notifyMenu('settings');
-                var downloadUrl = json.assets[0].browser_download_url;
                 var name = json.name;
                 var type = 'Auto';
                 if (this.autoUpdateVRCX === 'Notify') {
                     this.showVRCXUpdateDialog();
                 } else if (this.autoUpdateVRCX === 'Auto Download') {
-                    if (downloadUrl) {
-                        var autoInstall = false;
-                        this.downloadVRCXUpdate(downloadUrl, name, type, autoInstall);
-                    }
+                    var autoInstall = false;
+                    this.downloadVRCXUpdate(downloadUrl, name, type, autoInstall);
                 } else if (this.autoUpdateVRCX === 'Auto Install') {
-                    if (downloadUrl) {
-                        var autoInstall = true;
-                        this.downloadVRCXUpdate(downloadUrl, name, type, autoInstall);
-                    }
+                    var autoInstall = true;
+                    this.downloadVRCXUpdate(downloadUrl, name, type, autoInstall);
                 }
             }
         } else {
