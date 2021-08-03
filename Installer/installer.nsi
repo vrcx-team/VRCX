@@ -7,22 +7,22 @@
 ;--------------------------------
 ;Include Modern UI
 
-	!include "MUI2.nsh"
+    !include "MUI2.nsh"
     !include "FileFunc.nsh"
     !include "LogicLib.nsh"
 
 ;--------------------------------
 ;General
 
-	!define VRCX_BASEDIR "..\bin\x64\Release"
+    !define VRCX_BASEDIR "..\bin\x64\Release"
 
     Unicode True
-	Name "VRCX"
-	OutFile "VRCX_Setup.exe"
-	InstallDir "$PROGRAMFILES64\VRCX"
-	InstallDirRegKey HKLM "Software\VRCX" "InstallDir"
-	RequestExecutionLevel admin
-	ShowInstDetails show
+    Name "VRCX"
+    OutFile "VRCX_Setup.exe"
+    InstallDir "$PROGRAMFILES64\VRCX"
+    InstallDirRegKey HKLM "Software\VRCX" "InstallDir"
+    RequestExecutionLevel admin
+    ShowInstDetails show
 
 ;--------------------------------
 ;Variables
@@ -32,15 +32,15 @@
 ;--------------------------------
 ;Interface Settings
 
-	!define MUI_ABORTWARNING
+    !define MUI_ABORTWARNING
 
 ;--------------------------------
 ;Pages
 
-	!insertmacro MUI_PAGE_LICENSE "..\LICENSE"
-	!define MUI_PAGE_CUSTOMFUNCTION_PRE dirPre
-	!insertmacro MUI_PAGE_DIRECTORY
-	!insertmacro MUI_PAGE_INSTFILES
+    !insertmacro MUI_PAGE_LICENSE "..\LICENSE"
+    !define MUI_PAGE_CUSTOMFUNCTION_PRE dirPre
+    !insertmacro MUI_PAGE_DIRECTORY
+    !insertmacro MUI_PAGE_INSTFILES
 
     ;------------------------------
     ; Finish Page
@@ -57,13 +57,13 @@
     !insertmacro MUI_PAGE_FINISH
 
     !insertmacro MUI_UNPAGE_CONFIRM
-	!insertmacro MUI_UNPAGE_INSTFILES
+    !insertmacro MUI_UNPAGE_INSTFILES
     !insertmacro MUI_UNPAGE_FINISH
 
 ;--------------------------------
 ;Languages
 
-	!insertmacro MUI_LANGUAGE "English"
+    !insertmacro MUI_LANGUAGE "English"
 
 ;--------------------------------
 ;Macros
@@ -72,17 +72,17 @@
 ;Functions
 
 Function dirPre
-	StrCmp $upgradeInstallation "true" 0 +2
-		Abort
+    StrCmp $upgradeInstallation "true" 0 +2
+        Abort
 FunctionEnd
 
 Function .onInit
-	StrCpy $upgradeInstallation "false"
+    StrCpy $upgradeInstallation "false"
 
     ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString"
     StrCmp $R0 "" done
 
-	; If VRCX is already running, display a warning message and exit
+    ; If VRCX is already running, display a warning message and exit
     StrCpy $1 "VRCX.exe"
     nsProcess::_FindProcess "$1"
     Pop $R1
@@ -91,19 +91,19 @@ Function .onInit
         Abort
     ${EndIf}
 
-	MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
-		"VRCX is already installed. $\n$\nClick `OK` to upgrade the \
-		existing installation or `Cancel` to cancel this upgrade." \
-		IDOK upgrade
-	Abort
+    MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "VRCX is already installed. $\n$\nClick `OK` to upgrade the existing installation or `Cancel` to cancel this upgrade." /SD IDOK IDCANCEL cancel
+        Goto next
+    cancel:
+        Abort
+    next:
 
-	upgrade:
-		StrCpy $upgradeInstallation "true"
-	done:
+    StrCpy $upgradeInstallation "true"
+
+    done:
 FunctionEnd
 
 Function createDesktopShortcut
-	CreateShortcut "$DESKTOP\VRCX.lnk" "$INSTDIR\VRCX.exe"
+    CreateShortcut "$DESKTOP\VRCX.lnk" "$INSTDIR\VRCX.exe"
 FunctionEnd
 
 Function launchVRCX
@@ -116,32 +116,37 @@ FunctionEnd
 
 Section "Install" SecInstall
 
-	StrCmp $upgradeInstallation "true" 0 noupgrade
-		DetailPrint "Uninstall previous version..."
-		ExecWait '"$INSTDIR\Uninstall.exe" /S _?=$INSTDIR'
-		Delete $INSTDIR\Uninstall.exe
-		Goto afterupgrade
+    StrCmp $upgradeInstallation "true" 0 noupgrade
+        DetailPrint "Uninstall previous version..."
+        ExecWait '"$INSTDIR\Uninstall.exe" /S _?=$INSTDIR'
+        Delete $INSTDIR\Uninstall.exe
+        Goto afterupgrade
 
-	noupgrade:
+    noupgrade:
 
-	afterupgrade:
+    afterupgrade:
 
-	SetOutPath "$INSTDIR"
+    SetOutPath "$INSTDIR"
 
     File /r /x *.json /x *.sqlite3 /x *.pdb /x userdata /x cache "..\bin\x64\Release\*.*"
 
-	WriteRegStr HKLM "Software\VRCX" "InstallDir" $INSTDIR
-	WriteUninstaller "$INSTDIR\Uninstall.exe"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayName" "VRCX"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
+    WriteRegStr HKLM "Software\VRCX" "InstallDir" $INSTDIR
+    WriteUninstaller "$INSTDIR\Uninstall.exe"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayName" "VRCX"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "DisplayIcon" "$\"$INSTDIR\VRCX.ico$\""
 
     ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
     IntFmt $0 "0x%08X" $0
     WriteRegDWORD HKLM  "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "EstimatedSize" "$0"
 
-	CreateShortCut "$SMPROGRAMS\VRCX.lnk" "$INSTDIR\VRCX.exe"
+    CreateShortCut "$SMPROGRAMS\VRCX.lnk" "$INSTDIR\VRCX.exe"
     ApplicationID::Set "$SMPROGRAMS\VRCX.lnk" "VRCX"
+
+    ${If} ${Silent}
+        SetOutPath $INSTDIR
+        ShellExecAsUser::ShellExecAsUser "" "$INSTDIR\VRCX.exe" ""
+    ${EndIf}
 
 SectionEnd
 
@@ -149,7 +154,7 @@ SectionEnd
 ;Uninstaller Section
 
 Section "Uninstall"
-	; If VRCX is already running, display a warning message and exit
+    ; If VRCX is already running, display a warning message and exit
     StrCpy $1 "VRCX.exe"
     nsProcess::_FindProcess "$1"
     Pop $R1
@@ -158,11 +163,11 @@ Section "Uninstall"
         Abort
     ${EndIf}
 
-	RMDir /r "$INSTDIR"
+    RMDir /r "$INSTDIR"
 
-	DeleteRegKey HKLM "Software\VRCX"
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX"
+    DeleteRegKey HKLM "Software\VRCX"
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX"
 
-	Delete "$SMPROGRAMS\VRCX.lnk"
+    Delete "$SMPROGRAMS\VRCX.lnk"
     Delete "$DESKTOP\VRCX.lnk"
 SectionEnd
