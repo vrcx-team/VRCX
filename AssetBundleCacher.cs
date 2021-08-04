@@ -107,27 +107,12 @@ namespace VRCX
                 return;
             }
             // upgrade from Unity 2018 to 2019
-            var UnityPlayerDll = Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\UnityPlayer.dll");
-            if (File.Exists(UnityPlayerDll))
-            {
-                FileInfo UnityPlayerDllInfo = new FileInfo(UnityPlayerDll);
-                if (UnityPlayerDllInfo.Length == 23399880 || UnityPlayerDllInfo.Length == 37697480)
-                    File.Delete(UnityPlayerDll);
-                var UnityData = Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\AssetBundleCacher_Data\\data.unity3d");
-                if (File.Exists(UnityData))
-                    File.Delete(UnityData);
-            }
-            if (!File.Exists(UnityPlayerDll))
+            var UnityData = Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\AssetBundleCacher_Data\\data.unity3d");
+            if (File.Exists(UnityData))
             {
                 try
                 {
-                    using (var key = Registry.ClassesRoot.OpenSubKey(@"VRChat\shell\open\command"))
-                    {
-                        // "C:\Program Files (x86)\Steam\steamapps\common\VRChat\launch.exe" "%1" %*
-                        var match = Regex.Match(key.GetValue(string.Empty) as string, "(?!\")(.+?\\\\VRChat.*)(!?\\\\launch.exe\")");
-                        var fileLocation = Path.Combine(match.Groups[1].Value, "UnityPlayer.dll");
-                        File.Copy(fileLocation, Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\UnityPlayer.dll"));
-                    }
+                    File.Delete(UnityData);
                 }
                 catch
                 {
