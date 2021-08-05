@@ -9282,7 +9282,7 @@ speechSynthesis.getVoices();
                 D.loading = false;
                 D.ref = args.ref;
                 D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
-                this.updateVRChatCache();
+                this.updateVRChatWorldCache();
                 if (args.cache) {
                     API.getWorld(args.params);
                 }
@@ -9427,7 +9427,7 @@ speechSynthesis.getVoices();
                         D.loading = false;
                         D.ref = args.ref;
                         D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
-                        this.updateVRChatCache();
+                        this.updateVRChatWorldCache();
                     }
                     return args;
                 });
@@ -9546,7 +9546,9 @@ speechSynthesis.getVoices();
         isQuestFallback: false,
         treeData: [],
         fileCreatedAt: '',
-        fileSize: ''
+        fileSize: '',
+        inCache: false,
+        cacheSize: 0
     };
 
     API.$on('LOGOUT', function () {
@@ -9576,23 +9578,26 @@ speechSynthesis.getVoices();
     $app.methods.showAvatarDialog = function (avatarId) {
         this.$nextTick(() => adjustDialogZ(this.$refs.avatarDialog.$el));
         var D = this.avatarDialog;
+        D.visible = true;
         D.id = avatarId;
         D.treeData = [];
         D.fileSize = '';
+        D.inCache = false;
+        D.cacheSize = 0;
         D.isQuestFallback = false;
         D.isFavorite = API.cachedFavoritesByObjectId.has(avatarId);
         var ref = API.cachedAvatars.get(avatarId);
         if (typeof ref !== 'undefined') {
             D.ref = ref;
-            D.visible = true;
+            this.updateVRChatAvatarCache();
         }
         API.getAvatar({ avatarId }).then((args) => {
             var { ref } = args;
             D.ref = ref;
+            this.updateVRChatAvatarCache();
             if ((ref.imageUrl === API.currentUser.currentAvatarImageUrl) && (!ref.assetUrl)) {
                 D.ref.assetUrl = API.currentUser.currentAvatarAssetUrl;
             }
-            D.visible = true;
             if (/quest/.test(ref.tags)) {
                 D.isQuestFallback = true;
             }
@@ -12464,8 +12469,22 @@ speechSynthesis.getVoices();
 
     // Asset Bundle Cacher
 
-    $app.methods.updateVRChatCache = function () {
+    $app.methods.updateVRChatWorldCache = function () {
         var D = this.worldDialog;
+        if (D.visible) {
+            D.inCache = false;
+            D.cacheSize = 0;
+            this.checkVRChatCache(D.ref).then((cacheSize) => {
+                if (cacheSize > 0) {
+                    D.inCache = true;
+                    D.cacheSize = `${(cacheSize / 1048576).toFixed(2)} MiB`;
+                }
+            });
+        }
+    };
+
+    $app.methods.updateVRChatAvatarCache = function () {
+        var D = this.avatarDialog;
         if (D.visible) {
             D.inCache = false;
             D.cacheSize = 0;
@@ -12690,7 +12709,7 @@ speechSynthesis.getVoices();
                 break;
             case -3:
                 if (this.worldDialog.id === this.downloadCurrent.id) {
-                    this.updateVRChatCache();
+                    this.updateVRChatWorldCache();
                 }
                 if (this.downloadCurrent.type === 'Manual') {
                     this.$message({
@@ -12743,7 +12762,7 @@ speechSynthesis.getVoices();
                 return;
             case -12:
                 if (this.worldDialog.id === this.downloadCurrent.id) {
-                    this.updateVRChatCache();
+                    this.updateVRChatWorldCache();
                 }
                 if (this.downloadCurrent.type === 'Manual') {
                     this.$message({
@@ -12852,7 +12871,8 @@ speechSynthesis.getVoices();
         var cacheDir = await this.getVRChatCacheDir();
         await AssetBundleCacher.DeleteCache(cacheDir, ref.id, ref.version);
         this.getVRChatCacheSize();
-        this.updateVRChatCache();
+        this.updateVRChatWorldCache();
+        this.updateVRChatAvatarCache();
     };
 
     $app.methods.showDeleteAllVRChatCacheConfirm = function () {
@@ -13292,7 +13312,15 @@ speechSynthesis.getVoices();
         });
         this.checkingForVRCXUpdate = false;
         var json = JSON.parse(response.data);
-        D.releases = json;
+        var releases = [];
+        for (var release of json) {
+            for (var asset of release.assets) {
+                if ((asset.content_type === 'application/octet-stream') && (asset.state === 'uploaded')) {
+                    releases.push(release);
+                }
+            }
+        }
+        D.releases = releases;
         D.release = json[0].name;
         if (configRepository.getString('VRCX_branch') !== this.branch) {
             configRepository.setString('VRCX_branch', this.branch);

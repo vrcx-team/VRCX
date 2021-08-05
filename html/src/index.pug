@@ -1240,10 +1240,13 @@ html
                                 div(style="margin-top:5px")
                                     span.x-link(v-text="worldDialog.ref.authorName" @click="showUserDialog(worldDialog.ref.authorId)" style="color:#909399;font-family:monospace")
                                 div(style="margin-top:5px")
-                                    el-tag(v-if="worldDialog.ref.$isLabs" type="primary" effect="plain" size="mini") Labs
-                                    el-tag(v-else-if="worldDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini") Public
-                                    el-tag(v-else type="danger" effect="plain" size="mini") Private
-                                    el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-left:5px")
+                                    el-tag(v-if="worldDialog.ref.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Labs
+                                    el-tag(v-else-if="worldDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Public
+                                    el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Private
+                                    el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px;margin-top:5px")
+                                    el-tag(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-top:5px")
+                                        span(v-text="worldDialog.cacheSize")
+                                        |  Cache
                                 div(style="margin-top:5px")
                                     span(v-show="worldDialog.ref.name !== worldDialog.ref.description" v-text="worldDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
@@ -1383,17 +1386,22 @@ html
                                 div(style="margin-top:5px")
                                     span.x-link(v-text="avatarDialog.ref.authorName" @click="showUserDialog(avatarDialog.ref.authorId)" style="color:#909399;font-family:monospace")
                                 div(style="margin-top:5px")
-                                    el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini") Public
-                                    el-tag(v-else type="danger" effect="plain" size="mini") Private
-                                    el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-left:5px") Fallback
-                                    el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-left:5px")
+                                    el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Public
+                                    el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Private
+                                    el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Fallback
+                                    el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-right:5px;margin-top:5px")
+                                    el-tag(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini" style="margin-top:5px")
+                                        span(v-text="avatarDialog.cacheSize")
+                                        |  Cache
                                 div(style="margin-top:5px")
                                     span(v-show="avatarDialog.ref.name !== avatarDialog.ref.description" v-text="avatarDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
+                                el-tooltip(v-if="avatarDialog.inCache" placement="top" content="Delete avatar from cache" :disabled="hideTooltips")
+                                    el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(avatarDialog.ref)")
                                 el-tooltip(v-if="avatarDialog.isFavorite" placement="top" content="Remove from favorites" :disabled="hideTooltips")
-                                    el-button(type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Delete Favorite')")
+                                    el-button(type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Delete Favorite')" style="margin-left:5px")
                                 el-tooltip(v-else placement="top" content="Add to favorites" :disabled="hideTooltips")
-                                    el-button(type="default" icon="el-icon-star-off" circle @click="avatarDialogCommand('Add Favorite')")
+                                    el-button(type="default" icon="el-icon-star-off" circle @click="avatarDialogCommand('Add Favorite')" style="margin-left:5px")
                                 el-dropdown(trigger="click" @command="avatarDialogCommand" size="small" style="margin-left:5px")
                                     el-button(type="default" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
@@ -1729,9 +1737,6 @@ html
             //- dialog: update VRCX
             el-dialog.x-dialog(ref="VRCXUpdateDialog" :visible.sync="VRCXUpdateDialog.visible" title="VRCX Updater" width="400px")
                 div(v-loading="checkingForVRCXUpdate" style="margin-top:15px")
-                    template(v-if="!VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release === appVersion")
-                        span VRCX is up to date.
-                        br
                     template(v-if="VRCXUpdateDialog.updatePending")
                         span Update ready for install, restart VRCX to apply.
                     template(v-else)
@@ -1739,6 +1744,9 @@ html
                             el-option(v-once v-for="branch in branches" :key="branch.name" :label="branch.name" :value="branch.name")
                         el-select(v-model="VRCXUpdateDialog.release" style="display:inline-block;width:150px")
                             el-option(v-for="item in VRCXUpdateDialog.releases" :key="item.name" :label="item.tag_name" :value="item.name")
+                    template(v-if="!VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release === appVersion")
+                        br
+                        span VRCX is up to date.
                 template(#footer)
                     el-button(v-if="!VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release !== appVersion" type="primary" size="small" @click="installVRCXUpdate") Download
                     el-button(v-if="VRCXUpdateDialog.updatePending" type="primary" size="small" @click="restartVRCX") Install
