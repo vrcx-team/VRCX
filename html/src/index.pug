@@ -147,15 +147,35 @@ html
                             template(v-else-if="scope.row.type === 'Offline' || scope.row.type === 'Online'")
                                 location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName")
                             template(v-else-if="scope.row.type === 'Status'")
-                                el-tooltip(placement="top")
-                                    template(#content)
-                                        span(v-if="scope.row.status === 'active'") Online
-                                        span(v-else-if="scope.row.status === 'join me'") Join Me
-                                        span(v-else-if="scope.row.status === 'ask me'") Ask Me
-                                        span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
-                                        span(v-else) Offline
-                                    i.x-user-status(:class="statusClass(scope.row.status)")
-                                span(v-text="scope.row.statusDescription")
+                                template(v-if="scope.row.statusDescription === scope.row.previousStatusDescription")
+                                    el-tooltip(placement="top")
+                                        template(#content)
+                                            span(v-if="scope.row.previousStatus === 'active'") Active
+                                            span(v-else-if="scope.row.previousStatus === 'join me'") Join Me
+                                            span(v-else-if="scope.row.previousStatus === 'ask me'") Ask Me
+                                            span(v-else-if="scope.row.previousStatus === 'busy'") Do Not Disturb
+                                            span(v-else) Offline
+                                        i.x-user-status(:class="statusClass(scope.row.previousStatus)")
+                                    span
+                                        i.el-icon-right
+                                    el-tooltip(placement="top")
+                                        template(#content)
+                                            span(v-if="scope.row.status === 'active'") Active
+                                            span(v-else-if="scope.row.status === 'join me'") Join Me
+                                            span(v-else-if="scope.row.status === 'ask me'") Ask Me
+                                            span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
+                                            span(v-else) Offline
+                                        i.x-user-status(:class="statusClass(scope.row.status)")
+                                template(v-else)
+                                    el-tooltip(placement="top")
+                                        template(#content)
+                                            span(v-if="scope.row.status === 'active'") Online
+                                            span(v-else-if="scope.row.status === 'join me'") Join Me
+                                            span(v-else-if="scope.row.status === 'ask me'") Ask Me
+                                            span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
+                                            span(v-else) Offline
+                                        i.x-user-status(:class="statusClass(scope.row.status)")
+                                    span(v-text="scope.row.statusDescription")
                             template(v-else-if="scope.row.type === 'Avatar'")
                                 avatar-info(:imageurl="scope.row.currentAvatarImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.ownerId" :hintavatarname="scope.row.avatarName")
 
