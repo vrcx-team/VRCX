@@ -352,6 +352,7 @@ speechSynthesis.getVoices();
     };
 
     API.pendingGetRequests = new Map();
+    API.failedGetRequests = new Map();
 
     API.call = function (endpoint, options) {
         var init = {
@@ -361,6 +362,14 @@ speechSynthesis.getVoices();
         };
         var { params } = init;
         if (init.method === 'GET') {
+            // don't retry recent 404
+            if (this.failedGetRequests.has(endpoint)) {
+                var lastRun = this.failedGetRequests.get(endpoint);
+                if (lastRun >= Date.now() - 900000) { //15mins
+                    throw new Error(`Bailing request due to past 404, ${endpoint}`);
+                }
+                this.failedGetRequests.delete(endpoint);
+            }
             // transform body to url
             if (params === Object(params)) {
                 var url = new URL(init.url);
@@ -426,7 +435,11 @@ speechSynthesis.getVoices();
                     message: 'Avatar private or deleted',
                     type: 'error'
                 });
+                $app.avatarDialog.visable = false;
                 throw new Error('404: Can\'t find avatarǃ');
+            }
+            if ((init.method === 'GET') && (status === 404)) {
+                this.failedGetRequests.set(endpoint, Date.now());
             }
             if (data.error === Object(data.error)) {
                 this.$throw(
