@@ -87,16 +87,26 @@ namespace VRCX
             return Path.Combine(cachePath, idHash, versionLocation);
         }
 
-        public long CheckVRChatCache(string id, int version, string cacheDir)
+        public long[] CheckVRChatCache(string id, int version, string cacheDir)
         {
+            long FileSize = -1;
+            long IsLocked = 0;
             var FullLocation = GetVRChatCacheFullLocation(id, version, cacheDir);
             var FileLocation = Path.Combine(FullLocation, "__data");
             if (File.Exists(FileLocation))
             {
                 FileInfo data = new FileInfo(FileLocation);
-                return data.Length;
+                FileSize = data.Length;
             }
-            return -1;
+            if (File.Exists(Path.Combine(FullLocation, "__lock")))
+            {
+                IsLocked = 1;
+            }
+            return new long[]
+            {
+                FileSize,
+                IsLocked
+            };
         }
 
         public void DownloadCacheFile(string cacheDir, string url, string id, int version, int sizeInBytes, string md5, string AppVersion, bool IsUpdate)
