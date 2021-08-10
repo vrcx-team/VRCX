@@ -96,10 +96,12 @@ Function .onInit
     cancel:
         Abort
     next:
-
-    StrCpy $upgradeInstallation "true"
+        StrCpy $upgradeInstallation "true"
 
     done:
+    ${If} $upgradeInstallation == "false"
+        SetSilent normal
+    ${EndIf}
 FunctionEnd
 
 Function createDesktopShortcut
@@ -169,5 +171,8 @@ Section "Uninstall"
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX"
 
     Delete "$SMPROGRAMS\VRCX.lnk"
-    Delete "$DESKTOP\VRCX.lnk"
+
+    ${IfNot} ${Silent}
+        Delete "$DESKTOP\VRCX.lnk"
+    ${EndIf}
 SectionEnd
