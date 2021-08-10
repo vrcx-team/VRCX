@@ -13340,6 +13340,7 @@ speechSynthesis.getVoices();
             var regex = new RegExp(symbolList[key], "g");
             text = text.replace(regex, key);
         }
+        text = text.replace(/ {1,}/g, ' ');
         return text;
     };
 
