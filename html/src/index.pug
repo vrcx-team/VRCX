@@ -431,7 +431,7 @@ html
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
                             el-select(v-model="notificationTable.filters[0].value" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
-                                el-option(v-once v-for="type in ['requestInvite', 'invite', 'requestInviteResponse', 'inviteResponse', 'friendRequest', 'message']" :key="type" :label="type" :value="type")
+                                el-option(v-once v-for="type in ['requestInvite', 'invite', 'requestInviteResponse', 'inviteResponse', 'friendRequest', 'hiddenFriendRequest', 'message']" :key="type" :label="type" :value="type")
                             el-input(v-model="notificationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
                             el-tooltip(placement="bottom" content="Refresh" :disabled="hideTooltips")
                                 el-button(type="default" :loading="API.isNotificationsLoading" @click="API.refreshNotifications()" icon="el-icon-refresh" circle style="flex:none")
