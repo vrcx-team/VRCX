@@ -6246,15 +6246,6 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.saveFeedTableFilters = function () {
-        configRepository.setString('VRCX_feedTableFilters', JSON.stringify(this.feedTable.filters[0].value));
-        configRepository.setBool('VRCX_feedTableVIPFilter', this.feedTable.filters[2].value);
-    };
-    if (configRepository.getString('VRCX_feedTableFilters')) {
-        $app.data.feedTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_feedTableFilters'));
-        $app.data.feedTable.filters[2].value = configRepository.getBool('VRCX_feedTableVIPFilter');
-    }
-
     API.$on('LOGIN', async function (args) {
         $app.friendLogInitStatus = false;
         await database.init(args.json.id);
@@ -6505,13 +6496,6 @@ speechSynthesis.getVoices();
             ]
         }
     };
-
-    $app.methods.saveGameLogTableFilters = function () {
-        configRepository.setString('VRCX_gameLogTableFilters', JSON.stringify(this.gameLogTable.filters[0].value));
-    };
-    if (configRepository.getString('VRCX_gameLogTableFilters')) {
-        $app.data.gameLogTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_gameLogTableFilters'));
-    }
 
     $app.methods.resetGameLog = async function () {
         await gameLogService.reset();
@@ -7639,6 +7623,32 @@ speechSynthesis.getVoices();
             }
         });
     };
+
+    // Save Table Filters
+    $app.methods.saveTableFilters = function () {
+        configRepository.setString('VRCX_feedTableFilters', JSON.stringify(this.feedTable.filters[0].value));
+        configRepository.setBool('VRCX_feedTableVIPFilter', this.feedTable.filters[2].value);
+        configRepository.setString('VRCX_gameLogTableFilters', JSON.stringify(this.gameLogTable.filters[0].value));
+        configRepository.setString('VRCX_friendLogTableFilters', JSON.stringify(this.friendLogTable.filters[0].value));
+        configRepository.setString('VRCX_playerModerationTableFilters', JSON.stringify(this.playerModerationTable.filters[0].value));
+        configRepository.setString('VRCX_notificationTableFilters', JSON.stringify(this.notificationTable.filters[0].value));
+    };
+    if (configRepository.getString('VRCX_feedTableFilters')) {
+        $app.data.feedTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_feedTableFilters'));
+        $app.data.feedTable.filters[2].value = configRepository.getBool('VRCX_feedTableVIPFilter');
+    }
+    if (configRepository.getString('VRCX_gameLogTableFilters')) {
+        $app.data.gameLogTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_gameLogTableFilters'));
+    }
+    if (configRepository.getString('VRCX_friendLogTableFilters')) {
+        $app.data.friendLogTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_friendLogTableFilters'));
+    }
+    if (configRepository.getString('VRCX_playerModerationTableFilters')) {
+        $app.data.playerModerationTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_playerModerationTableFilters'));
+    }
+    if (configRepository.getString('VRCX_notificationTableFilters')) {
+        $app.data.notificationTable.filters[0].value = JSON.parse(configRepository.getString('VRCX_notificationTableFilters'));
+    }
 
     // App: Profile + Settings
 
