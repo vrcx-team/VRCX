@@ -3972,8 +3972,6 @@ speechSynthesis.getVoices();
     $app.data.debugWebRequests = false;
     $app.data.debugWebSocket = false;
 
-    $app.data.APILastOnline = new Map();
-
     $app.data.sharedFeed = {
         gameLog: {
             wrist: [],
@@ -5979,9 +5977,6 @@ speechSynthesis.getVoices();
     });
 
     API.$on('FRIEND:STATE', function (args) {
-        if (args.json.state === 'online') {
-            $app.APILastOnline.set(args.params.userId, Date.now());
-        }
         $app.updateFriend(args.params.userId, args.json.state);
     });
 
@@ -6094,7 +6089,7 @@ speechSynthesis.getVoices();
 
     $app.data.updateFriendInProgress = new Set();
 
-    $app.methods.updateFriend = async function (id, newState, origin) {
+    $app.methods.updateFriend = async function (id, stateInput, origin) {
         var ctx = this.friends.get(id);
         if (typeof ctx === 'undefined') {
             return;
@@ -6105,7 +6100,7 @@ speechSynthesis.getVoices();
         this.updateFriendInProgress.add(id);
         var ref = API.cachedUsers.get(id);
         var isVIP = API.cachedFavoritesByObjectId.has(id);
-        if (typeof newState === 'undefined' || ctx.state === newState) {
+        if (typeof stateInput === 'undefined' || ctx.state === stateInput) {
             // this is should be: undefined -> user
             if (ctx.ref !== ref) {
                 ctx.ref = ref;
@@ -6176,27 +6171,10 @@ speechSynthesis.getVoices();
             ) {
                 API.getUser({
                     userId: id
-                }).catch(() => {
-                    this.updateFriendInProgress.delete(id);
                 });
             }
         } else {
-            // prevent status flapping
-            if (
-                ctx.state === 'online' &&
-                (newState === 'active' || newState === 'offline')
-            ) {
-                this.updateFriendInProgress.delete(id);
-                await new Promise((resolve) => {
-                    setTimeout(resolve, 50000);
-                });
-                if (this.APILastOnline.has(id)) {
-                    var date = this.APILastOnline.get(id);
-                    if (date > Date.now() - 60000) {
-                        return;
-                    }
-                }
-            }
+            var newState = stateInput;
             var location = '';
             var $location_at = '';
             if (
@@ -6205,18 +6183,19 @@ speechSynthesis.getVoices();
             ) {
                 var {location, $location_at} = ref;
             }
-            var args = await API.getUser({
-                userId: id
-            }).catch(() => {
-                this.updateFriendInProgress.delete(id);
-            });
-            if (
-                typeof args !== 'undefined' &&
-                typeof args.ref !== 'undefined'
-            ) {
-                // eslint-disable-next-line no-param-reassign
-                newState = args.ref.state;
-                ctx.ref = args.ref;
+            try {
+                var args = await API.getUser({
+                    userId: id
+                });
+                if (
+                    typeof args !== 'undefined' &&
+                    typeof args.ref !== 'undefined'
+                ) {
+                    newState = args.ref.state;
+                    ctx.ref = args.ref;
+                }
+            } catch (err) {
+                console.error(err);
             }
             if (ctx.state !== newState) {
                 if (
@@ -6227,26 +6206,30 @@ speechSynthesis.getVoices();
                 ) {
                     ctx.ref.$online_for = '';
                     ctx.ref.$offline_for = Date.now();
-                    if (ctx.state === 'online') {
-                        var ts = Date.now();
-                        var time = ts - $location_at;
-                        var worldName = await this.getWorldName(location);
-                        var feed = {
-                            created_at: new Date().toJSON(),
-                            type: 'Offline',
-                            userId: ctx.ref.id,
-                            displayName: ctx.ref.displayName,
-                            location,
-                            worldName,
-                            time
-                        };
-                        this.addFeed(feed);
-                        database.addOnlineOfflineToDatabase(feed);
-                    }
+                    var ts = Date.now();
+                    var time = ts - $location_at;
+                    var worldName = await this.getWorldName(location);
+                    var feed = {
+                        created_at: new Date().toJSON(),
+                        type: 'Offline',
+                        userId: ctx.ref.id,
+                        displayName: ctx.ref.displayName,
+                        location,
+                        worldName,
+                        time
+                    };
+                    this.addFeed(feed);
+                    database.addOnlineOfflineToDatabase(feed);
                 } else if (newState === 'online') {
                     ctx.ref.$location_at = Date.now();
                     ctx.ref.$online_for = Date.now();
                     ctx.ref.$offline_for = '';
+                    if (
+                        typeof ctx.ref.location !== 'undefined' &&
+                        ctx.ref.location !== 'offline'
+                    ) {
+                        var {location} = ctx.ref;
+                    }
                     var worldName = await this.getWorldName(ctx.ref.location);
                     var feed = {
                         created_at: new Date().toJSON(),
@@ -6295,17 +6278,9 @@ speechSynthesis.getVoices();
                 this.friendsGroup3_.push(ctx);
                 this.friendsGroupD_.unshift(ctx);
             }
-            // changing property triggers Vue
-            // so, we need compare and set
-            if (ctx.state !== newState) {
-                ctx.state = newState;
-            }
-            if (ctx.name !== ctx.ref.displayName) {
-                ctx.name = ctx.ref.displayName;
-            }
-            if (ctx.isVIP !== isVIP) {
-                ctx.isVIP = isVIP;
-            }
+            ctx.state = newState;
+            ctx.name = ctx.ref.displayName;
+            ctx.isVIP = isVIP;
         }
         this.updateFriendInProgress.delete(id);
     };
