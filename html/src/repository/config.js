@@ -1,5 +1,5 @@
 import sqliteService from '../service/sqlite.js';
-import sharedRepository, { SharedRepository } from './shared.js';
+import sharedRepository, {SharedRepository} from './shared.js';
 
 var dirtyKeySet = new Set();
 
@@ -55,28 +55,25 @@ class ConfigRepository extends SharedRepository {
     }
 
     remove(key) {
-        key = transformKey(key);
-        sharedRepository.remove(key);
-        dirtyKeySet.add(key);
+        var _key = transformKey(key);
+        sharedRepository.remove(_key);
+        dirtyKeySet.add(_key);
     }
 
     getString(key, defaultValue = null) {
-        key = transformKey(key);
-        return sharedRepository.getString(key, defaultValue);
+        var _key = transformKey(key);
+        return sharedRepository.getString(_key, defaultValue);
     }
 
     setString(key, value) {
-        key = transformKey(key);
-        value = String(value);
-        sharedRepository.setString(key, value);
-        dirtyKeySet.add(key);
+        var _key = transformKey(key);
+        var _value = String(value);
+        sharedRepository.setString(_key, _value);
+        dirtyKeySet.add(_key);
     }
 }
 
 var self = new ConfigRepository();
 window.configRepository = self;
 
-export {
-    self as default,
-    ConfigRepository
-};
+export {self as default, ConfigRepository};

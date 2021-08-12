@@ -29,7 +29,7 @@ class Database {
     async getFeedDatabase() {
         var feedDatabase = [];
         var date = new Date();
-        date.setDate(date.getDate() - 3);  // 3 day limit
+        date.setDate(date.getDate() - 3); // 3 day limit
         var dateOffset = date.toJSON();
         await sqliteService.execute((dbRow) => {
             var row = {
@@ -113,7 +113,7 @@ class Database {
 
     async getMemo(userId) {
         var row = {};
-        await sqliteService.execute((dbRow, userId) => {
+        await sqliteService.execute((dbRow) => {
             row = {
                 userId: dbRow[0],
                 editedAt: dbRow[1],
@@ -177,7 +177,7 @@ class Database {
             var field = {};
             for (var item of items) {
                 if (typeof line[item] === 'string') {
-                    field[item] = line[item].replace(/'/g, "\''");
+                    field[item] = line[item].replace(/'/g, "''");
                 } else {
                     field[item] = '';
                 }
@@ -240,15 +240,23 @@ class Database {
             return;
         }
         var sqlValues = '';
-        var items = ['created_at', 'type', 'userId', 'displayName', 'previousDisplayName', 'trustLevel', 'previousTrustLevel'];
+        var items = [
+            'created_at',
+            'type',
+            'userId',
+            'displayName',
+            'previousDisplayName',
+            'trustLevel',
+            'previousTrustLevel'
+        ];
         for (var i = 0; i < inputData.length; ++i) {
             var line = inputData[i];
-            sqlValues +=  '(';
+            sqlValues += '(';
             for (var k = 0; k < items.length; ++k) {
                 var item = items[k];
                 var field = '';
                 if (typeof line[item] === 'string') {
-                    field = `'${line[item].replace(/'/g, "\''")}'`;
+                    field = `'${line[item].replace(/'/g, "''")}'`;
                 } else {
                     field = null;
                 }
@@ -257,11 +265,11 @@ class Database {
                     sqlValues += ', ';
                 }
             }
-            sqlValues +=  ')';
+            sqlValues += ')';
             if (i < inputData.length - 1) {
                 sqlValues += ', ';
             }
-            //sqlValues `('${line.created_at}', '${line.type}', '${line.userId}', '${line.displayName}', '${line.previousDisplayName}', '${line.trustLevel}', '${line.previousTrustLevel}'), `
+            // sqlValues `('${line.created_at}', '${line.type}', '${line.userId}', '${line.displayName}', '${line.previousDisplayName}', '${line.trustLevel}', '${line.previousTrustLevel}'), `
         }
         sqliteService.executeNonQuery(
             `INSERT OR IGNORE INTO ${Database.userId}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level) VALUES ${sqlValues}`
@@ -317,9 +325,12 @@ class Database {
                 '@owner_id': entry.ownerId,
                 '@avatar_name': entry.avatarName,
                 '@current_avatar_image_url': entry.currentAvatarImageUrl,
-                '@current_avatar_thumbnail_image_url': entry.currentAvatarThumbnailImageUrl,
-                '@previous_current_avatar_image_url': entry.previousCurrentAvatarImageUrl,
-                '@previous_current_avatar_thumbnail_image_url': entry.previousCurrentAvatarThumbnailImageUrl
+                '@current_avatar_thumbnail_image_url':
+                    entry.currentAvatarThumbnailImageUrl,
+                '@previous_current_avatar_image_url':
+                    entry.previousCurrentAvatarImageUrl,
+                '@previous_current_avatar_thumbnail_image_url':
+                    entry.previousCurrentAvatarThumbnailImageUrl
             }
         );
     }
@@ -343,7 +354,4 @@ class Database {
 var self = new Database();
 window.database = self;
 
-export {
-    self as default,
-    Database
-};
+export {self as default, Database};

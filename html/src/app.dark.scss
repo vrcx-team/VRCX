@@ -44,7 +44,8 @@ button {
     border: #333;
 }
 
-.el-input-group__append, .el-input-group__prepend {
+.el-input-group__append,
+.el-input-group__prepend {
     color: #fff;
     background-color: #666;
     border: #555;
@@ -157,11 +158,11 @@ button {
     background-color: #444;
 }
 
-.el-popper[x-placement^="bottom"] .popper__arrow::after {
+.el-popper[x-placement^='bottom'] .popper__arrow::after {
     border-bottom-color: #333;
 }
 
-.el-popper[x-placement^="bottom"] .popper__arrow {
+.el-popper[x-placement^='bottom'] .popper__arrow {
     border-bottom-color: #404040;
 }
 
@@ -230,11 +231,11 @@ button {
     border-color: #5f5f5f;
 }
 
-.el-popper[x-placement^="right"] .popper__arrow::after {
+.el-popper[x-placement^='right'] .popper__arrow::after {
     border-right-color: #5f5f5f;
 }
 
-.el-popper[x-placement^="right"] .popper__arrow {
+.el-popper[x-placement^='right'] .popper__arrow {
     border-right-color: #5f5f5f;
 }
 

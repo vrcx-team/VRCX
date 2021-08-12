@@ -8,11 +8,12 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 //
 
-@import "~normalize.css/normalize.css";
-@import "~animate.css/animate.min.css";
-@import "~noty/lib/noty.css";
-@import "~element-ui/lib/theme-chalk/index.css";
-@import "~famfamfam-flags/dist/sprite/famfamfam-flags.min.css";
+@import '~normalize.css/normalize.css';
+@import '~animate.css/animate.min.css';
+@import '~noty/lib/noty.css';
+@import '~element-ui/lib/theme-chalk/index.css';
+@import '~famfamfam-flags/dist/sprite/famfamfam-flags.min.css';
+@import '~vue-swatches/dist/vue-swatches.css';
 
 .color-palettes {
     background: #409eff;
@@ -113,7 +114,8 @@ input,
 textarea,
 select,
 button {
-    font-family: "Noto Sans JP", "Noto Sans KR", "Meiryo UI", "Malgun Gothic", "Segoe UI", sans-serif;
+    font-family: 'Noto Sans JP', 'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic',
+        'Segoe UI', sans-serif;
     line-height: normal;
 }
 
@@ -179,7 +181,7 @@ a {
     left: 1px;
     width: 2px;
     height: 48px;
-    content: "";
+    content: '';
     background: #dcdfe6;
 }
 
@@ -189,7 +191,7 @@ a {
     right: 4px;
     width: 4px;
     height: 4px;
-    content: "";
+    content: '';
     background: #ebeef5;
     border-radius: 50%;
 }
@@ -317,7 +319,7 @@ img.friends-list-avatar {
     bottom: 0;
     width: 8px;
     height: 8px;
-    content: "";
+    content: '';
     background: #909399;
     border: 2px solid #fff;
     border-radius: 50%;
@@ -497,7 +499,7 @@ i.x-user-status.busy {
     margin-right: -85px;
 }
 
-.el-progress__text{
+.el-progress__text {
     color: #c8c8c8;
 }
 

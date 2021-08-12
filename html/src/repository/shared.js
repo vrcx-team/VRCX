@@ -6,13 +6,13 @@ function transformKey(key) {
 
 class SharedRepository {
     remove(key) {
-        key = transformKey(key);
-        return SharedVariable.Remove(key);
+        var _key = transformKey(key);
+        return SharedVariable.Remove(_key);
     }
 
     getString(key, defaultValue = null) {
-        key = transformKey(key);
-        var value = SharedVariable.Get(key);
+        var _key = transformKey(key);
+        var value = SharedVariable.Get(_key);
         if (value === null) {
             return defaultValue;
         }
@@ -20,9 +20,9 @@ class SharedRepository {
     }
 
     setString(key, value) {
-        key = transformKey(key);
-        value = String(value);
-        SharedVariable.Set(key, value);
+        var _key = transformKey(key);
+        var _value = String(value);
+        SharedVariable.Set(_key, _value);
     }
 
     getBool(key, defaultValue = null) {
@@ -76,8 +76,7 @@ class SharedRepository {
         }
         try {
             value = JSON.parse(value);
-        } catch (err) {
-        }
+        } catch (err) {}
         if (value !== Object(value)) {
             return defaultValue;
         }
@@ -104,7 +103,4 @@ class SharedRepository {
 var self = new SharedRepository();
 window.sharedRepository = self;
 
-export {
-    self as default,
-    SharedRepository
-};
+export {self as default, SharedRepository};

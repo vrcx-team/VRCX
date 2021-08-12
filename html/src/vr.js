@@ -42,10 +42,12 @@ speechSynthesis.getVoices();
         locale
     });
 
-    var escapeTag = (s) => String(s).replace(/["&'<>]/gu, (c) => `&#${c.charCodeAt(0)};`);
+    var escapeTag = (s) =>
+        String(s).replace(/["&'<>]/gu, (c) => `&#${c.charCodeAt(0)};`);
     Vue.filter('escapeTag', escapeTag);
 
-    var commaNumber = (n) => String(Number(n) || 0).replace(/(\d)(?=(\d{3})+(?!\d))/gu, '$1,');
+    var commaNumber = (n) =>
+        String(Number(n) || 0).replace(/(\d)(?=(\d{3})+(?!\d))/gu, '$1,');
     Vue.filter('commaNumber', commaNumber);
 
     var formatDate = (s, format) => {
@@ -55,24 +57,27 @@ speechSynthesis.getVoices();
         }
         var hours = dt.getHours();
         var map = {
-            'YYYY': String(10000 + dt.getFullYear()).substr(-4),
-            'MM': String(101 + dt.getMonth()).substr(-2),
-            'DD': String(100 + dt.getDate()).substr(-2),
-            'HH24': String(100 + hours).substr(-2),
-            'HH': String(100 + (hours > 12
-                ? hours - 12
-                : hours)).substr(-2),
-            'MI': String(100 + dt.getMinutes()).substr(-2),
-            'SS': String(100 + dt.getSeconds()).substr(-2),
-            'AMPM': hours >= 12
-                ? 'PM'
-                : 'AM'
+            YYYY: String(10000 + dt.getFullYear()).substr(-4),
+            MM: String(101 + dt.getMonth()).substr(-2),
+            DD: String(100 + dt.getDate()).substr(-2),
+            HH24: String(100 + hours).substr(-2),
+            HH: String(100 + (hours > 12 ? hours - 12 : hours)).substr(-2),
+            MI: String(100 + dt.getMinutes()).substr(-2),
+            SS: String(100 + dt.getSeconds()).substr(-2),
+            AMPM: hours >= 12 ? 'PM' : 'AM'
         };
-        return format.replace(/YYYY|MM|DD|HH24|HH|MI|SS|AMPM/gu, (c) => map[c] || c);
+        return format.replace(
+            /YYYY|MM|DD|HH24|HH|MI|SS|AMPM/gu,
+            (c) => map[c] || c
+        );
     };
     Vue.filter('formatDate', formatDate);
 
-    var textToHex = (s) => String(s).split('').map((c) => c.charCodeAt(0).toString(16)).join(' ');
+    var textToHex = (s) =>
+        String(s)
+            .split('')
+            .map((c) => c.charCodeAt(0).toString(16))
+            .join(' ');
     Vue.filter('textToHex', textToHex);
 
     var timeToText = (t) => {
@@ -97,8 +102,7 @@ speechSynthesis.getVoices();
             arr.push(`${Math.floor(sec / 60)}m`);
             sec %= 60;
         }
-        if (sec ||
-            !arr.length) {
+        if (sec || !arr.length) {
             arr.push(`${sec}s`);
         }
         return arr.join(' ');
@@ -142,7 +146,7 @@ speechSynthesis.getVoices();
         if (typeof handlers === 'undefined') {
             return;
         }
-        var { length } = handlers;
+        var {length} = handlers;
         for (var i = 0; i < length; ++i) {
             if (handlers[i] === handler) {
                 if (length > 1) {
@@ -163,13 +167,13 @@ speechSynthesis.getVoices();
             method: 'GET',
             ...options
         };
-        var { params } = init;
+        var {params} = init;
         var isGetRequest = init.method === 'GET';
         if (isGetRequest === true) {
             // transform body to url
             if (params === Object(params)) {
                 var url = new URL(init.url);
-                var { searchParams } = url;
+                var {searchParams} = url;
                 for (var key in params) {
                     searchParams.set(key, params[key]);
                 }
@@ -185,54 +189,53 @@ speechSynthesis.getVoices();
                 'Content-Type': 'application/json;charset=utf-8',
                 ...init.headers
             };
-            init.body = params === Object(params)
-                ? JSON.stringify(params)
-                : '{}';
+            init.body =
+                params === Object(params) ? JSON.stringify(params) : '{}';
         }
         init.headers = {
             'User-Agent': appVersion,
             ...init.headers
         };
-        var req = webApiService.execute(init).catch((err) => {
-            this.$throw(0, err);
-        }).then((response) => {
-            try {
-                response.data = JSON.parse(response.data);
-                return response;
-            } catch (e) {
-            }
-            if (response.status === 200) {
-                this.$throw(0, 'Invalid JSON response');
-            }
-            this.$throw(response.status);
-            return {};
-        }).then(({ data, status }) => {
-            if (data === Object(data)) {
-                if (status === 200) {
-                    if (data.success === Object(data.success)) {
-                        new Noty({
-                            type: 'success',
-                            text: escapeTag(data.success.message)
-                        }).show();
+        var req = webApiService
+            .execute(init)
+            .catch((err) => {
+                this.$throw(0, err);
+            })
+            .then((response) => {
+                try {
+                    response.data = JSON.parse(response.data);
+                    return response;
+                } catch (e) {}
+                if (response.status === 200) {
+                    this.$throw(0, 'Invalid JSON response');
+                }
+                this.$throw(response.status);
+                return {};
+            })
+            .then(({data, status}) => {
+                if (data === Object(data)) {
+                    if (status === 200) {
+                        if (data.success === Object(data.success)) {
+                            new Noty({
+                                type: 'success',
+                                text: escapeTag(data.success.message)
+                            }).show();
+                        }
+                        return data;
                     }
-                    return data;
+                    if (data.error === Object(data.error)) {
+                        this.$throw(
+                            data.error.status_code || status,
+                            data.error.message,
+                            data.error.data
+                        );
+                    } else if (typeof data.error === 'string') {
+                        this.$throw(data.status_code || status, data.error);
+                    }
                 }
-                if (data.error === Object(data.error)) {
-                    this.$throw(
-                        data.error.status_code || status,
-                        data.error.message,
-                        data.error.data
-                    );
-                } else if (typeof data.error === 'string') {
-                    this.$throw(
-                        data.status_code || status,
-                        data.error
-                    );
-                }
-            }
-            this.$throw(status, data);
-            return data;
-        });
+                this.$throw(status, data);
+                return data;
+            });
         if (isGetRequest === true) {
             req.finally(() => {
                 this.pendingGetRequests.delete(init.url);
@@ -373,9 +376,9 @@ speechSynthesis.getVoices();
     // API: Location
 
     API.parseLocation = function (tag) {
-        tag = String(tag || '');
+        var _tag = String(tag || '');
         var ctx = {
-            tag,
+            tag: _tag,
             isOffline: false,
             isPrivate: false,
             worldId: '',
@@ -389,27 +392,21 @@ speechSynthesis.getVoices();
             friendsId: null,
             canRequestInvite: false
         };
-        if (tag === 'offline') {
+        if (_tag === 'offline') {
             ctx.isOffline = true;
-        } else if (tag === 'private') {
+        } else if (_tag === 'private') {
             ctx.isPrivate = true;
-        } else if (tag.startsWith('local') === false) {
-            var sep = tag.indexOf(':');
+        } else if (_tag.startsWith('local') === false) {
+            var sep = _tag.indexOf(':');
             if (sep >= 0) {
-                ctx.worldId = tag.substr(0, sep);
-                ctx.instanceId = tag.substr(sep + 1);
+                ctx.worldId = _tag.substr(0, sep);
+                ctx.instanceId = _tag.substr(sep + 1);
                 ctx.instanceId.split('~').forEach((s, i) => {
                     if (i) {
                         var A = s.indexOf('(');
-                        var Z = A >= 0
-                            ? s.lastIndexOf(')')
-                            : -1;
-                        var key = Z >= 0
-                            ? s.substr(0, A)
-                            : s;
-                        var value = A < Z
-                            ? s.substr(A + 1, Z - A - 1)
-                            : '';
+                        var Z = A >= 0 ? s.lastIndexOf(')') : -1;
+                        var key = Z >= 0 ? s.substr(0, A) : s;
+                        var value = A < Z ? s.substr(A + 1, Z - A - 1) : '';
                         if (key === 'hidden') {
                             ctx.hiddenId = value;
                         } else if (key === 'private') {
@@ -445,14 +442,15 @@ speechSynthesis.getVoices();
                     ctx.userId = ctx.hiddenId;
                 }
             } else {
-                ctx.worldId = tag;
+                ctx.worldId = _tag;
             }
         }
         return ctx;
     };
 
     Vue.component('location', {
-        template: '<span>{{ text }}<slot></slot><span class="famfamfam-flags" :class="region" style="display:inline-block;margin-left:5px"></span></span>',
+        template:
+            '<span>{{ text }}<slot></slot><span class="famfamfam-flags" :class="region" style="display:inline-block;margin-left:5px"></span></span>',
         props: {
             location: String,
             hint: {
@@ -488,7 +486,12 @@ speechSynthesis.getVoices();
                     }
                 }
                 this.region = '';
-                if ((this.location !== '') && (L.instanceId) && (!L.isOffline) && (!L.isPrivate)) {
+                if (
+                    this.location !== '' &&
+                    L.instanceId &&
+                    !L.isOffline &&
+                    !L.isPrivate
+                ) {
                     if (L.region === 'eu') {
                         this.region = 'europeanunion';
                     } else if (L.region === 'jp') {
@@ -626,7 +629,7 @@ speechSynthesis.getVoices();
                     props[prop] = true;
                 }
             }
-            var $ref = { ...ref };
+            var $ref = {...ref};
             Object.assign(ref, json);
             for (var prop in ref) {
                 if (ref[prop] !== Object(ref[prop])) {
@@ -639,10 +642,7 @@ speechSynthesis.getVoices();
                 if (asis === tobe) {
                     delete props[prop];
                 } else {
-                    props[prop] = [
-                        tobe,
-                        asis
-                    ];
+                    props[prop] = [tobe, asis];
                 }
             }
         }
@@ -734,21 +734,25 @@ speechSynthesis.getVoices();
             // OO has muted you
             // OO has hidden you
             // --
-            API.getConfig().catch((err) => {
-                // FIXME: 어케 복구하냐 이건
-                throw err;
-            }).then((args) => {
-                if (this.appType === '1') {
-                    this.updateCpuUsageLoop();
-                }
-                this.initLoop();
-                return args;
-            });
+            API.getConfig()
+                .catch((err) => {
+                    // FIXME: 어케 복구하냐 이건
+                    throw err;
+                })
+                .then((args) => {
+                    if (this.appType === '1') {
+                        this.updateCpuUsageLoop();
+                    }
+                    this.initLoop();
+                    return args;
+                });
         }
     };
 
     $app.methods.updateVRConfigVars = function () {
-        this.currentUserStatus = sharedRepository.getString('current_user_status');
+        this.currentUserStatus = sharedRepository.getString(
+            'current_user_status'
+        );
         this.isGameRunning = sharedRepository.getBool('is_game_running');
         this.isGameNoVR = sharedRepository.getBool('is_Game_No_VR');
         this.downloadProgress = sharedRepository.getInt('downloadProgress');
@@ -756,7 +760,9 @@ speechSynthesis.getVoices();
         if (lastLocation) {
             this.lastLocation = lastLocation;
             if (this.lastLocation.date !== 0) {
-                this.lastLocationTimer = timeToText(Date.now() - this.lastLocation.date);
+                this.lastLocationTimer = timeToText(
+                    Date.now() - this.lastLocation.date
+                );
             } else {
                 this.lastLocationTimer = '';
             }
@@ -794,14 +800,16 @@ speechSynthesis.getVoices();
             } else {
                 console.error('missing displayName');
             }
-            if ((displayName) && (!this.notyMap[displayName]) ||
-                (this.notyMap[displayName] < feed.created_at)) {
+            if (
+                (displayName && !this.notyMap[displayName]) ||
+                this.notyMap[displayName] < feed.created_at
+            ) {
                 this.notyMap[displayName] = feed.created_at;
             }
         });
     };
 
-    $app.methods.initLoop = async function () {
+    $app.methods.initLoop = function () {
         if (!sharedRepository.getBool('VRInit')) {
             setTimeout(this.initLoop, 500);
         } else {
@@ -813,7 +821,7 @@ speechSynthesis.getVoices();
         try {
             this.currentTime = new Date().toJSON();
             await this.updateVRConfigVars();
-            if ((!this.config.hideDevicesFromFeed) && (this.appType === '1')) {
+            if (!this.config.hideDevicesFromFeed && this.appType === '1') {
                 AppApi.GetVRDevices().then((devices) => {
                     devices.forEach((device) => {
                         device[2] = parseInt(device[2], 10);
@@ -865,8 +873,10 @@ speechSynthesis.getVoices();
             } else {
                 console.error('missing displayName');
             }
-            if ((displayName) && (!this.notyMap[displayName]) ||
-                (this.notyMap[displayName] < feed.created_at)) {
+            if (
+                (displayName && !this.notyMap[displayName]) ||
+                this.notyMap[displayName] < feed.created_at
+            ) {
                 this.notyMap[displayName] = feed.created_at;
                 notyToPlay.push(feed);
             }
@@ -877,7 +887,11 @@ speechSynthesis.getVoices();
         }
         var bias = new Date(Date.now() - 60000).toJSON();
         var noty = {};
-        var messageList = ['inviteMessage', 'requestMessage', 'responseMessage'];
+        var messageList = [
+            'inviteMessage',
+            'requestMessage',
+            'responseMessage'
+        ];
         for (var i = 0; i < notyToPlay.length; i++) {
             noty = notyToPlay[i];
             if (noty.created_at < bias) {
@@ -885,14 +899,21 @@ speechSynthesis.getVoices();
             }
             var message = '';
             for (var k = 0; k < messageList.length; k++) {
-                if (typeof noty.details !== 'undefined' && typeof noty.details[messageList[k]] !== 'undefined') {
+                if (
+                    typeof noty.details !== 'undefined' &&
+                    typeof noty.details[messageList[k]] !== 'undefined'
+                ) {
                     message = noty.details[messageList[k]];
                 }
             }
             if (message) {
                 message = `, ${message}`;
             }
-            if ((this.config.overlayNotifications) && (!this.isGameNoVR) && (this.isGameRunning)) {
+            if (
+                this.config.overlayNotifications &&
+                !this.isGameNoVR &&
+                this.isGameRunning
+            ) {
                 var text = '';
                 switch (noty.type) {
                     case 'OnPlayerJoined':
@@ -905,7 +926,12 @@ speechSynthesis.getVoices();
                         text = `<strong>${noty.displayName}</strong> is joining`;
                         break;
                     case 'GPS':
-                        text = `<strong>${noty.displayName}</strong> is in ${this.displayLocation(noty.location, noty.worldName)}`;
+                        text = `<strong>${
+                            noty.displayName
+                        }</strong> is in ${this.displayLocation(
+                            noty.location,
+                            noty.worldName
+                        )}`;
                         break;
                     case 'Online':
                         text = `<strong>${noty.displayName}</strong> has logged in`;
@@ -917,7 +943,12 @@ speechSynthesis.getVoices();
                         text = `<strong>${noty.displayName}</strong> status is now <i>${noty.status}</i> ${noty.statusDescription}`;
                         break;
                     case 'invite':
-                        text = `<strong>${noty.senderUsername}</strong> has invited you to ${this.displayLocation(noty.details.worldId, noty.details.worldName)}${message}`;
+                        text = `<strong>${
+                            noty.senderUsername
+                        }</strong> has invited you to ${this.displayLocation(
+                            noty.details.worldId,
+                            noty.details.worldName
+                        )}${message}`;
                         break;
                     case 'requestInvite':
                         text = `<strong>${noty.senderUsername}</strong> has requested an invite ${message}`;
@@ -1028,4 +1059,4 @@ speechSynthesis.getVoices();
 
     $app = new Vue($app);
     window.$app = $app;
-}());
+})();
