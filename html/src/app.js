@@ -10016,7 +10016,7 @@ speechSynthesis.getVoices();
                 }
             }
             var fileId = extractFileId(assetUrl);
-            var fileVersion = extractFileVersion(assetUrl);
+            var fileVersion = parseInt(extractFileVersion(assetUrl), 10);
             if (fileId) {
                 API.getBundles(fileId)
                     .then((args2) => {
@@ -10422,12 +10422,11 @@ speechSynthesis.getVoices();
                 }
             }
             var fileId = extractFileId(assetUrl);
-            var fileVersion = extractFileVersion(assetUrl);
+            var fileVersion = parseInt(extractFileVersion(assetUrl), 10);
             if (!fileId) {
-                var fileId = extractFileId(ref.assetUrl);
-                var fileVersion = extractFileVersion(ref.assetUrl);
+                fileId = extractFileId(ref.assetUrl);
+                fileVersion = parseInt(extractFileVersion(ref.assetUrl), 10);
             }
-            // var imageId = extractFileId(ref.imageUrl);
             D.fileSize = '';
             if (fileId) {
                 D.fileSize = 'Loading';
@@ -13619,7 +13618,7 @@ speechSynthesis.getVoices();
             }
         }
         var fileId = extractFileId(assetUrl);
-        var fileVersion = extractFileVersion(assetUrl);
+        var fileVersion = parseInt(extractFileVersion(assetUrl), 10);
         if (!fileId) {
             this.downloadCurrent.status = 'Invalid asset url';
             this.downloadCurrent.date = Date.now();
