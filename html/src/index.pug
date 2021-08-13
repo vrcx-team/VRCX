@@ -641,7 +641,7 @@ html
                                     img.friends-list-avatar(v-lazy="scope.row.currentAvatarImageUrl" style="height:500px;cursor:pointer" @click="openExternalLink(scope.row.currentAvatarImageUrl)")
                         el-table-column(label="Display Name" min-width="130" prop="displayName" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'displayName')")
                         el-table-column(label="User Name" min-width="120" prop="username" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'username')")
-                        el-table-column(label="Rank" width="110" prop="$trustNum" sortable="custom")
+                        el-table-column(label="Rank" width="110" prop="$trustSortNum" sortable="custom")
                             template(v-once #default="scope")
                                 span.name(v-text="scope.row.$trustLevel" :class="scope.row.$trustColor")
                         el-table-column(label="Status" min-width="180" prop="status" sortable :sort-method="(a, b) => sortStatus(a.status, b.status)")
