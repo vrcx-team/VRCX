@@ -442,7 +442,7 @@ speechSynthesis.getVoices();
                         message: 'Avatar private or deleted',
                         type: 'error'
                     });
-                    $app.avatarDialog.visable = false;
+                    $app.avatarDialog.visible = false;
                     throw new Error("404: Can't find avatarǃ");
                 }
                 if (init.method === 'GET' && status === 404) {
