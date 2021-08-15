@@ -14464,7 +14464,18 @@ speechSynthesis.getVoices();
     $app.methods.installVRCXUpdate = function () {
         for (var release of this.VRCXUpdateDialog.releases) {
             if (release.name === this.VRCXUpdateDialog.release) {
-                var downloadUrl = release.assets[0].browser_download_url;
+                for (var asset of release.assets) {
+                    if (
+                        asset.content_type === 'application/x-msdownload' &&
+                        asset.state === 'uploaded'
+                    ) {
+                        var downloadUrl = asset.browser_download_url;
+                        break;
+                    }
+                }
+                if (!downloadUrl) {
+                    return;
+                }
                 var name = release.name;
                 var type = 'Manual';
                 var autoInstall = false;
