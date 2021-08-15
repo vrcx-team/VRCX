@@ -5582,38 +5582,61 @@ speechSynthesis.getVoices();
 
     $app.methods.relogin = function (loginParmas) {
         return new Promise((resolve, reject) => {
-            this.checkPrimaryPassword(loginParmas)
-                .then((pwd) => {
-                    this.loginForm.loading = true;
-                    return API.getConfig()
-                        .catch((err) => {
-                            this.loginForm.loading = false;
-                            reject(err);
-                        })
-                        .then(() => {
-                            API.login({
-                                username: loginParmas.username,
-                                password: pwd,
-                                cipher: loginParmas.password
+            if (this.enablePrimaryPassword) {
+                this.checkPrimaryPassword(loginParmas)
+                    .then((pwd) => {
+                        this.loginForm.loading = true;
+                        return API.getConfig()
+                            .catch((err) => {
+                                this.loginForm.loading = false;
+                                reject(err);
                             })
-                                .catch((err2) => {
-                                    this.loginForm.loading = false;
-                                    API.logout();
-                                    reject(err2);
+                            .then(() => {
+                                API.login({
+                                    username: loginParmas.username,
+                                    password: pwd,
+                                    cipher: loginParmas.password
                                 })
-                                .then(() => {
-                                    this.loginForm.loading = false;
-                                    resolve();
-                                });
+                                    .catch((err2) => {
+                                        this.loginForm.loading = false;
+                                        API.logout();
+                                        reject(err2);
+                                    })
+                                    .then(() => {
+                                        this.loginForm.loading = false;
+                                        resolve();
+                                    });
+                            });
+                    })
+                    .catch((_) => {
+                        this.$message({
+                            message: 'Incorrect primary password',
+                            type: 'error'
                         });
-                })
-                .catch((_) => {
-                    this.$message({
-                        message: 'Incorrect primary password',
-                        type: 'error'
+                        reject(_);
                     });
-                    reject(_);
-                });
+            } else {
+                API.getConfig()
+                    .catch((err) => {
+                        this.loginForm.loading = false;
+                        reject(err);
+                    })
+                    .then(() => {
+                        API.login({
+                            username: loginParmas.username,
+                            password: loginParmas.password
+                        })
+                            .catch((err2) => {
+                                this.loginForm.loading = false;
+                                API.logout();
+                                reject(err2);
+                            })
+                            .then(() => {
+                                this.loginForm.loading = false;
+                                resolve();
+                            });
+                    });
+            }
         });
     };
 
@@ -5637,9 +5660,6 @@ speechSynthesis.getVoices();
     };
 
     API.$on('AUTOLOGIN', function () {
-        if ($app.enablePrimaryPassword) {
-            return;
-        }
         var user =
             $app.loginForm.savedCredentials[$app.loginForm.lastUserLoggedIn];
         if (typeof user !== 'undefined') {
