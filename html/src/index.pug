@@ -22,7 +22,7 @@ html
                             .x-friend-item(v-for="user in loginForm.savedCredentials" :key="user.user.id")
                                 .x-friend-item(@click="relogin(user.loginParmas)" style="width:202px;padding:0")
                                     .avatar
-                                        img(v-if="displayProfilePicOverrideAsAvatar && user.user.profilePicOverride" v-lazy="user.user.profilePicOverride")
+                                        img(v-if="user.user.profilePicOverride" v-lazy="user.user.profilePicOverride")
                                         img(v-else-if="displayVRCPlusIconsAsAvatar && user.user.userIcon" v-lazy="user.user.userIcon")
                                         img(v-else v-lazy="user.user.currentAvatarThumbnailImageUrl")
                                     .detail
@@ -286,7 +286,7 @@ html
                                         .x-friend-item
                                             template(v-if="favorite.ref")
                                                 .avatar(:class="userStatusClass(favorite.ref)")
-                                                    img(v-if="displayProfilePicOverrideAsAvatar && favorite.ref.profilePicOverride" v-lazy="favorite.ref.profilePicOverride")
+                                                    img(v-if="favorite.ref.profilePicOverride" v-lazy="favorite.ref.profilePicOverride")
                                                     img(v-else-if="displayVRCPlusIconsAsAvatar && favorite.ref.userIcon" v-lazy="favorite.ref.userIcon")
                                                     img(v-else v-lazy="favorite.ref.currentAvatarThumbnailImageUrl")
                                                 .detail
@@ -478,7 +478,7 @@ html
                     .x-friend-list(style="margin-top:10px")
                         .x-friend-item(@click="showUserDialog(API.currentUser.id)")
                             .avatar
-                                img(v-if="displayProfilePicOverrideAsAvatar && API.currentUser.profilePicOverride" v-lazy="API.currentUser.profilePicOverride")
+                                img(v-if="API.currentUser.profilePicOverride" v-lazy="API.currentUser.profilePicOverride")
                                 img(v-else-if="displayVRCPlusIconsAsAvatar && API.currentUser.userIcon" v-lazy="API.currentUser.userIcon")
                                 img(v-else v-lazy="API.currentUser.currentAvatarThumbnailImageUrl")
                             .detail
@@ -630,7 +630,7 @@ html
                         el-table-column(label="No." width="70" prop="$friendNum" sortable="custom")
                         el-table-column(label="Avatar" width="70" prop="photo")
                             template(v-once #default="scope")
-                                el-popover(v-if="displayProfilePicOverrideAsAvatar && scope.row.profilePicOverride" placement="right" height="500px" trigger="hover")
+                                el-popover(v-if="scope.row.profilePicOverride" placement="right" height="500px" trigger="hover")
                                     img.friends-list-avatar(slot="reference" v-lazy="scope.row.profilePicOverride")
                                     img.friends-list-avatar(v-lazy="scope.row.profilePicOverride" style="height:500px;cursor:pointer" @click="openExternalLink(scope.row.profilePicOverride)")
                                 el-popover(v-else-if="displayVRCPlusIconsAsAvatar && scope.row.userIcon" placement="right" height="500px" trigger="hover")
@@ -704,9 +704,6 @@ html
                             el-radio-button(label="system") System
                             el-radio-button(label="light") Light
                             el-radio-button(label="dark") Dark
-                    div.options-container-item
-                        span.name Profile Picture Override
-                        el-switch(v-model="displayProfilePicOverrideAsAvatar")
                     div.options-container-item
                         span.name VRCPlus Profile Icons
                         el-switch(v-model="displayVRCPlusIconsAsAvatar")
@@ -933,7 +930,7 @@ html
                                     .detail
                                         span.name(v-text="item.ref.displayName" :class="item.ref.$trustColor")
                                         location.extra(:location="item.ref.location" :link="false")
-                                    img.avatar(v-if="displayProfilePicOverrideAsAvatar && item.ref.profilePicOverride" v-lazy="item.ref.profilePicOverride")
+                                    img.avatar(v-if="item.ref.profilePicOverride" v-lazy="item.ref.profilePicOverride")
                                     img.avatar(v-else-if="displayVRCPlusIconsAsAvatar && item.ref.userIcon" v-lazy="item.ref.userIcon")
                                     img.avatar(v-else v-lazy="item.ref.currentAvatarThumbnailImageUrl")
                                 span(v-else) Search More: #[span(v-text="item.label" style="font-weight:bold")]
@@ -948,7 +945,7 @@ html
                     div(v-show="isFriendsGroupMe")
                         .x-friend-item(:key="API.currentUser.id" @click="showUserDialog(API.currentUser.id)")
                             .avatar(:class="userStatusClass(API.currentUser)")
-                                img(v-if="displayProfilePicOverrideAsAvatar && API.currentUser.profilePicOverride" v-lazy="API.currentUser.profilePicOverride")
+                                img(v-if="API.currentUser.profilePicOverride" v-lazy="API.currentUser.profilePicOverride")
                                 img(v-else-if="displayVRCPlusIconsAsAvatar && API.currentUser.userIcon" v-lazy="API.currentUser.userIcon")
                                 img(v-else v-lazy="API.currentUser.currentAvatarThumbnailImageUrl")
                             .detail
@@ -962,7 +959,7 @@ html
                         .x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" @click="showUserDialog(friend.id)")
                             template(v-if="friend.ref")
                                 .avatar(:class="userStatusClass(friend.ref)")
-                                    img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                    img(v-if="friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
                                     img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                     img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                 .detail
@@ -979,7 +976,7 @@ html
                         .x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" @click="showUserDialog(friend.id)")
                             template(v-if="friend.ref")
                                 .avatar(:class="userStatusClass(friend.ref)")
-                                    img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                    img(v-if="friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
                                     img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                     img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                 .detail
@@ -996,7 +993,7 @@ html
                         .x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" @click="showUserDialog(friend.id)")
                             template(v-if="friend.ref")
                                 .avatar
-                                    img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                    img(v-if="friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
                                     img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                     img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                 .detail
@@ -1013,7 +1010,7 @@ html
                         .x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" @click="showUserDialog(friend.id)")
                             template(v-if="friend.ref")
                                 .avatar
-                                    img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                    img(v-if="friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
                                     img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                     img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                 .detail
@@ -1028,7 +1025,7 @@ html
             el-dialog.x-dialog.x-user-dialog(ref="userDialog" :visible.sync="userDialog.visible" :show-close="false" width="770px")
                 div(v-loading="userDialog.loading")
                     div(style="display:flex")
-                        el-popover(v-if="displayProfilePicOverrideAsAvatar && userDialog.ref.profilePicOverride" placement="right" width="500px" trigger="click")
+                        el-popover(v-if="userDialog.ref.profilePicOverride" placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="userDialog.ref.profilePicOverride" style="flex:none;width:160px;height:120px;border-radius:4px;object-fit:cover")
                             img.x-link(v-lazy="userDialog.ref.profilePicOverride" style="width:500px;height:375px;object-fit:cover" @click="openExternalLink(userDialog.ref.profilePicOverride)")
                         el-popover(v-else placement="right" width="500px" trigger="click")
@@ -1128,7 +1125,7 @@ html
                                     .x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)")
                                         template(v-if="userDialog.$location.user")
                                             .avatar(:class="userStatusClass(userDialog.$location.user)")
-                                                img(v-if="displayProfilePicOverrideAsAvatar && userDialog.$location.user.profilePicOverride" v-lazy="userDialog.$location.user.profilePicOverride")
+                                                img(v-if="userDialog.$location.user.profilePicOverride" v-lazy="userDialog.$location.user.profilePicOverride")
                                                 img(v-else-if="displayVRCPlusIconsAsAvatar && userDialog.$location.user.userIcon" v-lazy="userDialog.$location.user.userIcon")
                                                 img(v-else v-lazy="userDialog.$location.user.currentAvatarThumbnailImageUrl")
                                             .detail
@@ -1137,7 +1134,7 @@ html
                                         span(v-else v-text="userDialog.$location.userId")
                                     .x-friend-item(v-for="user in userDialog.users" :key="user.id" @click="showUserDialog(user.id)")
                                         .avatar(:class="userStatusClass(user)")
-                                            img(v-if="displayProfilePicOverrideAsAvatar && user.profilePicOverride" v-lazy="user.profilePicOverride")
+                                            img(v-if="user.profilePicOverride" v-lazy="user.profilePicOverride")
                                             img(v-else-if="displayVRCPlusIconsAsAvatar && user.userIcon" v-lazy="user.userIcon")
                                             img(v-else v-lazy="user.currentAvatarThumbnailImageUrl")
                                         .detail
@@ -1153,9 +1150,6 @@ html
                                     .detail
                                         span.name Avatar Info
                                         .extra
-                                            el-popover(v-if="displayProfilePicOverrideAsAvatar && userDialog.ref.profilePicOverride" placement="right" width="500px" trigger="click" style="display:inline-block;margin-right:5px")
-                                                img.x-link(slot="reference" v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="flex:none;width:80px;height:60px;border-radius:4px;object-fit:cover")
-                                                img.x-link(v-lazy="userDialog.ref.currentAvatarImageUrl" style="width:500px;height:375px;object-fit:cover" @click="openExternalLink(userDialog.ref.currentAvatarImageUrl)")
                                             avatar-info(:imageurl="userDialog.ref.currentAvatarImageUrl" :userid="userDialog.id")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
@@ -1320,7 +1314,7 @@ html
                                     .x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)")
                                         template(v-if="room.$location.user")
                                             .avatar(:class="userStatusClass(room.$location.user)")
-                                                img(v-if="displayProfilePicOverrideAsAvatar && room.$location.user.profilePicOverride" v-lazy="room.$location.user.profilePicOverride")
+                                                img(v-if="room.$location.user.profilePicOverride" v-lazy="room.$location.user.profilePicOverride")
                                                 img(v-else-if="displayVRCPlusIconsAsAvatar && room.$location.user.userIcon" v-lazy="room.$location.user.userIcon")
                                                 img(v-else v-lazy="room.$location.user.currentAvatarThumbnailImageUrl")
                                             .detail
@@ -1329,7 +1323,7 @@ html
                                         span(v-else v-text="room.$location.userId")
                                     .x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)")
                                         .avatar(:class="userStatusClass(user)")
-                                            img(v-if="displayProfilePicOverrideAsAvatar && user.profilePicOverride" v-lazy="user.profilePicOverride")
+                                            img(v-if="user.profilePicOverride" v-lazy="user.profilePicOverride")
                                             img(v-else-if="displayVRCPlusIconsAsAvatar && user.userIcon" v-lazy="user.userIcon")
                                             img(v-else v-lazy="user.currentAvatarThumbnailImageUrl")
                                         .detail
@@ -1490,7 +1484,7 @@ html
                         el-option-group(v-if="API.currentUser" label="ME")
                             el-option.x-friend-item(:label="API.currentUser.displayName" :value="API.currentUser.id" style="height:auto")
                                 .avatar(:class="userStatusClass(API.currentUser)")
-                                    img(v-if="displayProfilePicOverrideAsAvatar && API.currentUser.profilePicOverride" v-lazy="API.currentUser.profilePicOverride")
+                                    img(v-if="API.currentUser.profilePicOverride" v-lazy="API.currentUser.profilePicOverride")
                                     img(v-else-if="displayVRCPlusIconsAsAvatar && API.currentUser.userIcon" v-lazy="API.currentUser.userIcon")
                                     img(v-else v-lazy="API.currentUser.currentAvatarThumbnailImageUrl")
                                 .detail
@@ -1499,7 +1493,7 @@ html
                             el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
-                                        img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                        img(v-if="friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
                                         img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                         img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                     .detail
@@ -1509,7 +1503,7 @@ html
                             el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
-                                        img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                        img(v-if="friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
                                         img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                         img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                     .detail
@@ -1519,7 +1513,7 @@ html
                             el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar
-                                        img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                        img(v-if="friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
                                         img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                         img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                     .detail
@@ -1606,7 +1600,7 @@ html
                             el-option-group(v-if="API.currentUser" label="ME")
                                 el-option.x-friend-item(:label="API.currentUser.displayName" :value="API.currentUser.id" style="height:auto")
                                     .avatar(:class="userStatusClass(API.currentUser)")
-                                        img(v-if="displayProfilePicOverrideAsAvatar && API.currentUser.profilePicOverride" v-lazy="API.currentUser.profilePicOverride")
+                                        img(v-if="API.currentUser.profilePicOverride" v-lazy="API.currentUser.profilePicOverride")
                                         img(v-else-if="displayVRCPlusIconsAsAvatar && API.currentUser.userIcon" v-lazy="API.currentUser.userIcon")
                                         img(v-else v-lazy="API.currentUser.currentAvatarThumbnailImageUrl")
                                     .detail
@@ -1615,7 +1609,7 @@ html
                                 el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                     template(v-if="friend.ref")
                                         .avatar(:class="userStatusClass(friend.ref)")
-                                            img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                            img(v-if="friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
                                             img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                             img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                         .detail
@@ -1625,7 +1619,7 @@ html
                                 el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                     template(v-if="friend.ref")
                                         .avatar(:class="userStatusClass(friend.ref)")
-                                            img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                            img(v-if="friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
                                             img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                             img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                         .detail
@@ -1635,7 +1629,7 @@ html
                                 el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                     template(v-if="friend.ref")
                                         .avatar
-                                            img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                            img(v-if="friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
                                             img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                             img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                         .detail
@@ -1645,7 +1639,7 @@ html
                                 el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                     template(v-if="friend.ref")
                                         .avatar
-                                            img(v-if="displayProfilePicOverrideAsAvatar && friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
+                                            img(v-if="friend.ref.profilePicOverride" v-lazy="friend.ref.profilePicOverride")
                                             img(v-else-if="displayVRCPlusIconsAsAvatar && friend.ref.userIcon" v-lazy="friend.ref.userIcon")
                                             img(v-else v-lazy="friend.ref.currentAvatarThumbnailImageUrl")
                                         .detail

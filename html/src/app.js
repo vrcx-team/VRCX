@@ -903,8 +903,8 @@ speechSynthesis.getVoices();
                     } catch (err) {}
                 }
                 if (typeof this.userid === 'undefined' || !this.ownerId) {
-                    this.color = 'avatar-info-unknown';
-                    this.avatarType = '(unknown)';
+                    this.color = '';
+                    this.avatarType = '';
                 } else if (this.ownerId === this.userid) {
                     this.color = 'avatar-info-own';
                     this.avatarType = '(own)';
@@ -4740,11 +4740,6 @@ speechSynthesis.getVoices();
                 })
                 .then((args) => {
                     if (
-                        this.displayProfilePicOverrideAsAvatar &&
-                        args.json.profilePicOverride
-                    ) {
-                        return args.json.profilePicOverride;
-                    } else if (
                         this.displayVRCPlusIconsAsAvatar &&
                         args.json.userIcon
                     ) {
@@ -8311,9 +8306,6 @@ speechSynthesis.getVoices();
     $app.data.displayVRCPlusIconsAsAvatar = configRepository.getBool(
         'displayVRCPlusIconsAsAvatar'
     );
-    $app.data.displayProfilePicOverrideAsAvatar = configRepository.getBool(
-        'VRCX_displayProfilePicOverrideAsAvatar'
-    );
     $app.data.hideTooltips = configRepository.getBool('VRCX_hideTooltips');
     $app.data.notificationTTS = configRepository.getString(
         'VRCX_notificationTTS'
@@ -8371,10 +8363,6 @@ speechSynthesis.getVoices();
             'displayVRCPlusIconsAsAvatar',
             this.displayVRCPlusIconsAsAvatar
         );
-        configRepository.setBool(
-            'VRCX_displayProfilePicOverrideAsAvatar',
-            this.displayProfilePicOverrideAsAvatar
-        );
         configRepository.setBool('VRCX_hideTooltips', this.hideTooltips);
         configRepository.setString(
             'VRCX_worldAutoCacheInvite',
@@ -8428,7 +8416,6 @@ speechSynthesis.getVoices();
     $app.watch.desktopToast = saveOpenVROption;
     $app.watch.minimalFeed = saveOpenVROption;
     $app.watch.displayVRCPlusIconsAsAvatar = saveOpenVROption;
-    $app.watch.displayProfilePicOverrideAsAvatar = saveOpenVROption;
     $app.watch.hideTooltips = saveOpenVROption;
     $app.watch.worldAutoCacheInvite = saveOpenVROption;
     $app.watch.worldAutoCacheGPS = saveOpenVROption;
