@@ -5832,7 +5832,7 @@ speechSynthesis.getVoices();
         database.commit();
     };
 
-    $app.methods.loadMemo = async function (userId) {
+    $app.methods.getMemo = async function (userId) {
         try {
             var row = await database.getMemo(userId);
             return row.memo;
@@ -6008,6 +6008,11 @@ speechSynthesis.getVoices();
         $app.updateFriend(args.ref.favoriteId);
     });
 
+    API.$on('LOGIN', function () {
+        this.cachedUsers = new Map(); // fix memos loading very slowly on relogin
+        $app.nextFriendsRefresh = 0;
+    });
+
     $app.methods.refreshFriends = function (ref, origin) {
         var map = new Map();
         for (var id of ref.friends) {
@@ -6051,7 +6056,7 @@ speechSynthesis.getVoices();
             no: ++this.friendsNo,
             memo: ''
         };
-        this.loadMemo(id).then((memo) => {
+        this.getMemo(id).then((memo) => {
             ctx.memo = memo;
         });
         if (typeof ref === 'undefined') {
@@ -9394,7 +9399,7 @@ speechSynthesis.getVoices();
         D.userIcon = '';
         D.id = userId;
         D.treeData = [];
-        this.loadMemo(userId).then((memo) => {
+        this.getMemo(userId).then((memo) => {
             D.memo = memo;
             var ref = this.friends.get(userId);
             if (ref) {
