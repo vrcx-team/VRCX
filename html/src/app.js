@@ -14380,7 +14380,7 @@ speechSynthesis.getVoices();
             var regex = new RegExp(symbolList[key], 'g');
             newText = newText.replace(regex, key);
         }
-        return newText.replace(/ {1,}/g, ' ');
+        return newText.replace(/ {1,}/g, ' ').trimRight();
     };
 
     $app.methods.checkCanInvite = function (location) {
