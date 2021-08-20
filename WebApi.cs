@@ -106,6 +106,23 @@ namespace VRCX
             }
         }
 
+        public string GetCookies()
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                new BinaryFormatter().Serialize(memoryStream, _cookieContainer);
+                return Convert.ToBase64String(memoryStream.ToArray());
+            }
+        }
+
+        public void SetCookies(string cookies)
+        {
+            using (var stream = new MemoryStream(Convert.FromBase64String(cookies)))
+            {
+                _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
+            }
+        }
+
 #pragma warning disable CS4014
         public async void Execute(IDictionary<string, object> options, IJavascriptCallback callback)
         {

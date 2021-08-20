@@ -958,7 +958,6 @@ speechSynthesis.getVoices();
     API.currentUser = {};
 
     API.$on('LOGOUT', function () {
-        webApiService.clearCookies();
         this.isLoggedIn = false;
     });
 
@@ -5436,6 +5435,7 @@ speechSynthesis.getVoices();
 
     API.$on('LOGOUT', function () {
         $app.updateStoredUser(this.currentUser);
+        webApiService.clearCookies();
     });
 
     $app.methods.checkPrimaryPassword = function (args) {
@@ -5549,7 +5549,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.updateStoredUser = function (currentUser) {
+    $app.methods.updateStoredUser = async function (currentUser) {
         var savedCredentialsArray = {};
         if (configRepository.getString('savedCredentials') !== null) {
             var savedCredentialsArray = JSON.parse(
@@ -5568,6 +5568,7 @@ speechSynthesis.getVoices();
         ) {
             savedCredentialsArray[currentUser.username].user = currentUser;
         }
+        savedCredentialsArray[currentUser.username].cookies = await webApiService.getCookies();
         this.loginForm.savedCredentials = savedCredentialsArray;
         var jsonCredentialsArray = JSON.stringify(savedCredentialsArray);
         configRepository.setString('savedCredentials', jsonCredentialsArray);
@@ -5575,7 +5576,11 @@ speechSynthesis.getVoices();
         configRepository.setString('lastUserLoggedIn', currentUser.username);
     };
 
-    $app.methods.relogin = function (loginParmas) {
+    $app.methods.relogin = function (user) {
+        var { loginParmas } = user;
+        if (user.cookies) {
+            webApiService.setCookies(user.cookies);
+        }
         return new Promise((resolve, reject) => {
             if (this.enablePrimaryPassword) {
                 this.checkPrimaryPassword(loginParmas)

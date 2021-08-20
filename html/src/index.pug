@@ -20,7 +20,7 @@ html
                         h2(style="font-weight:bold;text-align:center;margin:0") Saved Accounts
                         .x-friend-list(style="margin-top:10px")
                             .x-friend-item(v-for="user in loginForm.savedCredentials" :key="user.user.id")
-                                .x-friend-item(@click="relogin(user.loginParmas)" style="width:202px;padding:0")
+                                .x-friend-item(@click="relogin(user)" style="width:202px;padding:0")
                                     .avatar
                                         img(v-if="user.user.profilePicOverride" v-lazy="user.user.profilePicOverride")
                                         img(v-else-if="displayVRCPlusIconsAsAvatar && user.user.userIcon" v-lazy="user.user.userIcon")

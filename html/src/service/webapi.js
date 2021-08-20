@@ -5,6 +5,14 @@ class WebApiService {
         return WebApi.ClearCookies();
     }
 
+    getCookies() {
+        return WebApi.GetCookies();
+    }
+
+    setCookies(cookie) {
+        return WebApi.SetCookies(cookie);
+    }
+
     execute(options) {
         return new Promise((resolve, reject) => {
             WebApi.Execute(options, (err, response) => {
