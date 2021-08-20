@@ -391,14 +391,15 @@ namespace VRCX
 
         private bool ParseLogShaderKeywordsLimit(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
-            // 2021.04.04 12:21:06 Error - Maximum number (256) of shader keywords exceeded, keyword _TOGGLESIMPLEBLUR_ON will be ignored.
+            // 2021.04.04 12:21:06 Error      -  Maximum number (256) of shader keywords exceeded, keyword _TOGGLESIMPLEBLUR_ON will be ignored.
+            // 2021.08.20 04:20:69 Error      -  Maximum number (384) of shader global keywords exceeded, keyword _FOG_EXP2 will be ignored.
 
             if (logContext.ShaderKeywordsLimitReached == true)
             {
                 return false;
             }
 
-            if (string.Compare(line, offset, "Maximum number (256) of shader keywords exceeded", 0, 48, StringComparison.Ordinal) != 0)
+            if (string.Compare(line, offset, "Maximum number (384) of shader global keywords exceeded", 0, 55, StringComparison.Ordinal) != 0)
             {
                 return false;
             }
