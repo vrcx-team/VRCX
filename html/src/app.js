@@ -5568,7 +5568,8 @@ speechSynthesis.getVoices();
         ) {
             savedCredentialsArray[currentUser.username].user = currentUser;
         }
-        savedCredentialsArray[currentUser.username].cookies = await webApiService.getCookies();
+        savedCredentialsArray[currentUser.username].cookies =
+            await webApiService.getCookies();
         this.loginForm.savedCredentials = savedCredentialsArray;
         var jsonCredentialsArray = JSON.stringify(savedCredentialsArray);
         configRepository.setString('savedCredentials', jsonCredentialsArray);
@@ -5577,7 +5578,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.relogin = function (user) {
-        var { loginParmas } = user;
+        var {loginParmas} = user;
         if (user.cookies) {
             webApiService.setCookies(user.cookies);
         }
@@ -6789,8 +6790,10 @@ speechSynthesis.getVoices();
             $app.feedDownloadWorldCache(ref.id, props.location[0]);
         }
         if (
-            props.currentAvatarImageUrl ||
-            props.currentAvatarThumbnailImageUrl
+            (props.currentAvatarImageUrl ||
+                props.currentAvatarThumbnailImageUrl) &&
+            props.currentAvatarImageUrl !==
+                'https://assets.vrchat.com/system/defaultAvatar.png'
         ) {
             var currentAvatarImageUrl = '';
             var previousCurrentAvatarImageUrl = '';
