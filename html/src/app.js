@@ -10372,7 +10372,6 @@ speechSynthesis.getVoices();
         isFavorite: false,
         isQuestFallback: false,
         treeData: [],
-        fileCreatedAt: '',
         fileSize: '',
         inCache: false,
         cacheSize: 0,
@@ -10456,7 +10455,6 @@ speechSynthesis.getVoices();
                         for (let i = versions.length - 1; i > -1; i--) {
                             var version = versions[i];
                             if (version.version === fileVersion) {
-                                D.ref.created_at = version.created_at;
                                 D.fileSize = `${(
                                     version.file.sizeInBytes / 1048576
                                 ).toFixed(2)} MiB`;
