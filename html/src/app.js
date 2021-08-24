@@ -67,10 +67,25 @@ speechSynthesis.getVoices();
         configRepository.setBool('migrate_config_20201101', true);
     }
 
+    var showConsoleWarningMessage = function () {
+        if ($app.debug || $app.debugWebRequests || $app.debugWebSocket) {
+            return;
+        }
+        console.log(
+            '%cCareful! This might not do what you think.',
+            'background-color: red; color: yellow; font-size: 32px; font-weight: bold'
+        );
+        console.log(
+            '%cIf someone told you to copy-paste something here, it can give them access to your account.',
+            'font-size: 20px;'
+        );
+    };
+
     document.addEventListener('keyup', function (e) {
         if (e.ctrlKey) {
             if (e.key === 'I') {
                 AppApi.ShowDevTools();
+                showConsoleWarningMessage();
             } else if (e.key === 'r') {
                 location.reload();
             }
