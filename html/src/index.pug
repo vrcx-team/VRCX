@@ -468,8 +468,10 @@ html
                             template(v-if="scope.row.senderUserId !== API.currentUser.id")
                                 el-button(v-if="scope.row.type === 'friendRequest'" type="text" icon="el-icon-check" size="mini" @click="acceptNotification(scope.row)")
                                 el-button(v-else-if="scope.row.type === 'invite'" type="text" icon="el-icon-chat-line-square" size="mini" @click="showSendInviteResponseDialog(scope.row)")
-                                el-button(v-else-if="scope.row.type === 'requestInvite'" type="text" icon="el-icon-chat-line-square" size="mini" @click="showSendInviteRequestResponseDialog(scope.row)")
-                                el-button(type="text" icon="el-icon-close" size="mini" @click="hideNotification(scope.row)")
+                                template(v-else-if="scope.row.type === 'requestInvite'")
+                                    el-button(v-if="lastLocation.location && isGameRunning && !checkCanInvite(lastLocation.location)" type="text" icon="el-icon-check" size="mini" @click="acceptRequestInvite(scope.row)")
+                                    el-button(type="text" icon="el-icon-chat-line-square" size="mini" style="margin-left:5px" @click="showSendInviteRequestResponseDialog(scope.row)")
+                                el-button(type="text" icon="el-icon-close" size="mini" style="margin-left:5px" @click="hideNotification(scope.row)")
 
             //- profile
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'profile'")
@@ -1097,7 +1099,7 @@ html
                                             el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") Send Friend Request
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) Show Avatar Author
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") Show Fallback Avatar Details
-                                            el-dropdown-item(icon="el-icon-picture-outline" command="Previous Images") Show Avatar Previous Images
+                                            el-dropdown-item(v-if="userDialog.currentAvatarImageUrl !== 'https://assets.vrchat.com/system/defaultAvatar.png'" icon="el-icon-picture-outline" command="Previous Images") Show Avatar Previous Images
                                             el-dropdown-item(v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided style="color:#F56C6C") Unblock
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided :disabled="userDialog.ref.$isModerator") Block
                                             el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") Unmute
@@ -1265,11 +1267,11 @@ html
                                     span(v-show="worldDialog.ref.name !== worldDialog.ref.description" v-text="worldDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
                                 el-tooltip(v-if="worldDialog.inCache" placement="top" content="Delete world from cache" :disabled="hideTooltips")
-                                    el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(worldDialog.ref)" :disabled="worldDialog.cacheLocked")
+                                    el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(worldDialog.ref)" :disabled="isGameRunning && worldDialog.cacheLocked")
                                 el-tooltip(v-else-if="downloadCurrent.id === worldDialog.id || downloadQueue.has(worldDialog.id)" placement="top" content="Show download progress" :disabled="hideTooltips")
                                     el-button(icon="el-icon-loading" circle @click="showDownloadDialog")
                                 el-tooltip(v-else placement="top" content="Download world to cache" :disabled="hideTooltips")
-                                    el-button(icon="el-icon-download" circle @click="queueCacheDownload(worldDialog.ref, 'Manual')" :disabled="worldDialog.cacheLocked")
+                                    el-button(icon="el-icon-download" circle @click="queueCacheDownload(worldDialog.ref, 'Manual')" :disabled="isGameRunning && worldDialog.cacheLocked")
                                 el-tooltip(v-if="worldDialog.isFavorite" placement="top" content="Remove from favorites" :disabled="hideTooltips")
                                     el-button(type="warning" icon="el-icon-star-on" circle @click="worldDialogCommand('Delete Favorite')" style="margin-left:5px")
                                 el-tooltip(v-else placement="top" content="Add to favorites" :disabled="hideTooltips")
@@ -1411,11 +1413,11 @@ html
                                     span(v-show="avatarDialog.ref.name !== avatarDialog.ref.description" v-text="avatarDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
                                 el-tooltip(v-if="avatarDialog.inCache" placement="top" content="Delete avatar from cache" :disabled="hideTooltips")
-                                    el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(avatarDialog.ref)" :disabled="avatarDialog.cacheLocked")
+                                    el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(avatarDialog.ref)" :disabled="isGameRunning && avatarDialog.cacheLocked")
                                 el-tooltip(v-else-if="downloadCurrent.id === avatarDialog.id || downloadQueue.has(avatarDialog.id)" placement="top" content="Show download progress" :disabled="hideTooltips")
                                     el-button(icon="el-icon-loading" circle @click="showDownloadDialog")
                                 el-tooltip(v-else-if="avatarDialog.ref.id && avatarDialog.ref.version && avatarDialog.ref.assetUrl" placement="top" content="Download avatar to cache" :disabled="hideTooltips")
-                                    el-button(icon="el-icon-download" circle @click="queueCacheDownload(avatarDialog.ref, 'Avatar')" :disabled="avatarDialog.cacheLocked")
+                                    el-button(icon="el-icon-download" circle @click="queueCacheDownload(avatarDialog.ref, 'Avatar')" :disabled="isGameRunning && avatarDialog.cacheLocked")
                                 el-tooltip(v-if="avatarDialog.isFavorite" placement="top" content="Remove from favorites" :disabled="hideTooltips")
                                     el-button(type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Delete Favorite')" style="margin-left:5px")
                                 el-tooltip(v-else placement="top" content="Add to favorites" :disabled="hideTooltips")
