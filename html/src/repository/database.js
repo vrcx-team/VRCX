@@ -1,7 +1,7 @@
 import sqliteService from '../service/sqlite.js';
 
 class Database {
-    async init(userId) {
+    async initUserTables(userId) {
         Database.userId = userId.replaceAll('-', '').replaceAll('_', '');
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${Database.userId}_feed_gps (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, location TEXT, world_name TEXT, previous_location TEXT, time INTEGER)`
@@ -23,6 +23,24 @@ class Database {
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
+        );
+    }
+
+    async initTables() {
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS gamelog_location (id INTEGER PRIMARY KEY, created_at TEXT, location TEXT, world_id TEXT, world_name TEXT, time INTEGER, UNIQUE(created_at, location))`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS gamelog_join_leave (id INTEGER PRIMARY KEY, created_at TEXT, type TEXT, display_name TEXT, location TEXT, user_id TEXT, time INTEGER, UNIQUE(created_at, type, display_name))`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS gamelog_portal_spawn (id INTEGER PRIMARY KEY, created_at TEXT, display_name TEXT, location TEXT, user_id TEXT, instance_id TEXT, world_name TEXT, UNIQUE(created_at, display_name))`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS gamelog_video_play (id INTEGER PRIMARY KEY, created_at TEXT, video_url TEXT, video_name TEXT, video_id TEXT, location TEXT, display_name TEXT, user_id TEXT, UNIQUE(created_at, video_url))`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS gamelog_event (id INTEGER PRIMARY KEY, created_at TEXT, data TEXT, UNIQUE(created_at, data))`
         );
     }
 
@@ -346,6 +364,162 @@ class Database {
                 '@location': entry.location,
                 '@world_name': entry.worldName,
                 '@time': entry.time
+            }
+        );
+    }
+
+    async getGamelogDatabase() {
+        var gamelogDatabase = [];
+        var date = new Date();
+        date.setDate(date.getDate() - 3); // 3 day limit
+        var dateOffset = date.toJSON();
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                rowId: dbRow[0],
+                created_at: dbRow[1],
+                type: 'Location',
+                location: dbRow[2],
+                worldId: dbRow[3],
+                worldName: dbRow[4],
+                time: dbRow[5]
+            };
+            gamelogDatabase.unshift(row);
+        }, `SELECT * FROM gamelog_location WHERE created_at >= date('${dateOffset}')`);
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                rowId: dbRow[0],
+                created_at: dbRow[1],
+                type: dbRow[2],
+                displayName: dbRow[3],
+                location: dbRow[4],
+                userId: dbRow[5],
+                time: dbRow[6]
+            };
+            gamelogDatabase.unshift(row);
+        }, `SELECT * FROM gamelog_join_leave WHERE created_at >= date('${dateOffset}')`);
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                rowId: dbRow[0],
+                created_at: dbRow[1],
+                type: 'PortalSpawn',
+                displayName: dbRow[2],
+                location: dbRow[3],
+                userId: dbRow[4],
+                instanceId: dbRow[5],
+                worldName: dbRow[6]
+            };
+            gamelogDatabase.unshift(row);
+        }, `SELECT * FROM gamelog_portal_spawn WHERE created_at >= date('${dateOffset}')`);
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                rowId: dbRow[0],
+                created_at: dbRow[1],
+                type: 'VideoPlay',
+                videoUrl: dbRow[2],
+                videoName: dbRow[3],
+                videoId: dbRow[4],
+                location: dbRow[5],
+                displayName: dbRow[6],
+                userId: dbRow[7]
+            };
+            gamelogDatabase.unshift(row);
+        }, `SELECT * FROM gamelog_video_play WHERE created_at >= date('${dateOffset}')`);
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                rowId: dbRow[0],
+                created_at: dbRow[1],
+                type: 'Event',
+                data: dbRow[2]
+            };
+            gamelogDatabase.unshift(row);
+        }, `SELECT * FROM gamelog_event WHERE created_at >= date('${dateOffset}')`);
+        var compareByCreatedAt = function (a, b) {
+            var A = a.created_at;
+            var B = b.created_at;
+            if (A < B) {
+                return -1;
+            }
+            if (A > B) {
+                return 1;
+            }
+            return 0;
+        };
+        gamelogDatabase.sort(compareByCreatedAt);
+        return gamelogDatabase;
+    }
+
+    addGamelogLocationToDatabase(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO gamelog_location (created_at, location, world_id, world_name, time) VALUES (@created_at, @location, @world_id, @world_name, @time)`,
+            {
+                '@created_at': entry.created_at,
+                '@location': entry.location,
+                '@world_id': entry.worldId,
+                '@world_name': entry.worldName,
+                '@time': entry.time
+            }
+        );
+    }
+
+    updateGamelogLocationTimeToDatabase(entry) {
+        sqliteService.executeNonQuery(
+            `UPDATE gamelog_location SET time = @time WHERE created_at = @created_at`,
+            {
+                '@created_at': entry.created_at,
+                '@time': entry.time
+            }
+        );
+    }
+
+    addGamelogJoinLeaveToDatabase(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO gamelog_join_leave (created_at, type, display_name, location, user_id, time) VALUES (@created_at, @type, @display_name, @location, @user_id, @time)`,
+            {
+                '@created_at': entry.created_at,
+                '@type': entry.type,
+                '@display_name': entry.displayName,
+                '@location': entry.location,
+                '@user_id': entry.userId,
+                '@time': entry.time
+            }
+        );
+    }
+
+    addGamelogPortalSpawnToDatabase(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO gamelog_portal_spawn (created_at, display_name, location, user_id, instance_id, world_name) VALUES (@created_at, @display_name, @location, @user_id, @instance_id, @world_name)`,
+            {
+                '@created_at': entry.created_at,
+                '@display_name': entry.displayName,
+                '@location': entry.location,
+                '@user_id': entry.userId,
+                '@instance_id': entry.instanceId,
+                '@world_name': entry.worldName
+            }
+        );
+    }
+
+    addGamelogVideoPlayToDatabase(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO gamelog_video_play (created_at, video_url, video_name, video_id, location, display_name, user_id) VALUES (@created_at, @video_url, @video_name, @video_id, @location, @display_name, @user_id)`,
+            {
+                '@created_at': entry.created_at,
+                '@video_url': entry.videoUrl,
+                '@video_name': entry.videoName,
+                '@video_id': entry.videoId,
+                '@location': entry.location,
+                '@display_name': entry.displayName,
+                '@user_id': entry.userId
+            }
+        );
+    }
+
+    addGamelogEventToDatabase(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO gamelog_event (created_at, data) VALUES (@created_at, @data)`,
+            {
+                '@created_at': entry.created_at,
+                '@data': entry.data
             }
         );
     }

@@ -314,11 +314,26 @@ namespace VRCX
             System.Environment.Exit(0);
         }
 
-        public bool checkForUpdateZip()
+        public bool CheckForUpdateZip()
         {
             if (File.Exists(Path.Combine(Program.AppDataDirectory, "update.exe")))
                 return true;
             return false;
+        }
+
+        public void ExecuteAppFunction(string function, string json)
+        {
+            MainForm.Instance.Browser.ExecuteScriptAsync($"$app.{function}", json);
+        }
+
+        public void ExecuteVrFeedFunction(string function, string json)
+        {
+            VRCXVR._browser1.ExecuteScriptAsync($"$app.{function}", json);
+        }
+
+        public void ExecuteVrOverlayFunction(string function, string json)
+        {
+            VRCXVR._browser2.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         public void SetStartup(bool enabled)

@@ -22,9 +22,6 @@
 
 .noty_body {
     display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .noty_layout {
@@ -34,6 +31,7 @@
 
 .noty_theme__relax.noty_bar,
 .noty_theme__sunset.noty_bar {
+    height: 42px;
     position: relative;
     margin: 4px 0;
     overflow: hidden;
@@ -42,9 +40,7 @@
 
 .noty_theme__relax.noty_bar .noty_body,
 .noty_theme__sunset.noty_bar .noty_body {
-    padding: 5px 10px 10px;
     font-size: 15px;
-    text-align: center;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
@@ -141,6 +137,19 @@
 .noty_theme__sunset.noty_type__info .noty_progressbar,
 .noty_theme__sunset.noty_type__information .noty_progressbar {
     opacity: 0.6;
+}
+
+.noty-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 8px 8px 0 11px;
+}
+
+.noty-img {
+    height: 42px;
+    float: left;
+    border-radius: 4px;
 }
 
 ::-webkit-scrollbar {
