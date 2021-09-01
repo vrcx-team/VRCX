@@ -211,6 +211,7 @@ namespace VRCX
                             {
                                 if (ParseLogOnPlayerJoinedOrLeft(fileInfo, logContext, line, offset) == true ||
                                     ParseLogLocation(fileInfo, logContext, line, offset) == true ||
+                                    ParseLogLocationDestination(fileInfo, logContext, line, offset) == true ||
                                     ParseLogPortalSpawn(fileInfo, logContext, line, offset) == true ||
                                     ParseLogNotification(fileInfo, logContext, line, offset) == true ||
                                     ParseLogJoinBlocked(fileInfo, logContext, line, offset) == true ||
@@ -305,6 +306,29 @@ namespace VRCX
                     "location",
                     location,
                     logContext.RecentWorldName
+                });
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ParseLogLocationDestination(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2021.09.02 00:02:12 Log        -  [Behaviour] Destination set: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd:15609~private(usr_032383a7-748c-4fb2-94e4-bcb928e5de6b)~nonce(72CC87D420C1D49AEFFBEE8824C84B2DF0E38678E840661E)
+            // 2021.09.02 00:49:15 Log        -  [Behaviour] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
+
+            if (string.Compare(line, offset, "[Behaviour] Destination fetching: ", 0, 34, StringComparison.Ordinal) == 0)
+            {
+                var location = line.Substring(offset + 34);
+
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "location-destination",
+                    location
                 });
 
                 return true;
