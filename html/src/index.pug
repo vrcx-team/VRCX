@@ -719,10 +719,10 @@ html
                             el-radio-button(label="dark") Dark
                     div.options-container-item
                         span.name VRCPlus Profile Icons
-                        el-switch(v-model="displayVRCPlusIconsAsAvatar")
+                        el-switch(v-model="displayVRCPlusIconsAsAvatar" @change="saveOpenVROption")
                     div.options-container-item
                         span.name Disable Tooltips
-                        el-switch(v-model="hideTooltips")
+                        el-switch(v-model="hideTooltips" @change="saveOpenVROption")
                 div.options-container
                     span.header Side Panel
                     br
@@ -805,61 +805,64 @@ html
                         br
                     div.options-container-item
                         span.name Enable
-                        el-switch(v-model="openVR")
+                        el-switch(v-model="openVR" @change="saveOpenVROption")
                     div.options-container-item
                         span.name Force Run (Opens SteamVR)
-                        el-switch(v-model="openVRAlways" :disabled="!openVR")
+                        el-switch(v-model="openVRAlways" @change="saveOpenVROption" :disabled="!openVR")
                     div.options-container-item
                         span.name Hide Private Worlds
-                        el-switch(v-model="hidePrivateFromFeed")
+                        el-switch(v-model="hidePrivateFromFeed" @change="saveOpenVROption")
                     br
                     span.sub-header Wrist Feed
                     div.options-container-item
                         span.name Wrist Feed Overlay
-                        el-switch(v-model="overlayWrist" :disabled="!openVR")
+                        el-switch(v-model="overlayWrist" @change="saveOpenVROption" :disabled="!openVR")
                     div.options-container-item
                         span.name(style="min-width:137px") Overlay Button
-                        el-switch(v-model="overlaybutton" inactive-text="Grip" active-text="Menu" :disabled="!openVR || !overlayWrist")
+                        el-switch(v-model="overlaybutton" @change="saveOpenVROption" inactive-text="Grip" active-text="Menu" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
                         span.name Background Color
-                        el-switch(v-model="vrBackgroundEnabled" :disabled="!openVR || !overlayWrist")
+                        el-switch(v-model="vrBackgroundEnabled" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
                         span.name Minimal Feed Icons
-                        el-switch(v-model="minimalFeed" :disabled="!openVR || !overlayWrist")
+                        el-switch(v-model="minimalFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
                         span.name Hide VR Devices
-                        el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR || !overlayWrist")
+                        el-switch(v-model="hideDevicesFromFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog()" :disabled="!openVR || !overlayWrist") Wrist Feed Filters
+                        el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog" :disabled="!openVR || !overlayWrist") Wrist Feed Filters
                     br
                     span.sub-header Notifications
                     div.options-container-item
                         span.name Overlay Notifications
-                        el-switch(v-model="overlayNotifications" :disabled="!openVR")
+                        el-switch(v-model="overlayNotifications" @change="saveOpenVROption" :disabled="!openVR")
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog()" :disabled="!overlayNotifications || !openVR") Notification Position
+                        el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog" :disabled="!overlayNotifications || !openVR") Notification Position
                     div.options-container-item
                         span.name XSOverlay Notifications
-                        el-switch(v-model="xsNotifications")
+                        el-switch(v-model="xsNotifications" @change="saveOpenVROption")
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()" :disabled="(!overlayNotifications || !openVR) && !xsNotifications") Notification Timeout
+                        span.name User images (slower)
+                        el-switch(v-model="imageNotifications" @change="saveOpenVROption")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout" :disabled="(!overlayNotifications || !openVR) && !xsNotifications") Notification Timeout
                     div.options-container-item
                         span.name Desktop Notifications, When to display:
                         br
-                        el-radio-group(v-model="desktopToast" size="mini")
+                        el-radio-group(v-model="desktopToast" @change="saveOpenVROption" size="mini")
                             el-radio-button(label="Never")
                             el-radio-button(label="Inside VR")
                             el-radio-button(label="Game Closed")
                             el-radio-button(label="Game Running")
                             el-radio-button(label="Always")
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()") Notification Filters
+                        el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog") Notification Filters
                     br
                     span.sub-header Text-To-Speech Options
                     div.options-container-item
                         span.name Notification TTS, When to play:
                         br
-                        el-radio-group(v-model="notificationTTS" size="mini")
+                        el-radio-group(v-model="notificationTTS" @change="saveNotificationTTS" size="mini")
                             el-radio-button(label="Never")
                             el-radio-button(label="Inside VR")
                             el-radio-button(label="Game Closed")
@@ -880,31 +883,31 @@ html
                     div.options-container-item
                         span.name Download on invite:
                         br
-                        el-radio-group(v-model="worldAutoCacheInvite" size="mini")
+                        el-radio-group(v-model="worldAutoCacheInvite" @change="saveOpenVROption" size="mini")
                             el-radio-button(label="Never")
                             el-radio-button(label="Game Closed")
                             el-radio-button(label="Game Running")
                             el-radio-button(label="Always")
                     div.options-container-item
-                        el-switch(v-model="worldAutoCacheInviteFilter" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheInvite == 'Never'")
+                        el-switch(v-model="worldAutoCacheInviteFilter" @change="saveOpenVROption" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheInvite === 'Never'")
                     div.options-container-item
                         span.name Download on GPS:
                         br
-                        el-radio-group(v-model="worldAutoCacheGPS" size="mini")
+                        el-radio-group(v-model="worldAutoCacheGPS" @change="saveOpenVROption" size="mini")
                             el-radio-button(label="Never")
                             el-radio-button(label="Game Closed")
                             el-radio-button(label="Game Running")
                             el-radio-button(label="Always")
                     div.options-container-item
-                        el-switch(v-model="worldAutoCacheGPSFilter" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheGPS == 'Never'")
+                        el-switch(v-model="worldAutoCacheGPSFilter" @change="saveOpenVROption" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheGPS === 'Never'")
                     div.options-container-item
                         el-button-group
-                            el-button(size="small" icon="el-icon-download" @click="showDownloadDialog()") Download History
+                            el-button(size="small" icon="el-icon-download" @click="showDownloadDialog") Download History
                     br
                     span.sub-header Automatically Manage Cache When Closing VRChat
                     div.options-container-item
                         span.name(style="min-width:300px") Auto delete old versions from cache
-                        el-switch(v-model="autoSweepVRChatCache")
+                        el-switch(v-model="autoSweepVRChatCache" @change="saveOpenVROption")
                 div.options-container
                     span.header Application
                     div.options-container-item

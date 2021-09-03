@@ -4305,7 +4305,10 @@ speechSynthesis.getVoices();
                 return;
             }
         }
-        if (noty.type === 'Notification' || noty.type === 'LocationDestination') {
+        if (
+            noty.type === 'Notification' ||
+            noty.type === 'LocationDestination'
+        ) {
             return;
         }
         // remove current user
@@ -4638,20 +4641,30 @@ speechSynthesis.getVoices();
         if (playNotificationTTS) {
             this.playNotyTTS(noty, message);
         }
-        if (playOverlayNotification) {
-            this.notyGetImage(noty).then((imageUrl) => {
-                this.displayOverlayNotification(noty, message, imageUrl);
-            });
-        }
-        if (playDesktopToast || playXSNotification) {
-            this.notySaveImage(noty).then((image) => {
+        if (playDesktopToast || playXSNotification || playOverlayNotification) {
+            if (this.imageNotifications) {
+                this.notySaveImage(noty).then((image) => {
+                    if (playXSNotification) {
+                        this.displayXSNotification(noty, message, image);
+                    }
+                    if (playDesktopToast) {
+                        this.displayDesktopToast(noty, message, image);
+                    }
+                    if (playOverlayNotification) {
+                        this.displayOverlayNotification(noty, message, image);
+                    }
+                });
+            } else {
                 if (playXSNotification) {
-                    this.displayXSNotification(noty, message, image);
+                    this.displayXSNotification(noty, message, '');
                 }
                 if (playDesktopToast) {
-                    this.displayDesktopToast(noty, message, image);
+                    this.displayDesktopToast(noty, message, '');
                 }
-            });
+                if (playOverlayNotification) {
+                    this.displayOverlayNotification(noty, message, '');
+                }
+            }
         }
     };
 
@@ -4702,8 +4715,9 @@ speechSynthesis.getVoices();
 
     $app.methods.notySaveImage = async function (noty) {
         var imageUrl = await this.notyGetImage(noty);
+        var base64Image = '';
         try {
-            await fetch(imageUrl, {
+            base64Image = await fetch(imageUrl, {
                 method: 'GET',
                 redirect: 'follow',
                 headers: {
@@ -4718,24 +4732,18 @@ speechSynthesis.getVoices();
                     for (var i = 0; i < length; i++) {
                         binary += String.fromCharCode(bytes[i]);
                     }
-                    var imageData = btoa(binary);
-                    AppApi.CacheImage(imageData);
+                    return btoa(binary);
                 });
-            return true;
         } catch (err) {
             console.error(err);
-            return false;
         }
+        return base64Image;
     };
 
-    $app.methods.displayOverlayNotification = function (
-        noty,
-        message,
-        imageUrl
-    ) {
+    $app.methods.displayOverlayNotification = function (noty, message, image) {
         AppApi.ExecuteVrOverlayFunction(
             'playNoty',
-            JSON.stringify({noty, message, imageUrl})
+            JSON.stringify({noty, message, image})
         );
     };
 
@@ -6806,7 +6814,6 @@ speechSynthesis.getVoices();
         this.getAuth();
 
         $app.updateSharedFeed(true);
-        $app.notyInit = true;
 
         if ($app.isGameRunning) {
             $app.loadPlayerList();
@@ -7144,7 +7151,9 @@ speechSynthesis.getVoices();
             {
                 prop: 'type',
                 value: true,
-                filterFn: (row) => row.type !== 'Notification' || row.type !== 'LocationDestination'
+                filterFn: (row) =>
+                    row.type !== 'Notification' &&
+                    row.type !== 'LocationDestination'
             }
         ],
         tableProps: {
@@ -8602,6 +8611,9 @@ speechSynthesis.getVoices();
     $app.data.xsNotifications = configRepository.getBool(
         'VRCX_xsNotifications'
     );
+    $app.data.imageNotifications = configRepository.getBool(
+        'VRCX_imageNotifications'
+    );
     $app.data.desktopToast = configRepository.getString('VRCX_desktopToast');
     $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
     $app.data.displayVRCPlusIconsAsAvatar = configRepository.getBool(
@@ -8640,7 +8652,7 @@ speechSynthesis.getVoices();
         'VRCX_autoUpdateVRCX'
     );
     $app.data.branch = configRepository.getString('VRCX_branch');
-    var saveOpenVROption = function () {
+    $app.methods.saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
         configRepository.setBool('VRCX_overlaybutton', this.overlaybutton);
@@ -8658,6 +8670,10 @@ speechSynthesis.getVoices();
         );
         configRepository.setBool('VRCX_overlayWrist', this.overlayWrist);
         configRepository.setBool('VRCX_xsNotifications', this.xsNotifications);
+        configRepository.setBool(
+            'VRCX_imageNotifications',
+            this.imageNotifications
+        );
         configRepository.setString('VRCX_desktopToast', this.desktopToast);
         configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
         configRepository.setBool(
@@ -8693,7 +8709,7 @@ speechSynthesis.getVoices();
         this.updateVRConfigVars();
     };
     $app.data.TTSvoices = speechSynthesis.getVoices();
-    var saveNotificationTTS = function () {
+    $app.methods.saveNotificationTTS = function () {
         speechSynthesis.cancel();
         if (
             configRepository.getString('VRCX_notificationTTS') === 'Never' &&
@@ -8707,25 +8723,6 @@ speechSynthesis.getVoices();
         );
         this.updateVRConfigVars();
     };
-    $app.watch.openVR = saveOpenVROption;
-    $app.watch.openVRAlways = saveOpenVROption;
-    $app.watch.overlaybutton = saveOpenVROption;
-    $app.watch.hidePrivateFromFeed = saveOpenVROption;
-    $app.watch.hideDevicesFromFeed = saveOpenVROption;
-    $app.watch.overlayNotifications = saveOpenVROption;
-    $app.watch.overlayWrist = saveOpenVROption;
-    $app.watch.xsNotifications = saveOpenVROption;
-    $app.watch.desktopToast = saveOpenVROption;
-    $app.watch.minimalFeed = saveOpenVROption;
-    $app.watch.displayVRCPlusIconsAsAvatar = saveOpenVROption;
-    $app.watch.hideTooltips = saveOpenVROption;
-    $app.watch.worldAutoCacheInvite = saveOpenVROption;
-    $app.watch.worldAutoCacheGPS = saveOpenVROption;
-    $app.watch.worldAutoCacheInviteFilter = saveOpenVROption;
-    $app.watch.worldAutoCacheGPSFilter = saveOpenVROption;
-    $app.watch.autoSweepVRChatCache = saveOpenVROption;
-    $app.watch.vrBackgroundEnabled = saveOpenVROption;
-    $app.watch.notificationTTS = saveNotificationTTS;
     $app.data.themeMode = configRepository.getString('VRCX_ThemeMode');
     if (!$app.data.themeMode) {
         $app.data.themeMode = 'system';
@@ -9342,6 +9339,7 @@ speechSynthesis.getVoices();
                         'VRCX_notificationTimeout',
                         this.notificationTimeout
                     );
+                    this.updateVRConfigVars();
                 }
             }
         });

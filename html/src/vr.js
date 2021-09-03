@@ -318,11 +318,11 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.playNoty = function (json) {
-        var {noty, message, imageUrl} = JSON.parse(json);
+        var {noty, message, image} = JSON.parse(json);
         var text = '';
         var img = '';
-        if (imageUrl) {
-            img = `<img class="noty-img" src="${imageUrl}"></img>`;
+        if (image) {
+            img = `<img class="noty-img" src="data:image/png;base64, ${image}"></img>`;
         }
         switch (noty.type) {
             case 'OnPlayerJoined':
