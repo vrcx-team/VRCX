@@ -789,10 +789,13 @@ html
                         span * Only works when VRChat is running.
                     div.options-container-item
                         span.name Enable
-                        el-switch(v-model="discordActive")
+                        el-switch(v-model="discordActive" @change="saveDiscordOption")
                     div.options-container-item
-                        span.name Instance details
-                        el-switch(v-model="discordInstance" :disabled="!discordActive")
+                        span.name Instance type
+                        el-switch(v-model="discordInstance" @change="saveDiscordOption" :disabled="!discordActive")
+                    div.options-container-item
+                        span.name Join button (public only)
+                        el-switch(v-model="discordJoinButton" @change="saveDiscordOption" :disabled="!discordActive")
                 div.options-container
                     span.header SteamVR Overlay
                     div.options-container-item

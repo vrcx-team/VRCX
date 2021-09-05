@@ -244,6 +244,17 @@ speechSynthesis.getVoices();
     $appDarkStyle.href = `app.dark.css?_=${Date.now()}`;
     document.head.appendChild($appDarkStyle);
 
+    var getLaunchURL = function (worldId, instanceId) {
+        if (instanceId) {
+            return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
+                worldId
+            )}&instanceId=${encodeURIComponent(instanceId)}`;
+        }
+        return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
+            worldId
+        )}`;
+    };
+
     //
     // Languages
     //
@@ -3987,15 +3998,25 @@ speechSynthesis.getVoices();
                     ([isGameRunning, isGameNoVR]) => {
                         if (isGameRunning !== this.isGameRunning) {
                             this.isGameRunning = isGameRunning;
-                            Discord.SetTimestamps(Date.now(), 0);
+                            if (isGameRunning) {
+                                API.currentUser.$online_for = Date.now();
+                                API.currentUser.$offline_for = '';
+                            } else {
+                                API.currentUser.$online_for = '';
+                                API.currentUser.$offline_for = Date.now();
+                                Discord.SetActive(false);
+                                this.autoVRChatCacheManagement();
+                            }
+                            this.lastLocationReset();
                             this.updateVRConfigVars();
+                            this.updateOpenVR();
                         }
                         if (isGameNoVR !== this.isGameNoVR) {
                             this.isGameNoVR = isGameNoVR;
                             this.updateVRConfigVars();
+                            this.updateOpenVR();
                         }
                         this.updateDiscord();
-                        this.updateOpenVR();
                     }
                 );
             }
@@ -7114,15 +7135,30 @@ speechSynthesis.getVoices();
         this.updateVRLastLocation();
     };
 
-    $app.data.lastLocation$ = {};
+    $app.data.lastLocation$ = {
+        tag: '',
+        instanceId: '',
+        accessType: '',
+        worldName: '',
+        worldCapacity: 0,
+        joinUrl: '',
+        statusName: '',
+        statusImage: ''
+    };
     $app.data.discordActive = configRepository.getBool('discordActive');
     $app.data.discordInstance = configRepository.getBool('discordInstance');
-    var saveDiscordOption = function () {
+    $app.data.discordJoinButton = configRepository.getBool('discordJoinButton');
+    $app.methods.saveDiscordOption = function () {
         configRepository.setBool('discordActive', this.discordActive);
         configRepository.setBool('discordInstance', this.discordInstance);
+        configRepository.setBool('discordJoinButton', this.discordJoinButton);
+        if (!this.discordActive) {
+            Discord.SetText('', '');
+            Discord.SetActive(false);
+        }
+        this.lastLocation$.tag = '';
+        this.updateDiscord();
     };
-    $app.watch.discordActive = saveDiscordOption;
-    $app.watch.discordInstance = saveDiscordOption;
 
     $app.data.gameLogTable = {
         data: [],
@@ -7393,53 +7429,97 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateDiscord = function () {
-        var ref = API.cachedUsers.get(API.currentUser.id);
-        if (typeof ref !== 'undefined') {
-            var myLocation = this.lastLocation.location;
-            if (ref.location !== myLocation) {
-                API.applyUser({
-                    id: ref.id,
-                    location: myLocation
-                });
-            }
-        }
-        if (this.isGameRunning === false || this.lastLocation.location === '') {
-            Discord.SetActive(false);
+        if (!this.discordActive || !this.isGameRunning) {
             return;
         }
+        var L = this.lastLocation$;
         if (this.lastLocation.location !== this.lastLocation$.tag) {
-            var L = API.parseLocation(this.lastLocation.location);
-            L.worldName = L.worldId;
-            this.lastLocation$ = L;
+            if (this.lastLocation.location) {
+                Discord.SetActive(true);
+            }
+            Discord.SetTimestamps(this.lastLocation.date, 0);
+            L = API.parseLocation(this.lastLocation.location);
+            L.worldName = '';
+            L.worldCapacity = 0;
+            L.joinUrl = '';
             if (L.worldId) {
                 var ref = API.cachedWorlds.get(L.worldId);
                 if (ref) {
                     L.worldName = ref.name;
+                    L.worldCapacity = ref.capacity;
                 } else {
                     API.getWorld({
                         worldId: L.worldId
                     }).then((args) => {
                         L.worldName = args.ref.name;
+                        L.worldCapacity = args.ref.capacity;
                         return args;
                     });
                 }
+                switch (L.accessType) {
+                    case 'public':
+                        L.joinUrl = getLaunchURL(L.worldId, L.instanceId);
+                        L.accessType = 'Public';
+                        break;
+                    case 'invite+':
+                        L.accessType = 'Invite+';
+                        break;
+                    case 'invite':
+                        L.accessType = 'Invite';
+                        break;
+                    case 'friends':
+                        L.accessType = 'Friends';
+                        break;
+                    case 'friends+':
+                        L.accessType = 'Friends+';
+                        break;
+                }
             }
+            this.lastLocation$ = L;
         }
+        switch (API.currentUser.status) {
+            case 'active':
+                L.statusName = 'Active';
+                L.statusImage = 'active';
+                break;
+            case 'join me':
+                L.statusName = 'Join Me';
+                L.statusImage = 'joinme';
+                break;
+            case 'ask me':
+                L.statusName = 'Ask Me';
+                L.statusImage = 'askme';
+                break;
+            case 'busy':
+                L.statusName = 'Do Not Disturb';
+                L.statusImage = 'busy';
+                break;
+        }
+        Discord.SetAssets(
+            'vrchat', // big icon
+            'Powered by VRCX', // big icon hover text
+            L.statusImage, // small icon
+            L.statusName, // small icon hover text
+            L.instanceId, // party id
+            this.lastLocation.playerList.size, // party size
+            L.worldCapacity, // party max size
+            'Join', // button text
+            L.joinUrl, // button url
+            '883308884863901717' // app id
+        );
         // NOTE
         // 글자 수가 짧으면 업데이트가 안된다..
-        var LL = this.lastLocation$;
-        if (LL.worldName.length < 2) {
-            LL.worldName += '\uFFA0'.repeat(2 - LL.worldName.length);
+        if (L.worldName.length < 2) {
+            L.worldName += '\uFFA0'.repeat(2 - L.worldName.length);
         }
-        if (this.discordInstance) {
-            Discord.SetText(
-                LL.worldName,
-                `#${LL.instanceName} ${LL.accessType}`
-            );
+        if (API.currentUser.status === 'busy') {
+            Discord.SetText('Do Not Disturb', '');
+            Discord.SetTimestamps(0, 0);
+        } else if (this.discordInstance) {
+            Discord.SetText(L.worldName, L.accessType);
         } else {
-            Discord.SetText(LL.worldName, '');
+            Discord.SetText(L.worldName, '');
         }
-        Discord.SetActive(this.discordActive);
     };
 
     $app.methods.lookupUser = async function (ref) {
@@ -9011,19 +9091,6 @@ speechSynthesis.getVoices();
         );
         this.updateVRConfigVars();
     };
-
-    var isGameRunningStateChange = function () {
-        this.lastLocationReset();
-        if (this.isGameRunning) {
-            API.currentUser.$online_for = Date.now();
-            API.currentUser.$offline_for = '';
-        } else {
-            API.currentUser.$online_for = '';
-            API.currentUser.$offline_for = Date.now();
-            this.autoVRChatCacheManagement();
-        }
-    };
-    $app.watch.isGameRunning = isGameRunningStateChange;
 
     var downloadProgressStateChange = function () {
         this.updateVRConfigVars();
@@ -11325,17 +11392,6 @@ speechSynthesis.getVoices();
             instanceId: L.instanceId,
             worldId: L.worldId
         });
-    };
-
-    var getLaunchURL = function (worldId, instanceId) {
-        if (instanceId) {
-            return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-                worldId
-            )}&instanceId=${encodeURIComponent(instanceId)}`;
-        }
-        return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-            worldId
-        )}`;
     };
 
     var updateLocationURL = function () {

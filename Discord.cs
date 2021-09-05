@@ -1,4 +1,4 @@
-﻿// Copyright(c) 2019 pypy. All rights reserved.
+// Copyright(c) 2019 pypy. All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -17,6 +17,7 @@ namespace VRCX
         private DiscordRpcClient m_Client;
         private Timer m_Timer;
         private bool m_Active;
+        public static string DiscordAppId;
 
         static Discord()
         {
@@ -78,7 +79,7 @@ namespace VRCX
             {
                 if (m_Client == null)
                 {
-                    m_Client = new DiscordRpcClient("525953831020920832");
+                    m_Client = new DiscordRpcClient(DiscordAppId);
                     if (m_Client.Initialize() == false)
                     {
                         m_Client.Dispose();
@@ -126,7 +127,7 @@ namespace VRCX
             }
         }
 
-        public void SetAssets(string largeKey, string largeText, string smallKey, string smallText)
+        public void SetAssets(string largeKey, string largeText, string smallKey, string smallText, string partyId, int partySize, int partyMax, string buttonText, string buttonUrl, string appId)
         {
             m_Lock.EnterWriteLock();
             try
@@ -139,13 +140,35 @@ namespace VRCX
                 else
                 {
                     if (m_Presence.Assets == null)
-                    {
                         m_Presence.Assets = new Assets();
-                    }
+                    if (m_Presence.Party == null)
+                        m_Presence.Party = new Party();
                     m_Presence.Assets.LargeImageKey = largeKey;
                     m_Presence.Assets.LargeImageText = largeText;
                     m_Presence.Assets.SmallImageKey = smallKey;
                     m_Presence.Assets.SmallImageText = smallText;
+                    m_Presence.Party.ID = partyId;
+                    m_Presence.Party.Size = partySize;
+                    m_Presence.Party.Max = partyMax;
+                    Button[] Buttons = { };
+                    if (!string.IsNullOrEmpty(buttonUrl))
+                    {
+                        Buttons = new Button[]
+                        {
+                            new Button() { Label = buttonText, Url = buttonUrl }
+                        };
+                    }
+                    m_Presence.Buttons = Buttons;
+                    if (DiscordAppId != appId)
+                    {
+                        DiscordAppId = appId;
+                        if (m_Client != null)
+                        {
+                            m_Client.Dispose();
+                            m_Client = null;
+                        }
+                        Update();
+                    }
                 }
             }
             finally
