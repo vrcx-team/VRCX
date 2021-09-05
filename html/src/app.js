@@ -4329,14 +4329,19 @@ speechSynthesis.getVoices();
         if (
             noty.type === 'Notification' ||
             noty.type === 'LocationDestination'
+            // skip unused entries
         ) {
             return;
         }
-        // remove current user
+        if (noty.type === 'VideoPlay' && !noty.videoName) {
+            // skip videos without names
+            return;
+        }
         if (
             noty.type !== 'VideoPlay' &&
             noty.displayName === API.currentUser.displayName
         ) {
+            // remove current user
             return;
         }
         noty.isFriend = false;
@@ -4864,11 +4869,7 @@ speechSynthesis.getVoices();
                 this.speak(noty.data);
                 break;
             case 'VideoPlay':
-                var videoName = '';
-                if (noty.videoName) {
-                    videoName = `: ${noty.videoName}`;
-                }
-                this.speak(`Now playing video${videoName}`);
+                this.speak(`Now playing: ${noty.videoName}`);
                 break;
             case 'BlockedOnPlayerJoined':
                 this.speak(`Blocked user ${noty.displayName} has joined`);
@@ -5051,13 +5052,9 @@ speechSynthesis.getVoices();
                 AppApi.XSNotification('VRCX', noty.data, timeout, image);
                 break;
             case 'VideoPlay':
-                var videoName = noty.videoUrl;
-                if (noty.videoName) {
-                    videoName = noty.videoName;
-                }
                 AppApi.XSNotification(
                     'VRCX',
-                    `Now playing: ${videoName}`,
+                    `Now playing: ${noty.videoName}`,
                     timeout,
                     image
                 );
@@ -5238,11 +5235,11 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification('Event', noty.data, image);
                 break;
             case 'VideoPlay':
-                var videoName = noty.videoUrl;
-                if (noty.videoName) {
-                    videoName = noty.videoName;
-                }
-                AppApi.DesktopNotification('Now playing', videoName, image);
+                AppApi.DesktopNotification(
+                    'Now playing',
+                    noty.videoName,
+                    image
+                );
                 break;
             case 'BlockedOnPlayerJoined':
                 AppApi.DesktopNotification(
@@ -7382,14 +7379,8 @@ speechSynthesis.getVoices();
                 database.addGamelogPortalSpawnToDatabase(entry);
                 break;
             case 'video-play':
-                var entry = {
-                    created_at: gameLog.dt,
-                    type: 'VideoPlay',
-                    data: gameLog.videoUrl,
-                    displayName: gameLog.displayName
-                };
-                database.addGamelogVideoPlayToDatabase(entry);
-                break;
+                this.addGameLogVideo(gameLog, location, userId, pushToTable);
+                return;
             case 'notification':
                 var entry = {
                     created_at: gameLog.dt,
@@ -7410,6 +7401,90 @@ speechSynthesis.getVoices();
             this.queueGameLogNoty(entry);
             this.gameLogTable.data.push(entry);
         }
+    };
+
+    $app.methods.addGameLogVideo = async function (
+        gameLog,
+        location,
+        userId,
+        pushToTable
+    ) {
+        var videoUrl = gameLog.videoUrl;
+        var youtubeVideoId = '';
+        var videoId = '';
+        var videoName = '';
+        var videoLength = '';
+        var displayName = '';
+        if (typeof gameLog.displayName !== 'undefined') {
+            displayName = gameLog.displayName;
+        }
+        try {
+            var url = new URL(videoUrl);
+            var id1 = url.pathname;
+            var id2 = url.searchParams.get('v');
+            if (id1 && id1.length === 12) {
+                youtubeVideoId = id2.substring(1, 12);
+            }
+            if (id2 && id2.length === 11) {
+                youtubeVideoId = id2;
+            }
+            if (this.youTubeApi && youtubeVideoId) {
+                var data = await this.lookupYouTubeVideo(youtubeVideoId);
+                if (
+                    data ||
+                    (data.status === 200 && data.pageInfo.totalResults !== 0)
+                ) {
+                    videoId = 'YouTube';
+                    videoName = data.items[0].snippet.title;
+                    videoLength = this.convertYoutubeTime(
+                        data.items[0].contentDetails.duration
+                    );
+                } else {
+                    console.error(`YouTube video lookup failed status: ${status}`);
+                }
+            }
+        } catch {
+            console.error(`Invalid URL: ${url}`);
+        }
+        var entry = {
+            created_at: gameLog.dt,
+            type: 'VideoPlay',
+            videoUrl,
+            videoId,
+            videoName,
+            videoLength,
+            location,
+            displayName,
+            userId
+        };
+        if (pushToTable) {
+            this.queueGameLogNoty(entry);
+            this.gameLogTable.data.push(entry);
+        }
+        database.addGamelogVideoPlayToDatabase(entry);
+    };
+
+    $app.methods.lookupYouTubeVideo = async function (videoId) {
+        var data = {};
+        var apiKey = 'AIzaSyA-iUQCpWf5afEL3NanEOSxbzziPMU3bxY';
+        if (this.youTubeApiKey) {
+            apiKey = this.youTubeApiKey;
+        }
+        try {
+            var response = await webApiService.execute({
+                url: `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&key=${apiKey}`,
+                method: 'GET',
+                headers: {
+                    'User-Agent': appVersion,
+                    Referer: 'https://vrcx.pypy.moe'
+                }
+            });
+            data = JSON.parse(response.data);
+            data.status = response.status;
+        } catch {
+            console.error(`YouTube video lookup failed for ${videoId}`);
+        }
+        return data;
     };
 
     $app.methods.sweepGameLog = function () {
@@ -9091,6 +9166,9 @@ speechSynthesis.getVoices();
         );
         this.updateVRConfigVars();
     };
+
+    $app.data.youTubeApi = configRepository.getBool('VRCX_youtubeAPI');
+    $app.data.youTubeApiKey = configRepository.getString('VRCX_youtubeAPIKey');
 
     var downloadProgressStateChange = function () {
         this.updateVRConfigVars();
@@ -13870,6 +13948,57 @@ speechSynthesis.getVoices();
     $app.methods.setVRChatScreenshotResolution = function (res) {
         this.VRChatConfigFile.screenshot_res_height = res.height;
         this.VRChatConfigFile.screenshot_res_width = res.width;
+    };
+
+    // YouTube API
+
+    $app.data.youTubeApiKey = '';
+
+    $app.data.youTubeApiDialog = {
+        visible: false
+    };
+
+    API.$on('LOGOUT', function () {
+        $app.youTubeApiDialog.visible = false;
+    });
+
+    $app.methods.testYouTubeApiKey = async function () {
+        if (!this.youTubeApiKey) {
+            this.$message({
+                message: 'YouTube API key removed',
+                type: 'success'
+            });
+            this.youTubeApiDialog.visible = false;
+            return;
+        }
+        var data = await this.lookupYouTubeVideo('dQw4w9WgXcQ');
+        if (!data || data.status !== 200) {
+            this.youTubeApiKey = '';
+            this.$message({
+                message: `Invalid YouTube API key, error code: ${data.status}`,
+                type: 'error'
+            });
+        } else {
+            configRepository.setString(
+                'VRCX_youtubeAPIKey',
+                this.youTubeApiKey
+            );
+            this.$message({
+                message: 'YouTube API key valid!',
+                type: 'success'
+            });
+        }
+        this.youTubeApiDialog.visible = false;
+    };
+
+    $app.methods.changeYouTubeApi = function () {
+        configRepository.setBool('VRCX_youtubeAPI', this.youTubeApi);
+    };
+
+    $app.methods.showYouTubeApiDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.youTubeApiDialog.$el));
+        var D = this.youTubeApiDialog;
+        D.visible = true;
     };
 
     // Asset Bundle Cacher

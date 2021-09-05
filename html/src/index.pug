@@ -904,8 +904,7 @@ html
                     div.options-container-item
                         el-switch(v-model="worldAutoCacheGPSFilter" @change="saveOpenVROption" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheGPS === 'Never'")
                     div.options-container-item
-                        el-button-group
-                            el-button(size="small" icon="el-icon-download" @click="showDownloadDialog") Download History
+                        el-button(size="small" icon="el-icon-download" @click="showDownloadDialog") Download History
                     br
                     span.sub-header Automatically Manage Cache When Closing VRChat
                     div.options-container-item
@@ -929,6 +928,13 @@ html
                         el-button-group
                             el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
                             el-button(size="small" icon="el-icon-s-operation" @click="showVRChatConfig()") VRChat config.json
+                div.options-container
+                    span.header YouTube API
+                    div.options-container-item
+                        span.name Enabled
+                        el-switch(v-model="youTubeApi" @change="changeYouTubeApi")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog") YouTube API Key
                 div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                     span.header Legal Notice
                     div.options-container-item
@@ -1731,6 +1737,16 @@ html
                     el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')") VRChat Docs
                     el-button(size="small" @click="VRChatConfigDialog.visible = false") Cancel
                     el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="saveVRChatConfigFile") Save
+                    
+            //- dialog: YouTube Api Dialog
+            el-dialog.x-dialog(ref="youTubeApiDialog" :visible.sync="youTubeApiDialog.visible" title="YouTube API" width="400px")
+                div(style='font-size:12px;')
+                    | Enter your YouTube API Key #[br]
+                el-input(type="textarea" v-model="youTubeApiKey" placeholder="YouTube API Key" maxlength="39" show-word-limit style="dispaly:block;margin-top:10px")
+                template(#footer)
+                    div(style="display:flex")
+                        el-button(size="small" @click="openExternalLink('https://rapidapi.com/blog/how-to-get-youtube-api-key/')") Guide
+                        el-button(type="primary" size="small" @click="testYouTubeApiKey" style="margin-left:auto") Save
                     
             //- dialog: Cache Download
             el-dialog.x-dialog(ref="downloadDialog" :visible.sync="downloadDialog.visible" title="Download History" width="770px")
