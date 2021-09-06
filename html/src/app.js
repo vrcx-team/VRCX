@@ -4604,7 +4604,7 @@ speechSynthesis.getVoices();
             // don't play noty twice
             if (
                 this.notyMap[displayName] &&
-                this.notyMap[displayName] > noty.created_at
+                this.notyMap[displayName] >= noty.created_at
             ) {
                 return;
             }
@@ -7324,7 +7324,10 @@ speechSynthesis.getVoices();
                     gameLog.userDisplayName,
                     userMap
                 );
-                if (this.friends.has(userId)) {
+                if (
+                    this.friends.has(userId) ||
+                    API.currentUser.displayName === gameLog.userDisplayName
+                ) {
                     this.lastLocation.friendList.set(
                         gameLog.userDisplayName,
                         userMap
@@ -7381,6 +7384,13 @@ speechSynthesis.getVoices();
             case 'video-play':
                 this.addGameLogVideo(gameLog, location, userId, pushToTable);
                 return;
+            case 'vrcx':
+                // VideoPlay(PyPyDance) "https://jd.pypy.moe/api/v1/videos/jr1NX4Jo8GE.mp4",0.1001,239.606,"0905 : [J-POP] 【まなこ】金曜日のおはよう 踊ってみた (vernities)"
+                var type = gameLog.data.substr(0, gameLog.data.indexOf(' '));
+                if (type === 'VideoPlay(PyPyDance)') {
+                    this.addGameLogPyPyDance(gameLog, location, pushToTable);
+                }
+                return;
             case 'notification':
                 var entry = {
                     created_at: gameLog.dt,
@@ -7418,15 +7428,46 @@ speechSynthesis.getVoices();
         if (typeof gameLog.displayName !== 'undefined') {
             displayName = gameLog.displayName;
         }
-        try {
-            var url = new URL(videoUrl);
-            var id1 = url.pathname;
-            var id2 = url.searchParams.get('v');
-            if (id1 && id1.length === 12) {
-                youtubeVideoId = id2.substring(1, 12);
+        var L = API.parseLocation(location);
+        if (L.worldId !== 'wrld_f20326da-f1ac-45fc-a062-609723b097b1') {
+            // skip PyPyDance videos
+            try {
+                var url = new URL(videoUrl);
+                var id1 = url.pathname;
+                var id2 = url.searchParams.get('v');
+                if (id1 && id1.length === 12) {
+                    youtubeVideoId = id1.substring(1, 12);
+                }
+                if (id2 && id2.length === 11) {
+                    youtubeVideoId = id2;
+                }
+                if (this.youTubeApi && youtubeVideoId) {
+                    var data = await this.lookupYouTubeVideo(youtubeVideoId);
+                    if (data || data.pageInfo.totalResults !== 0) {
+                        videoId = 'YouTube';
+                        videoName = data.items[0].snippet.title;
+                        videoLength = this.convertYoutubeTime(
+                            data.items[0].contentDetails.duration
+                        );
+                    }
+                }
+            } catch {
+                console.error(`Invalid URL: ${url}`);
             }
-            if (id2 && id2.length === 11) {
-                youtubeVideoId = id2;
+            var entry = {
+                created_at: gameLog.dt,
+                type: 'VideoPlay',
+                videoUrl,
+                videoId,
+                videoName,
+                videoLength,
+                location,
+                displayName,
+                userId
+            };
+            if (pushToTable) {
+                this.queueGameLogNoty(entry);
+                this.gameLogTable.data.push(entry);
             }
             if (this.youTubeApi && youtubeVideoId) {
                 var data = await this.lookupYouTubeVideo(youtubeVideoId);
@@ -7443,29 +7484,36 @@ speechSynthesis.getVoices();
                     console.error(`YouTube video lookup failed status: ${status}`);
                 }
             }
-        } catch {
-            console.error(`Invalid URL: ${url}`);
         }
-        var entry = {
-            created_at: gameLog.dt,
-            type: 'VideoPlay',
-            videoUrl,
-            videoId,
-            videoName,
-            videoLength,
-            location,
-            displayName,
-            userId
-        };
-        if (pushToTable) {
-            this.queueGameLogNoty(entry);
-            this.gameLogTable.data.push(entry);
+        if (videoId === 'URL') {
+            var entry = {
+                dt: gameLog.dt,
+                videoUrl,
+                displayName
+            };
+            this.addGameLogVideo(entry, location, userId, pushToTable);
+        } else {
+            var entry = {
+                created_at: gameLog.dt,
+                type: 'VideoPlay',
+                videoUrl,
+                videoId,
+                videoName,
+                videoLength,
+                location,
+                displayName,
+                userId
+            };
+            if (pushToTable) {
+                this.queueGameLogNoty(entry);
+                this.gameLogTable.data.push(entry);
+            }
+            database.addGamelogVideoPlayToDatabase(entry);
         }
-        database.addGamelogVideoPlayToDatabase(entry);
     };
 
     $app.methods.lookupYouTubeVideo = async function (videoId) {
-        var data = {};
+        var data = null;
         var apiKey = 'AIzaSyA-iUQCpWf5afEL3NanEOSxbzziPMU3bxY';
         if (this.youTubeApiKey) {
             apiKey = this.youTubeApiKey;
@@ -7479,8 +7527,12 @@ speechSynthesis.getVoices();
                     Referer: 'https://vrcx.pypy.moe'
                 }
             });
-            data = JSON.parse(response.data);
-            data.status = response.status;
+            var json = JSON.parse(response.data);
+            if (response.status === 200) {
+                data = json;
+            } else {
+                throw new Error(`Error: ${response.data}`);
+            }
         } catch {
             console.error(`YouTube video lookup failed for ${videoId}`);
         }
@@ -7521,13 +7573,13 @@ speechSynthesis.getVoices();
                 var ref = API.cachedWorlds.get(L.worldId);
                 if (ref) {
                     L.worldName = ref.name;
-                    L.worldCapacity = ref.capacity;
+                    L.worldCapacity = ref.capacity * 2;
                 } else {
                     API.getWorld({
                         worldId: L.worldId
                     }).then((args) => {
                         L.worldName = args.ref.name;
-                        L.worldCapacity = args.ref.capacity;
+                        L.worldCapacity = args.ref.capacity * 2;
                         return args;
                     });
                 }
@@ -7554,7 +7606,7 @@ speechSynthesis.getVoices();
         }
         switch (API.currentUser.status) {
             case 'active':
-                L.statusName = 'Active';
+                L.statusName = 'Online';
                 L.statusImage = 'active';
                 break;
             case 'join me':
@@ -13972,10 +14024,10 @@ speechSynthesis.getVoices();
             return;
         }
         var data = await this.lookupYouTubeVideo('dQw4w9WgXcQ');
-        if (!data || data.status !== 200) {
+        if (!data) {
             this.youTubeApiKey = '';
             this.$message({
-                message: `Invalid YouTube API key, error code: ${data.status}`,
+                message: 'Invalid YouTube API key',
                 type: 'error'
             });
         } else {
@@ -13987,8 +14039,8 @@ speechSynthesis.getVoices();
                 message: 'YouTube API key valid!',
                 type: 'success'
             });
+            this.youTubeApiDialog.visible = false;
         }
-        this.youTubeApiDialog.visible = false;
     };
 
     $app.methods.changeYouTubeApi = function () {
