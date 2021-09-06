@@ -51,8 +51,9 @@ button {
     border: #555;
 }
 
-.el-table td,
-.el-table th.is-leaf {
+.el-table tr,
+.el-table td.el-table__cell,
+.el-table th.el-table__cell {
     background-color: #292929;
     border-bottom: 1px solid #5f5f5f;
 }
@@ -63,11 +64,11 @@ button {
     background-color: #5f5f5f;
 }
 
-.el-table--striped .el-table__body tr.el-table__row--striped td {
+.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell {
     background-color: #202020;
 }
 
-.el-table--enable-row-hover .el-table__body tr:hover > td {
+.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
     background-color: #323232;
 }
 

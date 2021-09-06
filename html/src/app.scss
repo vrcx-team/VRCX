@@ -82,6 +82,10 @@
     margin-top: 15px;
 }
 
+.el-table__expanded-cell[class*=cell] {
+    padding: 20px 50px;
+}
+
 .el-dialog__body {
     padding: 20px;
 }
