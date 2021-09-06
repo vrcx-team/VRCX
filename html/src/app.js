@@ -7481,7 +7481,7 @@ speechSynthesis.getVoices();
                         data.items[0].contentDetails.duration
                     );
                 } else {
-                    console.error(`YouTube video lookup failed status: ${status}`);
+                    console.error(`YouTube video lookup failed, error code: ${data.status}`);
                 }
             }
         }
