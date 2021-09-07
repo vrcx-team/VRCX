@@ -3695,14 +3695,12 @@ speechSynthesis.getVoices();
                     this.$emit('PIPELINE', {
                         json
                     });
-                    if (
-                        $app.debugWebSocket &&
-                        json.content &&
-                        this.cachedUsers.has(json.content.userId)
-                    ) {
+                    if ($app.debugWebSocket && json.content) {
                         var displayName = '';
                         var user = this.cachedUsers.get(json.content.userId);
-                        displayName = user.displayName;
+                        if (user) {
+                            displayName = user.displayName;
+                        }
                         console.log(
                             'WebSocket',
                             json.type,
@@ -7815,7 +7813,7 @@ speechSynthesis.getVoices();
                 params.featured = 'false';
                 break;
             default:
-                params.sort = 'popularity';
+                params.sort = 'relevance';
                 params.search = this.searchText;
                 break;
         }
@@ -9376,7 +9374,7 @@ speechSynthesis.getVoices();
         this.currentUserTreeData = buildTreeData(API.currentUser);
     };
 
-    $app.methods.promptUserDialog = function () {
+    $app.methods.promptUserIdDialog = function () {
         this.$prompt('Enter a User URL or ID (UUID)', 'Direct Access', {
             distinguishCancelAndClose: true,
             confirmButtonText: 'OK',
@@ -9399,6 +9397,21 @@ speechSynthesis.getVoices();
                     } else {
                         this.showUserDialog(instance.inputValue);
                     }
+                }
+            }
+        });
+    };
+
+    $app.methods.promptUsernameDialog = function () {
+        this.$prompt('Enter a Username', 'Direct Access', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputPattern: /\S+/,
+            inputErrorMessage: 'Username is required',
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue) {
+                    this.lookupUser({displayName: instance.inputValue});
                 }
             }
         });
@@ -9435,7 +9448,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptAvatarDialog = function () {
-        this.$prompt('Enter a Avatar ID (UUID)', 'Direct Access', {
+        this.$prompt('Enter a Avatar URL or ID (UUID)', 'Direct Access', {
             distinguishCancelAndClose: true,
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
