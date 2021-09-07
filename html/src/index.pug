@@ -246,13 +246,13 @@ html
                         el-button-group(style="margin-top:15px")
                             el-button(v-if="searchWorldParams.offset" @click="moreSearchWorld(-1)" icon="el-icon-back" size="small") Prev
                             el-button(v-if="searchWorldResults.length" @click="moreSearchWorld(1)" icon="el-icon-right" size="small") Next
-                    el-tab-pane(label="Avatar" v-loading="isSearchAvatarLoading" style="min-height:60px")
-                        el-dropdown(@command="(command) => searchAvatar(command)" size="small" trigger="click" style="margin-bottom:15px")
-                            el-button(size="small") Search by Category #[i.el-icon-arrow-down.el-icon--right]
-                            el-dropdown-menu(#default="dropdown")
-                                el-dropdown-item(command="updated") Updated Recently
-                                el-dropdown-item(command="created") New
-                                el-dropdown-item(command="mine") Mine
+                    //- el-tab-pane(label="Avatar" v-loading="isSearchAvatarLoading" style="min-height:60px")
+                    //-     el-dropdown(@command="(command) => searchAvatar(command)" size="small" trigger="click" style="margin-bottom:15px")
+                    //-         el-button(size="small") Search by Category #[i.el-icon-arrow-down.el-icon--right]
+                    //-         el-dropdown-menu(#default="dropdown")
+                    //-             el-dropdown-item(command="updated") Updated Recently
+                    //-             el-dropdown-item(command="created") New
+                    //-             el-dropdown-item(command="mine") Mine
                         span(style="margin-left:10px;font-size:12px;color:#909399") Avatar search is not possible.
                         .x-friend-list
                             .x-friend-item(v-for="avatar in searchAvatarResults" :key="avatar.id" @click="showAvatarDialog(avatar.id)")
@@ -511,7 +511,9 @@ html
                     span.header Direct Access
                     div(style="margin-top:10px")
                         el-button-group
-                            el-button(size="small" @click="promptUserDialog()") User
+                            
+                            el-button(size="small" @click="promptUsernameDialog()") Username
+                            el-button(size="small" @click="promptUserIdDialog()") User ID
                             el-button(size="small" @click="promptWorldDialog()") World/Instance
                             el-button(size="small" @click="promptAvatarDialog()") Avatar
                 div.options-container
