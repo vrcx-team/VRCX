@@ -69,8 +69,8 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | 🎵 #[span.name(v-text="feed.displayName")] 
-                                        template(v-if="feed.videoName")
-                                            | #[span(v-text="feed.videoName")]
+                                        template(v-if="feed.notyName")
+                                            | #[span(v-text="feed.notyName")]
                                         template(v-else)
                                             | #[span(v-text="feed.videoUrl")]
                             div(v-else-if="feed.type === 'invite'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
@@ -215,8 +215,8 @@ html
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
                                         | #[span.name(v-text="feed.displayName")] changed video to 
-                                        template(v-if="feed.videoName")
-                                            | #[span(v-text="feed.videoName")]
+                                        template(v-if="feed.notyName")
+                                            | #[span(v-text="feed.notyName")]
                                         template(v-else)
                                             | #[span(v-text="feed.videoUrl")]
                             div(v-else-if="feed.type === 'invite'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
