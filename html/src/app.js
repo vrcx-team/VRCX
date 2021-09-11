@@ -15148,6 +15148,26 @@ speechSynthesis.getVoices();
         return false;
     };
 
+    $app.methods.userImage = function (user) {
+        if (this.displayVRCPlusIconsAsAvatar && user.userIcon) {
+            return user.userIcon;
+        }
+        if (user.profilePicOverride) {
+            return user.profilePicOverride;
+        }
+        return user.currentAvatarThumbnailImageUrl;
+    };
+
+    $app.methods.userImageFull = function (user) {
+        if (this.displayVRCPlusIconsAsAvatar && user.userIcon) {
+            return user.userIcon;
+        }
+        if (user.profilePicOverride) {
+            return user.profilePicOverride;
+        }
+        return user.currentAvatarImageUrl;
+    };
+
     $app = new Vue($app);
     window.$app = $app;
 })();
