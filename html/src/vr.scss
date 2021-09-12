@@ -211,9 +211,14 @@ button {
 }
 
 .x-containerbottom span {
-    padding: 0px;
     display: block;
     overflow: hidden;
+}
+
+.np-progress-bar {
+    width: 0%;
+    height: 2px;
+    background-color: white;
 }
 
 .x-friend-item {

@@ -3994,6 +3994,7 @@ speechSynthesis.getVoices();
                 }
                 AppApi.CheckGameRunning().then(
                     ([isGameRunning, isGameNoVR]) => {
+                        this.updateOpenVR(isGameRunning, isGameNoVR);
                         if (isGameRunning !== this.isGameRunning) {
                             this.isGameRunning = isGameRunning;
                             if (isGameRunning) {
@@ -4006,13 +4007,12 @@ speechSynthesis.getVoices();
                                 this.autoVRChatCacheManagement();
                             }
                             this.lastLocationReset();
+                            this.clearNowPlaying();
                             this.updateVRConfigVars();
-                            this.updateOpenVR();
                         }
                         if (isGameNoVR !== this.isGameNoVR) {
                             this.isGameNoVR = isGameNoVR;
                             this.updateVRConfigVars();
-                            this.updateOpenVR();
                         }
                         this.updateDiscord();
                     }
@@ -5240,11 +5240,7 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification('Event', noty.data, image);
                 break;
             case 'VideoPlay':
-                AppApi.DesktopNotification(
-                    'Now playing',
-                    noty.notyName,
-                    image
-                );
+                AppApi.DesktopNotification('Now playing', noty.notyName, image);
                 break;
             case 'BlockedOnPlayerJoined':
                 AppApi.DesktopNotification(
@@ -7212,6 +7208,22 @@ speechSynthesis.getVoices();
         this.lastLocationReset();
     };
 
+    $app.methods.sweepGameLog = function () {
+        var {data} = this.gameLogTable;
+        // 로그는 7일까지만 남김
+        var limit = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toJSON();
+        var i = 0;
+        var j = data.length;
+        while (i < j && data[i].created_at < limit) {
+            ++i;
+        }
+        if (i === j) {
+            this.gameLogTable.data = [];
+        } else if (i) {
+            data.splice(0, i);
+        }
+    };
+
     $app.methods.refreshEntireGameLog = async function () {
         await gameLogService.setDateTill('1970-01-01');
         await database.initTables();
@@ -7241,7 +7253,7 @@ speechSynthesis.getVoices();
         await gameLogService.setDateTill(dateTill);
         await gameLogService.reset();
         await new Promise((resolve) => {
-            setTimeout(resolve, 1000);
+            setTimeout(resolve, 10000);
         });
         var location = '';
         var pushToTable = true;
@@ -7261,11 +7273,7 @@ speechSynthesis.getVoices();
             rawLogs.slice(3)
         );
         var pushToTable = true;
-        this.addGameLogEntry(
-            gameLog,
-            this.lastLocation.location,
-            pushToTable
-        );
+        this.addGameLogEntry(gameLog, this.lastLocation.location, pushToTable);
     };
 
     $app.lastLocationDestinationTime = 0;
@@ -7284,6 +7292,7 @@ speechSynthesis.getVoices();
             case 'location-destination':
                 if (this.isGameRunning) {
                     this.cancelVRChatCacheDownload(gameLog.location);
+                    this.clearNowPlaying();
                 }
                 this.lastLocationDestinationTime = Date.parse(gameLog.dt);
                 var entry = {
@@ -7295,6 +7304,7 @@ speechSynthesis.getVoices();
             case 'location':
                 if (this.isGameRunning) {
                     this.lastLocationReset();
+                    this.clearNowPlaying();
                     this.lastLocation = {
                         date: Date.parse(gameLog.dt),
                         location: gameLog.location,
@@ -7430,11 +7440,18 @@ speechSynthesis.getVoices();
         var videoName = '';
         var videoLength = '';
         var displayName = '';
+        var videoPos = 5; // video loading delay
         if (typeof gameLog.displayName !== 'undefined') {
             displayName = gameLog.displayName;
         }
+        if (typeof gameLog.videoPos !== 'undefined') {
+            videoPos = gameLog.videoPos;
+        }
         var L = API.parseLocation(location);
-        if (L.worldId !== 'wrld_f20326da-f1ac-45fc-a062-609723b097b1') {
+        if (
+            L.worldId !== 'wrld_f20326da-f1ac-45fc-a062-609723b097b1' ||
+            gameLog.videoId === 'YouTube'
+        ) {
             // skip PyPyDance videos
             try {
                 var url = new URL(videoUrl);
@@ -7468,36 +7485,61 @@ speechSynthesis.getVoices();
                 videoLength,
                 location,
                 displayName,
-                userId
+                userId,
+                videoPos
             };
             if (pushToTable) {
+                this.setNowPlaying(entry);
                 this.queueGameLogNoty(entry);
                 this.gameLogTable.data.push(entry);
                 this.updateSharedFeed(false);
                 this.notifyMenu('gameLog');
                 this.sweepGameLog();
             }
-            if (this.youTubeApi && youtubeVideoId) {
-                var data = await this.lookupYouTubeVideo(youtubeVideoId);
-                if (
-                    data ||
-                    (data.status === 200 && data.pageInfo.totalResults !== 0)
-                ) {
-                    videoId = 'YouTube';
-                    videoName = data.items[0].snippet.title;
-                    videoLength = this.convertYoutubeTime(
-                        data.items[0].contentDetails.duration
-                    );
-                } else {
-                    console.error(`YouTube video lookup failed, error code: ${data.status}`);
+            database.addGamelogVideoPlayToDatabase(entry);
+        }
+    };
+
+    $app.methods.addGameLogPyPyDance = function (
+        gameLog,
+        location,
+        pushToTable
+    ) {
+        var data =
+            /VideoPlay\(PyPyDance\) "(.+?)",([\d.]+),([\d.]+),"(.+?)\s*(?:)?"/g.exec(
+                gameLog.data
+            );
+        var videoUrl = data[1];
+        var videoPos = Number(data[2]);
+        var videoLength = Number(data[3]);
+        var title = data[4];
+        var bracketArray = title.split('(');
+        var text1 = bracketArray.pop();
+        var displayName = text1.slice(0, -1);
+        var text2 = bracketArray.join('(');
+        if (text2 === 'URL ') {
+            var videoId = 'YouTube';
+        } else {
+            var videoId = text2.substr(0, text2.indexOf(':') - 1);
+            text2 = text2.substr(text2.indexOf(':') + 2);
+        }
+        var videoName = text2.slice(0, -1);
+        var userId = '';
+        if (displayName && displayName !== 'Random') {
+            for (var ref of API.cachedUsers.values()) {
+                if (ref.displayName === displayName) {
+                    userId = ref.id;
+                    break;
                 }
             }
         }
-        if (videoId === 'URL') {
+        if (videoId === 'YouTube') {
             var entry = {
                 dt: gameLog.dt,
                 videoUrl,
-                displayName
+                displayName,
+                videoPos,
+                videoId
             };
             this.addGameLogVideo(entry, location, userId, pushToTable);
         } else {
@@ -7510,9 +7552,11 @@ speechSynthesis.getVoices();
                 videoLength,
                 location,
                 displayName,
-                userId
+                userId,
+                videoPos
             };
             if (pushToTable) {
+                this.setNowPlaying(entry);
                 this.queueGameLogNoty(entry);
                 this.gameLogTable.data.push(entry);
                 this.updateSharedFeed(false);
@@ -7550,20 +7594,127 @@ speechSynthesis.getVoices();
         return data;
     };
 
-    $app.methods.sweepGameLog = function () {
-        var {data} = this.gameLogTable;
-        // 로그는 7일까지만 남김
-        var limit = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toJSON();
-        var i = 0;
-        var j = data.length;
-        while (i < j && data[i].created_at < limit) {
-            ++i;
+    $app.data.nowPlaying = {
+        url: '',
+        name: '',
+        length: 0,
+        startTime: 0,
+        elapsed: 0,
+        percentage: 0,
+        remainingText: '',
+        playing: false
+    };
+
+    $app.methods.clearNowPlaying = function () {
+        this.nowPlaying = {
+            url: '',
+            name: '',
+            length: 0,
+            startTime: 0,
+            elapsed: 0,
+            percentage: 0,
+            remainingText: '',
+            playing: false
+        };
+        this.updateVrNowPlaying();
+    };
+
+    $app.methods.setNowPlaying = function (ctx) {
+        var videoId = '';
+        var displayName = '';
+        if (ctx.videoId) {
+            videoId = `${ctx.videoId} : `;
         }
-        if (i === j) {
-            this.gameLogTable.data = [];
-        } else if (i) {
-            data.splice(0, i);
+        if (ctx.displayName) {
+            displayName = ` (${ctx.displayName})`;
         }
+        var name = `${videoId}${ctx.videoName}${displayName} ‎`;
+        this.nowPlaying = {
+            url: ctx.videoUrl,
+            name,
+            length: ctx.videoLength,
+            startTime: Date.parse(ctx.created_at) / 1000 - ctx.videoPos,
+            elapsed: 0,
+            percentage: 0,
+            remainingText: ''
+        };
+        if (!this.nowPlaying.playing) {
+            this.nowPlaying.playing = true;
+            this.updateNowPlaying();
+        }
+    };
+
+    $app.methods.updateNowPlaying = function () {
+        var np = this.nowPlaying;
+        if (!np.url) {
+            this.nowPlaying.playing = false;
+            return;
+        }
+        var now = Date.now() / 1000;
+        np.elapsed = Math.round((now - np.startTime) * 10) / 10;
+        if (np.elapsed >= np.length) {
+            this.clearNowPlaying();
+            return;
+        }
+        np.remainingText = this.formatSeconds(np.length - np.elapsed);
+        np.percentage = Math.round(((np.elapsed * 100) / np.length) * 10) / 10;
+        this.updateVrNowPlaying();
+        setTimeout(() => this.updateNowPlaying(), 1000);
+    };
+
+    $app.methods.updateVrNowPlaying = function () {
+        var json = JSON.stringify(this.nowPlaying);
+        AppApi.ExecuteVrFeedFunction('nowPlayingUpdate', json);
+    };
+
+    $app.methods.formatSeconds = function (duration) {
+        var pad = function (num, size) {
+                return `000${num}`.slice(size * -1);
+            },
+            time = parseFloat(duration).toFixed(3),
+            hours = Math.floor(time / 60 / 60),
+            minutes = Math.floor(time / 60) % 60,
+            seconds = Math.floor(time - minutes * 60);
+        var hoursOut = '';
+        if (hours > '0') {
+            hoursOut = `${pad(hours, 2)}:`;
+        }
+        return `${hoursOut + pad(minutes, 2)}:${pad(seconds, 2)}`;
+    };
+
+    $app.methods.convertYoutubeTime = function (duration) {
+        var a = duration.match(/\d+/g);
+        if (
+            duration.indexOf('M') >= 0 &&
+            duration.indexOf('H') === -1 &&
+            duration.indexOf('S') === -1
+        ) {
+            a = [0, a[0], 0];
+        }
+        if (duration.indexOf('H') >= 0 && duration.indexOf('M') === -1) {
+            a = [a[0], 0, a[1]];
+        }
+        if (
+            duration.indexOf('H') >= 0 &&
+            duration.indexOf('M') === -1 &&
+            duration.indexOf('S') === -1
+        ) {
+            a = [a[0], 0, 0];
+        }
+        var length = 0;
+        if (a.length === 3) {
+            length += parseInt(a[0], 10) * 3600;
+            length += parseInt(a[1], 10) * 60;
+            length += parseInt(a[2], 10);
+        }
+        if (a.length === 2) {
+            length += parseInt(a[0], 10) * 60;
+            length += parseInt(a[1], 10);
+        }
+        if (a.length === 1) {
+            length += parseInt(a[0], 10);
+        }
+        return length;
     };
 
     $app.methods.updateDiscord = function () {
@@ -7633,8 +7784,19 @@ speechSynthesis.getVoices();
                 L.statusImage = 'busy';
                 break;
         }
+        var appId = '883308884863901717';
+        var bigIcon = 'vrchat';
+        if (L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1') {
+            L.worldName = this.nowPlaying.name;
+            appId = '784094509008551956';
+            bigIcon = 'pypy';
+            Discord.SetTimestamps(
+                Date.now(),
+                (this.nowPlaying.startTime + this.nowPlaying.length) * 1000
+            );
+        }
         Discord.SetAssets(
-            'vrchat', // big icon
+            bigIcon, // big icon
             'Powered by VRCX', // big icon hover text
             L.statusImage, // small icon
             L.statusName, // small icon hover text
@@ -7643,7 +7805,7 @@ speechSynthesis.getVoices();
             L.worldCapacity, // party max size
             'Join', // button text
             L.joinUrl, // button url
-            '883308884863901717' // app id
+            appId // app id
         );
         // NOTE
         // 글자 수가 짧으면 업데이트가 안된다..
@@ -9330,11 +9492,11 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.methods.updateOpenVR = function () {
+    $app.methods.updateOpenVR = function (isGameRunning, isGameNoVR) {
         if (
             this.openVR &&
-            this.isGameNoVR === false &&
-            (this.isGameRunning || this.openVRAlways)
+            !isGameNoVR &&
+            (isGameRunning || this.openVRAlways)
         ) {
             AppApi.StartVR();
         } else {

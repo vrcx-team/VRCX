@@ -8,6 +8,8 @@ import Noty from 'noty';
 import Vue from 'vue';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
+import MarqueeText from 'vue-marquee-text-component';
+Vue.component('marquee-text', MarqueeText);
 
 import configRepository from './repository/config.js';
 
@@ -178,6 +180,15 @@ speechSynthesis.getVoices();
             currentTime: new Date().toJSON(),
             cpuUsage: 0,
             config: {},
+            nowPlaying: {
+                url: '',
+                name: '',
+                length: 0,
+                startTime: 0,
+                elapsed: 0,
+                percentage: 0,
+                remainingText: ''
+            },
             lastLocation: {
                 date: 0,
                 location: '',
@@ -278,6 +289,10 @@ speechSynthesis.getVoices();
 
     $app.methods.configUpdate = function (json) {
         this.config = JSON.parse(json);
+    };
+
+    $app.methods.nowPlayingUpdate = function (json) {
+        this.nowPlaying = JSON.parse(json);
     };
 
     $app.methods.lastLocationUpdate = function (json) {
