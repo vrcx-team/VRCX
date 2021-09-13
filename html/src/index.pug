@@ -173,6 +173,7 @@ html
                                             span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
                                             span(v-else) Offline
                                         i.x-user-status(:class="statusClass(scope.row.status)")
+                                    span  ‎
                                     span(v-text="scope.row.statusDescription")
                             template(v-else-if="scope.row.type === 'Avatar'")
                                 avatar-info(:imageurl="scope.row.currentAvatarImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.ownerId" :hintavatarname="scope.row.avatarName")

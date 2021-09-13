@@ -349,9 +349,10 @@ html
                                 br
                                 span {{ device[2] }}%
             .x-containerbottom
-                span(style="float:right;padding-left:10px") {{ nowPlaying.remainingText }}
-                marquee-text {{ nowPlaying.name }}
-                div.np-progress-bar(:style="{ width: nowPlaying.percentage + '%' }")
+                template(v-if="nowPlaying.playing")
+                    span(style="float:right;padding-left:10px") {{ nowPlaying.remainingText }}
+                    marquee-text {{ nowPlaying.name }} ‎
+                    div.np-progress-bar(:style="{ width: nowPlaying.percentage + '%' }")
                 template(v-if="config && config.minimalFeed")
                     template(v-if="config.downloadProgress === 100")
                         span(style="display:inline-block;margin-right:5px") #[i.el-icon-loading]
