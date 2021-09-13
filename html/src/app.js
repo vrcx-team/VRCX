@@ -7113,8 +7113,13 @@ speechSynthesis.getVoices();
                 userId: ref.userId,
                 time
             };
-            $app.addGameLog(entry);
             database.addGamelogJoinLeaveToDatabase(entry);
+            this.gameLogTable.data.push(entry);
+        }
+        if (playerList.length > 0) {
+            this.updateSharedFeed(false);
+            this.notifyMenu('gameLog');
+            this.sweepGameLog();
         }
         if (this.lastLocation.date !== 0) {
             var timeLocation = new Date().getTime() - this.lastLocation.date;
