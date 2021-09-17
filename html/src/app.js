@@ -1317,7 +1317,11 @@ speechSynthesis.getVoices();
         if (json.id === API.currentUser.id) {
             json.status = API.currentUser.status;
             json.statusDescription = API.currentUser.statusDescription;
-            json.state = API.currentUser.state;
+            if ($app.isGameRunning) {
+                json.state = 'online';
+            } else {
+                json.state = 'active';
+            }
             json.last_login = API.currentUser.last_login;
             if (
                 typeof json.location !== 'undefined' &&
