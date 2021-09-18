@@ -6778,6 +6778,57 @@ speechSynthesis.getVoices();
 
     // App: Feed
 
+    $app.methods.feedSearch = function (row, filter) {
+        var { value } = filter;
+        if (!value) {
+            return true;
+        }
+        value = value.toUpperCase();
+        switch (row.type) {
+            case 'GPS':
+                if (String(row.displayName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                if (String(row.worldName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'Online':
+                if (String(row.displayName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                if (String(row.worldName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'Offline':
+                if (String(row.displayName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                if (String(row.worldName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'Status':
+                if (String(row.displayName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                if (String(row.statusDescription).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'Avatar':
+                if (String(row.displayName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                if (String(row.avatarName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+        }
+        return true;
+    };
+
     $app.data.feedTable = {
         data: [],
         filters: [
@@ -6789,7 +6840,9 @@ speechSynthesis.getVoices();
             },
             {
                 prop: 'displayName',
-                value: ''
+                value: '',
+                filterFn: (row, filter) =>
+                    $app.feedSearch(row, filter)
             },
             {
                 prop: 'userId',
@@ -7163,6 +7216,61 @@ speechSynthesis.getVoices();
         this.updateDiscord();
     };
 
+    $app.methods.gameLogSearch = function (row, filter) {
+        var { value } = filter;
+        if (!value) {
+            return true;
+        }
+        value = value.toUpperCase();
+        switch (row.type) {
+            case 'Location':
+                if (String(row.worldName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'OnPlayerJoined':
+                if (String(row.displayName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'OnPlayerLeft':
+                if (String(row.displayName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'PortalSpawn':
+                if (String(row.displayName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                if (String(row.worldName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'AvatarChange':
+                if (String(row.name).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'Event':
+                if (String(row.data).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'VideoPlay':
+                if (String(row.displayName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                if (String(row.videoName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                if (String(row.videoUrl).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+        }
+        return true;
+    };
+
     $app.data.gameLogTable = {
         data: [],
         lastEntryDate: '',
@@ -7175,7 +7283,9 @@ speechSynthesis.getVoices();
             },
             {
                 prop: 'displayName',
-                value: ''
+                value: '',
+                filterFn: (row, filter) =>
+                    $app.gameLogSearch(row, filter)
             },
             {
                 prop: 'displayName',
