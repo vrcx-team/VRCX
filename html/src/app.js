@@ -476,6 +476,13 @@ speechSynthesis.getVoices();
                 if (status === 404 && endpoint.substring(0, 6) === 'users/') {
                     throw new Error("404: Can't find user!");
                 }
+                if (
+                    status === 404 &&
+                    endpoint.substring(0, 7) === 'invite/' &&
+                    init.inviteId
+                ) {
+                    this.expireNotification(init.inviteId);
+                }
                 if (data.error === Object(data.error)) {
                     this.$throw(
                         data.error.status_code || status,
@@ -2218,11 +2225,9 @@ speechSynthesis.getVoices();
 
     // API: Notification
 
-    API.cachedNotifications = new Map();
     API.isNotificationsLoading = false;
 
     API.$on('LOGIN', function () {
-        this.cachedNotifications.clear();
         this.isNotificationsLoading = false;
     });
 
@@ -2254,13 +2259,19 @@ speechSynthesis.getVoices();
     });
 
     API.$on('NOTIFICATION:ACCEPT', function (args) {
-        var ref = this.cachedNotifications.get(args.params.notificationId);
-        if (typeof ref === 'undefined' || ref.$isDeleted) {
+        var array = $app.notificationTable.data;
+        for (var i = array.length - 1; i >= 0; i--) {
+            if (array[i].id === args.params.notificationId) {
+                var ref = array[i];
+                break;
+            }
+        }
+        if (typeof ref === 'undefined') {
             return;
         }
+        ref.$isExpired = true;
         args.ref = ref;
-        ref.$isDeleted = true;
-        this.$emit('NOTIFICATION:@DELETE', {
+        this.$emit('NOTIFICATION:EXPIRE', {
             ref,
             params: {
                 notificationId: ref.id
@@ -2274,13 +2285,32 @@ speechSynthesis.getVoices();
     });
 
     API.$on('NOTIFICATION:HIDE', function (args) {
-        var ref = this.cachedNotifications.get(args.params.notificationId);
-        if (typeof ref === 'undefined' && ref.$isDeleted) {
+        var array = $app.notificationTable.data;
+        for (var i = array.length - 1; i >= 0; i--) {
+            if (array[i].id === args.params.notificationId) {
+                var ref = array[i];
+                break;
+            }
+        }
+        if (typeof ref === 'undefined') {
             return;
         }
         args.ref = ref;
-        ref.$isDeleted = true;
-        this.$emit('NOTIFICATION:@DELETE', {
+        if (
+            ref.type === 'friendRequest' ||
+            ref.type === 'hiddenFriendRequest'
+        ) {
+            for (var i = array.length - 1; i >= 0; i--) {
+                if (array[i].id === ref.id) {
+                    array.splice(i, 1);
+                    break;
+                }
+            }
+        } else {
+            ref.$isExpired = true;
+            database.updateNotificationExpired(ref);
+        }
+        this.$emit('NOTIFICATION:EXPIRE', {
             ref,
             params: {
                 notificationId: ref.id
@@ -2289,7 +2319,13 @@ speechSynthesis.getVoices();
     });
 
     API.applyNotification = function (json) {
-        var ref = this.cachedNotifications.get(json.id);
+        var array = $app.notificationTable.data;
+        for (var i = array.length - 1; i >= 0; i--) {
+            if (array[i].id === json.id) {
+                var ref = array[i];
+                break;
+            }
+        }
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
@@ -2301,12 +2337,10 @@ speechSynthesis.getVoices();
                 seen: false,
                 created_at: '',
                 // VRCX
-                $isDeleted: false,
                 $isExpired: false,
                 //
                 ...json
             };
-            this.cachedNotifications.set(ref.id, ref);
         } else {
             Object.assign(ref, json);
             ref.$isExpired = false;
@@ -2326,36 +2360,42 @@ speechSynthesis.getVoices();
         return ref;
     };
 
-    API.expireNotifications = function () {
-        for (var ref of this.cachedNotifications.values()) {
-            ref.$isExpired = true;
+    API.expireFriendRequestNotifications = function () {
+        var array = $app.notificationTable.data;
+        for (var i = array.length - 1; i >= 0; i--) {
             if (
-                ref.type === 'friendRequest' ||
-                ref.type === 'hiddenFriendRequest'
+                array[i].type === 'friendRequest' ||
+                array[i].type === 'hiddenFriendRequest'
             ) {
-                this.cachedNotifications.delete(ref.id);
+                array.splice(i, 1);
             }
         }
     };
 
-    API.deleteExpiredNotifcations = function () {
-        for (var ref of this.cachedNotifications.values()) {
-            if (ref.$isDeleted || ref.$isExpired === false) {
-                continue;
+    API.expireNotification = function (notificationId) {
+        var array = $app.notificationTable.data;
+        for (var i = array.length - 1; i >= 0; i--) {
+            if (array[i].id === notificationId) {
+                var ref = array[i];
+                break;
             }
-            ref.$isDeleted = true;
-            this.$emit('NOTIFICATION:@DELETE', {
-                ref,
-                params: {
-                    notificationId: ref.id
-                }
-            });
         }
+        if (typeof ref === 'undefined') {
+            return;
+        }
+        ref.$isExpired = true;
+        database.updateNotificationExpired(ref);
+        this.$emit('NOTIFICATION:EXPIRE', {
+            ref,
+            params: {
+                notificationId: ref.id
+            }
+        });
     };
 
     API.refreshNotifications = async function () {
         this.isNotificationsLoading = true;
-        this.expireNotifications();
+        this.expireFriendRequestNotifications();
         var params = {
             n: 100,
             offset: 0
@@ -2382,7 +2422,6 @@ speechSynthesis.getVoices();
                 break;
             }
         }
-        this.deleteExpiredNotifcations();
         this.isNotificationsLoading = false;
     };
 
@@ -2512,31 +2551,33 @@ speechSynthesis.getVoices();
         });
     };
 
-    API.sendInviteResponse = function (params, inviteID) {
-        return this.call(`invite/${inviteID}/response`, {
+    API.sendInviteResponse = function (params, inviteId) {
+        return this.call(`invite/${inviteId}/response`, {
             method: 'POST',
-            params
+            params,
+            inviteId
         }).then((json) => {
             var args = {
                 json,
                 params,
-                inviteID
+                inviteId
             };
             this.$emit('INVITE:RESPONSE:SEND', args);
             return args;
         });
     };
 
-    API.sendInviteResponsePhoto = function (params, inviteID) {
-        return this.call(`invite/${inviteID}/response/photo`, {
+    API.sendInviteResponsePhoto = function (params, inviteId) {
+        return this.call(`invite/${inviteId}/response/photo`, {
             uploadImage: true,
             postData: JSON.stringify(params),
-            imageData: $app.uploadImage
+            imageData: $app.uploadImage,
+            inviteId
         }).then((json) => {
             var args = {
                 json,
                 params,
-                inviteID
+                inviteId
             };
             this.$emit('INVITE:RESPONSE:PHOTO:SEND', args);
             return args;
@@ -2586,13 +2627,13 @@ speechSynthesis.getVoices();
     };
 
     API.getFriendRequest = function (userId) {
-        for (var ref of this.cachedNotifications.values()) {
+        var array = $app.notificationTable.data;
+        for (var i = array.length - 1; i >= 0; i--) {
             if (
-                ref.$isDeleted === false &&
-                ref.type === 'friendRequest' &&
-                ref.senderUserId === userId
+                array[i].type === 'friendRequest' &&
+                array[i].senderUserId === userId
             ) {
-                return ref.id;
+                return array[i].id;
             }
         }
         return '';
@@ -3506,6 +3547,11 @@ speechSynthesis.getVoices();
                 break;
 
             case 'hide-notification':
+                this.$emit('NOTIFICATION:HIDE', {
+                    params: {
+                        notificationId: content
+                    }
+                });
                 this.$emit('NOTIFICATION:SEE', {
                     params: {
                         notificationId: content
@@ -4508,9 +4554,6 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.queueNotificationNoty = function (noty) {
-        if (noty.senderUserId === API.currentUser.id) {
-            return;
-        }
         noty.isFriend = this.friends.has(noty.senderUserId);
         noty.isFavorite = API.cachedFavoritesByObjectId.has(noty.senderUserId);
         var notyFilter = this.sharedFeedFilters.noty;
@@ -6875,6 +6918,8 @@ speechSynthesis.getVoices();
         await database.initUserTables(args.json.id);
         $app.feedTable.data = await database.getFeedDatabase();
         $app.sweepFeed();
+        // eslint-disable-next-line require-atomic-updates
+        $app.notificationTable.data = await database.getNotifications();
         if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
             await $app.getFriendLog();
         } else {
@@ -8615,6 +8660,20 @@ speechSynthesis.getVoices();
             this.friendLog.set(id, friendLogCurrent);
             database.setFriendLogCurrent(friendLogCurrent);
             this.notifyMenu('friendLog');
+            this.deleteFriendRequest(id);
+        }
+    };
+
+    $app.methods.deleteFriendRequest = function (userId) {
+        var array = $app.notificationTable.data;
+        for (var i = array.length - 1; i >= 0; i--) {
+            if (
+                array[i].type === 'friendRequest' &&
+                array[i].senderUserId === userId
+            ) {
+                array.splice(i, 1);
+                return;
+            }
         }
     };
 
@@ -8859,22 +8918,22 @@ speechSynthesis.getVoices();
         var {length} = array;
         for (var i = 0; i < length; ++i) {
             if (array[i].id === ref.id) {
-                if (ref.$isDeleted) {
-                    array.splice(i, 1);
-                } else {
-                    Vue.set(array, i, ref);
-                }
+                Vue.set(array, i, ref);
                 return;
             }
         }
-        if (ref.$isDeleted === false) {
-            $app.notificationTable.data.push(ref);
-            if (ref.senderUserId !== this.currentUser.id) {
-                $app.notifyMenu('notification');
-                $app.unseenNotifications.push(ref.id);
+        if (ref.senderUserId !== this.currentUser.id) {
+            if (
+                ref.type !== 'friendRequest' &&
+                ref.type !== 'hiddenFriendRequest'
+            ) {
+                database.addNotificationToDatabase(ref);
             }
+            $app.notifyMenu('notification');
+            $app.unseenNotifications.push(ref.id);
             $app.queueNotificationNoty(ref);
         }
+        $app.notificationTable.data.push(ref);
         $app.updateSharedFeed(true);
     });
 
@@ -8883,18 +8942,6 @@ speechSynthesis.getVoices();
         removeFromArray($app.unseenNotifications, notificationId);
         if ($app.unseenNotifications.length === 0) {
             $app.selectMenu('notification');
-        }
-    });
-
-    API.$on('NOTIFICATION:@DELETE', function (args) {
-        var {ref} = args;
-        var array = $app.notificationTable.data;
-        var {length} = array;
-        for (var i = 0; i < length; ++i) {
-            if (array[i].id === ref.id) {
-                array.splice(i, 1);
-                return;
-            }
         }
     });
 
@@ -8915,8 +8962,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.hideNotification = function (row) {
-        // FIXME: 메시지 수정
-        this.$confirm('Continue? Delete Notification', 'Confirm', {
+        this.$confirm(`Continue? Decline ${row.type}`, 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -8933,6 +8979,25 @@ speechSynthesis.getVoices();
                         API.hideNotification({
                             notificationId: row.id
                         });
+                    }
+                }
+            }
+        });
+    };
+
+    $app.methods.deleteNotificationLog = function (row) {
+        this.$confirm(`Continue? Delete ${row.type}`, 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    removeFromArray(this.notificationTable.data, row);
+                    if (
+                        row.type !== 'friendRequest' &&
+                        row.type !== 'hiddenFriendRequest'
+                    ) {
+                        database.deleteNotification(row.id);
                     }
                 }
             }
@@ -10146,7 +10211,7 @@ speechSynthesis.getVoices();
         D.isFriend = true;
     });
 
-    API.$on('NOTIFICATION:@DELETE', function (args) {
+    API.$on('NOTIFICATION:EXPIRE', function (args) {
         var {ref} = args;
         var D = $app.userDialog;
         if (

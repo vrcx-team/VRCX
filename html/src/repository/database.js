@@ -22,6 +22,9 @@ class Database {
             `CREATE TABLE IF NOT EXISTS ${Database.userId}_friend_log_history (id INTEGER PRIMARY KEY, created_at TEXT, type TEXT, user_id TEXT, display_name TEXT, previous_display_name TEXT, trust_level TEXT, previous_trust_level TEXT)`
         );
         await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${Database.userId}_notifications (id TEXT PRIMARY KEY, created_at TEXT, type TEXT, sender_user_id TEXT, sender_username TEXT, receiver_user_id TEXT, message TEXT, world_id TEXT, world_name TEXT, image_url TEXT, invite_message TEXT, request_message TEXT, response_message TEXT, expired INTEGER)`
+        );
+        await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
         );
     }
@@ -520,6 +523,103 @@ class Database {
             {
                 '@created_at': entry.created_at,
                 '@data': entry.data
+            }
+        );
+    }
+
+    async getNotifications() {
+        var notifications = [];
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                id: dbRow[0],
+                created_at: dbRow[1],
+                type: dbRow[2],
+                senderUserId: dbRow[3],
+                senderUsername: dbRow[4],
+                receiverUserId: dbRow[5],
+                message: dbRow[6],
+                details: {
+                    worldId: dbRow[7],
+                    worldName: dbRow[8],
+                    imageUrl: dbRow[9],
+                    inviteMessage: dbRow[10],
+                    requestMessage: dbRow[11],
+                    responseMessage: dbRow[12]
+                }
+            };
+            row.$isExpired = false;
+            if (dbRow[13] === 1) {
+                row.$isExpired = true;
+            }
+            notifications.unshift(row);
+        }, `SELECT * FROM ${Database.userId}_notifications LIMIT 5000`);
+        return notifications;
+    }
+
+    addNotificationToDatabase(row) {
+        var entry = {
+            id: '',
+            created_at: '',
+            type: '',
+            senderUserId: '',
+            senderUsername: '',
+            receiverUserId: '',
+            message: '',
+            ...row,
+            details: {
+                worldId: '',
+                worldName: '',
+                imageUrl: '',
+                inviteMessage: '',
+                requestMessage: '',
+                responseMessage: '',
+                ...row.details
+            }
+        };
+        var expired = 0;
+        if (row.$isExpired) {
+            expired = 1;
+        }
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO ${Database.userId}_notifications (id, created_at, type, sender_user_id, sender_username, receiver_user_id, message, world_id, world_name, image_url, invite_message, request_message, response_message, expired) VALUES (@id, @created_at, @type, @sender_user_id, @sender_username, @receiver_user_id, @message, @world_id, @world_name, @image_url, @invite_message, @request_message, @response_message, @expired)`,
+            {
+                '@id': entry.id,
+                '@created_at': entry.created_at,
+                '@type': entry.type,
+                '@sender_user_id': entry.senderUserId,
+                '@sender_username': entry.senderUsername,
+                '@receiver_user_id': entry.receiverUserId,
+                '@message': entry.message,
+                '@world_id': entry.details.worldId,
+                '@world_name': entry.details.worldName,
+                '@image_url': entry.details.imageUrl,
+                '@invite_message': entry.details.inviteMessage,
+                '@request_message': entry.details.requestMessage,
+                '@response_message': entry.details.responseMessage,
+                '@expired': expired
+            }
+        );
+    }
+
+    deleteNotification(rowId) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM ${Database.userId}_notifications WHERE id = @row_id`,
+            {
+                '@row_id': rowId
+            }
+        );
+    }
+
+    updateNotificationExpired(entry) {
+        var expired = 0;
+        if (entry.$isExpired) {
+            expired = 1;
+        }
+        sqliteService.executeNonQuery(
+            `UPDATE ${Database.userId}_notifications SET expired = @expired WHERE id = @id`,
+            {
+                '@id': entry.id,
+                '@expired': expired
             }
         );
     }
