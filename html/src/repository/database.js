@@ -371,7 +371,7 @@ class Database {
     async getGamelogDatabase() {
         var gamelogDatabase = [];
         var date = new Date();
-        date.setDate(date.getDate() - 3); // 3 day limit
+        date.setDate(date.getDate() - 7); // 7 day limit
         var dateOffset = date.toJSON();
         await sqliteService.execute((dbRow) => {
             var row = {

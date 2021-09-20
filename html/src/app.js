@@ -6779,7 +6779,7 @@ speechSynthesis.getVoices();
     // App: Feed
 
     $app.methods.feedSearch = function (row, filter) {
-        var { value } = filter;
+        var {value} = filter;
         if (!value) {
             return true;
         }
@@ -6813,7 +6813,9 @@ speechSynthesis.getVoices();
                 if (String(row.displayName).toUpperCase().includes(value)) {
                     return true;
                 }
-                if (String(row.statusDescription).toUpperCase().includes(value)) {
+                if (
+                    String(row.statusDescription).toUpperCase().includes(value)
+                ) {
                     return true;
                 }
                 return false;
@@ -6841,8 +6843,7 @@ speechSynthesis.getVoices();
             {
                 prop: 'displayName',
                 value: '',
-                filterFn: (row, filter) =>
-                    $app.feedSearch(row, filter)
+                filterFn: (row, filter) => $app.feedSearch(row, filter)
             },
             {
                 prop: 'userId',
@@ -7204,10 +7205,12 @@ speechSynthesis.getVoices();
     $app.data.discordActive = configRepository.getBool('discordActive');
     $app.data.discordInstance = configRepository.getBool('discordInstance');
     $app.data.discordJoinButton = configRepository.getBool('discordJoinButton');
+    $app.data.discordHideInvite = configRepository.getBool('discordHideInvite');
     $app.methods.saveDiscordOption = function () {
         configRepository.setBool('discordActive', this.discordActive);
         configRepository.setBool('discordInstance', this.discordInstance);
         configRepository.setBool('discordJoinButton', this.discordJoinButton);
+        configRepository.setBool('discordHideInvite', this.discordHideInvite);
         if (!this.discordActive) {
             Discord.SetText('', '');
             Discord.SetActive(false);
@@ -7217,7 +7220,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.gameLogSearch = function (row, filter) {
-        var { value } = filter;
+        var {value} = filter;
         if (!value) {
             return true;
         }
@@ -7284,8 +7287,7 @@ speechSynthesis.getVoices();
             {
                 prop: 'displayName',
                 value: '',
-                filterFn: (row, filter) =>
-                    $app.gameLogSearch(row, filter)
+                filterFn: (row, filter) => $app.gameLogSearch(row, filter)
             },
             {
                 prop: 'displayName',
@@ -7879,6 +7881,13 @@ speechSynthesis.getVoices();
             }
             this.lastLocation$ = L;
         }
+        var hidePrivate = false;
+        if (
+            (this.discordHideInvite && L.accessType === 'Invite') ||
+            L.accessType === 'Invite+'
+        ) {
+            hidePrivate = true;
+        }
         switch (API.currentUser.status) {
             case 'active':
                 L.statusName = 'Online';
@@ -7891,18 +7900,42 @@ speechSynthesis.getVoices();
             case 'ask me':
                 L.statusName = 'Ask Me';
                 L.statusImage = 'askme';
+                hidePrivate = true;
                 break;
             case 'busy':
                 L.statusName = 'Do Not Disturb';
                 L.statusImage = 'busy';
+                hidePrivate = true;
                 break;
         }
         var appId = '883308884863901717';
         var bigIcon = 'vrchat';
+        var instanceId = L.instanceId;
+        var partySize = this.lastLocation.playerList.size;
+        var partyMaxSize = L.worldCapacity;
+        var buttonText = 'Join';
+        var buttonUrl = L.joinUrl;
+        if (!this.discordJoinButton) {
+            buttonText = '';
+            buttonUrl = '';
+        }
+        if (!this.discordInstance) {
+            partySize = 0;
+            partyMaxSize = 0;
+        }
+        if (hidePrivate) {
+            instanceId = '';
+            partySize = 0;
+            partyMaxSize = 0;
+            buttonText = '';
+            buttonUrl = '';
+        }
         if (
-            L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1' ||
+            (!hidePrivate &&
+                L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1') ||
             L.worldId === 'wrld_42377cf1-c54f-45ed-8996-5875b0573a83'
         ) {
+            // dance world rpc
             if (L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1') {
                 appId = '784094509008551956';
                 bigIcon = 'pypy';
@@ -7925,11 +7958,11 @@ speechSynthesis.getVoices();
             'Powered by VRCX', // big icon hover text
             L.statusImage, // small icon
             L.statusName, // small icon hover text
-            L.instanceId, // party id
-            this.lastLocation.playerList.size, // party size
-            L.worldCapacity, // party max size
-            'Join', // button text
-            L.joinUrl, // button url
+            instanceId, // party id
+            partySize, // party size
+            partyMaxSize, // party max size
+            buttonText, // button text
+            buttonUrl, // button url
             appId // app id
         );
         // NOTE
@@ -7937,8 +7970,8 @@ speechSynthesis.getVoices();
         if (L.worldName.length < 2) {
             L.worldName += '\uFFA0'.repeat(2 - L.worldName.length);
         }
-        if (API.currentUser.status === 'busy') {
-            Discord.SetText('Do Not Disturb', '');
+        if (hidePrivate) {
+            Discord.SetText('Private', '');
             Discord.SetTimestamps(0, 0);
         } else if (this.discordInstance) {
             Discord.SetText(L.worldName, L.accessType);

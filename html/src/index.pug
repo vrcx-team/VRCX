@@ -780,11 +780,14 @@ html
                         span.name Enable
                         el-switch(v-model="discordActive" @change="saveDiscordOption")
                     div.options-container-item
-                        span.name Instance type
+                        span.name Instance type/player count
                         el-switch(v-model="discordInstance" @change="saveDiscordOption" :disabled="!discordActive")
                     div.options-container-item
                         span.name Join button (public only)
                         el-switch(v-model="discordJoinButton" @change="saveDiscordOption" :disabled="!discordActive")
+                    div.options-container-item
+                        span.name Hide world details in private
+                        el-switch(v-model="discordHideInvite" @change="saveDiscordOption" :disabled="!discordActive")
                 div.options-container
                     span.header SteamVR Overlay
                     div.options-container-item
