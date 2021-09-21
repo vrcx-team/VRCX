@@ -186,7 +186,7 @@ html
                             el-select(v-model="gameLogTable.filters[0].value" @change="saveTableFilters" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
                                 el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'PortalSpawn', 'AvatarChange', 'Event', 'VideoPlay']" :key="type" :label="type" :value="type")
                             el-input(v-model="gameLogTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
-                            el-tooltip(placement="bottom" content="Reset game log" :disabled="hideTooltips")
+                            el-tooltip(placement="bottom" content="Reload game log" :disabled="hideTooltips")
                                 el-button(type="default" @click="refreshEntireGameLog" icon="el-icon-refresh" circle style="flex:none")
                     el-table-column(label="Date" prop="created_at" sortable="custom" width="90")
                         template(v-once #default="scope")
