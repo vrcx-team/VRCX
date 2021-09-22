@@ -3030,7 +3030,7 @@ speechSynthesis.getVoices();
                         });
                     }
                 } else {
-                    var n = Math.floor(Math.random() * (64 + 1)) + 64;
+                    var n = Math.floor(Math.random() * (36 + 1)) + 64;
                     this.bulk({
                         fn,
                         N,
