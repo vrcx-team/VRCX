@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 
 $installPath = &"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version 16.0 -property installationpath
 Import-Module (Join-Path $installPath "Common7\Tools\Microsoft.VisualStudio.DevShell.dll")
@@ -22,7 +22,7 @@ New-Item -ItemType Junction -Path "bin\x64\Release\html" -Target "html\dist"
 
 Write-Host "Creating Zip..." -ForegroundColor Green
 cd "bin\x64\Release"
-7z a -tzip $ZipName * -mx=7 -xr0!cache -xr0!userdata -xr0!"*.log" -xr0!"*.json" -xr0!"*.sqlite3" -xr0!"*.pdb" -xr0!"*.config"
+7z a -tzip $ZipName * -mx=7 -xr0!"*.log" -xr0!"*.pdb"
 Move-Item $ZipName ..\..\..\$ZipName -Force
 cd ..\..\..\
 
