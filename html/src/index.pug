@@ -1706,7 +1706,7 @@ html
             //- dialog: YouTube Api Dialog
             el-dialog.x-dialog(ref="youTubeApiDialog" :visible.sync="youTubeApiDialog.visible" title="YouTube API" width="400px")
                 div(style='font-size:12px;')
-                    | Enter your YouTube API Key #[br]
+                    | Enter your YouTube API Key (optional) #[br]
                 el-input(type="textarea" v-model="youTubeApiKey" placeholder="YouTube API Key" maxlength="39" show-word-limit style="dispaly:block;margin-top:10px")
                 template(#footer)
                     div(style="display:flex")
@@ -1817,7 +1817,7 @@ html
                         el-button(type="primary" size="small" style="margin-left:auto" @click="notificationPositionDialog.visible = false") OK
 
             //- dialog: Noty feed filters
-            el-dialog.x-dialog(ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="480px")
+            el-dialog.x-dialog(ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="500px")
                 .toggle-list
                     .toggle-item
                         span.toggle-name OnPlayerJoining
@@ -1916,18 +1916,20 @@ html
                             el-radio-button(label="Friends")
                     .toggle-item
                         span.toggle-name Portal Spawn
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option")
+                                i.el-icon-warning
                         el-radio-group(v-model="sharedFeedFilters.noty.PortalSpawn" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                             el-radio-button(label="Everyone")
-                    .toggle-item
-                        span.toggle-name Avatar Change
-                        el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                    //- .toggle-item
+                    //-     span.toggle-name Avatar Change
+                    //-     el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
+                    //-         el-radio-button(label="Off")
+                    //-         el-radio-button(label="VIP")
+                    //-         el-radio-button(label="Friends")
+                    //-         el-radio-button(label="Everyone")
                     .toggle-item
                         span.toggle-name Video Play
                         el-radio-group(v-model="sharedFeedFilters.noty.VideoPlay" size="mini")
@@ -1971,7 +1973,7 @@ html
                     el-button(type="primary" size="small" style="margin-left:10px" @click="saveSharedFeedFilters") Save
                     
             //- dialog: wrist feed filters
-            el-dialog.x-dialog(ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="480px")
+            el-dialog.x-dialog(ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="500px")
                 .toggle-list
                     .toggle-item
                         span.toggle-name Self Location
@@ -2075,18 +2077,20 @@ html
                             el-radio-button(label="Friends")
                     .toggle-item
                         span.toggle-name Portal Spawn
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option")
+                                i.el-icon-warning
                         el-radio-group(v-model="sharedFeedFilters.wrist.PortalSpawn" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                             el-radio-button(label="Everyone")
-                    .toggle-item
-                        span.toggle-name Avatar Change
-                        el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                    //- .toggle-item
+                    //-     span.toggle-name Avatar Change
+                    //-     el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
+                    //-         el-radio-button(label="Off")
+                    //-         el-radio-button(label="VIP")
+                    //-         el-radio-button(label="Friends")
+                    //-         el-radio-button(label="Everyone")
                     .toggle-item
                         span.toggle-name Video Play
                         el-radio-group(v-model="sharedFeedFilters.wrist.VideoPlay" size="mini")
