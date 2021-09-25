@@ -10834,6 +10834,8 @@ speechSynthesis.getVoices();
             this.displayPreviousImages('User', 'Display');
         } else if (command === 'Manage Gallery') {
             this.showGalleryDialog();
+        } else if (command === 'Copy User') {
+            this.copyUser(D.id);
         } else {
             this.$confirm(`Continue? ${command}`, 'Confirm', {
                 confirmButtonText: 'Confirm',
@@ -12215,6 +12217,14 @@ speechSynthesis.getVoices();
             type: 'success'
         });
         this.copyToClipboard(`https://vrchat.com/home/world/${worldId}`);
+    };
+
+    $app.methods.copyUser = function (userId) {
+        this.$message({
+            message: 'User URL copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(`https://vrchat.com/home/user/${userId}`);
     };
 
     // App: VRCPlus Icons

@@ -1091,6 +1091,7 @@ html
                                     el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") Refresh
+                                        el-dropdown-item(icon="el-icon-s-order" command="Copy User") Copy User URL
                                         template(v-if="userDialog.ref.id === API.currentUser.id")
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Manage Gallery" divided) Manage Gallery/Icons
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author") Show Avatar Author
