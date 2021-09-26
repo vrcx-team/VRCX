@@ -3,6 +3,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+using CefSharp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -30,6 +31,8 @@ namespace VRCX
         private readonly List<string[]> m_LogList;
         private Thread m_Thread;
         private bool m_ResetLog;
+        private bool m_FirstRun = true;
+        private static DateTime tillDate = DateTime.Now;
 
         // NOTE
         // FileSystemWatcher() is unreliable
@@ -64,6 +67,17 @@ namespace VRCX
             thread.Interrupt();
             thread.Join();
         }
+        
+        public void Reset()
+        {
+            m_ResetLog = true;
+            m_Thread?.Interrupt();
+        }
+
+        public void SetDateTill(string date)
+        {
+            tillDate = DateTime.Parse(date);
+        }
 
         private void ThreadLoop()
         {
@@ -86,6 +100,7 @@ namespace VRCX
         {
             if (m_ResetLog == true)
             {
+                m_FirstRun = true;
                 m_ResetLog = false;
                 m_LogContextMap.Clear();
                 m_LogListLock.EnterWriteLock();
@@ -109,26 +124,17 @@ namespace VRCX
                 // sort by creation time
                 Array.Sort(fileInfos, (a, b) => a.CreationTimeUtc.CompareTo(b.CreationTimeUtc));
 
-                var utcNow = DateTime.UtcNow;
-                var minLimitDateTime = utcNow.AddDays(-7d);
-                var minRefreshDateTime = utcNow.AddMinutes(-3d);
-
                 foreach (var fileInfo in fileInfos)
                 {
-                    var lastWriteTimeUtc = fileInfo.LastWriteTimeUtc;
-
-                    if (lastWriteTimeUtc < minLimitDateTime)
+                    fileInfo.Refresh();
+                    if (fileInfo.Exists == false)
                     {
                         continue;
                     }
 
-                    if (lastWriteTimeUtc >= minRefreshDateTime)
+                    if (DateTime.Compare(fileInfo.LastWriteTime, tillDate) < 0)
                     {
-                        fileInfo.Refresh();
-                        if (fileInfo.Exists == false)
-                        {
-                            continue;
-                        }
+                        continue;
                     }
 
                     if (m_LogContextMap.TryGetValue(fileInfo.Name, out LogContext logContext) == true)
@@ -155,6 +161,8 @@ namespace VRCX
             {
                 m_LogContextMap.Remove(name);
             }
+
+            m_FirstRun = false;
         }
 
         private void ParseLog(FileInfo fileInfo, LogContext logContext)
@@ -184,17 +192,33 @@ namespace VRCX
                                 continue;
                             }
 
+                            if (DateTime.TryParseExact(
+                                line.Substring(0, 19),
+                                "yyyy.MM.dd HH:mm:ss",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.AssumeLocal,
+                                out DateTime lineDate
+                            ))
+                            {
+                                if (DateTime.Compare(lineDate, tillDate) <= 0)
+                                {
+                                    continue;
+                                }
+                            }
+
                             var offset = 34;
                             if (line[offset] == '[')
                             {
                                 if (ParseLogOnPlayerJoinedOrLeft(fileInfo, logContext, line, offset) == true ||
                                     ParseLogLocation(fileInfo, logContext, line, offset) == true ||
+                                    ParseLogLocationDestination(fileInfo, logContext, line, offset) == true ||
                                     ParseLogPortalSpawn(fileInfo, logContext, line, offset) == true ||
                                     ParseLogNotification(fileInfo, logContext, line, offset) == true ||
                                     ParseLogJoinBlocked(fileInfo, logContext, line, offset) == true ||
                                     ParseLogAvatarPedestalChange(fileInfo, logContext, line, offset) == true ||
                                     ParseLogVideoError(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogVideoPlay(fileInfo, logContext, line, offset) == true)
+                                    ParseLogVideoPlay(fileInfo, logContext, line, offset) == true ||
+                                    ParseLogWorldVRCX(fileInfo, logContext, line, offset) == true)
                                 {
                                     continue;
                                 }
@@ -221,6 +245,12 @@ namespace VRCX
             m_LogListLock.EnterWriteLock();
             try
             {
+                if (!m_FirstRun)
+                {
+                    var logLine = System.Text.Json.JsonSerializer.Serialize(item);
+                    if (MainForm.Instance != null && MainForm.Instance.Browser != null)
+                        MainForm.Instance.Browser.ExecuteScriptAsync("$app.addGameLogEvent", logLine);
+                }
                 m_LogList.Add(item);
             }
             finally
@@ -244,7 +274,7 @@ namespace VRCX
                 dt = DateTime.UtcNow;
             }
 
-            return $"{dt:yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'}";
+            return $"{dt:yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'}";
         }
 
         private bool ParseLogLocation(FileInfo fileInfo, LogContext logContext, string line, int offset)
@@ -276,6 +306,29 @@ namespace VRCX
                     "location",
                     location,
                     logContext.RecentWorldName
+                });
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ParseLogLocationDestination(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2021.09.02 00:02:12 Log        -  [Behaviour] Destination set: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd:15609~private(usr_032383a7-748c-4fb2-94e4-bcb928e5de6b)~nonce(72CC87D420C1D49AEFFBEE8824C84B2DF0E38678E840661E)
+            // 2021.09.02 00:49:15 Log        -  [Behaviour] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
+
+            if (string.Compare(line, offset, "[Behaviour] Destination fetching: ", 0, 34, StringComparison.Ordinal) == 0)
+            {
+                var location = line.Substring(offset + 34);
+
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "location-destination",
+                    location
                 });
 
                 return true;
@@ -515,6 +568,28 @@ namespace VRCX
             return true;
         }
 
+        private bool ParseLogWorldVRCX(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // [VRCX] VideoPlay(PyPyDance) "https://jd.pypy.moe/api/v1/videos/-Q3pdlsQxOk.mp4",0.5338666,260.6938,"1339 : Le Freak (Random)"
+
+            if (string.Compare(line, offset, "[VRCX] ", 0, 7, StringComparison.Ordinal) == 0)
+            {
+                var data = line.Substring(offset + 7);
+
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "vrcx",
+                    data
+                });
+
+                return true;
+            }
+
+            return false;
+        }
+
         private bool ParseLogSDK2VideoPlay(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2021.04.23 13:12:25 Log        -  User Natsumi-sama added URL https://www.youtube.com/watch?v=dQw4w9WgXcQ
@@ -579,14 +654,10 @@ namespace VRCX
             return true;
         }
 
-        public void Reset()
-        {
-            m_ResetLog = true;
-            m_Thread?.Interrupt();
-        }
-
         public string[][] Get()
         {
+            Update();
+
             if (m_ResetLog == false &&
                 m_LogList.Count > 0)
             {

@@ -36,17 +36,23 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.displayName")] #[i.x-user-status(:class="statusClass(feed.status)")] {{feed.statusDescription}}
+                                        | #[span.name(v-text="feed.displayName")] 
+                                        template(v-if="feed.statusDescription === feed.previousStatusDescription")
+                                            i.x-user-status(:class="statusClass(feed.previousStatus)")
+                                            i.el-icon-right
+                                            i.x-user-status(:class="statusClass(feed.status)")
+                                        template(v-else)
+                                            | #[i.x-user-status(:class="statusClass(feed.status)")] {{feed.statusDescription}}
                             div(v-else-if="feed.type === 'OnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | ▶️ #[span.name(v-text="feed.data")]
+                                        | ▶️ #[span.name(v-text="feed.displayName")]
                             div(v-else-if="feed.type === 'OnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | ◀️ #[span.name(v-text="feed.data")]
+                                        | ◀️ #[span.name(v-text="feed.displayName")]
                             div(v-else-if="feed.type === 'OnPlayerJoining'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -57,7 +63,16 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        location(:location="feed.data[0]" :hint="feed.data[1]")
+                                        location(:location="feed.location" :hint="feed.worldName")
+                            div(v-else-if="feed.type === 'VideoPlay'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 🎵 #[span.name(v-text="feed.displayName")] 
+                                        template(v-if="feed.videoName")
+                                            | #[span(v-text="feed.videoName")]
+                                        template(v-else)
+                                            | #[span(v-text="feed.videoUrl")]
                             div(v-else-if="feed.type === 'invite'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -107,7 +122,16 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | ✨ #[span.name(v-text="feed.data")]
+                                        | ✨ #[span.name(v-text="feed.displayName")]
+                                        template(v-if="feed.worldName")
+                                            |  #[location(:location="feed.instanceId" :hint="feed.worldName")]
+                            div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | 🧍 #[span.name(v-text="feed.displayName")] {{ feed.name }}
+                                        template(v-if="feed.description && feed.description !== feed.name")
+                                            |  - {{ feed.description }}
                             div(v-else-if="feed.type === 'Event'" class="x-friend-item")
                                 .detail
                                     span.extra
@@ -159,17 +183,23 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.displayName")] is #[i.x-user-status(:class="statusClass(feed.status)")] {{feed.statusDescription}}
+                                        | #[span.name(v-text="feed.displayName")] 
+                                        template(v-if="feed.statusDescription === feed.previousStatusDescription")
+                                            i.x-user-status(:class="statusClass(feed.previousStatus)")
+                                            i.el-icon-right
+                                            i.x-user-status(:class="statusClass(feed.status)")
+                                        template(v-else)
+                                            | #[i.x-user-status(:class="statusClass(feed.status)")] {{feed.statusDescription}}
                             div(v-else-if="feed.type === 'OnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.data")] has joined
+                                        | #[span.name(v-text="feed.displayName")] has joined
                             div(v-else-if="feed.type === 'OnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.data")] has left
+                                        | #[span.name(v-text="feed.displayName")] has left
                             div(v-else-if="feed.type === 'OnPlayerJoining'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -179,7 +209,16 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        location(:location="feed.data[0]" :hint="feed.data[1]")
+                                        location(:location="feed.location" :hint="feed.worldName")
+                            div(v-else-if="feed.type === 'VideoPlay'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.displayName")] changed video to 
+                                        template(v-if="feed.videoName")
+                                            | #[span(v-text="feed.videoName")]
+                                        template(v-else)
+                                            | #[span(v-text="feed.videoUrl")]
                             div(v-else-if="feed.type === 'invite'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -229,7 +268,16 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.data")] has spawned a portal
+                                        | #[span.name(v-text="feed.displayName")] has spawned a portal
+                                        template(v-if="feed.worldName")
+                                            |  to #[location(:location="feed.instanceId" :hint="feed.worldName")]
+                            div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                .detail
+                                    span.extra
+                                        span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                        | #[span.name(v-text="feed.displayName")] changed into avatar {{ feed.name }}
+                                        template(v-if="feed.description && feed.description !== feed.name")
+                                            |  - {{ feed.description }}
                             div(v-else-if="feed.type === 'Event'" class="x-friend-item")
                                 .detail
                                     span.extra
@@ -301,21 +349,25 @@ html
                                 br
                                 span {{ device[2] }}%
             .x-containerbottom
+                template(v-if="nowPlaying.playing")
+                    span(style="float:right;padding-left:10px") {{ nowPlaying.remainingText }}
+                    marquee-text {{ nowPlaying.name }} ‎
+                    div.np-progress-bar(:style="{ width: nowPlaying.percentage + '%' }")
                 template(v-if="config && config.minimalFeed")
-                    template(v-if="downloadProgress === 100")
+                    template(v-if="config.downloadProgress === 100")
                         span(style="display:inline-block;margin-right:5px") #[i.el-icon-loading]
-                    template(v-else-if="downloadProgress > 0")
-                        span(style="display:inline-block;margin-right:5px") {{ downloadProgress }}%
-                    template(v-if="lastLocation.date != 0")
+                    template(v-else-if="config.downloadProgress > 0")
+                        span(style="display:inline-block;margin-right:5px") {{ config.downloadProgress }}%
+                    template(v-if="lastLocation.date !== 0")
                         span(style="float:right") {{ lastLocationTimer }}
                         span(style="display:inline-block") {{ lastLocation.playerList.length }} 
                         span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
                 template(v-else)
-                    template(v-if="downloadProgress === 100")
+                    template(v-if="config.downloadProgress === 100")
                         span(style="display:inline-block;margin-right:5px") Downloading: #[i.el-icon-loading]
-                    template(v-else-if="downloadProgress > 0")
-                        span(style="display:inline-block;margin-right:5px") Downloading: {{ downloadProgress }}%
-                    template(v-if="lastLocation.date != 0")
+                    template(v-else-if="config.downloadProgress > 0")
+                        span(style="display:inline-block;margin-right:5px") Downloading: {{ config.downloadProgress }}%
+                    template(v-if="lastLocation.date !== 0")
                         span(style="float:right") Timer: {{ lastLocationTimer }}
                         span(style="display:inline-block") Players: {{ lastLocation.playerList.length }} 
                         span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}

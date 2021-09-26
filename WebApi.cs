@@ -147,6 +147,10 @@ namespace VRCX
                         {
                             request.UserAgent = value;
                         }
+                        else if (string.Compare(key, "Referer", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            request.Referer = value;
+                        }
                         else
                         {
                             request.Headers.Add(key, value);

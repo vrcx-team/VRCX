@@ -34,8 +34,8 @@ namespace VRCX
         private Device _device;
         private Texture2D _texture1;
         private Texture2D _texture2;
-        private OffScreenBrowser _browser1;
-        private OffScreenBrowser _browser2;
+        public static OffScreenBrowser _browser1;
+        public static OffScreenBrowser _browser2;
         private bool _active;
 
         static VRCXVR()

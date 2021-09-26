@@ -1,93 +1,82 @@
 // requires binding of LogWatcher
 
-// <string, object>
-var contextMap = new Map();
-
-function parseRawGameLog(dt, type, args) {
-    var gameLog = {
-        dt,
-        type
-    };
-
-    switch (type) {
-        case 'location':
-            gameLog.location = args[0];
-            gameLog.worldName = args[1];
-            break;
-
-        case 'player-joined':
-            gameLog.userDisplayName = args[0];
-            gameLog.userType = args[1];
-            break;
-
-        case 'player-left':
-            gameLog.userDisplayName = args[0];
-            break;
-
-        case 'notification':
-            gameLog.json = args[0];
-            break;
-
-        case 'portal-spawn':
-            gameLog.userDisplayName = args[0];
-            break;
-
-        case 'event':
-            gameLog.event = args[0];
-            break;
-
-        case 'video-play':
-            gameLog.videoURL = args[0];
-            gameLog.displayName = args[1];
-            break;
-
-        default:
-            break;
-    }
-
-    return gameLog;
-}
-
 class GameLogService {
-    async poll() {
-        var rawGameLogs = await LogWatcher.Get();
-        var gameLogs = [];
-        var now = Date.now();
+    parseRawGameLog(dt, type, args) {
+        var gameLog = {
+            dt,
+            type
+        };
 
-        for (var [fileName, dt, type, ...args] of rawGameLogs) {
-            var context = contextMap.get(fileName);
-            if (typeof context === 'undefined') {
-                context = {
-                    updatedAt: null,
+        switch (type) {
+            case 'location':
+                gameLog.location = args[0];
+                gameLog.worldName = args[1];
+                break;
 
-                    // location
-                    location: null
-                };
-                contextMap.set(fileName, context);
-            }
+            case 'location-destination':
+                gameLog.location = args[0];
+                break;
 
-            var gameLog = parseRawGameLog(dt, type, args);
+            case 'player-joined':
+                gameLog.userDisplayName = args[0];
+                gameLog.userType = args[1];
+                break;
 
-            switch (gameLog.type) {
-                case 'location':
-                    context.location = gameLog.location;
-                    break;
+            case 'player-left':
+                gameLog.userDisplayName = args[0];
+                break;
 
-                default:
-                    break;
-            }
+            case 'notification':
+                gameLog.json = args[0];
+                break;
 
-            context.updatedAt = now;
+            case 'portal-spawn':
+                gameLog.userDisplayName = args[0];
+                break;
 
-            gameLogs.push(gameLog);
+            case 'event':
+                gameLog.event = args[0];
+                break;
+
+            case 'video-play':
+                gameLog.videoUrl = args[0];
+                gameLog.displayName = args[1];
+                break;
+
+            case 'vrcx':
+                gameLog.data = args[0];
+                break;
+
+            default:
+                break;
         }
 
+        return gameLog;
+    }
+
+    async getAll() {
+        var gameLogs = [];
+        var done = false;
+        while (!done) {
+            var rawGameLogs = await LogWatcher.Get();
+            // eslint-disable-next-line no-unused-vars
+            for (var [fileName, dt, type, ...args] of rawGameLogs) {
+                var gameLog = this.parseRawGameLog(dt, type, args);
+                gameLogs.push(gameLog);
+            }
+            if (rawGameLogs.length === 0) {
+                done = true;
+            }
+        }
         return gameLogs;
+    }
+
+    async setDateTill(dateTill) {
+        await LogWatcher.SetDateTill(dateTill);
     }
 
     async reset() {
         await LogWatcher.Reset();
-        contextMap.clear();
     }
 }
 

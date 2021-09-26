@@ -173,6 +173,7 @@ html
                                             span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
                                             span(v-else) Offline
                                         i.x-user-status(:class="statusClass(scope.row.status)")
+                                    span  ‎
                                     span(v-text="scope.row.statusDescription")
                             template(v-else-if="scope.row.type === 'Avatar'")
                                 avatar-info(:imageurl="scope.row.currentAvatarImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.ownerId" :hintavatarname="scope.row.avatarName")
@@ -183,10 +184,10 @@ html
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
                             el-select(v-model="gameLogTable.filters[0].value" @change="saveTableFilters" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
-                                el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'PortalSpawn', 'Event', 'VideoPlay']" :key="type" :label="type" :value="type")
+                                el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'PortalSpawn', 'AvatarChange', 'Event', 'VideoPlay']" :key="type" :label="type" :value="type")
                             el-input(v-model="gameLogTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
-                            el-tooltip(placement="bottom" content="Reset game log" :disabled="hideTooltips")
-                                el-button(type="default" @click="resetGameLog()" icon="el-icon-refresh" circle style="flex:none")
+                            el-tooltip(placement="bottom" content="Reload game log" :disabled="hideTooltips")
+                                el-button(type="default" @click="refreshEntireGameLog" icon="el-icon-refresh" circle style="flex:none")
                     el-table-column(label="Date" prop="created_at" sortable="custom" width="90")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
@@ -194,17 +195,28 @@ html
                                     span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
                                 span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
                     el-table-column(label="Type" prop="type" width="120")
+                        template(v-once #default="scope")
+                            span.x-link(v-if="scope.row.location && scope.row.type !== 'Location'" v-text="scope.row.type" @click="showWorldDialog(scope.row.location)")
+                            span(v-else v-text="scope.row.type")
+                    el-table-column(label="User" prop="displayName" width="160")
+                        template(v-once #default="scope")
+                            span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)")
                     el-table-column(label="Detail" prop="data")
                         template(v-once #default="scope")
-                            location(v-if="scope.row.type === 'Location'" :location="scope.row.data[0]" :hint="scope.row.data[1]")
+                            location(v-if="scope.row.type === 'Location'" :location="scope.row.location" :hint="scope.row.worldName")
+                            location(v-else-if="scope.row.type === 'PortalSpawn'" :location="scope.row.instanceId" :hint="scope.row.worldName")
+                            template(v-else-if="scope.row.type === 'AvatarChange'")
+                                span.x-link(@click="showUserDialog(scope.row.authorId)" v-text="scope.row.name")
+                                template(v-if="scope.row.description && scope.row.name !== scope.row.description")
+                                    |  - {{ scope.row.description }}
                             template(v-else-if="scope.row.type === 'Event'")
                                 span(v-text="scope.row.data")
                             template(v-else-if="scope.row.type === 'VideoPlay'")
-                                span.x-link(v-text="scope.row.data" @click="openExternalLink(scope.row.data)")
-                                template(v-if="scope.row.displayName")
-                                    span.x-link(@click="lookupUser(scope.row.displayName)")  ({{ scope.row.displayName }})
-                            template(v-else-if="scope.row.type === 'Notification'")
-                            span.x-link(v-else v-text="scope.row.data" @click="lookupUser(scope.row.data)")
+                                span(v-if="scope.row.videoId") {{ scope.row.videoId }}: 
+                                span.x-link(v-if="scope.row.videoName" @click="openExternalLink(scope.row.videoUrl)" v-text="scope.row.videoName")
+                                span.x-link(v-else @click="openExternalLink(scope.row.videoUrl)" v-text="scope.row.videoUrl")
+                            template(v-else-if="scope.row.type === 'Notification' || scope.row.type === 'OnPlayerJoined' || scope.row.type === 'OnPlayerLeft'")
+                            span.x-link(v-else v-text="scope.row.data")
 
             //- search
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'search'")
@@ -458,15 +470,26 @@ html
                             span(v-else-if='scope.row.details && scope.row.details.inviteMessage' v-text="scope.row.details.inviteMessage")
                             span(v-else-if='scope.row.details && scope.row.details.requestMessage' v-text="scope.row.details.requestMessage")
                             span(v-else-if='scope.row.details && scope.row.details.responseMessage' v-text="scope.row.details.responseMessage")
-                    el-table-column(label="Action" width="80" align="right")
+                    el-table-column(label="Action" width="100" align="right")
                         template(v-once #default="scope")
-                            template(v-if="scope.row.senderUserId !== API.currentUser.id")
-                                el-button(v-if="scope.row.type === 'friendRequest'" type="text" icon="el-icon-check" size="mini" @click="acceptNotification(scope.row)")
-                                el-button(v-else-if="scope.row.type === 'invite'" type="text" icon="el-icon-chat-line-square" size="mini" @click="showSendInviteResponseDialog(scope.row)")
+                            template(v-if="scope.row.senderUserId !== API.currentUser.id && !scope.row.$isExpired")
+                                template(v-if="scope.row.type === 'friendRequest'")
+                                    el-tooltip(placement="top" content="Accept" :disabled="hideTooltips")
+                                        el-button(type="text" icon="el-icon-check" size="mini" @click="acceptNotification(scope.row)")
+                                template(v-else-if="scope.row.type === 'invite'")
+                                    el-tooltip(placement="top" content="Decline with message" :disabled="hideTooltips")
+                                        el-button(type="text" icon="el-icon-chat-line-square" size="mini" @click="showSendInviteResponseDialog(scope.row)")
                                 template(v-else-if="scope.row.type === 'requestInvite'")
-                                    el-button(v-if="lastLocation.location && isGameRunning && !checkCanInvite(lastLocation.location)" type="text" icon="el-icon-check" size="mini" @click="acceptRequestInvite(scope.row)")
-                                    el-button(type="text" icon="el-icon-chat-line-square" size="mini" style="margin-left:5px" @click="showSendInviteRequestResponseDialog(scope.row)")
-                                el-button(type="text" icon="el-icon-close" size="mini" style="margin-left:5px" @click="hideNotification(scope.row)")
+                                    template(v-if="lastLocation.location && isGameRunning && !checkCanInvite(lastLocation.location)")
+                                        el-tooltip(placement="top" content="Invite" :disabled="hideTooltips")
+                                            el-button(type="text" icon="el-icon-check" size="mini" @click="acceptRequestInvite(scope.row)")
+                                    el-tooltip(placement="top" content="Decline with message" :disabled="hideTooltips")
+                                        el-button(type="text" icon="el-icon-chat-line-square" size="mini" style="margin-left:5px" @click="showSendInviteRequestResponseDialog(scope.row)")
+                                template(v-if="scope.row.type !== 'requestInviteResponse' && scope.row.type !== 'inviteResponse' && scope.row.type !== 'message'")
+                                    el-tooltip(placement="top" content="Decline" :disabled="hideTooltips")
+                                        el-button(type="text" icon="el-icon-close" size="mini" style="margin-left:5px" @click="hideNotification(scope.row)")
+                            el-tooltip(placement="top" content="Delete log" :disabled="hideTooltips")
+                                el-button(type="text" icon="el-icon-delete" size="mini" style="margin-left:5px" @click="deleteNotificationLog(scope.row)")
 
             //- profile
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'profile'")
@@ -696,10 +719,10 @@ html
                             el-radio-button(label="dark") Dark
                     div.options-container-item
                         span.name VRCPlus Profile Icons
-                        el-switch(v-model="displayVRCPlusIconsAsAvatar")
+                        el-switch(v-model="displayVRCPlusIconsAsAvatar" @change="saveOpenVROption")
                     div.options-container-item
                         span.name Disable Tooltips
-                        el-switch(v-model="hideTooltips")
+                        el-switch(v-model="hideTooltips" @change="saveOpenVROption")
                 div.options-container
                     span.header Side Panel
                     br
@@ -766,10 +789,16 @@ html
                         span * Only works when VRChat is running.
                     div.options-container-item
                         span.name Enable
-                        el-switch(v-model="discordActive")
+                        el-switch(v-model="discordActive" @change="saveDiscordOption")
                     div.options-container-item
-                        span.name Instance details
-                        el-switch(v-model="discordInstance" :disabled="!discordActive")
+                        span.name Instance type/player count
+                        el-switch(v-model="discordInstance" @change="saveDiscordOption" :disabled="!discordActive")
+                    div.options-container-item
+                        span.name Join button (public only)
+                        el-switch(v-model="discordJoinButton" @change="saveDiscordOption" :disabled="!discordActive")
+                    div.options-container-item
+                        span.name Hide world details in private
+                        el-switch(v-model="discordHideInvite" @change="saveDiscordOption" :disabled="!discordActive")
                 div.options-container
                     span.header SteamVR Overlay
                     div.options-container-item
@@ -782,61 +811,64 @@ html
                         br
                     div.options-container-item
                         span.name Enable
-                        el-switch(v-model="openVR")
+                        el-switch(v-model="openVR" @change="saveOpenVROption")
                     div.options-container-item
                         span.name Force Run (Opens SteamVR)
-                        el-switch(v-model="openVRAlways" :disabled="!openVR")
+                        el-switch(v-model="openVRAlways" @change="saveOpenVROption" :disabled="!openVR")
                     div.options-container-item
                         span.name Hide Private Worlds
-                        el-switch(v-model="hidePrivateFromFeed")
+                        el-switch(v-model="hidePrivateFromFeed" @change="saveOpenVROption")
                     br
                     span.sub-header Wrist Feed
                     div.options-container-item
                         span.name Wrist Feed Overlay
-                        el-switch(v-model="overlayWrist" :disabled="!openVR")
+                        el-switch(v-model="overlayWrist" @change="saveOpenVROption" :disabled="!openVR")
                     div.options-container-item
                         span.name(style="min-width:137px") Overlay Button
-                        el-switch(v-model="overlaybutton" inactive-text="Grip" active-text="Menu" :disabled="!openVR || !overlayWrist")
+                        el-switch(v-model="overlaybutton" @change="saveOpenVROption" inactive-text="Grip" active-text="Menu" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
                         span.name Background Color
-                        el-switch(v-model="vrBackgroundEnabled" :disabled="!openVR || !overlayWrist")
+                        el-switch(v-model="vrBackgroundEnabled" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
                         span.name Minimal Feed Icons
-                        el-switch(v-model="minimalFeed" :disabled="!openVR || !overlayWrist")
+                        el-switch(v-model="minimalFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
                         span.name Hide VR Devices
-                        el-switch(v-model="hideDevicesFromFeed" :disabled="!openVR || !overlayWrist")
+                        el-switch(v-model="hideDevicesFromFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog()" :disabled="!openVR || !overlayWrist") Wrist Feed Filters
+                        el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog" :disabled="!openVR || !overlayWrist") Wrist Feed Filters
                     br
                     span.sub-header Notifications
                     div.options-container-item
                         span.name Overlay Notifications
-                        el-switch(v-model="overlayNotifications" :disabled="!openVR")
+                        el-switch(v-model="overlayNotifications" @change="saveOpenVROption" :disabled="!openVR")
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog()" :disabled="!overlayNotifications || !openVR") Notification Position
+                        el-button(size="small" icon="el-icon-rank" @click="showNotificationPositionDialog" :disabled="!overlayNotifications || !openVR") Notification Position
                     div.options-container-item
                         span.name XSOverlay Notifications
-                        el-switch(v-model="xsNotifications")
+                        el-switch(v-model="xsNotifications" @change="saveOpenVROption")
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout()" :disabled="(!overlayNotifications || !openVR) && !xsNotifications") Notification Timeout
+                        span.name User images (slower)
+                        el-switch(v-model="imageNotifications" @change="saveOpenVROption")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-time" @click="promptNotificationTimeout" :disabled="(!overlayNotifications || !openVR) && !xsNotifications") Notification Timeout
                     div.options-container-item
                         span.name Desktop Notifications, When to display:
                         br
-                        el-radio-group(v-model="desktopToast" size="mini")
+                        el-radio-group(v-model="desktopToast" @change="saveOpenVROption" size="mini")
                             el-radio-button(label="Never")
                             el-radio-button(label="Inside VR")
                             el-radio-button(label="Game Closed")
                             el-radio-button(label="Game Running")
                             el-radio-button(label="Always")
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog()") Notification Filters
+                        el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog") Notification Filters
                     br
                     span.sub-header Text-To-Speech Options
                     div.options-container-item
                         span.name Notification TTS, When to play:
                         br
-                        el-radio-group(v-model="notificationTTS" size="mini")
+                        el-radio-group(v-model="notificationTTS" @change="saveNotificationTTS" size="mini")
                             el-radio-button(label="Never")
                             el-radio-button(label="Inside VR")
                             el-radio-button(label="Game Closed")
@@ -857,31 +889,30 @@ html
                     div.options-container-item
                         span.name Download on invite:
                         br
-                        el-radio-group(v-model="worldAutoCacheInvite" size="mini")
+                        el-radio-group(v-model="worldAutoCacheInvite" @change="saveOpenVROption" size="mini")
                             el-radio-button(label="Never")
                             el-radio-button(label="Game Closed")
                             el-radio-button(label="Game Running")
                             el-radio-button(label="Always")
                     div.options-container-item
-                        el-switch(v-model="worldAutoCacheInviteFilter" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheInvite == 'Never'")
+                        el-switch(v-model="worldAutoCacheInviteFilter" @change="saveOpenVROption" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheInvite === 'Never'")
                     div.options-container-item
                         span.name Download on GPS:
                         br
-                        el-radio-group(v-model="worldAutoCacheGPS" size="mini")
+                        el-radio-group(v-model="worldAutoCacheGPS" @change="saveOpenVROption" size="mini")
                             el-radio-button(label="Never")
                             el-radio-button(label="Game Closed")
                             el-radio-button(label="Game Running")
                             el-radio-button(label="Always")
                     div.options-container-item
-                        el-switch(v-model="worldAutoCacheGPSFilter" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheGPS == 'Never'")
+                        el-switch(v-model="worldAutoCacheGPSFilter" @change="saveOpenVROption" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheGPS === 'Never'")
                     div.options-container-item
-                        el-button-group
-                            el-button(size="small" icon="el-icon-download" @click="showDownloadDialog()") Download History
+                        el-button(size="small" icon="el-icon-download" @click="showDownloadDialog") Download History
                     br
                     span.sub-header Automatically Manage Cache When Closing VRChat
                     div.options-container-item
                         span.name(style="min-width:300px") Auto delete old versions from cache
-                        el-switch(v-model="autoSweepVRChatCache")
+                        el-switch(v-model="autoSweepVRChatCache" @change="saveOpenVROption")
                 div.options-container
                     span.header Application
                     div.options-container-item
@@ -900,6 +931,13 @@ html
                         el-button-group
                             el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
                             el-button(size="small" icon="el-icon-s-operation" @click="showVRChatConfig()") VRChat config.json
+                div.options-container
+                    span.header YouTube API
+                    div.options-container-item
+                        span.name Enabled
+                        el-switch(v-model="youTubeApi" @change="changeYouTubeApi")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog") YouTube API Key
                 div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                     span.header Legal Notice
                     div.options-container-item
@@ -1053,6 +1091,7 @@ html
                                     el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") Refresh
+                                        el-dropdown-item(icon="el-icon-s-order" command="Copy User") Copy User URL
                                         template(v-if="userDialog.ref.id === API.currentUser.id")
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Manage Gallery" divided) Manage Gallery/Icons
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author") Show Avatar Author
@@ -1075,7 +1114,7 @@ html
                                             el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") Send Friend Request
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) Show Avatar Author
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") Show Fallback Avatar Details
-                                            el-dropdown-item(v-if="userDialog.currentAvatarImageUrl !== 'https://assets.vrchat.com/system/defaultAvatar.png'" icon="el-icon-picture-outline" command="Previous Images") Show Avatar Previous Images
+                                            el-dropdown-item(v-if="userDialog.ref.currentAvatarImageUrl !== 'https://assets.vrchat.com/system/defaultAvatar.png'" icon="el-icon-picture-outline" command="Previous Images") Show Avatar Previous Images
                                             el-dropdown-item(v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided style="color:#F56C6C") Unblock
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided :disabled="userDialog.ref.$isModerator") Block
                                             el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") Unmute
@@ -1665,6 +1704,16 @@ html
                     el-button(size="small" @click="VRChatConfigDialog.visible = false") Cancel
                     el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="saveVRChatConfigFile") Save
                     
+            //- dialog: YouTube Api Dialog
+            el-dialog.x-dialog(ref="youTubeApiDialog" :visible.sync="youTubeApiDialog.visible" title="YouTube API" width="400px")
+                div(style='font-size:12px;')
+                    | Enter your YouTube API Key (optional) #[br]
+                el-input(type="textarea" v-model="youTubeApiKey" placeholder="YouTube API Key" maxlength="39" show-word-limit style="dispaly:block;margin-top:10px")
+                template(#footer)
+                    div(style="display:flex")
+                        el-button(size="small" @click="openExternalLink('https://rapidapi.com/blog/how-to-get-youtube-api-key/')") Guide
+                        el-button(type="primary" size="small" @click="testYouTubeApiKey" style="margin-left:auto") Save
+                    
             //- dialog: Cache Download
             el-dialog.x-dialog(ref="downloadDialog" :visible.sync="downloadDialog.visible" title="Download History" width="770px")
                 div(v-if="downloadInProgress && downloadCurrent.ref")
@@ -1769,7 +1818,7 @@ html
                         el-button(type="primary" size="small" style="margin-left:auto" @click="notificationPositionDialog.visible = false") OK
 
             //- dialog: Noty feed filters
-            el-dialog.x-dialog(ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="480px")
+            el-dialog.x-dialog(ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="500px")
                 .toggle-list
                     .toggle-item
                         span.toggle-name OnPlayerJoining
@@ -1868,19 +1917,28 @@ html
                             el-radio-button(label="Friends")
                     .toggle-item
                         span.toggle-name Portal Spawn
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option")
+                                i.el-icon-warning
                         el-radio-group(v-model="sharedFeedFilters.noty.PortalSpawn" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                             el-radio-button(label="Everyone")
-                    .toggle-item
-                        span.toggle-name Events
-                        el-radio-group(v-model="sharedFeedFilters.noty.Event" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                    //- .toggle-item
+                    //-     span.toggle-name Avatar Change
+                    //-     el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
+                    //-         el-radio-button(label="Off")
+                    //-         el-radio-button(label="VIP")
+                    //-         el-radio-button(label="Friends")
+                    //-         el-radio-button(label="Everyone")
                     .toggle-item
                         span.toggle-name Video Play
                         el-radio-group(v-model="sharedFeedFilters.noty.VideoPlay" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Events
+                        el-radio-group(v-model="sharedFeedFilters.noty.Event" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="On")
                     .toggle-item
@@ -1916,7 +1974,7 @@ html
                     el-button(type="primary" size="small" style="margin-left:10px" @click="saveSharedFeedFilters") Save
                     
             //- dialog: wrist feed filters
-            el-dialog.x-dialog(ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="480px")
+            el-dialog.x-dialog(ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="500px")
                 .toggle-list
                     .toggle-item
                         span.toggle-name Self Location
@@ -2020,19 +2078,28 @@ html
                             el-radio-button(label="Friends")
                     .toggle-item
                         span.toggle-name Portal Spawn
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option")
+                                i.el-icon-warning
                         el-radio-group(v-model="sharedFeedFilters.wrist.PortalSpawn" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                             el-radio-button(label="Everyone")
+                    //- .toggle-item
+                    //-     span.toggle-name Avatar Change
+                    //-     el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
+                    //-         el-radio-button(label="Off")
+                    //-         el-radio-button(label="VIP")
+                    //-         el-radio-button(label="Friends")
+                    //-         el-radio-button(label="Everyone")
                     .toggle-item
-                        span.toggle-name Events
-                        el-radio-group(v-model="sharedFeedFilters.wrist.Event" size="mini")
+                        span.toggle-name Video Play
+                        el-radio-group(v-model="sharedFeedFilters.wrist.VideoPlay" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="On")
                     .toggle-item
-                        span.toggle-name Video Play
-                        el-radio-group(v-model="sharedFeedFilters.noty.VideoPlay" size="mini")
+                        span.toggle-name Events
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Event" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="On")
                     .toggle-item
