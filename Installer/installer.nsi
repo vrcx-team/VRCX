@@ -151,7 +151,7 @@ Section "Install" SecInstall
     WriteRegExpandStr HKCU "Software\Classes\vrcx\DefaultIcon" "" "$INSTDIR\VRCX.ico"
     WriteRegStr HKCU "Software\Classes\vrcx\shell" "" "open"
     WriteRegStr HKCU "Software\Classes\vrcx\shell\open" "FriendlyAppName" "VRCX"
-    WriteRegStr HKCU "Software\Classes\vrcx\shell\open\command" "" '"D:\WindowsFiles\Documents\git\VRCX\bin\x64\Release\VRCX.exe" /uri="%1" /params="%2 %3 %4"'
+    WriteRegStr HKCU "Software\Classes\vrcx\shell\open\command" "" '"$INSTDIR\VRCX.exe" /uri="%1" /params="%2 %3 %4"'
 
     ${If} ${Silent}
         SetOutPath $INSTDIR
