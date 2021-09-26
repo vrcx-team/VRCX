@@ -81,6 +81,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssetBundleCacher.cs" />
+    <Compile Include="IPCClient.cs" />
+    <Compile Include="IPCServer.cs" />
+    <Compile Include="StartupArgs.cs" />
     <Compile Include="Update.cs" />
     <Compile Include="CefService.cs" />
     <Compile Include="Discord.cs" />

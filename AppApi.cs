@@ -337,6 +337,13 @@ namespace VRCX
             VRCXVR._browser2.ExecuteScriptAsync($"$app.{function}", json);
         }
 
+        public string GetLaunchCommand()
+        {
+            string command = StartupArgs.LaunchCommand;
+            StartupArgs.LaunchCommand = string.Empty;
+            return command;
+        }
+
         public void SetStartup(bool enabled)
         {
             try

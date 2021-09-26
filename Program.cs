@@ -53,6 +53,7 @@ namespace VRCX
 
         private static void Run()
         {
+            StartupArgs.ArgsCheck();
             Update.Check();
 
             Application.EnableVisualStyles();
@@ -66,6 +67,7 @@ namespace VRCX
             LogWatcher.Instance.Init();
 
             CefService.Instance.Init();
+            IPCServer.Instance.Init();
             VRCXVR.Instance.Init();
             Application.Run(new MainForm());
             WebApi.Instance.SaveCookies();

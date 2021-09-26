@@ -15582,6 +15582,53 @@ speechSynthesis.getVoices();
         return user.currentAvatarImageUrl;
     };
 
+    $app.methods.ipcEvent = function (json) {
+        try {
+            var data = JSON.parse(json);
+        } catch {
+            console.error(`IPC invalid JSON, ${json}`);
+        }
+        switch (data.type) {
+            case 'Ping':
+                this.eventPing(data);
+                break;
+            case 'LaunchCommand':
+                this.eventLaunchCommand(data.command);
+                break;
+        }
+    };
+
+    API.$on('LOGIN', async function () {
+        var command = await AppApi.GetLaunchCommand();
+        if (command) {
+            $app.eventLaunchCommand(command);
+        }
+    });
+
+    $app.methods.eventLaunchCommand = function (command) {
+        if (!API.isLoggedIn) {
+            return;
+        }
+        var args = command.split('/');
+        var command = args[0];
+        var commandArg = args[1];
+        switch (command) {
+            case 'world':
+                this.showWorldDialog(commandArg);
+                break;
+            case 'avatar':
+                this.showAvatarDialog(commandArg);
+                break;
+            case 'user':
+                this.showUserDialog(commandArg);
+                break;
+        }
+    };
+
+    $app.methods.eventPing = function (data) {
+        console.log('IPC Ping', data.version);
+    };
+
     $app = new Vue($app);
     window.$app = $app;
 })();
