@@ -344,6 +344,14 @@ namespace VRCX
             return command;
         }
 
+        public void FocusWindow()
+        {
+            if (MainForm.Instance.WindowState == FormWindowState.Minimized)
+                MainForm.Instance.WindowState = FormWindowState.Normal;
+            MainForm.Instance.Show();
+            MainForm.Instance.Activate();
+        }
+
         public void SetStartup(bool enabled)
         {
             try

@@ -6,66 +6,51 @@
 using System;
 using System.Diagnostics;
 using System.IO.Pipes;
-using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 
 namespace VRCX
 {
     class StartupArgs
     {
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool ShowWindow(IntPtr hWnd, int flags);
-
-        [DllImport("user32.dll")]
-        private static extern int SetForegroundWindow(IntPtr hwnd);
-
         public static string LaunchCommand;
+        public static Process[] processList;
 
         public static void ArgsCheck()
         {
             string[] args = Environment.GetCommandLineArgs();
-            if (args.Length == 0)
-                return;
+            processList = Process.GetProcessesByName("VRCX");
 
             foreach (string arg in args)
             {
                 if (arg.Length > 12 && arg.Substring(0, 12) == "/uri=vrcx://")
-                {
                     LaunchCommand = arg.Substring(12);
-                    ProcessCheck(LaunchCommand);
-                }
             }
-        }
 
-        private static void ProcessCheck(string command)
-        {
-            Process currentProcess = Process.GetCurrentProcess();
-            Process[] processList = Process.GetProcessesByName("VRCX");
+            if (processList.Length > 1 && String.IsNullOrEmpty(LaunchCommand))
+            {
+                var result = MessageBox.Show("VRCX is already running, start another instance?", "VRCX", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                    return;
+            }
 
             if (processList.Length > 1)
             {
-                new IPCServer().CreateIPCServer();
-                var ipcClient = new NamedPipeClientStream(".", "vrcx-ipc", PipeDirection.InOut);
-                ipcClient.Connect();
-
-                if (ipcClient.IsConnected)
-                {
-                    var buffer = Encoding.UTF8.GetBytes($"{{\"type\":\"LaunchCommand\",\"command\":\"{command}\"}}" + (char)0x00);
-                    ipcClient.BeginWrite(buffer, 0, buffer.Length, IPCClient.OnSend, ipcClient);
-                }
-
-                foreach (Process process in processList)
-                {
-                    if (process.Id != currentProcess.Id)
-                    {
-                        IntPtr handle = process.MainWindowHandle;
-                        ShowWindow(handle, 9);
-                        SetForegroundWindow(handle);
-                    }
-                }
-
+                IPCToMain();
                 Environment.Exit(0);
+            }
+        }
+
+        private static void IPCToMain()
+        {
+            new IPCServer().CreateIPCServer();
+            var ipcClient = new NamedPipeClientStream(".", "vrcx-ipc", PipeDirection.InOut);
+            ipcClient.Connect();
+
+            if (ipcClient.IsConnected)
+            {
+                var buffer = Encoding.UTF8.GetBytes($"{{\"type\":\"LaunchCommand\",\"command\":\"{LaunchCommand}\"}}" + (char)0x00);
+                ipcClient.BeginWrite(buffer, 0, buffer.Length, IPCClient.OnSend, ipcClient);
             }
         }
     }

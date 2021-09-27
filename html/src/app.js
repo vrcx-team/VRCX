@@ -15593,6 +15593,7 @@ speechSynthesis.getVoices();
                 this.eventPing(data);
                 break;
             case 'LaunchCommand':
+                AppApi.FocusWindow();
                 this.eventLaunchCommand(data.command);
                 break;
         }
