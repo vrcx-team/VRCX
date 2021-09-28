@@ -13,8 +13,6 @@ Vue.component('marquee-text', MarqueeText);
 
 import configRepository from './repository/config.js';
 
-speechSynthesis.getVoices();
-
 (async function () {
     var $app = null;
 
@@ -293,6 +291,16 @@ speechSynthesis.getVoices();
 
     $app.methods.nowPlayingUpdate = function (json) {
         this.nowPlaying = JSON.parse(json);
+        if (this.appType === '2') {
+            var circle = document.querySelector(".np-progress-circle-stroke");
+            if (this.config.progressPie && this.nowPlaying.percentage !== 0) {
+                circle.style.opacity = 0.5;
+                var circumference = circle.getTotalLength();
+                circle.style.strokeDashoffset = circumference - (this.nowPlaying.percentage / 100) * circumference;
+            } else {
+                circle.style.opacity = 0;
+            }
+        }
     };
 
     $app.methods.lastLocationUpdate = function (json) {
@@ -478,15 +486,6 @@ speechSynthesis.getVoices();
             }
         }
         return text;
-    };
-
-    $app.methods.speak = function (text) {
-        var tts = new SpeechSynthesisUtterance();
-        var voices = speechSynthesis.getVoices();
-        var voiceIndex = this.config.notificationTTSVoice;
-        tts.voice = voices[voiceIndex];
-        tts.text = text;
-        speechSynthesis.speak(tts);
     };
 
     $app = new Vue($app);

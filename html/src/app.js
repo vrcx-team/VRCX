@@ -7825,6 +7825,7 @@ speechSynthesis.getVoices();
     $app.methods.updateVrNowPlaying = function () {
         var json = JSON.stringify(this.nowPlaying);
         AppApi.ExecuteVrFeedFunction('nowPlayingUpdate', json);
+        AppApi.ExecuteVrOverlayFunction('nowPlayingUpdate', json);
     };
 
     $app.methods.formatSeconds = function (duration) {
@@ -9618,6 +9619,8 @@ speechSynthesis.getVoices();
     $app.data.youTubeApi = configRepository.getBool('VRCX_youtubeAPI');
     $app.data.youTubeApiKey = configRepository.getString('VRCX_youtubeAPIKey');
 
+    $app.data.progressPie = configRepository.getBool('VRCX_progressPie');
+
     var downloadProgressStateChange = function () {
         this.updateVRConfigVars();
     };
@@ -9640,7 +9643,8 @@ speechSynthesis.getVoices();
             backgroundEnabled: this.vrBackgroundEnabled,
             isGameRunning: this.isGameRunning,
             isGameNoVR: this.isGameNoVR,
-            downloadProgress: this.downloadProgress
+            downloadProgress: this.downloadProgress,
+            progressPie: this.progressPie
         };
         var json = JSON.stringify(VRConfigVars);
         AppApi.ExecuteVrFeedFunction('configUpdate', json);
@@ -14475,6 +14479,8 @@ speechSynthesis.getVoices();
 
     $app.methods.changeYouTubeApi = function () {
         configRepository.setBool('VRCX_youtubeAPI', this.youTubeApi);
+        configRepository.setBool('VRCX_progressPie', this.progressPie);
+        this.updateVRConfigVars();
     };
 
     $app.methods.showYouTubeApiDialog = function () {

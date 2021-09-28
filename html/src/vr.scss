@@ -40,7 +40,7 @@
 
 .noty_theme__relax.noty_bar .noty_body,
 .noty_theme__sunset.noty_bar .noty_body {
-    font-size: 15px;
+    font-size: 14px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
@@ -221,6 +221,21 @@ button {
     background-color: white;
 }
 
+.np-progress-circle {
+    position: absolute;
+    bottom: -30px;
+    left: -21px;
+    width: 120px;
+    height: 120px;
+    transform: rotate(270deg) scale(0.5);
+}
+
+.np-progress-circle-stroke {
+    opacity: 0;
+    stroke-dasharray: 189;
+    stroke-dashoffset: 189;
+}
+
 .x-friend-item {
     box-sizing: border-box;
     display: flex;
@@ -256,7 +271,6 @@ button {
 
 .x-friend-item > img.avatar {
     width: 50px;
-    height: 37.5px;
     margin-right: 0;
     margin-left: 5px;
     border-radius: 2px;

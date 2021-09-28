@@ -374,5 +374,7 @@ html
                 br
                 span(style="float:right") {{ currentTime | formatDate('YYYY-MM-DD HH:MI:SS AMPM') }}
                 span CPU {{ cpuUsage }}%
+        svg(v-if="appType === '2'" class="np-progress-circle")
+            circle(class="np-progress-circle-stroke" cx="60" cy="60" stroke="white" r="30" fill="transparent" stroke-width="60")
         script(src="vendor.js")
         script(src="vr.js")

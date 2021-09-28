@@ -937,6 +937,9 @@ html
                         span.name Enabled
                         el-switch(v-model="youTubeApi" @change="changeYouTubeApi")
                     div.options-container-item
+                        span.name Progress pie overlay for videos
+                        el-switch(v-model="progressPie" @change="changeYouTubeApi")
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog") YouTube API Key
                 div.options-container
                     span.header VRCX Cache/Debug
