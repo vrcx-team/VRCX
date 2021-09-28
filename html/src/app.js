@@ -66,25 +66,10 @@ speechSynthesis.getVoices();
         configRepository.setBool('migrate_config_20201101', true);
     }
 
-    var showConsoleWarningMessage = function () {
-        if ($app.debug || $app.debugWebRequests || $app.debugWebSocket) {
-            return;
-        }
-        console.log(
-            '%cCareful! This might not do what you think.',
-            'background-color: red; color: yellow; font-size: 32px; font-weight: bold'
-        );
-        console.log(
-            '%cIf someone told you to copy-paste something here, it can give them access to your account.',
-            'font-size: 20px;'
-        );
-    };
-
     document.addEventListener('keyup', function (e) {
         if (e.ctrlKey) {
             if (e.key === 'I') {
-                AppApi.ShowDevTools();
-                showConsoleWarningMessage();
+                $app.showConsole();
             } else if (e.key === 'r') {
                 location.reload();
             }
@@ -4212,7 +4197,7 @@ speechSynthesis.getVoices();
             }
             return 0;
         });
-        wristFeed.splice(20);
+        wristFeed.splice(15);
         AppApi.ExecuteVrFeedFunction(
             'wristFeedUpdate',
             JSON.stringify(wristFeed)
@@ -7182,17 +7167,20 @@ speechSynthesis.getVoices();
 
     $app.methods.sweepFeed = function () {
         var {data} = this.feedTable;
-        // 로그는 3일까지만 남김
-        var limit = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toJSON();
-        var i = 0;
         var j = data.length;
-        while (i < j && data[i].created_at < limit) {
-            ++i;
-        }
-        if (i === j) {
-            this.feedTable.data = [];
-        } else if (i) {
-            data.splice(0, i);
+        if (j > 5000) {
+            data.splice(0, j - 5000);
+        } else {
+            var limit = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toJSON();
+            var i = 0;
+            while (i < j && data[i].created_at < limit) {
+                ++i;
+            }
+            if (i === j) {
+                this.feedTable.data = [];
+            } else if (i) {
+                data.splice(0, i);
+            }
         }
     };
 
@@ -7379,17 +7367,20 @@ speechSynthesis.getVoices();
 
     $app.methods.sweepGameLog = function () {
         var {data} = this.gameLogTable;
-        // 로그는 7일까지만 남김
-        var limit = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toJSON();
-        var i = 0;
         var j = data.length;
-        while (i < j && data[i].created_at < limit) {
-            ++i;
-        }
-        if (i === j) {
-            this.gameLogTable.data = [];
-        } else if (i) {
-            data.splice(0, i);
+        if (j > 5000) {
+            data.splice(0, j - 5000);
+        } else {
+            var limit = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toJSON();
+            var i = 0;
+            while (i < j && data[i].created_at < limit) {
+                ++i;
+            }
+            if (i === j) {
+                this.gameLogTable.data = [];
+            } else if (i) {
+                data.splice(0, i);
+            }
         }
     };
 
@@ -15580,6 +15571,44 @@ speechSynthesis.getVoices();
             return user.profilePicOverride;
         }
         return user.currentAvatarImageUrl;
+    };
+
+    $app.methods.showConsole = function () {
+        AppApi.ShowDevTools();
+        if (this.debug || this.debugWebRequests || this.debugWebSocket) {
+            return;
+        }
+        console.log(
+            '%cCareful! This might not do what you think.',
+            'background-color: red; color: yellow; font-size: 32px; font-weight: bold'
+        );
+        console.log(
+            '%cIf someone told you to copy-paste something here, it can give them access to your account.',
+            'font-size: 20px;'
+        );
+    };
+
+    $app.methods.clearVRCXCache = function () {
+        API.cachedUsers.forEach((value, key) => {
+            if (!this.friends.has(key) && !this.lastLocation.playerList.has(value.displayName) && key !== API.currentUser.id) {
+                API.cachedUsers.delete(key);
+                console.log(key);
+            }
+        });
+        API.cachedWorlds.forEach((value, key) => {
+            if (!API.cachedFavoritesByObjectId.has(key) && value.authorId !== API.currentUser.id) {
+                API.cachedWorlds.delete(key);
+                console.log(key);
+            }
+        });
+        API.cachedAvatars.forEach((value, key) => {
+            if (!API.cachedFavoritesByObjectId.has(key) && value.authorId !== API.currentUser.id) {
+                API.cachedAvatars.delete(key);
+                console.log(key);
+            }
+        });
+
+        API.cachedAvatarNames = new Map();
     };
 
     $app.methods.ipcEvent = function (json) {

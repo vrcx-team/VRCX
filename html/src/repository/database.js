@@ -65,7 +65,7 @@ class Database {
                 time: dbRow[7]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_feed_gps WHERE created_at >= date('${dateOffset}')`);
+        }, `SELECT * FROM ${Database.userId}_feed_gps WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -79,7 +79,7 @@ class Database {
                 previousStatusDescription: dbRow[7]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_feed_status WHERE created_at >= date('${dateOffset}')`);
+        }, `SELECT * FROM ${Database.userId}_feed_status WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -95,7 +95,7 @@ class Database {
                 previousCurrentAvatarThumbnailImageUrl: dbRow[9]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_feed_avatar WHERE created_at >= date('${dateOffset}')`);
+        }, `SELECT * FROM ${Database.userId}_feed_avatar WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -108,7 +108,7 @@ class Database {
                 time: dbRow[7]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_feed_online_offline WHERE created_at >= date('${dateOffset}')`);
+        }, `SELECT * FROM ${Database.userId}_feed_online_offline WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
             var B = b.created_at;
@@ -121,6 +121,7 @@ class Database {
             return 0;
         };
         feedDatabase.sort(compareByCreatedAt);
+        feedDatabase.splice(0, feedDatabase.length - 5000);
         return feedDatabase;
     }
 
@@ -237,7 +238,7 @@ class Database {
                 row.previousTrustLevel = dbRow[7];
             }
             friendLogHistory.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_friend_log_history`);
+        }, `SELECT * FROM ${Database.userId}_friend_log_history LIMIT 10000`);
         return friendLogHistory;
     }
 
@@ -387,7 +388,7 @@ class Database {
                 time: dbRow[5]
             };
             gamelogDatabase.unshift(row);
-        }, `SELECT * FROM gamelog_location WHERE created_at >= date('${dateOffset}')`);
+        }, `SELECT * FROM gamelog_location WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -399,7 +400,7 @@ class Database {
                 time: dbRow[6]
             };
             gamelogDatabase.unshift(row);
-        }, `SELECT * FROM gamelog_join_leave WHERE created_at >= date('${dateOffset}')`);
+        }, `SELECT * FROM gamelog_join_leave WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -412,7 +413,7 @@ class Database {
                 worldName: dbRow[6]
             };
             gamelogDatabase.unshift(row);
-        }, `SELECT * FROM gamelog_portal_spawn WHERE created_at >= date('${dateOffset}')`);
+        }, `SELECT * FROM gamelog_portal_spawn WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -426,7 +427,7 @@ class Database {
                 userId: dbRow[7]
             };
             gamelogDatabase.unshift(row);
-        }, `SELECT * FROM gamelog_video_play WHERE created_at >= date('${dateOffset}')`);
+        }, `SELECT * FROM gamelog_video_play WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -435,7 +436,7 @@ class Database {
                 data: dbRow[2]
             };
             gamelogDatabase.unshift(row);
-        }, `SELECT * FROM gamelog_event WHERE created_at >= date('${dateOffset}')`);
+        }, `SELECT * FROM gamelog_event WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
             var B = b.created_at;
@@ -447,6 +448,7 @@ class Database {
             }
             return 0;
         };
+        gamelogDatabase.splice(0, gamelogDatabase.length - 5000);
         gamelogDatabase.sort(compareByCreatedAt);
         return gamelogDatabase;
     }
