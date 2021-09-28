@@ -15596,19 +15596,29 @@ speechSynthesis.getVoices();
 
     $app.methods.clearVRCXCache = function () {
         API.cachedUsers.forEach((value, key) => {
-            if (!this.friends.has(key) && !this.lastLocation.playerList.has(value.displayName) && key !== API.currentUser.id) {
+            if (
+                !this.friends.has(key) &&
+                !this.lastLocation.playerList.has(value.displayName) &&
+                key !== API.currentUser.id
+            ) {
                 API.cachedUsers.delete(key);
                 console.log(key);
             }
         });
         API.cachedWorlds.forEach((value, key) => {
-            if (!API.cachedFavoritesByObjectId.has(key) && value.authorId !== API.currentUser.id) {
+            if (
+                !API.cachedFavoritesByObjectId.has(key) &&
+                value.authorId !== API.currentUser.id
+            ) {
                 API.cachedWorlds.delete(key);
                 console.log(key);
             }
         });
         API.cachedAvatars.forEach((value, key) => {
-            if (!API.cachedFavoritesByObjectId.has(key) && value.authorId !== API.currentUser.id) {
+            if (
+                !API.cachedFavoritesByObjectId.has(key) &&
+                value.authorId !== API.currentUser.id
+            ) {
                 API.cachedAvatars.delete(key);
                 console.log(key);
             }

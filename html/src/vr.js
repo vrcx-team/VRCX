@@ -292,11 +292,13 @@ import configRepository from './repository/config.js';
     $app.methods.nowPlayingUpdate = function (json) {
         this.nowPlaying = JSON.parse(json);
         if (this.appType === '2') {
-            var circle = document.querySelector(".np-progress-circle-stroke");
+            var circle = document.querySelector('.np-progress-circle-stroke');
             if (this.config.progressPie && this.nowPlaying.percentage !== 0) {
                 circle.style.opacity = 0.5;
                 var circumference = circle.getTotalLength();
-                circle.style.strokeDashoffset = circumference - (this.nowPlaying.percentage / 100) * circumference;
+                circle.style.strokeDashoffset =
+                    circumference -
+                    (this.nowPlaying.percentage / 100) * circumference;
             } else {
                 circle.style.opacity = 0;
             }
