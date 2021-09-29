@@ -7170,17 +7170,16 @@ speechSynthesis.getVoices();
         var j = data.length;
         if (j > 5000) {
             data.splice(0, j - 5000);
-        } else {
-            var limit = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toJSON();
-            var i = 0;
-            while (i < j && data[i].created_at < limit) {
-                ++i;
-            }
-            if (i === j) {
-                this.feedTable.data = [];
-            } else if (i) {
-                data.splice(0, i);
-            }
+        }
+        var limit = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toJSON();
+        var i = 0;
+        while (i < j && data[i].created_at < limit) {
+            ++i;
+        }
+        if (i === j) {
+            this.feedTable.data = [];
+        } else if (i) {
+            data.splice(0, i);
         }
     };
 
@@ -7370,17 +7369,16 @@ speechSynthesis.getVoices();
         var j = data.length;
         if (j > 5000) {
             data.splice(0, j - 5000);
-        } else {
-            var limit = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toJSON();
-            var i = 0;
-            while (i < j && data[i].created_at < limit) {
-                ++i;
-            }
-            if (i === j) {
-                this.gameLogTable.data = [];
-            } else if (i) {
-                data.splice(0, i);
-            }
+        }
+        var limit = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toJSON();
+        var i = 0;
+        while (i < j && data[i].created_at < limit) {
+            ++i;
+        }
+        if (i === j) {
+            this.gameLogTable.data = [];
+        } else if (i) {
+            data.splice(0, i);
         }
     };
 
