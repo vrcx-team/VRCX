@@ -937,10 +937,14 @@ html
                         span.name Enabled
                         el-switch(v-model="youTubeApi" @change="changeYouTubeApi")
                     div.options-container-item
-                        span.name Progress pie overlay for videos
+                        el-button(size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog") YouTube API Key
+                    span.header Progress pie overlay for videos
+                    div.options-container-item
+                        span.name Enable
                         el-switch(v-model="progressPie" @change="changeYouTubeApi")
                     div.options-container-item
-                        el-button(size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog") YouTube API Key
+                        span.name Dance worlds only
+                        el-switch(v-model="progressPieFilter" @change="changeYouTubeApi")
                 div.options-container
                     span.header VRCX Cache/Debug
                     div.options-container-item

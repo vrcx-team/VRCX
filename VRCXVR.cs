@@ -140,7 +140,7 @@ namespace VRCX
                 {
                     _browser1.RenderToTexture(_texture1);
                 }
-                if ("true".Equals(SharedVariable.Instance.Get("config:vrcx_overlaynotifications")))
+                if ("true".Equals(SharedVariable.Instance.Get("config:vrcx_overlaynotifications")) || "true".Equals(SharedVariable.Instance.Get("config:vrcx_progresspie")))
                 {
                     _browser2.RenderToTexture(_texture2);
                 }
