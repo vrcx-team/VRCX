@@ -15565,8 +15565,6 @@ speechSynthesis.getVoices();
                     );
                 }
             }
-        } else {
-            this.latestAppVersion = 'Error occured';
         }
     };
 

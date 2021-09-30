@@ -688,7 +688,7 @@ html
                             .detail
                                 span.name Version
                                 span.extra(v-text="appVersion")
-                        .x-friend-item(style="cursor:default")
+                        .x-friend-item(@click="checkForVRCXUpdate")
                             .detail
                                 span.name Latest Version
                                 span.extra(v-if="latestAppVersion" v-text="latestAppVersion")
@@ -697,6 +697,10 @@ html
                             .detail
                                 span.name Repository URL
                                 span.extra https://github.com/pypy-vrc/VRCX
+                        .x-friend-item(@click="openExternalLink('https://vrcx.pypy.moe/discord')")
+                            .detail
+                                span.name Support
+                                span.extra https://vrcx.pypy.moe/discord
                 div.options-container
                     span.sub-header VRCX Updater
                     div.options-container-item
