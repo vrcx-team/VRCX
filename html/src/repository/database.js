@@ -787,7 +787,7 @@ class Database {
                     userId
                 };
             }
-        }, `SELECT COUNT(*) FROM gamelog_join_leave WHERE user_id = '${userId}' OR display_name = '${displayName}'`);
+        }, `SELECT COUNT(*) FROM gamelog_join_leave WHERE (type = 'OnPlayerJoined') AND (user_id = '${userId}' OR display_name = '${displayName}')`);
         return ref;
     }
 }
