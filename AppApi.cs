@@ -315,7 +315,7 @@ namespace VRCX
             System.Environment.Exit(0);
         }
 
-        public bool CheckForUpdateZip()
+        public bool CheckForUpdateExe()
         {
             if (File.Exists(Path.Combine(Program.AppDataDirectory, "update.exe")))
                 return true;

@@ -133,7 +133,8 @@ class Database {
         sqliteService.executeNonQuery('COMMIT');
     }
 
-    async getMemo(userId) {
+    async getMemo(input) {
+        var userId = input.replaceAll("'", '');
         var row = {};
         await sqliteService.execute((dbRow) => {
             row = {
@@ -624,6 +625,170 @@ class Database {
                 '@expired': expired
             }
         );
+    }
+
+    async getGpsTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM ${Database.userId}_feed_gps`);
+        return size;
+    }
+
+    async getStatusTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM ${Database.userId}_feed_status`);
+        return size;
+    }
+
+    async getAvatarTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM ${Database.userId}_feed_avatar`);
+        return size;
+    }
+
+    async getOnlineOfflineTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM ${Database.userId}_feed_online_offline`);
+        return size;
+    }
+
+    async getFriendLogHistoryTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM ${Database.userId}_friend_log_history`);
+        return size;
+    }
+
+    async getNotificationTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM ${Database.userId}_notifications`);
+        return size;
+    }
+
+    async getLocationTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM gamelog_location`);
+        return size;
+    }
+
+    async getJoinLeaveTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM gamelog_join_leave`);
+        return size;
+    }
+
+    async getPortalSpawnTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM gamelog_portal_spawn`);
+        return size;
+    }
+
+    async getVideoPlayTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM gamelog_video_play`);
+        return size;
+    }
+
+    async getEventTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM gamelog_event`);
+        return size;
+    }
+
+    async getLastVisit(input) {
+        var worldId = input.replaceAll("'", '');
+        var ref = {
+            created_at: '',
+            worldId: ''
+        };
+        await sqliteService.execute((row) => {
+            ref = {
+                created_at: row[0],
+                worldId: row[1]
+            };
+        }, `SELECT created_at, world_id FROM gamelog_location WHERE world_id = '${worldId}' ORDER BY id DESC LIMIT 1`);
+        return ref;
+    }
+
+    async getVisitCount(input) {
+        var worldId = input.replaceAll("'", '');
+        var ref = {
+            visitCount: '',
+            worldId: ''
+        };
+        await sqliteService.execute((row) => {
+            ref = {
+                visitCount: row[0],
+                worldId: input
+            };
+        }, `SELECT COUNT(*) FROM gamelog_location WHERE world_id = '${worldId}'`);
+        return ref;
+    }
+
+    async getLastSeen(input) {
+        var userId = input.id.replaceAll("'", '');
+        var displayName = input.displayName.replaceAll("'", "''");
+        var ref = {
+            created_at: '',
+            userId: ''
+        };
+        await sqliteService.execute((row) => {
+            if (row[1]) {
+                ref = {
+                    created_at: row[0],
+                    userId: row[1]
+                };
+            } else {
+                ref = {
+                    created_at: row[0],
+                    userId
+                };
+            }
+        }, `SELECT created_at, user_id FROM gamelog_join_leave WHERE user_id = '${userId}' OR display_name = '${displayName}' ORDER BY id DESC LIMIT 1`);
+        return ref;
+    }
+
+    async getJoinCount(input) {
+        var userId = input.id.replaceAll("'", '');
+        var displayName = input.displayName.replaceAll("'", "''");
+        var ref = {
+            joinCount: '',
+            userId: ''
+        };
+        await sqliteService.execute((row) => {
+            if (row[1]) {
+                ref = {
+                    joinCount: row[0],
+                    userId: row[1]
+                };
+            } else {
+                ref = {
+                    joinCount: row[0],
+                    userId
+                };
+            }
+        }, `SELECT COUNT(*) FROM gamelog_join_leave WHERE user_id = '${userId}' OR display_name = '${displayName}'`);
+        return ref;
     }
 }
 

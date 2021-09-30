@@ -963,6 +963,32 @@ html
                         el-button(size="small" icon="el-icon-delete-solid" @click="clearVRCXCache") Clear Cache
                     div.options-container-item
                         el-button(size="small" icon="el-icon-tickets" @click="showConsole") Show Console
+                div.options-container
+                    span.header SQLite Table Size
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-refresh" @click="getSqliteTableSizes") Refresh
+                    div.options-container-item
+                        span.name GPS: #[span(v-text="sqliteTableSizes.gps")]
+                    div.options-container-item
+                        span.name Status: #[span(v-text="sqliteTableSizes.status")]
+                    div.options-container-item
+                        span.name Avatar: #[span(v-text="sqliteTableSizes.avatar")]
+                    div.options-container-item
+                        span.name Online/Offline: #[span(v-text="sqliteTableSizes.onlineOffline")]
+                    div.options-container-item
+                        span.name Friend Log History: #[span(v-text="sqliteTableSizes.friendLogHistory")]
+                    div.options-container-item
+                        span.name Notifications: #[span(v-text="sqliteTableSizes.notification")]
+                    div.options-container-item
+                        span.name Location: #[span(v-text="sqliteTableSizes.location")]
+                    div.options-container-item
+                        span.name Join/Leave: #[span(v-text="sqliteTableSizes.joinLeave")]
+                    div.options-container-item
+                        span.name Portal Spawn: #[span(v-text="sqliteTableSizes.portalSpawn")]
+                    div.options-container-item
+                        span.name Video Play: #[span(v-text="sqliteTableSizes.videoPlay")]
+                    div.options-container-item
+                        span.name Event: #[span(v-text="sqliteTableSizes.event")]
                 div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                     span.header Legal Notice
                     div.options-container-item
@@ -1200,9 +1226,12 @@ html
                                                 img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
                                 .x-friend-item(style="cursor:default")
                                     .detail
-                                        span.name Avatar Copying
-                                        span.extra(v-if="userDialog.ref.allowAvatarCopying" style="color:#67C23A") Allow
-                                        span.extra(v-else style="color:#F56C6C") Deny
+                                        span.name Last Seen
+                                        span.extra {{ userDialog.lastSeen | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                .x-friend-item(style="cursor:default")
+                                    .detail
+                                        span.name Join Count
+                                        span.extra(v-text="userDialog.joinCount")
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name(v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for") Online For
@@ -1216,6 +1245,11 @@ html
                                     .detail
                                         span.name Date Joined
                                         span.extra(v-text="userDialog.ref.date_joined")
+                                .x-friend-item(style="cursor:default")
+                                    .detail
+                                        span.name Avatar Copying
+                                        span.extra(v-if="userDialog.ref.allowAvatarCopying" style="color:#67C23A") Allow
+                                        span.extra(v-else style="color:#F56C6C") Deny
                                 .x-friend-item(v-if="userDialog.ref.id === API.currentUser.id && API.currentUser.homeLocation" @click="showWorldDialog(API.currentUser.homeLocation)" style="width:100%")
                                     .detail
                                         span.name Home Location
@@ -1379,7 +1413,7 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Favorites
-                                        span.extra {{ worldDialog.ref.favorites | commaNumber }}
+                                        span.extra {{ worldDialog.ref.favorites | commaNumber }} ({{ Math.round(((worldDialog.ref.favorites - worldDialog.ref.visits) / worldDialog.ref.visits * 100 + 100) * 100) / 100 }}%)
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Visits
@@ -1412,6 +1446,14 @@ html
                                     .detail
                                         span.name Platform
                                         span.extra(v-text="worldDialogPlatform")
+                                .x-friend-item(style="cursor:default")
+                                    .detail
+                                        span.name Last Visit
+                                        span.extra {{ worldDialog.lastVisit | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                .x-friend-item(style="cursor:default")
+                                    .detail
+                                        span.name Visit Count
+                                        span.extra(v-text="worldDialog.visitCount")
                         el-tab-pane(label="JSON")
                             el-button(type="default" @click="refreshWorldDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
                             el-tree(:data="worldDialog.treeData" style="margin-top:5px;font-size:12px")
