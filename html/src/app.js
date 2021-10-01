@@ -9310,6 +9310,7 @@ speechSynthesis.getVoices();
         );
         this.updateSharedFeed(true);
         this.updateVRConfigVars();
+        AppApi.ExecuteVrOverlayFunction('notyClear', '');
     };
     $app.data.TTSvoices = speechSynthesis.getVoices();
     $app.methods.saveNotificationTTS = function () {

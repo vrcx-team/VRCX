@@ -490,6 +490,10 @@ import configRepository from './repository/config.js';
         return text;
     };
 
+    $app.methods.notyClear = function () {
+        Noty.closeAll();
+    };
+
     $app = new Vue($app);
     window.$app = $app;
 })();
