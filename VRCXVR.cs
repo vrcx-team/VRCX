@@ -581,7 +581,7 @@ namespace VRCX
                         return err;
                     }
                     var m = Matrix.Scaling(1f);
-                    m *= Matrix.Translation(0, -0.1f, -1f);
+                    m *= Matrix.Translation(0, -0.3f, -1.5f);
                     var hm34 = new HmdMatrix34_t
                     {
                         m0 = m.M11,

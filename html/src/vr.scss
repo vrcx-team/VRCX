@@ -40,13 +40,8 @@
 
 .noty_theme__relax.noty_bar .noty_body,
 .noty_theme__sunset.noty_bar .noty_body {
-    font-size: 14px;
+    font-size: 15px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.noty_theme__sunset.noty_bar .noty_body {
-    text-shadow: #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px,
-        #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px;
 }
 
 .noty_theme__relax.noty_bar .noty_buttons,
@@ -106,15 +101,12 @@
 .noty_theme__sunset.noty_type__alert,
 .noty_theme__sunset.noty_type__notification {
     color: #fff;
+    background-color: #073b4c;
 }
 
 .noty_theme__sunset.noty_type__alert .noty_progressbar,
 .noty_theme__sunset.noty_type__notification .noty_progressbar {
     background-color: #fff;
-    border-radius: 8px;
-    border-color: black;
-    border-style: solid;
-    border-width: 1px;
 }
 
 .noty_theme__sunset.noty_type__warning {
