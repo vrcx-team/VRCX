@@ -1165,7 +1165,7 @@ html
                                             el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") Send Friend Request
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) Show Avatar Author
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") Show Fallback Avatar Details
-                                            el-dropdown-item(v-if="userDialog.ref.currentAvatarImageUrl !== 'https://assets.vrchat.com/system/defaultAvatar.png'" icon="el-icon-picture-outline" command="Previous Images") Show Avatar Previous Images
+                                            el-dropdown-item(v-if="userDialog.ref.currentAvatarImageUrl !== robotUrl" icon="el-icon-picture-outline" command="Previous Images") Show Avatar Previous Images
                                             el-dropdown-item(v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided style="color:#F56C6C") Unblock
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided :disabled="userDialog.ref.$isModerator") Block
                                             el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") Unmute
@@ -1212,7 +1212,8 @@ html
                                         el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" placeholder="Click to add a note" size="mini" resize="none")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
-                                        span.name Avatar Info
+                                        span.name(v-if="userDialog.ref.profilePicOverride && userDialog.ref.currentAvatarImageUrl !== robotUrl") Avatar Info Last Seen
+                                        span.name(v-else) Avatar Info
                                         .extra
                                             avatar-info(:imageurl="userDialog.ref.currentAvatarImageUrl" :userid="userDialog.id")
                                 .x-friend-item(style="width:100%;cursor:default")

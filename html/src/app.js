@@ -910,7 +910,10 @@ speechSynthesis.getVoices();
                 this.avatarName = '';
                 this.avatarType = '';
                 this.color = '';
-                if (this.hintownerid) {
+                if (this.imageurl === $app.robotUrl) {
+                    this.avatarName = '-';
+                    return;
+                } else if (this.hintownerid) {
                     this.avatarName = this.hintavatarname;
                     this.ownerId = this.hintownerid;
                 } else {
@@ -934,6 +937,9 @@ speechSynthesis.getVoices();
                 }
             },
             confirm() {
+                if (this.imageurl === $app.robotUrl) {
+                    return;
+                }
                 $app.showAvatarAuthorDialog(this.userid, this.imageurl);
             }
         },
@@ -1394,6 +1400,10 @@ speechSynthesis.getVoices();
             this.applyUserLanguage(ref);
             this.cachedUsers.set(ref.id, ref);
         } else {
+            if (json.currentAvatarImageUrl === $app.robotUrl) {
+                delete json.currentAvatarImageUrl;
+                delete json.currentAvatarThumbnailImageUrl;
+            }
             var props = {};
             for (var prop in ref) {
                 if (ref[prop] !== Object(ref[prop])) {
@@ -6994,6 +7004,9 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.data.robotUrl =
+        'https://api.vrchat.cloud/api/1/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file';
+
     API.$on('USER:UPDATE', async function (args) {
         var {ref, props} = args;
         if ($app.friends.has(ref.id) === false) {
@@ -7025,8 +7038,7 @@ speechSynthesis.getVoices();
         if (
             (props.currentAvatarImageUrl ||
                 props.currentAvatarThumbnailImageUrl) &&
-            props.currentAvatarImageUrl !==
-                'https://assets.vrchat.com/system/defaultAvatar.png'
+            props.currentAvatarImageUrl !== this.robotUrl
         ) {
             var currentAvatarImageUrl = '';
             var previousCurrentAvatarImageUrl = '';
