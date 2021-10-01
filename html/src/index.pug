@@ -1224,14 +1224,15 @@ html
                                                 template(#content)
                                                     span(v-text="link")
                                                 img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
-                                .x-friend-item(style="cursor:default")
-                                    .detail
-                                        span.name Last Seen
-                                        span.extra {{ userDialog.lastSeen | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
-                                .x-friend-item(style="cursor:default")
-                                    .detail
-                                        span.name Join Count
-                                        span.extra(v-text="userDialog.joinCount")
+                                template(v-if="API.currentUser.id !== userDialog.id")
+                                    .x-friend-item(style="cursor:default")
+                                        .detail
+                                            span.name Last Seen
+                                            span.extra {{ userDialog.lastSeen | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                    .x-friend-item(style="cursor:default")
+                                        .detail
+                                            span.name Join Count
+                                            span.extra(v-text="userDialog.joinCount")
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name(v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for") Online For
