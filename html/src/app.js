@@ -9653,8 +9653,6 @@ speechSynthesis.getVoices();
             }
         }
         var VRConfigVars = {
-            notificationTTS: this.notificationTTS,
-            notificationTTSVoice: this.notificationTTSVoice,
             overlayNotifications: this.overlayNotifications,
             hideDevicesFromFeed: this.hideDevicesFromFeed,
             minimalFeed: this.minimalFeed,
@@ -9673,6 +9671,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateVRLastLocation = function () {
+        this.updateVRConfigVars();
         var lastLocation = {
             date: this.lastLocation.date,
             location: this.lastLocation.location,
@@ -9766,7 +9765,6 @@ speechSynthesis.getVoices();
         var voiceName = voices[index < voices.length ? index : 0].name;
         speechSynthesis.cancel();
         this.speak(voiceName);
-        this.updateVRConfigVars();
     };
 
     $app.methods.speak = function (text) {
