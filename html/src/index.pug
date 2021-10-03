@@ -524,6 +524,15 @@ html
                                 span.extra(v-if="visits") {{visits}} users online.
                                 span.extra(v-else) Click to refresh
                 div.options-container
+                    span.header VRC SDK Downloads
+                    el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
+                        el-button(type="default" @click="API.getConfig()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                    .x-friend-list(style="margin-top:10px")
+                        .x-friend-item(v-for="(link, item) in API.cachedConfig.downloadUrls" :key="item" placement="top")
+                            .detail(@click="openExternalLink(link)")
+                                span.name(v-text="item")
+                                span.extra(v-text="link")
+                div.options-container
                     span.header Direct Access
                     div(style="margin-top:10px")
                         el-button-group
