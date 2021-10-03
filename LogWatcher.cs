@@ -335,6 +335,20 @@ namespace VRCX
                 return true;
             }
 
+            // 2021.10.04 11:54:16 Log        -  [Behaviour] OnLeftRoom
+
+            if (string.Compare(line, offset, "[Behaviour] OnLeftRoom", 0, 22, StringComparison.Ordinal) == 0)
+            {
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "location-destination"
+                });
+
+                return true;
+            }
+
             return false;
         }
 
