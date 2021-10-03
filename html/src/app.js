@@ -7611,14 +7611,14 @@ speechSynthesis.getVoices();
                     var urlParams = new URLSearchParams(gameLog.url);
                     if (url.pathname.substring(0, 13) === '/api/1/users/') {
                         var pathArray = url.pathname.split('/');
-                        userId = pathArray[4]
+                        userId = pathArray[4];
                     } else if (urlParams.has('userId')) {
                         userId = urlParams.get('userId');
                     }
                 } catch (err) {
                     console.error(err);
                 }
-                if (userId && !API.cachedUsers.has(userId)) {;
+                if (userId && !API.cachedUsers.has(userId)) {
                     API.getUser({userId});
                 }
                 return;
@@ -15582,6 +15582,13 @@ speechSynthesis.getVoices();
         this.checkingForVRCXUpdate = false;
         var json = JSON.parse(response.data);
         var releases = [];
+        if (typeof json !== 'object' || json.message) {
+            $app.$message({
+                message: `Failed to check for update, "${json.message}"`,
+                type: 'error'
+            });
+            return;
+        }
         for (var release of json) {
             for (var asset of release.assets) {
                 if (

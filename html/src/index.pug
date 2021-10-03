@@ -1237,7 +1237,7 @@ html
                                     .x-friend-item(style="cursor:default")
                                         .detail
                                             span.name Time Together
-                                            span.extra(v-text="userDialog.timeSpent")
+                                            span.extra {{ userDialog.timeSpent || '-' }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name(v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for") Online For
@@ -1496,7 +1496,7 @@ html
                                     el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(avatarDialog.ref)" :disabled="isGameRunning && avatarDialog.cacheLocked")
                                 el-tooltip(v-else-if="downloadCurrent.id === avatarDialog.id || downloadQueue.has(avatarDialog.id)" placement="top" content="Show download progress" :disabled="hideTooltips")
                                     el-button(icon="el-icon-loading" circle @click="showDownloadDialog")
-                                el-tooltip(v-else-if="avatarDialog.ref.id && avatarDialog.ref.version && avatarDialog.ref.assetUrl" placement="top" content="Download avatar to cache" :disabled="hideTooltips")
+                                el-tooltip(v-else-if="avatarDialog.ref.authorId === API.currentUser.id" placement="top" content="Download avatar to cache" :disabled="hideTooltips")
                                     el-button(icon="el-icon-download" circle @click="queueCacheDownload(avatarDialog.ref, 'Avatar')" :disabled="isGameRunning && avatarDialog.cacheLocked")
                                 el-tooltip(v-if="avatarDialog.isFavorite" placement="top" content="Remove from favorites" :disabled="hideTooltips")
                                     el-button(type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Delete Favorite')" style="margin-left:5px")
@@ -2006,6 +2006,8 @@ html
                     //-         el-radio-button(label="Everyone")
                     .toggle-item
                         span.toggle-name Video Play
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires VRCX YouTube API option enabled")
+                                i.el-icon-warning
                         el-radio-group(v-model="sharedFeedFilters.noty.VideoPlay" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="On")
