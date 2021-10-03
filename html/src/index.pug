@@ -1234,6 +1234,10 @@ html
                                         .detail
                                             span.name Join Count
                                             span.extra(v-text="userDialog.joinCount")
+                                    .x-friend-item(style="cursor:default")
+                                        .detail
+                                            span.name Time Together
+                                            span.extra(v-text="userDialog.timeSpent")
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name(v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for") Online For

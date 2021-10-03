@@ -790,6 +790,21 @@ class Database {
         }, `SELECT COUNT(*) FROM gamelog_join_leave WHERE (type = 'OnPlayerJoined') AND (user_id = '${userId}' OR display_name = '${displayName}')`);
         return ref;
     }
+
+    async getTimeSpent(input) {
+        var userId = input.id.replaceAll("'", '');
+        var displayName = input.displayName.replaceAll("'", "''");
+        var ref = {
+            timeSpent: 0,
+            userId
+        };
+        await sqliteService.execute((row) => {
+            if (typeof row[0] === 'number') {
+                ref.timeSpent += row[0];
+            }
+        }, `SELECT time FROM gamelog_join_leave WHERE (type = 'OnPlayerLeft') AND (user_id = '${userId}' OR display_name = '${displayName}')`);
+        return ref;
+    }
 }
 
 var self = new Database();

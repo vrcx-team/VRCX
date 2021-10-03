@@ -210,6 +210,32 @@ speechSynthesis.getVoices();
     };
     Vue.filter('timeToText', timeToText);
 
+    var timeToTextMin = function (sec) {
+        var n = Number(sec);
+        if (isNaN(n)) {
+            return escapeTag(sec);
+        }
+        n = Math.floor(n / 1000);
+        var arr = [];
+        if (n < 0) {
+            n = -n;
+        }
+        if (n >= 86400) {
+            arr.push(`${Math.floor(n / 86400)}d`);
+            n %= 86400;
+        }
+        if (n >= 3600) {
+            arr.push(`${Math.floor(n / 3600)}h`);
+            n %= 3600;
+        }
+        if (n >= 60) {
+            arr.push(`${Math.floor(n / 60)}m`);
+            n %= 60;
+        }
+        return arr.join(' ');
+    };
+    Vue.filter('timeToTextMin', timeToTextMin);
+
     Vue.use(VueLazyload, {
         preLoad: 1,
         observer: true,
@@ -10148,7 +10174,8 @@ speechSynthesis.getVoices();
             fileCreatedAt: ''
         },
         lastSeen: '',
-        joinCount: 0
+        joinCount: 0,
+        timeSpent: ''
     };
 
     $app.watch['userDialog.memo'] = function () {
@@ -10350,6 +10377,7 @@ speechSynthesis.getVoices();
         D.instance = {};
         D.lastSeen = '';
         D.joinCount = 0;
+        D.timeSpent = '';
         API.getCachedUser({
             userId
         })
@@ -10438,6 +10466,11 @@ speechSynthesis.getVoices();
                     database.getJoinCount(D.ref).then((ref2) => {
                         if (ref2.userId === D.id) {
                             D.joinCount = ref2.joinCount;
+                        }
+                    });
+                    database.getTimeSpent(D.ref).then((ref3) => {
+                        if (ref3.userId === D.id) {
+                            D.timeSpent = timeToTextMin(ref3.timeSpent);
                         }
                     });
                 }
