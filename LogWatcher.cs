@@ -67,7 +67,7 @@ namespace VRCX
             thread.Interrupt();
             thread.Join();
         }
-        
+
         public void Reset()
         {
             m_ResetLog = true;
@@ -214,6 +214,7 @@ namespace VRCX
                                     ParseLogLocationDestination(fileInfo, logContext, line, offset) == true ||
                                     ParseLogPortalSpawn(fileInfo, logContext, line, offset) == true ||
                                     ParseLogNotification(fileInfo, logContext, line, offset) == true ||
+                                    ParseLogAPIRequest(fileInfo, logContext, line, offset) == true ||
                                     ParseLogJoinBlocked(fileInfo, logContext, line, offset) == true ||
                                     ParseLogAvatarPedestalChange(fileInfo, logContext, line, offset) == true ||
                                     ParseLogVideoError(fileInfo, logContext, line, offset) == true ||
@@ -648,6 +649,35 @@ namespace VRCX
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
                 "notification",
+                data
+            });
+
+            return true;
+        }
+
+        private bool ParseLogAPIRequest(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2021.10.03 09:49:50 Log        -  [API] [110] Sending Get request to https://api.vrchat.cloud/api/1/worlds?apiKey=JlE5Jldo5Jibnk5O5hTx6XVqsJu4WJ26&organization=vrchat&userId=usr_032383a7-748c-4fb2-94e4-bcb928e5de6b&n=99&order=descending&offset=0&releaseStatus=public&maxUnityVersion=2019.4.31f1&minUnityVersion=5.5.0f1&maxAssetVersion=4&minAssetVersion=0&platform=standalonewindows
+            // 2021.10.03 09:48:43 Log        -  [API] [101] Sending Get request to https://api.vrchat.cloud/api/1/users/usr_032383a7-748c-4fb2-94e4-bcb928e5de6b?apiKey=JlE5Jldo5Jibnk5O5hTx6XVqsJu4WJ26&organization=vrchat
+
+            if (string.Compare(line, offset, "[API] [", 0, 7, StringComparison.Ordinal) != 0)
+            {
+                return false;
+            }
+
+            var pos = line.LastIndexOf("] Sending Get request to ");
+            if (pos < 0)
+            {
+                return false;
+            }
+
+            var data = line.Substring(pos + 25);
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "api-request",
                 data
             });
 

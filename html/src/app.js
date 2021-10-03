@@ -7601,6 +7601,27 @@ speechSynthesis.getVoices();
             case 'video-play':
                 this.addGameLogVideo(gameLog, location, userId, pushToTable);
                 return;
+            case 'api-request':
+                if (!this.isGameRunning) {
+                    return;
+                }
+                var userId = '';
+                try {
+                    var url = new URL(gameLog.url);
+                    var urlParams = new URLSearchParams(gameLog.url);
+                    if (url.pathname.substring(0, 13) === '/api/1/users/') {
+                        var pathArray = url.pathname.split('/');
+                        userId = pathArray[4]
+                    } else if (urlParams.has('userId')) {
+                        userId = urlParams.get('userId');
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+                if (userId && !API.cachedUsers.has(userId)) {;
+                    API.getUser({userId});
+                }
+                return;
             case 'vrcx':
                 // VideoPlay(PyPyDance) "https://jd.pypy.moe/api/v1/videos/jr1NX4Jo8GE.mp4",0.1001,239.606,"0905 : [J-POP] 【まなこ】金曜日のおはよう 踊ってみた (vernities)"
                 var type = gameLog.data.substr(0, gameLog.data.indexOf(' '));
