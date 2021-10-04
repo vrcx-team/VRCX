@@ -7971,19 +7971,19 @@ speechSynthesis.getVoices();
                 switch (L.accessType) {
                     case 'public':
                         L.joinUrl = getLaunchURL(L.worldId, L.instanceId);
-                        L.accessType = 'Public';
+                        L.accessType = `Public #${L.instanceName}`;
                         break;
                     case 'invite+':
-                        L.accessType = 'Invite+';
+                        L.accessType = `Invite+ #${L.instanceName}`;
                         break;
                     case 'invite':
-                        L.accessType = 'Invite';
+                        L.accessType = `Invite #${L.instanceName}`;
                         break;
                     case 'friends':
-                        L.accessType = 'Friends';
+                        L.accessType = `Friends #${L.instanceName}`;
                         break;
                     case 'friends+':
-                        L.accessType = 'Friends+';
+                        L.accessType = `Friends+ #${L.instanceName}`;
                         break;
                 }
             }
@@ -8018,7 +8018,7 @@ speechSynthesis.getVoices();
         }
         var appId = '883308884863901717';
         var bigIcon = 'vrchat';
-        var instanceId = L.instanceId;
+        var partyId = `${L.worldId}:${L.instanceName}`;
         var partySize = this.lastLocation.playerList.size;
         var partyMaxSize = L.worldCapacity;
         var buttonText = 'Join';
@@ -8032,7 +8032,7 @@ speechSynthesis.getVoices();
             partyMaxSize = 0;
         }
         if (hidePrivate) {
-            instanceId = '';
+            partyId = '';
             partySize = 0;
             partyMaxSize = 0;
             buttonText = '';
@@ -8066,7 +8066,7 @@ speechSynthesis.getVoices();
             'Powered by VRCX', // big icon hover text
             L.statusImage, // small icon
             L.statusName, // small icon hover text
-            instanceId, // party id
+            partyId, // party id
             partySize, // party size
             partyMaxSize, // party max size
             buttonText, // button text
