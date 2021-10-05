@@ -4097,6 +4097,7 @@ speechSynthesis.getVoices();
                 );
             }
         } catch (err) {
+            API.isRefreshFriendsLoading = false;
             console.error(err);
         }
         setTimeout(() => this.updateLoop(), 500);
@@ -7448,7 +7449,7 @@ speechSynthesis.getVoices();
         if (length > 1) {
             this.updateGameLog(this.gameLogTable.data[length - 1].created_at);
         } else {
-            this.refreshEntireGameLog();
+            this.updateGameLog('1970-01-01');
         }
     };
 

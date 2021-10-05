@@ -187,7 +187,7 @@ html
                                 el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'PortalSpawn', 'AvatarChange', 'Event', 'VideoPlay']" :key="type" :label="type" :value="type")
                             el-input(v-model="gameLogTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
                             el-tooltip(placement="bottom" content="Reload game log" :disabled="hideTooltips")
-                                el-button(type="default" @click="refreshEntireGameLog" icon="el-icon-refresh" circle style="flex:none")
+                                el-button(type="default" @click="getGameLogTable" icon="el-icon-refresh" circle style="flex:none")
                     el-table-column(label="Date" prop="created_at" sortable="custom" width="90")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
@@ -488,8 +488,9 @@ html
                                 template(v-if="scope.row.type !== 'requestInviteResponse' && scope.row.type !== 'inviteResponse' && scope.row.type !== 'message'")
                                     el-tooltip(placement="top" content="Decline" :disabled="hideTooltips")
                                         el-button(type="text" icon="el-icon-close" size="mini" style="margin-left:5px" @click="hideNotification(scope.row)")
-                            el-tooltip(placement="top" content="Delete log" :disabled="hideTooltips")
-                                el-button(type="text" icon="el-icon-delete" size="mini" style="margin-left:5px" @click="deleteNotificationLog(scope.row)")
+                            template(v-if="scope.row.type !== 'friendRequest' && scope.row.type !== 'hiddenFriendRequest'")
+                                el-tooltip(placement="top" content="Delete log" :disabled="hideTooltips")
+                                    el-button(type="text" icon="el-icon-delete" size="mini" style="margin-left:5px" @click="deleteNotificationLog(scope.row)")
 
             //- profile
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'profile'")
