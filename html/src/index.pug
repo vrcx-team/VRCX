@@ -186,8 +186,8 @@ html
                             el-select(v-model="gameLogTable.filters[0].value" @change="saveTableFilters" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
                                 el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'PortalSpawn', 'AvatarChange', 'Event', 'VideoPlay']" :key="type" :label="type" :value="type")
                             el-input(v-model="gameLogTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
-                            el-tooltip(placement="bottom" content="Reload game log" :disabled="hideTooltips")
-                                el-button(type="default" @click="getGameLogTable" icon="el-icon-refresh" circle style="flex:none")
+                            //- el-tooltip(placement="bottom" content="Reload game log" :disabled="hideTooltips")
+                            //-     el-button(type="default" @click="resetGameLog" icon="el-icon-refresh" circle style="flex:none")
                     el-table-column(label="Date" prop="created_at" sortable="custom" width="90")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
@@ -670,6 +670,7 @@ html
                         el-table-column(label="Status" min-width="180" prop="status" sortable :sort-method="(a, b) => sortStatus(a.status, b.status)")
                             template(v-once #default="scope")
                                 i.x-user-status(v-if="scope.row.status !== 'offline'" :class="statusClass(scope.row.status)")
+                                span  ‎
                                 span(v-text="scope.row.statusDescription")
                         el-table-column(label="Language" width="100" prop="$languages" sortable :sort-method="(a, b) => sortLanguages(a, b)")
                             template(v-once #default="scope")
@@ -683,6 +684,11 @@ html
                                     template(#content)
                                         span(v-text="link")
                                     img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
+                        el-table-column(label="Join Count" width="120" prop="$joinCount" sortable)
+                        el-table-column(label="Time Together" width="140" prop="$timeSpent" sortable)
+                            template(v-once #default="scope")
+                                span(v-if="scope.row.$timeSpent") {{ scope.row.$timeSpent | timeToTextMin }}
+                        el-table-column(label="Last Seen" width="170" prop="$lastSeen" sortable :sort-method="(a, b) => sortAlphabetically(a, b, '$lastSeen')")
                         el-table-column(label="Last Login" width="170" prop="last_login" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'last_login')")
                         el-table-column(label="Date Joined" width="120" prop="date_joined" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'date_joined')")
                         el-table-column(label="Unfriend" width="70" align="right")
@@ -827,7 +833,7 @@ html
                         span.name Enable
                         el-switch(v-model="openVR" @change="saveOpenVROption")
                     div.options-container-item
-                        span.name Force Run (Opens SteamVR)
+                        span.name Always start with SteamVR
                         el-switch(v-model="openVRAlways" @change="saveOpenVROption" :disabled="!openVR")
                     div.options-container-item
                         span.name Hide Private Worlds
@@ -960,7 +966,7 @@ html
                         span.name Dance worlds only
                         el-switch(v-model="progressPieFilter" @change="changeYouTubeApi")
                 div.options-container
-                    span.header VRCX Cache/Debug
+                    span.header VRCX Instance Cache/Debug
                     div.options-container-item
                         span.name User cache: #[span(v-text="API.cachedUsers.size")]
                     div.options-container-item
@@ -1222,7 +1228,7 @@ html
                                         el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" placeholder="Click to add a note" size="mini" resize="none")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
-                                        span.name(v-if="userDialog.ref.profilePicOverride && userDialog.ref.currentAvatarImageUrl !== robotUrl") Avatar Info Last Seen
+                                        span.name(v-if="userDialog.ref.profilePicOverride && userDialog.ref.currentAvatarImageUrl") Avatar Info Last Seen
                                         span.name(v-else) Avatar Info
                                         .extra
                                             avatar-info(:imageurl="userDialog.ref.currentAvatarImageUrl" :userid="userDialog.id")
@@ -1243,11 +1249,13 @@ html
                                     .x-friend-item(style="cursor:default")
                                         .detail
                                             span.name Join Count
-                                            span.extra(v-text="userDialog.joinCount")
+                                            span.extra(v-if="userDialog.joinCount === 0") -
+                                            span.extra(v-else v-text="userDialog.joinCount")
                                     .x-friend-item(style="cursor:default")
                                         .detail
                                             span.name Time Together
-                                            span.extra {{ userDialog.timeSpent || '-' }}
+                                            span.extra(v-if="userDialog.timeSpent === 0") -
+                                            span.extra(v-else) {{ userDialog.timeSpent | timeToTextMin }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name(v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for") Online For
