@@ -6524,6 +6524,19 @@ speechSynthesis.getVoices();
         return 0;
     };
 
+    // descending
+    var compareByCreatedAt = function (a, b) {
+        var A = String(a.created_at).toUpperCase();
+        var B = String(b.created_at).toUpperCase();
+        if (A < B) {
+            return 1;
+        }
+        if (A > B) {
+            return -1;
+        }
+        return 0;
+    };
+
     // private
     var compareByPrivate = function (a, b) {
         if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
@@ -8138,10 +8151,10 @@ speechSynthesis.getVoices();
     $app.data.searchWorldOption = '';
     $app.data.searchWorldParams = {};
     $app.data.searchAvatarResults = [];
-    $app.data.searchAvatarParams = {};
+    $app.data.searchAvatarFilter = '';
+    $app.data.searchAvatarSort = '';
     $app.data.isSearchUserLoading = false;
     $app.data.isSearchWorldLoading = false;
-    $app.data.isSearchAvatarLoading = false;
 
     API.$on('LOGIN', function () {
         $app.searchText = '';
@@ -8151,10 +8164,10 @@ speechSynthesis.getVoices();
         $app.searchWorldOption = '';
         $app.searchWorldParams = {};
         $app.searchAvatarResults = [];
-        $app.searchAvatarParams = {};
+        $app.searchAvatarFilter = '';
+        $app.searchAvatarSort = '';
         $app.isSearchUserLoading = false;
         $app.isSearchWorldLoading = false;
-        $app.isSearchAvatarLoading = false;
     });
 
     $app.methods.clearSearch = function () {
@@ -8166,6 +8179,7 @@ speechSynthesis.getVoices();
     $app.methods.search = function () {
         this.searchUser();
         this.searchWorld({});
+        this.searchAvatar();
     };
 
     $app.methods.searchUser = async function () {
@@ -8292,57 +8306,64 @@ speechSynthesis.getVoices();
             });
     };
 
-    $app.methods.searchAvatar = function (option) {
-        var params = {
-            n: 10,
-            offset: 0
-        };
-        switch (option) {
-            case 'updated':
-                params.sort = 'updated';
-                break;
-            case 'created':
-                params.sort = 'created';
-                break;
-            case 'mine':
-                params.user = 'me';
-                params.releaseStatus = 'all';
-                break;
-            default:
-                params.sort = 'popularity';
-                params.search = this.searchText;
-                break;
+    $app.methods.searchAvatar = function () {
+        if (!this.searchAvatarFilter) {
+            this.searchAvatarFilter = 'all';
         }
-        params.order = 'descending';
-        // TODO: option.platform
-        this.searchAvatarParams = params;
-        this.moreSearchAvatar();
-    };
-
-    $app.methods.moreSearchAvatar = function (go) {
-        var params = this.searchAvatarParams;
-        if (go) {
-            params.offset += params.n * go;
-            if (params.offset < 0) {
-                params.offset = 0;
+        if (!this.searchAvatarSort) {
+            this.searchAvatarSort = 'name';
+        }
+        var avatars = [];
+        var query = this.searchText.toUpperCase();
+        if (!query) {
+            for (var ref of API.cachedAvatars.values()) {
+                if (ref.authorId === API.currentUser.id) {
+                    avatars.push(ref);
+                }
             }
-        }
-        this.isSearchAvatarLoading = true;
-        API.getAvatars(params)
-            .finally(() => {
-                this.isSearchAvatarLoading = false;
-            })
-            .then((args) => {
-                var map = new Map();
-                for (var json of args.json) {
-                    var ref = API.cachedAvatars.get(json.id);
-                    if (typeof ref !== 'undefined') {
-                        map.set(ref.id, ref);
+        } else {
+            for (var ref of API.cachedAvatars.values()) {
+                var match = ref.name.toUpperCase().includes(query);
+                if (!match && ref.description) {
+                    match = ref.description.toUpperCase().includes(query);
+                }
+                if (!match && ref.authorName) {
+                    match = ref.authorName.toUpperCase().includes(query);
+                }
+                if (match) {
+                    switch (this.searchAvatarFilter) {
+                        case 'all':
+                            avatars.push(ref);
+                            break;
+                        case 'public':
+                            if (ref.releaseStatus === 'public') {
+                                avatars.push(ref);
+                            }
+                            break;
+                        case 'private':
+                            if (ref.releaseStatus === 'private') {
+                                avatars.push(ref);
+                            }
+                            break;
                     }
                 }
-                this.searchAvatarResults = Array.from(map.values());
-                return args;
-            });
+                if (avatars.length >= 1000) {
+                    break;
+                }
+            }
+        }
+        switch (this.searchAvatarSort) {
+            case 'updated':
+                avatars.sort(compareByUpdatedAt);
+                break;
+            case 'created':
+                avatars.sort(compareByCreatedAt);
+                break;
+            case 'name':
+                avatars.sort(compareByName);
+                break;
+        }
+        this.searchAvatarResults = avatars;
     };
 
     // App: Favorite
