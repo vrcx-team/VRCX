@@ -206,7 +206,7 @@ html
                             location(v-if="scope.row.type === 'Location'" :location="scope.row.location" :hint="scope.row.worldName")
                             location(v-else-if="scope.row.type === 'PortalSpawn'" :location="scope.row.instanceId" :hint="scope.row.worldName")
                             template(v-else-if="scope.row.type === 'AvatarChange'")
-                                span.x-link(@click="showUserDialog(scope.row.authorId)" v-text="scope.row.name")
+                                span.x-link(@click="showAvatarDialog(scope.row.avatarId)" v-text="scope.row.name")
                                 template(v-if="scope.row.description && scope.row.name !== scope.row.description")
                                     |  - {{ scope.row.description }}
                             template(v-else-if="scope.row.type === 'Event'")
@@ -2019,13 +2019,15 @@ html
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                             el-radio-button(label="Everyone")
-                    //- .toggle-item
-                    //-     span.toggle-name Avatar Change
-                    //-     el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
-                    //-         el-radio-button(label="Off")
-                    //-         el-radio-button(label="VIP")
-                    //-         el-radio-button(label="Friends")
-                    //-         el-radio-button(label="Everyone")
+                    .toggle-item
+                        span.toggle-name Lobby Avatar Change
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires photon logging steam launch option")
+                                i.el-icon-warning
+                        el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     .toggle-item
                         span.toggle-name Video Play
                             el-tooltip(placement="top" style="margin-left:5px" content="Requires VRCX YouTube API option enabled")
@@ -2182,15 +2184,19 @@ html
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                             el-radio-button(label="Everyone")
-                    //- .toggle-item
-                    //-     span.toggle-name Avatar Change
-                    //-     el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
-                    //-         el-radio-button(label="Off")
-                    //-         el-radio-button(label="VIP")
-                    //-         el-radio-button(label="Friends")
-                    //-         el-radio-button(label="Everyone")
+                    .toggle-item
+                        span.toggle-name Lobby Avatar Change
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires photon logging steam launch option")
+                                i.el-icon-warning
+                        el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     .toggle-item
                         span.toggle-name Video Play
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires VRCX YouTube API option enabled")
+                                i.el-icon-warning
                         el-radio-group(v-model="sharedFeedFilters.wrist.VideoPlay" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="On")
