@@ -198,7 +198,7 @@ html
                         template(v-once #default="scope")
                             span.x-link(v-if="scope.row.location && scope.row.type !== 'Location'" v-text="scope.row.type" @click="showWorldDialog(scope.row.location)")
                             span(v-else v-text="scope.row.type")
-                    el-table-column(label="User" prop="displayName" width="160")
+                    el-table-column(label="User" prop="displayName" width="180")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)")
                     el-table-column(label="Detail" prop="data")
@@ -258,7 +258,7 @@ html
                     el-tab-pane(label="Avatar" style="min-height:60px")
                         el-tooltip(placement="bottom" content="Refresh own avatars" :disabled="hideTooltips")
                             el-button(type="default" :loading="userDialog.isAvatarsLoading" @click="refreshUserDialogAvatars()" size="mini" icon="el-icon-refresh" circle)
-                        span(style="margin-left:5px") Total {{ searchAvatarResults.length }}
+                        span(style="font-size:14px;margin-left:5px") Results {{ searchAvatarResults.length }}
                         el-radio-group(v-model="searchAvatarSort" size="mini" style="margin-left:30px" @change="searchAvatar")
                             el-radio(label="name") by name
                             el-radio(label="update") by update
@@ -640,7 +640,9 @@ html
                 div.options-container(style="margin-top:0")
                     span.header Friends List
                     div(style="float:right;font-size:13px")
-                        span Load missing entries, spams API use at your own risk:
+                        span Load missing entries
+                        el-tooltip(placement="top" style="margin-left:5px" content="This spams the API a little so use it sparingly")
+                            i.el-icon-warning
                         template(v-if="friendsListLoading")
                             span(v-text="friendsListLoadingProgress" style="margin-left:5px")
                             el-tooltip(placement="top" content="Cancel" :disabled="hideTooltips")
@@ -2021,7 +2023,7 @@ html
                             el-radio-button(label="Everyone")
                     .toggle-item
                         span.toggle-name Lobby Avatar Change
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires photon logging steam launch option")
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=\"API;NetworkData\"' steam launch option")
                                 i.el-icon-warning
                         el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
                             el-radio-button(label="Off")
@@ -2186,7 +2188,7 @@ html
                             el-radio-button(label="Everyone")
                     .toggle-item
                         span.toggle-name Lobby Avatar Change
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires photon logging steam launch option")
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=\"API;NetworkData\"' steam launch option")
                                 i.el-icon-warning
                         el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
                             el-radio-button(label="Off")
