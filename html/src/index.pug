@@ -1058,7 +1058,7 @@ html
                                 .avatar(:class="userStatusClass(friend.ref)")
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.memo" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.memo }})
+                                    span.name(v-if="friend.$nickName" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
                                     location.extra(:location="friend.ref.location" :link="false")
                             template(v-else)
@@ -1073,7 +1073,7 @@ html
                                 .avatar(:class="userStatusClass(friend.ref)")
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.memo" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.memo }})
+                                    span.name(v-if="friend.$nickName" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
                                     location.extra(:location="friend.ref.location" :link="false")
                             template(v-else)
@@ -1088,7 +1088,7 @@ html
                                 .avatar
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.memo" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.memo }})
+                                    span.name(v-if="friend.$nickName" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
                                     span.extra(v-text="friend.ref.statusDescription" :link="false")
                             template(v-else)
@@ -1103,7 +1103,7 @@ html
                                 .avatar
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.memo" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.memo }})
+                                    span.name(v-if="friend.$nickName" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
                                     span.extra(v-text="friend.ref.statusDescription")
                             template(v-else)
