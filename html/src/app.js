@@ -1421,6 +1421,9 @@ speechSynthesis.getVoices();
                 $trustColor: 'x-tag-untrusted',
                 $trustSortNum: 1,
                 $languages: [],
+                $joinCount: 0,
+                $timeSpent: 0,
+                $lastSeen: '',
                 //
                 ...json
             };
@@ -1862,10 +1865,7 @@ speechSynthesis.getVoices();
         var {json} = args;
         var D = $app.userDialog;
         if ($app.userDialog.visible && D.ref.location === json.id) {
-            D.instance = {
-                id: json.id,
-                occupants: json.n_users
-            };
+            D.instance.occupants = json.n_users;
         }
     });
 
@@ -7033,10 +7033,7 @@ speechSynthesis.getVoices();
                         joinTime: Date.parse(ctx.created_at)
                     };
                     this.lastLocation.playerList.set(ctx.displayName, userMap);
-                    if (
-                        this.friends.has(ctx.userId) ||
-                        API.currentUser.displayName === ctx.displayName
-                    ) {
+                    if (this.friends.has(ctx.userId)) {
                         this.lastLocation.friendList.set(
                             ctx.displayName,
                             userMap
@@ -7562,10 +7559,7 @@ speechSynthesis.getVoices();
                     gameLog.userDisplayName,
                     userMap
                 );
-                if (
-                    this.friends.has(userId) ||
-                    API.currentUser.displayName === gameLog.userDisplayName
-                ) {
+                if (this.friends.has(userId)) {
                     this.lastLocation.friendList.set(
                         gameLog.userDisplayName,
                         userMap
@@ -10429,7 +10423,11 @@ speechSynthesis.getVoices();
         D.loading = true;
         D.avatars = [];
         D.worlds = [];
-        D.instance = {};
+        D.instance = {
+            id: '',
+            occupants: 0,
+            friendCount: 0
+        };
         D.lastSeen = '';
         D.joinCount = 0;
         D.timeSpent = '';
@@ -10551,6 +10549,7 @@ speechSynthesis.getVoices();
             }
         }
         var users = [];
+        var friendCount = 0;
         var playersInInstance = this.lastLocation.playerList;
         if (
             this.lastLocation.location === L.tag &&
@@ -10578,6 +10577,7 @@ speechSynthesis.getVoices();
                     users.push(API.cachedUsers.get(friend.userId));
                 }
             }
+            friendCount = users.length - 1;
         } else if (L.isOffline === false) {
             for (var friend of this.friends.values()) {
                 if (
@@ -10593,6 +10593,7 @@ speechSynthesis.getVoices();
                     users.push(friend.ref);
                 }
             }
+            friendCount = users.length;
         }
         users.sort(compareByLocationAt);
         D.users = users;
@@ -10608,6 +10609,7 @@ speechSynthesis.getVoices();
                 occupants: 0
             };
         }
+        D.instance.friendCount = friendCount;
     };
 
     $app.methods.setUserDialogWorlds = function (userId) {
@@ -11178,6 +11180,7 @@ speechSynthesis.getVoices();
             instances[id] = {
                 id,
                 occupants,
+                friendCount: 0,
                 users: []
             };
         }
@@ -11186,15 +11189,18 @@ speechSynthesis.getVoices();
             instances[instanceId] = {
                 id: instanceId,
                 occupants: 0,
+                friendCount: 0,
                 users: []
             };
         }
         var lastLocation$ = API.parseLocation(this.lastLocation.location);
         var playersInInstance = this.lastLocation.playerList;
         if (lastLocation$.worldId === D.id) {
+            var friendsInInstance = this.lastLocation.friendList;
             var instance = {
                 id: lastLocation$.instanceId,
                 occupants: playersInInstance.size,
+                friendCount: friendsInInstance.size,
                 users: []
             };
             instances[instance.id] = instance;
@@ -11205,7 +11211,6 @@ speechSynthesis.getVoices();
             if (playersInInstance.has(ref.displayName)) {
                 instance.users.push(ref); // add self
             }
-            var friendsInInstance = this.lastLocation.friendList;
             for (var friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
                 var addUser = true;
@@ -11239,6 +11244,7 @@ speechSynthesis.getVoices();
                 instance = {
                     id: instanceId,
                     occupants: 0,
+                    friendCount: 0,
                     users: []
                 };
                 instances[instanceId] = instance;
@@ -11265,6 +11271,7 @@ speechSynthesis.getVoices();
                     L.user = ref;
                 }
             }
+            instance.friendCount = instance.users.length;
             instance.users.sort(compareByLocationAt);
             rooms.push(instance);
         }
