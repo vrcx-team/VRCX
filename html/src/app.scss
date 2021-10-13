@@ -264,6 +264,13 @@ a {
     border-radius: 2px;
 }
 
+.x-friend-item-border:hover {
+    border-top-left-radius: 25px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 25px;
+}
+
 .x-aside-container > .x-friend-list > .x-friend-item:hover {
     background: #fff;
     border-radius: 2px;

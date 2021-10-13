@@ -200,7 +200,7 @@ html
                             span(v-else v-text="scope.row.type")
                     el-table-column(label="User" prop="displayName" width="180")
                         template(v-once #default="scope")
-                            span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)")
+                            span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)" style="padding-right:10px")
                     el-table-column(label="Detail" prop="data")
                         template(v-once #default="scope")
                             location(v-if="scope.row.type === 'Location'" :location="scope.row.location" :hint="scope.row.worldName")
@@ -1212,7 +1212,7 @@ html
                                             el-button(@click="refreshInstancePlayerCount(userDialog.ref.location)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                         span(v-if="userDialog.instance.occupants" style="margin-left:5px") {{ userDialog.instance.occupants }}  #[template(v-if="userDialog.instance.friendCount > 0") ({{ userDialog.instance.friendCount }})]
                                 .x-friend-list(style="flex:1;margin-top:10px")
-                                    .x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)")
+                                    .x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)" class="x-friend-item-border")
                                         template(v-if="userDialog.$location.user")
                                             .avatar(:class="userStatusClass(userDialog.$location.user)")
                                                 img(v-lazy="userImage(userDialog.$location.user)")
@@ -1220,7 +1220,7 @@ html
                                                 span.name(v-text="userDialog.$location.user.displayName" :class="userDialog.$location.user.$trustColor")
                                                 span.extra Instance Creator
                                         span(v-else v-text="userDialog.$location.userId")
-                                    .x-friend-item(v-for="user in userDialog.users" :key="user.id" @click="showUserDialog(user.id)")
+                                    .x-friend-item(v-for="user in userDialog.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
                                         .avatar(:class="userStatusClass(user)")
                                             img(v-lazy="userImage(user)")
                                         .detail
@@ -1293,7 +1293,7 @@ html
                                 el-radio(label="name") by name
                                 el-radio(label="update") by update
                             .x-friend-list(v-loading="userDialog.isWorldsLoading" style="margin-top:10px;min-height:60px")
-                                .x-friend-item(v-for="world in userDialog.worlds" :key="world.id" @click="showWorldDialog(world.id)")
+                                .x-friend-item(v-for="world in userDialog.worlds" :key="world.id" @click="showWorldDialog(world.id)" class="x-friend-item-border")
                                     .avatar
                                         img(v-lazy="world.thumbnailImageUrl")
                                     .detail
@@ -1307,7 +1307,7 @@ html
                                     i.x-user-status(style="margin-left:5px" :class="userFavoriteWorldsStatus(list[1])")
                                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ list[2].length }}/64
                                     .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
-                                        .x-friend-item(v-for="world in list[2]" :key="world.id" @click="showWorldDialog(world.id)")
+                                        .x-friend-item(v-for="world in list[2]" :key="world.id" @click="showWorldDialog(world.id)" class="x-friend-item-border")
                                             .avatar
                                                 img(v-lazy="world.thumbnailImageUrl")
                                             .detail
@@ -1325,7 +1325,7 @@ html
                                 el-radio(label="public") public
                                 el-radio(label="private") private
                             .x-friend-list(v-loading="userDialog.isAvatarsLoading" style="margin-top:10px;min-height:60px")
-                                .x-friend-item(v-for="avatar in userDialogAvatars" :key="avatar.id" @click="showAvatarDialog(avatar.id)")
+                                .x-friend-item(v-for="avatar in userDialogAvatars" :key="avatar.id" @click="showAvatarDialog(avatar.id)" class="x-friend-item-border")
                                     .avatar
                                         img(v-lazy="avatar.thumbnailImageUrl")
                                     .detail
@@ -1413,7 +1413,7 @@ html
                                         el-button(@click="refreshInstancePlayerCount(room.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                     span(v-if="room.occupants" style="margin-left:5px") {{ room.occupants }}  #[template(v-if="room.friendCount > 0") ({{ room.friendCount }})]
                                 .x-friend-list(style="margin:10px 0" v-if="room.$location.userId || room.users.length")
-                                    .x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)")
+                                    .x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)" class="x-friend-item-border")
                                         template(v-if="room.$location.user")
                                             .avatar(:class="userStatusClass(room.$location.user)")
                                                 img(v-lazy="userImage(room.$location.user)")
@@ -1421,7 +1421,7 @@ html
                                                 span.name(v-text="room.$location.user.displayName" :class="room.$location.user.$trustColor")
                                                 span.extra Instance Creator
                                         span(v-else v-text="room.$location.userId")
-                                    .x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)")
+                                    .x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
                                         .avatar(:class="userStatusClass(user)")
                                             img(v-lazy="userImage(user)")
                                         .detail
