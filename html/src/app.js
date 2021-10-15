@@ -5683,28 +5683,24 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateStoredUser = async function (currentUser) {
-        var savedCredentialsArray = {};
+        var savedCredentials = {};
         if (configRepository.getString('savedCredentials') !== null) {
-            var savedCredentialsArray = JSON.parse(
+            var savedCredentials = JSON.parse(
                 configRepository.getString('savedCredentials')
             );
         }
         if (this.saveCredentials) {
-            var credentialsToSave = {
-                user: currentUser,
-                loginParmas: this.saveCredentials
-            };
-            savedCredentialsArray[currentUser.username] = credentialsToSave;
+            savedCredentials[currentUser.username].loginParmas =
+                this.saveCredentials;
             delete this.saveCredentials;
-        } else if (
-            typeof savedCredentialsArray[currentUser.username] !== 'undefined'
-        ) {
-            savedCredentialsArray[currentUser.username].user = currentUser;
         }
-        savedCredentialsArray[currentUser.username].cookies =
-            await webApiService.getCookies();
-        this.loginForm.savedCredentials = savedCredentialsArray;
-        var jsonCredentialsArray = JSON.stringify(savedCredentialsArray);
+        if (typeof savedCredentials[currentUser.username] !== 'undefined') {
+            savedCredentials[currentUser.username].user = currentUser;
+            savedCredentials[currentUser.username].cookies =
+                await webApiService.getCookies();
+        }
+        this.loginForm.savedCredentials = savedCredentials;
+        var jsonCredentialsArray = JSON.stringify(savedCredentials);
         configRepository.setString('savedCredentials', jsonCredentialsArray);
         this.loginForm.lastUserLoggedIn = currentUser.username;
         configRepository.setString('lastUserLoggedIn', currentUser.username);
@@ -5775,18 +5771,18 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.deleteSavedLogin = function (username) {
-        var savedCredentialsArray = JSON.parse(
+        var savedCredentials = JSON.parse(
             configRepository.getString('savedCredentials')
         );
-        delete savedCredentialsArray[username];
+        delete savedCredentials[username];
         // Disable primary password when no account is available.
-        if (Object.keys(savedCredentialsArray).length === 0) {
+        if (Object.keys(savedCredentials).length === 0) {
             this.enablePrimaryPassword = false;
             configRepository.setBool('enablePrimaryPassword', false);
         }
-        this.loginForm.savedCredentials = savedCredentialsArray;
-        var jsonCredentialsArray = JSON.stringify(savedCredentialsArray);
-        configRepository.setString('savedCredentials', jsonCredentialsArray);
+        this.loginForm.savedCredentials = savedCredentials;
+        var jsonCredentials = JSON.stringify(savedCredentials);
+        configRepository.setString('savedCredentials', jsonCredentials);
         new Noty({
             type: 'success',
             text: 'Account removed.'
