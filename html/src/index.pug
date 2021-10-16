@@ -70,15 +70,15 @@ html
 
             //- feed
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'feed'")
-                data-tables(v-bind="feedTable")
+                data-tables(v-bind="feedTable" v-loading="feedTable.loading")
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
                             div(style="flex:none;margin-right:10px")
                                 el-tooltip(placement="bottom" content="Filter VIP only" :disabled="hideTooltips")
-                                    el-switch(v-model="feedTable.filters[2].value" @change="saveTableFilters" active-color="#13ce66")
-                            el-select(v-model="feedTable.filters[0].value" @change="saveTableFilters" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
+                                    el-switch(v-model="feedTable.vip" @change="feedTableLookup" active-color="#13ce66")
+                            el-select(v-model="feedTable.filter" @change="feedTableLookup" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
                                 el-option(v-once v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar']" :key="type" :label="type" :value="type")
-                            el-input(v-model="feedTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
+                            el-input(v-model="feedTable.search" placeholder="Search" @keyup.native.13="feedTableLookup" @change="feedTableLookup" clearable style="flex:none;width:150px;margin:0 10px")
                             el-tooltip(placement="bottom" content="Clear feed" :disabled="hideTooltips")
                                 el-button(type="default" @click="clearFeed()" icon="el-icon-delete" circle style="flex:none")
                     el-table-column(type="expand" width="20")
@@ -180,12 +180,12 @@ html
 
             //- gameLog
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'gameLog'")
-                data-tables(v-bind="gameLogTable")
+                data-tables(v-bind="gameLogTable" v-loading="gameLogTable.loading")
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
-                            el-select(v-model="gameLogTable.filters[0].value" @change="saveTableFilters" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
+                            el-select(v-model="gameLogTable.filter" @change="gameLogTableLookup" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
                                 el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'PortalSpawn', 'AvatarChange', 'Event', 'VideoPlay']" :key="type" :label="type" :value="type")
-                            el-input(v-model="gameLogTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
+                            el-input(v-model="gameLogTable.search" placeholder="Search" @keyup.native.13="gameLogTableLookup" @change="gameLogTableLookup" clearable style="flex:none;width:150px;margin:0 10px")
                             //- el-tooltip(placement="bottom" content="Reload game log" :disabled="hideTooltips")
                             //-     el-button(type="default" @click="resetGameLog" icon="el-icon-refresh" circle style="flex:none")
                     el-table-column(label="Date" prop="created_at" sortable="custom" width="90")
@@ -724,7 +724,7 @@ html
                                 span.name Support
                                 span.extra https://vrcx.pypy.moe/discord
                 div.options-container
-                    span.sub-header VRCX Updater
+                    span.header VRCX Updater
                     div.options-container-item
                         el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") Check for update
                     div.options-container-item
@@ -749,6 +749,14 @@ html
                     div.options-container-item
                         span.name Disable Tooltips
                         el-switch(v-model="hideTooltips" @change="saveOpenVROption")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-notebook-1" @click="promptMaxTableSizeDialog") Table Max Size
+                    div.options-container-item
+                        el-dropdown(@click.native.stop trigger="click" size="small")
+                            el-button(size="mini")
+                                span Page Size: {{ tablePageSize }} #[i.el-icon-arrow-down.el-icon--right]
+                            el-dropdown-menu(#default="dropdown")
+                                el-dropdown-item(v-for="(number) in [10, 15, 25, 50, 100]" v-text="number" @click.native="setTablePageSize(number)")
                 div.options-container
                     span.header Side Panel
                     br
@@ -815,6 +823,8 @@ html
                         span * Only works when VRChat is running.
                     div.options-container-item
                         span.name Enable
+                            el-tooltip(placement="top" style="margin-left:5px" content="Recommended to disable Rich Presence in VRChat config.json below to stop it from conflicting")
+                                i.el-icon-warning
                         el-switch(v-model="discordActive" @change="saveDiscordOption")
                     div.options-container-item
                         span.name Instance type/player count
@@ -903,7 +913,7 @@ html
                     div.options-container-item
                         span.name TTS Voice
                         el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
-                            el-button(size="mini" :disabled="!notificationTTS")
+                            el-button(size="mini" :disabled="notificationTTS === 'Never'")
                                 span {{ TTSvoices[notificationTTSVoice].name }} #[i.el-icon-arrow-down.el-icon--right]
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")
@@ -986,7 +996,7 @@ html
                     div.options-container-item
                         el-button(size="small" icon="el-icon-tickets" @click="showConsole") Show Console
                 div.options-container
-                    span.header SQLite Table Size
+                    span.sub-header SQLite Table Size
                     div.options-container-item
                         el-button(size="small" icon="el-icon-refresh" @click="getSqliteTableSizes") Refresh
                     div.options-container-item
@@ -1412,7 +1422,7 @@ html
                                     el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
                                         el-button(@click="refreshInstancePlayerCount(room.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                     span(v-if="room.occupants" style="margin-left:5px") {{ room.occupants }}  #[template(v-if="room.friendCount > 0") ({{ room.friendCount }})]
-                                .x-friend-list(style="margin:10px 0" v-if="room.$location.userId || room.users.length")
+                                .x-friend-list(style="margin:10px 0;max-height:unset" v-if="room.$location.userId || room.users.length")
                                     .x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)" class="x-friend-item-border")
                                         template(v-if="room.$location.user")
                                             .avatar(:class="userStatusClass(room.$location.user)")

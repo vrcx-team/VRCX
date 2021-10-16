@@ -4172,7 +4172,7 @@ speechSynthesis.getVoices();
         ) {
             var joiningMap = [];
             var bias = new Date(Date.now() - 120000).toJSON(); // 2 minutes
-            var feedTable = this.feedTable.data;
+            var feedTable = this.feedSessionTable;
             for (var i = feedTable.length - 1; i > -1; i--) {
                 var ctx = feedTable[i];
                 if (ctx.created_at < bias) {
@@ -4197,7 +4197,7 @@ speechSynthesis.getVoices();
                         continue;
                     }
                     var joining = true;
-                    var gameLogTable = this.gameLogTable.data;
+                    var gameLogTable = this.gameLogSessionTable;
                     for (var k = gameLogTable.length - 1; k > -1; k--) {
                         var gameLogItem = gameLogTable[k];
                         if (
@@ -4264,7 +4264,7 @@ speechSynthesis.getVoices();
 
     $app.methods.updateSharedFeedGameLog = function (forceUpdate) {
         // Location, OnPlayerJoined, OnPlayerLeft
-        var {data} = this.gameLogTable;
+        var data = this.gameLogSessionTable;
         var i = data.length;
         if (i > 0) {
             if (
@@ -4466,7 +4466,7 @@ speechSynthesis.getVoices();
 
     $app.methods.updateSharedFeedFeedTable = function (forceUpdate) {
         // GPS, Online, Offline, Status, Avatar
-        var {data} = this.feedTable;
+        var data = this.feedSessionTable;
         var i = data.length;
         if (i > 0) {
             if (
@@ -6884,12 +6884,11 @@ speechSynthesis.getVoices();
 
     // App: Feed
 
-    $app.methods.feedSearch = function (row, filter) {
-        var {value} = filter;
+    $app.methods.feedSearch = function (row) {
+        var value = this.feedTable.search.toUpperCase();
         if (!value) {
             return true;
         }
-        value = value.toUpperCase();
         switch (row.type) {
             case 'GPS':
                 if (String(row.displayName).toUpperCase().includes(value)) {
@@ -6919,6 +6918,9 @@ speechSynthesis.getVoices();
                 if (String(row.displayName).toUpperCase().includes(value)) {
                     return true;
                 }
+                if (String(row.status).toUpperCase().includes(value)) {
+                    return true;
+                }
                 if (
                     String(row.statusDescription).toUpperCase().includes(value)
                 ) {
@@ -6937,28 +6939,17 @@ speechSynthesis.getVoices();
         return true;
     };
 
+    $app.data.tablePageSize = 10;
+    if (configRepository.getInt('VRCX_tablePageSize')) {
+        $app.data.tablePageSize = configRepository.getInt('VRCX_tablePageSize');
+    }
+
     $app.data.feedTable = {
         data: [],
-        filters: [
-            {
-                prop: 'type',
-                value: [],
-                filterFn: (row, filter) =>
-                    filter.value.some((v) => v === row.type)
-            },
-            {
-                prop: 'displayName',
-                value: '',
-                filterFn: (row, filter) => $app.feedSearch(row, filter)
-            },
-            {
-                prop: 'userId',
-                value: false,
-                filterFn: (row, filter) =>
-                    !filter.value ||
-                    API.cachedFavoritesByObjectId.has(row.userId)
-            }
-        ],
+        search: '',
+        vip: false,
+        loading: false,
+        filter: [],
         tableProps: {
             stripe: true,
             size: 'mini',
@@ -6967,20 +6958,58 @@ speechSynthesis.getVoices();
                 order: 'descending'
             }
         },
-        pageSize: 10,
+        pageSize: $app.data.tablePageSize,
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 25, 50, 100]
+            pageSizes: [10, 15, 25, 50, 100]
         }
+    };
+
+    $app.data.feedSessionTable = [];
+
+    $app.methods.feedTableLookup = async function () {
+        configRepository.setString(
+            'VRCX_feedTableFilters',
+            JSON.stringify(this.feedTable.filter)
+        );
+        configRepository.setBool('VRCX_feedTableVIPFilter', this.feedTable.vip);
+        this.feedTable.loading = true;
+        var vipList = [];
+        if (this.feedTable.vip) {
+            vipList = this.getUserVipList();
+        }
+        this.feedTable.data = await database.lookupFeedDatabase(
+            this.feedTable.search,
+            this.feedTable.filter,
+            vipList
+        );
+        this.feedTable.loading = false;
+    };
+
+    $app.methods.getUserVipList = function () {
+        var vipList = [];
+        API.cachedFavorites.forEach((favorite) => {
+            if (favorite.type === 'friend') {
+                vipList.push(favorite.favoriteId);
+            }
+        });
+        return vipList;
     };
 
     API.$on('LOGIN', async function (args) {
         $app.feedTable.data = [];
+        $app.feedSessionTable = [];
         $app.friendLogInitStatus = false;
         await database.initUserTables(args.json.id);
-        $app.feedTable.data = await database.getFeedDatabase();
-        $app.sweepFeed();
+        // eslint-disable-next-line require-atomic-updates
+        $app.gameLogTable.data = await database.lookupGameLogDatabase(
+            $app.gameLogTable.search,
+            $app.gameLogTable.filter
+        );
+        // eslint-disable-next-line require-atomic-updates
+        $app.feedSessionTable = await database.getFeedDatabase();
+        $app.feedTableLookup();
         // eslint-disable-next-line require-atomic-updates
         $app.notificationTable.data = await database.getNotifications();
         if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
@@ -6989,9 +7018,7 @@ speechSynthesis.getVoices();
             await $app.initFriendLog(args.json.id);
         }
         this.getAuth();
-
         $app.updateSharedFeed(true);
-
         if ($app.isGameRunning) {
             $app.loadPlayerList();
         }
@@ -7004,7 +7031,7 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.loadPlayerList = function () {
-        var {data} = this.gameLogTable;
+        var data = this.gameLogSessionTable;
         if (data.length === 0) {
             return;
         }
@@ -7180,10 +7207,26 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.addFeed = function (feed) {
+        this.queueFeedNoty(feed);
+        this.feedSessionTable.push(feed);
+        if (
+            this.feedTable.filter.length > 0 &&
+            !this.feedTable.filter.includes(feed.type)
+        ) {
+            return;
+        }
+        if (
+            this.feedTable.vip &&
+            !API.cachedFavoritesByObjectId.has(feed.userId)
+        ) {
+            return;
+        }
+        if (!this.feedSearch(feed)) {
+            return;
+        }
         this.feedTable.data.push(feed);
         this.sweepFeed();
         this.updateSharedFeed(false);
-        this.queueFeedNoty(feed);
         this.notifyMenu('feed');
     };
 
@@ -7238,18 +7281,22 @@ speechSynthesis.getVoices();
     $app.methods.sweepFeed = function () {
         var {data} = this.feedTable;
         var j = data.length;
-        if (j > 5000) {
-            data.splice(0, j - 5000);
+        if (j > this.maxTableSize) {
+            data.splice(0, j - this.maxTableSize);
         }
-        var limit = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toJSON();
+
+        var date = new Date();
+        date.setDate(date.getDate() - 1); // 24 hour limit
+        var limit = date.toJSON();
         var i = 0;
-        while (i < j && data[i].created_at < limit) {
+        var k = this.feedSessionTable.length;
+        while (i < k && this.feedSessionTable[i].created_at < limit) {
             ++i;
         }
-        if (i === j) {
-            this.feedTable.data = [];
+        if (i === k) {
+            this.feedSessionTable = [];
         } else if (i) {
-            data.splice(0, i);
+            this.feedSessionTable.splice(0, i);
         }
     };
 
@@ -7276,12 +7323,7 @@ speechSynthesis.getVoices();
                 time
             };
             database.addGamelogJoinLeaveToDatabase(entry);
-            this.gameLogTable.data.push(entry);
-        }
-        if (playerList.length > 0) {
-            this.updateSharedFeed(false);
-            this.notifyMenu('gameLog');
-            this.sweepGameLog();
+            this.addGameLog(entry);
         }
         if (this.lastLocation.date !== 0) {
             var timeLocation = new Date().getTime() - this.lastLocation.date;
@@ -7328,12 +7370,11 @@ speechSynthesis.getVoices();
         this.updateDiscord();
     };
 
-    $app.methods.gameLogSearch = function (row, filter) {
-        var {value} = filter;
+    $app.methods.gameLogSearch = function (row) {
+        var value = this.gameLogTable.search.toUpperCase();
         if (!value) {
             return true;
         }
-        value = value.toUpperCase();
         switch (row.type) {
             case 'Location':
                 if (String(row.worldName).toUpperCase().includes(value)) {
@@ -7358,11 +7399,11 @@ speechSynthesis.getVoices();
                     return true;
                 }
                 return false;
-            case 'AvatarChange':
-                if (String(row.name).toUpperCase().includes(value)) {
-                    return true;
-                }
-                return false;
+            // case 'AvatarChange':
+            //     if (String(row.name).toUpperCase().includes(value)) {
+            //         return true;
+            //     }
+            //     return false;
             case 'Event':
                 if (String(row.data).toUpperCase().includes(value)) {
                     return true;
@@ -7385,33 +7426,9 @@ speechSynthesis.getVoices();
 
     $app.data.gameLogTable = {
         data: [],
-        lastEntryDate: '',
-        filters: [
-            {
-                prop: 'type',
-                value: [],
-                filterFn: (row, filter) =>
-                    filter.value.some((v) => v === row.type)
-            },
-            {
-                prop: 'displayName',
-                value: '',
-                filterFn: (row, filter) => $app.gameLogSearch(row, filter)
-            },
-            {
-                prop: 'displayName',
-                value: true,
-                filterFn: (row) =>
-                    row.displayName !== API.currentUser.displayName
-            },
-            {
-                prop: 'type',
-                value: true,
-                filterFn: (row) =>
-                    row.type !== 'Notification' &&
-                    row.type !== 'LocationDestination'
-            }
-        ],
+        loading: false,
+        search: '',
+        filter: [],
         tableProps: {
             stripe: true,
             size: 'mini',
@@ -7420,12 +7437,52 @@ speechSynthesis.getVoices();
                 order: 'descending'
             }
         },
-        pageSize: 10,
+        pageSize: $app.data.tablePageSize,
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 25, 50, 100]
+            pageSizes: [10, 15, 25, 50, 100]
         }
+    };
+
+    $app.data.gameLogSessionTable = [];
+
+    $app.methods.gameLogTableLookup = async function () {
+        configRepository.setString(
+            'VRCX_gameLogTableFilters',
+            JSON.stringify(this.gameLogTable.filter)
+        );
+        this.gameLogTable.loading = true;
+        this.gameLogTable.data = await database.lookupGameLogDatabase(
+            this.gameLogTable.search,
+            this.gameLogTable.filter
+        );
+        this.gameLogTable.loading = false;
+    };
+
+    $app.methods.addGameLog = function (entry) {
+        this.gameLogSessionTable.push(entry);
+        if (
+            this.gameLogTable.filter.length > 0 &&
+            !this.gameLogTable.filter.includes(entry.type)
+        ) {
+            return;
+        }
+        if (!this.gameLogSearch(entry)) {
+            return;
+        }
+        if (
+            entry.type === 'LocationDestination' ||
+            (entry.userId === API.currentUser.id &&
+                (entry.type === 'OnPlayerJoined' ||
+                    entry.type === 'OnPlayerLeft'))
+        ) {
+            return;
+        }
+        this.gameLogTable.data.push(entry);
+        this.sweepGameLog();
+        this.updateSharedFeed(false);
+        this.notifyMenu('gameLog');
     };
 
     $app.methods.resetGameLog = async function () {
@@ -7437,18 +7494,22 @@ speechSynthesis.getVoices();
     $app.methods.sweepGameLog = function () {
         var {data} = this.gameLogTable;
         var j = data.length;
-        if (j > 5000) {
-            data.splice(0, j - 5000);
+        if (j > this.maxTableSize) {
+            data.splice(0, j - this.maxTableSize);
         }
-        var limit = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toJSON();
+
+        var date = new Date();
+        date.setDate(date.getDate() - 1); // 24 hour limit
+        var limit = date.toJSON();
         var i = 0;
-        while (i < j && data[i].created_at < limit) {
+        var k = this.gameLogSessionTable.length;
+        while (i < k && this.gameLogSessionTable[i].created_at < limit) {
             ++i;
         }
-        if (i === j) {
-            this.gameLogTable.data = [];
+        if (i === k) {
+            this.gameLogSessionTable = [];
         } else if (i) {
-            data.splice(0, i);
+            this.gameLogSessionTable.splice(0, i);
         }
     };
 
@@ -7469,14 +7530,9 @@ speechSynthesis.getVoices();
 
     $app.methods.getGameLogTable = async function () {
         await database.initTables();
-        this.gameLogTable.data = await database.getGamelogDatabase();
-        this.sweepGameLog();
-        var length = this.gameLogTable.data.length;
-        if (length > 1) {
-            this.updateGameLog(this.gameLogTable.data[length - 1].created_at);
-        } else {
-            this.updateGameLog('1970-01-01');
-        }
+        this.gameLogSessionTable = await database.getGamelogDatabase();
+        var dateTill = await database.getLastDateGameLogDatabase();
+        this.updateGameLog(dateTill);
     };
 
     $app.methods.updateGameLog = async function (dateTill) {
@@ -7654,12 +7710,12 @@ speechSynthesis.getVoices();
                 }
                 return;
             case 'notification':
-                var entry = {
-                    created_at: gameLog.dt,
-                    type: 'Notification',
-                    data: gameLog.json
-                };
-                break;
+                // var entry = {
+                //     created_at: gameLog.dt,
+                //     type: 'Notification',
+                //     data: gameLog.json
+                // };
+                return;
             case 'event':
                 var entry = {
                     created_at: gameLog.dt,
@@ -7671,10 +7727,7 @@ speechSynthesis.getVoices();
         }
         if (pushToTable && entry) {
             this.queueGameLogNoty(entry);
-            this.gameLogTable.data.push(entry);
-            this.updateSharedFeed(false);
-            this.notifyMenu('gameLog');
-            this.sweepGameLog();
+            this.addGameLog(entry);
         }
     };
 
@@ -7741,10 +7794,7 @@ speechSynthesis.getVoices();
             if (pushToTable) {
                 this.setNowPlaying(entry);
                 this.queueGameLogNoty(entry);
-                this.gameLogTable.data.push(entry);
-                this.updateSharedFeed(false);
-                this.notifyMenu('gameLog');
-                this.sweepGameLog();
+                this.addGameLog(entry);
             }
             database.addGamelogVideoPlayToDatabase(entry);
         }
@@ -7811,10 +7861,7 @@ speechSynthesis.getVoices();
             if (pushToTable) {
                 this.setNowPlaying(entry);
                 this.queueGameLogNoty(entry);
-                this.gameLogTable.data.push(entry);
-                this.updateSharedFeed(false);
-                this.notifyMenu('gameLog');
-                this.sweepGameLog();
+                this.addGameLog(entry);
             }
             database.addGamelogVideoPlayToDatabase(entry);
         }
@@ -8636,11 +8683,11 @@ speechSynthesis.getVoices();
                 order: 'descending'
             }
         },
-        pageSize: 10,
+        pageSize: $app.data.tablePageSize,
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 25, 50, 100]
+            pageSizes: [10, 15, 25, 50, 100]
         }
     };
 
@@ -8917,11 +8964,11 @@ speechSynthesis.getVoices();
                 order: 'descending'
             }
         },
-        pageSize: 10,
+        pageSize: $app.data.tablePageSize,
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 25, 50, 100]
+            pageSizes: [10, 15, 25, 50, 100]
         }
     };
 
@@ -9001,11 +9048,11 @@ speechSynthesis.getVoices();
                 order: 'descending'
             }
         },
-        pageSize: 10,
+        pageSize: $app.data.tablePageSize,
         paginationProps: {
             small: true,
             layout: 'sizes,prev,pager,next,total',
-            pageSizes: [10, 25, 50, 100]
+            pageSizes: [10, 15, 25, 50, 100]
         }
     };
 
@@ -9142,18 +9189,6 @@ speechSynthesis.getVoices();
     // Save Table Filters
     $app.methods.saveTableFilters = function () {
         configRepository.setString(
-            'VRCX_feedTableFilters',
-            JSON.stringify(this.feedTable.filters[0].value)
-        );
-        configRepository.setBool(
-            'VRCX_feedTableVIPFilter',
-            this.feedTable.filters[2].value
-        );
-        configRepository.setString(
-            'VRCX_gameLogTableFilters',
-            JSON.stringify(this.gameLogTable.filters[0].value)
-        );
-        configRepository.setString(
             'VRCX_friendLogTableFilters',
             JSON.stringify(this.friendLogTable.filters[0].value)
         );
@@ -9167,15 +9202,15 @@ speechSynthesis.getVoices();
         );
     };
     if (configRepository.getString('VRCX_feedTableFilters')) {
-        $app.data.feedTable.filters[0].value = JSON.parse(
+        $app.data.feedTable.filter = JSON.parse(
             configRepository.getString('VRCX_feedTableFilters')
         );
-        $app.data.feedTable.filters[2].value = configRepository.getBool(
+        $app.data.feedTable.vip = configRepository.getBool(
             'VRCX_feedTableVIPFilter'
         );
     }
     if (configRepository.getString('VRCX_gameLogTableFilters')) {
-        $app.data.gameLogTable.filters[0].value = JSON.parse(
+        $app.data.gameLogTable.filter = JSON.parse(
             configRepository.getString('VRCX_gameLogTableFilters')
         );
     }
@@ -9349,6 +9384,8 @@ speechSynthesis.getVoices();
         'VRCX_autoUpdateVRCX'
     );
     $app.data.branch = configRepository.getString('VRCX_branch');
+    $app.data.maxTableSize = configRepository.getInt('VRCX_maxTableSize');
+    database.setmaxTableSize($app.data.maxTableSize);
     $app.methods.saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -9546,6 +9583,11 @@ speechSynthesis.getVoices();
     }
     if (!configRepository.getString('VRCX_lastVRCXVersion')) {
         configRepository.setString('VRCX_lastVRCXVersion', appVersion);
+    }
+    if (!configRepository.getInt('VRCX_maxTableSize')) {
+        $app.data.maxTableSize = 1000;
+        configRepository.getInt('VRCX_maxTableSize', $app.data.maxTableSize);
+        database.setmaxTableSize($app.data.maxTableSize);
     }
     if (!configRepository.getString('sharedFeedFilters')) {
         var sharedFeedFilters = {
@@ -10178,6 +10220,38 @@ speechSynthesis.getVoices();
                 }
             }
         });
+    };
+
+    $app.methods.promptMaxTableSizeDialog = function () {
+        this.$prompt('Enter a number', 'Max Table Size', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'Save',
+            cancelButtonText: 'Cancel',
+            inputValue: this.maxTableSize,
+            inputPattern: /\d+$/,
+            inputErrorMessage: 'Valid number is required',
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue) {
+                    this.maxTableSize = instance.inputValue;
+                    configRepository.setString(
+                        'VRCX_maxTableSize',
+                        this.maxTableSize
+                    );
+                    database.setmaxTableSize(this.maxTableSize);
+                    this.feedTableLookup();
+                }
+            }
+        });
+    };
+
+    $app.methods.setTablePageSize = function (pageSize) {
+        this.tablePageSize = pageSize;
+        this.feedTable.pageSize = pageSize;
+        this.gameLogTable.pageSize = pageSize;
+        this.friendLogTable.pageSize = pageSize;
+        this.playerModerationTable.pageSize = pageSize;
+        this.notificationTable.pageSize = pageSize;
+        configRepository.setInt('VRCX_tablePageSize', pageSize);
     };
 
     // App: Dialog

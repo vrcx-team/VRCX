@@ -1,28 +1,33 @@
 import sqliteService from '../service/sqlite.js';
 
 class Database {
+    setmaxTableSize(limit) {
+        Database.maxTableSize = limit;
+    }
+
     async initUserTables(userId) {
-        Database.userId = userId.replaceAll('-', '').replaceAll('_', '');
+        Database.userId = userId;
+        Database.userPrefix = userId.replaceAll('-', '').replaceAll('_', '');
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userId}_feed_gps (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, location TEXT, world_name TEXT, previous_location TEXT, time INTEGER)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_gps (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, location TEXT, world_name TEXT, previous_location TEXT, time INTEGER)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userId}_feed_status (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, status TEXT, status_description TEXT, previous_status TEXT, previous_status_description TEXT)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_status (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, status TEXT, status_description TEXT, previous_status TEXT, previous_status_description TEXT)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userId}_feed_avatar (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, owner_id TEXT, avatar_name TEXT, current_avatar_image_url TEXT, current_avatar_thumbnail_image_url TEXT, previous_current_avatar_image_url TEXT, previous_current_avatar_thumbnail_image_url TEXT)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_avatar (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, owner_id TEXT, avatar_name TEXT, current_avatar_image_url TEXT, current_avatar_thumbnail_image_url TEXT, previous_current_avatar_image_url TEXT, previous_current_avatar_thumbnail_image_url TEXT)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userId}_feed_online_offline (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, type TEXT, location TEXT, world_name TEXT, time INTEGER)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_online_offline (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, type TEXT, location TEXT, world_name TEXT, time INTEGER)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userId}_friend_log_current (user_id TEXT PRIMARY KEY, display_name TEXT, trust_level TEXT)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_friend_log_current (user_id TEXT PRIMARY KEY, display_name TEXT, trust_level TEXT)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userId}_friend_log_history (id INTEGER PRIMARY KEY, created_at TEXT, type TEXT, user_id TEXT, display_name TEXT, previous_display_name TEXT, trust_level TEXT, previous_trust_level TEXT)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_friend_log_history (id INTEGER PRIMARY KEY, created_at TEXT, type TEXT, user_id TEXT, display_name TEXT, previous_display_name TEXT, trust_level TEXT, previous_trust_level TEXT)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userId}_notifications (id TEXT PRIMARY KEY, created_at TEXT, type TEXT, sender_user_id TEXT, sender_username TEXT, receiver_user_id TEXT, message TEXT, world_id TEXT, world_name TEXT, image_url TEXT, invite_message TEXT, request_message TEXT, response_message TEXT, expired INTEGER)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_notifications (id TEXT PRIMARY KEY, created_at TEXT, type TEXT, sender_user_id TEXT, sender_username TEXT, receiver_user_id TEXT, message TEXT, world_id TEXT, world_name TEXT, image_url TEXT, invite_message TEXT, request_message TEXT, response_message TEXT, expired INTEGER)`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
@@ -50,7 +55,7 @@ class Database {
     async getFeedDatabase() {
         var feedDatabase = [];
         var date = new Date();
-        date.setDate(date.getDate() - 3); // 3 day limit
+        date.setDate(date.getDate() - 1); // 24 hour limit
         var dateOffset = date.toJSON();
         await sqliteService.execute((dbRow) => {
             var row = {
@@ -65,7 +70,7 @@ class Database {
                 time: dbRow[7]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_feed_gps WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
+        }, `SELECT * FROM ${Database.userPrefix}_feed_gps WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -79,7 +84,7 @@ class Database {
                 previousStatusDescription: dbRow[7]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_feed_status WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
+        }, `SELECT * FROM ${Database.userPrefix}_feed_status WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -95,7 +100,7 @@ class Database {
                 previousCurrentAvatarThumbnailImageUrl: dbRow[9]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_feed_avatar WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
+        }, `SELECT * FROM ${Database.userPrefix}_feed_avatar WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -108,7 +113,7 @@ class Database {
                 time: dbRow[7]
             };
             feedDatabase.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_feed_online_offline WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
+        }, `SELECT * FROM ${Database.userPrefix}_feed_online_offline WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
             var B = b.created_at;
@@ -121,7 +126,6 @@ class Database {
             return 0;
         };
         feedDatabase.sort(compareByCreatedAt);
-        feedDatabase.splice(0, feedDatabase.length - 5000);
         return feedDatabase;
     }
 
@@ -175,13 +179,13 @@ class Database {
                 trustLevel: dbRow[2]
             };
             friendLogCurrent.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_friend_log_current`);
+        }, `SELECT * FROM ${Database.userPrefix}_friend_log_current`);
         return friendLogCurrent;
     }
 
     setFriendLogCurrent(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${Database.userId}_friend_log_current (user_id, display_name, trust_level) VALUES (@user_id, @display_name, @trust_level)`,
+            `INSERT OR REPLACE INTO ${Database.userPrefix}_friend_log_current (user_id, display_name, trust_level) VALUES (@user_id, @display_name, @trust_level)`,
             {
                 '@user_id': entry.userId,
                 '@display_name': entry.displayName,
@@ -209,13 +213,13 @@ class Database {
         }
         sqlValues = sqlValues.slice(0, -2);
         sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO ${Database.userId}_friend_log_current (user_id, display_name, trust_level) VALUES ${sqlValues}`
+            `INSERT OR REPLACE INTO ${Database.userPrefix}_friend_log_current (user_id, display_name, trust_level) VALUES ${sqlValues}`
         );
     }
 
     deleteFriendLogCurrent(userId) {
         sqliteService.executeNonQuery(
-            `DELETE FROM ${Database.userId}_friend_log_current WHERE user_id = @user_id`,
+            `DELETE FROM ${Database.userPrefix}_friend_log_current WHERE user_id = @user_id`,
             {
                 '@user_id': userId
             }
@@ -239,13 +243,13 @@ class Database {
                 row.previousTrustLevel = dbRow[7];
             }
             friendLogHistory.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_friend_log_history LIMIT 10000`);
+        }, `SELECT * FROM ${Database.userPrefix}_friend_log_history`);
         return friendLogHistory;
     }
 
     addFriendLogHistory(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${Database.userId}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level) VALUES (@created_at, @type, @user_id, @display_name, @previous_display_name, @trust_level, @previous_trust_level)`,
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level) VALUES (@created_at, @type, @user_id, @display_name, @previous_display_name, @trust_level, @previous_trust_level)`,
             {
                 '@created_at': entry.created_at,
                 '@type': entry.type,
@@ -295,13 +299,13 @@ class Database {
             // sqlValues `('${line.created_at}', '${line.type}', '${line.userId}', '${line.displayName}', '${line.previousDisplayName}', '${line.trustLevel}', '${line.previousTrustLevel}'), `
         }
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${Database.userId}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level) VALUES ${sqlValues}`
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level) VALUES ${sqlValues}`
         );
     }
 
     deleteFriendLogHistory(rowId) {
         sqliteService.executeNonQuery(
-            `DELETE FROM ${Database.userId}_friend_log_history WHERE id = @row_id`,
+            `DELETE FROM ${Database.userPrefix}_friend_log_history WHERE id = @row_id`,
             {
                 '@row_id': rowId
             }
@@ -310,7 +314,7 @@ class Database {
 
     addGPSToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${Database.userId}_feed_gps (created_at, user_id, display_name, location, world_name, previous_location, time) VALUES (@created_at, @user_id, @display_name, @location, @world_name, @previous_location, @time)`,
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_feed_gps (created_at, user_id, display_name, location, world_name, previous_location, time) VALUES (@created_at, @user_id, @display_name, @location, @world_name, @previous_location, @time)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -325,7 +329,7 @@ class Database {
 
     addStatusToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${Database.userId}_feed_status (created_at, user_id, display_name, status, status_description, previous_status, previous_status_description) VALUES (@created_at, @user_id, @display_name, @status, @status_description, @previous_status, @previous_status_description)`,
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_feed_status (created_at, user_id, display_name, status, status_description, previous_status, previous_status_description) VALUES (@created_at, @user_id, @display_name, @status, @status_description, @previous_status, @previous_status_description)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -340,7 +344,7 @@ class Database {
 
     addAvatarToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${Database.userId}_feed_avatar (created_at, user_id, display_name, owner_id, avatar_name, current_avatar_image_url, current_avatar_thumbnail_image_url, previous_current_avatar_image_url, previous_current_avatar_thumbnail_image_url) VALUES (@created_at, @user_id, @display_name, @owner_id, @avatar_name, @current_avatar_image_url, @current_avatar_thumbnail_image_url, @previous_current_avatar_image_url, @previous_current_avatar_thumbnail_image_url)`,
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_feed_avatar (created_at, user_id, display_name, owner_id, avatar_name, current_avatar_image_url, current_avatar_thumbnail_image_url, previous_current_avatar_image_url, previous_current_avatar_thumbnail_image_url) VALUES (@created_at, @user_id, @display_name, @owner_id, @avatar_name, @current_avatar_image_url, @current_avatar_thumbnail_image_url, @previous_current_avatar_image_url, @previous_current_avatar_thumbnail_image_url)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -360,7 +364,7 @@ class Database {
 
     addOnlineOfflineToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${Database.userId}_feed_online_offline (created_at, user_id, display_name, type, location, world_name, time) VALUES (@created_at, @user_id, @display_name, @type, @location, @world_name, @time)`,
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_feed_online_offline (created_at, user_id, display_name, type, location, world_name, time) VALUES (@created_at, @user_id, @display_name, @type, @location, @world_name, @time)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -376,7 +380,7 @@ class Database {
     async getGamelogDatabase() {
         var gamelogDatabase = [];
         var date = new Date();
-        date.setDate(date.getDate() - 7); // 7 day limit
+        date.setDate(date.getDate() - 1); // 24 hour limit
         var dateOffset = date.toJSON();
         await sqliteService.execute((dbRow) => {
             var row = {
@@ -389,7 +393,7 @@ class Database {
                 time: dbRow[5]
             };
             gamelogDatabase.unshift(row);
-        }, `SELECT * FROM gamelog_location WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
+        }, `SELECT * FROM gamelog_location WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -401,7 +405,7 @@ class Database {
                 time: dbRow[6]
             };
             gamelogDatabase.unshift(row);
-        }, `SELECT * FROM gamelog_join_leave WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
+        }, `SELECT * FROM gamelog_join_leave WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -414,7 +418,7 @@ class Database {
                 worldName: dbRow[6]
             };
             gamelogDatabase.unshift(row);
-        }, `SELECT * FROM gamelog_portal_spawn WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
+        }, `SELECT * FROM gamelog_portal_spawn WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -428,7 +432,7 @@ class Database {
                 userId: dbRow[7]
             };
             gamelogDatabase.unshift(row);
-        }, `SELECT * FROM gamelog_video_play WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
+        }, `SELECT * FROM gamelog_video_play WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -437,7 +441,7 @@ class Database {
                 data: dbRow[2]
             };
             gamelogDatabase.unshift(row);
-        }, `SELECT * FROM gamelog_event WHERE created_at >= date('${dateOffset}') LIMIT 5000`);
+        }, `SELECT * FROM gamelog_event WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
             var B = b.created_at;
@@ -449,7 +453,6 @@ class Database {
             }
             return 0;
         };
-        gamelogDatabase.splice(0, gamelogDatabase.length - 5000);
         gamelogDatabase.sort(compareByCreatedAt);
         return gamelogDatabase;
     }
@@ -555,7 +558,7 @@ class Database {
                 row.$isExpired = true;
             }
             notifications.unshift(row);
-        }, `SELECT * FROM ${Database.userId}_notifications LIMIT 5000`);
+        }, `SELECT * FROM ${Database.userPrefix}_notifications ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         return notifications;
     }
 
@@ -584,7 +587,7 @@ class Database {
             expired = 1;
         }
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${Database.userId}_notifications (id, created_at, type, sender_user_id, sender_username, receiver_user_id, message, world_id, world_name, image_url, invite_message, request_message, response_message, expired) VALUES (@id, @created_at, @type, @sender_user_id, @sender_username, @receiver_user_id, @message, @world_id, @world_name, @image_url, @invite_message, @request_message, @response_message, @expired)`,
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_notifications (id, created_at, type, sender_user_id, sender_username, receiver_user_id, message, world_id, world_name, image_url, invite_message, request_message, response_message, expired) VALUES (@id, @created_at, @type, @sender_user_id, @sender_username, @receiver_user_id, @message, @world_id, @world_name, @image_url, @invite_message, @request_message, @response_message, @expired)`,
             {
                 '@id': entry.id,
                 '@created_at': entry.created_at,
@@ -606,7 +609,7 @@ class Database {
 
     deleteNotification(rowId) {
         sqliteService.executeNonQuery(
-            `DELETE FROM ${Database.userId}_notifications WHERE id = @row_id`,
+            `DELETE FROM ${Database.userPrefix}_notifications WHERE id = @row_id`,
             {
                 '@row_id': rowId
             }
@@ -619,7 +622,7 @@ class Database {
             expired = 1;
         }
         sqliteService.executeNonQuery(
-            `UPDATE ${Database.userId}_notifications SET expired = @expired WHERE id = @id`,
+            `UPDATE ${Database.userPrefix}_notifications SET expired = @expired WHERE id = @id`,
             {
                 '@id': entry.id,
                 '@expired': expired
@@ -631,7 +634,7 @@ class Database {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${Database.userId}_feed_gps`);
+        }, `SELECT COUNT(*) FROM ${Database.userPrefix}_feed_gps`);
         return size;
     }
 
@@ -639,7 +642,7 @@ class Database {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${Database.userId}_feed_status`);
+        }, `SELECT COUNT(*) FROM ${Database.userPrefix}_feed_status`);
         return size;
     }
 
@@ -647,7 +650,7 @@ class Database {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${Database.userId}_feed_avatar`);
+        }, `SELECT COUNT(*) FROM ${Database.userPrefix}_feed_avatar`);
         return size;
     }
 
@@ -655,7 +658,7 @@ class Database {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${Database.userId}_feed_online_offline`);
+        }, `SELECT COUNT(*) FROM ${Database.userPrefix}_feed_online_offline`);
         return size;
     }
 
@@ -663,7 +666,7 @@ class Database {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${Database.userId}_friend_log_history`);
+        }, `SELECT COUNT(*) FROM ${Database.userPrefix}_friend_log_history`);
         return size;
     }
 
@@ -671,7 +674,7 @@ class Database {
         var size = 0;
         await sqliteService.execute((row) => {
             size = row[0];
-        }, `SELECT COUNT(*) FROM ${Database.userId}_notifications`);
+        }, `SELECT COUNT(*) FROM ${Database.userPrefix}_notifications`);
         return size;
     }
 
@@ -804,6 +807,301 @@ class Database {
             }
         }, `SELECT time FROM gamelog_join_leave WHERE (type = 'OnPlayerLeft') AND (user_id = '${userId}' OR display_name = '${displayName}')`);
         return ref;
+    }
+
+    async lookupFeedDatabase(search, filters, vipList) {
+        var search = search.replaceAll("'", "''");
+        var vipQuery = '';
+        if (vipList.length > 0) {
+            vipQuery = 'AND user_id IN (';
+            vipList.forEach((vip, i) => {
+                vipQuery += `'${vip.replaceAll("'", "''")}'`;
+                if (i < vipList.length - 1) {
+                    vipQuery += ', ';
+                }
+            });
+            vipQuery += ')';
+        }
+        var gps = true;
+        var status = true;
+        var avatar = true;
+        var online = true;
+        var offline = true;
+        if (filters.length > 0) {
+            gps = false;
+            status = false;
+            avatar = false;
+            online = false;
+            offline = false;
+            filters.forEach((filter) => {
+                switch (filter) {
+                    case 'GPS':
+                        gps = true;
+                        break;
+                    case 'Status':
+                        status = true;
+                        break;
+                    case 'Avatar':
+                        avatar = true;
+                        break;
+                    case 'Online':
+                        online = true;
+                        break;
+                    case 'Offline':
+                        offline = true;
+                        break;
+                }
+            });
+        }
+        var feedDatabase = [];
+        if (gps) {
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    userId: dbRow[2],
+                    displayName: dbRow[3],
+                    type: 'GPS',
+                    location: dbRow[4],
+                    worldName: dbRow[5],
+                    previousLocation: dbRow[6],
+                    time: dbRow[7]
+                };
+                feedDatabase.unshift(row);
+            }, `SELECT * FROM ${Database.userPrefix}_feed_gps WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
+        if (status) {
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    userId: dbRow[2],
+                    displayName: dbRow[3],
+                    type: 'Status',
+                    status: dbRow[4],
+                    statusDescription: dbRow[5],
+                    previousStatus: dbRow[6],
+                    previousStatusDescription: dbRow[7]
+                };
+                feedDatabase.unshift(row);
+            }, `SELECT * FROM ${Database.userPrefix}_feed_status WHERE (display_name LIKE '%${search}%' OR status LIKE '%${search}%' OR status_description LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
+        if (avatar) {
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    userId: dbRow[2],
+                    displayName: dbRow[3],
+                    type: 'Avatar',
+                    ownerId: dbRow[4],
+                    avatarName: dbRow[5],
+                    currentAvatarImageUrl: dbRow[6],
+                    currentAvatarThumbnailImageUrl: dbRow[7],
+                    previousCurrentAvatarImageUrl: dbRow[8],
+                    previousCurrentAvatarThumbnailImageUrl: dbRow[9]
+                };
+                feedDatabase.unshift(row);
+            }, `SELECT * FROM ${Database.userPrefix}_feed_avatar WHERE (display_name LIKE '%${search}%' OR avatar_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
+        if (online || offline) {
+            var query = '';
+            if (!online || !offline) {
+                if (online) {
+                    query = "AND type = 'Online'";
+                } else if (offline) {
+                    query = "AND type = 'Offline'";
+                }
+            }
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    userId: dbRow[2],
+                    displayName: dbRow[3],
+                    type: dbRow[4],
+                    location: dbRow[5],
+                    worldName: dbRow[6],
+                    time: dbRow[7]
+                };
+                feedDatabase.unshift(row);
+            }, `SELECT * FROM ${Database.userPrefix}_feed_online_offline WHERE ((display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
+        var compareByCreatedAt = function (a, b) {
+            var A = a.created_at;
+            var B = b.created_at;
+            if (A < B) {
+                return -1;
+            }
+            if (A > B) {
+                return 1;
+            }
+            return 0;
+        };
+        feedDatabase.sort(compareByCreatedAt);
+        feedDatabase.splice(0, feedDatabase.length - Database.maxTableSize);
+        return feedDatabase;
+    }
+
+    async lookupGameLogDatabase(search, filters) {
+        var search = search.replaceAll("'", "''");
+        var location = true;
+        var onplayerjoined = true;
+        var onplayerleft = true;
+        var portalspawn = true;
+        var msgevent = true;
+        var videoplay = true;
+        if (filters.length > 0) {
+            location = false;
+            onplayerjoined = false;
+            onplayerleft = false;
+            portalspawn = false;
+            msgevent = false;
+            videoplay = false;
+            filters.forEach((filter) => {
+                switch (filter) {
+                    case 'Location':
+                        location = true;
+                        break;
+                    case 'OnPlayerJoined':
+                        onplayerjoined = true;
+                        break;
+                    case 'OnPlayerLeft':
+                        onplayerleft = true;
+                        break;
+                    case 'PortalSpawn':
+                        portalspawn = true;
+                        break;
+                    case 'Event':
+                        msgevent = true;
+                        break;
+                    case 'VideoPlay':
+                        videoplay = true;
+                        break;
+                }
+            });
+        }
+        var gamelogDatabase = [];
+        if (location) {
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    type: 'Location',
+                    location: dbRow[2],
+                    worldId: dbRow[3],
+                    worldName: dbRow[4],
+                    time: dbRow[5]
+                };
+                gamelogDatabase.unshift(row);
+            }, `SELECT * FROM gamelog_location WHERE world_name LIKE '%${search}%' ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
+        if (onplayerjoined || onplayerleft) {
+            var query = '';
+            if (!onplayerjoined || !onplayerleft) {
+                if (onplayerjoined) {
+                    query = "AND type = 'OnPlayerJoined'";
+                } else if (onplayerleft) {
+                    query = "AND type = 'OnPlayerLeft'";
+                }
+            }
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    type: dbRow[2],
+                    displayName: dbRow[3],
+                    location: dbRow[4],
+                    userId: dbRow[5],
+                    time: dbRow[6]
+                };
+                gamelogDatabase.unshift(row);
+            }, `SELECT * FROM gamelog_join_leave WHERE (display_name LIKE '%${search}%' AND user_id != '${Database.userId}') ${query} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
+        if (portalspawn) {
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    type: 'PortalSpawn',
+                    displayName: dbRow[2],
+                    location: dbRow[3],
+                    userId: dbRow[4],
+                    instanceId: dbRow[5],
+                    worldName: dbRow[6]
+                };
+                gamelogDatabase.unshift(row);
+            }, `SELECT * FROM gamelog_portal_spawn WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
+        if (msgevent) {
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    type: 'Event',
+                    data: dbRow[2]
+                };
+                gamelogDatabase.unshift(row);
+            }, `SELECT * FROM gamelog_event WHERE data LIKE '%${search}%' ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
+        if (videoplay) {
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    type: 'VideoPlay',
+                    videoUrl: dbRow[2],
+                    videoName: dbRow[3],
+                    videoId: dbRow[4],
+                    location: dbRow[5],
+                    displayName: dbRow[6],
+                    userId: dbRow[7]
+                };
+                gamelogDatabase.unshift(row);
+            }, `SELECT * FROM gamelog_video_play WHERE video_url LIKE '%${search}%' OR video_name LIKE '%${search}%' OR display_name LIKE '%${search}%' ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
+        var compareByCreatedAt = function (a, b) {
+            var A = a.created_at;
+            var B = b.created_at;
+            if (A < B) {
+                return -1;
+            }
+            if (A > B) {
+                return 1;
+            }
+            return 0;
+        };
+        gamelogDatabase.sort(compareByCreatedAt);
+        gamelogDatabase.splice(
+            0,
+            gamelogDatabase.length - Database.maxTableSize
+        );
+        return gamelogDatabase;
+    }
+
+    async getLastDateGameLogDatabase() {
+        var gamelogDatabase = [];
+        var date = '1970-01-01';
+        await sqliteService.execute((dbRow) => {
+            gamelogDatabase.unshift(dbRow[0]);
+        }, 'SELECT created_at FROM gamelog_location ORDER BY id DESC LIMIT 1');
+        await sqliteService.execute((dbRow) => {
+            gamelogDatabase.unshift(dbRow[0]);
+        }, 'SELECT created_at FROM gamelog_join_leave ORDER BY id DESC LIMIT 1');
+        await sqliteService.execute((dbRow) => {
+            gamelogDatabase.unshift(dbRow[0]);
+        }, 'SELECT created_at FROM gamelog_portal_spawn ORDER BY id DESC LIMIT 1');
+        await sqliteService.execute((dbRow) => {
+            gamelogDatabase.unshift(dbRow[0]);
+        }, 'SELECT created_at FROM gamelog_event ORDER BY id DESC LIMIT 1');
+        await sqliteService.execute((dbRow) => {
+            gamelogDatabase.unshift(dbRow[0]);
+        }, 'SELECT created_at FROM gamelog_video_play ORDER BY id DESC LIMIT 1');
+        if (gamelogDatabase.length > 0) {
+            gamelogDatabase.sort();
+            date = gamelogDatabase[gamelogDatabase.length - 1];
+        }
+        return date;
     }
 }
 
