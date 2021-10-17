@@ -368,7 +368,14 @@ import configRepository from './repository/config.js';
                 )}`;
                 break;
             case 'Online':
-                text = `<strong>${noty.displayName}</strong> has logged in`;
+                var locationName = '';
+                if (noty.worldName) {
+                    locationName = ` to ${this.displayLocation(
+                        noty.location,
+                        noty.worldName
+                    )}`;
+                }
+                text = `<strong>${noty.displayName}</strong> has logged in${locationName}`;
                 break;
             case 'Offline':
                 text = `<strong>${noty.displayName}</strong> has logged out`;

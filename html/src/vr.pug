@@ -31,7 +31,9 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.displayName")] ✔
+                                        | #[span.name(v-text="feed.displayName")] ✔  
+                                        template(v-if="feed.worldName")
+                                            | #[location(:location="feed.location" :hint="feed.worldName")]
                             div(v-else-if="feed.type === 'Status'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -122,9 +124,9 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | ✨ #[span.name(v-text="feed.displayName")]
+                                        | ✨ #[span.name(v-text="feed.displayName")]  
                                         template(v-if="feed.worldName")
-                                            |  #[location(:location="feed.instanceId" :hint="feed.worldName")]
+                                            | #[location(:location="feed.instanceId" :hint="feed.worldName")]
                             div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -178,7 +180,9 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.displayName")] has logged in
+                                        | #[span.name(v-text="feed.displayName")] has logged in  
+                                        template(v-if="feed.worldName")
+                                            | to #[location(:location="feed.location" :hint="feed.worldName")]
                             div(v-else-if="feed.type === 'Status'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
@@ -268,9 +272,9 @@ html
                                 .detail
                                     span.extra
                                         span.time {{ feed.created_at | formatDate('HH:MI') }}
-                                        | #[span.name(v-text="feed.displayName")] has spawned a portal
+                                        | #[span.name(v-text="feed.displayName")] has spawned a portal  
                                         template(v-if="feed.worldName")
-                                            |  to #[location(:location="feed.instanceId" :hint="feed.worldName")]
+                                            | to #[location(:location="feed.instanceId" :hint="feed.worldName")]
                             div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                 .detail
                                     span.extra
