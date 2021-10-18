@@ -3,6 +3,7 @@
 ;https://nsis.sourceforge.io/ApplicationID_plug-in
 ;https://nsis.sourceforge.io/ShellExecAsUser_plug-in
 ;https://nsis.sourceforge.io/NsProcess_plugin
+;https://nsis.sourceforge.io/Inetc_plug-in
 
 ;--------------------------------
 ;Include Modern UI
@@ -128,9 +129,18 @@ Section "Install" SecInstall
 
     afterupgrade:
 
+    ReadRegStr $R0 HKCR "Installer\Dependencies\VC,redist.x64,amd64,14.29,bundle" "Version"
+    IfErrors 0 VSRedistInstalled
+
+    inetc::get "https://aka.ms/vs/16/release/vc_redist.x64.exe" $TEMP\vcredist_x64.exe
+    ExecWait "$TEMP\vcredist_x64.exe /install /quiet /norestart"
+    Delete "$TEMP\vcredist_x64.exe"
+
+    VSRedistInstalled:
+
     SetOutPath "$INSTDIR"
 
-    File /r /x *.json /x *.sqlite3 /x *.pdb /x userdata /x cache "..\bin\x64\Release\*.*"
+    File /r /x *.log /x *.pdb "..\bin\x64\Release\*.*"
 
     WriteRegStr HKLM "Software\VRCX" "InstallDir" $INSTDIR
     WriteUninstaller "$INSTDIR\Uninstall.exe"
