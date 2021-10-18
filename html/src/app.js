@@ -4163,6 +4163,7 @@ speechSynthesis.getVoices();
         var locationBias = Date.now() - 30000; // 30 seconds
         if (
             this.isGameRunning &&
+            this.lastLocation.location &&
             L.accessType !== 'friends' &&
             this.lastLocation.date < locationBias &&
             (this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends' ||
@@ -4179,7 +4180,7 @@ speechSynthesis.getVoices();
                     break;
                 }
                 if (
-                    ctx.type === 'GPS' &&
+                    (ctx.type === 'GPS' || ctx.type === 'Online') &&
                     ctx.location === this.lastLocation.location
                 ) {
                     if (joiningMap[ctx.displayName]) {
