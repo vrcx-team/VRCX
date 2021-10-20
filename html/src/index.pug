@@ -221,7 +221,7 @@ html
             //- search
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'search'")
                 div(style="margin:0 0 10px;display:flex;align-items:center")
-                    el-input(v-model="searchText" clearable placeholder="Search" @keyup.native.13="search()" style="flex:1")
+                    el-input(v-model="searchText" placeholder="Search" @keyup.native.13="search()" style="flex:1")
                     el-tooltip(placement="bottom" content="Clear search results" :disabled="hideTooltips")
                         el-button(type="default" @click="clearSearch()" icon="el-icon-delete" circle style="flex:none;margin-left:10px")
                 el-tabs(ref="searchTab" type="card" style="margin-top:15px")

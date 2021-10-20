@@ -6894,6 +6894,7 @@ speechSynthesis.getVoices();
             } else {
                 this.showUserDialog(value);
             }
+            this.quickSearchVisibleChange(value);
         }
     };
 
@@ -6901,6 +6902,7 @@ speechSynthesis.getVoices();
     $app.methods.quickSearchVisibleChange = function (value) {
         if (value) {
             this.quickSearch = '';
+            this.quickSearchItems = [];
         }
     };
 
@@ -8251,6 +8253,9 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.clearSearch = function () {
+        this.searchText = '';
+        this.searchUserParams = {};
+        this.searchWorldParams = {};
         this.searchUserResults = [];
         this.searchWorldResults = [];
         this.searchAvatarResults = [];
