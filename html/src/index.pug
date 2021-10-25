@@ -1125,11 +1125,11 @@ html
                 div(v-loading="userDialog.loading")
                     div(style="display:flex")
                         el-popover(v-if="userDialog.ref.profilePicOverride" placement="right" width="500px" trigger="click")
-                            img.x-link(slot="reference" v-lazy="userDialog.ref.profilePicOverride" style="flex:none;width:160px;height:120px;border-radius:4px;object-fit:cover")
-                            img.x-link(v-lazy="userDialog.ref.profilePicOverride" style="width:500px;height:375px;object-fit:cover" @click="openExternalLink(userDialog.ref.profilePicOverride)")
+                            img.x-link(slot="reference" v-lazy="userDialog.ref.profilePicOverride" style="flex:none;height:120px;width:213.33px;border-radius:4px;object-fit:cover")
+                            img.x-link(v-lazy="userDialog.ref.profilePicOverride" style="height:400px" @click="openExternalLink(userDialog.ref.profilePicOverride)")
                         el-popover(v-else placement="right" width="500px" trigger="click")
-                            img.x-link(slot="reference" v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                            img.x-link(v-lazy="userDialog.ref.currentAvatarImageUrl" style="width:500px;height:375px" @click="openExternalLink(userDialog.ref.currentAvatarImageUrl)")
+                            img.x-link(slot="reference" v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="flex:none;height:120px;width:160px;border-radius:4px;object-fit:cover")
+                            img.x-link(v-lazy="userDialog.ref.currentAvatarImageUrl" style="height:500px" @click="openExternalLink(userDialog.ref.currentAvatarImageUrl)")
                         div(style="flex:1;display:flex;align-items:center;margin-left:15px")
                             div(style="flex:1")
                                 div
@@ -1163,8 +1163,8 @@ html
                                     span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
                             div(v-if="userDialog.ref.userIcon" style="flex:none;margin-right:10px")
                                 el-popover(placement="right" width="500px" trigger="click")
-                                    img.x-link(slot="reference" v-lazy="userDialog.ref.userIcon" style="flex:none;width:120px;height:120px;border-radius:4px")
-                                    img.x-link(v-lazy="userDialog.ref.userIcon" style="width:500px;height:500px;" @click="openExternalLink(userDialog.ref.userIcon)")
+                                    img.x-link(slot="reference" v-lazy="userDialog.ref.userIcon" style="flex:none;width:120px;height:120px;border-radius:4px;object-fit:cover")
+                                    img.x-link(v-lazy="userDialog.ref.userIcon" style="height:500px" @click="openExternalLink(userDialog.ref.userIcon)")
                             div(style="flex:none")
                                 el-tooltip(v-if="userDialog.isFavorite" placement="top" content="Remove from favorites" :disabled="hideTooltips")
                                     el-button(@click="userDialogCommand('Delete Favorite')" type="warning" icon="el-icon-star-on" circle)
@@ -1399,8 +1399,7 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
-                                            el-dropdown-item(icon="el-icon-upload2" command="Upload Image") Upload Image (1200x900)
-                                                input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
+                                            el-dropdown-item(v-if="worldDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") Download Unity Package
                                             el-dropdown-item(icon="el-icon-delete" command="Delete" style="color:#F56C6C" divided) Delete
                     el-tabs
                         el-tab-pane(label="Instances")
@@ -1548,8 +1547,6 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
-                                            el-dropdown-item(icon="el-icon-upload2" command="Upload Image") Upload Image (1200x900)
-                                                input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
                                             el-dropdown-item(v-if="avatarDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") Download Unity Package
                                             el-dropdown-item(icon="el-icon-user" command="Delete" style="color:#F56C6C" divided) Delete
                     el-tabs
@@ -2363,6 +2360,12 @@ html
             //- dialog: Change avatar image
             el-dialog.x-dialog(ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" title="Change Avatar Image" width="800px")
                 div(v-loading="changeAvatarImageDialogLoading")
+                    input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
+                    el-button-group(style="padding-bottom:10px")
+                        el-button(type="default" size="small" @click="displayPreviousImages('Avatar', 'Change')" icon="el-icon-refresh") Refresh
+                        el-button(type="default" size="small" @click="uploadAvatarImage" icon="el-icon-upload2") Upload Image (1200x900)
+                        //- el-button(type="default" size="small" @click="deleteAvatarImage" icon="el-icon-delete") Delete Latest Image
+                    br
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
                         .x-change-image-item(@click="setAvatarImage(image)" style="cursor:pointer" :class="{ 'current-image': compareCurrentImage(image) }")
                             img.image(v-lazy="image.file.url")
@@ -2370,6 +2373,12 @@ html
             //- dialog: Change world image
             el-dialog.x-dialog(ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" title="Change World Image" width="800px")
                 div(v-loading="changeWorldImageDialogLoading")
+                    input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
+                    el-button-group(style="padding-bottom:10px")
+                        el-button(type="default" size="small" @click="displayPreviousImages('World', 'Change')" icon="el-icon-refresh") Refresh
+                        el-button(type="default" size="small" @click="uploadWorldImage" icon="el-icon-upload2") Upload Image (1200x900)
+                        //- el-button(type="default" size="small" @click="deleteWorldImage" icon="el-icon-delete") Delete Latest Image
+                    br
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
                         .x-change-image-item(@click="setWorldImage(image)" style="cursor:pointer" :class="{ 'current-image': compareCurrentImage(image) }")
                             img.image(v-lazy="image.file.url")
