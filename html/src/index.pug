@@ -1398,9 +1398,14 @@ html
                                         template(v-else)
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
+                                            el-dropdown-item(icon="el-icon-edit" command="Change Capacity") Change Capacity
+                                            el-dropdown-item(icon="el-icon-edit" command="Change YouTube Preview") Change YouTube Preview
+                                            el-dropdown-item(icon="el-icon-edit" command="Change Tags") Change Tags
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
                                             el-dropdown-item(v-if="worldDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") Download Unity Package
-                                            el-dropdown-item(icon="el-icon-delete" command="Delete" style="color:#F56C6C" divided) Delete
+                                            el-dropdown-item(v-if="worldDialog.ref.tags.includes('system_approved') || worldDialog.ref.tags.includes('system_labs')" icon="el-icon-view" command="Unpublish" divided) Unpublish From Labs
+                                            el-dropdown-item(v-else icon="el-icon-view" command="Publish" divided) Publish To Labs
+                                            el-dropdown-item(icon="el-icon-delete" command="Delete" style="color:#F56C6C") Delete
                     el-tabs
                         el-tab-pane(label="Instances")
                             div.
@@ -1439,12 +1444,17 @@ html
                                                 timer(:epoch="user.$location_at")
                         el-tab-pane(label="Info")
                             .x-friend-list(style="max-height:none")
-                                .x-friend-item(style="width:100%;cursor:default")
-                                    .detail
-                                        span.name World ID
-                                        span.extra {{ worldDialog.id }}
-                                            el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                                                el-button(@click="copyWorld(worldDialog.id)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                                div(style="width:100%;display:flex")
+                                    .x-friend-item(style="width:350px;cursor:default")
+                                        .detail
+                                            span.name World ID
+                                            span.extra {{ worldDialog.id }}
+                                                el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                                                    el-button(@click="copyWorld(worldDialog.id)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                                    .x-friend-item(v-if="worldDialog.ref.previewYoutubeId" style="width:350px" @click="openExternalLink(`https://www.youtube.com/watch?v=${worldDialog.ref.previewYoutubeId}`)")
+                                        .detail
+                                            span.name YouTube Preview
+                                            span.extra https://www.youtube.com/watch?v={{ worldDialog.ref.previewYoutubeId }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Players
@@ -1817,6 +1827,17 @@ html
                     div(style="display:flex")
                         el-button(size="small" @click="openExternalLink('https://rapidapi.com/blog/how-to-get-youtube-api-key/')") Guide
                         el-button(type="primary" size="small" @click="testYouTubeApiKey" style="margin-left:auto") Save
+                        
+            //- dialog: Set World Tags
+            el-dialog.x-dialog(ref="setWorldTagsDialog" :visible.sync="setWorldTagsDialog.visible" title="Set World Tags" width="400px")
+                el-checkbox(v-model="setWorldTagsDialog.debugAllowed") Enable world debugging for others
+                div(style='font-size:12px;margin-top:10px')
+                    | Enter tags comma separated #[br]
+                el-input(type="textarea" v-model="setWorldTagsDialog.tags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+                template(#footer)
+                    div(style="display:flex")
+                        el-button(size="small" @click="setWorldTagsDialog.visible = false") Cancel
+                        el-button(type="primary" size="small" @click="saveSetWorldTagsDialog") Save
                     
             //- dialog: Cache Download
             el-dialog.x-dialog(ref="downloadDialog" :visible.sync="downloadDialog.visible" title="Download History" width="770px")

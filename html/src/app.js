@@ -1805,12 +1805,50 @@ speechSynthesis.getVoices();
 
     /*
         params: {
-            worldId: string
+            id: string
         }
     */
     API.saveWorld = function (params) {
         return this.call(`worlds/${params.id}`, {
             method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('WORLD:SAVE', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            worldId: string
+        }
+    */
+    API.publishWorld = function (params) {
+        return this.call(`worlds/${params.worldId}/publish`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('WORLD:SAVE', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            worldId: string
+        }
+    */
+    API.unpublishWorld = function (params) {
+        return this.call(`worlds/${params.worldId}/publish`, {
+            method: 'DELETE',
             params
         }).then((json) => {
             var args = {
@@ -10253,6 +10291,88 @@ speechSynthesis.getVoices();
         });
     };
 
+    $app.methods.promptChangeWorldCapacity = function (world) {
+        this.$prompt('Enter world capacity, Max: 40', 'Change Capacity', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputValue: world.ref.capacity,
+            inputPattern: /\d+$/,
+            inputErrorMessage: 'Valid number is required',
+            callback: (action, instance) => {
+                if (
+                    action === 'confirm' &&
+                    instance.inputValue !== world.ref.capacity
+                ) {
+                    API.saveWorld({
+                        id: world.id,
+                        capacity: instance.inputValue
+                    }).then((args) => {
+                        this.$message({
+                            message: 'World capacity changed',
+                            type: 'success'
+                        });
+                        return args;
+                    });
+                }
+            }
+        });
+    };
+
+    $app.methods.promptChangeWorldYouTubePreview = function (world) {
+        this.$prompt(
+            'Enter world YouTube preview, WARNING: once a preview is added it cannot be removed',
+            'Change YouTube Preview',
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+                inputValue: world.ref.previewYoutubeId,
+                inputErrorMessage: 'Valid YouTube URL is required',
+                callback: (action, instance) => {
+                    if (
+                        action === 'confirm' &&
+                        instance.inputValue !== world.ref.previewYoutubeId
+                    ) {
+                        if (instance.inputValue.length > 11) {
+                            try {
+                                var url = new URL(instance.inputValue);
+                                var id1 = url.pathname;
+                                var id2 = url.searchParams.get('v');
+                                if (id1 && id1.length === 12) {
+                                    instance.inputValue = id1.substring(1, 12);
+                                }
+                                if (id2 && id2.length === 11) {
+                                    instance.inputValue = id2;
+                                }
+                            } catch {
+                                this.$message({
+                                    message: 'Invalid YouTube URL',
+                                    type: 'error'
+                                });
+                                return;
+                            }
+                        }
+                        if (
+                            instance.inputValue !== world.ref.previewYoutubeId
+                        ) {
+                            API.saveWorld({
+                                id: world.id,
+                                previewYoutubeId: instance.inputValue
+                            }).then((args) => {
+                                this.$message({
+                                    message: 'World YouTube preview changed',
+                                    type: 'success'
+                                });
+                                return args;
+                            });
+                        }
+                    }
+                }
+            }
+        );
+    };
+
     $app.methods.promptMaxTableSizeDialog = function () {
         this.$prompt('Enter a number', 'Max Table Size', {
             distinguishCancelAndClose: true,
@@ -11462,6 +11582,15 @@ speechSynthesis.getVoices();
             case 'Change Description':
                 this.promptChangeWorldDescription(D);
                 break;
+            case 'Change Capacity':
+                this.promptChangeWorldCapacity(D);
+                break;
+            case 'Change YouTube Preview':
+                this.promptChangeWorldYouTubePreview(D);
+                break;
+            case 'Change Tags':
+                this.showSetWorldTagsDialog();
+                break;
             case 'Download Unity Package':
                 this.openExternalLink(this.worldDialog.ref.unityPackageUrl);
                 break;
@@ -11497,6 +11626,28 @@ speechSynthesis.getVoices();
                                 }).then((args) => {
                                     this.$message({
                                         message: 'Home world has been reset',
+                                        type: 'success'
+                                    });
+                                    return args;
+                                });
+                                break;
+                            case 'Publish':
+                                API.publishWorld({
+                                    worldId: D.id
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'World has been published',
+                                        type: 'success'
+                                    });
+                                    return args;
+                                });
+                                break;
+                            case 'Unpublish':
+                                API.unpublishWorld({
+                                    worldId: D.id
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'World has been unpublished',
                                         type: 'success'
                                     });
                                     return args;
@@ -12341,6 +12492,56 @@ speechSynthesis.getVoices();
         var D = this.launchOptionsDialog;
         D.arguments = this.launchArguments;
         D.visible = true;
+    };
+
+    // App: Set World Tags Dialog
+
+    $app.data.setWorldTagsDialog = {
+        visible: false,
+        tags: [],
+        debugAllowed: false
+    };
+
+    $app.methods.showSetWorldTagsDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.setWorldTagsDialog.$el));
+        var D = this.setWorldTagsDialog;
+        D.visible = true;
+        var oldTags = this.worldDialog.ref.tags;
+        var tags = [];
+        oldTags.forEach((tag) => {
+            if (tag.includes('author_tag_')) {
+                tags.unshift(tag.substring(11));
+            }
+            if (tag === 'debug_allowed') {
+                D.debugAllowed = true;
+            }
+        });
+        D.tags = tags.toString();
+    };
+
+    $app.methods.saveSetWorldTagsDialog = function () {
+        var D = this.setWorldTagsDialog;
+        var oldTags = D.tags.split(',');;
+        var tags = [];
+        oldTags.forEach((tag) => {
+            if (tag) {
+                tags.unshift(`author_tag_${tag}`);
+            }
+        });
+        if (D.debugAllowed) {
+            tags.unshift('debug_allowed');
+        }
+        API.saveWorld({
+            id: $app.worldDialog.id,
+            tags
+        }).then((args) => {
+            this.$message({
+                message: 'Tags updated',
+                type: 'success'
+            });
+            D.visible = false;
+            return args;
+        });
     };
 
     // App: Notification position
