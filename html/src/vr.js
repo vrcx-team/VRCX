@@ -170,17 +170,6 @@ import configRepository from './repository/config.js';
         }
     });
 
-    var removeFromArray = function (array, item) {
-        var {length} = array;
-        for (var i = 0; i < length; ++i) {
-            if (array[i] === item) {
-                array.splice(i, 1);
-                return true;
-            }
-        }
-        return false;
-    };
-
     var $app = {
         data: {
             // 1 = 대시보드랑 손목에 보이는거

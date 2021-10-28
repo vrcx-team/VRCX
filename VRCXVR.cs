@@ -110,8 +110,8 @@ namespace VRCX
                 _device,
                 new Texture2DDescription()
                 {
-                    Width = 512,
-                    Height = 512,
+                    Width = 1024,
+                    Height = 1024,
                     MipLevels = 1,
                     ArraySize = 1,
                     Format = Format.B8G8R8A8_UNorm,
@@ -130,8 +130,8 @@ namespace VRCX
 
             _browser2 = new OffScreenBrowser(
                 Path.Combine(Program.BaseDirectory, "html/vr.html?2"),
-                512,
-                512
+                1024,
+                1024
             );
 
             while (_thread != null)
@@ -140,10 +140,7 @@ namespace VRCX
                 {
                     _browser1.RenderToTexture(_texture1);
                 }
-                if ("true".Equals(SharedVariable.Instance.Get("config:vrcx_overlaynotifications")) || "true".Equals(SharedVariable.Instance.Get("config:vrcx_progresspie")))
-                {
-                    _browser2.RenderToTexture(_texture2);
-                }
+                _browser2.RenderToTexture(_texture2);
                 try
                 {
                     Thread.Sleep(16);

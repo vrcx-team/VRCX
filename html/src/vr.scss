@@ -31,35 +31,35 @@
 
 .noty_theme__relax.noty_bar,
 .noty_theme__sunset.noty_bar {
-    height: 42px;
+    height: 84px;
     position: relative;
-    margin: 4px 0;
+    margin: 8px 0;
     overflow: hidden;
-    border-radius: 2px;
+    border-radius: 8px;
 }
 
 .noty_theme__relax.noty_bar .noty_body,
 .noty_theme__sunset.noty_bar .noty_body {
-    font-size: 15px;
+    font-size: 30px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .noty_theme__relax.noty_bar .noty_buttons,
 .noty_theme__sunset.noty_bar .noty_buttons {
-    padding: 5px 10px;
+    padding: 10px 20px;
 }
 
 .noty_theme__relax.noty_type__alert,
 .noty_theme__relax.noty_type__notification {
     color: #444;
     background-color: #fff;
-    border: 1px solid #dedede;
+    border: 2px solid #dedede;
 }
 
 .noty_theme__relax.noty_type__warning {
     color: #826200;
     background-color: #ffeaa8;
-    border: 1px solid #ffc237;
+    border: 2px solid #ffc237;
 }
 
 .noty_theme__relax.noty_type__warning .noty_buttons {
@@ -69,7 +69,7 @@
 .noty_theme__relax.noty_type__error {
     color: #fff;
     background-color: #ff8181;
-    border: 1px solid #e25353;
+    border: 2px solid #e25353;
 }
 
 .noty_theme__relax.noty_type__error .noty_buttons {
@@ -80,7 +80,7 @@
 .noty_theme__relax.noty_type__information {
     color: #fff;
     background-color: #78c5e7;
-    border: 1px solid #3badd6;
+    border: 2px solid #3badd6;
 }
 
 .noty_theme__relax.noty_type__info .noty_buttons,
@@ -91,7 +91,7 @@
 .noty_theme__relax.noty_type__success {
     color: #006400;
     background-color: #bcf5bc;
-    border: 1px solid #7cdd77;
+    border: 2px solid #7cdd77;
 }
 
 .noty_theme__relax.noty_type__success .noty_buttons {
@@ -139,17 +139,21 @@
     opacity: 0.6;
 }
 
+.noty_has_timeout.noty_has_progressbar .noty_progressbar {
+    height: 6px;
+}
+
 .noty-text {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 8px 8px 0 11px;
+    padding: 16px 16px 0 22px;
 }
 
 .noty-img {
-    height: 42px;
+    height: 84px;
     float: left;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 ::-webkit-scrollbar {
@@ -223,11 +227,11 @@ button {
 
 .np-progress-circle {
     position: absolute;
-    bottom: -20px;
-    left: -20px;
+    bottom: 0;
+    left: 0;
     width: 120px;
     height: 120px;
-    transform: rotate(270deg) scale(0.65);
+    transform: rotate(270deg);
 }
 
 .np-progress-circle-stroke {
