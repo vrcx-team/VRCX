@@ -200,7 +200,7 @@ html
                             span(v-else v-text="scope.row.type")
                     el-table-column(label="User" prop="displayName" width="180")
                         template(v-once #default="scope")
-                            span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)" style="padding-right:10px")
+                            span.x-link(v-if="scope.row.displayName" v-text="scope.row.displayName" @click="lookupUser(scope.row)" style="padding-right:10px")
                     el-table-column(label="Detail" prop="data")
                         template(v-once #default="scope")
                             location(v-if="scope.row.type === 'Location'" :location="scope.row.location" :hint="scope.row.worldName")
@@ -977,10 +977,10 @@ html
                     span.header Progress pie overlay for videos
                     div.options-container-item
                         span.name Enable
-                        el-switch(v-model="progressPie" @change="changeYouTubeApi")
+                        el-switch(v-model="progressPie" @change="changeYouTubeApi" :disabled="!openVR")
                     div.options-container-item
                         span.name Dance worlds only
-                        el-switch(v-model="progressPieFilter" @change="changeYouTubeApi")
+                        el-switch(v-model="progressPieFilter" @change="changeYouTubeApi" :disabled="!openVR")
                 div.options-container
                     span.header VRCX Instance Cache/Debug
                     div.options-container-item

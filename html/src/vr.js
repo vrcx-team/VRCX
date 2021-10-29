@@ -193,7 +193,8 @@ import configRepository from './repository/config.js';
                 location: '',
                 name: '',
                 playerList: [],
-                friendList: []
+                friendList: [],
+                progressPie: false
             },
             lastLocationTimer: '',
             wristFeed: [],
@@ -298,7 +299,10 @@ import configRepository from './repository/config.js';
         this.nowPlaying = JSON.parse(json);
         if (this.appType === '2') {
             var circle = document.querySelector('.np-progress-circle-stroke');
-            if (this.config.progressPie && this.nowPlaying.percentage !== 0) {
+            if (
+                this.lastLocation.progressPie &&
+                this.nowPlaying.percentage !== 0
+            ) {
                 circle.style.opacity = 0.5;
                 var circumference = circle.getTotalLength();
                 circle.style.strokeDashoffset =

@@ -395,7 +395,7 @@ html
                             span(style="display:inline-block;margin-right:5px") {{ downloadProgress }}%
                         template(v-if="lastLocation.date !== 0")
                             span(style="float:right") {{ lastLocationTimer }}
-                            span(style="display:inline-block") {{ lastLocation.playerList.length }} 
+                            span(style="display:inline-block") {{ lastLocation.playerList.length }}
                             span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
                     template(v-else)
                         template(v-if="downloadProgress === 100")
