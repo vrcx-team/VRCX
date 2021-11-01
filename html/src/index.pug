@@ -184,7 +184,7 @@ html
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
                             el-select(v-model="gameLogTable.filter" @change="gameLogTableLookup" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
-                                el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'PortalSpawn', 'AvatarChange', 'Event', 'VideoPlay']" :key="type" :label="type" :value="type")
+                                el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'PortalSpawn', 'Event', 'VideoPlay']" :key="type" :label="type" :value="type")
                             el-input(v-model="gameLogTable.search" placeholder="Search" @keyup.native.13="gameLogTableLookup" @change="gameLogTableLookup" clearable style="flex:none;width:150px;margin:0 10px")
                             //- el-tooltip(placement="bottom" content="Reload game log" :disabled="hideTooltips")
                             //-     el-button(type="default" @click="resetGameLog" icon="el-icon-refresh" circle style="flex:none")
@@ -205,10 +205,6 @@ html
                         template(v-once #default="scope")
                             location(v-if="scope.row.type === 'Location'" :location="scope.row.location" :hint="scope.row.worldName")
                             location(v-else-if="scope.row.type === 'PortalSpawn'" :location="scope.row.instanceId" :hint="scope.row.worldName")
-                            template(v-else-if="scope.row.type === 'AvatarChange'")
-                                span.x-link(@click="showAvatarDialog(scope.row.avatarId)" v-text="scope.row.name")
-                                template(v-if="scope.row.description && scope.row.name !== scope.row.description")
-                                    |  - {{ scope.row.description }}
                             template(v-else-if="scope.row.type === 'Event'")
                                 span(v-text="scope.row.data")
                             template(v-else-if="scope.row.type === 'VideoPlay'")
@@ -2050,15 +2046,6 @@ html
                             el-radio-button(label="Friends")
                             el-radio-button(label="Everyone")
                     .toggle-item
-                        span.toggle-name Lobby Avatar Change
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=\"API;NetworkData\"' steam launch option")
-                                i.el-icon-warning
-                        el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
-                    .toggle-item
                         span.toggle-name Video Play
                             el-tooltip(placement="top" style="margin-left:5px" content="Requires VRCX YouTube API option enabled")
                                 i.el-icon-warning
@@ -2210,15 +2197,6 @@ html
                             el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option")
                                 i.el-icon-warning
                         el-radio-group(v-model="sharedFeedFilters.wrist.PortalSpawn" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
-                    .toggle-item
-                        span.toggle-name Lobby Avatar Change
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=\"API;NetworkData\"' steam launch option")
-                                i.el-icon-warning
-                        el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")

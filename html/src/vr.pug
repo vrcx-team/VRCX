@@ -12,8 +12,8 @@ html
         link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans+JP|Noto+Sans+KR&display=swap")
         link(rel="stylesheet" href="vr.css")
     body
-        .x-app#x-app(class="x-app-type")
-            template(v-if="appType === '1'" :class="{ background: config && config.backgroundEnabled }")
+        .x-app#x-app(class="x-app-type" :class="{ background: appType === '1' && config && config.backgroundEnabled }")
+            template(v-if="appType === '1'")
                 .x-container(style="flex:1")
                     .x-friend-list(ref="list" style="color:#aaa")
                         template(v-if="config && config.minimalFeed")
