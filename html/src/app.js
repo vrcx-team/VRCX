@@ -4217,8 +4217,9 @@ speechSynthesis.getVoices();
                 if (ctx.created_at < bias) {
                     break;
                 }
+                // (ctx.type === 'GPS' || ctx.type === 'Online') TODO: fix new friend triggering Online event
                 if (
-                    (ctx.type === 'GPS' || ctx.type === 'Online') &&
+                    ctx.type === 'GPS' &&
                     ctx.location === this.lastLocation.location
                 ) {
                     if (joiningMap[ctx.displayName]) {
@@ -9981,6 +9982,21 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.methods.getTTSVoiceName = function () {
+        var voices = speechSynthesis.getVoices();
+        if (voices.length === 0) {
+            return '';
+        }
+        if (this.notificationTTSVoice >= voices.length) {
+            this.notificationTTSVoice = 0;
+            configRepository.setString(
+                'VRCX_notificationTTSVoice',
+                this.notificationTTSVoice
+            );
+        }
+        return voices[this.notificationTTSVoice].name;
+    };
+
     $app.methods.changeTTSVoice = function (index) {
         this.notificationTTSVoice = index;
         configRepository.setString(
@@ -9991,7 +10007,7 @@ speechSynthesis.getVoices();
         if (voices.length === 0) {
             return;
         }
-        var voiceName = voices[index < voices.length ? index : 0].name;
+        var voiceName = voices[index].name;
         speechSynthesis.cancel();
         this.speak(voiceName);
     };
@@ -9999,7 +10015,14 @@ speechSynthesis.getVoices();
     $app.methods.speak = function (text) {
         var tts = new SpeechSynthesisUtterance();
         var voices = speechSynthesis.getVoices();
-        tts.voice = voices[this.notificationTTSVoice];
+        if (voices.length === 0) {
+            return;
+        }
+        var index = 0;
+        if (this.notificationTTSVoice < voices.length) {
+            index = this.notificationTTSVoice;
+        }
+        tts.voice = voices[index];
         tts.text = text;
         speechSynthesis.speak(tts);
     };

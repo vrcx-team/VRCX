@@ -1081,7 +1081,8 @@ class Database {
 
     async getLastDateGameLogDatabase() {
         var gamelogDatabase = [];
-        var date = '1970-01-01';
+        // var date = '1970-01-01';
+        var date = new Date(Date.now() - 86400000).toJSON(); // 24 hours
         await sqliteService.execute((dbRow) => {
             gamelogDatabase.unshift(dbRow[0]);
         }, 'SELECT created_at FROM gamelog_location ORDER BY id DESC LIMIT 1');
