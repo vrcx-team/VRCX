@@ -9670,7 +9670,11 @@ speechSynthesis.getVoices();
         }
         configRepository.setString('VRCX_branch', $app.data.branch);
     }
-    if (!configRepository.getString('VRCX_lastVRCXVersion')) {
+    if (configRepository.getString('VRCX_lastVRCXVersion')) {
+        if (configRepository.getString('VRCX_lastVRCXVersion') < appVersion) {
+            configRepository.setString('VRCX_lastVRCXVersion', appVersion);
+        }
+    } else {
         configRepository.setString('VRCX_lastVRCXVersion', appVersion);
     }
     if (!configRepository.getInt('VRCX_maxTableSize')) {

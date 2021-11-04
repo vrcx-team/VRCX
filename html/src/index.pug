@@ -910,7 +910,7 @@ html
                         span.name TTS Voice
                         el-dropdown(@command="(voice) => changeTTSVoice(voice)" trigger="click" size="small")
                             el-button(size="mini" :disabled="notificationTTS === 'Never'")
-                                span {{ TTSvoices[notificationTTSVoice].name }} #[i.el-icon-arrow-down.el-icon--right]
+                                span {{ getTTSVoiceName() }} #[i.el-icon-arrow-down.el-icon--right]
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")
                 div.options-container
