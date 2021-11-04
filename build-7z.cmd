@@ -7,8 +7,7 @@ IF ERRORLEVEL 1 (
     set ZIP_BIN=7z
 )
 cd /d %~dp0
-msbuild -t:restore -p:RestorePackagesConfig=true
-msbuild VRCX.sln /p:Configuration=Release /p:Platform=x64 -m
+msbuild VRCX.sln -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m
 cd html
 call npm ci
 call npm run production

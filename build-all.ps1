@@ -9,7 +9,7 @@ $ZipName = "VRCX_" + $Date + ".zip"
 $SetupName = "VRCX_" + $Date + "_Setup.exe"
 
 Write-Host "Building .Net..." -ForegroundColor Green
-msbuild VRCX.sln /p:Configuration=Release /p:Platform=x64 -m
+msbuild VRCX.sln -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConfig=true -t:"Restore;Clean;Build" -m
 
 Write-Host "Building Node.js..." -ForegroundColor Green
 cd "html"
