@@ -9986,9 +9986,14 @@ speechSynthesis.getVoices();
             isSteamVRRunning &&
             (isGameRunning || this.openVRAlways)
         ) {
-            AppApi.StartVR();
+            var hmdOverlay = false;
+            if (this.overlayNotifications || this.progressPie) {
+                hmdOverlay = true;
+            }
+            // active, hmdOverlay, wristOverlay
+            AppApi.SetVR(true, hmdOverlay, this.overlayWrist);
         } else {
-            AppApi.StopVR();
+            AppApi.SetVR(false, false, false);
         }
     };
 

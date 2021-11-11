@@ -212,14 +212,9 @@ namespace VRCX
             }
         }
 
-        public void StartVR()
+        public void SetVR(bool active, bool hmdOverlay, bool wristOverlay)
         {
-            VRCXVR.Instance.SetActive(true);
-        }
-
-        public void StopVR()
-        {
-            VRCXVR.Instance.SetActive(false);
+            VRCXVR.Instance.SetActive(active, hmdOverlay, wristOverlay);
         }
 
         public void RefreshVR()

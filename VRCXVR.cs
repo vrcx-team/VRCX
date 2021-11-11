@@ -37,6 +37,8 @@ namespace VRCX
         public static OffScreenBrowser _browser1;
         public static OffScreenBrowser _browser2;
         private bool _active;
+        private bool _hmdOverlayActive;
+        private bool _wristOverlayActive;
 
         static VRCXVR()
         {
@@ -136,14 +138,13 @@ namespace VRCX
 
             while (_thread != null)
             {
-                if ("true".Equals(SharedVariable.Instance.Get("config:vrcx_overlaywrist")))
-                {
+                if (_wristOverlayActive)
                     _browser1.RenderToTexture(_texture1);
-                }
-                _browser2.RenderToTexture(_texture2);
+                if (_hmdOverlayActive)
+                    _browser2.RenderToTexture(_texture2);
                 try
                 {
-                    Thread.Sleep(16);
+                    Thread.Sleep(32);
                 }
                 catch
                 {
@@ -244,9 +245,11 @@ namespace VRCX
 
         }
 
-        public void SetActive(bool active)
+        public void SetActive(bool active, bool hmdOverlay, bool wristOverlay)
         {
             _active = active;
+            _hmdOverlayActive = hmdOverlay;
+            _wristOverlayActive = wristOverlay;
         }
 
         public void Refresh()

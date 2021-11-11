@@ -1407,7 +1407,7 @@ html
                             div.
                                 #[i.el-icon-user] Public {{ worldDialog.ref.publicOccupants | commaNumber }}
                                 #[i.el-icon-user-solid(style="margin-left:10px")] Private {{ worldDialog.ref.privateOccupants | commaNumber }}
-                                #[i.el-icon-check(style="margin-left:10px")] Capacity {{ worldDialog.ref.capacity | commaNumber }}
+                                #[i.el-icon-check(style="margin-left:10px")] Capacity {{ worldDialog.ref.capacity | commaNumber }} ({{ worldDialog.ref.capacity * 2 | commaNumber }})
                             div(v-for="room in worldDialog.rooms" :key="room.id")
                                 div(style="margin:5px 0")
                                     span.x-link(@click="showLaunchDialog(room.$location.tag)")
@@ -1458,7 +1458,8 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Favorites
-                                        span.extra {{ worldDialog.ref.favorites | commaNumber }} ({{ Math.round(((worldDialog.ref.favorites - worldDialog.ref.visits) / worldDialog.ref.visits * 100 + 100) * 100) / 100 }}%)
+                                        span.extra {{ worldDialog.ref.favorites | commaNumber }}
+                                            | #[template(v-if="worldDialog.ref.favorites > 0")  ({{ Math.round(((worldDialog.ref.favorites - worldDialog.ref.visits) / worldDialog.ref.visits * 100 + 100) * 100) / 100 }}%)]
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Visits
@@ -1466,7 +1467,7 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Capacity
-                                        span.extra(v-text="worldDialog.ref.capacity")
+                                        span.extra {{ worldDialog.ref.capacity | commaNumber }} ({{ worldDialog.ref.capacity * 2 | commaNumber }})
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Heat
