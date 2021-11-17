@@ -448,6 +448,9 @@ speechSynthesis.getVoices();
                     }
                     return response;
                 } catch (e) {}
+                if (endpoint.substring(endpoint.length - 10) === '/shortName') {
+                    return response;
+                }
                 if (response.status === 200) {
                     this.$throw(0, 'Invalid JSON response');
                 }
@@ -1875,6 +1878,25 @@ speechSynthesis.getVoices();
                 params
             };
             this.$emit('INSTANCE', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            worldId: string,
+            instanceId: string
+        }
+    */
+    API.getInstanceShortName = function (params) {
+        return this.call(`instances/${params.worldId}:${params.instanceId}/shortName`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('INSTANCE:SHORTNAME', args);
             return args;
         });
     };
@@ -10165,7 +10187,27 @@ speechSynthesis.getVoices();
                     if (action === 'confirm' && instance.inputValue) {
                         var input = instance.inputValue;
                         var testUrl = input.substring(0, 15);
-                        if (testUrl === 'https://vrchat.') {
+                        if (testUrl === 'https://vrch.at') {
+                            AppApi.FollowUrl(input).then((url) => {
+                                // /home/launch?worldId=wrld_f20326da-f1ac-45fc-a062-609723b097b1&instanceId=33570~region(jp)&shortName=cough-stockinglinz-ddd26
+                                if (url.substring(0, 13) === '/home/launch?') {
+                                    var urlParams = new URLSearchParams(url.substring(13));
+                                    var worldId = urlParams.get('worldId');
+                                    var instanceId = urlParams.get('instanceId');
+                                    if (instanceId) {
+                                        var location = `${worldId}:${instanceId}`;
+                                        this.showWorldDialog(location);
+                                    } else if (worldId) {
+                                        this.showWorldDialog(worldId);
+                                    }
+                                } else {
+                                    this.$message({
+                                        message: 'Invalid URL',
+                                        type: 'error'
+                                    });
+                                }
+                            });
+                        } else if (testUrl === 'https://vrchat.') {
                             var url = new URL(input);
                             var urlPath = url.pathname;
                             if (urlPath.substring(5, 11) === '/user/') {
@@ -12659,6 +12701,11 @@ speechSynthesis.getVoices();
         $app.launchDialog.visible = false;
     });
 
+    API.$on('INSTANCE:SHORTNAME', function (args) {
+        var url = `https://vrch.at/${args.json}`;
+        $app.launchDialog.url = url;
+    });
+
     $app.methods.showLaunchDialog = function (tag) {
         this.$nextTick(() => adjustDialogZ(this.$refs.launchDialog.$el));
         var L = API.parseLocation(tag);
@@ -12673,6 +12720,7 @@ speechSynthesis.getVoices();
         }
         D.url = getLaunchURL(L.worldId, L.instanceId);
         D.visible = true;
+        API.getInstanceShortName({worldId: L.worldId, instanceId: L.instanceId});
     };
 
     $app.methods.locationToLaunchArg = function (location) {
@@ -12760,6 +12808,14 @@ speechSynthesis.getVoices();
             type: 'success'
         });
         this.copyToClipboard(`https://vrchat.com/home/user/${userId}`);
+    };
+
+    $app.methods.copyInstanceUrl = function (url) {
+        this.$message({
+            message: 'Instance URL copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(url);
     };
 
     // App: VRCPlus Icons

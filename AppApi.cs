@@ -355,6 +355,32 @@ namespace VRCX
             MainForm.Instance.Activate();
         }
 
+        public string FollowUrl(string url)
+        {
+            bool redirecting = true;
+
+            while (redirecting)
+            {
+                Console.WriteLine(url);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.AllowAutoRedirect = false;
+                request.UserAgent = "VRCX";
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if ((int)response.StatusCode == 301 || (int)response.StatusCode == 302)
+                {
+                    url = response.Headers["Location"];
+                    if (url.Substring(0, 1) == "/")
+                        return url;
+                }
+                else
+                {
+                    redirecting = false;
+                }
+            }
+
+            return "";
+        }
+
         public void SetStartup(bool enabled)
         {
             try
