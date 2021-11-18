@@ -34,7 +34,7 @@ namespace VRCX
                 SchemeHandlerFactory = new FolderSchemeHandlerFactory(Application.StartupPath + "/../../../html")
             });*/
 
-            cefSettings.CefCommandLineArgs.Add("ignore-certificate-errors");
+            // cefSettings.CefCommandLineArgs.Add("ignore-certificate-errors");
             cefSettings.CefCommandLineArgs.Add("disable-plugins");
             cefSettings.CefCommandLineArgs.Add("disable-spell-checking");
             cefSettings.CefCommandLineArgs.Add("disable-pdf-extension");
