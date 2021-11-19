@@ -6969,7 +6969,28 @@ speechSynthesis.getVoices();
         if (value) {
             this.quickSearch = '';
             this.quickSearchItems = [];
+            this.quickSearchUserHistory();
         }
+    };
+
+    // App: Quick Search User History
+
+    $app.data.showUserDialogHistory = new Set();
+
+    $app.methods.quickSearchUserHistory = function () {
+        var userHistory = Array.from(this.showUserDialogHistory.values()).reverse().slice(0, 5);
+        var results = [];
+        userHistory.forEach((userId) => {
+            var ref = API.cachedUsers.get(userId);
+            if (typeof ref !== 'undefined') {
+                results.push({
+                    value: ref.id,
+                    label: ref.name,
+                    ref
+                });
+            }
+        });
+        this.quickSearchItems = results;
     };
 
     // App: Feed
@@ -10876,6 +10897,8 @@ speechSynthesis.getVoices();
                 }
                 return args;
             });
+        this.showUserDialogHistory.delete(userId);
+        this.showUserDialogHistory.add(userId);
     };
 
     $app.methods.applyUserDialogLocation = function () {
