@@ -689,7 +689,7 @@ html
                         el-table-column(label="Join Count" width="120" prop="$joinCount" sortable)
                         el-table-column(label="Time Together" width="140" prop="$timeSpent" sortable)
                             template(v-once #default="scope")
-                                span(v-if="scope.row.$timeSpent") {{ scope.row.$timeSpent | timeToTextMin }}
+                                span(v-if="scope.row.$timeSpent") {{ scope.row.$timeSpent | timeToText }}
                         el-table-column(label="Last Seen" width="170" prop="$lastSeen" sortable :sort-method="(a, b) => sortAlphabetically(a, b, '$lastSeen')")
                         el-table-column(label="Last Login" width="170" prop="last_login" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'last_login')")
                         el-table-column(label="Date Joined" width="120" prop="date_joined" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'date_joined')")
@@ -1267,7 +1267,7 @@ html
                                         .detail
                                             span.name Time Together
                                             span.extra(v-if="userDialog.timeSpent === 0") -
-                                            span.extra(v-else) {{ userDialog.timeSpent | timeToTextMin }}
+                                            span.extra(v-else) {{ userDialog.timeSpent | timeToText }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name(v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for") Online For

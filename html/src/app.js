@@ -203,38 +203,12 @@ speechSynthesis.getVoices();
             arr.push(`${Math.floor(n / 60)}m`);
             n %= 60;
         }
-        if (n || arr.length === 0) {
+        if (arr.length === 0 && n < 60) {
             arr.push(`${n}s`);
         }
         return arr.join(' ');
     };
     Vue.filter('timeToText', timeToText);
-
-    var timeToTextMin = function (sec) {
-        var n = Number(sec);
-        if (isNaN(n)) {
-            return escapeTag(sec);
-        }
-        n = Math.floor(n / 1000);
-        var arr = [];
-        if (n < 0) {
-            n = -n;
-        }
-        if (n >= 86400) {
-            arr.push(`${Math.floor(n / 86400)}d`);
-            n %= 86400;
-        }
-        if (n >= 3600) {
-            arr.push(`${Math.floor(n / 3600)}h`);
-            n %= 3600;
-        }
-        if (n >= 60) {
-            arr.push(`${Math.floor(n / 60)}m`);
-            n %= 60;
-        }
-        return arr.join(' ');
-    };
-    Vue.filter('timeToTextMin', timeToTextMin);
 
     Vue.use(VueLazyload, {
         preLoad: 1,
