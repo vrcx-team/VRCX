@@ -369,7 +369,7 @@ namespace VRCX
                 if ((int)response.StatusCode == 301 || (int)response.StatusCode == 302)
                 {
                     url = response.Headers["Location"];
-                    if (url.Substring(0, 1) == "/")
+                    if (url.Substring(0, 1) == "/" || url.Substring(0, 31) == "https://vrchat.com/home/launch?")
                         return url;
                 }
                 else

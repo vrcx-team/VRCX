@@ -10190,6 +10190,10 @@ speechSynthesis.getVoices();
                         if (testUrl === 'https://vrch.at') {
                             AppApi.FollowUrl(input).then((url) => {
                                 // /home/launch?worldId=wrld_f20326da-f1ac-45fc-a062-609723b097b1&instanceId=33570~region(jp)&shortName=cough-stockinglinz-ddd26
+                                // https://vrch.at/wrld_f20326da-f1ac-45fc-a062-609723b097b1
+                                if (url.substring(0, 18) === 'https://vrchat.com') {
+                                    url = url.substring(18);
+                                }
                                 if (url.substring(0, 13) === '/home/launch?') {
                                     var urlParams = new URLSearchParams(url.substring(13));
                                     var worldId = urlParams.get('worldId');
