@@ -7542,6 +7542,11 @@ speechSynthesis.getVoices();
 
     $app.methods.addGameLog = function (entry) {
         this.gameLogSessionTable.push(entry);
+        this.updateSharedFeed(false);
+        if (entry.type === 'VideoPlay') {
+            // event time can be before last gameLog entry
+            this.updateSharedFeed(true);
+        }
         if (
             entry.type === 'LocationDestination' ||
             entry.type === 'AvatarChange' ||
@@ -7560,13 +7565,8 @@ speechSynthesis.getVoices();
         if (!this.gameLogSearch(entry)) {
             return;
         }
-        if (entry.type === 'VideoPlay') {
-            // event time can be before last gameLog entry
-            this.updateSharedFeed(true);
-        }
         this.gameLogTable.data.push(entry);
         this.sweepGameLog();
-        this.updateSharedFeed(false);
         this.notifyMenu('gameLog');
     };
 

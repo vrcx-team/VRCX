@@ -1654,7 +1654,7 @@ html
                             #[i.x-user-status.askme] Ask Me
                         el-option(label="Do Not Disturb" value="busy").
                             #[i.x-user-status.busy] Do Not Disturb
-                        el-option(label="Offline" value="offline").
+                        el-option(v-if="API.currentUser.$isModerator" label="Offline" value="offline").
                             #[i.x-user-status.offline] Offline
                     el-input(v-model="socialStatusDialog.statusDescription" placeholder="Status" maxlength="32" show-word-limit style="dispaly:block;margin-top:10px")
                 template(#footer)
