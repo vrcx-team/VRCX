@@ -30,6 +30,9 @@ class Database {
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_notifications (id TEXT PRIMARY KEY, created_at TEXT, type TEXT, sender_user_id TEXT, sender_username TEXT, receiver_user_id TEXT, message TEXT, world_id TEXT, world_name TEXT, image_url TEXT, invite_message TEXT, request_message TEXT, response_message TEXT, expired INTEGER)`
         );
         await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_moderation (user_id TEXT PRIMARY KEY, updated_at TEXT, display_name TEXT, block INTEGER, mute INTEGER)`
+        );
+        await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
         );
     }
@@ -1103,6 +1106,59 @@ class Database {
             date = gamelogDatabase[gamelogDatabase.length - 1];
         }
         return date;
+    }
+
+    async getModeration(input) {
+        var userId = input.replaceAll("'", '');
+        var row = {};
+        await sqliteService.execute((dbRow) => {
+            var block = false;
+            var mute = false;
+            if (dbRow[3] === 1) {
+                block = true;
+            }
+            if (dbRow[4] === 1) {
+                mute = true;
+            }
+            row = {
+                userId: dbRow[0],
+                updatedAt: dbRow[1],
+                displayName: dbRow[2],
+                block,
+                mute
+            };
+        }, `SELECT * FROM ${Database.userPrefix}_moderation WHERE user_id = '${userId}'`);
+        return row;
+    }
+
+    setModeration(entry) {
+        var block = 0;
+        var mute = 0;
+        if (entry.block) {
+            block = 1;
+        }
+        if (entry.mute) {
+            mute = 1;
+        }
+        sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO ${Database.userPrefix}_moderation (user_id, updated_at, display_name, block, mute) VALUES (@user_id, @updated_at, @display_name, @block, @mute)`,
+            {
+                '@user_id': entry.userId,
+                '@updated_at': entry.updatedAt,
+                '@display_name': entry.displayName,
+                '@block': block,
+                '@mute': mute
+            }
+        );
+    }
+
+    deleteModeration(userId) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM ${Database.userPrefix}_moderation WHERE user_id = @user_id`,
+            {
+                '@user_id': userId
+            }
+        );
     }
 }
 

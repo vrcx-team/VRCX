@@ -11,19 +11,10 @@ import locale from 'element-ui/lib/locale/lang/en';
 import MarqueeText from 'vue-marquee-text-component';
 Vue.component('marquee-text', MarqueeText);
 
-import configRepository from './repository/config.js';
-
 (async function () {
     var $app = null;
 
-    await CefSharp.BindObjectAsync(
-        'AppApi',
-        'WebApi',
-        'SharedVariable',
-        'SQLite'
-    );
-
-    await configRepository.init();
+    await CefSharp.BindObjectAsync('AppApi');
 
     Noty.overrideDefaults({
         animation: {
@@ -170,6 +161,17 @@ import configRepository from './repository/config.js';
         }
     });
 
+    var removeFromArray = function (array, item) {
+        var {length} = array;
+        for (var i = 0; i < length; ++i) {
+            if (array[i] === item) {
+                array.splice(i, 1);
+                return true;
+            }
+        }
+        return false;
+    };
+
     var $app = {
         data: {
             // 1 = 대시보드랑 손목에 보이는거
@@ -179,6 +181,7 @@ import configRepository from './repository/config.js';
             cpuUsage: 0,
             config: {},
             downloadProgress: 0,
+            photonLobbyBotSize: 0,
             nowPlaying: {
                 url: '',
                 name: '',
@@ -289,10 +292,16 @@ import configRepository from './repository/config.js';
 
     $app.methods.configUpdate = function (json) {
         this.config = JSON.parse(json);
+        this.hudFeed = [];
+        this.hudTimeout = [];
     };
 
     $app.methods.updateDownloadProgress = function (progress) {
         this.downloadProgress = parseInt(progress, 10);
+    };
+
+    $app.methods.updatePhotonLobbyBotSize = function (size) {
+        this.photonLobbyBotSize = parseInt(size, 10);
     };
 
     $app.methods.nowPlayingUpdate = function (json) {
@@ -356,7 +365,7 @@ import configRepository from './repository/config.js';
         var text = '';
         var img = '';
         if (image) {
-            img = `<img class="noty-img" src="data:image/png;base64, ${image}"></img>`;
+            img = `<img class="noty-img" src="${image}"></img>`;
         }
         switch (noty.type) {
             case 'OnPlayerJoined':
@@ -455,6 +464,18 @@ import configRepository from './repository/config.js';
             case 'MutedOnPlayerLeft':
                 text = `Muted user <strong>${noty.displayName}</strong> has left`;
                 break;
+            case 'Blocked':
+                text = `<strong>${noty.displayName}</strong> has blocked you`;
+                break;
+            case 'Unblocked':
+                text = `<strong>${noty.displayName}</strong> has unblocked you`;
+                break;
+            case 'Muted':
+                text = `<strong>${noty.displayName}</strong> has muted you`;
+                break;
+            case 'Unmuted':
+                text = `<strong>${noty.displayName}</strong> has unmuted you`;
+                break;
             default:
                 break;
         }
@@ -508,6 +529,61 @@ import configRepository from './repository/config.js';
 
     $app.methods.notyClear = function () {
         Noty.closeAll();
+    };
+
+    $app.data.hudFeed = [];
+    $app.data.cleanHudFeedLoopStatus = false;
+
+    $app.methods.cleanHudFeedLoop = function () {
+        if (!this.cleanHudFeedLoopStatus) {
+            return;
+        }
+        this.cleanHudFeed();
+        if (this.hudFeed.length === 0) {
+            this.cleanHudFeedLoopStatus = false;
+            return;
+        }
+        setTimeout(() => this.cleanHudFeedLoop(), 500);
+    };
+
+    $app.methods.cleanHudFeed = function () {
+        var dt = Date.now();
+        this.hudFeed.forEach((item) => {
+            if (item.time + 6000 < dt) {
+                removeFromArray(this.hudFeed, item);
+            }
+        });
+        if (this.hudFeed.length > 10) {
+            this.hudFeed.length = 10;
+        }
+        if (!this.cleanHudFeedLoopStatus) {
+            this.cleanHudFeedLoopStatus = true;
+            this.cleanHudFeedLoop();
+        }
+    };
+
+    $app.methods.addEntryHudFeed = function (json) {
+        var {displayName, text} = JSON.parse(json);
+        var combo = 1;
+        this.hudFeed.forEach((item) => {
+            if (item.displayName === displayName && item.text === text) {
+                combo = item.combo + 1;
+                removeFromArray(this.hudFeed, item);
+            }
+        });
+        this.hudFeed.unshift({
+            time: Date.now(),
+            displayName,
+            text,
+            combo
+        });
+        this.cleanHudFeed();
+    };
+
+    $app.data.hudTimeout = [];
+
+    $app.methods.updateHudTimeout = function (json) {
+        this.hudTimeout = JSON.parse(json);
     };
 
     $app = new Vue($app);

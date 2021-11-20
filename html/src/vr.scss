@@ -179,8 +179,8 @@ button {
     font-family: 'Noto Sans JP', 'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic',
         'Segoe UI', sans-serif;
     line-height: normal;
-    text-shadow: #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px,
-        #000 0px 0px 2px, #000 0px 0px 2px, #000 0px 0px 2px;
+    text-shadow: #000 0px 0px 3px, #000 0px 0px 3px, #000 0px 0px 3px,
+        #000 0px 0px 3px, #000 0px 0px 3px, #000 0px 0px 3px;
 }
 
 .x-app {
@@ -349,4 +349,50 @@ i.x-user-status.busy {
     to {
         transform: rotate(359deg);
     }
+}
+
+.hud-feed {
+    position: absolute;
+    right: 0;
+    width: 100%;
+}
+
+.hud-feed .item,
+.hud-timeout .item {
+    margin: 0;
+    text-align: right;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.hud-feed .item {
+    font-size: 32px;
+}
+
+.hud-feed .combo {
+    color: #aaa;
+}
+
+.hud-timeout .item {
+    font-size: 40px;
+}
+
+.hud-timeout {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.hud-timeout-feed {
+    position: absolute;
+    bottom: 150px;
+    right: 0;
+    color: #ed1b24;
+}
+
+.hud-timeout svg {
+    position: absolute;
+    right: -160px;
+    bottom: 0;
 }

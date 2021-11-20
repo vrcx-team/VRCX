@@ -59,6 +59,7 @@ html
                                 span= name
                     +menuitem('feed', 'Feed', 'el-icon-news')
                     +menuitem('gameLog', 'Game Log', 'el-icon-s-data')
+                    +menuitem('playerList', 'Player List', 'el-icon-tickets')
                     +menuitem('search', 'Search', 'el-icon-search')
                     +menuitem('favorite', 'Favorite', 'el-icon-star-off')
                     +menuitem('friendLog', 'Friend Log', 'el-icon-notebook-2')
@@ -67,6 +68,98 @@ html
                     +menuitem('friendsList', 'Friends List', 'el-icon-s-management')
                     +menuitem('profile', 'Profile', 'el-icon-user')
                     +menuitem('settings', 'Settings', 'el-icon-s-tools')
+
+            //- playerList
+            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'playerList'")
+                div(style="display:flex;flex-direction:column;height:100%")
+                    div(v-if="currentInstanceWorld.id" style="display:flex")
+                        el-popover(placement="right" width="500px" trigger="click" style="height:120px")
+                            img.x-link(slot="reference" v-lazy="currentInstanceWorld.thumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+                            img.x-link(v-lazy="currentInstanceWorld.imageUrl" style="width:500px;height:375px" @click="openExternalLink(currentInstanceWorld.imageUrl)")
+                        div(style="margin-left:10px;display:flex;flex-direction:column")
+                            div
+                                span.x-link(@click="showWorldDialog(currentInstanceWorld.id)" style="font-weight:bold;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1")
+                                    | #[i.el-icon-s-home(v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === currentInstanceWorld.id")] {{ currentInstanceWorld.name }}
+                            div
+                                span.x-link(v-text="currentInstanceWorld.authorName" @click="showUserDialog(currentInstanceWorld.authorId)" style="color:#909399;font-family:monospace")
+                            div(style="margin-top:5px")
+                                el-tag(v-if="currentInstanceWorld.$isLabs" type="primary" effect="plain" size="mini") Labs
+                                el-tag(v-else-if="currentInstanceWorld.releaseStatus === 'public'" type="success" effect="plain" size="mini") Public
+                                el-tag(v-else-if="currentInstanceWorld.releaseStatus === 'private'" type="danger" effect="plain" size="mini") Private
+                                span(style="margin-left:5px")
+                                    span \#{{ currentInstanceLocation.instanceName }} {{ currentInstanceLocation.accessType }}
+                                    span.famfamfam-flags(v-if="currentInstanceLocation.region === 'eu'" class="europeanunion" style="display:inline-block;margin-left:5px")
+                                    span.famfamfam-flags(v-else-if="currentInstanceLocation.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
+                                    span.famfamfam-flags(v-else class="us" style="display:inline-block;margin-left:5px")
+                                span(v-if="lastLocation.playerList.size > 0" style="margin-left:5px")
+                                    | {{ lastLocation.playerList.size }}
+                                    | #[template(v-if="lastLocation.friendList.size > 0") ({{ lastLocation.friendList.size }})]
+                                    template(v-if="photonLobbyBots.length > 0")
+                                        | &nbsp;
+                                        el-tooltip(placement="bottom")
+                                            template(#content)
+                                                span Photon Bot Id's: {{ photonLobbyBots.toString() }}
+                                            span(v-text="photonLobbyBots.length" style="color:red")
+                                //- el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px;margin-top:5px")
+                            div(style="margin-top:5px")
+                                span(v-show="currentInstanceWorld.name !== currentInstanceWorld.description" v-text="currentInstanceWorld.description" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2")
+                    div.current-instance-table
+                        data-tables(v-bind="currentInstanceUserList" @sort-change="updateTimers" @row-click="selectCurrentInstanceRow" style="margin-top:10px;cursor:pointer")
+                            el-table-column(label="Avatar" width="60" prop="photo")
+                                template(v-once #default="scope")
+                                    template(v-if="userImage(scope.row.ref)")
+                                        el-popover(placement="right" height="500px" trigger="hover")
+                                            img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row.ref)")
+                                            img.friends-list-avatar(v-lazy="userImageFull(scope.row.ref)" style="height:500px;cursor:pointer" @click="openExternalLink(userImageFull(scope.row.ref))")
+                            el-table-column(label="Timer" width="90" prop="timer" sortable)
+                                template(v-once #default="scope")
+                                    timer(:epoch="scope.row.timer")
+                            el-table-column(label="Photon Id" width="100" prop="photonId" sortable)
+                                template(v-once #default="scope")
+                                    span(v-text="scope.row.photonId")
+                            el-table-column(label="Display Name" min-width="140" prop="ref.displayName")
+                                template(v-once #default="scope")
+                                    span(v-text="scope.row.ref.displayName" :class="scope.row.ref.$trustColor")
+                            el-table-column(label="Status" min-width="180" prop="ref.status")
+                                template(v-once #default="scope")
+                                    template(v-if="scope.row.ref.status")
+                                        i.x-user-status(:class="statusClass(scope.row.ref.status)")
+                                        span  ‎
+                                        span(v-text="scope.row.ref.statusDescription")
+                            el-table-column(label="Language" width="100" prop="ref.$languages")
+                                template(v-once #default="scope")
+                                    el-tooltip(v-for="item in scope.row.ref.$languages" :key="item.key" placement="top")
+                                        template(#content)
+                                            span {{ item.value }} ({{ item.key }})
+                                        span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-left:5px")
+                            el-table-column(label="Bio Links" width="100" prop="ref.bioLinks")
+                                template(v-once #default="scope")
+                                    el-tooltip(v-if="link" v-for="(link, index) in scope.row.ref.bioLinks" :key="index")
+                                        template(#content)
+                                            span(v-text="link")
+                                        img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
+                    div.photon-event-table(v-if="photonEventTable.data.length > 0")
+                        data-tables(v-bind="photonEventTable" style="margin-bottom:10px")
+                            el-table-column(label="Date" prop="created_at" width="90")
+                                template(v-once #default="scope")
+                                    el-tooltip(placement="right")
+                                        template(#content)
+                                            span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+                                        span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                            el-table-column(label="Name" prop="photonId" width="160")
+                                template(v-once #default="scope")
+                                    span.x-link(v-text="getDisplayNameFromPhotonId(scope.row.photonId)" @click="showUserFromPhotonId(scope.row.photonId)" style="padding-right:10px")
+                            el-table-column(label="Event" prop="text")
+                                template(v-once #default="scope")
+                                    span(v-if="scope.row.avatar")
+                                        span ChangeAvatar  
+                                        span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
+                                        | &nbsp;
+                                        span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
+                                        span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
+                                        template(v-if="scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description")
+                                            |  - {{ scope.row.avatar.description }}
+                                    span(v-else v-text="scope.row.text")
 
             //- feed
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'feed'")
@@ -411,7 +504,7 @@ html
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
                             el-select(v-model="playerModerationTable.filters[0].value" @change="saveTableFilters" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
-                                el-option(v-once v-for="type in ['block', 'mute', 'unmute', 'hideAvatar', 'showAvatar']" :key="type" :label="type" :value="type")
+                                el-option(v-once v-for="type in ['block', 'unblock', 'mute', 'unmute', 'hideAvatar', 'showAvatar']" :key="type" :label="type" :value="type")
                             el-input(v-model="playerModerationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
                             el-tooltip(placement="bottom" content="Refresh" :disabled="hideTooltips")
                                 el-button(type="default" :loading="API.isPlayerModerationsLoading" @click="API.refreshPlayerModerations()" icon="el-icon-refresh" circle style="flex:none")
@@ -806,7 +899,7 @@ html
                                     span.color-picker(slot="trigger") #[i.el-icon-s-open] Veteran User
                             div
                                 v-swatches(v-model="trustColor.legendary" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-legendary")
-                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Early User
+                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Legend
                             div
                                 v-swatches(v-model="trustColor.vip" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-vip")
                                     span.color-picker(slot="trigger") #[i.el-icon-s-open] VRChat Team
@@ -977,6 +1070,33 @@ html
                     div.options-container-item
                         span.name Dance worlds only
                         el-switch(v-model="progressPieFilter" @change="changeYouTubeApi" :disabled="!openVR")
+                div.options-container
+                    span.header Photon Logging Overlay
+                    el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option")
+                        i.el-icon-warning
+                    div.options-container-item
+                    span.sub-header Photon Event HUD
+                    div.options-container-item
+                        span.name Enable
+                        el-switch(v-model="photonEventOverlay" @change="saveEventOverlay" :disabled="!openVR")
+                    div.options-container-item
+                        span.name Filter
+                        el-radio-group(v-model="photonEventOverlayFilter" @change="saveEventOverlay" size="mini" :disabled="!openVR || !photonEventOverlay")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
+                    span.sub-header User timeout HUD
+                    div.options-container-item
+                        span.name Enable
+                        el-switch(v-model="timeoutHudOverlay" @change="saveEventOverlay" :disabled="!openVR")
+                    div.options-container-item
+                        span.name Filter
+                        el-radio-group(v-model="timeoutHudOverlayFilter" @change="saveEventOverlay" size="mini" :disabled="!openVR || !timeoutHudOverlay")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-time" @click="promptPhotonLobbyTimeoutThreshold" :disabled="!openVR") Timeout Threshold
                 div.options-container
                     span.header VRCX Instance Cache/Debug
                     div.options-container-item
@@ -1595,7 +1715,7 @@ html
             el-dialog.x-dialog(ref="favoriteDialog" :visible.sync="favoriteDialog.visible" title="Choose Group" width="300px")
                 div(v-loading="favoriteDialog.loading")
                     el-button(v-for="group in favoriteDialog.groups" :key="group.name" style="display:block;width:100%;margin:10px 0" @click="addFavorite(group)" :disabled="group.count >= group.capacity") {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
-
+                    
             //- dialog: invite
             el-dialog.x-dialog(ref="inviteDialog" :visible.sync="inviteDialog.visible" title="Invite" width="450px")
                 div(v-loading="inviteDialog.loading")
@@ -2088,10 +2208,42 @@ html
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                             el-radio-button(label="Everyone")
+                    br
+                    .toggle-item
+                        span.toggle-name Photon Event Logging
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option")
+                                i.el-icon-warning
+                    .toggle-item
+                        span.toggle-name Lobby Avatar Change
+                        el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
+                    .toggle-item
+                        span.toggle-name Blocked
+                        el-radio-group(v-model="sharedFeedFilters.noty.Blocked" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Unblocked
+                        el-radio-group(v-model="sharedFeedFilters.noty.Unblocked" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Muted
+                        el-radio-group(v-model="sharedFeedFilters.noty.Muted" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Unmuted
+                        el-radio-group(v-model="sharedFeedFilters.noty.Unmuted" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                 template(#footer)
                     el-button(type="small" @click="cancelSharedFeedFilters") Cancel
                     el-button(type="primary" size="small" style="margin-left:10px" @click="saveSharedFeedFilters") Save
-                    
+
             //- dialog: wrist feed filters
             el-dialog.x-dialog(ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="500px")
                 .toggle-list
@@ -2244,6 +2396,38 @@ html
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                             el-radio-button(label="Everyone")
+                    br
+                    .toggle-item
+                        span.toggle-name Photon Event Logging
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option")
+                                i.el-icon-warning
+                    .toggle-item
+                        span.toggle-name Lobby Avatar Change
+                        el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
+                    .toggle-item
+                        span.toggle-name Blocked
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Blocked" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Unblocked
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Unblocked" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Muted
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Muted" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Unmuted
+                        el-radio-group(v-model="sharedFeedFilters.wrist.Unmuted" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
                 template(#footer)
                     el-button(type="small" @click="cancelSharedFeedFilters") Cancel
                     el-button(type="primary" size="small" @click="saveSharedFeedFilters") Save

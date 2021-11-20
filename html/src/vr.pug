@@ -397,6 +397,7 @@ html
                             span(style="float:right") {{ lastLocationTimer }}
                             span(style="display:inline-block") {{ lastLocation.playerList.length }}
                             span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
+                            span(v-if="photonLobbyBotSize > 0 && lastLocation.playerList.length > 0" style="display:inline-block;color:red;margin-left:5px") {{ photonLobbyBotSize }}
                     template(v-else)
                         template(v-if="downloadProgress === 100")
                             span(style="display:inline-block;margin-right:5px") Downloading: #[i.el-icon-loading]
@@ -406,11 +407,24 @@ html
                             span(style="float:right") Timer: {{ lastLocationTimer }}
                             span(style="display:inline-block") Players: {{ lastLocation.playerList.length }} 
                             span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
+                            span(v-if="photonLobbyBotSize > 0 && lastLocation.playerList.length > 0" style="display:inline-block;color:red;margin-left:5px") {{ photonLobbySize }}
                     br
                     span(style="float:right") {{ currentTime | formatDate('YYYY-MM-DD HH:MI:SS AMPM') }}
                     span CPU {{ cpuUsage }}%
             template(v-else)
                 svg(class="np-progress-circle")
                     circle(class="np-progress-circle-stroke" cx="60" cy="60" stroke="white" r="30" fill="transparent" stroke-width="60")
+                .hud-feed
+                    div(v-for="feed in hudFeed")
+                        .item <strong>{{ feed.displayName }}</strong> {{ feed.text }}  
+                            template(v-if="feed.combo > 1")
+                                span.combo x{{ feed.combo }}
+                .hud-timeout(v-if="hudTimeout.length > 0")
+                    .hud-timeout-feed
+                        div(v-for="feed in hudTimeout")
+                            p.item ({{ feed.time }}s) {{ feed.displayName }}
+                    svg(version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve")
+                        path(fill="#ED1B24" d="M68.6,96.5L87,78.1c1.6-1.6,1.6-4.1,0-5.7s-4.1-1.6-5.7,0L62.9,90.9L44.5,72.5l18.4-18.4c1.6-1.6,1.6-4.1,0-5.7c-1.6-1.6-4.1-1.6-5.7,0L38.9,66.8l-6.4-6.4L21.2,71.8C11,82,9.7,97.9,17.4,109.5L0,126.9l8.5,8.5L25.9,118c11.6,7.7,27.5,6.4,37.8-3.8L75,102.9C75,102.9,68.6,96.5,68.6,96.5z")
+                        path(fill="#ED1B24" d="M102.9,75l11.3-11.3c10.3-10.3,11.5-26.1,3.8-37.8l17.4-17.4L126.9,0l-17.4,17.4C97.9,9.7,82,11,71.8,21.2L60.5,32.5C102,74,60.8,32.9,102.9,75z")
         script(src="vendor.js")
         script(src="vr.js")

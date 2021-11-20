@@ -82,8 +82,12 @@
     margin-top: 15px;
 }
 
-.el-table__expanded-cell[class*='cell'] {
+.el-table--mini .el-table__expanded-cell[class*='cell'] {
     padding: 20px 50px;
+}
+
+.el-table--mini .el-table__cell {
+    padding: 5px 0;
 }
 
 .el-dialog__body {
@@ -614,4 +618,21 @@ i.x-user-status.busy {
 
 .el-form-item {
     margin-bottom: 4px;
+}
+
+.photon-event-table .el-table--mini .el-table__cell,
+.current-instance-table .el-table--mini .el-table__cell {
+    padding: 0;
+}
+
+.photon-event-table {
+    margin-top: 20px;
+}
+
+.current-instance-table img.friends-list-avatar {
+    width: unset;
+    height: 16px;
+    margin-right: 0;
+    margin-left: 3px;
+    border-radius: 2px;
 }

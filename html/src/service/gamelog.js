@@ -51,6 +51,15 @@ class GameLogService {
                 gameLog.url = args[0];
                 break;
 
+            case 'photon-event':
+                gameLog.json = args[0];
+                break;
+
+            case 'photon-id':
+                gameLog.displayName = args[0];
+                gameLog.photonId = args[1];
+                break;
+
             default:
                 break;
         }
