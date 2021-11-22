@@ -852,35 +852,35 @@ html
                     span.sub-header Sorting
                     div.options-container-item
                         span.name Sort Private to bottom
-                        el-switch(v-model="orderFriendsGroupPrivate")
+                        el-switch(v-model="orderFriendsGroupPrivate" @change="saveOrderFriendGroup")
                     div.options-container-item
                         span.name Sort by status
-                        el-switch(v-model="orderFriendsGroupStatus")
+                        el-switch(v-model="orderFriendsGroupStatus" @change="saveOrderFriendGroup")
                     div.options-container-item
                         span.name Sort GPS to top
-                        el-switch(v-model="orderFriendsGroupGPS")
+                        el-switch(v-model="orderFriendsGroupGPS" @change="saveOrderFriendGroup")
                         span.name(style="margin-left:5px") (online for only)
                     div.options-container-item
                         span.name VIP
-                        el-switch(v-model="orderFriendsGroup0" inactive-text="alphabetical" active-text="online for")
+                        el-switch(v-model="orderFriendsGroup0" inactive-text="alphabetical" active-text="online for" @change="saveOrderFriendGroup")
                     div.options-container-item
                         span.name Online
-                        el-switch(v-model="orderFriendsGroup1" inactive-text="alphabetical" active-text="online for")
+                        el-switch(v-model="orderFriendsGroup1" inactive-text="alphabetical" active-text="online for" @change="saveOrderFriendGroup")
                     div.options-container-item
                         span.name Active
-                        el-switch(v-model="orderFriendsGroup2" inactive-text="alphabetical" active-text="online for")
+                        el-switch(v-model="orderFriendsGroup2" inactive-text="alphabetical" active-text="online for" @change="saveOrderFriendGroup")
                     div.options-container-item
                         span.name Offline
-                        el-switch(v-model="orderFriendsGroup3" inactive-text="alphabetical" active-text="online for")
+                        el-switch(v-model="orderFriendsGroup3" inactive-text="alphabetical" active-text="online for" @change="saveOrderFriendGroup")
                     br
                     span.sub-header Width
                     div.options-container-item
                         el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{236: ''}" :min="141" :max="500" style="width:300px")
                 div.options-container
-                    span.header Trust Rank Colors
+                    span.header User Colors
                     div.options-container-item
-                            div
-                                v-swatches(v-model="trustColor.untrusted" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-untrusted")
+                        div
+                            v-swatches(v-model="trustColor.untrusted" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-untrusted")
                                     span.color-picker(slot="trigger") #[i.el-icon-s-open] Visitor
                             div
                                 v-swatches(v-model="trustColor.basic" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-basic")
@@ -895,17 +895,18 @@ html
                                 v-swatches(v-model="trustColor.veteran" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-veteran")
                                     span.color-picker(slot="trigger") #[i.el-icon-s-open] Trusted User
                             div
-                                v-swatches(v-model="trustColor.legend" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-legend")
-                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Veteran User
-                            div
-                                v-swatches(v-model="trustColor.legendary" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-legendary")
-                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Legend
-                            div
-                                v-swatches(v-model="trustColor.vip" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-vip")
-                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] VRChat Team
-                            div
-                                v-swatches(v-model="trustColor.troll" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-troll")
-                                    span.color-picker(slot="trigger") #[i.el-icon-s-open] Nuisance
+                            v-swatches(v-model="trustColor.legend" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-legend")
+                                span.color-picker(slot="trigger") #[i.el-icon-s-open] Veteran User
+                        div
+                            v-swatches(v-model="trustColor.vip" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-vip")
+                                span.color-picker(slot="trigger") #[i.el-icon-s-open] VRChat Team
+                        div
+                            v-swatches(v-model="trustColor.troll" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-troll")
+                                span.color-picker(slot="trigger") #[i.el-icon-s-open] Nuisance
+                        div
+                            v-swatches(v-model="trustColor.legendary" show-fallback fallback-input-type="color" popover-x="right" :swatches="trustColorSwatches" class="x-tag-legendary")
+                                span.color-picker(slot="trigger") #[i.el-icon-s-open] Legend
+                            el-switch(v-model="legendColorOverride" style="padding-bottom:5px;padding-left:3px" @change="saveLegendColorOverride")
                 div.options-container
                     span.header Discord Presence
                     div.options-container-item
@@ -913,7 +914,7 @@ html
                     div.options-container-item
                         span.name Enable
                             el-tooltip(placement="top" style="margin-left:5px" content="Recommended to disable Rich Presence in VRChat config.json below to stop it from conflicting")
-                                i.el-icon-warning
+                                i.el-icon-warning(style="cursor:pointer" @click="showVRChatConfig")
                         el-switch(v-model="discordActive" @change="saveDiscordOption")
                     div.options-container-item
                         span.name Instance type/player count
@@ -1072,8 +1073,8 @@ html
                         el-switch(v-model="progressPieFilter" @change="changeYouTubeApi" :disabled="!openVR")
                 div.options-container
                     span.header Photon Logging Overlay
-                    el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option")
-                        i.el-icon-warning
+                    el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click to copy)")
+                        i.el-icon-warning(style="cursor:pointer" @click="copyText(recommendedSteamParams)")
                     div.options-container-item
                     span.sub-header Photon Event HUD
                     div.options-container-item
@@ -2162,7 +2163,7 @@ html
                     .toggle-item
                         span.toggle-name Portal Spawn
                             el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option")
-                                i.el-icon-warning
+                                i.el-icon-warning(style="cursor:pointer" @click="copyText(recommendedSteamParams)")
                         el-radio-group(v-model="sharedFeedFilters.noty.PortalSpawn" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
@@ -2211,8 +2212,8 @@ html
                     br
                     .toggle-item
                         span.toggle-name Photon Event Logging
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option")
-                                i.el-icon-warning
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click to copy)")
+                                i.el-icon-warning(style="cursor:pointer" @click="copyText(recommendedSteamParams)")
                     .toggle-item
                         span.toggle-name Lobby Avatar Change
                         el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
@@ -2350,7 +2351,7 @@ html
                     .toggle-item
                         span.toggle-name Portal Spawn
                             el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option")
-                                i.el-icon-warning
+                                i.el-icon-warning(style="cursor:pointer" @click="copyText(recommendedSteamParams)")
                         el-radio-group(v-model="sharedFeedFilters.wrist.PortalSpawn" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
@@ -2399,8 +2400,8 @@ html
                     br
                     .toggle-item
                         span.toggle-name Photon Event Logging
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option")
-                                i.el-icon-warning
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click to copy)")
+                                i.el-icon-warning(style="cursor:pointer" @click="copyText(recommendedSteamParams)")
                     .toggle-item
                         span.toggle-name Lobby Avatar Change
                         el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")

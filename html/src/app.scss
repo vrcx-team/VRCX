@@ -90,6 +90,17 @@
     padding: 5px 0;
 }
 
+.el-table .cell {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+}
+
+.el-table__row:hover .el-table__cell .cell {
+    -webkit-box-orient: unset;
+    -webkit-line-clamp: unset;
+}
+
 .el-dialog__body {
     padding: 20px;
 }
@@ -597,7 +608,6 @@ i.x-user-status.busy {
 .avatar-info {
     cursor: pointer;
     width: fit-content;
-    display: inline-block;
     vertical-align: top;
 }
 

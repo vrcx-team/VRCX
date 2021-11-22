@@ -338,7 +338,7 @@ namespace VRCX
                 return true;
             }
 
-            if (line.Contains("] Joining wrld_"))
+            if (line.Contains("] Joining "))
             {
                 var lineOffset = line.LastIndexOf("] Joining ");
                 if (lineOffset < 0)
