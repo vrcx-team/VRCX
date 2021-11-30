@@ -13,6 +13,7 @@ Vue.component('v-swatches', VSwatches);
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 import {v4 as uuidv4} from 'uuid';
+import * as workerTimers from 'worker-timers';
 
 import {appVersion} from './constants.js';
 import configRepository from './repository/config.js';
@@ -1315,7 +1316,7 @@ speechSynthesis.getVoices();
         if (userUpdateTimer !== null) {
             return;
         }
-        userUpdateTimer = setTimeout(function () {
+        userUpdateTimer = workerTimers.setTimeout(() => {
             userUpdateTimer = null;
             var {length} = userUpdateQueue;
             for (var i = 0; i < length; ++i) {
@@ -4156,7 +4157,7 @@ speechSynthesis.getVoices();
             API.isRefreshFriendsLoading = false;
             console.error(err);
         }
-        setTimeout(() => this.updateLoop(), 500);
+        workerTimers.setTimeout(() => this.updateLoop(), 500);
     };
 
     $app.data.debug = false;
@@ -8176,7 +8177,7 @@ speechSynthesis.getVoices();
             dtNow < bias1 ||
             this.lastLocation.playerList.size <= 1
         ) {
-            setTimeout(() => this.photonLobbyWatcher(), 500);
+            workerTimers.setTimeout(() => this.photonLobbyWatcher(), 500);
             return;
         }
         LogWatcher.GetEvent7().then((event7List) => {
@@ -9177,7 +9178,7 @@ speechSynthesis.getVoices();
         np.remainingText = this.formatSeconds(np.length - np.elapsed);
         np.percentage = Math.round(((np.elapsed * 100) / np.length) * 10) / 10;
         this.updateVrNowPlaying();
-        setTimeout(() => this.updateNowPlaying(), 1000);
+        workerTimers.setTimeout(() => this.updateNowPlaying(), 1000);
     };
 
     $app.methods.updateVrNowPlaying = function () {
@@ -17127,7 +17128,7 @@ speechSynthesis.getVoices();
             default:
                 this.downloadProgress = downloadProgress;
         }
-        setTimeout(() => this.downloadVRChatCacheProgress(), 150);
+        workerTimers.setTimeout(() => this.downloadVRChatCacheProgress(), 150);
     };
 
     $app.methods.showDownloadDialog = function () {

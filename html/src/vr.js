@@ -8,6 +8,7 @@ import Noty from 'noty';
 import Vue from 'vue';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
+import * as workerTimers from 'worker-timers';
 import MarqueeText from 'vue-marquee-text-component';
 Vue.component('marquee-text', MarqueeText);
 
@@ -208,9 +209,10 @@ Vue.component('marquee-text', MarqueeText);
         watch: {},
         el: '#x-app',
         mounted() {
-            setTimeout(function () {
-                AppApi.ExecuteAppFunction('vrInit', '');
-            }, 1000);
+            workerTimers.setTimeout(
+                () => AppApi.ExecuteAppFunction('vrInit', ''),
+                1000
+            );
             if (this.appType === '1') {
                 this.updateStatsLoop();
             }
@@ -357,7 +359,7 @@ Vue.component('marquee-text', MarqueeText);
         } catch (err) {
             console.error(err);
         }
-        setTimeout(() => this.updateStatsLoop(), 500);
+        workerTimers.setTimeout(() => this.updateStatsLoop(), 500);
     };
 
     $app.methods.playNoty = function (json) {
@@ -543,7 +545,7 @@ Vue.component('marquee-text', MarqueeText);
             this.cleanHudFeedLoopStatus = false;
             return;
         }
-        setTimeout(() => this.cleanHudFeedLoop(), 500);
+        workerTimers.setTimeout(() => this.cleanHudFeedLoop(), 500);
     };
 
     $app.methods.cleanHudFeed = function () {
