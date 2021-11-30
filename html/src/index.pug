@@ -500,8 +500,7 @@ html
                             | &nbsp;
                             span.x-link(v-text="scope.row.displayName || scope.row.userId" @click="showUserDialog(scope.row.userId)")
                             template(v-if="scope.row.type === 'TrustLevel'")
-                                br
-                                span ({{ scope.row.previousTrustLevel }} #[i.el-icon-right] {{ scope.row.trustLevel }})
+                                span  ({{ scope.row.previousTrustLevel }} #[i.el-icon-right] {{ scope.row.trustLevel }})
                     el-table-column(label="Action" width="80" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="deleteFriendLog(scope.row)")

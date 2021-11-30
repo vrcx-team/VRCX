@@ -329,17 +329,20 @@ namespace VRCX
 
         public void ExecuteAppFunction(string function, string json)
         {
-            MainForm.Instance.Browser.ExecuteScriptAsync($"$app.{function}", json);
+            if (MainForm.Instance != null)
+                MainForm.Instance.Browser.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         public void ExecuteVrFeedFunction(string function, string json)
         {
-            VRCXVR._browser1.ExecuteScriptAsync($"$app.{function}", json);
+            if (VRCXVR._browser1 != null)
+                VRCXVR._browser1.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         public void ExecuteVrOverlayFunction(string function, string json)
         {
-            VRCXVR._browser2.ExecuteScriptAsync($"$app.{function}", json);
+            if (VRCXVR._browser2 != null)
+                VRCXVR._browser2.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         public string GetLaunchCommand()
