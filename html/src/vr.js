@@ -146,8 +146,10 @@ Vue.component('marquee-text', MarqueeText);
                         this.region = 'europeanunion';
                     } else if (L.region === 'jp') {
                         this.region = 'jp';
+                    } else if (L.region === 'use') {
+                        this.region = 'flag-icon-use';
                     } else {
-                        this.region = 'us';
+                        this.region = 'flag-icon-usw';
                     }
                 }
             }
