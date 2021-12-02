@@ -1081,8 +1081,8 @@ html
                         el-switch(v-model="progressPieFilter" @change="changeYouTubeApi" :disabled="!openVR")
                 div.options-container
                     span.header Photon Logging Overlay
-                    el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click to copy)")
-                        i.el-icon-warning(style="cursor:pointer" @click="copyText(recommendedSteamParams)")
+                    el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click for more info)")
+                        i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
                     div.options-container-item
                     span.sub-header Photon Event HUD
                     div.options-container-item
@@ -2172,8 +2172,8 @@ html
                             el-radio-button(label="Friends")
                     .toggle-item
                         span.toggle-name Portal Spawn
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option")
-                                i.el-icon-warning(style="cursor:pointer" @click="copyText(recommendedSteamParams)")
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option (click for more info)")
+                                i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
                         el-radio-group(v-model="sharedFeedFilters.noty.PortalSpawn" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
@@ -2222,8 +2222,8 @@ html
                     br
                     .toggle-item
                         span.toggle-name Photon Event Logging
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click to copy)")
-                                i.el-icon-warning(style="cursor:pointer" @click="copyText(recommendedSteamParams)")
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click for more info)")
+                                i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
                     .toggle-item
                         span.toggle-name Lobby Avatar Change
                         el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
@@ -2360,8 +2360,8 @@ html
                             el-radio-button(label="Friends")
                     .toggle-item
                         span.toggle-name Portal Spawn
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option")
-                                i.el-icon-warning(style="cursor:pointer" @click="copyText(recommendedSteamParams)")
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option (click for more info)")
+                                i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
                         el-radio-group(v-model="sharedFeedFilters.wrist.PortalSpawn" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
@@ -2410,8 +2410,8 @@ html
                     br
                     .toggle-item
                         span.toggle-name Photon Event Logging
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click to copy)")
-                                i.el-icon-warning(style="cursor:pointer" @click="copyText(recommendedSteamParams)")
+                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click for more info)")
+                                i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
                     .toggle-item
                         span.toggle-name Lobby Avatar Change
                         el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")

@@ -8038,7 +8038,7 @@ speechSynthesis.getVoices();
     };
 
     $app.data.recommendedSteamParams =
-        '--enable-sdk-log-levels --log-debug-levels=API;NetworkData';
+        'https://gist.github.com/Natsumi-sama/d280a58f08ace3da0e8fc7a9a381d44e';
     $app.data.lastPortalId = '';
     $app.data.lastPortalList = new Map();
     $app.data.portalQueue = '';
