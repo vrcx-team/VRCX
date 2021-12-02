@@ -1543,7 +1543,7 @@ html
                                         span \#{{ room.$location.instanceName }} {{ room.$location.accessType }}
                                         span.famfamfam-flags(v-if="room.$location.region === 'eu'" class="europeanunion" style="display:inline-block;margin-left:5px")
                                         span.famfamfam-flags(v-else-if="room.$location.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
-                                        span.flag-icon-use(v-else-if="currentInstanceLocation.region === 'use'" style="display:inline-block;margin-left:5px")
+                                        span.flag-icon-use(v-else-if="room.$location.region === 'use'" style="display:inline-block;margin-left:5px")
                                         span.flag-icon-usw(v-else style="display:inline-block;margin-left:5px")
                                     el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
                                         invite-yourself(:location="room.$location.tag" style="margin-left:5px")

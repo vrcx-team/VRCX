@@ -7977,6 +7977,8 @@ speechSynthesis.getVoices();
                 var type = gameLog.data.substr(0, gameLog.data.indexOf(' '));
                 if (type === 'VideoPlay(PyPyDance)') {
                     this.addGameLogPyPyDance(gameLog, location);
+                } else if (type === 'VideoPlay(VRDancing)') {
+                    this.addGameLogVRDancing(gameLog, location);
                 }
                 return;
             case 'photon-event':
@@ -8718,11 +8720,7 @@ speechSynthesis.getVoices();
                     data.EventType === 'UdonSyncRunProgramAsRPC' &&
                     data.Data[0] === 'Beep'
                 ) {
-                    var L = API.parseLocation(this.lastLocation.location);
-                    if (
-                        L.worldId !==
-                        'wrld_f20326da-f1ac-45fc-a062-609723b097b1'
-                    ) {
+                    if (!this.isDanceWorld(this.lastLocation.location)) {
                         return;
                     }
                     var text = 'Beep';
@@ -9026,12 +9024,8 @@ speechSynthesis.getVoices();
         if (typeof gameLog.videoPos !== 'undefined') {
             videoPos = gameLog.videoPos;
         }
-        var L = API.parseLocation(location);
-        if (
-            L.worldId !== 'wrld_f20326da-f1ac-45fc-a062-609723b097b1' ||
-            gameLog.videoId === 'YouTube'
-        ) {
-            // skip PyPyDance videos
+        if (!this.isDanceWorld(location) || gameLog.videoId === 'YouTube') {
+            // skip PyPyDance and VRDancing videos
             try {
                 var url = new URL(videoUrl);
                 var id1 = url.pathname;
@@ -9095,17 +9089,8 @@ speechSynthesis.getVoices();
             text2 = text2.substr(text2.indexOf(':') + 2);
         }
         var videoName = text2.slice(0, -1);
-        var userId = '';
         if (displayName === 'Random') {
             displayName = '';
-        }
-        if (displayName) {
-            for (var ref of API.cachedUsers.values()) {
-                if (ref.displayName === displayName) {
-                    userId = ref.id;
-                    break;
-                }
-            }
         }
         if (videoUrl === this.nowPlaying.url) {
             var entry = {
@@ -9116,6 +9101,74 @@ speechSynthesis.getVoices();
             };
             this.setNowPlaying(entry);
             return;
+        }
+        var userId = '';
+        if (displayName) {
+            for (var ref of API.cachedUsers.values()) {
+                if (ref.displayName === displayName) {
+                    userId = ref.id;
+                    break;
+                }
+            }
+        }
+        if (videoId === 'YouTube') {
+            var entry = {
+                dt: gameLog.dt,
+                videoUrl,
+                displayName,
+                videoPos,
+                videoId
+            };
+            this.addGameLogVideo(entry, location, userId);
+        } else {
+            var entry = {
+                created_at: gameLog.dt,
+                type: 'VideoPlay',
+                videoUrl,
+                videoId,
+                videoName,
+                videoLength,
+                location,
+                displayName,
+                userId,
+                videoPos
+            };
+            this.setNowPlaying(entry);
+        }
+    };
+
+    $app.methods.addGameLogVRDancing = function (gameLog, location) {
+        var data =
+            /VideoPlay\(VRDancing\) "(.+?)",([\d.]+),([\d.]+),([\d.]+),"(.+?)","(.+?)"/g.exec(
+                gameLog.data
+            );
+        var videoUrl = data[1];
+        var videoPos = Number(data[2]);
+        var videoLength = Number(data[3]);
+        var videoId = Number(data[4]);
+        var displayName = data[5];
+        var videoName = data[6];
+        if (videoId === -1) {
+            videoId = 'YouTube';
+        }
+        if (videoUrl === this.nowPlaying.url) {
+            var entry = {
+                created_at: gameLog.dt,
+                videoUrl,
+                videoLength,
+                videoPos
+            };
+            this.setNowPlaying(entry);
+            return;
+        }
+        var userId = '';
+        if (displayName) {
+            for (var ref of API.cachedUsers.values()) {
+                if (ref.displayName === displayName) {
+                    userId = ref.id;
+                    break;
+                }
+            }
         }
         if (videoId === 'YouTube') {
             var entry = {
@@ -9409,11 +9462,7 @@ speechSynthesis.getVoices();
             buttonText = '';
             buttonUrl = '';
         }
-        if (
-            (!hidePrivate &&
-                L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1') ||
-            L.worldId === 'wrld_42377cf1-c54f-45ed-8996-5875b0573a83'
-        ) {
+        if (!hidePrivate && this.isDanceWorld(L.tag)) {
             // dance world rpc
             if (L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1') {
                 appId = '784094509008551956';
@@ -11215,17 +11264,24 @@ speechSynthesis.getVoices();
         AppApi.ExecuteVrOverlayFunction('configUpdate', json);
     };
 
+    $app.methods.isDanceWorld = function (location) {
+        var danceWorlds = [
+            'wrld_f20326da-f1ac-45fc-a062-609723b097b1',
+            'wrld_42377cf1-c54f-45ed-8996-5875b0573a83'
+        ];
+        var L = API.parseLocation(location);
+        if (danceWorlds.includes(L.worldId)) {
+            return true;
+        }
+        return false;
+    };
+
     $app.methods.updateVRLastLocation = function () {
         var progressPie = false;
         if (this.progressPie) {
             progressPie = true;
             if (this.progressPieFilter) {
-                var L = API.parseLocation(this.lastLocation.location);
-                var danceWorlds = [
-                    'wrld_f20326da-f1ac-45fc-a062-609723b097b1',
-                    'wrld_42377cf1-c54f-45ed-8996-5875b0573a83'
-                ];
-                if (!danceWorlds.includes(L.worldId)) {
+                if (!this.isDanceWorld(this.lastLocation.location)) {
                     progressPie = false;
                 }
             }
