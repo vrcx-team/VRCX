@@ -211,9 +211,14 @@ namespace VRCX
             }
         }
 
-        public void SetVR(bool active, bool hmdOverlay, bool wristOverlay)
+        public void SetVR(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton)
         {
-            VRCXVR.Instance.SetActive(active, hmdOverlay, wristOverlay);
+            VRCXVR.Instance.SetActive(active, hmdOverlay, wristOverlay, menuButton);
+        }
+
+        public void TriggerLeftHand()
+        {
+            VRCXVR.Instance.TriggerLeftHand();
         }
 
         public void RefreshVR()

@@ -2029,7 +2029,10 @@ html
 
             //- dialog: launch
             el-dialog.x-dialog(ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="400px")
-                div #[span(v-text="launchDialog.url" style="word-break:break-all;font-size:12px")]
+                div #[span(v-text="launchDialog.shortUrl" style="word-break:break-all;font-size:12px")]
+                    el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                        el-button(@click="copyInstanceUrl(launchDialog.shortUrl)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                div(style="margin-top:10px") #[span(v-text="launchDialog.url" style="word-break:break-all;font-size:12px")]
                     el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
                         el-button(@click="copyInstanceUrl(launchDialog.url)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                 template(#footer)
