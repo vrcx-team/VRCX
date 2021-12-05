@@ -216,11 +216,6 @@ namespace VRCX
             VRCXVR.Instance.SetActive(active, hmdOverlay, wristOverlay, menuButton);
         }
 
-        public void TriggerLeftHand()
-        {
-            VRCXVR.Instance.TriggerLeftHand();
-        }
-
         public void RefreshVR()
         {
             VRCXVR.Instance.Refresh();
