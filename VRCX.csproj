@@ -166,19 +166,19 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.Common">
-      <Version>95.7.141</Version>
+      <Version>96.0.142</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.OffScreen">
-      <Version>95.7.141</Version>
+      <Version>96.0.142</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
-      <Version>95.7.141</Version>
+      <Version>96.0.142</Version>
     </PackageReference>
     <PackageReference Include="DiscordRichPresence">
       <Version>1.0.175</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
-      <Version>7.1.1</Version>
+      <Version>7.1.2</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
