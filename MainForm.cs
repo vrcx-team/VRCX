@@ -75,6 +75,7 @@ namespace VRCX
                 {
                     Location = location;
                 }
+                Size = new Size(1920, 1080);
                 if (size.Width > 0 && size.Height > 0)
                 {
                     Size = size;

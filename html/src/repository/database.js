@@ -1084,8 +1084,8 @@ class Database {
 
     async getLastDateGameLogDatabase() {
         var gamelogDatabase = [];
-        // var date = '1970-01-01';
-        var date = new Date(Date.now() - 86400000).toJSON(); // 24 hours
+        var date = new Date().toJSON();
+        var dateOffset = new Date(Date.now() - 86400000).toJSON(); // 24 hours
         await sqliteService.execute((dbRow) => {
             gamelogDatabase.unshift(dbRow[0]);
         }, 'SELECT created_at FROM gamelog_location ORDER BY id DESC LIMIT 1');
@@ -1103,7 +1103,10 @@ class Database {
         }, 'SELECT created_at FROM gamelog_video_play ORDER BY id DESC LIMIT 1');
         if (gamelogDatabase.length > 0) {
             gamelogDatabase.sort();
-            date = gamelogDatabase[gamelogDatabase.length - 1];
+            var newDate = gamelogDatabase[gamelogDatabase.length - 1];
+            if (newDate > dateOffset) {
+                date = newDate;
+            }
         }
         return date;
     }

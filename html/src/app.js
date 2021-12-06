@@ -8440,12 +8440,12 @@ speechSynthesis.getVoices();
                 } else if (typeof ref.displayName !== 'undefined') {
                     this.lookupUser(ref);
                 }
+            } else {
+                this.$message({
+                    message: 'No user info available',
+                    type: 'error'
+                });
             }
-        } else {
-            this.$message({
-                message: 'Missing user info',
-                type: 'error'
-            });
         }
     };
 

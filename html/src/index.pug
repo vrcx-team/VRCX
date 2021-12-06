@@ -99,7 +99,9 @@ html
                                         | &nbsp;
                                         el-tooltip(placement="bottom")
                                             template(#content)
-                                                span Photon Bot Id's: {{ photonLobbyBots.toString() }}
+                                                span Photon Bots: 
+                                                div(v-for="id in photonLobbyBots" :key="id" placement="top")
+                                                    span.x-link(v-text="getDisplayNameFromPhotonId(id)" @click="showUserFromPhotonId(id)" style="margin-right:5px")
                                             span(v-text="photonLobbyBots.length" style="color:red")
                                 //- el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px;margin-top:5px")
                             div(style="margin-top:5px")
