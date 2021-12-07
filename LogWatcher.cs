@@ -406,35 +406,29 @@ namespace VRCX
 
             // 2021.06.23 11:41:16 Log        -  [Behaviour] Initialized PlayerAPI "Natsumi-sama" is local
 
-            if (line.Contains("] Initialized PlayerAPI \""))
+            if (line.Contains("] OnPlayerJoined"))
             {
-                var lineOffset = line.LastIndexOf("] Initialized PlayerAPI \"");
+                var lineOffset = line.LastIndexOf("] OnPlayerJoined");
                 if (lineOffset < 0)
                     return false;
-                lineOffset += 25;
+                lineOffset += 17;
 
-                var pos = line.LastIndexOf("\" is ");
-                if (pos < 0)
-                    return false;
-
-                var userType = line.Substring(pos + 5);
-                var userDisplayName = line.Substring(lineOffset, pos - lineOffset);
+                var userDisplayName = line.Substring(lineOffset);
 
                 AppendLog(new[]
                 {
                     fileInfo.Name,
                     ConvertLogTimeToISO8601(line),
                     "player-joined",
-                    userDisplayName,
-                    userType,
+                    userDisplayName
                 });
 
                 return true;
             }
 
-            if (line.Contains("] OnPlayerLeft "))
+            if (line.Contains("] OnPlayerLeft") && !line.Contains("] OnPlayerLeftRoom"))
             {
-                var lineOffset = line.LastIndexOf("] OnPlayerLeft ");
+                var lineOffset = line.LastIndexOf("] OnPlayerLeft");
                 if (lineOffset < 0)
                     return false;
                 lineOffset += 15;
