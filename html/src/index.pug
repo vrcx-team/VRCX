@@ -128,6 +128,15 @@ html
                                         span 💚
                                     el-tooltip(v-if="scope.row.timeoutTime" placement="left" content="Timeout")
                                         span(style="color:red") 🔴{{ scope.row.timeoutTime }}s
+                            el-table-column(label="Platform" prop="inVrMode" width="70")
+                                template(v-once #default="scope")
+                                    template(v-if="scope.row.ref.last_platform")
+                                        span(v-if="scope.row.ref.last_platform === 'standalonewindows'" style="color:#409eff") PC
+                                        span(v-else-if="scope.row.ref.last_platform === 'android'" style="color:#67c23a") Q
+                                        span(v-else) {{ scope.row.ref.last_platform }}
+                                    template(v-if="scope.row.inVrMode !== undefined")
+                                        span(v-if="scope.row.inVrMode") VR
+                                        span(v-else) D
                             el-table-column(label="Display Name" min-width="140" prop="ref.displayName")
                                 template(v-once #default="scope")
                                     span(v-text="scope.row.ref.displayName" :class="scope.row.ref.$trustColor")
