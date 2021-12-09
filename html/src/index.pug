@@ -1279,14 +1279,14 @@ html
                                             span(v-else-if="userDialog.ref.status === 'busy'") Do Not Disturb
                                             span(v-else) Offline
                                         i.x-user-status(:class="userStatusClass(userDialog.ref)")
-                                    span(v-text="userDialog.ref.displayName" style="margin-left:5px;font-weight:bold")
+                                    span(v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px;font-weight:bold")
                                     el-popover(placement="top" trigger="click")
-                                        span(slot="reference" v-text="userDialog.ref.username" style="margin-left:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer")
+                                        span(slot="reference" v-text="userDialog.ref.username" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer")
                                         span(style="display:block;text-align:center;font-family:monospace") {{ userDialog.ref.username | textToHex }}
                                     el-tooltip(v-for="item in userDialog.ref.$languages" :key="item.key" placement="top")
                                         template(#content)
                                             span {{ item.value }} ({{ item.key }})
-                                        span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-left:5px")
+                                        span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
                                 div
                                     el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px;margin-top:5px")
                                     el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Friend No.{{userDialog.friend.no}}

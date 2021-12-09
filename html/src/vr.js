@@ -567,7 +567,7 @@ Vue.component('marquee-text', MarqueeText);
     };
 
     $app.methods.addEntryHudFeed = function (json) {
-        var {displayName, text} = JSON.parse(json);
+        var {displayName, text, color} = JSON.parse(json);
         var combo = 1;
         this.hudFeed.forEach((item) => {
             if (item.displayName === displayName && item.text === text) {
@@ -579,7 +579,8 @@ Vue.component('marquee-text', MarqueeText);
             time: Date.now(),
             displayName,
             text,
-            combo
+            combo,
+            color
         });
         this.cleanHudFeed();
     };
