@@ -332,6 +332,8 @@ namespace VRCX
                 if (lineOffset < 0)
                     return false;
                 lineOffset += 17;
+                if (lineOffset >= line.Length)
+                    return true;
 
                 var worldName = line.Substring(lineOffset);
                 logContext.RecentWorldName = worldName;
@@ -344,6 +346,8 @@ namespace VRCX
                 if (lineOffset < 0)
                     return false;
                 lineOffset += 10;
+                if (lineOffset >= line.Length)
+                    return true;
 
                 var location = line.Substring(lineOffset);
 
@@ -376,6 +380,8 @@ namespace VRCX
                 if (lineOffset < 0)
                     return false;
                 lineOffset += 24;
+                if (lineOffset >= line.Length)
+                    return true;
 
                 var location = line.Substring(lineOffset);
 
@@ -412,6 +418,8 @@ namespace VRCX
                 if (lineOffset < 0)
                     return false;
                 lineOffset += 17;
+                if (lineOffset > line.Length)
+                    return true;
 
                 var userDisplayName = line.Substring(lineOffset);
 
@@ -432,6 +440,8 @@ namespace VRCX
                 if (lineOffset < 0)
                     return false;
                 lineOffset += 15;
+                if (lineOffset > line.Length)
+                    return true;
 
                 var userDisplayName = line.Substring(lineOffset);
 
