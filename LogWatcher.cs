@@ -338,7 +338,7 @@ namespace VRCX
                 return true;
             }
 
-            if (line.Contains("] Joining ") && !line.Contains("or Creating Room: "))
+            if (line.Contains("] Joining ") && !line.Contains("] Joining or Creating Room: ") && !line.Contains("] Joining friend: "))
             {
                 var lineOffset = line.LastIndexOf("] Joining ");
                 if (lineOffset < 0)

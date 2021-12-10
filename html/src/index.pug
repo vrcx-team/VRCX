@@ -1100,6 +1100,9 @@ html
                         span.name Enable
                         el-switch(v-model="photonEventOverlay" @change="saveEventOverlay" :disabled="!openVR")
                     div.options-container-item
+                        span.name Show Join/Leave
+                        el-switch(v-model="photonEventOverlayJoinLeave" @change="saveEventOverlay" :disabled="!openVR")
+                    div.options-container-item
                         span.name Filter
                         el-radio-group(v-model="photonEventOverlayFilter" @change="saveEventOverlay" size="mini" :disabled="!openVR || !photonEventOverlay")
                             el-radio-button(label="VIP")
