@@ -193,9 +193,9 @@ namespace VRCX
                             if (logContext.incomingJson)
                             {
                                 logContext.jsonChunk += line;
-                                if (line == "}}")
+                                if (line == "}")
                                 {
-                                    var data = logContext.jsonChunk.Replace("{{", "{").Replace("}}", "}");
+                                    var data = logContext.jsonChunk;
                                     ParseLogPhotonEvent(fileInfo, data, logContext.jsonDate, logContext.photonEvent);
                                     logContext.incomingJson = false;
                                     logContext.jsonChunk = String.Empty;
@@ -231,9 +231,9 @@ namespace VRCX
                             var offset = 34;
                             if (line[offset] == '[')
                             {
-                                if (string.Compare(line, offset, "[Network Data] OnEvent: PLAYER:  ", 0, 33, StringComparison.Ordinal) == 0)
+                                if (string.Compare(line, offset, "[Network Data] OnEvent: PLAYER:   ", 0, 34, StringComparison.Ordinal) == 0)
                                 {
-                                    logContext.photonEvent = line.Substring(offset + 33);
+                                    logContext.photonEvent = line.Substring(offset + 34);
                                     logContext.incomingJson = true;
                                     logContext.jsonChunk = String.Empty;
                                     logContext.jsonDate = ConvertLogTimeToISO8601(line);
