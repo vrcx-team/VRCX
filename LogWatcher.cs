@@ -326,7 +326,7 @@ namespace VRCX
             // 2021.02.03 10:18:58 Log        -  [ǄǄǅǅǅǄǄǅǅǄǅǅǅǅǄǄǄǅǅǄǄǅǅǅǅǄǅǅǅǅǄǄǄǄǄǅǄǅǄǄǄǅǅǄǅǅǅ] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
             // 2021.06.23 12:02:56 Log        -  [Behaviour] Entering Room: VRChat Home
 
-            if (line.Contains("] Entering Room: "))
+            if (line.Contains("[Behaviour] Entering Room: ") || line.Contains("[RoomManager] Entering Room: "))
             {
                 var lineOffset = line.LastIndexOf("] Entering Room: ");
                 if (lineOffset < 0)
@@ -340,7 +340,7 @@ namespace VRCX
                 return true;
             }
 
-            if (line.Contains("] Joining ") && !line.Contains("] Joining or Creating Room: ") && !line.Contains("] Joining friend: "))
+            if ((line.Contains("[Behaviour] Joining ") || line.Contains("[RoomManager] Joining ")) && !line.Contains("] Joining or Creating Room: ") && !line.Contains("] Joining friend: "))
             {
                 var lineOffset = line.LastIndexOf("] Joining ");
                 if (lineOffset < 0)
@@ -374,7 +374,7 @@ namespace VRCX
             // 2021.09.02 00:02:12 Log        -  [Behaviour] Destination set: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd:15609~private(usr_032383a7-748c-4fb2-94e4-bcb928e5de6b)~nonce(72CC87D420C1D49AEFFBEE8824C84B2DF0E38678E840661E)
             // 2021.09.02 00:49:15 Log        -  [Behaviour] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
 
-            if (line.Contains("] Destination fetching: "))
+            if (line.Contains("[Behaviour] Destination fetching: ") || line.Contains("[VRCFlowManagerVRC] Destination fetching: "))
             {
                 var lineOffset = line.LastIndexOf("] Destination fetching: ");
                 if (lineOffset < 0)
@@ -412,7 +412,7 @@ namespace VRCX
 
             // 2021.06.23 11:41:16 Log        -  [Behaviour] Initialized PlayerAPI "Natsumi-sama" is local
 
-            if (line.Contains("] OnPlayerJoined"))
+            if (line.Contains("[Behaviour] OnPlayerJoined") || line.Contains("[NetworkManager] OnPlayerJoined"))
             {
                 var lineOffset = line.LastIndexOf("] OnPlayerJoined");
                 if (lineOffset < 0)
@@ -434,7 +434,7 @@ namespace VRCX
                 return true;
             }
 
-            if (line.Contains("] OnPlayerLeft") && !line.Contains("] OnPlayerLeftRoom"))
+            if ((line.Contains("[Behaviour] OnPlayerLeft") || line.Contains("[NetworkManager] OnPlayerLeft")) && !line.Contains("] OnPlayerLeftRoom"))
             {
                 var lineOffset = line.LastIndexOf("] OnPlayerLeft");
                 if (lineOffset < 0)
