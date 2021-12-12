@@ -14,6 +14,7 @@ import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 import {v4 as uuidv4} from 'uuid';
 import * as workerTimers from 'worker-timers';
+import 'default-passive-events';
 
 import {appVersion} from './constants.js';
 import configRepository from './repository/config.js';

@@ -25,6 +25,7 @@
     "animate.css": "^4.1.1",
     "copy-webpack-plugin": "^10.0.0",
     "css-loader": "^6.5.1",
+    "default-passive-events": "^2.0.0",
     "element-ui": "^2.15.6",
     "eslint": "^8.4.0",
     "eslint-config-prettier": "^8.3.0",
