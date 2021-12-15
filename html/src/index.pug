@@ -1090,9 +1090,9 @@ html
                     div.options-container-item
                         span.name Dance worlds only
                         el-switch(v-model="progressPieFilter" @change="changeYouTubeApi" :disabled="!openVR")
-                div.options-container
+                div.options-container(v-if="photonLoggingEnabled")
                     span.header Photon Logging Overlay
-                    el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click for more info)")
+                    el-tooltip(placement="top" style="margin-left:5px" content="(click for more info)")
                         i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
                     div.options-container-item
                     span.sub-header Photon Event HUD
@@ -2236,13 +2236,14 @@ html
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                             el-radio-button(label="Everyone")
-                    br
-                    .toggle-item
-                        span.toggle-name Photon Event Logging
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click for more info)")
-                                i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
-                    .toggle-item
-                        span.toggle-name Lobby Avatar Change
+                    template(v-if="photonLoggingEnabled")
+                        br
+                        .toggle-item
+                            span.toggle-name Photon Event Logging
+                                el-tooltip(placement="top" style="margin-left:5px" content="(click for more info)")
+                                    i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
+                        .toggle-item
+                            span.toggle-name Lobby Avatar Change
                         el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
@@ -2424,13 +2425,14 @@ html
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                             el-radio-button(label="Everyone")
-                    br
-                    .toggle-item
-                        span.toggle-name Photon Event Logging
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--log-debug-levels=API;NetworkData' steam launch option (click for more info)")
-                                i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
-                    .toggle-item
-                        span.toggle-name Lobby Avatar Change
+                    template(v-if="photonLoggingEnabled")
+                        br
+                        .toggle-item
+                            span.toggle-name Photon Event Logging
+                                el-tooltip(placement="top" style="margin-left:5px" content="(click for more info)")
+                                    i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
+                        .toggle-item
+                            span.toggle-name Lobby Avatar Change
                         el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")

@@ -8056,6 +8056,7 @@ speechSynthesis.getVoices();
     $app.data.photonLobbyTimeout = [];
     $app.data.photonLobbyJointime = new Map();
     $app.data.photonLobbyBots = [];
+    $app.data.photonLoggingEnabled = false;
 
     $app.data.photonEventType = [
         'MeshVisibility',
@@ -8420,6 +8421,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.parsePhotonEvent = function (data, gameLogDate) {
+        this.photonLoggingEnabled = true;
         if (data.Code === 226) {
             // nothing
         } else if (data.Code === 253) {
