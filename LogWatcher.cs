@@ -633,7 +633,7 @@ namespace VRCX
             if (pos < 0)
                 return false;
 
-            var playerPlayer = line.Substring(offset + 5, pos - (offset + 5));
+            var displayName = line.Substring(offset + 5, pos - (offset + 5));
             var data = line.Substring(pos + 11);
 
             AppendLog(new[]
@@ -668,7 +668,7 @@ namespace VRCX
                 ConvertLogTimeToISO8601(line),
                 "video-play",
                 data,
-                playerPlayer
+                displayName
             });
 
             return true;
