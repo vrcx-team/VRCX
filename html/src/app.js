@@ -7588,6 +7588,7 @@ speechSynthesis.getVoices();
         };
         this.updateVRLastLocation();
         this.getCurrentInstanceUserList();
+        this.lastVideoUrl = '';
     };
 
     $app.data.lastLocation$ = {
@@ -7808,6 +7809,7 @@ speechSynthesis.getVoices();
 
     $app.data.lastLocationDestination = '';
     $app.data.lastLocationDestinationTime = 0;
+    $app.data.lastVideoUrl = '';
 
     $app.methods.addGameLogEntry = function (gameLog, location) {
         var userId = '';
@@ -7951,6 +7953,10 @@ speechSynthesis.getVoices();
                 database.addGamelogPortalSpawnToDatabase(entry);
                 break;
             case 'video-play':
+                if (this.lastVideoUrl === gameLog.videoUrl) {
+                    return;
+                }
+                this.lastVideoUrl = gameLog.videoUrl;
                 this.addGameLogVideo(gameLog, location, userId);
                 return;
             case 'api-request':
@@ -9040,9 +9046,6 @@ speechSynthesis.getVoices();
         if (typeof gameLog.videoPos !== 'undefined') {
             videoPos = gameLog.videoPos;
         }
-        if (!this.isDanceWorld(location) && videoUrl === this.nowPlaying.url) {
-            return;
-        }
         if (!this.isDanceWorld(location) || gameLog.videoId === 'YouTube') {
             // skip PyPyDance and VRDancing videos
             try {
@@ -9090,7 +9093,7 @@ speechSynthesis.getVoices();
 
     $app.methods.addGameLogPyPyDance = function (gameLog, location) {
         var data =
-            /VideoPlay\(PyPyDance\) "(.+?)",([\d.]+),([\d.]+),"(.+?)\s*(?:)?"/g.exec(
+            /VideoPlay\(PyPyDance\) "(.+?)",([\d.]+),([\d.]+),"(.*)"/g.exec(
                 gameLog.data
             );
         if (!data) {
