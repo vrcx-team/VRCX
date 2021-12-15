@@ -21,7 +21,6 @@ namespace VRCX
             public long Length;
             public long Position;
             public string RecentWorldName;
-            public string LastVideoURL;
             public bool ShaderKeywordsLimitReached = false;
             public bool incomingJson;
             public string jsonChunk;
@@ -255,6 +254,7 @@ namespace VRCX
                                     ParseLogAvatarPedestalChange(fileInfo, logContext, line, offset) == true ||
                                     ParseLogVideoError(fileInfo, logContext, line, offset) == true ||
                                     ParseLogVideoChange(fileInfo, logContext, line, offset) == true ||
+                                    ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) == true ||
                                     ParseLogWorldVRCX(fileInfo, logContext, line, offset) == true ||
                                     ParseLogPhotonId(fileInfo, logContext, line, offset) == true)
                                 {
@@ -412,7 +412,11 @@ namespace VRCX
 
             // 2021.06.23 11:41:16 Log        -  [Behaviour] Initialized PlayerAPI "Natsumi-sama" is local
 
-            if (line.Contains("[Behaviour] OnPlayerJoined") || line.Contains("[NetworkManager] OnPlayerJoined"))
+            // 2021.12.12 11:47:22 Log        -  [Behaviour] OnPlayerJoined Natsumi-sama
+            // 2021.12.12 11:47:22 Log        -  [Behaviour] OnPlayerJoined:Unnamed
+            // 2021.12.12 11:53:14 Log        -  [Behaviour] OnPlayerLeftRoom
+
+            if ((line.Contains("[Behaviour] OnPlayerJoined") || line.Contains("[NetworkManager] OnPlayerJoined")) && !line.Contains("] OnPlayerJoined:"))
             {
                 var lineOffset = line.LastIndexOf("] OnPlayerJoined");
                 if (lineOffset < 0)
@@ -573,6 +577,26 @@ namespace VRCX
             return true;
         }
 
+        private bool ParseLogWorldVRCX(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // [VRCX] VideoPlay(PyPyDance) "https://jd.pypy.moe/api/v1/videos/-Q3pdlsQxOk.mp4",0.5338666,260.6938,"1339 : Le Freak (Random)"
+
+            if (string.Compare(line, offset, "[VRCX] ", 0, 7, StringComparison.Ordinal) != 0)
+                return false;
+
+            var data = line.Substring(offset + 7);
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "vrcx",
+                data
+            });
+
+            return true;
+        }
+
         private bool ParseLogVideoChange(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2021.04.20 13:37:69 Log        -  [Video Playback] Attempting to resolve URL 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
@@ -598,28 +622,6 @@ namespace VRCX
             return true;
         }
 
-        private bool ParseLogWorldVRCX(FileInfo fileInfo, LogContext logContext, string line, int offset)
-        {
-            // [VRCX] VideoPlay(PyPyDance) "https://jd.pypy.moe/api/v1/videos/-Q3pdlsQxOk.mp4",0.5338666,260.6938,"1339 : Le Freak (Random)"
-
-            if (string.Compare(line, offset, "[VRCX] ", 0, 7, StringComparison.Ordinal) == 0)
-            {
-                var data = line.Substring(offset + 7);
-
-                AppendLog(new[]
-                {
-                    fileInfo.Name,
-                    ConvertLogTimeToISO8601(line),
-                    "vrcx",
-                    data
-                });
-
-                return true;
-            }
-
-            return false;
-        }
-
         private bool ParseLogSDK2VideoPlay(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2021.04.23 13:12:25 Log        -  User Natsumi-sama added URL https://www.youtube.com/watch?v=dQw4w9WgXcQ
@@ -634,10 +636,31 @@ namespace VRCX
             var playerPlayer = line.Substring(offset + 5, pos - (offset + 5));
             var data = line.Substring(pos + 11);
 
-            if (logContext.LastVideoURL == data)
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "video-play",
+                data,
+                displayName
+            });
+
+            return true;
+        }
+
+        private bool ParseLogUsharpVideoPlay(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2021.12.12 05:51:58 Log        -  [USharpVideo] Started video load for URL: https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=1s, requested by ʜ ᴀ ᴘ ᴘ ʏ
+
+            if (string.Compare(line, offset, "[USharpVideo] Started video load for URL: ", 0, 42, StringComparison.Ordinal) != 0)
                 return false;
 
-            logContext.LastVideoURL = data;
+            var pos = line.LastIndexOf(", requested by ");
+            if (pos < 0)
+                return false;
+
+            var data = line.Substring(offset + 42, pos - (offset + 42));
+            var displayName = line.Substring(pos + 15);
 
             AppendLog(new[]
             {
