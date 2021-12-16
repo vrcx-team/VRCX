@@ -1689,6 +1689,7 @@ html
                                 el-dropdown(trigger="click" @command="avatarDialogCommand" size="small" style="margin-left:5px")
                                     el-button(type="default" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
+                                        el-dropdown-item(icon="el-icon-refresh" command="Refresh") Refresh
                                         el-dropdown-item(icon="el-icon-check" command="Select Avatar") Select Avatar
                                         el-dropdown-item(v-if="/quest/.test(avatarDialog.ref.tags)" icon="el-icon-check" command="Select Fallback Avatar") Select Fallback Avatar
                                         el-dropdown-item(v-if="avatarDialog.ref.authorId !== API.currentUser.id" icon="el-icon-picture-outline" command="Previous Images") Previous Images
