@@ -13520,59 +13520,64 @@ speechSynthesis.getVoices();
             D.ref = ref2;
             this.updateVRChatAvatarCache();
         }
-        API.getAvatar({avatarId}).then((args) => {
-            var {ref} = args;
-            D.ref = ref;
-            this.updateVRChatAvatarCache();
-            if (
-                ref.imageUrl === API.currentUser.currentAvatarImageUrl &&
-                !ref.assetUrl
-            ) {
-                D.ref.assetUrl = API.currentUser.currentAvatarAssetUrl;
-            }
-            if (/quest/.test(ref.tags)) {
-                D.isQuestFallback = true;
-            }
-            var assetUrl = '';
-            for (let i = ref.unityPackages.length - 1; i > -1; i--) {
-                var unityPackage = ref.unityPackages[i];
+        API.getAvatar({avatarId})
+            .then((args) => {
+                var {ref} = args;
+                D.ref = ref;
+                this.updateVRChatAvatarCache();
                 if (
-                    unityPackage.platform === 'standalonewindows' &&
-                    this.compareUnityVersion(unityPackage.unityVersion)
+                    ref.imageUrl === API.currentUser.currentAvatarImageUrl &&
+                    !ref.assetUrl
                 ) {
-                    assetUrl = unityPackage.assetUrl;
-                    break;
+                    D.ref.assetUrl = API.currentUser.currentAvatarAssetUrl;
                 }
-            }
-            var fileId = extractFileId(assetUrl);
-            var fileVersion = parseInt(extractFileVersion(assetUrl), 10);
-            if (!fileId) {
-                fileId = extractFileId(ref.assetUrl);
-                fileVersion = parseInt(extractFileVersion(ref.assetUrl), 10);
-            }
-            D.fileSize = '';
-            if (fileId) {
-                D.fileSize = 'Loading';
-                API.getBundles(fileId)
-                    .then((args2) => {
-                        var {versions} = args2.json;
-                        for (let i = versions.length - 1; i > -1; i--) {
-                            var version = versions[i];
-                            if (version.version === fileVersion) {
-                                D.fileSize = `${(
-                                    version.file.sizeInBytes / 1048576
-                                ).toFixed(2)} MiB`;
-                                break;
+                if (/quest/.test(ref.tags)) {
+                    D.isQuestFallback = true;
+                }
+                var assetUrl = '';
+                for (let i = ref.unityPackages.length - 1; i > -1; i--) {
+                    var unityPackage = ref.unityPackages[i];
+                    if (
+                        unityPackage.platform === 'standalonewindows' &&
+                        this.compareUnityVersion(unityPackage.unityVersion)
+                    ) {
+                        assetUrl = unityPackage.assetUrl;
+                        break;
+                    }
+                }
+                var fileId = extractFileId(assetUrl);
+                var fileVersion = parseInt(extractFileVersion(assetUrl), 10);
+                if (!fileId) {
+                    fileId = extractFileId(ref.assetUrl);
+                    fileVersion = parseInt(
+                        extractFileVersion(ref.assetUrl),
+                        10
+                    );
+                }
+                D.fileSize = '';
+                if (fileId) {
+                    D.fileSize = 'Loading';
+                    API.getBundles(fileId)
+                        .then((args2) => {
+                            var {versions} = args2.json;
+                            for (let i = versions.length - 1; i > -1; i--) {
+                                var version = versions[i];
+                                if (version.version === fileVersion) {
+                                    D.fileSize = `${(
+                                        version.file.sizeInBytes / 1048576
+                                    ).toFixed(2)} MiB`;
+                                    break;
+                                }
                             }
-                        }
-                    })
-                    .catch(() => {
-                        D.fileSize = 'Error';
-                    });
-            }
-        }).finally(() => {
-            D.loading = false;
-        });
+                        })
+                        .catch(() => {
+                            D.fileSize = 'Error';
+                        });
+                }
+            })
+            .finally(() => {
+                D.loading = false;
+            });
     };
 
     $app.methods.avatarDialogCommand = function (command) {
