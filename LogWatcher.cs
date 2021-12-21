@@ -189,21 +189,6 @@ namespace VRCX
                                 break;
                             }
 
-                            if (logContext.incomingJson)
-                            {
-                                logContext.jsonChunk += line;
-                                if (line == "}")
-                                {
-                                    var data = logContext.jsonChunk;
-                                    ParseLogPhotonEvent(fileInfo, data, logContext.jsonDate, logContext.photonEvent);
-                                    logContext.incomingJson = false;
-                                    logContext.jsonChunk = String.Empty;
-                                    logContext.jsonDate = String.Empty;
-                                    logContext.photonEvent = String.Empty;
-                                }
-                                continue;
-                            }
-
                             // 2020.10.31 23:36:28 Log        -  [VRCFlowManagerVRC] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
                             // 2021.02.03 10:18:58 Log        -  [ǄǄǅǅǅǄǄǅǅǄǅǅǅǅǄǄǄǅǅǄǄǅǅǅǅǄǅǅǅǅǄǄǄǄǄǅǄǅǄǄǄǅǅǄǅǅǅ] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
 
@@ -230,21 +215,7 @@ namespace VRCX
                             var offset = 34;
                             if (line[offset] == '[')
                             {
-                                if (string.Compare(line, offset, "[Network Data] OnEvent: PLAYER:   ", 0, 34, StringComparison.Ordinal) == 0)
-                                {
-                                    logContext.photonEvent = line.Substring(offset + 34);
-                                    logContext.incomingJson = true;
-                                    logContext.jsonChunk = String.Empty;
-                                    logContext.jsonDate = ConvertLogTimeToISO8601(line);
-                                }
-                                else if (string.Compare(line, offset, "[Network Data] OnEvent: SYSTEM ", 0, 31, StringComparison.Ordinal) == 0)
-                                {
-                                    logContext.photonEvent = line.Substring(offset + 31);
-                                    logContext.incomingJson = true;
-                                    logContext.jsonChunk = String.Empty;
-                                    logContext.jsonDate = ConvertLogTimeToISO8601(line);
-                                }
-                                else if (ParseLogOnPlayerJoinedOrLeft(fileInfo, logContext, line, offset) == true ||
+                                if (ParseLogOnPlayerJoinedOrLeft(fileInfo, logContext, line, offset) == true ||
                                     ParseLogLocation(fileInfo, logContext, line, offset) == true ||
                                     ParseLogLocationDestination(fileInfo, logContext, line, offset) == true ||
                                     ParseLogPortalSpawn(fileInfo, logContext, line, offset) == true ||
@@ -794,101 +765,6 @@ namespace VRCX
             }
 
             return false;
-        }
-
-        public class VrcEvent
-        {
-            public int Code { get; set; }
-            public Parameters Parameters { get; set; }
-            public int SenderKey { get; set; }
-            public int CustomDataKey { get; set; }
-            public int Type { get; set; }
-            public string EventType { get; set; }
-            public Object Data { get; set; }
-        }
-
-        public class Parameters
-        {
-            [JsonPropertyName("245")]
-            public _245 _245 { get; set; }
-            [JsonPropertyName("254")]
-            public int _254 { get; set; }
-        }
-
-        public class _245
-        {
-            [JsonPropertyName("$type")]
-            public string Type { get; set; }
-            [JsonPropertyName("$value")]
-            public string Value { get; set; }
-        }
-
-        private void ParseLogPhotonEvent(FileInfo fileInfo, string data, string date, string photonEvent)
-        {
-            // 2021.09.30 04:27:11 Log        -  [Network Data] OnEvent: PLAYER:  253
-            // 2021.09.30 04:27:40 Log        -  [Network Data] OnEvent: SYSTEM 255
-
-            if (photonEvent == "1" || photonEvent == "8" || photonEvent == "9" || photonEvent == "210")
-            {
-                return;
-            }
-
-            if (photonEvent == "7")
-            {
-                var json = System.Text.Json.JsonSerializer.Deserialize<VrcEvent>(data);
-                var photonId = json.Parameters._254;
-                if (photonEvent7.ContainsKey(photonId))
-                {
-                    photonEvent7[photonId] = date;
-                } else
-                {
-                    photonEvent7.Add(photonId, date);
-                }
-                return;
-            }
-
-            if (photonEvent == "254")
-            {
-                var json = System.Text.Json.JsonSerializer.Deserialize<VrcEvent>(data);
-                photonEvent7.Remove(json.Parameters._254);
-            }
-
-            if (photonEvent == "6")
-            {
-                var json = System.Text.Json.JsonSerializer.Deserialize<VrcEvent>(data);
-                byte[] bytes = Convert.FromBase64String(json.Parameters._245.Value);
-                try
-                {
-                    var deserialization = new VRCEventDeserialization();
-                    var eventData = deserialization.DeserializeData(bytes);
-                    json.Data = eventData.Data;
-                    json.Type = eventData.Type;
-                    json.EventType = eventData.EventType;
-                    data = System.Text.Json.JsonSerializer.Serialize<VrcEvent>(json);
-                }
-                catch(Exception ex)
-                {
-                    data = ex.ToString();
-                }
-            }
-
-            AppendLog(new[]
-            {
-                fileInfo.Name,
-                date,
-                "photon-event",
-                data
-            });
-        }
-
-        public IDictionary<int, string> GetEvent7()
-        {
-            return photonEvent7;
-        }
-
-        public void ClearEvent7()
-        {
-            photonEvent7 = new Dictionary<int, string>();
         }
 
         public string[][] Get()

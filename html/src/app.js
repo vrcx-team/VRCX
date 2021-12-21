@@ -4167,6 +4167,7 @@ speechSynthesis.getVoices();
     $app.data.debugWebRequests = false;
     $app.data.debugWebSocket = false;
     $app.data.debugUserDiff = false;
+    $app.data.debugPhotonLogging = true;
 
     $app.data.APILastOnline = new Map();
 
@@ -7551,6 +7552,7 @@ speechSynthesis.getVoices();
         this.photonLobbyWatcherLoopStop();
         this.photonLobbyAvatars = new Map();
         this.photonLobbyJointime = new Map();
+        this.photonEvent7List = new Map();
         this.moderationEventQueue = new Map();
         this.lastPortalId = '';
         this.lastPortalList = new Map();
@@ -7990,18 +7992,6 @@ speechSynthesis.getVoices();
                     this.addGameLogVRDancing(gameLog, location);
                 }
                 return;
-            case 'photon-event':
-                if (!this.isGameRunning || !this.friendLogInitStatus) {
-                    return;
-                }
-                try {
-                    var data = JSON.parse(gameLog.json);
-                } catch {
-                    console.error('error parsing photon json:', gameLog.json);
-                    return;
-                }
-                this.parsePhotonEvent(data, gameLog.dt);
-                return;
             case 'photon-id':
                 if (!this.isGameRunning || !this.friendLogInitStatus) {
                     return;
@@ -8062,7 +8052,7 @@ speechSynthesis.getVoices();
     $app.data.photonLobbyTimeout = [];
     $app.data.photonLobbyJointime = new Map();
     $app.data.photonLobbyBots = [];
-    $app.data.photonLoggingEnabled = false;
+    $app.data.photonEvent7List = new Map();
 
     $app.data.photonEventType = [
         'MeshVisibility',
@@ -8173,7 +8163,6 @@ speechSynthesis.getVoices();
         this.photonLobbyTimeout = [];
         this.photonLobbyBots = [];
         AppApi.ExecuteVrOverlayFunction('updateHudTimeout', '[]');
-        LogWatcher.ClearEvent7();
         this.updatePhotonLobbyBotSize(0);
     };
 
@@ -8196,13 +8185,11 @@ speechSynthesis.getVoices();
             workerTimers.setTimeout(() => this.photonLobbyWatcher(), 500);
             return;
         }
-        LogWatcher.GetEvent7().then((event7List) => {
-            var hudTimeout = [];
-            Object.entries(event7List).forEach(([photonId, dt]) => {
-                var id = parseInt(photonId, 10);
-                var timeSinceLastEvent = dtNow - Date.parse(dt);
-                if (timeSinceLastEvent > this.photonLobbyTimeoutThreshold) {
-                    if (this.photonLobbyJointime.has(id)) {
+        var hudTimeout = [];
+        this.photonEvent7List.forEach((dt, id) => {
+            var timeSinceLastEvent = dtNow - Date.parse(dt);
+            if (timeSinceLastEvent > this.photonLobbyTimeoutThreshold) {
+                if (this.photonLobbyJointime.has(id)) {
                         var {joinTime} = this.photonLobbyJointime.get(id);
                     }
                     if (!joinTime || joinTime + 120000 < dtNow) {
@@ -8255,13 +8242,11 @@ speechSynthesis.getVoices();
                 this.photonLobbyTimeout = hudTimeout;
                 this.getCurrentInstanceUserList();
             }
-            this.photonBotCheck(event7List, dtNow);
-        });
+        this.photonBotCheck(dtNow);
         workerTimers.setTimeout(() => this.photonLobbyWatcher(), 500);
     };
 
-    $app.methods.photonBotCheck = function (event7List, dtNow) {
-        var event7PhotonIds = Object.keys(event7List);
+    $app.methods.photonBotCheck = function (dtNow) {
         var photonBots = [];
         this.photonLobbyCurrent.forEach((ref, id) => {
             if (this.photonLobbyJointime.has(id)) {
@@ -8279,12 +8264,6 @@ speechSynthesis.getVoices();
                 !hasInstantiated
             ) {
                 text = 'Photon bot has joined, b';
-            } else if (
-                (!joinTime || joinTime + 3000 < dtNow) &&
-                typeof ref === 'undefined' &&
-                !event7PhotonIds.includes(id.toString())
-            ) {
-                text = 'Photon bot has joined, c';
             }
             if (text) {
                 if (!this.photonLobbyBots.includes(id)) {
@@ -8427,8 +8406,9 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.parsePhotonEvent = function (data, gameLogDate) {
-        this.photonLoggingEnabled = true;
-        if (data.Code === 226) {
+        if (data.Code === 7) {
+            this.photonEvent7List.set(data.Sender, gameLogDate);
+        } else if (data.Code === 226) {
             // nothing
         } else if (data.Code === 253) {
             // SetUserProperties
@@ -8474,7 +8454,7 @@ speechSynthesis.getVoices();
                     data.Parameters[249].inVRMode
                 );
             }
-            this.parsePhotonLobbyIds(data.Parameters[252].$values);
+            this.parsePhotonLobbyIds(data.Parameters[252]);
             this.photonLobbyJointime.set(data.Parameters[254], {
                 joinTime: Date.parse(gameLogDate),
                 hasInstantiated: false,
@@ -8482,6 +8462,8 @@ speechSynthesis.getVoices();
                 inVRMode: data.Parameters[249].inVRMode,
                 avatarEyeHeight: data.Parameters[249].avatarEyeHeight
             });
+            var ref = this.photonLobbyCurrent.get(data.Parameters[254]);
+            this.photonUserJoin(data.Parameters[254], ref, gameLogDate);
             this.startLobbyWatcherLoop();
         } else if (data.Code === 254) {
             // Leave
@@ -8490,7 +8472,8 @@ speechSynthesis.getVoices();
             this.photonLobbyCurrent.delete(data.Parameters[254]);
             this.photonLobbyJointime.delete(data.Parameters[254]);
             this.photonLobbyInVrMode.delete(data.Parameters[254]);
-            this.parsePhotonLobbyIds(data.Parameters[252].$values);
+            this.photonEvent7List.delete(data.Parameters[254]);
+            this.parsePhotonLobbyIds(data.Parameters[252]);
             if (typeof data.Parameters[203] !== 'undefined') {
                 this.setPhotonLobbyMaster(data.Parameters[203], gameLogDate);
             }
@@ -8531,8 +8514,8 @@ speechSynthesis.getVoices();
                         }
                     }
                 } else {
-                    var blockArray = data.Parameters[245]['10'].$values;
-                    var muteArray = data.Parameters[245]['11'].$values;
+                    var blockArray = data.Parameters[245]['10'];
+                    var muteArray = data.Parameters[245]['11'];
                     var idList = new Map();
                     blockArray.forEach((photonId1) => {
                         if (muteArray.includes(photonId1)) {
@@ -8586,50 +8569,64 @@ speechSynthesis.getVoices();
                 });
             }
         } else if (data.Code === 6) {
-            var senderId = data.Parameters[254];
             // VRC Event
-            if (
-                data.EventType === 'ReceiveVoiceStatsSyncRPC' ||
-                data.EventType === 'initUSpeakSenderRPC' ||
-                data.EventType === 'SanityCheck' ||
-                (data.EventType === 'UdonSyncRunProgramAsRPC' &&
-                    data.Data[0] !== 'Beep') ||
-                data.EventType === 'InformOfBadConnection' ||
-                data.EventType === 'SetTimerRPC' ||
-                data.EventType === 'IncrementPortalPlayerCountRPC' ||
-                data.EventType === 'PlayEffect' ||
-                data.EventType === 'PlayEmoteRPC' ||
-                data.EventType === 'CancelRPC' ||
-                data.EventType === '_SendOnSpawn' ||
-                data.EventType === 'RefreshAvatar' ||
-                data.EventType === 'InternalApplyOverrideRPC'
-            ) {
-                return;
-            }
-            if (
-                data.EventType === '_InstantiateObject' &&
-                data.Data[0] === 'Portals/PortalInternalDynamic'
-            ) {
-                this.lastPortalId = data.Data[3];
-                return;
-            } else if (
-                data.EventType === '_DestroyObject' &&
-                this.lastPortalList.has(data.Data[0])
-            ) {
-                var portalId = data.Data[0];
-                var date = this.lastPortalList.get(portalId);
-                var time = timeToText(Date.parse(gameLogDate) - date);
-                this.addEntryPhotonEvent({
+            var senderId = data.Parameters[254];
+            AppApi.DeserializeVrcEvent(data.Parameters[245]).then((json) => {
+                try {
+                    var eventData = JSON.parse(json);
+                } catch {
+                    console.error(
+                        'error parsing DeserializeVrcEvent json:',
+                        json
+                    );
+                    return;
+                }
+                if (
+                    eventData.EventType === 'ReceiveVoiceStatsSyncRPC' ||
+                    eventData.EventType === 'initUSpeakSenderRPC' ||
+                    eventData.EventType === 'SanityCheck' ||
+                    (eventData.EventType === 'UdonSyncRunProgramAsRPC' &&
+                        eventData.Data[0] !== 'Beep') ||
+                    eventData.EventType === 'InformOfBadConnection' ||
+                    eventData.EventType === 'SetTimerRPC' ||
+                    eventData.EventType === 'IncrementPortalPlayerCountRPC' ||
+                    eventData.EventType === 'PlayEffect' ||
+                    eventData.EventType === 'PlayEmoteRPC' ||
+                    eventData.EventType === 'CancelRPC' ||
+                    eventData.EventType === '_SendOnSpawn' ||
+                    eventData.EventType === 'RefreshAvatar' ||
+                    eventData.EventType === 'InternalApplyOverrideRPC'
+                ) {
+                    // Trash
+                    return;
+                }
+                if (this.debugPhotonLogging) {
+                    console.log('VrcEvent:', eventData);
+                }
+                if (
+                    eventData.EventType === '_InstantiateObject' &&
+                    eventData.Data[0] === 'Portals/PortalInternalDynamic'
+                ) {
+                    this.lastPortalId = eventData.Data[3];
+                    return;
+                } else if (
+                    eventData.EventType === '_DestroyObject' &&
+                    this.lastPortalList.has(eventData.Data[0])
+                ) {
+                    var portalId = eventData.Data[0];
+                    var date = this.lastPortalList.get(portalId);
+                    var time = timeToText(Date.parse(gameLogDate) - date);
+                    this.addEntryPhotonEvent({
                     photonId: senderId,
                     text: `DeletedPortal ${time}`,
-                    created_at: gameLogDate
-                });
-                return;
-            } else if (data.EventType === 'ConfigurePortal') {
-                var instanceId = `${data.Data[0]}:${data.Data[1]}`;
-                if (this.lastPortalId) {
-                    this.lastPortalList.set(
-                        this.lastPortalId,
+                        created_at: gameLogDate
+                    });
+                    return;
+                } else if (eventData.EventType === 'ConfigurePortal') {
+                    var instanceId = `${eventData.Data[0]}:${eventData.Data[1]}`;
+                    if (this.lastPortalId) {
+                        this.lastPortalList.set(
+                            this.lastPortalId,
                         Date.parse(gameLogDate)
                     );
                     this.lastPortalId = '';
@@ -8638,71 +8635,82 @@ speechSynthesis.getVoices();
                 if (displayName) {
                     var ref1 = {
                         id: this.getUserIdFromPhotonId(senderId),
-                        displayName
+                            displayName
+                        };
+                        this.portalQueue = 'skip';
+                        this.parsePhotonPortalSpawn(
+                            gameLogDate,
+                            instanceId,
+                            ref1
+                        );
+                    } else {
+                        this.portalQueue = instanceId;
+                    }
+                    return;
+                } else if (eventData.Type > 34) {
+                    var entry = {
+                        created_at: gameLogDate,
+                        type: 'Event',
+                        data: `${displayName} called non existent RPC ${eventData.Type}`
                     };
-                    this.portalQueue = 'skip';
-                    this.parsePhotonPortalSpawn(gameLogDate, instanceId, ref1);
-                } else {
-                    this.portalQueue = instanceId;
+                    this.addPhotonEventToGameLog(entry);
                 }
-                return;
-            } else if (data.Type > 34) {
-                var entry = {
-                    created_at: gameLogDate,
-                    type: 'Event',
-                    data: `${displayName} called non existent RPC ${data.Type}`
-                };
-                this.addPhotonEventToGameLog(entry);
-            }
-            if (data.Type === 14) {
-                if (data.EventType === 'ChangeVisibility') {
-                    if (data.Data[0] === true) {
-                        var text = 'EnableCamera';
-                    } else if (data.Data[0] === false) {
-                        var text = 'DisableCamera';
-                    }
-                } else if (
-                    data.EventType === 'UdonSyncRunProgramAsRPC' &&
-                    data.Data[0] === 'Beep'
-                ) {
-                    if (!this.isDanceWorld(this.lastLocation.location)) {
-                        return;
-                    }
-                    var text = 'Beep';
-                } else if (data.EventType === 'ReloadAvatarNetworkedRPC') {
-                    var text = 'AvatarReset';
-                } else if (data.EventType === 'SpawnEmojiRPC') {
-                    var text = `SpawnEmoji ${this.photonEmojis[data.Data]}`;
-                } else {
-                    var eventData = '';
-                    if (data.Data) {
-                        if (Array.isArray(data.Data)) {
-                            eventData = ` ${data.Data.toString()}`;
-                        } else {
-                            eventData = ` ${data.Data}`;
+                if (eventData.Type === 14) {
+                    if (eventData.EventType === 'ChangeVisibility') {
+                        if (eventData.Data[0] === true) {
+                            var text = 'EnableCamera';
+                        } else if (eventData.Data[0] === false) {
+                            var text = 'DisableCamera';
                         }
+                    } else if (
+                        eventData.EventType === 'UdonSyncRunProgramAsRPC' &&
+                        eventData.Data[0] === 'Beep'
+                    ) {
+                        if (!this.isDanceWorld(this.lastLocation.location)) {
+                            return;
+                        }
+                        var text = 'Beep';
+                    } else if (
+                        eventData.EventType === 'ReloadAvatarNetworkedRPC'
+                    ) {
+                        var text = 'AvatarReset';
+                    } else if (eventData.EventType === 'SpawnEmojiRPC') {
+                        var text = `SpawnEmoji ${
+                            this.photonEmojis[eventData.Data]
+                        }`;
+                    } else {
+                        var eventVrc = '';
+                        if (eventData.Data) {
+                            if (Array.isArray(eventData.Data)) {
+                                eventVrc = ` ${eventData.Data.toString()}`;
+                            } else {
+                                eventVrc = ` ${eventData.Data}`;
+                            }
+                        }
+                        var text = `${eventData.EventType}${eventVrc}`;
                     }
-                    var text = `${data.EventType}${eventData}`;
-                }
-                this.addEntryPhotonEvent({
-                    photonId: senderId,
+                    this.addEntryPhotonEvent({
+                        photonId: senderId,
                     text,
                     created_at: gameLogDate
-                });
-            } else {
-                var eventType = '';
-                if (data.EventType) {
-                    if (Array.isArray(data.EventType)) {
-                        eventType = ` ${data.EventType.toString()}`;
-                    } else {
-                        eventType = ` ${data.EventType}`;
+                    });
+                } else {
+                    var eventType = '';
+                    if (eventData.EventType) {
+                        if (Array.isArray(eventData.EventType)) {
+                            eventType = ` ${eventData.EventType.toString()}`;
+                        } else {
+                            eventType = ` ${eventData.EventType}`;
+                        }
+                    }
+                    if (this.debugPhotonLogging) {
+                        var feed = `RPC ${displayName} ${
+                            this.photonEventType[eventData.Type]
+                        }${eventType}`;
+                        console.log('VrcRpc:', feed);
                     }
                 }
-                var feed = `RPC ${displayName} ${
-                    this.photonEventType[data.Type]
-                }${eventType}`;
-                console.log(feed);
-            }
+            });
         }
     };
 
@@ -8806,13 +8814,9 @@ speechSynthesis.getVoices();
                 hasInstantiated: true
             });
         }
-        var hasJoined = this.photonLobbyCurrent.has(photonId);
         var tags = [];
-        if (
-            typeof user.tags !== 'undefined' &&
-            typeof user.tags.$values !== 'undefined'
-        ) {
-            tags = user.tags.$values;
+        if (typeof user.tags !== 'undefined') {
+            tags = user.tags;
         }
         var ref = API.cachedUsers.get(user.id);
         var photonUser = {
@@ -8833,9 +8837,6 @@ speechSynthesis.getVoices();
         };
         this.photonLobby.set(photonId, photonUser);
         this.photonLobbyCurrent.set(photonId, photonUser);
-        if (!hasJoined) {
-            this.photonUserJoin(photonId, photonUser, gameLogDate);
-        }
 
         var bias = Date.parse(gameLogDate) + 60 * 1000; // 1min
         if (bias > Date.now()) {
@@ -9009,11 +9010,8 @@ speechSynthesis.getVoices();
 
     $app.methods.parsePhotonAvatar = function (avatar) {
         var tags = [];
-        if (
-            typeof avatar.tags !== 'undefined' &&
-            typeof avatar.tags.$values !== 'undefined'
-        ) {
-            tags = avatar.tags.$values;
+        if (typeof avatar.tags !== 'undefined') {
+            tags = avatar.tags;
         }
         API.applyAvatar({
             id: avatar.id,
@@ -10950,6 +10948,9 @@ speechSynthesis.getVoices();
     );
     $app.data.photonEventOverlayJoinLeave = configRepository.getBool(
         'VRCX_PhotonEventOverlayJoinLeave'
+    );
+    $app.data.photonLoggingEnabled = configRepository.getBool(
+        'VRCX_photonLoggingEnabled'
     );
     $app.methods.saveEventOverlay = function () {
         configRepository.setBool(
@@ -18071,12 +18072,85 @@ speechSynthesis.getVoices();
             console.error(`IPC invalid JSON, ${json}`);
         }
         switch (data.type) {
+            case 'OnEvent':
+                if (
+                    this.debugPhotonLogging &&
+                    data.OnEventData.Code !== 6 &&
+                    data.OnEventData.Code !== 7
+                ) {
+                    console.log(
+                        'OnEvent',
+                        data.OnEventData.Code,
+                        data.OnEventData
+                    );
+                }
+                this.parsePhotonEvent(data.OnEventData, data.dt);
+                break;
+            case 'OnOperationResponse':
+                if (this.debugPhotonLogging) {
+                    console.log(
+                        'OnOperationResponse',
+                        data.OnOperationResponseData.OperationCode,
+                        data.OnOperationResponseData
+                    );
+                }
+                this.parseOperationResponse(
+                    data.OnOperationResponseData,
+                    data.dt
+                );
+                break;
             case 'Ping':
-                this.eventPing(data);
+                if (!this.photonLoggingEnabled) {
+                    this.photonLoggingEnabled = true;
+                    configRepository.setBool('VRCX_photonLoggingEnabled', true);
+                }
+                this.ipcEnabled = true;
+                this.ipcTimeout = 60; // 30secs
                 break;
             case 'LaunchCommand':
                 AppApi.FocusWindow();
                 this.eventLaunchCommand(data.command);
+                break;
+        }
+    };
+
+    $app.methods.parseOperationResponse = function (data, dateTime) {
+        switch (data.OperationCode) {
+            case 226:
+                if (typeof data.Parameters[249] !== 'undefined') {
+                    for (var i in data.Parameters[249]) {
+                        var id = parseInt(i, 10);
+                        var user = data.Parameters[249][i];
+                        this.parsePhotonUser(id, user.user, dateTime);
+                        this.parsePhotonAvatarChange(
+                            id,
+                            user.user,
+                            user.avatarDict,
+                            dateTime
+                        );
+                        this.parsePhotonAvatar(user.avatarDict);
+                        this.parsePhotonAvatar(user.favatarDict);
+                        if (typeof user.inVRMode !== 'undefined') {
+                            this.photonLobbyInVrMode.set(id, user.inVRMode);
+                        }
+                        this.photonLobbyJointime.set(id, {
+                            joinTime: Date.parse(dateTime),
+                            hasInstantiated: true,
+                            isInvisible: user.isInvisible,
+                            inVRMode: user.inVRMode,
+                            avatarEyeHeight: user.avatarEyeHeight
+                        });
+                    }
+                }
+                if (typeof data.Parameters[252] !== 'undefined') {
+                    this.parsePhotonLobbyIds(data.Parameters[252]);
+                }
+                if (
+                    typeof data.Parameters[248] !== 'undefined' &&
+                    typeof data.Parameters[248][248] !== 'undefined'
+                ) {
+                    this.setPhotonLobbyMaster(data.Parameters[248][248]);
+                }
                 break;
         }
     };

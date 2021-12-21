@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -29,9 +29,9 @@ namespace VRCX
 
         public class EventEntry
         {
-            public int Type;
-            public string EventType;
-            public object Data;
+            public int Type { get; set; }
+            public string EventType { get; set; }
+            public object Data { get; set; }
         }
 
         private byte DeserializeByte()
