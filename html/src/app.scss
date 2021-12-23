@@ -13,7 +13,6 @@
 @import '~noty/lib/noty.css';
 @import '~element-ui/lib/theme-chalk/index.css';
 @import '~famfamfam-flags/dist/sprite/famfamfam-flags.min.css';
-@import '~vue-swatches/dist/vue-swatches.css';
 
 .color-palettes {
     background: #409eff;
@@ -580,6 +579,15 @@ i.x-user-status.busy {
 
 .color-picker {
     font-size: 18px;
+    vertical-align: top;
+}
+
+.el-color-picker__trigger {
+    border: unset;
+}
+
+.el-color-picker__color {
+    border: 0.5px solid #999;
 }
 
 .disableToggleSwitch ul li label {

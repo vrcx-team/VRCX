@@ -12,7 +12,6 @@ module.exports = {
       'vue',
       'vue-data-tables',
       'vue-lazyload',
-      'vue-swatches',
       'uuid'
     ],
     app: {

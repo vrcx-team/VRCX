@@ -8,8 +8,6 @@ import Noty from 'noty';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
 import {DataTables} from 'vue-data-tables';
-import VSwatches from 'vue-swatches';
-Vue.component('v-swatches', VSwatches);
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 import {v4 as uuidv4} from 'uuid';
@@ -8190,58 +8188,58 @@ speechSynthesis.getVoices();
             var timeSinceLastEvent = dtNow - Date.parse(dt);
             if (timeSinceLastEvent > this.photonLobbyTimeoutThreshold) {
                 if (this.photonLobbyJointime.has(id)) {
-                        var {joinTime} = this.photonLobbyJointime.get(id);
-                    }
-                    if (!joinTime || joinTime + 120000 < dtNow) {
-                        // wait 2mins for user to load in
-                        hudTimeout.unshift({
-                            userId: this.getUserIdFromPhotonId(id),
-                            displayName: this.getDisplayNameFromPhotonId(id),
-                            time: Math.round(timeSinceLastEvent / 1000)
-                        });
-                    }
+                    var {joinTime} = this.photonLobbyJointime.get(id);
                 }
-            });
-            if (this.photonLobbyTimeout.length > 0 || hudTimeout.length > 0) {
-                hudTimeout.sort(function (a, b) {
-                    if (a.time > b.time) {
-                        return 1;
-                    }
-                    if (a.time < b.time) {
-                        return -1;
-                    }
-                    return 0;
-                });
-                if (this.timeoutHudOverlay) {
-                    if (
-                        this.timeoutHudOverlayFilter === 'VIP' ||
-                        this.timeoutHudOverlayFilter === 'Friends'
-                    ) {
-                        var filteredHudTimeout = [];
-                        hudTimeout.forEach((item) => {
-                            if (
-                                this.timeoutHudOverlayFilter === 'VIP' &&
-                                API.cachedFavoritesByObjectId.has(item.userId)
-                            ) {
-                                filteredHudTimeout.push(item);
-                            } else if (
-                                this.timeoutHudOverlayFilter === 'Friends' &&
-                                this.friends.has(item.userId)
-                            ) {
-                                filteredHudTimeout.push(item);
-                            }
-                        });
-                    } else {
-                        var filteredHudTimeout = hudTimeout;
-                    }
-                    AppApi.ExecuteVrOverlayFunction(
-                        'updateHudTimeout',
-                        JSON.stringify(filteredHudTimeout)
-                    );
+                if (!joinTime || joinTime + 120000 < dtNow) {
+                    // wait 2mins for user to load in
+                    hudTimeout.unshift({
+                        userId: this.getUserIdFromPhotonId(id),
+                        displayName: this.getDisplayNameFromPhotonId(id),
+                        time: Math.round(timeSinceLastEvent / 1000)
+                    });
                 }
-                this.photonLobbyTimeout = hudTimeout;
-                this.getCurrentInstanceUserList();
             }
+        });
+        if (this.photonLobbyTimeout.length > 0 || hudTimeout.length > 0) {
+            hudTimeout.sort(function (a, b) {
+                if (a.time > b.time) {
+                    return 1;
+                }
+                if (a.time < b.time) {
+                    return -1;
+                }
+                return 0;
+            });
+            if (this.timeoutHudOverlay) {
+                if (
+                    this.timeoutHudOverlayFilter === 'VIP' ||
+                    this.timeoutHudOverlayFilter === 'Friends'
+                ) {
+                    var filteredHudTimeout = [];
+                    hudTimeout.forEach((item) => {
+                        if (
+                            this.timeoutHudOverlayFilter === 'VIP' &&
+                            API.cachedFavoritesByObjectId.has(item.userId)
+                        ) {
+                            filteredHudTimeout.push(item);
+                        } else if (
+                            this.timeoutHudOverlayFilter === 'Friends' &&
+                            this.friends.has(item.userId)
+                        ) {
+                            filteredHudTimeout.push(item);
+                        }
+                    });
+                } else {
+                    var filteredHudTimeout = hudTimeout;
+                }
+                AppApi.ExecuteVrOverlayFunction(
+                    'updateHudTimeout',
+                    JSON.stringify(filteredHudTimeout)
+                );
+            }
+            this.photonLobbyTimeout = hudTimeout;
+            this.getCurrentInstanceUserList();
+        }
         this.photonBotCheck(dtNow);
         workerTimers.setTimeout(() => this.photonLobbyWatcher(), 500);
     };
@@ -8617,8 +8615,8 @@ speechSynthesis.getVoices();
                     var date = this.lastPortalList.get(portalId);
                     var time = timeToText(Date.parse(gameLogDate) - date);
                     this.addEntryPhotonEvent({
-                    photonId: senderId,
-                    text: `DeletedPortal ${time}`,
+                        photonId: senderId,
+                        text: `DeletedPortal ${time}`,
                         created_at: gameLogDate
                     });
                     return;
@@ -8627,14 +8625,14 @@ speechSynthesis.getVoices();
                     if (this.lastPortalId) {
                         this.lastPortalList.set(
                             this.lastPortalId,
-                        Date.parse(gameLogDate)
-                    );
-                    this.lastPortalId = '';
-                }
-                var displayName = this.getDisplayNameFromPhotonId(senderId);
-                if (displayName) {
-                    var ref1 = {
-                        id: this.getUserIdFromPhotonId(senderId),
+                            Date.parse(gameLogDate)
+                        );
+                        this.lastPortalId = '';
+                    }
+                    var displayName = this.getDisplayNameFromPhotonId(senderId);
+                    if (displayName) {
+                        var ref1 = {
+                            id: this.getUserIdFromPhotonId(senderId),
                             displayName
                         };
                         this.portalQueue = 'skip';
@@ -8691,8 +8689,8 @@ speechSynthesis.getVoices();
                     }
                     this.addEntryPhotonEvent({
                         photonId: senderId,
-                    text,
-                    created_at: gameLogDate
+                        text,
+                        created_at: gameLogDate
                     });
                 } else {
                     var eventType = '';
@@ -11200,21 +11198,6 @@ speechSynthesis.getVoices();
     $app.data.trustColor = JSON.parse(
         configRepository.getString('VRCX_trustColor')
     );
-
-    $app.data.trustColorSwatches = [
-        '#CCCCCC',
-        '#1778FF',
-        '#2BCF5C',
-        '#FF7B42',
-        '#B18FFF',
-        '#FFD000',
-        '#FF69B4',
-        '#ABCDEF',
-        '#8143E6',
-        '#B52626',
-        '#FF2626',
-        '#782F2F'
-    ];
 
     $app.methods.updatetrustColor = function () {
         var trustColor = $app.trustColor;
