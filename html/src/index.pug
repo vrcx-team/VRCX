@@ -899,31 +899,31 @@ html
                     span.header User Colors
                     div.options-container-item
                         div
-                            el-color-picker(v-model="trustColor.untrusted" size="mini" :predefine="['#CCCCCC']")
+                            el-color-picker(v-model="trustColor.untrusted" @change="updatetrustColor" size="mini" :predefine="['#CCCCCC']")
                             span.color-picker(slot="trigger" class="x-tag-untrusted") Visitor
                         div
-                            el-color-picker(v-model="trustColor.basic" size="mini" :predefine="['#1778ff']")
+                            el-color-picker(v-model="trustColor.basic" @change="updatetrustColor" size="mini" :predefine="['#1778ff']")
                             span.color-picker(slot="trigger" class="x-tag-basic") New User
                         div
-                            el-color-picker(v-model="trustColor.known" size="mini" :predefine="['#2bcf5c']")
+                            el-color-picker(v-model="trustColor.known" @change="updatetrustColor" size="mini" :predefine="['#2bcf5c']")
                             span.color-picker(slot="trigger" class="x-tag-known") User
                         div
-                            el-color-picker(v-model="trustColor.trusted" size="mini" :predefine="['#ff7b42']")
+                            el-color-picker(v-model="trustColor.trusted" @change="updatetrustColor" size="mini" :predefine="['#ff7b42']")
                             span.color-picker(slot="trigger" class="x-tag-trusted") Known User
                         div
-                            el-color-picker(v-model="trustColor.veteran" size="mini" :predefine="['#b18fff', '#8143e6']")
+                            el-color-picker(v-model="trustColor.veteran" @change="updatetrustColor" size="mini" :predefine="['#b18fff', '#8143e6']")
                             span.color-picker(slot="trigger" class="x-tag-veteran") Trusted User
                         div
-                            el-color-picker(v-model="trustColor.legend" size="mini" :predefine="['#ffd000', '#abcdef']")
+                            el-color-picker(v-model="trustColor.legend" @change="updatetrustColor" size="mini" :predefine="['#ffd000', '#abcdef']")
                             span.color-picker(slot="trigger" class="x-tag-legend") Veteran User
                         div
-                            el-color-picker(v-model="trustColor.vip" size="mini" :predefine="['#ff2626']")
+                            el-color-picker(v-model="trustColor.vip" @change="updatetrustColor" size="mini" :predefine="['#ff2626']")
                             span.color-picker(slot="trigger" class="x-tag-vip") VRChat Team
                         div
-                            el-color-picker(v-model="trustColor.troll" size="mini" :predefine="['#782f2f']")
+                            el-color-picker(v-model="trustColor.troll" @change="updatetrustColor" size="mini" :predefine="['#782f2f']")
                             span.color-picker(slot="trigger" class="x-tag-troll") Nuisance
                         div
-                            el-color-picker(v-model="trustColor.legendary" size="mini" :predefine="['#ff69b4', '#b52626']")
+                            el-color-picker(v-model="trustColor.legendary" @change="updatetrustColor" size="mini" :predefine="['#ff69b4', '#b52626']")
                             span.color-picker(slot="trigger" class="x-tag-legendary") Legend
                             el-switch(v-model="legendColorOverride" style="padding-bottom:21px;padding-left:6px" @change="saveLegendColorOverride")
                 div.options-container
@@ -2947,7 +2947,7 @@ html
                             LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
                             SOFTWARE.
-            
+
             //- dialog: Enable primary password
             el-dialog.x-dialog(
                 :visible.sync="enablePrimaryPasswordDialog.visible"

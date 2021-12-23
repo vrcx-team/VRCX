@@ -11226,15 +11226,6 @@ speechSynthesis.getVoices();
         document.getElementsByTagName('head')[0].appendChild(style);
     };
     $app.methods.updatetrustColor();
-    $app.watch['trustColor.untrusted'] = $app.methods.updatetrustColor;
-    $app.watch['trustColor.basic'] = $app.methods.updatetrustColor;
-    $app.watch['trustColor.known'] = $app.methods.updatetrustColor;
-    $app.watch['trustColor.trusted'] = $app.methods.updatetrustColor;
-    $app.watch['trustColor.veteran'] = $app.methods.updatetrustColor;
-    $app.watch['trustColor.legend'] = $app.methods.updatetrustColor;
-    $app.watch['trustColor.legendary'] = $app.methods.updatetrustColor;
-    $app.watch['trustColor.vip'] = $app.methods.updatetrustColor;
-    $app.watch['trustColor.troll'] = $app.methods.updatetrustColor;
 
     $app.methods.saveSharedFeedFilters = function () {
         this.notyFeedFiltersDialog.visible = false;
