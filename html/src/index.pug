@@ -158,20 +158,45 @@ html
                                         template(#content)
                                             span(v-text="link")
                                         img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
-                    div.photon-event-table(v-if="photonEventTable.data.length > 0")
-                        data-tables(v-bind="photonEventTable" style="margin-bottom:10px")
-                            el-table-column(label="Date" prop="created_at" width="90")
-                                template(v-once #default="scope")
+                    div.photon-event-table(v-if="photonLoggingEnabled")
+                        el-input(v-model="photonEventTableFilter" @input="photonEventTableFilterChange" placeholder="Search" clearable style="width:150px;position:absolute;margin-left:195px;z-index:1")
+                        el-tabs(type="card")
+                            el-tab-pane(label="Current")
+                                data-tables(v-bind="photonEventTable" style="margin-bottom:10px")
+                                    el-table-column(label="Date" prop="created_at" width="90")
+                                        template(v-once #default="scope")
                                     el-tooltip(placement="right")
                                         template(#content)
                                             span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                        span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
-                            el-table-column(label="Name" prop="photonId" width="160")
-                                template(v-once #default="scope")
-                                    span.x-link(v-text="getDisplayNameFromPhotonId(scope.row.photonId)" @click="showUserFromPhotonId(scope.row.photonId)" style="padding-right:10px")
-                            el-table-column(label="Event" prop="text")
-                                template(v-once #default="scope")
-                                    span(v-if="scope.row.avatar")
+                                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                                    el-table-column(label="Name" prop="photonId" width="160")
+                                        template(v-once #default="scope")
+                                            span.x-link(v-text="scope.row.displayName" @click="showUserFromPhotonId(scope.row.photonId)" style="padding-right:10px")
+                                    el-table-column(label="Event" prop="text")
+                                        template(v-once #default="scope")
+                                            span(v-if="scope.row.avatar")
+                                                span ChangeAvatar  
+                                                span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
+                                                | &nbsp;
+                                                span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
+                                                span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
+                                                template(v-if="scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description")
+                                                    |  - {{ scope.row.avatar.description }}
+                                            span(v-else v-text="scope.row.text")
+                            el-tab-pane(label="Previous")
+                                data-tables(v-bind="photonEventTablePrevious" style="margin-bottom:10px")
+                                    el-table-column(label="Date" prop="created_at" width="90")
+                                        template(v-once #default="scope")
+                                            el-tooltip(placement="right")
+                                                template(#content)
+                                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+                                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                                    el-table-column(label="Name" prop="photonId" width="160")
+                                        template(v-once #default="scope")
+                                            span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)" style="padding-right:10px")
+                                    el-table-column(label="Event" prop="text")
+                                        template(v-once #default="scope")
+                                            span(v-if="scope.row.avatar")
                                         span ChangeAvatar  
                                         span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
                                         | &nbsp;

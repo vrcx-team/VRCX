@@ -7555,7 +7555,10 @@ speechSynthesis.getVoices();
         this.lastPortalId = '';
         this.lastPortalList = new Map();
         this.portalQueue = '';
-        this.photonEventTable.data = [];
+        if (this.photonEventTable.data.length > 0) {
+            this.photonEventTablePrevious.data = this.photonEventTable.data;
+            this.photonEventTable.data = [];
+        }
         this.updateCurrentInstanceWorld();
         var playerList = Array.from(this.lastLocation.playerList.values());
         for (var ref of playerList) {
@@ -8285,8 +8288,42 @@ speechSynthesis.getVoices();
         AppApi.ExecuteVrFeedFunction('updatePhotonLobbyBotSize', `${size}`);
     };
 
+    $app.data.photonEventTableFilter = '';
+
+    $app.methods.photonEventTableFilterChange = function () {
+        this.photonEventTable.filters[0].value = this.photonEventTableFilter;
+        this.photonEventTablePrevious.filters[0].value =
+            this.photonEventTableFilter;
+    };
+
     $app.data.photonEventTable = {
         data: [],
+        filters: [
+            {
+                prop: ['displayName', 'text'],
+                value: ''
+            }
+        ],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        pageSize: 10,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [5, 10, 15, 25, 50]
+        }
+    };
+
+    $app.data.photonEventTablePrevious = {
+        data: [],
+        filters: [
+            {
+                prop: ['displayName', 'text'],
+                value: ''
+            }
+        ],
         tableProps: {
             stripe: true,
             size: 'mini'
