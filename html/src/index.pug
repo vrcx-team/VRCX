@@ -44,13 +44,13 @@ html
                             p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
                             p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
                             p pypy is not responsible for any problems caused by VRCX. Use at your own risk!
-                        
+
             //- menu
             .x-menu-container
                 //- download progress
                 div(v-if="downloadInProgress" @click="showDownloadDialog" style="margin:7px;height:50px;cursor:pointer")
                     el-progress(type="circle" width="50" stroke-width="3" :percentage="downloadProgress" :format="downloadProgressText")
-                            
+
                 el-menu(ref="menu" collapse @select="selectMenu")
                     mixin menuitem(index, name, icon)
                         el-menu-item(index=index)
@@ -165,9 +165,9 @@ html
                                 data-tables(v-bind="photonEventTable" style="margin-bottom:10px")
                                     el-table-column(label="Date" prop="created_at" width="90")
                                         template(v-once #default="scope")
-                                    el-tooltip(placement="right")
-                                        template(#content)
-                                            span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+                                            el-tooltip(placement="right")
+                                                template(#content)
+                                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
                                                 span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
                                     el-table-column(label="Name" prop="photonId" width="160")
                                         template(v-once #default="scope")
@@ -197,14 +197,14 @@ html
                                     el-table-column(label="Event" prop="text")
                                         template(v-once #default="scope")
                                             span(v-if="scope.row.avatar")
-                                        span ChangeAvatar  
-                                        span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
-                                        | &nbsp;
-                                        span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
-                                        span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
-                                        template(v-if="scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description")
-                                            |  - {{ scope.row.avatar.description }}
-                                    span(v-else v-text="scope.row.text")
+                                                span ChangeAvatar  
+                                                span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
+                                                | &nbsp;
+                                                span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
+                                                span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
+                                                template(v-if="scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description")
+                                                    |  - {{ scope.row.avatar.description }}
+                                            span(v-else v-text="scope.row.text")
 
             //- feed
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'feed'")
@@ -1765,7 +1765,7 @@ html
             el-dialog.x-dialog(ref="favoriteDialog" :visible.sync="favoriteDialog.visible" title="Choose Group" width="300px")
                 div(v-loading="favoriteDialog.loading")
                     el-button(v-for="group in favoriteDialog.groups" :key="group.name" style="display:block;width:100%;margin:10px 0" @click="addFavorite(group)" :disabled="group.count >= group.capacity") {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
-                    
+
             //- dialog: invite
             el-dialog.x-dialog(ref="inviteDialog" :visible.sync="inviteDialog.visible" title="Invite" width="450px")
                 div(v-loading="inviteDialog.loading")
@@ -1939,7 +1939,7 @@ html
                         el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/launch-options')") VRChat Docs
                         el-button(size="small" @click="openExternalLink('https://docs.unity3d.com/Manual/CommandLineArguments.html')") Unity Manual
                         el-button(type="primary" size="small" :disabled="launchOptionsDialog.loading" @click="updateLaunchOptions" style="margin-left:auto") OK
-                        
+
             //- dialog: VRChat Config JSON
             el-dialog.x-dialog(ref="VRChatConfigDialog" :visible.sync="VRChatConfigDialog.visible" title="VRChat Config JSON" width="420px")
                 div(style='font-size:12px;word-break:keep-all')
@@ -1985,7 +1985,7 @@ html
                     el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')") VRChat Docs
                     el-button(size="small" @click="VRChatConfigDialog.visible = false") Cancel
                     el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="saveVRChatConfigFile") Save
-                    
+
             //- dialog: YouTube Api Dialog
             el-dialog.x-dialog(ref="youTubeApiDialog" :visible.sync="youTubeApiDialog.visible" title="YouTube API" width="400px")
                 div(style='font-size:12px;')
@@ -1995,7 +1995,7 @@ html
                     div(style="display:flex")
                         el-button(size="small" @click="openExternalLink('https://rapidapi.com/blog/how-to-get-youtube-api-key/')") Guide
                         el-button(type="primary" size="small" @click="testYouTubeApiKey" style="margin-left:auto") Save
-                        
+
             //- dialog: Set World Tags
             el-dialog.x-dialog(ref="setWorldTagsDialog" :visible.sync="setWorldTagsDialog.visible" title="Set World Tags" width="400px")
                 el-checkbox(v-model="setWorldTagsDialog.debugAllowed") Enable world debugging for others
@@ -2006,7 +2006,7 @@ html
                     div(style="display:flex")
                         el-button(size="small" @click="setWorldTagsDialog.visible = false") Cancel
                         el-button(type="primary" size="small" @click="saveSetWorldTagsDialog") Save
-                    
+
             //- dialog: Cache Download
             el-dialog.x-dialog(ref="downloadDialog" :visible.sync="downloadDialog.visible" title="Download History" width="770px")
                 div(v-if="downloadInProgress && downloadCurrent.ref")
@@ -2079,7 +2079,7 @@ html
                     el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop (No VR)
                     el-button(size="small" @click="showInviteDialog(launchDialog.location)" :disabled="checkCanInvite(launchDialog.location)") Invite
                     el-button(type="primary" size="small" @click="launchGame(locationToLaunchArg(launchDialog.location))") Launch
-                
+
             //- dialog: export friends list
             el-dialog.x-dialog(:visible.sync="exportFriendsListDialog" title="Export Friends List" width="650px")
                 el-input(type="textarea" v-model="exportFriendsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
@@ -2487,7 +2487,7 @@ html
                 template(#footer)
                     el-button(type="small" @click="cancelSharedFeedFilters") Cancel
                     el-button(type="primary" size="small" @click="saveSharedFeedFilters") Save
-                    
+
             //- dialog: Edit Invite Message
             el-dialog.x-dialog(ref="editInviteMessageDialog" :visible.sync="editInviteMessageDialog.visible" title="Edit Invite Message" width="400px")
                 div(style='font-size:12px')
@@ -2496,7 +2496,7 @@ html
                 template(#footer)
                     el-button(type="small" @click="cancelEditInviteMessage") Cancel
                     el-button(type="primary" size="small" @click="saveEditInviteMessage") Save
-                    
+
             //- dialog: Edit And Send Invite Response Message
             el-dialog.x-dialog(ref="editAndSendInviteResponseDialog" :visible.sync="editAndSendInviteResponseDialog.visible" title="Edit and Send Invite Message" width="400px")
                 div(style='font-size:12px')
@@ -2505,7 +2505,7 @@ html
                 template(#footer)
                     el-button(type="small" @click="cancelEditAndSendInviteResponse") Cancel
                     el-button(type="primary" size="small" @click="saveEditAndSendInviteResponse") Send
-                    
+
             //- dialog Table: Send Invite Response Message
             el-dialog.x-dialog(ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" title="Send Invite Response Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
@@ -2522,7 +2522,7 @@ html
                 template(#footer)
                     el-button(type="small" @click="cancelSendInviteResponse") Cancel
                     el-button(type="small" @click="API.refreshInviteMessageTableData('response')") Refresh
-                    
+
             //- dialog Table: Send Invite Request Response Message
             el-dialog.x-dialog(ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" title="Send Invite Request Response Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
@@ -2547,7 +2547,7 @@ html
                 template(#footer)
                     el-button(type="small" @click="cancelInviteResponseConfirm") Cancel
                     el-button(type="primary" size="small" @click="sendInviteResponseConfirm") Confirm
-                    
+
             //- dialog Table: Send Invite Message
             el-dialog.x-dialog(ref="sendInviteDialog" :visible.sync="sendInviteDialogVisible" title="Send Invite Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
@@ -2564,7 +2564,7 @@ html
                 template(#footer)
                     el-button(type="small" @click="cancelSendInvite") Cancel
                     el-button(type="small" @click="API.refreshInviteMessageTableData('message')") Refresh
-                    
+
             //- dialog Table: Send Invite Request Message
             el-dialog.x-dialog(ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" title="Send Invite Request Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
@@ -2581,7 +2581,7 @@ html
                 template(#footer)
                     el-button(type="small" @click="cancelSendInviteRequest") Cancel
                     el-button(type="small" @click="API.refreshInviteMessageTableData('request')") Refresh
-                    
+
             //- dialog: Send Invite Message Confirm
             el-dialog.x-dialog(ref="sendInviteConfirmDialog" :visible.sync="sendInviteConfirmDialog.visible" title="Send Invite Message" width="400px")
                 div(style='font-size:12px')
@@ -2589,7 +2589,7 @@ html
                 template(#footer)
                     el-button(type="small" @click="cancelInviteConfirm") Cancel
                     el-button(type="primary" size="small" @click="sendInviteConfirm") Confirm
-                    
+
             //- dialog: Edit And Send Invite Message
             el-dialog.x-dialog(ref="editAndSendInviteDialog" :visible.sync="editAndSendInviteDialog.visible" title="Edit and Send Invite Message" width="400px")
                 div(style='font-size:12px')
@@ -2598,7 +2598,7 @@ html
                 template(#footer)
                     el-button(type="small" @click="cancelEditAndSendInvite") Cancel
                     el-button(type="primary" size="small" @click="saveEditAndSendInvite") Send
-                    
+
             //- dialog: Change avatar image
             el-dialog.x-dialog(ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" title="Change Avatar Image" width="800px")
                 div(v-loading="changeAvatarImageDialogLoading")
@@ -2611,7 +2611,7 @@ html
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
                         .x-change-image-item(@click="setAvatarImage(image)" style="cursor:pointer" :class="{ 'current-image': compareCurrentImage(image) }")
                             img.image(v-lazy="image.file.url")
-                            
+
             //- dialog: Change world image
             el-dialog.x-dialog(ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" title="Change World Image" width="800px")
                 div(v-loading="changeWorldImageDialogLoading")
@@ -2624,7 +2624,7 @@ html
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
                         .x-change-image-item(@click="setWorldImage(image)" style="cursor:pointer" :class="{ 'current-image': compareCurrentImage(image) }")
                             img.image(v-lazy="image.file.url")
-                            
+
             //- dialog: Display previous avatar/world images
             el-dialog.x-dialog(ref="previousImagesDialog" :visible.sync="previousImagesDialogVisible" title="Previous Images" width="800px")
                 div
@@ -2632,7 +2632,7 @@ html
                         el-popover.x-change-image-item(placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="image.file.url")
                             img.x-link(v-lazy="image.file.url" style="width:500px;height:375px" @click="openExternalLink(image.file.url)")
-                            
+
             //- dialog: Gallery/VRCPlusIcons
             el-dialog.x-dialog(ref="galleryDialog" :visible.sync="galleryDialogVisible" title="Gallery and Icons" width="100%")
                 el-tabs(type="card")
@@ -2676,19 +2676,19 @@ html
                         p(style="font-weight:bold") animate.css
                         pre(style="font-size:12px;white-space:pre-line").
                             The MIT License (MIT)
-                            
+
                             Copyright (c) 2019 Daniel Eden
-                            
+
                             Permission is hereby granted, free of charge, to any person obtaining a copy
                             of this software and associated documentation files (the "Software"), to deal
                             in the Software without restriction, including without limitation the rights
                             to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
                             copies of the Software, and to permit persons to whom the Software is
                             furnished to do so, subject to the following conditions:
-                            
+
                             The above copyright notice and this permission notice shall be included in all
                             copies or substantial portions of the Software.
-                            
+
                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
                             IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
                             FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -2733,19 +2733,19 @@ html
                         p(style="font-weight:bold") DiscordRichPresence
                         pre(style="font-size:12px;white-space:pre-line").
                             MIT License
-                            
+
                             Copyright (c) 2018 Lachee
-                            
+
                             Permission is hereby granted, free of charge, to any person obtaining a copy
                             of this software and associated documentation files (the "Software"), to deal
                             in the Software without restriction, including without limitation the rights
                             to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
                             copies of the Software, and to permit persons to whom the Software is
                             furnished to do so, subject to the following conditions:
-                            
+
                             The above copyright notice and this permission notice shall be included in all
                             copies or substantial portions of the Software.
-                            
+
                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
                             IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
                             FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -2757,19 +2757,19 @@ html
                         p(style="font-weight:bold") element
                         pre(style="font-size:12px;white-space:pre-line").
                             The MIT License (MIT)
-                            
+
                             Copyright (c) 2016-present ElemeFE
-                            
+
                             Permission is hereby granted, free of charge, to any person obtaining a copy
                             of this software and associated documentation files (the "Software"), to deal
                             in the Software without restriction, including without limitation the rights
                             to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
                             copies of the Software, and to permit persons to whom the Software is
                             furnished to do so, subject to the following conditions:
-                            
+
                             The above copyright notice and this permission notice shall be included in all
                             copies or substantial portions of the Software.
-                            
+
                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
                             IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
                             FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -2781,19 +2781,19 @@ html
                         p(style="font-weight:bold") librsync.net
                         pre(style="font-size:12px;white-space:pre-line").
                             The MIT License (MIT)
-                            
+
                             Copyright (c) 2015 Brad Dodson
-                            
+
                             Permission is hereby granted, free of charge, to any person obtaining a copy
                             of this software and associated documentation files (the "Software"), to deal
                             in the Software without restriction, including without limitation the rights
                             to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
                             copies of the Software, and to permit persons to whom the Software is
                             furnished to do so, subject to the following conditions:
-                            
+
                             The above copyright notice and this permission notice shall be included in all
                             copies or substantial portions of the Software.
-                            
+
                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
                             IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
                             FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -2805,31 +2805,31 @@ html
                         p(style="font-weight:bold") Newtonsoft.Json
                         pre(style="font-size:12px;white-space:pre-line").
                             The MIT License (MIT)
-                            
+
                             Copyright (c) 2007 James Newton-King
-                            
+
                             Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-                            
+
                             The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-                            
+
                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     div(style="margin-top:15px")
                         p(style="font-weight:bold") normalize
                         pre(style="font-size:12px;white-space:pre-line").
                             The MIT License (MIT)
-                            
+
                             Copyright © Nicolas Gallagher and Jonathan Neal
-                            
+
                             Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-                            
+
                             The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-                            
+
                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                     div(style="margin-top:15px")
                         p(style="font-weight:bold") noty
                         pre(style="font-size:12px;white-space:pre-line").
                             Copyright (c) 2012 Nedim Arabacı
-                            
+
                             Permission is hereby granted, free of charge, to any person obtaining
                             a copy of this software and associated documentation files (the
                             "Software"), to deal in the Software without restriction, including
@@ -2837,10 +2837,10 @@ html
                             distribute, sublicense, and/or sell copies of the Software, and to
                             permit persons to whom the Software is furnished to do so, subject to
                             the following conditions:
-                            
+
                             The above copyright notice and this permission notice shall be
                             included in all copies or substantial portions of the Software.
-                            
+
                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
                             EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
                             MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -2853,21 +2853,21 @@ html
                         pre(style="font-size:12px;white-space:pre-line").
                             Copyright (c) 2015, Valve Corporation
                             All rights reserved.
-                            
+
                             Redistribution and use in source and binary forms, with or without modification,
                             are permitted provided that the following conditions are met:
-                            
+
                             1. Redistributions of source code must retain the above copyright notice, this
                             list of conditions and the following disclaimer.
-                            
+
                             2. Redistributions in binary form must reproduce the above copyright notice,
                             this list of conditions and the following disclaimer in the documentation and/or
                             other materials provided with the distribution.
-                            
+
                             3. Neither the name of the copyright holder nor the names of its contributors
                             may be used to endorse or promote products derived from this software without
                             specific prior written permission.
-                            
+
                             THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
                             ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
                             WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -2882,17 +2882,17 @@ html
                         p(style="font-weight:bold") SharpDX
                         pre(style="font-size:12px;white-space:pre-line").
                             Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
-                            
+
                             Permission is hereby granted, free of charge, to any person obtaining a copy
                             of this software and associated documentation files (the "Software"), to deal
                             in the Software without restriction, including without limitation the rights
                             to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
                             copies of the Software, and to permit persons to whom the Software is
                             furnished to do so, subject to the following conditions:
-                            
+
                             The above copyright notice and this permission notice shall be included in
                             all copies or substantial portions of the Software.
-                            
+
                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
                             IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
                             FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -2904,19 +2904,19 @@ html
                         p(style="font-weight:bold") vue
                         pre(style="font-size:12px;white-space:pre-line").
                             The MIT License (MIT)
-                            
+
                             Copyright (c) 2013-present, Yuxi (Evan) You
-                            
+
                             Permission is hereby granted, free of charge, to any person obtaining a copy
                             of this software and associated documentation files (the "Software"), to deal
                             in the Software without restriction, including without limitation the rights
                             to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
                             copies of the Software, and to permit persons to whom the Software is
                             furnished to do so, subject to the following conditions:
-                            
+
                             The above copyright notice and this permission notice shall be included in
                             all copies or substantial portions of the Software.
-                            
+
                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
                             IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
                             FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -2928,19 +2928,19 @@ html
                         p(style="font-weight:bold") vue-data-tables
                         pre(style="font-size:12px;white-space:pre-line").
                             The MIT License (MIT)
-                            
+
                             Copyright (c) 2018 Leon Zhang
-                            
+
                             Permission is hereby granted, free of charge, to any person obtaining a copy
                             of this software and associated documentation files (the "Software"), to deal
                             in the Software without restriction, including without limitation the rights
                             to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
                             copies of the Software, and to permit persons to whom the Software is
                             furnished to do so, subject to the following conditions:
-                            
+
                             The above copyright notice and this permission notice shall be included in all
                             copies or substantial portions of the Software.
-                            
+
                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
                             IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
                             FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -2952,19 +2952,19 @@ html
                         p(style="font-weight:bold") vue-lazyload
                         pre(style="font-size:12px;white-space:pre-line").
                             The MIT License (MIT)
-                            
+
                             Copyright (c) 2016 Awe
-                            
+
                             Permission is hereby granted, free of charge, to any person obtaining a copy
                             of this software and associated documentation files (the "Software"), to deal
                             in the Software without restriction, including without limitation the rights
                             to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
                             copies of the Software, and to permit persons to whom the Software is
                             furnished to do so, subject to the following conditions:
-                            
+
                             The above copyright notice and this permission notice shall be included in all
                             copies or substantial portions of the Software.
-                            
+
                             THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
                             IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
                             FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
