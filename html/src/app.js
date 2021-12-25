@@ -13527,6 +13527,13 @@ speechSynthesis.getVoices();
         if (typeof ref2 !== 'undefined') {
             D.ref = ref2;
             this.updateVRChatAvatarCache();
+            if (
+                ref2.releaseStatus !== 'public' &&
+                ref2.authorId !== API.currentUser.id
+            ) {
+                D.loading = false;
+                return;
+            }
         }
         API.getAvatar({avatarId})
             .then((args) => {
