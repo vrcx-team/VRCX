@@ -8745,6 +8745,8 @@ speechSynthesis.getVoices();
                         }
                     }
                     if (this.debugPhotonLogging) {
+                        var displayName =
+                            this.getDisplayNameFromPhotonId(senderId);
                         var feed = `RPC ${displayName} ${
                             this.photonEventType[eventData.Type]
                         }${eventType}`;
