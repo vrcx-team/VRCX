@@ -22,11 +22,7 @@ namespace VRCX
             public long Position;
             public string RecentWorldName;
             public bool ShaderKeywordsLimitReached = false;
-            public bool incomingJson;
-            public string jsonChunk;
-            public string jsonDate;
             public string onJoinPhotonDisplayName;
-            public string photonEvent;
         }
 
         public static readonly LogWatcher Instance;
@@ -38,7 +34,6 @@ namespace VRCX
         private bool m_ResetLog;
         private bool m_FirstRun = true;
         private static DateTime tillDate = DateTime.Now;
-        private static IDictionary<int, string> photonEvent7 = new Dictionary<int, string>();
 
         // NOTE
         // FileSystemWatcher() is unreliable
@@ -331,7 +326,6 @@ namespace VRCX
                     logContext.RecentWorldName
                 });
 
-                photonEvent7 = new Dictionary<int, string>();
                 logContext.onJoinPhotonDisplayName = String.Empty;
 
                 return true;
