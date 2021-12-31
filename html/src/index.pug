@@ -377,6 +377,7 @@ html
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-for="row in API.cachedConfig.dynamicWorldRows" :key="row.index" v-text="row.name" :command="row")
                         el-checkbox(v-model="searchWorldLabs" style="margin-left:10px") Include community labs
+                        el-button(v-if="searchWorldResults.length > 0" @click="downloadSearchPage" icon="el-icon-download" size="small" style="margin-left:10px") Download All
                         .x-friend-list
                             .x-friend-item(v-for="world in searchWorldResults" :key="world.id" @click="showWorldDialog(world.id)")
                                 template(v-once)

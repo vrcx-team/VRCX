@@ -17207,6 +17207,16 @@ speechSynthesis.getVoices();
         });
     };
 
+    $app.methods.downloadSearchPage = function () {
+        this.searchWorldResults.forEach((ref) => {
+            API.getWorld({
+                worldId: ref.id
+            }).then((args) => {
+                this.queueCacheDownload(args.ref, 'Search');
+            });
+        });
+    };
+
     $app.data.downloadProgress = 0;
     $app.data.downloadInProgress = false;
     $app.data.downloadIsProcessing = false;
