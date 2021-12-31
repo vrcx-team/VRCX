@@ -751,6 +751,20 @@ class Database {
         return ref;
     }
 
+    async getTimeSpentInWorld(input) {
+        var worldId = input.replaceAll("'", '');
+        var ref = {
+            timeSpent: 0,
+            worldId: input
+        };
+        await sqliteService.execute((row) => {
+            if (typeof row[0] === 'number') {
+                ref.timeSpent += row[0];
+            }
+        }, `SELECT time FROM gamelog_location WHERE world_id = '${worldId}'`);
+        return ref;
+    }
+
     async getLastSeen(input) {
         var userId = input.id.replaceAll("'", '');
         var displayName = input.displayName.replaceAll("'", "''");
