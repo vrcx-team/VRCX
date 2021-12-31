@@ -8260,15 +8260,16 @@ speechSynthesis.getVoices();
             if (isInvisible) {
                 text = 'User has joined invisible';
             } else if (avatarEyeHeight < 0) {
-                text = 'Photon bot has joined, a';
+                text = 'Photon bot has joined, invalid avatarEyeHeight';
             } else if (
                 joinTime &&
                 joinTime + 10000 < dtNow &&
                 !hasInstantiated
             ) {
-                text = 'Photon bot has joined, b';
+                text =
+                    'Photon bot has joined, failed to instantiate after 10 seconds';
             }
-            if (text) {
+            if (text && id !== this.photonLobbyCurrentUser) {
                 if (!this.photonLobbyBots.includes(id)) {
                     this.addEntryPhotonEvent({
                         photonId: id,
@@ -8505,6 +8506,11 @@ speechSynthesis.getVoices();
             });
             var ref = this.photonLobbyCurrent.get(data.Parameters[254]);
             this.photonUserJoin(data.Parameters[254], ref, gameLogDate);
+            this.checkPhotonBotJoin(
+                data.Parameters[254],
+                data.Parameters[249],
+                gameLogDate
+            );
             this.startLobbyWatcherLoop();
         } else if (data.Code === 254) {
             // Leave
@@ -8808,7 +8814,7 @@ speechSynthesis.getVoices();
             if (this.photonLobbyMaster !== 0) {
                 this.addEntryPhotonEvent({
                     photonId,
-                    text: `Photon Migrate Master`,
+                    text: `Photon Master Migrate`,
                     created_at: gameLogDate
                 });
             }
@@ -8816,11 +8822,41 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.methods.checkPhotonBotJoin = function (photonId, data, gameLogDate) {
+        var text = '';
+        var platforms = [];
+        for (var unityPackage of this.currentInstanceWorld.unityPackages) {
+            platforms.push(unityPackage.platform);
+        }
+        if (data.isInvisible) {
+            text = 'User has joined invisible';
+            this.photonLobbyBots.unshift(photonId);
+        } else if (data.avatarEyeHeight < 0) {
+            text = 'Photon bot has joined, invalid avatarEyeHeight';
+            this.photonLobbyBots.unshift(photonId);
+        } else if (data.user.last_platform === 'android' && !data.inVRMode) {
+            var text = 'User joined as Quest in desktop mode';
+        } else if (
+            data.user.last_platform === 'android' &&
+            !platforms.includes('android')
+        ) {
+            var text = 'User joined as Quest in PC only world';
+        }
+        if (text) {
+            this.addEntryPhotonEvent({
+                photonId,
+                text,
+                color: 'yellow',
+                created_at: gameLogDate
+            });
+        }
+    };
+
     $app.methods.checkPhotonBotLeave = function (photonId, gameLogDate) {
         var text = '';
         var lobbyJointime = this.photonLobbyJointime.get(photonId);
         if (this.photonLobbyBots.includes(photonId)) {
-            var text = 'Photon bot has left';
+            text = 'Photon bot has left';
             if (typeof lobbyJointime !== 'undefined') {
                 var time = timeToText(Date.now() - lobbyJointime.joinTime);
                 text = `Photon bot has left ${time}`;
@@ -8878,6 +8914,14 @@ speechSynthesis.getVoices();
                     userId: user.id
                 });
                 ref = args.ref;
+                if (photonUser.last_platform !== ref.last_platform) {
+                    this.addEntryPhotonEvent({
+                        photonId,
+                        text: `API/Photon platform mismatch ${ref.last_platform}/${photonUser.last_platform}`,
+                        color: 'yellow',
+                        created_at: Date.parse(gameLogDate)
+                    });
+                }
             } else if (
                 !ref.isFriend &&
                 this.lastLocation.playerList.has(ref.displayName)
