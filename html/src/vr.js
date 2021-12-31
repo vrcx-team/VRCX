@@ -185,6 +185,7 @@ Vue.component('marquee-text', MarqueeText);
             config: {},
             downloadProgress: 0,
             photonLobbyBotSize: 0,
+            onlineFriendCount: 0,
             nowPlaying: {
                 url: '',
                 name: '',
@@ -306,6 +307,10 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.updatePhotonLobbyBotSize = function (size) {
         this.photonLobbyBotSize = parseInt(size, 10);
+    };
+
+    $app.methods.updateOnlineFriendCount = function (count) {
+        this.onlineFriendCount = parseInt(count, 10);
     };
 
     $app.methods.nowPlayingUpdate = function (json) {
