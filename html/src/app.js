@@ -8286,14 +8286,15 @@ speechSynthesis.getVoices();
                 text = 'User has joined invisible';
             } else if (avatarEyeHeight < 0) {
                 text = 'Photon bot has joined, invalid avatarEyeHeight';
-            } else if (
-                joinTime &&
-                joinTime + 10000 < dtNow &&
-                !hasInstantiated
-            ) {
-                text =
-                    'Photon bot has joined, failed to instantiate after 10 seconds';
             }
+            // else if (
+            //     joinTime &&
+            //     joinTime + 10000 < dtNow &&
+            //     !hasInstantiated
+            // ) {
+            //     text =
+            //         'Photon bot has joined, failed to instantiate after 10 seconds';
+            // }
             if (text && id !== this.photonLobbyCurrentUser) {
                 if (!this.photonLobbyBots.includes(id)) {
                     this.addEntryPhotonEvent({
