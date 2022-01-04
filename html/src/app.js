@@ -4165,7 +4165,8 @@ speechSynthesis.getVoices();
     $app.data.debugWebRequests = false;
     $app.data.debugWebSocket = false;
     $app.data.debugUserDiff = false;
-    $app.data.debugPhotonLogging = true;
+    $app.data.debugPhotonLogging = false;
+    $app.data.debugGameLog = false;
 
     $app.data.APILastOnline = new Map();
 
@@ -7824,6 +7825,13 @@ speechSynthesis.getVoices();
             rawLogs[2],
             rawLogs.slice(3)
         );
+        if (
+            this.debugGameLog &&
+            gameLog.type !== 'photon-id' &&
+            gameLog.type !== 'api-request'
+        ) {
+            console.log('gameLog:', gameLog);
+        }
         this.addGameLogEntry(gameLog, this.lastLocation.location);
     };
 
@@ -9333,6 +9341,9 @@ speechSynthesis.getVoices();
                 }
             });
             var json = JSON.parse(response.data);
+            if (this.debugWebRequests) {
+                console.log(json, response);
+            }
             if (response.status === 200) {
                 data = json;
             } else {
@@ -17985,6 +17996,9 @@ speechSynthesis.getVoices();
         });
         this.checkingForVRCXUpdate = false;
         var json = JSON.parse(response.data);
+        if (this.debugWebRequests) {
+            console.log(json, response);
+        }
         var releases = [];
         if (typeof json !== 'object' || json.message) {
             $app.$message({
@@ -18029,6 +18043,9 @@ speechSynthesis.getVoices();
         });
         this.checkingForVRCXUpdate = false;
         var json = JSON.parse(response.data);
+        if (this.debugWebRequests) {
+            console.log(json, response);
+        }
         if (json === Object(json) && json.name && json.published_at) {
             this.latestAppVersion = `${json.name} (${formatDate(
                 json.published_at,
