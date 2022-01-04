@@ -600,7 +600,7 @@ html
                         template(v-once #default="scope")
                             template(v-if="scope.row.details && scope.row.details.imageUrl")
                                 el-popover(placement="right" width="500px" trigger="click")
-                                    img.x-link(slot="reference" v-lazy="scope.row.details.imageUrl" style="flex:none;height:60px;border-radius:4px")
+                                    img.x-link(slot="reference" v-lazy="scope.row.details.imageUrl" style="flex:none;width:90px;border-radius:4px")
                                     img.x-link(v-lazy="scope.row.details.imageUrl" style="width:500px" @click="openExternalLink(scope.row.details.imageUrl)")
                     el-table-column(label="Message" prop="message")
                         template(v-once #default="scope")
@@ -1066,7 +1066,7 @@ html
                             el-radio-button(label="Game Running")
                             el-radio-button(label="Always")
                     div.options-container-item
-                        el-switch(v-model="worldAutoCacheInviteFilter" @change="saveOpenVROption" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheInvite === 'Never'")
+                        el-switch(v-model="worldAutoCacheInviteFilter" @change="saveOpenVROption" inactive-text="VIP" active-text="Friends" :disabled="worldAutoCacheInvite === 'Never'")
                     div.options-container-item
                         span.name Download on GPS:
                         br
@@ -1076,7 +1076,15 @@ html
                             el-radio-button(label="Game Running")
                             el-radio-button(label="Always")
                     div.options-container-item
-                        el-switch(v-model="worldAutoCacheGPSFilter" @change="saveOpenVROption" inactive-text="VIP" active-text="Everyone" :disabled="worldAutoCacheGPS === 'Never'")
+                        el-switch(v-model="worldAutoCacheGPSFilter" @change="saveOpenVROption" inactive-text="VIP" active-text="Friends" :disabled="worldAutoCacheGPS === 'Never'")
+                    div.options-container-item(v-if="photonLoggingEnabled")
+                        span.name Download on PortalSpawn:
+                        br
+                        el-radio-group(v-model="portalAutoCache" @change="saveOpenVROption" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="VIP")
+                            el-radio-button(label="Friends")
+                            el-radio-button(label="Everyone")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-download" @click="showDownloadDialog") Download History
                     br
