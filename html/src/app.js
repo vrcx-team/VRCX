@@ -8888,13 +8888,14 @@ speechSynthesis.getVoices();
                 var time = timeToText(Date.now() - lobbyJointime.joinTime);
                 text = `Photon bot has left ${time}`;
             }
-        } else if (
-            typeof lobbyJointime !== 'undefined' &&
-            !lobbyJointime.hasInstantiated
-        ) {
-            var time = timeToText(Date.now() - lobbyJointime.joinTime);
-            text = `Bot/Player left without instantiating ${time}`;
         }
+        // else if (
+        //     typeof lobbyJointime !== 'undefined' &&
+        //     !lobbyJointime.hasInstantiated
+        // ) {
+        //     var time = timeToText(Date.now() - lobbyJointime.joinTime);
+        //     text = `Bot/Player left without instantiating ${time}`;
+        // }
         if (text) {
             this.addEntryPhotonEvent({
                 photonId,
