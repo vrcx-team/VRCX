@@ -76,17 +76,19 @@ html
                         el-popover(placement="right" width="500px" trigger="click" style="height:120px")
                             img.x-link(slot="reference" v-lazy="currentInstanceWorld.thumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
                             img.x-link(v-lazy="currentInstanceWorld.imageUrl" style="width:500px;height:375px" @click="openExternalLink(currentInstanceWorld.imageUrl)")
-                        div(style="margin-left:10px;display:flex;flex-direction:column")
+                        div(style="margin-left:10px;display:flex;flex-direction:column;min-width:320px;width:100%")
                             div
                                 span.x-link(@click="showWorldDialog(currentInstanceWorld.id)" style="font-weight:bold;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1")
-                                    | #[i.el-icon-s-home(v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === currentInstanceWorld.id")] {{ currentInstanceWorld.name }}
+                                    | #[i.el-icon-s-home(v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === currentInstanceWorld.id" style="margin-right:5px")] {{ currentInstanceWorld.name }}
                             div
                                 span.x-link(v-text="currentInstanceWorld.authorName" @click="showUserDialog(currentInstanceWorld.authorId)" style="color:#909399;font-family:monospace")
                             div(style="margin-top:5px")
-                                el-tag(v-if="currentInstanceWorld.$isLabs" type="primary" effect="plain" size="mini") Labs
-                                el-tag(v-else-if="currentInstanceWorld.releaseStatus === 'public'" type="success" effect="plain" size="mini") Public
-                                el-tag(v-else-if="currentInstanceWorld.releaseStatus === 'private'" type="danger" effect="plain" size="mini") Private
-                                span(style="margin-left:5px")
+                                el-tag(v-if="currentInstanceWorld.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px") Labs
+                                el-tag(v-else-if="currentInstanceWorld.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") Public
+                                el-tag(v-else-if="currentInstanceWorld.releaseStatus === 'private'" type="danger" effect="plain" size="mini" style="margin-right:5px") Private
+                                el-tag.x-tag-platform-pc(v-if="currentInstanceWorld.$isPC" type="info" effect="plain" size="mini" style="margin-right:5px") PC
+                                el-tag.x-tag-platform-quest(v-if="currentInstanceWorld.$isQuest" type="info" effect="plain" size="mini" style="margin-right:5px") Quest
+                                span.x-link(@click="showLaunchDialog(lastLocation.location)")
                                     span \#{{ currentInstanceLocation.instanceName }} {{ currentInstanceLocation.accessType }}
                                     span.famfamfam-flags(v-if="currentInstanceLocation.region === 'eu'" class="europeanunion" style="display:inline-block;margin-left:5px")
                                     span.famfamfam-flags(v-else-if="currentInstanceLocation.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
@@ -103,9 +105,22 @@ html
                                                 div(v-for="id in photonLobbyBots" :key="id" placement="top")
                                                     span.x-link(v-text="getDisplayNameFromPhotonId(id)" @click="showUserFromPhotonId(id)" style="margin-right:5px")
                                             span(v-text="photonLobbyBots.length" style="color:red")
-                                //- el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px;margin-top:5px")
+                                //- el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px")
                             div(style="margin-top:5px")
                                 span(v-show="currentInstanceWorld.name !== currentInstanceWorld.description" v-text="currentInstanceWorld.description" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2")
+                        div(style="display:flex;flex-direction:column;margin-left:20px")
+                            .x-friend-item(style="cursor:default")
+                                .detail
+                                    span.name Capacity
+                                    span.extra {{ currentInstanceWorld.capacity | commaNumber }} ({{ currentInstanceWorld.capacity * 2 | commaNumber }})
+                            .x-friend-item(style="cursor:default")
+                                .detail
+                                    span.name Last Updated
+                                    span.extra {{ currentInstanceWorld.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                            .x-friend-item(style="cursor:default")
+                                .detail
+                                    span.name Created
+                                    span.extra {{ currentInstanceWorld.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
                     div.current-instance-table
                         data-tables(v-bind="currentInstanceUserList" @row-click="selectCurrentInstanceRow" style="margin-top:10px;cursor:pointer")
                             el-table-column(label="Avatar" width="60" prop="photo")
@@ -1330,15 +1345,15 @@ html
                                         template(#content)
                                             span {{ item.value }} ({{ item.key }})
                                         span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
-                                div
-                                    el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px;margin-top:5px")
-                                    el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Friend No.{{userDialog.friend.no}}
-                                    el-tag.x-tag-troll(v-if="userDialog.ref.$isTroll" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Nuisance
-                                    el-tag.x-tag-legendary(v-if="userDialog.ref.$isLegend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Legend
-                                    el-tag.x-tag-vip(v-if="userDialog.ref.$isModerator" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRChat Team
-                                    el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRC+
-                                    el-tag.x-tag-platform-pc(v-if="userDialog.ref.last_platform === 'standalonewindows'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
-                                    el-tag.x-tag-platform-quest(v-else-if="userDialog.ref.last_platform === 'android'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Quest
+                                div(style="margin-top:5px")
+                                    el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px")
+                                    el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px") Friend No.{{userDialog.friend.no}}
+                                    el-tag.x-tag-troll(v-if="userDialog.ref.$isTroll" type="info" effect="plain" size="mini" style="margin-right:5px") Nuisance
+                                    el-tag.x-tag-legendary(v-if="userDialog.ref.$isLegend" type="info" effect="plain" size="mini" style="margin-right:5px") Legend
+                                    el-tag.x-tag-vip(v-if="userDialog.ref.$isModerator" type="info" effect="plain" size="mini" style="margin-right:5px") VRChat Team
+                                    el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-right:5px") VRC+
+                                    el-tag.x-tag-platform-pc(v-if="userDialog.ref.last_platform === 'standalonewindows'" type="info" effect="plain" size="mini" style="margin-right:5px") PC
+                                    el-tag.x-tag-platform-quest(v-else-if="userDialog.ref.last_platform === 'android'" type="info" effect="plain" size="mini" style="margin-right:5px") Quest
                                 div(style="margin-top:5px")
                                     span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
                             div(v-if="userDialog.ref.userIcon" style="flex:none;margin-right:10px")
@@ -1424,7 +1439,7 @@ html
                                         el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" placeholder="Click to add a note" size="mini" resize="none")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
-                                        span.name(v-if="userDialog.ref.profilePicOverride && userDialog.ref.currentAvatarImageUrl") Avatar Info Last Seen
+                                        span.name(v-if="userDialog.id !== API.currentUser.id && userDialog.ref.profilePicOverride && userDialog.ref.currentAvatarImageUrl") Avatar Info Last Seen
                                         span.name(v-else) Avatar Info
                                         .extra
                                             avatar-info(:imageurl="userDialog.ref.currentAvatarImageUrl" :userid="userDialog.id")
@@ -1541,18 +1556,18 @@ html
                         div(style="flex:1;display:flex;align-items:center;margin-left:15px")
                             div(style="flex:1")
                                 div
-                                    i.el-icon-s-home(v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id")
+                                    i.el-icon-s-home(v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id" style="margin-right:5px")
                                     span(v-text="worldDialog.ref.name" style="font-weight:bold")
                                 div(style="margin-top:5px")
                                     span.x-link(v-text="worldDialog.ref.authorName" @click="showUserDialog(worldDialog.ref.authorId)" style="color:#909399;font-family:monospace")
                                 div(style="margin-top:5px")
-                                    el-tag(v-if="worldDialog.ref.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Labs
-                                    el-tag(v-else-if="worldDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Public
-                                    el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Private
-                                    el-tag.x-tag-platform-pc(v-if="worldDialog.isPC" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
-                                    el-tag.x-tag-platform-quest(v-if="worldDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Quest
-                                    el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px;margin-top:5px")
-                                    el-tag(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-top:5px")
+                                    el-tag(v-if="worldDialog.ref.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px") Labs
+                                    el-tag(v-else-if="worldDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") Public
+                                    el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px") Private
+                                    el-tag.x-tag-platform-pc(v-if="worldDialog.isPC" type="info" effect="plain" size="mini" style="margin-right:5px") PC
+                                    el-tag.x-tag-platform-quest(v-if="worldDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px") Quest
+                                    el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px")
+                                    el-tag(v-if="worldDialog.inCache" type="info" effect="plain" size="mini")
                                         span(v-text="worldDialog.cacheSize")
                                         |  Cache
                                 div(style="margin-top:5px")
@@ -1714,11 +1729,11 @@ html
                                 div(style="margin-top:5px")
                                     span.x-link(v-text="avatarDialog.ref.authorName" @click="showUserDialog(avatarDialog.ref.authorId)" style="color:#909399;font-family:monospace")
                                 div(style="margin-top:5px")
-                                    el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Public
-                                    el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Private
-                                    el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Fallback
-                                    el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-right:5px;margin-top:5px")
-                                    el-tag(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini" style="margin-top:5px")
+                                    el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") Public
+                                    el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px") Private
+                                    el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px") Fallback
+                                    el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-right:5px")
+                                    el-tag(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini")
                                         span(v-text="avatarDialog.cacheSize")
                                         |  Cache
                                 div(style="margin-top:5px")

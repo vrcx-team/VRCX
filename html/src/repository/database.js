@@ -721,7 +721,12 @@ class Database {
         return size;
     }
 
-    async getLastVisit(input) {
+    async getLastVisit(input, currentWorldMatch) {
+        if (currentWorldMatch) {
+            var count = 2;
+        } else {
+            var count = 1;
+        }
         var worldId = input.replaceAll("'", '');
         var ref = {
             created_at: '',
@@ -732,7 +737,7 @@ class Database {
                 created_at: row[0],
                 worldId: row[1]
             };
-        }, `SELECT created_at, world_id FROM gamelog_location WHERE world_id = '${worldId}' ORDER BY id DESC LIMIT 1`);
+        }, `SELECT created_at, world_id FROM gamelog_location WHERE world_id = '${worldId}' ORDER BY id DESC LIMIT ${count}`);
         return ref;
     }
 

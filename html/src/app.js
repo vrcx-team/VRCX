@@ -7856,6 +7856,7 @@ speechSynthesis.getVoices();
                 if (this.isGameRunning) {
                     this.cancelVRChatCacheDownload(gameLog.location);
                     this.clearNowPlaying();
+                    this.updateCurrentInstanceWorld(gameLog.location);
                 }
                 this.lastLocationDestination = gameLog.location;
                 this.lastLocationDestinationTime = Date.parse(gameLog.dt);
@@ -8367,9 +8368,14 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.addEntryPhotonEvent = function (input) {
+        var isMaster = false;
+        if (input.photonId === this.photonLobbyMaster) {
+            isMaster = true;
+        }
         var feed = {
             displayName: this.getDisplayNameFromPhotonId(input.photonId),
             userId: this.getUserIdFromPhotonId(input.photonId),
+            isMaster,
             ...input
         };
         this.photonEventTable.data.unshift(feed);
@@ -8853,8 +8859,10 @@ speechSynthesis.getVoices();
     $app.methods.checkPhotonBotJoin = function (photonId, data, gameLogDate) {
         var text = '';
         var platforms = [];
-        for (var unityPackage of this.currentInstanceWorld.unityPackages) {
-            platforms.push(unityPackage.platform);
+        if (typeof this.currentInstanceWorld.unityPackages === 'object') {
+            for (var unityPackage of this.currentInstanceWorld.unityPackages) {
+                platforms.push(unityPackage.platform);
+            }
         }
         if (data.isInvisible) {
             text = 'User has joined invisible';
@@ -12700,12 +12708,46 @@ speechSynthesis.getVoices();
         if (instanceId) {
             var L = API.parseLocation(instanceId);
             this.currentInstanceLocation = L;
-            API.getCachedWorld({
-                worldId: L.worldId
-            }).then((args) => {
-                this.currentInstanceWorld = args.ref;
-            });
+            var ref = API.cachedWorlds.get(L.worldId);
+            if (!ref) {
+                API.getCachedWorld({
+                    worldId: L.worldId
+                }).then((args) => {
+                    this.currentInstanceWorld = args.ref;
+                    var {isPC, isQuest} = this.getAvailablePlatforms(
+                        args.ref.unityPackages
+                    );
+                    this.currentInstanceWorld.$isPC = isPC;
+                    this.currentInstanceWorld.$isQuest = isQuest;
+                });
+            } else {
+                API.getWorld({
+                    worldId: L.worldId
+                }).then((args) => {
+                    this.currentInstanceWorld = args.ref;
+                    var {isPC, isQuest} = this.getAvailablePlatforms(
+                        args.ref.unityPackages
+                    );
+                    this.currentInstanceWorld.$isPC = isPC;
+                    this.currentInstanceWorld.$isQuest = isQuest;
+                });
+            }
         }
+    };
+
+    $app.methods.getAvailablePlatforms = function (unityPackages) {
+        var isPC = false;
+        var isQuest = false;
+        if (typeof unityPackages === 'object') {
+            for (var unityPackage of unityPackages) {
+                if (unityPackage.platform === 'standalonewindows') {
+                    isPC = true;
+                } else if (unityPackage.platform === 'android') {
+                    isQuest = true;
+                }
+            }
+        }
+        return {isPC, isQuest};
     };
 
     $app.methods.selectCurrentInstanceRow = function (val) {
@@ -13251,7 +13293,12 @@ speechSynthesis.getVoices();
         D.timeSpent = 0;
         D.isPC = false;
         D.isQuest = false;
-        database.getLastVisit(D.id).then((ref) => {
+        var LL = API.parseLocation(this.lastLocation.location);
+        var currentWorldMatch = false;
+        if (LL.worldId === D.id) {
+            currentWorldMatch = true;
+        }
+        database.getLastVisit(D.id, currentWorldMatch).then((ref) => {
             if (ref.worldId === D.id) {
                 D.lastVisit = ref.created_at;
             }
@@ -13279,13 +13326,11 @@ speechSynthesis.getVoices();
                     D.loading = false;
                     D.ref = args.ref;
                     D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
-                    for (var unityPackage of args.ref.unityPackages) {
-                        if (unityPackage.platform === 'standalonewindows') {
-                            D.isPC = true;
-                        } else if (unityPackage.platform === 'android') {
-                            D.isQuest = true;
-                        }
-                    }
+                    var {isPC, isQuest} = this.getAvailablePlatforms(
+                        args.ref.unityPackages
+                    );
+                    D.isPC = isPC;
+                    D.isQuest = isQuest;
                     this.updateVRChatWorldCache();
                     if (args.cache) {
                         API.getWorld(args.params)

@@ -418,7 +418,7 @@ html
                     circle(class="np-progress-circle-stroke" cx="60" cy="60" stroke="white" r="30" fill="transparent" stroke-width="60")
                 .hud-feed
                     div(v-for="feed in hudFeed")
-                        .item <strong>{{ feed.displayName }}</strong>
+                        .item #[span(v-if="feed.isMaster") 👑]<strong>{{ feed.displayName }}</strong>
                             span(v-if="feed.color === 'yellow'" style="color: yellow")  {{ feed.text }}  
                             span(v-else)  {{ feed.text }}  
                             template(v-if="feed.combo > 1")
