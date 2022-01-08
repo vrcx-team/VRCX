@@ -8276,11 +8276,12 @@ speechSynthesis.getVoices();
         workerTimers.setTimeout(() => this.photonLobbyWatcher(), 500);
     };
 
-    $app.methods.photonBotCheck = function (dtNow) {
+    $app.methods.photonBotCheck = function () {
         var photonBots = [];
         this.photonLobbyCurrent.forEach((ref, id) => {
             if (this.photonLobbyJointime.has(id)) {
-                var {joinTime, hasInstantiated, isInvisible, avatarEyeHeight} =
+                // dtNow, var {joinTime, hasInstantiated, isInvisible, avatarEyeHeight}
+                var {isInvisible, avatarEyeHeight} =
                     this.photonLobbyJointime.get(id);
             }
             var text = '';
