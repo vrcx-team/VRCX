@@ -4138,6 +4138,7 @@ speechSynthesis.getVoices();
                                 API.currentUser.$offline_for = Date.now();
                                 Discord.SetActive(false);
                                 this.autoVRChatCacheManagement();
+                                this.ipcTimeout = 0;
                             }
                             this.lastLocationReset();
                             this.clearNowPlaying();
@@ -18265,6 +18266,9 @@ speechSynthesis.getVoices();
                         data.OnEventData
                     );
                 }
+                if (data.OnEventData.Code !== 7) {
+                    this.photonEventPulse();
+                }
                 this.parsePhotonEvent(data.OnEventData, data.dt);
                 break;
             case 'OnOperationResponse':
@@ -18279,6 +18283,7 @@ speechSynthesis.getVoices();
                     data.OnOperationResponseData,
                     data.dt
                 );
+                this.photonEventPulse();
                 break;
             case 'Ping':
                 if (!this.photonLoggingEnabled) {
@@ -18293,6 +18298,15 @@ speechSynthesis.getVoices();
                 this.eventLaunchCommand(data.command);
                 break;
         }
+    };
+
+    $app.data.photonEventCount = 0;
+    $app.data.photonEventIcon = false;
+
+    $app.methods.photonEventPulse = function () {
+        this.photonEventCount++;
+        this.photonEventIcon = true;
+        workerTimers.setTimeout(() => (this.photonEventIcon = false), 150);
     };
 
     $app.methods.parseOperationResponse = function (data, dateTime) {
