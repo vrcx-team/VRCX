@@ -4121,6 +4121,9 @@ speechSynthesis.getVoices();
                         this.checkForVRCXUpdate();
                     }
                 }
+                if (--this.ipcTimeout <= 0) {
+                    this.ipcEnabled = false;
+                }
                 AppApi.CheckGameRunning().then(
                     ([isGameRunning, isGameNoVR, isSteamVRRunning]) => {
                         this.updateOpenVR(
@@ -18293,6 +18296,7 @@ speechSynthesis.getVoices();
         };
     };
 
+    $app.data.ipcEnabled = false;
     $app.methods.ipcEvent = function (json) {
         try {
             var data = JSON.parse(json);
