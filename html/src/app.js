@@ -7274,6 +7274,7 @@ speechSynthesis.getVoices();
         if ($app.isGameRunning) {
             $app.loadPlayerList();
         }
+        $app.vrInit();
         // remove old data from json file and migrate to SQLite
         if (VRCXStorage.Get(`${args.json.id}_friendLogUpdatedAt`)) {
             VRCXStorage.Remove(`${args.json.id}_feedTable`);
@@ -9350,7 +9351,7 @@ speechSynthesis.getVoices();
         }
         try {
             var response = await webApiService.execute({
-                url: `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&key=${apiKey}`,
+                url: `https://www.googleapis.com/youtube/v3/videos?id=${encodeURIComponent(videoId)}&part=snippet,contentDetails&key=${apiKey}`,
                 method: 'GET',
                 headers: {
                     'User-Agent': appVersion,
@@ -10372,8 +10373,8 @@ speechSynthesis.getVoices();
             set.add(id);
             this.addFriendship(id);
         }
-        for (var id in this.friendLog) {
-            if (set.has(id) === false) {
+        for (var id of this.friendLog.keys()) {
+            if (!set.has(id)) {
                 this.deleteFriendship(id);
             }
         }
@@ -12433,7 +12434,11 @@ speechSynthesis.getVoices();
                             instanceId: L.instanceId
                         });
                     }
-                    database.getLastSeen(D.ref).then((ref1) => {
+                    var inCurrentWorld = false;
+                    if (this.lastLocation.playerList.has(D.ref.displayName)) {
+                        inCurrentWorld = true;
+                    }
+                    database.getLastSeen(D.ref, inCurrentWorld).then((ref1) => {
                         if (ref1.userId === D.id) {
                             D.lastSeen = ref1.created_at;
                         }

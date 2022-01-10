@@ -770,7 +770,12 @@ class Database {
         return ref;
     }
 
-    async getLastSeen(input) {
+    async getLastSeen(input, inCurrentWorld) {
+        if (inCurrentWorld) {
+            var count = 2;
+        } else {
+            var count = 1;
+        }
         var userId = input.id.replaceAll("'", '');
         var displayName = input.displayName.replaceAll("'", "''");
         var ref = {
@@ -789,7 +794,7 @@ class Database {
                     userId
                 };
             }
-        }, `SELECT created_at, user_id FROM gamelog_join_leave WHERE user_id = '${userId}' OR display_name = '${displayName}' ORDER BY id DESC LIMIT 1`);
+        }, `SELECT created_at, user_id FROM gamelog_join_leave WHERE user_id = '${userId}' OR display_name = '${displayName}' ORDER BY id DESC LIMIT ${count}`);
         return ref;
     }
 

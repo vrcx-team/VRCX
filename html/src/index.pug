@@ -1345,15 +1345,15 @@ html
                                         template(#content)
                                             span {{ item.value }} ({{ item.key }})
                                         span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
-                                div(style="margin-top:5px")
-                                    el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px")
-                                    el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px") Friend No.{{userDialog.friend.no}}
-                                    el-tag.x-tag-troll(v-if="userDialog.ref.$isTroll" type="info" effect="plain" size="mini" style="margin-right:5px") Nuisance
-                                    el-tag.x-tag-legendary(v-if="userDialog.ref.$isLegend" type="info" effect="plain" size="mini" style="margin-right:5px") Legend
-                                    el-tag.x-tag-vip(v-if="userDialog.ref.$isModerator" type="info" effect="plain" size="mini" style="margin-right:5px") VRChat Team
-                                    el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-right:5px") VRC+
-                                    el-tag.x-tag-platform-pc(v-if="userDialog.ref.last_platform === 'standalonewindows'" type="info" effect="plain" size="mini" style="margin-right:5px") PC
-                                    el-tag.x-tag-platform-quest(v-else-if="userDialog.ref.last_platform === 'android'" type="info" effect="plain" size="mini" style="margin-right:5px") Quest
+                                div
+                                    el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px;margin-top:5px")
+                                    el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Friend No.{{userDialog.friend.no}}
+                                    el-tag.x-tag-troll(v-if="userDialog.ref.$isTroll" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Nuisance
+                                    el-tag.x-tag-legendary(v-if="userDialog.ref.$isLegend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Legend
+                                    el-tag.x-tag-vip(v-if="userDialog.ref.$isModerator" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRChat Team
+                                    el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRC+
+                                    el-tag.x-tag-platform-pc(v-if="userDialog.ref.last_platform === 'standalonewindows'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
+                                    el-tag.x-tag-platform-quest(v-else-if="userDialog.ref.last_platform === 'android'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Quest
                                 div(style="margin-top:5px")
                                     span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
                             div(v-if="userDialog.ref.userIcon" style="flex:none;margin-right:10px")
@@ -1560,14 +1560,14 @@ html
                                     span(v-text="worldDialog.ref.name" style="font-weight:bold")
                                 div(style="margin-top:5px")
                                     span.x-link(v-text="worldDialog.ref.authorName" @click="showUserDialog(worldDialog.ref.authorId)" style="color:#909399;font-family:monospace")
-                                div(style="margin-top:5px")
-                                    el-tag(v-if="worldDialog.ref.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px") Labs
-                                    el-tag(v-else-if="worldDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") Public
-                                    el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px") Private
-                                    el-tag.x-tag-platform-pc(v-if="worldDialog.isPC" type="info" effect="plain" size="mini" style="margin-right:5px") PC
-                                    el-tag.x-tag-platform-quest(v-if="worldDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px") Quest
-                                    el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px")
-                                    el-tag(v-if="worldDialog.inCache" type="info" effect="plain" size="mini")
+                                div
+                                    el-tag(v-if="worldDialog.ref.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Labs
+                                    el-tag(v-else-if="worldDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Public
+                                    el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Private
+                                    el-tag.x-tag-platform-pc(v-if="worldDialog.isPC" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
+                                    el-tag.x-tag-platform-quest(v-if="worldDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Quest
+                                    el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px;margin-top:5px")
+                                    el-tag(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px")
                                         span(v-text="worldDialog.cacheSize")
                                         |  Cache
                                 div(style="margin-top:5px")
