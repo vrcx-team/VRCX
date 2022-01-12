@@ -1028,6 +1028,9 @@ html
                         span.name Hide VR Devices
                         el-switch(v-model="hideDevicesFromFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
+                        span.name Hide CPU Usage
+                        el-switch(v-model="hideCpuUsageFromFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog" :disabled="!openVR || !overlayWrist") Wrist Feed Filters
                     br
                     span.sub-header Notifications

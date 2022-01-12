@@ -9351,7 +9351,9 @@ speechSynthesis.getVoices();
         }
         try {
             var response = await webApiService.execute({
-                url: `https://www.googleapis.com/youtube/v3/videos?id=${encodeURIComponent(videoId)}&part=snippet,contentDetails&key=${apiKey}`,
+                url: `https://www.googleapis.com/youtube/v3/videos?id=${encodeURIComponent(
+                    videoId
+                )}&part=snippet,contentDetails&key=${apiKey}`,
                 method: 'GET',
                 headers: {
                     'User-Agent': appVersion,
@@ -10374,7 +10376,10 @@ speechSynthesis.getVoices();
             this.addFriendship(id);
         }
         for (var id of this.friendLog.keys()) {
-            if (!set.has(id)) {
+            if (id === API.currentUser.id) {
+                this.friendLog.delete(id);
+                database.deleteFriendLogCurrent(id);
+            } else if (!set.has(id)) {
                 this.deleteFriendship(id);
             }
         }
@@ -10869,6 +10874,9 @@ speechSynthesis.getVoices();
     $app.data.hideDevicesFromFeed = configRepository.getBool(
         'VRCX_hideDevicesFromFeed'
     );
+    $app.data.hideCpuUsageFromFeed = configRepository.getBool(
+        'VRCX_hideCpuUsageFromFeed'
+    );
     $app.data.overlayNotifications = configRepository.getBool(
         'VRCX_overlayNotifications'
     );
@@ -10939,6 +10947,10 @@ speechSynthesis.getVoices();
         configRepository.setBool(
             'VRCX_hideDevicesFromFeed',
             this.hideDevicesFromFeed
+        );
+        configRepository.setBool(
+            'VRCX_hideCpuUsageFromFeed',
+            this.hideCpuUsageFromFeed
         );
         configRepository.setBool(
             'VRCX_overlayNotifications',
@@ -11418,6 +11430,7 @@ speechSynthesis.getVoices();
         var VRConfigVars = {
             overlayNotifications: this.overlayNotifications,
             hideDevicesFromFeed: this.hideDevicesFromFeed,
+            hideCpuUsageFromFeed: this.hideCpuUsageFromFeed,
             minimalFeed: this.minimalFeed,
             notificationPosition: this.notificationPosition,
             notificationTimeout: this.notificationTimeout,
@@ -12360,6 +12373,10 @@ speechSynthesis.getVoices();
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
+                this.$message({
+                    message: 'Failed to load user',
+                    type: 'error'
+                });
                 throw err;
             })
             .then((args) => {
@@ -13011,56 +13028,7 @@ speechSynthesis.getVoices();
             return;
         }
         if (command === 'Refresh') {
-            D.loading = true;
-            API.getUser({
-                userId: D.id
-            })
-                .catch((err) => {
-                    D.loading = false;
-                    D.visible = false;
-                    throw err;
-                })
-                .then((args) => {
-                    if (D.id === args.ref.id) {
-                        D.loading = false;
-                        D.ref = args.ref;
-                        D.friend = this.friends.get(D.id);
-                        D.isFriend = Boolean(D.friend);
-                        D.incomingRequest = false;
-                        D.outgoingRequest = false;
-                        D.isBlock = false;
-                        D.isMute = false;
-                        D.isHideAvatar = false;
-                        for (var ref of API.cachedPlayerModerations.values()) {
-                            if (
-                                ref.$isDeleted === false &&
-                                ref.targetUserId === D.id &&
-                                ref.sourceUserId === API.currentUser.id
-                            ) {
-                                if (ref.type === 'block') {
-                                    D.isBlock = true;
-                                } else if (ref.type === 'mute') {
-                                    D.isMute = true;
-                                } else if (ref.type === 'hideAvatar') {
-                                    D.isHideAvatar = true;
-                                }
-                            }
-                        }
-                        D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
-                        this.applyUserDialogLocation();
-                        API.getFriendStatus({
-                            userId: D.id
-                        });
-                        var L = API.parseLocation(D.ref.location);
-                        if (L.worldId && this.lastLocation.location !== L.tag) {
-                            API.getInstance({
-                                worldId: L.worldId,
-                                instanceId: L.instanceId
-                            });
-                        }
-                    }
-                    return args;
-                });
+            this.showUserDialog(D.id);
         } else if (command === 'Add Favorite') {
             this.showFavoriteDialog('friend', D.id);
         } else if (command === 'Edit Social Status') {
@@ -13328,6 +13296,10 @@ speechSynthesis.getVoices();
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
+                this.$message({
+                    message: 'Failed to load world',
+                    type: 'error'
+                });
                 throw err;
             })
             .then((args) => {
@@ -13486,26 +13458,7 @@ speechSynthesis.getVoices();
         }
         switch (command) {
             case 'Refresh':
-                D.loading = true;
-                API.getWorld({
-                    worldId: D.id
-                })
-                    .catch((err) => {
-                        D.loading = false;
-                        D.visible = false;
-                        throw err;
-                    })
-                    .then((args) => {
-                        if (D.id === args.ref.id) {
-                            D.loading = false;
-                            D.ref = args.ref;
-                            D.isFavorite = API.cachedFavoritesByObjectId.has(
-                                D.id
-                            );
-                            this.updateVRChatWorldCache();
-                        }
-                        return args;
-                    });
+                this.showWorldDialog(D.id);
                 break;
             case 'New Instance':
                 this.showNewInstanceDialog(D.$location.tag);
@@ -13755,6 +13708,15 @@ speechSynthesis.getVoices();
                             D.fileSize = 'Error';
                         });
                 }
+            })
+            .catch((err) => {
+                D.loading = false;
+                D.visible = false;
+                this.$message({
+                    message: 'Failed to load avatar',
+                    type: 'error'
+                });
+                throw err;
             })
             .finally(() => {
                 D.loading = false;

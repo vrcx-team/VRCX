@@ -398,7 +398,6 @@ html
                             span(style="display:inline-block") {{ lastLocation.playerList.length }}
                             span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
                             span(v-if="photonLobbyBotSize > 0 && lastLocation.playerList.length > 0" style="display:inline-block;color:red;margin-left:5px") {{ photonLobbyBotSize }}
-                            span(style="display:inline-block;margin-left:15px") {{ onlineFriendCount }}
                     template(v-else)
                         template(v-if="downloadProgress === 100")
                             span(style="display:inline-block;margin-right:5px") Downloading: #[i.el-icon-loading]
@@ -409,10 +408,10 @@ html
                             span(style="display:inline-block") Players: {{ lastLocation.playerList.length }} 
                             span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
                             span(v-if="photonLobbyBotSize > 0 && lastLocation.playerList.length > 0" style="display:inline-block;color:red;margin-left:5px") {{ photonLobbyBotSize }}
-                            span(style="display:inline-block;margin-left:15px") Online: {{ onlineFriendCount }}
                     br
                     span(style="float:right") {{ currentTime | formatDate('YYYY-MM-DD HH:MI:SS AMPM') }}
-                    span CPU {{ cpuUsage }}%
+                    span(v-if="config && !config.hideCpuUsageFromFeed" style="display:inline-block;margin-right:5px") CPU: {{ cpuUsage }}%
+                    span(style="display:inline-block") Online: {{ onlineFriendCount }}
             template(v-else)
                 svg(class="np-progress-circle")
                     circle(class="np-progress-circle-stroke" cx="60" cy="60" stroke="white" r="30" fill="transparent" stroke-width="60")

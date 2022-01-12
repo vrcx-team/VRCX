@@ -343,8 +343,10 @@ Vue.component('marquee-text', MarqueeText);
     $app.methods.updateStatsLoop = async function () {
         try {
             this.currentTime = new Date().toJSON();
-            var cpuUsage = await AppApi.CpuUsage();
-            this.cpuUsage = cpuUsage.toFixed(0);
+            if (!this.config.hideCpuUsageFromFeed) {
+                var cpuUsage = await AppApi.CpuUsage();
+                this.cpuUsage = cpuUsage.toFixed(0);
+            }
 
             this.lastLocationTimer = '';
             if (this.lastLocation.date !== 0) {
