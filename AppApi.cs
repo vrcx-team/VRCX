@@ -394,6 +394,15 @@ namespace VRCX
             return System.Text.Json.JsonSerializer.Serialize<VRCEventDeserialization.EventEntry>(eventData);
         }
 
+        public string CustomCssPath()
+        {
+            var output = String.Empty;
+            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX\\custom.css");
+            if (File.Exists(filePath))
+                output = filePath;
+            return output;
+        }
+
         public void SetStartup(bool enabled)
         {
             try

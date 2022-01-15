@@ -73,6 +73,8 @@ speechSynthesis.getVoices();
             } else if (e.key === 'r') {
                 location.reload();
             }
+        } else if (e.key === 'R') {
+            $app.refreshCustomCss();
         }
     });
 
@@ -4055,6 +4057,7 @@ speechSynthesis.getVoices();
             API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
             this.updateLoop();
             this.getGameLogTable();
+            this.refreshCustomCss();
             this.$nextTick(function () {
                 this.$el.style.display = '';
                 if (!this.enablePrimaryPassword) {
@@ -4075,6 +4078,22 @@ speechSynthesis.getVoices();
                 }
             });
         }
+    };
+
+    $app.methods.refreshCustomCss = function () {
+        if (document.contains(document.getElementById('app-custom-style'))) {
+            document.getElementById('app-custom-style').remove();
+        }
+        AppApi.CustomCssPath().then((customCss) => {
+            var head = document.head;
+            if (customCss) {
+                var $appCustomStyle = document.createElement('link');
+                $appCustomStyle.setAttribute('id', 'app-custom-style');
+                $appCustomStyle.rel = 'stylesheet';
+                $appCustomStyle.href = `file://${customCss}?_=${Date.now()}`;
+                head.appendChild($appCustomStyle);
+            }
+        });
     };
 
     $app.methods.openExternalLink = function (link) {
