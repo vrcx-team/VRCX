@@ -1396,6 +1396,7 @@ html
                                             el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") Send Friend Request
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) Show Avatar Author
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") Show Fallback Avatar Details
+                                            el-dropdown-item(icon="el-icon-tickets" command="Previous Instances") Show Previous Instances
                                             el-dropdown-item(v-if="userDialog.ref.currentAvatarImageUrl !== robotUrl" icon="el-icon-picture-outline" command="Previous Images") Show Avatar Previous Images
                                             el-dropdown-item(v-if="userDialog.isBlock" icon="el-icon-circle-check" command="Unblock" divided style="color:#F56C6C") Unblock
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided :disabled="userDialog.ref.$isModerator") Block
@@ -1461,7 +1462,7 @@ html
                                         .detail
                                             span.name Last Seen
                                             span.extra {{ userDialog.lastSeen | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
-                                    .x-friend-item(style="cursor:default")
+                                    .x-friend-item(@click="showPreviousInstancesUserDialog(userDialog.ref)")
                                         .detail
                                             span.name Join Count
                                             span.extra(v-if="userDialog.joinCount === 0") -
@@ -1601,8 +1602,9 @@ html
                                         el-dropdown-item(icon="el-icon-s-flag" command="New Instance" divided) New Instance
                                         el-dropdown-item(v-if="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id" icon="el-icon-magic-stick" command="Reset Home" divided) Reset Home
                                         el-dropdown-item(v-else icon="el-icon-s-home" command="Make Home" divided) Make Home
+                                        el-dropdown-item(icon="el-icon-tickets" command="Previous Instances") Show Previous Instances
                                         template(v-if="API.currentUser.id !== worldDialog.ref.authorId")
-                                            el-dropdown-item(icon="el-icon-picture-outline" command="Previous Images") Previous Images
+                                            el-dropdown-item(icon="el-icon-picture-outline" command="Previous Images") Show Previous Images
                                         template(v-else)
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") Rename
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") Change Description
@@ -1709,7 +1711,7 @@ html
                                     .detail
                                         span.name Last Visit
                                         span.extra {{ worldDialog.lastVisit | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
-                                .x-friend-item(style="cursor:default")
+                                .x-friend-item(@click="showPreviousInstancesWorldDialog(worldDialog.ref)")
                                     .detail
                                         span.name Visit Count
                                         span.extra(v-text="worldDialog.visitCount")
@@ -2715,6 +2717,60 @@ html
                             div(style="float:right;margin-top:5px")
                                 el-button(type="default" @click="openExternalLink(image.versions[1].file.url)" size="mini" icon="el-icon-paperclip" circle)
                                 el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                                
+            //- dialog Table: Previous Instances User
+            el-dialog.x-dialog(ref="previousInstancesUserDialog" :visible.sync="previousInstancesUserDialog.visible" title="Previous Instances" width="800px")
+                span(v-text="previousInstancesUserDialog.userRef.displayName" style="font-size:14px")
+                el-input(v-model="previousInstancesUserDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
+                data-tables(v-bind="previousInstancesUserDialogTable" v-loading="previousInstancesUserDialog.loading" style="margin-top:10px")
+                    el-table-column(label="Date" prop="created_at" sortable width="90")
+                        template(v-once #default="scope")
+                            el-tooltip(placement="left")
+                                template(#content)
+                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                    el-table-column(label="World" prop="name" sortable)
+                        template(v-once #default="scope")
+                            location(:location="scope.row.location" :hint="scope.row.name")
+                    el-table-column(label="Instance Creator" prop="location" width="160")
+                        template(v-once #default="scope")
+                            span.x-link(v-text="getDisplayNameFromUserId(scope.row.$location.userId)" @click="showUserDialog(scope.row.$location.userId)" style="cursor:pointer")
+                    el-table-column(label="Time" prop="time" width="90" sortable)
+                        template(v-once #default="scope")
+                            span(v-text="scope.row.timer")
+                    el-table-column(label="Action" width="60" align="right")
+                        template(v-once #default="scope")
+                            el-button(type="text" icon="el-icon-message" size="mini" @click="showLaunchDialog(scope.row.location)")
+                            el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogUserInstance(scope.row)")
+                            
+            //- dialog Table: Previous Instances World
+            el-dialog.x-dialog(ref="previousInstancesWorldDialog" :visible.sync="previousInstancesWorldDialog.visible" title="Previous Instances" width="800px")
+                span(v-text="previousInstancesWorldDialog.worldRef.name" style="font-size:14px")
+                el-input(v-model="previousInstancesWorldDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
+                data-tables(v-bind="previousInstancesWorldDialogTable" v-loading="previousInstancesWorldDialog.loading" style="margin-top:10px")
+                    el-table-column(label="Date" prop="created_at" sortable width="90")
+                        template(v-once #default="scope")
+                            el-tooltip(placement="left")
+                                template(#content)
+                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                    el-table-column(label="Instance Name" prop="name")
+                        template(v-once #default="scope")
+                            span.x-link(@click="showLaunchDialog(scope.row.location)")
+                                span \#{{ scope.row.$location.instanceName }} {{ scope.row.$location.accessType }}
+                                span.famfamfam-flags(v-if="scope.row.$location.region === 'eu'" class="europeanunion" style="display:inline-block;margin-left:5px")
+                                span.famfamfam-flags(v-else-if="scope.row.$location.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
+                                span.flag-icon-use(v-else-if="scope.row.$location.region === 'use'" style="display:inline-block;margin-left:5px")
+                                span.flag-icon-usw(v-else style="display:inline-block;margin-left:5px")
+                    el-table-column(label="Instance Creator" prop="location")
+                        template(v-once #default="scope")
+                            span.x-link(v-text="getDisplayNameFromUserId(scope.row.$location.userId)" @click="showUserDialog(scope.row.$location.userId)" style="cursor:pointer")
+                    el-table-column(label="Time" prop="time" width="90" sortable)
+                        template(v-once #default="scope")
+                            span(v-text="scope.row.timer")
+                    el-table-column(label="Action" width="60" align="right")
+                        template(v-once #default="scope")
+                            el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogWorldInstance(scope.row)")
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:visible.sync="ossDialog" title="Open Source Software Notice" width="650px")

@@ -13173,6 +13173,8 @@ speechSynthesis.getVoices();
             }
         } else if (command === 'Previous Images') {
             this.displayPreviousImages('User', 'Display');
+        } else if (command === 'Previous Instances') {
+            this.showPreviousInstancesUserDialog(D.ref);
         } else if (command === 'Manage Gallery') {
             this.showGalleryDialog();
         } else if (command === 'Copy User') {
@@ -13545,6 +13547,9 @@ speechSynthesis.getVoices();
                 break;
             case 'Previous Images':
                 this.displayPreviousImages('World', 'Display');
+                break;
+            case 'Previous Instances':
+                this.showPreviousInstancesWorldDialog(D.ref);
                 break;
             case 'Change Description':
                 this.promptChangeWorldDescription(D);
@@ -18473,6 +18478,184 @@ speechSynthesis.getVoices();
             allowAvatarCopying: !API.currentUser.allowAvatarCopying
         }).then((args) => {
             return args;
+        });
+    };
+
+    // App: Previous Instances User Dialog
+
+    $app.data.previousInstancesUserDialogTable = {
+        data: [],
+        filters: [
+            {
+                prop: 'name',
+                value: ''
+            }
+        ],
+        tableProps: {
+            stripe: true,
+            size: 'mini',
+            defaultSort: {
+                prop: 'created_at',
+                order: 'descending'
+            }
+        },
+        pageSize: 10,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 25, 50, 100]
+        }
+    };
+
+    $app.data.previousInstancesUserDialog = {
+        visible: false,
+        loading: false,
+        userRef: {}
+    };
+
+    $app.methods.showPreviousInstancesUserDialog = function (userRef) {
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.previousInstancesUserDialog.$el)
+        );
+        var D = this.previousInstancesUserDialog;
+        D.userRef = userRef;
+        D.visible = true;
+        D.loading = true;
+        this.refreshPreviousInstancesUserTable();
+    };
+
+    $app.methods.refreshPreviousInstancesUserTable = function () {
+        var D = this.previousInstancesUserDialog;
+        database.getpreviousInstancesByUserId(D.userRef).then((data) => {
+            var array = [];
+            for (var ref of data.values()) {
+                ref.$location = API.parseLocation(ref.location);
+                if (ref.time > 0) {
+                    ref.timer = timeToText(ref.time);
+                } else {
+                    ref.timer = '';
+                }
+                array.push(ref);
+            }
+            array.sort(compareByCreatedAt);
+            this.previousInstancesUserDialogTable.data = array;
+            D.loading = false;
+        });
+    };
+
+    $app.methods.getDisplayNameFromUserId = function (userId) {
+        var displayName = userId;
+        var ref = API.cachedUsers.get(userId);
+        if (
+            typeof ref !== 'undefined' &&
+            typeof ref.displayName !== 'undefined'
+        ) {
+            displayName = ref.displayName;
+        }
+        return displayName;
+    };
+
+    $app.methods.confirmDeleteGameLogUserInstance = function (row) {
+        this.$confirm('Continue? Delete', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    database.deleteGameLogInstance({
+                        id: this.previousInstancesUserDialog.userRef.id,
+                        displayName:
+                            this.previousInstancesUserDialog.userRef
+                                .displayName,
+                        location: row.location
+                    });
+                    removeFromArray(
+                        this.previousInstancesUserDialogTable.data,
+                        row
+                    );
+                }
+            }
+        });
+    };
+
+    // App: Previous Instances World Dialog
+
+    $app.data.previousInstancesWorldDialogTable = {
+        data: [],
+        filters: [
+            {
+                prop: 'name',
+                value: ''
+            }
+        ],
+        tableProps: {
+            stripe: true,
+            size: 'mini',
+            defaultSort: {
+                prop: 'created_at',
+                order: 'descending'
+            }
+        },
+        pageSize: 10,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 25, 50, 100]
+        }
+    };
+
+    $app.data.previousInstancesWorldDialog = {
+        visible: false,
+        loading: false,
+        worldRef: {}
+    };
+
+    $app.methods.showPreviousInstancesWorldDialog = function (worldRef) {
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.previousInstancesWorldDialog.$el)
+        );
+        var D = this.previousInstancesWorldDialog;
+        D.worldRef = worldRef;
+        D.visible = true;
+        D.loading = true;
+        this.refreshPreviousInstancesWorldTable();
+    };
+
+    $app.methods.refreshPreviousInstancesWorldTable = function () {
+        var D = this.previousInstancesWorldDialog;
+        database.getpreviousInstancesByWorldId(D.worldRef).then((data) => {
+            var array = [];
+            for (var ref of data.values()) {
+                ref.$location = API.parseLocation(ref.location);
+                if (ref.time > 0) {
+                    ref.timer = timeToText(ref.time);
+                } else {
+                    ref.timer = '';
+                }
+                array.push(ref);
+            }
+            array.sort(compareByCreatedAt);
+            this.previousInstancesWorldDialogTable.data = array;
+            D.loading = false;
+        });
+    };
+
+    $app.methods.confirmDeleteGameLogWorldInstance = function (row) {
+        this.$confirm('Continue? Delete', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    database.deleteGameLogInstanceByInstanceId({
+                        location: row.location
+                    });
+                    removeFromArray(
+                        this.previousInstancesWorldDialogTable.data,
+                        row
+                    );
+                }
+            }
         });
     };
 

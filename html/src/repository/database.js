@@ -140,16 +140,21 @@ class Database {
         sqliteService.executeNonQuery('COMMIT');
     }
 
-    async getMemo(input) {
-        var userId = input.replaceAll("'", '');
+    async getMemo(userId) {
         var row = {};
-        await sqliteService.execute((dbRow) => {
-            row = {
-                userId: dbRow[0],
-                editedAt: dbRow[1],
-                memo: dbRow[2]
-            };
-        }, `SELECT * FROM memos WHERE user_id = '${userId}'`);
+        await sqliteService.execute(
+            (dbRow) => {
+                row = {
+                    userId: dbRow[0],
+                    editedAt: dbRow[1],
+                    memo: dbRow[2]
+                };
+            },
+            `SELECT * FROM memos WHERE user_id = @user_id`,
+            {
+                '@user_id': userId
+            }
+        );
         return row;
     }
 
@@ -721,52 +726,68 @@ class Database {
         return size;
     }
 
-    async getLastVisit(input, currentWorldMatch) {
+    async getLastVisit(worldId, currentWorldMatch) {
         if (currentWorldMatch) {
             var count = 2;
         } else {
             var count = 1;
         }
-        var worldId = input.replaceAll("'", '');
         var ref = {
             created_at: '',
             worldId: ''
         };
-        await sqliteService.execute((row) => {
-            ref = {
-                created_at: row[0],
-                worldId: row[1]
-            };
-        }, `SELECT created_at, world_id FROM gamelog_location WHERE world_id = '${worldId}' ORDER BY id DESC LIMIT ${count}`);
+        await sqliteService.execute(
+            (row) => {
+                ref = {
+                    created_at: row[0],
+                    worldId: row[1]
+                };
+            },
+            `SELECT created_at, world_id FROM gamelog_location WHERE world_id = @worldId ORDER BY id DESC LIMIT @count`,
+            {
+                '@worldId': worldId,
+                '@count': count
+            }
+        );
         return ref;
     }
 
-    async getVisitCount(input) {
-        var worldId = input.replaceAll("'", '');
+    async getVisitCount(worldId) {
         var ref = {
             visitCount: '',
             worldId: ''
         };
-        await sqliteService.execute((row) => {
-            ref = {
-                visitCount: row[0],
-                worldId: input
-            };
-        }, `SELECT COUNT(*) FROM gamelog_location WHERE world_id = '${worldId}'`);
+        await sqliteService.execute(
+            (row) => {
+                ref = {
+                    visitCount: row[0],
+                    worldId
+                };
+            },
+            `SELECT COUNT(DISTINCT location) FROM gamelog_location WHERE world_id = @worldId`,
+            {
+                '@worldId': worldId
+            }
+        );
         return ref;
     }
 
-    async getTimeSpentInWorld(input) {
-        var worldId = input.replaceAll("'", '');
+    async getTimeSpentInWorld(worldId) {
         var ref = {
             timeSpent: 0,
-            worldId: input
+            worldId
         };
-        await sqliteService.execute((row) => {
-            if (typeof row[0] === 'number') {
-                ref.timeSpent += row[0];
+        await sqliteService.execute(
+            (row) => {
+                if (typeof row[0] === 'number') {
+                    ref.timeSpent += row[0];
+                }
+            },
+            `SELECT time FROM gamelog_location WHERE world_id = @worldId`,
+            {
+                '@worldId': worldId
             }
-        }, `SELECT time FROM gamelog_location WHERE world_id = '${worldId}'`);
+        );
         return ref;
     }
 
@@ -776,63 +797,79 @@ class Database {
         } else {
             var count = 1;
         }
-        var userId = input.id.replaceAll("'", '');
-        var displayName = input.displayName.replaceAll("'", "''");
         var ref = {
             created_at: '',
             userId: ''
         };
-        await sqliteService.execute((row) => {
-            if (row[1]) {
-                ref = {
-                    created_at: row[0],
-                    userId: row[1]
-                };
-            } else {
-                ref = {
-                    created_at: row[0],
-                    userId
-                };
+        await sqliteService.execute(
+            (row) => {
+                if (row[1]) {
+                    ref = {
+                        created_at: row[0],
+                        userId: row[1]
+                    };
+                } else {
+                    ref = {
+                        created_at: row[0],
+                        userId: input.id
+                    };
+                }
+            },
+            `SELECT created_at, user_id FROM gamelog_join_leave WHERE user_id = @userId OR display_name = @displayName ORDER BY id DESC LIMIT @count`,
+            {
+                '@userId': input.id,
+                '@displayName': input.displayName,
+                '@count': count
             }
-        }, `SELECT created_at, user_id FROM gamelog_join_leave WHERE user_id = '${userId}' OR display_name = '${displayName}' ORDER BY id DESC LIMIT ${count}`);
+        );
         return ref;
     }
 
     async getJoinCount(input) {
-        var userId = input.id.replaceAll("'", '');
-        var displayName = input.displayName.replaceAll("'", "''");
         var ref = {
             joinCount: '',
             userId: ''
         };
-        await sqliteService.execute((row) => {
-            if (row[1]) {
-                ref = {
-                    joinCount: row[0],
-                    userId: row[1]
-                };
-            } else {
-                ref = {
-                    joinCount: row[0],
-                    userId
-                };
+        await sqliteService.execute(
+            (row) => {
+                if (row[1]) {
+                    ref = {
+                        joinCount: row[0],
+                        userId: row[1]
+                    };
+                } else {
+                    ref = {
+                        joinCount: row[0],
+                        userId: input.id
+                    };
+                }
+            },
+            `SELECT COUNT(DISTINCT location) FROM gamelog_join_leave WHERE (type = 'OnPlayerJoined') AND (user_id = @userId OR display_name = @displayName)`,
+            {
+                '@userId': input.id,
+                '@displayName': input.displayName
             }
-        }, `SELECT COUNT(*) FROM gamelog_join_leave WHERE (type = 'OnPlayerJoined') AND (user_id = '${userId}' OR display_name = '${displayName}')`);
+        );
         return ref;
     }
 
     async getTimeSpent(input) {
-        var userId = input.id.replaceAll("'", '');
-        var displayName = input.displayName.replaceAll("'", "''");
         var ref = {
             timeSpent: 0,
-            userId
+            userId: input.id
         };
-        await sqliteService.execute((row) => {
-            if (typeof row[0] === 'number') {
-                ref.timeSpent += row[0];
+        await sqliteService.execute(
+            (row) => {
+                if (typeof row[0] === 'number') {
+                    ref.timeSpent += row[0];
+                }
+            },
+            `SELECT time FROM gamelog_join_leave WHERE (type = 'OnPlayerLeft') AND (user_id = @userId OR display_name = @displayName)`,
+            {
+                '@userId': input.id,
+                '@displayName': input.displayName
             }
-        }, `SELECT time FROM gamelog_join_leave WHERE (type = 'OnPlayerLeft') AND (user_id = '${userId}' OR display_name = '${displayName}')`);
+        );
         return ref;
     }
 
@@ -1135,26 +1172,31 @@ class Database {
         return date;
     }
 
-    async getModeration(input) {
-        var userId = input.replaceAll("'", '');
+    async getModeration(userId) {
         var row = {};
-        await sqliteService.execute((dbRow) => {
-            var block = false;
-            var mute = false;
-            if (dbRow[3] === 1) {
-                block = true;
+        await sqliteService.execute(
+            (dbRow) => {
+                var block = false;
+                var mute = false;
+                if (dbRow[3] === 1) {
+                    block = true;
+                }
+                if (dbRow[4] === 1) {
+                    mute = true;
+                }
+                row = {
+                    userId: dbRow[0],
+                    updatedAt: dbRow[1],
+                    displayName: dbRow[2],
+                    block,
+                    mute
+                };
+            },
+            `SELECT * FROM ${Database.userPrefix}_moderation WHERE user_id = @userId`,
+            {
+                '@userId': userId
             }
-            if (dbRow[4] === 1) {
-                mute = true;
-            }
-            row = {
-                userId: dbRow[0],
-                updatedAt: dbRow[1],
-                displayName: dbRow[2],
-                block,
-                mute
-            };
-        }, `SELECT * FROM ${Database.userPrefix}_moderation WHERE user_id = '${userId}'`);
+        );
         return row;
     }
 
@@ -1184,6 +1226,90 @@ class Database {
             `DELETE FROM ${Database.userPrefix}_moderation WHERE user_id = @user_id`,
             {
                 '@user_id': userId
+            }
+        );
+    }
+
+    async getpreviousInstancesByUserId(input) {
+        var data = new Map();
+        await sqliteService.execute(
+            (dbRow) => {
+                var time = 0;
+                if (dbRow[2] && dbRow[2] > 0) {
+                    time = dbRow[2];
+                }
+                var ref = data.get(dbRow[1]);
+                if (typeof ref !== 'undefined') {
+                    time = +Number(ref.time);
+                }
+                var row = {
+                    created_at: dbRow[0],
+                    location: dbRow[1],
+                    time,
+                    name: dbRow[3]
+                };
+                data.set(row.location, row);
+            },
+            `SELECT gamelog_join_leave.created_at, gamelog_join_leave.location, gamelog_join_leave.time, gamelog_location.world_name
+            FROM gamelog_join_leave
+            INNER JOIN gamelog_location ON gamelog_join_leave.location = gamelog_location.location
+            WHERE user_id = @userId OR display_name = @displayName
+            ORDER BY gamelog_join_leave.id DESC`,
+            {
+                '@userId': input.id,
+                '@displayName': input.displayName
+            }
+        );
+        return data;
+    }
+
+    deleteGameLogInstance(input) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM gamelog_join_leave WHERE (user_id = @user_id OR display_name = @displayName) AND (location = @location)`,
+            {
+                '@user_id': input.id,
+                '@displayName': input.displayName,
+                '@location': input.location
+            }
+        );
+    }
+
+    async getpreviousInstancesByWorldId(input) {
+        var data = new Map();
+        await sqliteService.execute(
+            (dbRow) => {
+                var time = 0;
+                if (dbRow[2] && dbRow[2] > 0) {
+                    time = dbRow[2];
+                }
+                var ref = data.get(dbRow[1]);
+                if (typeof ref !== 'undefined') {
+                    time = +Number(ref.time);
+                }
+                var row = {
+                    created_at: dbRow[0],
+                    location: dbRow[1],
+                    time,
+                    name: dbRow[3]
+                };
+                data.set(row.location, row);
+            },
+            `SELECT created_at, location, time, world_name
+            FROM gamelog_location
+            WHERE world_id = @worldId
+            ORDER BY id DESC`,
+            {
+                '@worldId': input.id
+            }
+        );
+        return data;
+    }
+
+    deleteGameLogInstanceByInstanceId(input) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM gamelog_location WHERE location = @location`,
+            {
+                '@location': input.location
             }
         );
     }
