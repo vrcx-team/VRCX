@@ -1190,6 +1190,7 @@ html
                         span.name Avatar Name cache: #[span(v-text="API.cachedAvatarNames.size")]
                     div.options-container-item
                         el-button(size="small" icon="el-icon-delete-solid" @click="clearVRCXCache") Clear Cache
+                        el-button(size="small" icon="el-icon-time" @click="promptAutoClearVRCXCacheFrequency") Auto Clear Cache
                     div.options-container-item
                         el-button(size="small" icon="el-icon-tickets" @click="showConsole") Show Console
                 div.options-container
