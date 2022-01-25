@@ -946,7 +946,11 @@ speechSynthesis.getVoices();
                 if (!this.imageurl) {
                     return;
                 }
-                $app.showAvatarAuthorDialog(this.userid, this.imageurl);
+                $app.showAvatarAuthorDialog(
+                    this.userid,
+                    this.ownerId,
+                    this.imageurl
+                );
             }
         },
         watch: {
@@ -9120,21 +9124,21 @@ speechSynthesis.getVoices();
                 var entry = {
                     created_at: new Date().toJSON(),
                     type: 'AvatarChange',
-                userId: user.id,
-                displayName: user.displayName,
-                name: avatar.name,
-                description: avatar.description,
-                avatarId: avatar.id,
-                authorId: avatar.authorId,
-                releaseStatus: avatar.releaseStatus,
-                imageUrl: avatar.imageUrl,
-                thumbnailImageUrl: avatar.thumbnailImageUrl
-            };
-            this.queueGameLogNoty(entry);
-            this.addGameLog(entry);
-            this.addEntryPhotonEvent({
-                photonId,
-                displayName: user.displayName,
+                    userId: user.id,
+                    displayName: user.displayName,
+                    name: avatar.name,
+                    description: avatar.description,
+                    avatarId: avatar.id,
+                    authorId: avatar.authorId,
+                    releaseStatus: avatar.releaseStatus,
+                    imageUrl: avatar.imageUrl,
+                    thumbnailImageUrl: avatar.thumbnailImageUrl
+                };
+                this.queueGameLogNoty(entry);
+                this.addGameLog(entry);
+                this.addEntryPhotonEvent({
+                    photonId,
+                    displayName: user.displayName,
                     userId: user.id,
                     text: `ChangeAvatar ${avatar.name}`,
                     created_at: gameLogDate,
@@ -9730,10 +9734,14 @@ speechSynthesis.getVoices();
     $app.data.searchWorldOption = '';
     $app.data.searchWorldParams = {};
     $app.data.searchAvatarResults = [];
+    $app.data.searchAvatarPage = [];
+    $app.data.searchAvatarPageNum = 0;
     $app.data.searchAvatarFilter = '';
     $app.data.searchAvatarSort = '';
+    $app.data.searchAvatarFilterRemote = '';
     $app.data.isSearchUserLoading = false;
     $app.data.isSearchWorldLoading = false;
+    $app.data.isSearchAvatarLoading = false;
 
     API.$on('LOGIN', function () {
         $app.searchText = '';
@@ -9743,10 +9751,14 @@ speechSynthesis.getVoices();
         $app.searchWorldOption = '';
         $app.searchWorldParams = {};
         $app.searchAvatarResults = [];
+        $app.searchAvatarPage = [];
+        $app.searchAvatarPageNum = 0;
         $app.searchAvatarFilter = '';
         $app.searchAvatarSort = '';
+        $app.searchAvatarFilterRemote = '';
         $app.isSearchUserLoading = false;
         $app.isSearchWorldLoading = false;
+        $app.isSearchAvatarLoading = false;
     });
 
     $app.methods.clearSearch = function () {
@@ -9756,6 +9768,8 @@ speechSynthesis.getVoices();
         this.searchUserResults = [];
         this.searchWorldResults = [];
         this.searchAvatarResults = [];
+        this.searchAvatarPage = [];
+        this.searchAvatarPageNum = 0;
     };
 
     $app.methods.search = function () {
@@ -9895,78 +9909,117 @@ speechSynthesis.getVoices();
             });
     };
 
-    $app.methods.searchAvatar = function () {
+    $app.methods.searchAvatar = async function () {
+        this.isSearchAvatarLoading = true;
         if (!this.searchAvatarFilter) {
             this.searchAvatarFilter = 'all';
         }
         if (!this.searchAvatarSort) {
             this.searchAvatarSort = 'name';
         }
-        var avatars = [];
+        if (!this.searchAvatarFilterRemote) {
+            this.searchAvatarFilterRemote = 'all';
+        }
+        var avatars = new Map();
         var query = this.searchText.toUpperCase();
         if (!query) {
             for (var ref of API.cachedAvatars.values()) {
                 if (ref.authorId === API.currentUser.id) {
                     switch (this.searchAvatarFilter) {
                         case 'all':
-                            avatars.push(ref);
+                            avatars.set(ref.id, ref);
                             break;
                         case 'public':
                             if (ref.releaseStatus === 'public') {
-                                avatars.push(ref);
+                                avatars.set(ref.id, ref);
                             }
                             break;
                         case 'private':
                             if (ref.releaseStatus === 'private') {
-                                avatars.push(ref);
+                                avatars.set(ref.id, ref);
                             }
                             break;
                     }
                 }
             }
+            this.isSearchAvatarLoading = false;
         } else {
-            for (var ref of API.cachedAvatars.values()) {
-                var match = ref.name.toUpperCase().includes(query);
-                if (!match && ref.description) {
-                    match = ref.description.toUpperCase().includes(query);
-                }
-                if (!match && ref.authorName) {
-                    match = ref.authorName.toUpperCase().includes(query);
-                }
-                if (match) {
-                    switch (this.searchAvatarFilter) {
-                        case 'all':
-                            avatars.push(ref);
-                            break;
-                        case 'public':
-                            if (ref.releaseStatus === 'public') {
-                                avatars.push(ref);
-                            }
-                            break;
-                        case 'private':
-                            if (ref.releaseStatus === 'private') {
-                                avatars.push(ref);
-                            }
-                            break;
+            if (
+                this.searchAvatarFilterRemote === 'all' ||
+                this.searchAvatarFilterRemote === 'local'
+            ) {
+                for (var ref of API.cachedAvatars.values()) {
+                    var match = ref.name.toUpperCase().includes(query);
+                    if (!match && ref.description) {
+                        match = ref.description.toUpperCase().includes(query);
+                    }
+                    if (!match && ref.authorName) {
+                        match = ref.authorName.toUpperCase().includes(query);
+                    }
+                    if (match) {
+                        switch (this.searchAvatarFilter) {
+                            case 'all':
+                                avatars.set(ref.id, ref);
+                                break;
+                            case 'public':
+                                if (ref.releaseStatus === 'public') {
+                                    avatars.set(ref.id, ref);
+                                }
+                                break;
+                            case 'private':
+                                if (ref.releaseStatus === 'private') {
+                                    avatars.set(ref.id, ref);
+                                }
+                                break;
+                        }
                     }
                 }
-                if (avatars.length >= 1000) {
-                    break;
+            }
+            if (
+                (this.searchAvatarFilterRemote === 'all' ||
+                    this.searchAvatarFilterRemote === 'remote') &&
+                this.avatarRemoteDatabase &&
+                query.length >= 3
+            ) {
+                var data = await this.lookupAvatars('search', query);
+                if (data && typeof data === 'object') {
+                    data.forEach((avatar) => {
+                        avatars.set(avatar.id, avatar);
+                    });
                 }
             }
+            this.isSearchAvatarLoading = false;
         }
+        var avatarsArray = Array.from(avatars.values());
         switch (this.searchAvatarSort) {
             case 'updated':
-                avatars.sort(compareByUpdatedAt);
+                avatarsArray.sort(compareByUpdatedAt);
                 break;
             case 'created':
-                avatars.sort(compareByCreatedAt);
+                avatarsArray.sort(compareByCreatedAt);
                 break;
             case 'name':
-                avatars.sort(compareByName);
+                avatarsArray.sort(compareByName);
                 break;
         }
-        this.searchAvatarResults = avatars;
+        this.searchAvatarPageNum = 0;
+        this.searchAvatarResults = avatarsArray;
+        this.searchAvatarPage = avatarsArray.slice(0, 10);
+    };
+
+    $app.methods.moreSearchAvatar = function (n) {
+        if (n === -1) {
+            this.searchAvatarPageNum--;
+            var offset = this.searchAvatarPageNum * 10;
+        }
+        if (n === 1) {
+            this.searchAvatarPageNum++;
+            var offset = this.searchAvatarPageNum * 10;
+        }
+        this.searchAvatarPage = this.searchAvatarResults.slice(
+            offset,
+            offset + 10
+        );
     };
 
     // App: Favorite
@@ -10963,6 +11016,12 @@ speechSynthesis.getVoices();
     $app.data.nextClearVRCXCacheCheck = configRepository.getString(
         'VRCX_clearVRCXCacheFrequency'
     );
+    $app.data.avatarRemoteDatabase = configRepository.getBool(
+        'VRCX_avatarRemoteDatabase'
+    );
+    $app.data.avatarRemoteDatabaseProvider = configRepository.getString(
+        'VRCX_avatarRemoteDatabaseProvider'
+    );
     $app.methods.saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -11023,6 +11082,10 @@ speechSynthesis.getVoices();
         configRepository.setBool(
             'VRCX_vrBackgroundEnabled',
             this.vrBackgroundEnabled
+        );
+        configRepository.setBool(
+            'VRCX_avatarRemoteDatabase',
+            this.avatarRemoteDatabase
         );
         this.updateSharedFeed(true);
         this.updateVRConfigVars();
@@ -12162,6 +12225,30 @@ speechSynthesis.getVoices();
         );
     };
 
+    $app.methods.promptSetAvatarRemoteDatabase = function () {
+        this.$prompt(
+            'Enter avatar database provider URL',
+            'Avatar Database Provider',
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+                inputValue: this.avatarRemoteDatabaseProvider,
+                inputPattern: /\S+/,
+                inputErrorMessage: 'Valid URL is required',
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        this.avatarRemoteDatabaseProvider = instance.inputValue;
+                        configRepository.setString(
+                            'VRCX_avatarRemoteDatabaseProvider',
+                            this.avatarRemoteDatabaseProvider
+                        );
+                    }
+                }
+            }
+        );
+    };
+
     // App: Dialog
 
     var adjustDialogZ = (el) => {
@@ -12490,15 +12577,14 @@ speechSynthesis.getVoices();
                     } else if (this.$refs.userDialogTabs.currentName === '3') {
                         this.userDialogLastActiveTab = 'Avatars';
                         this.setUserDialogAvatars(userId);
-                        if (this.userDialogLastAvatar !== userId) {
-                            this.userDialogLastAvatar = userId;
-                            if (
-                                userId === API.currentUser.id &&
-                                D.avatars.length === 0
-                            ) {
-                                this.refreshUserDialogAvatars();
-                            }
+                        this.userDialogLastAvatar = userId;
+                        if (
+                            userId === API.currentUser.id &&
+                            D.avatars.length === 0
+                        ) {
+                            this.refreshUserDialogAvatars();
                         }
+                        this.setUserDialogAvatarsRemote(userId);
                     } else if (this.$refs.userDialogTabs.currentName === '4') {
                         this.userDialogLastActiveTab = 'JSON';
                         this.refreshUserDialogTreeData();
@@ -12880,13 +12966,85 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.setUserDialogAvatars = function (userId) {
-        var avatars = [];
+        var avatars = new Set();
+        this.userDialogAvatars.forEach((avatar) => {
+            avatars.add(avatar.id, avatar);
+        });
         for (var ref of API.cachedAvatars.values()) {
-            if (ref.authorId === userId) {
-                avatars.push(ref);
+            if (ref.authorId === userId && !avatars.has(ref.id)) {
+                this.userDialog.avatars.push(ref);
             }
         }
-        this.sortUserDialogAvatars(avatars);
+        this.sortUserDialogAvatars(this.userDialog.avatars);
+    };
+
+    $app.methods.setUserDialogAvatarsRemote = async function (userId) {
+        if (this.avatarRemoteDatabase && userId !== API.currentUser.id) {
+            var data = await this.lookupAvatars('authorId', userId);
+            var avatars = new Set();
+            this.userDialogAvatars.forEach((avatar) => {
+                avatars.add(avatar.id, avatar);
+            });
+            if (data && typeof data === 'object') {
+                data.forEach((avatar) => {
+                    if (avatar.id && !avatars.has(avatar.id)) {
+                        this.userDialog.avatars.push(avatar);
+                    }
+                });
+            }
+        }
+        this.sortUserDialogAvatars(this.userDialog.avatars);
+    };
+
+    $app.methods.lookupAvatars = async function (type, search) {
+        if (type === 'search') {
+            var limit = '&limit=5000';
+        } else {
+            var limit = '';
+        }
+        var avatars = new Map();
+        try {
+            var response = await webApiService.execute({
+                url: `${
+                    this.avatarRemoteDatabaseProvider
+                }?${type}=${encodeURIComponent(search)}${limit}`,
+                method: 'GET',
+                headers: {
+                    'User-Agent': appVersion,
+                    Referer: 'https://vrcx.pypy.moe'
+                }
+            });
+            var json = JSON.parse(response.data);
+            if (this.debugWebRequests) {
+                console.log(json, response);
+            }
+            if (response.status === 200 && typeof json === 'object') {
+                json.forEach((avatar) => {
+                    if (!avatars.has(avatar.Id)) {
+                        var ref1 = {
+                            authorId: '',
+                            authorName: '',
+                            name: '',
+                            description: '',
+                            id: '',
+                            imageUrl: '',
+                            // thumbnailImageUrl: '',
+                            created_at: '0001-01-01T00:00:00.0000000Z',
+                            updated_at: '0001-01-01T00:00:00.0000000Z',
+                            releaseStatus: 'public',
+                            ...avatar,
+                            thumbnailImageUrl: avatar.imageUrl
+                        };
+                        avatars.set(ref1.id, ref1);
+                    }
+                });
+            } else {
+                throw new Error(`Error: ${response.data}`);
+            }
+        } catch {
+            console.error(`Avatar lookup failed for ${search}`);
+        }
+        return avatars;
     };
 
     $app.methods.sortUserDialogAvatars = function (array) {
@@ -13154,7 +13312,11 @@ speechSynthesis.getVoices();
             });
         } else if (command === 'Show Avatar Author') {
             var {currentAvatarImageUrl} = D.ref;
-            this.showAvatarAuthorDialog(D.id, currentAvatarImageUrl);
+            this.showAvatarAuthorDialog(
+                D.id,
+                D.$avatarInfo.ownerId,
+                currentAvatarImageUrl
+            );
         } else if (command === 'Show Fallback Avatar Details') {
             var {fallbackAvatar} = D.ref;
             if (fallbackAvatar) {
@@ -13900,8 +14062,34 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.showAvatarAuthorDialog = function (
+    $app.methods.checkAvatarCache = function (fileId) {
+        var avatarId = '';
+        for (var ref of API.cachedAvatars.values()) {
+            if (extractFileId(ref.imageUrl) === fileId) {
+                avatarId = ref.id;
+            }
+        }
+        return avatarId;
+    };
+
+    $app.methods.checkAvatarCacheRemote = async function (fileId, ownerUserId) {
+        var avatarId = '';
+        if (this.avatarRemoteDatabase) {
+            var data = await this.lookupAvatars('authorId', ownerUserId);
+            if (data && typeof data === 'object') {
+                data.forEach((avatar) => {
+                    if (extractFileId(avatar.imageUrl) === fileId) {
+                        avatarId = avatar.id;
+                    }
+                });
+            }
+        }
+        return avatarId;
+    };
+
+    $app.methods.showAvatarAuthorDialog = async function (
         refUserId,
+        ownerUserId,
         currentAvatarImageUrl
     ) {
         var fileId = extractFileId(currentAvatarImageUrl);
@@ -13910,44 +14098,37 @@ speechSynthesis.getVoices();
                 message: 'Sorry, the author is unknown',
                 type: 'error'
             });
-            return;
-        }
-        if (refUserId === API.currentUser.id) {
+        } else if (refUserId === API.currentUser.id) {
             this.showAvatarDialog(API.currentUser.currentAvatar);
-            return;
-        }
-        for (var ref of API.cachedAvatars.values()) {
-            if (extractFileId(ref.imageUrl) === fileId) {
-                this.showAvatarDialog(ref.id);
-                return;
-            }
-        }
-        if (API.cachedAvatarNames.has(fileId)) {
-            let {ownerId} = API.cachedAvatarNames.get(fileId);
-            if (ownerId === API.currentUser.id) {
-                this.refreshUserDialogAvatars(fileId);
-                return;
-            }
-            if (ownerId === refUserId) {
-                this.$message({
-                    message: "It's personal (own) avatar",
-                    type: 'warning'
-                });
-                return;
-            }
-            this.showUserDialog(ownerId);
         } else {
-            API.getAvatarImages({fileId}).then((args) => {
-                let ownerId = args.json.ownerId;
-                if (ownerId === refUserId) {
+            var avatarId = await this.checkAvatarCache(fileId);
+            if (!avatarId) {
+                var avatarInfo = await this.getAvatarName(
+                    currentAvatarImageUrl
+                );
+                if (avatarInfo.ownerId === API.currentUser.id) {
+                    this.refreshUserDialogAvatars(fileId);
+                }
+            }
+            if (!avatarId) {
+                avatarId = await this.checkAvatarCacheRemote(
+                    fileId,
+                    ownerUserId
+                );
+            }
+            if (!avatarId) {
+                if (avatarInfo.ownerId === refUserId) {
                     this.$message({
                         message: "It's personal (own) avatar",
                         type: 'warning'
                     });
-                    return;
+                } else {
+                    this.showUserDialog(avatarInfo.ownerId);
                 }
-                this.showUserDialog(ownerId);
-            });
+            }
+            if (avatarId) {
+                this.showAvatarDialog(avatarId);
+            }
         }
     };
 
@@ -16866,6 +17047,8 @@ speechSynthesis.getVoices();
                     this.userDialog.avatars.length === 0
                 ) {
                     this.refreshUserDialogAvatars();
+                } else {
+                    this.setUserDialogAvatarsRemote(userId);
                 }
             }
         } else if (obj.label === 'Worlds') {

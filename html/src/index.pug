@@ -410,30 +410,37 @@ html
                                         span.extra(v-else v-text="world.authorName")
                         el-button-group(style="margin-top:15px")
                             el-button(v-if="searchWorldParams.offset" @click="moreSearchWorld(-1)" icon="el-icon-back" size="small") Prev
-                            el-button(v-if="searchWorldResults.length" @click="moreSearchWorld(1)" icon="el-icon-right" size="small") Next
-                    el-tab-pane(label="Avatar" style="min-height:60px")
+                            el-button(v-if="searchWorldResults.length >= 10" @click="moreSearchWorld(1)" icon="el-icon-right" size="small") Next
+                    el-tab-pane(label="Avatar" v-loading="isSearchAvatarLoading" style="min-height:60px")
                         el-tooltip(placement="bottom" content="Refresh own avatars" :disabled="hideTooltips")
                             el-button(type="default" :loading="userDialog.isAvatarsLoading" @click="refreshUserDialogAvatars()" size="mini" icon="el-icon-refresh" circle)
                         span(style="font-size:14px;margin-left:5px") Results {{ searchAvatarResults.length }}
-                        el-radio-group(v-model="searchAvatarSort" size="mini" style="margin-left:30px" @change="searchAvatar")
+                        el-radio-group(v-model="searchAvatarSort" size="mini" style="margin:5px;display:block" @change="searchAvatar")
                             el-radio(label="name") by name
                             el-radio(label="update") by update
                             el-radio(label="created") by created
-                        el-radio-group(v-model="searchAvatarFilter" size="mini" style="margin-left:80px" @change="searchAvatar")
+                        el-radio-group(v-model="searchAvatarFilter" size="mini" style="margin:5px;display:block" @change="searchAvatar")
                             el-radio(label="all") all
                             el-radio(label="public") public
                             el-radio(label="private") private
+                        el-radio-group(v-model="searchAvatarFilterRemote" size="mini" style="margin:5px;display:block" @change="searchAvatar")
+                            el-radio(label="all") all
+                            el-radio(label="local") local
+                            el-radio(label="remote" :disabled="!avatarRemoteDatabase") remote
                         .x-friend-list(style="margin-top:20px")
-                            .x-friend-item(v-for="avatar in searchAvatarResults" :key="avatar.id" @click="showAvatarDialog(avatar.id)")
+                            .x-friend-item(v-for="avatar in searchAvatarPage" :key="avatar.id" @click="showAvatarDialog(avatar.id)")
                                 template(v-once)
                                     .avatar
-                                        img(v-lazy="avatar.thumbnailImageUrl")
+                                        img(v-if="avatar.thumbnailImageUrl" v-lazy="avatar.thumbnailImageUrl")
                                     .detail
                                         span.name(v-text="avatar.name")
                                         span.extra(v-text="avatar.releaseStatus" v-if="avatar.releaseStatus === 'public'" style="color: #67c23a;")
                                         span.extra(v-text="avatar.releaseStatus" v-else-if="avatar.releaseStatus === 'private'" style="color: #f56c6c;")
                                         span.extra(v-text="avatar.releaseStatus" v-else)
                                         span.extra(v-text="avatar.authorName")
+                        el-button-group(style="margin-top:15px")
+                            el-button(v-if="searchAvatarPageNum" @click="moreSearchAvatar(-1)" icon="el-icon-back" size="small") Prev
+                            el-button(v-if="searchAvatarResults.length > 10 && (searchAvatarPageNum + 1) * 10 < searchAvatarResults.length" @click="moreSearchAvatar(1)" icon="el-icon-right" size="small") Next
 
             //- favorite
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'favorite'" v-if="$refs.menu && $refs.menu.activeIndex === 'favorite'")
@@ -1141,6 +1148,13 @@ html
                         el-button-group
                             el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
                             el-button(size="small" icon="el-icon-s-operation" @click="showVRChatConfig()") VRChat config.json
+                div.options-container
+                    span.header Remote Avatar Database
+                    div.options-container-item
+                        span.name Enable
+                        el-switch(v-model="avatarRemoteDatabase" @change="saveOpenVROption")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-user-solid" @click="promptSetAvatarRemoteDatabase" :disabled="!avatarRemoteDatabase") Avatar Database Provider
                 div.options-container
                     span.header YouTube API
                     div.options-container-item
