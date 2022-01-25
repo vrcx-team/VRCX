@@ -8336,7 +8336,9 @@ speechSynthesis.getVoices();
                     var entry = {
                         created_at: new Date().toJSON(),
                         type: 'Event',
-                        data: `${text} - ${this.getDisplayNameFromPhotonId(photonId)} (${this.getUserIdFromPhotonId(photonId)})`
+                        data: `${text} - ${this.getDisplayNameFromPhotonId(
+                            id
+                        )} (${this.getUserIdFromPhotonId(id)})`
                     };
                     this.queueGameLogNoty(entry);
                     this.addGameLog(entry);
@@ -8917,7 +8919,9 @@ speechSynthesis.getVoices();
             var entry = {
                 created_at: new Date().toJSON(),
                 type: 'Event',
-                data: `${text} - ${this.getDisplayNameFromPhotonId(photonId)} (${this.getUserIdFromPhotonId(photonId)})`
+                data: `${text} - ${this.getDisplayNameFromPhotonId(
+                    photonId
+                )} (${this.getUserIdFromPhotonId(photonId)})`
             };
             this.queueGameLogNoty(entry);
             this.addGameLog(entry);
