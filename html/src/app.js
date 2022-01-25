@@ -8796,11 +8796,9 @@ speechSynthesis.getVoices();
                 } else {
                     var eventType = '';
                     if (eventData.EventType) {
-                        if (Array.isArray(eventData.EventType)) {
-                            eventType = ` ${eventData.EventType.toString()}`;
-                        } else {
-                            eventType = ` ${eventData.EventType}`;
-                        }
+                        eventType = ` ${JSON.stringify(
+                            eventData.EventType
+                        ).replace(/"([^(")"]+)":/g, '$1:')}`;
                     }
                     if (this.debugPhotonLogging) {
                         var displayName =
