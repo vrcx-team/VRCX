@@ -116,11 +116,11 @@ html
                             .x-friend-item(style="cursor:default")
                                 .detail
                                     span.name Last Updated
-                                    span.extra {{ currentInstanceWorld.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                    span.extra {{ currentInstanceWorld.updated_at | formatDate('long') }}
                             .x-friend-item(style="cursor:default")
                                 .detail
                                     span.name Created
-                                    span.extra {{ currentInstanceWorld.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                    span.extra {{ currentInstanceWorld.created_at | formatDate('long') }}
                     div.current-instance-table
                         data-tables(v-bind="currentInstanceUserList" @row-click="selectCurrentInstanceRow" style="margin-top:10px;cursor:pointer")
                             el-table-column(label="Avatar" width="60" prop="photo")
@@ -184,12 +184,12 @@ html
                         el-tabs(type="card")
                             el-tab-pane(label="Current")
                                 data-tables(v-bind="photonEventTable" style="margin-bottom:10px")
-                                    el-table-column(label="Date" prop="created_at" width="90")
+                                    el-table-column(label="Date" prop="created_at" width="110")
                                         template(v-once #default="scope")
                                             el-tooltip(placement="right")
                                                 template(#content)
-                                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                                                    span {{ scope.row.created_at | formatDate('long') }}
+                                                span {{ scope.row.created_at | formatDate('short') }}
                                     el-table-column(label="Name" prop="photonId" width="160")
                                         template(v-once #default="scope")
                                             span.x-link(v-text="scope.row.displayName" @click="showUserFromPhotonId(scope.row.photonId)" style="padding-right:10px")
@@ -206,12 +206,12 @@ html
                                             span(v-else v-text="scope.row.text")
                             el-tab-pane(label="Previous")
                                 data-tables(v-bind="photonEventTablePrevious" style="margin-bottom:10px")
-                                    el-table-column(label="Date" prop="created_at" width="90")
+                                    el-table-column(label="Date" prop="created_at" width="110")
                                         template(v-once #default="scope")
                                             el-tooltip(placement="right")
                                                 template(#content)
-                                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                                                    span {{ scope.row.created_at | formatDate('long') }}
+                                                span {{ scope.row.created_at | formatDate('short') }}
                                     el-table-column(label="Name" prop="photonId" width="160")
                                         template(v-once #default="scope")
                                             span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)" style="padding-right:10px")
@@ -287,12 +287,12 @@ html
                                             span(v-else) Offline
                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                     span(v-text="scope.row.statusDescription")
-                    el-table-column(label="Date" prop="created_at" sortable="custom" width="90")
+                    el-table-column(label="Date" prop="created_at" sortable="custom" width="110")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
                                 template(#content)
-                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                                    span {{ scope.row.created_at | formatDate('long') }}
+                                span {{ scope.row.created_at | formatDate('short') }}
                     el-table-column(label="Type" prop="type" width="70")
                     el-table-column(label="User" prop="displayName" width="180")
                         template(v-once #default="scope")
@@ -347,12 +347,12 @@ html
                             el-input(v-model="gameLogTable.search" placeholder="Search" @keyup.native.13="gameLogTableLookup" @change="gameLogTableLookup" clearable style="flex:none;width:150px;margin:0 10px")
                             //- el-tooltip(placement="bottom" content="Reload game log" :disabled="hideTooltips")
                             //-     el-button(type="default" @click="resetGameLog" icon="el-icon-refresh" circle style="flex:none")
-                    el-table-column(label="Date" prop="created_at" sortable="custom" width="90")
+                    el-table-column(label="Date" prop="created_at" sortable="custom" width="110")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
                                 template(#content)
-                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                                    span {{ scope.row.created_at | formatDate('long') }}
+                                span {{ scope.row.created_at | formatDate('short') }}
                     el-table-column(label="Type" prop="type" width="120")
                         template(v-once #default="scope")
                             span.x-link(v-if="scope.row.location && scope.row.type !== 'Location'" v-text="scope.row.type" @click="showWorldDialog(scope.row.location)")
@@ -546,12 +546,12 @@ html
                             el-select(v-model="friendLogTable.filters[0].value" @change="saveTableFilters" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
                                 el-option(v-once v-for="type in ['Friend', 'Unfriend', 'FriendRequest', 'CancelFriendRequest', 'DisplayName', 'TrustLevel']" :key="type" :label="type" :value="type")
                             el-input(v-model="friendLogTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin-left:10px")
-                    el-table-column(label="Date" prop="created_at" sortable="custom" width="100")
+                    el-table-column(label="Date" prop="created_at" sortable="custom" width="110")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
                                 template(#content)
-                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                                    span {{ scope.row.created_at | formatDate('long') }}
+                                span {{ scope.row.created_at | formatDate('short') }}
                     el-table-column(label="Type" prop="type" width="150")
                     el-table-column(label="User" prop="displayName")
                         template(v-once #default="scope")
@@ -574,12 +574,12 @@ html
                             el-input(v-model="playerModerationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
                             el-tooltip(placement="bottom" content="Refresh" :disabled="hideTooltips")
                                 el-button(type="default" :loading="API.isPlayerModerationsLoading" @click="API.refreshPlayerModerations()" icon="el-icon-refresh" circle style="flex:none")
-                    el-table-column(label="Date" prop="created" sortable="custom" width="100")
+                    el-table-column(label="Date" prop="created" sortable="custom" width="110")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
                                 template(#content)
-                                    span {{ scope.row.created | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                span {{ scope.row.created | formatDate('MM-DD HH24:MI') }}
+                                    span {{ scope.row.created | formatDate('long') }}
+                                span {{ scope.row.created | formatDate('short') }}
                     el-table-column(label="Type" prop="type" width="100")
                     el-table-column(label="Source" prop="sourceDisplayName")
                         template(v-once #default="scope")
@@ -601,12 +601,12 @@ html
                             el-input(v-model="notificationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
                             el-tooltip(placement="bottom" content="Refresh" :disabled="hideTooltips")
                                 el-button(type="default" :loading="API.isNotificationsLoading" @click="API.refreshNotifications()" icon="el-icon-refresh" circle style="flex:none")
-                    el-table-column(label="Date" prop="created_at" sortable="custom" width="100")
+                    el-table-column(label="Date" prop="created_at" sortable="custom" width="110")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
                                 template(#content)
-                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                                    span {{ scope.row.created_at | formatDate('long') }}
+                                span {{ scope.row.created_at | formatDate('short') }}
                     el-table-column(label="Type" prop="type" width="150")
                         template(v-once #default="scope")
                             el-tooltip(placement="top" v-if="scope.row.type === 'invite'")
@@ -665,7 +665,7 @@ html
                         .x-friend-item(style="cursor:default")
                             .detail
                                 span.name Last Login
-                                span.extra {{ API.currentUser.last_login | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+                                span.extra {{ API.currentUser.last_login | formatDate('long') }}
                         .x-friend-item(style="cursor:default")
                             .detail
                                 span.name Two-Factor Auth (2FA)
@@ -765,7 +765,7 @@ html
                     data-tables(v-bind="pastDisplayNameTable" style="margin-top:10px")
                         el-table-column(label="Date" prop="updated_at" sortable="custom")
                             template(v-once #default="scope")
-                                span {{ scope.row.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
+                                span {{ scope.row.updated_at | formatDate('long') }}
                         el-table-column(label="Name" prop="displayName")
                 div.options-container
                     span.header Config JSON
@@ -850,7 +850,11 @@ html
                             template(v-once #default="scope")
                                 span(v-if="scope.row.$timeSpent") {{ scope.row.$timeSpent | timeToText }}
                         el-table-column(label="Last Seen" width="170" prop="$lastSeen" sortable :sort-method="(a, b) => sortAlphabetically(a, b, '$lastSeen')")
+                            template(v-once #default="scope")
+                                span {{ scope.row.$timeSpent | formatDate('long') }}
                         el-table-column(label="Last Login" width="170" prop="last_login" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'last_login')")
+                            template(v-once #default="scope")
+                                span {{ scope.row.last_login | formatDate('long') }}
                         el-table-column(label="Date Joined" width="120" prop="date_joined" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'date_joined')")
                         el-table-column(label="Unfriend" width="70" align="right")
                             template(v-once #default="scope")
@@ -1130,6 +1134,9 @@ html
                     div.options-container-item
                         span.name Close to tray
                         el-switch(v-model="isCloseToTray")
+                    div.options-container-item
+                        span.name Time Format
+                        el-switch(v-model="dtHour12" @change="setDatetimeFormat" inactive-text="24 Hour" active-text="12 Hour")
                     div.options-container-item
                         el-button-group
                             el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
@@ -1461,7 +1468,7 @@ html
                                     .x-friend-item(style="cursor:default")
                                         .detail
                                             span.name Last Seen
-                                            span.extra {{ userDialog.lastSeen | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                            span.extra {{ userDialog.lastSeen | formatDate('long') }}
                                     .x-friend-item(@click="showPreviousInstancesUserDialog(userDialog.ref)")
                                         .detail
                                             span.name Join Count
@@ -1480,7 +1487,7 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Last Login
-                                        span.extra {{ userDialog.ref.last_login | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                        span.extra {{ userDialog.ref.last_login | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Date Joined
@@ -1694,11 +1701,11 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Created
-                                        span.extra {{ worldDialog.ref.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                        span.extra {{ worldDialog.ref.created_at | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Last Updated
-                                        span.extra {{ worldDialog.fileCreatedAt | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                        span.extra {{ worldDialog.fileCreatedAt | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Version
@@ -1710,7 +1717,7 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Last Visit
-                                        span.extra {{ worldDialog.lastVisit | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                        span.extra {{ worldDialog.lastVisit | formatDate('long') }}
                                 .x-friend-item(@click="showPreviousInstancesWorldDialog(worldDialog.ref)")
                                     .detail
                                         span.name Visit Count
@@ -1789,11 +1796,11 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Created
-                                        span.extra {{ avatarDialog.ref.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                        span.extra {{ avatarDialog.ref.created_at | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Last Updated
-                                        span.extra {{ avatarDialog.ref.updated_at | formatDate('YYYY-MM-DD HH24:MI:SS') || '-' }}
+                                        span.extra {{ avatarDialog.ref.updated_at | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Version
@@ -2723,12 +2730,12 @@ html
                 span(v-text="previousInstancesUserDialog.userRef.displayName" style="font-size:14px")
                 el-input(v-model="previousInstancesUserDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
                 data-tables(v-bind="previousInstancesUserDialogTable" v-loading="previousInstancesUserDialog.loading" style="margin-top:10px")
-                    el-table-column(label="Date" prop="created_at" sortable width="90")
+                    el-table-column(label="Date" prop="created_at" sortable width="110")
                         template(v-once #default="scope")
                             el-tooltip(placement="left")
                                 template(#content)
-                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                                    span {{ scope.row.created_at | formatDate('long') }}
+                                span {{ scope.row.created_at | formatDate('short') }}
                     el-table-column(label="World" prop="name" sortable)
                         template(v-once #default="scope")
                             location(:location="scope.row.location" :hint="scope.row.name")
@@ -2748,12 +2755,12 @@ html
                 span(v-text="previousInstancesWorldDialog.worldRef.name" style="font-size:14px")
                 el-input(v-model="previousInstancesWorldDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
                 data-tables(v-bind="previousInstancesWorldDialogTable" v-loading="previousInstancesWorldDialog.loading" style="margin-top:10px")
-                    el-table-column(label="Date" prop="created_at" sortable width="90")
+                    el-table-column(label="Date" prop="created_at" sortable width="110")
                         template(v-once #default="scope")
                             el-tooltip(placement="left")
                                 template(#content)
-                                    span {{ scope.row.created_at | formatDate('YYYY-MM-DD HH24:MI:SS') }}
-                                span {{ scope.row.created_at | formatDate('MM-DD HH24:MI') }}
+                                    span {{ scope.row.created_at | formatDate('long') }}
+                                span {{ scope.row.created_at | formatDate('short') }}
                     el-table-column(label="Instance Name" prop="name")
                         template(v-once #default="scope")
                             span.x-link(@click="showLaunchDialog(scope.row.location)")

@@ -39,29 +39,6 @@ Vue.component('marquee-text', MarqueeText);
         String(Number(n) || 0).replace(/(\d)(?=(\d{3})+(?!\d))/gu, '$1,');
     Vue.filter('commaNumber', commaNumber);
 
-    var formatDate = (s, format) => {
-        var dt = new Date(s);
-        if (isNaN(dt)) {
-            return escapeTag(s);
-        }
-        var hours = dt.getHours();
-        var map = {
-            YYYY: String(10000 + dt.getFullYear()).substr(-4),
-            MM: String(101 + dt.getMonth()).substr(-2),
-            DD: String(100 + dt.getDate()).substr(-2),
-            HH24: String(100 + hours).substr(-2),
-            HH: String(100 + (hours > 12 ? hours - 12 : hours)).substr(-2),
-            MI: String(100 + dt.getMinutes()).substr(-2),
-            SS: String(100 + dt.getSeconds()).substr(-2),
-            AMPM: hours >= 12 ? 'PM' : 'AM'
-        };
-        return format.replace(
-            /YYYY|MM|DD|HH24|HH|MI|SS|AMPM/gu,
-            (c) => map[c] || c
-        );
-    };
-    Vue.filter('formatDate', formatDate);
-
     var textToHex = (s) =>
         String(s)
             .split('')
@@ -299,6 +276,7 @@ Vue.component('marquee-text', MarqueeText);
         this.config = JSON.parse(json);
         this.hudFeed = [];
         this.hudTimeout = [];
+        this.setDatetimeFormat();
     };
 
     $app.methods.updateDownloadProgress = function (progress) {
@@ -342,7 +320,19 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.updateStatsLoop = async function () {
         try {
-            this.currentTime = new Date().toJSON();
+            this.currentTime = new Date()
+                .toLocaleDateString(this.currentCulture, {
+                    month: '2-digit',
+                    day: '2-digit',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: this.config.dtHour12
+                })
+                .replace(' AM', ' am')
+                .replace(' PM', ' pm')
+                .replace(',', '');
+
             if (!this.config.hideCpuUsageFromFeed) {
                 var cpuUsage = await AppApi.CpuUsage();
                 this.cpuUsage = cpuUsage.toFixed(0);
@@ -596,6 +586,27 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.updateHudTimeout = function (json) {
         this.hudTimeout = JSON.parse(json);
+    };
+
+    $app.data.currentCulture = await AppApi.CurrentCulture();
+
+    $app.methods.setDatetimeFormat = async function () {
+        this.currentCulture = await AppApi.CurrentCulture();
+        var formatDate = function (date) {
+            if (!date) {
+                return '';
+            }
+            var dt = new Date(date);
+            return dt
+                .toLocaleTimeString($app.currentCulture, {
+                    hour: '2-digit',
+                    minute: 'numeric',
+                    hour12: $app.config.dtHour12
+                })
+                .replace(' am', '')
+                .replace(' pm', '');
+        };
+        Vue.filter('formatDate', formatDate);
     };
 
     $app = new Vue($app);

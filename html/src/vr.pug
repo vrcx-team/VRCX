@@ -21,24 +21,24 @@ html
                                 .x-friend-item(v-if="feed.type === 'GPS'" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] #[location(:location="feed.location" :hint="feed.worldName")]
                                 div(v-else-if="feed.type === 'Offline'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] ✖️
                                 div(v-else-if="feed.type === 'Online'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] ✔  
                                             template(v-if="feed.worldName")
                                                 | #[location(:location="feed.location" :hint="feed.worldName")]
                                 div(v-else-if="feed.type === 'Status'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] 
                                             template(v-if="feed.statusDescription === feed.previousStatusDescription")
                                                 i.x-user-status(:class="statusClass(feed.previousStatus)")
@@ -49,28 +49,28 @@ html
                                 div(v-else-if="feed.type === 'OnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | ▶️ #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'OnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | ◀️ #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'OnPlayerJoining'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             span.spin ▶️
                                             span.name(v-text="feed.displayName" style="margin-left:20px")
                                 div(v-else-if="feed.type === 'Location'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             location(:location="feed.location" :hint="feed.worldName")
                                 div(v-else-if="feed.type === 'VideoPlay'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 🎵 #[span.name(v-text="feed.displayName")] 
                                             template(v-if="feed.videoName")
                                                 | #[span(v-text="feed.videoName")]
@@ -79,130 +79,130 @@ html
                                 div(v-else-if="feed.type === 'invite'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 📨 #[span.name(v-text="feed.senderUsername")] #[location(:location="feed.details.worldId" :hint="feed.details.worldName")] #[span(v-text="feed.details.inviteMessage")]
                                 div(v-else-if="feed.type === 'requestInvite'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 📩 #[span.name(v-text="feed.senderUsername")] #[span(v-text="feed.details.requestMessage")]
                                 div(v-else-if="feed.type === 'inviteResponse'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 💬 #[span.name(v-text="feed.senderUsername")] #[span(v-text="feed.details.responseMessage")]
                                 div(v-else-if="feed.type === 'requestInviteResponse'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 💬 #[span.name(v-text="feed.senderUsername")] #[span(v-text="feed.details.responseMessage")]
                                 div(v-else-if="feed.type === 'friendRequest'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 💚 #[span.name(v-text="feed.senderUsername")]
                                 div(v-else-if="feed.type === 'Friend'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 💖 #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'Unfriend'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 💔 #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'DisplayName'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 📃 #[span.name(v-text="feed.previousDisplayName")] #[i.el-icon-right] #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'TrustLevel'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 🤝 #[span.name(v-text="feed.displayName")] {{ feed.previousTrustLevel }} #[i.el-icon-right] {{ feed.trustLevel }}
                                 div(v-else-if="feed.type === 'PortalSpawn'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | ✨ #[span.name(v-text="feed.displayName")]  
                                             template(v-if="feed.worldName")
                                                 | #[location(:location="feed.instanceId" :hint="feed.worldName")]
                                 div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 🧍 #[span.name(v-text="feed.displayName")] {{ feed.name }}
                                             template(v-if="feed.description && feed.description !== feed.name")
                                                 |  - {{ feed.description }}
                                 div(v-else-if="feed.type === 'Event'" class="x-friend-item")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 🛑 #[span.name(v-text="feed.data")]
                                 div(v-else-if="feed.type === 'BlockedOnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | ▶️ 🚫 #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'BlockedOnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | ◀️ 🚫 #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'MutedOnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | ▶️ 🔇 #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'MutedOnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | ◀️ 🔇 #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'Blocked'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 🚫 #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'Unblocked'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | ⭕ #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'Muted'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 🔇 #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'Unmuted'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | 🎤 #[span.name(v-text="feed.displayName")]
                         template(v-else)
                             template(v-for="feed in wristFeed")
                                 .x-friend-item(v-if="feed.type === 'GPS'" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] is in #[location(:location="feed.location" :hint="feed.worldName")]
                                 div(v-else-if="feed.type === 'Offline'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] has logged out
                                 div(v-else-if="feed.type === 'Online'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] has logged in  
                                             template(v-if="feed.worldName")
                                                 | to #[location(:location="feed.location" :hint="feed.worldName")]
                                 div(v-else-if="feed.type === 'Status'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] 
                                             template(v-if="feed.statusDescription === feed.previousStatusDescription")
                                                 i.x-user-status(:class="statusClass(feed.previousStatus)")
@@ -213,27 +213,27 @@ html
                                 div(v-else-if="feed.type === 'OnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] has joined
                                 div(v-else-if="feed.type === 'OnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] has left
                                 div(v-else-if="feed.type === 'OnPlayerJoining'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] is joining
                                 div(v-else-if="feed.type === 'Location'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             location(:location="feed.location" :hint="feed.worldName")
                                 div(v-else-if="feed.type === 'VideoPlay'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] changed video to 
                                             template(v-if="feed.videoName")
                                                 | #[span(v-text="feed.videoName")]
@@ -242,106 +242,106 @@ html
                                 div(v-else-if="feed.type === 'invite'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.senderUsername")] has invited you to #[location(:location="feed.details.worldId" :hint="feed.details.worldName")] #[span(v-text="feed.details.inviteMessage")]
                                 div(v-else-if="feed.type === 'requestInvite'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.senderUsername")] has requested an invite #[span(v-text="feed.details.requestMessage")]
                                 div(v-else-if="feed.type === 'inviteResponse'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.senderUsername")] has responded to your invite #[span(v-text="feed.details.responseMessage")]
                                 div(v-else-if="feed.type === 'requestInviteResponse'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.senderUsername")] has responded to your invite request #[span(v-text="feed.details.responseMessage")]
                                 div(v-else-if="feed.type === 'friendRequest'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.senderUsername")] has sent you a friend request
                                 div(v-else-if="feed.type === 'Friend'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] is now your friend
                                 div(v-else-if="feed.type === 'Unfriend'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] is no longer your friend
                                 div(v-else-if="feed.type === 'DisplayName'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.previousDisplayName")] changed their name to #[span.name(v-text="feed.displayName")]
                                 div(v-else-if="feed.type === 'TrustLevel'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] trust level is now {{ feed.trustLevel }}
                                 div(v-else-if="feed.type === 'PortalSpawn'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] has spawned a portal  
                                             template(v-if="feed.worldName")
                                                 | to #[location(:location="feed.instanceId" :hint="feed.worldName")]
                                 div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] changed into avatar {{ feed.name }}
                                             template(v-if="feed.description && feed.description !== feed.name")
                                                 |  - {{ feed.description }}
                                 div(v-else-if="feed.type === 'Event'" class="x-friend-item")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | Event: #[span.name(v-text="feed.data")]
                                 div(v-else-if="feed.type === 'BlockedOnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | Blocked user #[span.name(v-text="feed.displayName")] has joined
                                 div(v-else-if="feed.type === 'BlockedOnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | Blocked user #[span.name(v-text="feed.displayName")] has left
                                 div(v-else-if="feed.type === 'MutedOnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | Muted user #[span.name(v-text="feed.displayName")] has joined
                                 div(v-else-if="feed.type === 'MutedOnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | Muted user #[span.name(v-text="feed.displayName")] has left
                                 div(v-else-if="feed.type === 'Blocked'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] has blocked you
                                 div(v-else-if="feed.type === 'Unblocked'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] has unblocked you
                                 div(v-else-if="feed.type === 'Muted'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] has muted you
                                 div(v-else-if="feed.type === 'Unmuted'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
-                                            span.time {{ feed.created_at | formatDate('HH:MI') }}
+                                            span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] has unmuted you
                 .x-containerbottom
                     div(style="display:flex;flex-direction:row")
@@ -409,7 +409,7 @@ html
                             span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
                             span(v-if="photonLobbyBotSize > 0 && lastLocation.playerList.length > 0" style="display:inline-block;color:red;margin-left:5px") {{ photonLobbyBotSize }}
                     br
-                    span(style="float:right") {{ currentTime | formatDate('YYYY-MM-DD HH:MI:SS AMPM') }}
+                    span(style="float:right") {{ currentTime }}
                     span(v-if="config && !config.hideCpuUsageFromFeed" style="display:inline-block;margin-right:5px") CPU: {{ cpuUsage }}%
                     span(style="display:inline-block") Online: {{ onlineFriendCount }}
             template(v-else)

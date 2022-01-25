@@ -403,6 +403,11 @@ namespace VRCX
             return output;
         }
 
+        public string CurrentCulture()
+        {
+            return System.Globalization.CultureInfo.CurrentCulture.ToString();
+        }
+
         public void SetStartup(bool enabled)
         {
             try

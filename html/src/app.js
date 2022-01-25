@@ -172,7 +172,6 @@ speechSynthesis.getVoices();
             (c) => map[c] || c
         );
     };
-    Vue.filter('formatDate', formatDate);
 
     var textToHex = function (text) {
         var s = String(text);
@@ -11476,7 +11475,8 @@ speechSynthesis.getVoices();
             notificationPosition: this.notificationPosition,
             notificationTimeout: this.notificationTimeout,
             notificationTheme,
-            backgroundEnabled: this.vrBackgroundEnabled
+            backgroundEnabled: this.vrBackgroundEnabled,
+            dtHour12: this.dtHour12
         };
         var json = JSON.stringify(VRConfigVars);
         AppApi.ExecuteVrFeedFunction('configUpdate', json);
@@ -18658,6 +18658,51 @@ speechSynthesis.getVoices();
             }
         });
     };
+
+    $app.data.dtHour12 = configRepository.getBool('VRCX_dtHour12');
+    $app.methods.setDatetimeFormat = async function () {
+        var currentCulture = await AppApi.CurrentCulture();
+        var hour12 = configRepository.getBool('VRCX_dtHour12');
+        if (typeof this.dtHour12 !== 'undefined') {
+            if (hour12 !== this.dtHour12) {
+                configRepository.setBool('VRCX_dtHour12', this.dtHour12);
+                this.updateVRConfigVars();
+            }
+            var hour12 = this.dtHour12;
+        }
+        var formatDate1 = function (date, format) {
+            if (!date) {
+                return '-';
+            }
+            var dt = new Date(date);
+            if (format === 'long') {
+                return dt.toLocaleDateString(currentCulture, {
+                    month: '2-digit',
+                    day: '2-digit',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                    hour12
+                });
+            } else if (format === 'short') {
+                return dt
+                    .toLocaleDateString(currentCulture, {
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12
+                    })
+                    .replace(' AM', 'am')
+                    .replace(' PM', 'pm')
+                    .replace(',', '');
+            }
+            return '-';
+        };
+        Vue.filter('formatDate', formatDate1);
+    };
+    $app.methods.setDatetimeFormat();
 
     $app = new Vue($app);
     window.$app = $app;
