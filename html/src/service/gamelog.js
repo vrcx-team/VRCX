@@ -42,6 +42,10 @@ class GameLogService {
                 gameLog.displayName = args[1];
                 break;
 
+            case 'video-sync':
+                gameLog.timestamp = args[0];
+                break;
+
             case 'vrcx':
                 gameLog.data = args[0];
                 break;

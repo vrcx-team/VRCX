@@ -221,6 +221,7 @@ namespace VRCX
                                     ParseLogVideoError(fileInfo, logContext, line, offset) == true ||
                                     ParseLogVideoChange(fileInfo, logContext, line, offset) == true ||
                                     ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) == true ||
+                                    ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) == true ||
                                     ParseLogWorldVRCX(fileInfo, logContext, line, offset) == true ||
                                     ParseLogPhotonId(fileInfo, logContext, line, offset) == true)
                                 {
@@ -634,6 +635,26 @@ namespace VRCX
                 "video-play",
                 data,
                 displayName
+            });
+
+            return true;
+        }
+
+        private bool ParseLogUsharpVideoSync(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2022.01.16 05:20:23 Log        -  [USharpVideo] Syncing video to 2.52
+
+            if (string.Compare(line, offset, "[USharpVideo] Syncing video to ", 0, 31, StringComparison.Ordinal) != 0)
+                return false;
+
+            var data = line.Substring(offset + 31);
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "video-sync",
+                data
             });
 
             return true;
