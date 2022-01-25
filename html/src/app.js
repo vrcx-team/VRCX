@@ -8333,6 +8333,14 @@ speechSynthesis.getVoices();
                         color: 'yellow',
                         created_at: new Date().toJSON()
                     });
+                    var entry = {
+                        created_at: new Date().toJSON(),
+                        type: 'Event',
+                        data: `${text} - ${this.getDisplayNameFromPhotonId(photonId)} (${this.getUserIdFromPhotonId(photonId)})`
+                    };
+                    this.queueGameLogNoty(entry);
+                    this.addGameLog(entry);
+                    database.addGamelogEventToDatabase(entry);
                 }
                 photonBots.unshift(id);
             }
@@ -8906,6 +8914,14 @@ speechSynthesis.getVoices();
                 color: 'yellow',
                 created_at: gameLogDate
             });
+            var entry = {
+                created_at: new Date().toJSON(),
+                type: 'Event',
+                data: `${text} - ${this.getDisplayNameFromPhotonId(photonId)} (${this.getUserIdFromPhotonId(photonId)})`
+            };
+            this.queueGameLogNoty(entry);
+            this.addGameLog(entry);
+            database.addGamelogEventToDatabase(entry);
         }
     };
 
