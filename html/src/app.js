@@ -13014,7 +13014,7 @@ speechSynthesis.getVoices();
 
     $app.methods.lookupAvatars = async function (type, search) {
         if (type === 'search') {
-            var limit = '&limit=5000';
+            var limit = '&n=5000';
         } else {
             var limit = '';
         }

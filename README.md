@@ -56,6 +56,10 @@ Screenshots
 * Extract entire zip archive.
 * Run `VRCX.exe`.
 
+# How to run VRCX on Linux
+
+* [Guide](https://github.com/RinLovesYou/VRChat-Linux/wiki/VRCX) made by @RinLovesYou
+
 # How to build VRCX from source
 
 * Get source code
