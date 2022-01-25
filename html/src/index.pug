@@ -1551,7 +1551,7 @@ html
                             .x-friend-list(style="margin-top:10px;min-height:60px")
                                 .x-friend-item(v-for="avatar in userDialogAvatars" @click="showAvatarDialog(avatar.id)" class="x-friend-item-border")
                                     .avatar
-                                        img(v-lazy="avatar.thumbnailImageUrl")
+                                        img(v-if="avatar.thumbnailImageUrl" v-lazy="avatar.thumbnailImageUrl")
                                     .detail
                                         span.name(v-text="avatar.name")
                                         span.extra(v-text="avatar.releaseStatus" v-if="avatar.releaseStatus === 'public'" style="color: #67c23a;")
@@ -2747,7 +2747,7 @@ html
                             span(v-text="scope.row.timer")
                     el-table-column(label="Action" width="60" align="right")
                         template(v-once #default="scope")
-                            el-button(type="text" icon="el-icon-message" size="mini" @click="showLaunchDialog(scope.row.location)")
+                            el-button(type="text" icon="el-icon-info" size="mini" @click="showLaunchDialog(scope.row.location)")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogUserInstance(scope.row)")
                             
             //- dialog Table: Previous Instances World

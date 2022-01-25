@@ -132,7 +132,12 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | 🧍 #[span.name(v-text="feed.displayName")] {{ feed.name }}
+                                            | 🧍 #[span.name(v-text="feed.displayName")]  
+                                            template(v-if="feed.releaseStatus === 'public'")
+                                                | #[i.x-user-status.online]
+                                            template(v-else)
+                                                | #[i.x-user-status.askme]
+                                            |  {{ feed.name }}
                                             template(v-if="feed.description && feed.description !== feed.name")
                                                 |  - {{ feed.description }}
                                 div(v-else-if="feed.type === 'Event'" class="x-friend-item")
@@ -295,7 +300,12 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")] changed into avatar {{ feed.name }}
+                                            | #[span.name(v-text="feed.displayName")] changed into avatar  
+                                            template(v-if="feed.releaseStatus === 'public'")
+                                                | #[i.x-user-status.online]
+                                            template(v-else)
+                                                | #[i.x-user-status.askme]
+                                            |  {{ feed.name }}
                                             template(v-if="feed.description && feed.description !== feed.name")
                                                 |  - {{ feed.description }}
                                 div(v-else-if="feed.type === 'Event'" class="x-friend-item")
@@ -418,10 +428,14 @@ html
                 .hud-feed
                     div(v-for="feed in hudFeed")
                         .item #[span(v-if="feed.isMaster") 👑]<strong>{{ feed.displayName }}</strong>
-                            span(v-if="feed.color === 'yellow'" style="color: yellow")  {{ feed.text }}  
-                            span(v-else)  {{ feed.text }}  
+                            span(v-if="feed.avatar")
+                                span(style="margin-left:10px") ChangeAvatar
+                                span(v-if="!feed.inCache" style="color:#aaa;margin-left:10px") #[i.el-icon-download]
+                                span(v-text="feed.avatar.name" style="margin-left:10px")
+                            span(v-else-if="feed.color === 'yellow'" style="color:yellow;margin-left:10px") {{ feed.text }}
+                            span(v-else style="margin-left:10px") {{ feed.text }}
                             template(v-if="feed.combo > 1")
-                                span.combo x{{ feed.combo }}
+                                span.combo(style="margin-left:10px") x{{ feed.combo }}
                 .hud-timeout(v-if="hudTimeout.length > 0")
                     .hud-timeout-feed
                         div(v-for="feed in hudTimeout")
