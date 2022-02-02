@@ -105,6 +105,7 @@ html
                                                 div(v-for="id in photonLobbyBots" :key="id" placement="top")
                                                     span.x-link(v-text="getDisplayNameFromPhotonId(id)" @click="showUserFromPhotonId(id)" style="margin-right:5px")
                                             span(v-text="photonLobbyBots.length" style="color:red")
+                                | &nbsp;#[timer(v-if="lastLocation.date" :epoch="lastLocation.date")]
                                 //- el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px")
                             div(style="margin-top:5px")
                                 span(v-show="currentInstanceWorld.name !== currentInstanceWorld.description" v-text="currentInstanceWorld.description" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2")
@@ -259,12 +260,12 @@ html
                                 template(v-else-if="scope.row.type === 'Avatar'")
                                     el-popover(placement="right" width="500px" trigger="click")
                                         img.x-link(slot="reference" v-lazy="scope.row.previousCurrentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                                        img.x-link(v-lazy="scope.row.previousCurrentAvatarImageUrl" style="width:500px;height:375px" @click="showAvatarAuthorDialog(scope.row.userId, scope.row.previousCurrentAvatarImageUrl)")
+                                        img.x-link(v-lazy="scope.row.previousCurrentAvatarImageUrl" style="width:500px;height:375px" @click="showAvatarAuthorDialog(scope.row.userId, '', scope.row.previousCurrentAvatarImageUrl)")
                                     span(style="position:relative;top:-50px;margin:0 5px")
                                         i.el-icon-right
                                     el-popover(placement="right" width="500px" trigger="click")
                                         img.x-link(slot="reference" v-lazy="scope.row.currentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                                        img.x-link(v-lazy="scope.row.currentAvatarImageUrl" style="width:500px;height:375px" @click="showAvatarAuthorDialog(scope.row.userId, scope.row.currentAvatarImageUrl)")
+                                        img.x-link(v-lazy="scope.row.currentAvatarImageUrl" style="width:500px;height:375px" @click="showAvatarAuthorDialog(scope.row.userId, '', scope.row.currentAvatarImageUrl)")
                                 template(v-else-if="scope.row.type === 'Status'")
                                     el-tooltip(placement="top")
                                         template(#content)
@@ -546,7 +547,7 @@ html
                                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="deleteFavorite(favorite.id)" style="margin-left:5px")
 
             //- friendLog
-            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'friendLog'")
+            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'friendLog'" v-if="$refs.menu && $refs.menu.activeIndex === 'friendLog'")
                 data-tables(v-bind="friendLogTable")
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
@@ -572,7 +573,7 @@ html
                             el-button(type="text" icon="el-icon-close" size="mini" @click="deleteFriendLog(scope.row)")
 
             //- moderation
-            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'moderation'")
+            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'moderation'" v-if="$refs.menu && $refs.menu.activeIndex === 'moderation'")
                 data-tables(v-bind="playerModerationTable" v-loading="API.isPlayerModerationsLoading")
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
@@ -599,7 +600,7 @@ html
                             el-button(v-if="scope.row.sourceUserId === API.currentUser.id" type="text" icon="el-icon-close" size="mini" @click="deletePlayerModeration(scope.row)")
 
             //- notification
-            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'notification'" v-loading="API.isNotificationsLoading")
+            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'notification'" v-if="$refs.menu && $refs.menu.activeIndex === 'notification'" v-loading="API.isNotificationsLoading")
                 data-tables(v-bind="notificationTable")
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
@@ -858,7 +859,7 @@ html
                                 span(v-if="scope.row.$timeSpent") {{ scope.row.$timeSpent | timeToText }}
                         el-table-column(label="Last Seen" width="170" prop="$lastSeen" sortable :sort-method="(a, b) => sortAlphabetically(a, b, '$lastSeen')")
                             template(v-once #default="scope")
-                                span {{ scope.row.$timeSpent | formatDate('long') }}
+                                span {{ scope.row.$lastSeen | formatDate('long') }}
                         el-table-column(label="Last Login" width="170" prop="last_login" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'last_login')")
                             template(v-once #default="scope")
                                 span {{ scope.row.last_login | formatDate('long') }}
@@ -1016,8 +1017,8 @@ html
                         span.name Enable
                         el-switch(v-model="openVR" @change="saveOpenVROption")
                     div.options-container-item
-                        span.name Always start with SteamVR
-                        el-switch(v-model="openVRAlways" @change="saveOpenVROption" :disabled="!openVR")
+                        span.name Start overlay with
+                        el-switch(v-model="openVRAlways" @change="saveOpenVROption" inactive-text="VRChat" active-text="SteamVR" :disabled="!openVR")
                     div.options-container-item
                         span.name Hide Private Worlds
                         el-switch(v-model="hidePrivateFromFeed" @change="saveOpenVROption")
@@ -1695,7 +1696,7 @@ html
                                     .detail
                                         span.name Favorites
                                         span.extra {{ worldDialog.ref.favorites | commaNumber }}
-                                            | #[template(v-if="worldDialog.ref.favorites > 0")  ({{ Math.round(((worldDialog.ref.favorites - worldDialog.ref.visits) / worldDialog.ref.visits * 100 + 100) * 100) / 100 }}%)]
+                                            | #[template(v-if="worldDialog.ref.favorites > 0 && worldDialog.ref.visits > 0")  ({{ Math.round(((worldDialog.ref.favorites - worldDialog.ref.visits) / worldDialog.ref.visits * 100 + 100) * 100) / 100 }}%)]
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Visits
