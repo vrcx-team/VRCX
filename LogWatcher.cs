@@ -404,7 +404,7 @@ namespace VRCX
                 return true;
             }
 
-            if ((line.Contains("[Behaviour] OnPlayerLeft") || line.Contains("[NetworkManager] OnPlayerLeft")) && !line.Contains("] OnPlayerLeftRoom"))
+            if ((line.Contains("[Behaviour] OnPlayerLeft") || line.Contains("[NetworkManager] OnPlayerLeft")) && !line.Contains("] OnPlayerLeftRoom") && !line.Contains("] OnPlayerLeft:"))
             {
                 var lineOffset = line.LastIndexOf("] OnPlayerLeft");
                 if (lineOffset < 0)
@@ -497,7 +497,6 @@ namespace VRCX
                 "event",
                 "Joining instance blocked by master"
             });
-            logContext.ShaderKeywordsLimitReached = true;
 
             return true;
         }
