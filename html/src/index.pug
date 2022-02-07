@@ -94,6 +94,7 @@ html
                                     span.famfamfam-flags(v-else-if="currentInstanceLocation.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
                                     span.flag-icon-use(v-else-if="currentInstanceLocation.region === 'use'" style="display:inline-block;margin-left:5px")
                                     span.flag-icon-usw(v-else style="display:inline-block;margin-left:5px")
+                                    i.el-icon-lock(v-if="currentInstanceLocation.strict" style="display:inline-block;margin-left:5px")
                                 span(v-if="lastLocation.playerList.size > 0" style="margin-left:5px")
                                     | {{ lastLocation.playerList.size }}
                                     | #[template(v-if="lastLocation.friendList.size > 0") ({{ lastLocation.friendList.size }})]
@@ -1650,6 +1651,7 @@ html
                                         span.famfamfam-flags(v-else-if="room.$location.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
                                         span.flag-icon-use(v-else-if="room.$location.region === 'use'" style="display:inline-block;margin-left:5px")
                                         span.flag-icon-usw(v-else style="display:inline-block;margin-left:5px")
+                                        i.el-icon-lock(v-if="room.$location.strict" style="display:inline-block;margin-left:5px")
                                     el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
                                         invite-yourself(:location="room.$location.tag" style="margin-left:5px")
                                     el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
@@ -1939,6 +1941,8 @@ html
                             el-radio-button(label="friends")
                             el-radio-button(label="invite+")
                             el-radio-button(label="invite")
+                    el-form-item(label="Strict" v-if="newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite'")
+                        el-checkbox(v-model="newInstanceDialog.strict") Prevent non friends joining via URL/Instance ID
                     el-form-item(label="Region")
                         el-radio-group(v-model="newInstanceDialog.region" size="mini" @change="buildInstance")
                             el-radio-button(label="US West")
@@ -1948,7 +1952,7 @@ html
                     el-form-item(label="World ID")
                         el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                     el-form-item(label="Instance ID")
-                        el-input(v-model="newInstanceDialog.instanceName" maxlength="16" placeholder="Random" show-word-limit size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+                        el-input(v-model="newInstanceDialog.instanceName" placeholder="Random" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                     el-form-item(label="Instance Creator")
                         el-select(v-model="newInstanceDialog.userId" clearable placeholder="Choose User" filterable style="width:100%")
                             el-option-group(v-if="API.currentUser" label="ME")
@@ -2778,6 +2782,7 @@ html
                                 span.famfamfam-flags(v-else-if="scope.row.$location.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
                                 span.flag-icon-use(v-else-if="scope.row.$location.region === 'use'" style="display:inline-block;margin-left:5px")
                                 span.flag-icon-usw(v-else style="display:inline-block;margin-left:5px")
+                                i.el-icon-lock(v-if="scope.row.$location.strict" style="display:inline-block;margin-left:5px")
                     el-table-column(label="Instance Creator" prop="location")
                         template(v-once #default="scope")
                             span.x-link(v-text="getDisplayNameFromUserId(scope.row.$location.userId)" @click="showUserDialog(scope.row.$location.userId)" style="cursor:pointer")
