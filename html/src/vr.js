@@ -46,30 +46,30 @@ Vue.component('marquee-text', MarqueeText);
             .join(' ');
     Vue.filter('textToHex', textToHex);
 
-    var timeToText = (t) => {
-        var sec = Number(t);
-        if (isNaN(sec)) {
-            return escapeTag(t);
+    var timeToText = function (sec) {
+        var n = Number(sec);
+        if (isNaN(n)) {
+            return escapeTag(sec);
         }
-        sec = Math.floor(sec / 1000);
+        n = Math.floor(n / 1000);
         var arr = [];
-        if (sec < 0) {
-            sec = -sec;
+        if (n < 0) {
+            n = -n;
         }
-        if (sec >= 86400) {
-            arr.push(`${Math.floor(sec / 86400)}d`);
-            sec %= 86400;
+        if (n >= 86400) {
+            arr.push(`${Math.floor(n / 86400)}d`);
+            n %= 86400;
         }
-        if (sec >= 3600) {
-            arr.push(`${Math.floor(sec / 3600)}h`);
-            sec %= 3600;
+        if (n >= 3600) {
+            arr.push(`${Math.floor(n / 3600)}h`);
+            n %= 3600;
         }
-        if (sec >= 60) {
-            arr.push(`${Math.floor(sec / 60)}m`);
-            sec %= 60;
+        if (n >= 60) {
+            arr.push(`${Math.floor(n / 60)}m`);
+            n %= 60;
         }
-        if (sec || !arr.length) {
-            arr.push(`${sec}s`);
+        if (arr.length === 0 && n < 60) {
+            arr.push(`${n}s`);
         }
         return arr.join(' ');
     };
@@ -327,7 +327,7 @@ Vue.component('marquee-text', MarqueeText);
                     year: 'numeric',
                     hour: 'numeric',
                     minute: 'numeric',
-                    hour12: this.config.dtHour12
+                    hourCycle: (this.config.dtHour12 ? 'h12' : 'h23')
                 })
                 .replace(' AM', ' am')
                 .replace(' PM', ' pm')
@@ -603,7 +603,7 @@ Vue.component('marquee-text', MarqueeText);
                 .toLocaleTimeString($app.currentCulture, {
                     hour: '2-digit',
                     minute: 'numeric',
-                    hour12: $app.config.dtHour12
+                    hourCycle: ($app.config.dtHour12 ? 'h12' : 'h23')
                 })
                 .replace(' am', '')
                 .replace(' pm', '');

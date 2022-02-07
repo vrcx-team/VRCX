@@ -1016,7 +1016,7 @@ html
                     div.options-container-item
                         span.name Enable
                         el-switch(v-model="openVR" @change="saveOpenVROption")
-                    div.options-container-item
+                    div.options-container-item(style="min-width:118px")
                         span.name Start overlay with
                         el-switch(v-model="openVRAlways" @change="saveOpenVROption" inactive-text="VRChat" active-text="SteamVR" :disabled="!openVR")
                     div.options-container-item
