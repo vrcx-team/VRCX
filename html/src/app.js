@@ -8048,6 +8048,8 @@ speechSynthesis.getVoices();
                     this.addGameLogPyPyDance(gameLog, location);
                 } else if (type === 'VideoPlay(VRDancing)') {
                     this.addGameLogVRDancing(gameLog, location);
+                } else if (type === 'VideoPlay(ZuwaZuwaDance)') {
+                    this.addGameLogZuwaZuwaDance(gameLog, location);
                 }
                 return;
             case 'photon-id':
@@ -9383,6 +9385,69 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.methods.addGameLogZuwaZuwaDance = function (gameLog, location) {
+        var data =
+            /VideoPlay\(ZuwaZuwaDance\) "(.+?)",([\d.]+),([\d.]+),(-?[\d.]+),"(.+?)","(.+?)"/g.exec(
+                gameLog.data
+            );
+        if (!data) {
+            console.error('failed to parse', gameLog.data);
+            return;
+        }
+        var videoUrl = data[1];
+        var videoPos = Number(data[2]);
+        var videoLength = Number(data[3]);
+        var videoId = Number(data[4]);
+        var displayName = data[5];
+        var videoName = data[6];
+        if (videoId === 0) {
+            videoId = 'YouTube';
+        }
+        if (videoUrl === this.nowPlaying.url) {
+            var entry = {
+                created_at: gameLog.dt,
+                videoUrl,
+                videoLength,
+                videoPos
+            };
+            this.setNowPlaying(entry);
+            return;
+        }
+        var userId = '';
+        if (displayName) {
+            for (var ref of API.cachedUsers.values()) {
+                if (ref.displayName === displayName) {
+                    userId = ref.id;
+                    break;
+                }
+            }
+        }
+        if (videoId === 'YouTube') {
+            var entry = {
+                dt: gameLog.dt,
+                videoUrl,
+                displayName,
+                videoPos,
+                videoId
+            };
+            this.addGameLogVideo(entry, location, userId);
+        } else {
+            var entry = {
+                created_at: gameLog.dt,
+                type: 'VideoPlay',
+                videoUrl,
+                videoId,
+                videoName,
+                videoLength,
+                location,
+                displayName,
+                userId,
+                videoPos
+            };
+            this.setNowPlaying(entry);
+        }
+    };
+
     $app.methods.lookupYouTubeVideo = async function (videoId) {
         var data = null;
         var apiKey = 'AIzaSyA-iUQCpWf5afEL3NanEOSxbzziPMU3bxY';
@@ -9669,6 +9734,10 @@ speechSynthesis.getVoices();
             ) {
                 appId = '846232616054030376';
                 bigIcon = 'vr_dancing';
+            } else if (
+                L.worldId === 'wrld_52bdcdab-11cd-4325-9655-0fb120846945') {
+                appId = '939473404808007731';
+                bigIcon = 'zuwa_zuwa_dance';
             }
             if (this.nowPlaying.name) {
                 L.worldName = this.nowPlaying.name;
@@ -11577,7 +11646,8 @@ speechSynthesis.getVoices();
         var danceWorlds = [
             'wrld_f20326da-f1ac-45fc-a062-609723b097b1',
             'wrld_42377cf1-c54f-45ed-8996-5875b0573a83',
-            'wrld_dd6d2888-dbdc-47c2-bc98-3d631b2acd7c'
+            'wrld_dd6d2888-dbdc-47c2-bc98-3d631b2acd7c',
+            'wrld_52bdcdab-11cd-4325-9655-0fb120846945'
         ];
         var L = API.parseLocation(location);
         if (danceWorlds.includes(L.worldId)) {
