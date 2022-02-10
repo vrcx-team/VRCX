@@ -5983,7 +5983,7 @@ speechSynthesis.getVoices();
                             username: loginParmas.username,
                             password: loginParmas.password
                         })
-                            .catch((err2) => {
+                            .catch(() => {
                                 this.loginForm.loading = false;
                                 API.logout();
                             })
@@ -9703,7 +9703,8 @@ speechSynthesis.getVoices();
                 appId = '846232616054030376';
                 bigIcon = 'vr_dancing';
             } else if (
-                L.worldId === 'wrld_52bdcdab-11cd-4325-9655-0fb120846945') {
+                L.worldId === 'wrld_52bdcdab-11cd-4325-9655-0fb120846945'
+            ) {
                 appId = '939473404808007731';
                 bigIcon = 'zuwa_zuwa_dance';
             }
@@ -12678,13 +12679,15 @@ speechSynthesis.getVoices();
                     if (this.lastLocation.playerList.has(D.ref.displayName)) {
                         inCurrentWorld = true;
                     }
-                    database.getUserStats(D.ref, inCurrentWorld).then((ref1) => {
-                        if (ref1.userId === D.id) {
-                            D.lastSeen = ref1.created_at;
-                            D.joinCount = ref1.joinCount;
-                            D.timeSpent = ref1.timeSpent;
-                        }
-                    });
+                    database
+                        .getUserStats(D.ref, inCurrentWorld)
+                        .then((ref1) => {
+                            if (ref1.userId === D.id) {
+                                D.lastSeen = ref1.created_at;
+                                D.joinCount = ref1.joinCount;
+                                D.timeSpent = ref1.timeSpent;
+                            }
+                        });
                 }
                 return args;
             });
@@ -15998,7 +16001,7 @@ speechSynthesis.getVoices();
             if (this.lastLocation.playerList.has(ctx.ref.displayName)) {
                 inCurrentWorld = true;
             }
-            this.getUserStats(ctx.ref);
+            this.getUserStats(ctx.ref, inCurrentWorld);
             ctx.ref.$friendNum = ctx.no;
             results.push(ctx.ref);
         }
@@ -16007,10 +16010,11 @@ speechSynthesis.getVoices();
 
     $app.methods.getUserStats = async function (ctx) {
         var ref = await database.getUserStats(ctx);
-        // eslint-disable-next-line require-atomic-updates
+        /* eslint-disable require-atomic-updates */
         ctx.$joinCount = ref.joinCount;
         ctx.$lastSeen = ref.created_at;
         ctx.$timeSpent = ref.timeSpent;
+        /* eslint-enable require-atomic-updates */
     };
 
     $app.watch.friendsListSearch = $app.methods.friendsListSearchChange;
@@ -19000,7 +19004,7 @@ speechSynthesis.getVoices();
                     hour: 'numeric',
                     minute: 'numeric',
                     second: 'numeric',
-                    hourCycle: (hour12 ? 'h12' : 'h23')
+                    hourCycle: hour12 ? 'h12' : 'h23'
                 });
             } else if (format === 'short') {
                 return dt
@@ -19009,7 +19013,7 @@ speechSynthesis.getVoices();
                         day: '2-digit',
                         hour: 'numeric',
                         minute: 'numeric',
-                        hourCycle: (hour12 ? 'h12' : 'h23')
+                        hourCycle: hour12 ? 'h12' : 'h23'
                     })
                     .replace(' AM', 'am')
                     .replace(' PM', 'pm')

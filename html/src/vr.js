@@ -329,7 +329,7 @@ Vue.component('marquee-text', MarqueeText);
                     year: 'numeric',
                     hour: 'numeric',
                     minute: 'numeric',
-                    hourCycle: (this.config.dtHour12 ? 'h12' : 'h23')
+                    hourCycle: this.config.dtHour12 ? 'h12' : 'h23'
                 })
                 .replace(' AM', ' am')
                 .replace(' PM', ' pm')
@@ -612,7 +612,7 @@ Vue.component('marquee-text', MarqueeText);
                 .toLocaleTimeString($app.currentCulture, {
                     hour: '2-digit',
                     minute: 'numeric',
-                    hourCycle: ($app.config.dtHour12 ? 'h12' : 'h23')
+                    hourCycle: $app.config.dtHour12 ? 'h12' : 'h23'
                 })
                 .replace(' am', '')
                 .replace(' pm', '');
