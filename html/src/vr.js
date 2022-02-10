@@ -178,9 +178,11 @@ Vue.component('marquee-text', MarqueeText);
                 name: '',
                 playerList: [],
                 friendList: [],
-                progressPie: false
+                progressPie: false,
+                onlineFor: 0
             },
             lastLocationTimer: '',
+            onlineForTimer: '',
             wristFeed: [],
             devices: []
         },
@@ -337,12 +339,19 @@ Vue.component('marquee-text', MarqueeText);
                 var cpuUsage = await AppApi.CpuUsage();
                 this.cpuUsage = cpuUsage.toFixed(0);
             }
-
-            this.lastLocationTimer = '';
             if (this.lastLocation.date !== 0) {
                 this.lastLocationTimer = timeToText(
                     Date.now() - this.lastLocation.date
                 );
+            } else {
+                this.lastLocationTimer = '';
+            }
+            if (this.lastLocation.onlineForTimer !== 0) {
+                this.onlineForTimer = timeToText(
+                    Date.now() - this.lastLocation.onlineFor
+                );
+            } else {
+                this.onlineForTimer = '';
             }
 
             if (!this.config.hideDevicesFromFeed) {
