@@ -873,6 +873,36 @@ class Database {
         return ref;
     }
 
+    async getUserStats(input, inCurrentWorld) {
+        var i = 0;
+        var instances = new Set();
+        var ref = {
+            timeSpent: 0,
+            created_at: '',
+            joinCount: 0,
+            userId: input.id
+        };
+        await sqliteService.execute(
+            (row) => {
+                if (typeof row[2] === 'number') {
+                    ref.timeSpent += row[2];
+                }
+                i++;
+                if (i === 1 || (inCurrentWorld && i === 2)) {
+                    ref.created_at = row[0];
+                }
+                instances.add(row[3]);
+            },
+            `SELECT created_at, user_id, time, location FROM gamelog_join_leave WHERE user_id = @userId OR display_name = @displayName ORDER BY id DESC`,
+            {
+                '@userId': input.id,
+                '@displayName': input.displayName
+            }
+        );
+        ref.joinCount = instances.size;
+        return ref;
+    }
+
     async lookupFeedDatabase(search, filters, vipList) {
         var search = search.replaceAll("'", "''");
         var vipQuery = '';

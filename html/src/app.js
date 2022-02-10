@@ -12710,19 +12710,11 @@ speechSynthesis.getVoices();
                     if (this.lastLocation.playerList.has(D.ref.displayName)) {
                         inCurrentWorld = true;
                     }
-                    database.getLastSeen(D.ref, inCurrentWorld).then((ref1) => {
+                    database.getUserStats(D.ref, inCurrentWorld).then((ref1) => {
                         if (ref1.userId === D.id) {
                             D.lastSeen = ref1.created_at;
-                        }
-                    });
-                    database.getJoinCount(D.ref).then((ref2) => {
-                        if (ref2.userId === D.id) {
-                            D.joinCount = ref2.joinCount;
-                        }
-                    });
-                    database.getTimeSpent(D.ref).then((ref3) => {
-                        if (ref3.userId === D.id) {
-                            D.timeSpent = ref3.timeSpent;
+                            D.joinCount = ref1.joinCount;
+                            D.timeSpent = ref1.timeSpent;
                         }
                     });
                 }
@@ -16034,30 +16026,22 @@ speechSynthesis.getVoices();
                     continue;
                 }
             }
-            this.getJoinCount(ctx.ref);
-            this.getLastSeen(ctx.ref);
-            this.getTimeSpent(ctx.ref);
+            var inCurrentWorld = false;
+            if (this.lastLocation.playerList.has(ctx.ref.displayName)) {
+                inCurrentWorld = true;
+            }
+            this.getUserStats(ctx.ref);
             ctx.ref.$friendNum = ctx.no;
             results.push(ctx.ref);
         }
         this.friendsListTable.data = results;
     };
 
-    $app.methods.getJoinCount = async function (ctx) {
-        var ref = await database.getJoinCount(ctx);
+    $app.methods.getUserStats = async function (ctx) {
+        var ref = await database.getUserStats(ctx);
         // eslint-disable-next-line require-atomic-updates
         ctx.$joinCount = ref.joinCount;
-    };
-
-    $app.methods.getLastSeen = async function (ctx) {
-        var ref = await database.getLastSeen(ctx);
-        // eslint-disable-next-line require-atomic-updates
         ctx.$lastSeen = ref.created_at;
-    };
-
-    $app.methods.getTimeSpent = async function (ctx) {
-        var ref = await database.getTimeSpent(ctx);
-        // eslint-disable-next-line require-atomic-updates
         ctx.$timeSpent = ref.timeSpent;
     };
 
