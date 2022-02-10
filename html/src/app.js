@@ -8317,28 +8317,24 @@ speechSynthesis.getVoices();
         workerTimers.setTimeout(() => this.photonLobbyWatcher(), 500);
     };
 
-    $app.methods.photonBotCheck = function () {
+    $app.methods.photonBotCheck = function (dtNow) {
         var photonBots = [];
         this.photonLobbyCurrent.forEach((ref, id) => {
             if (this.photonLobbyJointime.has(id)) {
-                // dtNow, var {joinTime, hasInstantiated, isInvisible, avatarEyeHeight}
-                var {isInvisible, avatarEyeHeight} =
+                var {joinTime, hasInstantiated, avatarEyeHeight} =
                     this.photonLobbyJointime.get(id);
             }
             var text = '';
-            if (isInvisible) {
-                text = 'User has joined invisible';
-            } else if (avatarEyeHeight < 0) {
+            if (avatarEyeHeight < 0) {
                 text = 'Photon bot has joined, invalid avatarEyeHeight';
+            } else if (
+                joinTime &&
+                joinTime + 11000 < dtNow &&
+                !hasInstantiated
+            ) {
+                text =
+                    'Potential photon bot has joined, failed to instantiate after 10 seconds';
             }
-            // else if (
-            //     joinTime &&
-            //     joinTime + 10000 < dtNow &&
-            //     !hasInstantiated
-            // ) {
-            //     text =
-            //         'Photon bot has joined, failed to instantiate after 10 seconds';
-            // }
             if (text && id !== this.photonLobbyCurrentUser) {
                 if (!this.photonLobbyBots.includes(id)) {
                     this.addEntryPhotonEvent({
@@ -8585,7 +8581,6 @@ speechSynthesis.getVoices();
             this.photonLobbyJointime.set(data.Parameters[254], {
                 joinTime: Date.parse(gameLogDate),
                 hasInstantiated,
-                isInvisible: data.Parameters[249].isInvisible,
                 inVRMode: data.Parameters[249].inVRMode,
                 avatarEyeHeight: data.Parameters[249].avatarEyeHeight
             });
@@ -8909,10 +8904,7 @@ speechSynthesis.getVoices();
                 platforms.push(unityPackage.platform);
             }
         }
-        if (data.isInvisible) {
-            text = 'User has joined invisible';
-            this.photonLobbyBots.unshift(photonId);
-        } else if (data.avatarEyeHeight < 0) {
+        if (data.avatarEyeHeight < 0) {
             text = 'Photon bot has joined, invalid avatarEyeHeight';
             this.photonLobbyBots.unshift(photonId);
         } else if (data.user.last_platform === 'android' && !data.inVRMode) {
@@ -8952,14 +8944,13 @@ speechSynthesis.getVoices();
                 var time = timeToText(Date.now() - lobbyJointime.joinTime);
                 text = `Photon bot has left ${time}`;
             }
+        } else if (
+            typeof lobbyJointime !== 'undefined' &&
+            !lobbyJointime.hasInstantiated
+        ) {
+            var time = timeToText(Date.now() - lobbyJointime.joinTime);
+            text = `Bot/Player left without instantiating ${time}`;
         }
-        // else if (
-        //     typeof lobbyJointime !== 'undefined' &&
-        //     !lobbyJointime.hasInstantiated
-        // ) {
-        //     var time = timeToText(Date.now() - lobbyJointime.joinTime);
-        //     text = `Bot/Player left without instantiating ${time}`;
-        // }
         if (text) {
             this.addEntryPhotonEvent({
                 photonId,
@@ -9054,8 +9045,7 @@ speechSynthesis.getVoices();
 
     $app.methods.photonUserJoin = function (photonId, ref, gameLogDate) {
         if (
-            typeof ref === 'undefined' ||
-            ref.id === API.currentUser.id ||
+            photonId !== this.photonLobbyCurrentUser &&
             !this.photonEventOverlayJoinLeave
         ) {
             return;
@@ -18800,7 +18790,6 @@ speechSynthesis.getVoices();
                         this.photonLobbyJointime.set(id, {
                             joinTime: Date.parse(dateTime),
                             hasInstantiated: false,
-                            isInvisible: user.isInvisible,
                             inVRMode: user.inVRMode,
                             avatarEyeHeight: user.avatarEyeHeight
                         });
