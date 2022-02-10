@@ -1132,7 +1132,7 @@ html
                 div.options-container
                     span.header Application
                     div.options-container-item
-                        span.name Use a Primary Password
+                        span.name(style="min-width:236px") Encrypt password (disables auto login)
                         el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange" :disabled="!loginForm.savedCredentials[API.currentUser.username]")
                     div.options-container-item
                         span.name Start at Windows startup

@@ -5971,38 +5971,7 @@ speechSynthesis.getVoices();
         }
         return new Promise((resolve, reject) => {
             if (this.enablePrimaryPassword) {
-                this.checkPrimaryPassword(loginParmas)
-                    .then((pwd) => {
-                        this.loginForm.loading = true;
-                        return API.getConfig()
-                            .catch((err) => {
-                                this.loginForm.loading = false;
-                                reject(err);
-                            })
-                            .then(() => {
-                                API.login({
-                                    username: loginParmas.username,
-                                    password: pwd,
-                                    cipher: loginParmas.password
-                                })
-                                    .catch((err2) => {
-                                        this.loginForm.loading = false;
-                                        API.logout();
-                                        reject(err2);
-                                    })
-                                    .then(() => {
-                                        this.loginForm.loading = false;
-                                        resolve();
-                                    });
-                            });
-                    })
-                    .catch((_) => {
-                        this.$message({
-                            message: 'Incorrect primary password',
-                            type: 'error'
-                        });
-                        reject(_);
-                    });
+                API.logout();
             } else {
                 API.getConfig()
                     .catch((err) => {
@@ -6017,11 +5986,9 @@ speechSynthesis.getVoices();
                             .catch((err2) => {
                                 this.loginForm.loading = false;
                                 API.logout();
-                                reject(err2);
                             })
                             .then(() => {
                                 this.loginForm.loading = false;
-                                resolve();
                             });
                     });
             }
