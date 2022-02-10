@@ -114,12 +114,14 @@ namespace VRCX
                 catch
                 {
                 }
+            }
 
+            if (Process.GetProcessesByName("vrchat").Length > 0)
+            {
                 isGameRunning = true;
             }
 
-            Process[] processList = Process.GetProcessesByName("vrserver");
-            if (processList.Length > 0)
+            if (Process.GetProcessesByName("vrserver").Length > 0)
             {
                 isSteamVRRunning = true;
             }
