@@ -26,14 +26,17 @@ html
                                     .detail
                                         span.name(v-text="user.user.displayName")
                                         span.extra(v-text="user.user.username")
+                                        span.extra(v-text="user.loginParmas.endpoint")
                                 el-button(type="default" @click="deleteSavedLogin(user.user.username)" size="mini" icon="el-icon-delete" circle)
                     div(style="margin:15px")
                         h2(style="font-weight:bold;text-align:center;margin:0") Login
                         el-form(ref="loginForm" :model="loginForm" :rules="loginForm.rules" @submit.native.prevent="login()")
                             el-form-item(label="Username or Email" prop="username" required)
                                 el-input(v-model="loginForm.username" name="username" placeholder="Username or Email" clearable)
-                            el-form-item(label="Password" prop="password" required style="margin-top:5px")
+                            el-form-item(label="Password" prop="password" required style="margin-top:10px")
                                 el-input(type="password" v-model="loginForm.password" name="password" placeholder="Password" clearable show-password)
+                            el-form-item(v-if="enableCustomEndpoint" label="Endpont" prop="endpoint" style="margin-top:10px")
+                                el-input(v-model="loginForm.endpoint" name="endpoint" placeholder="Endpoint URL" clearable)
                             el-checkbox(v-model="loginForm.saveCredentials" style="margin-top:15px") Save Credentials
                             el-form-item(style="margin-top:15px")
                                 el-button(native-type="submit" type="primary" :loading="loginForm.loading" style="width:100%") Login
