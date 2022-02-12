@@ -10467,34 +10467,33 @@ speechSynthesis.getVoices();
         if (!this.friendLogInitStatus || this.friendLog.has(id)) {
             return;
         }
-        var ctx = {
-            id,
-            displayName: null,
-            trustLevel: null
-        };
         var ref = API.cachedUsers.get(id);
         if (typeof ref !== 'undefined') {
-            ctx.displayName = ref.displayName;
-            ctx.trustLevel = ref.$trustLevel;
-            var friendLogHistory = {
-                created_at: new Date().toJSON(),
-                type: 'Friend',
-                userId: id,
-                displayName: ctx.displayName
-            };
-            this.friendLogTable.data.push(friendLogHistory);
-            database.addFriendLogHistory(friendLogHistory);
-            this.queueFriendLogNoty(friendLogHistory);
-            var friendLogCurrent = {
-                userId: id,
-                displayName: ctx.displayName,
-                trustLevel: ctx.trustLevel
-            };
-            this.friendLog.set(id, friendLogCurrent);
-            database.setFriendLogCurrent(friendLogCurrent);
-            this.notifyMenu('friendLog');
-            this.deleteFriendRequest(id);
-            this.updateSharedFeed(true);
+            API.getFriendStatus({
+                userId: id
+            }).then((args) => {
+                if (args.json.isFriend) {
+                    var friendLogHistory = {
+                        created_at: new Date().toJSON(),
+                        type: 'Friend',
+                        userId: id,
+                        displayName: ref.displayName
+                    };
+                    this.friendLogTable.data.push(friendLogHistory);
+                    database.addFriendLogHistory(friendLogHistory);
+                    this.queueFriendLogNoty(friendLogHistory);
+                    var friendLogCurrent = {
+                        userId: id,
+                        displayName: ref.displayName,
+                        trustLevel: ref.$trustLevel
+                    };
+                    this.friendLog.set(id, friendLogCurrent);
+                    database.setFriendLogCurrent(friendLogCurrent);
+                    this.notifyMenu('friendLog');
+                    this.deleteFriendRequest(id);
+                    this.updateSharedFeed(true);
+                }
+            });
         }
     };
 
@@ -10516,9 +10515,13 @@ speechSynthesis.getVoices();
         if (typeof ctx === 'undefined') {
             return;
         }
-        var friendLogHistory = {
-            created_at: new Date().toJSON(),
-            type: 'Unfriend',
+        API.getFriendStatus({
+            userId: id
+        }).then((args) => {
+            if (!args.json.isFriend) {
+                var friendLogHistory = {
+                    created_at: new Date().toJSON(),
+                    type: 'Unfriend',
             userId: id,
             displayName: ctx.displayName
         };
@@ -10526,9 +10529,11 @@ speechSynthesis.getVoices();
         database.addFriendLogHistory(friendLogHistory);
         this.queueFriendLogNoty(friendLogHistory);
         this.friendLog.delete(id);
-        database.deleteFriendLogCurrent(id);
-        this.notifyMenu('friendLog');
-        this.updateSharedFeed(true);
+                database.deleteFriendLogCurrent(id);
+                this.notifyMenu('friendLog');
+                this.updateSharedFeed(true);
+            }
+        });
     };
 
     $app.methods.updateFriendships = function (ref) {
@@ -10553,9 +10558,13 @@ speechSynthesis.getVoices();
             return;
         }
         if (ctx.displayName !== ref.displayName) {
-            if (ctx.displayName) {
-                var friendLogHistory = {
-                    created_at: new Date().toJSON(),
+            API.getFriendStatus({
+                userId: ref.id
+            }).then((args) => {
+                if (args.json.isFriend) {
+                    if (ctx.displayName) {
+                        var friendLogHistory = {
+                            created_at: new Date().toJSON(),
                     type: 'DisplayName',
                     userId: ref.id,
                     displayName: ref.displayName,
@@ -10580,8 +10589,10 @@ speechSynthesis.getVoices();
             this.friendLog.set(ref.id, friendLogCurrent);
             database.setFriendLogCurrent(friendLogCurrent);
             ctx.displayName = ref.displayName;
-            this.notifyMenu('friendLog');
-            this.updateSharedFeed(true);
+                    this.notifyMenu('friendLog');
+                    this.updateSharedFeed(true);
+                }
+            });
         }
         if (
             ref.$trustLevel &&
