@@ -573,22 +573,21 @@ Vue.component('marquee-text', MarqueeText);
     };
 
     $app.methods.addEntryHudFeed = function (json) {
-        var {displayName, text, color, avatar, inCache} = JSON.parse(json);
+        var data = JSON.parse(json);
         var combo = 1;
         this.hudFeed.forEach((item) => {
-            if (item.displayName === displayName && item.text === text) {
+            if (
+                item.displayName === data.displayName &&
+                item.text === data.text
+            ) {
                 combo = item.combo + 1;
                 removeFromArray(this.hudFeed, item);
             }
         });
         this.hudFeed.unshift({
             time: Date.now(),
-            displayName,
-            text,
             combo,
-            color,
-            avatar,
-            inCache
+            ...data
         });
         this.cleanHudFeed();
     };

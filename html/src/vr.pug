@@ -428,12 +428,22 @@ html
                 .hud-feed
                     div(v-for="feed in hudFeed")
                         .item #[span(v-if="feed.isMaster") 👑]<strong>{{ feed.displayName }}</strong>
-                            span(v-if="feed.avatar")
+                            span(v-if="feed.type === 'AvatarChange'")
                                 span(style="margin-left:10px") ChangeAvatar
                                 span(v-if="!feed.inCache" style="color:#aaa;margin-left:10px") #[i.el-icon-download]
                                 span(v-text="feed.avatar.name" style="margin-left:10px")
-                            span(v-else-if="feed.color === 'yellow'" style="color:yellow;margin-left:10px") {{ feed.text }}
-                            span(v-else style="margin-left:10px") {{ feed.text }}
+                                span(v-if="feed.avatar.releaseStatus === 'public'" style="margin-left:10px;color:#67c23a") (Public)
+                                span(v-else-if="feed.avatar.releaseStatus === 'private'" style="margin-left:10px;color:#e6a23c") (Private)
+                            template(v-else-if="feed.type === 'ChangeStatus'")
+                                span(style="margin-left:10px") ChangeStatus
+                                    template(v-if="feed.status !== feed.previousStatus")
+                                        i.x-user-status(:class="statusClass(feed.previousStatus)" style="margin-left:10px;width:20px;height:20px")
+                                        span
+                                            i.el-icon-right
+                                        i.x-user-status(:class="statusClass(feed.status)" style="width:20px;height:20px")
+                                    span(v-if="feed.statusDescription !== feed.previousStatusDescription" v-text="feed.statusDescription" style="margin-left:10px")
+                            span(v-else-if="feed.color === 'yellow'" v-text="feed.text" style="color:yellow;margin-left:10px")
+                            span(v-else style="margin-left:10px" v-text="feed.text")
                             template(v-if="feed.combo > 1")
                                 span.combo(style="margin-left:10px") x{{ feed.combo }}
                 .hud-timeout(v-if="hudTimeout.length > 0")
