@@ -6018,13 +6018,13 @@ speechSynthesis.getVoices();
                     })
                     .then(() => {
                         API.login({
-                        username: loginParmas.username,
-                        password: loginParmas.password,
-                        endpoint: loginParmas.endpoint
-                    })
-                        .catch(() => {
-                            this.loginForm.loading = false;
-                            API.logout();
+                            username: loginParmas.username,
+                            password: loginParmas.password,
+                            endpoint: loginParmas.endpoint
+                        })
+                            .catch(() => {
+                                this.loginForm.loading = false;
+                                API.logout();
                             })
                             .then(() => {
                                 this.loginForm.loading = false;
