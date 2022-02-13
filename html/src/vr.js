@@ -77,7 +77,7 @@ Vue.component('marquee-text', MarqueeText);
 
     Vue.component('location', {
         template:
-            '<span>{{ text }}<slot></slot><span class="famfamfam-flags" :class="region" style="display:inline-block;margin-left:5px"></span></span>',
+            '<span>{{ text }}<slot></slot><span class="famfamfam-flags" :class="region" style="display:inline-block;margin-left:5px"></span><i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
         props: {
             location: String,
             hint: {
@@ -88,7 +88,8 @@ Vue.component('marquee-text', MarqueeText);
         data() {
             return {
                 text: this.location,
-                region: this.region
+                region: this.region,
+                strict: this.strict
             };
         },
         methods: {
@@ -129,6 +130,7 @@ Vue.component('marquee-text', MarqueeText);
                         this.region = 'flag-icon-usw';
                     }
                 }
+                this.strict = L.strict;
             }
         },
         watch: {
@@ -216,7 +218,8 @@ Vue.component('marquee-text', MarqueeText);
             hiddenId: null,
             privateId: null,
             friendsId: null,
-            canRequestInvite: false
+            canRequestInvite: false,
+            strict: false
         };
         if (_tag === 'offline') {
             ctx.isOffline = true;
@@ -243,6 +246,8 @@ Vue.component('marquee-text', MarqueeText);
                             ctx.canRequestInvite = true;
                         } else if (key === 'region') {
                             ctx.region = value;
+                        } else if (key === 'strict') {
+                            ctx.strict = true;
                         }
                     } else {
                         ctx.instanceName = s;
@@ -346,7 +351,7 @@ Vue.component('marquee-text', MarqueeText);
             } else {
                 this.lastLocationTimer = '';
             }
-            if (this.lastLocation.onlineForTimer !== 0) {
+            if (this.lastLocation.onlineForTimer) {
                 this.onlineForTimer = timeToText(
                     Date.now() - this.lastLocation.onlineFor
                 );
