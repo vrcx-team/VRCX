@@ -14820,9 +14820,9 @@ speechSynthesis.getVoices();
             D.userId = configRepository.getString('instanceDialogUserId');
         }
         D.strict = false;
-        if (configRepository.getBool('instanceDialogStrict') !== null) {
-            D.strict = configRepository.getBool('instanceDialogStrict');
-        }
+        // if (configRepository.getBool('instanceDialogStrict') !== null) {
+        //     D.strict = configRepository.getBool('instanceDialogStrict');
+        // }
         this.buildInstance();
         D.visible = true;
     };

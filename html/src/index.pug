@@ -1967,8 +1967,8 @@ html
                             el-radio-button(label="friends")
                             el-radio-button(label="invite+")
                             el-radio-button(label="invite")
-                    el-form-item(label="Strict" v-if="newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite'")
-                        el-checkbox(v-model="newInstanceDialog.strict") Prevent non friends joining via URL/Instance ID
+                    //- el-form-item(label="Strict" v-if="newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite'")
+                    //-     el-checkbox(v-model="newInstanceDialog.strict") Prevent non friends joining via URL/Instance ID
                     el-form-item(label="Region")
                         el-radio-group(v-model="newInstanceDialog.region" size="mini" @change="buildInstance")
                             el-radio-button(label="US West")
