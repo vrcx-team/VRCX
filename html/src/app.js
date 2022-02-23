@@ -19163,6 +19163,28 @@ speechSynthesis.getVoices();
         );
     };
 
+    $app.data.mouseDownClass = [];
+    $app.data.mouseUpClass = [];
+    $app.methods.dialogMouseDown = function (e) {
+        this.mouseDownClass = [...e.target.classList];
+    };
+    $app.methods.dialogMouseUp = function (e) {
+        this.mouseUpClass = [...e.target.classList];
+    };
+    $app.methods.beforeDialogClose = function (done) {
+        if (
+            this.mouseDownClass.includes('el-dialog__wrapper') &&
+            this.mouseUpClass.includes('el-dialog__wrapper')
+        ) {
+            done();
+        } else if (
+            this.mouseDownClass.includes('el-dialog__close') &&
+            this.mouseUpClass.includes('el-dialog__close')
+        ) {
+            done();
+        }
+    };
+
     $app = new Vue($app);
     window.$app = $app;
 })();

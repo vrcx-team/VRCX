@@ -1366,7 +1366,7 @@ html
                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
 
             //- dialog: user
-            el-dialog.x-dialog.x-user-dialog(ref="userDialog" :visible.sync="userDialog.visible" :show-close="false" width="770px")
+            el-dialog.x-dialog.x-user-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="userDialog" :visible.sync="userDialog.visible" :show-close="false" width="770px")
                 div(v-loading="userDialog.loading")
                     div(style="display:flex")
                         el-popover(v-if="userDialog.ref.profilePicOverride" placement="right" width="500px" trigger="click")
@@ -1606,7 +1606,7 @@ html
                                         span(v-if="!scope.data.children" v-text="scope.data.value")
 
             //- dialog: world
-            el-dialog.x-dialog.x-world-dialog(ref="worldDialog" :visible.sync="worldDialog.visible" :show-close="false" width="770px")
+            el-dialog.x-dialog.x-world-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="worldDialog" :visible.sync="worldDialog.visible" :show-close="false" width="770px")
                 div(v-loading="worldDialog.loading")
                     div(style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click")
@@ -1777,7 +1777,7 @@ html
                                         span(v-if="!scope.data.children" v-text="scope.data.value")
 
             //- dialog: avatar
-            el-dialog.x-dialog.x-avatar-dialog(ref="avatarDialog" :visible.sync="avatarDialog.visible" :show-close="false" width="600px")
+            el-dialog.x-dialog.x-avatar-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarDialog" :visible.sync="avatarDialog.visible" :show-close="false" width="600px")
                 div(v-loading="avatarDialog.loading")
                     div(style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click")
@@ -1861,12 +1861,12 @@ html
                                         span(v-if="!scope.data.children" v-text="scope.data.value")
 
             //- dialog: favorite
-            el-dialog.x-dialog(ref="favoriteDialog" :visible.sync="favoriteDialog.visible" title="Choose Group" width="300px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="favoriteDialog" :visible.sync="favoriteDialog.visible" title="Choose Group" width="300px")
                 div(v-loading="favoriteDialog.loading")
                     el-button(v-for="group in favoriteDialog.groups" :key="group.name" style="display:block;width:100%;margin:10px 0" @click="addFavorite(group)" :disabled="group.count >= group.capacity") {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
 
             //- dialog: invite
-            el-dialog.x-dialog(ref="inviteDialog" :visible.sync="inviteDialog.visible" title="Invite" width="450px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" title="Invite" width="450px")
                 div(v-loading="inviteDialog.loading")
                     location(:location="inviteDialog.worldId" :link="false")
                     el-select(v-model="inviteDialog.userIds" multiple clearable placeholder="Choose Friends" filterable :disabled="inviteDialog.loading" style="width:100%;margin-top:15px")
@@ -1905,7 +1905,7 @@ html
                     el-button(type="primary" size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="sendInvite()") Invite
 
             //- dialog: social status
-            el-dialog.x-dialog(ref="socialStatusDialog" :visible.sync="socialStatusDialog.visible" title="Social Status" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="socialStatusDialog" :visible.sync="socialStatusDialog.visible" title="Social Status" width="400px")
                 div(v-loading="socialStatusDialog.loading")
                     el-collapse(style="border:0")
                         el-collapse-item
@@ -1930,7 +1930,7 @@ html
                     el-button(type="primary" size="small" :disabled="socialStatusDialog.loading" @click="saveSocialStatus") Update
 
             //- dialog: language
-            el-dialog.x-dialog(ref="languageDialog" :visible.sync="languageDialog.visible" title="Language" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="languageDialog" :visible.sync="languageDialog.visible" title="Language" width="400px")
                 div(v-loading="languageDialog.loading")
                     div(style="margin:5px 0")
                         el-tag(v-for="item in API.currentUser.$languages" :key="item.key" size="small" type="info" effect="plain" closable @close="removeUserLanguage(item.key)" style="margin-right:5px")
@@ -1947,7 +1947,7 @@ html
                         el-button(@click="languageDialog.languageValue='';languageDialog.languageChoice=true" size="mini") Add Language
 
             //- dialog: bio
-            el-dialog.x-dialog(ref="bioDialog" :visible.sync="bioDialog.visible" title="Bio" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="bioDialog" :visible.sync="bioDialog.visible" title="Bio" width="400px")
                 div(v-loading="bioDialog.loading")
                     el-input(type="textarea" v-model="bioDialog.bio" size="mini" maxlength="512" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="Please input a bio")
                     el-input(v-for="(link, index) in bioDialog.bioLinks" :key="index" :value="link" v-model="bioDialog.bioLinks[index]" size="small" style="margin-top:5px")
@@ -1958,7 +1958,7 @@ html
                     el-button(type="primary" size="small" :disabled="bioDialog.loading" @click="saveBio") Update
 
             //- dialog: new instance
-            el-dialog.x-dialog(ref="newInstanceDialog" :visible.sync="newInstanceDialog.visible" title="New Instance" width="600px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="newInstanceDialog" :visible.sync="newInstanceDialog.visible" title="New Instance" width="600px")
                 el-form(:model="newInstanceDialog" label-width="130px")
                     el-form-item(label="Access Type")
                         el-radio-group(v-model="newInstanceDialog.accessType" size="mini" @change="buildInstance")
@@ -2030,7 +2030,7 @@ html
                     el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location)") Launch
 
             //- dialog: launch options
-            el-dialog.x-dialog(ref="launchOptionsDialog" :visible.sync="launchOptionsDialog.visible" title="Launch Options" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchOptionsDialog" :visible.sync="launchOptionsDialog.visible" title="Launch Options" width="400px")
                 div(style='font-size:12px;')
                     | These options are for advanced users only. #[br]
                     | to change fps: --fps=&lt;N&gt; e.g.) #[el-tag(size="mini") --fps=144]
@@ -2042,7 +2042,7 @@ html
                         el-button(type="primary" size="small" :disabled="launchOptionsDialog.loading" @click="updateLaunchOptions" style="margin-left:auto") OK
 
             //- dialog: VRChat Config JSON
-            el-dialog.x-dialog(ref="VRChatConfigDialog" :visible.sync="VRChatConfigDialog.visible" title="VRChat Config JSON" width="420px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="VRChatConfigDialog" :visible.sync="VRChatConfigDialog.visible" title="VRChat Config JSON" width="420px")
                 div(style='font-size:12px;word-break:keep-all')
                     | These options are for advanced users only. #[br]
                     | Leave field empty to set as default, game restart required to apply settings.
@@ -2088,7 +2088,7 @@ html
                     el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="saveVRChatConfigFile") Save
 
             //- dialog: YouTube Api Dialog
-            el-dialog.x-dialog(ref="youTubeApiDialog" :visible.sync="youTubeApiDialog.visible" title="YouTube API" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="youTubeApiDialog" :visible.sync="youTubeApiDialog.visible" title="YouTube API" width="400px")
                 div(style='font-size:12px;')
                     | Enter your YouTube API Key (optional) #[br]
                 el-input(type="textarea" v-model="youTubeApiKey" placeholder="YouTube API Key" maxlength="39" show-word-limit style="dispaly:block;margin-top:10px")
@@ -2098,7 +2098,7 @@ html
                         el-button(type="primary" size="small" @click="testYouTubeApiKey" style="margin-left:auto") Save
 
             //- dialog: Set World Tags
-            el-dialog.x-dialog(ref="setWorldTagsDialog" :visible.sync="setWorldTagsDialog.visible" title="Set World Tags" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="setWorldTagsDialog" :visible.sync="setWorldTagsDialog.visible" title="Set World Tags" width="400px")
                 el-checkbox(v-model="setWorldTagsDialog.debugAllowed") Enable world debugging for others
                 div(style='font-size:12px;margin-top:10px')
                     | Enter tags comma separated #[br]
@@ -2109,7 +2109,7 @@ html
                         el-button(type="primary" size="small" @click="saveSetWorldTagsDialog") Save
 
             //- dialog: Cache Download
-            el-dialog.x-dialog(ref="downloadDialog" :visible.sync="downloadDialog.visible" title="Download History" width="770px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="downloadDialog" :visible.sync="downloadDialog.visible" title="Download History" width="770px")
                 div(v-if="downloadInProgress && downloadCurrent.ref")
                     span.x-link(v-if="downloadCurrent.type === 'Avatar'" @click="showAvatarDialog(downloadCurrent.location)" v-text="downloadCurrent.ref.name")
                     span.x-link(v-else @click="showWorldDialog(downloadCurrent.location)" v-text="downloadCurrent.ref.name")
@@ -2152,7 +2152,7 @@ html
                     el-button(size="small" @click="downloadDialog.visible = false") Close
 
             //- dialog: update VRCX
-            el-dialog.x-dialog(ref="VRCXUpdateDialog" :visible.sync="VRCXUpdateDialog.visible" title="VRCX Updater" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="VRCXUpdateDialog" :visible.sync="VRCXUpdateDialog.visible" title="VRCX Updater" width="400px")
                 div(v-loading="checkingForVRCXUpdate" style="margin-top:15px")
                     template(v-if="VRCXUpdateDialog.updatePending")
                         span Update ready for install, restart VRCX to apply.
@@ -2169,7 +2169,7 @@ html
                     el-button(v-if="VRCXUpdateDialog.updatePending" type="primary" size="small" @click="restartVRCX") Install
 
             //- dialog: launch
-            el-dialog.x-dialog(ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="400px")
                 div #[span(v-text="launchDialog.shortUrl" style="word-break:break-all;font-size:12px")]
                     el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
                         el-button(v-if="launchDialog.shortUrl" @click="copyInstanceUrl(launchDialog.shortUrl)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
@@ -2182,21 +2182,21 @@ html
                     el-button(type="primary" size="small" @click="launchGame(locationToLaunchArg(launchDialog.location))") Launch
 
             //- dialog: export friends list
-            el-dialog.x-dialog(:visible.sync="exportFriendsListDialog" title="Export Friends List" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportFriendsListDialog" title="Export Friends List" width="650px")
                 el-input(type="textarea" v-model="exportFriendsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: export avatars list
-            el-dialog.x-dialog(:visible.sync="exportAvatarsListDialog" title="Export Own Avatars" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportAvatarsListDialog" title="Export Own Avatars" width="650px")
                 el-input(type="textarea" v-model="exportAvatarsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: Discord username list
-            el-dialog.x-dialog(:visible.sync="discordNamesDialogVisible" title="Discord Names" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="discordNamesDialogVisible" title="Discord Names" width="650px")
                 div(style='font-size:12px;')
                     | Click load missing entries in the Friends List tab to search entire friends list
                 el-input(type="textarea" v-model="discordNamesContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px")
 
             //- dialog: Notification position
-            el-dialog.x-dialog(ref="notificationPositionDialog" :visible.sync="notificationPositionDialog.visible" title="Notification Position" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="notificationPositionDialog" :visible.sync="notificationPositionDialog.visible" title="Notification Position" width="400px")
                 div(style='font-size:12px;')
                     | Choose a notification position.
                 svg(version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 200" style="margin-top:15px;" xml:space="preserve")
@@ -2217,7 +2217,7 @@ html
                         el-button(type="primary" size="small" style="margin-left:auto" @click="notificationPositionDialog.visible = false") OK
 
             //- dialog: Noty feed filters
-            el-dialog.x-dialog(ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="500px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="500px")
                 .toggle-list
                     .toggle-item
                         span.toggle-name OnPlayerJoining
@@ -2399,7 +2399,7 @@ html
                     el-button(type="primary" size="small" style="margin-left:10px" @click="saveSharedFeedFilters") Save
 
             //- dialog: wrist feed filters
-            el-dialog.x-dialog(ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="500px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="500px")
                 .toggle-list
                     .toggle-item
                         span.toggle-name Self Location
@@ -2586,7 +2586,7 @@ html
                     el-button(type="primary" size="small" @click="saveSharedFeedFilters") Save
 
             //- dialog: Edit Invite Message
-            el-dialog.x-dialog(ref="editInviteMessageDialog" :visible.sync="editInviteMessageDialog.visible" title="Edit Invite Message" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="editInviteMessageDialog" :visible.sync="editInviteMessageDialog.visible" title="Edit Invite Message" width="400px")
                 div(style='font-size:12px')
                     span 1 hour edit cool down time.
                 el-input(type="textarea" v-model="editInviteMessageDialog.newMessage" size="mini" maxlength="64" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
@@ -2595,7 +2595,7 @@ html
                     el-button(type="primary" size="small" @click="saveEditInviteMessage") Save
 
             //- dialog: Edit And Send Invite Response Message
-            el-dialog.x-dialog(ref="editAndSendInviteResponseDialog" :visible.sync="editAndSendInviteResponseDialog.visible" title="Edit and Send Invite Message" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="editAndSendInviteResponseDialog" :visible.sync="editAndSendInviteResponseDialog.visible" title="Edit and Send Invite Message" width="400px")
                 div(style='font-size:12px')
                     span 1 hour edit cool down time.
                 el-input(type="textarea" v-model="editAndSendInviteResponseDialog.newMessage" size="mini" maxlength="64" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
@@ -2604,7 +2604,7 @@ html
                     el-button(type="primary" size="small" @click="saveEditAndSendInviteResponse") Send
 
             //- dialog Table: Send Invite Response Message
-            el-dialog.x-dialog(ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" title="Send Invite Response Message" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" title="Send Invite Response Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-bind="inviteResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
@@ -2621,7 +2621,7 @@ html
                     el-button(type="small" @click="API.refreshInviteMessageTableData('response')") Refresh
 
             //- dialog Table: Send Invite Request Response Message
-            el-dialog.x-dialog(ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" title="Send Invite Request Response Message" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" title="Send Invite Request Response Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-bind="inviteRequestResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
@@ -2638,7 +2638,7 @@ html
                     el-button(type="small" @click="API.refreshInviteMessageTableData('requestResponse')") Refresh
 
             //- dialog: Send Invite Response Message Confirm
-            el-dialog.x-dialog(ref="sendInviteResponseConfirmDialog" :visible.sync="sendInviteResponseConfirmDialog.visible" title="Send Invite Response Message" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteResponseConfirmDialog" :visible.sync="sendInviteResponseConfirmDialog.visible" title="Send Invite Response Message" width="400px")
                 div(style='font-size:12px')
                     span Are you sure you want to send?
                 template(#footer)
@@ -2646,7 +2646,7 @@ html
                     el-button(type="primary" size="small" @click="sendInviteResponseConfirm") Confirm
 
             //- dialog Table: Send Invite Message
-            el-dialog.x-dialog(ref="sendInviteDialog" :visible.sync="sendInviteDialogVisible" title="Send Invite Message" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteDialog" :visible.sync="sendInviteDialogVisible" title="Send Invite Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-bind="inviteMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
@@ -2663,7 +2663,7 @@ html
                     el-button(type="small" @click="API.refreshInviteMessageTableData('message')") Refresh
 
             //- dialog Table: Send Invite Request Message
-            el-dialog.x-dialog(ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" title="Send Invite Request Message" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" title="Send Invite Request Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-bind="inviteRequestMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
@@ -2680,7 +2680,7 @@ html
                     el-button(type="small" @click="API.refreshInviteMessageTableData('request')") Refresh
 
             //- dialog: Send Invite Message Confirm
-            el-dialog.x-dialog(ref="sendInviteConfirmDialog" :visible.sync="sendInviteConfirmDialog.visible" title="Send Invite Message" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteConfirmDialog" :visible.sync="sendInviteConfirmDialog.visible" title="Send Invite Message" width="400px")
                 div(style='font-size:12px')
                     span Are you sure you want to send?
                 template(#footer)
@@ -2688,7 +2688,7 @@ html
                     el-button(type="primary" size="small" @click="sendInviteConfirm") Confirm
 
             //- dialog: Edit And Send Invite Message
-            el-dialog.x-dialog(ref="editAndSendInviteDialog" :visible.sync="editAndSendInviteDialog.visible" title="Edit and Send Invite Message" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="editAndSendInviteDialog" :visible.sync="editAndSendInviteDialog.visible" title="Edit and Send Invite Message" width="400px")
                 div(style='font-size:12px')
                     span 1 hour edit cool down time.
                 el-input(type="textarea" v-model="editAndSendInviteDialog.newMessage" size="mini" maxlength="64" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
@@ -2697,7 +2697,7 @@ html
                     el-button(type="primary" size="small" @click="saveEditAndSendInvite") Send
 
             //- dialog: Change avatar image
-            el-dialog.x-dialog(ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" title="Change Avatar Image" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" title="Change Avatar Image" width="800px")
                 div(v-loading="changeAvatarImageDialogLoading")
                     input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
                     el-button-group(style="padding-bottom:10px")
@@ -2710,7 +2710,7 @@ html
                             img.image(v-lazy="image.file.url")
 
             //- dialog: Change world image
-            el-dialog.x-dialog(ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" title="Change World Image" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" title="Change World Image" width="800px")
                 div(v-loading="changeWorldImageDialogLoading")
                     input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
                     el-button-group(style="padding-bottom:10px")
@@ -2723,7 +2723,7 @@ html
                             img.image(v-lazy="image.file.url")
 
             //- dialog: Display previous avatar/world images
-            el-dialog.x-dialog(ref="previousImagesDialog" :visible.sync="previousImagesDialogVisible" title="Previous Images" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousImagesDialog" :visible.sync="previousImagesDialogVisible" title="Previous Images" width="800px")
                 div
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
                         el-popover.x-change-image-item(placement="right" width="500px" trigger="click")
@@ -2731,7 +2731,7 @@ html
                             img.x-link(v-lazy="image.file.url" style="width:500px;height:375px" @click="openExternalLink(image.file.url)")
 
             //- dialog: Gallery/VRCPlusIcons
-            el-dialog.x-dialog(ref="galleryDialog" :visible.sync="galleryDialogVisible" title="Gallery and Icons" width="100%")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="galleryDialog" :visible.sync="galleryDialogVisible" title="Gallery and Icons" width="100%")
                 el-tabs(type="card")
                     el-tab-pane(v-loading="galleryDialogGalleryLoading")
                         span(slot="label") Gallery
@@ -2765,7 +2765,7 @@ html
                                 el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                 
             //- dialog Table: Previous Instances User
-            el-dialog.x-dialog(ref="previousInstancesUserDialog" :visible.sync="previousInstancesUserDialog.visible" title="Previous Instances" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesUserDialog" :visible.sync="previousInstancesUserDialog.visible" title="Previous Instances" width="800px")
                 span(v-text="previousInstancesUserDialog.userRef.displayName" style="font-size:14px")
                 el-input(v-model="previousInstancesUserDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
                 data-tables(v-bind="previousInstancesUserDialogTable" v-loading="previousInstancesUserDialog.loading" style="margin-top:10px")
@@ -2790,7 +2790,7 @@ html
                             el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogUserInstance(scope.row)")
                             
             //- dialog Table: Previous Instances World
-            el-dialog.x-dialog(ref="previousInstancesWorldDialog" :visible.sync="previousInstancesWorldDialog.visible" title="Previous Instances" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesWorldDialog" :visible.sync="previousInstancesWorldDialog.visible" title="Previous Instances" width="800px")
                 span(v-text="previousInstancesWorldDialog.worldRef.name" style="font-size:14px")
                 el-input(v-model="previousInstancesWorldDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
                 data-tables(v-bind="previousInstancesWorldDialogTable" v-loading="previousInstancesWorldDialog.loading" style="margin-top:10px")
@@ -2820,7 +2820,7 @@ html
                             el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogWorldInstance(scope.row)")
 
             //- dialog: open source software notice
-            el-dialog.x-dialog(:visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
                 div(style="height:350px;overflow:hidden scroll;word-break:break-all")
                     div
                         span VRCX is based on open source software. It was possible because of their contribution.
