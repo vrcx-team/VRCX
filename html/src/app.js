@@ -9092,6 +9092,7 @@ speechSynthesis.getVoices();
         var ref = this.photonLobbyUserData.get(photonId);
         if (
             typeof ref !== 'undefined' &&
+            photonId !== this.photonLobbyCurrentUser &&
             (photonUser.status !== ref.status ||
                 photonUser.statusDescription !== ref.statusDescription)
         ) {

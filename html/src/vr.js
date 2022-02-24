@@ -351,7 +351,7 @@ Vue.component('marquee-text', MarqueeText);
             } else {
                 this.lastLocationTimer = '';
             }
-            if (this.lastLocation.onlineForTimer) {
+            if (this.lastLocation.onlineFor) {
                 this.onlineForTimer = timeToText(
                     Date.now() - this.lastLocation.onlineFor
                 );
