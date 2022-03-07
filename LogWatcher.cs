@@ -401,6 +401,8 @@ namespace VRCX
                     userDisplayName
                 });
 
+                logContext.onJoinPhotonDisplayName = userDisplayName;
+
                 return true;
             }
 
@@ -713,10 +715,10 @@ namespace VRCX
             // 2021.11.02 02:21:41 Log        -  [Behaviour] Configuring remote player VRCPlayer[Remote] 22349737 1194
             // 2021.11.02 02:21:41 Log        -  [Behaviour] Initialized player Natsumi-sama
 
-            // 2021.11.10 08:06:12 Log        -  [Behaviour] Natsumi-sama: Limb IK
-            // 2021.11.10 08:06:12 Log        -  [Behaviour] NatsumiDa: 3 Point IK
             // 2021.11.10 08:10:28 Log        -  [Behaviour] Initialize Limb Avatar (UnityEngine.Animator) VRCPlayer[Remote] 78614426 59 (ǄǄǄǅǄǅǅǄǅǄǄǅǅǄǅǄǅǅǅǄǄǄǅǄǄǅǅǄǅǅǄǅǅǄǅǅǅǅǄǅǄǅǄǄǄǄǅ) False Loading
             // 2021.11.10 08:57:32 Log        -  [Behaviour] Initialize Limb Avatar (UnityEngine.Animator) VRCPlayer[Local] 59136629 1 (ǄǄǄǅǄǅǅǄǅǄǄǅǅǄǅǄǅǅǅǄǄǄǅǄǄǅǅǄǅǅǄǅǅǄǅǅǅǅǄǅǄǅǄǄǄǄǅ) True Loading
+
+            // 2022.03.05 11:29:16 Log        -  [Behaviour] Initialize ThreePoint Avatar (UnityEngine.Animator) VRCPlayer[Local] 50608765 1 (ǄǅǄǄǄǅǄǅǅǄǅǄǄǅǅǄǄǄǅǄǄǄǅǄǅǄǅǅǄǄǄǄǅǅǄǄǄǄǅǅǄǄǅǄǄǅǅ) True Custom
 
             if (line.Contains("] Initialize ") && line.Contains(" Avatar (UnityEngine.Animator) VRCPlayer["))
             {
@@ -752,28 +754,6 @@ namespace VRCX
                     });
                     logContext.onJoinPhotonDisplayName = String.Empty;
 
-                    return true;
-                }
-            }
-
-            if (line.Contains(": 3 Point IK") || line.Contains(": Limb IK"))
-            {
-                var lineOffset = line.IndexOf("] ");
-                if (lineOffset < 0)
-                    return false;
-                lineOffset += 2;
-
-                if (line.Contains(": 3 Point IK"))
-                {
-                    var endPos = line.LastIndexOf(": 3 Point IK");
-                    logContext.onJoinPhotonDisplayName = line.Substring(lineOffset, endPos - lineOffset);
-                    return true;
-                }
-
-                if (line.Contains(": Limb IK"))
-                {
-                    var endPos = line.LastIndexOf(": Limb IK");
-                    logContext.onJoinPhotonDisplayName = line.Substring(lineOffset, endPos - lineOffset);
                     return true;
                 }
             }
