@@ -10663,26 +10663,38 @@ speechSynthesis.getVoices();
             return;
         }
         if (ctx.displayName !== ref.displayName) {
+            if (ctx.displayName) {
+                var friendLogHistory = {
+                    created_at: new Date().toJSON(),
+                            type: 'DisplayName',
+                            userId: ref.id,
+                    displayName: ref.displayName,
+                    previousDisplayName: ctx.displayName
+                };
+                this.friendLogTable.data.push(friendLogHistory);
+                database.addFriendLogHistory(friendLogHistory);
+                this.queueFriendLogNoty(friendLogHistory);
+                var friendLogCurrent = {
+                    userId: ref.id,
+                    displayName: ref.displayName,
+                    trustLevel: ref.$trustLevel
+                };
+                this.friendLog.set(ref.id, friendLogCurrent);
+                database.setFriendLogCurrent(friendLogCurrent);
+                ctx.displayName = ref.displayName;
+                this.notifyMenu('friendLog');
+                this.updateSharedFeed(true);
+            }
             API.getFriendStatus({
                 userId: ref.id
             }).then((args) => {
-                if (args.json.isFriend && this.friendLog.has(ref.id)) {
-                    if (ctx.displayName) {
-                        var friendLogHistory = {
-                            created_at: new Date().toJSON(),
-                            type: 'DisplayName',
-                            userId: ref.id,
-                            displayName: ref.displayName,
-                            previousDisplayName: ctx.displayName
-                        };
-                    } else {
-                        var friendLogHistory = {
-                            created_at: new Date().toJSON(),
-                            type: 'Friend',
-                            userId: ref.id,
-                            displayName: ref.displayName
-                        };
-                    }
+                if (args.json.isFriend && this.friendLog.has(ref.id) && !ctx.displayName) {
+                    var friendLogHistory = {
+                        created_at: new Date().toJSON(),
+                        type: 'Friend',
+                        userId: ref.id,
+                        displayName: ref.displayName
+                    };
                     this.friendLogTable.data.push(friendLogHistory);
                     database.addFriendLogHistory(friendLogHistory);
                     this.queueFriendLogNoty(friendLogHistory);
