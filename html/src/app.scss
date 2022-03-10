@@ -184,12 +184,16 @@ a {
 .x-menu-container {
     flex: none;
     overflow: hidden auto;
-    background: #383838;
+    background: #f8f8f8;
 }
 
 .x-menu-container > .el-menu {
     background: 0;
     border: 0;
+}
+
+.el-menu-item {
+    color: #303133;
 }
 
 .el-menu-item.is-active::before {
@@ -199,7 +203,7 @@ a {
     width: 2px;
     height: 48px;
     content: '';
-    background: #dcdfe6;
+    background: #303133;
 }
 
 .el-menu-item.notify::after {
@@ -209,7 +213,7 @@ a {
     width: 4px;
     height: 4px;
     content: '';
-    background: #ebeef5;
+    background: #303133;
     border-radius: 50%;
 }
 

@@ -177,6 +177,18 @@ button {
     background: #202020;
 }
 
+.el-menu-item {
+    color: #f8f8f8;
+}
+
+.el-menu-item.notify::after {
+    background: #ebeef5;
+}
+
+.el-menu-item.is-active::before {
+    background: #dcdfe6;
+}
+
 .el-menu-item:focus,
 .el-menu-item:hover {
     background-color: #505050;
@@ -364,4 +376,8 @@ button {
 
 .x-login-container p {
     color: #ddd;
+}
+
+.x-menu-container {
+    background: #303133;
 }
