@@ -10664,16 +10664,16 @@ speechSynthesis.getVoices();
         }
         if (ctx.displayName !== ref.displayName) {
             if (ctx.displayName) {
-                var friendLogHistory = {
+                var friendLogHistoryDisplayName = {
                     created_at: new Date().toJSON(),
-                            type: 'DisplayName',
-                            userId: ref.id,
+                    type: 'DisplayName',
+                    userId: ref.id,
                     displayName: ref.displayName,
                     previousDisplayName: ctx.displayName
                 };
-                this.friendLogTable.data.push(friendLogHistory);
-                database.addFriendLogHistory(friendLogHistory);
-                this.queueFriendLogNoty(friendLogHistory);
+                this.friendLogTable.data.push(friendLogHistoryDisplayName);
+                database.addFriendLogHistory(friendLogHistoryDisplayName);
+                this.queueFriendLogNoty(friendLogHistoryDisplayName);
                 var friendLogCurrent = {
                     userId: ref.id,
                     displayName: ref.displayName,
@@ -10688,23 +10688,27 @@ speechSynthesis.getVoices();
             API.getFriendStatus({
                 userId: ref.id
             }).then((args) => {
-                if (args.json.isFriend && this.friendLog.has(ref.id) && !ctx.displayName) {
-                    var friendLogHistory = {
+                if (
+                    args.json.isFriend &&
+                    this.friendLog.has(ref.id) &&
+                    !ctx.displayName
+                ) {
+                    var friendLogHistoryFriend = {
                         created_at: new Date().toJSON(),
                         type: 'Friend',
                         userId: ref.id,
                         displayName: ref.displayName
                     };
-                    this.friendLogTable.data.push(friendLogHistory);
-                    database.addFriendLogHistory(friendLogHistory);
-                    this.queueFriendLogNoty(friendLogHistory);
-                    var friendLogCurrent = {
+                    this.friendLogTable.data.push(friendLogHistoryFriend);
+                    database.addFriendLogHistory(friendLogHistoryFriend);
+                    this.queueFriendLogNoty(friendLogHistoryFriend);
+                    var friendLogCurrent1 = {
                         userId: ref.id,
                         displayName: ref.displayName,
                         trustLevel: ref.$trustLevel
                     };
-                    this.friendLog.set(ref.id, friendLogCurrent);
-                    database.setFriendLogCurrent(friendLogCurrent);
+                    this.friendLog.set(ref.id, friendLogCurrent1);
+                    database.setFriendLogCurrent(friendLogCurrent1);
                     ctx.displayName = ref.displayName;
                     this.notifyMenu('friendLog');
                     this.updateSharedFeed(true);
@@ -10716,7 +10720,7 @@ speechSynthesis.getVoices();
             ctx.trustLevel &&
             ctx.trustLevel !== ref.$trustLevel
         ) {
-            var friendLogHistory = {
+            var friendLogHistoryTrustLevel = {
                 created_at: new Date().toJSON(),
                 type: 'TrustLevel',
                 userId: ref.id,
@@ -10724,16 +10728,16 @@ speechSynthesis.getVoices();
                 trustLevel: ref.$trustLevel,
                 previousTrustLevel: ctx.trustLevel
             };
-            this.friendLogTable.data.push(friendLogHistory);
-            database.addFriendLogHistory(friendLogHistory);
-            this.queueFriendLogNoty(friendLogHistory);
-            var friendLogCurrent = {
+            this.friendLogTable.data.push(friendLogHistoryTrustLevel);
+            database.addFriendLogHistory(friendLogHistoryTrustLevel);
+            this.queueFriendLogNoty(friendLogHistoryTrustLevel);
+            var friendLogCurrent2 = {
                 userId: ref.id,
                 displayName: ref.displayName,
                 trustLevel: ref.$trustLevel
             };
-            this.friendLog.set(ref.id, friendLogCurrent);
-            database.setFriendLogCurrent(friendLogCurrent);
+            this.friendLog.set(ref.id, friendLogCurrent2);
+            database.setFriendLogCurrent(friendLogCurrent2);
             this.notifyMenu('friendLog');
             this.updateSharedFeed(true);
         }
