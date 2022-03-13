@@ -10577,7 +10577,7 @@ speechSynthesis.getVoices();
             API.getFriendStatus({
                 userId: id
             }).then((args) => {
-                if (args.json.isFriend && this.friendLog.has(id)) {
+                if (args.json.isFriend && !this.friendLog.has(id)) {
                     var friendLogHistory = {
                         created_at: new Date().toJSON(),
                         type: 'Friend',
