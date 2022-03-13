@@ -758,6 +758,28 @@ namespace VRCX
                 }
             }
 
+            if (line.Contains(": 3 Point IK") || line.Contains(": Limb IK"))
+            {
+                var lineOffset = line.IndexOf("] ");
+                if (lineOffset < 0)
+                    return false;
+                lineOffset += 2;
+
+                if (line.Contains(": 3 Point IK"))
+                {
+                    var endPos = line.LastIndexOf(": 3 Point IK");
+                    logContext.onJoinPhotonDisplayName = line.Substring(lineOffset, endPos - lineOffset);
+                    return true;
+                }
+
+                if (line.Contains(": Limb IK"))
+                {
+                    var endPos = line.LastIndexOf(": Limb IK");
+                    logContext.onJoinPhotonDisplayName = line.Substring(lineOffset, endPos - lineOffset);
+                    return true;
+                }
+            }
+
             return false;
         }
 
