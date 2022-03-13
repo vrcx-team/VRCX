@@ -189,9 +189,8 @@ Section "Uninstall"
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX"
     DeleteRegKey HKCU "Software\Classes\vrcx"
 
-    Delete "$SMPROGRAMS\VRCX.lnk"
-
     ${IfNot} ${Silent}
+        Delete "$SMPROGRAMS\VRCX.lnk"
         Delete "$DESKTOP\VRCX.lnk"
     ${EndIf}
 SectionEnd
