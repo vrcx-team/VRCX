@@ -3,10 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-using Microsoft.Win32;
 using System;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using System.IO;
 using System.Security.Cryptography;
 using System.Net;
@@ -168,11 +166,11 @@ namespace VRCX
                 if (client != null)
                 {
                     client.CancelAsync();
-            }
-            if (process != null && !process.HasExited)
-            {
-                process.Kill();
-                if (File.Exists(DownloadTempLocation))
+                }
+                if (process != null && !process.HasExited)
+                {
+                    process.Kill();
+                    if (File.Exists(DownloadTempLocation))
                         File.Delete(DownloadTempLocation);
                     if (Directory.Exists(Path.Combine(AssetBundleCacherTemp, AssetId)))
                         Directory.Delete(Path.Combine(AssetBundleCacherTemp, AssetId), true);
