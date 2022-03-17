@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading;
 
 namespace VRCX
@@ -22,6 +21,8 @@ namespace VRCX
             public long Position;
             public string RecentWorldName;
             public bool ShaderKeywordsLimitReached = false;
+            public bool AudioDeviceChanged = false;
+            public string LastAudioDevice;
             public string onJoinPhotonDisplayName;
         }
 
@@ -223,7 +224,8 @@ namespace VRCX
                                     ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) == true ||
                                     ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) == true ||
                                     ParseLogWorldVRCX(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogPhotonId(fileInfo, logContext, line, offset) == true)
+                                    ParseLogPhotonId(fileInfo, logContext, line, offset) == true ||
+                                    ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) == true)
                                 {
                                     continue;
                                 }
@@ -297,7 +299,7 @@ namespace VRCX
             {
                 var lineOffset = line.LastIndexOf("] Entering Room: ");
                 if (lineOffset < 0)
-                    return false;
+                    return true;
                 lineOffset += 17;
                 if (lineOffset >= line.Length)
                     return true;
@@ -311,7 +313,7 @@ namespace VRCX
             {
                 var lineOffset = line.LastIndexOf("] Joining ");
                 if (lineOffset < 0)
-                    return false;
+                    return true;
                 lineOffset += 10;
                 if (lineOffset >= line.Length)
                     return true;
@@ -344,7 +346,7 @@ namespace VRCX
             {
                 var lineOffset = line.LastIndexOf("] Destination fetching: ");
                 if (lineOffset < 0)
-                    return false;
+                    return true;
                 lineOffset += 24;
                 if (lineOffset >= line.Length)
                     return true;
@@ -386,7 +388,7 @@ namespace VRCX
             {
                 var lineOffset = line.LastIndexOf("] OnPlayerJoined");
                 if (lineOffset < 0)
-                    return false;
+                    return true;
                 lineOffset += 17;
                 if (lineOffset > line.Length)
                     return true;
@@ -410,7 +412,7 @@ namespace VRCX
             {
                 var lineOffset = line.LastIndexOf("] OnPlayerLeft");
                 if (lineOffset < 0)
-                    return false;
+                    return true;
                 lineOffset += 15;
                 if (lineOffset > line.Length)
                     return true;
@@ -762,7 +764,7 @@ namespace VRCX
             {
                 var lineOffset = line.IndexOf("] ");
                 if (lineOffset < 0)
-                    return false;
+                    return true;
                 lineOffset += 2;
 
                 if (line.Contains(": 3 Point IK"))
@@ -778,6 +780,47 @@ namespace VRCX
                     logContext.onJoinPhotonDisplayName = line.Substring(lineOffset, endPos - lineOffset);
                     return true;
                 }
+            }
+
+            return false;
+        }
+
+        private bool ParseLogOnAudioConfigurationChanged(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2022.03.15 03:40:34 Log        -  [Always] uSpeak: SetInputDevice 0 (3 total) 'Index HMD Mic (Valve VR Radio & HMD Mic)'
+            // 2022.03.15 04:02:22 Log        -  [Always] uSpeak: OnAudioConfigurationChanged - devicesChanged = True, resetting mic..
+            // 2022.03.15 04:02:22 Log        -  [Always] uSpeak: SetInputDevice by name 'Index HMD Mic (Valve VR Radio & HMD Mic)' (3 total)
+
+            if (line.Contains("[Always] uSpeak: OnAudioConfigurationChanged"))
+            {
+                logContext.AudioDeviceChanged = true;
+                return true;
+            }
+
+            if (line.Contains("[Always] uSpeak: SetInputDevice 0"))
+            {
+                var lineOffset = line.LastIndexOf(") '");
+                if (lineOffset < 0)
+                    return true;
+                lineOffset += 3;
+                var endPos = line.Length - 1;
+                var audioDevice = line.Substring(lineOffset, endPos - lineOffset);
+
+                if (logContext.AudioDeviceChanged && audioDevice != logContext.LastAudioDevice)
+                {
+                    AppendLog(new[]
+                    {
+                        fileInfo.Name,
+                        ConvertLogTimeToISO8601(line),
+                        "event",
+                        $"Audio device changed, mic set to '{audioDevice}'"
+                    });
+                }
+
+                logContext.LastAudioDevice = audioDevice;
+                logContext.AudioDeviceChanged = false;
+
+                return true;
             }
 
             return false;
