@@ -14873,15 +14873,12 @@ speechSynthesis.getVoices();
         });
     };
 
-    // App: Launch Options
-
-    $app.data.launchArguments = VRCXStorage.Get('launchArguments');
-
     // App: Launch Options Dialog
 
     $app.data.launchOptionsDialog = {
         visible: false,
-        arguments: ''
+        launchArguments: configRepository.getString('launchArguments'),
+        vrcLaunchPathOverride: configRepository.getString('vrcLaunchPathOverride')
     };
 
     API.$on('LOGOUT', function () {
@@ -14891,9 +14888,9 @@ speechSynthesis.getVoices();
     $app.methods.updateLaunchOptions = function () {
         var D = this.launchOptionsDialog;
         D.visible = false;
-        var args = String(D.arguments).replace(/\s+/g, ' ').trim();
-        this.launchArguments = args;
-        VRCXStorage.Set('launchArguments', args);
+        D.launchArguments = String(D.launchArguments).replace(/\s+/g, ' ').trim();
+        configRepository.setString('launchArguments', D.launchArguments);
+        configRepository.setString('vrcLaunchPathOverride', D.vrcLaunchPathOverride);
         this.$message({
             message: 'updated',
             type: 'success'
@@ -14903,7 +14900,6 @@ speechSynthesis.getVoices();
     $app.methods.showLaunchOptions = function () {
         this.$nextTick(() => adjustDialogZ(this.$refs.launchOptionsDialog.$el));
         var D = this.launchOptionsDialog;
-        D.arguments = this.launchArguments;
         D.visible = true;
     };
 
@@ -15049,13 +15045,18 @@ speechSynthesis.getVoices();
 
     $app.methods.launchGame = function (...args) {
         var D = this.launchDialog;
-        if (this.launchArguments) {
-            args.push(this.launchArguments);
+        var { launchArguments, vrcLaunchPathOverride } = this.launchOptionsDialog;
+        if (launchArguments) {
+            args.push(launchArguments);
         }
-        if (D.desktop === true) {
+        if (D.desktop) {
             args.push('--no-vr');
         }
-        AppApi.StartGame(args.join(' '));
+        if (vrcLaunchPathOverride) {
+            AppApi.StartGameFromPath(vrcLaunchPathOverride, args.join(' '));
+        } else {
+            AppApi.StartGame(args.join(' '));
+        }
         D.visible = false;
     };
 

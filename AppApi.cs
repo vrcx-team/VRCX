@@ -172,19 +172,24 @@ namespace VRCX
                     if (match.Success == true)
                     {
                         var path = match.Groups[1].Value;
-                        Process.Start(new ProcessStartInfo
-                        {
-                            WorkingDirectory = path,
-                            FileName = $"{path}\\VRChat.exe",
-                            UseShellExecute = false,
-                            Arguments = arguments
-                        }).Close();
+                        StartGameFromPath(path, arguments);
                     }
                 }
             }
             catch
             {
             }
+        }
+
+        public void StartGameFromPath(string path, string arguments)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                WorkingDirectory = path,
+                            FileName = $"{path}\\VRChat.exe",
+                            UseShellExecute = false,
+                Arguments = arguments
+            }).Close();
         }
 
         public void OpenLink(string url)
