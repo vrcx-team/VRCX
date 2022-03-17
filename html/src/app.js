@@ -4890,11 +4890,11 @@ speechSynthesis.getVoices();
         var playDesktopToast = false;
         if (
             this.desktopToast === 'Always' ||
-            (this.desktopToast === 'Inside VR' &&
-                !this.isGameNoVR &&
-                this.isGameRunning) ||
+            (this.desktopToast === 'Outside VR' && (this.isGameNoVR || !this.isGameRunning)) ||
+            (this.desktopToast === 'Inside VR' && !this.isGameNoVR && this.isGameRunning) ||
             (this.desktopToast === 'Game Closed' && !this.isGameRunning) ||
-            (this.desktopToast === 'Game Running' && this.isGameRunning)
+            (this.desktopToast === 'Game Running' && this.isGameRunning) ||
+            (this.desktopToast === 'Desktop Mode' && this.isGameNoVR && this.isGameRunning)
         ) {
             playDesktopToast = true;
         }
