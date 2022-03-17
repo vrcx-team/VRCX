@@ -944,6 +944,9 @@ html
                         span.name Disable Tooltips
                         el-switch(v-model="hideTooltips" @change="saveOpenVROption")
                     div.options-container-item
+                        span.name Sort Favorites By
+                        el-switch(v-model="sortFavorites" inactive-text="name" active-text="date" @change="saveOpenVROption")
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-notebook-1" @click="promptMaxTableSizeDialog") Table Max Size
                     div.options-container-item
                         el-dropdown(@click.native.stop trigger="click" size="small")
