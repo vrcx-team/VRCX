@@ -4890,11 +4890,16 @@ speechSynthesis.getVoices();
         var playDesktopToast = false;
         if (
             this.desktopToast === 'Always' ||
-            (this.desktopToast === 'Outside VR' && (this.isGameNoVR || !this.isGameRunning)) ||
-            (this.desktopToast === 'Inside VR' && !this.isGameNoVR && this.isGameRunning) ||
+            (this.desktopToast === 'Outside VR' &&
+                (this.isGameNoVR || !this.isGameRunning)) ||
+            (this.desktopToast === 'Inside VR' &&
+                !this.isGameNoVR &&
+                this.isGameRunning) ||
             (this.desktopToast === 'Game Closed' && !this.isGameRunning) ||
             (this.desktopToast === 'Game Running' && this.isGameRunning) ||
-            (this.desktopToast === 'Desktop Mode' && this.isGameNoVR && this.isGameRunning)
+            (this.desktopToast === 'Desktop Mode' &&
+                this.isGameNoVR &&
+                this.isGameRunning)
         ) {
             playDesktopToast = true;
         }
@@ -10445,9 +10450,8 @@ speechSynthesis.getVoices();
         }
         if (this.sortFavorites) {
             return this.favoriteFriends_;
-        } else {
-            return this.favoriteFriendsSorted;
         }
+        return this.favoriteFriendsSorted;
     };
 
     $app.computed.favoriteWorlds = function () {
@@ -10457,9 +10461,8 @@ speechSynthesis.getVoices();
         }
         if (this.sortFavorites) {
             return this.favoriteWorlds_;
-        } else {
-            return this.favoriteWorldsSorted;
         }
+        return this.favoriteWorldsSorted;
     };
 
     $app.computed.favoriteAvatars = function () {
@@ -10469,9 +10472,8 @@ speechSynthesis.getVoices();
         }
         if (this.sortFavorites) {
             return this.favoriteAvatars_;
-        } else {
-            return this.favoriteAvatarsSorted;
         }
+        return this.favoriteAvatarsSorted;
     };
 
     // App: friendLog
@@ -14907,7 +14909,9 @@ speechSynthesis.getVoices();
     $app.data.launchOptionsDialog = {
         visible: false,
         launchArguments: configRepository.getString('launchArguments'),
-        vrcLaunchPathOverride: configRepository.getString('vrcLaunchPathOverride')
+        vrcLaunchPathOverride: configRepository.getString(
+            'vrcLaunchPathOverride'
+        )
     };
 
     API.$on('LOGOUT', function () {
@@ -14917,9 +14921,14 @@ speechSynthesis.getVoices();
     $app.methods.updateLaunchOptions = function () {
         var D = this.launchOptionsDialog;
         D.visible = false;
-        D.launchArguments = String(D.launchArguments).replace(/\s+/g, ' ').trim();
+        D.launchArguments = String(D.launchArguments)
+            .replace(/\s+/g, ' ')
+            .trim();
         configRepository.setString('launchArguments', D.launchArguments);
-        configRepository.setString('vrcLaunchPathOverride', D.vrcLaunchPathOverride);
+        configRepository.setString(
+            'vrcLaunchPathOverride',
+            D.vrcLaunchPathOverride
+        );
         this.$message({
             message: 'updated',
             type: 'success'
@@ -15074,7 +15083,7 @@ speechSynthesis.getVoices();
 
     $app.methods.launchGame = function (...args) {
         var D = this.launchDialog;
-        var { launchArguments, vrcLaunchPathOverride } = this.launchOptionsDialog;
+        var {launchArguments, vrcLaunchPathOverride} = this.launchOptionsDialog;
         if (launchArguments) {
             args.push(launchArguments);
         }
