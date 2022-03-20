@@ -12,7 +12,7 @@ namespace VRCX
     public class WebApi
     {
         public static readonly WebApi Instance;
-        private CookieContainer _cookieContainer;
+        public CookieContainer _cookieContainer;
         private bool _cookieDirty;
         private Timer _timer;
 

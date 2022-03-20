@@ -5008,14 +5008,30 @@ speechSynthesis.getVoices();
         var imageUrl = await this.notyGetImage(noty);
         var fileId = extractFileId(imageUrl);
         var fileVersion = extractFileVersion(imageUrl);
-        if (fileId && fileVersion) {
-            return AppApi.GetImage(imageUrl, fileId, fileVersion);
-        } else if (imageUrl) {
-            fileVersion = imageUrl.split('/').pop(); // 1416226261.thumbnail-500.png
-            fileId = fileVersion.split('.').shift(); // 1416226261
-            return AppApi.GetImage(imageUrl, fileId, fileVersion);
+        var imageLocation = '';
+        try {
+            if (fileId && fileVersion) {
+                imageLocation = await AppApi.GetImage(
+                    imageUrl,
+                    fileId,
+                    fileVersion,
+                    appVersion
+                );
+            } else if (imageUrl) {
+                fileVersion = imageUrl.split('/').pop(); // 1416226261.thumbnail-500.png
+                fileId = fileVersion.split('.').shift(); // 1416226261
+                imageLocation = await AppApi.GetImage(
+                    imageUrl,
+                    fileId,
+                    fileVersion,
+                    appVersion
+                );
+
+            }
+        } catch (err) {
+            console.error(err);
         }
-        return '';
+        return imageLocation;
     };
 
     $app.methods.displayOverlayNotification = function (

@@ -238,9 +238,9 @@ namespace VRCX
             return CpuMonitor.Instance.CpuUsage;
         }
 
-        public string GetImage(string url, string fileId, string version)
+        public string GetImage(string url, string fileId, string version, string appVersion)
         {
-            return ImageCache.GetImage(url, fileId, version);
+            return ImageCache.GetImage(url, fileId, version, appVersion);
         }
 
         public void DesktopNotification(string BoldText, string Text, string Image)

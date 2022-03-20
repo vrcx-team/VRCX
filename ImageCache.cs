@@ -9,8 +9,9 @@ namespace VRCX
     {
         private static readonly string cacheLocation = Path.Combine(Program.AppDataDirectory, "ImageCache");
 
-        public static string GetImage(string url, string fileId, string version)
+        public static string GetImage(string url, string fileId, string version, string appVersion)
         {
+            var imageHost = "api.vrchat.cloud";
             var directoryLocation = Path.Combine(cacheLocation, fileId);
             var fileLocation = Path.Combine(directoryLocation, $"{version}.png");
 
@@ -24,9 +25,22 @@ namespace VRCX
                 Directory.Delete(directoryLocation, true);
             Directory.CreateDirectory(directoryLocation);
 
+            Uri uri = new Uri(url);
+            if (uri.Host != imageHost)
+                throw new ArgumentException("Invalid image host", url);
+
             using (var client = new WebClient())
             {
-                client.Headers.Add("user-agent", "VRCX");
+                string cookieString = String.Empty;
+                if (WebApi.Instance != null && WebApi.Instance._cookieContainer != null)
+                {
+                    CookieCollection cookies = WebApi.Instance._cookieContainer.GetCookies(new Uri($"https://{imageHost}"));
+                    foreach (Cookie cookie in cookies)
+                        cookieString += $"{cookie.Name}={cookie.Value};";
+                }
+
+                client.Headers.Add(HttpRequestHeader.Cookie, cookieString);
+                client.Headers.Add("user-agent", appVersion);
                 client.DownloadFile(url, fileLocation);
             }
 
