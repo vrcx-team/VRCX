@@ -10,7 +10,7 @@ using CefSharp.WinForms;
 
 namespace VRCX
 {
-    public partial class VRForm : Form
+    public partial class VRForm : WinformBase
     {
         public static VRForm Instance;
         private ChromiumWebBrowser _browser1;
