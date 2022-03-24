@@ -30,13 +30,14 @@
         {
             this.SuspendLayout();
             // 
-            // Popup
+            // InvisPopup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(148, 0);
-            this.Name = "Popup";
-            this.Text = "Popup";
+            this.Name = "InvisPopup";
+            this.Opacity = 0D;
+            this.Text = "InvisPopup";
             this.ResumeLayout(false);
 
         }

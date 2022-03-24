@@ -14,13 +14,15 @@ namespace VRCX
     {
         public InvisPopup()
         {
+            StartPosition = FormStartPosition.Manual;
+            //Location = new Point(-Height - 100, 0);
+            Location = new Point(0, 0);
             InitializeComponent();
         }
 
-        protected override void SetVisibleCore(bool value)
-        {
-            this.WindowState = FormWindowState.Minimized;
-            base.SetVisibleCore(value);
-        }
+        //protected override void SetVisibleCore(bool value)
+        //{
+        //    base.SetVisibleCore(value);
+        //}
     }
 }

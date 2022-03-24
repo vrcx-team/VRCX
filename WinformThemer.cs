@@ -22,8 +22,8 @@ namespace VRCX
         /// </summary>
         public static void SetGlobalTheme(int theme)
         {
-            if(currentTheme == theme)
-                return;
+            //if(currentTheme == theme)
+            //    return;
 
             currentTheme = theme;
 
@@ -50,14 +50,15 @@ namespace VRCX
 
         public static void SetThemeToGlobal(List<Form> forms)
         {
+            var activeForm = Form.ActiveForm;
             InvisPopupHandler.Show();
 
             foreach(Form form in forms)
             {
                 SetThemeToGlobal(form.Handle);
-
-                if (form.WindowState != FormWindowState.Minimized)
-                {
+                form.Activate();
+                //if (form.WindowState != FormWindowState.Minimized)
+                //{
                     //attempting to refresh this god forsaken title bar
 
                     //Minimize, Downside: shows animation
@@ -65,12 +66,13 @@ namespace VRCX
                     //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_RESTORE);
 
                     //Hide, Downside: reorders window to last in taskbar if not pinned
-                    PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_HIDE);
-                    PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_SHOW);
-                }
+                    //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_HIDE);
+                    //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_SHOW);
+                //}
             }
-
             InvisPopupHandler.Close();
+            if(activeForm != null)
+                activeForm.Activate();
         }
 
         private static void SetThemeToGlobal(IntPtr handle)
@@ -110,6 +112,11 @@ namespace VRCX
                     instance = new InvisPopup();
                 instance.Show();
                 instance.Activate();
+                //PInvokeFun.ShowWindow(instance.Handle, (int)PInvokeFun.SW_TYPES.SW_SHOWNORMAL);
+                //PInvokeFun.SetForegroundWindow(instance.Handle);
+                //instance.Hide();
+                //instance.Show();
+                //instance.Activate();
             }
 
             internal static void Close()
@@ -130,6 +137,10 @@ namespace VRCX
 
             [DllImport("user32.dll")]
             internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+            [DllImport("user32.dll", SetLastError = true)]
+            internal static extern bool SetForegroundWindow(IntPtr hwnd);
+
             internal enum SW_TYPES
             {
                 SW_HIDE = 0,
