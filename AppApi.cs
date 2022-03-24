@@ -415,6 +415,11 @@ namespace VRCX
             return System.Globalization.CultureInfo.CurrentCulture.ToString();
         }
 
+        public void ChangeTheme(int value)
+        {
+            WinformThemer.SetGlobalTheme(value);
+        }
+
         public void SetStartup(bool enabled)
         {
             try

@@ -11397,8 +11397,18 @@ speechSynthesis.getVoices();
     $app.watch.isDarkMode = function () {
         configRepository.setBool('isDarkMode', this.isDarkMode);
         $appDarkStyle.disabled = this.isDarkMode === false;
+        if (this.isDarkMode) {
+            AppApi.ChangeTheme(1);
+        } else {
+            AppApi.ChangeTheme(0);
+        }
         this.updateVRConfigVars();
     };
+    if ($app.data.isDarkMode) {
+        AppApi.ChangeTheme(1);
+    } else {
+        AppApi.ChangeTheme(0);
+    }
     window
         .matchMedia('(prefers-color-scheme: dark)')
         .addEventListener('change', (e) => {
