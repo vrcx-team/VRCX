@@ -109,6 +109,7 @@ namespace VRCX
                 if(instance == null)
                     instance = new InvisPopup();
                 instance.Show();
+                instance.Activate();
             }
 
             internal static void Close()
