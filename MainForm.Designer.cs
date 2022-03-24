@@ -39,34 +39,37 @@ namespace VRCX
             this.TrayMenu_Separator = new System.Windows.Forms.ToolStripSeparator();
             this.TrayMenu_Quit = new System.Windows.Forms.ToolStripMenuItem();
             this.TrayIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.TrayMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // TrayMenu
             // 
+            this.TrayMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.TrayMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.TrayMenu_Open,
             this.TrayMenu_Separator,
             this.TrayMenu_Quit});
             this.TrayMenu.Name = "TrayMenu";
-            this.TrayMenu.Size = new System.Drawing.Size(132, 54);
+            this.TrayMenu.Size = new System.Drawing.Size(147, 58);
             // 
             // TrayMenu_Open
             // 
             this.TrayMenu_Open.Name = "TrayMenu_Open";
-            this.TrayMenu_Open.Size = new System.Drawing.Size(131, 22);
+            this.TrayMenu_Open.Size = new System.Drawing.Size(146, 24);
             this.TrayMenu_Open.Text = "Open";
             this.TrayMenu_Open.Click += new System.EventHandler(this.TrayMenu_Open_Click);
             // 
             // TrayMenu_Separator
             // 
             this.TrayMenu_Separator.Name = "TrayMenu_Separator";
-            this.TrayMenu_Separator.Size = new System.Drawing.Size(128, 6);
+            this.TrayMenu_Separator.Size = new System.Drawing.Size(143, 6);
             // 
             // TrayMenu_Quit
             // 
             this.TrayMenu_Quit.Name = "TrayMenu_Quit";
-            this.TrayMenu_Quit.Size = new System.Drawing.Size(131, 22);
+            this.TrayMenu_Quit.Size = new System.Drawing.Size(146, 24);
             this.TrayMenu_Quit.Text = "Quit VRCX";
             this.TrayMenu_Quit.Click += new System.EventHandler(this.TrayMenu_Quit_Click);
             // 
@@ -77,12 +80,35 @@ namespace VRCX
             this.TrayIcon.Visible = true;
             this.TrayIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TrayIcon_MouseDoubleClick);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(91, 81);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Dark";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(196, 81);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "Light";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(842, 561);
-            this.MinimumSize = new System.Drawing.Size(320, 240);
+            this.ClientSize = new System.Drawing.Size(1052, 701);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.MinimumSize = new System.Drawing.Size(396, 288);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "VRCX";
@@ -103,5 +129,7 @@ namespace VRCX
         private System.Windows.Forms.ToolStripSeparator TrayMenu_Separator;
         private System.Windows.Forms.ToolStripMenuItem TrayMenu_Quit;
         private System.Windows.Forms.NotifyIcon TrayIcon;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }

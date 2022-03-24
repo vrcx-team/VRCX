@@ -13,12 +13,6 @@ namespace VRCX
 
     internal static class WinformThemer
     {
-        [DllImport("DwmApi")]
-        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, int[] pvAttribute, int cbAttribute);
-
-        [DllImport("DwmApi")]
-        private static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, IntPtr pvAttribute, int cbAttribute);
-
         private static int currentTheme = 0;
 
         /// <summary>
@@ -29,7 +23,14 @@ namespace VRCX
         public static void SetGlobalTheme(int theme)
         {
             currentTheme = theme;
-            foreach (Form form in Application.OpenForms)
+
+            List<Form> forms = new List<Form>();
+            foreach(Form form in Application.OpenForms)
+            {
+                forms.Add(form);
+            }
+
+            foreach (Form form in forms)
             {
                 SetThemeToGlobal(form);
             }
@@ -45,14 +46,32 @@ namespace VRCX
         public static void SetThemeToGlobal(Form form)
         {
             SetThemeToGlobal(form.Handle);
+
+            InvisPopup thisJankThing = new InvisPopup();
+            thisJankThing.Show();
+
+            if (form.WindowState != FormWindowState.Minimized)
+            {
+                //attempting to refresh this god forsaken title bar
+
+                //Minimize, Downside: shows animation
+                //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_MINIMIZE);
+                //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_RESTORE);
+
+                //Hide, Downside: reorders window to last in taskbar if not pinned
+                PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_HIDE);
+                PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_SHOW);
+            }
+
+            thisJankThing.Close();
         }
 
         private static void SetThemeToGlobal(IntPtr handle)
         {
             if (GetTheme(handle) != currentTheme)
             {
-                if (DwmSetWindowAttribute(handle, 19, new[] { currentTheme }, 4) != 0)
-                    DwmSetWindowAttribute(handle, 20, new[] { currentTheme }, 4);
+                if (PInvokeFun.DwmSetWindowAttribute(handle, 19, new[] { currentTheme }, 4) != 0)
+                    PInvokeFun.DwmSetWindowAttribute(handle, 20, new[] { currentTheme }, 4);
             }
         }
 
@@ -62,8 +81,8 @@ namespace VRCX
             IntPtr curThemePtr = Marshal.AllocHGlobal(4);
 
             //See what window state it currently is
-            if (DwmGetWindowAttribute(handle, 19, curThemePtr, 4) != 0)
-                DwmGetWindowAttribute(handle, 20, curThemePtr, 4);
+            if (PInvokeFun.DwmGetWindowAttribute(handle, 19, curThemePtr, 4) != 0)
+                PInvokeFun.DwmGetWindowAttribute(handle, 20, curThemePtr, 4);
 
             //Read current theme (light = 0, dark = 1)
             int theme = Marshal.ReadInt32(curThemePtr);
@@ -72,6 +91,33 @@ namespace VRCX
             Marshal.FreeHGlobal(curThemePtr);
 
             return theme;
+        }
+
+        internal static class PInvokeFun
+        {
+            [DllImport("DwmApi")]
+            internal static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, int[] pvAttribute, int cbAttribute);
+
+            [DllImport("DwmApi")]
+            internal static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, IntPtr pvAttribute, int cbAttribute);
+
+            [DllImport("user32.dll")]
+            internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+            internal enum SW_TYPES
+            {
+                SW_HIDE = 0,
+                SW_SHOWNORMAL = 1,
+                SW_SHOWMINIMIZED = 2,
+                SW_SHOWMAXIMIZED = 3,
+                SW_SHOWNOACTIVATE = 4,
+                SW_SHOW = 5,
+                SW_MINIMIZE = 6,
+                SW_SHOWMINNOACTIVE = 7,
+                SW_SHOWNA = 8,
+                SW_RESTORE = 9,
+                SW_SHOWDEFAULT = 10,
+                SW_FORCEMINIMIZE = 11
+            }
         }
     }
 }

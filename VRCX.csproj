@@ -83,6 +83,12 @@
     <Compile Include="AssetBundleCacher.cs" />
     <Compile Include="CefCustomMenuHandler.cs" />
     <Compile Include="ImageCache.cs" />
+    <Compile Include="InvisPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InvisPopup.Designer.cs">
+      <DependentUpon>InvisPopup.cs</DependentUpon>
+    </Compile>
     <Compile Include="VRCEventDeserialization.cs" />
     <Compile Include="IPCClient.cs" />
     <Compile Include="IPCServer.cs" />
@@ -123,6 +129,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="WinformThemer.cs" />
+    <EmbeddedResource Include="InvisPopup.resx">
+      <DependentUpon>InvisPopup.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="VRForm.resx">
       <DependentUpon>VRForm.cs</DependentUpon>
     </EmbeddedResource>

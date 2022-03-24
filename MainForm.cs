@@ -169,5 +169,15 @@ namespace VRCX
         {
             Application.Exit();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            WinformThemer.SetGlobalTheme(1);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            WinformThemer.SetGlobalTheme(0);
+        }
     }
 }
