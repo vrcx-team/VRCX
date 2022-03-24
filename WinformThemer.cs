@@ -59,29 +59,16 @@ namespace VRCX
         /// <param name="forms"></param>
         public static void SetThemeToGlobal(List<Form> forms)
         {
-            //Save current active form so we can refocus on this at the end
-            var activeForm = Form.ActiveForm;
-
-            //Show and focus on the invisible popup
-            InvisPopupHandler.Show();
-
             //For each form, set the theme, then move focus onto it to force refresh
             foreach(Form form in forms)
             {
                 //Set the theme of the window
                 SetThemeToGlobal(form.Handle);
 
-                //Move focus onto it to force refresh if not minimized
-                if (form.WindowState != FormWindowState.Minimized)
-                    form.Activate();
+                //Change opacity to foce full redraw
+                form.Opacity = 0.99999;
+                form.Opacity = 1;
             }
-
-            //Close + Dispose the invisible popup
-            InvisPopupHandler.Close();
-
-            //Restore focus to previous active form
-            if(activeForm != null && activeForm.WindowState != FormWindowState.Minimized)
-                activeForm.Activate();
         }
 
         private static void SetThemeToGlobal(IntPtr handle)
@@ -109,26 +96,6 @@ namespace VRCX
             Marshal.FreeHGlobal(curThemePtr);
 
             return theme;
-        }
-
-        internal static class InvisPopupHandler
-        {
-            private static InvisPopup instance;
-
-            internal static void Show()
-            {
-                if(instance == null)
-                    instance = new InvisPopup();
-                instance.Show();
-                instance.Activate();
-            }
-
-            internal static void Close()
-            {
-                instance.Close();
-                instance.Dispose();
-                instance = null;
-            }
         }
 
         internal static class PInvoke
