@@ -15,7 +15,7 @@ namespace VRCX
         public InvisPopup()
         {
             StartPosition = FormStartPosition.Manual;
-            Location = new Point(0, 0);
+            Location = new Point(-Width, -Height);
             InitializeComponent();
         }
     }
