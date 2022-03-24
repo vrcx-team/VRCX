@@ -22,6 +22,9 @@ namespace VRCX
         /// </summary>
         public static void SetGlobalTheme(int theme)
         {
+            if(currentTheme == theme)
+                return;
+
             currentTheme = theme;
 
             List<Form> forms = new List<Form>();
