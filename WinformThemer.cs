@@ -29,11 +29,7 @@ namespace VRCX
             {
                 forms.Add(form);
             }
-
-            foreach (Form form in forms)
-            {
-                SetThemeToGlobal(form);
-            }
+            SetThemeToGlobal(forms);
         }
 
         /// <summary>
@@ -43,27 +39,35 @@ namespace VRCX
         /// </summary>
         public static int GetGlobalTheme() => currentTheme;
 
+
         public static void SetThemeToGlobal(Form form)
         {
-            SetThemeToGlobal(form.Handle);
+            SetThemeToGlobal(new List<Form>() { form });
+        }
 
-            InvisPopup thisJankThing = new InvisPopup();
-            thisJankThing.Show();
+        public static void SetThemeToGlobal(List<Form> forms)
+        {
+            InvisPopupHandler.Show();
 
-            if (form.WindowState != FormWindowState.Minimized)
+            foreach(Form form in forms)
             {
-                //attempting to refresh this god forsaken title bar
+                SetThemeToGlobal(form.Handle);
 
-                //Minimize, Downside: shows animation
-                //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_MINIMIZE);
-                //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_RESTORE);
+                if (form.WindowState != FormWindowState.Minimized)
+                {
+                    //attempting to refresh this god forsaken title bar
 
-                //Hide, Downside: reorders window to last in taskbar if not pinned
-                PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_HIDE);
-                PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_SHOW);
+                    //Minimize, Downside: shows animation
+                    //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_MINIMIZE);
+                    //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_RESTORE);
+
+                    //Hide, Downside: reorders window to last in taskbar if not pinned
+                    PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_HIDE);
+                    PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_SHOW);
+                }
             }
 
-            thisJankThing.Close();
+            InvisPopupHandler.Close();
         }
 
         private static void SetThemeToGlobal(IntPtr handle)
@@ -91,6 +95,25 @@ namespace VRCX
             Marshal.FreeHGlobal(curThemePtr);
 
             return theme;
+        }
+
+        internal static class InvisPopupHandler
+        {
+            private static InvisPopup instance;
+
+            internal static void Show()
+            {
+                if(instance == null)
+                    instance = new InvisPopup();
+                instance.Show();
+            }
+
+            internal static void Close()
+            {
+                instance.Close();
+                instance.Dispose();
+                instance = null;
+            }
         }
 
         internal static class PInvokeFun
