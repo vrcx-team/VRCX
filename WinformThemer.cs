@@ -13,6 +13,9 @@ namespace VRCX
 
     internal static class WinformThemer
     {
+        /// <summary>
+        /// Private holder of current theme
+        /// </summary>
         private static int currentTheme = 0;
 
         /// <summary>
@@ -22,16 +25,15 @@ namespace VRCX
         /// </summary>
         public static void SetGlobalTheme(int theme)
         {
-            //if(currentTheme == theme)
-            //    return;
-
             currentTheme = theme;
 
+            //Make a seperate list for all current forms (causes issues otherwise)
             List<Form> forms = new List<Form>();
             foreach(Form form in Application.OpenForms)
             {
                 forms.Add(form);
             }
+
             SetThemeToGlobal(forms);
         }
 
@@ -42,36 +44,43 @@ namespace VRCX
         /// </summary>
         public static int GetGlobalTheme() => currentTheme;
 
-
+        /// <summary>
+        /// Set given form to the current global theme
+        /// </summary>
+        /// <param name="form"></param>
         public static void SetThemeToGlobal(Form form)
         {
             SetThemeToGlobal(new List<Form>() { form });
         }
 
+        /// <summary>
+        /// Set a list of given forms to the current global theme
+        /// </summary>
+        /// <param name="forms"></param>
         public static void SetThemeToGlobal(List<Form> forms)
         {
+            //Save current active form so we can refocus on this at the end
             var activeForm = Form.ActiveForm;
+
+            //Show and focus on the invisible popup
             InvisPopupHandler.Show();
 
+            //For each form, set the theme, then move focus onto it to force refresh
             foreach(Form form in forms)
             {
+                //Set the theme of the window
                 SetThemeToGlobal(form.Handle);
-                form.Activate();
-                //if (form.WindowState != FormWindowState.Minimized)
-                //{
-                    //attempting to refresh this god forsaken title bar
 
-                    //Minimize, Downside: shows animation
-                    //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_MINIMIZE);
-                    //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_RESTORE);
-
-                    //Hide, Downside: reorders window to last in taskbar if not pinned
-                    //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_HIDE);
-                    //PInvokeFun.ShowWindow(form.Handle, (int)PInvokeFun.SW_TYPES.SW_SHOW);
-                //}
+                //Move focus onto it to force refresh if not minimized
+                if (form.WindowState != FormWindowState.Minimized)
+                    form.Activate();
             }
+
+            //Close + Dispose the invisible popup
             InvisPopupHandler.Close();
-            if(activeForm != null)
+
+            //Restore focus to previous active form
+            if(activeForm != null && activeForm.WindowState != FormWindowState.Minimized)
                 activeForm.Activate();
         }
 
@@ -79,8 +88,8 @@ namespace VRCX
         {
             if (GetTheme(handle) != currentTheme)
             {
-                if (PInvokeFun.DwmSetWindowAttribute(handle, 19, new[] { currentTheme }, 4) != 0)
-                    PInvokeFun.DwmSetWindowAttribute(handle, 20, new[] { currentTheme }, 4);
+                if (PInvoke.DwmSetWindowAttribute(handle, 19, new[] { currentTheme }, 4) != 0)
+                    PInvoke.DwmSetWindowAttribute(handle, 20, new[] { currentTheme }, 4);
             }
         }
 
@@ -90,8 +99,8 @@ namespace VRCX
             IntPtr curThemePtr = Marshal.AllocHGlobal(4);
 
             //See what window state it currently is
-            if (PInvokeFun.DwmGetWindowAttribute(handle, 19, curThemePtr, 4) != 0)
-                PInvokeFun.DwmGetWindowAttribute(handle, 20, curThemePtr, 4);
+            if (PInvoke.DwmGetWindowAttribute(handle, 19, curThemePtr, 4) != 0)
+                PInvoke.DwmGetWindowAttribute(handle, 20, curThemePtr, 4);
 
             //Read current theme (light = 0, dark = 1)
             int theme = Marshal.ReadInt32(curThemePtr);
@@ -112,11 +121,6 @@ namespace VRCX
                     instance = new InvisPopup();
                 instance.Show();
                 instance.Activate();
-                //PInvokeFun.ShowWindow(instance.Handle, (int)PInvokeFun.SW_TYPES.SW_SHOWNORMAL);
-                //PInvokeFun.SetForegroundWindow(instance.Handle);
-                //instance.Hide();
-                //instance.Show();
-                //instance.Activate();
             }
 
             internal static void Close()
@@ -127,35 +131,13 @@ namespace VRCX
             }
         }
 
-        internal static class PInvokeFun
+        internal static class PInvoke
         {
             [DllImport("DwmApi")]
             internal static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, int[] pvAttribute, int cbAttribute);
 
             [DllImport("DwmApi")]
             internal static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, IntPtr pvAttribute, int cbAttribute);
-
-            [DllImport("user32.dll")]
-            internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-            [DllImport("user32.dll", SetLastError = true)]
-            internal static extern bool SetForegroundWindow(IntPtr hwnd);
-
-            internal enum SW_TYPES
-            {
-                SW_HIDE = 0,
-                SW_SHOWNORMAL = 1,
-                SW_SHOWMINIMIZED = 2,
-                SW_SHOWMAXIMIZED = 3,
-                SW_SHOWNOACTIVATE = 4,
-                SW_SHOW = 5,
-                SW_MINIMIZE = 6,
-                SW_SHOWMINNOACTIVE = 7,
-                SW_SHOWNA = 8,
-                SW_RESTORE = 9,
-                SW_SHOWDEFAULT = 10,
-                SW_FORCEMINIMIZE = 11
-            }
         }
     }
 }
