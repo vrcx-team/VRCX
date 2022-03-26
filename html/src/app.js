@@ -12596,7 +12596,10 @@ speechSynthesis.getVoices();
         },
         joinCount: 0,
         timeSpent: 0,
-        lastSeen: ''
+        lastSeen: '',
+        previousDisplayNames: [],
+        dateFriended: '',
+        unFriended: false
     };
 
     $app.watch['userDialog.memo'] = function () {
@@ -12810,6 +12813,9 @@ speechSynthesis.getVoices();
         D.lastSeen = '';
         D.joinCount = 0;
         D.timeSpent = 0;
+        D.previousDisplayNames = [];
+        D.dateFriended = '';
+        D.unFriended = false;
         API.getCachedUser({
             userId
         })
@@ -12897,15 +12903,48 @@ speechSynthesis.getVoices();
                     if (this.lastLocation.playerList.has(D.ref.displayName)) {
                         inCurrentWorld = true;
                     }
-                    database
-                        .getUserStats(D.ref, inCurrentWorld)
-                        .then((ref1) => {
+                    if (userId !== API.currentUser.id) {
+                        database
+                            .getUserStats(D.ref, inCurrentWorld)
+                            .then((ref1) => {
                             if (ref1.userId === D.id) {
                                 D.lastSeen = ref1.created_at;
-                                D.joinCount = ref1.joinCount;
-                                D.timeSpent = ref1.timeSpent;
-                            }
-                        });
+                                    D.joinCount = ref1.joinCount;
+                                    D.timeSpent = ref1.timeSpent;
+                                }
+                                var displayNameMap = ref1.previousDisplayNames;
+                                this.friendLogTable.data.forEach((ref2) => {
+                                    if (ref2.userId === D.id) {
+                                        if (ref2.type === 'DisplayName') {
+                                            displayNameMap.set(
+                                                ref2.previousDisplayName,
+                                                ref2.created_at
+                                            );
+                                        }
+                                        if (!D.dateFriended) {
+                                            if (ref2.type === 'Unfriend') {
+                                                D.unFriended = true;
+                                                D.dateFriended =
+                                                    ref2.created_at;
+                                            }
+                                            if (ref2.type === 'Friend') {
+                                                D.unFriended = false;
+                                                D.dateFriended =
+                                                    ref2.created_at;
+                                            }
+                                        }
+                                    }
+                                });
+                                var displayNameMapSorted = new Map(
+                                    [...displayNameMap.entries()].sort(
+                                        (a, b) => b[1] - a[1]
+                                    )
+                                );
+                                D.previousDisplayNames = Array.from(
+                                    displayNameMapSorted.keys()
+                                );
+                            });
+                    }
                 }
                 return args;
             });

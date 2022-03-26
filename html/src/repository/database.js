@@ -880,7 +880,8 @@ class Database {
             timeSpent: 0,
             created_at: '',
             joinCount: 0,
-            userId: input.id
+            userId: input.id,
+            previousDisplayNames: new Map()
         };
         await sqliteService.execute(
             (row) => {
@@ -892,8 +893,11 @@ class Database {
                     ref.created_at = row[0];
                 }
                 instances.add(row[3]);
+                if (input.displayName !== row[4]) {
+                    ref.previousDisplayNames.set(row[4], row[0]);
+                }
             },
-            `SELECT created_at, user_id, time, location FROM gamelog_join_leave WHERE user_id = @userId OR display_name = @displayName ORDER BY id DESC`,
+            `SELECT created_at, user_id, time, location, display_name FROM gamelog_join_leave WHERE user_id = @userId OR display_name = @displayName ORDER BY id DESC`,
             {
                 '@userId': input.id,
                 '@displayName': input.displayName
@@ -1342,6 +1346,29 @@ class Database {
                 '@location': input.location
             }
         );
+    }
+
+    async getpreviousDisplayNamesByUserId(ref) {
+        var data = new Map();
+        await sqliteService.execute(
+            (dbRow) => {
+                var row = {
+                    created_at: dbRow[0],
+                    displayName: dbRow[1]
+                };
+                if (ref.displayName !== row.displayName) {
+                    data.set(row.displayName, row.created_at);
+                }
+            },
+            `SELECT created_at, display_name
+            FROM gamelog_join_leave
+            WHERE user_id = @userId
+            ORDER BY id DESC`,
+            {
+                '@userId': ref.id
+            }
+        );
+        return data;
     }
 }
 

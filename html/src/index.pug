@@ -1396,6 +1396,13 @@ html
                                             span(v-else-if="userDialog.ref.status === 'busy'") Do Not Disturb
                                             span(v-else) Offline
                                         i.x-user-status(:class="userStatusClass(userDialog.ref)")
+                                    template(v-if="userDialog.previousDisplayNames.length > 0")
+                                        el-tooltip(placement="bottom")
+                                            template(#content)
+                                                span Previous Display Names: 
+                                                div(v-for="displayName in userDialog.previousDisplayNames" placement="top")
+                                                    span(v-text="displayName")
+                                            i.el-icon-caret-bottom
                                     span(v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px;font-weight:bold")
                                     el-popover(placement="top" trigger="click")
                                         span(slot="reference" v-text="userDialog.ref.username" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer")
@@ -1540,6 +1547,11 @@ html
                                     .detail
                                         span.name Date Joined
                                         span.extra(v-text="userDialog.ref.date_joined")
+                                .x-friend-item(style="cursor:default")
+                                    .detail
+                                        span.name(v-if="userDialog.unFriended") Unfriended
+                                        span.name(v-else) Friended
+                                        span.extra {{ userDialog.dateFriended | formatDate('long') }}
                                 template(v-if="API.currentUser.id === userDialog.id")
                                     .x-friend-item(@click="toggleAvatarCopying")
                                         .detail
