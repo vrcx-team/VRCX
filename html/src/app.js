@@ -12907,8 +12907,8 @@ speechSynthesis.getVoices();
                         database
                             .getUserStats(D.ref, inCurrentWorld)
                             .then((ref1) => {
-                            if (ref1.userId === D.id) {
-                                D.lastSeen = ref1.created_at;
+                                if (ref1.userId === D.id) {
+                                    D.lastSeen = ref1.created_at;
                                     D.joinCount = ref1.joinCount;
                                     D.timeSpent = ref1.timeSpent;
                                 }
