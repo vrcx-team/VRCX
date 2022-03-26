@@ -11217,6 +11217,9 @@ speechSynthesis.getVoices();
     $app.data.hideCpuUsageFromFeed = configRepository.getBool(
         'VRCX_hideCpuUsageFromFeed'
     );
+    $app.data.hideUptimeFromFeed = configRepository.getBool(
+        'VRCX_hideUptimeFromFeed'
+    );
     $app.data.overlayNotifications = configRepository.getBool(
         'VRCX_overlayNotifications'
     );
@@ -11304,6 +11307,10 @@ speechSynthesis.getVoices();
         configRepository.setBool(
             'VRCX_hideCpuUsageFromFeed',
             this.hideCpuUsageFromFeed
+        );
+        configRepository.setBool(
+            'VRCX_hideUptimeFromFeed',
+            this.hideUptimeFromFeed
         );
         configRepository.setBool(
             'VRCX_overlayNotifications',
@@ -11842,6 +11849,10 @@ speechSynthesis.getVoices();
                 }
             }
         }
+        var onlineFor = '';
+        if (!this.hideUptimeFromFeed) {
+            onlineFor = API.currentUser.$online_for;
+        }
         var lastLocation = {
             date: this.lastLocation.date,
             location: this.lastLocation.location,
@@ -11849,7 +11860,7 @@ speechSynthesis.getVoices();
             playerList: Array.from(this.lastLocation.playerList.values()),
             friendList: Array.from(this.lastLocation.friendList.values()),
             progressPie,
-            onlineFor: API.currentUser.$online_for
+            onlineFor
         };
         var json = JSON.stringify(lastLocation);
         AppApi.ExecuteVrFeedFunction('lastLocationUpdate', json);
