@@ -17659,11 +17659,7 @@ speechSynthesis.getVoices();
 
         var url = this.downloadCurrent.updateZipUrl;
         var size = this.downloadCurrent.size;
-        await AssetBundleCacher.DownloadFile(
-            url,
-            size,
-            appVersion
-        );
+        await AssetBundleCacher.DownloadFile(url, size, appVersion);
         this.downloadFileProgress();
     };
 
@@ -18243,7 +18239,13 @@ speechSynthesis.getVoices();
                 var name = release.name;
                 var type = 'Manual';
                 var autoInstall = false;
-                this.downloadVRCXUpdate(downloadUrl, size, name, type, autoInstall);
+                this.downloadVRCXUpdate(
+                    downloadUrl,
+                    size,
+                    name,
+                    type,
+                    autoInstall
+                );
                 this.VRCXUpdateDialog.visible = false;
                 this.showDownloadDialog();
             }
