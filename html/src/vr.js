@@ -162,7 +162,6 @@ Vue.component('marquee-text', MarqueeText);
             currentTime: new Date().toJSON(),
             cpuUsage: 0,
             config: {},
-            downloadProgress: 0,
             photonLobbyBotSize: 0,
             onlineFriendCount: 0,
             nowPlaying: {
@@ -284,10 +283,6 @@ Vue.component('marquee-text', MarqueeText);
         this.hudFeed = [];
         this.hudTimeout = [];
         this.setDatetimeFormat();
-    };
-
-    $app.methods.updateDownloadProgress = function (progress) {
-        this.downloadProgress = parseInt(progress, 10);
     };
 
     $app.methods.updatePhotonLobbyBotSize = function (size) {

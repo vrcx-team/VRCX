@@ -23,19 +23,11 @@ namespace VRCX
             Instance = new AssetBundleCacher();
         }
 
-        public static string AssetBundleCacherTemp;
-        public static string VRChatCacheLocation;
-        public static string CacheDestinationLocation;
-        public static string AssetBundleCacherLocation;
-        public static string AssetBundleCacherArgs;
         public static string DownloadTempLocation;
+        public static string DownloadDestinationLocation;
         public static int DownloadProgress;
+        public static int DownloadSize;
         public static bool DownloadCanceled;
-        public static bool IsUpdate;
-        public static string AssetId;
-        public static string AssetVersion;
-        public static int AssetSize;
-        public static string AssetMd5;
         public static WebClient client;
         public static Process process;
 
@@ -69,14 +61,6 @@ namespace VRCX
             return cachePath;
         }
 
-        public string GetAssetBundleCacherLocation(string cacheDir)
-        {
-            var cachePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat\AssetBundleCacher";
-            if (!string.IsNullOrEmpty(cacheDir) && Directory.Exists(cacheDir))
-                cachePath = Path.Combine(cacheDir, @"AssetBundleCacher");
-            return cachePath;
-        }
-
         public string GetVRChatCacheFullLocation(string id, int version, string cacheDir)
         {
             var cachePath = GetVRChatCacheLocation(cacheDir);
@@ -107,50 +91,12 @@ namespace VRCX
             };
         }
 
-        public void DownloadCacheFile(string cacheDir, string url, string id, int version, int sizeInBytes, string md5, string AppVersion, bool IsUpdate)
+        public void DownloadFile(string url, int size, string AppVersion)
         {
-            if (!File.Exists(Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\AssetBundleCacher.exe")))
-            {
-                DownloadProgress = -10;
-                return;
-            }
-            // upgrade from Unity 2018 to 2019
-            var UnityData = Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\AssetBundleCacher_Data\\data.unity3d");
-            if (File.Exists(UnityData))
-            {
-                try
-                {
-                    File.Delete(UnityData);
-                }
-                catch
-                {
-                    DownloadProgress = -11;
-                    return;
-                }
-            }
-            DownloadProgress = 0;
-            VRChatCacheLocation = GetVRChatCacheLocation(cacheDir);
-            AssetBundleCacherLocation = GetAssetBundleCacherLocation(cacheDir);
-            CacheDestinationLocation = GetVRChatCacheFullLocation(id, version, cacheDir);
-            if (File.Exists(Path.Combine(CacheDestinationLocation, "__data")))
-            {
-                DownloadProgress = -12;
-                return;
-            }
-            AssetSize = sizeInBytes;
-            AssetMd5 = md5;
-            AssetId = GetAssetId(id);
-            AssetVersion = GetAssetVersion(version);
-            DownloadTempLocation = Path.Combine(AssetBundleCacherLocation, AssetId);
-            AssetBundleCacherTemp = Path.Combine(AssetBundleCacherLocation, "Cache");
-            Directory.CreateDirectory(AssetBundleCacherTemp);
-            AssetBundleCacherArgs = $@" -url ""file:\\{DownloadTempLocation}"" -id ""{id}"" -ver {version} -batchmode -path ""{AssetBundleCacherTemp}""";
+            DownloadSize = size;
             DownloadCanceled = false;
-            if (IsUpdate)
-            {
-                AssetBundleCacher.IsUpdate = true;
-                DownloadTempLocation = Path.Combine(Program.AppDataDirectory, "update.exe");
-            }
+            DownloadTempLocation = Path.Combine(Program.AppDataDirectory, "tempDownload.exe");
+            DownloadDestinationLocation = Path.Combine(Program.AppDataDirectory, "update.exe");
             client = new WebClient();
             client.Headers.Add("user-agent", AppVersion);
             client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
@@ -164,17 +110,9 @@ namespace VRCX
             try
             {
                 if (client != null)
-                {
                     client.CancelAsync();
-                }
-                if (process != null && !process.HasExited)
-                {
-                    process.Kill();
-                    if (File.Exists(DownloadTempLocation))
-                        File.Delete(DownloadTempLocation);
-                    if (Directory.Exists(Path.Combine(AssetBundleCacherTemp, AssetId)))
-                        Directory.Delete(Path.Combine(AssetBundleCacherTemp, AssetId), true);
-                }
+                if (File.Exists(DownloadTempLocation))
+                    File.Delete(DownloadTempLocation);
             }
             catch(Exception)
             {
@@ -201,80 +139,22 @@ namespace VRCX
                     File.Delete(DownloadTempLocation);
                 return;
             }
-            DownloadProgress = -1;
             if (!File.Exists(DownloadTempLocation))
             {
                 DownloadProgress = -15;
                 return;
             }
-            if (IsUpdate)
-            {
-                DownloadProgress = -16;
-                return;
-            }
             FileInfo data = new FileInfo(DownloadTempLocation);
-            if (data.Length != AssetSize)
+            if (data.Length != DownloadSize)
             {
+                File.Delete(DownloadTempLocation);
                 DownloadProgress = -15;
                 return;
             }
-            using (var stream = File.OpenRead(DownloadTempLocation))
-            {
-                byte[] md5AsBytes = MD5.Create().ComputeHash(stream);
-                var md5 = System.Convert.ToBase64String(md5AsBytes);
-                if (md5 != AssetMd5)
-                {
-                    DownloadProgress = -15;
-                    return;
-                }
-            }
-            process = new Process();
-            process.StartInfo.FileName = Path.Combine(Program.BaseDirectory, "AssetBundleCacher\\AssetBundleCacher.exe");
-            process.StartInfo.Arguments = AssetBundleCacherArgs;
-            process.Start();
-            process.WaitForExit((int) TimeSpan.FromMinutes(2).TotalMilliseconds); //2mins
-            if (process.ExitCode != 0)
-            {
-                DownloadProgress = -13;
-                return;
-            }
-            if (DownloadCanceled)
-            {
-                if (File.Exists(DownloadTempLocation))
-                    File.Delete(DownloadTempLocation);
-                return;
-            }
-            try
-            {
-                if (File.Exists(Path.Combine(CacheDestinationLocation, "__data")))
-                {
-                    if (File.Exists(DownloadTempLocation))
-                        File.Delete(DownloadTempLocation);
-                    if (Directory.Exists(Path.Combine(AssetBundleCacherTemp, AssetId)))
-                        Directory.Delete(Path.Combine(AssetBundleCacherTemp, AssetId), true);
-                    DownloadProgress = -12;
-                    return;
-                }
-                if (Directory.Exists(CacheDestinationLocation))
-                    Directory.Delete(CacheDestinationLocation, true);
-                var CacheSource = Path.Combine(AssetBundleCacherTemp, AssetId, AssetVersion);
-                if (!File.Exists(Path.Combine(CacheSource, "__data")))
-                {
-                    DownloadProgress = -13;
-                    return;
-                }
-                if (!Directory.Exists(Path.Combine(VRChatCacheLocation, AssetId)))
-                    Directory.CreateDirectory(Path.Combine(VRChatCacheLocation, AssetId));
-                Directory.Move(CacheSource, CacheDestinationLocation);
-                Directory.Delete(Path.Combine(AssetBundleCacherTemp, AssetId), true);
-                File.Delete(DownloadTempLocation);
-            }
-            catch(Exception)
-            {
-                DownloadProgress = -14;
-                return;
-            }
-            DownloadProgress = -3;
+            if (File.Exists(DownloadDestinationLocation))
+                File.Delete(DownloadDestinationLocation);
+            File.Move(DownloadTempLocation, DownloadDestinationLocation);
+            DownloadProgress = -16;
         }
 
         public void DeleteCache(string cacheDir, string id, int version)

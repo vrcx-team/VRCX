@@ -426,7 +426,6 @@ html
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-for="row in API.cachedConfig.dynamicWorldRows" :key="row.index" v-text="row.name" :command="row")
                         el-checkbox(v-model="searchWorldLabs" style="margin-left:10px") Include community labs
-                        el-button(v-if="searchWorldResults.length > 0" @click="downloadSearchPage" icon="el-icon-download" size="small" style="margin-left:10px") Download All
                         .x-friend-list
                             .x-friend-item(v-for="world in searchWorldResults" :key="world.id" @click="showWorldDialog(world.id)")
                                 template(v-once)
@@ -1126,36 +1125,6 @@ html
                 div.options-container
                     span.header VRChat Cache Management
                     br
-                    span.sub-header Auto Cache Worlds
-                    br
-                    div.options-container-item
-                        span.name Download on invite:
-                        br
-                        el-radio-group(v-model="worldAutoCacheInvite" @change="saveOpenVROption" size="mini")
-                            el-radio-button(label="Never")
-                            el-radio-button(label="Game Closed")
-                            el-radio-button(label="Game Running")
-                            el-radio-button(label="Always")
-                    div.options-container-item
-                        el-switch(v-model="worldAutoCacheInviteFilter" @change="saveOpenVROption" inactive-text="VIP" active-text="Friends" :disabled="worldAutoCacheInvite === 'Never'")
-                    div.options-container-item
-                        span.name Download on GPS:
-                        br
-                        el-radio-group(v-model="worldAutoCacheGPS" @change="saveOpenVROption" size="mini")
-                            el-radio-button(label="Never")
-                            el-radio-button(label="Game Closed")
-                            el-radio-button(label="Game Running")
-                            el-radio-button(label="Always")
-                    div.options-container-item
-                        el-switch(v-model="worldAutoCacheGPSFilter" @change="saveOpenVROption" inactive-text="VIP" active-text="Friends" :disabled="worldAutoCacheGPS === 'Never'")
-                    div.options-container-item(v-if="photonLoggingEnabled")
-                        span.name Download on PortalSpawn:
-                        br
-                        el-radio-group(v-model="portalAutoCache" @change="saveOpenVROption" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-download" @click="showDownloadDialog") Download History
                     br
@@ -1654,10 +1623,6 @@ html
                             div(style="flex:none;margin-left:10px")
                                 el-tooltip(v-if="worldDialog.inCache" placement="top" content="Delete world from cache" :disabled="hideTooltips")
                                     el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(worldDialog.ref)" :disabled="isGameRunning && worldDialog.cacheLocked")
-                                el-tooltip(v-else-if="downloadCurrent.id === worldDialog.id || downloadQueue.has(worldDialog.id)" placement="top" content="Show download progress" :disabled="hideTooltips")
-                                    el-button(icon="el-icon-loading" circle @click="showDownloadDialog")
-                                el-tooltip(v-else placement="top" content="Download world to cache" :disabled="hideTooltips")
-                                    el-button(icon="el-icon-download" circle @click="queueCacheDownload(worldDialog.ref, 'Manual')" :disabled="isGameRunning && worldDialog.cacheLocked")
                                 el-tooltip(v-if="worldDialog.isFavorite" placement="top" content="Remove from favorites" :disabled="hideTooltips")
                                     el-button(type="warning" icon="el-icon-star-on" circle @click="worldDialogCommand('Delete Favorite')" style="margin-left:5px")
                                 el-tooltip(v-else placement="top" content="Add to favorites" :disabled="hideTooltips")
@@ -1822,10 +1787,6 @@ html
                             div(style="flex:none;margin-left:10px")
                                 el-tooltip(v-if="avatarDialog.inCache" placement="top" content="Delete avatar from cache" :disabled="hideTooltips")
                                     el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(avatarDialog.ref)" :disabled="isGameRunning && avatarDialog.cacheLocked")
-                                el-tooltip(v-else-if="downloadCurrent.id === avatarDialog.id || downloadQueue.has(avatarDialog.id)" placement="top" content="Show download progress" :disabled="hideTooltips")
-                                    el-button(icon="el-icon-loading" circle @click="showDownloadDialog")
-                                el-tooltip(v-else-if="avatarDialog.ref.authorId === API.currentUser.id" placement="top" content="Download avatar to cache" :disabled="hideTooltips")
-                                    el-button(icon="el-icon-download" circle @click="queueCacheDownload(avatarDialog.ref, 'Avatar')" :disabled="isGameRunning && avatarDialog.cacheLocked")
                                 el-tooltip(v-if="avatarDialog.isFavorite" placement="top" content="Remove from favorites" :disabled="hideTooltips")
                                     el-button(type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Delete Favorite')" style="margin-left:5px")
                                 el-tooltip(v-else placement="top" content="Add to favorites" :disabled="hideTooltips")
@@ -2134,24 +2095,17 @@ html
             //- dialog: Cache Download
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="downloadDialog" :visible.sync="downloadDialog.visible" title="Download History" width="770px")
                 div(v-if="downloadInProgress && downloadCurrent.ref")
-                    span.x-link(v-if="downloadCurrent.type === 'Avatar'" @click="showAvatarDialog(downloadCurrent.location)" v-text="downloadCurrent.ref.name")
-                    span.x-link(v-else @click="showWorldDialog(downloadCurrent.location)" v-text="downloadCurrent.ref.name")
-                    el-button(type="text" icon="el-icon-close" size="mini" @click="cancelVRChatCacheDownload(downloadCurrent.id)" style="margin-left:5px")
+                    span(v-text="downloadCurrent.ref.name")
+                    el-button(type="text" icon="el-icon-close" size="mini" @click="cancelDownload(downloadCurrent.id)" style="margin-left:5px")
                     el-progress(:percentage="downloadProgress" :format="downloadProgressText")
                 template(v-if="downloadQueueTable.data.length >= 1")
                     span(style="margin-top:15px") Queue:
                     data-tables(v-bind="downloadQueueTable" style="margin-top:10px")
                         el-table-column(label="Name" prop="name")
-                            template(v-once #default="scope")
-                                span.x-link(v-if="scope.row.type === 'Avatar'" v-text="scope.row.ref.name" @click="showAvatarDialog(scope.row.location)")
-                                span.x-link(v-else v-text="scope.row.ref.name" @click="showWorldDialog(scope.row.location)")
-                        el-table-column(label="User Name" prop="name" width="150")
-                            template(v-once #default="scope")
-                                span.x-link(v-text="getDisplayName(scope.row.userId)" @click="showUserDialog(scope.row.userId)")
                         el-table-column(label="Type" prop="type" width="70")
                         el-table-column(label="Cancel" width="60" align="right")
                             template(v-once #default="scope")
-                                el-button(type="text" icon="el-icon-close" size="mini" @click="cancelVRChatCacheDownload(scope.row.ref.id)")
+                                el-button(type="text" icon="el-icon-close" size="mini" @click="cancelDownload(scope.row.ref.id)")
                 span(style="margin-top:15px") History:
                 data-tables(v-bind="downloadHistoryTable" style="margin-top:10px")
                     el-table-column(label="Time" prop="date" width="90")
@@ -2161,17 +2115,12 @@ html
                         template(v-once #default="scope")
                             template(v-if="scope.row.ref.id === 'VRCXUpdate'")
                                 el-button(size="small" @click="showVRCXUpdateDialog") VRCX Update
-                            template(v-else-if="scope.row.type === 'Avatar'")
-                                span.x-link(v-text="scope.row.ref.name" @click="showAvatarDialog(scope.row.location)")
                             template(v-else)
-                                span.x-link(v-text="scope.row.ref.name" @click="showWorldDialog(scope.row.location)")
-                    el-table-column(label="User Name" prop="name" width="150")
-                        template(v-once #default="scope")
-                            span.x-link(v-text="getDisplayName(scope.row.userId)" @click="showUserDialog(scope.row.userId)")
+                                span(v-text="scope.row.ref.name")
                     el-table-column(label="Type" prop="type" width="70")
                     el-table-column(label="Status" prop="status" width="80")
                 template(#footer)
-                    el-button(v-if="downloadQueue.size >= 1" size="small" @click="cancelAllVRChatCacheDownload") Cancel All
+                    el-button(v-if="downloadQueue.size >= 1" size="small" @click="cancelAllDownloads") Cancel All
                     el-button(size="small" @click="downloadDialog.visible = false") Close
 
             //- dialog: update VRCX
