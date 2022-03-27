@@ -8913,7 +8913,6 @@ speechSynthesis.getVoices();
         var args = await API.getCachedWorld({
             worldId: L.worldId
         });
-        this.portalDownloadWorldCache(args.ref, ref);
         this.addPhotonEventToGameLog({
             created_at,
             type: 'PortalSpawn',
