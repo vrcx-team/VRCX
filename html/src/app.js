@@ -8592,6 +8592,27 @@ speechSynthesis.getVoices();
                     data.Parameters[251].inVRMode
                 );
             }
+        } else if (data.Code === 42) {
+            // SetUserProperties
+            this.parsePhotonUser(
+                data.Parameters[254],
+                data.Parameters[245].user,
+                gameLogDate
+            );
+            this.parsePhotonAvatarChange(
+                data.Parameters[254],
+                data.Parameters[245].user,
+                data.Parameters[245].avatarDict,
+                gameLogDate
+            );
+            this.parsePhotonAvatar(data.Parameters[245].avatarDict);
+            this.parsePhotonAvatar(data.Parameters[245].favatarDict);
+            if (typeof data.Parameters[245].inVRMode !== 'undefined') {
+                this.photonLobbyInVrMode.set(
+                    data.Parameters[254],
+                    data.Parameters[245].inVRMode
+                );
+            }
         } else if (data.Code === 255) {
             // Join
             if (typeof data.Parameters[249] !== 'undefined') {
