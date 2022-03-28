@@ -37,6 +37,8 @@ html
                                 el-input(type="password" v-model="loginForm.password" name="password" placeholder="Password" clearable show-password)
                             el-form-item(v-if="enableCustomEndpoint" label="Endpont" prop="endpoint" style="margin-top:10px")
                                 el-input(v-model="loginForm.endpoint" name="endpoint" placeholder="Endpoint URL" clearable)
+                            el-form-item(v-if="enableCustomEndpoint" label="WebSocket" prop="endpoint" style="margin-top:10px")
+                                el-input(v-model="loginForm.websocket" name="websocket" placeholder="WebSocket URL" clearable)
                             el-checkbox(v-model="loginForm.saveCredentials" style="margin-top:15px") Save Credentials
                             el-form-item(style="margin-top:15px")
                                 el-button(native-type="submit" type="primary" :loading="loginForm.loading" style="width:100%") Login

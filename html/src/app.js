@@ -363,7 +363,9 @@ speechSynthesis.getVoices();
     API.pendingGetRequests = new Map();
     API.failedGetRequests = new Map();
     API.endpointDomainVrchat = 'https://api.vrchat.cloud/api/1';
+    API.websocketDomainVrchat = 'wss://pipeline.vrchat.cloud';
     API.endpointDomain = 'https://api.vrchat.cloud/api/1';
+    API.websocketDomain = 'wss://pipeline.vrchat.cloud';
 
     API.call = function (endpoint, options) {
         var init = {
@@ -3821,9 +3823,7 @@ speechSynthesis.getVoices();
 
     API.connectWebSocket = function (token) {
         if (this.webSocket === null) {
-            var socket = new WebSocket(
-                `wss://pipeline.vrchat.cloud/?auth=${token}`
-            );
+            var socket = new WebSocket(`${API.websocketDomain}/?auth=${token}`);
             socket.onclose = () => {
                 if (this.webSocket === socket) {
                     this.webSocket = null;
@@ -5993,8 +5993,10 @@ speechSynthesis.getVoices();
         }
         if (loginParmas.endpoint) {
             API.endpointDomain = loginParmas.endpoint;
+            API.websocketDomain = loginParmas.websocket;
         } else {
             API.endpointDomain = API.endpointDomainVrchat;
+            API.websocketDomain = API.websocketDomainVrchat;
         }
         return new Promise((resolve, reject) => {
             if (this.enablePrimaryPassword) {
@@ -6040,7 +6042,8 @@ speechSynthesis.getVoices();
                         API.login({
                             username: loginParmas.username,
                             password: loginParmas.password,
-                            endpoint: loginParmas.endpoint
+                            endpoint: loginParmas.endpoint,
+                            websocket: loginParmas.websocket
                         })
                             .catch(() => {
                                 this.loginForm.loading = false;
@@ -6096,6 +6099,7 @@ speechSynthesis.getVoices();
         username: '',
         password: '',
         endpoint: '',
+        websocket: '',
         saveCredentials: false,
         savedCredentials:
             configRepository.getString('lastUserLoggedIn') !== null
@@ -6124,8 +6128,10 @@ speechSynthesis.getVoices();
                 this.loginForm.loading = true;
                 if (this.loginForm.endpoint) {
                     API.endpointDomain = this.loginForm.endpoint;
+                    API.websocketDomain = this.loginForm.websocket;
                 } else {
                     API.endpointDomain = API.endpointDomainVrchat;
+                    API.websocketDomain = API.websocketDomainVrchat;
                 }
                 API.getConfig()
                     .catch((err) => {
@@ -6174,6 +6180,9 @@ speechSynthesis.getVoices();
                                                         endpoint:
                                                             this.loginForm
                                                                 .endpoint,
+                                                        websocket:
+                                                            this.loginForm
+                                                                .websocket,
                                                         saveCredentials:
                                                             this.loginForm
                                                                 .saveCredentials,
@@ -6184,6 +6193,8 @@ speechSynthesis.getVoices();
                                                         this.loginForm.password =
                                                             '';
                                                         this.loginForm.endpoint =
+                                                            '';
+                                                        this.loginForm.websocket =
                                                             '';
                                                     });
                                                 });
@@ -6198,6 +6209,7 @@ speechSynthesis.getVoices();
                             username: this.loginForm.username,
                             password: this.loginForm.password,
                             endpoint: this.loginForm.endpoint,
+                            websocket: this.loginForm.websocket,
                             saveCredentials: this.loginForm.saveCredentials
                         }).finally(() => {
                             this.loginForm.username = '';
