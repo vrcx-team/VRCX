@@ -9352,9 +9352,15 @@ speechSynthesis.getVoices();
                 var id1 = url.pathname;
                 var id2 = url.searchParams.get('v');
                 if (id1 && id1.length === 12) {
+                    // https://youtu.be/
                     youtubeVideoId = id1.substring(1, 12);
                 }
+                if (id1 && id1.length === 19) {
+                    // https://www.youtube.com/shorts/
+                    youtubeVideoId = id1.substring(8, 19);
+                }
                 if (id2 && id2.length === 11) {
+                    // https://www.youtube.com/watch?v=
                     youtubeVideoId = id2;
                 }
                 if (this.youTubeApi && youtubeVideoId) {
