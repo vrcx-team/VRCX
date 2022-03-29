@@ -13,11 +13,13 @@ namespace VRCX
     {
         public static string BaseDirectory { get; private set; }
         public static string AppDataDirectory { get; private set; }
+        public static string ConfigLocation;
 
         static Program()
         {
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             AppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX");
+            ConfigLocation = Path.Combine(Program.AppDataDirectory, "VRCX.sqlite3");
 
             if (!Directory.Exists(AppDataDirectory))
             {
@@ -46,7 +48,7 @@ namespace VRCX
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.ToString(), "PLEASE REPORT TO PYPY", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(e.ToString(), "PLEASE REPORT IN https://vrcx.pypy.moe/discord", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(0);
             }
         }
