@@ -11417,6 +11417,10 @@ speechSynthesis.getVoices();
     } else {
         AppApi.ChangeTheme(0);
     }
+    var dateObj = new Date();
+    if (dateObj.getMonth() === 3 && dateObj.getDate() === 1) {
+        AppApi.DoFunny();
+    }
     window
         .matchMedia('(prefers-color-scheme: dark)')
         .addEventListener('change', (e) => {

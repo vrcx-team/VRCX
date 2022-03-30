@@ -105,6 +105,18 @@ namespace VRCX
 
             [DllImport("DwmApi")]
             internal static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, IntPtr pvAttribute, int cbAttribute);
+
+            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            internal static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);
+        }
+
+        public static void DoFunny()
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                PInvoke.SetWindowLong(form.Handle, -20, 0x00C00000);
+                // PInvoke.SetWindowLong(form.Handle, -20, 0x00050100);
+            }
         }
     }
 }

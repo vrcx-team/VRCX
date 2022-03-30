@@ -1126,10 +1126,6 @@ html
                                 el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")
                 div.options-container
                     span.header VRChat Cache Management
-                    br
-                    div.options-container-item
-                        el-button(size="small" icon="el-icon-download" @click="showDownloadDialog") Download History
-                    br
                     span.sub-header Automatically Manage Cache When Closing VRChat
                     div.options-container-item
                         span.name(style="min-width:300px") Auto delete old versions from cache
@@ -1218,6 +1214,7 @@ html
                         el-button(size="small" icon="el-icon-delete-solid" @click="clearVRCXCache") Clear Cache
                         el-button(size="small" icon="el-icon-time" @click="promptAutoClearVRCXCacheFrequency") Auto Clear Cache
                     div.options-container-item
+                        el-button(size="small" icon="el-icon-download" @click="showDownloadDialog") Download History
                         el-button(size="small" icon="el-icon-tickets" @click="showConsole") Show Console
                 div.options-container
                     span.sub-header SQLite Table Size

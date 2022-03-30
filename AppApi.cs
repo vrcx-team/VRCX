@@ -420,6 +420,11 @@ namespace VRCX
             WinformThemer.SetGlobalTheme(value);
         }
 
+        public void DoFunny()
+        {
+            WinformThemer.DoFunny();
+        }
+
         public void SetStartup(bool enabled)
         {
             try
