@@ -77,23 +77,28 @@ html
             //- playerList
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'playerList'")
                 div(style="display:flex;flex-direction:column;height:100%")
-                    div(v-if="currentInstanceWorld.id" style="display:flex")
+                    div(v-if="currentInstanceWorld.ref.id" style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click" style="height:120px")
-                            img.x-link(slot="reference" v-lazy="currentInstanceWorld.thumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                            img.x-link(v-lazy="currentInstanceWorld.imageUrl" style="width:500px;height:375px" @click="openExternalLink(currentInstanceWorld.imageUrl)")
+                            img.x-link(slot="reference" v-lazy="currentInstanceWorld.ref.thumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+                            img.x-link(v-lazy="currentInstanceWorld.ref.imageUrl" style="width:500px;height:375px" @click="openExternalLink(currentInstanceWorld.ref.imageUrl)")
                         div(style="margin-left:10px;display:flex;flex-direction:column;min-width:320px;width:100%")
                             div
-                                span.x-link(@click="showWorldDialog(currentInstanceWorld.id)" style="font-weight:bold;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1")
-                                    | #[i.el-icon-s-home(v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === currentInstanceWorld.id" style="margin-right:5px")] {{ currentInstanceWorld.name }}
+                                span.x-link(@click="showWorldDialog(currentInstanceWorld.ref.id)" style="font-weight:bold;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1")
+                                    | #[i.el-icon-s-home(v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id" style="margin-right:5px")] {{ currentInstanceWorld.ref.name }}
                             div
-                                span.x-link(v-text="currentInstanceWorld.authorName" @click="showUserDialog(currentInstanceWorld.authorId)" style="color:#909399;font-family:monospace")
+                                span.x-link(v-text="currentInstanceWorld.ref.authorName" @click="showUserDialog(currentInstanceWorld.ref.authorId)" style="color:#909399;font-family:monospace")
                             div(style="margin-top:5px")
-                                el-tag(v-if="currentInstanceWorld.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px") Labs
-                                el-tag(v-else-if="currentInstanceWorld.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") Public
-                                el-tag(v-else-if="currentInstanceWorld.releaseStatus === 'private'" type="danger" effect="plain" size="mini" style="margin-right:5px") Private
-                                el-tag.x-tag-platform-pc(v-if="currentInstanceWorld.$isPC" type="info" effect="plain" size="mini" style="margin-right:5px") PC
-                                el-tag.x-tag-platform-quest(v-if="currentInstanceWorld.$isQuest" type="info" effect="plain" size="mini" style="margin-right:5px") Quest
-                                span.x-link(@click="showLaunchDialog(lastLocation.location)")
+                                el-tag(v-if="currentInstanceWorld.ref.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px") Labs
+                                el-tag(v-else-if="currentInstanceWorld.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") Public
+                                el-tag(v-else-if="currentInstanceWorld.ref.releaseStatus === 'private'" type="danger" effect="plain" size="mini" style="margin-right:5px") Private
+                                el-tag.x-tag-platform-pc(v-if="currentInstanceWorld.isPC" type="info" effect="plain" size="mini" style="margin-right:5px") PC
+                                el-tag.x-tag-platform-quest(v-if="currentInstanceWorld.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px") Quest
+                                el-tag(type="info" effect="plain" size="mini" v-text="currentInstanceWorld.fileSize" style="margin-right:5px")
+                                el-tag(v-if="currentInstanceWorld.inCache" type="info" effect="plain" size="mini" style="margin-right:5px")
+                                    span(v-text="currentInstanceWorld.cacheSize")
+                                    |  Cache
+                                br
+                                span.x-link(v-if="currentInstanceLocation.instanceName" @click="showLaunchDialog(lastLocation.location)")
                                     span \#{{ currentInstanceLocation.instanceName }} {{ currentInstanceLocation.accessType }}
                                     span.famfamfam-flags(v-if="currentInstanceLocation.region === 'eu'" class="europeanunion" style="display:inline-block;margin-left:5px")
                                     span.famfamfam-flags(v-else-if="currentInstanceLocation.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
@@ -112,22 +117,21 @@ html
                                                     span.x-link(v-text="getDisplayNameFromPhotonId(id)" @click="showUserFromPhotonId(id)" style="margin-right:5px")
                                             span(v-text="photonLobbyBots.length" style="color:red")
                                 | &nbsp;#[timer(v-if="lastLocation.date" :epoch="lastLocation.date")]
-                                //- el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px")
                             div(style="margin-top:5px")
-                                span(v-show="currentInstanceWorld.name !== currentInstanceWorld.description" v-text="currentInstanceWorld.description" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2")
+                                span(v-show="currentInstanceWorld.ref.name !== currentInstanceWorld.ref.description" v-text="currentInstanceWorld.ref.description" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2")
                         div(style="display:flex;flex-direction:column;margin-left:20px")
                             .x-friend-item(style="cursor:default")
                                 .detail
                                     span.name Capacity
-                                    span.extra {{ currentInstanceWorld.capacity | commaNumber }} ({{ currentInstanceWorld.capacity * 2 | commaNumber }})
+                                    span.extra {{ currentInstanceWorld.ref.capacity | commaNumber }} ({{ currentInstanceWorld.ref.capacity * 2 | commaNumber }})
                             .x-friend-item(style="cursor:default")
                                 .detail
                                     span.name Last Updated
-                                    span.extra {{ currentInstanceWorld.updated_at | formatDate('long') }}
+                                    span.extra {{ currentInstanceWorld.fileCreatedAt | formatDate('long') }}
                             .x-friend-item(style="cursor:default")
                                 .detail
                                     span.name Created
-                                    span.extra {{ currentInstanceWorld.created_at | formatDate('long') }}
+                                    span.extra {{ currentInstanceWorld.ref.created_at | formatDate('long') }}
                     div.current-instance-table
                         data-tables(v-bind="currentInstanceUserList" @row-click="selectCurrentInstanceRow" style="margin-top:10px;cursor:pointer")
                             el-table-column(label="Avatar" width="60" prop="photo")

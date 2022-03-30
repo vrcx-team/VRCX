@@ -8979,8 +8979,9 @@ speechSynthesis.getVoices();
     $app.methods.checkPhotonBotJoin = function (photonId, data, gameLogDate) {
         var text = '';
         var platforms = [];
-        if (typeof this.currentInstanceWorld.unityPackages === 'object') {
-            for (var unityPackage of this.currentInstanceWorld.unityPackages) {
+        if (typeof this.currentInstanceWorld.ref.unityPackages === 'object') {
+            for (var unityPackage of this.currentInstanceWorld.ref
+                .unityPackages) {
                 platforms.push(unityPackage.platform);
             }
         }
@@ -13178,39 +13179,88 @@ speechSynthesis.getVoices();
         this.updateTimers();
     };
 
-    $app.data.currentInstanceWorld = {};
+    $app.data.currentInstanceWorld = {
+        ref: {},
+        isPC: false,
+        isQuest: false,
+        inCache: false,
+        cacheSize: '',
+        fileCreatedAt: '',
+        fileSize: ''
+    };
     $app.data.currentInstanceLocation = {};
 
     $app.methods.updateCurrentInstanceWorld = function (instanceId) {
-        this.currentInstanceWorld = {};
-        this.currentInstanceLocation = {};
-        if (instanceId) {
+        if (!instanceId) {
+            this.currentInstanceWorld = {
+                ref: {},
+                isPC: false,
+                isQuest: false,
+                inCache: false,
+                cacheSize: '',
+                fileCreatedAt: '',
+                fileSize: ''
+            };
+            this.currentInstanceLocation = {};
+        } else if (
+            instanceId !== this.currentInstanceLocation.tag &&
+            this.currentInstanceLocation.tag !==
+                this.lastLocationDestination
+        ) {
+            this.currentInstanceWorld = {
+                ref: {},
+                isPC: false,
+                isQuest: false,
+                inCache: false,
+                cacheSize: '',
+                fileCreatedAt: '',
+                fileSize: ''
+            };
             var L = API.parseLocation(instanceId);
             this.currentInstanceLocation = L;
-            var ref = API.cachedWorlds.get(L.worldId);
-            if (!ref) {
-                API.getCachedWorld({
-                    worldId: L.worldId
-                }).then((args) => {
-                    this.currentInstanceWorld = args.ref;
-                    var {isPC, isQuest} = this.getAvailablePlatforms(
-                        args.ref.unityPackages
-                    );
-                    this.currentInstanceWorld.$isPC = isPC;
-                    this.currentInstanceWorld.$isQuest = isQuest;
+            API.getWorld({
+                worldId: L.worldId
+            }).then((args) => {
+                this.currentInstanceWorld.ref = args.ref;
+                var {isPC, isQuest} = this.getAvailablePlatforms(
+                    args.ref.unityPackages
+                );
+                this.currentInstanceWorld.isPC = isPC;
+                this.currentInstanceWorld.isQuest = isQuest;
+                this.checkVRChatCache(args.ref).then((cacheInfo) => {
+                    if (cacheInfo[0] > 0) {
+                        this.currentInstanceWorld.inCache = true;
+                        this.currentInstanceWorld.cacheSize = `${(
+                            cacheInfo[0] / 1048576
+                        ).toFixed(2)} MiB`;
+                    }
                 });
-            } else {
-                API.getWorld({
-                    worldId: L.worldId
-                }).then((args) => {
-                    this.currentInstanceWorld = args.ref;
-                    var {isPC, isQuest} = this.getAvailablePlatforms(
-                        args.ref.unityPackages
-                    );
-                    this.currentInstanceWorld.$isPC = isPC;
-                    this.currentInstanceWorld.$isQuest = isQuest;
+                this.getBundleDateSize(args.ref).then(
+                    ({createdAt, fileSize}) => {
+                        this.currentInstanceWorld.fileCreatedAt = createdAt;
+                        this.currentInstanceWorld.fileSize = fileSize;
+                    }
+                );
+            });
+        } else {
+            API.getCachedWorld({
+                worldId: this.currentInstanceLocation.worldId
+            }).then((args) => {
+                this.currentInstanceWorld.ref = args.ref;
+                var {isPC, isQuest} = this.getAvailablePlatforms(
+                    args.ref.unityPackages
+                );
+                this.currentInstanceWorld.isPC = isPC;
+                this.currentInstanceWorld.isQuest = isQuest;
+                this.checkVRChatCache(args.ref).then((cacheInfo) => {
+                    if (cacheInfo[0] > 0) {
+                        this.currentInstanceWorld.inCache = true;
+                        this.currentInstanceWorld.cacheSize = `${(
+                            cacheInfo[0] / 1048576
+                        ).toFixed(2)} MiB`;
+                    }
                 });
-            }
+            });
         }
     };
 
@@ -13726,40 +13776,58 @@ speechSynthesis.getVoices();
             return b.users.length - a.users.length || b.occupants - a.occupants;
         });
         if (D.fileSize === 'Loading') {
-            var assetUrl = '';
-            for (let i = ref.unityPackages.length - 1; i > -1; i--) {
-                var unityPackage = ref.unityPackages[i];
-                if (
-                    unityPackage.platform === 'standalonewindows' &&
-                    $app.compareUnityVersion(unityPackage.unityVersion)
-                ) {
-                    assetUrl = unityPackage.assetUrl;
-                    break;
-                }
-            }
-            var fileId = extractFileId(assetUrl);
-            var fileVersion = parseInt(extractFileVersion(assetUrl), 10);
-            if (fileId) {
-                API.getBundles(fileId)
-                    .then((args2) => {
-                        var {versions} = args2.json;
-                        for (let i = versions.length - 1; i > -1; i--) {
-                            var version = versions[i];
-                            if (version.version === fileVersion) {
-                                D.fileCreatedAt = version.created_at;
-                                D.fileSize = `${(
-                                    version.file.sizeInBytes / 1048576
-                                ).toFixed(2)} MiB`;
-                                break;
-                            }
-                        }
-                    })
-                    .catch(() => {
+            $app.getBundleDateSize(ref)
+                .then(({createdAt, fileSize}) => {
+                    D.fileCreatedAt = createdAt;
+                    if (fileSize) {
+                        D.fileSize = fileSize;
+                    } else {
                         D.fileSize = 'Error';
-                    });
-            }
+                    }
+                })
+                .catch(() => {
+                    D.fileSize = 'Error';
+                });
         }
     });
+
+    $app.methods.getBundleDateSize = async function (ref) {
+        var assetUrl = '';
+        var createdAt = '';
+        var fileSize = '';
+        for (let i = ref.unityPackages.length - 1; i > -1; i--) {
+            var unityPackage = ref.unityPackages[i];
+            if (
+                unityPackage.platform === 'standalonewindows' &&
+                this.compareUnityVersion(unityPackage.unityVersion)
+            ) {
+                assetUrl = unityPackage.assetUrl;
+                break;
+                }
+            }
+        var fileId = extractFileId(assetUrl);
+        var fileVersion = parseInt(extractFileVersion(assetUrl), 10);
+        if (fileId) {
+            var args = await API.getBundles(fileId);
+            if (
+                typeof args.json !== 'undefined' &&
+                typeof args.json.versions !== 'undefined'
+            ) {
+                var {versions} = args.json;
+                for (let i = versions.length - 1; i > -1; i--) {
+                    var version = versions[i];
+                    if (version.version === fileVersion) {
+                        createdAt = version.created_at;
+                        fileSize = `${(
+                            version.file.sizeInBytes / 1048576
+                        ).toFixed(2)} MiB`;
+                        break;
+                    }
+                }
+            }
+        }
+        return {createdAt, fileSize};
+    };
 
     API.$on('FAVORITE', function (args) {
         var {ref} = args;
