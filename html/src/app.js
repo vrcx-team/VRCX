@@ -2973,7 +2973,8 @@ speechSynthesis.getVoices();
                 json,
                 params: {
                     favoriteId: json.id
-                }
+                },
+                sortTop: false
             });
         }
     });
@@ -2983,7 +2984,8 @@ speechSynthesis.getVoices();
             json: args.json,
             params: {
                 favoriteId: args.json.id
-            }
+            },
+            sortTop: true
         });
     });
 
@@ -3131,9 +3133,15 @@ speechSynthesis.getVoices();
     };
 
     API.expireFavorites = function () {
-        for (var ref of this.cachedFavorites.values()) {
-            ref.$isExpired = true;
-        }
+        this.cachedFavorites.clear();
+        this.cachedFavoritesByObjectId.clear();
+        $app.favoriteObjects.clear();
+        $app.favoriteFriends_ = [];
+        $app.favoriteFriendsSorted = [];
+        $app.favoriteWorlds_ = [];
+        $app.favoriteWorldsSorted = [];
+        $app.favoriteAvatars_ = [];
+        $app.favoriteAvatarsSorted = [];
     };
 
     API.deleteExpiredFavorites = function () {
@@ -10296,7 +10304,7 @@ speechSynthesis.getVoices();
     });
 
     API.$on('FAVORITE', function (args) {
-        $app.applyFavorite(args.ref.type, args.ref.favoriteId);
+        $app.applyFavorite(args.ref.type, args.ref.favoriteId, args.sortTop);
     });
 
     API.$on('FAVORITE:@DELETE', function (args) {
@@ -10315,7 +10323,7 @@ speechSynthesis.getVoices();
         $app.applyFavorite('avatar', args.ref.id);
     });
 
-    $app.methods.applyFavorite = function (type, objectId) {
+    $app.methods.applyFavorite = function (type, objectId, sortTop) {
         var favorite = API.cachedFavoritesByObjectId.get(objectId);
         var ctx = this.favoriteObjects.get(objectId);
         if (typeof favorite !== 'undefined') {
@@ -10405,10 +10413,25 @@ speechSynthesis.getVoices();
                 }
             }
             if (isTypeChanged) {
-                if (type === 'friend') {
-                    this.favoriteFriends_.push(ctx);
-                    this.favoriteFriendsSorted.push(ctx);
-                    this.sortFavoriteFriends = true;
+                if (sortTop) {
+                    if (type === 'friend') {
+                        this.favoriteFriends_.unshift(ctx);
+                        this.favoriteFriendsSorted.push(ctx);
+                        this.sortFavoriteFriends = true;
+                    } else if (type === 'world') {
+                        this.favoriteWorlds_.unshift(ctx);
+                        this.favoriteWorldsSorted.push(ctx);
+                        this.sortFavoriteWorlds = true;
+                    } else if (type === 'avatar') {
+                        this.favoriteAvatars_.unshift(ctx);
+                        this.favoriteAvatarsSorted.push(ctx);
+                        this.sortFavoriteAvatars = true;
+                    }
+                } else {
+                    if (type === 'friend') {
+                        this.favoriteFriends_.push(ctx);
+                        this.favoriteFriendsSorted.push(ctx);
+                        this.sortFavoriteFriends = true;
                 } else if (type === 'world') {
                     this.favoriteWorlds_.push(ctx);
                     this.favoriteWorldsSorted.push(ctx);
@@ -10416,7 +10439,8 @@ speechSynthesis.getVoices();
                 } else if (type === 'avatar') {
                     this.favoriteAvatars_.push(ctx);
                     this.favoriteAvatarsSorted.push(ctx);
-                    this.sortFavoriteAvatars = true;
+                        this.sortFavoriteAvatars = true;
+                    }
                 }
             }
         } else if (typeof ctx !== 'undefined') {
