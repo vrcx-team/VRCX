@@ -664,3 +664,12 @@ i.x-user-status.busy {
     width: 16px;
     height: 11px;
 }
+
+.el-pagination .el-select .el-input .el-input__inner,
+.el-input--mini .el-input__icon {
+    height: 22px;
+}
+
+.el-pagination .btn-next {
+    margin-right: 10px;
+}

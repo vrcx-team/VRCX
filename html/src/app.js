@@ -11180,7 +11180,8 @@ speechSynthesis.getVoices();
             stripe: true,
             size: 'mini'
         },
-        layout: 'table'
+        layout: 'table',
+        visible: false
     };
     $app.data.inviteResponseMessageTable = {
         data: [],
@@ -11188,7 +11189,8 @@ speechSynthesis.getVoices();
             stripe: true,
             size: 'mini'
         },
-        layout: 'table'
+        layout: 'table',
+        visible: false
     };
     $app.data.inviteRequestMessageTable = {
         data: [],
@@ -11196,7 +11198,8 @@ speechSynthesis.getVoices();
             stripe: true,
             size: 'mini'
         },
-        layout: 'table'
+        layout: 'table',
+        visible: false
     };
     $app.data.inviteRequestResponseMessageTable = {
         data: [],
@@ -11204,7 +11207,8 @@ speechSynthesis.getVoices();
             stripe: true,
             size: 'mini'
         },
-        layout: 'table'
+        layout: 'table',
+        visible: false
     };
     $app.data.friendsListTable = {
         data: [],
@@ -11441,10 +11445,6 @@ speechSynthesis.getVoices();
         AppApi.ChangeTheme(1);
     } else {
         AppApi.ChangeTheme(0);
-    }
-    var dateObj = new Date();
-    if (dateObj.getMonth() === 3 && dateObj.getDate() === 1) {
-        AppApi.DoFunny();
     }
     window
         .matchMedia('(prefers-color-scheme: dark)')

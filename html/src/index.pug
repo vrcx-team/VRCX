@@ -745,7 +745,7 @@ html
                     el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteMessageTable.visible = true; refreshInviteMessageTable('message')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
                     el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
-                        el-button(type="default" @click="inviteMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                        el-button(type="default" @click="inviteMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     data-tables(v-if="inviteMessageTable.visible" v-bind="inviteMessageTable" style="margin-top:10px")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                         el-table-column(label="Message" prop="message")
@@ -760,7 +760,7 @@ html
                     el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteResponseMessageTable.visible = true; refreshInviteMessageTable('response')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
                     el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
-                        el-button(type="default" @click="inviteResponseMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                        el-button(type="default" @click="inviteResponseMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     data-tables(v-if="inviteResponseMessageTable.visible" v-bind="inviteResponseMessageTable" style="margin-top:10px")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                         el-table-column(label="Message" prop="message")
@@ -775,7 +775,7 @@ html
                     el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteRequestMessageTable.visible = true; refreshInviteMessageTable('request')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
                     el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
-                        el-button(type="default" @click="inviteRequestMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                        el-button(type="default" @click="inviteRequestMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     data-tables(v-if="inviteRequestMessageTable.visible" v-bind="inviteRequestMessageTable" style="margin-top:10px")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                         el-table-column(label="Message" prop="message")
@@ -790,7 +790,7 @@ html
                     el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteRequestResponseMessageTable.visible = true; refreshInviteMessageTable('requestResponse')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
                     el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
-                        el-button(type="default" @click="inviteRequestResponseMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                        el-button(type="default" @click="inviteRequestResponseMessageTable.visible = false" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     data-tables(v-if="inviteRequestResponseMessageTable.visible" v-bind="inviteRequestResponseMessageTable" style="margin-top:10px")
                         el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                         el-table-column(label="Message" prop="message")
@@ -812,7 +812,7 @@ html
                     el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="refreshConfigTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
                     el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
-                        el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                        el-button(type="default" @click="configTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     el-tree(v-if="configTreeData.length > 0" :data="configTreeData" style="margin-top:10px;font-size:12px")
                         template(#default="scope")
                             span
@@ -823,7 +823,7 @@ html
                     el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="refreshCurrentUserTreeData()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
                     el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
-                        el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:0")
+                        el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     el-tree(v-if="currentUserTreeData.length > 0" :data="currentUserTreeData" style="margin-top:10px;font-size:12px")
                         template(#default="scope")
                             span
@@ -1519,7 +1519,7 @@ html
                                     .detail
                                         span.name Date Joined
                                         span.extra(v-text="userDialog.ref.date_joined")
-                                .x-friend-item(style="cursor:default")
+                                .x-friend-item(v-if="API.currentUser.id !== userDialog.id" style="cursor:default")
                                     .detail
                                         span.name(v-if="userDialog.unFriended") Unfriended
                                         span.name(v-else) Friended
@@ -1847,7 +1847,7 @@ html
             //- dialog: favorite
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="favoriteDialog" :visible.sync="favoriteDialog.visible" title="Choose Group" width="300px")
                 div(v-loading="favoriteDialog.loading")
-                    el-button(v-for="group in favoriteDialog.groups" :key="group.name" style="display:block;width:100%;margin:10px 0" @click="addFavorite(group)" :disabled="group.count >= group.capacity") {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
+                    el-button(v-for="group in favoriteDialog.groups" :key="group.name" style="display:block;width:100%;margin:10px 0" @click="addFavorite(group)") {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
 
             //- dialog: invite
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" title="Invite" width="450px")

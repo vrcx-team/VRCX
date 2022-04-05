@@ -13,6 +13,7 @@ namespace VRCX
         {
             var imageHost = "api.vrchat.cloud";
             var imageHost1 = "files.vrchat.cloud";
+            var imageHost2 = "d348imysud55la.cloudfront.net";
             var directoryLocation = Path.Combine(cacheLocation, fileId);
             var fileLocation = Path.Combine(directoryLocation, $"{version}.png");
 
@@ -27,7 +28,7 @@ namespace VRCX
             Directory.CreateDirectory(directoryLocation);
 
             Uri uri = new Uri(url);
-            if (uri.Host != imageHost && uri.Host != imageHost1)
+            if (uri.Host != imageHost && uri.Host != imageHost1 && uri.Host != imageHost2)
                 throw new ArgumentException("Invalid image host", url);
 
             using (var client = new WebClient())
