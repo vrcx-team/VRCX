@@ -12571,6 +12571,7 @@ speechSynthesis.getVoices();
         isBlock: false,
         isMute: false,
         isHideAvatar: false,
+        isInteractOff: false,
         isFavorite: false,
 
         $location: {},
@@ -12737,6 +12738,8 @@ speechSynthesis.getVoices();
             D.isMute = true;
         } else if (ref.type === 'hideAvatar') {
             D.isHideAvatar = true;
+        } else if (ref.type === 'interactOff') {
+            D.isInteractOff = true;
         }
         $app.$message({
             message: 'User moderated',
@@ -12760,6 +12763,8 @@ speechSynthesis.getVoices();
             D.isMute = false;
         } else if (ref.type === 'hideAvatar') {
             D.isHideAvatar = false;
+        } else if (ref.type === 'interactOff') {
+            D.isInteractOff = false;
         }
     });
 
@@ -12839,6 +12844,7 @@ speechSynthesis.getVoices();
                     D.isBlock = false;
                     D.isMute = false;
                     D.isHideAvatar = false;
+                    D.isInteractOff = false;
                     for (var ref of API.cachedPlayerModerations.values()) {
                         if (
                             ref.$isDeleted === false &&
@@ -12851,6 +12857,8 @@ speechSynthesis.getVoices();
                                 D.isMute = true;
                             } else if (ref.type === 'hideAvatar') {
                                 D.isHideAvatar = true;
+                            } else if (ref.type === 'interactOff') {
+                                D.isInteractOff = true;
                             }
                         }
                     }
@@ -13610,6 +13618,18 @@ speechSynthesis.getVoices();
                 API.sendPlayerModeration({
                     moderated: userId,
                     type: 'hideAvatar'
+                });
+                break;
+            case 'Enable Avatar Interaction':
+                API.deletePlayerModeration({
+                    moderated: userId,
+                    type: 'interactOff'
+                });
+                break;
+            case 'Disable Avatar Interaction':
+                API.sendPlayerModeration({
+                    moderated: userId,
+                    type: 'interactOff'
                 });
                 break;
             case 'Unfriend':

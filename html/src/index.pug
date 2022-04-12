@@ -66,7 +66,7 @@ html
                     +menuitem('gameLog', 'Game Log', 'el-icon-s-data')
                     +menuitem('playerList', 'Player List', 'el-icon-tickets')
                     +menuitem('search', 'Search', 'el-icon-search')
-                    +menuitem('favorite', 'Favorite', 'el-icon-star-off')
+                    +menuitem('favorite', 'Favorites', 'el-icon-star-off')
                     +menuitem('friendLog', 'Friend Log', 'el-icon-notebook-2')
                     +menuitem('moderation', 'Moderation', 'el-icon-finished')
                     +menuitem('notification', 'Notification', 'el-icon-bell')
@@ -610,7 +610,7 @@ html
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
                             el-select(v-model="playerModerationTable.filters[0].value" @change="saveTableFilters" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
-                                el-option(v-once v-for="type in ['block', 'unblock', 'mute', 'unmute', 'hideAvatar', 'showAvatar']" :key="type" :label="type" :value="type")
+                                el-option(v-once v-for="type in ['block', 'unblock', 'mute', 'unmute', 'hideAvatar', 'showAvatar', 'interactOn', 'interactOff']" :key="type" :label="type" :value="type")
                             el-input(v-model="playerModerationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
                             el-tooltip(placement="bottom" content="Refresh" :disabled="hideTooltips")
                                 el-button(type="default" :loading="API.isPlayerModerationsLoading" @click="API.refreshPlayerModerations()" icon="el-icon-refresh" circle style="flex:none")
@@ -1438,6 +1438,8 @@ html
                                             el-dropdown-item(v-else icon="el-icon-turn-off-microphone" command="Mute" :disabled="userDialog.ref.$isModerator") Mute
                                             el-dropdown-item(v-if="userDialog.isHideAvatar" icon="el-icon-user-solid" command="Show Avatar" style="color:#F56C6C") Show Avatar
                                             el-dropdown-item(v-else icon="el-icon-user" command="Hide Avatar") Hide Avatar
+                                            el-dropdown-item(v-if="userDialog.isInteractOff" icon="el-icon-thumb" command="Enable Avatar Interaction" style="color:#F56C6C") Enable Avatar Interaction
+                                            el-dropdown-item(v-else icon="el-icon-circle-close" command="Disable Avatar Interaction") Disable Avatar Interaction
                                             template(v-if="userDialog.isFriend")
                                                 el-dropdown-item(icon="el-icon-delete" command="Unfriend" divided) Unfriend
                     el-tabs(ref="userDialogTabs" @tab-click="userDialogTabClick")
