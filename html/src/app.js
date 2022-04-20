@@ -8943,9 +8943,13 @@ speechSynthesis.getVoices();
         ref
     ) {
         var L = API.parseLocation(instanceId);
-        var args = await API.getCachedWorld({
-            worldId: L.worldId
-        });
+        var name = instanceId;
+        try {
+            var args = await API.getCachedWorld({
+                worldId: L.worldId
+            });
+            name = args.ref.name;
+        } catch (err) {}
         this.addPhotonEventToGameLog({
             created_at,
             type: 'PortalSpawn',
@@ -8953,7 +8957,7 @@ speechSynthesis.getVoices();
             location: this.lastLocation.location,
             userId: ref.id,
             instanceId,
-            worldName: args.ref.name
+            worldName: name
         });
     };
 
