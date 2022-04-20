@@ -161,6 +161,7 @@ Vue.component('marquee-text', MarqueeText);
             appType: location.href.substr(-1),
             currentTime: new Date().toJSON(),
             cpuUsage: 0,
+            pcUptime: '',
             config: {},
             photonLobbyBotSize: 0,
             onlineFriendCount: 0,
@@ -363,6 +364,13 @@ Vue.component('marquee-text', MarqueeText);
                 });
             } else {
                 this.devices = '';
+            }
+            if (this.config.pcUptimeOnFeed) {
+                AppApi.GetUptime().then((uptime) => {
+                    this.pcUptime = timeToText(uptime);
+                });
+            } else {
+                this.pcUptime = '';
             }
         } catch (err) {
             console.error(err);

@@ -403,6 +403,8 @@ html
                             span(style="float:right") {{ lastLocationTimer }}
                                 template(v-if="onlineForTimer")
                                     |&nbsp;/ {{ onlineForTimer }}
+                                template(v-if="pcUptime")
+                                    |&nbsp;/ {{ pcUptime }}
                             span(style="display:inline-block") {{ lastLocation.playerList.length }}
                             span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
                             span(v-if="photonLobbyBotSize > 0 && lastLocation.playerList.length > 0" style="display:inline-block;color:red;margin-left:5px") {{ photonLobbyBotSize }}
@@ -410,6 +412,8 @@ html
                             span(style="float:right") Timer: {{ lastLocationTimer }}
                                 template(v-if="onlineForTimer")
                                     |&nbsp;/ {{ onlineForTimer }}
+                                template(v-if="pcUptime")
+                                    |&nbsp;/ {{ pcUptime }}
                             span(style="display:inline-block") Players: {{ lastLocation.playerList.length }} 
                             span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
                             span(v-if="photonLobbyBotSize > 0 && lastLocation.playerList.length > 0" style="display:inline-block;color:red;margin-left:5px") {{ photonLobbyBotSize }}

@@ -425,6 +425,15 @@ namespace VRCX
             WinformThemer.DoFunny();
         }
 
+        public double GetUptime()
+        {
+            using (var uptime = new PerformanceCounter("System", "System Up Time"))
+            {
+                uptime.NextValue();
+                return TimeSpan.FromSeconds(uptime.NextValue()).TotalMilliseconds;
+            }
+        }
+
         public void SetStartup(bool enabled)
         {
             try

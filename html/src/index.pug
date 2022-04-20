@@ -1081,6 +1081,9 @@ html
                         span.name Hide Uptime
                         el-switch(v-model="hideUptimeFromFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
+                        span.name Show PC Uptime
+                        el-switch(v-model="pcUptimeOnFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog" :disabled="!openVR || !overlayWrist") Wrist Feed Filters
                     br
                     span.sub-header Notifications

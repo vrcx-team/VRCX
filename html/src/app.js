@@ -10427,11 +10427,10 @@ speechSynthesis.getVoices();
                         this.favoriteAvatarsSorted.push(ctx);
                         this.sortFavoriteAvatars = true;
                     }
-                } else {
-                    if (type === 'friend') {
-                        this.favoriteFriends_.push(ctx);
-                        this.favoriteFriendsSorted.push(ctx);
-                        this.sortFavoriteFriends = true;
+                } else if (type === 'friend') {
+                    this.favoriteFriends_.push(ctx);
+                    this.favoriteFriendsSorted.push(ctx);
+                    this.sortFavoriteFriends = true;
                 } else if (type === 'world') {
                     this.favoriteWorlds_.push(ctx);
                     this.favoriteWorldsSorted.push(ctx);
@@ -10439,8 +10438,7 @@ speechSynthesis.getVoices();
                 } else if (type === 'avatar') {
                     this.favoriteAvatars_.push(ctx);
                     this.favoriteAvatarsSorted.push(ctx);
-                        this.sortFavoriteAvatars = true;
-                    }
+                    this.sortFavoriteAvatars = true;
                 }
             }
         } else if (typeof ctx !== 'undefined') {
@@ -11284,6 +11282,7 @@ speechSynthesis.getVoices();
     $app.data.hideUptimeFromFeed = configRepository.getBool(
         'VRCX_hideUptimeFromFeed'
     );
+    $app.data.pcUptimeOnFeed = configRepository.getBool('VRCX_pcUptimeOnFeed');
     $app.data.overlayNotifications = configRepository.getBool(
         'VRCX_overlayNotifications'
     );
@@ -11361,6 +11360,7 @@ speechSynthesis.getVoices();
             'VRCX_hideUptimeFromFeed',
             this.hideUptimeFromFeed
         );
+        configRepository.setBool('VRCX_pcUptimeOnFeed', this.pcUptimeOnFeed);
         configRepository.setBool(
             'VRCX_overlayNotifications',
             this.overlayNotifications
@@ -11819,7 +11819,8 @@ speechSynthesis.getVoices();
             notificationTimeout: this.notificationTimeout,
             notificationTheme,
             backgroundEnabled: this.vrBackgroundEnabled,
-            dtHour12: this.dtHour12
+            dtHour12: this.dtHour12,
+            pcUptimeOnFeed: this.pcUptimeOnFeed
         };
         var json = JSON.stringify(VRConfigVars);
         AppApi.ExecuteVrFeedFunction('configUpdate', json);
