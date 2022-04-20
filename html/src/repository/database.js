@@ -1269,12 +1269,12 @@ class Database {
         await sqliteService.execute(
             (dbRow) => {
                 var time = 0;
-                if (dbRow[2] && dbRow[2] > 0) {
+                if (dbRow[2]) {
                     time = dbRow[2];
                 }
                 var ref = data.get(dbRow[1]);
                 if (typeof ref !== 'undefined') {
-                    time = +Number(ref.time);
+                    time += ref.time;
                 }
                 var row = {
                     created_at: dbRow[0],
@@ -1313,12 +1313,12 @@ class Database {
         await sqliteService.execute(
             (dbRow) => {
                 var time = 0;
-                if (dbRow[2] && dbRow[2] > 0) {
+                if (dbRow[2]) {
                     time = dbRow[2];
                 }
                 var ref = data.get(dbRow[1]);
                 if (typeof ref !== 'undefined') {
-                    time = +Number(ref.time);
+                    time += ref.time;
                 }
                 var row = {
                     created_at: dbRow[0],
