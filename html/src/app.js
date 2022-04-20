@@ -1005,6 +1005,10 @@ speechSynthesis.getVoices();
     API.$on('USER:CURRENT', function (args) {
         var {json} = args;
         args.ref = this.applyCurrentUser(json);
+        var location = $app.lastLocation.location;
+        if ($app.gameLogDisabled) {
+            location = json.location;
+        }
         this.applyUser({
             id: json.id,
             username: json.username,
@@ -1026,7 +1030,7 @@ speechSynthesis.getVoices();
             fallbackAvatar: json.fallbackAvatar,
             profilePicOverride: json.profilePicOverride,
             isFriend: false,
-            location: $app.lastLocation.location
+            location
         });
     });
 
@@ -1354,6 +1358,12 @@ speechSynthesis.getVoices();
                 json.location === 'offline'
             ) {
                 json.location = '';
+            }
+            if (
+                typeof json.location === 'undefined' &&
+                typeof ref !== 'undefined'
+            ) {
+                json.location = ref.location;
             }
             if ($app.lastLocation.location) {
                 json.location = $app.lastLocation.location;
@@ -7950,6 +7960,9 @@ speechSynthesis.getVoices();
     $app.data.lastVideoUrl = '';
 
     $app.methods.addGameLogEntry = function (gameLog, location) {
+        if (this.gameLogDisabled) {
+            return;
+        }
         var userId = '';
         if (gameLog.userDisplayName) {
             for (var ref of API.cachedUsers.values()) {
@@ -11497,6 +11510,9 @@ speechSynthesis.getVoices();
     );
     $app.data.photonLoggingEnabled = configRepository.getBool(
         'VRCX_photonLoggingEnabled'
+    );
+    $app.data.gameLogDisabled = configRepository.getBool(
+        'VRCX_gameLogDisabled'
     );
     $app.methods.saveEventOverlay = function () {
         configRepository.setBool(
@@ -19016,6 +19032,31 @@ speechSynthesis.getVoices();
         ) {
             done();
         }
+    };
+
+    $app.methods.disableGameLogDialog = function () {
+        if (this.isGameRunning) {
+            this.$message({
+                message:
+                    'VRChat needs to be closed before this option can be changed',
+                type: 'error'
+            });
+            this.gameLogDisabled = !this.gameLogDisabled;
+            return;
+        }
+        if (this.gameLogDisabled) {
+            this.$confirm('Continue? Disable GameLog', 'Confirm', {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                type: 'info',
+                callback: (action) => {
+                    if (action !== 'confirm') {
+                        this.gameLogDisabled = !this.gameLogDisabled;
+                    }
+                }
+            });
+        }
+        configRepository.setBool('VRCX_gameLogDisabled', this.gameLogDisabled);
     };
 
     $app = new Vue($app);

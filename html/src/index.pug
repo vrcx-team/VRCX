@@ -1218,6 +1218,10 @@ html
                     div.options-container-item
                         span.name Avatar Name cache: #[span(v-text="API.cachedAvatarNames.size")]
                     div.options-container-item
+                        span.name Disable GameLog
+                        el-switch(v-model="gameLogDisabled" @change="disableGameLogDialog")
+                        span.name(style="margin-left:15px") (will likely break things)
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-delete-solid" @click="clearVRCXCache") Clear Cache
                         el-button(size="small" icon="el-icon-time" @click="promptAutoClearVRCXCacheFrequency") Auto Clear Cache
                     div.options-container-item
