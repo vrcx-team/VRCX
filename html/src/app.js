@@ -19053,12 +19053,18 @@ speechSynthesis.getVoices();
                 callback: (action) => {
                     if (action !== 'confirm') {
                         this.gameLogDisabled = !this.gameLogDisabled;
-                        configRepository.setBool('VRCX_gameLogDisabled', this.gameLogDisabled);
+                        configRepository.setBool(
+                            'VRCX_gameLogDisabled',
+                            this.gameLogDisabled
+                        );
                     }
                 }
             });
         } else {
-            configRepository.setBool('VRCX_gameLogDisabled', this.gameLogDisabled);
+            configRepository.setBool(
+                'VRCX_gameLogDisabled',
+                this.gameLogDisabled
+            );
         }
     };
 
