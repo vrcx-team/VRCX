@@ -427,9 +427,6 @@ speechSynthesis.getVoices();
                     }
                     return response;
                 } catch (e) {}
-                if (endpoint.substring(endpoint.length - 10) === '/shortName') {
-                    return response;
-                }
                 if (response.status === 200) {
                     this.$throw(0, 'Invalid JSON response');
                 }
@@ -15233,8 +15230,8 @@ speechSynthesis.getVoices();
 
     API.$on('INSTANCE:SHORTNAME', function (args) {
         var url = '';
-        if (args.json) {
-            url = `https://vrch.at/${args.json}`;
+        if (args.json && args.json.shortName) {
+            url = `https://vrch.at/${args.json.shortName}`;
         }
         $app.launchDialog.shortUrl = url;
     });

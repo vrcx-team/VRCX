@@ -369,11 +369,8 @@ namespace VRCX
 
         public string FollowUrl(string url)
         {
-            bool redirecting = true;
-
-            while (redirecting)
+            for (int i = 0; i < 10; i++)
             {
-                Console.WriteLine(url);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
                 request.AllowAutoRedirect = false;
                 request.UserAgent = "VRCX";
@@ -381,12 +378,12 @@ namespace VRCX
                 if ((int)response.StatusCode == 301 || (int)response.StatusCode == 302)
                 {
                     url = response.Headers["Location"];
-                    if (url.Substring(0, 1) == "/" || url.Substring(0, 31) == "https://vrchat.com/home/launch?")
+                    if (url.Substring(0, 1) == "/" || (url.Length > 30 && url.Substring(0, 31) == "https://vrchat.com/home/launch?"))
                         return url;
                 }
                 else
                 {
-                    redirecting = false;
+                    return "";
                 }
             }
 
