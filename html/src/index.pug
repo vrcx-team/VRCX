@@ -1451,7 +1451,7 @@ html
                                                 el-dropdown-item(icon="el-icon-delete" command="Unfriend" divided) Unfriend
                     el-tabs(ref="userDialogTabs" @tab-click="userDialogTabClick")
                         el-tab-pane(label="Info")
-                            div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee")
+                            div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee;max-height:190px")
                                 div(style="flex:none")
                                     location(:location="userDialog.ref.location")
                                     template(v-if="userDialog.ref.location && userDialog.ref.location !== 'private' && userDialog.ref.location !== 'offline'")
