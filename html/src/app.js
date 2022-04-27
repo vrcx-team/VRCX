@@ -8131,6 +8131,8 @@ speechSynthesis.getVoices();
                     this.addGameLogVRDancing(gameLog, location);
                 } else if (type === 'VideoPlay(ZuwaZuwaDance)') {
                     this.addGameLogZuwaZuwaDance(gameLog, location);
+                } else if (type === 'LSMedia') {
+                    this.addGameLogLSMedia(gameLog, location);
                 }
                 return;
             case 'photon-id':
@@ -8887,7 +8889,7 @@ speechSynthesis.getVoices();
                         eventData.EventType === 'UdonSyncRunProgramAsRPC' &&
                         eventData.Data[0] === 'Beep'
                     ) {
-                        if (!this.isDanceWorld(this.lastLocation.location)) {
+                        if (!this.isRpcWorld(this.lastLocation.location)) {
                             return;
                         }
                         var text = 'Beep';
@@ -9365,7 +9367,7 @@ speechSynthesis.getVoices();
         if (typeof gameLog.videoPos !== 'undefined') {
             videoPos = gameLog.videoPos;
         }
-        if (!this.isDanceWorld(location) || gameLog.videoId === 'YouTube') {
+        if (!this.isRpcWorld(location) || gameLog.videoId === 'YouTube') {
             // skip PyPyDance and VRDancing videos
             try {
                 var url = new URL(videoUrl);
@@ -9565,6 +9567,9 @@ speechSynthesis.getVoices();
         var videoId = Number(data[4]);
         var displayName = data[5];
         var videoName = data[6];
+        if (displayName === 'Random') {
+            displayName = '';
+        }
         if (videoId === 0) {
             videoId = 'YouTube';
         }
@@ -9611,6 +9616,56 @@ speechSynthesis.getVoices();
             };
             this.setNowPlaying(entry);
         }
+    };
+
+    $app.methods.addGameLogLSMedia = function (gameLog, location) {
+        // [VRCX] LSMedia 0,4268.981,Natsumi-sama,,
+        // [VRCX] LSMedia 0,6298.292,Natsumi-sama,The Outfit (2022), 1080p
+        var data =
+            /LSMedia ([\d.]+),([\d.]+),(.+?),(.+?),(?=[^,]*$) ([\d.]+p)/g.exec(
+                gameLog.data
+            );
+        if (!data) {
+            return;
+        }
+        var videoPos = Number(data[1]);
+        var videoLength = Number(data[2]);
+        var displayName = data[3];
+        var videoName = data[4];
+        var videoUrl = videoName;
+        var videoId = 'LSMedia';
+        if (videoUrl === this.nowPlaying.url) {
+            var entry = {
+                created_at: gameLog.dt,
+                videoUrl,
+                videoLength,
+                videoPos
+            };
+            this.setNowPlaying(entry);
+            return;
+        }
+        var userId = '';
+        if (displayName) {
+            for (var ref of API.cachedUsers.values()) {
+                if (ref.displayName === displayName) {
+                    userId = ref.id;
+                    break;
+                }
+            }
+        }
+        var entry = {
+            created_at: gameLog.dt,
+            type: 'VideoPlay',
+            videoUrl,
+            videoId,
+            videoName,
+            videoLength,
+            location,
+            displayName,
+            userId,
+            videoPos
+        };
+        this.setNowPlaying(entry);
     };
 
     $app.methods.lookupYouTubeVideo = async function (videoId) {
@@ -9893,7 +9948,7 @@ speechSynthesis.getVoices();
             buttonText = '';
             buttonUrl = '';
         }
-        if (!hidePrivate && this.isDanceWorld(L.tag)) {
+        if (!hidePrivate && this.isRpcWorld(L.tag)) {
             // dance world rpc
             if (L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1') {
                 appId = '784094509008551956';
@@ -9905,10 +9960,17 @@ speechSynthesis.getVoices();
                 appId = '846232616054030376';
                 bigIcon = 'vr_dancing';
             } else if (
-                L.worldId === 'wrld_52bdcdab-11cd-4325-9655-0fb120846945'
+                L.worldId === 'wrld_52bdcdab-11cd-4325-9655-0fb120846945' ||
+                L.worldId === 'wrld_db612673-d536-488e-a776-24e7877c161b'
             ) {
                 appId = '939473404808007731';
                 bigIcon = 'zuwa_zuwa_dance';
+            } else if (
+                L.worldId === 'wrld_99211ba0-1878-493f-b64e-d3552c10b7cb' ||
+                L.worldId === 'wrld_1b68f7a8-8aea-4900-b7a2-3fc4139ac817'
+            ) {
+                appId = '968292722391785512';
+                bigIcon = 'ls_media';
             }
             if (this.nowPlaying.name) {
                 L.worldName = this.nowPlaying.name;
@@ -11844,15 +11906,18 @@ speechSynthesis.getVoices();
         AppApi.ExecuteVrOverlayFunction('configUpdate', json);
     };
 
-    $app.methods.isDanceWorld = function (location) {
-        var danceWorlds = [
+    $app.methods.isRpcWorld = function (location) {
+        var rpcWorlds = [
             'wrld_f20326da-f1ac-45fc-a062-609723b097b1',
             'wrld_42377cf1-c54f-45ed-8996-5875b0573a83',
             'wrld_dd6d2888-dbdc-47c2-bc98-3d631b2acd7c',
-            'wrld_52bdcdab-11cd-4325-9655-0fb120846945'
+            'wrld_52bdcdab-11cd-4325-9655-0fb120846945',
+            'wrld_db612673-d536-488e-a776-24e7877c161b',
+            'wrld_99211ba0-1878-493f-b64e-d3552c10b7cb',
+            'wrld_1b68f7a8-8aea-4900-b7a2-3fc4139ac817'
         ];
         var L = API.parseLocation(location);
-        if (danceWorlds.includes(L.worldId)) {
+        if (rpcWorlds.includes(L.worldId)) {
             return true;
         }
         return false;
@@ -11863,7 +11928,7 @@ speechSynthesis.getVoices();
         if (this.progressPie) {
             progressPie = true;
             if (this.progressPieFilter) {
-                if (!this.isDanceWorld(this.lastLocation.location)) {
+                if (!this.isRpcWorld(this.lastLocation.location)) {
                     progressPie = false;
                 }
             }
