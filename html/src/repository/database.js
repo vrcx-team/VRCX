@@ -1370,6 +1370,14 @@ class Database {
         );
         return data;
     }
+
+    async cleanLegendFromFriendLog() {
+        await sqliteService.executeNonQuery(
+            `DELETE FROM ${Database.userPrefix}_friend_log_history
+            WHERE type = 'TrustLevel' AND created_at > '2022-05-04T01:00:00.000Z'
+            AND ((trust_level = 'Veteran User' AND previous_trust_level = 'Trusted User') OR (trust_level = 'Trusted User' AND previous_trust_level = 'Veteran User'))`
+        );
+    }
 }
 
 var self = new Database();

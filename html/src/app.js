@@ -1176,14 +1176,7 @@ speechSynthesis.getVoices();
         ) {
             ref.$isTroll = true;
         }
-        if (tags.includes('system_legend')) {
-            ref.$isLegend = true;
-        }
-        if (tags.includes('system_trust_legend')) {
-            ref.$trustLevel = 'Veteran User';
-            ref.$trustClass = 'x-tag-legend';
-            ref.$trustSortNum = 6;
-        } else if (tags.includes('system_trust_veteran')) {
+        if (tags.includes('system_trust_veteran')) {
             ref.$trustLevel = 'Trusted User';
             ref.$trustClass = 'x-tag-veteran';
             ref.$trustSortNum = 5;
@@ -1208,10 +1201,6 @@ speechSynthesis.getVoices();
         if (ref.$isTroll) {
             ref.$trustColor = 'x-tag-troll';
             ref.$trustSortNum += 0.1;
-        }
-        if ($app.legendColorOverride && ref.$isLegend) {
-            ref.$trustColor = 'x-tag-legendary';
-            ref.$trustSortNum += 0.2;
         }
         if (ref.$isModerator) {
             ref.$trustColor = 'x-tag-vip';
@@ -10736,6 +10725,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.getFriendLog = async function () {
+        await database.cleanLegendFromFriendLog(); // fix dataebase spam crap
         var friendLogCurrentArray = await database.getFriendLogCurrent();
         for (var friend of friendLogCurrentArray) {
             this.friendLog.set(friend.userId, friend);
@@ -10898,6 +10888,21 @@ speechSynthesis.getVoices();
             ctx.trustLevel &&
             ctx.trustLevel !== ref.$trustLevel
         ) {
+            if (
+                (ctx.trustLevel === 'Trusted User' &&
+                    ref.$trustLevel === 'Veteran User') ||
+                (ctx.trustLevel === 'Veteran User' &&
+                    ref.$trustLevel === 'Trusted User')
+            ) {
+                var friendLogCurrent3 = {
+                    userId: ref.id,
+                    displayName: ref.displayName,
+                    trustLevel: ref.$trustLevel
+                };
+                this.friendLog.set(ref.id, friendLogCurrent3);
+                database.setFriendLogCurrent(friendLogCurrent3);
+                return;
+            }
             var friendLogHistoryTrustLevel = {
                 created_at: new Date().toJSON(),
                 type: 'TrustLevel',
@@ -11390,9 +11395,6 @@ speechSynthesis.getVoices();
     $app.data.vrBackgroundEnabled = configRepository.getBool(
         'VRCX_vrBackgroundEnabled'
     );
-    $app.data.legendColorOverride = configRepository.getBool(
-        'VRCX_legendColorOverride'
-    );
     $app.data.asideWidth = configRepository.getInt('VRCX_asidewidth');
     $app.data.autoUpdateVRCX = configRepository.getString(
         'VRCX_autoUpdateVRCX'
@@ -11471,15 +11473,6 @@ speechSynthesis.getVoices();
         this.updateVRConfigVars();
         this.updateVRLastLocation();
         AppApi.ExecuteVrOverlayFunction('notyClear', '');
-    };
-    $app.methods.saveLegendColorOverride = function () {
-        configRepository.setBool(
-            'VRCX_legendColorOverride',
-            this.legendColorOverride
-        );
-        API.cachedUsers.forEach((ref) => {
-            API.applyUserTrustLevel(ref);
-        });
     };
     $app.data.TTSvoices = speechSynthesis.getVoices();
     $app.methods.saveNotificationTTS = function () {
@@ -11643,13 +11636,6 @@ speechSynthesis.getVoices();
             $app.data.vrBackgroundEnabled
         );
     }
-    if (!configRepository.getBool('VRCX_legendColorOverride')) {
-        $app.data.legendColorOverride = false;
-        configRepository.setBool(
-            'VRCX_legendColorOverride',
-            $app.data.legendColorOverride
-        );
-    }
     if (!configRepository.getInt('VRCX_asidewidth')) {
         $app.data.asideWidth = 236;
         configRepository.setInt('VRCX_asidewidth', $app.data.asideWidth);
@@ -11808,8 +11794,6 @@ speechSynthesis.getVoices();
                 known: '#2BCF5C',
                 trusted: '#FF7B42',
                 veteran: '#B18FFF',
-                legend: '#FFD000',
-                legendary: '#FF69B4',
                 vip: '#FF2626',
                 troll: '#782F2F'
             })

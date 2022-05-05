@@ -1017,24 +1017,17 @@ html
                             el-color-picker(v-model="trustColor.known" @change="updatetrustColor" size="mini" :predefine="['#2bcf5c']")
                             span.color-picker(slot="trigger" class="x-tag-known") User
                         div
-                            el-color-picker(v-model="trustColor.trusted" @change="updatetrustColor" size="mini" :predefine="['#ff7b42']")
-                            span.color-picker(slot="trigger" class="x-tag-trusted") Known User
-                        div
-                            el-color-picker(v-model="trustColor.veteran" @change="updatetrustColor" size="mini" :predefine="['#b18fff', '#8143e6']")
-                            span.color-picker(slot="trigger" class="x-tag-veteran") Trusted User
-                        div
-                            el-color-picker(v-model="trustColor.legend" @change="updatetrustColor" size="mini" :predefine="['#ffd000', '#abcdef']")
-                            span.color-picker(slot="trigger" class="x-tag-legend") Veteran User
-                        div
-                            el-color-picker(v-model="trustColor.vip" @change="updatetrustColor" size="mini" :predefine="['#ff2626']")
-                            span.color-picker(slot="trigger" class="x-tag-vip") VRChat Team
-                        div
-                            el-color-picker(v-model="trustColor.troll" @change="updatetrustColor" size="mini" :predefine="['#782f2f']")
-                            span.color-picker(slot="trigger" class="x-tag-troll") Nuisance
-                        div
-                                    el-color-picker(v-model="trustColor.legendary" @change="updatetrustColor" size="mini" :predefine="['#ff69b4', '#b52626']")
-                                    span.color-picker(slot="trigger" class="x-tag-legendary") Legend
-                                    el-switch(v-model="legendColorOverride" style="padding-bottom:21px;padding-left:6px" @change="saveLegendColorOverride")
+                                    el-color-picker(v-model="trustColor.trusted" @change="updatetrustColor" size="mini" :predefine="['#ff7b42']")
+                                    span.color-picker(slot="trigger" class="x-tag-trusted") Known User
+                                div
+                                    el-color-picker(v-model="trustColor.veteran" @change="updatetrustColor" size="mini" :predefine="['#b18fff', '#8143e6', '#ff69b4', '#b52626', '#ffd000', '#abcdef']")
+                                    span.color-picker(slot="trigger" class="x-tag-veteran") Trusted User
+                                div
+                                    el-color-picker(v-model="trustColor.vip" @change="updatetrustColor" size="mini" :predefine="['#ff2626']")
+                                    span.color-picker(slot="trigger" class="x-tag-vip") VRChat Team
+                                div
+                                    el-color-picker(v-model="trustColor.troll" @change="updatetrustColor" size="mini" :predefine="['#782f2f']")
+                                    span.color-picker(slot="trigger" class="x-tag-troll") Nuisance
                     el-tab-pane(label="Notifications")
                         div.options-container(style="margin-top:0")
                             span.header Notifications
@@ -1409,7 +1402,6 @@ html
                                     el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px;margin-top:5px")
                                     el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Friend No.{{userDialog.friend.no}}
                                     el-tag.x-tag-troll(v-if="userDialog.ref.$isTroll" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Nuisance
-                                    el-tag.x-tag-legendary(v-if="userDialog.ref.$isLegend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Legend
                                     el-tag.x-tag-vip(v-if="userDialog.ref.$isModerator" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRChat Team
                                     el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRC+
                                     el-tag.x-tag-platform-pc(v-if="userDialog.ref.last_platform === 'standalonewindows'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
