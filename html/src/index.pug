@@ -1091,19 +1091,17 @@ html
                                 span Menu: Vive Menu, Index B, Oculus Y/B Buttons
                                 br
                             div.options-container-item
-                                span.name Enable
+                                span.name SteamVR Overlay
                                 el-switch(v-model="openVR" @change="saveOpenVROption")
+                            div.options-container-item
+                                span.name Wrist Feed Overlay
+                                el-switch(v-model="overlayWrist" @change="saveOpenVROption" :disabled="!openVR")
                             div.options-container-item(style="min-width:118px")
                                 span.name Start overlay with
                                 el-switch(v-model="openVRAlways" @change="saveOpenVROption" inactive-text="VRChat" active-text="SteamVR" :disabled="!openVR")
                             div.options-container-item
                                 span.name Hide Private Worlds
                                 el-switch(v-model="hidePrivateFromFeed" @change="saveOpenVROption")
-                            br
-                            span.sub-header Wrist Feed
-                            div.options-container-item
-                                span.name Wrist Feed Overlay
-                                el-switch(v-model="overlayWrist" @change="saveOpenVROption" :disabled="!openVR")
                             div.options-container-item
                                 span.name(style="min-width:137px") Overlay Button
                                 el-switch(v-model="overlaybutton" @change="saveOpenVROption" inactive-text="Grip" active-text="Menu" :disabled="!openVR || !overlayWrist")
