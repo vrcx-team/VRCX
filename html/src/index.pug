@@ -1458,7 +1458,7 @@ html
                                                 el-dropdown-item(icon="el-icon-delete" command="Unfriend" divided) Unfriend
                     el-tabs(ref="userDialogTabs" @tab-click="userDialogTabClick")
                         el-tab-pane(label="Info")
-                            div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee;max-height:180px")
+                            div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee")
                                 div(style="flex:none")
                                     location(:location="userDialog.ref.location")
                                     template(v-if="userDialog.ref.location && userDialog.ref.location !== 'private' && userDialog.ref.location !== 'offline'")
@@ -1471,7 +1471,7 @@ html
                                         el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
                                             el-button(@click="refreshInstancePlayerCount(userDialog.ref.location)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                         span(v-if="userDialog.instance.occupants" style="margin-left:5px") {{ userDialog.instance.occupants }}  #[template(v-if="userDialog.instance.friendCount > 0") ({{ userDialog.instance.friendCount }})]
-                                .x-friend-list(style="flex:1;margin-top:10px")
+                                .x-friend-list(style="flex:1;margin-top:10px;max-height:150px")
                                     .x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)" class="x-friend-item-border")
                                         template(v-if="userDialog.$location.user")
                                             .avatar(:class="userStatusClass(userDialog.$location.user)")
