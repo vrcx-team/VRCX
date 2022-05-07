@@ -1284,7 +1284,7 @@ class Database {
                 };
                 data.set(row.location, row);
             },
-            `SELECT gamelog_join_leave.created_at, gamelog_join_leave.location, gamelog_join_leave.time, gamelog_location.world_name
+            `SELECT DISTINCT gamelog_join_leave.created_at, gamelog_join_leave.location, gamelog_join_leave.time, gamelog_location.world_name
             FROM gamelog_join_leave
             INNER JOIN gamelog_location ON gamelog_join_leave.location = gamelog_location.location
             WHERE user_id = @userId OR display_name = @displayName
