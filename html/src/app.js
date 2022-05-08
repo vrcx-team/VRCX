@@ -7737,11 +7737,13 @@ speechSynthesis.getVoices();
     $app.data.discordInstance = configRepository.getBool('discordInstance');
     $app.data.discordJoinButton = configRepository.getBool('discordJoinButton');
     $app.data.discordHideInvite = configRepository.getBool('discordHideInvite');
+    $app.data.discordHideImage = configRepository.getBool('discordHideImage');
     $app.methods.saveDiscordOption = function () {
         configRepository.setBool('discordActive', this.discordActive);
         configRepository.setBool('discordInstance', this.discordInstance);
         configRepository.setBool('discordJoinButton', this.discordJoinButton);
         configRepository.setBool('discordHideInvite', this.discordHideInvite);
+        configRepository.setBool('discordHideImage', this.discordHideImage);
         if (!this.discordActive) {
             Discord.SetText('', '');
             Discord.SetActive(false);
@@ -9850,6 +9852,7 @@ speechSynthesis.getVoices();
             Discord.SetTimestamps(this.lastLocation.date, 0);
             L = API.parseLocation(this.lastLocation.location);
             L.worldName = '';
+            L.thumbnailImageUrl = '';
             L.worldCapacity = 0;
             L.joinUrl = '';
             L.accessName = '';
@@ -9857,12 +9860,14 @@ speechSynthesis.getVoices();
                 var ref = API.cachedWorlds.get(L.worldId);
                 if (ref) {
                     L.worldName = ref.name;
+                    L.thumbnailImageUrl = ref.thumbnailImageUrl;
                     L.worldCapacity = ref.capacity * 2;
                 } else {
                     API.getWorld({
                         worldId: L.worldId
                     }).then((args) => {
                         L.worldName = args.ref.name;
+                        L.thumbnailImageUrl = args.ref.thumbnailImageUrl;
                         L.worldCapacity = args.ref.capacity * 2;
                         return args;
                     });
@@ -9941,8 +9946,7 @@ speechSynthesis.getVoices();
             partyMaxSize = 0;
             buttonText = '';
             buttonUrl = '';
-        }
-        if (!hidePrivate && this.isRpcWorld(L.tag)) {
+        } else if (this.isRpcWorld(L.tag)) {
             // dance world rpc
             if (L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1') {
                 appId = '784094509008551956';
@@ -9978,6 +9982,8 @@ speechSynthesis.getVoices();
                         1000
                 );
             }
+        } else if (!this.discordHideImage && L.thumbnailImageUrl) {
+            bigIcon = L.thumbnailImageUrl;
         }
         Discord.SetAssets(
             bigIcon, // big icon

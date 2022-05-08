@@ -1144,6 +1144,9 @@ html
                             div.options-container-item
                                 span.name Hide world details in private
                                 el-switch(v-model="discordHideInvite" @change="saveDiscordOption" :disabled="!discordActive")
+                            div.options-container-item
+                                span.name Hide world images
+                                el-switch(v-model="discordHideImage" @change="saveDiscordOption" :disabled="!discordActive")
                     el-tab-pane(label="Advanced")
                         div.options-container(style="margin-top:0")
                             span.header Advanced

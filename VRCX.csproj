@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -60,6 +60,10 @@
   <ItemGroup>
     <Reference Include="Blake2Sharp">
       <HintPath>librsync.net\Blake2Sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="DiscordRPC">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DiscordRPC\DiscordRPC.dll</HintPath>
     </Reference>
     <Reference Include="librsync.net">
       <HintPath>librsync.net\librsync.net.dll</HintPath>
@@ -171,16 +175,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.Common">
-      <Version>100.0.230</Version>
+      <Version>101.0.150</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.OffScreen">
-      <Version>100.0.230</Version>
+      <Version>101.0.150</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
-      <Version>100.0.230</Version>
-    </PackageReference>
-    <PackageReference Include="DiscordRichPresence">
-      <Version>1.0.175</Version>
+      <Version>101.0.150</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
       <Version>7.1.2</Version>
