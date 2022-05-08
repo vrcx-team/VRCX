@@ -162,7 +162,7 @@ namespace VRCX
                             continue;
                         }
                         var _err = EVRInitError.None;
-                        system = OpenVR.Init(ref _err, EVRApplicationType.VRApplication_Overlay);
+                        system = OpenVR.Init(ref _err, EVRApplicationType.VRApplication_Background);
                         nextInit = DateTime.UtcNow.AddSeconds(5);
                         if (system == null)
                         {

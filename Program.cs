@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace VRCX
 {
-    public class Program
+    public static class Program
     {
         public static string BaseDirectory { get; private set; }
         public static string AppDataDirectory { get; private set; }

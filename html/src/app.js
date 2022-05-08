@@ -79,7 +79,7 @@ speechSynthesis.getVoices();
         }
     });
 
-    var konamiCode = new Konami(() => {
+    Konami(() => {
         $app.toggleCustomEndpoint();
     });
 
@@ -19069,14 +19069,12 @@ speechSynthesis.getVoices();
         this.enableCustomEndpoint = !this.enableCustomEndpoint;
         if (this.enableCustomEndpoint) {
             this.$message({
-                message:
-                'Custom endpoint option enabled',
+                message: 'Custom endpoint option enabled',
                 type: 'success'
             });
         } else {
             this.$message({
-                message:
-                'Custom endpoint option disabled',
+                message: 'Custom endpoint option disabled',
                 type: 'success'
             });
         }
