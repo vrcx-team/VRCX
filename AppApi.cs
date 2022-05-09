@@ -183,10 +183,11 @@ namespace VRCX
 
         public void StartGameFromPath(string path, string arguments)
         {
+            if (!path.EndsWith(".exe")) path = Path.Combine(path, "VRChat.exe");
             Process.Start(new ProcessStartInfo
             {
-                WorkingDirectory = path,
-                            FileName = $"{path}\\VRChat.exe",
+                WorkingDirectory = Path.GetDirectoryName(path),
+                            FileName = path,
                             UseShellExecute = false,
                 Arguments = arguments
             }).Close();
