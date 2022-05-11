@@ -448,11 +448,7 @@ html
                     el-tab-pane(label="Avatar" v-loading="isSearchAvatarLoading" style="min-height:60px")
                         el-tooltip(placement="bottom" content="Refresh own avatars" :disabled="hideTooltips")
                             el-button(type="default" :loading="userDialog.isAvatarsLoading" @click="refreshUserDialogAvatars()" size="mini" icon="el-icon-refresh" circle)
-                        span(style="font-size:14px;margin-left:5px") Results {{ searchAvatarResults.length }}
-                        el-radio-group(v-model="searchAvatarSort" size="mini" style="margin:5px;display:block" @change="searchAvatar")
-                            el-radio(label="name") by name
-                            el-radio(label="update") by update
-                            el-radio(label="created") by created
+                        span(style="font-size:14px;margin-left:5px;margin-right:5px") Results {{ searchAvatarResults.length }}
                         el-radio-group(v-model="searchAvatarFilter" size="mini" style="margin:5px;display:block" @change="searchAvatar")
                             el-radio(label="all") all
                             el-radio(label="public") public
@@ -461,6 +457,10 @@ html
                             el-radio(label="all") all
                             el-radio(label="local") local
                             el-radio(label="remote" :disabled="!avatarRemoteDatabase") remote
+                        el-radio-group(:disabled="searchAvatarFilterRemote !== 'local'" v-model="searchAvatarSort" size="mini" style="margin:5px;display:block" @change="searchAvatar")
+                            el-radio(label="name") by name
+                            el-radio(label="update") by update
+                            el-radio(label="created") by created
                         .x-friend-list(style="margin-top:20px")
                             .x-friend-item(v-for="avatar in searchAvatarPage" :key="avatar.id" @click="showAvatarDialog(avatar.id)")
                                 template(v-once)
@@ -1459,35 +1459,36 @@ html
                                                 el-dropdown-item(icon="el-icon-delete" command="Unfriend" divided) Unfriend
                     el-tabs(ref="userDialogTabs" @tab-click="userDialogTabClick")
                         el-tab-pane(label="Info")
-                            div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee")
-                                div(style="flex:none")
-                                    location(:location="userDialog.ref.location")
-                                    template(v-if="userDialog.ref.location && userDialog.ref.location !== 'private' && userDialog.ref.location !== 'offline'")
-                                        el-tooltip(placement="top" content="Launch/Invite" :disabled="hideTooltips")
-                                            launch(:location="userDialog.ref.location" style="margin-left:5px")
-                                        el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
-                                            invite-yourself(:location="userDialog.ref.location" style="margin-left:5px")
-                                        el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                                            el-button(v-if="copyLocationCheck(userDialog.ref.location)" @click="copyLocation(userDialog.ref.location)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
-                                        el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
-                                            el-button(@click="refreshInstancePlayerCount(userDialog.ref.location)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
-                                        span(v-if="userDialog.instance.occupants" style="margin-left:5px") {{ userDialog.instance.occupants }}  #[template(v-if="userDialog.instance.friendCount > 0") ({{ userDialog.instance.friendCount }})]
-                                .x-friend-list(style="flex:1;margin-top:10px;max-height:150px")
-                                    .x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)" class="x-friend-item-border")
-                                        template(v-if="userDialog.$location.user")
-                                            .avatar(:class="userStatusClass(userDialog.$location.user)")
-                                                img(v-lazy="userImage(userDialog.$location.user)")
+                            template(v-if="!userDialog.isFriend || (userDialog.friend.state === 'online' || (userDialog.state !== 'online' && userDialog.ref.location !== 'private'))")
+                                div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee")
+                                    div(style="flex:none")
+                                        location(:location="userDialog.ref.location")
+                                        template(v-if="userDialog.ref.location && userDialog.ref.location !== 'private' && userDialog.ref.location !== 'offline'")
+                                            el-tooltip(placement="top" content="Launch/Invite" :disabled="hideTooltips")
+                                                launch(:location="userDialog.ref.location" style="margin-left:5px")
+                                            el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
+                                                invite-yourself(:location="userDialog.ref.location" style="margin-left:5px")
+                                            el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                                                el-button(v-if="copyLocationCheck(userDialog.ref.location)" @click="copyLocation(userDialog.ref.location)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                                            el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
+                                                el-button(@click="refreshInstancePlayerCount(userDialog.ref.location)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
+                                            span(v-if="userDialog.instance.occupants" style="margin-left:5px") {{ userDialog.instance.occupants }}  #[template(v-if="userDialog.instance.friendCount > 0") ({{ userDialog.instance.friendCount }})]
+                                    .x-friend-list(style="flex:1;margin-top:10px;max-height:150px")
+                                        .x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)" class="x-friend-item-border")
+                                            template(v-if="userDialog.$location.user")
+                                                .avatar(:class="userStatusClass(userDialog.$location.user)")
+                                                    img(v-lazy="userImage(userDialog.$location.user)")
+                                                .detail
+                                                    span.name(v-text="userDialog.$location.user.displayName" :class="userDialog.$location.user.$trustColor")
+                                                    span.extra Instance Creator
+                                            span(v-else v-text="userDialog.$location.userId")
+                                        .x-friend-item(v-for="user in userDialog.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
+                                            .avatar(:class="userStatusClass(user)")
+                                                img(v-lazy="userImage(user)")
                                             .detail
-                                                span.name(v-text="userDialog.$location.user.displayName" :class="userDialog.$location.user.$trustColor")
-                                                span.extra Instance Creator
-                                        span(v-else v-text="userDialog.$location.userId")
-                                    .x-friend-item(v-for="user in userDialog.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
-                                        .avatar(:class="userStatusClass(user)")
-                                            img(v-lazy="userImage(user)")
-                                        .detail
-                                            span.name(v-text="user.displayName" :class="user.$trustColor")
-                                            span.extra
-                                                timer(:epoch="user.$location_at")
+                                                span.name(v-text="user.displayName" :class="user.$trustColor")
+                                                span.extra
+                                                    timer(:epoch="user.$location_at")
                             .x-friend-list(style="max-height:none")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
@@ -1592,10 +1593,10 @@ html
                             template(v-if="userDialog.ref.id === API.currentUser.id")
                                 el-button(type="default" :loading="userDialog.isAvatarsLoading" @click="refreshUserDialogAvatars()" size="mini" icon="el-icon-refresh" circle)
                             span(style="margin-left:5px") Total {{ userDialogAvatars.length }}
-                            el-radio-group(v-model="userDialog.avatarSorting" size="mini" style="margin-left:30px" @change="changeUserDialogAvatarSorting")
+                            el-radio-group(v-if="userDialog.ref.id === API.currentUser.id" v-model="userDialog.avatarSorting" size="mini" style="margin-left:30px;margin-right:30px" @change="changeUserDialogAvatarSorting")
                                 el-radio(label="name") by name
                                 el-radio(label="update") by update
-                            el-radio-group(v-model="userDialog.avatarReleaseStatus" size="mini" style="margin-left:60px")
+                            el-radio-group(v-if="userDialog.ref.id === API.currentUser.id" v-model="userDialog.avatarReleaseStatus" size="mini" style="margin-left:30px")
                                 el-radio(label="all") all
                                 el-radio(label="public") public
                                 el-radio(label="private") private
