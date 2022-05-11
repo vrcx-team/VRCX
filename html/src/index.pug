@@ -45,7 +45,7 @@ html
                             el-form-item
                                 el-button(:loading="loginForm.loading" style="width:100%" @click="loginWithSteam()") Login with Steam
                         div(style="text-align:center;font-size:12px")
-                            p &copy; 2019-2021 #[a(href="https://github.com/pypy-vrc" target="_blank") pypy] (mina#5656)
+                            p &copy; 2019-2022 #[a(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] (mina#5656) & #[a(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
                             p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
                             p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
                             p pypy is not responsible for any problems caused by VRCX. Use at your own risk!
@@ -1132,7 +1132,7 @@ html
                                 span * Only works when VRChat is running.
                             div.options-container-item
                                 span.name Enable
-                                    el-tooltip(placement="top" style="margin-left:5px" content="Recommended to disable Rich Presence in VRChat config.json below to stop it from conflicting")
+                                    el-tooltip(placement="top" style="margin-left:5px" content="Recommended to disable Rich Presence in VRChat config.json to stop it from conflicting")
                                         i.el-icon-warning(style="cursor:pointer" @click="showVRChatConfig")
                                 el-switch(v-model="discordActive" @change="saveDiscordOption")
                             div.options-container-item
