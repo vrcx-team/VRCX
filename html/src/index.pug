@@ -36,9 +36,9 @@ html
                             el-form-item(label="Password" prop="password" required style="margin-top:10px")
                                 el-input(type="password" v-model="loginForm.password" name="password" placeholder="Password" clearable show-password)
                             el-form-item(v-if="enableCustomEndpoint" label="Endpont" prop="endpoint" style="margin-top:10px")
-                                el-input(v-model="loginForm.endpoint" name="endpoint" placeholder="Endpoint URL" clearable)
+                                el-input(v-model="loginForm.endpoint" name="endpoint" :placeholder="API.endpointDomainVrchat" clearable)
                             el-form-item(v-if="enableCustomEndpoint" label="WebSocket" prop="endpoint" style="margin-top:10px")
-                                el-input(v-model="loginForm.websocket" name="websocket" placeholder="WebSocket URL" clearable)
+                                el-input(v-model="loginForm.websocket" name="websocket" :placeholder="API.websocketDomainVrchat" clearable)
                             el-checkbox(v-model="loginForm.saveCredentials" style="margin-top:15px") Save Credentials
                             el-form-item(style="margin-top:15px")
                                 el-button(native-type="submit" type="primary" :loading="loginForm.loading" style="width:100%") Login
@@ -1469,7 +1469,7 @@ html
                                                 el-dropdown-item(icon="el-icon-delete" command="Unfriend" divided) Unfriend
                     el-tabs(ref="userDialogTabs" @tab-click="userDialogTabClick")
                         el-tab-pane(label="Info")
-                            template(v-if="!userDialog.isFriend || (userDialog.friend.state === 'online' || (userDialog.state !== 'online' && userDialog.ref.location !== 'private'))")
+                            template(v-if="!userDialog.isFriend || (userDialog.friend.state === 'online' || (userDialog.friend.state !== 'online' && userDialog.ref.location !== 'private'))")
                                 div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee")
                                     div(style="flex:none")
                                         location(:location="userDialog.ref.location")
