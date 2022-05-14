@@ -165,13 +165,17 @@ html
                                         span(v-else) D
                             el-table-column(label="Display Name" min-width="140" prop="ref.displayName")
                                 template(v-once #default="scope")
-                                    span(v-text="scope.row.ref.displayName" :class="scope.row.ref.$trustColor")
+                                    span(v-if="randomUserColours" v-text="scope.row.ref.displayName" :style="{'color':scope.row.ref.$userColour}")
+                                    span(v-else v-text="scope.row.ref.displayName")
                             el-table-column(label="Status" min-width="180" prop="ref.status")
                                 template(v-once #default="scope")
                                     template(v-if="scope.row.ref.status")
                                         i.x-user-status(:class="statusClass(scope.row.ref.status)")
                                         span  ‎
                                         span(v-text="scope.row.ref.statusDescription")
+                            el-table-column(label="Rank" width="110" prop="$trustSortNum" sortable="custom")
+                                template(v-once #default="scope")
+                                    span.name(v-text="scope.row.ref.$trustLevel" :class="scope.row.ref.$trustClass")
                             el-table-column(label="Language" width="100" prop="ref.$languages")
                                 template(v-once #default="scope")
                                     el-tooltip(v-for="item in scope.row.ref.$languages" :key="item.key" placement="top")
@@ -498,7 +502,7 @@ html
                                                 .avatar(:class="userStatusClass(favorite.ref)")
                                                     img(v-lazy="userImage(favorite.ref)")
                                                 .detail
-                                                    span.name(v-text="favorite.ref.displayName" :class="favorite.ref.$trustColor")
+                                                    span.name(v-text="favorite.ref.displayName" :style="{'color':favorite.ref.$userColour}")
                                                     location.extra(v-if="favorite.ref.location !== 'offline'" :location="favorite.ref.location" :link="false")
                                                     span(v-else v-text="favorite.ref.statusDescription")
                                                 el-tooltip(placement="left" content="Move" :disabled="hideTooltips")
@@ -865,10 +869,13 @@ html
                                     img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row)")
                                     img.friends-list-avatar(v-lazy="userImageFull(scope.row)" style="height:500px;cursor:pointer" @click="openExternalLink(userImageFull(scope.row))")
                         el-table-column(label="Display Name" min-width="130" prop="displayName" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'displayName')")
+                            template(v-once #default="scope")
+                                span.name(v-if="randomUserColours" v-text="scope.row.displayName" :style="{'color':scope.row.$userColour}")
+                                span.name(v-else v-text="scope.row.displayName")
                         el-table-column(label="User Name" min-width="120" prop="username" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'username')")
                         el-table-column(label="Rank" width="110" prop="$trustSortNum" sortable="custom")
                             template(v-once #default="scope")
-                                span.name(v-text="scope.row.$trustLevel" :class="scope.row.$trustColor")
+                                span.name(v-text="scope.row.$trustLevel" :class="scope.row.$trustClass")
                         el-table-column(label="Status" min-width="180" prop="status" sortable :sort-method="(a, b) => sortStatus(a.status, b.status)")
                             template(v-once #default="scope")
                                 i.x-user-status(v-if="scope.row.status !== 'offline'" :class="statusClass(scope.row.status)")
@@ -1006,6 +1013,9 @@ html
                                 el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{236: ''}" :min="141" :max="500" style="width:300px")
                         div.options-container
                             span.header User Colors
+                            div.options-container-item
+                                span.name Random colours from user ID
+                                el-switch(v-model="randomUserColours" @change="updatetrustColor")
                             div.options-container-item
                                 div
                                     el-color-picker(v-model="trustColor.untrusted" @change="updatetrustColor" size="mini" :predefine="['#CCCCCC']")
@@ -1280,7 +1290,7 @@ html
                             .x-friend-item
                                 template(v-if="item.ref")
                                     .detail
-                                        span.name(v-text="item.ref.displayName" :class="item.ref.$trustColor")
+                                        span.name(v-text="item.ref.displayName" :style="{'color':item.ref.$userColour}")
                                         location.extra(:location="item.ref.location" :link="false")
                                     img.avatar(v-lazy="userImage(item.ref)")
                                 span(v-else) Search More: #[span(v-text="item.label" style="font-weight:bold")]
@@ -1297,7 +1307,7 @@ html
                             .avatar(:class="userStatusClass(API.currentUser)")
                                 img(v-lazy="userImage(API.currentUser)")
                             .detail
-                                span.name(v-text="API.currentUser.displayName" :class="API.currentUser.$trustColor")
+                                span.name(v-text="API.currentUser.displayName" :style="{'color':API.currentUser.$userColour}")
                                 location.extra(v-if="isGameRunning === true" :location="lastLocation.location" :link="false")
                                 span.extra(v-else v-text="API.currentUser.statusDescription" :link="false")
                     .x-friend-group(v-show="friendsGroup0.length")
@@ -1309,8 +1319,8 @@ html
                                 .avatar(:class="userStatusClass(friend.ref)")
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.$nickName" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.$nickName }})
-                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                    span.name(v-if="friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
+                                    span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                     location.extra(:location="friend.ref.location" :link="false")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
@@ -1324,8 +1334,8 @@ html
                                 .avatar(:class="userStatusClass(friend.ref)")
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.$nickName" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.$nickName }})
-                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                    span.name(v-if="friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
+                                    span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                     location.extra(:location="friend.ref.location" :link="false")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
@@ -1339,8 +1349,8 @@ html
                                 .avatar
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.$nickName" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.$nickName }})
-                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                    span.name(v-if="friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
+                                    span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                     span.extra(v-text="friend.ref.statusDescription" :link="false")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
@@ -1354,8 +1364,8 @@ html
                                 .avatar
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.$nickName" :class="friend.ref.$trustColor") {{ friend.ref.displayName }} ({{ friend.$nickName }})
-                                    span.name(v-else v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                    span.name(v-if="friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
+                                    span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                     span.extra(v-text="friend.ref.statusDescription")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
@@ -1479,14 +1489,14 @@ html
                                                 .avatar(:class="userStatusClass(userDialog.$location.user)")
                                                     img(v-lazy="userImage(userDialog.$location.user)")
                                                 .detail
-                                                    span.name(v-text="userDialog.$location.user.displayName" :class="userDialog.$location.user.$trustColor")
+                                                    span.name(v-text="userDialog.$location.user.displayName" :style="{'color':userDialog.$location.user.$userColour}")
                                                     span.extra Instance Creator
                                             span(v-else v-text="userDialog.$location.userId")
                                         .x-friend-item(v-for="user in userDialog.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
                                             .avatar(:class="userStatusClass(user)")
                                                 img(v-lazy="userImage(user)")
                                             .detail
-                                                span.name(v-text="user.displayName" :class="user.$trustColor")
+                                                span.name(v-text="user.displayName" :style="{'color':user.$userColour}")
                                                 span.extra
                                                     timer(:epoch="user.$location_at")
                             .x-friend-list(style="max-height:none")
@@ -1699,14 +1709,14 @@ html
                                             .avatar(:class="userStatusClass(room.$location.user)")
                                                 img(v-lazy="userImage(room.$location.user)")
                                             .detail
-                                                span.name(v-text="room.$location.user.displayName" :class="room.$location.user.$trustColor")
+                                                span.name(v-text="room.$location.user.displayName" :style="{'color':room.$location.user.$userColour}")
                                                 span.extra Instance Creator
                                         span(v-else v-text="room.$location.userId")
                                     .x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
                                         .avatar(:class="userStatusClass(user)")
                                             img(v-lazy="userImage(user)")
                                         .detail
-                                            span.name(v-text="user.displayName" :class="user.$trustColor")
+                                            span.name(v-text="user.displayName" :style="{'color':user.$userColour}")
                                             span.extra
                                                 timer(:epoch="user.$location_at")
                         el-tab-pane(label="Info")
@@ -1886,7 +1896,7 @@ html
                                     .avatar(:class="userStatusClass(friend.ref)")
                                         img(v-lazy="userImage(friend.ref)")
                                     .detail
-                                        span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
                         el-option-group(v-if="friendsGroup1.length" label="ONLINE")
                             el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
@@ -1894,7 +1904,7 @@ html
                                     .avatar(:class="userStatusClass(friend.ref)")
                                         img(v-lazy="userImage(friend.ref)")
                                     .detail
-                                        span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
                         el-option-group(v-if="friendsGroup2.length" label="ACTIVE")
                             el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
@@ -1902,7 +1912,7 @@ html
                                     .avatar
                                         img(v-lazy="userImage(friend.ref)")
                                     .detail
-                                        span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
                 template(#footer)
                     el-button(size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="showSendInviteDialog()") Invite With Message
@@ -1997,7 +2007,7 @@ html
                                         .avatar(:class="userStatusClass(friend.ref)")
                                             img(v-lazy="userImage(friend.ref)")
                                         .detail
-                                            span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                            span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                     span(v-else v-text="friend.id")
                             el-option-group(v-if="friendsGroup1.length" label="ONLINE")
                                 el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
@@ -2005,7 +2015,7 @@ html
                                         .avatar(:class="userStatusClass(friend.ref)")
                                             img(v-lazy="userImage(friend.ref)")
                                         .detail
-                                            span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                            span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                     span(v-else v-text="friend.id")
                             el-option-group(v-if="friendsGroup2.length" label="ACTIVE")
                                 el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
@@ -2013,7 +2023,7 @@ html
                                         .avatar
                                             img(v-lazy="userImage(friend.ref)")
                                         .detail
-                                            span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                            span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
                             el-option-group(v-if="friendsGroup2.length" label="OFFLINE")
                                 el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
@@ -2021,7 +2031,7 @@ html
                                         .avatar
                                             img(v-lazy="userImage(friend.ref)")
                                         .detail
-                                            span.name(v-text="friend.ref.displayName" :class="friend.ref.$trustColor")
+                                            span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
                     el-form-item(label="Location")
                         el-input(v-model="newInstanceDialog.location" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")

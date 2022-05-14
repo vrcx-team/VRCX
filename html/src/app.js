@@ -1171,6 +1171,7 @@ speechSynthesis.getVoices();
     API.applyUserTrustLevel = function (ref) {
         ref.$isModerator = ref.developerType && ref.developerType !== 'none';
         ref.$isTroll = false;
+        var trustColor = '';
         var {tags} = ref;
         if (tags.includes('admin_moderator')) {
             ref.$isModerator = true;
@@ -1184,32 +1185,45 @@ speechSynthesis.getVoices();
         if (tags.includes('system_trust_veteran')) {
             ref.$trustLevel = 'Trusted User';
             ref.$trustClass = 'x-tag-veteran';
+            trustColor = 'veteran';
             ref.$trustSortNum = 5;
         } else if (tags.includes('system_trust_trusted')) {
             ref.$trustLevel = 'Known User';
             ref.$trustClass = 'x-tag-trusted';
+            trustColor = 'trusted';
             ref.$trustSortNum = 4;
         } else if (tags.includes('system_trust_known')) {
             ref.$trustLevel = 'User';
             ref.$trustClass = 'x-tag-known';
+            trustColor = 'known';
             ref.$trustSortNum = 3;
         } else if (tags.includes('system_trust_basic')) {
             ref.$trustLevel = 'New User';
             ref.$trustClass = 'x-tag-basic';
+            trustColor = 'basic';
             ref.$trustSortNum = 2;
         } else {
             ref.$trustLevel = 'Visitor';
             ref.$trustClass = 'x-tag-untrusted';
+            trustColor = 'untrusted';
             ref.$trustSortNum = 1;
         }
-        ref.$trustColor = ref.$trustClass;
         if (ref.$isTroll) {
-            ref.$trustColor = 'x-tag-troll';
+            trustColor = 'troll';
             ref.$trustSortNum += 0.1;
         }
         if (ref.$isModerator) {
-            ref.$trustColor = 'x-tag-vip';
+            trustColor = 'vip';
             ref.$trustSortNum += 0.3;
+        }
+        if ($app.randomUserColours && $app.friendLogInitStatus) {
+            if (!ref.$userColour) {
+                $app.getNameColour(ref.id).then((colour) => {
+                    ref.$userColour = colour;
+                });
+            }
+        } else {
+            ref.$userColour = $app.trustColor[trustColor];
         }
     };
 
@@ -1278,7 +1292,7 @@ speechSynthesis.getVoices();
                 $isTroll: false,
                 $trustLevel: 'Visitor',
                 $trustClass: 'x-tag-untrusted',
-                $trustColor: 'x-tag-untrusted',
+                $userColour: '',
                 $trustSortNum: 1,
                 $languages: [],
                 //
@@ -1408,7 +1422,7 @@ speechSynthesis.getVoices();
                 $isTroll: false,
                 $trustLevel: 'Visitor',
                 $trustClass: 'x-tag-untrusted',
-                $trustColor: 'x-tag-untrusted',
+                $userColour: '',
                 $trustSortNum: 1,
                 $languages: [],
                 $joinCount: 0,
@@ -7376,6 +7390,12 @@ speechSynthesis.getVoices();
         } else {
             await $app.initFriendLog(args.json.id);
         }
+        if ($app.randomUserColours) {
+            $app.getNameColour(this.currentUser.id).then((colour) => {
+                this.currentUser.$userColour = colour;
+            });
+            $app.userColourInit();
+        }
         this.getAuth();
         $app.updateSharedFeed(true);
         if ($app.isGameRunning) {
@@ -11432,6 +11452,7 @@ speechSynthesis.getVoices();
         'VRCX_avatarRemoteDatabaseProvider'
     );
     $app.data.sortFavorites = configRepository.getBool('VRCX_sortFavorites');
+    $app.data.randomUserColours = configRepository.getBool('VRCX_randomUserColours');
     $app.methods.saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -11483,6 +11504,7 @@ speechSynthesis.getVoices();
             this.avatarRemoteDatabase
         );
         configRepository.setBool('VRCX_sortFavorites', this.sortFavorites);
+        configRepository.setBool('VRCX_randomUserColours', this.randomUserColours);
         this.updateSharedFeed(true);
         this.updateVRConfigVars();
         this.updateVRLastLocation();
@@ -11523,6 +11545,7 @@ speechSynthesis.getVoices();
             AppApi.ChangeTheme(0);
         }
         this.updateVRConfigVars();
+        this.updatetrustColor();
     };
     if ($app.data.isDarkMode) {
         AppApi.ChangeTheme(1);
@@ -11818,18 +11841,31 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updatetrustColor = function () {
-        var trustColor = $app.trustColor;
-        if (trustColor) {
+        configRepository.setBool('VRCX_randomUserColours', this.randomUserColours);
+        if (this.trustColor) {
             configRepository.setString(
                 'VRCX_trustColor',
-                JSON.stringify(trustColor)
+                JSON.stringify(this.trustColor)
             );
-        } else {
-            trustColor = JSON.parse(
-                configRepository.getString('VRCX_trustColor')
-            );
-            $app.trustColor = trustColor;
         }
+        if (this.randomUserColours) {
+            this.getNameColour(API.currentUser.id).then((colour) => {
+                API.currentUser.$userColour = colour;
+            });
+            this.userColourInit();
+        } else {
+            API.applyUserTrustLevel(API.currentUser);
+            API.cachedUsers.forEach((ref) => {
+                API.applyUserTrustLevel(ref);
+            });
+        }
+        this.updatetrustColorClasses();
+    };
+
+    $app.methods.updatetrustColorClasses = function () {
+        var trustColor = JSON.parse(
+            configRepository.getString('VRCX_trustColor')
+        );
         if (document.getElementById('trustColor') !== null) {
             document.getElementById('trustColor').outerHTML = '';
         }
@@ -11843,7 +11879,7 @@ speechSynthesis.getVoices();
         style.innerHTML = newCSS;
         document.getElementsByTagName('head')[0].appendChild(style);
     };
-    $app.methods.updatetrustColor();
+    $app.methods.updatetrustColorClasses();
 
     $app.methods.saveSharedFeedFilters = function () {
         this.notyFeedFiltersDialog.visible = false;
@@ -19151,6 +19187,54 @@ speechSynthesis.getVoices();
                 this.gameLogDisabled
             );
         }
+    };
+
+    $app.methods.getNameColour = async function (userId) {
+        var hue = await AppApi.GetColourFromUserID(userId);
+        return this.HueToHex(hue);
+    };
+
+    $app.methods.userColourInit = async function () {
+        var dictObject = await AppApi.GetColourBulk(Array.from(API.cachedUsers.keys()));
+        for (var [userId, hue] of Object.entries(dictObject)) {
+            var ref = API.cachedUsers.get(userId);
+            if (typeof ref !== 'undefined') {
+                ref.$userColour = this.HueToHex(hue);
+            }
+        }
+    };
+
+    $app.methods.HueToHex = function (hue) {
+        // this.HSVtoRGB(hue / 65535, .8, .8);
+        if (this.isDarkMode) {
+            return this.HSVtoRGB(hue / 65535, .6, 1);
+        }
+        return this.HSVtoRGB(hue / 65535, 1, .7);
+    };
+
+    $app.methods.HSVtoRGB = function (h, s, v) {
+        var r, g, b, i, f, p, q, t;
+        if (arguments.length === 1) {
+            s = h.s, v = h.v, h = h.h;
+        }
+        i = Math.floor(h * 6);
+        f = h * 6 - i;
+        p = v * (1 - s);
+        q = v * (1 - f * s);
+        t = v * (1 - (1 - f) * s);
+        switch (i % 6) {
+            case 0: r = v, g = t, b = p; break;
+            case 1: r = q, g = v, b = p; break;
+            case 2: r = p, g = v, b = t; break;
+            case 3: r = p, g = q, b = v; break;
+            case 4: r = t, g = p, b = v; break;
+            case 5: r = v, g = p, b = q; break;
+        }
+        var red = Math.round(r * 255);
+        var green = Math.round(g * 255);
+        var blue = Math.round(b * 255);
+        var decColor = 0x1000000 + blue + 0x100 * green + 0x10000 * red ;
+        return '#'+decColor.toString(16).substr(1);
     };
 
     $app = new Vue($app);

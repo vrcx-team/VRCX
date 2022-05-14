@@ -19,6 +19,8 @@ using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
 using librsync.net;
 using System.Net.Sockets;
+using System.Text;
+using System.Collections.Generic;
 
 namespace VRCX
 {
@@ -431,6 +433,23 @@ namespace VRCX
                 uptime.NextValue();
                 return TimeSpan.FromSeconds(uptime.NextValue()).TotalMilliseconds;
             }
+        }
+
+        private static readonly MD5 _hasher = MD5.Create();
+        public int GetColourFromUserID(string userId)
+        {
+            var hash = _hasher.ComputeHash(Encoding.UTF8.GetBytes(userId));
+            return hash[3] << 8 | hash[4];
+        }
+
+        public Dictionary<string, int> GetColourBulk(List<Object> userIds)
+        {
+            Dictionary<string, int> output = new Dictionary<string, int>();
+            foreach (string userId in userIds)
+            {
+                output.Add(userId, GetColourFromUserID(userId));
+            }
+            return output;
         }
 
         public void SetStartup(bool enabled)
