@@ -709,8 +709,8 @@ html
                                 span.extra(v-text="API.currentUser.username")
                         .x-friend-item(style="cursor:default")
                             .detail
-                                span.name Last Login
-                                span.extra {{ API.currentUser.last_login | formatDate('long') }}
+                                span.name Last Activity
+                                span.extra {{ API.currentUser.last_activity | formatDate('long') }}
                         .x-friend-item(style="cursor:default")
                             .detail
                                 span.name Two-Factor Auth (2FA)
@@ -900,6 +900,9 @@ html
                         el-table-column(label="Last Seen" width="170" prop="$lastSeen" sortable :sort-method="(a, b) => sortAlphabetically(a, b, '$lastSeen')")
                             template(v-once #default="scope")
                                 span {{ scope.row.$lastSeen | formatDate('long') }}
+                        el-table-column(label="Last Activity" width="170" prop="last_activity" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'last_activity')")
+                            template(v-once #default="scope")
+                                span {{ scope.row.last_activity | formatDate('long') }}
                         el-table-column(label="Last Login" width="170" prop="last_login" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'last_login')")
                             template(v-once #default="scope")
                                 span {{ scope.row.last_login | formatDate('long') }}
@@ -1541,8 +1544,8 @@ html
                                         span.extra(v-text="userOnlineFor(userDialog)")
                                 .x-friend-item(style="cursor:default")
                                     .detail
-                                        span.name Last Login
-                                        span.extra {{ userDialog.ref.last_login | formatDate('long') }}
+                                        span.name Last Activity
+                                        span.extra {{ userDialog.ref.last_activity | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Date Joined
