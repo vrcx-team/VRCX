@@ -11452,7 +11452,9 @@ speechSynthesis.getVoices();
         'VRCX_avatarRemoteDatabaseProvider'
     );
     $app.data.sortFavorites = configRepository.getBool('VRCX_sortFavorites');
-    $app.data.randomUserColours = configRepository.getBool('VRCX_randomUserColours');
+    $app.data.randomUserColours = configRepository.getBool(
+        'VRCX_randomUserColours'
+    );
     $app.methods.saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -11504,7 +11506,10 @@ speechSynthesis.getVoices();
             this.avatarRemoteDatabase
         );
         configRepository.setBool('VRCX_sortFavorites', this.sortFavorites);
-        configRepository.setBool('VRCX_randomUserColours', this.randomUserColours);
+        configRepository.setBool(
+            'VRCX_randomUserColours',
+            this.randomUserColours
+        );
         this.updateSharedFeed(true);
         this.updateVRConfigVars();
         this.updateVRLastLocation();
@@ -11841,7 +11846,10 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updatetrustColor = function () {
-        configRepository.setBool('VRCX_randomUserColours', this.randomUserColours);
+        configRepository.setBool(
+            'VRCX_randomUserColours',
+            this.randomUserColours
+        );
         if (this.trustColor) {
             configRepository.setString(
                 'VRCX_trustColor',
@@ -19195,7 +19203,9 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.userColourInit = async function () {
-        var dictObject = await AppApi.GetColourBulk(Array.from(API.cachedUsers.keys()));
+        var dictObject = await AppApi.GetColourBulk(
+            Array.from(API.cachedUsers.keys())
+        );
         for (var [userId, hue] of Object.entries(dictObject)) {
             var ref = API.cachedUsers.get(userId);
             if (typeof ref !== 'undefined') {
@@ -19207,34 +19217,62 @@ speechSynthesis.getVoices();
     $app.methods.HueToHex = function (hue) {
         // this.HSVtoRGB(hue / 65535, .8, .8);
         if (this.isDarkMode) {
-            return this.HSVtoRGB(hue / 65535, .6, 1);
+            return this.HSVtoRGB(hue / 65535, 0.6, 1);
         }
-        return this.HSVtoRGB(hue / 65535, 1, .7);
+        return this.HSVtoRGB(hue / 65535, 1, 0.7);
     };
 
     $app.methods.HSVtoRGB = function (h, s, v) {
-        var r, g, b, i, f, p, q, t;
+        var r = 0;
+        var g = 0;
+        var b = 0;
         if (arguments.length === 1) {
-            s = h.s, v = h.v, h = h.h;
+            var s = h.s;
+            var v = h.v;
+            var h = h.h;
         }
-        i = Math.floor(h * 6);
-        f = h * 6 - i;
-        p = v * (1 - s);
-        q = v * (1 - f * s);
-        t = v * (1 - (1 - f) * s);
+        var i = Math.floor(h * 6);
+        var f = h * 6 - i;
+        var p = v * (1 - s);
+        var q = v * (1 - f * s);
+        var t = v * (1 - (1 - f) * s);
         switch (i % 6) {
-            case 0: r = v, g = t, b = p; break;
-            case 1: r = q, g = v, b = p; break;
-            case 2: r = p, g = v, b = t; break;
-            case 3: r = p, g = q, b = v; break;
-            case 4: r = t, g = p, b = v; break;
-            case 5: r = v, g = p, b = q; break;
+            case 0:
+                r = v;
+                g = t;
+                b = p;
+                break;
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+            case 5:
+                r = v;
+                g = p;
+                b = q;
+                break;
         }
         var red = Math.round(r * 255);
         var green = Math.round(g * 255);
         var blue = Math.round(b * 255);
-        var decColor = 0x1000000 + blue + 0x100 * green + 0x10000 * red ;
-        return '#'+decColor.toString(16).substr(1);
+        var decColor = 0x1000000 + blue + 0x100 * green + 0x10000 * red;
+        return `#${decColor.toString(16).substr(1)}`;
     };
 
     $app = new Vue($app);
