@@ -106,7 +106,7 @@ Function .onInit
 FunctionEnd
 
 Function createDesktopShortcut
-    CreateShortcut "%USERPROFILE%\DESKTOP\VRCX.lnk" "$INSTDIR\VRCX.exe"
+    CreateShortcut "$DESKTOP\VRCX.lnk" "$INSTDIR\VRCX.exe"
 FunctionEnd
 
 Function launchVRCX
@@ -152,6 +152,8 @@ Section "Install" SecInstall
     IntFmt $0 "0x%08X" $0
     WriteRegDWORD HKLM  "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "EstimatedSize" "$0"
 
+    ;SetShellVarContext current sets the shortcut to current userspace
+    SetShellVarContext current
     CreateShortCut "$SMPROGRAMS\VRCX.lnk" "$INSTDIR\VRCX.exe"
     ApplicationID::Set "$SMPROGRAMS\VRCX.lnk" "VRCX"
 
