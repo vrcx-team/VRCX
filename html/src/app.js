@@ -1025,6 +1025,7 @@ speechSynthesis.getVoices();
             tags: json.tags,
             developerType: json.developerType,
             last_login: json.last_login,
+            last_activity: json.last_activity,
             last_platform: json.last_platform,
             date_joined: json.date_joined,
             allowAvatarCopying: json.allowAvatarCopying,
@@ -1279,6 +1280,7 @@ speechSynthesis.getVoices();
                 tags: [],
                 developerType: '',
                 last_login: '',
+                last_activity: '',
                 last_platform: '',
                 date_joined: '',
                 allowAvatarCopying: false,
@@ -1358,6 +1360,7 @@ speechSynthesis.getVoices();
                 json.state = 'active';
             }
             json.last_login = API.currentUser.last_login;
+            json.last_activity = API.currentUser.last_activity;
             if (
                 typeof json.location !== 'undefined' &&
                 json.location === 'offline'
@@ -1405,6 +1408,7 @@ speechSynthesis.getVoices();
                 tags: [],
                 developerType: '',
                 last_login: '',
+                last_activity: '',
                 last_platform: '',
                 date_joined: '',
                 allowAvatarCopying: false,
