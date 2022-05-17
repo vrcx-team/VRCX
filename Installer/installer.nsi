@@ -106,7 +106,7 @@ Function .onInit
 FunctionEnd
 
 Function createDesktopShortcut
-    CreateShortcut "$DESKTOP\VRCX.lnk" "$INSTDIR\VRCX.exe"
+    CreateShortcut "%USERPROFILE%\DESKTOP\VRCX.lnk" "$INSTDIR\VRCX.exe"
 FunctionEnd
 
 Function launchVRCX
