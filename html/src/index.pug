@@ -1184,6 +1184,9 @@ html
                                 div.options-container-item
                                     span.name Time Format
                                     el-switch(v-model="dtHour12" @change="setDatetimeFormat" inactive-text="24 Hour" active-text="12 Hour")
+                                div.options-container-item
+                                    span.name Force ISO date format
+                                    el-switch(v-model="dtIsoFormat" @change="setDatetimeFormat")
                                 div.options-container
                                     span.sub-header Automatically Manage Cache When Closing VRChat
                                     div.options-container-item
