@@ -158,6 +158,21 @@ class Database {
         return row;
     }
 
+    async getAllMemos() {
+        var memos = [];
+        await sqliteService.execute(
+            (dbRow) => {
+                var row = {
+                    userId: dbRow[0],
+                    memo: dbRow[1]
+                };
+                memos.push(row);
+            },
+            'SELECT user_id, memo FROM memos'
+        );
+        return memos;
+    }
+
     setMemo(entry) {
         sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO memos (user_id, edited_at, memo) VALUES (@user_id, @edited_at, @memo)`,

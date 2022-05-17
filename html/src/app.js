@@ -6329,6 +6329,21 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.methods.getAllMemos = async function () {
+        var memeos = await database.getAllMemos();
+        memeos.forEach((memo) => {
+            var ref = $app.friends.get(memo.userId);
+            if (typeof ref !== 'undefined') {
+                ref.memo = memo.memo;
+                ref.$nickName = '';
+                if (memo.memo) {
+                    var array = memo.memo.split('\n');
+                    ref.$nickName = array[0];
+                }
+            }
+        });
+    };
+
     // App: Friends
 
     $app.data.friends = new Map();
@@ -6530,14 +6545,16 @@ speechSynthesis.getVoices();
             memo: '',
             $nickName: ''
         };
-        this.getMemo(id).then((memo) => {
-            ctx.memo = memo;
-            ctx.$nickName = '';
+        if (this.friendLogInitStatus) {
+            this.getMemo(id).then((memo) => {
+                ctx.memo = memo;
+                ctx.$nickName = '';
             if (memo) {
                 var array = memo.split('\n');
-                ctx.$nickName = array[0];
-            }
-        });
+                    ctx.$nickName = array[0];
+                }
+            });
+        }
         if (typeof ref === 'undefined') {
             ref = this.friendLog.get(id);
             if (typeof ref !== 'undefined' && ref.displayName) {
@@ -7394,6 +7411,7 @@ speechSynthesis.getVoices();
         } else {
             await $app.initFriendLog(args.json.id);
         }
+        $app.getAllMemos();
         if ($app.randomUserColours) {
             $app.getNameColour(this.currentUser.id).then((colour) => {
                 this.currentUser.$userColour = colour;
