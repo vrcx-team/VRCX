@@ -106,7 +106,7 @@ Function .onInit
 FunctionEnd
 
 Function createDesktopShortcut
-    SetShellVarContext current
+    SetShellVarContext all
     CreateShortcut "$DESKTOP\VRCX.lnk" "$INSTDIR\VRCX.exe"
 FunctionEnd
 
