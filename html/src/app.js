@@ -1025,6 +1025,7 @@ speechSynthesis.getVoices();
             tags: json.tags,
             developerType: json.developerType,
             last_login: json.last_login,
+            last_activity: json.last_activity,
             last_platform: json.last_platform,
             date_joined: json.date_joined,
             allowAvatarCopying: json.allowAvatarCopying,
@@ -1279,6 +1280,7 @@ speechSynthesis.getVoices();
                 tags: [],
                 developerType: '',
                 last_login: '',
+                last_activity: '',
                 last_platform: '',
                 date_joined: '',
                 allowAvatarCopying: false,
@@ -1358,6 +1360,7 @@ speechSynthesis.getVoices();
                 json.state = 'active';
             }
             json.last_login = API.currentUser.last_login;
+            json.last_activity = API.currentUser.last_activity;
             if (
                 typeof json.location !== 'undefined' &&
                 json.location === 'offline'
@@ -1405,6 +1408,7 @@ speechSynthesis.getVoices();
                 tags: [],
                 developerType: '',
                 last_login: '',
+                last_activity: '',
                 last_platform: '',
                 date_joined: '',
                 allowAvatarCopying: false,
@@ -19076,15 +19080,23 @@ speechSynthesis.getVoices();
     };
 
     $app.data.dtHour12 = configRepository.getBool('VRCX_dtHour12');
+    $app.data.dtIsoFormat = configRepository.getBool('VRCX_dtIsoFormat');
     $app.methods.setDatetimeFormat = async function () {
         var currentCulture = await AppApi.CurrentCulture();
         var hour12 = configRepository.getBool('VRCX_dtHour12');
+        var isoFormat = configRepository.getBool('VRCX_dtIsoFormat');
         if (typeof this.dtHour12 !== 'undefined') {
             if (hour12 !== this.dtHour12) {
                 configRepository.setBool('VRCX_dtHour12', this.dtHour12);
                 this.updateVRConfigVars();
             }
             var hour12 = this.dtHour12;
+        }
+        if (typeof this.dtIsoFormat !== 'undefined') {
+            if (isoFormat !== this.dtIsoFormat) {
+                configRepository.setBool('VRCX_dtIsoFormat', this.dtIsoFormat);
+            }
+            var isoFormat = this.dtIsoFormat;
         }
         var formatDate1 = function (date, format) {
             if (!date) {
@@ -19116,6 +19128,30 @@ speechSynthesis.getVoices();
             }
             return '-';
         };
+        if (isoFormat) {
+            formatDate1 = function (date, format) {
+                if (!date) {
+                    return '-';
+                }
+                var dt = new Date(date);
+                if (format === 'long') {
+                    return dt.toISOString();
+                } else if (format === 'short') {
+                    return dt
+                        .toLocaleDateString('en-nz', {
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hourCycle: hour12 ? 'h12' : 'h23'
+                        })
+                        .replace(' AM', 'am')
+                        .replace(' PM', 'pm')
+                        .replace(',', '');
+                }
+                return '-';
+            };
+        }
         Vue.filter('formatDate', formatDate1);
     };
     $app.methods.setDatetimeFormat();
