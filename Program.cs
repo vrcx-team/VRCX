@@ -56,8 +56,8 @@ namespace VRCX
 
         private static void Run()
         {
-            StartupArgs.ArgsCheck();
             Update.Check();
+            StartupArgs.ArgsCheck();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
