@@ -10790,6 +10790,12 @@ speechSynthesis.getVoices();
         this.friendLogTable.data = await database.getFriendLogHistory();
         await API.refreshFriends();
         this.friendLogInitStatus = true;
+        for (var friend of friendLogCurrentArray) {
+            var ref = API.cachedUsers.get(friend.userId);
+            if (typeof ref !== 'undefined') {
+                this.updateFriendship(ref);
+            }
+        }
     };
 
     $app.methods.addFriendship = function (id) {
