@@ -1529,21 +1529,31 @@ html
                                     .x-friend-item(style="cursor:default")
                                         .detail
                                             span.name Last Seen
+                                                el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                    i.el-icon-warning
                                             span.extra {{ userDialog.lastSeen | formatDate('long') }}
                                     .x-friend-item(@click="showPreviousInstancesUserDialog(userDialog.ref)")
                                         .detail
                                             span.name Join Count
+                                                el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                    i.el-icon-warning
                                             span.extra(v-if="userDialog.joinCount === 0") -
                                             span.extra(v-else v-text="userDialog.joinCount")
                                     .x-friend-item(style="cursor:default")
                                         .detail
                                             span.name Time Together
+                                                el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                    i.el-icon-warning
                                             span.extra(v-if="userDialog.timeSpent === 0") -
                                             span.extra(v-else) {{ userDialog.timeSpent | timeToText }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name(v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for") Online For
+                                            el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                i.el-icon-warning
                                         span.name(v-else) Offline For
+                                            el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                i.el-icon-warning
                                         span.extra(v-text="userOnlineFor(userDialog)")
                                 .x-friend-item(style="cursor:default")
                                     .detail
@@ -1556,7 +1566,11 @@ html
                                 .x-friend-item(v-if="API.currentUser.id !== userDialog.id" style="cursor:default")
                                     .detail
                                         span.name(v-if="userDialog.unFriended") Unfriended
+                                            el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                i.el-icon-warning
                                         span.name(v-else) Friended
+                                            el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                i.el-icon-warning
                                         span.extra {{ userDialog.dateFriended | formatDate('long') }}
                                 template(v-if="API.currentUser.id === userDialog.id")
                                     .x-friend-item(@click="toggleAvatarCopying")
