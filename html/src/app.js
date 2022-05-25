@@ -10790,11 +10790,15 @@ speechSynthesis.getVoices();
         this.friendLogTable.data = await database.getFriendLogHistory();
         await API.refreshFriends();
         this.friendLogInitStatus = true;
+        // check for friend/name/rank change AFTER friendLogInitStatus is set
         for (var friend of friendLogCurrentArray) {
             var ref = API.cachedUsers.get(friend.userId);
             if (typeof ref !== 'undefined') {
                 this.updateFriendship(ref);
             }
+        }
+        if (typeof API.currentUser.friends !== 'undefined') {
+            this.updateFriendships(API.currentUser);
         }
     };
 
@@ -12524,7 +12528,7 @@ speechSynthesis.getVoices();
 
     $app.methods.promptChangeWorldYouTubePreview = function (world) {
         this.$prompt(
-            'Enter world YouTube preview, WARNING: once a preview is added it cannot be removed',
+            'Enter world YouTube preview',
             'Change YouTube Preview',
             {
                 distinguishCancelAndClose: true,
