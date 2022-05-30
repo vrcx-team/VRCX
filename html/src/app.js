@@ -9010,6 +9010,7 @@ speechSynthesis.getVoices();
             var text = 'User joined as Quest in desktop mode';
         } else if (
             data.user.last_platform === 'android' &&
+            platforms.length > 0 &&
             !platforms.includes('android')
         ) {
             var text = 'User joined as Quest in PC only world';
@@ -9957,7 +9958,7 @@ speechSynthesis.getVoices();
                 bigIcon = 'vr_dancing';
             } else if (
                 L.worldId === 'wrld_52bdcdab-11cd-4325-9655-0fb120846945' ||
-                L.worldId === 'wrld_db612673-d536-488e-a776-24e7877c161b'
+                L.worldId === 'wrld_2d40da63-8f1f-4011-8a9e-414eb8530acd'
             ) {
                 appId = '939473404808007731';
                 bigIcon = 'zuwa_zuwa_dance';
@@ -11942,7 +11943,7 @@ speechSynthesis.getVoices();
             'wrld_42377cf1-c54f-45ed-8996-5875b0573a83',
             'wrld_dd6d2888-dbdc-47c2-bc98-3d631b2acd7c',
             'wrld_52bdcdab-11cd-4325-9655-0fb120846945',
-            'wrld_db612673-d536-488e-a776-24e7877c161b',
+            'wrld_2d40da63-8f1f-4011-8a9e-414eb8530acd',
             'wrld_99211ba0-1878-493f-b64e-d3552c10b7cb',
             'wrld_1b68f7a8-8aea-4900-b7a2-3fc4139ac817'
         ];
@@ -12483,13 +12484,10 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptChangeWorldYouTubePreview = function (world) {
-        this.$prompt(
-            'Enter world YouTube preview',
-            'Change YouTube Preview',
-            {
-                distinguishCancelAndClose: true,
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel',
+        this.$prompt('Enter world YouTube preview', 'Change YouTube Preview', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
                 inputValue: world.ref.previewYoutubeId,
                 inputErrorMessage: 'Valid YouTube URL is required',
                 callback: (action, instance) => {
@@ -12513,15 +12511,13 @@ speechSynthesis.getVoices();
                                     message: 'Invalid YouTube URL',
                                     type: 'error'
                                 });
-                                return;
-                            }
+                            return;
                         }
-                        if (
-                            instance.inputValue !== world.ref.previewYoutubeId
-                        ) {
-                            API.saveWorld({
-                                id: world.id,
-                                previewYoutubeId: instance.inputValue
+                    }
+                    if (instance.inputValue !== world.ref.previewYoutubeId) {
+                        API.saveWorld({
+                            id: world.id,
+                            previewYoutubeId: instance.inputValue
                             }).then((args) => {
                                 this.$message({
                                     message: 'World YouTube preview changed',
@@ -12529,11 +12525,10 @@ speechSynthesis.getVoices();
                                 });
                                 return args;
                             });
-                        }
                     }
                 }
             }
-        );
+        });
     };
 
     $app.methods.promptMaxTableSizeDialog = function () {
@@ -19294,6 +19289,23 @@ speechSynthesis.getVoices();
         var blue = Math.round(b * 255);
         var decColor = 0x1000000 + blue + 0x100 * green + 0x10000 * red;
         return `#${decColor.toString(16).substr(1)}`;
+    };
+
+    $app.methods.isFriendOnline = function (friend) {
+        if (
+            typeof friend === 'undefined' ||
+            typeof friend.ref === 'undefined'
+        ) {
+            return false;
+        }
+        if (friend.state === 'online') {
+            return true;
+        }
+        if (friend.state !== 'online' && friend.ref.location !== 'private') {
+            // wat
+            return true;
+        }
+        return false;
     };
 
     $app = new Vue($app);
