@@ -8637,9 +8637,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.parsePhotonEvent = function (data, gameLogDate) {
-        if (data.Code === 7) {
-            this.photonEvent7List.set(data.Sender, gameLogDate);
-        } else if (data.Code === 226) {
+        if (data.Code === 226) {
             // nothing
         } else if (data.Code === 253) {
             // SetUserProperties
@@ -8831,41 +8829,16 @@ speechSynthesis.getVoices();
                     hasInstantiated: true
                 });
             }
-        } else if (data.Code === 6) {
-            // VRC Event
-            var senderId = data.Parameters[254];
-            AppApi.DeserializeVrcEvent(data.Parameters[245]).then((json) => {
-                try {
-                    var eventData = JSON.parse(json);
-                } catch {
-                    console.error(
-                        'error parsing DeserializeVrcEvent json:',
-                        json
-                    );
-                    return;
-                }
-                if (
-                    eventData.EventType === 'ReceiveVoiceStatsSyncRPC' ||
-                    eventData.EventType === 'initUSpeakSenderRPC' ||
-                    eventData.EventType === 'SanityCheck' ||
-                    (eventData.EventType === 'UdonSyncRunProgramAsRPC' &&
-                        eventData.Data[0] !== 'Beep') ||
-                    eventData.EventType === 'InformOfBadConnection' ||
-                    eventData.EventType === 'SetTimerRPC' ||
-                    eventData.EventType === 'IncrementPortalPlayerCountRPC' ||
-                    eventData.EventType === 'PlayEffect' ||
-                    eventData.EventType === 'PlayEmoteRPC' ||
-                    eventData.EventType === 'CancelRPC' ||
-                    eventData.EventType === '_SendOnSpawn' ||
-                    eventData.EventType === 'RefreshAvatar' ||
-                    eventData.EventType === 'InternalApplyOverrideRPC'
-                ) {
-                    // Trash
-                    return;
-                }
-                if (this.debugPhotonLogging) {
-                    console.log('VrcEvent:', eventData);
-                }
+        }
+    };
+
+    $app.methods.parseVRCEvent = function (eventData) {
+        // VRC Event
+        var senderId = eventData.senderId;
+        var datetime = eventData.dt;
+        if (this.debugPhotonLogging) {
+            console.log('VrcEvent:', eventData);
+        }
                 if (
                     eventData.EventType === '_InstantiateObject' &&
                     eventData.Data[0] === 'Portals/PortalInternalDynamic'
@@ -8875,102 +8848,85 @@ speechSynthesis.getVoices();
                 } else if (
                     eventData.EventType === '_DestroyObject' &&
                     this.lastPortalList.has(eventData.Data[0])
-                ) {
-                    var portalId = eventData.Data[0];
-                    var date = this.lastPortalList.get(portalId);
-                    var time = timeToText(Date.parse(gameLogDate) - date);
-                    this.addEntryPhotonEvent({
-                        photonId: senderId,
-                        text: `DeletedPortal ${time}`,
-                        type: 'DeletedPortal',
-                        created_at: gameLogDate
-                    });
-                    return;
-                } else if (eventData.EventType === 'ConfigurePortal') {
+        ) {
+            var portalId = eventData.Data[0];
+            var date = this.lastPortalList.get(portalId);
+            var time = timeToText(Date.parse(datetime) - date);
+            this.addEntryPhotonEvent({
+                photonId: senderId,
+                text: `DeletedPortal ${time}`,
+                type: 'DeletedPortal',
+                created_at: datetime
+            });
+            return;
+        } else if (eventData.EventType === 'ConfigurePortal') {
                     var instanceId = `${eventData.Data[0]}:${eventData.Data[1]}`;
-                    if (this.lastPortalId) {
-                        this.lastPortalList.set(
-                            this.lastPortalId,
-                            Date.parse(gameLogDate)
-                        );
-                        this.lastPortalId = '';
-                    }
+            if (this.lastPortalId) {
+                this.lastPortalList.set(
+                    this.lastPortalId,
+                    Date.parse(datetime)
+                );
+                this.lastPortalId = '';
+            }
                     var displayName = this.getDisplayNameFromPhotonId(senderId);
                     if (displayName) {
                         var ref1 = {
-                            id: this.getUserIdFromPhotonId(senderId),
-                            displayName
-                        };
-                        this.parsePhotonPortalSpawn(
-                            gameLogDate,
-                            instanceId,
-                            ref1
-                        );
-                    }
-                    return;
-                } else if (eventData.Type > 34) {
-                    var entry = {
-                        created_at: gameLogDate,
-                        type: 'Event',
-                        data: `${displayName} called non existent RPC ${eventData.Type}`
-                    };
+                    id: this.getUserIdFromPhotonId(senderId),
+                    displayName
+                };
+                this.parsePhotonPortalSpawn(datetime, instanceId, ref1);
+            }
+            return;
+        } else if (eventData.Type > 34) {
+            var entry = {
+                created_at: datetime,
+                type: 'Event',
+                data: `${displayName} called non existent RPC ${eventData.Type}`
+            };
                     this.addPhotonEventToGameLog(entry);
                 }
                 if (eventData.Type === 14) {
                     if (eventData.EventType === 'ChangeVisibility') {
                         if (eventData.Data[0] === true) {
                             var text = 'EnableCamera';
-                        } else if (eventData.Data[0] === false) {
-                            var text = 'DisableCamera';
-                        }
-                    } else if (
-                        eventData.EventType === 'UdonSyncRunProgramAsRPC' &&
-                        eventData.Data[0] === 'Beep'
-                    ) {
-                        if (!this.isRpcWorld(this.lastLocation.location)) {
-                            return;
-                        }
-                        var text = 'Beep';
-                    } else if (
-                        eventData.EventType === 'ReloadAvatarNetworkedRPC'
-                    ) {
-                        var text = 'AvatarReset';
-                    } else if (eventData.EventType === 'SpawnEmojiRPC') {
-                        var text = `SpawnEmoji ${
-                            this.photonEmojis[eventData.Data]
-                        }`;
-                    } else {
-                        var eventVrc = '';
-                        if (eventData.Data) {
-                            eventVrc = ` ${JSON.stringify(
-                                eventData.Data
-                            ).replace(/"([^(")"]+)":/g, '$1:')}`;
-                        }
-                        var text = `${eventData.EventType}${eventVrc}`;
-                    }
-                    this.addEntryPhotonEvent({
-                        photonId: senderId,
-                        text,
-                        type: 'Event',
-                        created_at: gameLogDate
-                    });
-                } else {
-                    var eventType = '';
-                    if (eventData.EventType) {
-                        eventType = ` ${JSON.stringify(
-                            eventData.EventType
-                        ).replace(/"([^(")"]+)":/g, '$1:')}`;
-                    }
-                    if (this.debugPhotonLogging) {
-                        var displayName =
-                            this.getDisplayNameFromPhotonId(senderId);
-                        var feed = `RPC ${displayName} ${
-                            this.photonEventType[eventData.Type]
-                        }${eventType}`;
-                        console.log('VrcRpc:', feed);
-                    }
+                } else if (eventData.Data[0] === false) {
+                    var text = 'DisableCamera';
                 }
+            } else if (eventData.EventType === 'ReloadAvatarNetworkedRPC') {
+                var text = 'AvatarReset';
+            } else if (eventData.EventType === 'SpawnEmojiRPC') {
+                var text = `SpawnEmoji ${this.photonEmojis[eventData.Data]}`;
+            } else {
+                var eventVrc = '';
+                if (eventData.Data) {
+                    eventVrc = ` ${JSON.stringify(eventData.Data).replace(
+                        /"([^(")"]+)":/g,
+                        '$1:'
+                    )}`;
+                }
+                var text = `${eventData.EventType}${eventVrc}`;
+            }
+                    this.addEntryPhotonEvent({
+                photonId: senderId,
+                text,
+                type: 'Event',
+                created_at: datetime
             });
+        } else {
+            var eventType = '';
+            if (eventData.EventType) {
+                eventType = ` ${JSON.stringify(eventData.EventType).replace(
+                    /"([^(")"]+)":/g,
+                    '$1:'
+                )}`;
+            }
+            if (this.debugPhotonLogging) {
+                var displayName = this.getDisplayNameFromPhotonId(senderId);
+                var feed = `RPC ${displayName} ${
+                    this.photonEventType[eventData.Type]
+                }${eventType}`;
+                console.log('VrcRpc:', feed);
+            }
         }
     };
 
@@ -18797,20 +18753,14 @@ speechSynthesis.getVoices();
         }
         switch (data.type) {
             case 'OnEvent':
-                if (
-                    this.debugPhotonLogging &&
-                    data.OnEventData.Code !== 6 &&
-                    data.OnEventData.Code !== 7
-                ) {
+                if (this.debugPhotonLogging) {
                     console.log(
                         'OnEvent',
                         data.OnEventData.Code,
                         data.OnEventData
                     );
                 }
-                if (data.OnEventData.Code !== 7) {
-                    this.photonEventPulse();
-                }
+                this.photonEventPulse();
                 this.parsePhotonEvent(data.OnEventData, data.dt);
                 break;
             case 'OnOperationResponse':
@@ -18826,6 +18776,13 @@ speechSynthesis.getVoices();
                     data.dt
                 );
                 this.photonEventPulse();
+                break;
+            case 'VRCEvent':
+                this.photonEventPulse();
+                this.parseVRCEvent(data);
+                break;
+            case 'Event7':
+                this.photonEvent7List.set(data.senderId, data.dt);
                 break;
             case 'Ping':
                 if (!this.photonLoggingEnabled) {

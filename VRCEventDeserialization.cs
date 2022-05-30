@@ -6,10 +6,11 @@ using System.Text;
 
 namespace VRCX
 {
-    class VRCEventDeserialization
+    internal class VRCEventDeserialization
     {
         private byte[] byteData;
         private int byteOffset;
+
         private static readonly Dictionary<int, Type> DataType = new Dictionary<int, Type> {
             {2, typeof(byte)},
             {3, typeof(double)},
@@ -29,10 +30,55 @@ namespace VRCX
 
         public class EventEntry
         {
+            public string type { get; set; }
+            public string dt { get; set; }
+            public int senderId { get; set; }
+
+
             public int Type { get; set; }
             public string EventType { get; set; }
             public object Data { get; set; }
         }
+        public class EventData
+        {
+            public string dt { get; set; }
+            public string type { get; set; }
+            public EventDataContainer OnEventData { get; set; }
+            public OperationContainer OnOperationResponseData { get; set; }
+        }
+
+        public class EventDataContainer
+        {
+            public byte Code { get; set; }
+            public int Sender { get; set; }
+            public Dictionary<byte, object> Parameters { get; set; }
+            public byte SenderKey { get; set; }
+            public byte CustomDataKey { get; set; }
+        }
+        public class OperationContainer
+        {
+            public byte OperationCode { get; set; }
+            public short ReturnCode { get; set; }
+            public string DebugMessage { get; set; }
+            public Dictionary<byte, object> Parameters { get; set; }
+        }
+
+        public static readonly List<string> ignoreEvents = new List<string>
+        {
+            "ReceiveVoiceStatsSyncRPC",
+            "initUSpeakSenderRPC",
+            "SanityCheck",
+            "UdonSyncRunProgramAsRPC",
+            "InformOfBadConnection",
+            "SetTimerRPC",
+            "IncrementPortalPlayerCountRPC",
+            "PlayEffect",
+            "PlayEmoteRPC",
+            "CancelRPC",
+            "_SendOnSpawn",
+            "RefreshAvatar",
+            "InternalApplyOverrideRPC"
+        };
 
         private byte DeserializeByte()
         {
@@ -142,34 +188,49 @@ namespace VRCX
             {
                 case 1:
                     return null;
+
                 case 2:
                     return DeserializeByte();
+
                 case 3:
                     return DeserializeDouble();
+
                 case 4:
                     return DeserializeFloat();
+
                 case 5:
                     return DeserializeInt();
+
                 case 6:
                     return DeserializeShort();
+
                 case 7:
                     return DeserializeInt64();
+
                 case 8:
                     return DeserializeBool();
+
                 case 9:
                     return DeserializeString();
+
                 case 10:
                     return DeserializeObjectArray();
+
                 case 11:
                     return DeserializeTypeArray();
+
                 case 100:
                     return DeserializeVector2();
+
                 case 101:
                     return DeserializeVector3();
+
                 case 102:
                     return DeserializeVector4();
+
                 case 103:
                     return DeserializeQuaternion();
+
                 default:
                     throw new Exception("Ignoring data type: " + type);
             }
