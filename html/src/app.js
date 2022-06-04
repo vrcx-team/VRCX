@@ -463,13 +463,13 @@ speechSynthesis.getVoices();
                         type: 'error'
                     });
                     $app.avatarDialog.visible = false;
-                    throw new Error("404: Can't find avatarǃ");
+                    throw new Error(`404: Can't find avatarǃ ${endpoint}`);
                 }
                 if (init.method === 'GET' && status === 404) {
                     this.failedGetRequests.set(endpoint, Date.now());
                 }
                 if (status === 404 && endpoint.substring(0, 6) === 'users/') {
-                    throw new Error("404: Can't find user!");
+                    throw new Error(`404: Can't find user! ${endpoint}`);
                 }
                 if (
                     status === 404 &&
@@ -969,6 +969,51 @@ speechSynthesis.getVoices();
                 this.parse();
             },
             userid() {
+                this.parse();
+            }
+        },
+        mounted() {
+            this.parse();
+        }
+    });
+
+    Vue.component('display-name', {
+        template:
+            '<span @click="showUserDialog" class="x-link">{{ username }}</span>',
+        props: {
+            username: String,
+            userid: String,
+            location: String,
+            key: Number
+        },
+        data() {
+            return {
+                username: this.username
+            };
+        },
+        methods: {
+            async parse() {
+                this.username = this.userid;
+                if (this.userid) {
+                    var args = await API.getCachedUser({ userId: this.userid });
+                }
+                if (
+                    typeof args !== 'undefined' &&
+                    typeof args.json !== 'undefined' &&
+                    typeof args.json.displayName !== 'undefined'
+                ) {
+                    this.username = args.json.displayName;
+                }
+            },
+            showUserDialog() {
+                $app.showUserDialog(this.userid);
+            }
+        },
+        watch: {
+            location() {
+                this.parse();
+            },
+            key() {
                 this.parse();
             }
         },
@@ -18910,6 +18955,7 @@ speechSynthesis.getVoices();
     $app.data.previousInstancesUserDialog = {
         visible: false,
         loading: false,
+        forceUpdate: 0,
         userRef: {}
     };
 
@@ -18940,6 +18986,7 @@ speechSynthesis.getVoices();
             array.sort(compareByCreatedAt);
             this.previousInstancesUserDialogTable.data = array;
             D.loading = false;
+            workerTimers.setTimeout(() => D.forceUpdate++, 150);
         });
     };
 
@@ -19007,6 +19054,7 @@ speechSynthesis.getVoices();
     $app.data.previousInstancesWorldDialog = {
         visible: false,
         loading: false,
+        forceUpdate: 0,
         worldRef: {}
     };
 
@@ -19037,6 +19085,7 @@ speechSynthesis.getVoices();
             array.sort(compareByCreatedAt);
             this.previousInstancesWorldDialogTable.data = array;
             D.loading = false;
+            workerTimers.setTimeout(() => D.forceUpdate++, 150);
         });
     };
 
