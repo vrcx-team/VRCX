@@ -995,7 +995,7 @@ speechSynthesis.getVoices();
             async parse() {
                 this.username = this.userid;
                 if (this.userid) {
-                    var args = await API.getCachedUser({ userId: this.userid });
+                    var args = await API.getCachedUser({userId: this.userid});
                 }
                 if (
                     typeof args !== 'undefined' &&
@@ -8884,15 +8884,15 @@ speechSynthesis.getVoices();
         if (this.debugPhotonLogging) {
             console.log('VrcEvent:', eventData);
         }
-                if (
-                    eventData.EventType === '_InstantiateObject' &&
-                    eventData.Data[0] === 'Portals/PortalInternalDynamic'
-                ) {
-                    this.lastPortalId = eventData.Data[3];
-                    return;
-                } else if (
-                    eventData.EventType === '_DestroyObject' &&
-                    this.lastPortalList.has(eventData.Data[0])
+        if (
+            eventData.EventType === '_InstantiateObject' &&
+            eventData.Data[0] === 'Portals/PortalInternalDynamic'
+        ) {
+            this.lastPortalId = eventData.Data[3];
+            return;
+        } else if (
+            eventData.EventType === '_DestroyObject' &&
+            this.lastPortalList.has(eventData.Data[0])
         ) {
             var portalId = eventData.Data[0];
             var date = this.lastPortalList.get(portalId);
@@ -8905,7 +8905,7 @@ speechSynthesis.getVoices();
             });
             return;
         } else if (eventData.EventType === 'ConfigurePortal') {
-                    var instanceId = `${eventData.Data[0]}:${eventData.Data[1]}`;
+            var instanceId = `${eventData.Data[0]}:${eventData.Data[1]}`;
             if (this.lastPortalId) {
                 this.lastPortalList.set(
                     this.lastPortalId,
@@ -8913,9 +8913,9 @@ speechSynthesis.getVoices();
                 );
                 this.lastPortalId = '';
             }
-                    var displayName = this.getDisplayNameFromPhotonId(senderId);
-                    if (displayName) {
-                        var ref1 = {
+            var displayName = this.getDisplayNameFromPhotonId(senderId);
+            if (displayName) {
+                var ref1 = {
                     id: this.getUserIdFromPhotonId(senderId),
                     displayName
                 };
@@ -8928,12 +8928,12 @@ speechSynthesis.getVoices();
                 type: 'Event',
                 data: `${displayName} called non existent RPC ${eventData.Type}`
             };
-                    this.addPhotonEventToGameLog(entry);
-                }
-                if (eventData.Type === 14) {
-                    if (eventData.EventType === 'ChangeVisibility') {
-                        if (eventData.Data[0] === true) {
-                            var text = 'EnableCamera';
+            this.addPhotonEventToGameLog(entry);
+        }
+        if (eventData.Type === 14) {
+            if (eventData.EventType === 'ChangeVisibility') {
+                if (eventData.Data[0] === true) {
+                    var text = 'EnableCamera';
                 } else if (eventData.Data[0] === false) {
                     var text = 'DisableCamera';
                 }
@@ -8951,7 +8951,7 @@ speechSynthesis.getVoices();
                 }
                 var text = `${eventData.EventType}${eventVrc}`;
             }
-                    this.addEntryPhotonEvent({
+            this.addEntryPhotonEvent({
                 photonId: senderId,
                 text,
                 type: 'Event',
@@ -12533,29 +12533,29 @@ speechSynthesis.getVoices();
             distinguishCancelAndClose: true,
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
-                inputValue: world.ref.previewYoutubeId,
-                inputErrorMessage: 'Valid YouTube URL is required',
-                callback: (action, instance) => {
-                    if (
-                        action === 'confirm' &&
-                        instance.inputValue !== world.ref.previewYoutubeId
-                    ) {
-                        if (instance.inputValue.length > 11) {
-                            try {
-                                var url = new URL(instance.inputValue);
-                                var id1 = url.pathname;
-                                var id2 = url.searchParams.get('v');
-                                if (id1 && id1.length === 12) {
-                                    instance.inputValue = id1.substring(1, 12);
-                                }
-                                if (id2 && id2.length === 11) {
-                                    instance.inputValue = id2;
-                                }
-                            } catch {
-                                this.$message({
-                                    message: 'Invalid YouTube URL',
-                                    type: 'error'
-                                });
+            inputValue: world.ref.previewYoutubeId,
+            inputErrorMessage: 'Valid YouTube URL is required',
+            callback: (action, instance) => {
+                if (
+                    action === 'confirm' &&
+                    instance.inputValue !== world.ref.previewYoutubeId
+                ) {
+                    if (instance.inputValue.length > 11) {
+                        try {
+                            var url = new URL(instance.inputValue);
+                            var id1 = url.pathname;
+                            var id2 = url.searchParams.get('v');
+                            if (id1 && id1.length === 12) {
+                                instance.inputValue = id1.substring(1, 12);
+                            }
+                            if (id2 && id2.length === 11) {
+                                instance.inputValue = id2;
+                            }
+                        } catch {
+                            this.$message({
+                                message: 'Invalid YouTube URL',
+                                type: 'error'
+                            });
                             return;
                         }
                     }
@@ -12563,13 +12563,13 @@ speechSynthesis.getVoices();
                         API.saveWorld({
                             id: world.id,
                             previewYoutubeId: instance.inputValue
-                            }).then((args) => {
-                                this.$message({
-                                    message: 'World YouTube preview changed',
-                                    type: 'success'
-                                });
-                                return args;
+                        }).then((args) => {
+                            this.$message({
+                                message: 'World YouTube preview changed',
+                                type: 'success'
                             });
+                            return args;
+                        });
                     }
                 }
             }
