@@ -8255,6 +8255,27 @@ speechSynthesis.getVoices();
                 };
                 database.addGamelogEventToDatabase(entry);
                 break;
+            case 'vrc-quit':
+                var bias = Date.parse(gameLog.dt) + 1000;
+                if (
+                    !this.vrcQuitFix ||
+                    !this.isGameRunning ||
+                    bias < Date.now()
+                ) {
+                    return;
+                }
+                AppApi.QuitGame().then((processCount) => {
+                    if (processCount > 1) {
+                        console.log(
+                            'More than 1 process running, not killing VRC'
+                        );
+                    } else if (processCount === 1) {
+                        console.log('Killed VRC');
+                    } else {
+                        console.log('Nothing to kill, no VRC process running');
+                    }
+                });
+                break;
         }
         if (entry) {
             this.queueGameLogNoty(entry);
@@ -11460,6 +11481,7 @@ speechSynthesis.getVoices();
     $app.data.autoSweepVRChatCache = configRepository.getBool(
         'VRCX_autoSweepVRChatCache'
     );
+    $app.data.vrcQuitFix = configRepository.getBool('VRCX_vrcQuitFix');
     $app.data.vrBackgroundEnabled = configRepository.getBool(
         'VRCX_vrBackgroundEnabled'
     );
@@ -11531,6 +11553,7 @@ speechSynthesis.getVoices();
             'VRCX_autoSweepVRChatCache',
             this.autoSweepVRChatCache
         );
+        configRepository.setBool('VRCX_vrcQuitFix', this.vrcQuitFix);
         configRepository.setBool(
             'VRCX_vrBackgroundEnabled',
             this.vrBackgroundEnabled

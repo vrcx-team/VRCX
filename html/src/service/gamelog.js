@@ -59,6 +59,9 @@ class GameLogService {
                 gameLog.photonId = args[1];
                 break;
 
+            case 'vrc-quit':
+                break;
+
             default:
                 break;
         }

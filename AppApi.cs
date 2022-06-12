@@ -137,6 +137,15 @@ namespace VRCX
             };
         }
 
+        public int QuitGame()
+        {
+            var processes = Process.GetProcessesByName("vrchat");
+            if (processes.Length == 1)
+                processes[0].Kill();
+
+            return processes.Length;
+        }
+
         public void StartGame(string arguments)
         {
             // try stream first

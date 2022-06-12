@@ -1188,6 +1188,10 @@ html
                                     span.name Force ISO date format
                                     el-switch(v-model="dtIsoFormat" @change="setDatetimeFormat")
                                 div.options-container
+                                    span.sub-header VRChat Quit Fix
+                                    div.options-container-item
+                                        span.name(style="min-width:300px") Kill VRChat after exiting game
+                                        el-switch(v-model="vrcQuitFix" @change="saveOpenVROption")
                                     span.sub-header Automatically Manage Cache When Closing VRChat
                                     div.options-container-item
                                         span.name(style="min-width:300px") Auto delete old versions from cache

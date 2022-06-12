@@ -235,7 +235,8 @@ namespace VRCX
                             else
                             {
                                 if (ParseLogShaderKeywordsLimit(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogSDK2VideoPlay(fileInfo, logContext, line, offset) == true)
+                                    ParseLogSDK2VideoPlay(fileInfo, logContext, line, offset) == true ||
+                                    ParseApplicationQuit(fileInfo, logContext, line, offset) == true)
                                 {
                                     continue;
                                 }
@@ -836,6 +837,23 @@ namespace VRCX
             }
 
             return false;
+        }
+
+        private bool ParseApplicationQuit(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2022.06.12 01:51:46 Log        -  VRCApplication: OnApplicationQuit at 1603.499
+
+            if (string.Compare(line, offset, "VRCApplication: OnApplicationQuit at ", 0, 37, StringComparison.Ordinal) != 0)
+                return false;
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "vrc-quit"
+            });
+
+            return true;
         }
 
         public string[][] Get()
