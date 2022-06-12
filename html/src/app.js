@@ -6430,7 +6430,7 @@ speechSynthesis.getVoices();
         'orderFriendGroupPrivate'
     );
     $app.data.orderFriendsGroupStatus = configRepository.getBool(
-        'orderFriendGroupPrivate'
+        'orderFriendsGroupStatus'
     );
     $app.data.orderFriendsGroupGPS = configRepository.getBool(
         'orderFriendGroupGPS'
@@ -6688,10 +6688,12 @@ speechSynthesis.getVoices();
                     }
                     if (ctx.isVIP) {
                         removeFromArray(this.friendsGroupA_, ctx);
-                        this.friendsGroupA_.push(ctx);
+                        this.sortFriendsGroup0 = true;
+                        this.friendsGroupA_.unshift(ctx);
                     } else {
                         removeFromArray(this.friendsGroupB_, ctx);
-                        this.friendsGroupB_.push(ctx);
+                        this.sortFriendsGroup0 = true;
+                        this.friendsGroupB_.unshift(ctx);
                     }
                 } else if (ctx.state === 'active') {
                     removeFromArray(this.friendsGroupC_, ctx);
@@ -6898,6 +6900,10 @@ speechSynthesis.getVoices();
 
     $app.methods.updateFriendGPS = function (userId) {
         if (!this.orderFriendsGroupGPS) {
+            if (this.orderFriendsGroupPrivate || this.orderFriendsGroupStatus) {
+                this.sortFriendsGroup0 = true;
+                this.sortFriendsGroup1 = true;
+            }
             return;
         }
         var ctx = this.friends.get(userId);
@@ -15505,7 +15511,15 @@ speechSynthesis.getVoices();
         return true;
     };
 
-    $app.methods.copyAvatar = function (avatarId) {
+    $app.methods.copyAvatarId = function (avatarId) {
+        this.$message({
+            message: 'Avatar ID copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(avatarId);
+    };
+
+    $app.methods.copyAvatarUrl = function (avatarId) {
         this.$message({
             message: 'Avatar URL copied to clipboard',
             type: 'success'
@@ -17814,8 +17828,8 @@ speechSynthesis.getVoices();
 
     $app.data.VRChatResolutions = [
         {name: '1280x720 (720p)', width: 1280, height: 720},
-        {name: '1920x1080 (Default 1080p)', width: '', height: ''},
-        {name: '2560x1440 (2K)', width: 2560, height: 1440},
+        {name: '1920x1080 (1080p Default)', width: '', height: ''},
+        {name: '2560x1440 (1440p)', width: 2560, height: 1440},
         {name: '3840x2160 (4K)', width: 3840, height: 2160}
     ];
 

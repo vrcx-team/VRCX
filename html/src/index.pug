@@ -985,6 +985,14 @@ html
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(v-for="(number) in [10, 15, 25, 50, 100]" v-text="number" @click.native="setTablePageSize(number)")
                         div.options-container
+                            span.header Timedate
+                            div.options-container-item
+                                span.name Time Format
+                                el-switch(v-model="dtHour12" @change="setDatetimeFormat" inactive-text="24 Hour" active-text="12 Hour")
+                            div.options-container-item
+                                span.name Force ISO date format
+                                el-switch(v-model="dtIsoFormat" @change="setDatetimeFormat")
+                        div.options-container
                             span.header Side Panel
                             br
                             span.sub-header Sorting
@@ -1010,7 +1018,6 @@ html
                             div.options-container-item
                                 span.name Offline
                                 el-switch(v-model="orderFriendsGroup3" inactive-text="alphabetical" active-text="online for" @change="saveOrderFriendGroup")
-                            br
                             span.sub-header Width
                             div.options-container-item
                                 el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{236: ''}" :min="141" :max="500" style="width:300px")
@@ -1119,7 +1126,7 @@ html
                                 span.name(style="min-width:137px") Overlay Button
                                 el-switch(v-model="overlaybutton" @change="saveOpenVROption" inactive-text="Grip" active-text="Menu" :disabled="!openVR || !overlayWrist")
                             div.options-container-item
-                                span.name Background Color
+                                span.name Background Colour
                                 el-switch(v-model="vrBackgroundEnabled" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                             div.options-container-item
                                 span.name Minimal Feed Icons
@@ -1181,12 +1188,6 @@ html
                                 div.options-container-item
                                     span.name Close to tray
                                     el-switch(v-model="isCloseToTray")
-                                div.options-container-item
-                                    span.name Time Format
-                                    el-switch(v-model="dtHour12" @change="setDatetimeFormat" inactive-text="24 Hour" active-text="12 Hour")
-                                div.options-container-item
-                                    span.name Force ISO date format
-                                    el-switch(v-model="dtIsoFormat" @change="setDatetimeFormat")
                                 div.options-container
                                     span.sub-header VRChat Quit Fix
                                     div.options-container-item
@@ -1213,6 +1214,8 @@ html
                                 span.header Progress pie overlay for videos
                                 div.options-container-item
                                     span.name Enable
+                                        el-tooltip(placement="top" style="margin-left:5px" content="Requires SteamVR overlay to be enabled")
+                                            i.el-icon-warning
                                     el-switch(v-model="progressPie" @change="changeYouTubeApi" :disabled="!openVR")
                                 div.options-container-item
                                     span.name Dance worlds only
@@ -1223,6 +1226,8 @@ html
                                 span.sub-header Photon Event HUD
                                 div.options-container-item
                                     span.name Enable
+                                        el-tooltip(placement="top" style="margin-left:5px" content="Requires SteamVR overlay to be enabled")
+                                            i.el-icon-warning
                                     el-switch(v-model="photonEventOverlay" @change="saveEventOverlay" :disabled="!openVR")
                                 div.options-container-item
                                     span.name Show Join/Leave
@@ -1236,6 +1241,8 @@ html
                                 span.sub-header User timeout HUD
                                 div.options-container-item
                                     span.name Enable
+                                        el-tooltip(placement="top" style="margin-left:5px" content="Requires SteamVR overlay to be enabled")
+                                            i.el-icon-warning
                                     el-switch(v-model="timeoutHudOverlay" @change="saveEventOverlay" :disabled="!openVR")
                                 div.options-container-item
                                     span.name Filter
@@ -1871,7 +1878,11 @@ html
                                         span.name Avatar ID
                                         span.extra {{ avatarDialog.id }}
                                             el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                                                el-button(@click="copyAvatar(avatarDialog.id)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                                                el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
+                                                    el-button(type="default" icon="el-icon-s-order" size="mini" circle)
+                                                    el-dropdown-menu(#default="dropdown")
+                                                        el-dropdown-item(@click.native="copyAvatarId(avatarDialog.id)") Copy ID
+                                                        el-dropdown-item(@click.native="copyAvatarUrl(avatarDialog.id)") Copy URL
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Created
