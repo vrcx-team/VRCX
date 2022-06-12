@@ -24,6 +24,7 @@ namespace VRCX
             public bool ShaderKeywordsLimitReached = false;
             public bool AudioDeviceChanged = false;
             public string LastAudioDevice;
+            public string LastVideoError;
             public string onJoinPhotonDisplayName;
         }
 
@@ -331,6 +332,7 @@ namespace VRCX
                 });
 
                 logContext.onJoinPhotonDisplayName = String.Empty;
+                logContext.LastVideoError = String.Empty;
 
                 return true;
             }
@@ -535,6 +537,9 @@ namespace VRCX
                 return false;
 
             var data = line.Substring(offset + 24);
+            if (data == logContext.LastVideoError)
+                return true;
+            logContext.LastVideoError = data;
 
             AppendLog(new[]
             {
