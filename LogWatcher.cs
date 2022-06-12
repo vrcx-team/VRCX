@@ -332,6 +332,7 @@ namespace VRCX
                 });
 
                 logContext.onJoinPhotonDisplayName = String.Empty;
+                logContext.LastAudioDevice = String.Empty;
                 logContext.LastVideoError = String.Empty;
 
                 return true;
@@ -811,17 +812,22 @@ namespace VRCX
                 lineOffset += 3;
                 var endPos = line.Length - 1;
                 var audioDevice = line.Substring(lineOffset, endPos - lineOffset);
-
-                if (logContext.AudioDeviceChanged && audioDevice != logContext.LastAudioDevice)
+                if (String.IsNullOrEmpty(logContext.LastAudioDevice))
                 {
-                    AppendLog(new[]
-                    {
-                        fileInfo.Name,
-                        ConvertLogTimeToISO8601(line),
-                        "event",
-                        $"Audio device changed, mic set to '{audioDevice}'"
-                    });
+                    logContext.AudioDeviceChanged = false;
+                    logContext.LastAudioDevice = audioDevice;
+                    return true;
                 }
+                if (!logContext.AudioDeviceChanged || logContext.LastAudioDevice == audioDevice)
+                    return true;
+
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "event",
+                    $"Audio device changed, mic set to '{audioDevice}'"
+                });
 
                 logContext.LastAudioDevice = audioDevice;
                 logContext.AudioDeviceChanged = false;
