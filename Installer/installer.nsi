@@ -15,8 +15,6 @@
 ;--------------------------------
 ;General
 
-    !define VRCX_BASEDIR "..\bin\x64\Release"
-
     Unicode True
     Name "VRCX"
     OutFile "VRCX_Setup.exe"
@@ -140,7 +138,7 @@ Section "Install" SecInstall
 
     SetOutPath "$INSTDIR"
 
-    File /r /x *.log /x *.pdb "..\bin\x64\Release\*.*"
+    File /r /x *.log "..\bin\x64\Release\*.*"
 
     WriteRegStr HKLM "Software\VRCX" "InstallDir" $INSTDIR
     WriteUninstaller "$INSTDIR\Uninstall.exe"
