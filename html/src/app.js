@@ -1544,7 +1544,11 @@ speechSynthesis.getVoices();
                     props
                 });
                 if ($app.debugUserDiff) {
-                    console.log('>', ref.displayName, props);
+                    delete props.last_login;
+                    delete props.last_activity;
+                    if (Object.keys(props).length !== 0) {
+                        console.log('>', ref.displayName, props);
+                    }
                 }
             }
         }
