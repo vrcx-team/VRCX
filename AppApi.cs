@@ -403,14 +403,6 @@ namespace VRCX
             return "";
         }
 
-        public string DeserializeVrcEvent(string base64Data)
-        {
-            byte[] bytes = Convert.FromBase64String(base64Data);
-            var deserialization = new VRCEventDeserialization();
-            var eventData = deserialization.DeserializeData(bytes);
-            return System.Text.Json.JsonSerializer.Serialize<VRCEventDeserialization.EventEntry>(eventData);
-        }
-
         public string CustomCssPath()
         {
             var output = String.Empty;

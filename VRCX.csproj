@@ -87,7 +87,6 @@
     <Compile Include="AssetBundleCacher.cs" />
     <Compile Include="CefCustomMenuHandler.cs" />
     <Compile Include="ImageCache.cs" />
-    <Compile Include="VRCEventDeserialization.cs" />
     <Compile Include="IPCClient.cs" />
     <Compile Include="IPCServer.cs" />
     <Compile Include="StartupArgs.cs" />

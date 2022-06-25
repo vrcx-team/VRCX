@@ -8727,9 +8727,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.parsePhotonEvent = function (data, gameLogDate) {
-        if (data.Code === 226) {
-            // nothing
-        } else if (data.Code === 253) {
+        if (data.Code === 253) {
             // SetUserProperties
             this.parsePhotonUser(
                 data.Parameters[253],
@@ -8922,21 +8920,22 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.parseVRCEvent = function (eventData) {
+    $app.methods.parseVRCEvent = function (json) {
         // VRC Event
-        var senderId = eventData.senderId;
-        var datetime = eventData.dt;
+        var datetime = json.dt;
+        var eventData = json.VRCEventData;
+        var senderId = eventData.Sender;
         if (this.debugPhotonLogging) {
-            console.log('VrcEvent:', eventData);
+            console.log('VrcEvent:', json);
         }
         if (
-            eventData.EventType === '_InstantiateObject' &&
+            eventData.EventName === '_InstantiateObject' &&
             eventData.Data[0] === 'Portals/PortalInternalDynamic'
         ) {
             this.lastPortalId = eventData.Data[3];
             return;
         } else if (
-            eventData.EventType === '_DestroyObject' &&
+            eventData.EventName === '_DestroyObject' &&
             this.lastPortalList.has(eventData.Data[0])
         ) {
             var portalId = eventData.Data[0];
@@ -8949,7 +8948,7 @@ speechSynthesis.getVoices();
                 created_at: datetime
             });
             return;
-        } else if (eventData.EventType === 'ConfigurePortal') {
+        } else if (eventData.EventName === 'ConfigurePortal') {
             var instanceId = `${eventData.Data[0]}:${eventData.Data[1]}`;
             if (this.lastPortalId) {
                 this.lastPortalList.set(
@@ -8967,24 +8966,24 @@ speechSynthesis.getVoices();
                 this.parsePhotonPortalSpawn(datetime, instanceId, ref1);
             }
             return;
-        } else if (eventData.Type > 34) {
+        } else if (eventData.EventType > 34) {
             var entry = {
                 created_at: datetime,
                 type: 'Event',
-                data: `${displayName} called non existent RPC ${eventData.Type}`
+                data: `${displayName} called non existent RPC ${eventData.EventType}`
             };
             this.addPhotonEventToGameLog(entry);
         }
-        if (eventData.Type === 14) {
-            if (eventData.EventType === 'ChangeVisibility') {
+        if (eventData.EventType === 14) {
+            if (eventData.EventName === 'ChangeVisibility') {
                 if (eventData.Data[0] === true) {
                     var text = 'EnableCamera';
                 } else if (eventData.Data[0] === false) {
                     var text = 'DisableCamera';
                 }
-            } else if (eventData.EventType === 'ReloadAvatarNetworkedRPC') {
+            } else if (eventData.EventName === 'ReloadAvatarNetworkedRPC') {
                 var text = 'AvatarReset';
-            } else if (eventData.EventType === 'SpawnEmojiRPC') {
+            } else if (eventData.EventName === 'SpawnEmojiRPC') {
                 var text = `SpawnEmoji ${this.photonEmojis[eventData.Data]}`;
             } else {
                 var eventVrc = '';
@@ -8994,7 +8993,7 @@ speechSynthesis.getVoices();
                         '$1:'
                     )}`;
                 }
-                var text = `${eventData.EventType}${eventVrc}`;
+                var text = `${eventData.EventName}${eventVrc}`;
             }
             this.addEntryPhotonEvent({
                 photonId: senderId,
@@ -9003,9 +9002,9 @@ speechSynthesis.getVoices();
                 created_at: datetime
             });
         } else {
-            var eventType = '';
-            if (eventData.EventType) {
-                eventType = ` ${JSON.stringify(eventData.EventType).replace(
+            var eventName = '';
+            if (eventData.EventName) {
+                eventName = ` ${JSON.stringify(eventData.EventName).replace(
                     /"([^(")"]+)":/g,
                     '$1:'
                 )}`;
@@ -9013,8 +9012,8 @@ speechSynthesis.getVoices();
             if (this.debugPhotonLogging) {
                 var displayName = this.getDisplayNameFromPhotonId(senderId);
                 var feed = `RPC ${displayName} ${
-                    this.photonEventType[eventData.Type]
-                }${eventType}`;
+                    this.photonEventType[eventData.EventType]
+                }${eventName}`;
                 console.log('VrcRpc:', feed);
             }
         }
@@ -18842,6 +18841,9 @@ speechSynthesis.getVoices();
 
     $app.data.ipcEnabled = false;
     $app.methods.ipcEvent = function (json) {
+        if (!this.friendLogInitStatus) {
+            return;
+        }
         try {
             var data = JSON.parse(json);
         } catch {
@@ -18856,8 +18858,8 @@ speechSynthesis.getVoices();
                         data.OnEventData
                     );
                 }
-                this.photonEventPulse();
                 this.parsePhotonEvent(data.OnEventData, data.dt);
+                this.photonEventPulse();
                 break;
             case 'OnOperationResponse':
                 if (this.debugPhotonLogging) {
@@ -18874,16 +18876,22 @@ speechSynthesis.getVoices();
                 this.photonEventPulse();
                 break;
             case 'VRCEvent':
-                this.photonEventPulse();
                 this.parseVRCEvent(data);
+                this.photonEventPulse();
                 break;
-            case 'Event7':
-                this.photonEvent7List.set(data.senderId, data.dt);
+            case 'Event7List':
+                for (var [id, dt] of Object.entries(data.Event7List)) {
+                    this.photonEvent7List.set(parseInt(id, 10), dt);
+                }
                 break;
             case 'Ping':
                 if (!this.photonLoggingEnabled) {
                     this.photonLoggingEnabled = true;
                     configRepository.setBool('VRCX_photonLoggingEnabled', true);
+                }
+                if (!this.companionUpdateReminder && data.version < '1.1.0') {
+                    // check version
+                    this.promptCompanionUpdateReminder();
                 }
                 this.ipcEnabled = true;
                 this.ipcTimeout = 60; // 30secs
@@ -18892,7 +18900,19 @@ speechSynthesis.getVoices();
                 AppApi.FocusWindow();
                 this.eventLaunchCommand(data.command);
                 break;
+            default:
+                console.log('IPC:', data);
         }
+    };
+
+    $app.data.companionUpdateReminder = false;
+
+    $app.methods.promptCompanionUpdateReminder = function () {
+        this.$alert(
+            'An update is required for it to function properly.',
+            'VRCX Companion mod is out of date'
+        );
+        this.companionUpdateReminder = true;
     };
 
     $app.data.photonEventCount = 0;

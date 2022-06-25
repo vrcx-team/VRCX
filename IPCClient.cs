@@ -17,10 +17,7 @@ namespace VRCX
     {
         private NamedPipeServerStream _ipcServer;
         private byte[] _recvBuffer = new byte[1024 * 8];
-
         private string _currentPacket;
-        private VRCEventDeserialization.EventEntry _eventEntry;
-        private readonly VRCEventDeserialization eventDeserialization = new VRCEventDeserialization();
 
         public IPCClient(NamedPipeServerStream ipcServer)
         {
@@ -54,34 +51,6 @@ namespace VRCX
                     {
                         if (string.IsNullOrEmpty(packet))
                             continue;
-
-                        var eventData = System.Text.Json.JsonSerializer.Deserialize<VRCEventDeserialization.EventData>(packet);
-                        if (eventData.type == "OnEvent" && eventData.OnEventData.Code == 6)
-                        {
-                            var byteArray = Convert.FromBase64String(eventData.OnEventData.Parameters[245].ToString());
-                            _eventEntry = eventDeserialization.DeserializeData(byteArray);
-                            if (VRCEventDeserialization.ignoreEvents.Contains(_eventEntry.EventType))
-                                continue;
-
-                            _eventEntry.type = "VRCEvent";
-                            _eventEntry.dt = eventData.dt;
-                            _eventEntry.senderId = eventData.OnEventData.Sender;
-                            var jsonData = System.Text.Json.JsonSerializer.Serialize(_eventEntry);
-                            MainForm.Instance.Browser.ExecuteScriptAsync("$app.ipcEvent", jsonData);
-                            continue;
-                        }
-                        else if (eventData.type == "OnEvent" && eventData.OnEventData.Code == 7)
-                        {
-                            _eventEntry = new VRCEventDeserialization.EventEntry
-                            {
-                                type = "Event7",
-                                dt = eventData.dt,
-                                senderId = eventData.OnEventData.Sender
-                            };
-                            var jsonData = System.Text.Json.JsonSerializer.Serialize(_eventEntry);
-                            MainForm.Instance.Browser.ExecuteScriptAsync("$app.ipcEvent", jsonData);
-                            continue;
-                        }
 
                         MainForm.Instance.Browser.ExecuteScriptAsync("$app.ipcEvent", packet);
                     }
