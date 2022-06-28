@@ -380,13 +380,13 @@ speechSynthesis.getVoices();
         };
         var {params} = init;
         if (init.method === 'GET') {
-            // don't retry recent 404
+            // don't retry recent 404/403
             if (this.failedGetRequests.has(endpoint)) {
                 var lastRun = this.failedGetRequests.get(endpoint);
                 if (lastRun >= Date.now() - 900000) {
                     // 15mins
                     throw new Error(
-                        `Bailing request due to past 404, ${endpoint}`
+                        `Bailing request due to recent 404/403, ${endpoint}`
                     );
                 }
                 this.failedGetRequests.delete(endpoint);
@@ -457,6 +457,14 @@ speechSynthesis.getVoices();
                     }
                     throw new Error('401: Missing Credentials');
                 }
+                if (status === 403 && endpoint.substring(0, 6) === 'config') {
+                    $app.$alert(
+                        'VRChat currently blocks most VPNs. Please disable any connected VPNs and try again.',
+                        'Login Error 403'
+                    );
+                    this.logout();
+                    throw new Error(`403: ${endpoint}`);
+                }
                 if (status === 404 && endpoint.substring(0, 8) === 'avatars/') {
                     $app.$message({
                         message: 'Avatar private or deleted',
@@ -465,7 +473,10 @@ speechSynthesis.getVoices();
                     $app.avatarDialog.visible = false;
                     throw new Error(`404: Can't find avatarǃ ${endpoint}`);
                 }
-                if (init.method === 'GET' && status === 404) {
+                if (
+                    init.method === 'GET' &&
+                    (status === 404 || status === 403)
+                ) {
                     this.failedGetRequests.set(endpoint, Date.now());
                 }
                 if (status === 404 && endpoint.substring(0, 6) === 'users/') {
@@ -14568,10 +14579,6 @@ speechSynthesis.getVoices();
             .catch((err) => {
                 D.loading = false;
                 D.visible = false;
-                this.$message({
-                    message: 'Failed to load avatar',
-                    type: 'error'
-                });
                 throw err;
             })
             .finally(() => {
