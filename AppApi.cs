@@ -21,6 +21,7 @@ using librsync.net;
 using System.Net.Sockets;
 using System.Text;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace VRCX
 {
@@ -451,6 +452,16 @@ namespace VRCX
                 output.Add(userId, GetColourFromUserID(userId));
             }
             return output;
+        }
+
+        public string GetClipboard()
+        {
+            var clipboard = String.Empty;
+            Thread thread = new Thread(() => clipboard = Clipboard.GetText());
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+            return clipboard;
         }
 
         public void SetStartup(bool enabled)

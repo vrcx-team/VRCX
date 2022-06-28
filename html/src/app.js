@@ -12342,77 +12342,9 @@ speechSynthesis.getVoices();
                 callback: (action, instance) => {
                     if (action === 'confirm' && instance.inputValue) {
                         var input = instance.inputValue;
-                        var testUrl = input.substring(0, 15);
-                        if (testUrl === 'https://vrch.at') {
-                            AppApi.FollowUrl(input).then((output) => {
-                                var url = output;
-                                // /home/launch?worldId=wrld_f20326da-f1ac-45fc-a062-609723b097b1&instanceId=33570~region(jp)&shortName=cough-stockinglinz-ddd26
-                                // https://vrch.at/wrld_f20326da-f1ac-45fc-a062-609723b097b1
-                                if (
-                                    url.substring(0, 18) ===
-                                    'https://vrchat.com'
-                                ) {
-                                    url = url.substring(18);
-                                }
-                                if (url.substring(0, 13) === '/home/launch?') {
-                                    var urlParams = new URLSearchParams(
-                                        url.substring(13)
-                                    );
-                                    var worldId = urlParams.get('worldId');
-                                    var instanceId =
-                                        urlParams.get('instanceId');
-                                    if (instanceId) {
-                                        var location = `${worldId}:${instanceId}`;
-                                        this.showWorldDialog(location);
-                                    } else if (worldId) {
-                                        this.showWorldDialog(worldId);
-                                    }
-                                } else {
-                                    this.$message({
-                                        message: 'Invalid URL',
-                                        type: 'error'
-                                    });
-                                }
-                            });
-                        } else if (testUrl === 'https://vrchat.') {
-                            var url = new URL(input);
-                            var urlPath = url.pathname;
-                            if (urlPath.substring(5, 11) === '/user/') {
-                                var userId = urlPath.substring(11);
-                                this.showUserDialog(userId);
-                            } else if (
-                                urlPath.substring(5, 13) === '/avatar/'
-                            ) {
-                                var avatarId = urlPath.substring(13);
-                                this.showAvatarDialog(avatarId);
-                            } else if (urlPath.substring(5, 12) === '/world/') {
-                                var worldId = urlPath.substring(12);
-                                this.showWorldDialog(worldId);
-                            } else if (urlPath.substring(5, 12) === '/launch') {
-                                var urlParams = new URLSearchParams(url.search);
-                                var worldId = urlParams.get('worldId');
-                                var instanceId = urlParams.get('instanceId');
-                                if (instanceId) {
-                                    var location = `${worldId}:${instanceId}`;
-                                    this.showWorldDialog(location);
-                                } else if (worldId) {
-                                    this.showWorldDialog(worldId);
-                                }
-                            } else {
-                                this.$message({
-                                    message: 'Invalid URL',
-                                    type: 'error'
-                                });
-                            }
-                        } else if (input.substring(0, 4) === 'usr_') {
-                            this.showUserDialog(input);
-                        } else if (input.substring(0, 5) === 'wrld_') {
-                            this.showWorldDialog(input);
-                        } else if (input.substring(0, 5) === 'avtr_') {
-                            this.showAvatarDialog(input);
-                        } else {
+                        if (!this.directAccessParse(input)) {
                             this.$message({
-                                message: 'Invalid ID/URL',
+                                message: 'Invalid URL/ID',
                                 type: 'error'
                             });
                         }
@@ -12420,6 +12352,80 @@ speechSynthesis.getVoices();
                 }
             }
         );
+    };
+
+    $app.methods.directAccessPaste = function () {
+        AppApi.GetClipboard().then((clipboard) => {
+            if (!this.directAccessParse(clipboard)) {
+                this.promptOmniDirectDialog();
+            }
+        });
+    };
+
+    $app.methods.directAccessParse = function (input) {
+        var testUrl = input.substring(0, 15);
+        if (testUrl === 'https://vrch.at') {
+            return AppApi.FollowUrl(input).then((output) => {
+                var url = output;
+                // /home/launch?worldId=wrld_f20326da-f1ac-45fc-a062-609723b097b1&instanceId=33570~region(jp)&shortName=cough-stockinglinz-ddd26
+                // https://vrch.at/wrld_f20326da-f1ac-45fc-a062-609723b097b1
+                if (url.substring(0, 18) === 'https://vrchat.com') {
+                    url = url.substring(18);
+                }
+                if (url.substring(0, 13) === '/home/launch?') {
+                    var urlParams = new URLSearchParams(url.substring(13));
+                    var worldId = urlParams.get('worldId');
+                    var instanceId = urlParams.get('instanceId');
+                    if (instanceId) {
+                        var location = `${worldId}:${instanceId}`;
+                        this.showWorldDialog(location);
+                        return true;
+                    } else if (worldId) {
+                        this.showWorldDialog(worldId);
+                        return true;
+                    }
+                }
+                return false;
+            });
+        } else if (testUrl === 'https://vrchat.') {
+            var url = new URL(input);
+                            var urlPath = url.pathname;
+            if (urlPath.substring(5, 11) === '/user/') {
+                var userId = urlPath.substring(11);
+                this.showUserDialog(userId);
+                return true;
+            } else if (urlPath.substring(5, 13) === '/avatar/') {
+                var avatarId = urlPath.substring(13);
+                this.showAvatarDialog(avatarId);
+                return true;
+            } else if (urlPath.substring(5, 12) === '/world/') {
+                var worldId = urlPath.substring(12);
+                this.showWorldDialog(worldId);
+                return true;
+            } else if (urlPath.substring(5, 12) === '/launch') {
+                var urlParams = new URLSearchParams(url.search);
+                var worldId = urlParams.get('worldId');
+                var instanceId = urlParams.get('instanceId');
+                if (instanceId) {
+                    var location = `${worldId}:${instanceId}`;
+                    this.showWorldDialog(location);
+                    return true;
+                } else if (worldId) {
+                    this.showWorldDialog(worldId);
+                    return true;
+                }
+            }
+        } else if (input.substring(0, 4) === 'usr_') {
+            this.showUserDialog(input);
+            return true;
+        } else if (input.substring(0, 5) === 'wrld_') {
+            this.showWorldDialog(input);
+            return true;
+        } else if (input.substring(0, 5) === 'avtr_') {
+            this.showAvatarDialog(input);
+            return true;
+        }
+        return false;
     };
 
     $app.methods.promptNotificationTimeout = function () {
