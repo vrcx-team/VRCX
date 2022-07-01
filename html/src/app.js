@@ -274,6 +274,7 @@ speechSynthesis.getVoices();
         ara: 'العربية',
         ron: 'Română',
         vie: 'Tiếng Việt',
+        ukr: 'украї́нська',
         ase: 'American Sign Language',
         bfi: 'British Sign Language',
         dse: 'Dutch Sign Language',
@@ -306,6 +307,7 @@ speechSynthesis.getVoices();
         ara: 'ae',
         ron: 'ro',
         vie: 'vn',
+        ukr: 'ua',
         ase: 'us',
         bfi: 'gb',
         dse: 'nl',
@@ -8998,7 +9000,7 @@ speechSynthesis.getVoices();
                 var text = `SpawnEmoji ${this.photonEmojis[eventData.Data]}`;
             } else {
                 var eventVrc = '';
-                if (eventData.Data) {
+                if (eventData.Data.length > 0) {
                     eventVrc = ` ${JSON.stringify(eventData.Data).replace(
                         /"([^(")"]+)":/g,
                         '$1:'

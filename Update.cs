@@ -7,13 +7,16 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace VRCX
 {
-    class Update
+    internal class Update
     {
         public static void Check()
         {
+            if (Process.GetProcessesByName("VRCX_Setup").Length > 0)
+                Environment.Exit(0);
             if (File.Exists(Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe")))
                 File.Delete(Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe"));
             if (File.Exists(Path.Combine(Program.AppDataDirectory, "update.exe")))
@@ -24,14 +27,17 @@ namespace VRCX
         {
             try
             {
-                if (!File.Exists(Path.Combine(Program.AppDataDirectory, "update.exe")))
-                    return;
                 File.Move(Path.Combine(Program.AppDataDirectory, "update.exe"), Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe"));
-                System.Diagnostics.Process VRCXProcess = new System.Diagnostics.Process();
-                VRCXProcess.StartInfo.FileName = Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe");
-                VRCXProcess.StartInfo.Arguments = "/S";
+                var VRCXProcess = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe"),
+                        Arguments = "/S"
+                    }
+                };
                 VRCXProcess.Start();
-                System.Environment.Exit(0);
+                Environment.Exit(0);
             }
             catch (Exception e)
             {
