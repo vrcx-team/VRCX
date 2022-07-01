@@ -94,6 +94,7 @@ namespace VRCX
 
         public void DownloadFile(string url, int size, string AppVersion)
         {
+            DownloadProgress = 0;
             DownloadSize = size;
             DownloadCanceled = false;
             DownloadTempLocation = Path.Combine(Program.AppDataDirectory, "tempDownload.exe");
