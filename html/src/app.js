@@ -4,6 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+import '@fontsource/noto-sans-kr';
+import '@fontsource/noto-sans-jp';
 import Noty from 'noty';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
@@ -12388,7 +12390,7 @@ speechSynthesis.getVoices();
             });
         } else if (testUrl === 'https://vrchat.') {
             var url = new URL(input);
-                            var urlPath = url.pathname;
+            var urlPath = url.pathname;
             if (urlPath.substring(5, 11) === '/user/') {
                 var userId = urlPath.substring(11);
                 this.showUserDialog(userId);

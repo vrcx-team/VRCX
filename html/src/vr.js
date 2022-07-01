@@ -4,6 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+import '@fontsource/noto-sans-kr';
+import '@fontsource/noto-sans-jp';
 import Noty from 'noty';
 import Vue from 'vue';
 import ElementUI from 'element-ui';
