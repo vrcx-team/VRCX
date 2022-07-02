@@ -7807,6 +7807,7 @@ speechSynthesis.getVoices();
         this.photonLobbyAvatars = new Map();
         this.photonLobbyJointime = new Map();
         this.photonEvent7List = new Map();
+        this.photonLastEvent7List = '';
         this.moderationEventQueue = new Map();
         this.lastPortalId = '';
         this.lastPortalList = new Map();
@@ -8340,6 +8341,7 @@ speechSynthesis.getVoices();
     $app.data.photonLobbyJointime = new Map();
     $app.data.photonLobbyBots = [];
     $app.data.photonEvent7List = new Map();
+    $app.data.photonLastEvent7List = '';
 
     $app.data.photonEventType = [
         'MeshVisibility',
@@ -8464,11 +8466,14 @@ speechSynthesis.getVoices();
         var dtNow = Date.now();
         var bias = this.lastLocationDestinationTime + 5 * 1000;
         var bias1 = this.lastLocation.date + 30 * 1000;
+        var bias2 = this.photonLastEvent7List + 2 * 1000;
         if (
             dtNow < bias ||
             dtNow < bias1 ||
+            dtNow > bias2 ||
             this.lastLocation.playerList.size <= 1
         ) {
+            this.photonLobbyTimeout = [];
             workerTimers.setTimeout(() => this.photonLobbyWatcher(), 500);
             return;
         }
@@ -18920,13 +18925,15 @@ speechSynthesis.getVoices();
                 for (var [id, dt] of Object.entries(data.Event7List)) {
                     this.photonEvent7List.set(parseInt(id, 10), dt);
                 }
+                // this.photonLastEvent7List = Date.parse(data.dt);
+                this.photonLastEvent7List = Date.now();
                 break;
             case 'Ping':
                 if (!this.photonLoggingEnabled) {
                     this.photonLoggingEnabled = true;
                     configRepository.setBool('VRCX_photonLoggingEnabled', true);
                 }
-                if (!this.companionUpdateReminder && data.version < '1.1.0') {
+                if (!this.companionUpdateReminder && data.version < '1.1.1') {
                     // check version
                     this.promptCompanionUpdateReminder();
                 }
