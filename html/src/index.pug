@@ -1932,12 +1932,12 @@ html
 
             //- dialog: favorite
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="favoriteDialog" :visible.sync="favoriteDialog.visible" title="Choose Group" width="300px")
-                div(v-loading="favoriteDialog.loading")
+                div(v-if="favoriteDialog.visible" v-loading="favoriteDialog.loading")
                     el-button(v-for="group in favoriteDialog.groups" :key="group.name" style="display:block;width:100%;margin:10px 0" @click="addFavorite(group)") {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
 
             //- dialog: invite
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" title="Invite" width="450px")
-                div(v-loading="inviteDialog.loading")
+                div(v-if="inviteDialog.visible" v-loading="inviteDialog.loading")
                     location(:location="inviteDialog.worldId" :link="false")
                     el-select(v-model="inviteDialog.userIds" multiple clearable placeholder="Choose Friends" filterable :disabled="inviteDialog.loading" style="width:100%;margin-top:15px")
                         el-option-group(v-if="API.currentUser" label="ME")
@@ -2029,7 +2029,7 @@ html
 
             //- dialog: new instance
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="newInstanceDialog" :visible.sync="newInstanceDialog.visible" title="New Instance" width="600px")
-                el-form(:model="newInstanceDialog" label-width="130px")
+                el-form(v-if="newInstanceDialog.visible" :model="newInstanceDialog" label-width="130px")
                     el-form-item(label="Access Type")
                         el-radio-group(v-model="newInstanceDialog.accessType" size="mini" @change="buildInstance")
                             el-radio-button(label="public")
@@ -2183,31 +2183,32 @@ html
 
             //- dialog: Cache Download
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="downloadDialog" :visible.sync="downloadDialog.visible" title="Download History" width="770px")
-                div(v-if="downloadInProgress && downloadCurrent.ref")
-                    span(v-text="downloadCurrent.ref.name")
-                    el-button(type="text" icon="el-icon-close" size="mini" @click="cancelDownload(downloadCurrent.id)" style="margin-left:5px")
-                    el-progress(:percentage="downloadProgress" :format="downloadProgressText")
-                template(v-if="downloadQueueTable.data.length >= 1")
-                    span(style="margin-top:15px") Queue:
-                    data-tables(v-bind="downloadQueueTable" style="margin-top:10px")
-                        el-table-column(label="Name" prop="name")
-                        el-table-column(label="Type" prop="type" width="70")
-                        el-table-column(label="Cancel" width="60" align="right")
+                template(v-if="downloadDialog.visible")
+                    div(v-if="downloadInProgress && downloadCurrent.ref")
+                        span(v-text="downloadCurrent.ref.name")
+                        el-button(type="text" icon="el-icon-close" size="mini" @click="cancelDownload(downloadCurrent.id)" style="margin-left:5px")
+                        el-progress(:percentage="downloadProgress" :format="downloadProgressText")
+                    template(v-if="downloadQueueTable.data.length >= 1")
+                        span(style="margin-top:15px") Queue:
+                        data-tables(v-bind="downloadQueueTable" style="margin-top:10px")
+                            el-table-column(label="Name" prop="name")
+                            el-table-column(label="Type" prop="type" width="70")
+                            el-table-column(label="Cancel" width="60" align="right")
+                                template(v-once #default="scope")
+                                    el-button(type="text" icon="el-icon-close" size="mini" @click="cancelDownload(scope.row.ref.id)")
+                    span(style="margin-top:15px") History:
+                    data-tables(v-bind="downloadHistoryTable" style="margin-top:10px")
+                        el-table-column(label="Time" prop="date" width="90")
                             template(v-once #default="scope")
-                                el-button(type="text" icon="el-icon-close" size="mini" @click="cancelDownload(scope.row.ref.id)")
-                span(style="margin-top:15px") History:
-                data-tables(v-bind="downloadHistoryTable" style="margin-top:10px")
-                    el-table-column(label="Time" prop="date" width="90")
-                        template(v-once #default="scope")
-                            timer(:epoch="scope.row.date")
-                    el-table-column(label="Name" prop="name")
-                        template(v-once #default="scope")
-                            template(v-if="scope.row.ref.id === 'VRCXUpdate'")
-                                el-button(size="small" @click="showVRCXUpdateDialog") VRCX Update
-                            template(v-else)
-                                span(v-text="scope.row.ref.name")
-                    el-table-column(label="Type" prop="type" width="70")
-                    el-table-column(label="Status" prop="status" width="80")
+                                timer(:epoch="scope.row.date")
+                        el-table-column(label="Name" prop="name")
+                            template(v-once #default="scope")
+                                template(v-if="scope.row.ref.id === 'VRCXUpdate'")
+                                    el-button(size="small" @click="showVRCXUpdateDialog") VRCX Update
+                                template(v-else)
+                                    span(v-text="scope.row.ref.name")
+                        el-table-column(label="Type" prop="type" width="70")
+                        el-table-column(label="Status" prop="status" width="80")
                 template(#footer)
                     el-button(v-if="downloadQueue.size >= 1" size="small" @click="cancelAllDownloads") Cancel All
                     el-button(size="small" @click="downloadDialog.visible = false") Close
@@ -2672,7 +2673,7 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" title="Send Invite Response Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
-                data-tables(v-bind="inviteResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
+                data-tables(v-if="sendInviteResponseDialogVisible" v-bind="inviteResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                     el-table-column(label="Message" prop="message")
                     el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
@@ -2689,7 +2690,7 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" title="Send Invite Request Response Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
-                data-tables(v-bind="inviteRequestResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
+                data-tables(v-if="sendInviteRequestResponseDialogVisible" v-bind="inviteRequestResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                     el-table-column(label="Message" prop="message")
                     el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
@@ -2714,7 +2715,7 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteDialog" :visible.sync="sendInviteDialogVisible" title="Send Invite Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
-                data-tables(v-bind="inviteMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
+                data-tables(v-if="sendInviteDialogVisible" v-bind="inviteMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                     el-table-column(label="Message" prop="message")
                     el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
@@ -2731,7 +2732,7 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" title="Send Invite Request Message" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
-                data-tables(v-bind="inviteRequestMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
+                data-tables(v-if="sendInviteRequestDialogVisible" v-bind="inviteRequestMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
                     el-table-column(label="Message" prop="message")
                     el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
@@ -2763,7 +2764,7 @@ html
 
             //- dialog: Change avatar image
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" title="Change Avatar Image" width="800px")
-                div(v-loading="changeAvatarImageDialogLoading")
+                div(v-if="changeAvatarImageDialogVisible" v-loading="changeAvatarImageDialogLoading")
                     input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
                     el-button-group(style="padding-bottom:10px")
                         el-button(type="default" size="small" @click="displayPreviousImages('Avatar', 'Change')" icon="el-icon-refresh") Refresh
@@ -2776,7 +2777,7 @@ html
 
             //- dialog: Change world image
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" title="Change World Image" width="800px")
-                div(v-loading="changeWorldImageDialogLoading")
+                div(v-if="changeWorldImageDialogVisible" v-loading="changeWorldImageDialogLoading")
                     input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
                     el-button-group(style="padding-bottom:10px")
                         el-button(type="default" size="small" @click="displayPreviousImages('World', 'Change')" icon="el-icon-refresh") Refresh
@@ -2789,7 +2790,7 @@ html
 
             //- dialog: Display previous avatar/world images
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousImagesDialog" :visible.sync="previousImagesDialogVisible" title="Previous Images" width="800px")
-                div
+                div(v-if="previousImagesDialogVisible")
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
                         el-popover.x-change-image-item(placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="image.file.url")
@@ -2798,7 +2799,7 @@ html
             //- dialog: Gallery/VRCPlusIcons
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="galleryDialog" :visible.sync="galleryDialogVisible" title="Gallery and Icons" width="100%")
                 el-tabs(type="card")
-                    el-tab-pane(v-loading="galleryDialogGalleryLoading")
+                    el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogGalleryLoading")
                         span(slot="label") Gallery
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
                         input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
@@ -2813,7 +2814,7 @@ html
                             div(style="float:right;margin-top:5px")
                                 el-button(type="default" @click="openExternalLink(image.versions[1].file.url)" size="mini" icon="el-icon-paperclip" circle)
                                 el-button(type="default" @click="deleteGalleryImage(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
-                    el-tab-pane(v-loading="galleryDialogIconsLoading")
+                    el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") Icons
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ VRCPlusIconsTable.length }}/64
                         input(type="file" accept="image/*" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
@@ -2833,7 +2834,7 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesUserDialog" :visible.sync="previousInstancesUserDialog.visible" title="Previous Instances" width="800px")
                 span(v-text="previousInstancesUserDialog.userRef.displayName" style="font-size:14px")
                 el-input(v-model="previousInstancesUserDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
-                data-tables(v-bind="previousInstancesUserDialogTable" v-loading="previousInstancesUserDialog.loading" style="margin-top:10px")
+                data-tables(v-if="previousInstancesUserDialog.visible" v-bind="previousInstancesUserDialogTable" v-loading="previousInstancesUserDialog.loading" style="margin-top:10px")
                     el-table-column(label="Date" prop="created_at" sortable width="110")
                         template(v-once #default="scope")
                             el-tooltip(placement="left")
@@ -2859,7 +2860,7 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesWorldDialog" :visible.sync="previousInstancesWorldDialog.visible" title="Previous Instances" width="800px")
                 span(v-text="previousInstancesWorldDialog.worldRef.name" style="font-size:14px")
                 el-input(v-model="previousInstancesWorldDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
-                data-tables(v-bind="previousInstancesWorldDialogTable" v-loading="previousInstancesWorldDialog.loading" style="margin-top:10px")
+                data-tables(v-if="previousInstancesWorldDialog.visible" v-bind="previousInstancesWorldDialogTable" v-loading="previousInstancesWorldDialog.loading" style="margin-top:10px")
                     el-table-column(label="Date" prop="created_at" sortable width="110")
                         template(v-once #default="scope")
                             el-tooltip(placement="left")
@@ -2909,7 +2910,7 @@ html
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
-                div(style="height:350px;overflow:hidden scroll;word-break:break-all")
+                div(v-if="ossDialog" style="height:350px;overflow:hidden scroll;word-break:break-all")
                     div
                         span VRCX is based on open source software. It was possible because of their contribution.
                     div(style="margin-top:15px")
