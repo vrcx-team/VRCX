@@ -8986,6 +8986,8 @@ speechSynthesis.getVoices();
                 this.parsePhotonPortalSpawn(datetime, instanceId, ref1);
             }
             return;
+        } else if (eventData.EventName === '_SendOnSpawn') {
+            return;
         } else if (eventData.EventType > 34) {
             var entry = {
                 created_at: datetime,
@@ -12646,10 +12648,13 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptMaxTableSizeDialog = function () {
-        this.$prompt('Enter a number', 'Max Table Size', {
-            distinguishCancelAndClose: true,
-            confirmButtonText: 'Save',
-            cancelButtonText: 'Cancel',
+        this.$prompt(
+            'Larger table sizes may impact RAM usage and performance (default: 1000)',
+            'Max Table Size',
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel',
             inputValue: this.maxTableSize,
             inputPattern: /\d+$/,
             inputErrorMessage: 'Valid number is required',
@@ -12660,12 +12665,13 @@ speechSynthesis.getVoices();
                         'VRCX_maxTableSize',
                         this.maxTableSize
                     );
-                    database.setmaxTableSize(this.maxTableSize);
-                    this.feedTableLookup();
-                    this.gameLogTableLookup();
+                        database.setmaxTableSize(this.maxTableSize);
+                        this.feedTableLookup();
+                        this.gameLogTableLookup();
+                    }
                 }
             }
-        });
+        );
     };
 
     $app.methods.setTablePageSize = function (pageSize) {
@@ -12710,7 +12716,7 @@ speechSynthesis.getVoices();
 
     $app.methods.promptAutoClearVRCXCacheFrequency = function () {
         this.$prompt(
-            'Enter amount of hours (default: 24, disabled: 0)',
+            'Enter amount of hours, larger values may impact RAM usage and performance (default: 24, disabled: 0)',
             'Clear VRCX Cache Timer',
             {
                 distinguishCancelAndClose: true,
@@ -18925,15 +18931,14 @@ speechSynthesis.getVoices();
                 for (var [id, dt] of Object.entries(data.Event7List)) {
                     this.photonEvent7List.set(parseInt(id, 10), dt);
                 }
-                // this.photonLastEvent7List = Date.parse(data.dt);
-                this.photonLastEvent7List = Date.now();
+                this.photonLastEvent7List = Date.parse(data.dt);
                 break;
             case 'Ping':
                 if (!this.photonLoggingEnabled) {
                     this.photonLoggingEnabled = true;
                     configRepository.setBool('VRCX_photonLoggingEnabled', true);
                 }
-                if (!this.companionUpdateReminder && data.version < '1.1.1') {
+                if (!this.companionUpdateReminder && data.version < '1.1.3') {
                     // check version
                     this.promptCompanionUpdateReminder();
                 }
