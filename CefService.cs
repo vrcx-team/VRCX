@@ -44,7 +44,7 @@ namespace VRCX
             cefSettings.CefCommandLineArgs.Add("disable-web-security");
             cefSettings.SetOffScreenRenderingBestPerformanceArgs();
 
-            // CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO
+            CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO
             CefSharpSettings.ShutdownOnExit = false;
 
             // Enable High-DPI support on Windows 7 or newer
