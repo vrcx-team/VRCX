@@ -70,10 +70,11 @@ Screenshots
 ### Discord Rich Presence
 ![dis](https://user-images.githubusercontent.com/82102170/178109155-7888e67a-c02d-4732-aebb-4fceb162984d.png)
 
-<!-- 
-![noty1](https://user-images.githubusercontent.com/25771678/63169808-ae06d980-c072-11e9-93e9-fcc13312872b.PNG)
-![noty2](https://user-images.githubusercontent.com/25771678/63169810-ae9f7000-c072-11e9-818b-dd419213420b.PNG)
--->
+### VR Overlay
+![overlay1](https://user-images.githubusercontent.com/82102170/178281800-af4c69da-a0f5-43d8-9515-e960e1a16b39.png)
+![overlay2](https://user-images.githubusercontent.com/82102170/178281884-ea1df88c-f16c-4c83-825c-c285f49b1ff1.png)
+
+
 
 # How to install VRCX
 
