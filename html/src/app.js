@@ -19239,6 +19239,65 @@ speechSynthesis.getVoices();
         });
     };
 
+    // App: Previous Instance Info Dialog
+
+    $app.data.previousInstanceInfoDialogTable = {
+        data: [],
+        filters: [
+            {
+                prop: 'displayName',
+                value: ''
+            }
+        ],
+        tableProps: {
+            stripe: true,
+            size: 'mini',
+            defaultSort: {
+                prop: 'created_at',
+                order: 'descending'
+            }
+        },
+        pageSize: 10,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 25, 50, 100]
+        }
+    };
+
+    $app.data.previousInstanceInfoDialog = {
+        visible: false,
+        loading: false,
+        forceUpdate: 0,
+        $location: {}
+    };
+
+    $app.methods.showPreviousInstanceInfoDialog = function (instanceId) {
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.previousInstanceInfoDialog.$el)
+        );
+        var D = this.previousInstanceInfoDialog;
+        D.$location = API.parseLocation(instanceId);
+        D.visible = true;
+        D.loading = true;
+        this.refreshPreviousInstanceInfoTable();
+    };
+
+    $app.methods.refreshPreviousInstanceInfoTable = function () {
+        var D = this.previousInstanceInfoDialog;
+        database.getPlayersFromInstance(D.$location.tag).then((data) => {
+            var array = [];
+            for (var entry of Array.from(data.values())) {
+                entry.timer = timeToText(entry.time);
+                array.push(entry);
+            }
+            array.sort(compareByCreatedAt);
+            this.previousInstanceInfoDialogTable.data = array;
+            D.loading = false;
+            workerTimers.setTimeout(() => D.forceUpdate++, 150);
+        });
+    };
+
     $app.data.dtHour12 = configRepository.getBool('VRCX_dtHour12');
     $app.data.dtIsoFormat = configRepository.getBool('VRCX_dtIsoFormat');
     $app.methods.setDatetimeFormat = async function () {

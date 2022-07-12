@@ -1360,6 +1360,42 @@ class Database {
         );
     }
 
+    async getPlayersFromInstance(location) {
+        var players = new Map();
+        await sqliteService.execute(
+            (dbRow) => {
+                var time = 0;
+                var count = 0;
+                var created_at = dbRow[0];
+                if (dbRow[3]) {
+                    time = dbRow[3];
+                }
+                var ref = players.get(dbRow[1]);
+                if (typeof ref !== 'undefined') {
+                    time += ref.time;
+                    count = ref.count;
+                    created_at = ref.created_at;
+                }
+                if (dbRow[4] === 'OnPlayerJoined') {
+                    count++;
+                }
+                var row = {
+                    created_at,
+                    displayName: dbRow[1],
+                    userId: dbRow[2],
+                    time,
+                    count
+                };
+                players.set(row.displayName, row);
+            },
+            `SELECT created_at, display_name, user_id, time, type FROM gamelog_join_leave WHERE location = @location`,
+            {
+                '@location': location
+            }
+        );
+        return players;
+    }
+
     async getpreviousDisplayNamesByUserId(ref) {
         var data = new Map();
         await sqliteService.execute(

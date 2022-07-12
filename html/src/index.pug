@@ -2230,15 +2230,19 @@ html
                     el-button(v-if="VRCXUpdateDialog.updatePending" type="primary" size="small" @click="restartVRCX") Install
 
             //- dialog: launch
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="450px")
                 div #[span(v-text="launchDialog.shortUrl" style="word-break:break-all;font-size:12px")]
                     el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
                         el-button(v-if="launchDialog.shortUrl" @click="copyInstanceUrl(launchDialog.shortUrl)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                 div(style="margin-top:10px") #[span(v-text="launchDialog.url" style="word-break:break-all;font-size:12px")]
                     el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
                         el-button(@click="copyInstanceUrl(launchDialog.url)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                div(style="margin-top:10px") #[span(v-text="launchDialog.location" style="word-break:break-all;font-size:12px")]
+                    el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                        el-button(@click="copyInstanceUrl(launchDialog.location)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                 template(#footer)
                     el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop (No VR)
+                    el-button(size="small" @click="showPreviousInstanceInfoDialog(launchDialog.location)") Info
                     el-button(size="small" @click="showInviteDialog(launchDialog.location)" :disabled="checkCanInvite(launchDialog.location)") Invite
                     el-button(type="primary" size="small" @click="launchGame(locationToLaunchArg(launchDialog.location))") Launch
 
@@ -2845,9 +2849,10 @@ html
                     el-table-column(label="Time" prop="time" width="90" sortable)
                         template(v-once #default="scope")
                             span(v-text="scope.row.timer")
-                    el-table-column(label="Action" width="60" align="right")
+                    el-table-column(label="Action" width="90" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-info" size="mini" @click="showLaunchDialog(scope.row.location)")
+                            el-button(type="text" icon="el-icon-tickets" size="mini" @click="showPreviousInstanceInfoDialog(scope.row.location)")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogUserInstance(scope.row)")
                             
             //- dialog Table: Previous Instances World
@@ -2876,9 +2881,31 @@ html
                     el-table-column(label="Time" prop="time" width="90" sortable)
                         template(v-once #default="scope")
                             span(v-text="scope.row.timer")
-                    el-table-column(label="Action" width="60" align="right")
+                    el-table-column(label="Action" width="90" align="right")
                         template(v-once #default="scope")
+                            el-button(type="text" icon="el-icon-tickets" size="mini" @click="showPreviousInstanceInfoDialog(scope.row.location)")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogWorldInstance(scope.row)")
+
+            //- dialog Table: Previous Instance Info
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstanceInfoDialog" :visible.sync="previousInstanceInfoDialog.visible" title="Previous Instance Info" width="800px")
+                location(:location="previousInstanceInfoDialog.$location.tag" style="font-size:14px")
+                el-input(v-model="previousInstanceInfoDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
+                data-tables(v-if="previousInstanceInfoDialog.visible" v-bind="previousInstanceInfoDialogTable" v-loading="previousInstanceInfoDialog.loading" style="margin-top:10px")
+                    el-table-column(label="Date" prop="created_at" sortable width="110")
+                        template(v-once #default="scope")
+                            el-tooltip(placement="left")
+                                template(#content)
+                                    span {{ scope.row.created_at | formatDate('long') }}
+                                span {{ scope.row.created_at | formatDate('short') }}
+                    el-table-column(label="Display Name" prop="displayName" sortable)
+                        template(v-once #default="scope")
+                            span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)")
+                    el-table-column(label="Time" prop="time" width="90" sortable)
+                        template(v-once #default="scope")
+                            span(v-text="scope.row.timer")
+                    el-table-column(label="Count" prop="count" width="90" sortable)
+                        template(v-once #default="scope")
+                            span(v-text="scope.row.count")
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
