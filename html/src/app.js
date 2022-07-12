@@ -8210,11 +8210,11 @@ speechSynthesis.getVoices();
                 database.addGamelogPortalSpawnToDatabase(entry);
                 break;
             case 'video-play':
-                var videoUrl = encodeURI(gameLog.videoUrl);
-                if (this.lastVideoUrl === videoUrl) {
+                gameLog.videoUrl = encodeURI(gameLog.videoUrl);
+                if (this.lastVideoUrl === gameLog.videoUrl) {
                     return;
                 }
-                this.lastVideoUrl = videoUrl;
+                this.lastVideoUrl = gameLog.videoUrl;
                 this.addGameLogVideo(gameLog, location, userId);
                 return;
             case 'video-sync':
@@ -9612,6 +9612,10 @@ speechSynthesis.getVoices();
         var videoName = data[6];
         if (videoId === -1) {
             videoId = 'YouTube';
+        }
+        if (parseInt(videoPos, 10) === parseInt(videoLength, 10)) {
+            // ummm okay
+            videoPos = 0;
         }
         if (videoUrl === this.nowPlaying.url) {
             var entry = {
@@ -12424,13 +12428,13 @@ speechSynthesis.getVoices();
                 }
             }
         } else if (input.substring(0, 4) === 'usr_') {
-            this.showUserDialog(input);
+            this.showUserDialog(input.trim());
             return true;
         } else if (input.substring(0, 5) === 'wrld_') {
-            this.showWorldDialog(input);
+            this.showWorldDialog(input.trim());
             return true;
         } else if (input.substring(0, 5) === 'avtr_') {
-            this.showAvatarDialog(input);
+            this.showAvatarDialog(input.trim());
             return true;
         }
         return false;
@@ -12655,16 +12659,16 @@ speechSynthesis.getVoices();
                 distinguishCancelAndClose: true,
                 confirmButtonText: 'Save',
                 cancelButtonText: 'Cancel',
-            inputValue: this.maxTableSize,
-            inputPattern: /\d+$/,
-            inputErrorMessage: 'Valid number is required',
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    this.maxTableSize = instance.inputValue;
-                    configRepository.setString(
-                        'VRCX_maxTableSize',
-                        this.maxTableSize
-                    );
+                inputValue: this.maxTableSize,
+                inputPattern: /\d+$/,
+                inputErrorMessage: 'Valid number is required',
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        this.maxTableSize = instance.inputValue;
+                        configRepository.setString(
+                            'VRCX_maxTableSize',
+                            this.maxTableSize
+                        );
                         database.setmaxTableSize(this.maxTableSize);
                         this.feedTableLookup();
                         this.gameLogTableLookup();
@@ -16719,11 +16723,12 @@ speechSynthesis.getVoices();
         r.onload = async function (file) {
             var base64File = btoa(r.result);
             var fileMd5 = await $app.genMd5(base64File);
-            var fileSizeInBytes = file.total;
+            var fileSizeInBytes = parseInt(file.total, 10);
             var base64SignatureFile = await $app.genSig(base64File);
             var signatureMd5 = await $app.genMd5(base64SignatureFile);
-            var signatureSizeInBytes = await $app.genLength(
-                base64SignatureFile
+            var signatureSizeInBytes = parseInt(
+                await $app.genLength(base64SignatureFile),
+                10
             );
             var avatarId = $app.avatarDialog.id;
             var {imageUrl} = $app.avatarDialog.ref;
@@ -17053,11 +17058,12 @@ speechSynthesis.getVoices();
         r.onload = async function (file) {
             var base64File = btoa(r.result);
             var fileMd5 = await $app.genMd5(base64File);
-            var fileSizeInBytes = file.total;
+            var fileSizeInBytes = parseInt(file.total, 10);
             var base64SignatureFile = await $app.genSig(base64File);
             var signatureMd5 = await $app.genMd5(base64SignatureFile);
-            var signatureSizeInBytes = await $app.genLength(
-                base64SignatureFile
+            var signatureSizeInBytes = parseInt(
+                await $app.genLength(base64SignatureFile),
+                10
             );
             var worldId = $app.worldDialog.id;
             var {imageUrl} = $app.worldDialog.ref;

@@ -2017,7 +2017,7 @@ html
                         el-button(@click="languageDialog.languageValue='';languageDialog.languageChoice=true" size="mini") Add Language
 
             //- dialog: bio
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="bioDialog" :visible.sync="bioDialog.visible" title="Bio" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="bioDialog" :visible.sync="bioDialog.visible" title="Bio" width="600px")
                 div(v-loading="bioDialog.loading")
                     el-input(type="textarea" v-model="bioDialog.bio" size="mini" maxlength="512" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="Please input a bio")
                     el-input(v-for="(link, index) in bioDialog.bioLinks" :key="index" :value="link" v-model="bioDialog.bioLinks[index]" size="small" style="margin-top:5px")
