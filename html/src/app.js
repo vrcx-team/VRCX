@@ -18634,7 +18634,9 @@ speechSynthesis.getVoices();
             if (release.name === this.VRCXUpdateDialog.release) {
                 for (var asset of release.assets) {
                     if (
-                        asset.content_type === 'application/x-msdownload' &&
+                        (asset.content_type === 'application/x-msdownload' ||
+                            asset.content_type ===
+                                'application/x-msdos-program') &&
                         asset.state === 'uploaded'
                     ) {
                         var downloadUrl = asset.browser_download_url;
