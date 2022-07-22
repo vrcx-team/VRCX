@@ -29,7 +29,7 @@
     "css-loader": "^6.7.1",
     "default-passive-events": "^2.0.0",
     "element-ui": "^2.15.9",
-    "eslint": "^8.18.0",
+    "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
     "famfamfam-flags": "^1.0.0",
     "html-webpack-plugin": "^5.5.0",
