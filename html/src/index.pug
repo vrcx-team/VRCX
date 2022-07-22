@@ -896,7 +896,8 @@ html
                         el-table-column(label="User Name" min-width="120" prop="username" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'username')")
                         el-table-column(label="Rank" width="110" prop="$trustSortNum" sortable="custom")
                             template(v-once #default="scope")
-                                span.name(v-text="scope.row.$trustLevel" :class="scope.row.$trustClass")
+                                span.name(v-if="randomUserColours" v-text="scope.row.$trustLevel" :class="scope.row.$trustClass")
+                                span.name(v-else v-text="scope.row.$trustLevel" :style="{'color':scope.row.$userColour}")
                         el-table-column(label="Status" min-width="180" prop="status" sortable :sort-method="(a, b) => sortStatus(a.status, b.status)")
                             template(v-once #default="scope")
                                 i.x-user-status(v-if="scope.row.status !== 'offline'" :class="statusClass(scope.row.status)")
@@ -1579,18 +1580,24 @@ html
                                             span.extra(v-if="userDialog.timeSpent === 0") -
                                             span.extra(v-else) {{ userDialog.timeSpent | timeToText }}
                                 .x-friend-item(style="cursor:default")
-                                    .detail
-                                        span.name(v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for") Online For
-                                            el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
-                                                i.el-icon-warning
-                                        span.name(v-else) Offline For
-                                            el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
-                                                i.el-icon-warning
-                                        span.extra(v-text="userOnlineFor(userDialog)")
+                                    el-tooltip(placement="top")
+                                        template(#content)
+                                            span {{ userOnlineForTimestamp(userDialog) | formatDate('short') }}
+                                        .detail
+                                            span.name(v-if="userDialog.ref.state === 'online' && userDialog.ref.$online_for") Online For
+                                                el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                    i.el-icon-warning
+                                            span.name(v-else) Offline For
+                                                el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                    i.el-icon-warning
+                                            span.extra {{ userOnlineFor(userDialog) | timeToText }}
                                 .x-friend-item(style="cursor:default")
-                                    .detail
-                                        span.name Last Activity
-                                        span.extra {{ userDialog.ref.last_activity | formatDate('long') }}
+                                    el-tooltip(placement="top")
+                                        template(#content)
+                                            span Last Login {{ userDialog.ref.last_login | formatDate('short') }}
+                                        .detail
+                                            span.name Last Activity
+                                            span.extra {{ userDialog.ref.last_activity | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Date Joined
@@ -1730,7 +1737,7 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Change Tags") Change Tags
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") Change Image
                                             el-dropdown-item(v-if="worldDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") Download Unity Package
-                                            el-dropdown-item(v-if="worldDialog.ref.tags.includes('system_approved') || worldDialog.ref.tags.includes('system_labs')" icon="el-icon-view" command="Unpublish" divided) Unpublish From Labs
+                                            el-dropdown-item(v-if="worldDialog.ref.tags.includes('system_approved') || worldDialog.ref.tags.includes('system_labs')" icon="el-icon-view" command="Unpublish" divided) Unpublish
                                             el-dropdown-item(v-else icon="el-icon-view" command="Publish" divided) Publish To Labs
                                             el-dropdown-item(icon="el-icon-delete" command="Delete" style="color:#F56C6C") Delete
                     el-tabs

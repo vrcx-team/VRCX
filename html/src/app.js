@@ -1449,6 +1449,7 @@ speechSynthesis.getVoices();
             json.statusDescription = $app.replaceBioSymbols(
                 json.statusDescription
             );
+            json.statusDescription = $app.removeEmojis(json.statusDescription);
         }
         if (typeof json.bio !== 'undefined') {
             json.bio = $app.replaceBioSymbols(json.bio);
@@ -4251,7 +4252,7 @@ speechSynthesis.getVoices();
                     }
                 }
                 if (--this.nextAppUpdateCheck <= 0) {
-                    this.nextAppUpdateCheck = 43200; // 6hours
+                    this.nextAppUpdateCheck = 1800; // 15mins
                     if (this.autoUpdateVRCX !== 'Off') {
                         this.checkForVRCXUpdate();
                     }
@@ -7809,7 +7810,6 @@ speechSynthesis.getVoices();
         this.photonEvent7List = new Map();
         this.photonLastEvent7List = '';
         this.moderationEventQueue = new Map();
-        this.lastPortalId = '';
         this.lastPortalList = new Map();
         if (this.photonEventTable.data.length > 0) {
             this.photonEventTablePrevious.data = this.photonEventTable.data;
@@ -8210,7 +8210,7 @@ speechSynthesis.getVoices();
                 database.addGamelogPortalSpawnToDatabase(entry);
                 break;
             case 'video-play':
-                gameLog.videoUrl = encodeURI(gameLog.videoUrl);
+                gameLog.videoUrl = decodeURI(gameLog.videoUrl);
                 if (this.lastVideoUrl === gameLog.videoUrl) {
                     return;
                 }
@@ -8325,7 +8325,6 @@ speechSynthesis.getVoices();
 
     $app.data.recommendedSteamParams =
         'https://gist.github.com/Natsumi-sama/d280a58f08ace3da0e8fc7a9a381d44e';
-    $app.data.lastPortalId = '';
     $app.data.lastPortalList = new Map();
     $app.data.moderationEventQueue = new Map();
     $app.data.moderationAgainstTable = [];
@@ -8952,7 +8951,7 @@ speechSynthesis.getVoices();
             eventData.EventName === '_InstantiateObject' &&
             eventData.Data[0] === 'Portals/PortalInternalDynamic'
         ) {
-            this.lastPortalId = eventData.Data[3];
+            this.lastPortalList.set(eventData.Data[3], Date.parse(datetime));
             return;
         } else if (
             eventData.EventName === '_DestroyObject' &&
@@ -8970,13 +8969,6 @@ speechSynthesis.getVoices();
             return;
         } else if (eventData.EventName === 'ConfigurePortal') {
             var instanceId = `${eventData.Data[0]}:${eventData.Data[1]}`;
-            if (this.lastPortalId) {
-                this.lastPortalList.set(
-                    this.lastPortalId,
-                    Date.parse(datetime)
-                );
-                this.lastPortalId = '';
-            }
             var displayName = this.getDisplayNameFromPhotonId(senderId);
             if (displayName) {
                 var ref1 = {
@@ -15812,11 +15804,20 @@ speechSynthesis.getVoices();
 
     $app.methods.userOnlineFor = function (ctx) {
         if (ctx.ref.state === 'online' && ctx.ref.$online_for) {
-            return timeToText(Date.now() - ctx.ref.$online_for);
+            return Date.now() - ctx.ref.$online_for;
         } else if (ctx.ref.$offline_for) {
-            return timeToText(Date.now() - ctx.ref.$offline_for);
+            return Date.now() - ctx.ref.$offline_for;
         }
-        return '-';
+        return 0;
+    };
+
+    $app.methods.userOnlineForTimestamp = function (ctx) {
+        if (ctx.ref.state === 'online' && ctx.ref.$online_for) {
+            return ctx.ref.$online_for;
+        } else if (ctx.ref.$offline_for) {
+            return ctx.ref.$offline_for;
+        }
+        return 0;
     };
 
     // App: Invite Messages
@@ -18552,6 +18553,16 @@ speechSynthesis.getVoices();
             newText = newText.replace(regex, key);
         }
         return newText.replace(/ {1,}/g, ' ').trimRight();
+    };
+
+    $app.methods.removeEmojis = function (text) {
+        return text
+            .replace(
+                /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+                ''
+            )
+            .replace(/\s+/g, ' ')
+            .trim();
     };
 
     $app.methods.checkCanInvite = function (location) {
