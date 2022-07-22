@@ -7,14 +7,23 @@ VRCX is an assistant application for VRChat that provides information about and 
 
 VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
 
-pypy is not responsible for any problems caused by VRCX. ***Use at your own risk!***
+pypy & Natsumi are not responsible for any problems caused by VRCX. ***Use at your own risk!***
 
-![vrchat api](https://user-images.githubusercontent.com/11171153/114227156-b559c400-99c8-11eb-9df6-ee6615b8118e.png)
+
+## How to install VRCX
+
+* Download latest release setup from [here](https://github.com/pypy-vrc/VRCX/releases/latest).
+* Run `VRCX_Setup.exe`.
+
+## Is VRCX against VRChat ToS?
+
+**TL;DR:** no, as long as you don't use the Steam account login method.
 
 *VRChat's official stance on usage of the API, as listed in their Discord #faq channel.*
+![vrchat api](https://user-images.githubusercontent.com/11171153/114227156-b559c400-99c8-11eb-9df6-ee6615b8118e.png)
 
-Special comments about VRChatRPC.DLL
--
+### Special comments about VRChatRPC.DLL
+
 VRChatRPC.DLL is used to login VRChat via your **Steam account**. (If you press the Steam login button on the login page)
 
 If you don't need to login via Steam, VRChatRPC.DLL will not be used.
@@ -75,18 +84,11 @@ Screenshots
 ![overlay2](https://user-images.githubusercontent.com/82102170/178281884-ea1df88c-f16c-4c83-825c-c285f49b1ff1.png)
 
 
+## How to run VRCX on Linux
 
-# How to install VRCX
+* [Guide](https://github.com/RinLovesYou/VRChat-Linux/wiki/VRCX) made by [RinLovesYou](https://github.com/RinLovesYou)
 
-* Download latest release [zip](https://github.com/pypy-vrc/VRCX/releases/latest).
-* Extract entire zip archive.
-* Run `VRCX.exe`.
-
-# How to run VRCX on Linux
-
-* [Guide](https://github.com/RinLovesYou/VRChat-Linux/wiki/VRCX) made by @RinLovesYou
-
-# How to build VRCX from source
+## How to build VRCX from source
 
 * Get source code
     * Download latest source code [zip](https://github.com/pypy-vrc/VRCX/archive/master.zip) or clone repo with `git clone`.
