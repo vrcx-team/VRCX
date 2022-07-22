@@ -1508,7 +1508,7 @@ html
                     el-tabs(ref="userDialogTabs" @tab-click="userDialogTabClick")
                         el-tab-pane(label="Info")
                             template(v-if="!userDialog.isFriend || isFriendOnline(userDialog.friend)")
-                                div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #eee")
+                                div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #e4e7ed14")
                                     div(style="flex:none")
                                         location(:location="userDialog.ref.location")
                                         template(v-if="userDialog.ref.location && userDialog.ref.location !== 'private' && userDialog.ref.location !== 'offline'")

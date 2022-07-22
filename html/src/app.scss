@@ -673,3 +673,12 @@ i.x-user-status.busy {
 .el-pagination .btn-next {
     margin-right: 10px;
 }
+
+.el-dialog,
+.el-message-box {
+    border-radius: 10px;
+}
+
+.el-tabs__nav-wrap::after {
+    background-color: #e4e7ed14;
+}
