@@ -224,9 +224,7 @@ speechSynthesis.getVoices();
         observerOptions: {
             rootMargin: '0px',
             threshold: 0.1
-        },
-        error: './assets/blank.png',
-        loading: './assets/blank.png'
+        }
     });
 
     Vue.use(DataTables);
@@ -8748,24 +8746,49 @@ speechSynthesis.getVoices();
     $app.methods.parsePhotonEvent = function (data, gameLogDate) {
         if (data.Code === 253) {
             // SetUserProperties
-            this.parsePhotonUser(
-                data.Parameters[253],
-                data.Parameters[251].user,
-                gameLogDate
-            );
-            this.parsePhotonAvatarChange(
-                data.Parameters[253],
-                data.Parameters[251].user,
-                data.Parameters[251].avatarDict,
-                gameLogDate
-            );
-            this.parsePhotonAvatar(data.Parameters[251].avatarDict);
-            this.parsePhotonAvatar(data.Parameters[251].favatarDict);
-            if (typeof data.Parameters[251].inVRMode !== 'undefined') {
-                this.photonLobbyInVrMode.set(
+            if (data.Parameters[253] === -1) {
+                for (var i in data.Parameters[251]) {
+                    var id = parseInt(i, 10);
+                    var user = data.Parameters[251][i];
+                    this.parsePhotonUser(id, user.user, gameLogDate);
+                    this.parsePhotonAvatarChange(
+                        id,
+                        user.user,
+                        user.avatarDict,
+                        gameLogDate
+                    );
+                    this.parsePhotonAvatar(user.avatarDict);
+                    this.parsePhotonAvatar(user.favatarDict);
+                    if (typeof user.inVRMode !== 'undefined') {
+                        this.photonLobbyInVrMode.set(id, user.inVRMode);
+                    }
+                    this.photonLobbyJointime.set(id, {
+                        joinTime: Date.parse(gameLogDate),
+                        hasInstantiated: false,
+                        inVRMode: user.inVRMode,
+                        avatarEyeHeight: user.avatarEyeHeight
+                    });
+                }
+            } else {
+                this.parsePhotonUser(
                     data.Parameters[253],
-                    data.Parameters[251].inVRMode
+                    data.Parameters[251].user,
+                    gameLogDate
                 );
+                this.parsePhotonAvatarChange(
+                    data.Parameters[253],
+                    data.Parameters[251].user,
+                    data.Parameters[251].avatarDict,
+                    gameLogDate
+                );
+                this.parsePhotonAvatar(data.Parameters[251].avatarDict);
+                this.parsePhotonAvatar(data.Parameters[251].favatarDict);
+                if (typeof data.Parameters[251].inVRMode !== 'undefined') {
+                    this.photonLobbyInVrMode.set(
+                        data.Parameters[253],
+                        data.Parameters[251].inVRMode
+                    );
+                }
             }
         } else if (data.Code === 42) {
             // SetUserProperties
@@ -15808,7 +15831,7 @@ speechSynthesis.getVoices();
         } else if (ctx.ref.$offline_for) {
             return Date.now() - ctx.ref.$offline_for;
         }
-        return 0;
+        return '-';
     };
 
     $app.methods.userOnlineForTimestamp = function (ctx) {
