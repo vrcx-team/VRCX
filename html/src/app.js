@@ -1350,6 +1350,9 @@ speechSynthesis.getVoices();
                 onlineFriends: [],
                 activeFriends: [],
                 offlineFriends: [],
+                travelingToInstance: '',
+                travelingToLocation: '',
+                travelingToWorld: '',
                 // VRCX
                 $homeLocation: {},
                 $isVRCPlus: false,
@@ -1360,6 +1363,7 @@ speechSynthesis.getVoices();
                 $userColour: '',
                 $trustSortNum: 1,
                 $languages: [],
+                $previousLocation: '',
                 //
                 ...json
             };
@@ -1480,6 +1484,9 @@ speechSynthesis.getVoices();
                 location: '',
                 worldId: '',
                 instanceId: '',
+                travelingToInstance: '',
+                travelingToLocation: '',
+                travelingToWorld: '',
                 // VRCX
                 $location: {},
                 $location_at: Date.now(),
@@ -1497,6 +1504,7 @@ speechSynthesis.getVoices();
                 $timeSpent: 0,
                 $lastSeen: '',
                 $nickName: '',
+                $previousLocation: '',
                 //
                 ...json
             };
@@ -1548,7 +1556,7 @@ speechSynthesis.getVoices();
             // FIXME
             // if the status is offline, just ignore status and statusDescription only.
             if (has && ref.status !== 'offline' && $ref.status !== 'offline') {
-                if (props.location) {
+                if (props.location && props.location[0] !== 'traveling') {
                     var ts = Date.now();
                     props.location.push(ts - ref.$location_at);
                     ref.$location_at = ts;
@@ -3791,6 +3799,7 @@ speechSynthesis.getVoices();
                 this.$emit('USER', {
                     json: {
                         location: content.location,
+                        travelingToLocation: content.travelingToLocation,
                         ...content.user
                     },
                     params: {
@@ -3864,6 +3873,7 @@ speechSynthesis.getVoices();
                     this.$emit('USER', {
                         json: {
                             location: content.location,
+                            travelingToLocation: content.travelingToLocation,
                             ...content.user
                         },
                         params: {
@@ -7583,8 +7593,14 @@ speechSynthesis.getVoices();
             props.location[0] !== 'offline' &&
             props.location[0] !== '' &&
             props.location[1] !== 'offline' &&
-            props.location[1] !== ''
+            props.location[1] !== '' &&
+            props.location[0] !== 'traveling'
         ) {
+            // skip GPS if user is offline or traveling
+            var previousLocation = props.location[1];
+            if (previousLocation === 'traveling') {
+                previousLocation = ref.$previousLocation;
+            }
             var worldName = await $app.getWorldName(props.location[0]);
             var feed = {
                 created_at: new Date().toJSON(),
@@ -7593,11 +7609,20 @@ speechSynthesis.getVoices();
                 displayName: ref.displayName,
                 location: props.location[0],
                 worldName,
-                previousLocation: props.location[1],
+                previousLocation,
                 time: props.location[2]
             };
             $app.addFeed(feed);
             database.addGPSToDatabase(feed);
+            $app.updateFriendGPS(ref.id);
+        }
+        if (
+            props.location &&
+            props.location[0] === 'traveling' &&
+            props.location[1] !== 'traveling'
+        ) {
+            // store previous location when user is traveling
+            ref.$previousLocation = props.location[1];
             $app.updateFriendGPS(ref.id);
         }
         if (
