@@ -33,15 +33,14 @@ html
                                 el-input(v-model="loginForm.username" name="username" placeholder="Username or Email" clearable)
                             el-form-item(label="Password" prop="password" required style="margin-top:10px")
                                 el-input(type="password" v-model="loginForm.password" name="password" placeholder="Password" clearable show-password)
+                            el-checkbox(v-model="loginForm.saveCredentials" style="margin-top:15px") Save Credentials
+                            el-checkbox(v-model="enableCustomEndpoint" @change="toggleCustomEndpoint" style="margin-top:10px") Private Server
                             el-form-item(v-if="enableCustomEndpoint" label="Endpont" prop="endpoint" style="margin-top:10px")
                                 el-input(v-model="loginForm.endpoint" name="endpoint" :placeholder="API.endpointDomainVrchat" clearable)
                             el-form-item(v-if="enableCustomEndpoint" label="WebSocket" prop="endpoint" style="margin-top:10px")
                                 el-input(v-model="loginForm.websocket" name="websocket" :placeholder="API.websocketDomainVrchat" clearable)
-                            el-checkbox(v-model="loginForm.saveCredentials" style="margin-top:15px") Save Credentials
                             el-form-item(style="margin-top:15px")
                                 el-button(native-type="submit" type="primary" :loading="loginForm.loading" style="width:100%") Login
-                            el-form-item
-                                el-button(:loading="loginForm.loading" style="width:100%" @click="loginWithSteam()") Login with Steam
                         div(style="text-align:center;font-size:12px")
                             p &copy; 2019-2022 #[a(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] (mina#5656) & #[a(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
                             p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
