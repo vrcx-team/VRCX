@@ -86,14 +86,6 @@ namespace VRCX
             Cef.GetGlobalCookieManager().DeleteCookies();
         }
 
-        public string LoginWithSteam()
-        {
-            var rpc = VRChatRPC.Instance;
-            return rpc.Update() == true
-                ? rpc.GetAuthSessionTicket()
-                : string.Empty;
-        }
-
         public bool[] CheckGameRunning()
         {
             var isGameRunning = false;
@@ -200,8 +192,8 @@ namespace VRCX
             Process.Start(new ProcessStartInfo
             {
                 WorkingDirectory = Path.GetDirectoryName(path),
-                            FileName = path,
-                            UseShellExecute = false,
+                FileName = path,
+                UseShellExecute = false,
                 Arguments = arguments
             }).Close();
         }

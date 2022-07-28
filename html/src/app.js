@@ -1183,33 +1183,6 @@ speechSynthesis.getVoices();
 
     /*
         params: {
-            steamTicket: string
-        }
-    */
-    API.loginWithSteam = function (params) {
-        return this.call(
-            `auth/steam?apiKey=${this.cachedConfig.clientApiKey}`,
-            {
-                method: 'POST',
-                params
-            }
-        ).then((json) => {
-            var args = {
-                json,
-                params,
-                origin: true
-            };
-            if (json.requiresTwoFactorAuth) {
-                this.$emit('USER:2FA', args);
-            } else {
-                this.$emit('USER:CURRENT', args);
-            }
-            return args;
-        });
-    };
-
-    /*
-        params: {
             code: string
         }
     */
