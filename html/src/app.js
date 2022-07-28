@@ -768,7 +768,7 @@ speechSynthesis.getVoices();
             parse() {
                 var L = API.parseLocation(this.location);
                 this.$el.style.display =
-                    L.isOffline || L.isPrivate ? 'none' : '';
+                    L.isOffline || L.isPrivate || L.isTraveling ? 'none' : '';
             },
             confirm() {
                 API.$emit('SHOW_LAUNCH_DIALOG', this.location);
@@ -794,17 +794,22 @@ speechSynthesis.getVoices();
             parse() {
                 var L = API.parseLocation(this.location);
                 this.$el.style.display =
-                    L.isOffline || L.isPrivate ? 'none' : '';
+                    L.isOffline || L.isPrivate || L.isTraveling ? 'none' : '';
             },
             confirm() {
                 var L = API.parseLocation(this.location);
-                if (L.isOffline || L.isPrivate || L.worldId === '') {
+                if (
+                    L.isOffline ||
+                    L.isPrivate ||
+                    L.isTraveling ||
+                    L.worldId === ''
+                ) {
                     return;
                 }
                 if (API.currentUser.status === 'busy') {
                     this.$message({
                         message:
-                            "You can't invite yourself in 'Do Not Disturb' mode",
+                            "You cannot invite yourself in 'Do Not Disturb' status",
                         type: 'error'
                     });
                     return;
@@ -827,9 +832,13 @@ speechSynthesis.getVoices();
 
     Vue.component('location', {
         template:
-            '<span @click="showWorldDialog" :class="{ \'x-link\': link && this.location !== \'private\' && this.location !== \'offline\'}">{{ text }}<slot></slot><span class="famfamfam-flags" :class="region" style="display:inline-block;margin-left:5px"></span><i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
+            "<span @click=\"showWorldDialog\" :class=\"{ 'x-link': link && this.location !== 'private' && this.location !== 'offline'}\">" +
+            '<i v-if="isTraveling" class="el-icon el-icon-loading" style="display:inline-block;margin-right:5px"></i>' +
+            '{{ text }}<slot></slot><span class="famfamfam-flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
+            '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
         props: {
             location: String,
+            traveling: String,
             hint: {
                 type: String,
                 default: ''
@@ -843,13 +852,23 @@ speechSynthesis.getVoices();
             return {
                 text: this.location,
                 region: this.region,
-                strict: this.strict
+                strict: this.strict,
+                isTraveling: this.isTraveling
             };
         },
         methods: {
             parse() {
-                this.text = this.location;
-                var L = API.parseLocation(this.location);
+                this.isTraveling = false;
+                var instanceId = this.location;
+                if (
+                    typeof this.traveling !== 'undefined' &&
+                    this.location === 'traveling'
+                ) {
+                    instanceId = this.traveling;
+                    this.isTraveling = true;
+                }
+                this.text = instanceId;
+                var L = API.parseLocation(instanceId);
                 if (L.isOffline) {
                     this.text = 'Offline';
                 } else if (L.isPrivate) {
@@ -868,7 +887,7 @@ speechSynthesis.getVoices();
                         API.getWorld({
                             worldId: L.worldId
                         }).then((args) => {
-                            if (L.tag === this.location) {
+                            if (L.tag === instanceId) {
                                 if (L.instanceId) {
                                     this.text = `${args.json.name} #${L.instanceName} ${L.accessType}`;
                                 } else {
@@ -884,12 +903,7 @@ speechSynthesis.getVoices();
                     }
                 }
                 this.region = '';
-                if (
-                    this.location !== '' &&
-                    L.instanceId &&
-                    !L.isOffline &&
-                    !L.isPrivate
-                ) {
+                if ($app.isRealInstance(instanceId)) {
                     if (L.region === 'eu') {
                         this.region = 'europeanunion';
                     } else if (L.region === 'jp') {
@@ -904,7 +918,11 @@ speechSynthesis.getVoices();
             },
             showWorldDialog() {
                 if (this.link) {
-                    API.$emit('SHOW_WORLD_DIALOG', this.location);
+                    var instanceId = this.location;
+                    if (this.traveling && this.location === 'traveling') {
+                        instanceId = this.traveling;
+                    }
+                    API.$emit('SHOW_WORLD_DIALOG', instanceId);
                 }
             }
         },
@@ -1061,6 +1079,7 @@ speechSynthesis.getVoices();
     API.isLoggedIn = false;
     API.cachedUsers = new Map();
     API.currentUser = {};
+    API.currentTravelers = new Map();
 
     API.$on('USER:CURRENT', function (args) {
         var {json} = args;
@@ -1309,6 +1328,9 @@ speechSynthesis.getVoices();
     API.applyCurrentUser = function (json) {
         var ref = this.currentUser;
         if (this.isLoggedIn) {
+            if (json.currentAvatar !== ref.currentAvatar) {
+                $app.addAvatarToHistory(json.currentAvatar);
+            }
             Object.assign(ref, json);
             if (ref.homeLocation !== ref.$homeLocation.tag) {
                 ref.$homeLocation = this.parseLocation(ref.homeLocation);
@@ -1358,7 +1380,6 @@ speechSynthesis.getVoices();
                 $userColour: '',
                 $trustSortNum: 1,
                 $languages: [],
-                $previousLocation: '',
                 //
                 ...json
             };
@@ -1486,6 +1507,7 @@ speechSynthesis.getVoices();
                 $location: {},
                 $location_at: Date.now(),
                 $online_for: Date.now(),
+                $travelingToTime: Date.now(),
                 $offline_for: '',
                 $isVRCPlus: false,
                 $isModerator: false,
@@ -1512,7 +1534,21 @@ speechSynthesis.getVoices();
                 ref.$location_at = player.joinTime;
                 ref.$online_for = player.joinTime;
             }
-            ref.$location = this.parseLocation(ref.location);
+            if (ref.location === 'traveling') {
+                ref.$location = this.parseLocation(ref.travelingToLocation);
+                if (!this.currentTravelers.has(ref.id)) {
+                    this.currentTravelers.set(ref.id, ref);
+                    $app.sharedFeed.pendingUpdate = true;
+                    $app.updateSharedFeed(false);
+                }
+            } else {
+                ref.$location = this.parseLocation(ref.location);
+                if (this.currentTravelers.has(ref.id)) {
+                    this.currentTravelers.delete(ref.id);
+                    $app.sharedFeed.pendingUpdate = true;
+                    $app.updateSharedFeed(false);
+                }
+            }
             ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
@@ -1526,8 +1562,20 @@ speechSynthesis.getVoices();
             }
             var $ref = {...ref};
             Object.assign(ref, json);
-            if (ref.location !== ref.$location.tag) {
+            if (ref.location === 'traveling') {
+                ref.$location = this.parseLocation(ref.travelingToLocation);
+                if (!this.currentTravelers.has(ref.id)) {
+                    this.currentTravelers.set(ref.id, ref);
+                    $app.sharedFeed.pendingUpdate = true;
+                    $app.updateSharedFeed(false);
+                }
+            } else {
                 ref.$location = this.parseLocation(ref.location);
+                if (this.currentTravelers.has(ref.id)) {
+                    this.currentTravelers.delete(ref.id);
+                    $app.sharedFeed.pendingUpdate = true;
+                    $app.updateSharedFeed(false);
+                }
             }
             ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
@@ -3783,7 +3831,10 @@ speechSynthesis.getVoices();
                 break;
 
             case 'friend-online':
-                if (content.location !== 'private') {
+                if (
+                    content.location !== 'private' &&
+                    content.location !== 'traveling'
+                ) {
                     this.$emit('WORLD', {
                         json: content.world,
                         params: {
@@ -3849,7 +3900,10 @@ speechSynthesis.getVoices();
                 break;
 
             case 'friend-location':
-                if (content.location !== 'private') {
+                if (
+                    content.location !== 'private' &&
+                    content.location !== 'traveling'
+                ) {
                     this.$emit('WORLD', {
                         json: content.world,
                         params: {
@@ -4365,89 +4419,56 @@ speechSynthesis.getVoices();
             feeds.friendLogTable.wrist,
             feeds.moderationAgainstTable.wrist
         );
-        // OnPlayerJoining
-        var L = API.parseLocation(this.lastLocation.location); // WebSocket dosen't update friend only instances
-        var locationBias = Date.now() - 30000; // 30 seconds
-        if (
-            this.isGameRunning &&
-            this.lastLocation.location &&
-            L.accessType !== 'friends' &&
-            this.lastLocation.date < locationBias &&
-            (this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends' ||
-                this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP' ||
-                this.sharedFeedFilters.noty.OnPlayerJoining === 'Friends' ||
-                this.sharedFeedFilters.noty.OnPlayerJoining === 'VIP')
-        ) {
-            var joiningMap = [];
-            var bias = new Date(Date.now() - 120000).toJSON(); // 2 minutes
-            var feedTable = this.feedSessionTable;
-            for (var i = feedTable.length - 1; i > -1; i--) {
-                var ctx = feedTable[i];
-                if (ctx.created_at < bias) {
-                    break;
-                }
-                // (ctx.type === 'GPS' || ctx.type === 'Online') TODO: fix new friend triggering Online event
-                if (
-                    ctx.type === 'GPS' &&
-                    ctx.location === this.lastLocation.location
-                ) {
-                    if (joiningMap[ctx.displayName]) {
-                        continue;
-                    }
-                    joiningMap[ctx.displayName] = ctx.created_at;
-                    if (API.cachedUsers.has(ctx.userId)) {
-                        var user = API.cachedUsers.get(ctx.userId);
-                        if (ctx.location !== user.location) {
-                            continue;
-                        }
-                    }
-                    var playersInInstance = this.lastLocation.playerList;
-                    if (playersInInstance.has(ctx.displayName)) {
-                        continue;
-                    }
-                    var joining = true;
-                    var gameLogTable = this.gameLogSessionTable;
-                    for (var k = gameLogTable.length - 1; k > -1; k--) {
-                        var gameLogItem = gameLogTable[k];
-                        if (
-                            gameLogItem.type === 'Location' ||
-                            gameLogItem.created_at < bias
-                        ) {
-                            break;
-                        }
-                        if (
-                            gameLogItem.type === 'OnPlayerJoined' &&
-                            gameLogItem.displayName === ctx.displayName
-                        ) {
-                            joining = false;
-                            break;
-                        }
-                    }
-                    if (joining) {
-                        var isFriend = this.friends.has(ctx.userId);
-                        var isFavorite = API.cachedFavoritesByObjectId.has(
-                            ctx.userId
-                        );
-                        var onPlayerJoining = {
-                            ...ctx,
-                            isFriend,
+        // OnPlayerJoining/Traveling
+        API.currentTravelers.forEach((ref) => {
+            var isFavorite = API.cachedFavoritesByObjectId.has(ref.id);
+            if (
+                this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends' ||
+                (this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP' &&
+                    isFavorite)
+            ) {
+                if (ref.$location.tag === $app.lastLocation.location) {
+                    var feedEntry = {
+                        ...ref,
+                        created_at: new Date(ref.$travelingToTime).toJSON(),
+                        isFavorite,
+                        isFriend: true,
+                        type: 'OnPlayerJoining'
+                    };
+                    wristFeed.unshift(feedEntry);
+                } else {
+                    var worldRef = API.cachedWorlds.get(ref.$location.worldId);
+                    if (typeof worldRef !== 'undefined') {
+                        var feedEntry = {
+                            created_at: new Date(ref.$travelingToTime).toJSON(),
+                            type: 'GPS',
+                            userId: ref.id,
+                            displayName: ref.displayName,
+                            location: ref.$location.tag,
+                            worldName: worldRef.name,
+                            previousLocation: '',
                             isFavorite,
-                            type: 'OnPlayerJoining'
+                            time: 0,
+                            isFriend: true,
+                            isTraveling: true
                         };
-                        if (
-                            this.sharedFeedFilters.wrist.OnPlayerJoining ===
-                                'Friends' ||
-                            (this.sharedFeedFilters.wrist.OnPlayerJoining ===
-                                'VIP' &&
-                                isFavorite)
-                        ) {
-                            wristFeed.unshift(onPlayerJoining);
-                        }
-                        this.queueFeedNoty(onPlayerJoining);
+                        wristFeed.unshift(feedEntry);
+                    } else {
+                        // no world cache, fetch world and try again
+                        API.getWorld({
+                            worldId: ref.$location.worldId
+                        }).then((args) => {
+                            workerTimers.setTimeout(() => {
+                                // delay to allow for world cache to update
+                                $app.sharedFeed.pendingUpdate = true;
+                                $app.updateSharedFeed(false);
+                            }, 100);
+                            return args;
+                        });
                     }
                 }
             }
-        }
+        });
         wristFeed.sort(function (a, b) {
             if (a.created_at < b.created_at) {
                 return 1;
@@ -6763,10 +6784,7 @@ speechSynthesis.getVoices();
                 origin &&
                 ctx.state !== 'online' &&
                 typeof ref !== 'undefined' &&
-                ref.location !== '' &&
-                ref.location !== 'offline' &&
-                ref.location !== 'private' &&
-                ref.location !== 'traveling'
+                this.isRealInstance(ref.location)
             ) {
                 API.getUser({
                     userId: id
@@ -6907,7 +6925,7 @@ speechSynthesis.getVoices();
 
     $app.methods.getWorldName = async function (location) {
         var worldName = '';
-        if (location !== 'offline') {
+        if (this.isRealInstance(location)) {
             try {
                 var L = API.parseLocation(location);
                 if (L.worldId) {
@@ -7082,6 +7100,9 @@ speechSynthesis.getVoices();
 
     // location at
     var compareByLocationAt = function (a, b) {
+        if (a.location === 'traveling') {
+            return -1;
+        }
         if (a.$location_at < b.$location_at) {
             return -1;
         }
@@ -7593,8 +7614,11 @@ speechSynthesis.getVoices();
         ) {
             // skip GPS if user is offline or traveling
             var previousLocation = props.location[1];
+            var time = props.location[2];
             if (previousLocation === 'traveling') {
                 previousLocation = ref.$previousLocation;
+                var travelTime = Date.now() - ref.$travelingToTime;
+                time -= travelTime;
             }
             var worldName = await $app.getWorldName(props.location[0]);
             var feed = {
@@ -7605,7 +7629,7 @@ speechSynthesis.getVoices();
                 location: props.location[0],
                 worldName,
                 previousLocation,
-                time: props.location[2]
+                time
             };
             $app.addFeed(feed);
             database.addGPSToDatabase(feed);
@@ -7616,8 +7640,10 @@ speechSynthesis.getVoices();
             props.location[0] === 'traveling' &&
             props.location[1] !== 'traveling'
         ) {
+            $app.onPlayerTraveling(ref);
             // store previous location when user is traveling
             ref.$previousLocation = props.location[1];
+            ref.$travelingToTime = Date.now();
             $app.updateFriendGPS(ref.id);
         }
         if (
@@ -13240,7 +13266,7 @@ speechSynthesis.getVoices();
 
     $app.methods.applyUserDialogLocation = function () {
         var D = this.userDialog;
-        var L = API.parseLocation(D.ref.location);
+        var L = API.parseLocation(D.ref.$location.tag);
         D.$location = L;
         if (L.userId) {
             var ref = API.cachedUsers.get(L.userId);
@@ -13290,14 +13316,15 @@ speechSynthesis.getVoices();
             friendCount = users.length - 1;
         } else if (L.isOffline === false) {
             for (var friend of this.friends.values()) {
-                if (
-                    typeof friend.ref !== 'undefined' &&
-                    friend.ref.location === L.tag
-                ) {
+                if (typeof friend.ref === 'undefined') {
+                    continue;
+                }
+                if (friend.ref.$location.tag === L.tag) {
                     if (
                         friend.state !== 'online' &&
                         friend.ref.location === 'private'
                     ) {
+                        // don't add offline friends to private instances
                         continue;
                     }
                     users.push(friend.ref);
@@ -13307,15 +13334,15 @@ speechSynthesis.getVoices();
         }
         users.sort(compareByLocationAt);
         D.users = users;
-        if (L.worldId && this.lastLocation.location === D.ref.location) {
+        if (L.worldId && this.lastLocation.location === L.tag) {
             D.instance = {
-                id: D.ref.location,
+                id: L.tag,
                 occupants: this.lastLocation.playerList.size
             };
         }
-        if (L.isOffline || L.isPrivate || L.worldId === '') {
+        if (L.isOffline || L.isPrivate || L.isTraveling || L.worldId === '') {
             D.instance = {
-                id: D.ref.location,
+                id: L.tag,
                 occupants: 0
             };
         }
@@ -14974,7 +15001,7 @@ speechSynthesis.getVoices();
     $app.methods.showInviteDialog = function (tag) {
         this.$nextTick(() => adjustDialogZ(this.$refs.inviteDialog.$el));
         var L = API.parseLocation(tag);
-        if (L.isOffline || L.isPrivate || L.worldId === '') {
+        if (L.isOffline || L.isPrivate || L.isTraveling || L.worldId === '') {
             return;
         }
         API.getCachedWorld({
@@ -15218,7 +15245,7 @@ speechSynthesis.getVoices();
 
     $app.methods.selfInvite = function (location) {
         var L = API.parseLocation(location);
-        if (L.isOffline || L.isPrivate || L.worldId === '') {
+        if (L.isOffline || L.isPrivate || L.isTraveling || L.worldId === '') {
             return;
         }
         if (API.currentUser.status === 'busy') {
@@ -15281,7 +15308,7 @@ speechSynthesis.getVoices();
     $app.methods.showNewInstanceDialog = function (tag) {
         this.$nextTick(() => adjustDialogZ(this.$refs.newInstanceDialog.$el));
         var L = API.parseLocation(tag);
-        if (L.isOffline || L.isPrivate || L.worldId === '') {
+        if (L.isOffline || L.isPrivate || L.isTraveling || L.worldId === '') {
             return;
         }
         var D = this.newInstanceDialog;
@@ -15492,7 +15519,7 @@ speechSynthesis.getVoices();
     $app.methods.showLaunchDialog = function (tag) {
         this.$nextTick(() => adjustDialogZ(this.$refs.launchDialog.$el));
         var L = API.parseLocation(tag);
-        if (L.isOffline || L.isPrivate || L.worldId === '') {
+        if (L.isOffline || L.isPrivate || L.isTraveling || L.worldId === '') {
             return;
         }
         var D = this.launchDialog;
@@ -15567,18 +15594,6 @@ speechSynthesis.getVoices();
             message: 'Instance URL copied to clipboard',
             type: 'success'
         });
-    };
-
-    $app.methods.copyLocationCheck = function (location) {
-        if (
-            location === '' ||
-            location === 'offline' ||
-            location === 'private' ||
-            location === 'traveling'
-        ) {
-            return false;
-        }
-        return true;
     };
 
     $app.methods.copyAvatarId = function (avatarId) {
@@ -19593,6 +19608,40 @@ speechSynthesis.getVoices();
             return true;
         }
         return false;
+    };
+
+    $app.methods.isRealInstance = function (instanceId) {
+        switch (instanceId) {
+            case 'offline':
+                return false;
+            case 'private':
+                return false;
+            case 'traveling':
+                return false;
+            case '':
+                return false;
+        }
+        return true;
+    };
+
+    $app.methods.onPlayerTraveling = function (ref) {
+        if (
+            !this.isGameRunning ||
+            !this.lastLocation.location ||
+            this.lastLocation.location !== ref.travelingToLocation
+        ) {
+            return;
+        }
+
+        var isFavorite = API.cachedFavoritesByObjectId.has(ref.id);
+        var onPlayerJoining = {
+            ...ref,
+            created_at: new Date(ref.$travelingToTime).toJSON(),
+            isFavorite,
+            isFriend: true,
+            type: 'OnPlayerJoining'
+        };
+        this.queueFeedNoty(onPlayerJoining);
     };
 
     $app = new Vue($app);

@@ -523,7 +523,7 @@ html
                                                     img(v-lazy="userImage(favorite.ref)")
                                                 .detail
                                                     span.name(v-text="favorite.ref.displayName" :style="{'color':favorite.ref.$userColour}")
-                                                    location.extra(v-if="favorite.ref.location !== 'offline'" :location="favorite.ref.location" :link="false")
+                                                    location.extra(v-if="favorite.ref.location !== 'offline'" :location="favorite.ref.location" :traveling="favorite.ref.travelingToLocation" :link="false")
                                                     span(v-else v-text="favorite.ref.statusDescription")
                                                 el-tooltip(placement="left" content="Move" :disabled="hideTooltips")
                                                     el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
@@ -1329,7 +1329,7 @@ html
                                 template(v-if="item.ref")
                                     .detail
                                         span.name(v-text="item.ref.displayName" :style="{'color':item.ref.$userColour}")
-                                        location.extra(:location="item.ref.location" :link="false")
+                                        location.extra(:location="item.ref.location" :traveling="item.ref.travelingToLocation" :link="false")
                                     img.avatar(v-lazy="userImage(item.ref)")
                                 span(v-else) Search More: #[span(v-text="item.label" style="font-weight:bold")]
                     el-tooltip(placement="bottom" content="Direct access ID/URL" :disabled="hideTooltips")
@@ -1346,7 +1346,7 @@ html
                                 img(v-lazy="userImage(API.currentUser)")
                             .detail
                                 span.name(v-text="API.currentUser.displayName" :style="{'color':API.currentUser.$userColour}")
-                                location.extra(v-if="isGameRunning === true" :location="lastLocation.location" :link="false")
+                                location.extra(v-if="isGameRunning === true" :location="lastLocation.location" :traveling="lastLocationDestination" :link="false")
                                 span.extra(v-else v-text="API.currentUser.statusDescription" :link="false")
                     .x-friend-group(v-show="friendsGroup0.length")
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup0 }")
@@ -1359,7 +1359,7 @@ html
                                 .detail
                                     span.name(v-if="friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                    location.extra(:location="friend.ref.location" :link="false")
+                                    location.extra(:location="friend.ref.location" :traveling="friend.ref.travelingToLocation" :link="false")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
@@ -1374,7 +1374,7 @@ html
                                 .detail
                                     span.name(v-if="friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                    location.extra(:location="friend.ref.location" :link="false")
+                                    location.extra(:location="friend.ref.location" :traveling="friend.ref.travelingToLocation" :link="false")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
@@ -1510,16 +1510,16 @@ html
                             template(v-if="!userDialog.isFriend || isFriendOnline(userDialog.friend)")
                                 div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #e4e7ed14")
                                     div(style="flex:none")
-                                        location(:location="userDialog.ref.location")
-                                        template(v-if="userDialog.ref.location && userDialog.ref.location !== 'private' && userDialog.ref.location !== 'offline'")
+                                        location(:location="userDialog.ref.location" :traveling="userDialog.ref.travelingToLocation")
+                                        template(v-if="isRealInstance(userDialog.ref.$location.tag)")
                                             el-tooltip(placement="top" content="Launch/Invite" :disabled="hideTooltips")
-                                                launch(:location="userDialog.ref.location" style="margin-left:5px")
+                                                launch(:location="userDialog.ref.$location.tag" style="margin-left:5px")
                                             el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
-                                                invite-yourself(:location="userDialog.ref.location" style="margin-left:5px")
+                                                invite-yourself(:location="userDialog.ref.$location.tag" style="margin-left:5px")
                                             el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                                                el-button(v-if="copyLocationCheck(userDialog.ref.location)" @click="copyLocation(userDialog.ref.location)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                                                el-button(@click="copyLocation(userDialog.ref.$location.tag)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                                             el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
-                                                el-button(@click="refreshInstancePlayerCount(userDialog.ref.location)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
+                                                el-button(@click="refreshInstancePlayerCount(userDialog.ref.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                             span(v-if="userDialog.instance.occupants" style="margin-left:5px") {{ userDialog.instance.occupants }}  #[template(v-if="userDialog.instance.friendCount > 0") ({{ userDialog.instance.friendCount }})]
                                     .x-friend-list(style="flex:1;margin-top:10px;max-height:150px")
                                         .x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)" class="x-friend-item-border")
@@ -1535,7 +1535,10 @@ html
                                                 img(v-lazy="userImage(user)")
                                             .detail
                                                 span.name(v-text="user.displayName" :style="{'color':user.$userColour}")
-                                                span.extra
+                                                span.extra(v-if="user.location === 'traveling'")
+                                                    i.el-icon-loading(style="margin-right:5px")
+                                                    timer(:epoch="user.$travelingToTime")
+                                                span.extra(v-else)
                                                     timer(:epoch="user.$location_at")
                             .x-friend-list(style="max-height:none")
                                 .x-friend-item(style="width:100%;cursor:default")
@@ -1757,7 +1760,7 @@ html
                                     el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
                                         invite-yourself(:location="room.$location.tag" style="margin-left:5px")
                                     el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                                        el-button(v-if="copyLocationCheck(room.$location.tag)" @click="copyLocation(room.$location.tag)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                                        el-button(v-if="isRealInstance(room.$location.tag)" @click="copyLocation(room.$location.tag)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
                                     el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
                                         el-button(@click="refreshInstancePlayerCount(room.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                     span(v-if="room.occupants" style="margin-left:5px") {{ room.occupants }}  #[template(v-if="room.friendCount > 0") ({{ room.friendCount }})]
@@ -1775,7 +1778,10 @@ html
                                             img(v-lazy="userImage(user)")
                                         .detail
                                             span.name(v-text="user.displayName" :style="{'color':user.$userColour}")
-                                            span.extra
+                                            span.extra(v-if="user.location === 'traveling'")
+                                                i.el-icon-loading(style="margin-right:5px")
+                                                timer(:epoch="user.$travelingToTime")
+                                            span.extra(v-else)
                                                 timer(:epoch="user.$location_at")
                         el-tab-pane(label="Info")
                             .x-friend-list(style="max-height:none")
@@ -2238,15 +2244,18 @@ html
 
             //- dialog: launch
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="450px")
-                div #[span(v-text="launchDialog.shortUrl" style="word-break:break-all;font-size:12px")]
+                div(v-if="launchDialog.shortUrl")
                     el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                        el-button(v-if="launchDialog.shortUrl" @click="copyInstanceUrl(launchDialog.shortUrl)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
-                div(style="margin-top:10px") #[span(v-text="launchDialog.url" style="word-break:break-all;font-size:12px")]
+                        el-button(@click="copyInstanceUrl(launchDialog.shortUrl)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
+                    span(v-text="launchDialog.shortUrl" style="word-break:break-all;font-size:12px")
+                div(style="margin-top:10px")
                     el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                        el-button(@click="copyInstanceUrl(launchDialog.url)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
-                div(style="margin-top:10px") #[span(v-text="launchDialog.location" style="word-break:break-all;font-size:12px")]
+                        el-button(@click="copyInstanceUrl(launchDialog.url)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
+                    span(v-text="launchDialog.url" style="word-break:break-all;font-size:12px")
+                div(style="margin-top:10px")
                     el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                        el-button(@click="copyInstanceUrl(launchDialog.location)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                        el-button(@click="copyInstanceUrl(launchDialog.location)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
+                    span(v-text="launchDialog.location" style="word-break:break-all;font-size:12px")
                 template(#footer)
                     el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop (No VR)
                     el-button(size="small" @click="showPreviousInstanceInfoDialog(launchDialog.location)") Info

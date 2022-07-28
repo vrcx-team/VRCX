@@ -18,6 +18,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
+                                            i.el-icon-loading(v-if="feed.isTraveling" style="margin-right:5px")
                                             | #[span.name(v-text="feed.displayName")] #[location(:location="feed.location" :hint="feed.worldName")]
                                 div(v-else-if="feed.type === 'Offline'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
@@ -187,7 +188,10 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")] is in #[location(:location="feed.location" :hint="feed.worldName")]
+                                            template(v-if="feed.isTraveling")
+                                                | #[span.name(v-text="feed.displayName")] is traveling to #[location(:location="feed.location" :hint="feed.worldName")]
+                                            template(v-else)
+                                                | #[span.name(v-text="feed.displayName")] is in #[location(:location="feed.location" :hint="feed.worldName")]
                                 div(v-else-if="feed.type === 'Offline'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
