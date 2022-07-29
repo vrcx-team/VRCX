@@ -153,28 +153,6 @@ speechSynthesis.getVoices();
     };
     Vue.filter('commaNumber', commaNumber);
 
-    var formatDate = function (date, format) {
-        var dt = new Date(date);
-        if (isNaN(dt)) {
-            return escapeTag(date);
-        }
-        var hours = dt.getHours();
-        var map = {
-            YYYY: String(10000 + dt.getFullYear()).substr(-4),
-            MM: String(101 + dt.getMonth()).substr(-2),
-            DD: String(100 + dt.getDate()).substr(-2),
-            HH24: String(100 + hours).substr(-2),
-            HH: String(100 + (hours > 12 ? hours - 12 : hours)).substr(-2),
-            MI: String(100 + dt.getMinutes()).substr(-2),
-            SS: String(100 + dt.getSeconds()).substr(-2),
-            AMPM: hours >= 12 ? 'PM' : 'AM'
-        };
-        return format.replace(
-            /YYYY|MM|DD|HH24|HH|MI|SS|AMPM/g,
-            (c) => map[c] || c
-        );
-    };
-
     var textToHex = function (text) {
         var s = String(text);
         return s
@@ -18809,7 +18787,8 @@ speechSynthesis.getVoices();
                 for (var asset of json.assets) {
                     if (
                         (asset.content_type === 'application/x-msdownload' ||
-                        asset.content_type === 'application/x-msdos-program') &&
+                            asset.content_type ===
+                                'application/x-msdos-program') &&
                         asset.state === 'uploaded'
                     ) {
                         var downloadUrl = asset.browser_download_url;
