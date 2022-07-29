@@ -30,7 +30,6 @@ class GameLogService {
                 break;
 
             case 'portal-spawn':
-                gameLog.userDisplayName = args[0];
                 break;
 
             case 'event':
@@ -60,6 +59,9 @@ class GameLogService {
                 break;
 
             case 'vrc-quit':
+                break;
+
+            case 'openvr-init':
                 break;
 
             default:

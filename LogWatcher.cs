@@ -236,7 +236,8 @@ namespace VRCX
                             {
                                 if (ParseLogShaderKeywordsLimit(fileInfo, logContext, line, offset) == true ||
                                     ParseLogSDK2VideoPlay(fileInfo, logContext, line, offset) == true ||
-                                    ParseApplicationQuit(fileInfo, logContext, line, offset) == true)
+                                    ParseApplicationQuit(fileInfo, logContext, line, offset) == true ||
+                                    ParseOpenVRInit(fileInfo, logContext, line, offset) == true)
                                 {
                                     continue;
                                 }
@@ -442,26 +443,16 @@ namespace VRCX
         {
             // 2021.04.06 11:25:45 Log        -  [Network Processing] RPC invoked ConfigurePortal on (Clone [1600004] Portals/PortalInternalDynamic) for Natsumi-sama
             // 2021.07.19 04:24:28 Log        -  [Behaviour] Will execute SendRPC/AlwaysBufferOne on (Clone [100004] Portals/PortalInternalDynamic) (UnityEngine.GameObject) for Natsumi-sama: S: "ConfigurePortal" I: 7 F: 0 B: 255 (local master owner)
+            // 2022.07.29 18:40:37 Log        -  [Behaviour] Instantiated a (Clone [800004] Portals/PortalInternalDynamic)
 
-            if (!line.Contains("] Will execute SendRPC/AlwaysBufferOne on (Clone ["))
+            if (!line.Contains("] Portals/PortalInternalDynamic)"))
                 return false;
-
-            var pos = line.LastIndexOf("] Portals/PortalInternalDynamic) (UnityEngine.GameObject) for ");
-            if (pos < 0)
-                return false;
-
-            var endPos = line.LastIndexOf(": S: \"ConfigurePortal\"");
-            if (endPos < 0)
-                return false;
-
-            var data = line.Substring(pos + 62, endPos - (pos + 62));
 
             AppendLog(new[]
             {
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
-                "portal-spawn",
-                data
+                "portal-spawn"
             });
 
             return true;
@@ -851,6 +842,23 @@ namespace VRCX
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
                 "vrc-quit"
+            });
+
+            return true;
+        }
+
+        private bool ParseOpenVRInit(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2022.07.29 02:52:14 Log        -  OpenVR initialized!
+
+            if (string.Compare(line, offset, "OpenVR initialized!", 0, 19, StringComparison.Ordinal) != 0)
+                return false;
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "openvr-init"
             });
 
             return true;

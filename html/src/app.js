@@ -4183,7 +4183,7 @@ speechSynthesis.getVoices();
             ipcTimeout: 0,
             nextClearVRCXCacheCheck: 0,
             isGameRunning: false,
-            isGameNoVR: false,
+            isGameNoVR: configRepository.getBool('isGameNoVR'),
             isSteamVRRunning: false,
             appVersion,
             latestAppVersion: '',
@@ -4295,18 +4295,19 @@ speechSynthesis.getVoices();
                     this.clearVRCXCache();
                 }
                 AppApi.CheckGameRunning().then(
-                    ([isGameRunning, isGameNoVR, isSteamVRRunning]) => {
-                        this.updateOpenVR(
-                            isGameRunning,
-                            isGameNoVR,
-                            isSteamVRRunning
-                        );
+                    ([isGameRunning, isSteamVRRunning]) => {
+                        this.updateOpenVR(isGameRunning, isSteamVRRunning);
                         if (isGameRunning !== this.isGameRunning) {
                             this.isGameRunning = isGameRunning;
                             if (isGameRunning) {
                                 API.currentUser.$online_for = Date.now();
                                 API.currentUser.$offline_for = '';
                             } else {
+                                this.isGameNoVR = true;
+                                configRepository.setBool(
+                                    'isGameNoVR',
+                                    this.isGameNoVR
+                                );
                                 API.currentUser.$online_for = '';
                                 API.currentUser.$offline_for = Date.now();
                                 Discord.SetActive(false);
@@ -4315,10 +4316,6 @@ speechSynthesis.getVoices();
                             }
                             this.lastLocationReset();
                             this.clearNowPlaying();
-                            this.updateVRLastLocation();
-                        }
-                        if (isGameNoVR !== this.isGameNoVR) {
-                            this.isGameNoVR = isGameNoVR;
                             this.updateVRLastLocation();
                         }
                         if (isSteamVRRunning !== this.isSteamVRRunning) {
@@ -5223,16 +5220,7 @@ speechSynthesis.getVoices();
                 );
                 break;
             case 'PortalSpawn':
-                var locationName = '';
-                if (noty.worldName) {
-                    locationName = ` to ${this.displayLocation(
-                        noty.instanceId,
-                        noty.worldName
-                    )}`;
-                }
-                this.speak(
-                    `${noty.displayName} has spawned a portal${locationName}`
-                );
+                this.speak('User has spawned a portal');
                 break;
             case 'AvatarChange':
                 this.speak(
@@ -5419,16 +5407,9 @@ speechSynthesis.getVoices();
                 );
                 break;
             case 'PortalSpawn':
-                var locationName = '';
-                if (noty.worldName) {
-                    locationName = ` to ${this.displayLocation(
-                        noty.instanceId,
-                        noty.worldName
-                    )}`;
-                }
                 AppApi.XSNotification(
                     'VRCX',
-                    `${noty.displayName} has spawned a portal${locationName}`,
+                    'User has spawned a portal',
                     timeout,
                     image
                 );
@@ -5643,16 +5624,9 @@ speechSynthesis.getVoices();
                 );
                 break;
             case 'PortalSpawn':
-                var locationName = '';
-                if (noty.worldName) {
-                    locationName = ` to ${this.displayLocation(
-                        noty.instanceId,
-                        noty.worldName
-                    )}`;
-                }
                 AppApi.DesktopNotification(
                     noty.displayName,
-                    `has spawned a portal${locationName}`,
+                    'User has spawned a portal',
                     image
                 );
                 break;
@@ -8215,9 +8189,9 @@ speechSynthesis.getVoices();
                 var entry = {
                     created_at: gameLog.dt,
                     type: 'PortalSpawn',
-                    displayName: gameLog.userDisplayName,
                     location,
-                    userId,
+                    displayName: '',
+                    userId: '',
                     instanceId: '',
                     worldName: ''
                 };
@@ -8329,6 +8303,10 @@ speechSynthesis.getVoices();
                         console.log('Nothing to kill, no VRC process running');
                     }
                 });
+                break;
+            case 'opvenvr-init':
+                this.isGameNoVR = false;
+                configRepository.setBool('isGameNoVR', this.isGameNoVR);
                 break;
         }
         if (entry) {
@@ -11512,7 +11490,7 @@ speechSynthesis.getVoices();
             stripe: true,
             size: 'mini',
             defaultSort: {
-                prop: 'photonId',
+                prop: 'timer',
                 order: 'descending'
             }
         },
@@ -11745,9 +11723,10 @@ speechSynthesis.getVoices();
     $app.data.photonEventOverlayJoinLeave = configRepository.getBool(
         'VRCX_PhotonEventOverlayJoinLeave'
     );
-    $app.data.photonLoggingEnabled = configRepository.getBool(
-        'VRCX_photonLoggingEnabled'
-    );
+    $app.data.photonLoggingEnabled = false;
+    // $app.data.photonLoggingEnabled = configRepository.getBool(
+    //     'VRCX_photonLoggingEnabled'
+    // );
     $app.data.gameLogDisabled = configRepository.getBool(
         'VRCX_gameLogDisabled'
     );
@@ -12188,14 +12167,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.methods.updateOpenVR = function (
-        isGameRunning,
-        isGameNoVR,
-        isSteamVRRunning
-    ) {
+    $app.methods.updateOpenVR = function (isGameRunning, isSteamVRRunning) {
         if (
             this.openVR &&
-            !isGameNoVR &&
+            !this.isGameNoVR &&
             isSteamVRRunning &&
             (isGameRunning || this.openVRAlways)
         ) {

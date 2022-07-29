@@ -122,9 +122,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | ✨ #[span.name(v-text="feed.displayName")]  
-                                            template(v-if="feed.worldName")
-                                                | #[location(:location="feed.instanceId" :hint="feed.worldName")]
+                                            | ✨ User has spawned a portal
                                 div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -293,9 +291,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")] has spawned a portal  
-                                            template(v-if="feed.worldName")
-                                                | to #[location(:location="feed.instanceId" :hint="feed.worldName")]
+                                            | User has spawned a portal
                                 div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra

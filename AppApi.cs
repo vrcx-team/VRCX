@@ -89,34 +89,12 @@ namespace VRCX
         public bool[] CheckGameRunning()
         {
             var isGameRunning = false;
-            var isGameNoVR = false;
             var isSteamVRRunning = false;
-
-            var hwnd = WinApi.FindWindow("UnityWndClass", "VRChat");
-            if (hwnd != IntPtr.Zero)
-            {
-                var cmdline = string.Empty;
-
-                try
-                {
-                    WinApi.GetWindowThreadProcessId(hwnd, out uint pid);
-                    using (var searcher = new ManagementObjectSearcher($"SELECT CommandLine FROM Win32_Process WHERE ProcessId = {pid}"))
-                    using (var objects = searcher.Get())
-                    {
-                        cmdline = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
-                    }
-                    isGameNoVR = cmdline.Contains("--no-vr");
-                }
-                catch
-                {
-                }
-            }
 
             if (Process.GetProcessesByName("vrchat").Length > 0)
             {
                 isGameRunning = true;
             }
-
             if (Process.GetProcessesByName("vrserver").Length > 0)
             {
                 isSteamVRRunning = true;
@@ -125,7 +103,6 @@ namespace VRCX
             return new bool[]
             {
                 isGameRunning,
-                isGameNoVR,
                 isSteamVRRunning
             };
         }
