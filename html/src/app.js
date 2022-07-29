@@ -8174,7 +8174,14 @@ speechSynthesis.getVoices();
                 database.addGamelogJoinLeaveToDatabase(entry);
                 break;
             case 'portal-spawn':
-                if (this.ipcEnabled && this.isGameRunning) {
+                var bias = Date.parse($app.lastLocation.date) + 30 * 1000;
+                if (
+                    (this.ipcEnabled && this.isGameRunning) ||
+                    !this.lastLocation.location ||
+                    bias < Date.now()
+                ) {
+                    console.log('ignored portal spawn');
+                    // 30sec wait for world portals to load
                     return;
                 }
                 var entry = {
@@ -8295,7 +8302,7 @@ speechSynthesis.getVoices();
                     }
                 });
                 break;
-            case 'opvenvr-init':
+            case 'openvr-init':
                 this.isGameNoVR = false;
                 configRepository.setBool('isGameNoVR', this.isGameNoVR);
                 break;
