@@ -1084,10 +1084,6 @@ speechSynthesis.getVoices();
     API.$on('USER:CURRENT', function (args) {
         var {json} = args;
         args.ref = this.applyCurrentUser(json);
-        var location = $app.lastLocation.location;
-        if ($app.gameLogDisabled) {
-            location = json.location;
-        }
         this.applyUser({
             id: json.id,
             username: json.username,
@@ -1110,7 +1106,10 @@ speechSynthesis.getVoices();
             fallbackAvatar: json.fallbackAvatar,
             profilePicOverride: json.profilePicOverride,
             isFriend: false,
-            location
+            location: json.location,
+            travelingToInstance: json.travelingToInstance,
+            travelingToLocation: json.travelingToLocation,
+            travelingToWorld: json.travelingToWorld
         });
     });
 
@@ -1341,6 +1340,9 @@ speechSynthesis.getVoices();
                 travelingToLocation: '',
                 travelingToWorld: '',
                 // VRCX
+                $online_for: Date.now(),
+                $offline_for: Date.now(),
+                $travelingToTime: Date.now(),
                 $homeLocation: {},
                 $isVRCPlus: false,
                 $isModerator: false,
@@ -1350,7 +1352,6 @@ speechSynthesis.getVoices();
                 $userColour: '',
                 $trustSortNum: 1,
                 $languages: [],
-                //
                 ...json
             };
             ref.$homeLocation = this.parseLocation(ref.homeLocation);
@@ -1414,24 +1415,22 @@ speechSynthesis.getVoices();
             }
             json.last_login = API.currentUser.last_login;
             json.last_activity = API.currentUser.last_activity;
-            if (
-                typeof json.location !== 'undefined' &&
-                json.location === 'offline'
-            ) {
-                json.location = '';
-            }
-            if (
-                typeof json.location === 'undefined' &&
-                typeof ref !== 'undefined'
-            ) {
-                json.location = ref.location;
-            }
-            if ($app.lastLocation.location) {
+            if ($app.lastLocation.location === 'traveling') {
+                json.location = 'traveling';
+                json.travelingToLocation = $app.lastLocationDestination;
+                json.$travelingToTime = $app.lastLocationDestinationTime;
+            } else if ($app.lastLocation.location) {
                 json.location = $app.lastLocation.location;
                 json.$location_at = $app.lastLocation.date;
+            } else if (ref) {
+                json.location = ref.location;
+            } else {
+                json.location = '';
             }
-            json.$online_for = API.currentUser.$online_for;
-            json.$offline_for = API.currentUser.$offline_for;
+            if (json.location && json.location === 'offline') {
+                json.$online_for = API.currentUser.$online_for;
+                json.$offline_for = API.currentUser.$offline_for;
+            }
         }
         if (typeof json.statusDescription !== 'undefined') {
             json.statusDescription = $app.replaceBioSymbols(
@@ -1510,6 +1509,7 @@ speechSynthesis.getVoices();
                     this.currentTravelers.set(ref.id, ref);
                     $app.sharedFeed.pendingUpdate = true;
                     $app.updateSharedFeed(false);
+                    $app.onPlayerTraveling(ref);
                 }
             } else {
                 ref.$location = this.parseLocation(ref.location);
@@ -1538,6 +1538,7 @@ speechSynthesis.getVoices();
                     this.currentTravelers.set(ref.id, ref);
                     $app.sharedFeed.pendingUpdate = true;
                     $app.updateSharedFeed(false);
+                    $app.onPlayerTraveling(ref);
                 }
             } else {
                 ref.$location = this.parseLocation(ref.location);
@@ -4390,9 +4391,10 @@ speechSynthesis.getVoices();
         API.currentTravelers.forEach((ref) => {
             var isFavorite = API.cachedFavoritesByObjectId.has(ref.id);
             if (
-                this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends' ||
-                (this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP' &&
-                    isFavorite)
+                (this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends' ||
+                    (this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP' &&
+                        isFavorite)) &&
+                !$app.lastLocation.playerList.has(ref.displayName)
             ) {
                 if (ref.$location.tag === $app.lastLocation.location) {
                     var feedEntry = {
@@ -7044,7 +7046,13 @@ speechSynthesis.getVoices();
 
     // location at
     var compareByLocationAt = function (a, b) {
+        if (a.location === 'traveling' && b.location === 'traveling') {
+            return 0;
+        }
         if (a.location === 'traveling') {
+            return 1;
+        }
+        if (b.location === 'traveling') {
             return -1;
         }
         if (a.$location_at < b.$location_at) {
@@ -7499,7 +7507,7 @@ speechSynthesis.getVoices();
                 break;
             }
         }
-        this.updateCurrentInstanceWorld(this.lastLocation.location);
+        this.updateCurrentInstanceWorld();
         if (length > 0) {
             for (var i = length + 1; i < data.length; i++) {
                 var ctx = data[i];
@@ -7584,7 +7592,7 @@ speechSynthesis.getVoices();
             props.location[0] === 'traveling' &&
             props.location[1] !== 'traveling'
         ) {
-            $app.onPlayerTraveling(ref);
+            // $app.onPlayerTraveling(ref);
             // store previous location when user is traveling
             ref.$previousLocation = props.location[1];
             ref.$travelingToTime = Date.now();
@@ -7803,7 +7811,6 @@ speechSynthesis.getVoices();
             this.photonEventTablePrevious.data = this.photonEventTable.data;
             this.photonEventTable.data = [];
         }
-        this.updateCurrentInstanceWorld();
         var playerList = Array.from(this.lastLocation.playerList.values());
         for (var ref of playerList) {
             var time = new Date().getTime() - ref.joinTime;
@@ -7833,6 +7840,7 @@ speechSynthesis.getVoices();
             playerList: new Map(),
             friendList: new Map()
         };
+        this.updateCurrentInstanceWorld();
         this.updateVRLastLocation();
         this.getCurrentInstanceUserList();
         this.lastVideoUrl = '';
@@ -8082,17 +8090,23 @@ speechSynthesis.getVoices();
         }
         switch (gameLog.type) {
             case 'location-destination':
-                if (this.isGameRunning) {
-                    this.clearNowPlaying();
-                    this.updateCurrentInstanceWorld(gameLog.location);
-                }
+                this.lastLocation.location = 'traveling';
                 this.lastLocationDestination = gameLog.location;
                 this.lastLocationDestinationTime = Date.parse(gameLog.dt);
+                API.currentUser.location = this.lastLocation.location;
+                API.currentUser.travelingToLocation =
+                    this.lastLocationDestination;
+                API.currentUser.$travelingToTime =
+                    this.lastLocationDestinationTime;
                 var entry = {
                     created_at: gameLog.dt,
                     type: 'LocationDestination',
                     location: gameLog.location
                 };
+                if (this.isGameRunning) {
+                    this.clearNowPlaying();
+                    this.updateCurrentInstanceWorld();
+                }
                 break;
             case 'location':
                 if (this.isGameRunning) {
@@ -8106,7 +8120,7 @@ speechSynthesis.getVoices();
                         friendList: new Map()
                     };
                     this.updateVRLastLocation();
-                    this.updateCurrentInstanceWorld(gameLog.location);
+                    this.updateCurrentInstanceWorld();
                 }
                 var L = API.parseLocation(gameLog.location);
                 var entry = {
@@ -9960,20 +9974,26 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateDiscord = function () {
+        var currentLocation = this.lastLocation.location;
+        var timeStamp = this.lastLocation.date;
+        if (this.lastLocation.location === 'traveling') {
+            currentLocation = this.lastLocationDestination;
+            timeStamp = this.lastLocationDestinationTime;
+        }
         if (
             !this.discordActive ||
             !this.isGameRunning ||
-            (!this.lastLocation.location && !this.lastLocation$.tag)
+            (!currentLocation && !this.lastLocation$.tag)
         ) {
             return;
         }
         var L = this.lastLocation$;
-        if (this.lastLocation.location !== this.lastLocation$.tag) {
-            if (this.lastLocation.location) {
+        if (currentLocation !== this.lastLocation$.tag) {
+            if (currentLocation) {
                 Discord.SetActive(true);
             }
-            Discord.SetTimestamps(this.lastLocation.date, 0);
-            L = API.parseLocation(this.lastLocation.location);
+            Discord.SetTimestamps(timeStamp, 0);
+            L = API.parseLocation(currentLocation);
             L.worldName = '';
             L.thumbnailImageUrl = '';
             L.worldCapacity = 0;
@@ -13229,10 +13249,11 @@ speechSynthesis.getVoices();
         var users = [];
         var friendCount = 0;
         var playersInInstance = this.lastLocation.playerList;
-        if (
-            this.lastLocation.location === L.tag &&
-            playersInInstance.size > 0
-        ) {
+        var currentLocation = this.lastLocation.location;
+        if (this.lastLocation.location === 'traveling') {
+            currentLocation = this.lastLocationDestination;
+        }
+        if (currentLocation === L.tag && playersInInstance.size > 0) {
             var ref = API.cachedUsers.get(API.currentUser.id);
             if (typeof ref === 'undefined') {
                 ref = API.currentUser;
@@ -13279,7 +13300,11 @@ speechSynthesis.getVoices();
         }
         users.sort(compareByLocationAt);
         D.users = users;
-        if (L.worldId && this.lastLocation.location === L.tag) {
+        if (
+            L.worldId &&
+            currentLocation === L.tag &&
+            playersInInstance.size > 0
+        ) {
             D.instance = {
                 id: L.tag,
                 occupants: this.lastLocation.playerList.size
@@ -13466,7 +13491,11 @@ speechSynthesis.getVoices();
     };
     $app.data.currentInstanceLocation = {};
 
-    $app.methods.updateCurrentInstanceWorld = function (instanceId) {
+    $app.methods.updateCurrentInstanceWorld = function () {
+        var instanceId = this.lastLocation.location;
+        if (this.lastLocation.location === 'traveling') {
+            instanceId = this.lastLocationDestination;
+        }
         if (!instanceId) {
             this.currentInstanceWorld = {
                 ref: {},
@@ -13478,10 +13507,7 @@ speechSynthesis.getVoices();
                 fileSize: ''
             };
             this.currentInstanceLocation = {};
-        } else if (
-            instanceId !== this.currentInstanceLocation.tag &&
-            this.currentInstanceLocation.tag !== this.lastLocationDestination
-        ) {
+        } else if (instanceId !== this.currentInstanceLocation.tag) {
             this.currentInstanceWorld = {
                 ref: {},
                 isPC: false,
@@ -14240,9 +14266,13 @@ speechSynthesis.getVoices();
                 users: []
             };
         }
-        var lastLocation$ = API.parseLocation(this.lastLocation.location);
+        var currentLocation = this.lastLocation.location;
+        if (this.lastLocation.location === 'traveling') {
+            currentLocation = this.lastLocationDestination;
+        }
+        var lastLocation$ = API.parseLocation(currentLocation);
         var playersInInstance = this.lastLocation.playerList;
-        if (lastLocation$.worldId === D.id) {
+        if (lastLocation$.worldId === D.id && playersInInstance.size > 0) {
             var friendsInInstance = this.lastLocation.friendList;
             var instance = {
                 id: lastLocation$.instanceId,
@@ -14281,7 +14311,8 @@ speechSynthesis.getVoices();
                 typeof ref === 'undefined' ||
                 typeof ref.$location === 'undefined' ||
                 ref.$location.worldId !== D.id ||
-                ref.$location.instanceId === lastLocation$.instanceId
+                (ref.$location.instanceId === lastLocation$.instanceId &&
+                    playersInInstance.size > 0)
             ) {
                 continue;
             }
@@ -19573,7 +19604,8 @@ speechSynthesis.getVoices();
         if (
             !this.isGameRunning ||
             !this.lastLocation.location ||
-            this.lastLocation.location !== ref.travelingToLocation
+            this.lastLocation.location !== ref.travelingToLocation ||
+            this.lastLocation.playerList.has(ref.displayName)
         ) {
             return;
         }
