@@ -704,7 +704,7 @@ html
                                     el-tooltip(placement="top" content="Decline with message" :disabled="hideTooltips")
                                         el-button(type="text" icon="el-icon-chat-line-square" size="mini" @click="showSendInviteResponseDialog(scope.row)")
                                 template(v-else-if="scope.row.type === 'requestInvite'")
-                                    template(v-if="lastLocation.location && isGameRunning && !checkCanInvite(lastLocation.location)")
+                                    template(v-if="lastLocation.location && isGameRunning && checkCanInvite(lastLocation.location)")
                                         el-tooltip(placement="top" content="Invite" :disabled="hideTooltips")
                                             el-button(type="text" icon="el-icon-check" size="mini" @click="acceptRequestInvite(scope.row)")
                                     el-tooltip(placement="top" content="Decline with message" :disabled="hideTooltips")
@@ -1483,7 +1483,7 @@ html
                                             template(v-if="userDialog.isFriend")
                                                 el-dropdown-item(icon="el-icon-postcard" command="Request Invite" divided) Request Invite
                                                 el-dropdown-item(icon="el-icon-postcard" command="Request Invite Message") Request Invite With Message
-                                                template(v-if="lastLocation.location && isGameRunning && !checkCanInvite(lastLocation.location)")
+                                                template(v-if="lastLocation.location && isGameRunning && checkCanInvite(lastLocation.location)")
                                                     el-dropdown-item(icon="el-icon-message" command="Invite") Invite
                                                     el-dropdown-item(icon="el-icon-message" command="Invite Message") Invite With Message
                                             template(v-else-if="userDialog.incomingRequest")
@@ -2255,7 +2255,7 @@ html
                 template(#footer)
                     el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop (No VR)
                     el-button(size="small" @click="showPreviousInstanceInfoDialog(launchDialog.location)") Info
-                    el-button(size="small" @click="showInviteDialog(launchDialog.location)" :disabled="checkCanInvite(launchDialog.location)") Invite
+                    el-button(size="small" @click="showInviteDialog(launchDialog.location)" :disabled="!checkCanInvite(launchDialog.location)") Invite
                     el-button(type="primary" size="small" @click="launchGame(locationToLaunchArg(launchDialog.location))") Launch
 
             //- dialog: export friends list
