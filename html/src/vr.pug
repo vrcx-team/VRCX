@@ -7,6 +7,7 @@ html
         meta(http-equiv="viewport" content="width=device-width,initial-scale=1,user-scalable=no")
         title VRCXVR
         link(rel="stylesheet" href="vr.css")
+        link(rel="stylesheet" href="flags.css")
     body
         .x-app#x-app(class="x-app-type" :class="{ background: appType === '1' && config && config.backgroundEnabled }")
             template(v-if="appType === '1'")

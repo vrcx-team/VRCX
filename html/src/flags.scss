@@ -1,0 +1,100 @@
+:root {
+    --offx: 20px; /* flag size */
+    --offy: calc(var(--offx) / 70 * 46);
+}
+.flags {
+    background: url('/images/flags.png') no-repeat;
+    background-size: calc(var(--offx) * 6);
+    width: var(--offx);
+    height: var(--offy);
+    transform: translateY(calc(var(--offx) / 16));
+    background-position: calc(var(--offx) * -5) calc(var(--offy) * -4);
+}
+span[class='flags'] {
+    background-position: calc(var(--offx) * 1) 0;
+}
+.flags.us {
+    background-position: 0 0;
+}
+.flags.kr {
+    background-position: calc(var(--offx) * -1) 0;
+}
+.flags.ru {
+    background-position: calc(var(--offx) * -2) 0;
+}
+.flags.es {
+    background-position: calc(var(--offx) * -3) 0;
+}
+.flags.pt {
+    background-position: calc(var(--offx) * -4) 0;
+}
+.flags.cn {
+    background-position: calc(var(--offx) * -5) 0;
+}
+.flags.de {
+    background-position: 0 calc(var(--offy) * -1);
+}
+.flags.jp {
+    background-position: calc(var(--offx) * -1) calc(var(--offy) * -1);
+}
+.flags.fr {
+    background-position: calc(var(--offx) * -2) calc(var(--offy) * -1);
+}
+.flags.se {
+    background-position: calc(var(--offx) * -3) calc(var(--offy) * -1);
+}
+.flags.nl {
+    background-position: calc(var(--offx) * -4) calc(var(--offy) * -1);
+}
+.flags.pl {
+    background-position: calc(var(--offx) * -5) calc(var(--offy) * -1);
+}
+.flags.dk {
+    background-position: 0 calc(var(--offy) * -2);
+}
+.flags.no {
+    background-position: calc(var(--offx) * -1) calc(var(--offy) * -2);
+}
+.flags.it {
+    background-position: calc(var(--offx) * -2) calc(var(--offy) * -2);
+}
+.flags.th {
+    background-position: calc(var(--offx) * -3) calc(var(--offy) * -2);
+}
+.flags.fi {
+    background-position: calc(var(--offx) * -4) calc(var(--offy) * -2);
+}
+.flags.hu {
+    background-position: calc(var(--offx) * -5) calc(var(--offy) * -2);
+}
+.flags.cz {
+    background-position: 0 calc(var(--offy) * -3);
+}
+.flags.tr {
+    background-position: calc(var(--offx) * -1) calc(var(--offy) * -3);
+}
+.flags.ae {
+    background-position: calc(var(--offx) * -2) calc(var(--offy) * -3);
+}
+.flags.ro {
+    background-position: calc(var(--offx) * -3) calc(var(--offy) * -3);
+}
+.flags.vn {
+    background-position: calc(var(--offx) * -4) calc(var(--offy) * -3);
+}
+.flags.ua {
+    background-position: calc(var(--offx) * -5) calc(var(--offy) * -3);
+}
+.flags.gb {
+    background-position: 0 calc(var(--offy) * -4);
+}
+
+.flags.use {
+    background-position: calc(var(--offx) * -1) calc(var(--offy) * -4);
+}
+.flags.eu {
+    background-position: calc(var(--offx) * -2) calc(var(--offy) * -4);
+}
+.flags.tw {
+    background-position: calc(var(--offx) * -3) calc(var(--offy) * -4);
+}

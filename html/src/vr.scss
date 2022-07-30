@@ -12,7 +12,6 @@
 @import '~animate.css/animate.min.css';
 @import '~noty/lib/noty.css';
 @import '~element-ui/lib/theme-chalk/index.css';
-@import '~famfamfam-flags/dist/sprite/famfamfam-flags.min.css';
 
 /*
     마지노선인듯
@@ -396,18 +395,4 @@ i.x-user-status.busy {
     position: absolute;
     right: -160px;
     bottom: 0;
-}
-
-.flag-icon-use {
-    background-image: url('/images/flag_use.png');
-    background-size: 16px 11px;
-    width: 16px;
-    height: 11px;
-}
-
-.flag-icon-usw {
-    background-image: url('/images/flag_usw.png');
-    background-size: 16px 11px;
-    width: 16px;
-    height: 11px;
 }

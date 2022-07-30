@@ -9,6 +9,7 @@ html
         link(rel="preconnect" href="https://api.vrchat.cloud")
         link(rel="preconnect" href="https://d348imysud55la.cloudfront.net")
         link(rel="stylesheet" href="app.css")
+        link(rel="stylesheet" href="flags.css")
     body
         .x-app#x-app(style="display:none")
             //- login
@@ -97,10 +98,8 @@ html
                                 br
                                 span.x-link(v-if="currentInstanceLocation.instanceName" @click="showLaunchDialog(lastLocation.location)")
                                     span \#{{ currentInstanceLocation.instanceName }} {{ currentInstanceLocation.accessType }}
-                                    span.famfamfam-flags(v-if="currentInstanceLocation.region === 'eu'" class="europeanunion" style="display:inline-block;margin-left:5px")
-                                    span.famfamfam-flags(v-else-if="currentInstanceLocation.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
-                                    span.flag-icon-use(v-else-if="currentInstanceLocation.region === 'use'" style="display:inline-block;margin-left:5px")
-                                    span.flag-icon-usw(v-else style="display:inline-block;margin-left:5px")
+                                    span.flags(v-if="currentInstanceLocation.region" :class="currentInstanceLocation.region" style="display:inline-block;margin-left:5px")
+                                    span.flags(v-else class="us" style="display:inline-block;margin-left:5px")
                                     i.el-icon-lock(v-if="currentInstanceLocation.strict" style="display:inline-block;margin-left:5px")
                                 span(v-if="lastLocation.playerList.size > 0" style="margin-left:5px")
                                     | {{ lastLocation.playerList.size }}
@@ -178,7 +177,7 @@ html
                                     el-tooltip(v-for="item in scope.row.ref.$languages" :key="item.key" placement="top")
                                         template(#content)
                                             span {{ item.value }} ({{ item.key }})
-                                        span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-left:5px")
+                                        span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-left:5px")
                             el-table-column(label="Bio Links" width="100" prop="ref.bioLinks")
                                 template(v-once #default="scope")
                                     el-tooltip(v-if="link" v-for="(link, index) in scope.row.ref.bioLinks" :key="index")
@@ -907,7 +906,7 @@ html
                                 el-tooltip(v-for="item in scope.row.$languages" :key="item.key" placement="top")
                                     template(#content)
                                         span {{ item.value }} ({{ item.key }})
-                                    span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-left:5px")
+                                    span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-left:5px")
                         el-table-column(label="Bio Links" width="100" prop="bioLinks")
                             template(v-once #default="scope")
                                 el-tooltip(v-if="link" v-for="(link, index) in scope.row.bioLinks" :key="index")
@@ -1446,7 +1445,7 @@ html
                                     el-tooltip(v-for="item in userDialog.ref.$languages" :key="item.key" placement="top")
                                         template(#content)
                                             span {{ item.value }} ({{ item.key }})
-                                        span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
+                                        span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
                                 div
                                     el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px;margin-top:5px")
                                     el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Friend No.{{userDialog.friend.no}}
@@ -1750,10 +1749,8 @@ html
                                 div(style="margin:5px 0")
                                     span.x-link(@click="showLaunchDialog(room.$location.tag)")
                                         span \#{{ room.$location.instanceName }} {{ room.$location.accessType }}
-                                        span.famfamfam-flags(v-if="room.$location.region === 'eu'" class="europeanunion" style="display:inline-block;margin-left:5px")
-                                        span.famfamfam-flags(v-else-if="room.$location.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
-                                        span.flag-icon-use(v-else-if="room.$location.region === 'use'" style="display:inline-block;margin-left:5px")
-                                        span.flag-icon-usw(v-else style="display:inline-block;margin-left:5px")
+                                        span.flags(v-if="room.$location.region" :class="room.$location.region" style="display:inline-block;margin-left:5px")
+                                        span.flags(v-else class="us" style="display:inline-block;margin-left:5px")
                                         i.el-icon-lock(v-if="room.$location.strict" style="display:inline-block;margin-left:5px")
                                     el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
                                         invite-yourself(:location="room.$location.tag" style="margin-left:5px")
@@ -2012,12 +2009,12 @@ html
                 div(v-loading="languageDialog.loading")
                     div(style="margin:5px 0")
                         el-tag(v-for="item in API.currentUser.$languages" :key="item.key" size="small" type="info" effect="plain" closable @close="removeUserLanguage(item.key)" style="margin-right:5px")
-                            span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
+                            span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
                             | {{ item.value }} ({{ item.key }})
                     div(v-if="languageDialog.languageChoice === true")
                         el-select(v-model="languageDialog.languageValue" size="mini")
                             el-option(v-for="item in languageDialog.languages" :key="item.key" :value="item.key" :label="item.value")
-                                span.famfamfam-flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
+                                span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
                                 | {{ item.value }} ({{ item.key }})
                         el-button(@click="languageDialog.languageChoice=false; addUserLanguage(languageDialog.languageValue)" size="mini") Ok
                         el-button(@click="languageDialog.languageChoice=false" size="mini" style="margin-left:0") Cancel
@@ -2882,10 +2879,8 @@ html
                         template(v-once #default="scope")
                             span.x-link(@click="showLaunchDialog(scope.row.location)")
                                 span \#{{ scope.row.$location.instanceName }} {{ scope.row.$location.accessType }}
-                                span.famfamfam-flags(v-if="scope.row.$location.region === 'eu'" class="europeanunion" style="display:inline-block;margin-left:5px")
-                                span.famfamfam-flags(v-else-if="scope.row.$location.region === 'jp'" class="jp" style="display:inline-block;margin-left:5px")
-                                span.flag-icon-use(v-else-if="scope.row.$location.region === 'use'" style="display:inline-block;margin-left:5px")
-                                span.flag-icon-usw(v-else style="display:inline-block;margin-left:5px")
+                                span.flags(v-if="scope.row.$location.region" :class="scope.row.$location.region" style="display:inline-block;margin-left:5px")
+                                span.flags(v-else class="us" style="display:inline-block;margin-left:5px")
                                 i.el-icon-lock(v-if="scope.row.$location.strict" style="display:inline-block;margin-left:5px")
                     el-table-column(label="Instance Creator" prop="location")
                         template(v-once #default="scope")
@@ -3130,6 +3125,13 @@ html
                             ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
                             (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
                             SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+                    div(style="margin-top:15px")
+                        p(style="font-weight:bold") osu!resources
+                        pre(style="font-size:12px;white-space:pre-line").
+                            https://github.com/ppy/osu-resources
+
+                            CC-BY-NC 4.0
+                            https://github.com/ppy/osu-resources/blob/master/LICENCE.md
                     div(style="margin-top:15px")
                         p(style="font-weight:bold") SharpDX
                         pre(style="font-size:12px;white-space:pre-line").

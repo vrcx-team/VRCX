@@ -12,7 +12,6 @@
 @import '~animate.css/animate.min.css';
 @import '~noty/lib/noty.css';
 @import '~element-ui/lib/theme-chalk/index.css';
-@import '~famfamfam-flags/dist/sprite/famfamfam-flags.min.css';
 
 .color-palettes {
     background: #409eff;
@@ -649,20 +648,6 @@ i.x-user-status.busy {
     margin-right: 0;
     margin-left: 3px;
     border-radius: 2px;
-}
-
-.flag-icon-use {
-    background-image: url('/images/flag_use.png');
-    background-size: 16px 11px;
-    width: 16px;
-    height: 11px;
-}
-
-.flag-icon-usw {
-    background-image: url('/images/flag_usw.png');
-    background-size: 16px 11px;
-    width: 16px;
-    height: 11px;
 }
 
 .el-pagination .el-select .el-input .el-input__inner,

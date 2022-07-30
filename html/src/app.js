@@ -812,7 +812,7 @@ speechSynthesis.getVoices();
         template:
             "<span @click=\"showWorldDialog\" :class=\"{ 'x-link': link && this.location !== 'private' && this.location !== 'offline'}\">" +
             '<i v-if="isTraveling" class="el-icon el-icon-loading" style="display:inline-block;margin-right:5px"></i>' +
-            '{{ text }}<slot></slot><span class="famfamfam-flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
+            '{{ text }}<slot></slot><span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
             '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
         props: {
             location: String,
@@ -882,14 +882,9 @@ speechSynthesis.getVoices();
                 }
                 this.region = '';
                 if ($app.isRealInstance(instanceId)) {
-                    if (L.region === 'eu') {
-                        this.region = 'europeanunion';
-                    } else if (L.region === 'jp') {
-                        this.region = 'jp';
-                    } else if (L.region === 'use') {
-                        this.region = 'flag-icon-use';
-                    } else {
-                        this.region = 'flag-icon-usw';
+                    this.region = L.region;
+                    if (!L.region) {
+                        this.region = 'us';
                     }
                 }
                 this.strict = L.strict;

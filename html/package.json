@@ -31,7 +31,6 @@
     "element-ui": "^2.15.9",
     "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
-    "famfamfam-flags": "^1.0.0",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.6.1",
     "normalize.css": "^8.0.1",
