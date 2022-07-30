@@ -87,7 +87,9 @@ Function .onInit
     Pop $R1
     ${If} $R1 = 0
         MessageBox MB_OK|MB_ICONEXCLAMATION "VRCX is still running. Cannot install this software.$\nPlease close VRCX and try again." /SD IDOK
-        Abort
+        ${IfNot} ${Silent}
+            Abort
+        ${EndIf}
     ${EndIf}
 
     MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "VRCX is already installed. $\n$\nClick `OK` to upgrade the existing installation or `Cancel` to cancel this upgrade." /SD IDOK IDCANCEL cancel

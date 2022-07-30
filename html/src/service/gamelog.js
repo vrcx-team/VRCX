@@ -64,6 +64,9 @@ class GameLogService {
             case 'openvr-init':
                 break;
 
+            case 'desktop-mode':
+                break;
+
             default:
                 break;
         }

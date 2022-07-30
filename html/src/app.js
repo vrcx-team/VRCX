@@ -4277,7 +4277,7 @@ speechSynthesis.getVoices();
                                 API.currentUser.$online_for = Date.now();
                                 API.currentUser.$offline_for = '';
                             } else {
-                                this.isGameNoVR = true;
+                                this.isGameNoVR = false;
                                 configRepository.setBool(
                                     'isGameNoVR',
                                     this.isGameNoVR
@@ -8169,14 +8169,7 @@ speechSynthesis.getVoices();
                 database.addGamelogJoinLeaveToDatabase(entry);
                 break;
             case 'portal-spawn':
-                var bias = Date.parse($app.lastLocation.date) + 30 * 1000;
-                if (
-                    (this.ipcEnabled && this.isGameRunning) ||
-                    !this.lastLocation.location ||
-                    bias < Date.now()
-                ) {
-                    console.log('ignored portal spawn');
-                    // 30sec wait for world portals to load
+                if (this.ipcEnabled && this.isGameRunning) {
                     return;
                 }
                 var entry = {
@@ -8288,17 +8281,23 @@ speechSynthesis.getVoices();
                 AppApi.QuitGame().then((processCount) => {
                     if (processCount > 1) {
                         console.log(
-                            'More than 1 process running, not killing VRC'
+                            'QuitFix: More than 1 process running, not killing VRC'
                         );
                     } else if (processCount === 1) {
-                        console.log('Killed VRC');
+                        console.log('QuitFix: Killed VRC');
                     } else {
-                        console.log('Nothing to kill, no VRC process running');
+                        console.log(
+                            'QuitFix: Nothing to kill, no VRC process running'
+                        );
                     }
                 });
                 break;
             case 'openvr-init':
                 this.isGameNoVR = false;
+                configRepository.setBool('isGameNoVR', this.isGameNoVR);
+                break;
+            case 'desktop-mode':
+                this.isGameNoVR = true;
                 configRepository.setBool('isGameNoVR', this.isGameNoVR);
                 break;
         }
@@ -13632,6 +13631,25 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.lookupAvatars = async function (type, search) {
+        if (
+            this.avatarRemoteDatabaseProvider ===
+            'https://requi.dev/vrcx_search.php'
+        ) {
+            this.$alert(
+                'ReMod remote avatar search has been shutdown due to EAC more info here: https://requi.dev/vrcx_search.php',
+                'Remote avatar search'
+            );
+            this.avatarRemoteDatabaseProvider = '';
+            configRepository.setString(
+                'VRCX_avatarRemoteDatabaseProvider',
+                this.avatarRemoteDatabaseProvider
+            );
+            this.avatarRemoteDatabase = false;
+            configRepository.setBool(
+                'VRCX_avatarRemoteDatabase',
+                this.avatarRemoteDatabase
+            );
+        }
         if (type === 'search') {
             var limit = '&n=5000';
         } else {

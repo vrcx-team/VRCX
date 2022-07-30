@@ -193,6 +193,7 @@ namespace VRCX
                             if (line.Length <= 36 ||
                                 line[31] != '-')
                             {
+                                ParseDesktopMode(fileInfo, line);
                                 continue;
                             }
 
@@ -445,17 +446,17 @@ namespace VRCX
             // 2021.07.19 04:24:28 Log        -  [Behaviour] Will execute SendRPC/AlwaysBufferOne on (Clone [100004] Portals/PortalInternalDynamic) (UnityEngine.GameObject) for Natsumi-sama: S: "ConfigurePortal" I: 7 F: 0 B: 255 (local master owner)
             // 2022.07.29 18:40:37 Log        -  [Behaviour] Instantiated a (Clone [800004] Portals/PortalInternalDynamic)
 
-            if (!line.Contains("] Portals/PortalInternalDynamic)"))
-                return false;
-
-            AppendLog(new[]
+            if (line.Contains("[Behaviour] Instantiated a (Clone [") && line.Contains("] Portals/PortalInternalDynamic)"))
             {
-                fileInfo.Name,
-                ConvertLogTimeToISO8601(line),
-                "portal-spawn"
-            });
-
-            return true;
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "portal-spawn"
+                });
+                return true;
+            }
+            return false;
         }
 
         private bool ParseLogShaderKeywordsLimit(FileInfo fileInfo, LogContext logContext, string line, int offset)
@@ -862,6 +863,21 @@ namespace VRCX
             });
 
             return true;
+        }
+
+        private void ParseDesktopMode(FileInfo fileInfo, string line)
+        {
+            //    XR Device: None
+
+            if (string.Compare(line, 0, "    XR Device: None", 0, 19, StringComparison.Ordinal) != 0)
+                return;
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "desktop-mode"
+            });
         }
 
         public string[][] Get()
