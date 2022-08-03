@@ -165,7 +165,9 @@ namespace VRCX
 
         public void StartGameFromPath(string path, string arguments)
         {
-            if (!path.EndsWith(".exe")) path = Path.Combine(path, "VRChat.exe");
+            if (!path.EndsWith(".exe"))
+                path = Path.Combine(path, "start_protected_game.exe");
+
             Process.Start(new ProcessStartInfo
             {
                 WorkingDirectory = Path.GetDirectoryName(path),

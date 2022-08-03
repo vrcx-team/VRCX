@@ -744,9 +744,9 @@ speechSynthesis.getVoices();
         },
         methods: {
             parse() {
-                this.$el.style.display = $app.checkCanInviteSelf()
-                    ? 'none'
-                    : '';
+                this.$el.style.display = $app.checkCanInviteSelf(this.location)
+                    ? ''
+                    : 'none';
             },
             confirm() {
                 API.$emit('SHOW_LAUNCH_DIALOG', this.location);
@@ -770,32 +770,12 @@ speechSynthesis.getVoices();
         },
         methods: {
             parse() {
-                this.$el.style.display = $app.checkCanInviteSelf()
-                    ? 'none'
-                    : '';
+                this.$el.style.display = $app.checkCanInviteSelf(this.location)
+                    ? ''
+                    : 'none';
             },
             confirm() {
-                var L = API.parseLocation(this.location);
-                if (
-                    L.isOffline ||
-                    L.isPrivate ||
-                    L.isTraveling ||
-                    L.worldId === ''
-                ) {
-                    return;
-                }
-                if (API.currentUser.status === 'busy') {
-                    this.$message({
-                        message:
-                            "You cannot invite yourself in 'Do Not Disturb' status",
-                        type: 'error'
-                    });
-                    return;
-                }
-                API.selfInvite({
-                    instanceId: L.instanceId,
-                    worldId: L.worldId
-                });
+                $app.selfInvite(this.location);
             }
         },
         watch: {
@@ -1395,8 +1375,6 @@ speechSynthesis.getVoices();
             } else if ($app.lastLocation.location) {
                 json.location = $app.lastLocation.location;
                 json.$location_at = $app.lastLocation.date;
-            } else if (ref) {
-                json.location = ref.location;
             } else {
                 json.location = '';
             }
@@ -1479,10 +1457,14 @@ speechSynthesis.getVoices();
             if (ref.location === 'traveling') {
                 ref.$location = this.parseLocation(ref.travelingToLocation);
                 if (!this.currentTravelers.has(ref.id)) {
-                    this.currentTravelers.set(ref.id, ref);
+                    var travelRef = {
+                        created_at: new Date().toJSON(),
+                        ...ref
+                    };
+                    this.currentTravelers.set(ref.id, travelRef);
                     $app.sharedFeed.pendingUpdate = true;
                     $app.updateSharedFeed(false);
-                    $app.onPlayerTraveling(ref);
+                    $app.onPlayerTraveling(travelRef);
                 }
             } else {
                 ref.$location = this.parseLocation(ref.location);
@@ -1505,13 +1487,21 @@ speechSynthesis.getVoices();
             }
             var $ref = {...ref};
             Object.assign(ref, json);
+            ref.$isVRCPlus = ref.tags.includes('system_supporter');
+            this.applyUserTrustLevel(ref);
+            this.applyUserLanguage(ref);
+            // traveling
             if (ref.location === 'traveling') {
                 ref.$location = this.parseLocation(ref.travelingToLocation);
                 if (!this.currentTravelers.has(ref.id)) {
-                    this.currentTravelers.set(ref.id, ref);
+                    var travelRef = {
+                        created_at: new Date().toJSON(),
+                        ...ref
+                    };
+                    this.currentTravelers.set(ref.id, travelRef);
                     $app.sharedFeed.pendingUpdate = true;
                     $app.updateSharedFeed(false);
-                    $app.onPlayerTraveling(ref);
+                    $app.onPlayerTraveling(travelRef);
                 }
             } else {
                 ref.$location = this.parseLocation(ref.location);
@@ -1521,9 +1511,6 @@ speechSynthesis.getVoices();
                     $app.updateSharedFeed(false);
                 }
             }
-            ref.$isVRCPlus = ref.tags.includes('system_supporter');
-            this.applyUserTrustLevel(ref);
-            this.applyUserLanguage(ref);
             for (var prop in ref) {
                 if (ref[prop] !== Object(ref[prop])) {
                     props[prop] = true;
@@ -4372,7 +4359,6 @@ speechSynthesis.getVoices();
                 if (ref.$location.tag === $app.lastLocation.location) {
                     var feedEntry = {
                         ...ref,
-                        created_at: new Date(ref.$travelingToTime).toJSON(),
                         isFavorite,
                         isFriend: true,
                         type: 'OnPlayerJoining'
@@ -4382,7 +4368,7 @@ speechSynthesis.getVoices();
                     var worldRef = API.cachedWorlds.get(ref.$location.worldId);
                     if (typeof worldRef !== 'undefined') {
                         var feedEntry = {
-                            created_at: new Date(ref.$travelingToTime).toJSON(),
+                            created_at: ref.created_at,
                             type: 'GPS',
                             userId: ref.id,
                             displayName: ref.displayName,
@@ -6623,7 +6609,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.data.updateFriendInProgress = new Set();
+    $app.data.updateFriendInProgress = new Map();
 
     $app.methods.updateFriend = async function (id, stateInput, origin) {
         var ctx = this.friends.get(id);
@@ -6631,9 +6617,13 @@ speechSynthesis.getVoices();
             return;
         }
         if (this.updateFriendInProgress.has(id)) {
-            return;
+            var date = this.updateFriendInProgress.get(id);
+            if (date + 10000 >= Date.now()) {
+                // wait for 10 seconds
+                return;
+            }
         }
-        this.updateFriendInProgress.add(id);
+        this.updateFriendInProgress.set(id, Date.now());
         var ref = API.cachedUsers.get(id);
         var isVIP = API.cachedFavoritesByObjectId.has(id);
         if (typeof stateInput === 'undefined' || ctx.state === stateInput) {
@@ -6726,6 +6716,7 @@ speechSynthesis.getVoices();
                 ctx.state === 'online' &&
                 (stateInput === 'active' || stateInput === 'offline')
             ) {
+                // wait 1minute then check if user came back online
                 await new Promise((resolve) => {
                     setTimeout(resolve, 50000);
                 });
@@ -7805,6 +7796,8 @@ speechSynthesis.getVoices();
             };
             database.updateGamelogLocationTimeToDatabase(update);
         }
+        this.lastLocationDestination = '';
+        this.lastLocationDestinationTime = 0;
         this.lastLocation = {
             date: 0,
             location: '',
@@ -7812,6 +7805,7 @@ speechSynthesis.getVoices();
             playerList: new Map(),
             friendList: new Map()
         };
+        this.updateCurrentUserLocation();
         this.updateCurrentInstanceWorld();
         this.updateVRLastLocation();
         this.getCurrentInstanceUserList();
@@ -8062,20 +8056,16 @@ speechSynthesis.getVoices();
         }
         switch (gameLog.type) {
             case 'location-destination':
-                this.lastLocation.location = 'traveling';
-                this.lastLocationDestination = gameLog.location;
-                this.lastLocationDestinationTime = Date.parse(gameLog.dt);
-                API.currentUser.location = this.lastLocation.location;
-                API.currentUser.travelingToLocation =
-                    this.lastLocationDestination;
-                API.currentUser.$travelingToTime =
-                    this.lastLocationDestinationTime;
-                var entry = {
-                    created_at: gameLog.dt,
-                    type: 'LocationDestination',
-                    location: gameLog.location
-                };
                 if (this.isGameRunning) {
+                    this.lastLocation.location = 'traveling';
+                    this.lastLocationDestination = gameLog.location;
+                    this.lastLocationDestinationTime = Date.parse(gameLog.dt);
+                    this.updateCurrentUserLocation();
+                    var entry = {
+                        created_at: gameLog.dt,
+                        type: 'LocationDestination',
+                        location: gameLog.location
+                    };
                     this.clearNowPlaying();
                     this.updateCurrentInstanceWorld();
                 }
@@ -8091,6 +8081,7 @@ speechSynthesis.getVoices();
                         playerList: new Map(),
                         friendList: new Map()
                     };
+                    this.updateCurrentUserLocation();
                     this.updateVRLastLocation();
                     this.updateCurrentInstanceWorld();
                 }
@@ -14935,8 +14926,8 @@ speechSynthesis.getVoices();
                     return;
                 }
                 if (
-                    this.API.currentUser.status === 'busy' &&
-                    D.userIds.includes(this.API.currentUser.id) === true
+                    API.currentUser.status === 'busy' &&
+                    D.userIds.includes(API.currentUser.id)
                 ) {
                     this.$message({
                         message:
@@ -14949,14 +14940,23 @@ speechSynthesis.getVoices();
                 var inviteLoop = () => {
                     if (D.userIds.length > 0) {
                         var receiverUserId = D.userIds.shift();
-                        API.sendInvite(
-                            {
-                                instanceId: D.worldId,
-                                worldId: D.worldId,
-                                worldName: D.worldName
-                            },
-                            receiverUserId
-                        ).finally(inviteLoop);
+                        if (receiverUserId === API.currentUser.id) {
+                            // can't invite self!?
+                            var L = API.parseLocation(D.worldId);
+                            API.selfInvite({
+                                instanceId: L.instanceId,
+                                worldId: L.worldId
+                            }).finally(inviteLoop);
+                        } else {
+                            API.sendInvite(
+                                {
+                                    instanceId: D.worldId,
+                                    worldId: D.worldId,
+                                    worldName: D.worldName
+                                },
+                                receiverUserId
+                            ).finally(inviteLoop);
+                        }
                     } else {
                         D.loading = false;
                         D.visible = false;
@@ -15223,7 +15223,8 @@ speechSynthesis.getVoices();
         }
         if (API.currentUser.status === 'busy') {
             this.$message({
-                message: "You can't invite yourself in 'Do Not Disturb' mode",
+                message:
+                    "You cannot invite yourself in 'Do Not Disturb' status",
                 type: 'error'
             });
             return;
@@ -15231,6 +15232,12 @@ speechSynthesis.getVoices();
         API.selfInvite({
             instanceId: L.instanceId,
             worldId: L.worldId
+        }).then((args) => {
+            this.$message({
+                message: 'Self invite sent',
+                type: 'success'
+            });
+            return args;
         });
     };
 
@@ -16248,8 +16255,8 @@ speechSynthesis.getVoices();
         var J = this.inviteDialog;
         if (J.visible) {
             if (
-                this.API.currentUser.status === 'busy' &&
-                J.userIds.includes(this.API.currentUser.id) === true
+                API.currentUser.status === 'busy' &&
+                J.userIds.includes(API.currentUser.id)
             ) {
                 this.$message({
                     message:
@@ -16261,7 +16268,14 @@ speechSynthesis.getVoices();
             var inviteLoop = () => {
                 if (J.userIds.length > 0) {
                     var receiverUserId = J.userIds.shift();
-                    if ($app.uploadImage) {
+                    if (receiverUserId === API.currentUser.id) {
+                        // can't invite self!?
+                        var L = API.parseLocation(J.worldId);
+                        API.selfInvite({
+                            instanceId: L.instanceId,
+                            worldId: L.worldId
+                        }).finally(inviteLoop);
+                    } else if ($app.uploadImage) {
                         API.sendInvitePhoto(
                             {
                                 instanceId: J.worldId,
@@ -16411,8 +16425,8 @@ speechSynthesis.getVoices();
         var J = this.inviteDialog;
         if (J.visible) {
             if (
-                this.API.currentUser.status === 'busy' &&
-                J.userIds.includes(this.API.currentUser.id) === true
+                API.currentUser.status === 'busy' &&
+                J.userIds.includes(API.currentUser.id)
             ) {
                 this.$message({
                     message:
@@ -16424,7 +16438,14 @@ speechSynthesis.getVoices();
             var inviteLoop = () => {
                 if (J.userIds.length > 0) {
                     var receiverUserId = J.userIds.shift();
-                    if ($app.uploadImage) {
+                    if (receiverUserId === API.currentUser.id) {
+                        // can't invite self!?
+                        var L = API.parseLocation(J.worldId);
+                        API.selfInvite({
+                            instanceId: L.instanceId,
+                            worldId: L.worldId
+                        }).finally(inviteLoop);
+                    } else if ($app.uploadImage) {
                         API.sendInvitePhoto(
                             {
                                 instanceId: J.worldId,
@@ -18602,18 +18623,27 @@ speechSynthesis.getVoices();
         if (L.accessType === 'public' || L.userId === API.currentUser.id) {
             return true;
         }
+        if (L.accessType === 'invite') {
+            return false;
+        }
+        if (this.lastLocation.location === location) {
+            return true;
+        }
         return false;
     };
 
     $app.methods.checkCanInviteSelf = function (location) {
         var L = API.parseLocation(location);
-        if (L.accessType === 'invite' || L.accessType === 'friends') {
-            if (L.userId === API.currentUser.id) {
-                return false;
-            }
+        if (L.userId === API.currentUser.id) {
             return true;
         }
-        return false;
+        if (L.accessType === 'friends' && !this.friends.has(L.userId)) {
+            return false;
+        }
+        if (L.accessType === 'invite' || L.accessType === 'invite+') {
+            return false;
+        }
+        return true;
     };
 
     $app.methods.setAsideWidth = function () {
@@ -19609,20 +19639,25 @@ speechSynthesis.getVoices();
             !this.isGameRunning ||
             !this.lastLocation.location ||
             this.lastLocation.location !== ref.travelingToLocation ||
+            ref.id === API.currentUser.id ||
             this.lastLocation.playerList.has(ref.displayName)
         ) {
             return;
         }
 
-        var isFavorite = API.cachedFavoritesByObjectId.has(ref.id);
         var onPlayerJoining = {
-            ...ref,
-            created_at: new Date(ref.$travelingToTime).toJSON(),
-            isFavorite,
-            isFriend: true,
+            created_at: new Date(ref.created_at).toJSON(),
+            userId: ref.id,
+            displayName: ref.displayName,
             type: 'OnPlayerJoining'
         };
         this.queueFeedNoty(onPlayerJoining);
+    };
+
+    $app.methods.updateCurrentUserLocation = function () {
+        API.currentUser.location = this.lastLocation.location;
+        API.currentUser.travelingToLocation = this.lastLocationDestination;
+        API.currentUser.$travelingToTime = this.lastLocationDestinationTime;
     };
 
     $app = new Vue($app);
