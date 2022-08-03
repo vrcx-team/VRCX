@@ -1,13 +1,13 @@
 :root {
     --offx: 20px; /* flag size */
-    --offy: calc(var(--offx) / 70 * 46);
+    --offy: calc(var(--offx) / 72 * 52);
 }
 .flags {
     background: url('/images/flags.png') no-repeat;
     background-size: calc(var(--offx) * 6);
     width: var(--offx);
     height: var(--offy);
-    transform: translateY(calc(var(--offx) / 16));
+    transform: translateY(2px); /* move flag down */
     background-position: calc(var(--offx) * -5) calc(var(--offy) * -4);
 }
 span[class='flags'] {
