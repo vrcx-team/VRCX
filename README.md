@@ -17,7 +17,7 @@ pypy & Natsumi are not responsible for any problems caused by VRCX. ***Use at yo
 
 ## Is VRCX against VRChat ToS?
 
-**TL;DR:** no, as long as you don't use the Steam account login method.
+**TL;DR:** no.
 
 *VRChat's official stance on usage of the API, as listed in their Discord #faq channel.*
 ![vrchat api](https://user-images.githubusercontent.com/11171153/114227156-b559c400-99c8-11eb-9df6-ee6615b8118e.png)
