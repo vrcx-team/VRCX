@@ -22,14 +22,6 @@ pypy & Natsumi are not responsible for any problems caused by VRCX. ***Use at yo
 *VRChat's official stance on usage of the API, as listed in their Discord #faq channel.*
 ![vrchat api](https://user-images.githubusercontent.com/11171153/114227156-b559c400-99c8-11eb-9df6-ee6615b8118e.png)
 
-### Special comments about VRChatRPC.DLL
-
-VRChatRPC.DLL was used to login VRChat via your **Steam account**. (If you press the Steam login button on the login page)
-
-In detail, VRChatRPC.DLL accessed the VRChat Process (DLL Injection) and called the Steam API to obtain the Login Token.
-
-This method is no longer possible due to the new EAC (Easy AntiCheat) update to VRChat.
-
 Screenshots
 =
 ### Login
