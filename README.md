@@ -17,24 +17,10 @@ pypy & Natsumi are not responsible for any problems caused by VRCX. ***Use at yo
 
 ## Is VRCX against VRChat ToS?
 
-**TL;DR:** no, as long as you don't use the Steam account login method.
+**TL;DR:** no.
 
 *VRChat's official stance on usage of the API, as listed in their Discord #faq channel.*
 ![vrchat api](https://user-images.githubusercontent.com/11171153/114227156-b559c400-99c8-11eb-9df6-ee6615b8118e.png)
-
-### Special comments about VRChatRPC.DLL
-
-VRChatRPC.DLL is used to login VRChat via your **Steam account**. (If you press the Steam login button on the login page)
-
-If you don't need to login via Steam, VRChatRPC.DLL will not be used.
-
-In detail, VRChatRPC.DLL accesses the VRChat Process (DLL Injection) and calls the Steam API to obtain the Login Token. This may lead to BAN from VRChat.
-
-No technical measures have been taken on security yet (Of course I can't say there's no risk, but there's no problem), but I don't know what will happen later.
-
-Since it is impossible to login to a 3rdparty account in the usual way, so this is the only way.
-
-It's source code is available at https://github.com/pypy-vrc/VRChatRPC.
 
 Screenshots
 =
