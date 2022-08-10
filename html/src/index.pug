@@ -578,6 +578,8 @@ html
                                 template(slot="title")
                                     span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
                                     span(style="color:#909399;font-size:12px;margin-left:10px") {{ group.count }}/{{ group.capacity }}
+                                    el-tooltip(placement="top" content="Rename" :disabled="hideTooltips")
+                                        el-button(@click.stop="changeFavoriteGroupName(group)" size="mini" icon="el-icon-edit" circle style="margin-left:10px")
                                     el-tooltip(placement="right" content="Clear" :disabled="hideTooltips")
                                         el-button(@click.stop="clearFavoriteGroup(group)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                                 .x-friend-list(v-if="group.count" style="margin-top:10px")

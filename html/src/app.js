@@ -3340,7 +3340,7 @@ speechSynthesis.getVoices();
     };
 
     API.buildFavoriteGroups = function () {
-        // 192 = ['group_0', 'group_1', 'group_2'] x 64
+        // 450 = ['group_0', 'group_1', 'group_2'] x 150
         this.favoriteFriendGroups = [];
         for (var i = 0; i < 3; ++i) {
             this.favoriteFriendGroups.push({
@@ -3349,12 +3349,12 @@ speechSynthesis.getVoices();
                 type: 'friend',
                 name: `group_${i}`,
                 displayName: `Group ${i + 1}`,
-                capacity: 64,
+                capacity: 150,
                 count: 0,
                 visibility: 'private'
             });
         }
-        // 256 = ['worlds1', 'worlds2', 'worlds3', 'worlds4'] x 64
+        // 400 = ['worlds1', 'worlds2', 'worlds3', 'worlds4'] x 100
         this.favoriteWorldGroups = [];
         for (var i = 0; i < 4; ++i) {
             this.favoriteWorldGroups.push({
@@ -3363,31 +3363,23 @@ speechSynthesis.getVoices();
                 type: 'world',
                 name: `worlds${i + 1}`,
                 displayName: `Group ${i + 1}`,
-                capacity: 64,
+                capacity: 100,
                 count: 0,
                 visibility: 'private'
             });
         }
-        // 100 = ['avatars1'] x 25
-        // Favorite Avatars (0/25)
-        // VRC+ Group 1 (0/25)
-        // VRC+ Group 2 (0/25)
-        // VRC+ Group 3 (0/25)
-        var avatarGroupNames = [
-            'Favorite Avatars',
-            'VRC+ Group 1',
-            'VRC+ Group 2',
-            'VRC+ Group 3'
-        ];
+        // 350 = ['avatars1', ...] x 50
+        // Favorite Avatars (0/50)
+        // VRC+ Group 1..5 (0/50)
         this.favoriteAvatarGroups = [];
-        for (var i = 0; i < 4; ++i) {
+        for (var i = 0; i < 6; ++i) {
             this.favoriteAvatarGroups.push({
                 assign: false,
                 key: `avatar:avatars${i + 1}`,
                 type: 'avatar',
                 name: `avatars${i + 1}`,
-                displayName: avatarGroupNames[i],
-                capacity: 25,
+                displayName: `Group ${i + 1}`,
+                capacity: 50,
                 count: 0,
                 visibility: 'private'
             });
@@ -3410,9 +3402,7 @@ speechSynthesis.getVoices();
             for (var group of groups) {
                 if (group.assign === false && group.name === ref.name) {
                     group.assign = true;
-                    if (ref.type !== 'avatar') {
-                        group.displayName = ref.displayName;
-                    }
+                    group.displayName = ref.displayName;
                     group.visibility = ref.visibility;
                     ref.$groupRef = group;
                     assigns.add(ref.id);
@@ -3439,9 +3429,7 @@ speechSynthesis.getVoices();
                     group.assign = true;
                     group.key = `${group.type}:${ref.name}`;
                     group.name = ref.name;
-                    if (ref.type !== 'avatar') {
-                        group.displayName = ref.displayName;
-                    }
+                    group.displayName = ref.displayName;
                     ref.$groupRef = group;
                     assigns.add(ref.id);
                     break;
