@@ -6471,9 +6471,6 @@ speechSynthesis.getVoices();
     });
 
     API.$on('FRIEND:STATE', function (args) {
-        if (args.json.state === 'online') {
-            $app.APILastOnline.set(args.params.userId, Date.now());
-        }
         $app.updateFriend(args.params.userId, args.json.state);
     });
 
@@ -6604,14 +6601,19 @@ speechSynthesis.getVoices();
         if (typeof ctx === 'undefined') {
             return;
         }
-        if (this.updateFriendInProgress.has(id)) {
-            var date = this.updateFriendInProgress.get(id);
-            if (date + 10000 >= Date.now()) {
-                // wait for 10 seconds
-                return;
-            }
+        var lastOnlineDate = this.APILastOnline.get(id);
+        if (
+            stateInput &&
+            ctx.state !== stateInput &&
+            lastOnlineDate &&
+            lastOnlineDate > Date.now() - 100
+        ) {
+            // crappy double online fix
+            return;
         }
-        this.updateFriendInProgress.set(id, Date.now());
+        if (stateInput === 'online') {
+            this.APILastOnline.set(id, Date.now());
+        }
         var ref = API.cachedUsers.get(id);
         var isVIP = API.cachedFavoritesByObjectId.has(id);
         if (typeof stateInput === 'undefined' || ctx.state === stateInput) {
@@ -6704,16 +6706,20 @@ speechSynthesis.getVoices();
                 ctx.state === 'online' &&
                 (stateInput === 'active' || stateInput === 'offline')
             ) {
-                // wait 1minute then check if user came back online
+                // check if already waiting
+                var date = this.updateFriendInProgress.get(id);
+                if (date && date > Date.now() - 110000) {
+                    return;
+                }
+                this.updateFriendInProgress.set(id, Date.now());
+                // wait 2minutes then check if user came back online
                 await new Promise((resolve) => {
-                    setTimeout(resolve, 50000);
+                    setTimeout(resolve, 110000);
                 });
-                if (this.APILastOnline.has(id)) {
-                    var date = this.APILastOnline.get(id);
-                    if (date > Date.now() - 60000) {
-                        this.updateFriendInProgress.delete(id);
-                        return;
-                    }
+                var date1 = this.APILastOnline.get(id);
+                if (date1 && date1 > Date.now() - 120000) {
+                    this.updateFriendInProgress.delete(id);
+                    return;
                 }
             }
             try {

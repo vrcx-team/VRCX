@@ -1333,7 +1333,7 @@ html
                                         location.extra(:location="item.ref.location" :traveling="item.ref.travelingToLocation" :link="false")
                                     img.avatar(v-lazy="userImage(item.ref)")
                                 span(v-else) Search More: #[span(v-text="item.label" style="font-weight:bold")]
-                    el-tooltip(placement="bottom" content="Direct access ID/URL" :disabled="hideTooltips")
+                    el-tooltip(placement="bottom" content="Direct access ID/URL from clipboard" :disabled="hideTooltips")
                         el-button(type="default" @click="directAccessPaste" size="mini" icon="el-icon-discover" circle)
                     el-tooltip(placement="bottom" content="Refresh friends" :disabled="hideTooltips")
                         el-button(type="default" @click="API.closeWebSocket(); API.getCurrentUser(); API.refreshFriends()" :loading="API.isRefreshFriendsLoading" size="mini" icon="el-icon-refresh" circle style="margin-right:10px")
