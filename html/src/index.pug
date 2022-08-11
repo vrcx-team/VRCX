@@ -1543,6 +1543,10 @@ html
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Note
+                                        span.extra(v-text="userDialog.ref.note")
+                                .x-friend-item(style="width:100%;cursor:default")
+                                    .detail
+                                        span.name Local Note
                                         el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" placeholder="Click to add a note" size="mini" resize="none")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
@@ -1835,14 +1839,20 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Last Visit
+                                            el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                i.el-icon-warning
                                         span.extra {{ worldDialog.lastVisit | formatDate('long') }}
                                 .x-friend-item(@click="showPreviousInstancesWorldDialog(worldDialog.ref)")
                                     .detail
                                         span.name Visit Count
+                                            el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                i.el-icon-warning
                                         span.extra(v-text="worldDialog.visitCount")
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Time Spent
+                                            el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" content="Info from local database may not be accurate")
+                                                i.el-icon-warning
                                         span.extra(v-if="worldDialog.timeSpent === 0") -
                                         span.extra(v-else) {{ worldDialog.timeSpent | timeToText }}
                         el-tab-pane(label="JSON")
