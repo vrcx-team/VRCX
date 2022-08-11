@@ -33,6 +33,9 @@ class Database {
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_moderation (user_id TEXT PRIMARY KEY, updated_at TEXT, display_name TEXT, block INTEGER, mute INTEGER)`
         );
         await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_avatar_history (avatar_id TEXT PRIMARY KEY, created_at TEXT)`
+        );
+        await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
         );
     }
@@ -52,6 +55,9 @@ class Database {
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS gamelog_event (id INTEGER PRIMARY KEY, created_at TEXT, data TEXT, UNIQUE(created_at, data))`
+        );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS cache_avatar (id TEXT PRIMARY KEY, added_at TEXT, author_id TEXT, author_name TEXT, created_at TEXT, description TEXT, image_url TEXT, name TEXT, release_status TEXT, thumbnail_image_url TEXT, updated_at TEXT, version INTEGER)`
         );
     }
 
@@ -1425,6 +1431,64 @@ class Database {
             WHERE type = 'TrustLevel' AND created_at > '2022-05-04T01:00:00.000Z'
             AND ((trust_level = 'Veteran User' AND previous_trust_level = 'Trusted User') OR (trust_level = 'Trusted User' AND previous_trust_level = 'Veteran User'))`
         );
+    }
+
+    addAvatarToCache(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO cache_avatar (id, added_at, author_id, author_name, created_at, description, image_url, name, release_status, thumbnail_image_url, updated_at, version) VALUES (@id, @added_at, @author_id, @author_name, @created_at, @description, @image_url, @name, @release_status, @thumbnail_image_url, @updated_at, @version)`,
+            {
+                '@id': entry.id,
+                '@added_at': new Date().toJSON(),
+                '@author_id': entry.authorId,
+                '@author_name': entry.authorName,
+                '@created_at': entry.created_at,
+                '@description': entry.description,
+                '@image_url': entry.imageUrl,
+                '@name': entry.name,
+                '@release_status': entry.releaseStatus,
+                '@thumbnail_image_url': entry.thumbnailImageUrl,
+                '@updated_at': entry.updated_at,
+                '@version': entry.version
+            }
+        );
+    }
+
+    addAvatarToHistory(avatarId) {
+        sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO ${Database.userPrefix}_avatar_history (avatar_id, created_at) VALUES (@avatar_id, @created_at)`,
+            {
+                '@avatar_id': avatarId,
+                '@created_at': new Date().toJSON()
+            }
+        );
+    }
+
+    async getAvatarHistory() {
+        var data = [];
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                id: dbRow[0],
+                authorId: dbRow[4],
+                authorName: dbRow[5],
+                created_at: dbRow[6],
+                description: dbRow[7],
+                imageUrl: dbRow[8],
+                name: dbRow[9],
+                releaseStatus: dbRow[10],
+                thumbnailImageUrl: dbRow[11],
+                updated_at: dbRow[12],
+                version: dbRow[13]
+            };
+            data.unshift(row);
+        }, `SELECT * FROM ${Database.userPrefix}_avatar_history INNER JOIN cache_avatar ON cache_avatar.id = ${Database.userPrefix}_avatar_history.avatar_id LIMIT 100`);
+        return data;
+    }
+
+    clearAvatarHistory() {
+        sqliteService.executeNonQuery(
+            `DELETE FROM ${Database.userPrefix}_avatar_history`
+        );
+        sqliteService.executeNonQuery('DELETE FROM cache_avatar');
     }
 }
 

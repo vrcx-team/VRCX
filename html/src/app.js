@@ -1255,6 +1255,9 @@ speechSynthesis.getVoices();
     API.applyCurrentUser = function (json) {
         var ref = this.currentUser;
         if (this.isLoggedIn) {
+            if (json.currentAvatar !== ref.currentAvatar) {
+                $app.addAvatarToHistory(json.currentAvatar);
+            }
             Object.assign(ref, json);
             if (ref.homeLocation !== ref.$homeLocation.tag) {
                 ref.$homeLocation = this.parseLocation(ref.homeLocation);
@@ -18949,7 +18952,8 @@ speechSynthesis.getVoices();
         API.cachedAvatars.forEach((ref, id) => {
             if (
                 !API.cachedFavoritesByObjectId.has(id) &&
-                ref.authorId !== API.currentUser.id
+                ref.authorId !== API.currentUser.id &&
+                !$app.avatarHistory.has(id)
             ) {
                 API.cachedAvatars.delete(id);
             }
@@ -19658,6 +19662,71 @@ speechSynthesis.getVoices();
         API.currentUser.location = this.lastLocation.location;
         API.currentUser.travelingToLocation = this.lastLocationDestination;
         API.currentUser.$travelingToTime = this.lastLocationDestinationTime;
+    };
+
+    $app.data.avatarHistory = new Set();
+    $app.data.avatarHistoryArray = [];
+
+    API.$on('LOGIN', async function () {
+        $app.avatarHistory = new Set();
+        var historyArray = await database.getAvatarHistory();
+        $app.avatarHistoryArray = historyArray;
+        for (var i = 0; i < historyArray.length; i++) {
+            $app.avatarHistory.add(historyArray[i].id);
+            this.applyAvatar(historyArray[i]);
+        }
+    });
+
+    $app.methods.addAvatarToHistory = function (avatarId) {
+        var historyArray = $app.avatarHistoryArray;
+        for (var i = 0; i < historyArray.length; ++i) {
+            if (historyArray[i].id === avatarId) {
+                historyArray.splice(i, 1);
+            }
+        }
+        this.avatarHistory.delete(avatarId);
+        this.avatarHistory.add(avatarId);
+        database.addAvatarToHistory(avatarId);
+        API.getAvatar({avatarId});
+    };
+
+    API.$on('AVATAR', function (args) {
+        var ref = args.json;
+        // if in history add/update cache
+        if ($app.avatarHistory.has(ref.id)) {
+            database.addAvatarToCache(ref);
+
+            // only add to array if not in array
+            var inArray = false;
+            var historyArray = $app.avatarHistoryArray;
+            for (var i = 0; i < historyArray.length; ++i) {
+                if (historyArray[i].id === ref.id) {
+                    inArray = true;
+                }
+            }
+            if (!inArray) {
+                $app.avatarHistoryArray.unshift(ref);
+            }
+        }
+    });
+
+    $app.methods.promptClearAvatarHistory = function () {
+        this.$confirm('Continue? Clear Avatar History', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    this.clearAvatarHistory();
+                }
+            }
+        });
+    };
+
+    $app.methods.clearAvatarHistory = function () {
+        this.avatarHistory = new Set();
+        this.avatarHistoryArray = [];
+        database.clearAvatarHistory();
     };
 
     $app = new Vue($app);
