@@ -10784,6 +10784,14 @@ speechSynthesis.getVoices();
 
     API.$on('USER', function (args) {
         $app.updateFriendship(args.ref);
+        if (
+            $app.friendLogInitStatus &&
+            args.json.isFriend &&
+            !$app.friendLog.has(args.ref.id) &&
+            args.json.id !== this.currentUser.id
+        ) {
+            $app.addFriendship(args.ref.id);
+        }
     });
 
     API.$on('FRIEND:ADD', function (args) {
@@ -10882,33 +10890,41 @@ speechSynthesis.getVoices();
             return;
         }
         var ref = API.cachedUsers.get(id);
-        if (typeof ref !== 'undefined') {
-            API.getFriendStatus({
+        if (typeof ref === 'undefined') {
+            API.getUser({
                 userId: id
-            }).then((args) => {
-                if (args.json.isFriend && !this.friendLog.has(id)) {
-                    var friendLogHistory = {
-                        created_at: new Date().toJSON(),
-                        type: 'Friend',
-                        userId: id,
-                        displayName: ref.displayName
-                    };
-                    this.friendLogTable.data.push(friendLogHistory);
-                    database.addFriendLogHistory(friendLogHistory);
-                    this.queueFriendLogNoty(friendLogHistory);
-                    var friendLogCurrent = {
-                        userId: id,
-                        displayName: ref.displayName,
-                        trustLevel: ref.$trustLevel
-                    };
-                    this.friendLog.set(id, friendLogCurrent);
-                    database.setFriendLogCurrent(friendLogCurrent);
-                    this.notifyMenu('friendLog');
-                    this.deleteFriendRequest(id);
-                    this.updateSharedFeed(true);
-                }
             });
+            return;
         }
+        API.getFriendStatus({
+            userId: id
+        }).then((args) => {
+            if (args.json.isFriend && !this.friendLog.has(id)) {
+                this.addFriend(id, ref.state);
+                var friendLogHistory = {
+                    created_at: new Date().toJSON(),
+                    type: 'Friend',
+                    userId: id,
+                    displayName: ref.displayName
+                };
+                this.friendLogTable.data.push(friendLogHistory);
+                database.addFriendLogHistory(friendLogHistory);
+                this.queueFriendLogNoty(friendLogHistory);
+                var friendLogCurrent = {
+                    userId: id,
+                    displayName: ref.displayName,
+                    trustLevel: ref.$trustLevel
+                };
+                this.friendLog.set(id, friendLogCurrent);
+                database.setFriendLogCurrent(friendLogCurrent);
+                this.notifyMenu('friendLog');
+                this.deleteFriendRequest(id);
+                this.updateSharedFeed(true);
+                API.getUser({
+                    userId: id
+                });
+            }
+        });
     };
 
     $app.methods.deleteFriendRequest = function (userId) {
@@ -10946,6 +10962,7 @@ speechSynthesis.getVoices();
                 database.deleteFriendLogCurrent(id);
                 this.notifyMenu('friendLog');
                 this.updateSharedFeed(true);
+                this.deleteFriend(id);
             }
         });
     };
@@ -10994,35 +11011,6 @@ speechSynthesis.getVoices();
                 this.notifyMenu('friendLog');
                 this.updateSharedFeed(true);
             }
-            API.getFriendStatus({
-                userId: ref.id
-            }).then((args) => {
-                if (
-                    args.json.isFriend &&
-                    this.friendLog.has(ref.id) &&
-                    !ctx.displayName
-                ) {
-                    var friendLogHistoryFriend = {
-                        created_at: new Date().toJSON(),
-                        type: 'Friend',
-                        userId: ref.id,
-                        displayName: ref.displayName
-                    };
-                    this.friendLogTable.data.push(friendLogHistoryFriend);
-                    database.addFriendLogHistory(friendLogHistoryFriend);
-                    this.queueFriendLogNoty(friendLogHistoryFriend);
-                    var friendLogCurrent1 = {
-                        userId: ref.id,
-                        displayName: ref.displayName,
-                        trustLevel: ref.$trustLevel
-                    };
-                    this.friendLog.set(ref.id, friendLogCurrent1);
-                    database.setFriendLogCurrent(friendLogCurrent1);
-                    ctx.displayName = ref.displayName;
-                    this.notifyMenu('friendLog');
-                    this.updateSharedFeed(true);
-                }
-            });
         }
         if (
             ref.$trustLevel &&
