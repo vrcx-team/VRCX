@@ -26,6 +26,7 @@ namespace VRCX
             public string LastAudioDevice;
             public string LastVideoError;
             public string onJoinPhotonDisplayName;
+            public string locationDestination;
         }
 
         public static readonly LogWatcher Instance;
@@ -337,6 +338,7 @@ namespace VRCX
                 logContext.onJoinPhotonDisplayName = String.Empty;
                 logContext.LastAudioDevice = String.Empty;
                 logContext.LastVideoError = String.Empty;
+                logContext.locationDestination = String.Empty;
 
                 return true;
             }
@@ -348,25 +350,33 @@ namespace VRCX
         {
             // 2021.09.02 00:02:12 Log        -  [Behaviour] Destination set: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd:15609~private(usr_032383a7-748c-4fb2-94e4-bcb928e5de6b)~nonce(72CC87D420C1D49AEFFBEE8824C84B2DF0E38678E840661E)
             // 2021.09.02 00:49:15 Log        -  [Behaviour] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
+            // 2022.08.13 18:57:00 Log        -  [Behaviour] OnLeftRoom
 
-            if (line.Contains("[Behaviour] Destination set: "))
+            if (line.Contains("[Behaviour] OnLeftRoom"))
             {
-                var lineOffset = line.LastIndexOf("] Destination set: ");
-                if (lineOffset < 0)
-                    return true;
-                lineOffset += 19;
-                if (lineOffset >= line.Length)
-                    return true;
-
-                var location = line.Substring(lineOffset);
-
                 AppendLog(new[]
                 {
                     fileInfo.Name,
                     ConvertLogTimeToISO8601(line),
                     "location-destination",
-                    location
+                    logContext.locationDestination
                 });
+
+                logContext.locationDestination = String.Empty;
+
+                return true;
+            }
+
+            if (line.Contains("[Behaviour] Destination fetching: "))
+            {
+                var lineOffset = line.LastIndexOf("] Destination fetching: ");
+                if (lineOffset < 0)
+                    return true;
+                lineOffset += 24;
+                if (lineOffset >= line.Length)
+                    return true;
+
+                logContext.locationDestination = line.Substring(lineOffset);
 
                 return true;
             }
