@@ -446,7 +446,7 @@ speechSynthesis.getVoices();
                         type: 'error'
                     });
                     $app.avatarDialog.visible = false;
-                    throw new Error(`404: Can't find avatarǃ ${endpoint}`);
+                    throw new Error(`404: ${data.error.message} ${endpoint}`);
                 }
                 if (
                     init.method === 'GET' &&
@@ -455,7 +455,7 @@ speechSynthesis.getVoices();
                     this.failedGetRequests.set(endpoint, Date.now());
                 }
                 if (status === 404 && endpoint.substring(0, 6) === 'users/') {
-                    throw new Error(`404: Can't find user! ${endpoint}`);
+                    throw new Error(`404: ${data.error.message} ${endpoint}`);
                 }
                 if (
                     status === 404 &&
@@ -4296,6 +4296,7 @@ speechSynthesis.getVoices();
     $app.data.debugUserDiff = false;
     $app.data.debugPhotonLogging = false;
     $app.data.debugGameLog = false;
+    $app.data.debugFriendState = false;
 
     $app.data.APILastOnline = new Map();
 
@@ -6601,7 +6602,7 @@ speechSynthesis.getVoices();
 
     $app.data.updateFriendInProgress = new Map();
 
-    $app.methods.updateFriend = async function (id, stateInput, origin) {
+    $app.methods.updateFriend = function (id, stateInput, origin) {
         var ctx = this.friends.get(id);
         if (typeof ctx === 'undefined') {
             return;
@@ -6611,9 +6612,17 @@ speechSynthesis.getVoices();
             stateInput &&
             ctx.state !== stateInput &&
             lastOnlineDate &&
-            lastOnlineDate > Date.now() - 100
+            lastOnlineDate > Date.now() - 1000
         ) {
             // crappy double online fix
+            if (this.debugFriendState) {
+                console.log(
+                    ctx.name,
+                    new Date().toJSON(),
+                    'userAlreadyOnline',
+                    stateInput
+                );
+            }
             return;
         }
         if (stateInput === 'online') {
@@ -6692,144 +6701,172 @@ speechSynthesis.getVoices();
             ) {
                 API.getUser({
                     userId: id
-                }).catch(() => {
-                    this.updateFriendInProgress.delete(id);
                 });
             }
-        } else {
-            var newState = stateInput;
-            var location = '';
-            var $location_at = '';
-            if (
-                typeof ref !== 'undefined' &&
-                typeof ref.location !== 'undefined'
-            ) {
-                var {location, $location_at} = ref;
-            }
-            // prevent status flapping
-            if (
-                ctx.state === 'online' &&
-                (stateInput === 'active' || stateInput === 'offline')
-            ) {
+        } else if (
+            ctx.state === 'online' &&
+            (stateInput === 'active' || stateInput === 'offline')
+        ) {
+            // delayed second check to prevent status flapping
+            var date = this.updateFriendInProgress.get(id);
+            if (date && date > Date.now() - 120000) {
                 // check if already waiting
-                var date = this.updateFriendInProgress.get(id);
-                if (date && date > Date.now() - 110000) {
-                    return;
+                if (this.debugFriendState) {
+                    console.log(
+                        ctx.name,
+                        new Date().toJSON(),
+                        'pendingOfflineCheck',
+                        stateInput
+                    );
                 }
-                this.updateFriendInProgress.set(id, Date.now());
-                // wait 2minutes then check if user came back online
-                await new Promise((resolve) => {
-                    setTimeout(resolve, 110000);
-                });
-                var date1 = this.APILastOnline.get(id);
-                if (date1 && date1 > Date.now() - 120000) {
-                    this.updateFriendInProgress.delete(id);
-                    return;
-                }
+                return;
             }
-            try {
-                var args = await API.getUser({
-                    userId: id
-                });
-                if (
-                    typeof args !== 'undefined' &&
-                    typeof args.ref !== 'undefined'
-                ) {
-                    newState = args.ref.state;
-                    ctx.ref = args.ref;
-                }
-            } catch (err) {
-                console.error(err);
-            }
-            if (ctx.state !== newState) {
-                if (
-                    typeof ctx.ref.$offline_for !== 'undefined' &&
-                    ctx.ref.$offline_for === '' &&
-                    (newState === 'offline' || newState === 'active') &&
-                    ctx.state === 'online'
-                ) {
-                    ctx.ref.$online_for = '';
-                    ctx.ref.$offline_for = Date.now();
-                    var ts = Date.now();
-                    var time = ts - $location_at;
-                    var worldName = await this.getWorldName(location);
-                    var feed = {
-                        created_at: new Date().toJSON(),
-                        type: 'Offline',
-                        userId: ctx.ref.id,
-                        displayName: ctx.ref.displayName,
-                        location,
-                        worldName,
-                        time
-                    };
-                    this.addFeed(feed);
-                    database.addOnlineOfflineToDatabase(feed);
-                } else if (newState === 'online') {
-                    ctx.ref.$location_at = Date.now();
-                    ctx.ref.$online_for = Date.now();
-                    ctx.ref.$offline_for = '';
-                    if (
-                        typeof ctx.ref.location !== 'undefined' &&
-                        ctx.ref.location !== 'offline'
-                    ) {
-                        var {location} = ctx.ref;
-                    }
-                    var worldName = await this.getWorldName(ctx.ref.location);
-                    var feed = {
-                        created_at: new Date().toJSON(),
-                        type: 'Online',
-                        userId: ctx.ref.id,
-                        displayName: ctx.ref.displayName,
-                        location,
-                        worldName,
-                        time: ''
-                    };
-                    this.addFeed(feed);
-                    database.addOnlineOfflineToDatabase(feed);
-                }
-            }
-            if (ctx.state === 'online') {
-                if (ctx.isVIP) {
-                    removeFromArray(this.friendsGroup0_, ctx);
-                    removeFromArray(this.friendsGroupA_, ctx);
-                } else {
-                    removeFromArray(this.friendsGroup1_, ctx);
-                    removeFromArray(this.friendsGroupB_, ctx);
-                }
-            } else if (ctx.state === 'active') {
-                removeFromArray(this.friendsGroup2_, ctx);
-                removeFromArray(this.friendsGroupC_, ctx);
-            } else {
-                removeFromArray(this.friendsGroup3_, ctx);
-                removeFromArray(this.friendsGroupD_, ctx);
-            }
-            if (newState === 'online') {
-                if (isVIP) {
-                    this.sortFriendsGroup0 = true;
-                    this.friendsGroup0_.push(ctx);
-                    this.friendsGroupA_.unshift(ctx);
-                } else {
-                    this.sortFriendsGroup1 = true;
-                    this.friendsGroup1_.push(ctx);
-                    this.friendsGroupB_.unshift(ctx);
-                }
-            } else if (newState === 'active') {
-                this.sortFriendsGroup2 = true;
-                this.friendsGroup2_.push(ctx);
-                this.friendsGroupC_.unshift(ctx);
-            } else {
-                this.sortFriendsGroup3 = true;
-                this.friendsGroup3_.push(ctx);
-                this.friendsGroupD_.unshift(ctx);
-            }
-            if (ctx.state !== newState) {
-                this.updateOnlineFriendCoutner();
-            }
-            ctx.state = newState;
-            ctx.name = ctx.ref.displayName;
-            ctx.isVIP = isVIP;
+            this.updateFriendInProgress.set(id, Date.now());
+            // wait 2minutes then check if user came back online
+            workerTimers.setTimeout(() => {
+                this.updateFriendInProgress.delete(id);
+                var {location, $location_at} = ref;
+                this.updateFriendDelayedCheck(
+                    id,
+                    ctx,
+                    stateInput,
+                    isVIP,
+                    location,
+                    $location_at
+                );
+            }, 110000);
+        } else {
+            var {location, $location_at} = ref;
+            this.updateFriendDelayedCheck(
+                id,
+                ctx,
+                stateInput,
+                isVIP,
+                location,
+                $location_at
+            );
         }
-        this.updateFriendInProgress.delete(id);
+    };
+
+    $app.methods.updateFriendDelayedCheck = async function (
+        id,
+        ctx,
+        stateInput,
+        isVIP,
+        location,
+        $location_at
+    ) {
+        var date = this.APILastOnline.get(id);
+        if (
+            ctx.state === 'online' &&
+            (stateInput === 'active' || stateInput === 'offline') &&
+            date &&
+            date > Date.now() - 120000
+        ) {
+            if (this.debugFriendState) {
+                console.log(
+                    ctx.name,
+                    new Date().toJSON(),
+                    'falsePositiveOffline',
+                    stateInput
+                );
+            }
+            return;
+        }
+        var newState = stateInput;
+        var args = await API.getUser({
+            userId: id
+        });
+        newState = args.ref.state;
+        if (this.debugFriendState) {
+            console.log(
+                ctx.name,
+                new Date().toJSON(),
+                'updateFriendState',
+                newState,
+                stateInput
+            );
+        }
+        var newRef = args.ref;
+        if (ctx.state !== newState) {
+            if (
+                (newState === 'offline' || newState === 'active') &&
+                ctx.state === 'online'
+            ) {
+                ctx.ref.$online_for = '';
+                ctx.ref.$offline_for = Date.now();
+                var ts = Date.now();
+                var time = ts - $location_at;
+                var worldName = await this.getWorldName(location);
+                var feed = {
+                    created_at: new Date().toJSON(),
+                    type: 'Offline',
+                    userId: newRef.id,
+                    displayName: newRef.displayName,
+                    location,
+                    worldName,
+                    time
+                };
+                this.addFeed(feed);
+                database.addOnlineOfflineToDatabase(feed);
+            } else if (newState === 'online') {
+                ctx.ref.$location_at = Date.now();
+                ctx.ref.$online_for = Date.now();
+                ctx.ref.$offline_for = '';
+                var worldName = await this.getWorldName(newRef.location);
+                var feed = {
+                    created_at: new Date().toJSON(),
+                    type: 'Online',
+                    userId: ctx.ref.id,
+                    displayName: ctx.ref.displayName,
+                    location: newRef.location,
+                    worldName,
+                    time: ''
+                };
+                this.addFeed(feed);
+                database.addOnlineOfflineToDatabase(feed);
+            }
+        }
+        if (ctx.state === 'online') {
+            if (ctx.isVIP) {
+                removeFromArray(this.friendsGroup0_, ctx);
+                removeFromArray(this.friendsGroupA_, ctx);
+            } else {
+                removeFromArray(this.friendsGroup1_, ctx);
+                removeFromArray(this.friendsGroupB_, ctx);
+            }
+        } else if (ctx.state === 'active') {
+            removeFromArray(this.friendsGroup2_, ctx);
+            removeFromArray(this.friendsGroupC_, ctx);
+        } else {
+            removeFromArray(this.friendsGroup3_, ctx);
+            removeFromArray(this.friendsGroupD_, ctx);
+        }
+        if (newState === 'online') {
+            if (isVIP) {
+                this.sortFriendsGroup0 = true;
+                this.friendsGroup0_.push(ctx);
+                this.friendsGroupA_.unshift(ctx);
+            } else {
+                this.sortFriendsGroup1 = true;
+                this.friendsGroup1_.push(ctx);
+                this.friendsGroupB_.unshift(ctx);
+            }
+        } else if (newState === 'active') {
+            this.sortFriendsGroup2 = true;
+            this.friendsGroup2_.push(ctx);
+            this.friendsGroupC_.unshift(ctx);
+        } else {
+            this.sortFriendsGroup3 = true;
+            this.friendsGroup3_.push(ctx);
+            this.friendsGroupD_.unshift(ctx);
+        }
+        if (ctx.state !== newState) {
+            this.updateOnlineFriendCoutner();
+        }
+        ctx.state = newState;
+        ctx.name = newRef.displayName;
+        ctx.isVIP = isVIP;
     };
 
     $app.methods.getWorldName = async function (location) {
