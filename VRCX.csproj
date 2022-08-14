@@ -173,13 +173,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.Common">
-      <Version>103.0.90</Version>
+      <Version>104.4.180</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.OffScreen">
-      <Version>103.0.90</Version>
+      <Version>104.4.180</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
-      <Version>103.0.90</Version>
+      <Version>104.4.180</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
       <Version>7.1.2</Version>
