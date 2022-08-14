@@ -16,6 +16,9 @@ span[class='flags'] {
 .flags.us {
     background-position: 0 0;
 }
+.flags.usw {
+    background-position: 0 0;
+}
 .flags.kr {
     background-position: calc(var(--offx) * -1) 0;
 }
@@ -88,7 +91,6 @@ span[class='flags'] {
 .flags.gb {
     background-position: 0 calc(var(--offy) * -4);
 }
-
 .flags.use {
     background-position: calc(var(--offx) * -1) calc(var(--offy) * -4);
 }
