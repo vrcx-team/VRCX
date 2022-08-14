@@ -2005,7 +2005,7 @@ speechSynthesis.getVoices();
             return;
         }
         var D = $app.userDialog;
-        if ($app.userDialog.visible && D.ref.location === json.id) {
+        if ($app.userDialog.visible && D.ref.$location.tag === json.id) {
             D.instance.occupants = json.n_users;
         }
     });
@@ -4408,12 +4408,8 @@ speechSynthesis.getVoices();
             'wristFeedUpdate',
             JSON.stringify(wristFeed)
         );
-        if (this.userDialog.visible) {
-            this.applyUserDialogLocation();
-        }
-        if (this.worldDialog.visible) {
-            this.applyWorldDialogInstances();
-        }
+        this.applyUserDialogLocation();
+        this.applyWorldDialogInstances();
         feeds.pendingUpdate = false;
     };
 
@@ -7474,7 +7470,6 @@ speechSynthesis.getVoices();
                 break;
             }
         }
-        this.updateCurrentInstanceWorld();
         if (length > 0) {
             for (var i = length + 1; i < data.length; i++) {
                 var ctx = data[i];
@@ -7511,8 +7506,12 @@ speechSynthesis.getVoices();
                 }
             });
 
+            this.updateCurrentUserLocation();
+            this.updateCurrentInstanceWorld();
             this.updateVRLastLocation();
             this.getCurrentInstanceUserList();
+            this.applyUserDialogLocation();
+            this.applyWorldDialogInstances();
         }
     };
 
@@ -7522,6 +7521,10 @@ speechSynthesis.getVoices();
         var {ref, props} = args;
         if ($app.friends.has(ref.id) === false) {
             return;
+        }
+        if (props.location && ref.id === $app.userDialog.id) {
+            // update user dialog instance occupants
+            $app.applyUserDialogLocation(true);
         }
         if (
             props.location &&
@@ -7813,6 +7816,8 @@ speechSynthesis.getVoices();
         this.updateVRLastLocation();
         this.getCurrentInstanceUserList();
         this.lastVideoUrl = '';
+        this.applyUserDialogLocation();
+        this.applyWorldDialogInstances();
     };
 
     $app.data.lastLocation$ = {
@@ -8071,6 +8076,8 @@ speechSynthesis.getVoices();
                     };
                     this.clearNowPlaying();
                     this.updateCurrentInstanceWorld();
+                    this.applyUserDialogLocation();
+                    this.applyWorldDialogInstances();
                 }
                 break;
             case 'location':
@@ -8087,6 +8094,8 @@ speechSynthesis.getVoices();
                     this.updateCurrentUserLocation();
                     this.updateVRLastLocation();
                     this.updateCurrentInstanceWorld();
+                    this.applyUserDialogLocation();
+                    this.applyWorldDialogInstances();
                 }
                 var L = API.parseLocation(gameLog.location);
                 var entry = {
@@ -12855,7 +12864,6 @@ speechSynthesis.getVoices();
         } else if (D.ref.friendRequestStatus === 'outgoing') {
             D.outgoingRequest = true;
         }
-        $app.applyUserDialogLocation();
     });
 
     API.$on('WORLD', function (args) {
@@ -13095,7 +13103,7 @@ speechSynthesis.getVoices();
                     } else if (D.ref.friendRequestStatus === 'outgoing') {
                         D.outgoingRequest = true;
                     }
-                    this.applyUserDialogLocation();
+                    this.applyUserDialogLocation(true);
                     if (this.$refs.userDialogTabs.currentName === '0') {
                         this.userDialogLastActiveTab = 'Info';
                     } else if (this.$refs.userDialogTabs.currentName === '1') {
@@ -13128,13 +13136,6 @@ speechSynthesis.getVoices();
                     }
                     if (args.cache) {
                         API.getUser(args.params);
-                    }
-                    var L = API.parseLocation(D.ref.location);
-                    if (L.worldId && this.lastLocation.location !== L.tag) {
-                        API.getInstance({
-                            worldId: L.worldId,
-                            instanceId: L.instanceId
-                        });
                     }
                     var inCurrentWorld = false;
                     if (this.lastLocation.playerList.has(D.ref.displayName)) {
@@ -13189,10 +13190,22 @@ speechSynthesis.getVoices();
         this.showUserDialogHistory.add(userId);
     };
 
-    $app.methods.applyUserDialogLocation = function () {
+    $app.methods.applyUserDialogLocation = function (updateInstanceOccupants) {
         var D = this.userDialog;
+        if (!D.visible) {
+            return;
+        }
         var L = API.parseLocation(D.ref.$location.tag);
-        D.$location = L;
+        if (L.tag !== this.lastLocation.location && updateInstanceOccupants) {
+            this.userDialog.instance.occupants = 0;
+            if (this.isRealInstance(L.tag)) {
+                API.getInstance({
+                    worldId: L.worldId,
+                    instanceId: L.instanceId
+                });
+            }
+            D.$location = L;
+        }
         if (L.userId) {
             var ref = API.cachedUsers.get(L.userId);
             if (typeof ref === 'undefined') {
@@ -13277,6 +13290,7 @@ speechSynthesis.getVoices();
             };
         }
         D.instance.friendCount = friendCount;
+        this.updateTimers();
     };
 
     // App: player list
@@ -14148,6 +14162,11 @@ speechSynthesis.getVoices();
         if (L.worldId === '') {
             return;
         }
+        if (L.worldId === L.instanceId) {
+            // very janky fix for removing empty worldId instance
+            L.instanceId = '';
+            L.instanceName = '';
+        }
         D.id = L.worldId;
         D.$location = L;
         D.treeData = [];
@@ -14227,6 +14246,9 @@ speechSynthesis.getVoices();
 
     $app.methods.applyWorldDialogInstances = function () {
         var D = this.worldDialog;
+        if (!D.visible) {
+            return;
+        }
         var instances = {};
         for (var [id, occupants] of D.ref.instances) {
             instances[id] = {
@@ -14350,6 +14372,7 @@ speechSynthesis.getVoices();
             return b.users.length - a.users.length || b.occupants - a.occupants;
         });
         D.rooms = rooms;
+        this.updateTimers();
     };
 
     $app.methods.worldDialogCommand = function (command) {
@@ -18395,7 +18418,7 @@ speechSynthesis.getVoices();
 
     $app.methods.refreshInstancePlayerCount = function (instance) {
         var L = API.parseLocation(instance);
-        if (L.worldId) {
+        if (L.worldId && L.tag !== this.lastLocation.location) {
             API.getInstance({
                 worldId: L.worldId,
                 instanceId: L.instanceId
