@@ -1073,6 +1073,7 @@ speechSynthesis.getVoices();
     });
 
     API.$on('USER', function (args) {
+        $app.updateFriend(args.json.id, args.json.state);
         args.ref = this.applyUser(args.json);
     });
 
@@ -6464,10 +6465,6 @@ speechSynthesis.getVoices();
         $app.updateOnlineFriendCoutner();
     });
 
-    API.$on('USER', function (args) {
-        $app.updateFriend(args.ref.id);
-    });
-
     API.$on('FRIEND:ADD', function (args) {
         $app.addFriend(args.params.userId);
     });
@@ -6722,10 +6719,10 @@ speechSynthesis.getVoices();
                 return;
             }
             this.updateFriendInProgress.set(id, Date.now());
+            var {location, $location_at} = ref;
             // wait 2minutes then check if user came back online
             workerTimers.setTimeout(() => {
                 this.updateFriendInProgress.delete(id);
-                var {location, $location_at} = ref;
                 this.updateFriendDelayedCheck(
                     id,
                     ctx,
