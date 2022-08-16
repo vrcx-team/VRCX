@@ -1560,13 +1560,13 @@ html
                                                 span.extra(v-else)
                                                     timer(:epoch="user.$location_at")
                             .x-friend-list(style="max-height:none")
+                                //- .x-friend-item(v-if="userDialog.id !== API.currentUser.id" style="width:100%;cursor:default")
+                                //-     .detail
+                                //-         span.name Note
+                                //-         span.extra(v-text="userDialog.ref.note")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Note
-                                        span.extra(v-text="userDialog.ref.note")
-                                .x-friend-item(style="width:100%;cursor:default")
-                                    .detail
-                                        span.name Local Note
                                         el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" placeholder="Click to add a note" size="mini" resize="none")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail

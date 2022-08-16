@@ -1384,10 +1384,8 @@ speechSynthesis.getVoices();
             } else {
                 json.location = '';
             }
-            if (json.location && json.location === 'offline') {
-                json.$online_for = API.currentUser.$online_for;
-                json.$offline_for = API.currentUser.$offline_for;
-            }
+            json.$online_for = API.currentUser.$online_for;
+            json.$offline_for = API.currentUser.$offline_for;
         }
         if (typeof json.statusDescription !== 'undefined') {
             json.statusDescription = $app.replaceBioSymbols(
