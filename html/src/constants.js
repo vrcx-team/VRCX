@@ -1,1 +1,1 @@
-export var appVersion = 'VRCX 2022.07.30';
+export var appVersion = 'VRCX 2022.08.16';
