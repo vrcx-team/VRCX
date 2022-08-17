@@ -81,15 +81,18 @@ Function .onInit
     ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString"
     StrCmp $R0 "" done
 
+    ; wait for process to fully quit during upgrade
+    ${If} ${Silent}
+        Sleep 2000
+    ${EndIf}
+
     ; If VRCX is already running, display a warning message and exit
     StrCpy $1 "VRCX.exe"
     nsProcess::_FindProcess "$1"
     Pop $R1
     ${If} $R1 = 0
         MessageBox MB_OK|MB_ICONEXCLAMATION "VRCX is still running. Cannot install this software.$\nPlease close VRCX and try again." /SD IDOK
-        ${IfNot} ${Silent}
-            Abort
-        ${EndIf}
+        Abort
     ${EndIf}
 
     MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "VRCX is already installed. $\n$\nClick `OK` to upgrade the existing installation or `Cancel` to cancel this upgrade." /SD IDOK IDCANCEL cancel
