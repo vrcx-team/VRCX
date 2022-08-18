@@ -90,6 +90,7 @@ namespace VRCX
             }
             else if (m_Client != null)
             {
+                m_Client.ClearPresence();
                 m_Client.Dispose();
                 m_Client = null;
             }
