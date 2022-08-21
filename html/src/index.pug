@@ -1460,7 +1460,7 @@ html
                                                 div(v-for="displayName in userDialog.previousDisplayNames" placement="top")
                                                     span(v-text="displayName")
                                             i.el-icon-caret-bottom
-                                    span(v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px;font-weight:bold")
+                                    span.dialog-title(v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px")
                                     el-popover(placement="top" trigger="click")
                                         span(slot="reference" v-text="userDialog.ref.username" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer")
                                         span(style="display:block;text-align:center;font-family:monospace") {{ userDialog.ref.username | textToHex }}
@@ -1675,7 +1675,7 @@ html
                                         span(slot="label")
                                             span(v-text="list[0]" style="font-weight:bold;font-size:16px")
                                             i.x-user-status(style="margin-left:5px" :class="userFavoriteWorldsStatus(list[1])")
-                                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ list[2].length }}/64
+                                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ list[2].length }}/100
                                         .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
                                             .x-friend-item(v-for="world in list[2]" :key="world.id" @click="showWorldDialog(world.id)" class="x-friend-item-border")
                                                 .avatar
@@ -1722,7 +1722,7 @@ html
                             div(style="flex:1")
                                 div
                                     i.el-icon-s-home(v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id" style="margin-right:5px")
-                                    span(v-text="worldDialog.ref.name" style="font-weight:bold")
+                                    span.dialog-title(v-text="worldDialog.ref.name")
                                 div(style="margin-top:5px")
                                     span.x-link(v-text="worldDialog.ref.authorName" @click="showUserDialog(worldDialog.ref.authorId)" style="color:#909399;font-family:monospace")
                                 div
@@ -1893,7 +1893,7 @@ html
                         div(style="flex:1;display:flex;align-items:center;margin-left:15px")
                             div(style="flex:1")
                                 div
-                                    span(v-text="avatarDialog.ref.name" style="font-weight:bold")
+                                    span.dialog-title(v-text="avatarDialog.ref.name")
                                 div(style="margin-top:5px")
                                     span.x-link(v-text="avatarDialog.ref.authorName" @click="showUserDialog(avatarDialog.ref.authorId)" style="color:#909399;font-family:monospace")
                                 div(style="margin-top:5px")
