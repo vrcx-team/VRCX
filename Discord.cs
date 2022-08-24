@@ -17,7 +17,6 @@ namespace VRCX
         private readonly RichPresence m_Presence;
         private DiscordRpcClient m_Client;
         private Timer m_Timer;
-        private bool m_Active;
         public static string DiscordAppId;
 
         static Discord()
@@ -75,35 +74,33 @@ namespace VRCX
                 }
                 m_Client.Invoke();
             }
+        }
 
-            if (m_Active == true)
-            {
-                if (m_Client == null)
-                {
-                    m_Client = new DiscordRpcClient(DiscordAppId);
-                    if (m_Client.Initialize() == false)
-                    {
-                        m_Client.Dispose();
-                        m_Client = null;
-                    }
-                }
-            }
-            else if (m_Client != null)
+        public void SetActive(bool active)
+        {
+            if (!active && m_Client != null)
             {
                 m_Client.ClearPresence();
                 m_Client.Dispose();
                 m_Client = null;
             }
-        }
 
-        public void SetActive(bool active)
-        {
-            m_Active = active;
+            if (active && m_Client == null)
+            {
+                m_Client = new DiscordRpcClient(DiscordAppId);
+                if (m_Client.Initialize() == false)
+                {
+                    m_Client.Dispose();
+                    m_Client = null;
+                }
+            }
         }
 
         // https://stackoverflow.com/questions/1225052/best-way-to-shorten-utf8-string-based-on-byte-length
         private static string LimitByteLength(string str, int maxBytesLength)
         {
+            if (str == null)
+                return string.Empty;
             var bytesArr = Encoding.UTF8.GetBytes(str);
             var bytesToRemove = 0;
             var lastIndexInString = str.Length - 1;
