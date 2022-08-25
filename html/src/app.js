@@ -4268,13 +4268,13 @@ speechSynthesis.getVoices();
                                 );
                                 API.currentUser.$online_for = '';
                                 API.currentUser.$offline_for = Date.now();
-                                this.setDiscordActive(isGameRunning);
                                 this.autoVRChatCacheManagement();
                                 this.ipcTimeout = 0;
                             }
                             this.lastLocationReset();
                             this.clearNowPlaying();
                             this.updateVRLastLocation();
+                            this.setDiscordActive(isGameRunning);
                         }
                         if (isSteamVRRunning !== this.isSteamVRRunning) {
                             this.isSteamVRRunning = isSteamVRRunning;
@@ -13240,7 +13240,7 @@ speechSynthesis.getVoices();
         if (!D.visible) {
             return;
         }
-        var L = API.parseLocation(D.ref.$location.tag);
+        var L = API.parseLocation(D.$location.tag);
         if (L.tag !== this.lastLocation.location && updateInstanceOccupants) {
             this.userDialog.instance.occupants = 0;
             if (this.isRealInstance(L.tag)) {
