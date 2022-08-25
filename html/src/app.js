@@ -13240,7 +13240,7 @@ speechSynthesis.getVoices();
         if (!D.visible) {
             return;
         }
-        var L = API.parseLocation(D.$location.tag);
+        var L = API.parseLocation(D.ref.$location.tag);
         if (L.tag !== this.lastLocation.location && updateInstanceOccupants) {
             this.userDialog.instance.occupants = 0;
             if (this.isRealInstance(L.tag)) {
