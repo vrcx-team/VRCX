@@ -61,7 +61,17 @@ namespace VRCX
 
         private void Update()
         {
-            if (m_Client != null)
+            if (m_Client == null)
+            {
+                m_Client = new DiscordRpcClient(DiscordAppId);
+                if (m_Client.Initialize() == false)
+                {
+                    m_Client.Dispose();
+                    m_Client = null;
+                }
+            }
+
+            if (m_Client != null && !m_Lock.IsWriteLockHeld)
             {
                 m_Lock.EnterReadLock();
                 try
@@ -76,23 +86,13 @@ namespace VRCX
             }
         }
 
-        public void SetActive(bool active)
+        public void SetInactive()
         {
-            if (!active && m_Client != null)
+            if (m_Client != null)
             {
                 m_Client.ClearPresence();
                 m_Client.Dispose();
                 m_Client = null;
-            }
-
-            if (active && m_Client == null)
-            {
-                m_Client = new DiscordRpcClient(DiscordAppId);
-                if (m_Client.Initialize() == false)
-                {
-                    m_Client.Dispose();
-                    m_Client = null;
-                }
             }
         }
 
@@ -114,15 +114,18 @@ namespace VRCX
 
         public void SetText(string details, string state)
         {
-            m_Lock.EnterWriteLock();
-            try
+            if (m_Client != null && !m_Lock.IsReadLockHeld)
             {
-                m_Presence.Details = LimitByteLength(details, 127);
-                m_Presence.State = LimitByteLength(state, 127);
-            }
-            finally
-            {
-                m_Lock.ExitWriteLock();
+                m_Lock.EnterWriteLock();
+                try
+                {
+                    m_Presence.Details = LimitByteLength(details, 127);
+                    m_Presence.State = LimitByteLength(state, 127);
+                }
+                finally
+                {
+                    m_Lock.ExitWriteLock();
+                }
             }
         }
 

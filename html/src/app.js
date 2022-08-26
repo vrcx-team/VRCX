@@ -4274,7 +4274,7 @@ speechSynthesis.getVoices();
                             this.lastLocationReset();
                             this.clearNowPlaying();
                             this.updateVRLastLocation();
-                            this.setDiscordActive(isGameRunning);
+                            this.nextDiscordUpdate = 0;
                         }
                         if (isSteamVRRunning !== this.isSteamVRRunning) {
                             this.isSteamVRRunning = isSteamVRRunning;
@@ -7881,7 +7881,6 @@ speechSynthesis.getVoices();
         configRepository.setBool('discordJoinButton', this.discordJoinButton);
         configRepository.setBool('discordHideInvite', this.discordHideInvite);
         configRepository.setBool('discordHideImage', this.discordHideImage);
-        this.setDiscordActive(this.isGameRunning);
         this.lastLocation$.tag = '';
         this.updateDiscord();
     };
@@ -10003,6 +10002,7 @@ speechSynthesis.getVoices();
             !this.isGameRunning ||
             (!currentLocation && !this.lastLocation$.tag)
         ) {
+            Discord.SetInactive();
             return;
         }
         var L = this.lastLocation$;
@@ -10169,15 +10169,6 @@ speechSynthesis.getVoices();
             Discord.SetText(L.worldName, L.accessName);
         } else {
             Discord.SetText(L.worldName, '');
-        }
-    };
-
-    $app.methods.setDiscordActive = function (isGameRunning) {
-        if (this.discordActive && isGameRunning) {
-            Discord.SetActive(true);
-        } else {
-            Discord.SetText('', '');
-            Discord.SetActive(false);
         }
     };
 
