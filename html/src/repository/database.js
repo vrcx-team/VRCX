@@ -1490,6 +1490,49 @@ class Database {
         );
         sqliteService.executeNonQuery('DELETE FROM cache_avatar');
     }
+
+    async fixGameLogTraveling() {
+        var travelingList = [];
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                rowId: dbRow[0],
+                created_at: dbRow[1],
+                type: dbRow[2],
+                displayName: dbRow[3],
+                location: dbRow[4],
+                userId: dbRow[5],
+                time: dbRow[6]
+            };
+            travelingList.unshift(row);
+        }, 'SELECT * FROM gamelog_join_leave WHERE type = "OnPlayerLeft" AND location = "traveling"');
+        travelingList.forEach(async (travelingEntry) => {
+            await sqliteService.execute(
+                (dbRow) => {
+                    var onPlayingJoin = {
+                        rowId: dbRow[0],
+                        created_at: dbRow[1],
+                        type: dbRow[2],
+                        displayName: dbRow[3],
+                        location: dbRow[4],
+                        userId: dbRow[5],
+                        time: dbRow[6]
+                    };
+                    sqliteService.executeNonQuery(
+                        `UPDATE gamelog_join_leave SET location = @location WHERE id = @rowId`,
+                        {
+                            '@rowId': travelingEntry.rowId,
+                            '@location': onPlayingJoin.location
+                        }
+                    );
+                },
+                'SELECT * FROM gamelog_join_leave WHERE type = "OnPlayerJoined" AND display_name = @displayName AND created_at <= @created_at ORDER BY created_at DESC LIMIT 1',
+                {
+                    '@displayName': travelingEntry.displayName,
+                    '@created_at': travelingEntry.created_at
+                }
+            );
+        });
+    }
 }
 
 var self = new Database();
