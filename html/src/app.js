@@ -6632,6 +6632,11 @@ speechSynthesis.getVoices();
         }
         var ref = API.cachedUsers.get(id);
         var isVIP = API.cachedFavoritesByObjectId.has(id);
+        var location = '';
+        var $location_at = '';
+        if (typeof ref !== 'undefined') {
+            var {location, $location_at} = ref;
+        }
         if (typeof stateInput === 'undefined' || ctx.state === stateInput) {
             // this is should be: undefined -> user
             if (ctx.ref !== ref) {
@@ -6724,7 +6729,6 @@ speechSynthesis.getVoices();
                 return;
             }
             this.updateFriendInProgress.set(id, Date.now());
-            var {location, $location_at} = ref;
             // wait 2minutes then check if user came back online
             workerTimers.setTimeout(() => {
                 this.updateFriendInProgress.delete(id);
@@ -6738,7 +6742,6 @@ speechSynthesis.getVoices();
                 );
             }, 110000);
         } else {
-            var {location, $location_at} = ref;
             this.updateFriendDelayedCheck(
                 id,
                 ctx,
@@ -8105,16 +8108,17 @@ speechSynthesis.getVoices();
         switch (gameLog.type) {
             case 'location-destination':
                 if (this.isGameRunning) {
+                    // needs to be added before OnPlayerLeft entries from LocationReset
+                    this.addGameLog({
+                        created_at: gameLog.dt,
+                        type: 'LocationDestination',
+                        location: gameLog.location
+                    });
                     this.lastLocationReset();
                     this.lastLocation.location = 'traveling';
                     this.lastLocationDestination = gameLog.location;
                     this.lastLocationDestinationTime = Date.parse(gameLog.dt);
                     this.updateCurrentUserLocation();
-                    var entry = {
-                        created_at: gameLog.dt,
-                        type: 'LocationDestination',
-                        location: gameLog.location
-                    };
                     this.clearNowPlaying();
                     this.updateCurrentInstanceWorld();
                     this.applyUserDialogLocation();
