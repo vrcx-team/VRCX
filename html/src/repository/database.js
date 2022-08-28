@@ -520,6 +520,38 @@ class Database {
         );
     }
 
+    addGamelogJoinLeaveBulk(inputData) {
+        if (inputData.length === 0) {
+            return;
+        }
+        var sqlValues = '';
+        var items = [
+            'created_at',
+            'type',
+            'displayName',
+            'location',
+            'userId',
+            'time'
+        ];
+        for (var line of inputData) {
+            var field = {};
+            for (var item of items) {
+                if (typeof line[item] === 'string') {
+                    field[item] = line[item].replace(/'/g, "''");
+                } else if (typeof line[item] === 'number') {
+                    field[item] = line[item];
+                } else {
+                    field[item] = '';
+                }
+            }
+            sqlValues += `('${field.created_at}', '${field.type}', '${field.displayName}', '${field.location}', '${field.userId}', '${field.time}'), `;
+        }
+        sqlValues = sqlValues.slice(0, -2);
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO gamelog_join_leave (created_at, type, display_name, location, user_id, time) VALUES ${sqlValues}`
+        );
+    }
+
     addGamelogPortalSpawnToDatabase(entry) {
         sqliteService.executeNonQuery(
             `INSERT OR IGNORE INTO gamelog_portal_spawn (created_at, display_name, location, user_id, instance_id, world_name) VALUES (@created_at, @display_name, @location, @user_id, @instance_id, @world_name)`,
