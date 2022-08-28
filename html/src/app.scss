@@ -340,7 +340,8 @@ img.friends-list-avatar {
 .x-friend-item > .avatar.online::after,
 .x-friend-item > .avatar.joinme::after,
 .x-friend-item > .avatar.askme::after,
-.x-friend-item > .avatar.busy::after {
+.x-friend-item > .avatar.busy::after,
+.x-friend-item > .avatar.offline::after {
     position: absolute;
     right: 0;
     bottom: 0;
@@ -370,6 +371,10 @@ img.friends-list-avatar {
 
 .x-friend-item > .avatar.busy::after {
     background: #f56c6c;
+}
+
+.x-friend-item > .avatar.offline::after {
+    background: #909399;
 }
 
 .x-friend-item.offline > .avatar::after {
