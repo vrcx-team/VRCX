@@ -792,9 +792,9 @@ speechSynthesis.getVoices();
 
     Vue.component('location', {
         template:
-            "<span @click=\"showWorldDialog\" :class=\"{ 'x-link': link && this.location !== 'private' && this.location !== 'offline'}\">" +
+            "<span @click=\"showWorldDialog\" :class=\"{ 'x-link': link && this.location !== 'private' && this.location !== 'traveling' && this.location !== 'offline'}\">" +
             '<i v-if="isTraveling" class="el-icon el-icon-loading" style="display:inline-block;margin-right:5px"></i>' +
-            '{{ text }}<slot></slot><span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
+            '<span style="margin-right:5px">{{ text }}</span><span class="flags" :class="region" style="display:inline-block"></span>' +
             '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
         props: {
             location: String,
@@ -6953,6 +6953,19 @@ speechSynthesis.getVoices();
         return 0;
     };
 
+    // ascending
+    var compareByDisplayName = function (a, b) {
+        var A = String(a.displayName).toUpperCase();
+        var B = String(b.displayName).toUpperCase();
+        if (A < B) {
+            return -1;
+        }
+        if (A > B) {
+            return 1;
+        }
+        return 0;
+    };
+
     // descending
     var compareByUpdatedAt = function (a, b) {
         var A = String(a.updated_at).toUpperCase();
@@ -11690,6 +11703,10 @@ speechSynthesis.getVoices();
         );
         configRepository.setBool('VRCX_sortFavorites', this.sortFavorites);
         configRepository.setBool(
+            'VRCX_instanceUsersSortAlphabetical',
+            this.instanceUsersSortAlphabetical
+        );
+        configRepository.setBool(
             'VRCX_randomUserColours',
             this.randomUserColours
         );
@@ -11795,6 +11812,9 @@ speechSynthesis.getVoices();
     // );
     $app.data.gameLogDisabled = configRepository.getBool(
         'VRCX_gameLogDisabled'
+    );
+    $app.data.instanceUsersSortAlphabetical = configRepository.getBool(
+        'VRCX_instanceUsersSortAlphabetical'
     );
     $app.methods.saveEventOverlay = function () {
         configRepository.setBool(
@@ -11922,6 +11942,13 @@ speechSynthesis.getVoices();
         configRepository.setBool(
             'VRCX_PhotonEventOverlayJoinLeave',
             $app.data.photonEventOverlayJoinLeave
+        );
+    }
+    if (!configRepository.getBool('VRCX_instanceUsersSortAlphabetical')) {
+        $app.data.instanceUsersSortAlphabetical = false;
+        configRepository.setBool(
+            'VRCX_instanceUsersSortAlphabetical',
+            $app.data.instanceUsersSortAlphabetical
         );
     }
     if (!configRepository.getString('sharedFeedFilters')) {
@@ -13348,7 +13375,11 @@ speechSynthesis.getVoices();
             }
             friendCount = users.length;
         }
-        users.sort(compareByLocationAt);
+        if (this.instanceUsersSortAlphabetical) {
+            users.sort(compareByDisplayName);
+        } else {
+            users.sort(compareByLocationAt);
+        }
         D.users = users;
         if (
             L.worldId &&
@@ -14430,7 +14461,11 @@ speechSynthesis.getVoices();
             if (instance.friendCount === 0) {
                 instance.friendCount = instance.users.length;
             }
-            instance.users.sort(compareByLocationAt);
+            if (this.instanceUsersSortAlphabetical) {
+                instance.users.sort(compareByDisplayName);
+            } else {
+                instance.users.sort(compareByLocationAt);
+            }
             rooms.push(instance);
         }
         // reuse instance occupants from getInstance
@@ -19780,37 +19815,25 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.addAvatarToHistory = function (avatarId) {
-        var historyArray = $app.avatarHistoryArray;
-        for (var i = 0; i < historyArray.length; ++i) {
-            if (historyArray[i].id === avatarId) {
-                historyArray.splice(i, 1);
+        API.getAvatar({avatarId}).then((args) => {
+            var {ref} = args;
+            if (ref.authorId === API.currentUser.id) {
+                return;
             }
-        }
-        this.avatarHistory.delete(avatarId);
-        this.avatarHistory.add(avatarId);
-        database.addAvatarToHistory(avatarId);
-        API.getAvatar({avatarId});
-    };
-
-    API.$on('AVATAR', function (args) {
-        var ref = args.json;
-        // if in history add/update cache
-        if ($app.avatarHistory.has(ref.id)) {
-            database.addAvatarToCache(ref);
-
-            // only add to array if not in array
-            var inArray = false;
-            var historyArray = $app.avatarHistoryArray;
+            var historyArray = this.avatarHistoryArray;
             for (var i = 0; i < historyArray.length; ++i) {
                 if (historyArray[i].id === ref.id) {
-                    inArray = true;
+                    historyArray.splice(i, 1);
                 }
             }
-            if (!inArray) {
-                $app.avatarHistoryArray.unshift(ref);
-            }
-        }
-    });
+            this.avatarHistoryArray.unshift(ref);
+            database.addAvatarToCache(ref);
+
+            this.avatarHistory.delete(ref.id);
+            this.avatarHistory.add(ref.id);
+            database.addAvatarToHistory(ref.id);
+        });
+    };
 
     $app.methods.promptClearAvatarHistory = function () {
         this.$confirm('Continue? Clear Avatar History', 'Confirm', {

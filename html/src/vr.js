@@ -79,7 +79,7 @@ Vue.component('marquee-text', MarqueeText);
 
     Vue.component('location', {
         template:
-            '<span>{{ text }}<slot></slot><span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span><i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
+            '<span><span style="margin-right:5px">{{ text }}</span><span class="flags" :class="region" style="display:inline-block;margin-bottom:2px"></span><i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
         props: {
             location: String,
             hint: {
