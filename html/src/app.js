@@ -1262,6 +1262,14 @@ speechSynthesis.getVoices();
             Object.assign(ref, json);
             if (ref.homeLocation !== ref.$homeLocation.tag) {
                 ref.$homeLocation = this.parseLocation(ref.homeLocation);
+                // apply home location name to user dialog
+                if ($app.userDialog.visible && $app.userDialog.id === ref.id) {
+                    API.getCachedWorld({
+                        worldId: API.currentUser.homeLocation
+                    }).then((args) => {
+                        $app.userDialog.$homeLocationName = args.ref.name;
+                    });
+                }
             }
             ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
@@ -12908,6 +12916,7 @@ speechSynthesis.getVoices();
         isFavorite: false,
 
         $location: {},
+        $homeLocationName: '',
         users: [],
         instance: {},
 
@@ -13160,6 +13169,13 @@ speechSynthesis.getVoices();
         D.previousDisplayNames = [];
         D.dateFriended = '';
         D.unFriended = false;
+        if (userId === API.currentUser.id) {
+            API.getCachedWorld({
+                worldId: API.currentUser.homeLocation
+            }).then((args) => {
+                D.$homeLocationName = args.ref.name;
+            });
+        }
         API.getCachedUser({
             userId
         })

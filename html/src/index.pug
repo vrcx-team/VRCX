@@ -1657,7 +1657,7 @@ html
                                     .detail
                                         span.name Home Location
                                         span.extra
-                                            location(:location="API.currentUser.homeLocation" :link="false")
+                                            span(v-text="userDialog.$homeLocationName")
                                             el-button(@click.stop="resetHome()" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                         el-tab-pane(label="Worlds")
                             el-button(type="default" :loading="userDialog.isWorldsLoading" @click="refreshUserDialogWorlds()" size="mini" icon="el-icon-refresh" circle)
