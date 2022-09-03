@@ -228,7 +228,6 @@ namespace VRCX
                                     ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) == true ||
                                     ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) == true ||
                                     ParseLogWorldVRCX(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogPhotonId(fileInfo, logContext, line, offset) == true ||
                                     ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) == true)
                                 {
                                     continue;

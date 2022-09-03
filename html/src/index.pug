@@ -139,7 +139,7 @@ html
                             el-table-column(label="Timer" width="80" prop="timer" sortable)
                                 template(v-once #default="scope")
                                     timer(:epoch="scope.row.timer")
-                            el-table-column(label="Photon Id" width="110" prop="photonId" sortable)
+                            el-table-column(v-if="photonLoggingEnabled" label="Photon Id" width="110" prop="photonId" sortable)
                                 template(v-once #default="scope")
                                     span(v-text="scope.row.photonId")
                             el-table-column(label="Icons" prop="isMaster" width="100")
@@ -1363,7 +1363,7 @@ html
                 .x-friend-list(style="padding-bottom:10px")
                     .x-friend-group
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroupMe }")
-                        span.x-link(@click="isFriendsGroupMe = !isFriendsGroupMe" style="margin-left:5px") ME
+                        span.x-link(@click="isFriendsGroupMe = !isFriendsGroupMe" style="margin-left:5px") ME&horbar;{{ onlineFriendCount }}/{{ friends.size }}
                     div(v-show="isFriendsGroupMe")
                         .x-friend-item(:key="API.currentUser.id" @click="showUserDialog(API.currentUser.id)")
                             .avatar(:class="userStatusClass(API.currentUser)")
@@ -1815,7 +1815,11 @@ html
                                             span.name World ID
                                             span.extra {{ worldDialog.id }}
                                                 el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                                                    el-button(@click="copyWorld(worldDialog.id)" size="mini" icon="el-icon-s-order" style="margin-left:5px" circle)
+                                                    el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
+                                                        el-button(type="default" icon="el-icon-s-order" size="mini" circle)
+                                                        el-dropdown-menu(#default="dropdown")
+                                                            el-dropdown-item(@click.native="copyWorldId(worldDialog.id)") Copy ID
+                                                            el-dropdown-item(@click.native="copyWorldUrl(worldDialog.id)") Copy URL
                                     .x-friend-item(v-if="worldDialog.ref.previewYoutubeId" style="width:350px" @click="openExternalLink(`https://www.youtube.com/watch?v=${worldDialog.ref.previewYoutubeId}`)")
                                         .detail
                                             span.name YouTube Preview

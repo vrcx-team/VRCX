@@ -792,7 +792,7 @@ speechSynthesis.getVoices();
 
     Vue.component('location', {
         template:
-            "<span @click=\"showWorldDialog\" :class=\"{ 'x-link': link && this.location !== 'private' && this.location !== 'traveling' && this.location !== 'offline'}\">" +
+            "<span @click=\"showWorldDialog\" :class=\"{ 'x-link': link && this.location !== 'private' && this.location !== 'offline'}\">" +
             '<i v-if="isTraveling" class="el-icon el-icon-loading" style="display:inline-block;margin-right:5px"></i>' +
             '<span style="margin-right:5px">{{ text }}</span><span class="flags" :class="region" style="display:inline-block"></span>' +
             '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
@@ -5795,7 +5795,9 @@ speechSynthesis.getVoices();
         for (var userId of friends) {
             var ref = this.friends.get(userId);
             var name = (typeof ref !== 'undefined' && ref.name) || '';
-            var memo = (typeof ref !== 'undefined' && ref.memo) || '';
+            var memo =
+                (typeof ref !== 'undefined' && ref.memo.replace(/\n/g, ' ')) ||
+                '';
             lines.push(`${_(userId)},${_(name)},${_(memo)}`);
         }
         this.exportFriendsListContent = lines.join('\n');
@@ -6837,6 +6839,8 @@ speechSynthesis.getVoices();
                 database.addOnlineOfflineToDatabase(feed);
             } else if (newState === 'online') {
                 if (ctx.ref !== 'undefined') {
+                    ctx.ref.$previousLocation = '';
+                    ctx.ref.$travelingToTime = Date.now();
                     ctx.ref.$location_at = Date.now();
                     ctx.ref.$online_for = Date.now();
                     ctx.ref.$offline_for = '';
@@ -7622,21 +7626,29 @@ speechSynthesis.getVoices();
                 previousLocation = ref.$previousLocation;
                 var travelTime = Date.now() - ref.$travelingToTime;
                 time -= travelTime;
+                if (time < 0) {
+                    time = 0;
+                }
             }
-            var worldName = await $app.getWorldName(props.location[0]);
-            var feed = {
-                created_at: new Date().toJSON(),
-                type: 'GPS',
-                userId: ref.id,
-                displayName: ref.displayName,
-                location: props.location[0],
-                worldName,
-                previousLocation,
-                time
-            };
-            $app.addFeed(feed);
-            database.addGPSToDatabase(feed);
-            $app.updateFriendGPS(ref.id);
+            if (ref.$previousLocation === props.location[0]) {
+                // location traveled to is the same
+                ref.$location_at = Date.now() - props.location[2];
+            } else {
+                var worldName = await $app.getWorldName(props.location[0]);
+                var feed = {
+                    created_at: new Date().toJSON(),
+                    type: 'GPS',
+                    userId: ref.id,
+                    displayName: ref.displayName,
+                    location: props.location[0],
+                    worldName,
+                    previousLocation,
+                    time
+                };
+                $app.addFeed(feed);
+                database.addGPSToDatabase(feed);
+                $app.updateFriendGPS(ref.id);
+            }
         }
         if (
             props.location &&
@@ -13442,6 +13454,24 @@ speechSynthesis.getVoices();
                     );
                 }
             }
+            // add/remove friends from lastLocation.friendList
+            if (
+                !$app.lastLocation.friendList.has(ref.displayName) &&
+                $app.friends.has(ref.id)
+            ) {
+                var userMap = {
+                    displayName: ref.displayName,
+                    userId: ref.id,
+                    joinTime: playerListRef.joinTime
+                };
+                $app.lastLocation.friendList.set(ref.displayName, userMap);
+            }
+            if (
+                $app.lastLocation.friendList.has(ref.displayName) &&
+                !$app.friends.has(ref.id)
+            ) {
+                $app.lastLocation.friendList.delete(ref.displayName);
+            }
             $app.photonLobby.forEach((ref1, id) => {
                 if (
                     typeof ref1 !== 'undefined' &&
@@ -15734,7 +15764,15 @@ speechSynthesis.getVoices();
         this.copyToClipboard(`https://vrchat.com/home/avatar/${avatarId}`);
     };
 
-    $app.methods.copyWorld = function (worldId) {
+    $app.methods.copyWorldId = function (worldId) {
+        this.$message({
+            message: 'World ID copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(worldId);
+    };
+
+    $app.methods.copyWorldUrl = function (worldId) {
         this.$message({
             message: 'World URL copied to clipboard',
             type: 'success'
@@ -16834,9 +16872,6 @@ speechSynthesis.getVoices();
             this.friendsListLoadingProgress = `${i}/${length}`;
             await API.getUser({
                 userId
-            });
-            await new Promise((resolve) => {
-                setTimeout(resolve, 1000);
             });
         }
         this.friendsListLoadingProgress = '';
