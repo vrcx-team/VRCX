@@ -1565,6 +1565,67 @@ class Database {
             );
         });
     }
+
+    async fixNegativeGPS() {
+        var gpsTables = [];
+        await sqliteService.execute((dbRow) => {
+            gpsTables.push(dbRow[0]);
+        }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_gps'`);
+        gpsTables.forEach((tableName) => {
+            sqliteService.executeNonQuery(
+                `UPDATE ${tableName} SET time = 0 WHERE time < 0`
+            );
+        });
+    }
+
+    async getGameLogInstancesTime() {
+        var instances = new Map();
+        await sqliteService.execute((dbRow) => {
+            var time = 0;
+            var location = dbRow[0];
+            if (dbRow[1]) {
+                time = dbRow[1];
+            }
+            var ref = instances.get(location);
+            if (typeof ref !== 'undefined') {
+                time += ref;
+            }
+            instances.set(location, time);
+        }, 'SELECT location, time FROM gamelog_location');
+        return instances;
+    }
+
+    async getBrokenLeaveEntries() {
+        var instances = await this.getGameLogInstancesTime();
+        var badEntries = [];
+        await sqliteService.execute((dbRow) => {
+            if (typeof dbRow[1] === 'number') {
+                var ref = instances.get(dbRow[0]);
+                if (typeof ref !== 'undefined' && dbRow[1] > ref) {
+                    badEntries.push(dbRow[2]);
+                }
+            }
+        }, `SELECT location, time, id FROM gamelog_join_leave WHERE type = 'OnPlayerLeft' AND time > 0`);
+        return badEntries;
+    }
+
+    async fixBrokenLeaveEntries() {
+        var badEntries = await this.getBrokenLeaveEntries();
+        var badEntriesList = '';
+        var count = badEntries.length;
+        badEntries.forEach((entry) => {
+            count--;
+            if (count === 0) {
+                badEntriesList = badEntriesList.concat(entry);
+            } else {
+                badEntriesList = badEntriesList.concat(`${entry}, `);
+            }
+        });
+
+        sqliteService.executeNonQuery(
+            `UPDATE gamelog_join_leave SET time = 0 WHERE id IN (${badEntriesList})`
+        );
+    }
 }
 
 var self = new Database();

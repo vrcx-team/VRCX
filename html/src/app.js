@@ -1458,12 +1458,9 @@ speechSynthesis.getVoices();
                 //
                 ...json
             };
-            if (
-                !json.isFriend &&
-                $app.lastLocation.playerList.has(json.displayName)
-            ) {
+            if ($app.lastLocation.playerList.has(json.displayName)) {
+                // update $location_at from instance join time
                 var player = $app.lastLocation.playerList.get(json.displayName);
-                ref.location = 'offline';
                 ref.$location_at = player.joinTime;
                 ref.$online_for = player.joinTime;
             }
@@ -7512,7 +7509,12 @@ speechSynthesis.getVoices();
         if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
             await $app.getFriendLog();
         } else {
-            await $app.initFriendLog(args.json.id);
+            try {
+                await $app.initFriendLog(args.json.id);
+            } catch (err) {
+                this.logout();
+                throw err;
+            }
         }
         $app.getAllMemos();
         if ($app.randomUserColours) {
@@ -8206,27 +8208,36 @@ speechSynthesis.getVoices();
                 database.addGamelogLocationToDatabase(entry);
                 break;
             case 'player-joined':
+                var joinTime = Date.parse(gameLog.dt);
                 var userMap = {
                     displayName: gameLog.userDisplayName,
                     userId,
-                    joinTime: Date.parse(gameLog.dt)
+                    joinTime
                 };
                 this.lastLocation.playerList.set(
                     gameLog.userDisplayName,
                     userMap
                 );
                 if (userId) {
-                    if (this.friends.has(userId)) {
+                    var ref = API.cachedUsers.get(userId);
+                    if (userId === API.currentUser.id) {
+                        // skip
+                    } else if (this.friends.has(userId)) {
                         this.lastLocation.friendList.set(
                             gameLog.userDisplayName,
                             userMap
                         );
-                    } else {
-                        var ref = API.cachedUsers.get(userId);
-                        if (typeof ref !== 'undefined') {
-                            var joinTime = Date.parse(gameLog.dt);
+                        if (
+                            ref.location !== this.lastLocation.location &&
+                            ref.travelingToLocation !==
+                                this.lastLocation.location
+                        ) {
+                            // fix $location_at with private
                             ref.$location_at = joinTime;
                         }
+                    } else if (typeof ref !== 'undefined') {
+                        // set $location_at to join time if user isn't a friend
+                        ref.$location_at = joinTime;
                     }
                 }
                 this.updateVRLastLocation();
@@ -10980,8 +10991,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.getFriendLog = async function () {
-        await database.cleanLegendFromFriendLog(); // fix database spam crap
-        await database.fixGameLogTraveling(); // fix past bug with incorrect gameLog locations
+        await this.updateDatabaseVersion();
         var friendLogCurrentArray = await database.getFriendLogCurrent();
         for (var friend of friendLogCurrentArray) {
             this.friendLog.set(friend.userId, friend);
@@ -13572,19 +13582,6 @@ speechSynthesis.getVoices();
                 if (addUser) {
                     var ref = API.cachedUsers.get(player.userId);
                     if (typeof ref !== 'undefined') {
-                        if (
-                            !ref.isFriend ||
-                            ref.location !== this.lastLocation.location
-                        ) {
-                            // fix $location_at
-                            var {joinTime} = this.lastLocation.playerList.get(
-                                ref.displayName
-                            );
-                            if (!joinTime) {
-                                joinTime = Date.now();
-                            }
-                            ref.$location_at = joinTime;
-                        }
                         pushUser(ref);
                     } else {
                         var {joinTime} = this.lastLocation.playerList.get(
@@ -19903,6 +19900,22 @@ speechSynthesis.getVoices();
         this.avatarHistory = new Set();
         this.avatarHistoryArray = [];
         database.clearAvatarHistory();
+    };
+
+    $app.data.databaseVersion = configRepository.getInt('VRCX_databaseVersion');
+
+    $app.methods.updateDatabaseVersion = async function () {
+        var databaseVersion = 1;
+        if (this.databaseVersion !== databaseVersion) {
+            console.log('Updating database...');
+            await database.cleanLegendFromFriendLog(); // fix friendLog spammed with crap
+            await database.fixGameLogTraveling(); // fix bug with gameLog location being set as traveling
+            await database.fixNegativeGPS(); // fix GPS being a negative value due to VRCX bug with traveling
+            await database.fixBrokenLeaveEntries(); // fix user instance timer being higher than current user location timer
+            this.databaseVersion = databaseVersion;
+            configRepository.setInt('VRCX_databaseVersion', databaseVersion);
+            console.log('Database update complete.');
+        }
     };
 
     $app = new Vue($app);

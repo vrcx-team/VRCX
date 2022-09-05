@@ -1361,9 +1361,11 @@ html
                     el-tooltip(placement="bottom" content="Refresh friends" :disabled="hideTooltips")
                         el-button(type="default" @click="API.closeWebSocket(); API.getCurrentUser(); API.refreshFriends()" :loading="API.isRefreshFriendsLoading" size="mini" icon="el-icon-refresh" circle style="margin-right:10px")
                 .x-friend-list(style="padding-bottom:10px")
-                    .x-friend-group
+                    .x-friend-group(style="padding:5px 0 0")
+                        span FRIENDS&horbar;{{ onlineFriendCount }}/{{ friends.size }}
+                    .x-friend-group(style="padding:10px 0 5px")
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroupMe }")
-                        span.x-link(@click="isFriendsGroupMe = !isFriendsGroupMe" style="margin-left:5px") ME&horbar;{{ onlineFriendCount }}/{{ friends.size }}
+                        span.x-link(@click="isFriendsGroupMe = !isFriendsGroupMe" style="margin-left:5px") ME
                     div(v-show="isFriendsGroupMe")
                         .x-friend-item(:key="API.currentUser.id" @click="showUserDialog(API.currentUser.id)")
                             .avatar(:class="userStatusClass(API.currentUser)")
@@ -2819,7 +2821,7 @@ html
                     br
                     el-button-group(style="padding-bottom:10px;padding-top:10px")
                         el-button(type="default" size="small" @click="displayPreviousImages('Avatar', 'Change')" icon="el-icon-refresh") Refresh
-                        el-button(type="default" size="small" @click="uploadAvatarImage" icon="el-icon-upload2") Upload Image (1200x900)
+                        el-button(type="default" size="small" @click="uploadAvatarImage" icon="el-icon-upload2") Upload Image
                         //- el-button(type="default" size="small" @click="deleteAvatarImage" icon="el-icon-delete") Delete Latest Image
                     br
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
@@ -2834,7 +2836,7 @@ html
                     br
                     el-button-group(style="padding-bottom:10px;padding-top:10px")
                         el-button(type="default" size="small" @click="displayPreviousImages('World', 'Change')" icon="el-icon-refresh") Refresh
-                        el-button(type="default" size="small" @click="uploadWorldImage" icon="el-icon-upload2") Upload Image (1200x900)
+                        el-button(type="default" size="small" @click="uploadWorldImage" icon="el-icon-upload2") Upload Image
                         //- el-button(type="default" size="small" @click="deleteWorldImage" icon="el-icon-delete") Delete Latest Image
                     br
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
