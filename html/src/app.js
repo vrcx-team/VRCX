@@ -1073,7 +1073,7 @@ speechSynthesis.getVoices();
     });
 
     API.$on('USER', function (args) {
-        $app.updateFriend(args.json.id, args.json.state);
+        $app.queueUpdateFriend({id: args.json.id, state: args.json.state});
         args.ref = this.applyUser(args.json);
     });
 
@@ -6486,15 +6486,18 @@ speechSynthesis.getVoices();
     });
 
     API.$on('FRIEND:STATE', function (args) {
-        $app.updateFriend(args.params.userId, args.json.state);
+        $app.queueUpdateFriend({
+            id: args.params.userId,
+            state: args.json.state
+        });
     });
 
     API.$on('FAVORITE', function (args) {
-        $app.updateFriend(args.ref.favoriteId);
+        $app.queueUpdateFriend({id: args.ref.favoriteId});
     });
 
     API.$on('FAVORITE:@DELETE', function (args) {
-        $app.updateFriend(args.ref.favoriteId);
+        $app.queueUpdateFriend({id: args.ref.favoriteId});
     });
 
     API.$on('LOGIN', function () {
@@ -6518,7 +6521,7 @@ speechSynthesis.getVoices();
         }
         for (var [id, state] of map) {
             if (this.friends.has(id)) {
-                this.updateFriend(id, state, origin);
+                this.queueUpdateFriend({id, state, origin});
             } else {
                 this.addFriend(id, state);
             }
@@ -6610,9 +6613,33 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.data.updateFriendQueue = [];
+    $app.data.updateFriendTimer = null;
+
+    $app.methods.queueUpdateFriend = function (ctx) {
+        this.updateFriendQueue.push(ctx);
+        if (this.updateFriendTimer !== null) {
+            return;
+        }
+        this.updateFriendTimer = workerTimers.setTimeout(() => {
+            var queue = [...this.updateFriendQueue];
+            this.updateFriendQueue = [];
+            this.updateFriendTimer = null;
+            for (var i = 0; i < queue.length; ++i) {
+                try {
+                    this.updateFriend(queue[i]);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        }, 5);
+    };
+
     $app.data.updateFriendInProgress = new Map();
 
-    $app.methods.updateFriend = function (id, stateInput, origin) {
+    $app.methods.updateFriend = function (ctx) {
+        var {id, state, origin} = ctx;
+        var stateInput = state;
         var ctx = this.friends.get(id);
         if (typeof ctx === 'undefined') {
             return;
