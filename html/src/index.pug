@@ -136,7 +136,7 @@ html
                                         el-popover(placement="right" height="500px" trigger="hover")
                                             img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row.ref)")
                                             img.friends-list-avatar(v-lazy="userImageFull(scope.row.ref)" style="height:500px;cursor:pointer" @click="openExternalLink(userImageFull(scope.row.ref))")
-                            el-table-column(label="Timer" width="80" prop="timer" sortable)
+                            el-table-column(label="Timer" width="90" prop="timer" sortable)
                                 template(v-once #default="scope")
                                     timer(:epoch="scope.row.timer")
                             el-table-column(v-if="photonLoggingEnabled" label="Photon Id" width="110" prop="photonId" sortable)
