@@ -1543,7 +1543,7 @@ html
                                             el-tooltip(placement="top" content="Launch/Invite" :disabled="hideTooltips")
                                                 launch(:location="userDialog.$location.tag" style="margin-left:5px")
                                             el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
-                                                invite-yourself(:location="userDialog.$location.tag" style="margin-left:5px")
+                                                invite-yourself(:locaTion="userDialog.$location.tag" :shortname="userDialog.$location.shortName" style="margin-left:5px")
                                             el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
                                                 el-button(v-if="userDialog.$location.tag !== lastLocation.location" @click="refreshInstancePlayerCount(userDialog.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                             span(v-if="userDialog.instance.occupants" style="margin-left:5px") {{ userDialog.instance.occupants }}  #[template(v-if="userDialog.instance.friendCount > 0") ({{ userDialog.instance.friendCount }})]
@@ -1786,7 +1786,7 @@ html
                                         span.flags(v-else class="us" style="display:inline-block;margin-left:5px")
                                         i.el-icon-lock(v-if="room.$location.strict" style="display:inline-block;margin-left:5px")
                                     el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
-                                        invite-yourself(:location="room.$location.tag" style="margin-left:5px")
+                                        invite-yourself(:location="room.$location.tag" :shortname="room.$location.shortName" style="margin-left:5px")
                                     el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
                                         el-button(v-if="room.$location.tag !== lastLocation.location" @click="refreshInstancePlayerCount(room.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                     span(v-if="room.occupants" style="margin-left:5px") {{ room.occupants }}  #[template(v-if="room.friendCount > 0") ({{ room.friendCount }})]
@@ -2138,11 +2138,11 @@ html
                                             span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
                     el-form-item(label="Location")
-                        el-input(v-model="newInstanceDialog.location" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+                        el-input(v-model="newInstanceDialog.location" size="mini" readonly)
                     el-form-item(label="URL")
                         el-input(v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                 template(#footer)
-                    el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.url)") Copy URL
+                    el-button(size="small" @click="copyInstanceUrlAndUpdateNewInstanceDialog(newInstanceDialog.url)") Copy URL
                     el-button(size="small" @click="selfInvite(newInstanceDialog.location)") Self Invite
                     el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)" :disabled="(newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') && newInstanceDialog.userId !== API.currentUser.id") Invite
                     el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location)") Launch
