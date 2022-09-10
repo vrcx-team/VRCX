@@ -208,23 +208,6 @@ speechSynthesis.getVoices();
     $appDarkStyle.href = `app.dark.css?_=${Date.now()}`;
     document.head.appendChild($appDarkStyle);
 
-    var getLaunchURL = function (instance) {
-        var L = instance;
-        if (L.instanceId) {
-            if (L.shortName.length > 0 && L.userId != null) {
-                return `https://vrchat.com/home/launch?worldId=${
-                    encodeURIComponent(L.worldId)
-                }&instanceId=${encodeURIComponent(L.instanceId)}&shortName=${encodeURIComponent(L.shortName)}`;
-            }
-            return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-                L.worldId
-            )}&instanceId=${encodeURIComponent(L.instanceId)}`;
-        }
-        return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-            L.worldId
-        )}`;
-    };
-
     //
     // Languages
     //
@@ -692,10 +675,12 @@ speechSynthesis.getVoices();
         } else if (_tag.startsWith('local') === false) {
             var sep = _tag.indexOf(':');
             // technically not part of instance id, but might be there when coping id from url so why not support it
-            var shortNameQualifier = "&shortName="
-            var shortNameIndex = _tag.indexOf(shortNameQualifier)
+            var shortNameQualifier = '&shortName=';
+            var shortNameIndex = _tag.indexOf(shortNameQualifier);
             if (shortNameIndex >= 0) {
-                ctx.shortName = _tag.substr(shortNameIndex + shortNameQualifier.length)
+                ctx.shortName = _tag.substr(
+                    shortNameIndex + shortNameQualifier.length
+                );
                 _tag = _tag.substr(0, shortNameIndex);
             }
             if (sep >= 0) {
@@ -1992,9 +1977,6 @@ speechSynthesis.getVoices();
                 json,
                 params
             };
-            if (args.json) {
-                args.shortOrSecureName = args.json.shortName ?? args.json.secureName;
-            }
             this.$emit('INSTANCE:SHORTNAME', args);
             return args;
         });
@@ -2007,6 +1989,9 @@ speechSynthesis.getVoices();
         }
     */
     API.selfInvite = function (params) {
+        if (params.shortName === '') {
+            delete params.shortName;
+        }
         return this.call(
             `invite/myself/to/${params.worldId}:${params.instanceId}`,
             {
@@ -10164,7 +10149,7 @@ speechSynthesis.getVoices();
                 }
                 switch (L.accessType) {
                     case 'public':
-                        L.joinUrl = getLaunchURL(L);
+                        L.joinUrl = this.getLaunchURL(L);
                         L.accessName = `Public #${L.instanceName} (${platform})`;
                         break;
                     case 'invite+':
@@ -12543,16 +12528,20 @@ speechSynthesis.getVoices();
             }
         });
     };
-    
-    $app.methods.directAccessWorld = function (input) {
-        if (input.startsWith("/home/")) {
-            input = "https://vrchat.com" + input;
+
+    $app.methods.directAccessWorld = function (textBoxInput) {
+        var input = textBoxInput;
+        if (input.startsWith('/home/')) {
+            input = `https://vrchat.com${input}`;
         }
         if (input.startsWith('https://vrch.at')) {
             return AppApi.FollowUrl(input).then((output) => {
                 return this.directAccessWorld(output);
             });
-        } else if (input.startsWith('https://vrchat.') || input.startsWith("/home/")) {
+        } else if (
+            input.startsWith('https://vrchat.') ||
+            input.startsWith('/home/')
+        ) {
             var url = new URL(input);
             var urlPath = url.pathname;
             if (urlPath.substring(5, 12) === '/world/') {
@@ -12575,8 +12564,8 @@ speechSynthesis.getVoices();
             }
         } else if (input.substring(0, 5) === 'wrld_') {
             // a bit hacky, but supports weird malformed inputs cut out from url, why not
-            if (input.indexOf("&instanceId=") >= 0) {
-                input = "https://vrchat.com/home/launch?worldId=" + input;
+            if (input.indexOf('&instanceId=') >= 0) {
+                input = `https://vrchat.com/home/launch?worldId=${input}`;
                 return this.directAccessWorld(input);
             }
             this.showWorldDialog(input.trim());
@@ -14346,16 +14335,14 @@ speechSynthesis.getVoices();
         D.isFavorite = false;
     });
 
-    $app.methods.showWorldDialog = function (tag, shortName = void 0) {
+    $app.methods.showWorldDialog = function (tag, shortName) {
         this.$nextTick(() => adjustDialogZ(this.$refs.worldDialog.$el));
         var D = this.worldDialog;
         var L = API.parseLocation(tag);
         if (L.worldId === '') {
             return;
         }
-        if (!L.shortName && shortName) {
-            L.shortName = shortName;
-        }
+        L.shortName = shortName;
         if (L.worldId === L.instanceId) {
             // very janky fix for removing empty worldId instance
             L.instanceId = '';
@@ -14458,7 +14445,7 @@ speechSynthesis.getVoices();
                 id: instanceId,
                 occupants: 0,
                 friendCount: 0,
-                shortName: shortName,
+                shortName,
                 users: []
             };
         }
@@ -15161,8 +15148,7 @@ speechSynthesis.getVoices();
                             var L = API.parseLocation(D.worldId);
                             API.selfInvite({
                                 instanceId: L.instanceId,
-                                worldId: L.worldId,
-                                shortName: L.shortName
+                                worldId: L.worldId
                             }).finally(inviteLoop);
                         } else {
                             API.sendInvite(
@@ -15435,7 +15421,7 @@ speechSynthesis.getVoices();
         this.updateNewInstanceDialog(false);
     };
 
-    $app.methods.selfInvite = function (location, shortName = void 0) {
+    $app.methods.selfInvite = function (location, shortName) {
         var L = API.parseLocation(location);
         if (L.isOffline || L.isTraveling || L.worldId === '') {
             return;
@@ -15451,7 +15437,7 @@ speechSynthesis.getVoices();
         API.selfInvite({
             instanceId: L.instanceId,
             worldId: L.worldId,
-            shortName: shortName ?? L.shortName
+            shortName
         }).then((args) => {
             this.$message({
                 message: 'Self invite sent',
@@ -15461,7 +15447,7 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.methods.updateNewInstanceDialog = function (noChanges = false) {
+    $app.methods.updateNewInstanceDialog = function (noChanges) {
         var D = $app.newInstanceDialog;
         if (D.instanceId) {
             D.location = `${D.worldId}:${D.instanceId}`;
@@ -15474,7 +15460,7 @@ speechSynthesis.getVoices();
         } else {
             D.shortName = '';
         }
-        D.url = getLaunchURL(L);
+        D.url = this.getLaunchURL(L);
     };
 
     var saveNewInstanceDialog = function () {
@@ -15504,7 +15490,8 @@ speechSynthesis.getVoices();
         );
         $app.buildInstance();
     };
-    $app.watch['newInstanceDialog.worldId'] = $app.methods.updateNewInstanceDialog;
+    $app.watch['newInstanceDialog.worldId'] =
+        $app.methods.updateNewInstanceDialog;
     $app.watch['newInstanceDialog.instanceName'] = saveNewInstanceDialog;
     $app.watch['newInstanceDialog.accessType'] = saveNewInstanceDialog;
     $app.watch['newInstanceDialog.region'] = saveNewInstanceDialog;
@@ -15703,6 +15690,7 @@ speechSynthesis.getVoices();
         visible: false,
         loading: false,
         desktop: configRepository.getBool('launchAsDesktop'),
+        tag: '',
         location: '',
         url: '',
         shortName: '',
@@ -15718,51 +15706,82 @@ speechSynthesis.getVoices();
     });
 
     API.$on('INSTANCE:SHORTNAME', function (args) {
-        var url = '';
-        var shortName = '';
-        if (args.json && args.shortOrSecureName) {
-            shortName = args.shortOrSecureName;
-            url = `https://vrch.at/${shortName}`;
+        if (!args.params || !args.json || !args.json.shortName) {
+            return;
         }
-        $app.newInstanceDialog.shortName = shortName;
-        $app.launchDialog.shortName = shortName;
-        $app.launchDialog.shortUrl = url;
-        $app.launchDialog.url = $app.addShortNameToFullUrl($app.launchDialog.url, shortName);
-        $app.updateNewInstanceDialog(true);
+        var shortName = args.json.shortName;
+        var location = `${args.params.worldId}:${args.params.instanceId}`;
+        if (location === $app.launchDialog.tag) {
+            var L = this.parseLocation(location);
+            L.shortName = shortName;
+            $app.launchDialog.shortName = shortName;
+            $app.launchDialog.shortUrl = `https://vrch.at/${shortName}`;
+            $app.launchDialog.url = $app.getLaunchURL(L);
+        }
+        if (location === $app.newInstanceDialog.location) {
+            $app.newInstanceDialog.shortName = shortName;
+            $app.updateNewInstanceDialog(true);
+        }
     });
 
-    $app.methods.addShortNameToFullUrl = function(input, shortName) {
-        if (input.trim().length == 0) {
+    $app.methods.addShortNameToFullUrl = function (input, shortName) {
+        if (input.trim().length === 0 || !shortName) {
             return input;
         }
         var url = new URL(input);
         var urlParams = new URLSearchParams(url.search);
-        urlParams.set("shortName", shortName);
+        urlParams.set('shortName', shortName);
         url.search = urlParams.toString();
         return url.toString();
-    }
+    };
 
-    $app.methods.showLaunchDialog = function (tag) {
+    $app.methods.showLaunchDialog = function (tag, shortName) {
         this.$nextTick(() => adjustDialogZ(this.$refs.launchDialog.$el));
+        var D = this.launchDialog;
+        D.tag = tag;
+        D.shortUrl = '';
+        D.shortName = '';
         var L = API.parseLocation(tag);
+        L.shortName = shortName;
         if (L.isOffline || L.isPrivate || L.isTraveling || L.worldId === '') {
             return;
         }
-        var D = this.launchDialog;
+        if (shortName) {
+            D.shortName = shortName;
+            D.shortUrl = `https://vrch.at/${shortName}`;
+        }
         if (L.instanceId) {
             D.location = `${L.worldId}:${L.instanceId}`;
         } else {
             D.location = L.worldId;
         }
-        D.shortUrl = '';
-        D.url = getLaunchURL(L);
+        D.url = this.getLaunchURL(L);
         D.visible = true;
-        if (L.userId != null) {
+        if (L.userId && !shortName) {
             API.getInstanceShortName({
                 worldId: L.worldId,
                 instanceId: L.instanceId
-            })
+            });
         }
+    };
+
+    $app.methods.getLaunchURL = function (instance) {
+        var L = instance;
+        if (L.instanceId) {
+            if (L.shortName) {
+                return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
+                    L.worldId
+                )}&instanceId=${encodeURIComponent(
+                    L.instanceId
+                )}&shortName=${encodeURIComponent(L.shortName)}`;
+            }
+            return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
+                L.worldId
+            )}&instanceId=${encodeURIComponent(L.instanceId)}`;
+        }
+        return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
+            L.worldId
+        )}`;
     };
 
     $app.methods.locationToLaunchArg = function (location) {
@@ -15801,40 +15820,27 @@ speechSynthesis.getVoices();
         document.execCommand('copy');
         document.getElementById('copy_to_clipboard').remove();
     };
-    
-    $app.methods.copyInstanceUrlAndUpdateNewInstanceDialog = function (url) {
-        this.copyInstanceUrl(url)
-            .then(url => {
-                $app.newInstanceDialog.url = url;
-                $app.updateNewInstanceDialog(true)
-            });
-    }
 
-    $app.methods.copyInstanceUrl = function (url) {
-        var copyUrl = function (url) {
-            $app.copyToClipboard(url);
-            $app.$message({
-                message: 'Instance URL copied to clipboard',
-                type: 'success'
-            });
-            return url;
+    $app.methods.copyInstanceMessage = function (input) {
+        this.copyToClipboard(input);
+        this.$message({
+            message: 'Instance copied to clipboard',
+            type: 'success'
+        });
+        return input;
+    };
+
+    $app.methods.copyInstanceUrl = async function (location) {
+        var L = API.parseLocation(location);
+        var args = await API.getInstanceShortName({
+            worldId: L.worldId,
+            instanceId: L.instanceId
+        });
+        if (args.json && args.json.shortName) {
+            L.shortName = args.json.shortName;
         }
-        var location = this.parseLocationUrl(url)
-        if (!location.shortName) {
-            return API.getInstanceShortName({
-                worldId: location.worldId,
-                instanceId: location.instanceId
-            }).then((args) => {
-                if (args.json && args.shortOrSecureName) {
-                    var newUrl = this.addShortNameToFullUrl(url, args.shortOrSecureName)
-                    return copyUrl(newUrl);
-                } else {
-                    return copyUrl(url);
-                }
-            });
-        }
-        copyUrl(url);
-        return Promise.resolve(url);
+        var newUrl = this.getLaunchURL(L);
+        this.copyInstanceMessage(newUrl);
     };
 
     $app.methods.copyAvatarId = function (avatarId) {
@@ -16534,8 +16540,7 @@ speechSynthesis.getVoices();
                         var L = API.parseLocation(J.worldId);
                         API.selfInvite({
                             instanceId: L.instanceId,
-                            worldId: L.worldId,
-                            shortName: L.shortName
+                            worldId: L.worldId
                         }).finally(inviteLoop);
                     } else if ($app.uploadImage) {
                         API.sendInvitePhoto(
@@ -16562,7 +16567,7 @@ speechSynthesis.getVoices();
                     J.loading = false;
                     J.visible = false;
                     this.$message({
-                        message: 'Invite message sent',
+                        message: 'Invite sent',
                         type: 'success'
                     });
                 }
@@ -16705,8 +16710,7 @@ speechSynthesis.getVoices();
                         var L = API.parseLocation(J.worldId);
                         API.selfInvite({
                             instanceId: L.instanceId,
-                            worldId: L.worldId,
-                            shortName: L.shortName
+                            worldId: L.worldId
                         }).finally(inviteLoop);
                     } else if ($app.uploadImage) {
                         API.sendInvitePhoto(
@@ -18550,36 +18554,6 @@ speechSynthesis.getVoices();
     API.$on('LOGIN', function () {
         $app.downloadDialog.visible = false;
     });
-
-    // Parse location URL
-
-    $app.methods.parseLocationUrl = function (location) {
-        var url = new URL(location);
-        var urlPath = url.pathname;
-        if (urlPath.substring(5, 12) === '/world/') {
-            var worldId = urlPath.substring(12);
-            return worldId;
-        }
-        if (urlPath.substring(5, 12) === '/launch') {
-            var urlParams = new URLSearchParams(url.search);
-            var worldId = urlParams.get('worldId');
-            var instanceId = urlParams.get('instanceId');
-            var shortName = urlParams.get('shortName');
-            var location;
-            if (instanceId) {
-                location = `${worldId}:${instanceId}`;
-            } else if (worldId) {
-                location = worldId;
-            }
-            return {
-                worldId: worldId,
-                instanceId: instanceId,
-                location: location,
-                shortName: shortName
-            }
-        }
-        return void 0;
-    };
 
     // Parse User URL
 

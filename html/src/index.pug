@@ -1543,7 +1543,7 @@ html
                                             el-tooltip(placement="top" content="Launch/Invite" :disabled="hideTooltips")
                                                 launch(:location="userDialog.$location.tag" style="margin-left:5px")
                                             el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
-                                                invite-yourself(:locaTion="userDialog.$location.tag" :shortname="userDialog.$location.shortName" style="margin-left:5px")
+                                                invite-yourself(:location="userDialog.$location.tag" :shortname="userDialog.$location.shortName" style="margin-left:5px")
                                             el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
                                                 el-button(v-if="userDialog.$location.tag !== lastLocation.location" @click="refreshInstancePlayerCount(userDialog.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                             span(v-if="userDialog.instance.occupants" style="margin-left:5px") {{ userDialog.instance.occupants }}  #[template(v-if="userDialog.instance.friendCount > 0") ({{ userDialog.instance.friendCount }})]
@@ -1780,7 +1780,7 @@ html
                                 #[i.el-icon-check(style="margin-left:10px")] Capacity {{ worldDialog.ref.capacity | commaNumber }} ({{ worldDialog.ref.capacity * 2 | commaNumber }})
                             div(v-for="room in worldDialog.rooms" :key="room.id")
                                 div(style="margin:5px 0")
-                                    span.x-link(@click="showLaunchDialog(room.$location.tag)")
+                                    span.x-link(@click="showLaunchDialog(room.$location.tag, room.$location.shortName)")
                                         span \#{{ room.$location.instanceName }} {{ room.$location.accessType }}
                                         span.flags(v-if="room.$location.region" :class="room.$location.region" style="display:inline-block;margin-left:5px")
                                         span.flags(v-else class="us" style="display:inline-block;margin-left:5px")
@@ -2096,7 +2096,7 @@ html
                     el-form-item(label="World ID")
                         el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                     el-form-item(label="Instance ID")
-                        el-input(v-model="newInstanceDialog.instanceName" placeholder="Random" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+                        el-input(v-model="newInstanceDialog.instanceName" placeholder="Random" size="mini")
                     el-form-item(label="Instance Creator")
                         el-select(v-model="newInstanceDialog.userId" clearable placeholder="Choose User" filterable style="width:100%")
                             el-option-group(v-if="API.currentUser" label="ME")
@@ -2142,7 +2142,7 @@ html
                     el-form-item(label="URL")
                         el-input(v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                 template(#footer)
-                    el-button(size="small" @click="copyInstanceUrlAndUpdateNewInstanceDialog(newInstanceDialog.url)") Copy URL
+                    el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.location)") Copy URL
                     el-button(size="small" @click="selfInvite(newInstanceDialog.location)") Self Invite
                     el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)" :disabled="(newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') && newInstanceDialog.userId !== API.currentUser.id") Invite
                     el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location)") Launch
@@ -2280,18 +2280,21 @@ html
 
             //- dialog: launch
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchDialog" :visible.sync="launchDialog.visible" title="Launch" width="450px")
-                div(v-if="launchDialog.shortUrl")
-                    el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                        el-button(@click="copyInstanceUrl(launchDialog.shortUrl)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
-                    span(v-text="launchDialog.shortUrl" style="word-break:break-all;font-size:12px")
-                div(style="margin-top:10px")
-                    el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                        el-button(@click="copyInstanceUrl(launchDialog.url)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
-                    span(v-text="launchDialog.url" style="word-break:break-all;font-size:12px")
-                div(style="margin-top:10px")
-                    el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
-                        el-button(@click="copyInstanceUrl(launchDialog.location)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
-                    span(v-text="launchDialog.location" style="word-break:break-all;font-size:12px")
+                el-form(:model="launchDialog" label-width="80px")
+                    el-form-item(label="URL")
+                        el-input(v-model="launchDialog.url" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" style="width:260px")
+                        el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                            el-button(@click="copyInstanceMessage(launchDialog.url)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
+                    el-form-item(v-if="launchDialog.shortUrl" label="Short URL")
+                        el-tooltip(placement="top" style="margin-left:5px" content="Short URL's expire after a set period of time")
+                            i.el-icon-warning
+                        el-input(v-model="launchDialog.shortUrl" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" style="width:241px")
+                        el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                            el-button(@click="copyInstanceMessage(launchDialog.shortUrl)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
+                    el-form-item(label="Location")
+                        el-input(v-model="launchDialog.location" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" style="width:260px")
+                        el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                            el-button(@click="copyInstanceMessage(launchDialog.location)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
                 template(#footer)
                     el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop (No VR)
                     el-button(size="small" @click="showPreviousInstanceInfoDialog(launchDialog.location)") Info
