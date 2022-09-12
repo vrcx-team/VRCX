@@ -1626,6 +1626,20 @@ class Database {
             `UPDATE gamelog_join_leave SET time = 0 WHERE id IN (${badEntriesList})`
         );
     }
+
+    async getUserIdFromDisplayName(displayName) {
+        var userId = '';
+        await sqliteService.execute(
+            (row) => {
+                userId = row[0];
+            },
+            `SELECT user_id FROM gamelog_join_leave WHERE display_name = @displayName AND user_id != "" ORDER BY id DESC LIMIT 1`,
+            {
+                '@displayName': displayName
+            }
+        );
+        return userId;
+    }
 }
 
 var self = new Database();

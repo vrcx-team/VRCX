@@ -6756,7 +6756,9 @@ speechSynthesis.getVoices();
         ) {
             ctx.ref = ref;
             ctx.isVIP = isVIP;
-            ctx.name = ref.displayName;
+            if (typeof ref !== 'undefined') {
+                ctx.name = ref.displayName;
+            }
             // delayed second check to prevent status flapping
             var date = this.updateFriendInProgress.get(id);
             if (date && date > Date.now() - 120000) {
@@ -6789,7 +6791,9 @@ speechSynthesis.getVoices();
         } else {
             ctx.ref = ref;
             ctx.isVIP = isVIP;
-            ctx.name = ref.displayName;
+            if (typeof ref !== 'undefined') {
+                ctx.name = ref.displayName;
+            }
             this.updateFriendDelayedCheck(
                 id,
                 ctx,
@@ -6877,8 +6881,8 @@ speechSynthesis.getVoices();
                 var feed = {
                     created_at: new Date().toJSON(),
                     type: 'Online',
-                    userId: ctx.ref.id,
-                    displayName: ctx.ref.displayName,
+                    userId: id,
+                    displayName: ctx.name,
                     location: newRef.location,
                     worldName,
                     time: ''
@@ -8273,6 +8277,15 @@ speechSynthesis.getVoices();
                         // set $location_at to join time if user isn't a friend
                         ref.$location_at = joinTime;
                     }
+                } else {
+                    // try fetch userId from previous encounter using database
+                    database
+                        .getUserIdFromDisplayName(gameLog.userDisplayName)
+                        .then((oldUserId) => {
+                            if (oldUserId && this.isGameRunning) {
+                                API.getUser({userId: oldUserId});
+                            }
+                        });
                 }
                 this.updateVRLastLocation();
                 this.getCurrentInstanceUserList();

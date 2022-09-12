@@ -949,7 +949,7 @@ html
                             template(v-once #default="scope")
                                 span {{ scope.row.last_login | formatDate('long') }}
                         el-table-column(label="Date Joined" width="120" prop="date_joined" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'date_joined')")
-                        el-table-column(label="Unfriend" width="80" align="right")
+                        el-table-column(label="Unfriend" width="80")
                             template(v-once #default="scope")
                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(scope.row.id)")
 
@@ -2251,10 +2251,7 @@ html
                                 timer(:epoch="scope.row.date")
                         el-table-column(label="Name" prop="name")
                             template(v-once #default="scope")
-                                template(v-if="scope.row.ref.id === 'VRCXUpdate'")
-                                    el-button(size="small" @click="showVRCXUpdateDialog") VRCX Update
-                                template(v-else)
-                                    span(v-text="scope.row.ref.name")
+                                span(v-text="scope.row.ref.name")
                         el-table-column(label="Type" prop="type" width="70")
                         el-table-column(label="Status" prop="status" width="80")
                 template(#footer)
@@ -2283,17 +2280,17 @@ html
                 el-form(:model="launchDialog" label-width="80px")
                     el-form-item(label="URL")
                         el-input(v-model="launchDialog.url" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" style="width:260px")
-                        el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                        el-tooltip(placement="right" content="Copy to clipboard" :disabled="hideTooltips")
                             el-button(@click="copyInstanceMessage(launchDialog.url)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
                     el-form-item(v-if="launchDialog.shortUrl" label="Short URL")
                         el-tooltip(placement="top" style="margin-left:5px" content="Short URL's expire after a set period of time")
                             i.el-icon-warning
                         el-input(v-model="launchDialog.shortUrl" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" style="width:241px")
-                        el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                        el-tooltip(placement="right" content="Copy to clipboard" :disabled="hideTooltips")
                             el-button(@click="copyInstanceMessage(launchDialog.shortUrl)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
                     el-form-item(label="Location")
                         el-input(v-model="launchDialog.location" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" style="width:260px")
-                        el-tooltip(placement="top" content="Copy to clipboard" :disabled="hideTooltips")
+                        el-tooltip(placement="right" content="Copy to clipboard" :disabled="hideTooltips")
                             el-button(@click="copyInstanceMessage(launchDialog.location)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
                 template(#footer)
                     el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop (No VR)
@@ -2303,17 +2300,17 @@ html
 
             //- dialog: export friends list
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportFriendsListDialog" title="Export Friends List" width="650px")
-                el-input(type="textarea" v-model="exportFriendsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+                el-input(type="textarea" v-if="exportFriendsListDialog" v-model="exportFriendsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: export avatars list
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportAvatarsListDialog" title="Export Own Avatars" width="650px")
-                el-input(type="textarea" v-model="exportAvatarsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+                el-input(type="textarea" v-if="exportAvatarsListDialog" v-model="exportAvatarsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: Discord username list
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="discordNamesDialogVisible" title="Discord Names" width="650px")
                 div(style='font-size:12px;')
                     | Click load missing entries in the Friends List tab to search entire friends list
-                el-input(type="textarea" v-model="discordNamesContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px")
+                el-input(type="textarea" v-if="discordNamesDialogVisible" v-model="discordNamesContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px")
 
             //- dialog: Notification position
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="notificationPositionDialog" :visible.sync="notificationPositionDialog.visible" title="Notification Position" width="400px")
