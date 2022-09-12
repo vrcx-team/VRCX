@@ -54,7 +54,8 @@ namespace VRCX
 
             Browser.IsBrowserInitializedChanged += (A, B) =>
             {
-                // Browser.ShowDevTools();
+                if (Program.LaunchDebug)
+                    Browser.ShowDevTools();
             };
 
             Util.ApplyJavascriptBindings(Browser.JavascriptObjectRepository);
@@ -164,6 +165,11 @@ namespace VRCX
             }
             Show();
             Focus();
+        }
+
+        private void TrayMenu_DevTools_Click(object sender, System.EventArgs e)
+        {
+            Instance.Browser.ShowDevTools();
         }
 
         private void TrayMenu_Quit_Click(object sender, System.EventArgs e)

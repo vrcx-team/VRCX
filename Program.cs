@@ -15,6 +15,7 @@ namespace VRCX
         public static string BaseDirectory { get; private set; }
         public static string AppDataDirectory { get; private set; }
         public static string ConfigLocation;
+        public static bool LaunchDebug;
 
         static Program()
         {

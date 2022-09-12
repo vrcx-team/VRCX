@@ -27,8 +27,11 @@ namespace VRCX
                 if (arg.Length > 12 && arg.Substring(0, 12) == "/uri=vrcx://")
                     LaunchCommand = arg.Substring(12);
 
-                if (arg.Length > 12 && arg.Substring(0, 8) == "--config")
+                if (arg.Length > 8 && arg.Substring(0, 8) == "--config")
                     Program.ConfigLocation = arg.Substring(9);
+
+                if (arg.Length >= 7 && arg.Substring(0, 7) == "--debug")
+                    Program.LaunchDebug = true;
             }
 
             if (processList.Length > 1 && String.IsNullOrEmpty(LaunchCommand))
