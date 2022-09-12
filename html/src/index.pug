@@ -537,6 +537,8 @@ html
                                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="deleteFavorite(favorite.id)" style="margin-left:5px")
                     el-tab-pane(label="Worlds")
                         el-collapse(style="border:0")
+                            el-button(size="small" @click="showWorldExportDialog") Export
+                            el-button(size="small" @click="showWorldImportDialog") Import
                             el-collapse-item(v-for="group in API.favoriteWorldGroups" :key="group.name")
                                 template(slot="title")
                                     span(v-text="group.displayName" style="font-weight:bold;font-size:14px;margin-left:10px")
@@ -2961,6 +2963,66 @@ html
                     el-table-column(label="Count" prop="count" width="90" sortable)
                         template(v-once #default="scope")
                             span(v-text="scope.row.count")
+
+
+            //- dialog: export world list
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="worldExportDialogVisible" title="World Favorites Export" width="650px")
+                el-dropdown(@click.native.stop trigger="click" size="small")
+                    el-button(size="mini")
+                        span(v-if="worldExportFavoriteGroup") {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{ worldExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) All Favorites #[i.el-icon-arrow-down.el-icon--right]
+                    el-dropdown-menu(#default="dropdown")
+                        el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldExportGroup(null)") All Favorites
+                        template(v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
+                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldExportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                br
+                el-input(type="textarea" v-if="worldExportDialogVisible" v-model="worldExportContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+
+            //- dialog: World import dialog
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="worldImportDialog.visible" title="World Favorites Import" width="650px")
+                div(style="font-size:12px")
+                    | Enter a list of world IDs
+                el-input(type="textarea" v-model="worldImportDialog.input" size="mini" rows="10" resize="none" style="margin-top:15px")
+                el-button(size="small" @click="processWorldImportList" :disabled="!worldImportDialog.input") Process List
+                span(v-if="worldImportDialog.progress" style="margin-top:10px") Progress: {{ worldImportDialog.progress }}/{{ worldImportDialog.progressTotal }}
+                br
+                el-dropdown(@click.native.stop trigger="click" size="small")
+                    el-button(size="mini")
+                        span(v-if="worldImportDialog.worldImportFavoriteGroup") {{ worldImportDialog.worldImportFavoriteGroup.displayName }} ({{ worldImportDialog.worldImportFavoriteGroup.count }}/{{ worldImportDialog.worldImportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+                    el-dropdown-menu(#default="dropdown")
+                        template(v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
+                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                el-button(size="small" @click="importWorldImportTable" style="margin:10px" :disabled="worldImportTable.data.length === 0 || !worldImportDialog.worldImportFavoriteGroup") Import Worlds
+                span(v-if="worldImportDialog.worldImportFavoriteGroup") {{ worldImportTable.data.length }} / {{ worldImportDialog.worldImportFavoriteGroup.capacity - worldImportDialog.worldImportFavoriteGroup.count }}
+                span(v-if="worldImportDialog.importProgress" style="margin:10px") Import Progress: {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
+                br
+                el-button(size="small" @click="clearWorldImportTable") Clear Table
+                br
+                template(v-if="worldImportDialog.errors")
+                    el-button(size="small" @click="worldImportDialog.errors = ''") Clear Errors
+                    h2(style="font-weight:bold;margin:0") Errors:
+                    pre(v-text="worldImportDialog.errors" style="white-space:pre-wrap;font-size:12px")
+                data-tables(v-if="worldImportDialog.visible" v-bind="worldImportTable" v-loading="worldImportDialog.loading" style="margin-top:10px")
+                    el-table-column(label="Image" width="70" prop="thumbnailImageUrl")
+                        template(v-once #default="scope")
+                            el-popover(placement="right" height="500px" trigger="hover")
+                                img.friends-list-avatar(slot="reference" v-lazy="scope.row.thumbnailImageUrl")
+                                img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="openExternalLink(scope.row.imageUrl)")
+                    el-table-column(label="Name" prop="name")
+                        template(v-once #default="scope")
+                            span.x-link(v-text="scope.row.name" @click="showWorldDialog(scope.row.id)")
+                    el-table-column(label="Author" width="120" prop="authorName")
+                        template(v-once #default="scope")
+                            span.x-link(v-text="scope.row.authorName" @click="showUserDialog(scope.row.authorId)")
+                    el-table-column(label="Status" width="70" prop="releaseStatus")
+                        template(v-once #default="scope")
+                            span(v-text="scope.row.releaseStatus" v-if="scope.row.releaseStatus === 'public'" style="color:#67c23a")
+                            span(v-text="scope.row.releaseStatus" v-else-if="scope.row.releaseStatus === 'private'" style="color:#f56c6c")
+                            span(v-text="scope.row.releaseStatus" v-else)
+                    el-table-column(label="Action" width="90" align="right")
+                        template(v-once #default="scope")
+                            el-button(type="text" icon="el-icon-close" size="mini" @click="deleteItemWorldImport(scope.row)")
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" title="Open Source Software Notice" width="650px")

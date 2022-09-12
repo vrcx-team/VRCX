@@ -15073,6 +15073,14 @@ speechSynthesis.getVoices();
             });
     };
 
+    $app.methods.addFavoriteWorld = function (ref, group) {
+        return API.addFavorite({
+            type: 'world',
+            favoriteId: ref.id,
+            tags: group.name
+        });
+    };
+
     $app.methods.addFavoriteAvatar = function (ref, group) {
         API.addFavorite({
             type: 'avatar',
@@ -19986,6 +19994,181 @@ speechSynthesis.getVoices();
             configRepository.setInt('VRCX_databaseVersion', databaseVersion);
             console.log('Database update complete.');
         }
+    };
+
+    // App: world favorite import
+
+    $app.data.worldImportDialog = {
+        visible: false,
+        loading: false,
+        progress: 0,
+        progressTotal: 0,
+        input: '',
+        worldIdList: new Set(),
+        errors: '',
+        worldImportFavoriteGroup: null,
+        importProgress: 0,
+        importProgressTotal: 0
+    };
+
+    $app.data.worldImportTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        layout: 'table'
+    };
+
+    $app.methods.showWorldImportDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.avatarDialog.$el));
+        var D = this.worldImportDialog;
+        this.resetWorldImport();
+        D.visible = true;
+    };
+
+    $app.methods.processWorldImportList = async function () {
+        var D = this.worldImportDialog;
+        D.loading = true;
+        var regexWorldId =
+            /wrld_[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}/g;
+        var match = [];
+        var worldIdList = new Set();
+        while ((match = regexWorldId.exec(D.input)) !== null) {
+            worldIdList.add(match[0]);
+        }
+        D.input = '';
+        D.errors = '';
+        D.progress = 0;
+        D.progressTotal = worldIdList.size;
+        var data = Array.from(worldIdList);
+        for (var i = 0; i < data.length; ++i) {
+            var worldId = data[i];
+            if (!D.visible) {
+                this.resetWorldImport();
+                return;
+            }
+            if (!D.worldIdList.has(worldId)) {
+                try {
+                    var args = await API.getWorld({
+                        worldId
+                    });
+                    this.worldImportTable.data.push(args.ref);
+                    D.worldIdList.add(worldId);
+                } catch (err) {
+                    D.errors = D.errors.concat(
+                        `WorldId: ${worldId}\n${err}\n\n`
+                    );
+                }
+            }
+            D.progress++;
+            if (D.progress === worldIdList.size) {
+                D.progress = 0;
+            }
+        }
+        D.loading = false;
+    };
+
+    $app.methods.deleteItemWorldImport = function (ref) {
+        var D = this.worldImportDialog;
+        removeFromArray(this.worldImportTable.data, ref);
+        D.worldIdList.delete(ref.id);
+    };
+
+    $app.methods.resetWorldImport = function () {
+        var D = this.worldImportDialog;
+        D.input = '';
+        D.errors = '';
+    };
+
+    $app.methods.clearWorldImportTable = function () {
+        var D = this.worldImportDialog;
+        this.worldImportTable.data = [];
+        D.worldIdList = new Set();
+    };
+
+    $app.methods.selectWorldImportGroup = function (group) {
+        var D = this.worldImportDialog;
+        D.worldImportFavoriteGroup = group;
+    };
+
+    $app.methods.importWorldImportTable = async function () {
+        var D = this.worldImportDialog;
+        D.loading = true;
+        if (!D.worldImportFavoriteGroup) {
+            return;
+        }
+
+        var data = [...this.worldImportTable.data].reverse();
+        D.importProgressTotal = data.length;
+        try {
+            for (var i = data.length - 1; i >= 0; i--) {
+                var ref = data[i];
+                await this.addFavoriteWorld(ref, D.worldImportFavoriteGroup);
+                removeFromArray(this.worldImportTable.data, ref);
+                D.worldIdList.delete(ref.id);
+                D.importProgress++;
+                if (D.importProgress === data.length) {
+                    D.importProgress = 0;
+                }
+            }
+        } catch (err) {
+            D.errors = `Name: ${ref.name}\nWorldId: ${ref.id}\n${err}\n\n`;
+        } finally {
+            D.importProgress = 0;
+            D.importProgressTotal = 0;
+            D.loading = false;
+        }
+    };
+
+    API.$on('LOGIN', function () {
+        $app.clearWorldImportTable();
+        $app.resetWorldImport();
+        $app.worldImportDialog.visible = false;
+        $app.worldImportFavoriteGroup = null;
+
+        $app.worldExportDialogVisible = false;
+        $app.worldExportFavoriteGroup = null;
+    });
+
+    // App: world favorite export
+
+    $app.data.worldExportDialogVisible = false;
+    $app.data.worldExportContent = '';
+    $app.data.worldExportFavoriteGroup = null;
+
+    $app.methods.showWorldExportDialog = function () {
+        this.worldExportFavoriteGroup = null;
+        this.updateWorldExportDialog();
+        this.worldExportDialogVisible = true;
+    };
+
+    $app.methods.updateWorldExportDialog = function () {
+        var _ = function (str) {
+            if (/[\x00-\x1f,"]/.test(str) === true) {
+                return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+        };
+        var lines = ['WorldID,Name'];
+        API.favoriteWorldGroups.forEach((group) => {
+            if (
+                !this.worldExportFavoriteGroup ||
+                this.worldExportFavoriteGroup === group
+            ) {
+                $app.favoriteWorlds.forEach((ref) => {
+                    if (group.key === ref.groupKey) {
+                        lines.push(`${_(ref.id)},${_(ref.name)}`);
+                    }
+                });
+            }
+        });
+        this.worldExportContent = lines.join('\n');
+    };
+
+    $app.methods.selectWorldExportGroup = function (group) {
+        this.worldExportFavoriteGroup = group;
+        this.updateWorldExportDialog();
     };
 
     $app = new Vue($app);
