@@ -59,16 +59,19 @@ namespace VRCX
         /// <param name="forms"></param>
         public static void SetThemeToGlobal(List<Form> forms)
         {
-            //For each form, set the theme, then move focus onto it to force refresh
-            foreach(Form form in forms)
+            MainForm.Instance.Invoke(new Action(() =>
             {
-                //Set the theme of the window
-                SetThemeToGlobal(form.Handle);
+                //For each form, set the theme, then move focus onto it to force refresh
+                foreach (Form form in forms)
+                {
+                    //Set the theme of the window
+                    SetThemeToGlobal(form.Handle);
 
-                //Change opacity to foce full redraw
-                form.Opacity = 0.99999;
-                form.Opacity = 1;
-            }
+                    //Change opacity to foce full redraw
+                    form.Opacity = 0.99999;
+                    form.Opacity = 1;
+                }
+            }));
         }
 
         private static void SetThemeToGlobal(IntPtr handle)

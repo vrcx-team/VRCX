@@ -19365,16 +19365,16 @@ speechSynthesis.getVoices();
         }
     });
 
-    $app.methods.eventLaunchCommand = function (command) {
+    $app.methods.eventLaunchCommand = function (input) {
         if (!API.isLoggedIn) {
             return;
         }
-        var args = command.split('/');
+        var args = input.split('/');
         var command = args[0];
         var commandArg = args[1];
         switch (command) {
             case 'world':
-                this.showWorldDialog(commandArg);
+                this.directAccessWorld(input.replace('world/', ''));
                 break;
             case 'avatar':
                 this.showAvatarDialog(commandArg);

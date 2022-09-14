@@ -346,10 +346,14 @@ namespace VRCX
 
         public void FocusWindow()
         {
-            if (MainForm.Instance.WindowState == FormWindowState.Minimized)
-                MainForm.Instance.WindowState = FormWindowState.Normal;
-            MainForm.Instance.Show();
-            MainForm.Instance.Activate();
+            MainForm.Instance.Invoke(new Action(() =>
+            {
+                if (MainForm.Instance.WindowState == FormWindowState.Minimized)
+                    MainForm.Instance.WindowState = FormWindowState.Normal;
+
+                MainForm.Instance.Show();
+                MainForm.Instance.Activate();
+            }));
         }
 
         public string FollowUrl(string url)

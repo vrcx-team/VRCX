@@ -2993,14 +2993,13 @@ html
                     el-dropdown-menu(#default="dropdown")
                         template(v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                el-button(size="small" @click="importWorldImportTable" style="margin:10px" :disabled="worldImportTable.data.length === 0 || !worldImportDialog.worldImportFavoriteGroup") Import Worlds
+                el-button(size="small" @click="importWorldImportTable" style="margin:5px" :disabled="worldImportTable.data.length === 0 || !worldImportDialog.worldImportFavoriteGroup") Import Worlds
                 span(v-if="worldImportDialog.worldImportFavoriteGroup") {{ worldImportTable.data.length }} / {{ worldImportDialog.worldImportFavoriteGroup.capacity - worldImportDialog.worldImportFavoriteGroup.count }}
                 span(v-if="worldImportDialog.importProgress" style="margin:10px") Import Progress: {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
                 br
                 el-button(size="small" @click="clearWorldImportTable") Clear Table
-                br
                 template(v-if="worldImportDialog.errors")
-                    el-button(size="small" @click="worldImportDialog.errors = ''") Clear Errors
+                    el-button(size="small" @click="worldImportDialog.errors = ''" style="margin-left:5px") Clear Errors
                     h2(style="font-weight:bold;margin:0") Errors:
                     pre(v-text="worldImportDialog.errors" style="white-space:pre-wrap;font-size:12px")
                 data-tables(v-if="worldImportDialog.visible" v-bind="worldImportTable" v-loading="worldImportDialog.loading" style="margin-top:10px")
