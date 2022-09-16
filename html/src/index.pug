@@ -1069,6 +1069,14 @@ html
                             div.options-container-item
                                 el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{236: ''}" :min="141" :max="500" style="width:300px")
                         div.options-container
+                            span.header User Dialog
+                            div.options-container-item
+                                span.name Hide VRChat Notes
+                                el-switch(v-model="hideUserNotes" @change="saveUserDialogOption")
+                            div.options-container-item
+                                span.name Hide VRCX Memos
+                                el-switch(v-model="hideUserMemos" @change="saveUserDialogOption")
+                        div.options-container
                             span.header User Colours
                             div.options-container-item
                                 span.name Random colours from user ID
@@ -1385,7 +1393,7 @@ html
                                 .avatar(:class="userStatusClass(friend.ref, friend.pendingOffline)")
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
+                                    span.name(v-if="!hideUserMemos && friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                     span.extra(v-if="friend.pendingOffline") #[i.el-icon-warning-outline] Pending Offline
                                     location.extra(v-else :location="friend.ref.location" :traveling="friend.ref.travelingToLocation" :link="false")
@@ -1401,7 +1409,7 @@ html
                                 .avatar(:class="userStatusClass(friend.ref, friend.pendingOffline)")
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
+                                    span.name(v-if="!hideUserMemos && friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                     span.extra(v-if="friend.pendingOffline") #[i.el-icon-warning-outline] Pending Offline
                                     location.extra(v-else :location="friend.ref.location" :traveling="friend.ref.travelingToLocation" :link="false")
@@ -1417,7 +1425,7 @@ html
                                 .avatar
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
+                                    span.name(v-if="!hideUserMemos && friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                     span.extra(v-text="friend.ref.statusDescription" :link="false")
                             template(v-else)
@@ -1432,7 +1440,7 @@ html
                                 .avatar
                                     img(v-lazy="userImage(friend.ref)")
                                 .detail
-                                    span.name(v-if="friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
+                                    span.name(v-if="!hideUserMemos && friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                     span.extra(v-text="friend.ref.statusDescription")
                             template(v-else)
@@ -1569,14 +1577,18 @@ html
                                                 span.extra(v-else)
                                                     timer(:epoch="user.$location_at")
                             .x-friend-list(style="max-height:none")
-                                //- .x-friend-item(v-if="userDialog.id !== API.currentUser.id" style="width:100%;cursor:default")
-                                //-     .detail
-                                //-         span.name Note
-                                //-         span.extra(v-text="userDialog.ref.note")
-                                .x-friend-item(style="width:100%;cursor:default")
+                                .x-friend-item(v-if="!hideUserNotes" style="width:100%;cursor:default")
                                     .detail
                                         span.name Note
-                                        el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" placeholder="Click to add a note" size="mini" resize="none")
+                                        el-input(v-model="userDialog.note" type="textarea" maxlength="256" show-word-limit :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" @change="checkNote(userDialog.ref, userDialog.note)" @input="cleanNote(userDialog.note)" placeholder="Click to add a note" size="mini" resize="none")
+                                        div(style="float:right")
+                                            i.el-icon-loading(v-if="userDialog.noteSaving" style="margin-left:5px")
+                                            i.el-icon-more-outline(v-else-if="userDialog.note !== userDialog.ref.note" style="margin-left:5px")
+                                            el-button(v-if="userDialog.note" type="text" icon="el-icon-delete" size="mini" @click="deleteNote(userDialog.id)" style="margin-left:5px")
+                                .x-friend-item(v-if="!hideUserMemos" style="width:100%;cursor:default")
+                                    .detail
+                                        span.name Memo
+                                        el-input.extra(v-model="userDialog.memo" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" placeholder="Click to add a memo" size="mini" resize="none")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name(v-if="userDialog.id !== API.currentUser.id && userDialog.ref.profilePicOverride && userDialog.ref.currentAvatarImageUrl") Avatar Info Last Seen

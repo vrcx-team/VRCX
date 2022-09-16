@@ -7328,6 +7328,9 @@ speechSynthesis.getVoices();
                 if (!match && ctx.memo) {
                     match = String(ctx.memo).toUpperCase().includes(QUERY);
                 }
+                if (!match && ctx.ref.note) {
+                    match = String(ctx.ref.note).toUpperCase().includes(QUERY);
+                }
                 if (match) {
                     results.push({
                         value: ctx.id,
@@ -11731,6 +11734,8 @@ speechSynthesis.getVoices();
     $app.data.randomUserColours = configRepository.getBool(
         'VRCX_randomUserColours'
     );
+    $app.data.hideUserNotes = configRepository.getBool('VRCX_hideUserNotes');
+    $app.data.hideUserMemos = configRepository.getBool('VRCX_hideUserMemos');
     $app.methods.saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -11795,6 +11800,10 @@ speechSynthesis.getVoices();
         this.updateVRConfigVars();
         this.updateVRLastLocation();
         AppApi.ExecuteVrOverlayFunction('notyClear', '');
+    };
+    $app.methods.saveUserDialogOption = function () {
+        configRepository.setBool('VRCX_hideUserNotes', this.hideUserNotes);
+        configRepository.setBool('VRCX_hideUserMemos', this.hideUserMemos);
     };
     $app.data.TTSvoices = speechSynthesis.getVoices();
     $app.methods.saveNotificationTTS = function () {
@@ -12976,6 +12985,8 @@ speechSynthesis.getVoices();
         ref: {},
         friend: {},
         isFriend: false,
+        note: '',
+        noteSaving: false,
         incomingRequest: false,
         outgoingRequest: false,
         isBlock: false,
@@ -13039,6 +13050,8 @@ speechSynthesis.getVoices();
             return;
         }
         D.ref = ref;
+        D.note = String(ref.note || '');
+        D.noteSaving = false;
         D.incomingRequest = false;
         D.outgoingRequest = false;
         if (D.ref.friendRequestStatus === 'incoming') {
@@ -13210,6 +13223,8 @@ speechSynthesis.getVoices();
         D.id = userId;
         D.treeData = [];
         D.memo = '';
+        D.note = '';
+        D.noteSaving = false;
         this.getMemo(userId).then((memo) => {
             D.memo = memo;
             var ref = this.friends.get(userId);
@@ -13263,6 +13278,7 @@ speechSynthesis.getVoices();
                     D.ref = args.ref;
                     D.friend = this.friends.get(D.id);
                     D.isFriend = Boolean(D.friend);
+                    D.note = String(D.ref.note || '');
                     D.incomingRequest = false;
                     D.outgoingRequest = false;
                     D.isBlock = false;
@@ -20175,6 +20191,77 @@ speechSynthesis.getVoices();
     $app.methods.selectWorldExportGroup = function (group) {
         this.worldExportFavoriteGroup = group;
         this.updateWorldExportDialog();
+    };
+
+    // App: user dialog notes
+
+    API.saveNote = function (params) {
+        return this.call('userNotes', {
+            method: 'POST',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('NOTE', args);
+            return args;
+        });
+    };
+
+    API.$on('NOTE', function (args) {
+        var note = '';
+        var targetUserId = '';
+        if (typeof args.json !== 'undefined') {
+            note = args.json.note;
+        }
+        if (typeof args.params !== 'undefined') {
+            targetUserId = args.params.targetUserId;
+        }
+        if (targetUserId === $app.userDialog.id) {
+            if (note === args.params.note) {
+                $app.userDialog.noteSaving = false;
+                $app.userDialog.note = note;
+            } else {
+                // response is cached sadge :<
+                this.getUser({userId: targetUserId});
+            }
+        }
+        var ref = API.cachedUsers.get(targetUserId);
+        if (typeof ref !== 'undefined') {
+            ref.note = note;
+        }
+    });
+
+    $app.methods.checkNote = function (ref, note) {
+        if (ref.note !== note) {
+            this.addNote(ref.id, note);
+        }
+    };
+
+    $app.methods.cleanNote = function (note) {
+        // remove newlines because they aren't supported
+        $app.userDialog.note = note.replace(/[\r\n]/g, '');
+    };
+
+    $app.methods.addNote = function (userId, note) {
+        if (this.userDialog.id === userId) {
+            this.userDialog.noteSaving = true;
+        }
+        return API.saveNote({
+            targetUserId: userId,
+            note
+        });
+    };
+
+    $app.methods.deleteNote = function (userId) {
+        if (this.userDialog.id === userId) {
+            this.userDialog.noteSaving = true;
+        }
+        return API.saveNote({
+            targetUserId: userId,
+            note: ''
+        });
     };
 
     $app = new Vue($app);
