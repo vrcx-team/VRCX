@@ -6871,7 +6871,10 @@ speechSynthesis.getVoices();
                 };
                 this.addFeed(feed);
                 database.addOnlineOfflineToDatabase(feed);
-            } else if (newState === 'online') {
+            } else if (
+                newState === 'online' &&
+                (ctx.state === 'offline' || ctx.state === 'active')
+            ) {
                 ctx.ref.$previousLocation = '';
                 ctx.ref.$travelingToTime = Date.now();
                 ctx.ref.$location_at = Date.now();
@@ -8159,7 +8162,7 @@ speechSynthesis.getVoices();
         await gameLogService.setDateTill(dateTill);
         await gameLogService.reset();
         await new Promise((resolve) => {
-            setTimeout(resolve, 10000);
+            workerTimers.setTimeout(resolve, 10000);
         });
         var location = '';
         for (var gameLog of await gameLogService.getAll()) {
@@ -20043,7 +20046,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.showWorldImportDialog = function () {
-        this.$nextTick(() => adjustDialogZ(this.$refs.avatarDialog.$el));
+        this.$nextTick(() => adjustDialogZ(this.$refs.worldImportDialog.$el));
         var D = this.worldImportDialog;
         this.resetWorldImport();
         D.visible = true;
@@ -20130,9 +20133,6 @@ speechSynthesis.getVoices();
                 removeFromArray(this.worldImportTable.data, ref);
                 D.worldIdList.delete(ref.id);
                 D.importProgress++;
-                if (D.importProgress === data.length) {
-                    D.importProgress = 0;
-                }
             }
         } catch (err) {
             D.errors = `Name: ${ref.name}\nWorldId: ${ref.id}\n${err}\n\n`;
@@ -20155,11 +20155,15 @@ speechSynthesis.getVoices();
 
     // App: world favorite export
 
+    $app.data.worldExportDialogRef = {};
     $app.data.worldExportDialogVisible = false;
     $app.data.worldExportContent = '';
     $app.data.worldExportFavoriteGroup = null;
 
     $app.methods.showWorldExportDialog = function () {
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.worldExportDialogRef.$el)
+        );
         this.worldExportFavoriteGroup = null;
         this.updateWorldExportDialog();
         this.worldExportDialogVisible = true;
@@ -20262,6 +20266,86 @@ speechSynthesis.getVoices();
             targetUserId: userId,
             note: ''
         });
+    };
+
+    // App: note export
+
+    $app.data.noteExportDialog = {
+        visible: false,
+        loading: false,
+        progress: 0,
+        progressTotal: 0,
+        errors: ''
+    };
+    $app.data.noteExportTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        layout: 'table'
+    };
+
+    $app.methods.showNoteExportDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.noteExportDialog.$el));
+        var D = this.noteExportDialog;
+        D.progress = 0;
+        D.progressTotal = 0;
+        D.loading = false;
+        D.visible = true;
+    };
+
+    $app.methods.updateNoteExportDialog = function () {
+        var data = [];
+        this.friends.forEach((ctx) => {
+            var newMemo = ctx.memo.replace(/[\r\n]/g, ' ');
+            if (ctx.memo && ctx.ref && ctx.ref.note !== newMemo.slice(0, 256)) {
+                data.push({
+                    id: ctx.id,
+                    name: ctx.name,
+                    memo: newMemo,
+                    ref: ctx.ref
+                });
+            }
+        });
+        this.noteExportTable.data = data;
+    };
+
+    $app.methods.removeFromNoteExportTable = function (ref) {
+        removeFromArray(this.noteExportTable.data, ref);
+    };
+
+    $app.methods.exportNoteExport = async function () {
+        var D = this.noteExportDialog;
+        D.loading = true;
+        var data = [...this.noteExportTable.data].reverse();
+        D.progressTotal = data.length;
+        try {
+            for (var i = data.length - 1; i >= 0; i--) {
+                if (D.visible && D.loading) {
+                    var ctx = data[i];
+                    await API.saveNote({
+                        targetUserId: ctx.id,
+                        note: ctx.memo.slice(0, 256)
+                    });
+                    removeFromArray(this.noteExportTable.data, ctx);
+                    D.progress++;
+                    await new Promise((resolve) => {
+                        workerTimers.setTimeout(resolve, 5000);
+                    });
+                }
+            }
+        } catch (err) {
+            D.errors = `Name: ${ctx.name}\n${err}\n\n`;
+        } finally {
+            D.progress = 0;
+            D.progressTotal = 0;
+            D.loading = false;
+        }
+    };
+
+    $app.methods.cancelNoteExport = function () {
+        this.noteExportDialog.loading = false;
     };
 
     $app = new Vue($app);

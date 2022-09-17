@@ -763,6 +763,7 @@ html
                         el-button(size="small" icon="el-icon-printer" @click="showExportFriendsListDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") Export Friends List
                         el-button(size="small" icon="el-icon-user" @click="showExportAvatarsListDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") Export Own Avatars
                         el-button(size="small" icon="el-icon-chat-dot-round" @click="showDiscordNamesDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") Discord Names
+                        el-button(size="small" icon="el-icon-document-copy" @click="showNoteExportDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") Export Notes
                 div.options-container
                     span.header Game Info
                     .x-friend-list(style="margin-top:10px")
@@ -1076,6 +1077,10 @@ html
                             div.options-container-item
                                 span.name Hide VRCX Memos
                                 el-switch(v-model="hideUserMemos" @change="saveUserDialogOption")
+                            div.options-container-item
+                                span.name Export VRCX memos into VRChat notes
+                                br
+                                el-button(size="small" icon="el-icon-document-copy" @click="showNoteExportDialog") Export Notes
                         div.options-container
                             span.header User Colours
                             div.options-container-item
@@ -2976,9 +2981,8 @@ html
                         template(v-once #default="scope")
                             span(v-text="scope.row.count")
 
-
             //- dialog: export world list
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="worldExportDialogVisible" title="World Favorites Export" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="worldExportDialogRef" :visible.sync="worldExportDialogVisible" title="World Favorites Export" width="650px")
                 el-dropdown(@click.native.stop trigger="click" size="small")
                     el-button(size="mini")
                         span(v-if="worldExportFavoriteGroup") {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{ worldExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
@@ -2991,7 +2995,7 @@ html
                 el-input(type="textarea" v-if="worldExportDialogVisible" v-model="worldExportContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: World import dialog
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="worldImportDialog.visible" title="World Favorites Import" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="worldImportDialog" :visible.sync="worldImportDialog.visible" title="World Favorites Import" width="650px")
                 div(style="font-size:12px")
                     | Enter a list of world IDs
                 el-input(type="textarea" v-model="worldImportDialog.input" size="mini" rows="10" resize="none" style="margin-top:15px")
@@ -3034,6 +3038,41 @@ html
                     el-table-column(label="Action" width="90" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="deleteItemWorldImport(scope.row)")
+
+            //- dialog: Note export dialog
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="noteExportDialog" :visible.sync="noteExportDialog.visible" title="Note Export" width="1000px")
+                div(style="font-size:12px")
+                    | This process will export all of your VRCX memos and import them into VRChat notes. #[br]
+                    | Be warned of the following limitations: #[br]
+                    | - API endpoint has a rate limit that requires a large delay between requests. #[br]
+                    | - Character limit of 256 per note. #[br]
+                    | - Swear words filter (no fun allowed). #[br]
+                    | - No new lines (they will replaced with a space). #[br]
+                    | - This will overwrite any existing VRChat notes for these users. #[br]
+                    | - Any edits made here wont affect VRCX memos but will affect VRChat notes once exported. #[br]
+                el-button(size="small" @click="updateNoteExportDialog" :disabled="noteExportDialog.loading" style="margin-top:10px") Refresh
+                el-button(size="small" @click="exportNoteExport" :disabled="noteExportDialog.loading" style="margin-top:10px") Export
+                el-button(v-if="noteExportDialog.loading" size="small" @click="cancelNoteExport" style="margin-top:10px") Cancel
+                span(v-if="noteExportDialog.loading" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] Progress: {{ noteExportDialog.progress }}/{{ noteExportDialog.progressTotal }}
+                template(v-if="noteExportDialog.errors")
+                    el-button(size="small" @click="noteExportDialog.errors = ''") Clear Errors
+                    h2(style="font-weight:bold;margin:0") Errors:
+                    pre(v-text="noteExportDialog.errors" style="white-space:pre-wrap;font-size:12px")
+                data-tables(v-if="noteExportDialog.visible" v-bind="noteExportTable" v-loading="noteExportDialog.loading" style="margin-top:10px")
+                    el-table-column(label="Image" width="70" prop="currentAvatarThumbnailImageUrl")
+                        template(v-once #default="scope")
+                            el-popover(placement="right" height="500px" trigger="hover")
+                                img.friends-list-avatar(slot="reference" v-lazy="scope.row.ref.currentAvatarThumbnailImageUrl")
+                                img.friends-list-avatar(v-lazy="scope.row.ref.currentAvatarImageUrl" style="height:500px;cursor:pointer" @click="openExternalLink(scope.row.ref.currentAvatarImageUrl)")
+                    el-table-column(label="Name" width="170" prop="name")
+                        template(v-once #default="scope")
+                            span.x-link(v-text="scope.row.name" @click="showUserDialog(scope.row.id)")
+                    el-table-column(label="Note" prop="memo")
+                        template(v-once #default="scope")
+                            el-input(v-model="scope.row.memo" type="textarea" maxlength="256" show-word-limit :rows="2" :autosize="{ minRows: 1, maxRows: 10 }" size="mini" resize="none")
+                    el-table-column(label="Skip Export" width="90" align="right")
+                        template(v-once #default="scope")
+                            el-button(type="text" icon="el-icon-close" size="mini" @click="removeFromNoteExportTable(scope.row)")
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
