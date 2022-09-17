@@ -155,7 +155,35 @@ This can be caused by a few different things here's some things to try:
 
 ## How to run VRCX on Linux
 
-- [Guide](https://github.com/RinLovesYou/VRChat-Linux/wiki/VRCX) made by [RinLovesYou](https://github.com/RinLovesYou)
+Guide made by [RinLovesYou](https://github.com/RinLovesYou)
+
+- Installing Wine
+
+  - Arch Linux: Wine can be installed by enabling the [multilib](https://wiki.archlinux.org/title/Multilib) repository and running `sudo pacman -S wine`
+
+  - Ubuntu: Please refer to the [wiki](https://wiki.winehq.org/Ubuntu)
+
+- Winetricks Magic
+
+  > It is imperative that you are using Wine 7.0rc5 or later! this has not been tested on earlier versions. Wine 7.0 Finally allows for full installation of the .net framework, which is needed for VRCX to function.
+
+  - Start over with a clean wine prefix. Either create one for VRCX or `rm -rf ~/.wine` and use the main prefix.
+
+  - `winetricks --force dotnet472` yes, you'll have to sit through all of the installers (there's a lot of them).
+
+  - `winetricks corefonts`
+
+  - `winetricks winecfg`
+
+  - Set it to Windows 10 for good measure, you should just be able to run `wine VRCX.exe` now. Should you get an error about CEFSharp, you can try wine `VRCX.exe -no-cef-sandbox`
+
+- Notes
+
+  - VRCX on Linux is known to have a nasty memory leak so keep an eye on memory usage or restart it frequently.
+
+  - If you have a laptop that uses hardware muxing with an Intel iGPU you'll need to set your graphics device in `nvidia-settings` to only the NVIDIA GPU.
+
+  ![image](https://camo.githubusercontent.com/ed672a01defae989c4bf5963c0cc9db973b42203e1e5e927f3341c6a9115beb8/68747470733a2f2f63646e2e646973636f72646170702e636f6d2f6174746163686d656e74732f3835343037313233363336333535303736362f3933353531333532313839373233343435322f756e6b6e6f776e2e706e67)
 
 ## How to build VRCX from source
 
