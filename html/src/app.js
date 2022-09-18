@@ -15116,8 +15116,16 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.addFavoriteAvatar = function (ref, group) {
-        API.addFavorite({
+        return API.addFavorite({
             type: 'avatar',
+            favoriteId: ref.id,
+            tags: group.name
+        });
+    };
+
+    $app.methods.addFavoriteUser = function (ref, group) {
+        return API.addFavorite({
+            type: 'friend',
             favoriteId: ref.id,
             tags: group.name
         });
@@ -19175,6 +19183,9 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.userImage = function (user) {
+        if (typeof user === 'undefined') {
+            return '';
+        }
         if (this.displayVRCPlusIconsAsAvatar && user.userIcon) {
             return user.userIcon;
         }
@@ -20215,6 +20226,374 @@ speechSynthesis.getVoices();
     $app.methods.selectWorldExportGroup = function (group) {
         this.worldExportFavoriteGroup = group;
         this.updateWorldExportDialog();
+    };
+
+    // App: avatar favorite import
+
+    $app.data.avatarImportDialog = {
+        visible: false,
+        loading: false,
+        progress: 0,
+        progressTotal: 0,
+        input: '',
+        avatarIdList: new Set(),
+        errors: '',
+        avatarImportFavoriteGroup: null,
+        importProgress: 0,
+        importProgressTotal: 0
+    };
+
+    $app.data.avatarImportTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        layout: 'table'
+    };
+
+    $app.methods.showAvatarImportDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.avatarImportDialog.$el));
+        var D = this.avatarImportDialog;
+        this.resetAvatarImport();
+        D.visible = true;
+    };
+
+    $app.methods.processAvatarImportList = async function () {
+        var D = this.avatarImportDialog;
+        D.loading = true;
+        var regexAvatarId =
+            /avtr_[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}/g;
+        var match = [];
+        var avatarIdList = new Set();
+        while ((match = regexAvatarId.exec(D.input)) !== null) {
+            avatarIdList.add(match[0]);
+        }
+        D.input = '';
+        D.errors = '';
+        D.progress = 0;
+        D.progressTotal = avatarIdList.size;
+        var data = Array.from(avatarIdList);
+        for (var i = 0; i < data.length; ++i) {
+            if (!D.visible) {
+                this.resetAvatarImport();
+            }
+            if (!D.loading || !D.visible) {
+                break;
+            }
+            var avatarId = data[i];
+            if (!D.avatarIdList.has(avatarId)) {
+                try {
+                    var args = await API.getAvatar({
+                        avatarId
+                    });
+                    this.avatarImportTable.data.push(args.ref);
+                    D.avatarIdList.add(avatarId);
+                } catch (err) {
+                    D.errors = D.errors.concat(
+                        `AvatarId: ${avatarId}\n${err}\n\n`
+                    );
+                }
+            }
+            D.progress++;
+            if (D.progress === avatarIdList.size) {
+                D.progress = 0;
+            }
+        }
+        D.loading = false;
+    };
+
+    $app.methods.deleteItemAvatarImport = function (ref) {
+        var D = this.avatarImportDialog;
+        removeFromArray(this.avatarImportTable.data, ref);
+        D.avatarIdList.delete(ref.id);
+    };
+
+    $app.methods.resetAvatarImport = function () {
+        var D = this.avatarImportDialog;
+        D.input = '';
+        D.errors = '';
+    };
+
+    $app.methods.clearAvatarImportTable = function () {
+        var D = this.avatarImportDialog;
+        this.avatarImportTable.data = [];
+        D.avatarIdList = new Set();
+    };
+
+    $app.methods.selectAvatarImportGroup = function (group) {
+        var D = this.avatarImportDialog;
+        D.avatarImportFavoriteGroup = group;
+    };
+
+    $app.methods.cancelAvatarImport = function () {
+        var D = this.avatarImportDialog;
+        D.loading = false;
+    };
+
+    $app.methods.importAvatarImportTable = async function () {
+        var D = this.avatarImportDialog;
+        D.loading = true;
+        if (!D.avatarImportFavoriteGroup) {
+            return;
+        }
+        var data = [...this.avatarImportTable.data].reverse();
+        D.importProgressTotal = data.length;
+        try {
+            for (var i = data.length - 1; i >= 0; i--) {
+                if (!D.loading || !D.visible) {
+                    break;
+                }
+                var ref = data[i];
+                await this.addFavoriteAvatar(ref, D.avatarImportFavoriteGroup);
+                removeFromArray(this.avatarImportTable.data, ref);
+                D.avatarIdList.delete(ref.id);
+                D.importProgress++;
+            }
+        } catch (err) {
+            D.errors = `Name: ${ref.name}\nAvatarId: ${ref.id}\n${err}\n\n`;
+        } finally {
+            D.importProgress = 0;
+            D.importProgressTotal = 0;
+            D.loading = false;
+        }
+    };
+
+    API.$on('LOGIN', function () {
+        $app.clearAvatarImportTable();
+        $app.resetAvatarImport();
+        $app.avatarImportDialog.visible = false;
+        $app.avatarImportFavoriteGroup = null;
+
+        $app.avatarExportDialogVisible = false;
+        $app.avatarExportFavoriteGroup = null;
+    });
+
+    // App: avatar favorite export
+
+    $app.data.avatarExportDialogRef = {};
+    $app.data.avatarExportDialogVisible = false;
+    $app.data.avatarExportContent = '';
+    $app.data.avatarExportFavoriteGroup = null;
+
+    $app.methods.showAvatarExportDialog = function () {
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.avatarExportDialogRef.$el)
+        );
+        this.avatarExportFavoriteGroup = null;
+        this.updateAvatarExportDialog();
+        this.avatarExportDialogVisible = true;
+    };
+
+    $app.methods.updateAvatarExportDialog = function () {
+        var _ = function (str) {
+            if (/[\x00-\x1f,"]/.test(str) === true) {
+                return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+        };
+        var lines = ['AvatarID,Name'];
+        API.favoriteAvatarGroups.forEach((group) => {
+            if (
+                !this.avatarExportFavoriteGroup ||
+                this.avatarExportFavoriteGroup === group
+            ) {
+                $app.favoriteAvatars.forEach((ref) => {
+                    if (group.key === ref.groupKey) {
+                        lines.push(`${_(ref.id)},${_(ref.name)}`);
+                    }
+                });
+            }
+        });
+        this.avatarExportContent = lines.join('\n');
+    };
+
+    $app.methods.selectAvatarExportGroup = function (group) {
+        this.avatarExportFavoriteGroup = group;
+        this.updateAvatarExportDialog();
+    };
+
+    // App: friend favorite import
+
+    $app.data.friendImportDialog = {
+        visible: false,
+        loading: false,
+        progress: 0,
+        progressTotal: 0,
+        input: '',
+        userIdList: new Set(),
+        errors: '',
+        friendImportFavoriteGroup: null,
+        importProgress: 0,
+        importProgressTotal: 0
+    };
+
+    $app.data.friendImportTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        layout: 'table'
+    };
+
+    $app.methods.showFriendImportDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.friendImportDialog.$el));
+        var D = this.friendImportDialog;
+        this.resetFriendImport();
+        D.visible = true;
+    };
+
+    $app.methods.processFriendImportList = async function () {
+        var D = this.friendImportDialog;
+        D.loading = true;
+        var regexFriendId =
+            /usr_[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}/g;
+        var match = [];
+        var userIdList = new Set();
+        while ((match = regexFriendId.exec(D.input)) !== null) {
+            userIdList.add(match[0]);
+        }
+        D.input = '';
+        D.errors = '';
+        D.progress = 0;
+        D.progressTotal = userIdList.size;
+        var data = Array.from(userIdList);
+        for (var i = 0; i < data.length; ++i) {
+            if (!D.visible) {
+                this.resetFriendImport();
+            }
+            if (!D.loading || !D.visible) {
+                break;
+            }
+            var userId = data[i];
+            if (!D.userIdList.has(userId)) {
+                try {
+                    var args = await API.getUser({
+                        userId
+                    });
+                    this.friendImportTable.data.push(args.ref);
+                    D.userIdList.add(userId);
+                } catch (err) {
+                    D.errors = D.errors.concat(`UserId: ${userId}\n${err}\n\n`);
+                }
+            }
+            D.progress++;
+            if (D.progress === userIdList.size) {
+                D.progress = 0;
+            }
+        }
+        D.loading = false;
+    };
+
+    $app.methods.deleteItemFriendImport = function (ref) {
+        var D = this.friendImportDialog;
+        removeFromArray(this.friendImportTable.data, ref);
+        D.userIdList.delete(ref.id);
+    };
+
+    $app.methods.resetFriendImport = function () {
+        var D = this.friendImportDialog;
+        D.input = '';
+        D.errors = '';
+    };
+
+    $app.methods.clearFriendImportTable = function () {
+        var D = this.friendImportDialog;
+        this.friendImportTable.data = [];
+        D.userIdList = new Set();
+    };
+
+    $app.methods.selectFriendImportGroup = function (group) {
+        var D = this.friendImportDialog;
+        D.friendImportFavoriteGroup = group;
+    };
+
+    $app.methods.cancelFriendImport = function () {
+        var D = this.friendImportDialog;
+        D.loading = false;
+    };
+
+    $app.methods.importFriendImportTable = async function () {
+        var D = this.friendImportDialog;
+        D.loading = true;
+        if (!D.friendImportFavoriteGroup) {
+            return;
+        }
+        var data = [...this.friendImportTable.data].reverse();
+        D.importProgressTotal = data.length;
+        try {
+            for (var i = data.length - 1; i >= 0; i--) {
+                if (!D.loading || !D.visible) {
+                    break;
+                }
+                var ref = data[i];
+                await this.addFavoriteUser(ref, D.friendImportFavoriteGroup);
+                removeFromArray(this.friendImportTable.data, ref);
+                D.userIdList.delete(ref.id);
+                D.importProgress++;
+            }
+        } catch (err) {
+            D.errors = `Name: ${ref.displayName}\nUserId: ${ref.id}\n${err}\n\n`;
+        } finally {
+            D.importProgress = 0;
+            D.importProgressTotal = 0;
+            D.loading = false;
+        }
+    };
+
+    API.$on('LOGIN', function () {
+        $app.clearFriendImportTable();
+        $app.resetFriendImport();
+        $app.friendImportDialog.visible = false;
+        $app.friendImportFavoriteGroup = null;
+
+        $app.friendExportDialogVisible = false;
+        $app.friendExportFavoriteGroup = null;
+    });
+
+    // App: friend favorite export
+
+    $app.data.friendExportDialogRef = {};
+    $app.data.friendExportDialogVisible = false;
+    $app.data.friendExportContent = '';
+    $app.data.friendExportFavoriteGroup = null;
+
+    $app.methods.showFriendExportDialog = function () {
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.friendExportDialogRef.$el)
+        );
+        this.friendExportFavoriteGroup = null;
+        this.updateFriendExportDialog();
+        this.friendExportDialogVisible = true;
+    };
+
+    $app.methods.updateFriendExportDialog = function () {
+        var _ = function (str) {
+            if (/[\x00-\x1f,"]/.test(str) === true) {
+                return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+        };
+        var lines = ['UserID,Name'];
+        API.favoriteFriendGroups.forEach((group) => {
+            if (
+                !this.friendExportFavoriteGroup ||
+                this.friendExportFavoriteGroup === group
+            ) {
+                $app.favoriteFriends.forEach((ref) => {
+                    if (group.key === ref.groupKey) {
+                        lines.push(`${_(ref.id)},${_(ref.name)}`);
+                    }
+                });
+            }
+        });
+        this.friendExportContent = lines.join('\n');
+    };
+
+    $app.methods.selectFriendExportGroup = function (group) {
+        this.friendExportFavoriteGroup = group;
+        this.updateFriendExportDialog();
     };
 
     // App: user dialog notes
