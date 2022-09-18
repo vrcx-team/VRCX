@@ -3000,7 +3000,7 @@ html
                     | Enter a list of world IDs
                 el-input(type="textarea" v-model="worldImportDialog.input" size="mini" rows="10" resize="none" style="margin-top:15px")
                 el-button(size="small" @click="processWorldImportList" :disabled="!worldImportDialog.input") Process List
-                span(v-if="worldImportDialog.progress" style="margin-top:10px") Progress: {{ worldImportDialog.progress }}/{{ worldImportDialog.progressTotal }}
+                span(v-if="worldImportDialog.progress" style="margin-top:10px") #[i.el-icon-loading(style="margin-right:5px")] Progress: {{ worldImportDialog.progress }}/{{ worldImportDialog.progressTotal }}
                 br
                 el-dropdown(@click.native.stop trigger="click" size="small")
                     el-button(size="mini")
@@ -3010,8 +3010,9 @@ html
                         template(v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
                 el-button(size="small" @click="importWorldImportTable" style="margin:5px" :disabled="worldImportTable.data.length === 0 || !worldImportDialog.worldImportFavoriteGroup") Import Worlds
+                el-button(v-if="worldImportDialog.loading" size="small" @click="cancelWorldImport" style="margin-top:10px") Cancel
                 span(v-if="worldImportDialog.worldImportFavoriteGroup") {{ worldImportTable.data.length }} / {{ worldImportDialog.worldImportFavoriteGroup.capacity - worldImportDialog.worldImportFavoriteGroup.count }}
-                span(v-if="worldImportDialog.importProgress" style="margin:10px") Import Progress: {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
+                span(v-if="worldImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] Import Progress: {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
                 br
                 el-button(size="small" @click="clearWorldImportTable") Clear Table
                 template(v-if="worldImportDialog.errors")
@@ -3062,8 +3063,8 @@ html
                     el-table-column(label="Image" width="70" prop="currentAvatarThumbnailImageUrl")
                         template(v-once #default="scope")
                             el-popover(placement="right" height="500px" trigger="hover")
-                                img.friends-list-avatar(slot="reference" v-lazy="scope.row.ref.currentAvatarThumbnailImageUrl")
-                                img.friends-list-avatar(v-lazy="scope.row.ref.currentAvatarImageUrl" style="height:500px;cursor:pointer" @click="openExternalLink(scope.row.ref.currentAvatarImageUrl)")
+                                img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row.ref)")
+                                img.friends-list-avatar(v-lazy="userImageFull(scope.row.ref)" style="height:500px;cursor:pointer" @click="openExternalLink(userImageFull(scope.row.ref))")
                     el-table-column(label="Name" width="170" prop="name")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.name" @click="showUserDialog(scope.row.id)")

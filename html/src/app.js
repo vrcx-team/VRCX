@@ -1402,6 +1402,9 @@ speechSynthesis.getVoices();
         if (typeof json.bio !== 'undefined') {
             json.bio = $app.replaceBioSymbols(json.bio);
         }
+        if (typeof json.note !== 'undefined') {
+            json.note = $app.replaceBioSymbols(json.note);
+        }
         if (json.currentAvatarImageUrl === $app.robotUrl) {
             delete json.currentAvatarImageUrl;
             delete json.currentAvatarThumbnailImageUrl;
@@ -2079,6 +2082,10 @@ speechSynthesis.getVoices();
             this.currentUser.activeFriends.length;
         var count = Math.trunc(N / 50);
         for (var i = count; i > -1; i--) {
+            if (params.offset > 5000) {
+                // API offset limit is 5000
+                break;
+            }
             var args = await this.getFriends(params);
             friends = friends.concat(args.json);
             params.offset += 50;
@@ -2099,6 +2106,10 @@ speechSynthesis.getVoices();
         var N = this.currentUser.friends.length - onlineCount;
         var count = Math.trunc(N / 50);
         for (var i = count; i > -1; i--) {
+            if (params.offset > 5000) {
+                // API offset limit is 5000
+                break;
+            }
             var args = await this.getFriends(params);
             friends = friends.concat(args.json);
             params.offset += 50;
@@ -6509,7 +6520,6 @@ speechSynthesis.getVoices();
     });
 
     API.$on('LOGIN', function () {
-        this.cachedUsers = new Map(); // fix memos loading very slowly on relogin
         $app.nextFriendsRefresh = 0;
     });
 
@@ -10559,22 +10569,20 @@ speechSynthesis.getVoices();
         var query = this.searchText.toUpperCase();
         if (!query) {
             for (var ref of API.cachedAvatars.values()) {
-                if (ref.authorId === API.currentUser.id) {
-                    switch (this.searchAvatarFilter) {
-                        case 'all':
+                switch (this.searchAvatarFilter) {
+                    case 'all':
+                        avatars.set(ref.id, ref);
+                        break;
+                    case 'public':
+                        if (ref.releaseStatus === 'public') {
                             avatars.set(ref.id, ref);
-                            break;
-                        case 'public':
-                            if (ref.releaseStatus === 'public') {
-                                avatars.set(ref.id, ref);
-                            }
-                            break;
-                        case 'private':
-                            if (ref.releaseStatus === 'private') {
-                                avatars.set(ref.id, ref);
-                            }
-                            break;
-                    }
+                        }
+                        break;
+                    case 'private':
+                        if (ref.releaseStatus === 'private') {
+                            avatars.set(ref.id, ref);
+                        }
+                        break;
                 }
             }
             this.isSearchAvatarLoading = false;
@@ -11019,6 +11027,7 @@ speechSynthesis.getVoices();
     $app.data.friendLogInitStatus = false;
 
     $app.methods.initFriendLog = async function (userId) {
+        await this.updateDatabaseVersion();
         var sqlValues = [];
         var friends = await API.refreshFriends();
         for (var friend of friends) {
@@ -20010,7 +20019,9 @@ speechSynthesis.getVoices();
     $app.methods.updateDatabaseVersion = async function () {
         var databaseVersion = 1;
         if (this.databaseVersion !== databaseVersion) {
-            console.log('Updating database...');
+            console.log(
+                `Updating database from ${this.databaseVersion} to ${databaseVersion}...`
+            );
             await database.cleanLegendFromFriendLog(); // fix friendLog spammed with crap
             await database.fixGameLogTraveling(); // fix bug with gameLog location being set as traveling
             await database.fixNegativeGPS(); // fix GPS being a negative value due to VRCX bug with traveling
@@ -20068,11 +20079,13 @@ speechSynthesis.getVoices();
         D.progressTotal = worldIdList.size;
         var data = Array.from(worldIdList);
         for (var i = 0; i < data.length; ++i) {
-            var worldId = data[i];
             if (!D.visible) {
                 this.resetWorldImport();
-                return;
             }
+            if (!D.loading || !D.visible) {
+                break;
+            }
+            var worldId = data[i];
             if (!D.worldIdList.has(worldId)) {
                 try {
                     var args = await API.getWorld({
@@ -20117,17 +20130,24 @@ speechSynthesis.getVoices();
         D.worldImportFavoriteGroup = group;
     };
 
+    $app.methods.cancelWorldImport = function () {
+        var D = this.worldImportDialog;
+        D.loading = false;
+    };
+
     $app.methods.importWorldImportTable = async function () {
         var D = this.worldImportDialog;
         D.loading = true;
         if (!D.worldImportFavoriteGroup) {
             return;
         }
-
         var data = [...this.worldImportTable.data].reverse();
         D.importProgressTotal = data.length;
         try {
             for (var i = data.length - 1; i >= 0; i--) {
+                if (!D.loading || !D.visible) {
+                    break;
+                }
                 var ref = data[i];
                 await this.addFavoriteWorld(ref, D.worldImportFavoriteGroup);
                 removeFromArray(this.worldImportTable.data, ref);
@@ -20217,7 +20237,7 @@ speechSynthesis.getVoices();
         var note = '';
         var targetUserId = '';
         if (typeof args.json !== 'undefined') {
-            note = args.json.note;
+            note = $app.replaceBioSymbols(args.json.note);
         }
         if (typeof args.params !== 'undefined') {
             targetUserId = args.params.targetUserId;
@@ -20285,6 +20305,15 @@ speechSynthesis.getVoices();
         },
         layout: 'table'
     };
+
+    API.$on('LOGIN', function () {
+        $app.noteExportTable.data = [];
+        $app.noteExportDialog.visible = false;
+        $app.noteExportDialog.loading = false;
+        $app.noteExportDialog.progress = 0;
+        $app.noteExportDialog.progressTotal = 0;
+        $app.noteExportDialog.errors = '';
+    });
 
     $app.methods.showNoteExportDialog = function () {
         this.$nextTick(() => adjustDialogZ(this.$refs.noteExportDialog.$el));
