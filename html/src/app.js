@@ -453,6 +453,12 @@ speechSynthesis.getVoices();
                 ) {
                     this.expireNotification(init.inviteId);
                 }
+                if (
+                    status === 403 &&
+                    endpoint.startsWith('invite/myself/to/')
+                ) {
+                    throw new Error(`403: ${data.error.message} ${endpoint}`);
+                }
                 if (data && data.error === Object(data.error)) {
                     this.$throw(
                         data.error.status_code || status,
@@ -2005,13 +2011,21 @@ speechSynthesis.getVoices();
                 method: 'POST',
                 params
             }
-        ).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            return args;
-        });
+        )
+            .then((json) => {
+                var args = {
+                    json,
+                    params
+                };
+                return args;
+            })
+            .catch((err) => {
+                $app.$message({
+                    message: "you're not allowed to access this instance.",
+                    type: 'error'
+                });
+                throw err;
+            });
     };
 
     API.$on('INSTANCE', function (args) {
@@ -12947,7 +12961,11 @@ speechSynthesis.getVoices();
         );
     };
 
-    $app.methods.promptSetAvatarRemoteDatabase = function () {
+    $app.methods.promptSetAvatarRemoteDatabase = function (newUrl) {
+        var inputValue = this.avatarRemoteDatabaseProvider;
+        if (newUrl) {
+            inputValue = newUrl;
+        }
         this.$prompt(
             'Enter avatar database provider URL',
             'Avatar Database Provider',
@@ -12955,15 +12973,23 @@ speechSynthesis.getVoices();
                 distinguishCancelAndClose: true,
                 confirmButtonText: 'OK',
                 cancelButtonText: 'Cancel',
-                inputValue: this.avatarRemoteDatabaseProvider,
-                inputPattern: /\S+/,
+                inputValue,
                 inputErrorMessage: 'Valid URL is required',
                 callback: (action, instance) => {
-                    if (action === 'confirm' && instance.inputValue) {
+                    if (action === 'confirm') {
                         this.avatarRemoteDatabaseProvider = instance.inputValue;
                         configRepository.setString(
                             'VRCX_avatarRemoteDatabaseProvider',
                             this.avatarRemoteDatabaseProvider
+                        );
+                        if (this.avatarRemoteDatabaseProvider) {
+                            this.avatarRemoteDatabase = true;
+                        } else {
+                            this.avatarRemoteDatabase = false;
+                        }
+                        configRepository.setBool(
+                            'VRCX_avatarRemoteDatabase',
+                            this.avatarRemoteDatabase
                         );
                     }
                 }
@@ -13230,8 +13256,6 @@ speechSynthesis.getVoices();
     $app.methods.showUserDialog = function (userId) {
         this.$nextTick(() => adjustDialogZ(this.$refs.userDialog.$el));
         var D = this.userDialog;
-        D.currentAvatarThumbnailImageUrl = '';
-        D.userIcon = '';
         D.id = userId;
         D.treeData = [];
         D.memo = '';
@@ -15762,17 +15786,24 @@ speechSynthesis.getVoices();
     });
 
     API.$on('INSTANCE:SHORTNAME', function (args) {
-        if (!args.params || !args.json || !args.json.shortName) {
+        if (!args.json) {
             return;
         }
         var shortName = args.json.shortName;
-        var location = `${args.params.worldId}:${args.params.instanceId}`;
+        var location = `${args.instance.worldId}:${args.instance.instanceId}`;
+        var L = this.parseLocation(location);
+        if (!shortName) {
+            if (location === $app.launchDialog.tag && args.json.secureName) {
+                $app.launchDialog.location = `${L.worldId}:${L.instanceId}&shortName=${args.json.secureName}`;
+            }
+            return;
+        }
         if (location === $app.launchDialog.tag) {
-            var L = this.parseLocation(location);
             L.shortName = shortName;
             $app.launchDialog.shortName = shortName;
             $app.launchDialog.shortUrl = `https://vrch.at/${shortName}`;
             $app.launchDialog.url = $app.getLaunchURL(L);
+            $app.launchDialog.location = `${L.worldId}:${L.instanceId}&shortName=${shortName}`;
         }
         if (location === $app.newInstanceDialog.location) {
             $app.newInstanceDialog.shortName = shortName;
@@ -15806,7 +15837,9 @@ speechSynthesis.getVoices();
             D.shortName = shortName;
             D.shortUrl = `https://vrch.at/${shortName}`;
         }
-        if (L.instanceId) {
+        if (shortName && L.instanceId) {
+            D.location = `${L.worldId}:${L.instanceId}&shortName=${shortName}`;
+        } else if (L.instanceId) {
             D.location = `${L.worldId}:${L.instanceId}`;
         } else {
             D.location = L.worldId;
@@ -19426,6 +19459,11 @@ speechSynthesis.getVoices();
                 break;
             case 'user':
                 this.showUserDialog(commandArg);
+                break;
+            case 'addavatardb':
+                this.promptSetAvatarRemoteDatabase(
+                    input.replace('addavatardb/', '')
+                );
                 break;
         }
     };

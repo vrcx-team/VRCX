@@ -489,6 +489,7 @@ html
                                 template(v-once)
                                     .avatar
                                         img(v-if="avatar.thumbnailImageUrl" v-lazy="avatar.thumbnailImageUrl")
+                                        img(v-else-if="avatar.imageUrl" v-lazy="avatar.imageUrl")
                                     .detail
                                         span.name(v-text="avatar.name")
                                         span.extra(v-text="avatar.releaseStatus" v-if="avatar.releaseStatus === 'public'" style="color: #67c23a;")
@@ -1267,7 +1268,7 @@ html
                                     span.name Enable
                                     el-switch(v-model="avatarRemoteDatabase" @change="saveOpenVROption")
                                 div.options-container-item
-                                    el-button(size="small" icon="el-icon-user-solid" @click="promptSetAvatarRemoteDatabase" :disabled="!avatarRemoteDatabase") Avatar Database Provider
+                                    el-button(size="small" icon="el-icon-user-solid" @click="promptSetAvatarRemoteDatabase('')" :disabled="!avatarRemoteDatabase") Avatar Database Provider
                             div.options-container
                                 span.header YouTube API
                                 div.options-container-item
