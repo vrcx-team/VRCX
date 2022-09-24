@@ -469,6 +469,10 @@ html
                             el-button(v-if="searchWorldParams.offset" @click="moreSearchWorld(-1)" icon="el-icon-back" size="small") Prev
                             el-button(v-if="searchWorldResults.length >= 10" @click="moreSearchWorld(1)" icon="el-icon-right" size="small") Next
                     el-tab-pane(label="Avatar" v-loading="isSearchAvatarLoading" style="min-height:60px")
+                        el-dropdown(v-if="avatarRemoteDatabaseProviderList.length > 1" trigger="click" @click.native.stop size="mini" style="margin-right:5px")
+                            el-button(size="small") Search Provider #[i.el-icon-arrow-down.el-icon--right]
+                            el-dropdown-menu(#default="dropdown")
+                                el-dropdown-item(v-for="provider in avatarRemoteDatabaseProviderList" :key="provider" @click.native="setAvatarProvider(provider)") #[i.el-icon-check.el-icon--left(v-if="provider === avatarRemoteDatabaseProvider")] {{ provider }}
                         el-tooltip(placement="bottom" content="Refresh own avatars" :disabled="hideTooltips")
                             el-button(type="default" :loading="userDialog.isAvatarsLoading" @click="refreshUserDialogAvatars()" size="mini" icon="el-icon-refresh" circle)
                         span(style="font-size:14px;margin-left:5px;margin-right:5px") Results {{ searchAvatarResults.length }}
@@ -1268,7 +1272,7 @@ html
                                     span.name Enable
                                     el-switch(v-model="avatarRemoteDatabase" @change="saveOpenVROption")
                                 div.options-container-item
-                                    el-button(size="small" icon="el-icon-user-solid" @click="promptSetAvatarRemoteDatabase('')" :disabled="!avatarRemoteDatabase") Avatar Database Provider
+                                    el-button(size="small" icon="el-icon-user-solid" @click="showAvatarProviderDialog") Avatar Database Provider
                             div.options-container
                                 span.header YouTube API
                                 div.options-container-item
@@ -3189,6 +3193,13 @@ html
                     el-table-column(label="Skip Export" width="90" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="removeFromNoteExportTable(scope.row)")
+
+            //- dialog: avatar database provider
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarProviderDialog" :visible.sync="avatarProviderDialog.visible" title="Avatar Database Provider" width="600px")
+                div
+                    el-input(v-for="(provider, index) in avatarRemoteDatabaseProviderList" :key="index" :value="provider" v-model="avatarRemoteDatabaseProviderList[index]" @change="saveAvatarProviderList" size="small" style="margin-top:5px")
+                        el-button(slot="append" icon="el-icon-delete" @click="removeAvatarProvider(provider)")
+                    el-button(@click="avatarRemoteDatabaseProviderList.push('')" size="mini" style="margin-top:5px") Add Provider
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" title="Open Source Software Notice" width="650px")

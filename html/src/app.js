@@ -10342,6 +10342,11 @@ speechSynthesis.getVoices();
             this.showUserDialog(ref.userId);
             return;
         }
+        if (ref.displayName === 'F⁄A-18E Super Hornet') {
+            // :eyes:
+            this.showUserDialog('usr_5cd9007b-1802-45fe-92e2-0b6617639344');
+            return;
+        }
         if (!ref.displayName || ref.displayName.substring(0, 3) === 'ID:') {
             return;
         }
@@ -11753,9 +11758,37 @@ speechSynthesis.getVoices();
     $app.data.avatarRemoteDatabase = configRepository.getBool(
         'VRCX_avatarRemoteDatabase'
     );
-    $app.data.avatarRemoteDatabaseProvider = configRepository.getString(
-        'VRCX_avatarRemoteDatabaseProvider'
-    );
+    $app.data.avatarRemoteDatabaseProvider = '';
+    $app.data.avatarRemoteDatabaseProviderList = [];
+    if (configRepository.getString('VRCX_avatarRemoteDatabaseProviderList')) {
+        $app.data.avatarRemoteDatabaseProviderList = JSON.parse(
+            configRepository.getString('VRCX_avatarRemoteDatabaseProviderList')
+        );
+    }
+    if (configRepository.getString('VRCX_avatarRemoteDatabaseProvider')) {
+        // move existing provider to new list
+        var avatarRemoteDatabaseProvider = configRepository.getString(
+            'VRCX_avatarRemoteDatabaseProvider'
+        );
+        if (
+            !$app.data.avatarRemoteDatabaseProviderList.includes(
+                avatarRemoteDatabaseProvider
+            )
+        ) {
+            $app.data.avatarRemoteDatabaseProviderList.push(
+                avatarRemoteDatabaseProvider
+            );
+        }
+        configRepository.remove('VRCX_avatarRemoteDatabaseProvider');
+        configRepository.setString(
+            'VRCX_avatarRemoteDatabaseProviderList',
+            JSON.stringify($app.data.avatarRemoteDatabaseProviderList)
+        );
+    }
+    if ($app.data.avatarRemoteDatabaseProviderList.length > 0) {
+        $app.data.avatarRemoteDatabaseProvider =
+            $app.data.avatarRemoteDatabaseProviderList[0];
+    }
     $app.data.sortFavorites = configRepository.getBool('VRCX_sortFavorites');
     $app.data.randomUserColours = configRepository.getBool(
         'VRCX_randomUserColours'
@@ -12961,42 +12994,6 @@ speechSynthesis.getVoices();
         );
     };
 
-    $app.methods.promptSetAvatarRemoteDatabase = function (newUrl) {
-        var inputValue = this.avatarRemoteDatabaseProvider;
-        if (newUrl) {
-            inputValue = newUrl;
-        }
-        this.$prompt(
-            'Enter avatar database provider URL',
-            'Avatar Database Provider',
-            {
-                distinguishCancelAndClose: true,
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel',
-                inputValue,
-                inputErrorMessage: 'Valid URL is required',
-                callback: (action, instance) => {
-                    if (action === 'confirm') {
-                        this.avatarRemoteDatabaseProvider = instance.inputValue;
-                        configRepository.setString(
-                            'VRCX_avatarRemoteDatabaseProvider',
-                            this.avatarRemoteDatabaseProvider
-                        );
-                        if (this.avatarRemoteDatabaseProvider) {
-                            this.avatarRemoteDatabase = true;
-                        } else {
-                            this.avatarRemoteDatabase = false;
-                        }
-                        configRepository.setBool(
-                            'VRCX_avatarRemoteDatabase',
-                            this.avatarRemoteDatabase
-                        );
-                    }
-                }
-            }
-        );
-    };
-
     // App: Dialog
 
     var adjustDialogZ = (el) => {
@@ -13877,36 +13874,76 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.lookupAvatars = async function (type, search) {
-        if (
-            this.avatarRemoteDatabaseProvider ===
-            'https://requi.dev/vrcx_search.php'
-        ) {
-            this.$alert(
-                'ReMod remote avatar search has been shutdown due to EAC more info here: https://requi.dev/vrcx_search.php',
-                'Remote avatar search'
-            );
-            this.avatarRemoteDatabaseProvider = '';
-            configRepository.setString(
-                'VRCX_avatarRemoteDatabaseProvider',
-                this.avatarRemoteDatabaseProvider
-            );
-            this.avatarRemoteDatabase = false;
-            configRepository.setBool(
-                'VRCX_avatarRemoteDatabase',
-                this.avatarRemoteDatabase
-            );
-        }
-        if (type === 'search') {
-            var limit = '&n=5000';
-        } else {
-            var limit = '';
-        }
         var avatars = new Map();
+        if (type === 'search') {
+            try {
+                var response = await webApiService.execute({
+                    url: `${
+                        this.avatarRemoteDatabaseProvider
+                    }?${type}=${encodeURIComponent(search)}&n=5000`,
+                    method: 'GET',
+                    headers: {
+                        'User-Agent': appVersion,
+                        Referer: 'https://vrcx.pypy.moe'
+                    }
+                });
+                var json = JSON.parse(response.data);
+                if (this.debugWebRequests) {
+                    console.log(json, response);
+                }
+                if (response.status === 200 && typeof json === 'object') {
+                    json.forEach((avatar) => {
+                        if (!avatars.has(avatar.Id)) {
+                            var ref = {
+                                authorId: '',
+                                authorName: '',
+                                name: '',
+                                description: '',
+                                id: '',
+                                imageUrl: '',
+                                thumbnailImageUrl: '',
+                                created_at: '0001-01-01T00:00:00.0000000Z',
+                                updated_at: '0001-01-01T00:00:00.0000000Z',
+                                releaseStatus: 'public',
+                                ...avatar
+                            };
+                            avatars.set(ref.id, ref);
+                        }
+                    });
+                } else {
+                    throw new Error(`Error: ${response.data}`);
+                }
+            } catch (err) {
+                var msg = `Avatar search failed for ${search} with ${this.avatarRemoteDatabaseProvider}\n${err}`;
+                console.error(msg);
+                this.$message({
+                    message: msg,
+                    type: 'error'
+                });
+            }
+        } else if (type === 'authorId') {
+            var length = this.avatarRemoteDatabaseProviderList.length;
+            for (var i = 0; i < length; ++i) {
+                var url = this.avatarRemoteDatabaseProviderList[i];
+                var avatarArray = await this.lookupAvatarsByAuthor(url, search);
+                avatarArray.forEach((avatar) => {
+                    if (!avatars.has(avatar.id)) {
+                        avatars.set(avatar.id, avatar);
+                    }
+                });
+            }
+        }
+        return avatars;
+    };
+
+    $app.methods.lookupAvatarsByAuthor = async function (url, authorId) {
+        var avatars = [];
+        if (!url) {
+            return avatars;
+        }
         try {
             var response = await webApiService.execute({
-                url: `${
-                    this.avatarRemoteDatabaseProvider
-                }?${type}=${encodeURIComponent(search)}${limit}`,
+                url: `${url}?authorId=${encodeURIComponent(authorId)}`,
                 method: 'GET',
                 headers: {
                     'User-Agent': appVersion,
@@ -13919,28 +13956,31 @@ speechSynthesis.getVoices();
             }
             if (response.status === 200 && typeof json === 'object') {
                 json.forEach((avatar) => {
-                    if (!avatars.has(avatar.Id)) {
-                        var ref1 = {
-                            authorId: '',
-                            authorName: '',
-                            name: '',
-                            description: '',
-                            id: '',
-                            imageUrl: '',
-                            thumbnailImageUrl: '',
-                            created_at: '0001-01-01T00:00:00.0000000Z',
-                            updated_at: '0001-01-01T00:00:00.0000000Z',
-                            releaseStatus: 'public',
-                            ...avatar
-                        };
-                        avatars.set(ref1.id, ref1);
-                    }
+                    var ref = {
+                        authorId: '',
+                        authorName: '',
+                        name: '',
+                        description: '',
+                        id: '',
+                        imageUrl: '',
+                        thumbnailImageUrl: '',
+                        created_at: '0001-01-01T00:00:00.0000000Z',
+                        updated_at: '0001-01-01T00:00:00.0000000Z',
+                        releaseStatus: 'public',
+                        ...avatar
+                    };
+                    avatars.push(ref);
                 });
             } else {
                 throw new Error(`Error: ${response.data}`);
             }
-        } catch {
-            console.error(`Avatar lookup failed for ${search}`);
+        } catch (err) {
+            var msg = `Avatar lookup failed for ${authorId} with ${url}\n${err}`;
+            console.error(msg);
+            this.$message({
+                message: msg,
+                type: 'error'
+            });
         }
         return avatars;
     };
@@ -19461,9 +19501,7 @@ speechSynthesis.getVoices();
                 this.showUserDialog(commandArg);
                 break;
             case 'addavatardb':
-                this.promptSetAvatarRemoteDatabase(
-                    input.replace('addavatardb/', '')
-                );
+                this.addAvatarProvider(input.replace('addavatardb/', ''));
                 break;
         }
     };
@@ -20792,6 +20830,70 @@ speechSynthesis.getVoices();
 
     $app.methods.cancelNoteExport = function () {
         this.noteExportDialog.loading = false;
+    };
+
+    // avatar database provider
+
+    $app.data.avatarProviderDialog = {
+        visible: false
+    };
+
+    $app.methods.showAvatarProviderDialog = function () {
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.avatarProviderDialog.$el)
+        );
+        var D = this.avatarProviderDialog;
+        D.visible = true;
+    };
+
+    $app.methods.addAvatarProvider = function (url) {
+        if (!url) {
+            return;
+        }
+        this.showAvatarProviderDialog();
+        if (!this.avatarRemoteDatabaseProviderList.includes(url)) {
+            this.avatarRemoteDatabaseProviderList.push(url);
+        }
+        this.saveAvatarProviderList();
+    };
+
+    $app.methods.removeAvatarProvider = function (url) {
+        var length = this.avatarRemoteDatabaseProviderList.length;
+        for (var i = 0; i < length; ++i) {
+            if (this.avatarRemoteDatabaseProviderList[i] === url) {
+                this.avatarRemoteDatabaseProviderList.splice(i, 1);
+            }
+        }
+        this.saveAvatarProviderList();
+    };
+
+    $app.methods.saveAvatarProviderList = function () {
+        var length = this.avatarRemoteDatabaseProviderList.length;
+        for (var i = 0; i < length; ++i) {
+            if (!this.avatarRemoteDatabaseProviderList[i]) {
+                this.avatarRemoteDatabaseProviderList.splice(i, 1);
+            }
+        }
+        configRepository.setString(
+            'VRCX_avatarRemoteDatabaseProviderList',
+            JSON.stringify(this.avatarRemoteDatabaseProviderList)
+        );
+        if (this.avatarRemoteDatabaseProviderList.length > 0) {
+            this.avatarRemoteDatabaseProvider =
+                this.avatarRemoteDatabaseProviderList[0];
+            this.avatarRemoteDatabase = true;
+        } else {
+            this.avatarRemoteDatabaseProvider = '';
+            this.avatarRemoteDatabase = false;
+        }
+        configRepository.setBool(
+            'VRCX_avatarRemoteDatabase',
+            this.avatarRemoteDatabase
+        );
+    };
+
+    $app.methods.setAvatarProvider = function (provider) {
+        this.avatarRemoteDatabaseProvider = provider;
     };
 
     $app = new Vue($app);
