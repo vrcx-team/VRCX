@@ -1997,6 +1997,24 @@ speechSynthesis.getVoices();
 
     /*
         params: {
+            shortName: string
+        }
+    */
+    API.getInstanceFromShortName = function (params) {
+        return this.call(`instances/s/${params.shortName}`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('INSTANCE', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
             worldId: string,
             instanceId: string
         }
@@ -9174,15 +9192,29 @@ speechSynthesis.getVoices();
             });
             return;
         } else if (eventData.EventName === 'ConfigurePortal') {
-            var instanceId = `${eventData.Data[0]}:${eventData.Data[1]}`;
+            var shortName = eventData.Data[0];
             var displayName = this.getDisplayNameFromPhotonId(senderId);
-            if (displayName) {
-                var ref1 = {
+            API.getInstanceFromShortName({shortName}).then((args) => {
+                var location = args.json.location;
+                var ref = {
                     id: this.getUserIdFromPhotonId(senderId),
                     displayName
                 };
-                this.parsePhotonPortalSpawn(datetime, instanceId, ref1);
-            }
+                this.parsePhotonPortalSpawn(datetime, location, ref);
+                var portalType = 'Secure';
+                if (shortName === args.json.shortName) {
+                    portalType = 'Unlocked';
+                }
+                this.addEntryPhotonEvent({
+                    photonId: senderId,
+                    text: `${portalType} PortalSpawn`,
+                    type: 'PortalSpawn',
+                    shortName,
+                    location,
+                    created_at: datetime
+                });
+                return args;
+            });
             return;
         } else if (eventData.EventName === '_SendOnSpawn') {
             return;
@@ -9203,11 +9235,13 @@ speechSynthesis.getVoices();
                 }
             } else if (eventData.EventName === 'ReloadAvatarNetworkedRPC') {
                 var text = 'AvatarReset';
+            } else if (eventData.EventName === 'ReleaseBones') {
+                var text = 'ResetPhysBones';
             } else if (eventData.EventName === 'SpawnEmojiRPC') {
                 var text = `SpawnEmoji ${this.photonEmojis[eventData.Data]}`;
             } else {
                 var eventVrc = '';
-                if (eventData.Data.length > 0) {
+                if (eventData.Data && eventData.Data.length > 0) {
                     eventVrc = ` ${JSON.stringify(eventData.Data).replace(
                         /"([^(")"]+)":/g,
                         '$1:'
@@ -9405,18 +9439,23 @@ speechSynthesis.getVoices();
         var bias = Date.parse(gameLogDate) + 60 * 1000; // 1min
         if (bias > Date.now()) {
             if (typeof ref === 'undefined' || typeof ref.id === 'undefined') {
-                var args = await API.getUser({
-                    userId: user.id
-                });
-                ref = args.ref;
-                if (photonUser.last_platform !== ref.last_platform) {
-                    this.addEntryPhotonEvent({
-                        photonId,
-                        text: `API/Photon platform mismatch ${ref.last_platform}/${photonUser.last_platform}`,
-                        type: 'PhotonBot',
-                        color: 'yellow',
-                        created_at: Date.parse(gameLogDate)
+                try {
+                    var args = await API.getUser({
+                        userId: user.id
                     });
+                    ref = args.ref;
+                    if (photonUser.last_platform !== ref.last_platform) {
+                        this.addEntryPhotonEvent({
+                            photonId,
+                            text: `API/Photon platform mismatch ${ref.last_platform}/${photonUser.last_platform}`,
+                            type: 'PhotonBot',
+                            color: 'yellow',
+                            created_at: Date.parse(gameLogDate)
+                        });
+                    }
+                } catch (err) {
+                    console.error(err);
+                    ref = photonUser;
                 }
             } else if (
                 !ref.isFriend &&
@@ -11509,14 +11548,18 @@ speechSynthesis.getVoices();
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
-                    var L = API.parseLocation(this.lastLocation.location);
+                    var currentLocation = this.lastLocation.location;
+                    if (this.lastLocation.location === 'traveling') {
+                        currentLocation = this.lastLocationDestination;
+                    }
+                    var L = API.parseLocation(currentLocation);
                     API.getCachedWorld({
                         worldId: L.worldId
                     }).then((args) => {
                         API.sendInvite(
                             {
-                                instanceId: this.lastLocation.location,
-                                worldId: this.lastLocation.location,
+                                instanceId: L.tag,
+                                worldId: L.tag,
                                 worldName: args.ref.name,
                                 rsvp: true
                             },
@@ -12619,9 +12662,12 @@ speechSynthesis.getVoices();
         if (input.startsWith('/home/')) {
             input = `https://vrchat.com${input}`;
         }
-        if (input.startsWith('https://vrch.at')) {
-            return AppApi.FollowUrl(input).then((output) => {
-                return this.directAccessWorld(output);
+        if (input.startsWith('https://vrch.at/')) {
+            var shortName = input.substring(16, 24);
+            return API.getInstanceFromShortName({shortName}).then((args) => {
+                var location = args.json.location;
+                this.directAccessWorld(location);
+                return args;
             });
         } else if (
             input.startsWith('https://vrchat.') ||
@@ -14244,14 +14290,18 @@ speechSynthesis.getVoices();
                 D.id
             );
         } else if (command === 'Invite') {
-            var L = API.parseLocation(this.lastLocation.location);
+            var currentLocation = this.lastLocation.location;
+            if (this.lastLocation.location === 'traveling') {
+                currentLocation = this.lastLocationDestination;
+            }
+            var L = API.parseLocation(currentLocation);
             API.getCachedWorld({
                 worldId: L.worldId
             }).then((args) => {
                 API.sendInvite(
                     {
-                        instanceId: this.lastLocation.location,
-                        worldId: this.lastLocation.location,
+                        instanceId: L.tag,
+                        worldId: L.tag,
                         worldName: args.ref.name
                     },
                     D.id

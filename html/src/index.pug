@@ -237,6 +237,7 @@ html
                                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                                 span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription" style="margin-left:10px")
                                             span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
+                                            span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" v-text="scope.row.text" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
                                             span(v-else v-text="scope.row.text")
                             el-tab-pane(label="Previous")
                                 data-tables(v-bind="photonEventTablePrevious" style="margin-bottom:10px")

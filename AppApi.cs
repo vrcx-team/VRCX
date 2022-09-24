@@ -356,29 +356,6 @@ namespace VRCX
             }));
         }
 
-        public string FollowUrl(string url)
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-                request.AllowAutoRedirect = false;
-                request.UserAgent = "VRCX";
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                if ((int)response.StatusCode == 301 || (int)response.StatusCode == 302)
-                {
-                    url = response.Headers["Location"];
-                    if (url.Substring(0, 1) == "/" || (url.Length > 30 && url.Substring(0, 31) == "https://vrchat.com/home/launch?"))
-                        return url;
-                }
-                else
-                {
-                    return "";
-                }
-            }
-
-            return "";
-        }
-
         public string CustomCssPath()
         {
             var output = String.Empty;
