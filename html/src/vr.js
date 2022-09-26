@@ -449,10 +449,22 @@ Vue.component('marquee-text', MarqueeText);
                 text = `<strong>${noty.previousDisplayName}</strong> changed their name to ${noty.displayName}`;
                 break;
             case 'PortalSpawn':
-                text = 'User has spawned a portal';
+                if (noty.displayName) {
+                    text = `<strong>${
+                        noty.displayName
+                    }</strong> has spawned a portal to ${this.displayLocation(
+                        noty.instanceId,
+                        noty.worldName
+                    )}`;
+                } else {
+                    text = 'User has spawned a portal';
+                }
                 break;
             case 'AvatarChange':
                 text = `<strong>${noty.displayName}</strong> changed into avatar ${noty.name}`;
+                break;
+            case 'ChatBoxMessage':
+                text = `<strong>${noty.displayName}</strong> said ${noty.text}`;
                 break;
             case 'Event':
                 text = noty.data;

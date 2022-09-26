@@ -123,7 +123,11 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | ✨ User has spawned a portal
+                                            template(v-if="feed.displayName")
+                                                | ✨ #[span.name(v-text="feed.displayName")]  
+                                                | #[location(:location="feed.instanceId" :hint="feed.worldName")]
+                                            template(v-else)
+                                                | ✨ User has spawned a portal
                                 div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -136,6 +140,11 @@ html
                                             |  {{ feed.name }}
                                             template(v-if="feed.description && feed.description !== feed.name")
                                                 |  - {{ feed.description }}
+                                div(v-else-if="feed.type === 'ChatBoxMessage'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                    .detail
+                                        span.extra
+                                            span.time {{ feed.created_at | formatDate }}
+                                            | 💬 #[span.name(v-text="feed.displayName")] #[span(v-text="feed.text")]
                                 div(v-else-if="feed.type === 'Event'" class="x-friend-item")
                                     .detail
                                         span.extra
@@ -292,7 +301,11 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | User has spawned a portal
+                                            template(v-if="feed.displayName")
+                                                | #[span.name(v-text="feed.displayName")] has spawned a portal to  
+                                                | #[location(:location="feed.instanceId" :hint="feed.worldName")]
+                                            template(v-else)
+                                                | User has spawned a portal
                                 div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -305,6 +318,11 @@ html
                                             |  {{ feed.name }}
                                             template(v-if="feed.description && feed.description !== feed.name")
                                                 |  - {{ feed.description }}
+                                div(v-else-if="feed.type === 'ChatBoxMessage'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                    .detail
+                                        span.extra
+                                            span.time {{ feed.created_at | formatDate }}
+                                            | #[span.name(v-text="feed.displayName")] said #[span(v-text="feed.text")]
                                 div(v-else-if="feed.type === 'Event'" class="x-friend-item")
                                     .detail
                                         span.extra
@@ -424,7 +442,7 @@ html
                 .hud-feed
                     div(v-for="feed in hudFeed")
                         .item #[span(v-if="feed.isMaster") 👑]<strong>{{ feed.displayName }}</strong>
-                            span(v-if="feed.type === 'AvatarChange'")
+                            template(v-if="feed.type === 'AvatarChange'")
                                 span(style="margin-left:10px") ChangeAvatar
                                 span(v-if="!feed.inCache" style="color:#aaa;margin-left:10px") #[i.el-icon-download]
                                 span(v-text="feed.avatar.name" style="margin-left:10px")
@@ -438,6 +456,17 @@ html
                                             i.el-icon-right
                                         i.x-user-status(:class="statusClass(feed.status)" style="width:20px;height:20px")
                                     span(v-if="feed.statusDescription !== feed.previousStatusDescription" v-text="feed.statusDescription" style="margin-left:10px")
+                            template(v-else-if="feed.type === 'ChatBoxMessage'")
+                                span(style="margin-left:10px") ChatBox
+                                span(v-text="feed.text" style="margin-left:10px;white-space:normal")
+                            template(v-else-if="feed.type === 'PortalSpawn'")
+                                span(style="margin-left:10px") PortalSpawn
+                                location(:location="feed.location" :hint="feed.worldName" :link="false" style="margin-left:10px")
+                            template(v-else-if="feed.type === 'OnPlayerJoined'")
+                                span(style="margin-left:10px") has joined -
+                                span(v-text="feed.avatar.name" style="margin-left:10px")
+                                span(v-if="feed.avatar.releaseStatus === 'public'" style="margin-left:10px;color:#67c23a") (Public)
+                                span(v-else-if="feed.avatar.releaseStatus === 'private'" style="margin-left:10px;color:#e6a23c") (Private)
                             span(v-else-if="feed.color === 'yellow'" v-text="feed.text" style="color:yellow;margin-left:10px")
                             span(v-else style="margin-left:10px" v-text="feed.text")
                             template(v-if="feed.combo > 1")

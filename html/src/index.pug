@@ -186,7 +186,9 @@ html
                                         img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
                     div.photon-event-table(v-if="photonLoggingEnabled")
                         div(style="position:absolute;margin-left:195px;z-index:1")
-                            el-input(v-model="photonEventTableFilter" @input="photonEventTableFilterChange" placeholder="Search" clearable style="width:150px")
+                            el-select(v-model="photonEventTableTypeFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
+                                el-option(v-once v-for="type in ['AvatarChange', 'ChangeStatus', 'PortalSpawn', 'DeletedPortal', 'ChatBoxMessage', 'Event', 'PhotonMasterMigrate', 'PhotonBot', 'OnPlayerJoined', 'OnPlayerLeft', 'Moderation']" :key="type" :label="type" :value="type")
+                            el-input(v-model="photonEventTableFilter" @input="photonEventTableFilterChange" placeholder="Search" clearable style="width:150px;margin-left:10px")
                             el-tooltip(placement="bottom" content="VRCX Companion Status" :disabled="hideTooltips")
                                 div(style="display:inline-block;margin-left:15px;font-size:14px;vertical-align:text-top;margin-top:1px")
                                     span(v-if="ipcEnabled && !photonEventIcon") 🟢
@@ -206,7 +208,7 @@ html
                                             span.x-link(v-text="scope.row.displayName" @click="showUserFromPhotonId(scope.row.photonId)" style="padding-right:10px")
                                     el-table-column(label="Event" prop="text")
                                         template(v-once #default="scope")
-                                            span(v-if="scope.row.type === 'AvatarChange'")
+                                            template(v-if="scope.row.type === 'AvatarChange'")
                                                 span ChangeAvatar  
                                                 span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
                                                 | &nbsp;
@@ -236,8 +238,15 @@ html
                                                             span(v-else) Offline
                                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                                 span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription" style="margin-left:10px")
+                                            span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
+                                                | PortalSpawn #[location(:location="scope.row.location" :hint="scope.row.worldName" :link="false")]
+                                            span(v-else-if="scope.row.type === 'ChatBoxMessage'")
+                                                | ChatBox #[span(v-text="scope.row.text")]
+                                            span(v-else-if="scope.row.type === 'OnPlayerJoined'")
+                                                | has joined - #[span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")]&nbsp;
+                                                span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
+                                                span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
                                             span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
-                                            span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" v-text="scope.row.text" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
                                             span(v-else v-text="scope.row.text")
                             el-tab-pane(label="Previous")
                                 data-tables(v-bind="photonEventTablePrevious" style="margin-bottom:10px")
@@ -282,6 +291,14 @@ html
                                                             span(v-else) Offline
                                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                                 span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription" style="margin-left:10px")
+                                            span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
+                                                | PortalSpawn #[location(:location="scope.row.location" :hint="scope.row.worldName" :link="false")]
+                                            span(v-else-if="scope.row.type === 'ChatBoxMessage'")
+                                                | ChatBox #[span(v-text="scope.row.text")]
+                                            span(v-else-if="scope.row.type === 'OnPlayerJoined'")
+                                                | has joined - #[span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")]&nbsp;
+                                                span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
+                                                span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
                                             span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
                                             span(v-else v-text="scope.row.text")
 
@@ -1122,6 +1139,9 @@ html
                         div.options-container(style="margin-top:0")
                             span.header Notifications
                             div.options-container-item
+                                el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog") Notification Filters
+                            span.sub-header SteamVR Notifications
+                            div.options-container-item
                                 span.name SteamVR Overlay
                                 el-switch(v-model="openVR" @change="saveOpenVROption")
                             div.options-container-item
@@ -1149,8 +1169,6 @@ html
                                     el-radio-button(label="Game Closed")
                                     el-radio-button(label="Game Running")
                                     el-radio-button(label="Always")
-                            div.options-container-item
-                                el-button(size="small" icon="el-icon-chat-square" @click="showNotyFeedFiltersDialog") Notification Filters
                             br
                             span.sub-header Text-To-Speech Options
                             div.options-container-item
@@ -1810,6 +1828,7 @@ html
                             div(v-for="room in worldDialog.rooms" :key="room.id")
                                 div(style="margin:5px 0")
                                     span.x-link(@click="showLaunchDialog(room.$location.tag, room.$location.shortName)")
+                                        i.el-icon-unlock(v-if="(room.$location.shortName && worldDialog.$location.shortName === room.$location.shortName) || API.currentUser.id === room.$location.userId" style="display:inline-block;margin-right:5px")
                                         span \#{{ room.$location.instanceName }} {{ room.$location.accessType }}
                                         span.flags(v-if="room.$location.region" :class="room.$location.region" style="display:inline-block;margin-left:5px")
                                         span.flags(v-else class="us" style="display:inline-block;margin-left:5px")
@@ -2174,7 +2193,7 @@ html
                     el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.location)") Copy URL
                     el-button(size="small" @click="selfInvite(newInstanceDialog.location)") Self Invite
                     el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)" :disabled="(newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') && newInstanceDialog.userId !== API.currentUser.id") Invite
-                    el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location)") Launch
+                    el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.secureOrShortName)") Launch
 
             //- dialog: launch options
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchOptionsDialog" :visible.sync="launchOptionsDialog.visible" title="Launch Options" width="500px")
@@ -2325,7 +2344,7 @@ html
                     el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") Start as Desktop (No VR)
                     el-button(size="small" @click="showPreviousInstanceInfoDialog(launchDialog.location)") Info
                     el-button(size="small" @click="showInviteDialog(launchDialog.location)" :disabled="!checkCanInvite(launchDialog.location)") Invite
-                    el-button(type="primary" size="small" @click="launchGame(locationToLaunchArg(launchDialog.location))") Launch
+                    el-button(type="primary" size="small" @click="launchGame(launchDialog.location, launchDialog.secureOrShortName)" :disabled="!launchDialog.secureOrShortName") Launch
 
             //- dialog: export friends list
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportFriendsListDialog" title="Export Friends List" width="650px")
@@ -2521,6 +2540,13 @@ html
                                 el-radio-button(label="Friends")
                                 el-radio-button(label="Everyone")
                         .toggle-item
+                            span.toggle-name Lobby ChatBox Message
+                            el-radio-group(v-model="sharedFeedFilters.noty.ChatBoxMessage" size="mini")
+                                el-radio-button(label="Off")
+                                el-radio-button(label="VIP")
+                                el-radio-button(label="Friends")
+                                el-radio-button(label="Everyone")
+                        .toggle-item
                             span.toggle-name Blocked
                             el-radio-group(v-model="sharedFeedFilters.noty.Blocked" size="mini")
                                 el-radio-button(label="Off")
@@ -2703,6 +2729,13 @@ html
                         .toggle-item
                             span.toggle-name Lobby Avatar Change
                             el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
+                                el-radio-button(label="Off")
+                                el-radio-button(label="VIP")
+                                el-radio-button(label="Friends")
+                                el-radio-button(label="Everyone")
+                        .toggle-item
+                            span.toggle-name Lobby ChatBox Message
+                            el-radio-group(v-model="sharedFeedFilters.wrist.ChatBoxMessage" size="mini")
                                 el-radio-button(label="Off")
                                 el-radio-button(label="VIP")
                                 el-radio-button(label="Friends")
