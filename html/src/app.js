@@ -8844,6 +8844,20 @@ speechSynthesis.getVoices();
 
     $app.data.photonEventTableFilter = '';
     $app.data.photonEventTableTypeFilter = [];
+    $app.data.photonEventTableTypeOverlayFilter = [];
+    $app.data.photonEventTableTypeFilterList = [
+        'Event',
+        'OnPlayerJoined',
+        'OnPlayerLeft',
+        'AvatarChange',
+        'ChangeStatus',
+        'PortalSpawn',
+        'DeletedPortal',
+        'ChatBoxMessage',
+        'Moderation',
+        'PhotonMasterMigrate',
+        'PhotonBot'
+    ];
 
     $app.methods.photonEventTableFilterChange = function () {
         this.photonEventTable.filters[0].value = this.photonEventTableFilter;
@@ -8858,6 +8872,10 @@ speechSynthesis.getVoices();
         configRepository.setString(
             'VRCX_photonEventTypeFilter',
             JSON.stringify(this.photonEventTableTypeFilter)
+        );
+        configRepository.setString(
+            'VRCX_photonEventTypeOverlayFilter',
+            JSON.stringify(this.photonEventTableTypeOverlayFilter)
         );
     };
 
@@ -8926,8 +8944,8 @@ speechSynthesis.getVoices();
         };
         this.photonEventTable.data.unshift(feed);
         if (
-            this.photonEventTableTypeFilter.length > 0 &&
-            !this.photonEventTableTypeFilter.includes(feed.type)
+            this.photonEventTableTypeOverlayFilter.length > 0 &&
+            !this.photonEventTableTypeOverlayFilter.includes(feed.type)
         ) {
             return;
         }
@@ -9313,27 +9331,38 @@ speechSynthesis.getVoices();
         } else if (eventData.EventName === 'ConfigurePortal') {
             var shortName = eventData.Data[0];
             var displayName = this.getDisplayNameFromPhotonId(senderId);
-            API.getInstanceFromShortName({shortName}).then((args) => {
-                var location = args.json.location;
-                var newShortName = args.json.shortName;
-                var ref = {
-                    id: this.getUserIdFromPhotonId(senderId),
-                    displayName
-                };
-                var portalType = 'Secure';
-                if (shortName === newShortName) {
-                    portalType = 'Unlocked';
-                }
-                this.parsePhotonPortalSpawn(
-                    datetime,
-                    location,
-                    ref,
-                    portalType,
-                    newShortName,
-                    senderId
-                );
-                return args;
-            });
+            var ref = {
+                id: this.getUserIdFromPhotonId(senderId),
+                displayName
+            };
+            API.getInstanceFromShortName({shortName})
+                .then((args) => {
+                    var location = args.json.location;
+                    var newShortName = args.json.shortName;
+                    var portalType = 'Secure';
+                    if (shortName === newShortName) {
+                        portalType = 'Unlocked';
+                    }
+                    this.parsePhotonPortalSpawn(
+                        datetime,
+                        location,
+                        ref,
+                        portalType,
+                        newShortName,
+                        senderId
+                    );
+                    return args;
+                })
+                .catch(() => {
+                    this.parsePhotonPortalSpawn(
+                        datetime,
+                        location,
+                        ref,
+                        'Error',
+                        shortName,
+                        senderId
+                    );
+                });
             return;
         } else if (eventData.EventName === '_SendOnSpawn') {
             return;
@@ -9400,21 +9429,23 @@ speechSynthesis.getVoices();
         shortName,
         photonId
     ) {
-        var L = API.parseLocation(instanceId);
-        var name = instanceId;
-        try {
-            var args = await API.getCachedWorld({
-                worldId: L.worldId
-            });
-            name = args.ref.name;
-        } catch (err) {}
+        var worldName = shortName;
+        if (instanceId) {
+            var L = API.parseLocation(instanceId);
+            try {
+                var args = await API.getCachedWorld({
+                    worldId: L.worldId
+                });
+                worldName = args.ref.name;
+            } catch (err) {}
+        }
         this.addEntryPhotonEvent({
             photonId,
-            text: `${portalType} PortalSpawn to ${name}`,
+            text: `${portalType} PortalSpawn to ${worldName}`,
             type: 'PortalSpawn',
             shortName,
             location: instanceId,
-            worldName: name,
+            worldName,
             created_at
         });
         this.addPhotonEventToGameLog({
@@ -9424,7 +9455,7 @@ speechSynthesis.getVoices();
             location: this.lastLocation.location,
             userId: ref.id,
             instanceId,
-            worldName: name
+            worldName
         });
     };
 
@@ -11765,6 +11796,11 @@ speechSynthesis.getVoices();
             $app.data.photonEventTableTypeFilter;
         $app.data.photonEventTablePrevious.filters[1].value =
             $app.data.photonEventTableTypeFilter;
+    }
+    if (configRepository.getString('VRCX_photonEventTypeOverlayFilter')) {
+        $app.data.photonEventTableTypeOverlayFilter = JSON.parse(
+            configRepository.getString('VRCX_photonEventTypeOverlayFilter')
+        );
     }
 
     // App: Profile + Settings
@@ -16126,11 +16162,11 @@ speechSynthesis.getVoices();
 
     $app.methods.launchGame = function (location, shortName) {
         var D = this.launchDialog;
-        var args = '';
+        var args = [];
         if (shortName) {
-            args = `vrchat://launch?id=${location}&shortName=${shortName}`;
+            args.push(`vrchat://launch?id=${location}&shortName=${shortName}`);
         } else {
-            args = `vrchat://launch?id=${location}`;
+            args.push(`vrchat://launch?id=${location}`);
         }
         var {launchArguments, vrcLaunchPathOverride} = this.launchOptionsDialog;
         if (launchArguments) {

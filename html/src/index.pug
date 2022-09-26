@@ -187,7 +187,7 @@ html
                     div.photon-event-table(v-if="photonLoggingEnabled")
                         div(style="position:absolute;margin-left:195px;z-index:1")
                             el-select(v-model="photonEventTableTypeFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
-                                el-option(v-once v-for="type in ['AvatarChange', 'ChangeStatus', 'PortalSpawn', 'DeletedPortal', 'ChatBoxMessage', 'Event', 'PhotonMasterMigrate', 'PhotonBot', 'OnPlayerJoined', 'OnPlayerLeft', 'Moderation']" :key="type" :label="type" :value="type")
+                                el-option(v-once v-for="type in photonEventTableTypeFilterList" :key="type" :label="type" :value="type")
                             el-input(v-model="photonEventTableFilter" @input="photonEventTableFilterChange" placeholder="Search" clearable style="width:150px;margin-left:10px")
                             el-tooltip(placement="bottom" content="VRCX Companion Status" :disabled="hideTooltips")
                                 div(style="display:inline-block;margin-left:15px;font-size:14px;vertical-align:text-top;margin-top:1px")
@@ -1326,6 +1326,9 @@ html
                                         el-radio-button(label="VIP")
                                         el-radio-button(label="Friends")
                                         el-radio-button(label="Everyone")
+                                div.options-container-item
+                                    el-select(v-model="photonEventTableTypeOverlayFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
+                                        el-option(v-once v-for="type in photonEventTableTypeFilterList" :key="type" :label="type" :value="type")
                                 span.sub-header User timeout HUD
                                 div.options-container-item
                                     span.name Enable
