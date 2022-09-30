@@ -14699,7 +14699,7 @@ speechSynthesis.getVoices();
         if (D.visible === false || D.id !== args.ref.favoriteId) {
             return;
         }
-        D.isFavorite = false;
+        D.isFavorite = $app.localWorldFavoritesList.includes(D.id);
     });
 
     $app.methods.showWorldDialog = function (tag, shortName) {
@@ -14763,6 +14763,11 @@ speechSynthesis.getVoices();
                     D.loading = false;
                     D.ref = args.ref;
                     D.isFavorite = API.cachedFavoritesByObjectId.has(D.id);
+                    if (!D.isFavorite) {
+                        D.isFavorite = this.localWorldFavoritesList.includes(
+                            D.id
+                        );
+                    }
                     var {isPC, isQuest} = this.getAvailablePlatforms(
                         args.ref.unityPackages
                     );
@@ -15405,7 +15410,8 @@ speechSynthesis.getVoices();
         loading: false,
         type: '',
         objectId: '',
-        groups: []
+        groups: [],
+        currentGroup: {}
     };
 
     API.$on('LOGOUT', function () {
@@ -15424,7 +15430,6 @@ speechSynthesis.getVoices();
                 D.loading = false;
             })
             .then((args) => {
-                D.visible = false;
                 return args;
             });
     };
@@ -15480,7 +15485,32 @@ speechSynthesis.getVoices();
             D.groups = API.favoriteAvatarGroups;
             D.visible = true;
         }
+        this.updateFavoriteDialog(objectId);
     };
+
+    $app.methods.updateFavoriteDialog = function (objectId) {
+        var D = this.favoriteDialog;
+        if (!D.visible || D.objectId !== objectId) {
+            return;
+        }
+        D.currentGroup = {};
+        var favorite = this.favoriteObjects.get(objectId);
+        if (favorite) {
+            for (var group of API.favoriteWorldGroups) {
+                if (favorite.groupKey === group.key) {
+                    D.currentGroup = group;
+                }
+            }
+        }
+    };
+
+    API.$on('FAVORITE:ADD', function (args) {
+        $app.updateFavoriteDialog(args.params.favoriteId);
+    });
+
+    API.$on('FAVORITE:DELETE', function (args) {
+        $app.updateFavoriteDialog(args.params.objectId);
+    });
 
     // App: Invite Dialog
 
@@ -19575,7 +19605,8 @@ speechSynthesis.getVoices();
         API.cachedWorlds.forEach((ref, id) => {
             if (
                 !API.cachedFavoritesByObjectId.has(id) &&
-                ref.authorId !== API.currentUser.id
+                ref.authorId !== API.currentUser.id &&
+                !this.localWorldFavoritesList.includes(id)
             ) {
                 API.cachedWorlds.delete(id);
             }
@@ -20395,6 +20426,7 @@ speechSynthesis.getVoices();
         worldIdList: new Set(),
         errors: '',
         worldImportFavoriteGroup: null,
+        worldImportLocalFavoriteGroup: null,
         importProgress: 0,
         importProgressTotal: 0
     };
@@ -20479,7 +20511,14 @@ speechSynthesis.getVoices();
 
     $app.methods.selectWorldImportGroup = function (group) {
         var D = this.worldImportDialog;
+        D.worldImportLocalFavoriteGroup = null;
         D.worldImportFavoriteGroup = group;
+    };
+
+    $app.methods.selectWorldImportLocalGroup = function (group) {
+        var D = this.worldImportDialog;
+        D.worldImportFavoriteGroup = null;
+        D.worldImportLocalFavoriteGroup = group;
     };
 
     $app.methods.cancelWorldImport = function () {
@@ -20489,10 +20528,10 @@ speechSynthesis.getVoices();
 
     $app.methods.importWorldImportTable = async function () {
         var D = this.worldImportDialog;
-        D.loading = true;
-        if (!D.worldImportFavoriteGroup) {
+        if (!D.worldImportFavoriteGroup && !D.worldImportLocalFavoriteGroup) {
             return;
         }
+        D.loading = true;
         var data = [...this.worldImportTable.data].reverse();
         D.importProgressTotal = data.length;
         try {
@@ -20501,7 +20540,17 @@ speechSynthesis.getVoices();
                     break;
                 }
                 var ref = data[i];
-                await this.addFavoriteWorld(ref, D.worldImportFavoriteGroup);
+                if (D.worldImportFavoriteGroup) {
+                    await this.addFavoriteWorld(
+                        ref,
+                        D.worldImportFavoriteGroup
+                    );
+                } else if (D.worldImportLocalFavoriteGroup) {
+                    this.addLocalWorldFavorite(
+                        ref.id,
+                        D.worldImportLocalFavoriteGroup
+                    );
+                }
                 removeFromArray(this.worldImportTable.data, ref);
                 D.worldIdList.delete(ref.id);
                 D.importProgress++;
@@ -20520,9 +20569,11 @@ speechSynthesis.getVoices();
         $app.resetWorldImport();
         $app.worldImportDialog.visible = false;
         $app.worldImportFavoriteGroup = null;
+        $app.worldImportLocalFavoriteGroup = null;
 
         $app.worldExportDialogVisible = false;
         $app.worldExportFavoriteGroup = null;
+        $app.worldExportLocalFavoriteGroup = null;
     });
 
     // App: world favorite export
@@ -20531,12 +20582,14 @@ speechSynthesis.getVoices();
     $app.data.worldExportDialogVisible = false;
     $app.data.worldExportContent = '';
     $app.data.worldExportFavoriteGroup = null;
+    $app.data.worldExportLocalFavoriteGroup = null;
 
     $app.methods.showWorldExportDialog = function () {
         this.$nextTick(() =>
             adjustDialogZ(this.$refs.worldExportDialogRef.$el)
         );
         this.worldExportFavoriteGroup = null;
+        this.worldExportLocalFavoriteGroup = null;
         this.updateWorldExportDialog();
         this.worldExportDialogVisible = true;
     };
@@ -20549,23 +20602,51 @@ speechSynthesis.getVoices();
             return str;
         };
         var lines = ['WorldID,Name'];
-        API.favoriteWorldGroups.forEach((group) => {
-            if (
-                !this.worldExportFavoriteGroup ||
-                this.worldExportFavoriteGroup === group
-            ) {
-                $app.favoriteWorlds.forEach((ref) => {
-                    if (group.key === ref.groupKey) {
-                        lines.push(`${_(ref.id)},${_(ref.name)}`);
-                    }
-                });
+        if (this.worldExportFavoriteGroup) {
+            API.favoriteWorldGroups.forEach((group) => {
+                if (this.worldExportFavoriteGroup === group) {
+                    $app.favoriteWorlds.forEach((ref) => {
+                        if (group.key === ref.groupKey) {
+                            lines.push(`${_(ref.id)},${_(ref.name)}`);
+                        }
+                    });
+                }
+            });
+        } else if (this.worldExportLocalFavoriteGroup) {
+            var favoriteGroup =
+                this.localWorldFavorites[this.worldExportLocalFavoriteGroup];
+            if (!favoriteGroup) {
+                return;
             }
-        });
+            for (var i = 0; i < favoriteGroup.length; ++i) {
+                var ref = favoriteGroup[i];
+                lines.push(`${_(ref.id)},${_(ref.name)}`);
+            }
+        } else {
+            // export all
+            this.favoriteWorlds.forEach((ref1) => {
+                lines.push(`${_(ref1.id)},${_(ref1.name)}`);
+            });
+            for (var i = 0; i < this.localWorldFavoritesList.length; ++i) {
+                var worldId = this.localWorldFavoritesList[i];
+                var ref2 = API.cachedWorlds.get(worldId);
+                if (typeof ref2 !== 'undefined') {
+                    lines.push(`${_(ref2.id)},${_(ref2.name)}`);
+                }
+            }
+        }
         this.worldExportContent = lines.join('\n');
     };
 
     $app.methods.selectWorldExportGroup = function (group) {
         this.worldExportFavoriteGroup = group;
+        this.worldExportLocalFavoriteGroup = null;
+        this.updateWorldExportDialog();
+    };
+
+    $app.methods.selectWorldExportLocalGroup = function (group) {
+        this.worldExportLocalFavoriteGroup = group;
+        this.worldExportFavoriteGroup = null;
         this.updateWorldExportDialog();
     };
 
@@ -21160,6 +21241,227 @@ speechSynthesis.getVoices();
     $app.methods.setAvatarProvider = function (provider) {
         this.avatarRemoteDatabaseProvider = provider;
     };
+
+    // App: local world favorites
+
+    $app.data.localWorldFavoriteGroups = [];
+    $app.data.localWorldFavoritesList = [];
+    $app.data.localWorldFavorites = [];
+
+    $app.methods.addLocalWorldFavorite = function (worldId, group) {
+        if (this.hasLocalWorldFavorite(worldId, group)) {
+            return;
+        }
+        var ref = API.cachedWorlds.get(worldId);
+        if (typeof ref === 'undefined') {
+            return;
+        }
+        if (!this.localWorldFavoritesList.includes(worldId)) {
+            this.localWorldFavoritesList.push(worldId);
+        }
+        if (!this.localWorldFavorites[group]) {
+            this.localWorldFavorites[group] = [];
+        }
+        if (!this.localWorldFavoriteGroups.includes(group)) {
+            this.localWorldFavoriteGroups.push(group);
+        }
+        this.localWorldFavorites[group].unshift(ref);
+        database.addWorldToCache(ref);
+        database.addWorldToFavorites(worldId, group);
+        if (
+            this.favoriteDialog.visible &&
+            this.favoriteDialog.objectId === worldId
+        ) {
+            this.updateFavoriteDialog(worldId);
+        }
+        if (this.worldDialog.visible && this.worldDialog.id === worldId) {
+            this.worldDialog.isFavorite = true;
+        }
+    };
+
+    $app.methods.removeLocalWorldFavorite = function (worldId, group) {
+        var favoriteGroup = this.localWorldFavorites[group];
+        for (var i = 0; i < favoriteGroup.length; ++i) {
+            if (favoriteGroup[i].id === worldId) {
+                favoriteGroup.splice(i, 1);
+            }
+        }
+        var worldInFavorites = false;
+        for (var i = 0; i < this.localWorldFavoritesList.length; ++i) {
+            for (var j = 0; j < this.localWorldFavoritesList[i].length; ++j) {
+                if (this.localWorldFavoritesList[i][j] === worldId) {
+                    worldInFavorites = true;
+                }
+            }
+        }
+        database.removeWorldFromFavorites(worldId, group);
+        if (!worldInFavorites) {
+            removeFromArray(this.localWorldFavoritesList, worldId);
+            database.removeWorldFromCache(worldId);
+        }
+        if (
+            this.favoriteDialog.visible &&
+            this.favoriteDialog.objectId === worldId
+        ) {
+            this.updateFavoriteDialog(worldId);
+        }
+        if (this.worldDialog.visible && this.worldDialog.id === worldId) {
+            this.worldDialog.isFavorite =
+                API.cachedFavoritesByObjectId.has(worldId);
+        }
+    };
+
+    $app.methods.getLocalWorldFavorites = async function () {
+        this.localWorldFavoriteGroups = [];
+        this.localWorldFavoritesList = [];
+        this.localWorldFavorites = [];
+        for (var i = 0; i < this.localWorldFavoritesList.length; ++i) {
+            // keep reference to fix Vue error
+            this.localWorldFavoritesList[i] = [];
+        }
+        var worldCache = await database.getWorldCache();
+        for (var i = 0; i < worldCache.length; ++i) {
+            var ref = worldCache[i];
+            if (!API.cachedWorlds.has(ref.id)) {
+                API.cachedWorlds.set(ref.id, ref);
+            }
+        }
+        var favorites = await database.getWorldFavorites();
+        for (var i = 0; i < favorites.length; ++i) {
+            var favorite = favorites[i];
+            if (!this.localWorldFavoritesList.includes(favorite.worldId)) {
+                this.localWorldFavoritesList.push(favorite.worldId);
+            }
+            if (!this.localWorldFavorites[favorite.groupName]) {
+                this.localWorldFavorites[favorite.groupName] = [];
+            }
+            if (!this.localWorldFavoriteGroups.includes(favorite.groupName)) {
+                this.localWorldFavoriteGroups.push(favorite.groupName);
+            }
+            var ref = API.cachedWorlds.get(favorite.worldId);
+            this.localWorldFavorites[favorite.groupName].unshift(ref);
+        }
+        if (this.localWorldFavoriteGroups.length === 0) {
+            // default group
+            this.localWorldFavorites.Favorites = [];
+            this.localWorldFavoriteGroups.push('Favorites');
+        }
+        this.localWorldFavoriteGroups.sort();
+        this.localWorldFavorites.sort();
+    };
+
+    $app.methods.hasLocalWorldFavorite = function (worldId, group) {
+        var favoriteGroup = this.localWorldFavorites[group];
+        if (!favoriteGroup) {
+            return false;
+        }
+        for (var i = 0; i < favoriteGroup.length; ++i) {
+            if (favoriteGroup[i].id === worldId) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    $app.methods.promptNewLocalWorldFavoriteGroup = function () {
+        this.$prompt('Enter a world favorite group name', 'New Group', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputPattern: /\S+/,
+            inputErrorMessage: 'Name is required',
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue) {
+                    this.newLocalWorldFavoriteGroup(instance.inputValue);
+                }
+            }
+        });
+    };
+
+    $app.methods.newLocalWorldFavoriteGroup = function (group) {
+        if (this.localWorldFavoriteGroups.includes(group)) {
+            $app.$message({
+                message: `Group already exists with the name ${group}`,
+                type: 'error'
+            });
+            return;
+        }
+        if (!this.localWorldFavorites[group]) {
+            this.localWorldFavorites[group] = [];
+        }
+        if (!this.localWorldFavoriteGroups.includes(group)) {
+            this.localWorldFavoriteGroups.push(group);
+        }
+        this.localWorldFavoriteGroups.sort();
+        this.localWorldFavorites.sort();
+    };
+
+    $app.methods.promptLocalWorldFavoriteGroupRename = function (group) {
+        this.$prompt('Enter a world favorite group name', 'Rename Group', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'Save',
+            cancelButtonText: 'Cancel',
+            inputPattern: /\S+/,
+            inputErrorMessage: 'Name is required',
+            inputValue: group,
+            callback: (action, instance) => {
+                if (action === 'confirm' && instance.inputValue) {
+                    this.renameLocalWorldFavoriteGroup(
+                        instance.inputValue,
+                        group
+                    );
+                }
+            }
+        });
+    };
+
+    $app.methods.renameLocalWorldFavoriteGroup = function (newName, group) {
+        if (this.localWorldFavoriteGroups.includes(newName)) {
+            $app.$message({
+                message: `Group already exists with the name ${newName}`,
+                type: 'error'
+            });
+            return;
+        }
+        this.localWorldFavoriteGroups.push(newName);
+        this.localWorldFavorites[newName] = this.localWorldFavorites[group];
+
+        removeFromArray(this.localWorldFavoriteGroups, group);
+        delete this.localWorldFavorites[group];
+        database.renameWorldFavoriteGroup(newName, group);
+        this.localWorldFavoriteGroups.sort();
+        this.localWorldFavorites.sort();
+    };
+
+    $app.methods.promptLocalWorldFavoriteGroupDelete = function (group) {
+        this.$confirm(`Delete Group? ${group}`, 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    this.deleteLocalWorldFavoriteGroup(group);
+                }
+            }
+        });
+    };
+
+    $app.methods.deleteLocalWorldFavoriteGroup = function (group) {
+        removeFromArray(this.localWorldFavoriteGroups, group);
+        delete this.localWorldFavorites[group];
+        database.deleteWorldFavoriteGroup(group);
+    };
+
+    API.$on('WORLD', function (args) {
+        if ($app.localWorldFavoritesList.includes(args.ref.id)) {
+            // update db cache
+            database.addWorldToCache(args.ref);
+        }
+    });
+
+    API.$on('LOGIN', function () {
+        $app.getLocalWorldFavorites();
+    });
 
     $app = new Vue($app);
     window.$app = $app;
