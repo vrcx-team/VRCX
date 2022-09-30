@@ -465,8 +465,6 @@ html
                             template(v-else-if="feed.type === 'OnPlayerJoined'")
                                 span(style="margin-left:10px") has joined -
                                 span(v-text="feed.avatar.name" style="margin-left:10px")
-                                span(v-if="feed.avatar.releaseStatus === 'public'" style="margin-left:10px;color:#67c23a") (Public)
-                                span(v-else-if="feed.avatar.releaseStatus === 'private'" style="margin-left:10px;color:#e6a23c") (Private)
                             span(v-else-if="feed.color === 'yellow'" v-text="feed.text" style="color:yellow;margin-left:10px")
                             span(v-else style="margin-left:10px" v-text="feed.text")
                             template(v-if="feed.combo > 1")

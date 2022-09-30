@@ -9072,6 +9072,7 @@ speechSynthesis.getVoices();
                             inVRMode: user.inVRMode,
                             avatarEyeHeight: user.avatarEyeHeight
                         });
+                        this.photonUserJoin(id, user.avatarDict, gameLogDate);
                     }
                 } else {
                     this.parsePhotonUser(
@@ -9093,6 +9094,11 @@ speechSynthesis.getVoices();
                             data.Parameters[251].inVRMode
                         );
                     }
+                    this.photonUserJoin(
+                        data.Parameters[253],
+                        data.Parameters[251].avatarDict,
+                        gameLogDate
+                    );
                 }
                 break;
             case 42:
@@ -9335,34 +9341,40 @@ speechSynthesis.getVoices();
                 id: this.getUserIdFromPhotonId(senderId),
                 displayName
             };
-            API.getInstanceFromShortName({shortName})
-                .then((args) => {
-                    var location = args.json.location;
-                    var newShortName = args.json.shortName;
-                    var portalType = 'Secure';
-                    if (shortName === newShortName) {
-                        portalType = 'Unlocked';
-                    }
-                    this.parsePhotonPortalSpawn(
-                        datetime,
-                        location,
-                        ref,
-                        portalType,
-                        newShortName,
-                        senderId
-                    );
-                    return args;
-                })
-                .catch(() => {
-                    this.parsePhotonPortalSpawn(
-                        datetime,
-                        location,
-                        ref,
-                        'Error',
-                        shortName,
-                        senderId
-                    );
-                });
+            workerTimers.setTimeout(() => {
+                // Delay to fix 404? lol
+                API.getInstanceFromShortName({shortName})
+                    .then((args) => {
+                        var location = args.json.location;
+                        var newShortName = args.json.shortName;
+                        var portalType = 'Secure';
+                        if (shortName === newShortName) {
+                            portalType = 'Unlocked';
+                        }
+                        this.parsePhotonPortalSpawn(
+                            datetime,
+                            location,
+                            ref,
+                            portalType,
+                            newShortName,
+                            senderId
+                        );
+                        return args;
+                    })
+                    .catch(() => {
+                        this.parsePhotonPortalSpawn(
+                            datetime,
+                            '',
+                            ref,
+                            'Error',
+                            shortName,
+                            senderId
+                        );
+                        this.failedGetRequests.delete(
+                            `instances/s/${shortName}`
+                        );
+                    });
+            }, 1000);
             return;
         } else if (eventData.EventName === '_SendOnSpawn') {
             return;
@@ -18707,6 +18719,9 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.checkVRChatCache = async function (ref) {
+        if (!ref.unityPackages) {
+            return [-1, 0];
+        }
         var cacheDir = await this.getVRChatCacheDir();
         var assetUrl = '';
         for (var i = ref.unityPackages.length - 1; i > -1; i--) {
