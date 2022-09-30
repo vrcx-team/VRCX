@@ -605,7 +605,7 @@ html
                             el-collapse-item(v-for="group in localWorldFavoriteGroups" v-if="localWorldFavorites[group]" :key="group")
                                 template(slot="title")
                                     span(v-text="group" style="font-weight:bold;font-size:14px;margin-left:10px")
-                                    span(style="color:#909399;font-size:12px;margin-left:10px") {{ localWorldFavorites[group].length }}
+                                    span(style="color:#909399;font-size:12px;margin-left:10px") {{ getLocalWorldFavoriteGroupLength(group) }}
                                     el-tooltip(placement="top" content="Rename" :disabled="hideTooltips")
                                         el-button(@click.stop="promptLocalWorldFavoriteGroupRename(group)" size="mini" icon="el-icon-edit" circle style="margin-left:5px")
                                     el-tooltip(placement="right" content="Delete" :disabled="hideTooltips")
@@ -2066,8 +2066,8 @@ html
                 div(v-if="favoriteDialog.visible && favoriteDialog.type === 'world'" style="margin-top:20px")
                     span(style="display:block;text-align:center") Local Favorites
                     template(v-for="group in localWorldFavoriteGroups" :key="group")
-                        el-button(v-if="hasLocalWorldFavorite(favoriteDialog.objectId, group)" style="display:block;width:100%;margin:10px 0" @click="removeLocalWorldFavorite(favoriteDialog.objectId, group)") #[i.el-icon-check] {{ group }} ({{ localWorldFavorites[group].length }})
-                        el-button(v-else style="display:block;width:100%;margin:10px 0" @click="addLocalWorldFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ localWorldFavorites[group].length }})
+                        el-button(v-if="hasLocalWorldFavorite(favoriteDialog.objectId, group)" style="display:block;width:100%;margin:10px 0" @click="removeLocalWorldFavorite(favoriteDialog.objectId, group)") #[i.el-icon-check] {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+                        el-button(v-else style="display:block;width:100%;margin:10px 0" @click="addLocalWorldFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
 
             //- dialog: invite
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" title="Invite" width="450px")
@@ -3074,7 +3074,7 @@ html
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldExportGroup(groupAPI)") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
                 el-dropdown(@click.native.stop trigger="click" size="small" style="margin-left:10px")
                     el-button(size="mini")
-                        span(v-if="worldExportLocalFavoriteGroup") {{ worldExportLocalFavoriteGroup }} ({{ localWorldFavorites[worldExportLocalFavoriteGroup].length }}) #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-if="worldExportLocalFavoriteGroup") {{ worldExportLocalFavoriteGroup }} ({{ getLocalWorldFavoriteGroupLength(worldExportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
                         span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default="dropdown")
                         el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldExportLocalGroup(null)") None
@@ -3100,12 +3100,12 @@ html
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
                 el-dropdown(@click.native.stop trigger="click" size="small" style="margin:5px")
                     el-button(size="mini")
-                        span(v-if="worldImportDialog.worldImportLocalFavoriteGroup") {{ worldImportDialog.worldImportLocalFavoriteGroup }} ({{ localWorldFavorites[worldImportDialog.worldImportLocalFavoriteGroup].length }}) #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-if="worldImportDialog.worldImportLocalFavoriteGroup") {{ worldImportDialog.worldImportLocalFavoriteGroup }} ({{ getLocalWorldFavoriteGroupLength(worldImportDialog.worldImportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
                         span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default="dropdown")
                         template(v-for="group in localWorldFavoriteGroups" :key="group")
-                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldImportLocalGroup(group)" ) {{ group }} ({{ localWorldFavorites[group].length }})
-                el-button(size="small" @click="importWorldImportTable" style="margin:5px" :disabled="worldImportTable.data.length === 0 || !worldImportDialog.worldImportFavoriteGroup") Import Worlds
+                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldImportLocalGroup(group)" ) {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+                el-button(size="small" @click="importWorldImportTable" style="margin:5px" :disabled="worldImportTable.data.length === 0 || (!worldImportDialog.worldImportFavoriteGroup && !worldImportDialog.worldImportLocalFavoriteGroup)") Import Worlds
                 el-button(v-if="worldImportDialog.loading" size="small" @click="cancelWorldImport" style="margin-top:10px") Cancel
                 span(v-if="worldImportDialog.worldImportFavoriteGroup") {{ worldImportTable.data.length }} / {{ worldImportDialog.worldImportFavoriteGroup.capacity - worldImportDialog.worldImportFavoriteGroup.count }}
                 span(v-if="worldImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] Import Progress: {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
