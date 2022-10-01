@@ -21397,19 +21397,31 @@ speechSynthesis.getVoices();
                 favoriteGroup.splice(i, 1);
             }
         }
+
+        // remove from cache if no longer in favorites
         var worldInFavorites = false;
-        for (var i = 0; i < this.localWorldFavoritesList.length; ++i) {
-            for (var j = 0; j < this.localWorldFavoritesList[i].length; ++j) {
-                if (this.localWorldFavoritesList[i][j] === worldId) {
+        for (var i = 0; i < this.localWorldFavoriteGroups.length; ++i) {
+            var groupName = this.localWorldFavoriteGroups[i];
+            if (!this.localWorldFavorites[groupName] || group === groupName) {
+                continue;
+            }
+            for (
+                var j = 0;
+                j < this.localWorldFavorites[groupName].length;
+                ++j
+            ) {
+                var id = this.localWorldFavorites[groupName][j].id;
+                if (id === worldId) {
                     worldInFavorites = true;
+                    break;
                 }
             }
         }
-        database.removeWorldFromFavorites(worldId, group);
         if (!worldInFavorites) {
             removeFromArray(this.localWorldFavoritesList, worldId);
             database.removeWorldFromCache(worldId);
         }
+        database.removeWorldFromFavorites(worldId, group);
         if (
             this.favoriteDialog.visible &&
             this.favoriteDialog.objectId === worldId
