@@ -114,7 +114,12 @@ To install a theme place `custom.css` into your `%AppData%\VRCX` folder then pre
 - `vrcx://user/usr_id` open VRCX user dialog.
 - `vrcx://avatar/avtr_id` open VRCX avatar dialog.
 - `vrcx://world/wrld_id` open VRCX world dialog.
-- `vrcx://world/wrld_id:12345` or `vrcx://world/https://vrch.at/shortUrl` open VRCX world dialog with instance.
+- `vrcx://world/wrld_id:12345` open VRCX world dialog with instance.
+- `vrcx://world/https://vrch.at/0gmbxjpj` open VRCX world dialog with unlocked instance.
+- `vrcx://import/avatar/avtr_id,avtr_id...` open VRCX avatar favorites import dialog.
+- `vrcx://import/world/wrld_id,wrld_id...` open VRCX world favorites import dialog.
+- `vrcx://import/friend/usr_id,usr_id...` open VRCX friend favorites import dialog.
+- `vrcx://addavatardb/https://website/vrcx_search.php` open VRCX remote avatar database provider dialog.
 
 ## Keyboard shortcuts
 
