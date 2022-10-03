@@ -223,9 +223,9 @@ namespace VRCX
             return CpuMonitor.Instance.CpuUsage;
         }
 
-        public string GetImage(string url, string fileId, string version, string appVersion)
+        public string GetImage(string url, string fileId, string version)
         {
-            return ImageCache.GetImage(url, fileId, version, appVersion);
+            return ImageCache.GetImage(url, fileId, version);
         }
 
         public void DesktopNotification(string BoldText, string Text, string Image)
@@ -295,11 +295,11 @@ namespace VRCX
             broadcastSocket.SendTo(byteBuffer, endPoint);
         }
 
-        public void DownloadVRCXUpdate(string url, string AppVersion)
+        public void DownloadVRCXUpdate(string url)
         {
             var Location = Path.Combine(Program.AppDataDirectory, "update.exe");
             WebClient client = new WebClient();
-            client.Headers.Add("user-agent", AppVersion);
+            client.Headers.Add("user-agent", Program.Version);
             client.DownloadFile(new Uri(url), Location);
         }
 

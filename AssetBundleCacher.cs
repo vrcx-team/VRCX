@@ -92,7 +92,7 @@ namespace VRCX
             };
         }
 
-        public void DownloadFile(string url, int size, string AppVersion)
+        public void DownloadFile(string url, int size)
         {
             DownloadProgress = 0;
             DownloadSize = size;
@@ -100,7 +100,7 @@ namespace VRCX
             DownloadTempLocation = Path.Combine(Program.AppDataDirectory, "tempDownload.exe");
             DownloadDestinationLocation = Path.Combine(Program.AppDataDirectory, "update.exe");
             client = new WebClient();
-            client.Headers.Add("user-agent", AppVersion);
+            client.Headers.Add("user-agent", Program.Version);
             client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadProgressCallback);
             client.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadCompletedCallback);
             client.DownloadFileAsync(new System.Uri(url), DownloadTempLocation);

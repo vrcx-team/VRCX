@@ -9,7 +9,7 @@ namespace VRCX
     {
         private static readonly string cacheLocation = Path.Combine(Program.AppDataDirectory, "ImageCache");
 
-        public static string GetImage(string url, string fileId, string version, string appVersion)
+        public static string GetImage(string url, string fileId, string version)
         {
             var imageHost = "api.vrchat.cloud";
             var imageHost1 = "files.vrchat.cloud";
@@ -42,7 +42,7 @@ namespace VRCX
                 }
 
                 client.Headers.Add(HttpRequestHeader.Cookie, cookieString);
-                client.Headers.Add("user-agent", appVersion);
+                client.Headers.Add("user-agent", Program.Version);
                 client.DownloadFile(url, fileLocation);
             }
 
