@@ -408,10 +408,19 @@ speechSynthesis.getVoices();
             })
             .then(({data, status}) => {
                 if (status === 200) {
-                    if (data && data.success === Object(data.success)) {
+                    if (!data) {
+                        return data;
+                    }
+                    var text = '';
+                    if (data.success === Object(data.success)) {
+                        text = data.success.message;
+                    } else if (data.OK === String(data.OK)) {
+                        text = data.OK;
+                    }
+                    if (text) {
                         new Noty({
                             type: 'success',
-                            text: escapeTag(data.success.message)
+                            text: escapeTag(text)
                         }).show();
                     }
                     return data;
@@ -2987,10 +2996,7 @@ speechSynthesis.getVoices();
         }
         this.isPlayerModerationsLoading = true;
         this.expirePlayerModerations();
-        Promise.all([
-            this.getPlayerModerations()
-            // this.getPlayerModerationsAgainstMe();
-        ])
+        Promise.all([this.getPlayerModerations(), this.getAvatarModerations()])
             .finally(() => {
                 this.isPlayerModerationsLoading = false;
             })
@@ -3001,18 +3007,6 @@ speechSynthesis.getVoices();
 
     API.getPlayerModerations = function () {
         return this.call('auth/user/playermoderations', {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json
-            };
-            this.$emit('PLAYER-MODERATION:LIST', args);
-            return args;
-        });
-    };
-
-    API.getPlayerModerationsAgainstMe = function () {
-        return this.call('auth/user/playermoderated', {
             method: 'GET'
         }).then((json) => {
             var args = {
@@ -3063,6 +3057,126 @@ speechSynthesis.getVoices();
             this.$emit('PLAYER-MODERATION:DELETE', args);
             return args;
         });
+    };
+
+    // API: AvatarModeration
+
+    API.cachedAvatarModerations = new Map();
+
+    API.getAvatarModerations = function () {
+        return this.call('auth/user/avatarmoderations', {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json
+            };
+            this.$emit('AVATAR-MODERATION:LIST', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            avatarModerationType: string,
+            targetAvatarId: string
+        }
+    */
+    API.sendAvatarModeration = function (params) {
+        return this.call('auth/user/avatarmoderations', {
+            method: 'POST',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('AVATAR-MODERATION', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            avatarModerationType: string,
+            targetAvatarId: string
+        }
+    */
+    API.deleteAvatarModeration = function (params) {
+        return this.call(
+            `auth/user/avatarmoderations?targetAvatarId=${encodeURIComponent(
+                params.targetAvatarId
+            )}&avatarModerationType=${encodeURIComponent(
+                params.avatarModerationType
+            )}`,
+            {
+                method: 'DELETE'
+            }
+        ).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('AVATAR-MODERATION:DELETE', args);
+            return args;
+        });
+    };
+
+    API.$on('AVATAR-MODERATION', function (args) {
+        args.ref = this.applyAvatarModeration(args.json);
+    });
+
+    API.$on('AVATAR-MODERATION:LIST', function (args) {
+        // TODO: compare with cachedAvatarModerations
+        this.cachedAvatarModerations = new Map();
+        for (var json of args.json) {
+            this.applyAvatarModeration(json);
+        }
+    });
+
+    API.$on('AVATAR-MODERATION:DELETE', function (args) {
+        this.cachedAvatarModerations.delete(args.params.targetAvatarId);
+
+        // update avatar dialog
+        var D = $app.avatarDialog;
+        if (
+            D.visible &&
+            args.params.avatarModerationType === 'block' &&
+            D.id === args.params.targetAvatarId
+        ) {
+            D.isBlocked = false;
+        }
+    });
+
+    API.applyAvatarModeration = function (json) {
+        // fix inconsistent Unix time response
+        if (typeof json.created === 'number') {
+            json.created = new Date(json.created).toJSON();
+        }
+
+        var ref = this.cachedAvatarModerations.get(json.targetAvatarId);
+        if (typeof ref === 'undefined') {
+            ref = {
+                avatarModerationType: '',
+                created: '',
+                targetAvatarId: '',
+                ...json
+            };
+            this.cachedAvatarModerations.set(ref.targetAvatarId, ref);
+        } else {
+            Object.assign(ref, json);
+        }
+
+        // update avatar dialog
+        var D = $app.avatarDialog;
+        if (
+            D.visible &&
+            ref.avatarModerationType === 'block' &&
+            D.id === ref.targetAvatarId
+        ) {
+            D.isBlocked = true;
+        }
+
+        return ref;
     };
 
     // API: Favorite
@@ -15115,6 +15229,7 @@ speechSynthesis.getVoices();
         id: '',
         ref: {},
         isFavorite: false,
+        isBlocked: false,
         isQuestFallback: false,
         treeData: [],
         fileSize: '',
@@ -15157,6 +15272,7 @@ speechSynthesis.getVoices();
         D.cacheLocked = false;
         D.isQuestFallback = false;
         D.isFavorite = API.cachedFavoritesByObjectId.has(avatarId);
+        D.isBlocked = API.cachedAvatarModerations.has(avatarId);
         var ref2 = API.cachedAvatars.get(avatarId);
         if (typeof ref2 !== 'undefined') {
             D.ref = ref2;
@@ -15296,6 +15412,24 @@ speechSynthesis.getVoices();
                                         type: 'success'
                                     });
                                     return args;
+                                });
+                                break;
+                            case 'Block Avatar':
+                                API.sendAvatarModeration({
+                                    avatarModerationType: 'block',
+                                    targetAvatarId: D.id
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'Avatar blocked',
+                                        type: 'success'
+                                    });
+                                    return args;
+                                });
+                                break;
+                            case 'Unblock Avatar':
+                                API.deleteAvatarModeration({
+                                    avatarModerationType: 'block',
+                                    targetAvatarId: D.id
                                 });
                                 break;
                             case 'Make Public':
