@@ -50,7 +50,7 @@ namespace VRCX
             // Enable High-DPI support on Windows 7 or newer
             Cef.EnableHighDPISupport();
 
-            cefSettings.UserAgent = "VRCX Cef Browser";
+            cefSettings.UserAgent = Program.Version;
 
             if (Cef.Initialize(cefSettings) == false)
             {

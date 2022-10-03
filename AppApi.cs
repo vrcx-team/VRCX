@@ -370,6 +370,11 @@ namespace VRCX
             return System.Globalization.CultureInfo.CurrentCulture.ToString();
         }
 
+        public string GetVersion()
+        {
+            return Program.Version;
+        }
+
         public void ChangeTheme(int value)
         {
             WinformThemer.SetGlobalTheme(value);

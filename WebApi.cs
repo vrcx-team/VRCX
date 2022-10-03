@@ -131,6 +131,7 @@ namespace VRCX
                 var request = WebRequest.CreateHttp((string)options["url"]);
                 request.CookieContainer = _cookieContainer;
                 request.KeepAlive = true;
+                request.UserAgent = Program.Version;
 
                 if (options.TryGetValue("headers", out object headers) == true)
                 {
@@ -142,10 +143,6 @@ namespace VRCX
                         if (string.Compare(key, "Content-Type", StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             request.ContentType = value;
-                        }
-                        else if (string.Compare(key, "User-Agent", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            request.UserAgent = value;
                         }
                         else if (string.Compare(key, "Referer", StringComparison.OrdinalIgnoreCase) == 0)
                         {

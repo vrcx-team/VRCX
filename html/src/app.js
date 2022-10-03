@@ -16,7 +16,6 @@ import {v4 as uuidv4} from 'uuid';
 import * as workerTimers from 'worker-timers';
 import 'default-passive-events';
 
-import {appVersion} from './constants.js';
 import configRepository from './repository/config.js';
 import webApiService from './service/webapi.js';
 import gameLogService from './service/gamelog.js';
@@ -383,10 +382,6 @@ speechSynthesis.getVoices();
             init.body =
                 params === Object(params) ? JSON.stringify(params) : '{}';
         }
-        init.headers = {
-            'User-Agent': appVersion,
-            ...init.headers
-        };
         var req = webApiService
             .execute(init)
             .catch((err) => {
@@ -4328,7 +4323,7 @@ speechSynthesis.getVoices();
             isGameRunning: false,
             isGameNoVR: configRepository.getBool('isGameNoVR'),
             isSteamVRRunning: false,
-            appVersion,
+            appVersion: '',
             latestAppVersion: '',
             ossDialog: false,
             exportFriendsListDialog: false,
@@ -4339,6 +4334,9 @@ speechSynthesis.getVoices();
         watch: {},
         el: '#x-app',
         mounted() {
+            AppApi.GetVersion().then((version) => {
+                this.appVersion = version;
+            });
             API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
             API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
             this.updateLoop();
@@ -5247,8 +5245,7 @@ speechSynthesis.getVoices();
                 imageLocation = await AppApi.GetImage(
                     imageUrl,
                     fileId,
-                    fileVersion,
-                    appVersion
+                    fileVersion
                 );
             } else if (imageUrl) {
                 fileVersion = imageUrl.split('/').pop(); // 1416226261.thumbnail-500.png
@@ -5256,8 +5253,7 @@ speechSynthesis.getVoices();
                 imageLocation = await AppApi.GetImage(
                     imageUrl,
                     fileId,
-                    fileVersion,
-                    appVersion
+                    fileVersion
                 );
             }
         } catch (err) {
@@ -10351,7 +10347,6 @@ speechSynthesis.getVoices();
                 )}&part=snippet,contentDetails&key=${apiKey}`,
                 method: 'GET',
                 headers: {
-                    'User-Agent': appVersion,
                     Referer: 'https://vrcx.pypy.moe'
                 }
             });
@@ -12427,11 +12422,20 @@ speechSynthesis.getVoices();
         configRepository.setString('VRCX_branch', $app.data.branch);
     }
     if (configRepository.getString('VRCX_lastVRCXVersion')) {
-        if (configRepository.getString('VRCX_lastVRCXVersion') < appVersion) {
-            configRepository.setString('VRCX_lastVRCXVersion', appVersion);
+        if (
+            configRepository.getString('VRCX_lastVRCXVersion') <
+            $app.data.appVersion
+        ) {
+            configRepository.setString(
+                'VRCX_lastVRCXVersion',
+                $app.data.appVersion
+            );
         }
     } else {
-        configRepository.setString('VRCX_lastVRCXVersion', appVersion);
+        configRepository.setString(
+            'VRCX_lastVRCXVersion',
+            $app.data.appVersion
+        );
     }
     if (!configRepository.getInt('VRCX_maxTableSize')) {
         $app.data.maxTableSize = 1000;
@@ -14283,7 +14287,6 @@ speechSynthesis.getVoices();
                     }?${type}=${encodeURIComponent(search)}&n=5000`,
                     method: 'GET',
                     headers: {
-                        'User-Agent': appVersion,
                         Referer: 'https://vrcx.pypy.moe'
                     }
                 });
@@ -14346,7 +14349,6 @@ speechSynthesis.getVoices();
                 url: `${url}?authorId=${encodeURIComponent(authorId)}`,
                 method: 'GET',
                 headers: {
-                    'User-Agent': appVersion,
                     Referer: 'https://vrcx.pypy.moe'
                 }
             });
@@ -18966,7 +18968,7 @@ speechSynthesis.getVoices();
 
         var url = this.downloadCurrent.updateZipUrl;
         var size = this.downloadCurrent.size;
-        await AssetBundleCacher.DownloadFile(url, size, appVersion);
+        await AssetBundleCacher.DownloadFile(url, size);
         this.downloadFileProgress();
     };
 
@@ -19649,10 +19651,7 @@ speechSynthesis.getVoices();
         this.checkingForVRCXUpdate = true;
         var response = await webApiService.execute({
             url,
-            method: 'GET',
-            headers: {
-                'User-Agent': appVersion
-            }
+            method: 'GET'
         });
         this.checkingForVRCXUpdate = false;
         var json = JSON.parse(response.data);
@@ -19702,6 +19701,14 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.checkForVRCXUpdate = async function () {
+        if (
+            !this.appVersion ||
+            this.appVersion === 'VRCX Nightly Build' ||
+            this.appVersion === 'VRCX Stable'
+        ) {
+            console.log('Skipping VRCX update check, version is null');
+            return;
+        }
         if (this.branch === 'Beta') {
             // move Beta users to stable
             this.branch = 'Stable';
@@ -19711,10 +19718,7 @@ speechSynthesis.getVoices();
         this.checkingForVRCXUpdate = true;
         var response = await webApiService.execute({
             url,
-            method: 'GET',
-            headers: {
-                'User-Agent': appVersion
-            }
+            method: 'GET'
         });
         this.checkingForVRCXUpdate = false;
         var json = JSON.parse(response.data);

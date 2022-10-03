@@ -15,6 +15,7 @@ namespace VRCX
         public static string BaseDirectory { get; private set; }
         public static string AppDataDirectory { get; private set; }
         public static string ConfigLocation;
+        public static string Version { get; private set; }
         public static bool LaunchDebug;
 
         static Program()
@@ -55,10 +56,24 @@ namespace VRCX
             }
         }
 
+        private static void GetVersion()
+        {
+            var buildName = "VRCX";
+            try
+            {
+                Version = $"{buildName} {File.ReadAllText(Path.Combine(BaseDirectory, "Version"))}";
+            }
+            catch (Exception)
+            {
+                Version = $"{buildName} Build";
+            }
+        }
+
         private static void Run()
         {
             Update.Check();
             StartupArgs.ArgsCheck();
+            GetVersion();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
