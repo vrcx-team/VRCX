@@ -4336,6 +4336,7 @@ speechSynthesis.getVoices();
         mounted() {
             AppApi.GetVersion().then((version) => {
                 this.appVersion = version;
+                this.comapreAppVersion();
             });
             API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
             API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
@@ -4388,6 +4389,38 @@ speechSynthesis.getVoices();
             callback: (action) => {
                 if (action === 'confirm') {
                     AppApi.OpenLink(link);
+                }
+            }
+        });
+    };
+
+    $app.methods.comapreAppVersion = function () {
+        if (!this.appVersion) {
+            return;
+        }
+        var lastVersion = configRepository.getString('VRCX_lastVRCXVersion');
+        if (!lastVersion) {
+            configRepository.setString('VRCX_lastVRCXVersion', this.appVersion);
+            return;
+        }
+        if (lastVersion < this.appVersion) {
+            configRepository.setString('VRCX_lastVRCXVersion', this.appVersion);
+            if (configRepository.getString('VRCX_branch') === 'Stable') {
+                this.openChangeLog();
+            }
+        }
+    };
+
+    $app.methods.openChangeLog = function () {
+        this.$confirm('Open Change Log?', 'VRCX has updated', {
+            confirmButtonText: 'Open',
+            cancelButtonText: 'Close',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    AppApi.OpenLink(
+                        'https://github.com/pypy-vrc/VRCX/releases/latest'
+                    );
                 }
             }
         });
@@ -12421,22 +12454,6 @@ speechSynthesis.getVoices();
         $app.data.branch = 'Stable';
         configRepository.setString('VRCX_branch', $app.data.branch);
     }
-    if (configRepository.getString('VRCX_lastVRCXVersion')) {
-        if (
-            configRepository.getString('VRCX_lastVRCXVersion') <
-            $app.data.appVersion
-        ) {
-            configRepository.setString(
-                'VRCX_lastVRCXVersion',
-                $app.data.appVersion
-            );
-        }
-    } else {
-        configRepository.setString(
-            'VRCX_lastVRCXVersion',
-            $app.data.appVersion
-        );
-    }
     if (!configRepository.getInt('VRCX_maxTableSize')) {
         $app.data.maxTableSize = 1000;
         configRepository.getInt('VRCX_maxTableSize', $app.data.maxTableSize);
@@ -19704,9 +19721,8 @@ speechSynthesis.getVoices();
         if (
             !this.appVersion ||
             this.appVersion === 'VRCX Nightly Build' ||
-            this.appVersion === 'VRCX Stable'
+            this.appVersion === 'VRCX Build'
         ) {
-            console.log('Skipping VRCX update check, version is null');
             return;
         }
         if (this.branch === 'Beta') {
