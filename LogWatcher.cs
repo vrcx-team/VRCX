@@ -94,9 +94,8 @@ namespace VRCX
                 {
                     Thread.Sleep(1000);
                 }
-                catch
+                catch(ThreadInterruptedException)
                 {
-                    // ThreadInterruptedException
                 }
             }
         }

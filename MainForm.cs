@@ -103,7 +103,15 @@ namespace VRCX
                 {
                     state = FormWindowState.Minimized;
                 }
-                WindowState = state;
+                if ("true".Equals(VRCXStorage.Instance.Get("VRCX_StartAsMinimizedState")) &&
+                    "true".Equals(VRCXStorage.Instance.Get("VRCX_CloseToTray")))
+                {
+                    BeginInvoke(new MethodInvoker(Hide));
+                }
+                else
+                {
+                    WindowState = state;
+                }
             }
             catch
             {
@@ -136,7 +144,7 @@ namespace VRCX
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing &&
-                "true".Equals(SharedVariable.Instance.Get("config:vrcx_closetotray")))
+                "true".Equals(VRCXStorage.Instance.Get("VRCX_CloseToTray")))
             {
                 e.Cancel = true;
                 Hide();
