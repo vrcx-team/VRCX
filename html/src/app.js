@@ -1978,7 +1978,8 @@ speechSynthesis.getVoices();
     /*
         params: {
             worldId: string,
-            instanceId: string
+            instanceId: string,
+            shortName: string
         }
     */
     API.getInstanceShortName = function (instance) {
@@ -2024,15 +2025,17 @@ speechSynthesis.getVoices();
     /*
         params: {
             worldId: string,
-            instanceId: string
+            instanceId: string,
+            shortName: string
         }
     */
-    API.selfInvite = function (params) {
-        if (params.shortName === '') {
-            delete params.shortName;
+    API.selfInvite = function (instance) {
+        var params = {};
+        if (instance.shortName) {
+            params.shortName = instance.shortName;
         }
         return this.call(
-            `invite/myself/to/${params.worldId}:${params.instanceId}`,
+            `invite/myself/to/${instance.worldId}:${instance.instanceId}`,
             {
                 method: 'POST',
                 params
@@ -2041,6 +2044,7 @@ speechSynthesis.getVoices();
             .then((json) => {
                 var args = {
                     json,
+                    instance,
                     params
                 };
                 return args;
@@ -4403,7 +4407,7 @@ speechSynthesis.getVoices();
             configRepository.setString('VRCX_lastVRCXVersion', this.appVersion);
             return;
         }
-        if (lastVersion < this.appVersion) {
+        if (lastVersion !== this.appVersion) {
             configRepository.setString('VRCX_lastVRCXVersion', this.appVersion);
             if (configRepository.getString('VRCX_branch') === 'Stable') {
                 this.openChangeLog();
@@ -9527,7 +9531,7 @@ speechSynthesis.getVoices();
                             shortName,
                             senderId
                         );
-                        this.failedGetRequests.delete(
+                        API.failedGetRequests.delete(
                             `instances/s/${shortName}`
                         );
                     });
