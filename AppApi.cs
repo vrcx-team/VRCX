@@ -348,11 +348,7 @@ namespace VRCX
         {
             MainForm.Instance.Invoke(new Action(() =>
             {
-                if (MainForm.Instance.WindowState == FormWindowState.Minimized)
-                    MainForm.Instance.WindowState = FormWindowState.Normal;
-
-                MainForm.Instance.Show();
-                MainForm.Instance.Activate();
+                MainForm.Instance.Focus_Window();
             }));
         }
 

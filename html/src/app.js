@@ -9309,7 +9309,11 @@ speechSynthesis.getVoices();
                 }
                 this.parsePhotonLobbyIds(data.Parameters[252]);
                 var hasInstantiated = false;
-                if (this.photonLobbyCurrentUser === data.Parameters[254]) {
+                if (
+                    this.photonLobbyCurrentUser === data.Parameters[254] ||
+                    this.photonLobbyJointime.has(data.Parameters[254])
+                ) {
+                    // fix current user and join event firing twice
                     hasInstantiated = true;
                 }
                 this.photonLobbyJointime.set(data.Parameters[254], {
@@ -10070,7 +10074,10 @@ speechSynthesis.getVoices();
             // skip PyPyDance and VRDancing videos
             try {
                 var url = new URL(videoUrl);
-                if (url.origin === 'https://t-ne.x0.to') {
+                if (
+                    url.origin === 'https://t-ne.x0.to' ||
+                    url.origin === 'https://nextnex.com'
+                ) {
                     url = new URL(url.searchParams.get('url'));
                 }
                 var id1 = url.pathname;
@@ -19857,6 +19864,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.clearVRCXCache = function () {
+        API.failedGetRequests = new Map();
         API.cachedUsers.forEach((ref, id) => {
             if (
                 !this.friends.has(id) &&

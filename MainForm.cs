@@ -160,19 +160,28 @@ namespace VRCX
             VRCXStorage.Instance.Set("VRCX_WindowState", ((int)WindowState).ToString());
         }
 
-        private void TrayIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            TrayMenu_Open_Click(sender, e);
+            if (e.Button == MouseButtons.Left)
+            {
+                Focus_Window();
+            }
         }
 
         private void TrayMenu_Open_Click(object sender, System.EventArgs e)
+        {
+            Focus_Window();
+        }
+
+        public void Focus_Window()
         {
             if (WindowState == FormWindowState.Minimized)
             {
                 WindowState = FormWindowState.Normal;
             }
             Show();
-            Focus();
+            // Focus();
+            Activate();
         }
 
         private void TrayMenu_DevTools_Click(object sender, System.EventArgs e)

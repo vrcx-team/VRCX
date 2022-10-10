@@ -84,7 +84,7 @@ namespace VRCX
             this.TrayIcon.ContextMenuStrip = this.TrayMenu;
             this.TrayIcon.Text = "VRCX";
             this.TrayIcon.Visible = true;
-            this.TrayIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TrayIcon_MouseDoubleClick);
+            this.TrayIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.TrayIcon_MouseClick);
             //
             // MainForm
             //

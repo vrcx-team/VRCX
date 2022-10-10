@@ -46,7 +46,7 @@ html
                             p &copy; 2019-2022 #[a(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] (mina#5656) & #[a(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
                             p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
                             p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
-                            p pypy is not responsible for any problems caused by VRCX. Use at your own risk!
+                            p pypy or Natsumi aren't responsible for any problems caused by VRCX. Use at your own risk!
 
             //- menu
             .x-menu-container
@@ -1038,7 +1038,7 @@ html
                         div.options-container
                             span.header VRCX Updater
                             div.options-container-item
-                                el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") Check for update
+                                el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") Change build
                             div.options-container-item
                                 span.name Auto update:
                                 br
@@ -1047,13 +1047,25 @@ html
                                     el-radio-button(label="Notify")
                                     el-radio-button(label="Auto Download")
                                     el-radio-button(label="Auto Install")
+                        div.options-container
+                            span.header Application
+                            div.options-container-item
+                                span.name Start at Windows startup
+                                el-switch(v-model="isStartAtWindowsStartup")
+                            div.options-container-item
+                                span.name Start as minimized state
+                                el-switch(v-model="isStartAsMinimizedState")
+                            div.options-container-item
+                                span.name Close to tray
+                                el-switch(v-model="isCloseToTray")
+                            div.options-container
                         div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                             span.header Legal Notice
                             div.options-container-item
-                                p &copy; 2019-2022 #[a(href="https://github.com/pypy-vrc" target="_blank") pypy] (mina#5656)
+                                p &copy; 2019-2022 #[a(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] (mina#5656) & #[a(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
                                 p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
                                 p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
-                                p pypy is not responsible for any problems caused by VRCX. Use at your own risk!
+                                p pypy or Natsumi aren't responsible for any problems caused by VRCX. Use at your own risk!
                             div.options-container-item
                                 el-button(@click="ossDialog = true" size="small") Open Source Software Notice
                     el-tab-pane(label="Appearance")
@@ -1289,28 +1301,18 @@ html
                                     el-button(size="small" icon="el-icon-s-operation" @click="showVRChatConfig()") VRChat config.json
                                     el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
                             div.options-container
-                                span.header Application
+                                span.sub-header Primary password
                                 div.options-container-item
-                                    span.name(style="min-width:236px") Encrypt password (disables auto login)
+                                    span.name(style="min-width:300px") Encrypt password (disables auto login)
                                     el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange" :disabled="!loginForm.savedCredentials[API.currentUser.username]")
+                                span.sub-header VRChat Quit Fix
                                 div.options-container-item
-                                    span.name Start at Windows startup
-                                    el-switch(v-model="isStartAtWindowsStartup")
+                                    span.name(style="min-width:300px") Kill VRChat after exiting game
+                                    el-switch(v-model="vrcQuitFix" @change="saveOpenVROption")
+                                span.sub-header Automatically Manage Cache When Closing VRChat
                                 div.options-container-item
-                                    span.name Start as minimized state
-                                    el-switch(v-model="isStartAsMinimizedState")
-                                div.options-container-item
-                                    span.name Close to tray
-                                    el-switch(v-model="isCloseToTray")
-                                div.options-container
-                                    span.sub-header VRChat Quit Fix
-                                    div.options-container-item
-                                        span.name(style="min-width:300px") Kill VRChat after exiting game
-                                        el-switch(v-model="vrcQuitFix" @change="saveOpenVROption")
-                                    span.sub-header Automatically Manage Cache When Closing VRChat
-                                    div.options-container-item
-                                        span.name(style="min-width:300px") Auto delete old versions from cache
-                                        el-switch(v-model="autoSweepVRChatCache" @change="saveOpenVROption")
+                                    span.name(style="min-width:300px") Auto delete old versions from cache
+                                    el-switch(v-model="autoSweepVRChatCache" @change="saveOpenVROption")
                             div.options-container
                                 span.header Remote Avatar Database
                                 div.options-container-item
