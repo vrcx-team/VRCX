@@ -21908,7 +21908,7 @@ speechSynthesis.getVoices();
                 distinguishCancelAndClose: true,
                 confirmButtonText: 'Save',
                 cancelButtonText: 'Cancel',
-                inputValue: this.pendingOfflineDelay,
+                inputValue: this.pendingOfflineDelay / 1000,
                 inputPattern: /\d+$/,
                 inputErrorMessage: 'Valid number is required',
                 callback: (action, instance) => {
