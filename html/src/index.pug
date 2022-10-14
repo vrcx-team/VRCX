@@ -1301,6 +1301,11 @@ html
                                     el-button(size="small" icon="el-icon-s-operation" @click="showVRChatConfig()") VRChat config.json
                                     el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") Launch Options
                             div.options-container
+                                span.sub-header Pending Offline
+                                div.options-container-item
+                                    span.name Delay before marking user as offline (fixes false positives)
+                                    el-button-group(style="display:block")
+                                        el-button(size="small" icon="el-icon-s-operation" @click="promptSetPendingOffline") Set Delay
                                 span.sub-header Primary password
                                 div.options-container-item
                                     span.name(style="min-width:300px") Encrypt password (disables auto login)
