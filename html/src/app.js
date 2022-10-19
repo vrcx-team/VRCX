@@ -13187,7 +13187,10 @@ speechSynthesis.getVoices();
                 this.showAvatarDialog(avatarId);
                 return true;
             }
-        } else if (input.substring(0, 4) === 'usr_') {
+        } else if (
+            input.substring(0, 4) === 'usr_' ||
+            /^[A-Za-z0-9]{10}$/g.test(input)
+        ) {
             this.showUserDialog(input.trim());
             return true;
         } else if (input.substring(0, 5) === 'avtr_') {
