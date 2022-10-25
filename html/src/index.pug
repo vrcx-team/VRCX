@@ -463,8 +463,9 @@ html
                                     .avatar
                                         img(v-lazy="userImage(user)")
                                     .detail
-                                        span.name(v-text="user.displayName" :class="user.trustClass")
-                                        span.extra(v-text="user.username" style="font-family:monospace")
+                                        span.name(v-text="user.displayName")
+                                        span.extra(v-if="randomUserColours" v-text="user.$trustLevel" :class="user.$trustClass")
+                                        span.extra(v-else v-text="user.$trustLevel" :style="{'color':user.$userColour}")
                         el-button-group(style="margin-top:15px")
                             el-button(v-if="searchUserParams.offset" @click="moreSearchUser(-1)" icon="el-icon-back" size="small") Prev
                             el-button(v-if="searchUserResults.length" @click="moreSearchUser(1)" icon="el-icon-right" size="small") Next
@@ -969,7 +970,6 @@ html
                             template(v-once #default="scope")
                                 span.name(v-if="randomUserColours" v-text="scope.row.displayName" :style="{'color':scope.row.$userColour}")
                                 span.name(v-else v-text="scope.row.displayName")
-                        el-table-column(label="User Name" min-width="120" prop="username" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'username')")
                         el-table-column(label="Rank" width="110" prop="$trustSortNum" sortable="custom")
                             template(v-once #default="scope")
                                 span.name(v-if="randomUserColours" v-text="scope.row.$trustLevel" :class="scope.row.$trustClass")
@@ -1547,9 +1547,10 @@ html
                                                     span(v-text="displayName")
                                             i.el-icon-caret-bottom
                                     span.dialog-title(v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px")
-                                    el-popover(placement="top" trigger="click")
-                                        span(slot="reference" v-text="userDialog.ref.username" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer")
-                                        span(style="display:block;text-align:center;font-family:monospace") {{ userDialog.ref.username | textToHex }}
+                                    template(v-if="userDialog.ref.id === API.currentUser.id")
+                                        el-popover(placement="top" trigger="click")
+                                            span(slot="reference" v-text="API.currentUser.username" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer")
+                                            span(style="display:block;text-align:center;font-family:monospace") {{ API.currentUser.username | textToHex }}
                                     el-tooltip(v-for="item in userDialog.ref.$languages" :key="item.key" placement="top")
                                         template(#content)
                                             span {{ item.value }} ({{ item.key }})
