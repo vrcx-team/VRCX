@@ -64,10 +64,6 @@
     <Reference Include="Blake2Sharp">
       <HintPath>librsync.net\Blake2Sharp.dll</HintPath>
     </Reference>
-    <Reference Include="DiscordRPC">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DiscordRPC\DiscordRPC.dll</HintPath>
-    </Reference>
     <Reference Include="librsync.net">
       <HintPath>librsync.net\librsync.net.dll</HintPath>
     </Reference>
@@ -187,6 +183,9 @@
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
       <Version>104.4.240</Version>
+    </PackageReference>
+    <PackageReference Include="DiscordRichPresence">
+      <Version>1.1.1.14</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
       <Version>7.1.2</Version>
