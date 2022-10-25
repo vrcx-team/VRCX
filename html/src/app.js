@@ -9290,9 +9290,14 @@ speechSynthesis.getVoices();
                         if (typeof user.inVRMode !== 'undefined') {
                             this.photonLobbyInVrMode.set(id, user.inVRMode);
                         }
+                        var hasInstantiated = false;
+                        var lobbyJointime = this.photonLobbyJointime.get(id);
+                        if (typeof lobbyJointime !== 'undefined') {
+                            hasInstantiated = lobbyJointime.hasInstantiated;
+                        }
                         this.photonLobbyJointime.set(id, {
                             joinTime: Date.parse(gameLogDate),
-                            hasInstantiated: false,
+                            hasInstantiated,
                             inVRMode: user.inVRMode,
                             avatarEyeHeight: user.avatarEyeHeight
                         });
@@ -9372,12 +9377,15 @@ speechSynthesis.getVoices();
                 }
                 this.parsePhotonLobbyIds(data.Parameters[252]);
                 var hasInstantiated = false;
-                if (
-                    this.photonLobbyCurrentUser === data.Parameters[254] ||
-                    this.photonLobbyJointime.has(data.Parameters[254])
-                ) {
-                    // fix current user and join event firing twice
+                if (this.photonLobbyCurrentUser === data.Parameters[254]) {
+                    // fix current user
                     hasInstantiated = true;
+                }
+                var ref = this.photonLobbyCurrent.get(data.Parameters[254]);
+                if (typeof ref !== 'undefined') {
+                    // fix for join event firing twice
+                    // fix instantiation happening out of order before join event
+                    hasInstantiated = ref.hasInstantiated;
                 }
                 this.photonLobbyJointime.set(data.Parameters[254], {
                     joinTime: Date.parse(gameLogDate),
@@ -9385,7 +9393,6 @@ speechSynthesis.getVoices();
                     inVRMode: data.Parameters[249].inVRMode,
                     avatarEyeHeight: data.Parameters[249].avatarEyeHeight
                 });
-                var ref = this.photonLobbyCurrent.get(data.Parameters[254]);
                 this.photonUserJoin(
                     data.Parameters[254],
                     data.Parameters[249].avatarDict,
@@ -9509,12 +9516,20 @@ speechSynthesis.getVoices();
                         ...lobbyJointime,
                         hasInstantiated: true
                     });
+                } else {
+                    this.photonLobbyJointime.set(data.Parameters[254], {
+                        joinTime: Date.parse(gameLogDate),
+                        hasInstantiated: true
+                    });
                 }
                 break;
             case 43:
                 // Chatbox Message
                 var photonId = data.Parameters[254];
                 var text = data.Parameters[245];
+                if (this.photonLobbyCurrentUser === photonId) {
+                    return;
+                }
                 this.addEntryPhotonEvent({
                     photonId,
                     text,
@@ -20116,9 +20131,14 @@ speechSynthesis.getVoices();
                         if (typeof user.inVRMode !== 'undefined') {
                             this.photonLobbyInVrMode.set(id, user.inVRMode);
                         }
+                        var hasInstantiated = false;
+                        var lobbyJointime = this.photonLobbyJointime.get(id);
+                        if (typeof lobbyJointime !== 'undefined') {
+                            hasInstantiated = lobbyJointime.hasInstantiated;
+                        }
                         this.photonLobbyJointime.set(id, {
                             joinTime: Date.parse(dateTime),
-                            hasInstantiated: false,
+                            hasInstantiated,
                             inVRMode: user.inVRMode,
                             avatarEyeHeight: user.avatarEyeHeight
                         });
