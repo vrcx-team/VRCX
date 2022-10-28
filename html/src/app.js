@@ -1668,24 +1668,6 @@ speechSynthesis.getVoices();
 
     /*
         params: {
-            username: string
-        }
-    */
-    API.getUserByUsername = function (params) {
-        return this.call(`users/${params.username}/name`, {
-            method: 'GET'
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('USER', args);
-            return args;
-        });
-    };
-
-    /*
-        params: {
             status: string ('active', 'offline', 'busy', 'ask me', 'join me'),
             statusDescription: string
         }
@@ -10827,14 +10809,6 @@ speechSynthesis.getVoices();
                 return;
             }
         }
-        try {
-            var username = encodeURIComponent(ref.displayName.toLowerCase());
-            var args = await API.getUserByUsername({username});
-            if (args.ref.displayName === ref.displayName) {
-                this.showUserDialog(args.ref.id);
-                return;
-            }
-        } catch (err) {}
         this.searchText = ref.displayName;
         await this.searchUser();
         for (var ctx of this.searchUserResults) {
