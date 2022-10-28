@@ -4350,6 +4350,7 @@ speechSynthesis.getVoices();
             AppApi.GetVersion().then((version) => {
                 this.appVersion = version;
                 this.comapreAppVersion();
+                this.setBranch();
             });
             API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
             API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
@@ -4422,6 +4423,18 @@ speechSynthesis.getVoices();
                 this.openChangeLog();
             }
         }
+    };
+
+    $app.methods.setBranch = function () {
+        if (!this.appVersion) {
+            return;
+        }
+        if (this.appVersion.includes('VRCX Nightly')) {
+            this.branch = 'Nightly';
+        } else {
+            this.branch = 'Stable';
+        }
+        configRepository.setString('VRCX_branch', this.branch);
     };
 
     $app.methods.openChangeLog = function () {
@@ -8924,6 +8937,9 @@ speechSynthesis.getVoices();
             dtNow > bias2 ||
             this.lastLocation.playerList.size <= 1
         ) {
+            if (this.photonLobbyTimeout.length > 0) {
+                AppApi.ExecuteVrOverlayFunction('updateHudTimeout', '[]');
+            }
             this.photonLobbyTimeout = [];
             workerTimers.setTimeout(() => this.photonLobbyWatcher(), 500);
             return;
@@ -9578,7 +9594,8 @@ speechSynthesis.getVoices();
                         );
                         return args;
                     })
-                    .catch(() => {
+                    .catch((err) => {
+                        console.log('PortalSpawn', err);
                         this.parsePhotonPortalSpawn(
                             datetime,
                             '',
@@ -13152,10 +13169,10 @@ speechSynthesis.getVoices();
         if (!input) {
             return false;
         }
-        var testUrl = input.substring(0, 15);
-        if (this.directAccessWorld(input)) {
+        if (this.directAccessWorld(input.trim())) {
             return true;
         }
+        var testUrl = input.substring(0, 15);
         if (testUrl === 'https://vrchat.') {
             var url = new URL(input);
             var urlPath = url.pathname;

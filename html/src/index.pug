@@ -128,62 +128,6 @@ html
                                 .detail
                                     span.name Created
                                     span.extra {{ currentInstanceWorld.ref.created_at | formatDate('long') }}
-                    div.current-instance-table
-                        data-tables(v-bind="currentInstanceUserList" @row-click="selectCurrentInstanceRow" style="margin-top:10px;cursor:pointer")
-                            el-table-column(label="Avatar" width="70" prop="photo")
-                                template(v-once #default="scope")
-                                    template(v-if="userImage(scope.row.ref)")
-                                        el-popover(placement="right" height="500px" trigger="hover")
-                                            img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row.ref)")
-                                            img.friends-list-avatar(v-lazy="userImageFull(scope.row.ref)" style="height:500px;cursor:pointer" @click="openExternalLink(userImageFull(scope.row.ref))")
-                            el-table-column(label="Timer" width="90" prop="timer" sortable)
-                                template(v-once #default="scope")
-                                    timer(:epoch="scope.row.timer")
-                            el-table-column(v-if="photonLoggingEnabled" label="Photon Id" width="110" prop="photonId" sortable)
-                                template(v-once #default="scope")
-                                    span(v-text="scope.row.photonId")
-                            el-table-column(label="Icons" prop="isMaster" width="100")
-                                template(v-once #default="scope")
-                                    el-tooltip(v-if="scope.row.isMaster" placement="left" content="Instance Master")
-                                        span 👑
-                                    el-tooltip(v-if="scope.row.isFriend" placement="left" content="Friend")
-                                        span 💚
-                                    el-tooltip(v-if="scope.row.timeoutTime" placement="left" content="Timeout")
-                                        span(style="color:red") 🔴{{ scope.row.timeoutTime }}s
-                            el-table-column(label="Platform" prop="inVrMode" width="80")
-                                template(v-once #default="scope")
-                                    template(v-if="scope.row.ref.last_platform")
-                                        span(v-if="scope.row.ref.last_platform === 'standalonewindows'" style="color:#409eff") PC
-                                        span(v-else-if="scope.row.ref.last_platform === 'android'" style="color:#67c23a") Q
-                                        span(v-else) {{ scope.row.ref.last_platform }}
-                                    template(v-if="scope.row.inVrMode !== undefined")
-                                        span(v-if="scope.row.inVrMode") VR
-                                        span(v-else) D
-                            el-table-column(label="Display Name" min-width="140" prop="ref.displayName")
-                                template(v-once #default="scope")
-                                    span(v-if="randomUserColours" v-text="scope.row.ref.displayName" :style="{'color':scope.row.ref.$userColour}")
-                                    span(v-else v-text="scope.row.ref.displayName")
-                            el-table-column(label="Status" min-width="180" prop="ref.status")
-                                template(v-once #default="scope")
-                                    template(v-if="scope.row.ref.status")
-                                        i.x-user-status(:class="statusClass(scope.row.ref.status)")
-                                        span  ‎
-                                        span(v-text="scope.row.ref.statusDescription")
-                            el-table-column(label="Rank" width="110" prop="$trustSortNum" sortable="custom")
-                                template(v-once #default="scope")
-                                    span.name(v-text="scope.row.ref.$trustLevel" :class="scope.row.ref.$trustClass")
-                            el-table-column(label="Language" width="100" prop="ref.$languages")
-                                template(v-once #default="scope")
-                                    el-tooltip(v-for="item in scope.row.ref.$languages" :key="item.key" placement="top")
-                                        template(#content)
-                                            span {{ item.value }} ({{ item.key }})
-                                        span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-left:5px")
-                            el-table-column(label="Bio Links" width="100" prop="ref.bioLinks")
-                                template(v-once #default="scope")
-                                    el-tooltip(v-if="link" v-for="(link, index) in scope.row.ref.bioLinks" :key="index")
-                                        template(#content)
-                                            span(v-text="link")
-                                        img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
                     div.photon-event-table(v-if="photonLoggingEnabled")
                         div(style="position:absolute;margin-left:195px;z-index:1")
                             el-select(v-model="photonEventTableTypeFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
@@ -301,6 +245,62 @@ html
                                                 span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
                                             span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
                                             span(v-else v-text="scope.row.text")
+                    div.current-instance-table
+                        data-tables(v-bind="currentInstanceUserList" @row-click="selectCurrentInstanceRow" style="margin-top:10px;cursor:pointer")
+                            el-table-column(label="Avatar" width="70" prop="photo")
+                                template(v-once #default="scope")
+                                    template(v-if="userImage(scope.row.ref)")
+                                        el-popover(placement="right" height="500px" trigger="hover")
+                                            img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row.ref)")
+                                            img.friends-list-avatar(v-lazy="userImageFull(scope.row.ref)" style="height:500px;cursor:pointer" @click="openExternalLink(userImageFull(scope.row.ref))")
+                            el-table-column(label="Timer" width="90" prop="timer" sortable)
+                                template(v-once #default="scope")
+                                    timer(:epoch="scope.row.timer")
+                            el-table-column(v-if="photonLoggingEnabled" label="Photon Id" width="110" prop="photonId" sortable)
+                                template(v-once #default="scope")
+                                    span(v-text="scope.row.photonId")
+                            el-table-column(label="Icons" prop="isMaster" width="100")
+                                template(v-once #default="scope")
+                                    el-tooltip(v-if="scope.row.isMaster" placement="left" content="Instance Master")
+                                        span 👑
+                                    el-tooltip(v-if="scope.row.isFriend" placement="left" content="Friend")
+                                        span 💚
+                                    el-tooltip(v-if="scope.row.timeoutTime" placement="left" content="Timeout")
+                                        span(style="color:red") 🔴{{ scope.row.timeoutTime }}s
+                            el-table-column(label="Platform" prop="inVrMode" width="80")
+                                template(v-once #default="scope")
+                                    template(v-if="scope.row.ref.last_platform")
+                                        span(v-if="scope.row.ref.last_platform === 'standalonewindows'" style="color:#409eff") PC
+                                        span(v-else-if="scope.row.ref.last_platform === 'android'" style="color:#67c23a") Q
+                                        span(v-else) {{ scope.row.ref.last_platform }}
+                                    template(v-if="scope.row.inVrMode !== undefined")
+                                        span(v-if="scope.row.inVrMode") VR
+                                        span(v-else) D
+                            el-table-column(label="Display Name" min-width="140" prop="ref.displayName")
+                                template(v-once #default="scope")
+                                    span(v-if="randomUserColours" v-text="scope.row.ref.displayName" :style="{'color':scope.row.ref.$userColour}")
+                                    span(v-else v-text="scope.row.ref.displayName")
+                            el-table-column(label="Status" min-width="180" prop="ref.status")
+                                template(v-once #default="scope")
+                                    template(v-if="scope.row.ref.status")
+                                        i.x-user-status(:class="statusClass(scope.row.ref.status)")
+                                        span  ‎
+                                        span(v-text="scope.row.ref.statusDescription")
+                            el-table-column(label="Rank" width="110" prop="$trustSortNum" sortable="custom")
+                                template(v-once #default="scope")
+                                    span.name(v-text="scope.row.ref.$trustLevel" :class="scope.row.ref.$trustClass")
+                            el-table-column(label="Language" width="100" prop="ref.$languages")
+                                template(v-once #default="scope")
+                                    el-tooltip(v-for="item in scope.row.ref.$languages" :key="item.key" placement="top")
+                                        template(#content)
+                                            span {{ item.value }} ({{ item.key }})
+                                        span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-left:5px")
+                            el-table-column(label="Bio Links" width="100" prop="ref.bioLinks")
+                                template(v-once #default="scope")
+                                    el-tooltip(v-if="link" v-for="(link, index) in scope.row.ref.bioLinks" :key="index")
+                                        template(#content)
+                                            span(v-text="link")
+                                        img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
 
             //- feed
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'feed'")
