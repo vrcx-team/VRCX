@@ -129,13 +129,23 @@ To install a theme place `custom.css` into your `%AppData%\VRCX` folder then pre
 
 ## Common issues
 
+### **VRCX running slow**
+
+- Settings > Appearance > Max Table Size
+  - Lower this value to something like 100 this will decrease the amount of table entries stored in RAM.
+- Settings > Advanced > Auto Clear Cache
+  - Lower this interval to something like 3 hours this will decrease the amount of unnecessary worlds, users and avatars stored in RAM.
+
 ### **VRCX opens to a white screen**
 
-This can be caused by a few different things here's some things to try:
+This can be caused by a many different things here's a list of things to try:
 
 - Install [Microsoft Visual C++ Redistributable 2019](https://aka.ms/vs/17/release/vc_redist.x64.exe).
 - Reboot your computer, maybe another process is trying to read the database file.
 - Disable antivirus software, Avast and AVG are known to delete Cef/VRCX.
+- Remove AVerMedia AssistCentral this is known to cause problems with VRCX for some unknown reason.
+- Unstable RAM can be a potential cause, remove any RAM overclock and run MemTest86.
+- Run VRCX as administrator, this can fix it on some rare occasions.
 - Test a fresh database, first close VRCX then backup your current database by opening `%AppData%\VRCX\` and renaming `VRCX.sqlite3` to something like `Backup.sqlite3`, if this solves it but you'd like to still keep your data follow the steps bellow on how to repair your database.
 
 ### **SteamVR Overlay not working**
