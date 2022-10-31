@@ -147,21 +147,21 @@ html
                                                 template(#content)
                                                     span {{ scope.row.created_at | formatDate('long') }}
                                                 span {{ scope.row.created_at | formatDate('short') }}
-                                    el-table-column(label="Name" prop="photonId" width="160")
+                                    el-table-column(label="User" prop="photonId" width="160")
                                         template(v-once #default="scope")
                                             span.x-link(v-text="scope.row.displayName" @click="showUserFromPhotonId(scope.row.photonId)" style="padding-right:10px")
-                                    el-table-column(label="Event" prop="text")
+                                    el-table-column(label="Type" prop="type" width="140")
+                                    el-table-column(label="Details" prop="text")
                                         template(v-once #default="scope")
-                                            template(v-if="scope.row.type === 'AvatarChange'")
-                                                span ChangeAvatar  
+                                            template(v-if="scope.row.type === 'ChangeAvatar'")
                                                 span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
                                                 | &nbsp;
+                                                span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
                                                 span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
                                                 span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
                                                 template(v-if="scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description")
                                                     |  - {{ scope.row.avatar.description }}
                                             template(v-else-if="scope.row.type === 'ChangeStatus'")
-                                                span ChangeStatus
                                                 template(v-if="scope.row.status !== scope.row.previousStatus")
                                                     el-tooltip(placement="top")
                                                         template(#content)
@@ -170,7 +170,7 @@ html
                                                             span(v-else-if="scope.row.previousStatus === 'ask me'") Ask Me
                                                             span(v-else-if="scope.row.previousStatus === 'busy'") Do Not Disturb
                                                             span(v-else) Offline
-                                                        i.x-user-status(:class="statusClass(scope.row.previousStatus)" style="margin-left:5px")
+                                                        i.x-user-status(:class="statusClass(scope.row.previousStatus)")
                                                     span
                                                         i.el-icon-right
                                                     el-tooltip(placement="top")
@@ -183,11 +183,12 @@ html
                                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                                 span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription" style="margin-left:5px")
                                             span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
-                                                | PortalSpawn #[location(:location="scope.row.location" :hint="scope.row.worldName" :link="false")]
-                                            span(v-else-if="scope.row.type === 'ChatBoxMessage'")
-                                                | ChatBox #[span(v-text="scope.row.text")]
+                                                location(:location="scope.row.location" :hint="scope.row.worldName" :link="false")
+                                            span(v-else-if="scope.row.type === 'ChatBoxMessage'" v-text="scope.row.text")
                                             span(v-else-if="scope.row.type === 'OnPlayerJoined'")
-                                                | has joined - #[span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")]&nbsp;
+                                                span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
+                                                | &nbsp;
+                                                span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
                                                 span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
                                                 span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
                                             span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
@@ -200,21 +201,21 @@ html
                                                 template(#content)
                                                     span {{ scope.row.created_at | formatDate('long') }}
                                                 span {{ scope.row.created_at | formatDate('short') }}
-                                    el-table-column(label="Name" prop="photonId" width="160")
+                                    el-table-column(label="User" prop="photonId" width="160")
                                         template(v-once #default="scope")
                                             span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)" style="padding-right:10px")
-                                    el-table-column(label="Event" prop="text")
+                                    el-table-column(label="Type" prop="type" width="140")
+                                    el-table-column(label="Details" prop="text")
                                         template(v-once #default="scope")
-                                            span(v-if="scope.row.type === 'AvatarChange'")
-                                                span ChangeAvatar  
+                                            template(v-if="scope.row.type === 'ChangeAvatar'")
                                                 span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
                                                 | &nbsp;
+                                                span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
                                                 span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
                                                 span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
                                                 template(v-if="scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description")
                                                     |  - {{ scope.row.avatar.description }}
                                             template(v-else-if="scope.row.type === 'ChangeStatus'")
-                                                span ChangeStatus
                                                 template(v-if="scope.row.status !== scope.row.previousStatus")
                                                     el-tooltip(placement="top")
                                                         template(#content)
@@ -223,7 +224,7 @@ html
                                                             span(v-else-if="scope.row.previousStatus === 'ask me'") Ask Me
                                                             span(v-else-if="scope.row.previousStatus === 'busy'") Do Not Disturb
                                                             span(v-else) Offline
-                                                        i.x-user-status(:class="statusClass(scope.row.previousStatus)" style="margin-left:5px")
+                                                        i.x-user-status(:class="statusClass(scope.row.previousStatus)")
                                                     span
                                                         i.el-icon-right
                                                     el-tooltip(placement="top")
@@ -236,11 +237,12 @@ html
                                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                                 span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription" style="margin-left:5px")
                                             span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
-                                                | PortalSpawn #[location(:location="scope.row.location" :hint="scope.row.worldName" :link="false")]
-                                            span(v-else-if="scope.row.type === 'ChatBoxMessage'")
-                                                | ChatBox #[span(v-text="scope.row.text")]
+                                                location(:location="scope.row.location" :hint="scope.row.worldName" :link="false")
+                                            span(v-else-if="scope.row.type === 'ChatBoxMessage'" v-text="scope.row.text")
                                             span(v-else-if="scope.row.type === 'OnPlayerJoined'")
-                                                | has joined - #[span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")]&nbsp;
+                                                span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
+                                                | &nbsp;
+                                                span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
                                                 span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
                                                 span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
                                             span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
@@ -1351,17 +1353,17 @@ html
                                             i.el-icon-warning
                                     el-switch(v-model="photonEventOverlay" @change="saveEventOverlay" :disabled="!openVR")
                                 div.options-container-item
-                                    span.name Show Join/Leave
-                                    el-switch(v-model="photonEventOverlayJoinLeave" @change="saveEventOverlay" :disabled="!openVR")
-                                div.options-container-item
                                     span.name Filter
                                     el-radio-group(v-model="photonEventOverlayFilter" @change="saveEventOverlay" size="mini" :disabled="!openVR || !photonEventOverlay")
                                         el-radio-button(label="VIP")
                                         el-radio-button(label="Friends")
                                         el-radio-button(label="Everyone")
                                 div.options-container-item
+                                    el-button(size="small" icon="el-icon-time" @click="promptPhotonOverlayMessageTimeout" :disabled="!openVR") Message Timeout
+                                div.options-container-item
                                     el-select(v-model="photonEventTableTypeOverlayFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
                                         el-option(v-once v-for="type in photonEventTableTypeFilterList" :key="type" :label="type" :value="type")
+                                br
                                 span.sub-header User timeout HUD
                                 div.options-container-item
                                     span.name Enable

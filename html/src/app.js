@@ -8229,6 +8229,7 @@ speechSynthesis.getVoices();
         this.photonLobbyJointime = new Map();
         this.photonEvent7List = new Map();
         this.photonLastEvent7List = '';
+        this.photonLastChatBoxMsg = new Map();
         this.moderationEventQueue = new Map();
         this.lastPortalList = new Map();
         if (this.photonEventTable.data.length > 0) {
@@ -8806,6 +8807,7 @@ speechSynthesis.getVoices();
     $app.data.photonLobbyBots = [];
     $app.data.photonEvent7List = new Map();
     $app.data.photonLastEvent7List = '';
+    $app.data.photonLastChatBoxMsg = new Map();
 
     $app.data.photonEventType = [
         'MeshVisibility',
@@ -8956,17 +8958,18 @@ speechSynthesis.getVoices();
                     hudTimeout.unshift({
                         userId: this.getUserIdFromPhotonId(id),
                         displayName: this.getDisplayNameFromPhotonId(id),
-                        time: Math.round(timeSinceLastEvent / 1000)
+                        time: Math.round(timeSinceLastEvent / 1000),
+                        rawTime: timeSinceLastEvent
                     });
                 }
             }
         });
         if (this.photonLobbyTimeout.length > 0 || hudTimeout.length > 0) {
             hudTimeout.sort(function (a, b) {
-                if (a.time > b.time) {
+                if (a.rawTime > b.rawTime) {
                     return 1;
                 }
-                if (a.time < b.time) {
+                if (a.rawTime < b.rawTime) {
                     return -1;
                 }
                 return 0;
@@ -9063,12 +9066,14 @@ speechSynthesis.getVoices();
         'Event',
         'OnPlayerJoined',
         'OnPlayerLeft',
-        'AvatarChange',
+        'ChangeAvatar',
         'ChangeStatus',
         'PortalSpawn',
         'DeletedPortal',
         'ChatBoxMessage',
         'Moderation',
+        'Camera',
+        'SpawnEmoji',
         'PhotonMasterMigrate',
         'PhotonBot'
     ];
@@ -9520,6 +9525,11 @@ speechSynthesis.getVoices();
                 if (this.photonLobbyCurrentUser === photonId) {
                     return;
                 }
+                var lastMsg = this.photonLastChatBoxMsg.get(photonId);
+                if (lastMsg === text) {
+                    return;
+                }
+                this.photonLastChatBoxMsg.set(photonId, text);
                 this.addEntryPhotonEvent({
                     photonId,
                     text,
@@ -9619,20 +9629,30 @@ speechSynthesis.getVoices();
                 data: `${displayName} called non existent RPC ${eventData.EventType}`
             };
             this.addPhotonEventToGameLog(entry);
+            return;
         }
         if (eventData.EventType === 14) {
+            var type = 'Event';
             if (eventData.EventName === 'ChangeVisibility') {
                 if (eventData.Data[0] === true) {
                     var text = 'EnableCamera';
                 } else if (eventData.Data[0] === false) {
                     var text = 'DisableCamera';
                 }
+                type = 'Camera';
+            } else if (eventData.EventName === 'PhotoCapture') {
+                var text = 'PhotoCapture';
+                type = 'Camera';
+            } else if (eventData.EventName === 'TimerBloop') {
+                var text = 'TimerBloop';
+                type = 'Camera';
             } else if (eventData.EventName === 'ReloadAvatarNetworkedRPC') {
                 var text = 'AvatarReset';
             } else if (eventData.EventName === 'ReleaseBones') {
                 var text = 'ResetPhysBones';
             } else if (eventData.EventName === 'SpawnEmojiRPC') {
-                var text = `SpawnEmoji ${this.photonEmojis[eventData.Data]}`;
+                var text = this.photonEmojis[eventData.Data];
+                type = 'SpawnEmoji';
             } else {
                 var eventVrc = '';
                 if (eventData.Data && eventData.Data.length > 0) {
@@ -9646,7 +9666,7 @@ speechSynthesis.getVoices();
             this.addEntryPhotonEvent({
                 photonId: senderId,
                 text,
-                type: 'Event',
+                type,
                 created_at: datetime
             });
         } else {
@@ -9819,6 +9839,10 @@ speechSynthesis.getVoices();
         user,
         gameLogDate
     ) {
+        if (typeof user === 'undefined') {
+            console.error('PhotonUser: user is undefined', photonId);
+            return;
+        }
         var tags = [];
         if (typeof user.tags !== 'undefined') {
             tags = user.tags;
@@ -9935,25 +9959,26 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.photonUserJoin = function (photonId, avatar, gameLogDate) {
-        if (
-            photonId === this.photonLobbyCurrentUser ||
-            !this.photonEventOverlayJoinLeave
-        ) {
+        if (photonId === this.photonLobbyCurrentUser) {
             return;
         }
-        this.addEntryPhotonEvent({
-            photonId,
-            text: 'has joined',
-            type: 'OnPlayerJoined',
-            created_at: gameLogDate,
-            avatar
+        this.checkVRChatCache(avatar).then((cacheInfo) => {
+            var inCache = false;
+            if (cacheInfo[0] > 0) {
+                inCache = true;
+            }
+            this.addEntryPhotonEvent({
+                photonId,
+                text: 'has joined',
+                type: 'OnPlayerJoined',
+                created_at: gameLogDate,
+                avatar,
+                inCache
+            });
         });
     };
 
     $app.methods.photonUserLeave = function (photonId, gameLogDate) {
-        if (!this.photonEventOverlayJoinLeave) {
-            return;
-        }
         var text = 'has left';
         var lastEvent = this.photonEvent7List.get(parseInt(photonId, 10));
         if (typeof lastEvent !== 'undefined') {
@@ -10052,6 +10077,10 @@ speechSynthesis.getVoices();
         avatar,
         gameLogDate
     ) {
+        if (typeof user === 'undefined') {
+            console.error('PhotonAvatarChange: user is undefined', photonId);
+            return;
+        }
         var oldAvatarId = this.photonLobbyAvatars.get(user.id);
         if (
             oldAvatarId &&
@@ -10083,7 +10112,7 @@ speechSynthesis.getVoices();
                     displayName: user.displayName,
                     userId: user.id,
                     text: `ChangeAvatar ${avatar.name}`,
-                    type: 'AvatarChange',
+                    type: 'ChangeAvatar',
                     created_at: gameLogDate,
                     avatar,
                     inCache
@@ -10094,6 +10123,10 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.parsePhotonAvatar = function (avatar) {
+        if (typeof avatar === 'undefined' || typeof avatar.id === 'undefined') {
+            console.error('PhotonAvatar: avatar is undefined');
+            return;
+        }
         var tags = [];
         var unityPackages = [];
         if (typeof avatar.tags !== 'undefined') {
@@ -12451,8 +12484,8 @@ speechSynthesis.getVoices();
     $app.data.photonEventOverlayFilter = configRepository.getString(
         'VRCX_PhotonEventOverlayFilter'
     );
-    $app.data.photonEventOverlayJoinLeave = configRepository.getBool(
-        'VRCX_PhotonEventOverlayJoinLeave'
+    $app.data.photonOverlayMessageTimeout = configRepository.getString(
+        'VRCX_photonOverlayMessageTimeout'
     );
     $app.data.photonLoggingEnabled = false;
     $app.data.gameLogDisabled = configRepository.getBool(
@@ -12477,10 +12510,6 @@ speechSynthesis.getVoices();
         configRepository.setString(
             'VRCX_PhotonEventOverlayFilter',
             this.photonEventOverlayFilter
-        );
-        configRepository.setBool(
-            'VRCX_PhotonEventOverlayJoinLeave',
-            this.photonEventOverlayJoinLeave
         );
         if (!this.timeoutHudOverlay) {
             AppApi.ExecuteVrOverlayFunction('updateHudTimeout', '[]');
@@ -12575,11 +12604,11 @@ speechSynthesis.getVoices();
             $app.data.photonEventOverlayFilter
         );
     }
-    if (!configRepository.getBool('VRCX_PhotonEventOverlayJoinLeave')) {
-        $app.data.photonEventOverlayJoinLeave = false;
-        configRepository.setBool(
-            'VRCX_PhotonEventOverlayJoinLeave',
-            $app.data.photonEventOverlayJoinLeave
+    if (!configRepository.getString('VRCX_photonOverlayMessageTimeout')) {
+        $app.data.photonOverlayMessageTimeout = 6000;
+        configRepository.setString(
+            'VRCX_photonOverlayMessageTimeout',
+            $app.data.photonOverlayMessageTimeout
         );
     }
     if (!configRepository.getBool('VRCX_instanceUsersSortAlphabetical')) {
@@ -12786,6 +12815,7 @@ speechSynthesis.getVoices();
             minimalFeed: this.minimalFeed,
             notificationPosition: this.notificationPosition,
             notificationTimeout: this.notificationTimeout,
+            photonOverlayMessageTimeout: this.photonOverlayMessageTimeout,
             notificationTheme,
             backgroundEnabled: this.vrBackgroundEnabled,
             dtHour12: this.dtHour12,
@@ -13218,6 +13248,33 @@ speechSynthesis.getVoices();
                     configRepository.setString(
                         'VRCX_notificationTimeout',
                         this.notificationTimeout
+                    );
+                    this.updateVRConfigVars();
+                }
+            }
+        });
+    };
+
+    $app.methods.promptPhotonOverlayMessageTimeout = function () {
+        this.$prompt('Enter amount of seconds', 'Overlay Message Timeout', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            inputValue: this.photonOverlayMessageTimeout / 1000,
+            inputPattern: /\d+$/,
+            inputErrorMessage: 'Valid number is required',
+            callback: (action, instance) => {
+                if (
+                    action === 'confirm' &&
+                    instance.inputValue &&
+                    !isNaN(instance.inputValue)
+                ) {
+                    this.photonOverlayMessageTimeout = Math.trunc(
+                        Number(instance.inputValue) * 1000
+                    );
+                    configRepository.setString(
+                        'VRCX_photonOverlayMessageTimeout',
+                        this.photonOverlayMessageTimeout
                     );
                     this.updateVRConfigVars();
                 }

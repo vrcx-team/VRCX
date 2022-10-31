@@ -442,7 +442,7 @@ html
                 .hud-feed
                     div(v-for="feed in hudFeed")
                         .item #[span(v-if="feed.isMaster") 👑]<strong>{{ feed.displayName }}</strong>
-                            template(v-if="feed.type === 'AvatarChange'")
+                            template(v-if="feed.type === 'ChangeAvatar'")
                                 span(style="margin-left:10px") ChangeAvatar
                                 span(v-if="!feed.inCache" style="color:#aaa;margin-left:10px") #[i.el-icon-download]
                                 span(v-text="feed.avatar.name" style="margin-left:10px")
@@ -464,7 +464,11 @@ html
                                 location(:location="feed.location" :hint="feed.worldName" :link="false" style="margin-left:10px")
                             template(v-else-if="feed.type === 'OnPlayerJoined'")
                                 span(style="margin-left:10px") has joined -
+                                span(v-if="!feed.inCache" style="color:#aaa;margin-left:10px") #[i.el-icon-download]
                                 span(v-text="feed.avatar.name" style="margin-left:10px")
+                            template(v-else-if="feed.type === 'SpawnEmoji'")
+                                span(style="margin-left:10px") SpawnEmoji
+                                span(v-text="feed.text" style="margin-left:10px")
                             span(v-else-if="feed.color === 'yellow'" v-text="feed.text" style="color:yellow;margin-left:10px")
                             span(v-else style="margin-left:10px" v-text="feed.text")
                             template(v-if="feed.combo > 1")

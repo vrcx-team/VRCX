@@ -569,7 +569,7 @@ Vue.component('marquee-text', MarqueeText);
     $app.methods.cleanHudFeed = function () {
         var dt = Date.now();
         this.hudFeed.forEach((item) => {
-            if (item.time + 6000 < dt) {
+            if (item.time + this.config.photonOverlayMessageTimeout < dt) {
                 removeFromArray(this.hudFeed, item);
             }
         });
