@@ -889,6 +889,11 @@ speechSynthesis.getVoices();
                     if (this.traveling && this.location === 'traveling') {
                         instanceId = this.traveling;
                     }
+                    if (!instanceId && this.hint.length === 8) {
+                        // shortName
+                        API.$emit('SHOW_WORLD_DIALOG_SHORTNAME', this.hint);
+                        return;
+                    }
                     API.$emit('SHOW_WORLD_DIALOG', instanceId);
                 }
             }
@@ -4353,6 +4358,9 @@ speechSynthesis.getVoices();
                 this.setBranch();
             });
             API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
+            API.$on('SHOW_WORLD_DIALOG_SHORTNAME', (tag) =>
+                this.verifyShortName('', tag)
+            );
             API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
             this.updateLoop();
             this.getGameLogTable();
@@ -5957,7 +5965,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.displayLocation = function (location, worldName) {
-        var text = '';
+        var text = worldName;
         var L = API.parseLocation(location);
         if (L.isOffline) {
             text = 'Offline';
@@ -5968,8 +5976,6 @@ speechSynthesis.getVoices();
         } else if (L.worldId) {
             if (L.instanceId) {
                 text = `${worldName} ${L.accessType}`;
-            } else {
-                text = worldName;
             }
         }
         return text;
@@ -9074,7 +9080,7 @@ speechSynthesis.getVoices();
         'Moderation',
         'Camera',
         'SpawnEmoji',
-        'PhotonMasterMigrate',
+        'MasterMigrate',
         'PhotonBot'
     ];
 
@@ -9757,7 +9763,7 @@ speechSynthesis.getVoices();
                 this.addEntryPhotonEvent({
                     photonId,
                     text: `Photon Master Migrate`,
-                    type: 'PhotonMasterMigrate',
+                    type: 'MasterMigrate',
                     created_at: gameLogDate
                 });
             }
@@ -12484,8 +12490,8 @@ speechSynthesis.getVoices();
     $app.data.photonEventOverlayFilter = configRepository.getString(
         'VRCX_PhotonEventOverlayFilter'
     );
-    $app.data.photonOverlayMessageTimeout = configRepository.getString(
-        'VRCX_photonOverlayMessageTimeout'
+    $app.data.photonOverlayMessageTimeout = Number(
+        configRepository.getString('VRCX_photonOverlayMessageTimeout')
     );
     $app.data.photonLoggingEnabled = false;
     $app.data.gameLogDisabled = configRepository.getBool(

@@ -102,6 +102,8 @@ Vue.component('marquee-text', MarqueeText);
                     this.text = 'Offline';
                 } else if (L.isPrivate) {
                     this.text = 'Private';
+                } else if (L.isTraveling) {
+                    this.text = 'Traveling';
                 } else if (typeof this.hint === 'string' && this.hint !== '') {
                     if (L.instanceId) {
                         this.text = `${this.hint} #${L.instanceName} ${L.accessType}`;
@@ -206,11 +208,13 @@ Vue.component('marquee-text', MarqueeText);
             tag: _tag,
             isOffline: false,
             isPrivate: false,
+            isTraveling: false,
             worldId: '',
             instanceId: '',
             instanceName: '',
             accessType: '',
             region: '',
+            shortName: '',
             userId: null,
             hiddenId: null,
             privateId: null,
@@ -222,6 +226,8 @@ Vue.component('marquee-text', MarqueeText);
             ctx.isOffline = true;
         } else if (_tag === 'private') {
             ctx.isPrivate = true;
+        } else if (_tag === 'traveling') {
+            ctx.isTraveling = true;
         } else if (_tag.startsWith('local') === false) {
             var sep = _tag.indexOf(':');
             if (sep >= 0) {
@@ -531,17 +537,17 @@ Vue.component('marquee-text', MarqueeText);
     };
 
     $app.methods.displayLocation = function (location, worldName) {
-        var text = '';
+        var text = worldName;
         var L = this.parseLocation(location);
         if (L.isOffline) {
             text = 'Offline';
         } else if (L.isPrivate) {
             text = 'Private';
+        } else if (L.isTraveling) {
+            text = 'Traveling';
         } else if (L.worldId) {
             if (L.instanceId) {
                 text = `${worldName} ${L.accessType}`;
-            } else {
-                text = worldName;
             }
         }
         return text;
