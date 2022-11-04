@@ -3203,6 +3203,18 @@ speechSynthesis.getVoices();
     API.favoriteAvatarGroups = [];
     API.isFavoriteLoading = false;
     API.isFavoriteGroupLoading = false;
+    API.favoriteLimits = {
+        maxFavoriteGroups: {
+            avatar: 6,
+            friend: 3,
+            world: 4
+        },
+        maxFavoritesPerGroup: {
+            avatar: 50,
+            friend: 150,
+            world: 100
+        }
+    };
 
     API.$on('LOGIN', function () {
         this.cachedFavorites.clear();
@@ -3484,11 +3496,12 @@ speechSynthesis.getVoices();
         }
     };
 
-    API.refreshFavorites = function () {
+    API.refreshFavorites = async function () {
         if (this.isFavoriteLoading) {
             return;
         }
         this.isFavoriteLoading = true;
+        await this.getFavoriteLimits();
         this.expireFavorites();
         this.bulk({
             fn: 'getFavorites',
@@ -3538,28 +3551,28 @@ speechSynthesis.getVoices();
     API.buildFavoriteGroups = function () {
         // 450 = ['group_0', 'group_1', 'group_2'] x 150
         this.favoriteFriendGroups = [];
-        for (var i = 0; i < 3; ++i) {
+        for (var i = 0; i < this.favoriteLimits.maxFavoriteGroups.friend; ++i) {
             this.favoriteFriendGroups.push({
                 assign: false,
                 key: `friend:group_${i}`,
                 type: 'friend',
                 name: `group_${i}`,
                 displayName: `Group ${i + 1}`,
-                capacity: 150,
+                capacity: this.favoriteLimits.maxFavoritesPerGroup.friend,
                 count: 0,
                 visibility: 'private'
             });
         }
         // 400 = ['worlds1', 'worlds2', 'worlds3', 'worlds4'] x 100
         this.favoriteWorldGroups = [];
-        for (var i = 0; i < 4; ++i) {
+        for (var i = 0; i < this.favoriteLimits.maxFavoriteGroups.world; ++i) {
             this.favoriteWorldGroups.push({
                 assign: false,
                 key: `world:worlds${i + 1}`,
                 type: 'world',
                 name: `worlds${i + 1}`,
                 displayName: `Group ${i + 1}`,
-                capacity: 100,
+                capacity: this.favoriteLimits.maxFavoritesPerGroup.world,
                 count: 0,
                 visibility: 'private'
             });
@@ -3568,14 +3581,14 @@ speechSynthesis.getVoices();
         // Favorite Avatars (0/50)
         // VRC+ Group 1..5 (0/50)
         this.favoriteAvatarGroups = [];
-        for (var i = 0; i < 6; ++i) {
+        for (var i = 0; i < this.favoriteLimits.maxFavoriteGroups.avatar; ++i) {
             this.favoriteAvatarGroups.push({
                 assign: false,
                 key: `avatar:avatars${i + 1}`,
                 type: 'avatar',
                 name: `avatars${i + 1}`,
                 displayName: `Group ${i + 1}`,
-                capacity: 50,
+                capacity: this.favoriteLimits.maxFavoritesPerGroup.avatar,
                 count: 0,
                 visibility: 'private'
             });
@@ -3673,6 +3686,25 @@ speechSynthesis.getVoices();
             });
         }
     };
+
+    API.getFavoriteLimits = function () {
+        return this.call('auth/user/favoritelimits', {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json
+            };
+            this.$emit('FAVORITE:LIMITS', args);
+            return args;
+        });
+    };
+
+    API.$on('FAVORITE:LIMITS', function (args) {
+        this.favoriteLimits = {
+            ...this.favoriteLimits,
+            ...args.json
+        };
+    });
 
     API.refreshFavoriteGroups = function () {
         if (this.isFavoriteGroupLoading) {
