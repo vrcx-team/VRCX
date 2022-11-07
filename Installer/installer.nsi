@@ -132,7 +132,7 @@ Section "Install" SecInstall
 
     afterupgrade:
 
-    ReadRegStr $R0 HKCR "Installer\Dependencies\VC,redist.x64,amd64,14.32,bundle" "Version"
+    ReadRegStr $R0 HKCR "Installer\Dependencies\VC,redist.x64,amd64,14.34,bundle" "Version"
     IfErrors 0 VSRedistInstalled
 
     inetc::get "https://aka.ms/vs/17/release/vc_redist.x64.exe" $TEMP\vcredist_x64.exe

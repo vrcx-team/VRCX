@@ -9568,6 +9568,9 @@ speechSynthesis.getVoices();
                     return;
                 }
                 this.photonLastChatBoxMsg.set(photonId, text);
+                if (this.checkChatboxBlacklist(text)) {
+                    return;
+                }
                 this.addEntryPhotonEvent({
                     photonId,
                     text,
@@ -22016,6 +22019,46 @@ speechSynthesis.getVoices();
                 }
             }
         );
+    };
+
+    // App: ChatBox Blacklist
+    $app.data.chatboxBlacklist = ['NP: ', 'Now Playing', '( ▶️ '];
+    if (configRepository.getString('VRCX_chatboxBlacklist')) {
+        $app.data.chatboxBlacklist = JSON.parse(
+            configRepository.getString('VRCX_chatboxBlacklist')
+        );
+    }
+    $app.data.chatboxBlacklistDialog = {
+        visible: false,
+        loading: false
+    };
+
+    API.$on('LOGOUT', function () {
+        $app.chatboxBlacklistDialog.visible = false;
+    });
+
+    $app.methods.saveChatboxBlacklist = function () {
+        configRepository.setString(
+            'VRCX_chatboxBlacklist',
+            JSON.stringify(this.chatboxBlacklist)
+        );
+    };
+
+    $app.methods.showChatboxBlacklistDialog = function () {
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.chatboxBlacklistDialog.$el)
+        );
+        var D = this.chatboxBlacklistDialog;
+        D.visible = true;
+    };
+
+    $app.methods.checkChatboxBlacklist = function (msg) {
+        for (var i = 0; i < this.chatboxBlacklist.length; ++i) {
+            if (msg.includes(this.chatboxBlacklist[i])) {
+                return true;
+            }
+        }
+        return false;
     };
 
     $app = new Vue($app);

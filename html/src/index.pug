@@ -42,7 +42,9 @@ html
                                 el-input(v-model="loginForm.websocket" name="websocket" :placeholder="API.websocketDomainVrchat" clearable)
                             el-form-item(style="margin-top:15px")
                                 el-button(native-type="submit" type="primary" :loading="loginForm.loading" style="width:100%") Login
+                        el-button(type="primary" @click="openExternalLink('https://vrchat.com/register')" :loading="loginForm.loading" style="width:100%") Register
                         div(style="text-align:center;font-size:12px")
+                            p #[a(@click="openExternalLink('https://vrchat.com/home/password')") Forgot password?]
                             p &copy; 2019-2022 #[a(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] (mina#5656) & #[a(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
                             p VRCX is an assistant application for provide information about manage friendship. this application uses unofficial VRChat API (VRCSDK).
                             p VRCX isn't endorsed by VRChat and doesn't reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat. VRChat is trademark of VRChat Inc. VRChat © VRChat Inc.
@@ -130,9 +132,10 @@ html
                                     span.extra {{ currentInstanceWorld.ref.created_at | formatDate('long') }}
                     div.photon-event-table(v-if="photonLoggingEnabled")
                         div(style="position:absolute;margin-left:195px;z-index:1")
-                            el-select(v-model="photonEventTableTypeFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
+                            el-select(v-model="photonEventTableTypeFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1;width:150px" placeholder="Filter")
                                 el-option(v-once v-for="type in photonEventTableTypeFilterList" :key="type" :label="type" :value="type")
                             el-input(v-model="photonEventTableFilter" @input="photonEventTableFilterChange" placeholder="Search" clearable style="width:150px;margin-left:10px")
+                            el-button(@click="showChatboxBlacklistDialog" style="margin-left:10px") Chatbox Blacklist
                             el-tooltip(placement="bottom" content="VRCX Companion Status" :disabled="hideTooltips")
                                 div(style="display:inline-block;margin-left:15px;font-size:14px;vertical-align:text-top;margin-top:1px")
                                     span(v-if="ipcEnabled && !photonEventIcon") 🟢
@@ -3299,6 +3302,13 @@ html
                     el-input(v-for="(provider, index) in avatarRemoteDatabaseProviderList" :key="index" :value="provider" v-model="avatarRemoteDatabaseProviderList[index]" @change="saveAvatarProviderList" size="small" style="margin-top:5px")
                         el-button(slot="append" icon="el-icon-delete" @click="removeAvatarProvider(provider)")
                     el-button(@click="avatarRemoteDatabaseProviderList.push('')" size="mini" style="margin-top:5px") Add Provider
+
+            //- dialog: chatbox blacklist
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="chatboxBlacklistDialog" :visible.sync="chatboxBlacklistDialog.visible" title="Chatbox Blacklist" width="600px")
+                div(v-loading="chatboxBlacklistDialog.loading")
+                    el-input(v-for="(item, index) in chatboxBlacklist" :key="index" :value="item" v-model="chatboxBlacklist[index]" size="small" style="margin-top:5px" @change="saveChatboxBlacklist")
+                        el-button(slot="append" icon="el-icon-delete" @click="chatboxBlacklist.splice(index, 1); saveChatboxBlacklist()")
+                    el-button(@click="chatboxBlacklist.push('')" size="mini" style="margin-top:5px") Add Item
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
