@@ -89,20 +89,10 @@ namespace VRCX
             // REMOVE THIS
             // nextOverlay = DateTime.MaxValue;
             // https://stackoverflow.com/questions/38312597/how-to-choose-a-specific-graphics-device-in-sharpdx-directx-11/38596725#38596725
-            SharpDX.DXGI.Factory f = new SharpDX.DXGI.Factory1();
-            SharpDX.DXGI.Adapter a = f.GetAdapter(1);
-            FeatureLevel[] levels = new FeatureLevel[]
-            {
-#if DIRECTX11_1
-    FeatureLevel.Level_11_1,
-#endif
-                FeatureLevel.Level_11_0,
-                FeatureLevel.Level_10_1,
-                FeatureLevel.Level_10_0,
-                FeatureLevel.Level_9_3
-            };
+            Factory f = new Factory1();
+            Adapter a = f.GetAdapter(1);
+            
             DeviceCreationFlags flags = DeviceCreationFlags.BgraSupport;
-            // _device = new Device(a, flags, levels);
 
             _device = Program.GPUFix ? new Device(a, flags) : new Device(DriverType.Hardware, DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport);
 
