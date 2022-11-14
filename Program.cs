@@ -17,7 +17,7 @@ namespace VRCX
         public static string ConfigLocation;
         public static string Version { get; private set; }
         public static bool LaunchDebug;
-
+        public static bool GPUFix;
         static Program()
         {
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;

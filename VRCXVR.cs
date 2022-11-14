@@ -88,11 +88,13 @@ namespace VRCX
 
             // REMOVE THIS
             // nextOverlay = DateTime.MaxValue;
+            // https://stackoverflow.com/questions/38312597/how-to-choose-a-specific-graphics-device-in-sharpdx-directx-11/38596725#38596725
+            Factory f = new Factory1();
+            Adapter a = f.GetAdapter(1);
+            
+            DeviceCreationFlags flags = DeviceCreationFlags.BgraSupport;
 
-            _device = new Device(
-                DriverType.Hardware,
-                DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport
-            );
+            _device = Program.GPUFix ? new Device(a, flags) : new Device(DriverType.Hardware, DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport);
 
             _texture1 = new Texture2D(
                 _device,
