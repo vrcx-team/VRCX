@@ -111,6 +111,8 @@ To install a theme place `custom.css` into your `%AppData%\VRCX` folder then pre
 
 - `--debug` launch Chromium DevTools with VRCX.
 - `--config="C:\VRCX.sqlite3"` set a custom path for VRCX database.
+- `--gpufix` set VRCX overlay rendering GPU to index 1 forcing the overlay to render to a secondary dedicated GPU or if you're using an integrated GPU it will force 
+rendering to your dedicated GPU.
 - `vrcx://user/usr_id` open VRCX user dialog.
 - `vrcx://avatar/avtr_id` open VRCX avatar dialog.
 - `vrcx://world/wrld_id` open VRCX world dialog.
@@ -150,6 +152,7 @@ This can be caused by a many different things here's a list of things to try:
 
 ### **SteamVR Overlay not working**
 
+- Try launch VRCX with the launch parameter `--gpufix`.
 - Disable SteamVR safe mode.
 - If your computer has an iGPU follow these [steps](https://www.windowsdigitals.com/force-chrome-firefox-game-to-use-nvidia-gpu-integrated-graphics/).
 
