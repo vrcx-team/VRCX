@@ -24,7 +24,9 @@ namespace VRCX
 
             foreach (string arg in args)
             {
-                if (arg.Contains("--gpufix")) Program.GPUFix = true;
+                if (arg.Contains("--gpufix"))
+                    Program.GPUFix = true;
+                
                 if (arg.Length > 12 && arg.Substring(0, 12) == "/uri=vrcx://")
                     LaunchCommand = arg.Substring(12);
 

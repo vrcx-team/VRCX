@@ -263,6 +263,12 @@ html
                                     timer(:epoch="scope.row.timer")
                             el-table-column(v-if="photonLoggingEnabled" label="Photon Id" width="110" prop="photonId" sortable)
                                 template(v-once #default="scope")
+                                    template(v-if="chatboxUserBlacklist.has(scope.row.ref.id)")
+                                        el-tooltip(placement="left" content="Unblock chatbox messages")
+                                            el-button(type="text" icon="el-icon-turn-off-microphone" size="mini" style="color:red;margin-right:5px" @click.stop="deleteChatboxUserBlacklist(scope.row.ref.id)")
+                                    template(v-else)
+                                        el-tooltip(placement="left" content="Block chatbox messages")
+                                            el-button(type="text" icon="el-icon-microphone" size="mini" style="margin-right:5px" @click.stop="addChatboxUserBlacklist(scope.row.ref)")
                                     span(v-text="scope.row.photonId")
                             el-table-column(label="Icons" prop="isMaster" width="100")
                                 template(v-once #default="scope")
@@ -3305,10 +3311,15 @@ html
 
             //- dialog: chatbox blacklist
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="chatboxBlacklistDialog" :visible.sync="chatboxBlacklistDialog.visible" title="Chatbox Blacklist" width="600px")
-                div(v-loading="chatboxBlacklistDialog.loading")
+                div(v-loading="chatboxBlacklistDialog.loading" v-if="chatboxBlacklistDialog.visible")
+                    h2 Keyword Blacklist
                     el-input(v-for="(item, index) in chatboxBlacklist" :key="index" :value="item" v-model="chatboxBlacklist[index]" size="small" style="margin-top:5px" @change="saveChatboxBlacklist")
                         el-button(slot="append" icon="el-icon-delete" @click="chatboxBlacklist.splice(index, 1); saveChatboxBlacklist()")
                     el-button(@click="chatboxBlacklist.push('')" size="mini" style="margin-top:5px") Add Item
+                    br
+                    h2 User Blacklist
+                    el-tag(v-for="user in chatboxUserBlacklist" type="info" disable-transitions="true" :key="user[0]" style="margin-right:5px" closable @close="deleteChatboxUserBlacklist(user[0])")
+                        span {{user[1]}}
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" title="Open Source Software Notice" width="650px")

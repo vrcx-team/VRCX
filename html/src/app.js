@@ -9568,7 +9568,11 @@ speechSynthesis.getVoices();
                     return;
                 }
                 this.photonLastChatBoxMsg.set(photonId, text);
-                if (this.checkChatboxBlacklist(text)) {
+                var userId = this.getUserIdFromPhotonId(photonId);
+                if (
+                    this.chatboxUserBlacklist.has(userId) ||
+                    this.checkChatboxBlacklist(text)
+                ) {
                     return;
                 }
                 this.addEntryPhotonEvent({
@@ -9578,7 +9582,7 @@ speechSynthesis.getVoices();
                     created_at: gameLogDate
                 });
                 var entry = {
-                    userId: this.getUserIdFromPhotonId(photonId),
+                    userId,
                     displayName: this.getDisplayNameFromPhotonId(photonId),
                     created_at: gameLogDate,
                     type: 'ChatBoxMessage',
@@ -22059,6 +22063,40 @@ speechSynthesis.getVoices();
             }
         }
         return false;
+    };
+
+    // App: ChatBox User Blacklist
+    $app.data.chatboxUserBlacklist = new Map();
+    if (configRepository.getString('VRCX_chatboxUserBlacklist')) {
+        $app.data.chatboxUserBlacklist = new Map(
+            Object.entries(
+                JSON.parse(
+                    configRepository.getString('VRCX_chatboxUserBlacklist')
+                )
+            )
+        );
+    }
+
+    $app.methods.saveChatboxUserBlacklist = function () {
+        configRepository.setString(
+            'VRCX_chatboxUserBlacklist',
+            JSON.stringify(Object.fromEntries(this.chatboxUserBlacklist))
+        );
+    };
+
+    $app.methods.addChatboxUserBlacklist = function (user) {
+        this.chatboxUserBlacklist.set(user.id, user.displayName);
+        this.saveChatboxUserBlacklist();
+        this.getCurrentInstanceUserList();
+    };
+
+    $app.methods.deleteChatboxUserBlacklist = function (userId) {
+        this.chatboxUserBlacklist.delete(userId);
+        this.saveChatboxUserBlacklist();
+        this.getCurrentInstanceUserList();
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.chatboxBlacklistDialog.$el)
+        );
     };
 
     $app = new Vue($app);
