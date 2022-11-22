@@ -41,6 +41,7 @@ namespace VRCX
         private bool _hmdOverlayActive;
         private bool _wristOverlayActive;
         private bool _menuButton;
+        private int _overlayHand;
 
         static VRCXVR()
         {
@@ -91,7 +92,7 @@ namespace VRCX
             // https://stackoverflow.com/questions/38312597/how-to-choose-a-specific-graphics-device-in-sharpdx-directx-11/38596725#38596725
             Factory f = new Factory1();
             Adapter a = f.GetAdapter(1);
-            
+
             DeviceCreationFlags flags = DeviceCreationFlags.BgraSupport;
 
             _device = Program.GPUFix ? new Device(a, flags) : new Device(DriverType.Hardware, DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport);
@@ -150,7 +151,7 @@ namespace VRCX
                 {
                     Thread.Sleep(32);
                 }
-                catch(ThreadInterruptedException)
+                catch (ThreadInterruptedException)
                 {
                 }
 
@@ -245,15 +246,15 @@ namespace VRCX
             _texture2.Dispose();
             _texture1.Dispose();
             _device.Dispose();
-
         }
 
-        public void SetActive(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton)
+        public void SetActive(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
         {
             _active = active;
             _hmdOverlayActive = hmdOverlay;
             _wristOverlayActive = wristOverlay;
             _menuButton = menuButton;
+            _overlayHand = overlayHand;
         }
 
         public void Refresh()
@@ -309,23 +310,28 @@ namespace VRCX
                     // Vive : Menu, Bit 1, Mask 2,
                     // Vive : Grip, Bit 2, Mask 4
                     var role = system.GetControllerRoleForTrackedDeviceIndex(i);
-                    if (role == ETrackedControllerRole.LeftHand ||
-                        role == ETrackedControllerRole.RightHand)
+                    if (role == ETrackedControllerRole.LeftHand || role == ETrackedControllerRole.RightHand)
                     {
-                        if (system.GetControllerState(i, ref state, (uint)Marshal.SizeOf(state)) &&
-                            (state.ulButtonPressed & (_menuButton ? 2u : (isOculus ? 128u : 4u))) != 0)
+                        if (_overlayHand == 0 ||
+                            _overlayHand == 1 && role == ETrackedControllerRole.LeftHand ||
+                            _overlayHand == 2 && role == ETrackedControllerRole.RightHand)
                         {
-                            if (role == ETrackedControllerRole.LeftHand)
+                            if (system.GetControllerState(i, ref state, (uint)Marshal.SizeOf(state)) &&
+                                (state.ulButtonPressed & (_menuButton ? 2u : (isOculus ? 128u : 4u))) != 0)
                             {
-                                Array.Copy(_translationLeft, _translation, 3);
-                                Array.Copy(_rotationLeft, _rotation, 3);
+                                if (role == ETrackedControllerRole.LeftHand)
+                                {
+                                    Array.Copy(_translationLeft, _translation, 3);
+                                    Array.Copy(_rotationLeft, _rotation, 3);
+                                }
+                                else
+                                {
+                                    Array.Copy(_translationRight, _translation, 3);
+                                    Array.Copy(_rotationRight, _rotation, 3);
+                                }
+
+                                overlayIndex = i;
                             }
-                            else
-                            {
-                                Array.Copy(_translationRight, _translation, 3);
-                                Array.Copy(_rotationRight, _rotation, 3);
-                            }
-                            overlayIndex = i;
                         }
                     }
                     var type = string.Empty;

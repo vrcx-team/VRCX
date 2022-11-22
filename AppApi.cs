@@ -203,9 +203,9 @@ namespace VRCX
             }
         }
 
-        public void SetVR(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton)
+        public void SetVR(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
         {
-            VRCXVR.Instance.SetActive(active, hmdOverlay, wristOverlay, menuButton);
+            VRCXVR.Instance.SetActive(active, hmdOverlay, wristOverlay, menuButton, overlayHand);
         }
 
         public void RefreshVR()
@@ -391,6 +391,7 @@ namespace VRCX
         }
 
         private static readonly MD5 _hasher = MD5.Create();
+
         public int GetColourFromUserID(string userId)
         {
             var hash = _hasher.ComputeHash(Encoding.UTF8.GetBytes(userId));

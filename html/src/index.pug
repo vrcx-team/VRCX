@@ -14,6 +14,8 @@ html
         .x-app#x-app(style="display:none")
             //- login
             .x-login-container(v-show="!API.isLoggedIn")
+                div(style="position:absolute;margin:5px")
+                    el-button(type="default" @click="showVRCXUpdateDialog" size="mini" icon="el-icon-download" circle)
                 div(style="width:300px;margin:auto" v-loading="loginForm.loading")
                     div(style="margin:15px" v-if="Object.keys(loginForm.savedCredentials).length !== 0")
                         h2(style="font-weight:bold;text-align:center;margin:0") Saved Accounts
@@ -723,7 +725,7 @@ html
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
                             el-select(v-model="playerModerationTable.filters[0].value" @change="saveTableFilters" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
-                                el-option(v-once v-for="type in ['block', 'unblock', 'mute', 'unmute', 'hideAvatar', 'showAvatar', 'interactOn', 'interactOff']" :key="type" :label="type" :value="type")
+                                el-option(v-once v-for="type in ['block', 'unblock', 'mute', 'unmute', 'interactOn', 'interactOff']" :key="type" :label="type" :value="type")
                             el-input(v-model="playerModerationTable.filters[1].value" placeholder="Search" style="flex:none;width:150px;margin:0 10px")
                             el-tooltip(placement="bottom" content="Refresh" :disabled="hideTooltips")
                                 el-button(type="default" :loading="API.isPlayerModerationsLoading" @click="API.refreshPlayerModerations()" icon="el-icon-refresh" circle style="flex:none")
@@ -1253,15 +1255,21 @@ html
                             div.options-container-item
                                 span.name Wrist Feed Overlay
                                 el-switch(v-model="overlayWrist" @change="saveOpenVROption" :disabled="!openVR")
-                            div.options-container-item(style="min-width:118px")
-                                span.name Start overlay with
-                                el-switch(v-model="openVRAlways" @change="saveOpenVROption" inactive-text="VRChat" active-text="SteamVR" :disabled="!openVR")
                             div.options-container-item
                                 span.name Hide Private Worlds
                                 el-switch(v-model="hidePrivateFromFeed" @change="saveOpenVROption")
+                            div.options-container-item(style="min-width:118px")
+                                span.name Start Overlay With
+                                el-switch(v-model="openVRAlways" @change="saveOpenVROption" inactive-text="VRChat" active-text="SteamVR" :disabled="!openVR")
                             div.options-container-item
-                                span.name(style="min-width:137px") Overlay Button
+                                span.name Overlay Button
                                 el-switch(v-model="overlaybutton" @change="saveOpenVROption" inactive-text="Grip" active-text="Menu" :disabled="!openVR || !overlayWrist")
+                            div.options-container-item
+                                span.name Display Overlay On
+                                el-radio-group(v-model="overlayHand" @change="saveOpenVROption" size="mini")
+                                    el-radio-button(label="1") Left Hand
+                                    el-radio-button(label="2") Right Hand
+                                    el-radio-button(label="0") Both Hands
                             div.options-container-item
                                 span.name Background Colour
                                 el-switch(v-model="vrBackgroundEnabled" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
@@ -1618,8 +1626,8 @@ html
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided :disabled="userDialog.ref.$isModerator") Block
                                             el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") Unmute
                                             el-dropdown-item(v-else icon="el-icon-turn-off-microphone" command="Mute" :disabled="userDialog.ref.$isModerator") Mute
-                                            el-dropdown-item(v-if="userDialog.isHideAvatar" icon="el-icon-user-solid" command="Show Avatar" style="color:#F56C6C") Show Avatar
-                                            el-dropdown-item(v-else icon="el-icon-user" command="Hide Avatar") Hide Avatar
+                                            //- el-dropdown-item(v-if="userDialog.isHideAvatar" icon="el-icon-user-solid" command="Show Avatar" style="color:#F56C6C") Show Avatar
+                                            //- el-dropdown-item(v-else icon="el-icon-user" command="Hide Avatar") Hide Avatar
                                             el-dropdown-item(v-if="userDialog.isInteractOff" icon="el-icon-thumb" command="Enable Avatar Interaction" style="color:#F56C6C") Enable Avatar Interaction
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Disable Avatar Interaction") Disable Avatar Interaction
                                             template(v-if="userDialog.isFriend")
@@ -3318,7 +3326,7 @@ html
                     el-button(@click="chatboxBlacklist.push('')" size="mini" style="margin-top:5px") Add Item
                     br
                     h2 User Blacklist
-                    el-tag(v-for="user in chatboxUserBlacklist" type="info" disable-transitions="true" :key="user[0]" style="margin-right:5px" closable @close="deleteChatboxUserBlacklist(user[0])")
+                    el-tag(v-for="user in chatboxUserBlacklist" type="info" disable-transitions="true" :key="user[0]" style="margin-right:5px;margin-top:5px" closable @close="deleteChatboxUserBlacklist(user[0])")
                         span {{user[1]}}
 
             //- dialog: open source software notice
