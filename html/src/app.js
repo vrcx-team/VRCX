@@ -13275,8 +13275,7 @@ speechSynthesis.getVoices();
         if (this.directAccessWorld(input.trim())) {
             return true;
         }
-        var testUrl = input.substring(0, 15);
-        if (testUrl === 'https://vrchat.') {
+        if (input.startsWith('https://vrchat.')) {
             var url = new URL(input);
             var urlPath = url.pathname;
             if (urlPath.substring(5, 11) === '/user/') {
@@ -13287,7 +13286,14 @@ speechSynthesis.getVoices();
                 var avatarId = urlPath.substring(13);
                 this.showAvatarDialog(avatarId);
                 return true;
+            } else if (urlPath.substring(5, 12) === '/group/') {
+                var groupId = urlPath.substring(12);
+                this.showGroupDialog(groupId);
+                return true;
             }
+        } else if (input.startsWith('https://vrc.group/')) {
+            // var shortCode = input.substring(18);
+            // resolve short code? A
         } else if (
             input.substring(0, 4) === 'usr_' ||
             /^[A-Za-z0-9]{10}$/g.test(input)
@@ -13296,6 +13302,9 @@ speechSynthesis.getVoices();
             return true;
         } else if (input.substring(0, 5) === 'avtr_') {
             this.showAvatarDialog(input.trim());
+            return true;
+        } else if (input.substring(0, 4) === 'grp_') {
+            this.showGroupDialog(input.trim());
             return true;
         }
         return false;
@@ -13695,6 +13704,20 @@ speechSynthesis.getVoices();
             avatarName: '',
             fileCreatedAt: ''
         },
+        representedGroup: {
+            bannerUrl: '',
+            description: '',
+            discriminator: '',
+            groupId: '',
+            iconUrl: '',
+            isRepresenting: false,
+            memberCount: 0,
+            memberVisibility: '',
+            name: '',
+            ownerId: '',
+            privacy: '',
+            shortCode: ''
+        },
         joinCount: 0,
         timeSpent: 0,
         lastSeen: '',
@@ -13923,6 +13946,20 @@ speechSynthesis.getVoices();
             occupants: 0,
             friendCount: 0
         };
+        D.representedGroup = {
+            bannerUrl: '',
+            description: '',
+            discriminator: '',
+            groupId: '',
+            iconUrl: '',
+            isRepresenting: false,
+            memberCount: 0,
+            memberVisibility: '',
+            name: '',
+            ownerId: '',
+            privacy: '',
+            shortCode: ''
+        };
         D.lastSeen = '';
         D.joinCount = 0;
         D.timeSpent = 0;
@@ -14070,6 +14107,7 @@ speechSynthesis.getVoices();
                                 );
                             });
                     }
+                    API.getRepresentedGroup({userId});
                 }
                 return args;
             });
@@ -16714,6 +16752,22 @@ speechSynthesis.getVoices();
             type: 'success'
         });
         this.copyToClipboard(`https://vrchat.com/home/user/${userId}`);
+    };
+
+    $app.methods.copyGroupId = function (groupId) {
+        this.$message({
+            message: 'Group ID copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(groupId);
+    };
+
+    $app.methods.copyGroupUrl = function (groupUrl) {
+        this.$message({
+            message: 'Group URL copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(groupUrl);
     };
 
     $app.methods.copyText = function (text) {
@@ -20403,6 +20457,9 @@ speechSynthesis.getVoices();
             case 'user':
                 this.showUserDialog(commandArg);
                 break;
+            case 'group':
+                this.showGroupDialog(commandArg);
+                break;
             case 'addavatardb':
                 this.addAvatarProvider(input.replace('addavatardb/', ''));
                 break;
@@ -22278,9 +22335,62 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP', function (args) {
-        var group = args.json;
-        console.log(args);
+        args.ref = this.applyGroup(args.json);
+    });
+
+    API.$on('GROUP', function (args) {
+        console.log('group', args);
+        var group = args.ref;
         this.cachedGroups.set(group.id, group);
+    });
+
+    API.$on('GROUP', function (args) {
+        if ($app.groupDialog.visible && $app.groupDialog.id === args.ref.id) {
+            // update group dialog
+        }
+        if (
+            $app.userDialog.visible &&
+            ($app.userDialog.representedGroup.id === args.ref.id ||
+                $app.userDialog.id === args.params.userId)
+        ) {
+            $app.userDialog.representedGroup = args.ref;
+        }
+    });
+
+    /*
+        params: {
+            userId: string
+        }
+    */
+    API.getRepresentedGroup = function (params) {
+        return this.call(`users/${params.userId}/groups/represented`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:REPRESENTED', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:REPRESENTED', function (args) {
+        console.log('represented', args.json);
+        var json = args.json;
+        if (!json.id) {
+            // no group
+            return;
+        }
+        json.$memberId = json.id;
+        json.id = json.groupId;
+        this.$emit('GROUP', {
+            json,
+            params: {
+                groupId: json.id,
+                userId: args.params.userId
+            }
+        });
     });
 
     /*
@@ -22302,24 +22412,329 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP:LIST', function (args) {
-        console.log(args.json);
-        for (var i = 0; i < args.json.length; ++i) {
-            var group = args.json[i];
-            this.cachedGroups.set(group.id, group);
+        console.log('groups', args.json);
+        for (var json of args.json) {
+            json.$memberId = json.id;
+            json.id = json.groupId;
+            this.$emit('GROUP', {
+                json,
+                params: {
+                    groupId: json.id,
+                    userId: args.params.userId
+                }
+            });
         }
     });
+
+    /*
+        params: {
+            groupId: string
+        }
+    */
+    API.joinGroup = function (params) {
+        return this.call(`groups/${params.groupId}/join`, {
+            method: 'POST'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:JOIN', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:JOIN', function (args) {
+        console.log('join', args.json);
+        var json = {
+            $memberId: args.json.id,
+            id: args.json.groupId,
+            membershipStatus: args.json.membershipStatus,
+            myMember: {
+                isRepresenting: args.json.isRepresenting,
+                id: args.json.id,
+                roleIds: args.json.roleIds,
+                joinedAt: args.json.joinedAt,
+                membershipStatus: args.json.membershipStatus,
+                visibility: args.json.visibility,
+                isSubscribedToAnnouncements:
+                    args.json.isSubscribedToAnnouncements
+            }
+        };
+        var groupId = json.id;
+        this.$emit('GROUP', {
+            json,
+            params: {
+                groupId,
+                userId: args.params.userId
+            }
+        });
+        if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
+            if (json.membershipStatus === 'member') {
+                $app.groupDialog.inGroup = true;
+            }
+        }
+    });
+
+    /*
+        params: {
+            groupId: string
+        }
+    */
+    API.leaveGroup = function (params) {
+        return this.call(`groups/${params.groupId}/leave`, {
+            method: 'POST'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:LEAVE', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:LEAVE', function (args) {
+        console.log('leave', args);
+        var groupId = args.params.groupId;
+        if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
+            $app.groupDialog.inGroup = false;
+        }
+    });
+
+    /*
+        params: {
+            groupId: string
+        }
+    */
+    API.cancelGroupRequest = function (params) {
+        return this.call(`groups/${params.groupId}/requests`, {
+            method: 'DELETE'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:CANCELJOINREQUEST', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:CANCELJOINREQUEST', function (args) {
+        console.log('CANCELJOINREQUEST', args);
+        var groupId = args.params.groupId;
+        if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
+            $app.groupDialog.ref.membershipStatus = 'inactive';
+        }
+    });
+
+    /*
+        params: {
+            groupId: string
+        }
+    */
+    API.getCachedGroup = function (params) {
+        return new Promise((resolve, reject) => {
+            var ref = this.cachedGroups.get(params.groupId);
+            if (typeof ref === 'undefined') {
+                this.getGroup(params).catch(reject).then(resolve);
+            } else {
+                resolve({
+                    cache: true,
+                    json: ref,
+                    params,
+                    ref
+                });
+            }
+        });
+    };
+
+    API.applyGroup = function (json) {
+        var ref = this.cachedGroups.get(json.id);
+        if (typeof ref === 'undefined') {
+            ref = {
+                id: '',
+                name: '',
+                shortCode: '',
+                description: '',
+                bannerId: '',
+                bannerUrl: '',
+                createdAt: '',
+                discriminator: '',
+                galleries: [],
+                iconId: '',
+                iconUrl: '',
+                isVerified: false,
+                joinState: '',
+                languages: [],
+                links: [],
+                memberCount: 0,
+                memberCountSyncedAt: '',
+                membershipStatus: '',
+                onlineMemberCount: 0,
+                ownerId: '',
+                privacy: '',
+                rules: null,
+                tags: [],
+                // in group
+                initialRoleIds: [],
+                myMember: {
+                    bannedAt: null,
+                    groupId: '',
+                    has2FA: false,
+                    id: '',
+                    isRepresenting: false,
+                    isSubscribedToAnnouncements: false,
+                    joinedAt: '',
+                    managerNotes: '',
+                    membershipStatus: '',
+                    permissions: [],
+                    roleIds: [],
+                    userId: '',
+                    visibility: '',
+                    _created_at: '',
+                    _id: '',
+                    _updated_at: ''
+                },
+                updatedAt: '',
+                // group list
+                $memberId: '',
+                groupId: '',
+                isRepresenting: false,
+                memberVisibility: false,
+                mutualGroup: false,
+                // VRCX
+                $languages: [],
+                ...json
+            };
+            this.cachedGroups.set(ref.id, ref);
+        } else {
+            Object.assign(ref, json);
+        }
+        ref.$url = `https://vrc.group/${ref.shortCode}.${ref.discriminator}`;
+        this.applyGroupLanguage(ref);
+        return ref;
+    };
+
+    API.applyGroupLanguage = function (ref) {
+        ref.$languages = [];
+        var {languages} = ref;
+        if (!languages) {
+            return;
+        }
+        for (var language of languages) {
+            var value = subsetOfLanguages[language];
+            if (typeof value === 'undefined') {
+                continue;
+            }
+            ref.$languages.push({
+                key: language,
+                value
+            });
+        }
+    };
 
     $app.data.groupDialog = {
         visible: false,
         loading: false,
+        treeData: [],
         id: '',
-        group: null
+        inGroup: false,
+        ref: {}
     };
 
     $app.methods.showGroupDialog = function (groupId) {
-        // this.$nextTick(() => adjustDialogZ(this.$refs.groupDialog.$el));
-        this.groupDialog.visible = true;
-        this.groupDialog.id = groupId;
+        if (!groupId) {
+            return;
+        }
+        this.$nextTick(() => adjustDialogZ(this.$refs.groupDialog.$el));
+        var D = this.groupDialog;
+        D.visible = true;
+        D.loading = true;
+        D.id = groupId;
+        D.inGroup = false;
+        D.treeData = [];
+        API.getCachedGroup({
+            groupId
+        })
+            .catch((err) => {
+                D.loading = false;
+                D.visible = false;
+                this.$message({
+                    message: 'Failed to load group',
+                    type: 'error'
+                });
+                throw err;
+            })
+            .then((args) => {
+                if (D.id === args.ref.id) {
+                    D.loading = false;
+                    D.ref = args.ref;
+                    D.inGroup = args.ref.membershipStatus === 'member';
+                    if (args.cache) {
+                        API.getGroup(args.params)
+                            .catch((err) => {
+                                throw err;
+                            })
+                            .then((args1) => {
+                                if (D.id === args1.ref.id) {
+                                    D.ref = args1.ref;
+                                    D.inGroup =
+                                        args.ref.membershipStatus === 'member';
+                                }
+                                return args1;
+                            });
+                    }
+                }
+            });
+    };
+
+    $app.methods.groupDialogCommand = function (command) {
+        var D = this.groupDialog;
+        if (D.visible === false) {
+            return;
+        }
+        switch (command) {
+            case 'Refresh':
+                this.showGroupDialog(D.id);
+                break;
+        }
+    };
+
+    $app.methods.refreshGroupDialogTreeData = function () {
+        var D = this.groupDialog;
+        D.treeData = buildTreeData(D.ref);
+    };
+
+    $app.methods.joinGroup = function (groupId) {
+        return API.joinGroup({
+            groupId
+        }).then((args) => {
+            if (args.json.membershipStatus === 'member') {
+                this.$message({
+                    message: 'Group joined',
+                    type: 'success'
+                });
+            } else if (args.json.membershipStatus === 'requested') {
+                this.$message({
+                    message: 'Group join request sent',
+                    type: 'success'
+                });
+            }
+            return args;
+        });
+    };
+
+    $app.methods.leaveGroup = function (groupId) {
+        return API.leaveGroup({
+            groupId
+        });
+    };
+
+    $app.methods.cancelGroupRequest = function (groupId) {
+        return API.cancelGroupRequest({
+            groupId
+        });
     };
 
     $app = new Vue($app);

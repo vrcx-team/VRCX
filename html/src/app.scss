@@ -100,7 +100,7 @@
 
 .el-dialog__body {
     padding: 20px;
-    word-break: unset;
+    word-break: break-word;
 }
 
 .el-dialog__footer > .el-button + .el-button {
