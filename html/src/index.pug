@@ -133,8 +133,8 @@ html
                                     span.name Created
                                     span.extra {{ currentInstanceWorld.ref.created_at | formatDate('long') }}
                     div.photon-event-table(v-if="photonLoggingEnabled")
-                        div(style="position:absolute;margin-left:195px;z-index:1")
-                            el-select(v-model="photonEventTableTypeFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1;width:150px" placeholder="Filter")
+                        div(style="position:absolute;width:600px;margin-left:195px;z-index:1")
+                            el-select(v-model="photonEventTableTypeFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1;width:220px" placeholder="Filter")
                                 el-option(v-once v-for="type in photonEventTableTypeFilterList" :key="type" :label="type" :value="type")
                             el-input(v-model="photonEventTableFilter" @input="photonEventTableFilterChange" placeholder="Search" clearable style="width:150px;margin-left:10px")
                             el-button(@click="showChatboxBlacklistDialog" style="margin-left:10px") Chatbox Blacklist
@@ -951,6 +951,12 @@ html
                 div.options-container(style="margin-top:0")
                     span.header Friends List
                     div(style="float:right;font-size:13px")
+                        div(v-if="friendsListBulkUnfriendMode" style="display:inline-block;margin-right:10px")
+                            el-button(size="small" @click="showBulkUnfriendSelectionConfirm") Bulk Unfriend Selection
+                            //- el-button(size="small" @click="showBulkUnfriendAllConfirm" style="margin-right:5px") Bulk Unfriend All
+                        div(style="display:inline-block;margin-right:10px")
+                            span.name Bulk Unfriend Mode
+                            el-switch(v-model="friendsListBulkUnfriendMode" style="margin-left:5px")
                         span Load missing entries
                         el-tooltip(placement="top" style="margin-left:5px" content="This takes a lot of API requests so use it sparingly")
                             i.el-icon-warning
@@ -973,6 +979,10 @@ html
                         el-tooltip(placement="top" content="Clear results" :disabled="hideTooltips")
                             el-button(type="default" @click="friendsListTable.data = []" icon="el-icon-delete" circle style="flex:none;margin-left:5px")
                     data-tables(v-bind="friendsListTable" @row-click="selectFriendsListRow" style="margin-top:10px;cursor:pointer")
+                        el-table-column(v-if="friendsListBulkUnfriendMode" width="55" prop="$selected")
+                            template(v-once #default="scope")
+                                el-button(type="text" size="mini" @click.stop)
+                                    el-checkbox(v-model="scope.row.$selected")
                         el-table-column(label="No." width="70" prop="$friendNum" sortable="custom")
                         el-table-column(label="Avatar" width="70" prop="photo")
                             template(v-once #default="scope")
