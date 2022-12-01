@@ -1774,6 +1774,40 @@ html
                                         span.extra
                                             span(v-text="userDialog.$homeLocationName")
                                             el-button(@click.stop="resetHome()" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                        el-tab-pane(label="Groups")
+                            el-button(type="default" :loading="userDialog.isGroupsLoading" @click="getUserGroups(userDialog.id)" size="mini" icon="el-icon-refresh" circle)
+                            span(style="margin-left:5px") Total {{ userGroups.groups.length }}
+                            div(v-loading="userDialog.isGroupsLoading" style="margin-top:10px")
+                                template(v-if="userGroups.ownGroups.length > 0")
+                                    span(style="font-weight:bold;font-size:16px") Own Groups
+                                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.ownGroups.length }}
+                                    .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
+                                        .x-friend-item(v-for="group in userGroups.ownGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border")
+                                            .avatar
+                                                img(v-lazy="group.iconUrl")
+                                            .detail
+                                                span.name(v-text="group.name")
+                                                span.extra ({{ group.memberCount }})
+                                template(v-if="userGroups.mutualGroups.length > 0")
+                                    span(style="font-weight:bold;font-size:16px") Mutual Groups
+                                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.mutualGroups.length }}
+                                    .x-friend-list(v-if="userGroups.mutualGroups.length > 0" style="margin-top:10px;margin-bottom:15px;min-height:60px")
+                                        .x-friend-item(v-for="group in userGroups.mutualGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border")
+                                            .avatar
+                                                img(v-lazy="group.iconUrl")
+                                            .detail
+                                                span.name(v-text="group.name")
+                                                span.extra ({{ group.memberCount }})
+                                template(v-if="userGroups.remainingGroups.length > 0")
+                                    span(style="font-weight:bold;font-size:16px") Groups
+                                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.remainingGroups.length }}
+                                    .x-friend-list(v-if="userGroups.remainingGroups.length > 0" style="margin-top:10px;margin-bottom:15px;min-height:60px")
+                                        .x-friend-item(v-for="group in userGroups.remainingGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border")
+                                            .avatar
+                                                img(v-lazy="group.iconUrl")
+                                            .detail
+                                                span.name(v-text="group.name")
+                                                span.extra ({{ group.memberCount }})
                         el-tab-pane(label="Worlds")
                             el-button(type="default" :loading="userDialog.isWorldsLoading" @click="refreshUserDialogWorlds()" size="mini" icon="el-icon-refresh" circle)
                             span(style="margin-left:5px") Total {{ userDialog.worlds.length }}

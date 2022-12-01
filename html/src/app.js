@@ -13682,6 +13682,7 @@ speechSynthesis.getVoices();
         isWorldsLoading: false,
         isFavoriteWorldsLoading: false,
         isAvatarsLoading: false,
+        isGroupsLoading: false,
 
         worldSorting: 'update',
         avatarSorting: 'update',
@@ -13987,19 +13988,25 @@ speechSynthesis.getVoices();
                     if (this.$refs.userDialogTabs.currentName === '0') {
                         this.userDialogLastActiveTab = 'Info';
                     } else if (this.$refs.userDialogTabs.currentName === '1') {
+                        this.userDialogLastActiveTab = 'Groups';
+                        if (this.userDialogLastGroup !== userId) {
+                            this.userDialogLastGroup = userId;
+                            this.getUserGroups(userId);
+                        }
+                    } else if (this.$refs.userDialogTabs.currentName === '2') {
                         this.userDialogLastActiveTab = 'Worlds';
                         this.setUserDialogWorlds(userId);
                         if (this.userDialogLastWorld !== userId) {
                             this.userDialogLastWorld = userId;
                             this.refreshUserDialogWorlds();
                         }
-                    } else if (this.$refs.userDialogTabs.currentName === '2') {
+                    } else if (this.$refs.userDialogTabs.currentName === '3') {
                         this.userDialogLastActiveTab = 'Favorite Worlds';
                         if (this.userDialogLastFavoriteWorld !== userId) {
                             this.userDialogLastFavoriteWorld = userId;
                             this.getUserFavoriteWorlds(userId);
                         }
-                    } else if (this.$refs.userDialogTabs.currentName === '3') {
+                    } else if (this.$refs.userDialogTabs.currentName === '4') {
                         this.userDialogLastActiveTab = 'Avatars';
                         this.setUserDialogAvatars(userId);
                         this.userDialogLastAvatar = userId;
@@ -14010,7 +14017,7 @@ speechSynthesis.getVoices();
                             this.refreshUserDialogAvatars();
                         }
                         this.setUserDialogAvatarsRemote(userId);
-                    } else if (this.$refs.userDialogTabs.currentName === '4') {
+                    } else if (this.$refs.userDialogTabs.currentName === '5') {
                         this.userDialogLastActiveTab = 'JSON';
                         this.refreshUserDialogTreeData();
                     }
@@ -18915,13 +18922,19 @@ speechSynthesis.getVoices();
     $app.data.userDialogLastAvatar = '';
     $app.data.userDialogLastWorld = '';
     $app.data.userDialogLastFavoriteWorld = '';
+    $app.data.userDialogLastGroup = '';
 
     $app.methods.userDialogTabClick = function (obj) {
         var userId = this.userDialog.id;
         if (this.userDialogLastActiveTab === obj.label) {
             return;
         }
-        if (obj.label === 'Avatars') {
+        if (obj.label === 'Groups') {
+            if (this.userDialogLastGroup !== userId) {
+                this.userDialogLastGroup = userId;
+                this.getUserGroups(userId);
+            }
+        } else if (obj.label === 'Avatars') {
             this.setUserDialogAvatars(userId);
             if (this.userDialogLastAvatar !== userId) {
                 this.userDialogLastAvatar = userId;
@@ -19606,6 +19619,45 @@ speechSynthesis.getVoices();
                 instanceId: L.instanceId
             });
         }
+    };
+
+    // userDialog Groups
+
+    $app.data.userGroups = {
+        groups: [],
+        ownGroups: [],
+        mutualGroups: [],
+        remainingGroups: []
+    };
+
+    $app.methods.getUserGroups = async function (userId) {
+        this.userDialog.isGroupsLoading = true;
+        this.userGroups = {
+            groups: [],
+            ownGroups: [],
+            mutualGroups: [],
+            remainingGroups: []
+        };
+        var params = {
+            n: 100,
+            offset: 0,
+            userId
+        };
+        var args = await API.getGroups(params);
+        this.userGroups.groups = args.json;
+        for (var i = 0; i < args.json.length; ++i) {
+            var group = args.json[i];
+            if (group.ownerId === userId) {
+                this.userGroups.ownGroups.unshift(group);
+            }
+            if (group.mutualGroup) {
+                this.userGroups.mutualGroups.unshift(group);
+            }
+            if (!group.mutualGroup && group.ownerId !== userId) {
+                this.userGroups.remainingGroups.unshift(group);
+            }
+        }
+        this.userDialog.isGroupsLoading = false;
     };
 
     // gallery
@@ -22200,6 +22252,74 @@ speechSynthesis.getVoices();
         this.$nextTick(() =>
             adjustDialogZ(this.$refs.chatboxBlacklistDialog.$el)
         );
+    };
+
+    // App: Groups
+
+    API.cachedGroups = new Map();
+
+    /*
+        params: {
+            groupId: string
+        }
+    */
+    API.getGroup = function (params) {
+        // includeRoles=true
+        return this.call(`groups/${params.groupId}`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP', function (args) {
+        var group = args.json;
+        console.log(args);
+        this.cachedGroups.set(group.id, group);
+    });
+
+    /*
+        params: {
+            userId: string
+        }
+    */
+    API.getGroups = function (params) {
+        return this.call(`users/${params.userId}/groups`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:LIST', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:LIST', function (args) {
+        console.log(args.json);
+        for (var i = 0; i < args.json.length; ++i) {
+            var group = args.json[i];
+            this.cachedGroups.set(group.id, group);
+        }
+    });
+
+    $app.data.groupDialog = {
+        visible: false,
+        loading: false,
+        id: '',
+        group: null
+    };
+
+    $app.methods.showGroupDialog = function (groupId) {
+        // this.$nextTick(() => adjustDialogZ(this.$refs.groupDialog.$el));
+        this.groupDialog.visible = true;
+        this.groupDialog.id = groupId;
     };
 
     $app = new Vue($app);
