@@ -13292,8 +13292,19 @@ speechSynthesis.getVoices();
                 return true;
             }
         } else if (input.startsWith('https://vrc.group/')) {
-            // var shortCode = input.substring(18);
-            // resolve short code? A
+            var shortCode = input.substring(18);
+            API.groupStrictsearch({query: shortCode}).then((args) => {
+                for (var group of args.json) {
+                    if (
+                        `${group.shortCode}.${group.discriminator}` ===
+                        shortCode
+                    ) {
+                        this.showGroupDialog(group.id);
+                    }
+                }
+                return args;
+            });
+            return true;
         } else if (
             input.substring(0, 4) === 'usr_' ||
             /^[A-Za-z0-9]{10}$/g.test(input)
@@ -14107,7 +14118,10 @@ speechSynthesis.getVoices();
                                 );
                             });
                     }
-                    API.getRepresentedGroup({userId});
+                    API.getRepresentedGroup({userId}).then((args1) => {
+                        D.representedGroup = args1.json;
+                        return args1;
+                    });
                 }
                 return args;
             });
@@ -19704,6 +19718,13 @@ speechSynthesis.getVoices();
             if (group.ownerId === userId) {
                 this.userGroups.ownGroups.unshift(group);
             }
+            if (userId === API.currentUser.id) {
+                // skip mutual groups for current user
+                if (group.ownerId !== userId) {
+                    this.userGroups.remainingGroups.unshift(group);
+                }
+                continue;
+            }
             if (group.mutualGroup) {
                 this.userGroups.mutualGroups.unshift(group);
             }
@@ -20260,7 +20281,7 @@ speechSynthesis.getVoices();
                 API.cachedAvatars.delete(id);
             }
         });
-
+        API.cachedGroups = new Map();
         API.cachedAvatarNames = new Map();
     };
 
@@ -22336,24 +22357,14 @@ speechSynthesis.getVoices();
 
     API.$on('GROUP', function (args) {
         args.ref = this.applyGroup(args.json);
-    });
-
-    API.$on('GROUP', function (args) {
         console.log('group', args);
-        var group = args.ref;
-        this.cachedGroups.set(group.id, group);
+        this.cachedGroups.set(args.ref.id, args.ref);
     });
 
     API.$on('GROUP', function (args) {
         if ($app.groupDialog.visible && $app.groupDialog.id === args.ref.id) {
             // update group dialog
-        }
-        if (
-            $app.userDialog.visible &&
-            ($app.userDialog.representedGroup.id === args.ref.id ||
-                $app.userDialog.id === args.params.userId)
-        ) {
-            $app.userDialog.representedGroup = args.ref;
+            $app.groupDialog.inGroup = args.ref.membershipStatus === 'member';
         }
     });
 
@@ -22378,7 +22389,7 @@ speechSynthesis.getVoices();
     API.$on('GROUP:REPRESENTED', function (args) {
         console.log('represented', args.json);
         var json = args.json;
-        if (!json.id) {
+        if (!json.groupId) {
             // no group
             return;
         }
@@ -22387,7 +22398,7 @@ speechSynthesis.getVoices();
         this.$emit('GROUP', {
             json,
             params: {
-                groupId: json.id,
+                groupId: json.groupId,
                 userId: args.params.userId
             }
         });
@@ -22470,9 +22481,7 @@ speechSynthesis.getVoices();
             }
         });
         if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
-            if (json.membershipStatus === 'member') {
-                $app.groupDialog.inGroup = true;
-            }
+            $app.groupDialog.inGroup = json.membershipStatus === 'member';
         }
     });
 
@@ -22525,6 +22534,76 @@ speechSynthesis.getVoices();
         var groupId = args.params.groupId;
         if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
             $app.groupDialog.ref.membershipStatus = 'inactive';
+        }
+    });
+
+    /*
+        groupId: string,
+        params: {
+            isRepresenting: bool
+        }
+    */
+    API.setGroupRepresentation = function (groupId, params) {
+        return this.call(`groups/${groupId}/representation`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                groupId,
+                params
+            };
+            this.$emit('GROUP:SETREPRESENTATION', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:SETREPRESENTATION', function (args) {
+        console.log('SETREPRESENTATION', args);
+        if ($app.groupDialog.visible && $app.groupDialog.id === args.groupId) {
+            $app.groupDialog.ref.isRepresenting = args.params.isRepresenting;
+        }
+        if (
+            $app.userDialog.visible &&
+            $app.userDialog.id === this.currentUser.id
+        ) {
+            this.getRepresentedGroup({userId: this.currentUser.id}).then(
+                (args1) => {
+                    $app.userDialog.representedGroup = args1.json;
+                    return args1;
+                }
+            );
+        }
+    });
+
+    /*
+        params: {
+            query: string
+        }
+    */
+    API.groupStrictsearch = function (params) {
+        return this.call(`groups/strictsearch`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:STRICTSEARCH', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:STRICTSEARCH', function (args) {
+        console.log('STRICTSEARCH', args);
+        for (var json of args.json) {
+            this.$emit('GROUP', {
+                json,
+                params: {
+                    groupId: json.id
+                }
+            });
         }
     });
 
@@ -22640,6 +22719,7 @@ speechSynthesis.getVoices();
         treeData: [],
         id: '',
         inGroup: false,
+        ownerDisplayName: '',
         ref: {}
     };
 
@@ -22653,6 +22733,7 @@ speechSynthesis.getVoices();
         D.loading = true;
         D.id = groupId;
         D.inGroup = false;
+        D.ownerDisplayName = '';
         D.treeData = [];
         API.getCachedGroup({
             groupId
@@ -22685,6 +22766,13 @@ speechSynthesis.getVoices();
                                 return args1;
                             });
                     }
+                    D.ownerDisplayName = args.ref.ownerId;
+                    API.getCachedUser({
+                        userId: args.ref.ownerId
+                    }).then((args1) => {
+                        D.ownerDisplayName = args1.ref.displayName;
+                        return args1;
+                    });
                 }
             });
     };
@@ -22697,6 +22785,12 @@ speechSynthesis.getVoices();
         switch (command) {
             case 'Refresh':
                 this.showGroupDialog(D.id);
+                break;
+            case 'Set Represented Group':
+                API.setGroupRepresentation(D.id, {isRepresenting: true});
+                break;
+            case 'Clear Represented Group':
+                API.setGroupRepresentation(D.id, {isRepresenting: false});
                 break;
         }
     };
