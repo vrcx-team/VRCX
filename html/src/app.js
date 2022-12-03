@@ -2558,7 +2558,8 @@ speechSynthesis.getVoices();
         args.ref = ref;
         if (
             ref.type === 'friendRequest' ||
-            ref.type === 'hiddenFriendRequest'
+            ref.type === 'hiddenFriendRequest' ||
+            ref.type === 'group.invite'
         ) {
             for (var i = array.length - 1; i >= 0; i--) {
                 if (array[i].id === ref.id) {
@@ -2675,6 +2676,19 @@ speechSynthesis.getVoices();
         };
         var count = 50; // 5000 max
         for (var i = 0; i < count; i++) {
+            var args = await this.getGroupNotifications(params);
+            $app.unseenNotifications = [];
+            params.offset += 100;
+            if (args.json.length < 100) {
+                break;
+            }
+        }
+        var params = {
+            n: 100,
+            offset: 0
+        };
+        var count = 50; // 5000 max
+        for (var i = 0; i < count; i++) {
             var args = await this.getHiddenFriendRequests(params);
             $app.unseenNotifications = [];
             params.offset += 100;
@@ -2739,6 +2753,63 @@ speechSynthesis.getVoices();
         });
     };
 
+    API.getNotificationsV2 = function (params) {
+        return this.call('notifications', {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('NOTIFICATION:V2:LIST', args);
+            return args;
+        });
+    };
+
+    API.$on('NOTIFICATION:V2:LIST', function (args) {
+        for (var json of args.json) {
+            this.$emit('NOTIFICATION:V2', json);
+        }
+        console.log('NOTIFICATION:V2:LIST', args);
+    });
+
+    API.$on('NOTIFICATION:V2', function (json) {
+        json.created_at = json.createdAt;
+        this.$emit('NOTIFICATION', {
+            json,
+            params: {
+                notificationId: json.id
+            }
+        });
+    });
+
+    /*
+        params: {
+            notificationId: string,
+            responseType: string,
+            responseData: string
+        }
+    */
+    API.sendNotificationResponse = function (params) {
+        return this.call(`notifications/${params.notificationId}/respond`, {
+            method: 'POST',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('NOTIFICATION:RESPONSE', args);
+            return args;
+        });
+    };
+
+    API.$on('NOTIFICATION:RESPONSE', function (args) {
+        this.$emit('NOTIFICATION:HIDE', args);
+        console.log('NOTIFICATION:RESPONSE', args);
+    });
+
     /*
         params: {
             receiverUserId: string,
@@ -2748,7 +2819,6 @@ speechSynthesis.getVoices();
             details: json-string
         }
     */
-
     API.sendInvite = function (params, receiverUserId) {
         return this.call(`invite/${receiverUserId}`, {
             method: 'POST',
@@ -3927,6 +3997,16 @@ speechSynthesis.getVoices();
         switch (type) {
             case 'notification':
                 this.$emit('NOTIFICATION', {
+                    json: content,
+                    params: {
+                        notificationId: content.id
+                    }
+                });
+                break;
+
+            case 'notification-v2':
+                console.log('notification-v2', content);
+                this.$emit('NOTIFICATION:V2', {
                     json: content,
                     params: {
                         notificationId: content.id
@@ -11980,7 +12060,8 @@ speechSynthesis.getVoices();
         if (ref.senderUserId !== this.currentUser.id) {
             if (
                 ref.type !== 'friendRequest' &&
-                ref.type !== 'hiddenFriendRequest'
+                ref.type !== 'hiddenFriendRequest' &&
+                ref.type !== 'group.invite'
             ) {
                 database.addNotificationToDatabase(ref);
             }
@@ -22608,6 +22689,47 @@ speechSynthesis.getVoices();
     });
 
     /*
+        userId: string,
+        groupId: string,
+        params: {
+            visibility: string
+        }
+    */
+    API.setGroupVisibility = function (userId, groupId, params) {
+        return this.call(`groups/${groupId}/members/${userId}`, {
+            method: 'PUT',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                userId,
+                groupId,
+                params
+            };
+            this.$emit('GROUP:VISIBILITY', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:VISIBILITY', function (args) {
+        console.log('VISIBILITY', args);
+        var json = args.json;
+        if ($app.groupDialog.visible && $app.groupDialog.id === json.groupId) {
+            $app.groupDialog.ref.myMember.visibility = json.visibility;
+        }
+        json.$memberId = json.id;
+        json.id = json.groupId;
+        delete json.visibility;
+        this.$emit('GROUP', {
+            json,
+            params: {
+                groupId: json.groupId,
+                userId: args.params.userId
+            }
+        });
+    });
+
+    /*
         params: {
             groupId: string
         }
@@ -22690,6 +22812,7 @@ speechSynthesis.getVoices();
         } else {
             Object.assign(ref, json);
         }
+        ref.rules = $app.replaceBioSymbols(ref.rules);
         ref.$url = `https://vrc.group/${ref.shortCode}.${ref.discriminator}`;
         this.applyGroupLanguage(ref);
         return ref;
@@ -22786,11 +22909,17 @@ speechSynthesis.getVoices();
             case 'Refresh':
                 this.showGroupDialog(D.id);
                 break;
-            case 'Set Represented Group':
-                API.setGroupRepresentation(D.id, {isRepresenting: true});
+            case 'Leave Group':
+                this.leaveGroup(D.id);
                 break;
-            case 'Clear Represented Group':
-                API.setGroupRepresentation(D.id, {isRepresenting: false});
+            case 'Visibility Everyone':
+                this.setGroupVisibility(D.id, 'visible');
+                break;
+            case 'Visibility Friends':
+                this.setGroupVisibility(D.id, 'friends');
+                break;
+            case 'Visibility Hidden':
+                this.setGroupVisibility(D.id, 'hidden');
                 break;
         }
     };
@@ -22828,6 +22957,36 @@ speechSynthesis.getVoices();
     $app.methods.cancelGroupRequest = function (groupId) {
         return API.cancelGroupRequest({
             groupId
+        });
+    };
+
+    $app.methods.setGroupRepresentation = function (groupId) {
+        return API.setGroupRepresentation(groupId, {isRepresenting: true});
+    };
+
+    $app.methods.clearGroupRepresentation = function (groupId) {
+        return API.setGroupRepresentation(groupId, {isRepresenting: false});
+    };
+
+    $app.methods.setGroupVisibility = function (groupId, visibility) {
+        return API.setGroupVisibility(API.currentUser.id, groupId, {
+            visibility
+        });
+    };
+
+    $app.methods.sendNotificationResponse = function (
+        notificationId,
+        link,
+        response
+    ) {
+        if (!link) {
+            return null;
+        }
+        var groupId = link.split(':').pop();
+        return API.sendNotificationResponse({
+            notificationId,
+            responseType: response,
+            responseData: groupId
         });
     };
 
