@@ -677,6 +677,7 @@ speechSynthesis.getVoices();
             hiddenId: null,
             privateId: null,
             friendsId: null,
+            groupId: null,
             canRequestInvite: false,
             strict: false
         };
@@ -716,6 +717,8 @@ speechSynthesis.getVoices();
                             ctx.canRequestInvite = true;
                         } else if (key === 'region') {
                             ctx.region = value;
+                        } else if (key === 'group') {
+                            ctx.groupId = value;
                         } else if (key === 'strict') {
                             ctx.strict = true;
                         }
@@ -741,6 +744,9 @@ speechSynthesis.getVoices();
                     // FriendsOfGuests
                     ctx.accessType = 'friends+';
                     ctx.userId = ctx.hiddenId;
+                } else if (ctx.groupId !== null) {
+                    // Group
+                    ctx.accessType = 'group';
                 }
             } else {
                 ctx.worldId = _tag;
@@ -2676,7 +2682,7 @@ speechSynthesis.getVoices();
         };
         var count = 50; // 5000 max
         for (var i = 0; i < count; i++) {
-            var args = await this.getGroupNotifications(params);
+            var args = await this.getNotificationsV2(params);
             $app.unseenNotifications = [];
             params.offset += 100;
             if (args.json.length < 100) {
@@ -2769,12 +2775,13 @@ speechSynthesis.getVoices();
 
     API.$on('NOTIFICATION:V2:LIST', function (args) {
         for (var json of args.json) {
-            this.$emit('NOTIFICATION:V2', json);
+            this.$emit('NOTIFICATION:V2', {json});
         }
         console.log('NOTIFICATION:V2:LIST', args);
     });
 
-    API.$on('NOTIFICATION:V2', function (json) {
+    API.$on('NOTIFICATION:V2', function (args) {
+        var json = args.json;
         json.created_at = json.createdAt;
         this.$emit('NOTIFICATION', {
             json,
@@ -10856,6 +10863,9 @@ speechSynthesis.getVoices();
                     case 'friends+':
                         L.accessName = `Friends+ #${L.instanceName} (${platform})`;
                         break;
+                    case 'group':
+                        L.accessName = `Group #${L.instanceName} (${platform})`;
+                        break;
                 }
             }
             this.lastLocation$ = L;
@@ -16318,6 +16328,7 @@ speechSynthesis.getVoices();
         userId: '',
         accessType: '',
         region: '',
+        groupId: '',
         strict: false,
         location: '',
         shortName: '',
@@ -16352,6 +16363,9 @@ speechSynthesis.getVoices();
             }
             if (D.accessType === 'invite+') {
                 tags.push('~canRequestInvite');
+            }
+            if (D.accessType === 'group') {
+                tags.push(`~group(${D.groupId})`);
             }
         }
         if (D.region === 'US West') {
@@ -16439,6 +16453,10 @@ speechSynthesis.getVoices();
                 this.newInstanceDialog.userId
             );
         }
+        configRepository.setString(
+            'instanceDialogGroupId',
+            this.newInstanceDialog.groupId
+        );
         configRepository.setBool(
             'instanceDialogStrict',
             this.newInstanceDialog.strict
@@ -16451,6 +16469,7 @@ speechSynthesis.getVoices();
     $app.watch['newInstanceDialog.accessType'] = saveNewInstanceDialog;
     $app.watch['newInstanceDialog.region'] = saveNewInstanceDialog;
     $app.watch['newInstanceDialog.userId'] = saveNewInstanceDialog;
+    $app.watch['newInstanceDialog.groupId'] = saveNewInstanceDialog;
     $app.watch['newInstanceDialog.strict'] = saveNewInstanceDialog;
 
     $app.methods.showNewInstanceDialog = function (tag) {
@@ -16480,6 +16499,9 @@ speechSynthesis.getVoices();
         D.userId = '';
         if (configRepository.getString('instanceDialogUserId') !== null) {
             D.userId = configRepository.getString('instanceDialogUserId');
+        }
+        if (configRepository.getString('instanceDialogGroupId') !== null) {
+            D.groupId = configRepository.getString('instanceDialogGroupId');
         }
         D.strict = false;
         // if (configRepository.getBool('instanceDialogStrict') !== null) {
@@ -22340,7 +22362,16 @@ speechSynthesis.getVoices();
     };
 
     // App: ChatBox Blacklist
-    $app.data.chatboxBlacklist = ['NP: ', 'Now Playing', '( ▶️ '];
+    $app.data.chatboxBlacklist = [
+        'NP: ',
+        'Now Playing',
+        'Now playing',
+        "▶️ '",
+        '( ▶️ ',
+        "' - '",
+        "' by '",
+        '[Spotify] '
+    ];
     if (configRepository.getString('VRCX_chatboxBlacklist')) {
         $app.data.chatboxBlacklist = JSON.parse(
             configRepository.getString('VRCX_chatboxBlacklist')
@@ -22692,10 +22723,11 @@ speechSynthesis.getVoices();
         userId: string,
         groupId: string,
         params: {
-            visibility: string
+            visibility: string,
+            isSubscribedToAnnouncements: bool
         }
     */
-    API.setGroupVisibility = function (userId, groupId, params) {
+    API.setGroupProps = function (userId, groupId, params) {
         return this.call(`groups/${groupId}/members/${userId}`, {
             method: 'PUT',
             params
@@ -22706,16 +22738,18 @@ speechSynthesis.getVoices();
                 groupId,
                 params
             };
-            this.$emit('GROUP:VISIBILITY', args);
+            this.$emit('GROUP:PROPS', args);
             return args;
         });
     };
 
-    API.$on('GROUP:VISIBILITY', function (args) {
-        console.log('VISIBILITY', args);
+    API.$on('GROUP:PROPS', function (args) {
+        console.log('GROUP:PROPS', args);
         var json = args.json;
         if ($app.groupDialog.visible && $app.groupDialog.id === json.groupId) {
             $app.groupDialog.ref.myMember.visibility = json.visibility;
+            $app.groupDialog.ref.myMember.isSubscribedToAnnouncements =
+                json.isSubscribedToAnnouncements;
         }
         json.$memberId = json.id;
         json.id = json.groupId;
@@ -22727,6 +22761,28 @@ speechSynthesis.getVoices();
                 userId: args.params.userId
             }
         });
+    });
+
+    /*
+        params: {
+            groupId: string
+        }
+    */
+    API.getGroupAnnouncement = function (params) {
+        return this.call(`groups/${params.groupId}/announcement`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:ANNOUNCEMENT', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:ANNOUNCEMENT', function (args) {
+        console.log('GROUP:ANNOUNCEMENT', args);
     });
 
     /*
@@ -22843,7 +22899,9 @@ speechSynthesis.getVoices();
         id: '',
         inGroup: false,
         ownerDisplayName: '',
-        ref: {}
+        announcementDisplayName: '',
+        ref: {},
+        announcement: {}
     };
 
     $app.methods.showGroupDialog = function (groupId) {
@@ -22857,7 +22915,9 @@ speechSynthesis.getVoices();
         D.id = groupId;
         D.inGroup = false;
         D.ownerDisplayName = '';
+        D.announcementDisplayName = '';
         D.treeData = [];
+        D.announcement = {};
         API.getCachedGroup({
             groupId
         })
@@ -22871,24 +22931,10 @@ speechSynthesis.getVoices();
                 throw err;
             })
             .then((args) => {
-                if (D.id === args.ref.id) {
+                if (groupId === args.ref.id) {
                     D.loading = false;
                     D.ref = args.ref;
                     D.inGroup = args.ref.membershipStatus === 'member';
-                    if (args.cache) {
-                        API.getGroup(args.params)
-                            .catch((err) => {
-                                throw err;
-                            })
-                            .then((args1) => {
-                                if (D.id === args1.ref.id) {
-                                    D.ref = args1.ref;
-                                    D.inGroup =
-                                        args.ref.membershipStatus === 'member';
-                                }
-                                return args1;
-                            });
-                    }
                     D.ownerDisplayName = args.ref.ownerId;
                     API.getCachedUser({
                         userId: args.ref.ownerId
@@ -22896,7 +22942,43 @@ speechSynthesis.getVoices();
                         D.ownerDisplayName = args1.ref.displayName;
                         return args1;
                     });
+                    if (args.cache) {
+                        this.getGroupDialogGroup(groupId);
+                    }
                 }
+            });
+    };
+
+    $app.methods.getGroupDialogGroup = function (groupId) {
+        var D = this.groupDialog;
+        return API.getGroup({groupId})
+            .catch((err) => {
+                throw err;
+            })
+            .then((args1) => {
+                if (D.id === args1.ref.id) {
+                    D.ref = args1.ref;
+                    D.inGroup = args1.ref.membershipStatus === 'member';
+                    if (D.inGroup) {
+                        API.getGroupAnnouncement({
+                            groupId
+                        }).then((args2) => {
+                            if (groupId === args2.json.groupId) {
+                                D.announcement = args2.json;
+                                if (D.announcement && D.announcement.authorId) {
+                                    API.getCachedUser({
+                                        userId: D.announcement.authorId
+                                    }).then((args3) => {
+                                        D.announcementDisplayName =
+                                            args3.ref.displayName;
+                                        return args3;
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+                return args1;
             });
     };
 
@@ -22920,6 +23002,12 @@ speechSynthesis.getVoices();
                 break;
             case 'Visibility Hidden':
                 this.setGroupVisibility(D.id, 'hidden');
+                break;
+            case 'Subscribe To Announcements':
+                this.setGroupSubscription(D.id, true);
+                break;
+            case 'Unsubscribe To Announcements':
+                this.setGroupSubscription(D.id, false);
                 break;
         }
     };
@@ -22969,8 +23057,26 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.setGroupVisibility = function (groupId, visibility) {
-        return API.setGroupVisibility(API.currentUser.id, groupId, {
+        return API.setGroupProps(API.currentUser.id, groupId, {
             visibility
+        }).then((args) => {
+            this.$message({
+                message: 'Group visibility updated',
+                type: 'success'
+            });
+            return args;
+        });
+    };
+
+    $app.methods.setGroupSubscription = function (groupId, subscribe) {
+        return API.setGroupProps(API.currentUser.id, groupId, {
+            isSubscribedToAnnouncements: subscribe
+        }).then((args) => {
+            this.$message({
+                message: 'Group subscription updated',
+                type: 'success'
+            });
+            return args;
         });
     };
 

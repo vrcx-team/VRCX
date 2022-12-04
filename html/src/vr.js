@@ -219,6 +219,7 @@ Vue.component('marquee-text', MarqueeText);
             hiddenId: null,
             privateId: null,
             friendsId: null,
+            groupId: null,
             canRequestInvite: false,
             strict: false
         };
@@ -230,6 +231,15 @@ Vue.component('marquee-text', MarqueeText);
             ctx.isTraveling = true;
         } else if (_tag.startsWith('local') === false) {
             var sep = _tag.indexOf(':');
+            // technically not part of instance id, but might be there when coping id from url so why not support it
+            var shortNameQualifier = '&shortName=';
+            var shortNameIndex = _tag.indexOf(shortNameQualifier);
+            if (shortNameIndex >= 0) {
+                ctx.shortName = _tag.substr(
+                    shortNameIndex + shortNameQualifier.length
+                );
+                _tag = _tag.substr(0, shortNameIndex);
+            }
             if (sep >= 0) {
                 ctx.worldId = _tag.substr(0, sep);
                 ctx.instanceId = _tag.substr(sep + 1);
@@ -249,6 +259,8 @@ Vue.component('marquee-text', MarqueeText);
                             ctx.canRequestInvite = true;
                         } else if (key === 'region') {
                             ctx.region = value;
+                        } else if (key === 'group') {
+                            ctx.groupId = value;
                         } else if (key === 'strict') {
                             ctx.strict = true;
                         }
@@ -274,6 +286,9 @@ Vue.component('marquee-text', MarqueeText);
                     // FriendsOfGuests
                     ctx.accessType = 'friends+';
                     ctx.userId = ctx.hiddenId;
+                } else if (ctx.groupId !== null) {
+                    // Group
+                    ctx.accessType = 'group';
                 }
             } else {
                 ctx.worldId = _tag;

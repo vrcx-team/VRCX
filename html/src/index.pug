@@ -2162,6 +2162,7 @@ html
                                 div
                                     span(v-if="groupDialog.ref.ownerId === API.currentUser.id" style="margin-right:5px") 👑
                                     span.dialog-title(v-text="groupDialog.ref.name" style="margin-right:5px")
+                                    span(style="color:#909399;font-family:monospace;font-size:12px;margin-right:5px") {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
                                     el-tooltip(v-for="item in groupDialog.ref.$languages" :key="item.key" placement="top")
                                         template(#content)
                                             span {{ item.value }} ({{ item.key }})
@@ -2172,13 +2173,22 @@ html
                                     el-tag(v-if="groupDialog.ref.isVerified" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Verified
 
                                     el-tag(v-if="groupDialog.ref.privacy === 'private'" type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Private
-                                    el-tag(v-else-if="groupDialog.ref.joinState === 'open'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Public
-                                    el-tag(v-else-if="groupDialog.ref.joinState === 'request'" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Invite
-                                    el-tag(v-else-if="groupDialog.ref.joinState === 'invite'" type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Closed
+                                    el-tag(v-if="groupDialog.ref.privacy === 'default'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Public
+
+                                    el-tag(v-if="groupDialog.ref.joinState === 'open'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Open
+                                    el-tag(v-else-if="groupDialog.ref.joinState === 'request'" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Request
+                                    el-tag(v-else-if="groupDialog.ref.joinState === 'invite'" type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Invite
+                                    el-tag(v-else-if="groupDialog.ref.joinState === 'closed'" type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Closed
 
                                     el-tag(v-if="groupDialog.inGroup" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Joined
-
                                     el-tag(v-if="groupDialog.ref.myMember && groupDialog.ref.myMember.bannedAt" type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Banned
+
+                                    template(v-if="groupDialog.inGroup && groupDialog.ref.myMember")
+                                        el-tag(v-if="groupDialog.ref.myMember.visibility === 'visible'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Visible
+                                        el-tag(v-else-if="groupDialog.ref.myMember.visibility === 'friends'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Friends
+                                        el-tag(v-else-if="groupDialog.ref.myMember.visibility === 'hidden'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Hidden
+                                        el-tag(v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Subscribed
+
                                 div(style="margin-top:5px")
                                     span(v-show="groupDialog.ref.name !== groupDialog.ref.description" v-text="groupDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
@@ -2190,6 +2200,8 @@ html
                                             el-button(type="default" icon="el-icon-star-off" circle @click="setGroupRepresentation(groupDialog.id)" style="margin-left:5px" :disabled="groupDialog.ref.privacy === 'private'")
                                 el-tooltip(v-else-if="groupDialog.ref.membershipStatus === 'requested'" placement="top" content="Cancel join request" :disabled="hideTooltips")
                                     el-button(type="default" icon="el-icon-close" circle @click="cancelGroupRequest(groupDialog.id)" style="margin-left:5px")
+                                el-tooltip(v-else-if="groupDialog.ref.membershipStatus === 'invited'" placement="top" content="Pending invite" :disabled="hideTooltips")
+                                    el-button(type="default" icon="el-icon-message" circle @click="joinGroup(groupDialog.id)" style="margin-left:5px")
                                 template(v-else)
                                     el-tooltip(v-if="groupDialog.ref.joinState === 'request'" placement="top" content="Request to join" :disabled="hideTooltips")
                                         el-button(type="default" icon="el-icon-message" circle @click="joinGroup(groupDialog.id)" style="margin-left:5px")
@@ -2203,30 +2215,44 @@ html
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") Refresh
 
-                                        template(v-if="groupDialog.ref.myMember")
-                                            el-dropdown-item(icon="el-icon-view" command="Visibility Everyone" divided) #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'visible'")] Visibility Everyone
-                                            el-dropdown-item(icon="el-icon-view" command="Visibility Friends") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'friends'")] Visibility Friends
-                                            el-dropdown-item(icon="el-icon-view" command="Visibility Hidden") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'hidden'")] Visibility Hidden
+                                        template(v-if="groupDialog.inGroup")
+                                            template(v-if="groupDialog.ref.myMember")
+                                                el-dropdown-item(v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" icon="el-icon-close" command="Unsubscribe To Announcements" divided) Unsubscribe To Announcements
+                                                el-dropdown-item(v-else icon="el-icon-check" command="Subscribe To Announcements" divided) Subscribe To Announcements
+                                                
+                                            template(v-if="groupDialog.ref.myMember && groupDialog.ref.privacy === 'default'")
+                                                el-dropdown-item(icon="el-icon-view" command="Visibility Everyone" divided) #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'visible'")] Visibility Everyone
+                                                el-dropdown-item(icon="el-icon-view" command="Visibility Friends") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'friends'")] Visibility Friends
+                                                el-dropdown-item(icon="el-icon-view" command="Visibility Hidden") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'hidden'")] Visibility Hidden
 
-                                        el-dropdown-item(v-if="groupDialog.inGroup" icon="el-icon-delete" command="Leave Group" style="color:#F56C6C" divided) Leave Group
+                                            el-dropdown-item(icon="el-icon-delete" command="Leave Group" style="color:#F56C6C" divided) Leave Group
                     el-tabs
                         el-tab-pane(label="Info")
                             el-popover(placement="right" width="500px" trigger="click")
                                 img.x-link(slot="reference" v-lazy="groupDialog.ref.bannerUrl" style="flex:none;width:100%;aspect-ratio:6/1;object-fit:cover;border-radius:4px")
                                 img.x-link(v-lazy="groupDialog.ref.bannerUrl" style="width:854px;height:480px" @click="openExternalLink(groupDialog.ref.bannerUrl)")
                             .x-friend-list(style="max-height:none")
-                                .x-friend-item(style="width:350px;cursor:default")
+                                .x-friend-item(v-if="groupDialog.ref.membershipStatus === 'member'" style="width:100%;cursor:default")
                                     .detail
-                                        span.name Group URL
-                                        span.extra {{ groupDialog.ref.$url }}
-                                            el-tooltip(placement="top" content="Copy URL to clipboard" :disabled="hideTooltips")
-                                                el-button(type="default" @click="copyGroupUrl(groupDialog.ref.$url)" size="mini" icon="el-icon-s-order" circle style="margin-left:5px")
-                                .x-friend-item(style="width:350px;cursor:default")
+                                        span.name Announcement
+                                        span(style="display:block" v-text="groupDialog.announcement.title")
+                                        div(v-if="groupDialog.announcement.imageUrl" style="display:inline-block;margin-right:5px")
+                                            el-popover(placement="right" width="500px" trigger="click")
+                                                img.x-link(slot="reference" v-lazy="groupDialog.announcement.imageUrl" style="flex:none;width:60px;height:60px;border-radius:4px;object-fit:cover")
+                                                img.x-link(v-lazy="groupDialog.announcement.imageUrl" style="height:500px" @click="openExternalLink(groupDialog.announcement.imageUrl)")
+                                        pre.extra(style="display:inline-block;vertical-align:top;font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0") {{ groupDialog.announcement.text || '-' }}
+                                        br
+                                        .extra(v-if="groupDialog.announcement.id" style="float:right;margin-left:5px")
+                                            el-tooltip(placement="bottom")
+                                                template(#content)
+                                                    span {{ groupDialog.announcement.updatedAt | formatDate('long') }}
+                                                span(@click="showUserDialog(groupDialog.announcement.authorId)" style="cursor:pointer")
+                                                    span(v-text="groupDialog.announcementDisplayName" style="margin-right:5px")
+                                                    timer(:epoch="Date.parse(groupDialog.announcement.updatedAt)")
+                                .x-friend-item(style="width:100%;cursor:default")
                                     .detail
-                                        span.name Group ID
-                                        span.extra {{ groupDialog.id }}
-                                            el-tooltip(placement="top" content="Copy ID to clipboard" :disabled="hideTooltips")
-                                                el-button(type="default" @click="copyGroupId(groupDialog.id)" size="mini" icon="el-icon-s-order" circle style="margin-left:5px")
+                                        span.name Rules
+                                        pre.extra(style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0") {{ groupDialog.ref.rules || '-' }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name Members
@@ -2244,24 +2270,24 @@ html
                                                     span(v-text="link")
                                                 img(:src="getFaviconUrl(link)" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;cursor:pointer" @click.stop="openExternalLink(link)")
                                         .extra(v-else) -
-                                .x-friend-item(style="width:100%;cursor:default")
+                                .x-friend-item(style="width:350px;cursor:default")
                                     .detail
-                                        span.name Rules
-                                        pre.extra(style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0") {{ groupDialog.ref.rules || '-' }}
+                                        span.name Group URL
+                                        span.extra {{ groupDialog.ref.$url }}
+                                            el-tooltip(placement="top" content="Copy URL to clipboard" :disabled="hideTooltips")
+                                                el-button(type="default" @click="copyGroupUrl(groupDialog.ref.$url)" size="mini" icon="el-icon-s-order" circle style="margin-left:5px")
+                                .x-friend-item(style="width:350px;cursor:default")
+                                    .detail
+                                        span.name Group ID
+                                        span.extra {{ groupDialog.id }}
+                                            el-tooltip(placement="top" content="Copy ID to clipboard" :disabled="hideTooltips")
+                                                el-button(type="default" @click="copyGroupId(groupDialog.id)" size="mini" icon="el-icon-s-order" circle style="margin-left:5px")
                                 div(v-if="groupDialog.ref.membershipStatus === 'member'" style="width:100%;margin-top:10px;border-top:1px solid #e4e7ed14")
                                     div(style="width:100%;display:flex;margin-top:10px")
                                         .x-friend-item(style="cursor:default")
                                             .detail
                                                 span.name Joined At
                                                 span.extra {{ groupDialog.ref.myMember.joinedAt | formatDate('long') }}
-                                        .x-friend-item(style="cursor:default")
-                                            .detail
-                                                span.name Announcements
-                                                span.extra {{ groupDialog.ref.myMember.isSubscribedToAnnouncements }}
-                                        .x-friend-item(style="cursor:default")
-                                            .detail
-                                                span.name Visibility
-                                                span.extra {{ groupDialog.ref.myMember.visibility }}
                         el-tab-pane(label="JSON")
                             el-button(type="default" @click="refreshGroupDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
                             el-tree(:data="groupDialog.treeData" style="margin-top:5px;font-size:12px")
@@ -2382,6 +2408,7 @@ html
                     el-form-item(label="Access Type")
                         el-radio-group(v-model="newInstanceDialog.accessType" size="mini" @change="buildInstance")
                             el-radio-button(label="public")
+                            el-radio-button(label="group")
                             el-radio-button(label="friends+")
                             el-radio-button(label="friends")
                             el-radio-button(label="invite+")
@@ -2398,7 +2425,7 @@ html
                         el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                     el-form-item(label="Instance ID")
                         el-input(v-model="newInstanceDialog.instanceName" placeholder="Random" size="mini")
-                    el-form-item(label="Instance Creator")
+                    el-form-item(label="Instance Creator" v-if="newInstanceDialog.accessType !== 'public' && newInstanceDialog.accessType !== 'group'")
                         el-select(v-model="newInstanceDialog.userId" clearable placeholder="Choose User" filterable style="width:100%")
                             el-option-group(v-if="API.currentUser" label="ME")
                                 el-option.x-friend-item(:label="API.currentUser.displayName" :value="API.currentUser.id" style="height:auto")
@@ -2438,6 +2465,8 @@ html
                                         .detail
                                             span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
+                    el-form-item(label="Group ID" v-if="newInstanceDialog.accessType === 'group'")
+                        el-input(v-model="newInstanceDialog.groupId" placeholder="grp_UUID" size="mini")
                     el-form-item(label="Location")
                         el-input(v-model="newInstanceDialog.location" size="mini" readonly)
                     el-form-item(label="URL")
