@@ -308,6 +308,7 @@ namespace VRCX
             Process VRCXProcess = new Process();
             VRCXProcess.StartInfo.FileName = Path.Combine(Program.BaseDirectory, "VRCX.exe");
             VRCXProcess.StartInfo.UseShellExecute = false;
+            VRCXProcess.StartInfo.Arguments = "/Upgrade";
             VRCXProcess.Start();
             Environment.Exit(0);
         }
