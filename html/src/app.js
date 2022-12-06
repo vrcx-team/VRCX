@@ -2814,6 +2814,10 @@ speechSynthesis.getVoices();
 
     API.$on('NOTIFICATION:RESPONSE', function (args) {
         this.$emit('NOTIFICATION:HIDE', args);
+        $app.$message({
+            message: args.json,
+            type: 'success'
+        });
         console.log('NOTIFICATION:RESPONSE', args);
     });
 
@@ -8353,7 +8357,6 @@ speechSynthesis.getVoices();
         this.photonLobbyMaster = 0;
         this.photonLobbyCurrentUser = 0;
         this.photonLobbyUserData = new Map();
-        this.photonLobbyInVrMode = new Map();
         this.photonLobbyWatcherLoopStop();
         this.photonLobbyAvatars = new Map();
         this.photonLobbyJointime = new Map();
@@ -8811,7 +8814,12 @@ speechSynthesis.getVoices();
                 return;
             case 'api-request':
                 var bias = Date.parse(gameLog.dt) + 60 * 1000;
-                if (!this.isGameRunning || bias < Date.now()) {
+                if (
+                    !this.isGameRunning ||
+                    this.lastLocation.location === '' ||
+                    this.lastLocation.location === 'traveling' ||
+                    bias < Date.now()
+                ) {
                     return;
                 }
                 var userId = '';
@@ -8928,7 +8936,6 @@ speechSynthesis.getVoices();
     $app.data.photonLobbyMaster = 0;
     $app.data.photonLobbyCurrentUser = 0;
     $app.data.photonLobbyUserData = new Map();
-    $app.data.photonLobbyInVrMode = new Map();
     $app.data.photonLobbyCurrent = new Map();
     $app.data.photonLobbyAvatars = new Map();
     $app.data.photonLobbyWatcherLoop = false;
@@ -9048,7 +9055,6 @@ speechSynthesis.getVoices();
         this.photonLobbyTimeout = [];
         this.photonLobbyBots = [];
         AppApi.ExecuteVrOverlayFunction('updateHudTimeout', '[]');
-        this.updatePhotonLobbyBotSize(0);
     };
 
     $app.methods.photonLobbyWatcher = function () {
@@ -9156,8 +9162,7 @@ speechSynthesis.getVoices();
                 joinTime + 11000 < dtNow &&
                 !hasInstantiated
             ) {
-                text =
-                    'Potential photon bot has joined, failed to instantiate after 10 seconds';
+                text = 'User failed to instantiate after 10 seconds';
             }
             if (text && id !== this.photonLobbyCurrentUser) {
                 if (!this.photonLobbyBots.includes(id)) {
@@ -9182,14 +9187,7 @@ speechSynthesis.getVoices();
                 photonBots.unshift(id);
             }
         });
-        if (this.photonLobbyBots.length !== photonBots.length) {
-            this.updatePhotonLobbyBotSize(photonBots.length);
-        }
         this.photonLobbyBots = photonBots;
-    };
-
-    $app.methods.updatePhotonLobbyBotSize = function (size) {
-        AppApi.ExecuteVrFeedFunction('updatePhotonLobbyBotSize', `${size}`);
     };
 
     $app.data.photonEventTableFilter = '';
@@ -9415,9 +9413,6 @@ speechSynthesis.getVoices();
                         );
                         this.parsePhotonAvatar(user.avatarDict);
                         this.parsePhotonAvatar(user.favatarDict);
-                        if (typeof user.inVRMode !== 'undefined') {
-                            this.photonLobbyInVrMode.set(id, user.inVRMode);
-                        }
                         var hasInstantiated = false;
                         var lobbyJointime = this.photonLobbyJointime.get(id);
                         if (typeof lobbyJointime !== 'undefined') {
@@ -9436,53 +9431,61 @@ speechSynthesis.getVoices();
                         this.photonUserJoin(id, user.avatarDict, gameLogDate);
                     }
                 } else {
-                    this.parsePhotonUser(
-                        data.Parameters[253],
-                        data.Parameters[251].user,
-                        gameLogDate
-                    );
+                    console.log('oldSetUserProps', data);
+                    var id = parseInt(data.Parameters[253], 10);
+                    var user = data.Parameters[251];
+                    this.parsePhotonUser(id, user.user, gameLogDate);
                     this.parsePhotonAvatarChange(
-                        data.Parameters[253],
-                        data.Parameters[251].user,
-                        data.Parameters[251].avatarDict,
+                        id,
+                        user.user,
+                        user.avatarDict,
                         gameLogDate
                     );
-                    this.parsePhotonAvatar(data.Parameters[251].avatarDict);
-                    this.parsePhotonAvatar(data.Parameters[251].favatarDict);
-                    if (typeof data.Parameters[251].inVRMode !== 'undefined') {
-                        this.photonLobbyInVrMode.set(
-                            data.Parameters[253],
-                            data.Parameters[251].inVRMode
-                        );
+                    this.parsePhotonAvatar(user.avatarDict);
+                    this.parsePhotonAvatar(user.favatarDict);
+                    var hasInstantiated = false;
+                    var lobbyJointime = this.photonLobbyJointime.get(id);
+                    if (typeof lobbyJointime !== 'undefined') {
+                        hasInstantiated = lobbyJointime.hasInstantiated;
                     }
-                    this.photonUserJoin(
-                        data.Parameters[253],
-                        data.Parameters[251].avatarDict,
-                        gameLogDate
-                    );
+                    this.photonLobbyJointime.set(id, {
+                        joinTime: Date.parse(gameLogDate),
+                        hasInstantiated,
+                        inVRMode: user.user.inVRMode,
+                        avatarEyeHeight: user.user.avatarEyeHeight,
+                        canModerateInstance: user.user.canModerateInstance,
+                        groupOnNameplate: user.user.groupOnNameplate,
+                        showGroupBadgeToOthers:
+                            user.user.showGroupBadgeToOthers,
+                        showSocialRank: user.user.showSocialRank
+                    });
+                    this.photonUserJoin(id, user.avatarDict, gameLogDate);
                 }
                 break;
             case 42:
                 // SetUserProperties
-                this.parsePhotonUser(
-                    data.Parameters[254],
-                    data.Parameters[245].user,
-                    gameLogDate
-                );
+                var id = parseInt(data.Parameters[254], 10);
+                var user = data.Parameters[245];
+                this.parsePhotonUser(id, user.user, gameLogDate);
                 this.parsePhotonAvatarChange(
-                    data.Parameters[254],
-                    data.Parameters[245].user,
-                    data.Parameters[245].avatarDict,
+                    id,
+                    user.user,
+                    user.avatarDict,
                     gameLogDate
                 );
-                this.parsePhotonAvatar(data.Parameters[245].avatarDict);
-                this.parsePhotonAvatar(data.Parameters[245].favatarDict);
-                if (typeof data.Parameters[245].inVRMode !== 'undefined') {
-                    this.photonLobbyInVrMode.set(
-                        data.Parameters[254],
-                        data.Parameters[245].inVRMode
-                    );
-                }
+                this.parsePhotonAvatar(user.avatarDict);
+                this.parsePhotonAvatar(user.favatarDict);
+                var lobbyJointime = this.photonLobbyJointime.get(id);
+                this.photonLobbyJointime.set(id, {
+                    hasInstantiated: true,
+                    ...lobbyJointime,
+                    inVRMode: user.inVRMode,
+                    avatarEyeHeight: user.avatarEyeHeight,
+                    canModerateInstance: user.canModerateInstance,
+                    groupOnNameplate: user.groupOnNameplate,
+                    showGroupBadgeToOthers: user.showGroupBadgeToOthers,
+                    showSocialRank: user.showSocialRank
+                });
                 break;
             case 255:
                 // Join
@@ -9500,12 +9503,6 @@ speechSynthesis.getVoices();
                     );
                     this.parsePhotonAvatar(data.Parameters[249].avatarDict);
                     this.parsePhotonAvatar(data.Parameters[249].favatarDict);
-                }
-                if (typeof data.Parameters[249].inVRMode !== 'undefined') {
-                    this.photonLobbyInVrMode.set(
-                        data.Parameters[254],
-                        data.Parameters[249].inVRMode
-                    );
                 }
                 this.parsePhotonLobbyIds(data.Parameters[252]);
                 var hasInstantiated = false;
@@ -9549,7 +9546,6 @@ speechSynthesis.getVoices();
                 this.photonUserLeave(data.Parameters[254], gameLogDate);
                 this.photonLobbyCurrent.delete(data.Parameters[254]);
                 this.photonLobbyJointime.delete(data.Parameters[254]);
-                this.photonLobbyInVrMode.delete(data.Parameters[254]);
                 this.photonEvent7List.delete(data.Parameters[254]);
                 this.parsePhotonLobbyIds(data.Parameters[252]);
                 if (typeof data.Parameters[203] !== 'undefined') {
@@ -9958,25 +9954,15 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.checkPhotonBotLeave = function (photonId, gameLogDate) {
-        var text = '';
         var lobbyJointime = this.photonLobbyJointime.get(photonId);
-        if (this.photonLobbyBots.includes(photonId)) {
-            text = 'Photon bot has left';
-            if (typeof lobbyJointime !== 'undefined') {
-                var time = timeToText(Date.now() - lobbyJointime.joinTime);
-                text = `Photon bot has left ${time}`;
-            }
-        } else if (
+        if (
             typeof lobbyJointime !== 'undefined' &&
             !lobbyJointime.hasInstantiated
         ) {
             var time = timeToText(Date.now() - lobbyJointime.joinTime);
-            text = `Bot/Player left without instantiating ${time}`;
-        }
-        if (text) {
             this.addEntryPhotonEvent({
                 photonId,
-                text,
+                text: `User left without instantiating ${time}`,
                 type: 'PhotonBot',
                 color: 'yellow',
                 created_at: gameLogDate
@@ -13035,7 +13021,6 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.vrInit = function () {
-        this.updatePhotonLobbyBotSize(this.photonLobbyBots.length);
         this.updateVRConfigVars();
         this.updateVRLastLocation();
         this.updateVrNowPlaying();
@@ -14412,7 +14397,20 @@ speechSynthesis.getVoices();
             ) {
                 isMaster = true;
             }
-            var inVrMode = $app.photonLobbyInVrMode.get(photonId);
+            var lobbyJointime = $app.photonLobbyJointime.get(photonId);
+            var inVRMode = false;
+            var groupOnNameplate = '';
+            if (typeof lobbyJointime !== 'undefined') {
+                inVRMode = lobbyJointime.inVRMode;
+                groupOnNameplate = lobbyJointime.groupOnNameplate;
+            }
+            // if (groupOnNameplate) {
+            //     API.getCachedGroup({
+            //         groupId: groupOnNameplate
+            //     }).then((args) => {
+            //         groupOnNameplate = args.ref.name;
+            //     });
+            // }
             var timeoutTime = 0;
             if (typeof ref.id !== 'undefined') {
                 isFriend = $app.friends.has(ref.id);
@@ -14438,7 +14436,8 @@ speechSynthesis.getVoices();
                 timer: ref.$location_at,
                 photonId,
                 isMaster,
-                inVrMode,
+                inVRMode,
+                groupOnNameplate,
                 isFriend,
                 timeoutTime
             });
@@ -20322,6 +20321,9 @@ speechSynthesis.getVoices();
         if (user.profilePicOverride) {
             return user.profilePicOverride;
         }
+        if (user.thumbnailUrl) {
+            return user.thumbnailUrl;
+        }
         return user.currentAvatarThumbnailImageUrl;
     };
 
@@ -20414,7 +20416,8 @@ speechSynthesis.getVoices();
         try {
             var data = JSON.parse(json);
         } catch {
-            console.error(`IPC invalid JSON, ${json}`);
+            console.log(`IPC invalid JSON, ${json}`);
+            return;
         }
         switch (data.type) {
             case 'OnEvent':
@@ -20529,9 +20532,6 @@ speechSynthesis.getVoices();
                         );
                         this.parsePhotonAvatar(user.avatarDict);
                         this.parsePhotonAvatar(user.favatarDict);
-                        if (typeof user.inVRMode !== 'undefined') {
-                            this.photonLobbyInVrMode.set(id, user.inVRMode);
-                        }
                         var hasInstantiated = false;
                         var lobbyJointime = this.photonLobbyJointime.get(id);
                         if (typeof lobbyJointime !== 'undefined') {
@@ -22787,6 +22787,62 @@ speechSynthesis.getVoices();
 
     /*
         params: {
+            groupId: string,
+            userId: string
+        }
+    */
+    API.getGroupMember = function (params) {
+        return this.call(`groups/${params.groupId}/members/${params.userId}`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:MEMBER', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            groupId: string,
+            n: number,
+            offset: number
+        }
+    */
+    API.getGroupMembers = function (params) {
+        return this.call(`groups/${params.groupId}/members`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:MEMBERS', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:MEMBERS', function (args) {
+        console.log('GROUP:MEMBERS', args);
+        for (var json of args.json) {
+            this.$emit('GROUP:MEMBER', {
+                json,
+                params: {
+                    groupId: args.params.groupId
+                }
+            });
+        }
+    });
+
+    API.$on('GROUP:MEMBER', function (args) {
+        args.ref = this.applyGroupMember(args.json);
+    });
+
+    /*
+        params: {
             groupId: string
         }
     */
@@ -22869,9 +22925,23 @@ speechSynthesis.getVoices();
             Object.assign(ref, json);
         }
         ref.rules = $app.replaceBioSymbols(ref.rules);
+        ref.name = $app.replaceBioSymbols(ref.name);
+        ref.description = $app.replaceBioSymbols(ref.description);
         ref.$url = `https://vrc.group/${ref.shortCode}.${ref.discriminator}`;
         this.applyGroupLanguage(ref);
         return ref;
+    };
+
+    API.applyGroupMember = function (json) {
+        if (typeof json.user !== 'undefined') {
+            var ref = this.cachedUsers.get(json.user.id);
+            if (typeof ref !== 'undefined') {
+                json.user = ref;
+            }
+        } else if (json.userId === this.currentUser.id) {
+            json.user = this.currentUser;
+        }
+        return json;
     };
 
     API.applyGroupLanguage = function (ref) {
@@ -22901,12 +22971,17 @@ speechSynthesis.getVoices();
         ownerDisplayName: '',
         announcementDisplayName: '',
         ref: {},
-        announcement: {}
+        announcement: {},
+        members: []
     };
 
     $app.methods.showGroupDialog = function (groupId) {
         if (!groupId) {
             return;
+        }
+        if (groupId.startsWith('group:')) {
+            // eslint-disable-next-line no-param-reassign
+            groupId = groupId.substr(6);
         }
         this.$nextTick(() => adjustDialogZ(this.$refs.groupDialog.$el));
         var D = this.groupDialog;
@@ -22942,6 +23017,15 @@ speechSynthesis.getVoices();
                         D.ownerDisplayName = args1.ref.displayName;
                         return args1;
                     });
+                    if (this.$refs.groupDialogTabs.currentName === '0') {
+                        this.groupDialogLastActiveTab = 'Info';
+                    } else if (this.$refs.groupDialogTabs.currentName === '1') {
+                        this.groupDialogLastActiveTab = 'Members';
+                        if (this.groupDialogLastMembers !== groupId) {
+                            this.groupDialogLastMembers = groupId;
+                            this.getGroupDialogGroupMembers();
+                        }
+                    }
                     if (args.cache) {
                         this.getGroupDialogGroup(groupId);
                     }
@@ -22965,6 +23049,16 @@ speechSynthesis.getVoices();
                         }).then((args2) => {
                             if (groupId === args2.json.groupId) {
                                 D.announcement = args2.json;
+                                if (D.announcement.id) {
+                                    D.announcement.title =
+                                        this.replaceBioSymbols(
+                                            D.announcement.title
+                                        );
+                                    D.announcement.text =
+                                        this.replaceBioSymbols(
+                                            D.announcement.text
+                                        );
+                                }
                                 if (D.announcement && D.announcement.authorId) {
                                     API.getCachedUser({
                                         userId: D.announcement.authorId
@@ -23010,6 +23104,25 @@ speechSynthesis.getVoices();
                 this.setGroupSubscription(D.id, false);
                 break;
         }
+    };
+
+    $app.data.groupDialogLastActiveTab = '';
+    $app.data.groupDialogLastMembers = '';
+
+    $app.methods.groupDialogTabClick = function (obj) {
+        var groupId = this.groupDialog.id;
+        if (this.groupDialogLastActiveTab === obj.label) {
+            return;
+        }
+        if (obj.label === 'Members') {
+            if (this.groupDialogLastMembers !== groupId) {
+                this.groupDialogLastMembers = groupId;
+                this.getGroupDialogGroupMembers();
+            }
+        } else if (obj.label === 'JSON') {
+            this.refreshGroupDialogTreeData();
+        }
+        this.groupDialogLastActiveTab = obj.label;
     };
 
     $app.methods.refreshGroupDialogTreeData = function () {
@@ -23094,6 +23207,77 @@ speechSynthesis.getVoices();
             responseType: response,
             responseData: groupId
         });
+    };
+
+    // group members
+
+    $app.data.isGroupMembersLoading = false;
+    $app.data.isGroupMembersDone = false;
+    $app.data.loadMoreGroupMembersParams = {};
+
+    $app.methods.getGroupDialogGroupMembers = async function () {
+        this.groupDialog.members = [];
+        this.isGroupMembersDone = false;
+        this.loadMoreGroupMembersParams = {
+            n: 100,
+            offset: 0,
+            groupId: this.groupDialog.id
+        };
+        await API.getGroupMember({
+            groupId: this.groupDialog.id,
+            userId: API.currentUser.id
+        }).then((args) => {
+            if (args.json) {
+                args.json.user = API.currentUser;
+                this.groupDialog.members.push(args.json);
+            }
+            return args;
+        });
+        await this.loadMoreGroupMembers();
+    };
+
+    $app.methods.loadMoreGroupMembers = async function () {
+        if (this.isGroupMembersDone || this.isGroupMembersLoading) {
+            return;
+        }
+        var params = this.loadMoreGroupMembersParams;
+        this.isGroupMembersLoading = true;
+        await API.getGroupMembers(params)
+            .finally(() => {
+                params.offset += params.n;
+                this.isGroupMembersLoading = false;
+            })
+            .then((args) => {
+                for (var i = 0; i < args.json.length; i++) {
+                    var member = args.json[i];
+                    if (member.userId === API.currentUser.id) {
+                        // remove self from array
+                        // when fetching only friends self is included
+                        args.json.splice(i, 1);
+                        break;
+                    }
+                }
+                if (args.json.length < params.n) {
+                    this.isGroupMembersDone = true;
+                }
+                this.groupDialog.members = [
+                    ...this.groupDialog.members,
+                    ...args.json
+                ];
+                return args;
+            });
+    };
+
+    $app.methods.isAllowedToViewGroupMembers = function () {
+        var D = this.groupDialog;
+        if (
+            D.ref &&
+            D.ref.myMember &&
+            D.ref.myMember.permissions.includes('group-members-viewall')
+        ) {
+            return true;
+        }
+        return false;
     };
 
     $app = new Vue($app);

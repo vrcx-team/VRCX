@@ -162,7 +162,6 @@ Vue.component('marquee-text', MarqueeText);
             cpuUsage: 0,
             pcUptime: '',
             config: {},
-            photonLobbyBotSize: 0,
             onlineFriendCount: 0,
             nowPlaying: {
                 url: '',
@@ -302,10 +301,6 @@ Vue.component('marquee-text', MarqueeText);
         this.hudFeed = [];
         this.hudTimeout = [];
         this.setDatetimeFormat();
-    };
-
-    $app.methods.updatePhotonLobbyBotSize = function (size) {
-        this.photonLobbyBotSize = parseInt(size, 10);
     };
 
     $app.methods.updateOnlineFriendCount = function (count) {

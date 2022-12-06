@@ -422,7 +422,6 @@ html
                                     |&nbsp;/ {{ pcUptime }}
                             span(style="display:inline-block") {{ lastLocation.playerList.length }}
                             span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
-                            span(v-if="photonLobbyBotSize > 0 && lastLocation.playerList.length > 0" style="display:inline-block;color:red;margin-left:5px") {{ photonLobbyBotSize }}
                         template(v-else)
                             span(style="float:right") Timer: {{ lastLocationTimer }}
                                 template(v-if="onlineForTimer")
@@ -431,7 +430,6 @@ html
                                     |&nbsp;/ {{ pcUptime }}
                             span(style="display:inline-block") Players: {{ lastLocation.playerList.length }} 
                             span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
-                            span(v-if="photonLobbyBotSize > 0 && lastLocation.playerList.length > 0" style="display:inline-block;color:red;margin-left:5px") {{ photonLobbyBotSize }}
                     br
                     span(style="float:right") {{ currentTime }}
                     span(v-if="config && !config.hideCpuUsageFromFeed" style="display:inline-block;margin-right:5px") CPU: {{ cpuUsage }}%
