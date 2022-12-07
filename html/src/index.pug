@@ -2308,13 +2308,13 @@ html
                                     .x-friend-item(v-if="!isGroupMembersDone" v-loading="isGroupMembersLoading" style="width:100%;height:45px;text-align:center" @click="loadMoreGroupMembers")
                                         .detail(v-if="!isGroupMembersLoading")
                                             span.name Load more...
-                            el-tab-pane(label="JSON")
-                                el-button(type="default" @click="refreshGroupDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
-                                el-tree(:data="groupDialog.treeData" style="margin-top:5px;font-size:12px")
-                                    template(#default="scope")
-                                        span
-                                            span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
-                                            span(v-if="!scope.data.children" v-text="scope.data.value")
+                        el-tab-pane(label="JSON")
+                            el-button(type="default" @click="refreshGroupDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
+                            el-tree(:data="groupDialog.treeData" style="margin-top:5px;font-size:12px")
+                                template(#default="scope")
+                                    span
+                                        span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
+                                        span(v-if="!scope.data.children" v-text="scope.data.value")
 
             //- dialog: favorite
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="favoriteDialog" :visible.sync="favoriteDialog.visible" title="Choose Group" width="300px")
