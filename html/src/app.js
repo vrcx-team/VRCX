@@ -22469,7 +22469,6 @@ speechSynthesis.getVoices();
 
     API.$on('GROUP', function (args) {
         args.ref = this.applyGroup(args.json);
-        console.log('group', args);
         this.cachedGroups.set(args.ref.id, args.ref);
     });
 
@@ -22499,7 +22498,6 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP:REPRESENTED', function (args) {
-        console.log('represented', args.json);
         var json = args.json;
         if (!json.groupId) {
             // no group
@@ -22535,7 +22533,6 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP:LIST', function (args) {
-        console.log('groups', args.json);
         for (var json of args.json) {
             json.$memberId = json.id;
             json.id = json.groupId;
@@ -22568,7 +22565,6 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP:JOIN', function (args) {
-        console.log('join', args.json);
         var json = {
             $memberId: args.json.id,
             id: args.json.groupId,
@@ -22616,7 +22612,6 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP:LEAVE', function (args) {
-        console.log('leave', args);
         var groupId = args.params.groupId;
         if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
             $app.groupDialog.inGroup = false;
@@ -22642,7 +22637,6 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP:CANCELJOINREQUEST', function (args) {
-        console.log('CANCELJOINREQUEST', args);
         var groupId = args.params.groupId;
         if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
             $app.groupDialog.ref.membershipStatus = 'inactive';
@@ -22671,7 +22665,6 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP:SETREPRESENTATION', function (args) {
-        console.log('SETREPRESENTATION', args);
         if ($app.groupDialog.visible && $app.groupDialog.id === args.groupId) {
             $app.groupDialog.ref.isRepresenting = args.params.isRepresenting;
         }
@@ -22708,7 +22701,6 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP:STRICTSEARCH', function (args) {
-        console.log('STRICTSEARCH', args);
         for (var json of args.json) {
             this.$emit('GROUP', {
                 json,
@@ -22744,7 +22736,6 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP:PROPS', function (args) {
-        console.log('GROUP:PROPS', args);
         var json = args.json;
         json.$memberId = json.id;
         json.id = json.groupId;
@@ -22792,10 +22783,6 @@ speechSynthesis.getVoices();
         });
     };
 
-    API.$on('GROUP:ANNOUNCEMENT', function (args) {
-        console.log('GROUP:ANNOUNCEMENT', args);
-    });
-
     /*
         params: {
             groupId: string,
@@ -22837,7 +22824,6 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP:MEMBERS', function (args) {
-        console.log('GROUP:MEMBERS', args);
         for (var json of args.json) {
             this.$emit('GROUP:MEMBER', {
                 json,
