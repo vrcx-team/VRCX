@@ -22746,14 +22746,25 @@ speechSynthesis.getVoices();
     API.$on('GROUP:PROPS', function (args) {
         console.log('GROUP:PROPS', args);
         var json = args.json;
+        json.$memberId = json.id;
+        json.id = json.groupId;
         if ($app.groupDialog.visible && $app.groupDialog.id === json.groupId) {
             $app.groupDialog.ref.myMember.visibility = json.visibility;
             $app.groupDialog.ref.myMember.isSubscribedToAnnouncements =
                 json.isSubscribedToAnnouncements;
         }
-        json.$memberId = json.id;
-        json.id = json.groupId;
         delete json.visibility;
+        if (
+            $app.userDialog.visible &&
+            $app.userDialog.id === this.currentUser.id
+        ) {
+            this.getRepresentedGroup({userId: this.currentUser.id}).then(
+                (args1) => {
+                    $app.userDialog.representedGroup = args1.json;
+                    return args1;
+                }
+            );
+        }
         this.$emit('GROUP', {
             json,
             params: {
@@ -22993,6 +23004,9 @@ speechSynthesis.getVoices();
         D.announcementDisplayName = '';
         D.treeData = [];
         D.announcement = {};
+        if (this.groupDialogLastMembers !== groupId) {
+            D.members = [];
+        }
         API.getCachedGroup({
             groupId
         })
@@ -23017,18 +23031,7 @@ speechSynthesis.getVoices();
                         D.ownerDisplayName = args1.ref.displayName;
                         return args1;
                     });
-                    if (this.$refs.groupDialogTabs.currentName === '0') {
-                        this.groupDialogLastActiveTab = 'Info';
-                    } else if (this.$refs.groupDialogTabs.currentName === '1') {
-                        this.groupDialogLastActiveTab = 'Members';
-                        if (this.groupDialogLastMembers !== groupId) {
-                            this.groupDialogLastMembers = groupId;
-                            this.getGroupDialogGroupMembers();
-                        }
-                    }
-                    if (args.cache) {
-                        this.getGroupDialogGroup(groupId);
-                    }
+                    this.getGroupDialogGroup(groupId);
                 }
             });
     };
@@ -23070,6 +23073,15 @@ speechSynthesis.getVoices();
                                 }
                             }
                         });
+                    }
+                    if (this.$refs.groupDialogTabs.currentName === '0') {
+                        this.groupDialogLastActiveTab = 'Info';
+                    } else if (this.$refs.groupDialogTabs.currentName === '1') {
+                        this.groupDialogLastActiveTab = 'Members';
+                        if (this.groupDialogLastMembers !== groupId) {
+                            this.groupDialogLastMembers = groupId;
+                            this.getGroupDialogGroupMembers();
+                        }
                     }
                 }
                 return args1;
@@ -23219,11 +23231,15 @@ speechSynthesis.getVoices();
         this.groupDialog.members = [];
         this.isGroupMembersDone = false;
         this.loadMoreGroupMembersParams = {
-            n: 100,
+            n: 25,
             offset: 0,
             groupId: this.groupDialog.id
         };
-        if (this.groupDialog.ref.membershipStatus !== 'member') {
+        if (this.isAllowedToViewGroupMembers()) {
+            // friend only group view perms only allow max n=25
+            this.loadMoreGroupMembersParams.n = 100;
+        }
+        if (!this.groupDialog.inGroup) {
             return;
         }
         await API.getGroupMember({

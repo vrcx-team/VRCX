@@ -2292,7 +2292,7 @@ html
                                                 span.name Joined At
                                                 span.extra {{ groupDialog.ref.myMember.joinedAt | formatDate('long') }}
                         el-tab-pane(label="Members")
-                            template(v-if="groupDialog.ref.membershipStatus === 'member'")
+                            template(v-if="groupDialog.visible && groupDialog.ref.membershipStatus === 'member'")
                                 span(v-if="isAllowedToViewGroupMembers()" style="font-weight:bold;font-size:16px") All Members
                                 span(v-else style="font-weight:bold;font-size:16px") Friends Only
                                 br
