@@ -278,7 +278,7 @@ html
                                         span(v-if="scope.row.ref.last_platform === 'standalonewindows'" style="color:#409eff") PC
                                         span(v-else-if="scope.row.ref.last_platform === 'android'" style="color:#67c23a") Q
                                         span(v-else) {{ scope.row.ref.last_platform }}
-                                    template(v-if="scope.row.inVRMode !== undefined")
+                                    template(v-if="scope.row.inVRMode !== null")
                                         span(v-if="scope.row.inVRMode") VR
                                         span(v-else) D
                             el-table-column(label="Display Name" min-width="140" prop="ref.displayName")
