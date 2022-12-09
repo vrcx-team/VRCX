@@ -2565,7 +2565,7 @@ speechSynthesis.getVoices();
         if (
             ref.type === 'friendRequest' ||
             ref.type === 'hiddenFriendRequest' ||
-            ref.type === 'group.invite'
+            ref.type.includes('.')
         ) {
             for (var i = array.length - 1; i >= 0; i--) {
                 if (array[i].id === ref.id) {
@@ -8017,6 +8017,7 @@ speechSynthesis.getVoices();
             $app.migrateMemos();
             $app.migrateFriendLog(args.json.id);
         }
+        await AppApi.IPCAnnounceStart();
     });
 
     $app.methods.loadPlayerList = function () {
@@ -8941,7 +8942,6 @@ speechSynthesis.getVoices();
     $app.data.photonLobbyWatcherLoop = false;
     $app.data.photonLobbyTimeout = [];
     $app.data.photonLobbyJointime = new Map();
-    $app.data.photonLobbyBots = [];
     $app.data.photonEvent7List = new Map();
     $app.data.photonLastEvent7List = '';
     $app.data.photonLastChatBoxMsg = new Map();
@@ -9053,7 +9053,6 @@ speechSynthesis.getVoices();
     $app.methods.photonLobbyWatcherLoopStop = function () {
         this.photonLobbyWatcherLoop = false;
         this.photonLobbyTimeout = [];
-        this.photonLobbyBots = [];
         AppApi.ExecuteVrOverlayFunction('updateHudTimeout', '[]');
     };
 
@@ -9140,54 +9139,7 @@ speechSynthesis.getVoices();
             this.photonLobbyTimeout = hudTimeout;
             this.getCurrentInstanceUserList();
         }
-        this.photonBotCheck(dtNow);
         workerTimers.setTimeout(() => this.photonLobbyWatcher(), 500);
-    };
-
-    $app.methods.photonBotCheck = function (dtNow) {
-        if (this.photonLobbyCurrentUser === 0) {
-            return;
-        }
-        var photonBots = [];
-        this.photonLobbyCurrent.forEach((ref, id) => {
-            if (this.photonLobbyJointime.has(id)) {
-                var {joinTime, hasInstantiated, avatarEyeHeight} =
-                    this.photonLobbyJointime.get(id);
-            }
-            var text = '';
-            if (avatarEyeHeight < 0) {
-                text = 'Photon bot has joined, invalid avatarEyeHeight';
-            } else if (
-                joinTime &&
-                joinTime + 11000 < dtNow &&
-                !hasInstantiated
-            ) {
-                text = 'User failed to instantiate after 10 seconds';
-            }
-            if (text && id !== this.photonLobbyCurrentUser) {
-                if (!this.photonLobbyBots.includes(id)) {
-                    this.addEntryPhotonEvent({
-                        photonId: id,
-                        text,
-                        type: 'PhotonBot',
-                        color: 'yellow',
-                        created_at: new Date().toJSON()
-                    });
-                    var entry = {
-                        created_at: new Date().toJSON(),
-                        type: 'Event',
-                        data: `${text} ${this.getDisplayNameFromPhotonId(
-                            id
-                        )} (${this.getUserIdFromPhotonId(id)})`
-                    };
-                    this.queueGameLogNoty(entry);
-                    this.addGameLog(entry);
-                    database.addGamelogEventToDatabase(entry);
-                }
-                photonBots.unshift(id);
-            }
-        });
-        this.photonLobbyBots = photonBots;
     };
 
     $app.data.photonEventTableFilter = '';
@@ -9922,7 +9874,6 @@ speechSynthesis.getVoices();
         }
         if (data.avatarEyeHeight < 0) {
             text = 'Photon bot has joined, invalid avatarEyeHeight';
-            this.photonLobbyBots.unshift(photonId);
         } else if (data.user.last_platform === 'android' && !data.inVRMode) {
             var text = 'User joined as Quest in desktop mode';
         } else if (
@@ -12057,7 +12008,7 @@ speechSynthesis.getVoices();
             if (
                 ref.type !== 'friendRequest' &&
                 ref.type !== 'hiddenFriendRequest' &&
-                ref.type !== 'group.invite'
+                !ref.type.includes('.')
             ) {
                 database.addNotificationToDatabase(ref);
             }
@@ -15078,6 +15029,8 @@ speechSynthesis.getVoices();
             this.showGalleryDialog();
         } else if (command === 'Copy User') {
             this.copyUser(D.id);
+        } else if (command === 'Invite To Group') {
+            this.showInviteGroupDialog('', D.id);
         } else {
             this.$confirm(`Continue? ${command}`, 'Confirm', {
                 confirmButtonText: 'Confirm',
@@ -20483,6 +20436,9 @@ speechSynthesis.getVoices();
                 AppApi.FocusWindow();
                 this.eventLaunchCommand(data.command);
                 break;
+            case 'VRCXLaunch':
+                console.log('VRCXLaunch:', data);
+                break;
             default:
                 console.log('IPC:', data);
         }
@@ -21203,7 +21159,7 @@ speechSynthesis.getVoices();
     $app.data.databaseVersion = configRepository.getInt('VRCX_databaseVersion');
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 1;
+        var databaseVersion = 2;
         if (this.databaseVersion !== databaseVersion) {
             console.log(
                 `Updating database from ${this.databaseVersion} to ${databaseVersion}...`
@@ -21212,6 +21168,7 @@ speechSynthesis.getVoices();
             await database.fixGameLogTraveling(); // fix bug with gameLog location being set as traveling
             await database.fixNegativeGPS(); // fix GPS being a negative value due to VRCX bug with traveling
             await database.fixBrokenLeaveEntries(); // fix user instance timer being higher than current user location timer
+            await database.fixBrokenGroupInvites(); // fix notification v2 in wrong table
             this.databaseVersion = databaseVersion;
             configRepository.setInt('VRCX_databaseVersion', databaseVersion);
             console.log('Database update complete.');
@@ -22590,6 +22547,7 @@ speechSynthesis.getVoices();
         });
         if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
             $app.groupDialog.inGroup = json.membershipStatus === 'member';
+            this.getGroup({groupId});
         }
     });
 
@@ -22615,6 +22573,14 @@ speechSynthesis.getVoices();
         var groupId = args.params.groupId;
         if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
             $app.groupDialog.inGroup = false;
+            this.getGroup({groupId});
+        }
+        if (
+            $app.userDialog.visible &&
+            $app.userDialog.id === this.currentUser.id &&
+            $app.userDialog.representedGroup.id === groupId
+        ) {
+            $app.getCurrentUserRepresentedGroup();
         }
     });
 
@@ -22672,12 +22638,7 @@ speechSynthesis.getVoices();
             $app.userDialog.visible &&
             $app.userDialog.id === this.currentUser.id
         ) {
-            this.getRepresentedGroup({userId: this.currentUser.id}).then(
-                (args1) => {
-                    $app.userDialog.representedGroup = args1.json;
-                    return args1;
-                }
-            );
+            $app.getCurrentUserRepresentedGroup();
         }
     });
 
@@ -22749,12 +22710,7 @@ speechSynthesis.getVoices();
             $app.userDialog.visible &&
             $app.userDialog.id === this.currentUser.id
         ) {
-            this.getRepresentedGroup({userId: this.currentUser.id}).then(
-                (args1) => {
-                    $app.userDialog.representedGroup = args1.json;
-                    return args1;
-                }
-            );
+            $app.getCurrentUserRepresentedGroup();
         }
         this.$emit('GROUP', {
             json,
@@ -22837,6 +22793,28 @@ speechSynthesis.getVoices();
     API.$on('GROUP:MEMBER', function (args) {
         args.ref = this.applyGroupMember(args.json);
     });
+
+    /*
+        params: {
+            groupId: string,
+            userId: string
+        }
+    */
+    API.sendGroupInvite = function (params) {
+        return this.call(`groups/${params.groupId}/invites`, {
+            method: 'POST',
+            params: {
+                userId: params.userId
+            }
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:INVITE', args);
+            return args;
+        });
+    };
 
     /*
         params: {
@@ -23101,6 +23079,9 @@ speechSynthesis.getVoices();
             case 'Unsubscribe To Announcements':
                 this.setGroupSubscription(D.id, false);
                 break;
+            case 'Invite To Group':
+                this.showInviteGroupDialog(D.id, '');
+                break;
         }
     };
 
@@ -23146,6 +23127,10 @@ speechSynthesis.getVoices();
             return args;
         });
     };
+
+    API.$on('LOGOUT', function () {
+        $app.groupDialog.visible = false;
+    });
 
     $app.methods.leaveGroup = function (groupId) {
         return API.leaveGroup({
@@ -23284,6 +23269,128 @@ speechSynthesis.getVoices();
             return true;
         }
         return false;
+    };
+
+    $app.methods.getCurrentUserRepresentedGroup = function () {
+        return API.getRepresentedGroup({
+            userId: API.currentUser.id
+        }).then((args) => {
+            this.userDialog.representedGroup = args.json;
+            return args;
+        });
+    };
+
+    // group invite users
+
+    $app.data.inviteGroupDialog = {
+        visible: false,
+        loading: false,
+        groupId: '',
+        groupName: '',
+        userId: '',
+        userIds: [],
+        userObject: {},
+        groups: []
+    };
+
+    $app.methods.showInviteGroupDialog = function (groupId, userId) {
+        this.$nextTick(() => adjustDialogZ(this.$refs.inviteGroupDialog.$el));
+        var D = this.inviteGroupDialog;
+        D.userIds = [];
+        D.groups = [];
+        D.groupId = groupId;
+        D.groupName = groupId;
+        D.userId = userId;
+        D.userObject = {};
+        D.visible = true;
+        D.loading = true;
+        if (groupId) {
+            API.getCachedGroup({
+                groupId
+            })
+                .then((args) => {
+                    D.groupName = args.ref.name;
+                })
+                .catch(() => {
+                    D.groupId = '';
+                });
+            this.isAllowedToInviteToGroup();
+        }
+        API.getGroups({n: 100, userId: API.currentUser.id}).then((args) => {
+            this.inviteGroupDialog.groups = args.json;
+            D.loading = false;
+        });
+
+        if (userId) {
+            API.getCachedUser({userId}).then((args) => {
+                D.userObject = args.ref;
+            });
+            D.userIds = [userId];
+        }
+    };
+
+    API.$on('LOGOUT', function () {
+        $app.inviteGroupDialog.visible = false;
+    });
+
+    $app.methods.sendGroupInvite = function () {
+        this.$confirm('Continue? Invite To Group', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                var D = this.inviteGroupDialog;
+                if (action !== 'confirm' || D.loading === true) {
+                    return;
+                }
+                D.loading = true;
+                var inviteLoop = () => {
+                    if (D.userIds.length > 0) {
+                        var receiverUserId = D.userIds.shift();
+                        API.sendGroupInvite({
+                            groupId: D.groupId,
+                            userId: receiverUserId
+                        }).finally(inviteLoop);
+                    } else {
+                        D.loading = false;
+                    }
+                };
+                inviteLoop();
+            }
+        });
+    };
+
+    $app.methods.isAllowedToInviteToGroup = function () {
+        var D = this.inviteGroupDialog;
+        var groupId = D.groupId;
+        if (!groupId) {
+            return;
+        }
+        D.loading = true;
+        API.getGroup({groupId})
+            .then((args) => {
+                var group = args.ref;
+                if (group.joinState === 'open') {
+                    return args;
+                }
+                if (
+                    group.myMember &&
+                    group.myMember.permissions &&
+                    group.myMember.permissions.includes('group-invites-manage')
+                ) {
+                    return args;
+                }
+                // not allowed to invite
+                D.groupId = '';
+                this.$message({
+                    type: 'error',
+                    message: 'You are not allowed to invite to this group'
+                });
+                return args;
+            })
+            .finally(() => {
+                D.loading = false;
+            });
     };
 
     $app = new Vue($app);

@@ -1750,6 +1750,12 @@ class Database {
         );
         return userId;
     }
+
+    async fixBrokenGroupInvites() {
+        await sqliteService.executeNonQuery(
+            `DELETE FROM ${Database.userPrefix}_notifications WHERE type LIKE '%.%'`
+        );
+    }
 }
 
 var self = new Database();

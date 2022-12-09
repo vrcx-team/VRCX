@@ -22,6 +22,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Collections.Generic;
 using System.Threading;
+using System.IO.Pipes;
 
 namespace VRCX
 {
@@ -318,6 +319,16 @@ namespace VRCX
             if (File.Exists(Path.Combine(Program.AppDataDirectory, "update.exe")))
                 return true;
             return false;
+        }
+
+        public void IPCAnnounceStart()
+        {
+            var ipcClient = new NamedPipeClientStream(".", "vrcx-ipc", PipeDirection.InOut);
+            ipcClient.Connect();
+            if (!ipcClient.IsConnected)
+                return;
+            var buffer = Encoding.UTF8.GetBytes($"{{\"type\":\"VRCXLaunch\"}}" + (char)0x00);
+            ipcClient.BeginWrite(buffer, 0, buffer.Length, IPCClient.OnSend, ipcClient);
         }
 
         public void ExecuteAppFunction(string function, string json)

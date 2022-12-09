@@ -807,11 +807,10 @@ html
                                         el-button(type="text" icon="el-icon-close" size="mini" @click="sendNotificationResponse(scope.row.id, scope.row.link, 'decline')")
                                     el-tooltip(placement="top" content="Block Group" :disabled="hideTooltips")
                                         el-button(type="text" icon="el-icon-circle-close" size="mini" @click="sendNotificationResponse(scope.row.id, scope.row.link, 'block')")
-
-                                template(v-if="scope.row.type !== 'requestInviteResponse' && scope.row.type !== 'inviteResponse' && scope.row.type !== 'message' && scope.row.type !== 'group.invite'")
+                                template(v-if="scope.row.type !== 'requestInviteResponse' && scope.row.type !== 'inviteResponse' && scope.row.type !== 'message' && !scope.row.type.includes('group.') && !scope.row.type.includes('moderation.')")
                                     el-tooltip(placement="top" content="Decline" :disabled="hideTooltips")
                                         el-button(type="text" icon="el-icon-close" size="mini" style="margin-left:5px" @click="hideNotification(scope.row)")
-                            template(v-if="scope.row.type !== 'friendRequest' && scope.row.type !== 'hiddenFriendRequest' && scope.row.type !== 'group.invite'")
+                            template(v-if="scope.row.type !== 'friendRequest' && scope.row.type !== 'hiddenFriendRequest' && !scope.row.type.includes('group.') && !scope.row.type.includes('moderation.')")
                                 el-tooltip(placement="top" content="Delete log" :disabled="hideTooltips")
                                     el-button(type="text" icon="el-icon-delete" size="mini" style="margin-left:5px" @click="deleteNotificationLog(scope.row)")
 
@@ -1633,6 +1632,7 @@ html
                                                 template(v-if="lastLocation.location && isGameRunning && checkCanInvite(lastLocation.location)")
                                                     el-dropdown-item(icon="el-icon-message" command="Invite") Invite
                                                     el-dropdown-item(icon="el-icon-message" command="Invite Message") Invite With Message
+                                            el-dropdown-item(icon="el-icon-message" command="Invite To Group") Invite To Group
                                             template(v-else-if="userDialog.incomingRequest")
                                                 el-dropdown-item(icon="el-icon-check" command="Accept Friend Request") Accept Friend Request
                                                 el-dropdown-item(icon="el-icon-close" command="Decline Friend Request") Decline Friend Request
@@ -2222,7 +2222,7 @@ html
                                             template(v-if="groupDialog.ref.myMember")
                                                 el-dropdown-item(v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" icon="el-icon-close" command="Unsubscribe To Announcements" divided) Unsubscribe To Announcements
                                                 el-dropdown-item(v-else icon="el-icon-check" command="Subscribe To Announcements" divided) Subscribe To Announcements
-                                                
+                                                el-dropdown-item(icon="el-icon-message" command="Invite To Group") Invite To Group
                                             template(v-if="groupDialog.ref.myMember && groupDialog.ref.privacy === 'default'")
                                                 el-dropdown-item(icon="el-icon-view" command="Visibility Everyone" divided) #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'visible'")] Visibility Everyone
                                                 el-dropdown-item(icon="el-icon-view" command="Visibility Friends") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'friends'")] Visibility Friends
@@ -2476,15 +2476,15 @@ html
                                             img(v-lazy="userImage(friend.ref)")
                                         .detail
                                             span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                span(v-else v-text="friend.id")
-                            el-option-group(v-if="friendsGroup2.length" label="OFFLINE")
+                                    span(v-else v-text="friend.id")
+                            el-option-group(v-if="friendsGroup3.length" label="OFFLINE")
                                 el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                     template(v-if="friend.ref")
                                         .avatar
                                             img(v-lazy="userImage(friend.ref)")
                                         .detail
                                             span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                span(v-else v-text="friend.id")
+                                    span(v-else v-text="friend.id")
                     el-form-item(label="Group ID" v-if="newInstanceDialog.accessType === 'group'")
                         el-input(v-model="newInstanceDialog.groupId" placeholder="grp_UUID" size="mini")
                     el-form-item(label="Location")
@@ -3228,7 +3228,7 @@ html
                             el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") Upload
                             el-button(type="default" size="small" @click="setProfilePicOverride('')" icon="el-icon-close" :disabled="!API.currentUser.profilePicOverride") Clear
                         br
-                        .x-friend-item(v-for="image in galleryTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
+                        .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in galleryTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setProfilePicOverride(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentProfilePic(image.id) }")
                                 img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="float:right;margin-top:5px")
@@ -3243,7 +3243,7 @@ html
                             el-button(type="default" size="small" @click="displayVRCPlusIconUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") Upload
                             el-button(type="default" size="small" @click="setVRCPlusIcon('')" icon="el-icon-close" :disabled="!API.currentUser.userIcon") Clear
                         br
-                        .x-friend-item(v-for="image in VRCPlusIconsTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
+                        .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in VRCPlusIconsTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setVRCPlusIcon(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(image.id) }")
                                 img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="float:right;margin-top:5px")
@@ -3563,6 +3563,61 @@ html
                     h2 User Blacklist
                     el-tag(v-for="user in chatboxUserBlacklist" type="info" disable-transitions="true" :key="user[0]" style="margin-right:5px;margin-top:5px" closable @close="deleteChatboxUserBlacklist(user[0])")
                         span {{user[1]}}
+
+            //- dialog: invite group
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteGroupDialog" :visible.sync="inviteGroupDialog.visible" title="Invite To Group" width="450px")
+                div(v-if="inviteGroupDialog.visible" v-loading="inviteGroupDialog.loading")
+                    span The limits for this is unknown be careful using it
+                    el-select(v-model="inviteGroupDialog.groupId" clearable placeholder="Choose Group" filterable :disabled="inviteGroupDialog.loading" @change="isAllowedToInviteToGroup" style="margin-top:15px")
+                        el-option-group(v-if="inviteGroupDialog.groups.length" label="Groups" style="width:410px")
+                            el-option.x-friend-item(v-for="group in inviteGroupDialog.groups" :key="group.id" :label="group.name" :value="group.id" style="height:auto")
+                                .avatar
+                                    img(v-lazy="group.iconUrl")
+                                .detail
+                                    span.name(v-text="group.name")
+                    el-select(v-model="inviteGroupDialog.userIds" multiple clearable placeholder="Choose Friends" filterable :disabled="inviteGroupDialog.loading" style="width:100%;margin-top:15px")
+                        el-option-group(v-if="inviteGroupDialog.userId" label="Selected User")
+                            el-option.x-friend-item(:key="inviteGroupDialog.userObject.id" :label="inviteGroupDialog.userObject.displayName" :value="inviteGroupDialog.userObject.id" style="height:auto")
+                                template(v-if="inviteGroupDialog.userObject.id")
+                                    .avatar(:class="userStatusClass(inviteGroupDialog.userObject)")
+                                        img(v-lazy="userImage(inviteGroupDialog.userObject)")
+                                    .detail
+                                        span.name(v-text="inviteGroupDialog.userObject.displayName" :style="{'color':inviteGroupDialog.userObject.$userColour}")
+                                span(v-else v-text="inviteGroupDialog.userId")
+                        el-option-group(v-if="friendsGroup0.length" label="VIP")
+                            el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar(:class="userStatusClass(friend.ref)")
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                        el-option-group(v-if="friendsGroup1.length" label="ONLINE")
+                            el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar(:class="userStatusClass(friend.ref)")
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                        el-option-group(v-if="friendsGroup2.length" label="ACTIVE")
+                            el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                        el-option-group(v-if="friendsGroup3.length" label="OFFLINE")
+                            el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                template(#footer)
+                    el-button(type="primary" size="small" :disabled="inviteGroupDialog.loading || !inviteGroupDialog.userIds.length" @click="sendGroupInvite()") Invite
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
