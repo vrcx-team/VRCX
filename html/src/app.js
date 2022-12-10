@@ -5457,12 +5457,15 @@ speechSynthesis.getVoices();
         ) {
             playOverlayNotification = true;
         }
+        var message = '';
+        if (noty.message) {
+            message = noty.message;
+        }
         var messageList = [
             'inviteMessage',
             'requestMessage',
             'responseMessage'
         ];
-        let message = '';
         for (var k = 0; k < messageList.length; k++) {
             if (
                 typeof noty.details !== 'undefined' &&
@@ -5522,6 +5525,8 @@ speechSynthesis.getVoices();
             imageUrl = noty.thumbnailImageUrl;
         } else if (noty.details && noty.details.imageUrl) {
             imageUrl = noty.details.imageURL;
+        } else if (noty.imageUrl) {
+            imageUrl = noty.imageUrl;
         } else if (userId) {
             imageUrl = await API.getCachedUser({
                 userId
@@ -5670,6 +5675,18 @@ speechSynthesis.getVoices();
                 this.speak(
                     `${noty.previousDisplayName} changed their name to ${noty.displayName}`
                 );
+                break;
+            case 'group.announcement':
+                this.speak(noty.message);
+                break;
+            case 'group.informative':
+                this.speak(noty.message);
+                break;
+            case 'group.invite':
+                this.speak(noty.message);
+                break;
+            case 'group.joinRequest':
+                this.speak(noty.message);
                 break;
             case 'PortalSpawn':
                 if (noty.displayName) {
@@ -5871,6 +5888,18 @@ speechSynthesis.getVoices();
                     timeout,
                     image
                 );
+                break;
+            case 'group.announcement':
+                AppApi.XSNotification('VRCX', noty.message, timeout, image);
+                break;
+            case 'group.informative':
+                AppApi.XSNotification('VRCX', noty.message, timeout, image);
+                break;
+            case 'group.invite':
+                AppApi.XSNotification('VRCX', noty.message, timeout, image);
+                break;
+            case 'group.joinRequest':
+                AppApi.XSNotification('VRCX', noty.message, timeout, image);
                 break;
             case 'PortalSpawn':
                 if (noty.displayName) {
@@ -6108,6 +6137,30 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification(
                     noty.previousDisplayName,
                     `changed their name to ${noty.displayName}`,
+                    image
+                );
+                break;
+            case 'group.announcement':
+                AppApi.DesktopNotification(
+                    'Group Announcement',
+                    noty.message,
+                    image
+                );
+                break;
+            case 'group.informative':
+                AppApi.DesktopNotification(
+                    'Group Informative',
+                    noty.message,
+                    image
+                );
+                break;
+            case 'group.invite':
+                AppApi.DesktopNotification('Group Invite', noty.message, image);
+                break;
+            case 'group.joinRequest':
+                AppApi.DesktopNotification(
+                    'Group Join Request',
+                    noty.message,
                     image
                 );
                 break;
@@ -12835,6 +12888,10 @@ speechSynthesis.getVoices();
                 Unfriend: 'On',
                 DisplayName: 'VIP',
                 TrustLevel: 'VIP',
+                'group.announcement': 'On',
+                'group.informative': 'On',
+                'group.invite': 'On',
+                'group.joinRequest': 'Off',
                 PortalSpawn: 'Everyone',
                 Event: 'On',
                 VideoPlay: 'Off',
@@ -12867,6 +12924,10 @@ speechSynthesis.getVoices();
                 Unfriend: 'On',
                 DisplayName: 'Friends',
                 TrustLevel: 'Friends',
+                'group.announcement': 'On',
+                'group.informative': 'On',
+                'group.invite': 'On',
+                'group.joinRequest': 'On',
                 PortalSpawn: 'Everyone',
                 Event: 'On',
                 VideoPlay: 'On',
@@ -12899,6 +12960,16 @@ speechSynthesis.getVoices();
         $app.data.sharedFeedFilters.wrist.Unblocked = 'On';
         $app.data.sharedFeedFilters.wrist.Muted = 'On';
         $app.data.sharedFeedFilters.wrist.Unmuted = 'On';
+    }
+    if (!$app.data.sharedFeedFilters.noty['group.announcement']) {
+        $app.data.sharedFeedFilters.noty['group.announcement'] = 'On';
+        $app.data.sharedFeedFilters.noty['group.informative'] = 'On';
+        $app.data.sharedFeedFilters.noty['group.invite'] = 'On';
+        $app.data.sharedFeedFilters.noty['group.joinRequest'] = 'Off';
+        $app.data.sharedFeedFilters.wrist['group.announcement'] = 'On';
+        $app.data.sharedFeedFilters.wrist['group.informative'] = 'On';
+        $app.data.sharedFeedFilters.wrist['group.invite'] = 'On';
+        $app.data.sharedFeedFilters.wrist['group.joinRequest'] = 'On';
     }
 
     if (!configRepository.getString('VRCX_trustColor')) {

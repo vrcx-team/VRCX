@@ -2793,9 +2793,27 @@ html
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                     .toggle-item
+                        span.toggle-name Group Announcement
+                        el-radio-group(v-model="sharedFeedFilters.noty['group.announcement']" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Group Join/Leave
+                        el-radio-group(v-model="sharedFeedFilters.noty['group.informative']" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Group Invite
+                        el-radio-group(v-model="sharedFeedFilters.noty['group.invite']" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Group Join Request
+                        el-radio-group(v-model="sharedFeedFilters.noty['group.joinRequest']" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
                         span.toggle-name Portal Spawn
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option (click for more info)")
-                                i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
                         el-radio-group(v-model="sharedFeedFilters.noty.PortalSpawn" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
@@ -2987,9 +3005,27 @@ html
                             el-radio-button(label="VIP")
                             el-radio-button(label="Friends")
                     .toggle-item
+                        span.toggle-name Group Announcement
+                        el-radio-group(v-model="sharedFeedFilters.wrist['group.announcement']" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Group Join/Leave
+                        el-radio-group(v-model="sharedFeedFilters.wrist['group.informative']" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Group Invite
+                        el-radio-group(v-model="sharedFeedFilters.wrist['group.invite']" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
+                        span.toggle-name Group Join Request
+                        el-radio-group(v-model="sharedFeedFilters.wrist['group.joinRequest']" size="mini")
+                            el-radio-button(label="Off")
+                            el-radio-button(label="On")
+                    .toggle-item
                         span.toggle-name Portal Spawn
-                            el-tooltip(placement="top" style="margin-left:5px" content="Requires '--enable-sdk-log-levels' steam launch option (click for more info)")
-                                i.el-icon-warning(style="cursor:pointer" @click="openExternalLink(recommendedSteamParams)")
                         el-radio-group(v-model="sharedFeedFilters.wrist.PortalSpawn" size="mini")
                             el-radio-button(label="Off")
                             el-radio-button(label="VIP")
