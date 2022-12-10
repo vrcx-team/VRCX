@@ -1752,9 +1752,15 @@ class Database {
     }
 
     async fixBrokenGroupInvites() {
-        await sqliteService.executeNonQuery(
-            `DELETE FROM ${Database.userPrefix}_notifications WHERE type LIKE '%.%'`
-        );
+        var notificationTables = [];
+        await sqliteService.execute((dbRow) => {
+            notificationTables.push(dbRow[0]);
+        }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_notifications'`);
+        notificationTables.forEach((tableName) => {
+            sqliteService.executeNonQuery(
+                `DELETE FROM ${tableName} WHERE type LIKE '%.%'`
+            );
+        });
     }
 }
 
