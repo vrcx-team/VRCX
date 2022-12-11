@@ -2161,25 +2161,28 @@ html
                                         span(v-if="!scope.data.children" v-text="scope.data.value")
 
             //- dialog: group
-            el-dialog.x-dialog.x-world-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="groupDialog" :visible.sync="groupDialog.visible" :show-close="false" width="770px")
-                div(v-loading="groupDialog.loading")
+            el-dialog.x-dialog.x-group-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="groupDialog" :visible.sync="groupDialog.visible" :show-close="false" width="770px")
+                .group-banner-image
+                    el-popover(placement="right" width="500px" trigger="click")
+                        img.x-link(slot="reference" v-lazy="groupDialog.ref.bannerUrl" style="flex:none;width:100%;aspect-ratio:6/1;object-fit:cover;border-radius:4px")
+                        img.x-link(v-lazy="groupDialog.ref.bannerUrl" style="width:854px;height:480px" @click="openExternalLink(groupDialog.ref.bannerUrl)")
+                .group-body(v-loading="groupDialog.loading")
                     div(style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="groupDialog.ref.iconUrl" style="flex:none;width:120px;height:120px;border-radius:4px")
                             img.x-link(v-lazy="groupDialog.ref.iconUrl" style="width:500px;height:500px" @click="openExternalLink(groupDialog.ref.iconUrl)")
                         div(style="flex:1;display:flex;align-items:center;margin-left:15px")
-                            div(style="flex:1")
-                                div
-                                    span(v-if="groupDialog.ref.ownerId === API.currentUser.id" style="margin-right:5px") 👑
-                                    span.dialog-title(v-text="groupDialog.ref.name" style="margin-right:5px")
-                                    span(style="color:#909399;font-family:monospace;font-size:12px;margin-right:5px") {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
-                                    el-tooltip(v-for="item in groupDialog.ref.$languages" :key="item.key" placement="top")
-                                        template(#content)
-                                            span {{ item.value }} ({{ item.key }})
-                                        span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
+                            .group-header(style="flex:1")
+                                span(v-if="groupDialog.ref.ownerId === API.currentUser.id" style="margin-right:5px") 👑
+                                span.dialog-title(v-text="groupDialog.ref.name" style="margin-right:5px")
+                                span.group-discriminator(style="color:#909399;font-family:monospace;font-size:12px;margin-right:5px") {{ groupDialog.ref.shortCode }}.{{ groupDialog.ref.discriminator }}
+                                el-tooltip(v-for="item in groupDialog.ref.$languages" :key="item.key" placement="top")
+                                    template(#content)
+                                        span {{ item.value }} ({{ item.key }})
+                                    span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
                                 div(style="margin-top:5px")
                                     span.x-link(v-text="groupDialog.ownerDisplayName" @click="showUserDialog(groupDialog.ref.ownerId)" style="color:#909399;font-family:monospace")
-                                div
+                                .group-tags
                                     el-tag(v-if="groupDialog.ref.isVerified" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Verified
 
                                     el-tag(v-if="groupDialog.ref.privacy === 'private'" type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Private
@@ -2199,7 +2202,7 @@ html
                                         el-tag(v-else-if="groupDialog.ref.myMember.visibility === 'hidden'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Hidden
                                         el-tag(v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Subscribed
 
-                                div(style="margin-top:5px")
+                                .group-description(style="margin-top:5px")
                                     span(v-show="groupDialog.ref.name !== groupDialog.ref.description" v-text="groupDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
                                 template(v-if="groupDialog.inGroup")
@@ -2242,9 +2245,10 @@ html
                                             el-dropdown-item(icon="el-icon-delete" command="Leave Group" style="color:#F56C6C" divided) Leave Group
                     el-tabs(ref="groupDialogTabs" @tab-click="groupDialogTabClick")
                         el-tab-pane(label="Info")
-                            el-popover(placement="right" width="500px" trigger="click")
-                                img.x-link(slot="reference" v-lazy="groupDialog.ref.bannerUrl" style="flex:none;width:100%;aspect-ratio:6/1;object-fit:cover;border-radius:4px")
-                                img.x-link(v-lazy="groupDialog.ref.bannerUrl" style="width:854px;height:480px" @click="openExternalLink(groupDialog.ref.bannerUrl)")
+                            .group-banner-image-info
+                                el-popover(placement="right" width="500px" trigger="click")
+                                    img.x-link(slot="reference" v-lazy="groupDialog.ref.bannerUrl" style="flex:none;width:100%;aspect-ratio:6/1;object-fit:cover;border-radius:4px")
+                                    img.x-link(v-lazy="groupDialog.ref.bannerUrl" style="width:854px;height:480px" @click="openExternalLink(groupDialog.ref.bannerUrl)")
                             .x-friend-list(style="max-height:none")
                                 .x-friend-item(v-if="groupDialog.ref.membershipStatus === 'member'" style="width:100%;cursor:default")
                                     .detail

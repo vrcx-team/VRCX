@@ -449,7 +449,8 @@ img.friends-list-avatar {
 
 .x-user-dialog > .el-dialog > .el-dialog__header,
 .x-world-dialog > .el-dialog > .el-dialog__header,
-.x-avatar-dialog > .el-dialog > .el-dialog__header {
+.x-avatar-dialog > .el-dialog > .el-dialog__header,
+.x-group-dialog > .el-dialog > .el-dialog__header {
     display: none;
     padding: 0;
 }
@@ -457,6 +458,14 @@ img.friends-list-avatar {
 .x-user-dialog > .el-dialog > .el-dialog__body,
 .x-world-dialog > .el-dialog > .el-dialog__body,
 .x-avatar-dialog > .el-dialog > .el-dialog__body {
+    padding: 20px;
+}
+
+.x-group-dialog > .el-dialog > .el-dialog__body {
+    padding: 0;
+}
+
+.x-group-dialog > .el-dialog > .el-dialog__body > .group-body {
     padding: 20px;
 }
 
@@ -672,4 +681,8 @@ i.x-user-status.busy {
 
 .dialog-title {
     font-weight: bold;
+}
+
+.group-banner-image {
+    display: none;
 }
