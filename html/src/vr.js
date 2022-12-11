@@ -79,10 +79,17 @@ Vue.component('marquee-text', MarqueeText);
 
     Vue.component('location', {
         template:
-            '<span><span style="margin-right:5px">{{ text }}</span><span class="flags" :class="region" style="display:inline-block;margin-bottom:2px"></span><i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
+            '<span><span style="margin-right:5px">{{ text }}</span>' +
+            '<span v-if="groupName" style="margin-right:5px">{{ groupName }}</span>' +
+            '<span class="flags" :class="region" style="display:inline-block;margin-bottom:2px"></span>' +
+            '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
         props: {
             location: String,
             hint: {
+                type: String,
+                default: ''
+            },
+            grouphint: {
                 type: String,
                 default: ''
             }
@@ -91,7 +98,8 @@ Vue.component('marquee-text', MarqueeText);
             return {
                 text: this.location,
                 region: this.region,
-                strict: this.strict
+                strict: this.strict,
+                groupName: this.groupName
             };
         },
         methods: {
@@ -130,6 +138,7 @@ Vue.component('marquee-text', MarqueeText);
                     }
                 }
                 this.strict = L.strict;
+                this.groupName = this.grouphint;
             }
         },
         watch: {

@@ -9,7 +9,7 @@ class Database {
         Database.userId = userId;
         Database.userPrefix = userId.replaceAll('-', '').replaceAll('_', '');
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_gps (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, location TEXT, world_name TEXT, previous_location TEXT, time INTEGER)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_gps (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, location TEXT, world_name TEXT, previous_location TEXT, time INTEGER, group_name TEXT)`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_status (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, status TEXT, status_description TEXT, previous_status TEXT, previous_status_description TEXT)`
@@ -18,7 +18,7 @@ class Database {
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_avatar (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, owner_id TEXT, avatar_name TEXT, current_avatar_image_url TEXT, current_avatar_thumbnail_image_url TEXT, previous_current_avatar_image_url TEXT, previous_current_avatar_thumbnail_image_url TEXT)`
         );
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_online_offline (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, type TEXT, location TEXT, world_name TEXT, time INTEGER)`
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_online_offline (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, type TEXT, location TEXT, world_name TEXT, time INTEGER, group_name TEXT)`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_friend_log_current (user_id TEXT PRIMARY KEY, display_name TEXT, trust_level TEXT)`
@@ -42,7 +42,7 @@ class Database {
 
     async initTables() {
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS gamelog_location (id INTEGER PRIMARY KEY, created_at TEXT, location TEXT, world_id TEXT, world_name TEXT, time INTEGER, UNIQUE(created_at, location))`
+            `CREATE TABLE IF NOT EXISTS gamelog_location (id INTEGER PRIMARY KEY, created_at TEXT, location TEXT, world_id TEXT, world_name TEXT, time INTEGER, groupName TEXT, UNIQUE(created_at, location))`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS gamelog_join_leave (id INTEGER PRIMARY KEY, created_at TEXT, type TEXT, display_name TEXT, location TEXT, user_id TEXT, time INTEGER, UNIQUE(created_at, type, display_name))`
@@ -82,7 +82,8 @@ class Database {
                 location: dbRow[4],
                 worldName: dbRow[5],
                 previousLocation: dbRow[6],
-                time: dbRow[7]
+                time: dbRow[7],
+                groupName: dbRow[8]
             };
             feedDatabase.unshift(row);
         }, `SELECT * FROM ${Database.userPrefix}_feed_gps WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
@@ -125,7 +126,8 @@ class Database {
                 type: dbRow[4],
                 location: dbRow[5],
                 worldName: dbRow[6],
-                time: dbRow[7]
+                time: dbRow[7],
+                groupName: dbRow[8]
             };
             feedDatabase.unshift(row);
         }, `SELECT * FROM ${Database.userPrefix}_feed_online_offline WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
@@ -346,7 +348,7 @@ class Database {
 
     addGPSToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${Database.userPrefix}_feed_gps (created_at, user_id, display_name, location, world_name, previous_location, time) VALUES (@created_at, @user_id, @display_name, @location, @world_name, @previous_location, @time)`,
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_feed_gps (created_at, user_id, display_name, location, world_name, previous_location, time, group_name) VALUES (@created_at, @user_id, @display_name, @location, @world_name, @previous_location, @time, @group_name)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -354,7 +356,8 @@ class Database {
                 '@location': entry.location,
                 '@world_name': entry.worldName,
                 '@previous_location': entry.previousLocation,
-                '@time': entry.time
+                '@time': entry.time,
+                '@group_name': entry.groupName
             }
         );
     }
@@ -396,7 +399,7 @@ class Database {
 
     addOnlineOfflineToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO ${Database.userPrefix}_feed_online_offline (created_at, user_id, display_name, type, location, world_name, time) VALUES (@created_at, @user_id, @display_name, @type, @location, @world_name, @time)`,
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_feed_online_offline (created_at, user_id, display_name, type, location, world_name, time, group_name) VALUES (@created_at, @user_id, @display_name, @type, @location, @world_name, @time, @group_name)`,
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -404,7 +407,8 @@ class Database {
                 '@type': entry.type,
                 '@location': entry.location,
                 '@world_name': entry.worldName,
-                '@time': entry.time
+                '@time': entry.time,
+                '@group_name': entry.groupName
             }
         );
     }
@@ -422,7 +426,8 @@ class Database {
                 location: dbRow[2],
                 worldId: dbRow[3],
                 worldName: dbRow[4],
-                time: dbRow[5]
+                time: dbRow[5],
+                groupName: dbRow[6]
             };
             gamelogDatabase.unshift(row);
         }, `SELECT * FROM gamelog_location WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
@@ -491,13 +496,14 @@ class Database {
 
     addGamelogLocationToDatabase(entry) {
         sqliteService.executeNonQuery(
-            `INSERT OR IGNORE INTO gamelog_location (created_at, location, world_id, world_name, time) VALUES (@created_at, @location, @world_id, @world_name, @time)`,
+            `INSERT OR IGNORE INTO gamelog_location (created_at, location, world_id, world_name, time, group_name) VALUES (@created_at, @location, @world_id, @world_name, @time, @group_name)`,
             {
                 '@created_at': entry.created_at,
                 '@location': entry.location,
                 '@world_id': entry.worldId,
                 '@world_name': entry.worldName,
-                '@time': entry.time
+                '@time': entry.time,
+                '@group_name': entry.groupName
             }
         );
     }
@@ -1019,7 +1025,8 @@ class Database {
                     location: dbRow[4],
                     worldName: dbRow[5],
                     previousLocation: dbRow[6],
-                    time: dbRow[7]
+                    time: dbRow[7],
+                    groupName: dbRow[8]
                 };
                 feedDatabase.unshift(row);
             }, `SELECT * FROM ${Database.userPrefix}_feed_gps WHERE (display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
@@ -1076,7 +1083,8 @@ class Database {
                     type: dbRow[4],
                     location: dbRow[5],
                     worldName: dbRow[6],
-                    time: dbRow[7]
+                    time: dbRow[7],
+                    groupName: dbRow[8]
                 };
                 feedDatabase.unshift(row);
             }, `SELECT * FROM ${Database.userPrefix}_feed_online_offline WHERE ((display_name LIKE '%${search}%' OR world_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
@@ -1145,7 +1153,8 @@ class Database {
                     location: dbRow[2],
                     worldId: dbRow[3],
                     worldName: dbRow[4],
-                    time: dbRow[5]
+                    time: dbRow[5],
+                    groupName: dbRow[6]
                 };
                 gamelogDatabase.unshift(row);
             }, `SELECT * FROM gamelog_location WHERE world_name LIKE '%${search}%' ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
@@ -1336,11 +1345,12 @@ class Database {
                     created_at: dbRow[0],
                     location: dbRow[1],
                     time,
-                    name: dbRow[3]
+                    worldName: dbRow[3],
+                    groupName: dbRow[4]
                 };
                 data.set(row.location, row);
             },
-            `SELECT DISTINCT gamelog_join_leave.created_at, gamelog_join_leave.location, gamelog_join_leave.time, gamelog_location.world_name
+            `SELECT DISTINCT gamelog_join_leave.created_at, gamelog_join_leave.location, gamelog_join_leave.time, gamelog_location.world_name, gamelog_location.group_name
             FROM gamelog_join_leave
             INNER JOIN gamelog_location ON gamelog_join_leave.location = gamelog_location.location
             WHERE user_id = @userId OR display_name = @displayName
@@ -1380,11 +1390,12 @@ class Database {
                     created_at: dbRow[0],
                     location: dbRow[1],
                     time,
-                    name: dbRow[3]
+                    worldName: dbRow[3],
+                    groupName: dbRow[4]
                 };
                 data.set(row.location, row);
             },
-            `SELECT created_at, location, time, world_name
+            `SELECT created_at, location, time, world_name, group_name
             FROM gamelog_location
             WHERE world_id = @worldId
             ORDER BY id DESC`,
@@ -1761,6 +1772,22 @@ class Database {
                 `DELETE FROM ${tableName} WHERE type LIKE '%.%'`
             );
         });
+    }
+
+    async updateTableForGroupNames() {
+        try {
+            var tables = [];
+            await sqliteService.execute((dbRow) => {
+                tables.push(dbRow[0]);
+            }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_feed_gps' OR name LIKE '%_feed_online_offline' OR name = 'gamelog_location'`);
+            tables.forEach((tableName) => {
+                sqliteService.executeNonQuery(
+                    `ALTER TABLE ${tableName} ADD group_name TEXT DEFAULT ''`
+                );
+            });
+        } catch (e) {
+            console.error(e);
+        }
     }
 }
 

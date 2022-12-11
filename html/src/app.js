@@ -823,6 +823,10 @@ speechSynthesis.getVoices();
                 type: String,
                 default: ''
             },
+            grouphint: {
+                type: String,
+                default: ''
+            },
             link: {
                 type: Boolean,
                 default: true
@@ -884,7 +888,9 @@ speechSynthesis.getVoices();
                         this.text = ref.name;
                     }
                 }
-                if (L.groupId) {
+                if (this.grouphint) {
+                    this.groupName = this.grouphint;
+                } else if (L.groupId) {
                     this.groupName = L.groupId;
                     API.getCachedGroup({groupId: L.groupId}).then((args) => {
                         this.groupName = args.json.name;
@@ -946,7 +952,11 @@ speechSynthesis.getVoices();
         props: {
             locationobject: Object,
             currentuserid: String,
-            worlddialogshortname: String
+            worlddialogshortname: String,
+            grouphint: {
+                type: String,
+                default: ''
+            }
         },
         data() {
             return {
@@ -954,6 +964,7 @@ speechSynthesis.getVoices();
                 instanceName: this.instanceName,
                 accessType: this.accessType,
                 region: this.region,
+                shortName: this.shortName,
                 isUnlocked: this.isUnlocked,
                 strict: this.strict,
                 groupName: this.groupName
@@ -965,6 +976,7 @@ speechSynthesis.getVoices();
                 this.instanceName = this.locationobject.instanceName;
                 this.accessType = this.locationobject.accessType;
                 this.strict = this.locationobject.strict;
+                this.shortName = this.locationobject.shortName;
 
                 this.isUnlocked = false;
                 if (
@@ -983,7 +995,9 @@ speechSynthesis.getVoices();
                 }
 
                 this.groupName = '';
-                if (this.locationobject.groupId) {
+                if (this.grouphint) {
+                    this.groupName = this.grouphint;
+                } else if (this.locationobject.groupId) {
                     this.groupName = this.locationobject.groupId;
                     API.getCachedGroup({
                         groupId: this.locationobject.groupId
@@ -994,7 +1008,7 @@ speechSynthesis.getVoices();
                 }
             },
             showLaunchDialog() {
-                API.$emit('SHOW_LAUNCH_DIALOG', this.location);
+                API.$emit('SHOW_LAUNCH_DIALOG', this.location, this.shortName);
             },
             showGroupDialog() {
                 if (!this.location) {
@@ -4601,7 +4615,9 @@ speechSynthesis.getVoices();
                 this.verifyShortName('', tag)
             );
             API.$on('SHOW_GROUP_DIALOG', (tag) => this.showGroupDialog(tag));
-            API.$on('SHOW_LAUNCH_DIALOG', (tag) => this.showLaunchDialog(tag));
+            API.$on('SHOW_LAUNCH_DIALOG', (tag, shortName) =>
+                this.showLaunchDialog(tag, shortName)
+            );
             this.updateLoop();
             this.getGameLogTable();
             this.refreshCustomCss();
@@ -7477,6 +7493,7 @@ speechSynthesis.getVoices();
                 var ts = Date.now();
                 var time = ts - $location_at;
                 var worldName = await this.getWorldName(location);
+                var groupName = await this.getGroupName(location);
                 var feed = {
                     created_at: new Date().toJSON(),
                     type: 'Offline',
@@ -7484,6 +7501,7 @@ speechSynthesis.getVoices();
                     displayName: newRef.displayName,
                     location,
                     worldName,
+                    groupName,
                     time
                 };
                 this.addFeed(feed);
@@ -7498,6 +7516,7 @@ speechSynthesis.getVoices();
                 ctx.ref.$online_for = Date.now();
                 ctx.ref.$offline_for = '';
                 var worldName = await this.getWorldName(newRef.location);
+                var groupName = await this.getGroupName(location);
                 var feed = {
                     created_at: new Date().toJSON(),
                     type: 'Online',
@@ -7505,6 +7524,7 @@ speechSynthesis.getVoices();
                     displayName: ctx.name,
                     location: newRef.location,
                     worldName,
+                    groupName,
                     time: ''
                 };
                 this.addFeed(feed);
@@ -7567,6 +7587,20 @@ speechSynthesis.getVoices();
             } catch (err) {}
         }
         return worldName;
+    };
+
+    $app.methods.getGroupName = async function (location) {
+        var groupName = '';
+        try {
+            var L = API.parseLocation(location);
+            if (L.groupId) {
+                var args = await API.getCachedGroup({
+                    groupId: L.groupId
+                });
+                groupName = args.ref.name;
+            }
+        } catch (err) {}
+        return groupName;
     };
 
     $app.methods.updateFriendGPS = function (userId) {
@@ -8291,6 +8325,7 @@ speechSynthesis.getVoices();
                 ref.$location_at = Date.now() - props.location[2];
             } else {
                 var worldName = await $app.getWorldName(props.location[0]);
+                var groupName = await $app.getGroupName(props.location[0]);
                 var feed = {
                     created_at: new Date().toJSON(),
                     type: 'GPS',
@@ -8298,6 +8333,7 @@ speechSynthesis.getVoices();
                     displayName: ref.displayName,
                     location: props.location[0],
                     worldName,
+                    groupName,
                     previousLocation,
                     time
                 };
@@ -8866,7 +8902,7 @@ speechSynthesis.getVoices();
                     worldName: gameLog.worldName,
                     time: 0
                 };
-                database.addGamelogLocationToDatabase(entry);
+                this.addGamelogLocationToDatabase(entry);
                 break;
             case 'player-joined':
                 var joinTime = Date.parse(gameLog.dt);
@@ -9096,6 +9132,15 @@ speechSynthesis.getVoices();
             this.queueGameLogNoty(entry);
             this.addGameLog(entry);
         }
+    };
+
+    $app.methods.addGamelogLocationToDatabase = async function (input) {
+        var groupName = await this.getGroupName(input.location);
+        var entry = {
+            ...input,
+            groupName
+        };
+        database.addGamelogLocationToDatabase(entry);
     };
 
     $app.data.lastPortalList = new Map();
@@ -16467,7 +16512,8 @@ speechSynthesis.getVoices();
             D.instanceName = D.instanceName.replace(/[^A-Za-z0-9-_]/g, '');
             tags.push(D.instanceName);
         } else {
-            tags.push((99999 * Math.random() + 1).toFixed(0));
+            var randValue = (99999 * Math.random() + 1).toFixed(0);
+            tags.push(String(randValue).padStart(5, '0'));
         }
         if (!D.userId) {
             D.userId = API.currentUser.id;
@@ -16478,14 +16524,13 @@ speechSynthesis.getVoices();
                 tags.push(`~hidden(${userId})`);
             } else if (D.accessType === 'friends') {
                 tags.push(`~friends(${userId})`);
+            } else if (D.accessType === 'group') {
+                tags.push(`~group(${D.groupId})`);
             } else {
                 tags.push(`~private(${userId})`);
             }
             if (D.accessType === 'invite+') {
                 tags.push('~canRequestInvite');
-            }
-            if (D.accessType === 'group') {
-                tags.push(`~group(${D.groupId})`);
             }
         }
         if (D.region === 'US West') {
@@ -16497,7 +16542,7 @@ speechSynthesis.getVoices();
         } else if (D.region === 'Japan') {
             tags.push(`~region(jp)`);
         }
-        if (D.accessType !== 'public') {
+        if (D.accessType !== 'public' && D.accessType !== 'group') {
             tags.push(`~nonce(${uuidv4()})`);
         }
         if (D.accessType !== 'invite' && D.accessType !== 'friends') {
@@ -21327,7 +21372,7 @@ speechSynthesis.getVoices();
     $app.data.databaseVersion = configRepository.getInt('VRCX_databaseVersion');
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 3;
+        var databaseVersion = 4;
         if (this.databaseVersion !== databaseVersion) {
             console.log(
                 `Updating database from ${this.databaseVersion} to ${databaseVersion}...`
@@ -21337,6 +21382,9 @@ speechSynthesis.getVoices();
             await database.fixNegativeGPS(); // fix GPS being a negative value due to VRCX bug with traveling
             await database.fixBrokenLeaveEntries(); // fix user instance timer being higher than current user location timer
             await database.fixBrokenGroupInvites(); // fix notification v2 in wrong table
+            if (this.databaseVersion && this.databaseVersion < 4) {
+                await database.updateTableForGroupNames(); // alter tables to include group name
+            }
             this.databaseVersion = databaseVersion;
             configRepository.setInt('VRCX_databaseVersion', databaseVersion);
             console.log('Database update complete.');
@@ -23363,27 +23411,28 @@ speechSynthesis.getVoices();
     $app.data.loadMoreGroupMembersParams = {};
 
     $app.methods.getGroupDialogGroupMembers = async function () {
-        this.groupDialog.members = [];
+        var D = this.groupDialog;
+        D.members = [];
         this.isGroupMembersDone = false;
         this.loadMoreGroupMembersParams = {
             n: 25,
             offset: 0,
-            groupId: this.groupDialog.id
+            groupId: D.id
         };
-        if (this.isAllowedToViewGroupMembers()) {
+        if (this.hasGroupPermission(D.ref, 'group-members-viewall')) {
             // friend only group view perms only allow max n=25
             this.loadMoreGroupMembersParams.n = 100;
         }
-        if (!this.groupDialog.inGroup) {
+        if (!D.inGroup) {
             return;
         }
         await API.getGroupMember({
-            groupId: this.groupDialog.id,
+            groupId: D.id,
             userId: API.currentUser.id
         }).then((args) => {
             if (args.json) {
                 args.json.user = API.currentUser;
-                this.groupDialog.members.push(args.json);
+                D.members.push(args.json);
             }
             return args;
         });
@@ -23422,14 +23471,13 @@ speechSynthesis.getVoices();
             });
     };
 
-    $app.methods.isAllowedToViewGroupMembers = function () {
-        var D = this.groupDialog;
+    $app.methods.hasGroupPermission = function (ref, permission) {
         if (
-            D.ref &&
-            D.ref.myMember &&
-            D.ref.myMember.permissions &&
-            (D.ref.myMember.permissions.includes('*') ||
-                D.ref.myMember.permissions.includes('group-members-viewall'))
+            ref &&
+            ref.myMember &&
+            ref.myMember.permissions &&
+            (ref.myMember.permissions.includes('*') ||
+                ref.myMember.permissions.includes(permission))
         ) {
             return true;
         }
@@ -23534,15 +23582,7 @@ speechSynthesis.getVoices();
         D.loading = true;
         API.getGroup({groupId})
             .then((args) => {
-                var group = args.ref;
-                if (
-                    group.myMember &&
-                    group.myMember.permissions &&
-                    (group.myMember.permissions.includes('*') ||
-                        group.myMember.permissions.includes(
-                            'group-invites-manage'
-                        ))
-                ) {
+                if (this.hasGroupPermission(args.ref, 'group-invites-manage')) {
                     return args;
                 }
                 // not allowed to invite

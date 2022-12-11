@@ -176,7 +176,7 @@ html
                                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                                 span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription" style="margin-left:5px")
                                             span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
-                                                location(:location="scope.row.location" :hint="scope.row.worldName" :link="false")
+                                                location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName" :link="false")
                                             span(v-else-if="scope.row.type === 'ChatBoxMessage'" v-text="scope.row.text")
                                             span(v-else-if="scope.row.type === 'OnPlayerJoined'")
                                                 span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
@@ -230,7 +230,7 @@ html
                                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                                 span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription" style="margin-left:5px")
                                             span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
-                                                location(:location="scope.row.location" :hint="scope.row.worldName" :link="false")
+                                                location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName" :link="false")
                                             span(v-else-if="scope.row.type === 'ChatBoxMessage'" v-text="scope.row.text")
                                             span(v-else-if="scope.row.type === 'OnPlayerJoined'")
                                                 span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
@@ -328,13 +328,13 @@ html
                                     br
                                     span
                                         i.el-icon-right
-                                    location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName")
+                                    location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
                                 template(v-else-if="scope.row.type === 'Offline'")
                                     template(v-if="scope.row.location")
-                                        location(:location="scope.row.location" :hint="scope.row.worldName")
+                                        location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
                                         el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ scope.row.time | timeToText }}
                                 template(v-else-if="scope.row.type === 'Online'")
-                                    location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName")
+                                    location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
                                 template(v-else-if="scope.row.type === 'Avatar'")
                                     el-popover(placement="right" width="500px" trigger="click")
                                         img.x-link(slot="reference" v-lazy="scope.row.previousCurrentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
@@ -379,9 +379,9 @@ html
                     el-table-column(label="Detail")
                         template(v-once #default="scope")
                             template(v-if="scope.row.type === 'GPS'")
-                                location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName")
+                                location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
                             template(v-else-if="scope.row.type === 'Offline' || scope.row.type === 'Online'")
-                                location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName")
+                                location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
                             template(v-else-if="scope.row.type === 'Status'")
                                 template(v-if="scope.row.statusDescription === scope.row.previousStatusDescription")
                                     el-tooltip(placement="top")
@@ -441,8 +441,8 @@ html
                             span.x-link(v-if="scope.row.displayName" v-text="scope.row.displayName" @click="lookupUser(scope.row)" style="padding-right:10px")
                     el-table-column(label="Detail" prop="data")
                         template(v-once #default="scope")
-                            location(v-if="scope.row.type === 'Location'" :location="scope.row.location" :hint="scope.row.worldName")
-                            location(v-else-if="scope.row.type === 'PortalSpawn'" :location="scope.row.instanceId" :hint="scope.row.worldName")
+                            location(v-if="scope.row.type === 'Location'" :location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
+                            location(v-else-if="scope.row.type === 'PortalSpawn'" :location="scope.row.instanceId" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
                             template(v-else-if="scope.row.type === 'Event'")
                                 span(v-text="scope.row.data")
                             template(v-else-if="scope.row.type === 'VideoPlay'")
@@ -757,7 +757,7 @@ html
                         template(v-once #default="scope")
                             el-tooltip(v-if="scope.row.type === 'invite'" placement="top")
                                 template(#content)
-                                    location(v-if="scope.row.details" :location="scope.row.details.worldId" :hint="scope.row.details.worldName" :link="false")
+                                    location(v-if="scope.row.details" :location="scope.row.details.worldId" :hint="scope.row.details.worldName" :grouphint="scope.row.details.groupName" :link="false")
                                 span.x-link(v-text="scope.row.type" @click="showWorldDialog(scope.row.details.worldId)")
                             template(v-else-if="scope.row.link")
                                 el-tooltip(placement="top" :content="scope.row.linkText" :disabled="hideTooltips")
@@ -2304,7 +2304,7 @@ html
                                                 span.extra {{ groupDialog.ref.myMember.joinedAt | formatDate('long') }}
                         el-tab-pane(label="Members")
                             template(v-if="groupDialog.visible && groupDialog.ref.membershipStatus === 'member'")
-                                span(v-if="isAllowedToViewGroupMembers()" style="font-weight:bold;font-size:16px") All Members
+                                span(v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')" style="font-weight:bold;font-size:16px") All Members
                                 span(v-else style="font-weight:bold;font-size:16px") Friends Only
                                 br
                                 el-button(type="default" @click="getGroupDialogGroupMembers()" size="mini" icon="el-icon-refresh" circle)
@@ -3310,7 +3310,7 @@ html
                                 span {{ scope.row.created_at | formatDate('short') }}
                     el-table-column(label="World" prop="name" sortable)
                         template(v-once #default="scope")
-                            location(:location="scope.row.location" :hint="scope.row.name")
+                            location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
                     el-table-column(label="Instance Creator" prop="location" width="160")
                         template(v-once #default="scope")
                             display-name(:userid="scope.row.$location.userId" :location="scope.row.$location.tag" :key="previousInstancesUserDialog.forceUpdate")
@@ -3336,7 +3336,7 @@ html
                                 span {{ scope.row.created_at | formatDate('short') }}
                     el-table-column(label="Instance Name" prop="name")
                         template(v-once #default="scope")
-                            location-world(:locationobject="scope.row.$location" :currentuserid="API.currentUser.id")
+                            location-world(:locationobject="scope.row.$location" :grouphint="scope.row.groupName" :currentuserid="API.currentUser.id")
                     el-table-column(label="Instance Creator" prop="location")
                         template(v-once #default="scope")
                             display-name(:userid="scope.row.$location.userId" :location="scope.row.$location.tag" :key="previousInstancesWorldDialog.forceUpdate")
