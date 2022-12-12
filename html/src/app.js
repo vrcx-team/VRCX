@@ -15632,6 +15632,111 @@ speechSynthesis.getVoices();
         this.updateTimers();
     };
 
+    $app.methods.applyGroupDialogInstances = function (inputInstances) {
+        var D = this.groupDialog;
+        if (!D.visible) {
+            return;
+        }
+        var instances = {};
+        for (var instance of inputInstances) {
+            instances[instance.location] = {
+                id: instance.instanceId,
+                tag: instance.location,
+                occupants: instance.memberCount,
+                friendCount: 0,
+                users: []
+            };
+        }
+        var currentLocation = this.lastLocation.location;
+        if (this.lastLocation.location === 'traveling') {
+            currentLocation = this.lastLocationDestination;
+        }
+        var lastLocation$ = API.parseLocation(currentLocation);
+        var playersInInstance = this.lastLocation.playerList;
+        if (lastLocation$.groupId === D.id && playersInInstance.size > 0) {
+            var friendsInInstance = this.lastLocation.friendList;
+            var instance = {
+                id: lastLocation$.instanceId,
+                tag: currentLocation,
+                occupants: playersInInstance.size,
+                friendCount: friendsInInstance.size,
+                users: []
+            };
+            instances[currentLocation] = instance;
+            var ref = API.cachedUsers.get(API.currentUser.id);
+            if (typeof ref === 'undefined') {
+                ref = API.currentUser;
+            }
+            if (playersInInstance.has(ref.displayName)) {
+                instance.users.push(ref); // add self
+            }
+            for (var friend of friendsInInstance.values()) {
+                // if friend isn't in instance add them
+                var addUser = true;
+                for (var k = 0; k < instance.users.length; k++) {
+                    var user = instance.users[k];
+                    if (friend.displayName === user.displayName) {
+                        addUser = false;
+                        break;
+                    }
+                }
+                if (addUser) {
+                    var ref = API.cachedUsers.get(friend.userId);
+                    if (typeof ref !== 'undefined') {
+                        instance.users.push(ref);
+                    }
+                }
+            }
+        }
+        for (var {ref} of this.friends.values()) {
+            if (
+                typeof ref === 'undefined' ||
+                typeof ref.$location === 'undefined' ||
+                ref.$location.groupId !== D.id ||
+                (ref.$location.instanceId === lastLocation$.instanceId &&
+                    playersInInstance.size > 0)
+            ) {
+                continue;
+            }
+            var {instanceId, tag} = ref.$location;
+            var instance = instances[tag];
+            if (typeof instance === 'undefined') {
+                instance = {
+                    id: instanceId,
+                    tag,
+                    occupants: 0,
+                    friendCount: 0,
+                    users: []
+                };
+                instances[tag] = instance;
+            }
+            instance.users.push(ref);
+        }
+        var rooms = [];
+        for (var instance of Object.values(instances)) {
+            // due to references on callback of API.getUser()
+            // this should be block scope variable
+            const L = API.parseLocation(instance.tag);
+            instance.location = instance.tag;
+            instance.$location = L;
+            if (instance.friendCount === 0) {
+                instance.friendCount = instance.users.length;
+            }
+            if (this.instanceUsersSortAlphabetical) {
+                instance.users.sort(compareByDisplayName);
+            } else {
+                instance.users.sort(compareByLocationAt);
+            }
+            rooms.push(instance);
+        }
+        // sort by more friends, occupants
+        rooms.sort(function (a, b) {
+            return b.users.length - a.users.length || b.occupants - a.occupants;
+        });
+        D.instances = rooms;
+        this.updateTimers();
+    };
+
     $app.methods.worldDialogCommand = function (command) {
         var D = this.worldDialog;
         if (D.visible === false) {
@@ -22763,7 +22868,7 @@ speechSynthesis.getVoices();
         });
         if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
             $app.groupDialog.inGroup = json.membershipStatus === 'member';
-            this.getGroup({groupId});
+            this.getGroupDialogGroup(groupId);
         }
     });
 
@@ -22789,7 +22894,7 @@ speechSynthesis.getVoices();
         var groupId = args.params.groupId;
         if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
             $app.groupDialog.inGroup = false;
-            this.getGroup({groupId});
+            this.getGroupDialogGroup(groupId);
         }
         if (
             $app.userDialog.visible &&
@@ -23037,6 +23142,38 @@ speechSynthesis.getVoices();
             groupId: string
         }
     */
+
+    API.getGroupInstances = function (params) {
+        return this.call(`groups/${params.groupId}/instances`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:INSTANCES', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:INSTANCES', function (args) {
+        for (var json of args.json) {
+            this.$emit('WORLD', {
+                json: json.world,
+                params: {
+                    worldId: json.world.id
+                }
+            });
+            json.world = this.applyWorld(json.world);
+        }
+    });
+
+    /*
+        params: {
+            groupId: string
+        }
+    */
     API.getCachedGroup = function (params) {
         return new Promise((resolve, reject) => {
             var ref = this.cachedGroups.get(params.groupId);
@@ -23163,7 +23300,8 @@ speechSynthesis.getVoices();
         announcementDisplayName: '',
         ref: {},
         announcement: {},
-        members: []
+        members: [],
+        instances: []
     };
 
     $app.methods.showGroupDialog = function (groupId) {
@@ -23180,6 +23318,7 @@ speechSynthesis.getVoices();
         D.announcementDisplayName = '';
         D.treeData = [];
         D.announcement = {};
+        D.instances = [];
         if (this.groupDialogLastMembers !== groupId) {
             D.members = [];
         }
@@ -23247,6 +23386,13 @@ speechSynthesis.getVoices();
                                         return args3;
                                     });
                                 }
+                            }
+                        });
+                        API.getGroupInstances({
+                            groupId
+                        }).then((args3) => {
+                            if (groupId === args3.params.groupId) {
+                                this.applyGroupDialogInstances(args3.json);
                             }
                         });
                     }

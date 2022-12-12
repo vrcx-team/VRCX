@@ -1481,7 +1481,9 @@ html
                                 template(v-if="item.ref")
                                     .detail
                                         span.name(v-text="item.ref.displayName" :style="{'color':item.ref.$userColour}")
-                                        location.extra(:location="item.ref.location" :traveling="item.ref.travelingToLocation" :link="false")
+                                        span.extra(v-if="item.ref.state === 'offline'") Offline
+                                        span.extra(v-else-if="item.ref.state === 'active'") Active
+                                        location.extra(v-else :location="item.ref.location" :traveling="item.ref.travelingToLocation" :link="false")
                                     img.avatar(v-lazy="userImage(item.ref)")
                                 span(v-else) Search More: #[span(v-text="item.label" style="font-weight:bold")]
                     el-tooltip(placement="bottom" content="Direct access ID/URL from clipboard" :disabled="hideTooltips")
@@ -1644,12 +1646,12 @@ html
                                                 template(v-if="lastLocation.location && isGameRunning && checkCanInvite(lastLocation.location)")
                                                     el-dropdown-item(icon="el-icon-message" command="Invite") Invite
                                                     el-dropdown-item(icon="el-icon-message" command="Invite Message") Invite With Message
-                                            el-dropdown-item(icon="el-icon-message" command="Invite To Group") Invite To Group
                                             template(v-else-if="userDialog.incomingRequest")
                                                 el-dropdown-item(icon="el-icon-check" command="Accept Friend Request") Accept Friend Request
                                                 el-dropdown-item(icon="el-icon-close" command="Decline Friend Request") Decline Friend Request
                                             el-dropdown-item(v-else-if="userDialog.outgoingRequest" icon="el-icon-close" command="Cancel Friend Request") Cancel Friend Request
                                             el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") Send Friend Request
+                                            el-dropdown-item(icon="el-icon-message" command="Invite To Group") Invite To Group
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) Show Avatar Author
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") Show Fallback Avatar Details
                                             el-dropdown-item(icon="el-icon-tickets" command="Previous Instances") Show Previous Instances
@@ -2267,6 +2269,25 @@ html
                                                 span(@click="showUserDialog(groupDialog.announcement.authorId)" style="cursor:pointer")
                                                     span(v-text="groupDialog.announcementDisplayName" style="margin-right:5px")
                                                     timer(:epoch="Date.parse(groupDialog.announcement.updatedAt)")
+                                div(v-for="room in groupDialog.instances" :key="room.tag" style="width:100%")
+                                    div(style="margin:5px 0")
+                                        location(:location="room.tag")
+                                        el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
+                                            invite-yourself(:location="room.tag" style="margin-left:5px")
+                                        el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
+                                            el-button(v-if="room.tag !== lastLocation.location" @click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
+                                        span(v-if="room.occupants" style="margin-left:5px") {{ room.occupants }}  #[template(v-if="room.friendCount > 0") ({{ room.friendCount }})]
+                                    .x-friend-list(style="margin:10px 0;max-height:unset" v-if="room.users.length")
+                                        .x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
+                                            .avatar(:class="userStatusClass(user)")
+                                                img(v-lazy="userImage(user)")
+                                            .detail
+                                                span.name(v-text="user.displayName" :style="{'color':user.$userColour}")
+                                                span.extra(v-if="user.location === 'traveling'")
+                                                    i.el-icon-loading(style="margin-right:5px")
+                                                    timer(:epoch="user.$travelingToTime")
+                                                span.extra(v-else)
+                                                    timer(:epoch="user.$location_at")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name Rules
