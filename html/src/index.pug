@@ -315,7 +315,7 @@ html
                                 el-tooltip(placement="bottom" content="Filter VIP only" :disabled="hideTooltips")
                                     el-switch(v-model="feedTable.vip" @change="feedTableLookup" active-color="#13ce66")
                             el-select(v-model="feedTable.filter" @change="feedTableLookup" multiple clearable collapse-tags style="flex:1" placeholder="Filter")
-                                el-option(v-once v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar']" :key="type" :label="type" :value="type")
+                                el-option(v-once v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio']" :key="type" :label="type" :value="type")
                             el-input(v-model="feedTable.search" placeholder="Search" @keyup.native.13="feedTableLookup" @change="feedTableLookup" clearable style="flex:none;width:150px;margin:0 10px")
                             //- el-tooltip(placement="bottom" content="Clear feed" :disabled="hideTooltips")
                             //-     el-button(type="default" @click="clearFeed()" icon="el-icon-delete" circle style="flex:none")
@@ -366,6 +366,15 @@ html
                                             span(v-else) Offline
                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                     span(v-text="scope.row.statusDescription")
+                                template(v-else-if="scope.row.type === 'Bio'")
+                                    el-tooltip(placement="top")
+                                    pre(v-text="scope.row.previousBio")
+                                    
+                                    span
+                                        i.el-icon-right
+                                    br
+                                    el-tooltip(placement="top")
+                                    pre(v-text="scope.row.bio")
                     el-table-column(label="Date" prop="created_at" sortable="custom" width="120")
                         template(v-once #default="scope")
                             el-tooltip(placement="right")
@@ -1453,6 +1462,8 @@ html
                                     span.name GPS: #[span(v-text="sqliteTableSizes.gps")]
                                 div.options-container-item
                                     span.name Status: #[span(v-text="sqliteTableSizes.status")]
+                                div.options-container-item
+                                    span.name Bio: #[span(v-text="sqliteTableSizes.bio")]
                                 div.options-container-item
                                     span.name Avatar: #[span(v-text="sqliteTableSizes.avatar")]
                                 div.options-container-item

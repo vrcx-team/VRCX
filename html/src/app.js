@@ -8447,6 +8447,32 @@ speechSynthesis.getVoices();
             $app.addFeed(feed);
             database.addStatusToDatabase(feed);
         }
+
+        if (props.bio) {
+            var bio = '';
+            var previousBio = '';
+            if (props.bio) {
+                if (props.bio[0]) {
+                    bio = props.bio[0];
+                }
+                if (props.bio[1]) {
+                    previousBio = props.bio[1];
+                }
+            } else if (ref.bio) {
+                bio = ref.bio;
+                previousBio = ref.bio;
+            }
+            var feed = {
+                created_at: new Date().toJSON(),
+                type: 'Bio',
+                userId: ref.id,
+                displayName: ref.displayName,
+                bio,
+                previousBio
+            };
+            $app.addFeed(feed);
+            database.addBioToDatabase(feed);
+        }
     });
 
     $app.methods.addFeed = function (feed) {
@@ -20667,6 +20693,7 @@ speechSynthesis.getVoices();
         this.sqliteTableSizes = {
             gps: await database.getGpsTableSize(),
             status: await database.getStatusTableSize(),
+            bio: await database.getBioTableSize(),
             avatar: await database.getAvatarTableSize(),
             onlineOffline: await database.getOnlineOfflineTableSize(),
             friendLogHistory: await database.getFriendLogHistoryTableSize(),

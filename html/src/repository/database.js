@@ -15,6 +15,9 @@ class Database {
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_status (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, status TEXT, status_description TEXT, previous_status TEXT, previous_status_description TEXT)`
         );
         await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_bio (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, bio TEXT, previous_bio TEXT)`
+        );
+        await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS ${Database.userPrefix}_feed_avatar (id INTEGER PRIMARY KEY, created_at TEXT, user_id TEXT, display_name TEXT, owner_id TEXT, avatar_name TEXT, current_avatar_image_url TEXT, current_avatar_thumbnail_image_url TEXT, previous_current_avatar_image_url TEXT, previous_current_avatar_thumbnail_image_url TEXT)`
         );
         await sqliteService.executeNonQuery(
@@ -101,6 +104,18 @@ class Database {
             };
             feedDatabase.unshift(row);
         }, `SELECT * FROM ${Database.userPrefix}_feed_status WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                rowId: dbRow[0],
+                created_at: dbRow[1],
+                userId: dbRow[2],
+                displayName: dbRow[3],
+                type: 'Bio',
+                bio: dbRow[4],
+                previousBio: dbRow[5]
+            };
+            feedDatabase.unshift(row);
+        }, `SELECT * FROM ${Database.userPrefix}_feed_bio WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         await sqliteService.execute((dbRow) => {
             var row = {
                 rowId: dbRow[0],
@@ -373,6 +388,19 @@ class Database {
                 '@status_description': entry.statusDescription,
                 '@previous_status': entry.previousStatus,
                 '@previous_status_description': entry.previousStatusDescription
+            }
+        );
+    }
+
+    addBioToDatabase(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO ${Database.userPrefix}_feed_bio (created_at, user_id, display_name, bio, previous_bio) VALUES (@created_at, @user_id, @display_name, @bio, @previous_bio)`,
+            {
+                '@created_at': entry.created_at,
+                '@user_id': entry.userId,
+                '@display_name': entry.displayName,
+                '@bio': entry.bio,
+                '@previous_bio': entry.previousBio
             }
         );
     }
@@ -716,6 +744,14 @@ class Database {
         return size;
     }
 
+    async getBioTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM ${Database.userPrefix}_feed_bio`);
+        return size;
+    }
+
     async getAvatarTableSize() {
         var size = 0;
         await sqliteService.execute((row) => {
@@ -984,12 +1020,14 @@ class Database {
         }
         var gps = true;
         var status = true;
+        var bio = true;
         var avatar = true;
         var online = true;
         var offline = true;
         if (filters.length > 0) {
             gps = false;
             status = false;
+            bio = false;
             avatar = false;
             online = false;
             offline = false;
@@ -1000,6 +1038,9 @@ class Database {
                         break;
                     case 'Status':
                         status = true;
+                        break;
+                    case 'Bio':
+                        bio = true;
                         break;
                     case 'Avatar':
                         avatar = true;
@@ -1046,6 +1087,20 @@ class Database {
                 };
                 feedDatabase.unshift(row);
             }, `SELECT * FROM ${Database.userPrefix}_feed_status WHERE (display_name LIKE '%${search}%' OR status LIKE '%${search}%' OR status_description LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
+        if (bio) {
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    userId: dbRow[2],
+                    displayName: dbRow[3],
+                    type: 'Bio',
+                    bio: dbRow[4],
+                    previousBio: dbRow[5]
+                };
+                feedDatabase.unshift(row);
+            }, `SELECT * FROM ${Database.userPrefix}_feed_bio WHERE (display_name LIKE '%${search}%' OR bio LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (avatar) {
             await sqliteService.execute((dbRow) => {
