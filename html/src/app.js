@@ -8447,20 +8447,14 @@ speechSynthesis.getVoices();
             $app.addFeed(feed);
             database.addStatusToDatabase(feed);
         }
-
         if (props.bio) {
             var bio = '';
             var previousBio = '';
-            if (props.bio) {
-                if (props.bio[0]) {
-                    bio = props.bio[0];
-                }
-                if (props.bio[1]) {
-                    previousBio = props.bio[1];
-                }
-            } else if (ref.bio) {
-                bio = ref.bio;
-                previousBio = ref.bio;
+            if (props.bio[0]) {
+                bio = props.bio[0];
+            }
+            if (props.bio[1]) {
+                previousBio = props.bio[1];
             }
             var feed = {
                 created_at: new Date().toJSON(),
