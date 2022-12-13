@@ -124,6 +124,7 @@ namespace VRCX
         }
 
 #pragma warning disable CS4014
+
         public async void Execute(IDictionary<string, object> options, IJavascriptCallback callback)
         {
             try
@@ -180,7 +181,7 @@ namespace VRCX
                     request.ContentLength = sentData.Length;
                     using (System.IO.Stream sendStream = request.GetRequestStream())
                     {
-                        sendStream.Write(sentData, 0, sentData.Length);
+                        await sendStream.WriteAsync(sentData, 0, sentData.Length);
                         sendStream.Close();
                     }
                 }
@@ -200,7 +201,7 @@ namespace VRCX
                         {
                             string item = String.Format(FormDataTemplate, boundary, key, postData[key]);
                             byte[] itemBytes = System.Text.Encoding.UTF8.GetBytes(item);
-                            requestStream.Write(itemBytes, 0, itemBytes.Length);
+                            await requestStream.WriteAsync(itemBytes, 0, itemBytes.Length);
                         }
                     }
                     var imageData = options["imageData"] as string;
@@ -211,21 +212,21 @@ namespace VRCX
                     string HeaderTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n";
                     string header = String.Format(HeaderTemplate, boundary, fileFormKey, fileName, fileMimeType);
                     byte[] headerbytes = Encoding.UTF8.GetBytes(header);
-                    requestStream.Write(headerbytes, 0, headerbytes.Length);
+                    await requestStream.WriteAsync(headerbytes, 0, headerbytes.Length);
                     using (MemoryStream fileStream = new MemoryStream(fileToUpload))
                     {
                         byte[] buffer = new byte[1024];
                         int bytesRead = 0;
                         while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
                         {
-                            requestStream.Write(buffer, 0, bytesRead);
+                            await requestStream.WriteAsync(buffer, 0, bytesRead);
                         }
                         fileStream.Close();
                     }
                     byte[] newlineBytes = Encoding.UTF8.GetBytes("\r\n");
-                    requestStream.Write(newlineBytes, 0, newlineBytes.Length);
+                    await requestStream.WriteAsync(newlineBytes, 0, newlineBytes.Length);
                     byte[] endBytes = System.Text.Encoding.UTF8.GetBytes("--" + boundary + "--");
-                    requestStream.Write(endBytes, 0, endBytes.Length);
+                    await requestStream.WriteAsync(endBytes, 0, endBytes.Length);
                     requestStream.Close();
                 }
 
@@ -242,11 +243,27 @@ namespace VRCX
                         {
                             if (callback.CanExecute == true)
                             {
-                                callback.ExecuteAsync(null, new
+                                if (response.ContentType.Contains("image/") || response.ContentType.Contains("application/octet-stream"))
                                 {
-                                    data = await streamReader.ReadToEndAsync(),
-                                    status = response.StatusCode
-                                });
+                                    // base64 response data for image
+                                    using (var memoryStream = new MemoryStream())
+                                    {
+                                        await stream.CopyToAsync(memoryStream);
+                                        callback.ExecuteAsync(null, new
+                                        {
+                                            data = $"data:image/png;base64,{Convert.ToBase64String(memoryStream.ToArray())}",
+                                            status = response.StatusCode
+                                        });
+                                    }
+                                }
+                                else
+                                {
+                                    callback.ExecuteAsync(null, new
+                                    {
+                                        data = await streamReader.ReadToEndAsync(),
+                                        status = response.StatusCode
+                                    });
+                                }
                             }
                         }
                     }
@@ -289,6 +306,7 @@ namespace VRCX
 
             callback.Dispose();
         }
+
 #pragma warning restore CS4014
     }
 }

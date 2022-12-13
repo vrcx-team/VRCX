@@ -45,6 +45,7 @@ namespace VRCX
             {
                 DragHandler = new NoopDragHandler(),
                 MenuHandler = new CustomMenuHandler(),
+                DownloadHandler = new CustomDownloadHandler(),
                 BrowserSettings =
                 {
                     DefaultEncoding = "UTF-8",

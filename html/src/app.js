@@ -23807,6 +23807,42 @@ speechSynthesis.getVoices();
         );
     };
 
+    $app.methods.downloadAndSaveImage = async function (url) {
+        if (!url) {
+            return;
+        }
+        try {
+            var response = await webApiService.execute({
+                url,
+                method: 'GET'
+            });
+            if (
+                response.status !== 200 ||
+                !response.data.startsWith('data:image/png')
+            ) {
+                throw new Error(`Error: ${response.data}`);
+            }
+            var link = document.createElement('a');
+            link.href = response.data;
+            var fileName = `${extractFileId(url)}.png`;
+            if (!fileName) {
+                fileName = `${url.split('/').pop()}.png`;
+            }
+            if (!fileName) {
+                fileName = 'image.png';
+            }
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch {
+            new Noty({
+                type: 'error',
+                text: escapeTag(`Failed to download image. ${url}`)
+            }).show();
+        }
+    };
+
     $app = new Vue($app);
     window.$app = $app;
 })();
