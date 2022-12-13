@@ -373,6 +373,15 @@ namespace VRCX
             return output;
         }
 
+        public string CustomScriptPath()
+        {
+            var output = String.Empty;
+            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX\\custom.js");
+            if (File.Exists(filePath))
+                output = filePath;
+            return output;
+        }
+
         public string CurrentCulture()
         {
             return System.Globalization.CultureInfo.CurrentCulture.ToString();

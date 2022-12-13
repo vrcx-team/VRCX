@@ -2242,17 +2242,15 @@ html
                                     el-button(type="default" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") Refresh
-
                                         template(v-if="groupDialog.inGroup")
                                             template(v-if="groupDialog.ref.myMember")
                                                 el-dropdown-item(v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" icon="el-icon-close" command="Unsubscribe To Announcements" divided) Unsubscribe To Announcements
                                                 el-dropdown-item(v-else icon="el-icon-check" command="Subscribe To Announcements" divided) Subscribe To Announcements
-                                                el-dropdown-item(icon="el-icon-message" command="Invite To Group") Invite To Group
+                                                el-dropdown-item(v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')" icon="el-icon-message" command="Invite To Group") Invite To Group
                                             template(v-if="groupDialog.ref.myMember && groupDialog.ref.privacy === 'default'")
                                                 el-dropdown-item(icon="el-icon-view" command="Visibility Everyone" divided) #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'visible'")] Visibility Everyone
                                                 el-dropdown-item(icon="el-icon-view" command="Visibility Friends") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'friends'")] Visibility Friends
                                                 el-dropdown-item(icon="el-icon-view" command="Visibility Hidden") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'hidden'")] Visibility Hidden
-
                                             el-dropdown-item(icon="el-icon-delete" command="Leave Group" style="color:#F56C6C" divided) Leave Group
                     el-tabs(ref="groupDialogTabs" @tab-click="groupDialogTabClick")
                         el-tab-pane(label="Info")

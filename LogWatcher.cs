@@ -37,6 +37,7 @@ namespace VRCX
         private Thread m_Thread;
         private bool m_ResetLog;
         private bool m_FirstRun = true;
+        private bool m_NullLogMsg;
         private static DateTime tillDate = DateTime.Now;
 
         // NOTE
@@ -94,7 +95,7 @@ namespace VRCX
                 {
                     Thread.Sleep(1000);
                 }
-                catch(ThreadInterruptedException)
+                catch (ThreadInterruptedException)
                 {
                 }
             }
@@ -128,8 +129,10 @@ namespace VRCX
                 // sort by creation time
                 Array.Sort(fileInfos, (a, b) => a.CreationTimeUtc.CompareTo(b.CreationTimeUtc));
 
+                var index = 0;
                 foreach (var fileInfo in fileInfos)
                 {
+                    index++;
                     fileInfo.Refresh();
                     if (fileInfo.Exists == false)
                     {
@@ -149,6 +152,17 @@ namespace VRCX
                     {
                         logContext = new LogContext();
                         m_LogContextMap.Add(fileInfo.Name, logContext);
+                    }
+
+                    if (!m_NullLogMsg && fileInfo.Length == 0 && index == fileInfos.Length)
+                    {
+                        // check if last file is empty
+                        Console.WriteLine($"{fileInfo.Name}");
+                        if (MainForm.Instance != null && MainForm.Instance.Browser != null)
+                        {
+                            MainForm.Instance.Browser.ExecuteScriptAsync("$app.showNullLogWarning()");
+                            m_NullLogMsg = true;
+                        }
                     }
 
                     if (logContext.Length == fileInfo.Length)
