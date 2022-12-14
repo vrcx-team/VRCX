@@ -54,27 +54,24 @@ namespace VRCX
             return versionHex.PadLeft(32, '0');
         }
 
-        public string GetVRChatCacheLocation(string cacheDir)
+        public string GetVRChatCacheLocation()
         {
-            var cachePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat\Cache-WindowsPlayer";
-            if (!string.IsNullOrEmpty(cacheDir) && Directory.Exists(cacheDir))
-                cachePath = Path.Combine(cacheDir, @"Cache-WindowsPlayer");
-            return cachePath;
+            return AppApi.Instance.GetVRChatCacheLocation();
         }
 
-        public string GetVRChatCacheFullLocation(string id, int version, string cacheDir)
+        public string GetVRChatCacheFullLocation(string id, int version)
         {
-            var cachePath = GetVRChatCacheLocation(cacheDir);
+            var cachePath = GetVRChatCacheLocation();
             var idHash = GetAssetId(id);
             var versionLocation = GetAssetVersion(version);
             return Path.Combine(cachePath, idHash, versionLocation);
         }
 
-        public long[] CheckVRChatCache(string id, int version, string cacheDir)
+        public long[] CheckVRChatCache(string id, int version)
         {
             long FileSize = -1;
             long IsLocked = 0;
-            var FullLocation = GetVRChatCacheFullLocation(id, version, cacheDir);
+            var FullLocation = GetVRChatCacheFullLocation(id, version);
             var FileLocation = Path.Combine(FullLocation, "__data");
             if (File.Exists(FileLocation))
             {
@@ -116,9 +113,8 @@ namespace VRCX
                 if (File.Exists(DownloadTempLocation))
                     File.Delete(DownloadTempLocation);
             }
-            catch(Exception)
+            catch (Exception)
             {
-
             }
             DownloadProgress = -4;
         }
@@ -159,16 +155,16 @@ namespace VRCX
             DownloadProgress = -16;
         }
 
-        public void DeleteCache(string cacheDir, string id, int version)
+        public void DeleteCache(string id, int version)
         {
-            var FullLocation = GetVRChatCacheFullLocation(id, version, cacheDir);
+            var FullLocation = GetVRChatCacheFullLocation(id, version);
             if (Directory.Exists(FullLocation))
                 Directory.Delete(FullLocation, true);
         }
 
-        public void DeleteAllCache(string cacheDir)
+        public void DeleteAllCache()
         {
-            var cachePath = GetVRChatCacheLocation(cacheDir);
+            var cachePath = GetVRChatCacheLocation();
             if (Directory.Exists(cachePath))
             {
                 Directory.Delete(cachePath, true);
@@ -176,9 +172,9 @@ namespace VRCX
             }
         }
 
-        public void SweepCache(string cacheDir)
+        public void SweepCache()
         {
-            var cachePath = GetVRChatCacheLocation(cacheDir);
+            var cachePath = GetVRChatCacheLocation();
             if (!Directory.Exists(cachePath))
                 return;
             var directories = new DirectoryInfo(cachePath);
@@ -205,9 +201,9 @@ namespace VRCX
             }
         }
 
-        public long GetCacheSize(string cacheDir)
+        public long GetCacheSize()
         {
-            var cachePath = GetVRChatCacheLocation(cacheDir);
+            var cachePath = GetVRChatCacheLocation();
             if (Directory.Exists(cachePath))
             {
                 return DirSize(new DirectoryInfo(cachePath));

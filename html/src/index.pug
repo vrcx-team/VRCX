@@ -871,7 +871,7 @@ html
                     el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
                         el-button(type="default" @click="API.getConfig()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
                     .x-friend-list(style="margin-top:10px")
-                        .x-friend-item(v-for="(link, item) in API.cachedConfig.downloadUrls" :key="item" v-if="item !== 'sdk2'" placement="top")
+                        .x-friend-item(v-for="(link, item) in API.cachedConfig.downloadUrls" :key="item" placement="top")
                             .detail(@click="openExternalLink(link)")
                                 span.name(v-text="item")
                                 span.extra(v-text="link")
@@ -2334,6 +2334,25 @@ html
                                             .detail
                                                 span.name Joined At
                                                 span.extra {{ groupDialog.ref.myMember.joinedAt | formatDate('long') }}
+                                        .x-friend-item(style="cursor:default")
+                                            .detail
+                                                span.name Roles
+                                                span.extra(v-if="groupDialog.memberRoles.length === 0") -
+                                                span.extra(v-else)
+                                                    template(v-for="(role, rIndex) in groupDialog.memberRoles" :key="rIndex")
+                                                        el-tooltip(placement="top")
+                                                            template(#content)
+                                                                span Description: {{ role.description }}
+                                                                br
+                                                                span(v-if="role.updatedAt") Updated At: {{ role.updatedAt | formatDate('long') }}
+                                                                span(v-else) Created At: {{ role.createdAt | formatDate('long') }}
+                                                                br
+                                                                span Permissions:
+                                                                br
+                                                                template(v-for="(permission, pIndex) in role.permissions" :key="pIndex")
+                                                                    span {{ permission }}
+                                                                    br
+                                                            span {{ role.name }}{{ rIndex < groupDialog.memberRoles.length - 1 ? ', ' : '' }}
                         el-tab-pane(label="Members")
                             template(v-if="groupDialog.visible && groupDialog.ref.membershipStatus === 'member'")
                                 span(v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')" style="font-weight:bold;font-size:16px") All Members

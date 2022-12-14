@@ -23,6 +23,8 @@ using System.Text;
 using System.Collections.Generic;
 using System.Threading;
 using System.IO.Pipes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace VRCX
 {
@@ -75,6 +77,30 @@ namespace VRCX
             var logPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat\";
             var configFile = Path.Combine(logPath, @"config.json");
             File.WriteAllText(configFile, json);
+        }
+
+        public string GetVRChatAppDataLocation()
+        {
+            var json = ReadConfigFile();
+            if (!string.IsNullOrEmpty(json))
+            {
+                var obj = JsonConvert.DeserializeObject<JObject>(json);
+                if (obj["cache_directory"] != null)
+                {
+                    var cacheDir = (string)obj["cache_directory"];
+                    if (!string.IsNullOrEmpty(cacheDir) && Directory.Exists(cacheDir))
+                    {
+                        return cacheDir;
+                    }
+                }
+            }
+            var cachePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat";
+            return cachePath;
+        }
+
+        public string GetVRChatCacheLocation()
+        {
+            return Path.Combine(GetVRChatAppDataLocation(), "Cache-WindowsPlayer");
         }
 
         public void ShowDevTools()
@@ -437,6 +463,53 @@ namespace VRCX
             thread.Start();
             thread.Join();
             return clipboard;
+        }
+
+        public string GetVRChatRegistryKey(string key)
+        {
+            // https://answers.unity.com/questions/177945/playerprefs-changing-the-name-of-keys.html?childToView=208076#answer-208076
+            // VRC_GROUP_ORDER_usr_032383a7-748c-4fb2-94e4-bcb928e5de6b_h2810492971
+            uint hash = 5381;
+            foreach (char c in key)
+                hash = hash * 33 ^ c;
+            var keyName = key + "_h" + hash;
+
+            using (var regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\VRChat\VRChat"))
+            {
+                var bytes = (byte[])regKey?.GetValue(keyName);
+                if (bytes == null)
+                    return null;
+
+                var value = Encoding.ASCII.GetString(bytes);
+                return value;
+            }
+        }
+
+        public Dictionary<string, short> GetVRChatModerations(string currentUserId)
+        {
+            var filePath = Path.Combine(GetVRChatAppDataLocation(), "LocalPlayerModerations", $"{currentUserId}-show-hide-user.vrcset");
+            if (!File.Exists(filePath))
+                return null;
+
+            var output = new Dictionary<string, short>();
+            using (var reader = new StreamReader(filePath))
+            {
+                string line;
+                int index;
+                string userId;
+                short type;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    index = line.IndexOf(' ');
+                    if (index <= 0)
+                        continue;
+
+                    userId = line.Substring(0, index);
+                    type = short.Parse(line.Substring(line.Length - 3));
+                    output.Add(userId, type);
+                }
+            }
+            return output;
         }
 
         public void SetStartup(bool enabled)
