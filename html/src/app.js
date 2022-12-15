@@ -4649,6 +4649,7 @@ speechSynthesis.getVoices();
             this.getGameLogTable();
             this.refreshCustomCss();
             this.refreshCustomScript();
+            this.checkVRChatDebugLogging();
             this.$nextTick(function () {
                 this.$el.style.display = '';
                 if (!this.enablePrimaryPassword) {
@@ -4827,6 +4828,10 @@ speechSynthesis.getVoices();
                             this.lastLocationReset();
                             this.clearNowPlaying();
                             this.updateVRLastLocation();
+                            workerTimers.setTimeout(
+                                () => this.checkVRChatDebugLogging(),
+                                60000
+                            );
                             this.nextDiscordUpdate = 0;
                         }
                         if (isSteamVRRunning !== this.isSteamVRRunning) {
@@ -14000,6 +14005,7 @@ speechSynthesis.getVoices();
         isBlock: false,
         isMute: false,
         isHideAvatar: false,
+        isShowAvatar: false,
         isInteractOff: false,
         isFavorite: false,
 
@@ -14043,6 +14049,7 @@ speechSynthesis.getVoices();
         joinCount: 0,
         timeSpent: 0,
         lastSeen: '',
+        avatarModeration: 0,
         previousDisplayNames: [],
         dateFriended: '',
         unFriended: false
@@ -14285,6 +14292,9 @@ speechSynthesis.getVoices();
         D.lastSeen = '';
         D.joinCount = 0;
         D.timeSpent = 0;
+        D.avatarModeration = 0;
+        D.isHideAvatar = false;
+        D.isShowAvatar = false;
         D.previousDisplayNames = [];
         D.dateFriended = '';
         D.unFriended = false;
@@ -14318,7 +14328,6 @@ speechSynthesis.getVoices();
                     D.outgoingRequest = false;
                     D.isBlock = false;
                     D.isMute = false;
-                    D.isHideAvatar = false;
                     D.isInteractOff = false;
                     for (var ref of API.cachedPlayerModerations.values()) {
                         if (
@@ -14428,6 +14437,17 @@ speechSynthesis.getVoices();
                                     displayNameMapSorted.keys()
                                 );
                             });
+                        AppApi.GetVRChatUserModeration(
+                            API.currentUser.id,
+                            userId
+                        ).then((result) => {
+                            D.avatarModeration = result;
+                            if (result === 4) {
+                                D.isHideAvatar = true;
+                            } else if (result === 5) {
+                                D.isShowAvatar = true;
+                            }
+                        });
                     }
                     API.getRepresentedGroup({userId}).then((args1) => {
                         D.representedGroup = args1.json;
@@ -15187,18 +15207,6 @@ speechSynthesis.getVoices();
                     type: 'mute'
                 });
                 break;
-            case 'Show Avatar':
-                API.deletePlayerModeration({
-                    moderated: userId,
-                    type: 'hideAvatar'
-                });
-                break;
-            case 'Hide Avatar':
-                API.sendPlayerModeration({
-                    moderated: userId,
-                    type: 'hideAvatar'
-                });
-                break;
             case 'Enable Avatar Interaction':
                 API.deletePlayerModeration({
                     moderated: userId,
@@ -15315,6 +15323,18 @@ speechSynthesis.getVoices();
             this.copyUser(D.id);
         } else if (command === 'Invite To Group') {
             this.showInviteGroupDialog('', D.id);
+        } else if (command === 'Hide Avatar') {
+            if (D.isHideAvatar) {
+                this.setPlayerModeration(D.id, 0);
+            } else {
+                this.setPlayerModeration(D.id, 4);
+            }
+        } else if (command === 'Show Avatar') {
+            if (D.isShowAvatar) {
+                this.setPlayerModeration(D.id, 0);
+            } else {
+                this.setPlayerModeration(D.id, 5);
+            }
         } else {
             this.$confirm(`Continue? ${command}`, 'Confirm', {
                 confirmButtonText: 'Confirm',
@@ -23287,10 +23307,6 @@ speechSynthesis.getVoices();
         });
     };
 
-    API.$on('GROUP:ROLES', function (args) {
-        console.log(args);
-    });
-
     /*
         params: {
             groupId: string
@@ -23908,13 +23924,40 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.showNullLogWarning = function () {
-        return;
-        // eslint-disable-next-line no-unreachable
-        this.$alert(
-            'VRCX noticed your last log file is empty this is normally caused by disabling debug logging. VRCX requires debug logging to be enabled to function correctly. Please enable debug logging in VRChat quick menu settings > debug > enable debug logging, then rejoin the instance or restart VRChat.',
-            'Enable debug logging'
-        );
+    $app.methods.checkVRChatDebugLogging = async function () {
+        try {
+            var loggingEnabled = await AppApi.GetVRChatRegistryKey(
+                'LOGGING_ENABLED'
+            );
+            if (loggingEnabled === null) {
+                // key not found
+                return;
+            }
+            if (loggingEnabled === 1) {
+                // already enabled
+                return;
+            }
+            var result = await AppApi.SetVRChatRegistryKey(
+                'LOGGING_ENABLED',
+                '1'
+            );
+            if (!result) {
+                // failed to set key
+                this.$alert(
+                    'VRCX has noticed VRChat debug logging is disabled. VRCX requires debug logging in order to function correctly. Please enable debug logging in VRChat quick menu settings > debug > enable debug logging, then rejoin the instance or restart VRChat.',
+                    'Enable debug logging'
+                );
+                console.error('Failed to enable debug logging', result);
+                return;
+            }
+            this.$alert(
+                'VRCX has noticed VRChat debug logging is disabled and automatically re-enabled it. VRCX requires debug logging in order to function correctly.',
+                'Enabled debug logging'
+            );
+            console.log('Enabled debug logging');
+        } catch (e) {
+            console.error(e);
+        }
     };
 
     $app.methods.downloadAndSaveImage = async function (url) {
@@ -23951,6 +23994,31 @@ speechSynthesis.getVoices();
                 text: escapeTag(`Failed to download image. ${url}`)
             }).show();
         }
+    };
+
+    $app.methods.setPlayerModeration = function (userId, type) {
+        var D = this.userDialog;
+        AppApi.SetVRChatUserModeration(API.currentUser.id, userId, type).then(
+            (result) => {
+                if (result) {
+                    if (type === 4) {
+                        D.isShowAvatar = false;
+                        D.isHideAvatar = true;
+                    } else if (type === 5) {
+                        D.isShowAvatar = true;
+                        D.isHideAvatar = false;
+                    } else {
+                        D.isShowAvatar = false;
+                        D.isHideAvatar = false;
+                    }
+                } else {
+                    $app.$message({
+                        message: 'Failed to change avatar moderation',
+                        type: 'error'
+                    });
+                }
+            }
+        );
     };
 
     $app = new Vue($app);

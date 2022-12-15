@@ -465,7 +465,7 @@ namespace VRCX
             return clipboard;
         }
 
-        public string GetVRChatRegistryKey(string key)
+        public object GetVRChatRegistryKey(string key)
         {
             // https://answers.unity.com/questions/177945/playerprefs-changing-the-name-of-keys.html?childToView=208076#answer-208076
             // VRC_GROUP_ORDER_usr_032383a7-748c-4fb2-94e4-bcb928e5de6b_h2810492971
@@ -476,13 +476,54 @@ namespace VRCX
 
             using (var regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\VRChat\VRChat"))
             {
-                var bytes = (byte[])regKey?.GetValue(keyName);
-                if (bytes == null)
+                var data = regKey?.GetValue(keyName);
+                if (data == null)
                     return null;
 
-                var value = Encoding.ASCII.GetString(bytes);
-                return value;
+                var type = regKey.GetValueKind(keyName);
+                switch (type)
+                {
+                    case RegistryValueKind.Binary:
+                        return Encoding.ASCII.GetString((byte[])data);
+
+                    case RegistryValueKind.DWord:
+                        return data;
+                }
             }
+
+            return null;
+        }
+
+        public bool SetVRChatRegistryKey(string key, string value)
+        {
+            uint hash = 5381;
+            foreach (char c in key)
+                hash = hash * 33 ^ c;
+            var keyName = key + "_h" + hash;
+
+            using (var regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\VRChat\VRChat", true))
+            {
+                if (regKey?.GetValue(keyName) == null)
+                    return false;
+
+                var type = regKey.GetValueKind(keyName);
+                object setValue = null;
+                switch (type)
+                {
+                    case RegistryValueKind.Binary:
+                        setValue = Encoding.ASCII.GetBytes(value);
+                        break;
+
+                    case RegistryValueKind.DWord:
+                        setValue = value;
+                        break;
+                }
+                if (setValue == null)
+                    return false;
+
+                regKey.SetValue(keyName, setValue, type);
+            }
+            return true;
         }
 
         public Dictionary<string, short> GetVRChatModerations(string currentUserId)
@@ -510,6 +551,61 @@ namespace VRCX
                 }
             }
             return output;
+        }
+
+        public short GetVRChatUserModeration(string currentUserId, string userId)
+        {
+            var filePath = Path.Combine(GetVRChatAppDataLocation(), "LocalPlayerModerations", $"{currentUserId}-show-hide-user.vrcset");
+            if (!File.Exists(filePath))
+                return 0;
+
+            using (var reader = new StreamReader(filePath))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    var index = line.IndexOf(' ');
+                    if (index <= 0)
+                        continue;
+
+                    if (userId == line.Substring(0, index))
+                    {
+                        return short.Parse(line.Substring(line.Length - 3));
+                    }
+                }
+            }
+            return 0;
+        }
+
+        public bool SetVRChatUserModeration(string currentUserId, string userId, int type)
+        {
+            var filePath = Path.Combine(GetVRChatAppDataLocation(), "LocalPlayerModerations", $"{currentUserId}-show-hide-user.vrcset");
+            if (!File.Exists(filePath))
+                return false;
+
+            var lines = File.ReadAllLines(filePath).ToList();
+            var index = lines.FindIndex(x => x.StartsWith(userId));
+            if (index >= 0)
+                lines.RemoveAt(index);
+
+            if (type != 0)
+            {
+                var sb = new StringBuilder(userId);
+                while (sb.Length < 64)
+                    sb.Append(' ');
+
+                sb.Append(type.ToString("000"));
+                lines.Add(sb.ToString());
+            }
+            try
+            {
+                File.WriteAllLines(filePath, lines);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         public void SetStartup(bool enabled)

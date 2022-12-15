@@ -1636,7 +1636,7 @@ html
                                     el-tooltip(v-else placement="top" content="Add to favorites" :disabled="hideTooltips")
                                         el-button(type="default" @click="userDialogCommand('Add Favorite')" icon="el-icon-star-off" circle)
                                 el-dropdown(trigger="click" @command="userDialogCommand" size="small")
-                                    el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
+                                    el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest || userDialog.isShowAvatar) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") Refresh
                                         el-dropdown-item(icon="el-icon-s-order" command="Copy User") Copy User URL
@@ -1669,8 +1669,8 @@ html
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided :disabled="userDialog.ref.$isModerator") Block
                                             el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") Unmute
                                             el-dropdown-item(v-else icon="el-icon-turn-off-microphone" command="Mute" :disabled="userDialog.ref.$isModerator") Mute
-                                            //- el-dropdown-item(v-if="userDialog.isHideAvatar" icon="el-icon-user-solid" command="Show Avatar" style="color:#F56C6C") Show Avatar
-                                            //- el-dropdown-item(v-else icon="el-icon-user" command="Hide Avatar") Hide Avatar
+                                            el-dropdown-item(icon="el-icon-user-solid" command="Show Avatar") #[i.el-icon-check.el-icon--left(v-if="userDialog.isShowAvatar")]Show Avatar
+                                            el-dropdown-item(icon="el-icon-user" command="Hide Avatar") #[i.el-icon-check.el-icon--left(v-if="userDialog.isHideAvatar")]Hide Avatar
                                             el-dropdown-item(v-if="userDialog.isInteractOff" icon="el-icon-thumb" command="Enable Avatar Interaction" style="color:#F56C6C") Enable Avatar Interaction
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Disable Avatar Interaction") Disable Avatar Interaction
                                             template(v-if="userDialog.isFriend")
@@ -3661,7 +3661,7 @@ html
             //- dialog: invite group
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteGroupDialog" :visible.sync="inviteGroupDialog.visible" title="Invite To Group" width="450px")
                 div(v-if="inviteGroupDialog.visible" v-loading="inviteGroupDialog.loading")
-                    span The limits for this is unknown be careful using it
+                    span The limits for this are unknown be careful when using it, inviting too many users to a group is known to cause a ban.
                     el-select(v-model="inviteGroupDialog.groupId" clearable placeholder="Choose Group" filterable :disabled="inviteGroupDialog.loading" @change="isAllowedToInviteToGroup" style="margin-top:15px")
                         el-option-group(v-if="inviteGroupDialog.groups.length" label="Groups" style="width:410px")
                             el-option.x-friend-item(v-for="group in inviteGroupDialog.groups" :key="group.id" :label="group.name" :value="group.id" style="height:auto")
