@@ -4331,6 +4331,14 @@ speechSynthesis.getVoices();
                     }
                 });
                 break;
+
+            case 'group-joined':
+            case 'group-left':
+                // content.groupId
+                break;
+
+            default:
+                console.log('Unknown pipeline type', args.json);
         }
     });
 
@@ -19729,7 +19737,8 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.checkVRChatCache = function (ref) {
+    // eslint-disable-next-line require-await
+    $app.methods.checkVRChatCache = async function (ref) {
         if (!ref.unityPackages) {
             return [-1, 0];
         }
@@ -23900,6 +23909,8 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.showNullLogWarning = function () {
+        return;
+        // eslint-disable-next-line no-unreachable
         this.$alert(
             'VRCX noticed your last log file is empty this is normally caused by disabling debug logging. VRCX requires debug logging to be enabled to function correctly. Please enable debug logging in VRChat quick menu settings > debug > enable debug logging, then rejoin the instance or restart VRChat.',
             'Enable debug logging'
