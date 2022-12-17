@@ -23812,7 +23812,7 @@ speechSynthesis.getVoices();
         groupId: '',
         groupName: '',
         userId: '',
-        userIds: [],
+        userIds: '',
         userObject: {},
         groups: []
     };
@@ -23820,7 +23820,7 @@ speechSynthesis.getVoices();
     $app.methods.showInviteGroupDialog = function (groupId, userId) {
         this.$nextTick(() => adjustDialogZ(this.$refs.inviteGroupDialog.$el));
         var D = this.inviteGroupDialog;
-        D.userIds = [];
+        D.userIds = '';
         D.groups = [];
         D.groupId = groupId;
         D.groupName = groupId;
@@ -23849,7 +23849,8 @@ speechSynthesis.getVoices();
             API.getCachedUser({userId}).then((args) => {
                 D.userObject = args.ref;
             });
-            D.userIds = [userId];
+            // D.userIds = [userId];
+            D.userIds = userId;
         }
     };
 
@@ -23868,18 +23869,25 @@ speechSynthesis.getVoices();
                     return;
                 }
                 D.loading = true;
-                var inviteLoop = () => {
-                    if (D.userIds.length > 0) {
-                        var receiverUserId = D.userIds.shift();
-                        API.sendGroupInvite({
-                            groupId: D.groupId,
-                            userId: receiverUserId
-                        }).finally(inviteLoop);
-                    } else {
-                        D.loading = false;
-                    }
-                };
-                inviteLoop();
+                // no fun allowed
+                // var inviteLoop = () => {
+                //     if (D.userIds.length > 0) {
+                //         var receiverUserId = D.userIds.shift();
+                //         API.sendGroupInvite({
+                //             groupId: D.groupId,
+                //             userId: receiverUserId
+                //         }).finally(inviteLoop);
+                //     } else {
+                //         D.loading = false;
+                //     }
+                // };
+                var receiverUserId = D.userIds;
+                API.sendGroupInvite({
+                    groupId: D.groupId,
+                    userId: receiverUserId
+                }).finally(() => {
+                    D.loading = false;
+                });
             }
         });
     };

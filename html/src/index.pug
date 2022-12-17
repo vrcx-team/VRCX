@@ -3661,7 +3661,8 @@ html
             //- dialog: invite group
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteGroupDialog" :visible.sync="inviteGroupDialog.visible" title="Invite To Group" width="450px")
                 div(v-if="inviteGroupDialog.visible" v-loading="inviteGroupDialog.loading")
-                    span The limits for this are unknown be careful when using it, inviting too many users to a group is known to cause a ban.
+                    span Don't spam invite users, inviting too many users to a group is known to cause a ban.
+                    br
                     el-select(v-model="inviteGroupDialog.groupId" clearable placeholder="Choose Group" filterable :disabled="inviteGroupDialog.loading" @change="isAllowedToInviteToGroup" style="margin-top:15px")
                         el-option-group(v-if="inviteGroupDialog.groups.length" label="Groups" style="width:410px")
                             el-option.x-friend-item(v-for="group in inviteGroupDialog.groups" :key="group.id" :label="group.name" :value="group.id" style="height:auto")
@@ -3669,7 +3670,7 @@ html
                                     img(v-lazy="group.iconUrl")
                                 .detail
                                     span.name(v-text="group.name")
-                    el-select(v-model="inviteGroupDialog.userIds" multiple clearable placeholder="Choose Friends" filterable :disabled="inviteGroupDialog.loading" style="width:100%;margin-top:15px")
+                    el-select(v-model="inviteGroupDialog.userIds" clearable placeholder="Choose Friends" filterable :disabled="inviteGroupDialog.loading" style="width:100%;margin-top:15px")
                         el-option-group(v-if="inviteGroupDialog.userId" label="Selected User")
                             el-option.x-friend-item(:key="inviteGroupDialog.userObject.id" :label="inviteGroupDialog.userObject.displayName" :value="inviteGroupDialog.userObject.id" style="height:auto")
                                 template(v-if="inviteGroupDialog.userObject.id")
