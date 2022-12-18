@@ -173,8 +173,8 @@ html
                                                             span(v-else-if="scope.row.status === 'ask me'") Ask Me
                                                             span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
                                                             span(v-else) Offline
-                                                        i.x-user-status(:class="statusClass(scope.row.status)")
-                                                span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription" style="margin-left:5px")
+                                                        i.x-user-status(:class="statusClass(scope.row.status)" style="margin-right:5px")
+                                                span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription")
                                             span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
                                                 location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName" :link="false")
                                             span(v-else-if="scope.row.type === 'ChatBoxMessage'" v-text="scope.row.text")
@@ -708,8 +708,7 @@ html
                     el-table-column(label="Type" prop="type" width="150")
                     el-table-column(label="User" prop="displayName")
                         template(v-once #default="scope")
-                            span(v-if="scope.row.type === 'DisplayName'") {{ scope.row.previousDisplayName }} #[i.el-icon-right]
-                            | &nbsp;
+                            span(v-if="scope.row.type === 'DisplayName'") {{ scope.row.previousDisplayName }} #[i.el-icon-right] 
                             span.x-link(v-text="scope.row.displayName || scope.row.userId" @click="showUserDialog(scope.row.userId)")
                             template(v-if="scope.row.type === 'TrustLevel'")
                                 span  ({{ scope.row.previousTrustLevel }} #[i.el-icon-right] {{ scope.row.trustLevel }})
@@ -785,7 +784,8 @@ html
                                     img.x-link(v-lazy="scope.row.imageUrl" style="width:500px" @click="downloadAndSaveImage(scope.row.imageUrl)")
                     el-table-column(label="Message" prop="message")
                         template(v-once #default="scope")
-                            span(v-if="scope.row.message" v-text="scope.row.message")
+                            span(v-if="scope.row.title") {{ scope.row.title }}, {{ scope.row.message }}
+                            span(v-else-if="scope.row.message" v-text="scope.row.message")
                             span(v-else-if='scope.row.details && scope.row.details.inviteMessage' v-text="scope.row.details.inviteMessage")
                             span(v-else-if='scope.row.details && scope.row.details.requestMessage' v-text="scope.row.details.requestMessage")
                             span(v-else-if='scope.row.details && scope.row.details.responseMessage' v-text="scope.row.details.responseMessage")
@@ -2244,7 +2244,7 @@ html
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") Refresh
                                         template(v-if="groupDialog.inGroup")
                                             template(v-if="groupDialog.ref.myMember")
-                                                el-dropdown-item(v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" icon="el-icon-close" command="Unsubscribe To Announcements" divided) Unsubscribe To Announcements
+                                                el-dropdown-item(v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" icon="el-icon-close" command="Unsubscribe To Announcements" divided) Unsubscribe From Announcements
                                                 el-dropdown-item(v-else icon="el-icon-check" command="Subscribe To Announcements" divided) Subscribe To Announcements
                                                 el-dropdown-item(v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')" icon="el-icon-message" command="Invite To Group") Invite To Group
                                             template(v-if="groupDialog.ref.myMember && groupDialog.ref.privacy === 'default'")

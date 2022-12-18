@@ -528,7 +528,7 @@ namespace VRCX
 
         public Dictionary<string, short> GetVRChatModerations(string currentUserId)
         {
-            var filePath = Path.Combine(GetVRChatAppDataLocation(), "LocalPlayerModerations", $"{currentUserId}-show-hide-user.vrcset");
+            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + $@"Low\VRChat\VRChat\LocalPlayerModerations\{currentUserId}-show-hide-user.vrcset";
             if (!File.Exists(filePath))
                 return null;
 
@@ -555,7 +555,7 @@ namespace VRCX
 
         public short GetVRChatUserModeration(string currentUserId, string userId)
         {
-            var filePath = Path.Combine(GetVRChatAppDataLocation(), "LocalPlayerModerations", $"{currentUserId}-show-hide-user.vrcset");
+            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + $@"Low\VRChat\VRChat\LocalPlayerModerations\{currentUserId}-show-hide-user.vrcset";
             if (!File.Exists(filePath))
                 return 0;
 
@@ -579,7 +579,7 @@ namespace VRCX
 
         public bool SetVRChatUserModeration(string currentUserId, string userId, int type)
         {
-            var filePath = Path.Combine(GetVRChatAppDataLocation(), "LocalPlayerModerations", $"{currentUserId}-show-hide-user.vrcset");
+            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + $@"Low\VRChat\VRChat\LocalPlayerModerations\{currentUserId}-show-hide-user.vrcset";
             if (!File.Exists(filePath))
                 return false;
 
