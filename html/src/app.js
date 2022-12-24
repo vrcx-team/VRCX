@@ -9,6 +9,7 @@ import '@fontsource/noto-sans-jp';
 import Noty from 'noty';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
+import VueI18n from 'vue-i18n'
 import {DataTables} from 'vue-data-tables';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
@@ -21,6 +22,7 @@ import webApiService from './service/webapi.js';
 import gameLogService from './service/gamelog.js';
 import security from './security.js';
 import database from './repository/database.js';
+import * as localizedStrings from './localization/localizedStrings.js';
 
 speechSynthesis.getVoices();
 
@@ -204,6 +206,13 @@ speechSynthesis.getVoices();
     });
 
     Vue.use(DataTables);
+
+    Vue.use(VueI18n);
+
+    var i18n = new VueI18n({
+        locale: 'en',
+        messages: localizedStrings,
+    })
 
     var $appDarkStyle = document.createElement('link');
     $appDarkStyle.disabled = true;
@@ -4625,6 +4634,7 @@ speechSynthesis.getVoices();
             exportFriendsListDialog: false,
             exportFriendsListContent: ''
         },
+        i18n,
         computed: {},
         methods: {},
         watch: {},
