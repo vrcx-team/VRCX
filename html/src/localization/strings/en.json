@@ -710,6 +710,11 @@
                 "header": "JSON"
             }
         },
+        "favorite": {
+            "header": "Choose Group",
+            "vrchat_favorites": "VRChat Favorites",
+            "local_favorites": "Local Favorites"
+        },
         "social_status": {
             "header": "Social Status",
             "history": "History",
@@ -728,6 +733,78 @@
             "bio_placeholder": "Please input a bio",
             "add_link": "Add Link",
             "update": "Update"
+        },
+        "new_instance": {
+            "header": "New Instance",
+            "access_type": "Access Type",
+            "access_type_public": "Public",
+            "access_type_group": "Group",
+            "access_type_friend_plus": "Friends+",
+            "access_type_friend": "Friends",
+            "access_type_invite_plus": "Invite+",
+            "access_type_invite": "Invite",
+            "region": "Region",
+            "region_usw": "US West",
+            "region_use": "US East",
+            "region_eu": "Europe",
+            "region_jp": "Japan",
+            "world_id": "World ID",
+            "instance_id": "Instance ID",
+            "instance_id_placeholder": "Random",
+            "instance_creator": "Instance Creator",
+            "instance_creator_placeholder": "Choose User",
+            "group_id": "Group ID",
+            "location": "Location",
+            "url": "URL",
+            "copy_url": "Copy URL",
+            "self_invite": "Self invite",
+            "invite": "Invite",
+            "launch": "Launch"
+        },
+        "launch_options": {
+            "header": "Launch Options",
+            "description": "These options are for advanced users only.",
+            "example": "to change max fps: --fps=<N> e.g.)",
+            "path_override": "VRChat Path Override",
+            "vrchat_docs": "VRChat Docs",
+            "unity_manual": "Unity Manual",
+            "save": "Save"
+        },
+        "youtube_api": {
+            "header": "YouTube API",
+            "description": "Enter your YouTube API Key (optional)",
+            "placeholder": "YouTube API Key",
+            "guide": "Guide",
+            "save": "Save"
+        },
+        "vrcx_updater": {
+            "header": "VRCX Updater",
+            "latest_version": "VRCX is up to date.",
+            "ready_for_update": "Ready for install, restart VRCX to apply.",
+            "download": "Download",
+            "install": "Install"
+        },
+        "launch": {
+            "header": "Launch",
+            "url": "URL",
+            "short_url": "Short URL",
+            "short_url_notice": "Short URL's expire after a set period of time",
+            "location": "Location",
+            "copy_tooltip": "Copy to clipboard",
+            "start_as_desktop": "Start as Desktop (No VR)",
+            "info": "Info",
+            "invite": "Invite",
+            "launch": "Launch"
+        },
+        "export_friends_list": {
+            "header": "Export Friends List"
+        },
+        "export_own_avatars": {
+            "header": "Export Own Avatars"
+        },
+        "discord_names": {
+            "header": "Discord Names",
+            "description": "Click load missing entries in the Friends List tab to search entire friends list"
         }
     },
     "table": {

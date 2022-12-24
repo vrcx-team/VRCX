@@ -6,7 +6,7 @@
         "game_log": "遊戲紀錄",
         "player_list": "玩家列表",
         "search": "搜尋",
-        "favorites": "最愛",
+        "favorites": "收藏",
         "friend_log": "好友紀錄",
         "moderation": "玩家處置",
         "notification": "通知",
@@ -30,7 +30,7 @@
             }
         },
         "feed": {
-            "favorites_only_tooltip": "僅篩選最愛",
+            "favorites_only_tooltip": "僅篩選收藏",
             "filter_placeholder": "篩選動態",
             "search_placeholder": "搜尋動態"
         },
@@ -72,18 +72,18 @@
             },
             "worlds": {
                 "header": "世界",
-                "vrchat_favorites": "VRChat 最愛",
-                "local_favorites": "本地最愛",
+                "vrchat_favorites": "VRChat 收藏",
+                "local_favorites": "本地收藏",
                 "new_group": "新群組"
             },
             "avatars": {
                 "header": "角色"
             },
-            "refresh_tooltip": "重新整理所有最愛",
+            "refresh_tooltip": "重新整理所有收藏",
             "export": "匯出",
             "import": "匯入",
             "move_tooltip": "移動",
-            "unfavorite_tooltip": "解除最愛",
+            "unfavorite_tooltip": "解除收藏",
             "visibility_tooltip": "變更可見度",
             "rename_tooltip": "重新命名",
             "clear_tooltip": "清除",
@@ -111,7 +111,7 @@
             "load_notice": "這會向 API 傳送大量請求，所以請謹慎使用",
             "load_tooltip": "讀取",
             "cancel_tooltip": "取消",
-            "favorites_only_tooltip": "僅篩選最愛",
+            "favorites_only_tooltip": "僅篩選收藏",
             "search_placeholder": "搜尋好友",
             "filter_placeholder": "篩選好友",
             "refresh_tooltip": "重新整理",
@@ -207,7 +207,7 @@
                     "theme_mode_dark": "深色",
                     "vrcplus_profile_icons": "VRChat+ 個人檔案圖示",
                     "disable_tooltips": "關閉提示",
-                    "sort_favorite_by": "最愛排序依據",
+                    "sort_favorite_by": "收藏排序依據",
                     "sort_favorite_by_name": "名稱",
                     "sort_favorite_by_date": "時間",
                     "sort_instance_users_by": "坊間玩家排序依據",
@@ -231,7 +231,7 @@
                         "sort_by_status": "依狀態排序",
                         "sort_gps_to_top": "將 GPS 排序到頂部",
                         "sort_gps_to_top_notice": "（僅限上線玩家）",
-                        "sort_favorite_by": "最愛玩家 排序依據",
+                        "sort_favorite_by": "收藏玩家 排序依據",
                         "sort_favorite_by_alphabet": "字母順序",
                         "sort_favorite_by_online_time": "上線時長",
                         "sort_online_by": "網頁玩家 排序依據",
@@ -406,7 +406,7 @@
                         "enable": "啟用",
                         "enable_tooltip": "需要啟用 SteamVR 疊層選項",
                         "filter": "篩選器",
-                        "filter_favorites": "最愛",
+                        "filter_favorites": "收藏",
                         "filter_friends": "好友",
                         "filter_everyone": "所有人",
                         "message_timeout": "訊息時長"
@@ -416,7 +416,7 @@
                         "enable": "啟用",
                         "enable_tooltip": "需要啟用 SteamVR 疊層選項",
                         "filter": "篩選器",
-                        "filter_favorites": "最愛",
+                        "filter_favorites": "收藏",
                         "filter_friends": "好友",
                         "filter_everyone": "所有人",
                         "timeout_threshold": "愈時閾值"
@@ -434,7 +434,7 @@
         "refresh_tooltip": "重新整理好友",
         "friends": "好友",
         "me": "我",
-        "favorite": "最愛",
+        "favorite": "收藏",
         "online": "上線",
         "active": "活躍",
         "offline": "離線",
@@ -456,8 +456,8 @@
                 "vrchat_team": "VRChat 團隊"
             },
             "actions": {
-                "favorite_tooltip": "添加到我的最愛",
-                "unfavorite_tooltip": "從我的最愛中移除",
+                "favorite_tooltip": "添加到我的收藏",
+                "unfavorite_tooltip": "從我的收藏中移除",
                 "refresh": "重新整理",
                 "copy_url": "複製玩家連結",
                 "invite": "邀請",
@@ -532,7 +532,7 @@
                 "sort_by_update": "依更新排序"
             },
             "favorite_worlds": {
-                "header": "最愛世界"
+                "header": "收藏世界"
             },
             "avatars": {
                 "header": "角色",
@@ -556,8 +556,8 @@
             },
             "actions": {
                 "delete_cache_tooltip": "從快取中刪除世界",
-                "favorite_tooltip": "添加到我的最愛",
-                "unfavorite_tooltip": "從我的最愛中移除",
+                "favorite_tooltip": "添加到我的收藏",
+                "unfavorite_tooltip": "從我的收藏中移除",
                 "refresh": "重新整理",
                 "new_instance": "新房間",
                 "make_home": "設為家點",
@@ -592,7 +592,7 @@
                 "copy_url": "複製連結",
                 "youtube_preview": "YouTube 預覽",
                 "players": "玩家人數",
-                "favorites": "最愛次數",
+                "favorites": "收藏次數",
                 "visits": "總綁訪次數",
                 "capacity": "最大玩家上限",
                 "heat": "熱度",
@@ -620,8 +620,8 @@
             },
             "actions": {
                 "delete_cache_tooltip": "從快取中刪除角色",
-                "favorite_tooltip": "添加到我的最愛",
-                "unfavorite_tooltip": "從我的最愛中移除",
+                "favorite_tooltip": "添加到我的收藏",
+                "unfavorite_tooltip": "從我的收藏中移除",
                 "refresh": "重新整理",
                 "select": "選擇角色",
                 "select_fallback": "選擇為備用角色",
@@ -712,6 +712,11 @@
                 "header": "原始資料"
             }
         },
+        "favorite": {
+            "header": "選擇群組",
+            "vrchat_favorites": "VRChat 收藏",
+            "local_favorites": "本地收藏"
+        },
         "social_status": {
             "header": "社交狀態",
             "history": "過去的社交狀態",
@@ -730,6 +735,78 @@
             "bio_placeholder": "在這裡介紹一下自己吧！",
             "add_link": "新增社交連結",
             "update": "更新"
+        },
+        "new_instance": {
+            "header": "新房間",
+            "access_type": "房間種類",
+            "access_type_public": "公開",
+            "access_type_group": "群組",
+            "access_type_friend_plus": "好友+",
+            "access_type_friend": "好友",
+            "access_type_invite_plus": "邀請+",
+            "access_type_invite": "邀請",
+            "region": "地區",
+            "region_usw": "美國西部",
+            "region_use": "美國東部",
+            "region_eu": "歐洲",
+            "region_jp": "日本",
+            "world_id": "世界 ID",
+            "instance_id": "房間 ID",
+            "instance_id_placeholder": "亂數",
+            "instance_creator": "房間建立者",
+            "instance_creator_placeholder": "選擇玩家",
+            "group_id": "群組 ID",
+            "location": "地點",
+            "url": "連結",
+            "copy_url": "複製連結",
+            "self_invite": "自我邀請",
+            "invite": "邀請",
+            "launch": "啟動"
+        },
+        "launch_options": {
+            "header": "啟動選項",
+            "description": "這些選項僅適用於高級玩家。",
+            "example": "變更 FPS 限制：--fps=<N> 例：",
+            "path_override": "VRChat 位置覆蓋",
+            "vrchat_docs": "VRChat 文檔",
+            "unity_manual": "Unity 手冊",
+            "save": "儲存"
+        },
+        "youtube_api": {
+            "header": "YouTube API",
+            "description": "輸入你的 YouTube API 金鑰（選擇性）",
+            "placeholder": "YouTube API 金鑰",
+            "guide": "教學",
+            "save": "儲存"
+        },
+        "vrcx_updater": {
+            "header": "VRCX 更新器",
+            "latest_version": "VRCX 已是最新版本。",
+            "ready_for_update": "已準備好安裝更新，重新啟動 VRCX 來套用更新。",
+            "download": "下載",
+            "install": "安裝"
+        },
+        "launch": {
+            "header": "啟動",
+            "url": "連結",
+            "short_url": "短連結",
+            "short_url_notice": "短網址會在一段時間後過期",
+            "location": "地點",
+            "copy_tooltip": "複製到剪貼簿",
+            "start_as_desktop": "以桌面模式啟動（無 VR）",
+            "info": "資訊",
+            "invite": "邀請",
+            "launch": "啟動"
+        },
+        "export_friends_list": {
+            "header": "匯出好友列表"
+        },
+        "export_own_avatars": {
+            "header": "匯出私有角色"
+        },
+        "discord_names": {
+            "header": "Discord 名稱",
+            "description": "點擊好友列表中的「讀取缺失的項目」來搜尋整個好友列表"
         }
     },
     "table": {
