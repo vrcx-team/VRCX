@@ -2728,7 +2728,7 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="notificationPositionDialog" :visible.sync="notificationPositionDialog.visible" title="Notification Position" width="400px")
                 div(style='font-size:12px;')
                     | Choose a notification position.
-                svg(version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 200" style="margin-top:15px;" xml:space="preserve")
+                .notification-position.svg(version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 200" style="margin-top:15px;" xml:space="preserve")
                     path(style="fill:black;" d="M291.89,5A3.11,3.11,0,0,1,295,8.11V160.64a3.11,3.11,0,0,1-3.11,3.11H8.11A3.11,3.11,0,0,1,5,160.64V8.11A3.11,3.11,0,0,1,8.11,5H291.89m0-5H8.11A8.11,8.11,0,0,0,0,8.11V160.64a8.11,8.11,0,0,0,8.11,8.11H291.89a8.11,8.11,0,0,0,8.11-8.11V8.11A8.11,8.11,0,0,0,291.89,0Z")
                     rect(style="fill:#c4c4c4;" x="5" y="5" width="290" height="158.75" rx="2.5")
                 el-radio-group(v-model="notificationPosition" size="mini" @change="changeNotificationPosition")
@@ -3330,7 +3330,7 @@ html
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setProfilePicOverride(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentProfilePic(image.id) }")
                                 img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="float:right;margin-top:5px")
-                                el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-paperclip" circle)
+                                el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteGalleryImage(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") Icons
@@ -3345,7 +3345,7 @@ html
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setVRCPlusIcon(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(image.id) }")
                                 img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="float:right;margin-top:5px")
-                                el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-paperclip" circle)
+                                el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
 
             //- dialog Table: Previous Instances User

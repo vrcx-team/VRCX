@@ -1953,6 +1953,8 @@ speechSynthesis.getVoices();
             Object.assign(ref, json);
         }
         ref.$isLabs = ref.tags.includes('system_labs');
+        ref.name = $app.replaceBioSymbols(ref.name);
+        ref.description = $app.replaceBioSymbols(ref.description);
         return ref;
     };
 
@@ -2508,6 +2510,8 @@ speechSynthesis.getVoices();
         } else {
             Object.assign(ref, json);
         }
+        ref.name = $app.replaceBioSymbols(ref.name);
+        ref.description = $app.replaceBioSymbols(ref.description);
         return ref;
     };
 
@@ -4168,6 +4172,22 @@ speechSynthesis.getVoices();
                 });
                 break;
 
+            case 'notification-v2-delete':
+                console.log('notification-v2-delete', content);
+                for (var id of content.ids) {
+                    this.$emit('NOTIFICATION:HIDE', {
+                        params: {
+                            notificationId: id
+                        }
+                    });
+                    this.$emit('NOTIFICATION:SEE', {
+                        params: {
+                            notificationId: id
+                        }
+                    });
+                }
+                break;
+
             case 'see-notification':
                 this.$emit('NOTIFICATION:SEE', {
                     params: {
@@ -4345,6 +4365,19 @@ speechSynthesis.getVoices();
             case 'group-joined':
             case 'group-left':
                 // content.groupId
+                break;
+            case 'group-member-updated':
+                // content {
+                //   groupId: string,
+                //   id: string,
+                //   isRepresenting: boolean,
+                //   isSubscribedToAnnouncements: boolean,
+                //   joinedAt: string,
+                //   membershipStatus: string,
+                //   roleIds: string[],
+                //   userId: string,
+                //   visibility: string
+                // }
                 break;
 
             default:
@@ -8083,8 +8116,15 @@ speechSynthesis.getVoices();
     $app.methods.quickSearchChange = function (value) {
         if (value) {
             if (value.startsWith('search:')) {
-                this.friendsListSearch = value.substr(7);
-                this.$refs.menu.activeIndex = 'friendsList';
+                var searchText = value.substr(7);
+                if (this.quickSearchItems.length > 1 && searchText.length) {
+                    this.friendsListSearch = searchText;
+                    this.$refs.menu.activeIndex = 'friendsList';
+                } else {
+                    this.$refs.menu.activeIndex = 'search';
+                    this.searchText = searchText;
+                    this.lookupUser({displayName: searchText});
+                }
             } else {
                 this.showUserDialog(value);
             }
@@ -8173,6 +8213,17 @@ speechSynthesis.getVoices();
                     return true;
                 }
                 if (String(row.avatarName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'Bio':
+                if (String(row.displayName).toUpperCase().includes(value)) {
+                    return true;
+                }
+                if (String(row.bio).toUpperCase().includes(value)) {
+                    return true;
+                }
+                if (String(row.previousBio).toUpperCase().includes(value)) {
                     return true;
                 }
                 return false;
@@ -17324,6 +17375,7 @@ speechSynthesis.getVoices();
                 message: 'VRCPlus required',
                 type: 'error'
             });
+            return;
         }
         var userIcon = '';
         if (fileId) {
@@ -19304,7 +19356,7 @@ speechSynthesis.getVoices();
         var imageName = args.json.name;
         var avatarNameRegex = /Avatar - (.*) - Image -/g.exec(imageName);
         if (avatarNameRegex) {
-            avatarName = avatarNameRegex[1];
+            avatarName = this.replaceBioSymbols(avatarNameRegex[1]);
         }
         var ownerId = args.json.ownerId;
         var avatarInfo = {
@@ -20275,6 +20327,7 @@ speechSynthesis.getVoices();
                 message: 'VRCPlus required',
                 type: 'error'
             });
+            return;
         }
         var profilePicOverride = '';
         if (fileId) {
@@ -23982,6 +24035,10 @@ speechSynthesis.getVoices();
         if (!url) {
             return;
         }
+        this.$message({
+            message: 'Downloading image...',
+            type: 'info'
+        });
         try {
             var response = await webApiService.execute({
                 url,
