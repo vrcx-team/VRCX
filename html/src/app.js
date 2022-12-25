@@ -9,7 +9,7 @@ import '@fontsource/noto-sans-jp';
 import Noty from 'noty';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
-import VueI18n from 'vue-i18n'
+import VueI18n from 'vue-i18n';
 import {DataTables} from 'vue-data-tables';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
@@ -211,8 +211,9 @@ speechSynthesis.getVoices();
 
     var i18n = new VueI18n({
         locale: 'en',
-        messages: localizedStrings,
-    })
+        fallbackLocale: 'en',
+        messages: localizedStrings
+    });
 
     var $appDarkStyle = document.createElement('link');
     $appDarkStyle.disabled = true;
@@ -24094,6 +24095,36 @@ speechSynthesis.getVoices();
                 }
             }
         );
+    };
+
+    // App: Language
+
+    $app.data.appLanguage = 'en';
+    if (configRepository.getString('VRCX_appLanguage')) {
+        $app.data.appLanguage = configRepository.getString('VRCX_appLanguage');
+        i18n.locale = $app.data.appLanguage;
+    } else {
+        AppApi.CurrentLanguage().then((result) => {
+            if (!result) {
+                console.error('Failed to get current language');
+                $app.changeAppLanguage('en');
+                return;
+            }
+            var lang = result.split('-')[0];
+            i18n.availableLocales.forEach((ref) => {
+                var refLang = ref.split('_')[0];
+                if (refLang === lang) {
+                    $app.changeAppLanguage(ref);
+                }
+            });
+        });
+    }
+
+    $app.methods.changeAppLanguage = function (language) {
+        console.log('Language changed:', language);
+        this.appLanguage = language;
+        i18n.locale = language;
+        configRepository.setString('VRCX_appLanguage', language);
     };
 
     $app = new Vue($app);

@@ -227,7 +227,8 @@
                     "sort_instance_users_by_time": "time",
                     "sort_instance_users_by_alphabet": "alphabetical",
                     "table_max_size": "Table Max Size",
-                    "page_size": "Page Size:"
+                    "page_size": "Page Size:",
+                    "language": "Language"
                 },
                 "timedate": {
                     "header": "Time/Date",

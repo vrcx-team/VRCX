@@ -1122,6 +1122,13 @@ html
                         div.options-container(style="margin-top:0")
                             span.header {{ $t("view.settings.appearance.appearance.header") }}
                             div.options-container-item
+                                span.name {{ $t('view.settings.appearance.appearance.language') }} 
+                                el-dropdown(@click.native.stop trigger="click" size="small")
+                                    el-button(size="mini")
+                                        span {{ $i18n.messages[appLanguage]?.language }} #[i.el-icon-arrow-down.el-icon--right]
+                                    el-dropdown-menu(#default="dropdown")
+                                        el-dropdown-item(v-for="(obj, language) in $i18n.messages" v-text="obj.language" @click.native="changeAppLanguage(language)") 
+                            div.options-container-item
                                 span.name {{ $t('view.settings.appearance.appearance.theme_mode') }}
                                 el-radio-group(v-model="themeMode" size="mini")
                                     el-radio-button(label="system") {{ $t('view.settings.appearance.appearance.theme_mode_system') }}
