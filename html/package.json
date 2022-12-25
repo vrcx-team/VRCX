@@ -22,6 +22,9 @@
   },
   "homepage": "https://github.com/pypy-vrc/VRCX#readme",
   "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/plugin-syntax-import-assertions": "^7.20.0",
+    "@babel/preset-env": "^7.20.2",
     "@fontsource/noto-sans-jp": "^4.5.12",
     "@fontsource/noto-sans-kr": "^4.5.12",
     "animate.css": "^4.1.1",
