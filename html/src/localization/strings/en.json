@@ -38,6 +38,19 @@
             "filter_placeholder": "Filter",
             "search_placeholder": "Search"
         },
+        "player_list": {
+            "capacity": "Capacoty",
+            "last_updated": "Last Updated",
+            "created_at": "Created At",
+            "photon": {
+                "current": "Current",
+                "previous": "Previous",
+                "search_placeholder": "Search",
+                "filter_placeholder": "Filter",
+                "chatbox_blacklist": "Chatbox Blacklist",
+                "status_tooltip": "VRCX Companion Status"
+            }
+        },
         "search": {
             "search_placeholder": "Search",
             "clear_results_tooltip": "Clear Search Results",
@@ -114,7 +127,8 @@
             "search_placeholder": "Search",
             "filter_placeholder": "Filter",
             "refresh_tooltip": "Refresh",
-            "clear_tooltip": "Clear Results"
+            "clear_tooltip": "Clear Results",
+            "cancel_tooltip": "Cancel"
         },
         "profile": {
             "profile": {
@@ -616,6 +630,11 @@
                 "fallback": "Fallback",
                 "cache": "Cache"
             },
+            "labels": {
+                "public": "(Public)",
+                "private": "(Private)",
+                "own": "(Own)"
+            },
             "actions": {
                 "delete_cache_tooltip": "Delete avatar from cache",
                 "favorite_tooltip": "Add to favorites",
@@ -805,6 +824,72 @@
         "discord_names": {
             "header": "Discord Names",
             "description": "Click load missing entries in the Friends List tab to search entire friends list"
+        },
+        "world_export": {
+            "header": "World Favorites Export"
+        },
+        "world_import": {
+            "header": "World Favorites Import",
+            "description": "Enter a list of world IDs",
+            "process_list": "Process List",
+            "process_progress": "Progress:",
+            "select_vrchat_group_placeholder": "Select Group",
+            "select_local_group_placeholder": "Select Group",
+            "import": "Import Worlds",
+            "cancel": "Cancel",
+            "import_progress": "Import Progress:",
+            "clear_table": "Clear Table",
+            "errors": "Errors:",
+            "clear_errors": "Clear Errors"
+        },
+        "avatar_export": {
+            "header": "Avatar Favorites Export"
+        },
+        "avatar_import": {
+            "header": "Avatar Favorites Import",
+            "description": "Enter a list of avatar IDs",
+            "process_list": "Process List",
+            "process_progress": "Progress:",
+            "select_group_placeholder": "Select Group",
+            "import": "Import Avatars",
+            "cancel": "Cancel",
+            "import_progress": "Import Progress:",
+            "clear_table": "Clear Table",
+            "errors": "Errors:",
+            "clear_errors": "Clear Errors"
+        },
+        "friend_export": {
+            "header": "Friend Favorites Export"
+        },
+        "friend_import": {
+            "header": "Friend Favorites Import",
+            "description": "Enter a list of user IDs",
+            "process_list": "Process List",
+            "process_progress": "Progress:",
+            "select_group_placeholder": "Select Group",
+            "import": "Import Friends",
+            "cancel": "Cancel",
+            "import_progress": "Import Progress:",
+            "clear_table": "Clear Table",
+            "errors": "Errors:",
+            "clear_errors": "Clear Errors"
+        },
+        "note_export": {
+            "header": "Note Export",
+            "description1": "This process will export all of your VRCX memos and import them into VRChat notes.",
+            "description2": "Be warned of the following limitations:",
+            "description3": "- API endpoint has a rate limit that requires a large delay between requests.",
+            "description4": "- Character limit of 256 per note.",
+            "description5": "- Swear words filter (no fun allowed).",
+            "description6": "- No new lines (they will replaced with a space).",
+            "description7": "- This will overwrite any existing VRChat notes for these users.",
+            "description8": "- Any edits made here wont affect VRCX memos but will affect VRChat notes once exported.",
+            "refresh": "Refresh",
+            "export": "Export",
+            "cancel": "Cancel",
+            "progress": "Progress:",
+            "errors": "Errors:",
+            "clear_errors": "Clear Errors"
         }
     },
     "table": {
@@ -830,7 +915,11 @@
             "status": "Status",
             "rank": "Rank",
             "language": "Language",
-            "bioLink": "Bio Links"
+            "bioLink": "Bio Links",
+            "date": "Date",
+            "user": "User",
+            "type": "Type",
+            "detail": "Detail"
         },
         "friendLog": {
             "date": "Date",
@@ -872,6 +961,15 @@
         "social_status": {
             "no": "No.",
             "status": "Status"
+        },
+        "import": {
+            "image": "Image",
+            "name": "Name",
+            "author": "Author",
+            "status": "Status",
+            "note": "Note",
+            "skip_export": "Skip Export",
+            "action": "Action"
         }
     }
 }

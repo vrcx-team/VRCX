@@ -90,15 +90,15 @@ html
                             div
                                 span.x-link(v-text="currentInstanceWorld.ref.authorName" @click="showUserDialog(currentInstanceWorld.ref.authorId)" style="color:#909399;font-family:monospace")
                             div(style="margin-top:5px")
-                                el-tag(v-if="currentInstanceWorld.ref.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px") Labs
-                                el-tag(v-else-if="currentInstanceWorld.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") Public
-                                el-tag(v-else-if="currentInstanceWorld.ref.releaseStatus === 'private'" type="danger" effect="plain" size="mini" style="margin-right:5px") Private
+                                el-tag(v-if="currentInstanceWorld.ref.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.world.tags.labs') }}
+                                el-tag(v-else-if="currentInstanceWorld.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.world.tags.public') }}
+                                el-tag(v-else-if="currentInstanceWorld.ref.releaseStatus === 'private'" type="danger" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.world.tags.private') }}
                                 el-tag.x-tag-platform-pc(v-if="currentInstanceWorld.isPC" type="info" effect="plain" size="mini" style="margin-right:5px") PC
                                 el-tag.x-tag-platform-quest(v-if="currentInstanceWorld.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px") Quest
                                 el-tag(type="info" effect="plain" size="mini" v-text="currentInstanceWorld.fileSize" style="margin-right:5px")
                                 el-tag(v-if="currentInstanceWorld.inCache" type="info" effect="plain" size="mini" style="margin-right:5px")
                                     span(v-text="currentInstanceWorld.cacheSize")
-                                    |  Cache
+                                    |  {{ $t('dialog.world.tags.cache') }}
                                 br
                                 location-world(:locationobject="currentInstanceLocation" :currentuserid="API.currentUser.id")
                                 span(v-if="lastLocation.playerList.size > 0" style="margin-left:5px")
@@ -110,29 +110,29 @@ html
                         div(style="display:flex;flex-direction:column;margin-left:20px")
                             .x-friend-item(style="cursor:default")
                                 .detail
-                                    span.name Capacity
+                                    span.name {{ $t('dialog.world.info.capacity') }}
                                     span.extra {{ currentInstanceWorld.ref.capacity | commaNumber }} ({{ currentInstanceWorld.ref.capacity * 2 | commaNumber }})
                             .x-friend-item(style="cursor:default")
                                 .detail
-                                    span.name Last Updated
+                                    span.name {{ $t('dialog.world.info.last_updated') }}
                                     span.extra {{ currentInstanceWorld.fileCreatedAt | formatDate('long') }}
                             .x-friend-item(style="cursor:default")
                                 .detail
-                                    span.name Created
+                                    span.name {{ $t('dialog.world.info.created_at') }}
                                     span.extra {{ currentInstanceWorld.ref.created_at | formatDate('long') }}
                     div.photon-event-table(v-if="photonLoggingEnabled")
                         div(style="position:absolute;width:600px;margin-left:195px;z-index:1")
-                            el-select(v-model="photonEventTableTypeFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1;width:220px" placeholder="Filter")
+                            el-select(v-model="photonEventTableTypeFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1;width:220px" :placeholder="$t('view.player_list.photon.filter_placeholder')")
                                 el-option(v-once v-for="type in photonEventTableTypeFilterList" :key="type" :label="type" :value="type")
-                            el-input(v-model="photonEventTableFilter" @input="photonEventTableFilterChange" placeholder="Search" clearable style="width:150px;margin-left:10px")
-                            el-button(@click="showChatboxBlacklistDialog" style="margin-left:10px") Chatbox Blacklist
-                            el-tooltip(placement="bottom" content="VRCX Companion Status" :disabled="hideTooltips")
+                            el-input(v-model="photonEventTableFilter" @input="photonEventTableFilterChange" :placeholder="$t('view.player_list.photon.search_placeholder')" clearable style="width:150px;margin-left:10px")
+                            el-button(@click="showChatboxBlacklistDialog" style="margin-left:10px") {{ $t('view.player_list.photon.chatbox_blacklist') }}
+                            el-tooltip(placement="bottom" :content="$t('view.player_list.photon.status_tooltip')" :disabled="hideTooltips")
                                 div(style="display:inline-block;margin-left:15px;font-size:14px;vertical-align:text-top;margin-top:1px")
                                     span(v-if="ipcEnabled && !photonEventIcon") 🟢
                                     span(v-else-if="ipcEnabled") ⚪
                                     span(v-else) 🔴
                         el-tabs(type="card")
-                            el-tab-pane(label="Current")
+                            el-tab-pane(:label="$t('view.player_list.photon.current')")
                                 data-tables(v-bind="photonEventTable" style="margin-bottom:10px")
                                     el-table-column(:label="$t('table.playerList.date')" prop="created_at" width="120")
                                         template(v-once #default="scope")
@@ -150,19 +150,19 @@ html
                                                 span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
                                                 | &nbsp;
                                                 span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
-                                                span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
-                                                span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
+                                                span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") {{ $t('dialog.avatar.labels.public') }}
+                                                span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") {{ $t('dialog.avatar.labels.private') }}
                                                 template(v-if="scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description")
                                                     |  - {{ scope.row.avatar.description }}
                                             template(v-else-if="scope.row.type === 'ChangeStatus'")
                                                 template(v-if="scope.row.status !== scope.row.previousStatus")
                                                     el-tooltip(placement="top")
                                                         template(#content)
-                                                            span(v-if="scope.row.previousStatus === 'active'") Active
-                                                            span(v-else-if="scope.row.previousStatus === 'join me'") Join Me
-                                                            span(v-else-if="scope.row.previousStatus === 'ask me'") Ask Me
-                                                            span(v-else-if="scope.row.previousStatus === 'busy'") Do Not Disturb
-                                                            span(v-else) Offline
+                                                            span(v-if="scope.row.previousStatus === 'active'") {{ $t('dialog.user.status.active') }}
+                                                            span(v-else-if="scope.row.previousStatus === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                                            span(v-else-if="scope.row.previousStatus === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                                            span(v-else-if="scope.row.previousStatus === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                                            span(v-else) {{ $t('dialog.user.status.offline') }}
                                                         i.x-user-status(:class="statusClass(scope.row.previousStatus)")
                                                     span
                                                         i.el-icon-right
@@ -182,11 +182,11 @@ html
                                                 span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
                                                 | &nbsp;
                                                 span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
-                                                span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
-                                                span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
+                                                span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") {{ $t('dialog.avatar.labels.public') }}
+                                                span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") {{ $t('dialog.avatar.labels.private') }}
                                             span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
                                             span(v-else v-text="scope.row.text")
-                            el-tab-pane(label="Previous")
+                            el-tab-pane(:label="$t('view.player_list.photon.previous')")
                                 data-tables(v-bind="photonEventTablePrevious" style="margin-bottom:10px")
                                     el-table-column(:label="$t('table.playerList.date')" prop="created_at" width="120")
                                         template(v-once #default="scope")
@@ -194,11 +194,11 @@ html
                                                 template(#content)
                                                     span {{ scope.row.created_at | formatDate('long') }}
                                                 span {{ scope.row.created_at | formatDate('short') }}
-                                    el-table-column(label="User" prop="photonId" width="160")
+                                    el-table-column(:label="$t('table.playerList.user')" prop="photonId" width="160")
                                         template(v-once #default="scope")
                                             span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)" style="padding-right:10px")
-                                    el-table-column(label="Type" prop="type" width="140")
-                                    el-table-column(label="Details" prop="text")
+                                    el-table-column(:label="$t('table.playerList.type')" prop="type" width="140")
+                                    el-table-column(:label="$t('table.playerList.detail')" prop="text")
                                         template(v-once #default="scope")
                                             template(v-if="scope.row.type === 'ChangeAvatar'")
                                                 span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
@@ -212,21 +212,21 @@ html
                                                 template(v-if="scope.row.status !== scope.row.previousStatus")
                                                     el-tooltip(placement="top")
                                                         template(#content)
-                                                            span(v-if="scope.row.previousStatus === 'active'") Active
-                                                            span(v-else-if="scope.row.previousStatus === 'join me'") Join Me
-                                                            span(v-else-if="scope.row.previousStatus === 'ask me'") Ask Me
-                                                            span(v-else-if="scope.row.previousStatus === 'busy'") Do Not Disturb
-                                                            span(v-else) Offline
+                                                            span(v-if="scope.row.previousStatus === 'active'") {{ $t('dialog.user.status.active') }}
+                                                            span(v-else-if="scope.row.previousStatus === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                                            span(v-else-if="scope.row.previousStatus === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                                            span(v-else-if="scope.row.previousStatus === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                                            span(v-else) {{ $t('dialog.user.status.offline') }}
                                                         i.x-user-status(:class="statusClass(scope.row.previousStatus)")
                                                     span
                                                         i.el-icon-right
                                                     el-tooltip(placement="top")
                                                         template(#content)
-                                                            span(v-if="scope.row.status === 'active'") Active
-                                                            span(v-else-if="scope.row.status === 'join me'") Join Me
-                                                            span(v-else-if="scope.row.status === 'ask me'") Ask Me
-                                                            span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
-                                                            span(v-else) Offline
+                                                            span(v-if="scope.row.status === 'active'") {{ $t('dialog.user.status.active') }}
+                                                            span(v-else-if="scope.row.status === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                                            span(v-else-if="scope.row.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                                            span(v-else-if="scope.row.status === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                                            span(v-else) {{ $t('dialog.user.status.offline') }}
                                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                                 span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription" style="margin-left:5px")
                                             span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
@@ -347,11 +347,11 @@ html
                                 template(v-else-if="scope.row.type === 'Status'")
                                     el-tooltip(placement="top")
                                         template(#content)
-                                            span(v-if="scope.row.previousStatus === 'active'") Active
-                                            span(v-else-if="scope.row.previousStatus === 'join me'") Join Me
-                                            span(v-else-if="scope.row.previousStatus === 'ask me'") Ask Me
-                                            span(v-else-if="scope.row.previousStatus === 'busy'") Do Not Disturb
-                                            span(v-else) Offline
+                                            span(v-if="scope.row.previousStatus === 'active'") {{ $t('dialog.user.status.active') }}
+                                            span(v-else-if="scope.row.previousStatus === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                            span(v-else-if="scope.row.previousStatus === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                            span(v-else-if="scope.row.previousStatus === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                            span(v-else) {{ $t('dialog.user.status.offline') }}
                                         i.x-user-status(:class="statusClass(scope.row.previousStatus)")
                                     span(v-text="scope.row.previousStatusDescription")
                                     br
@@ -359,11 +359,11 @@ html
                                         i.el-icon-right
                                     el-tooltip(placement="top")
                                         template(#content)
-                                            span(v-if="scope.row.status === 'active'") Active
-                                            span(v-else-if="scope.row.status === 'join me'") Join Me
-                                            span(v-else-if="scope.row.status === 'ask me'") Ask Me
-                                            span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
-                                            span(v-else) Offline
+                                            span(v-if="scope.row.status === 'active'") {{ $t('dialog.user.status.active') }}
+                                            span(v-else-if="scope.row.status === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                            span(v-else-if="scope.row.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                            span(v-else-if="scope.row.status === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                            span(v-else) {{ $t('dialog.user.status.offline') }}
                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                     span(v-text="scope.row.statusDescription")
                                 template(v-else-if="scope.row.type === 'Bio'")
@@ -391,30 +391,30 @@ html
                                 template(v-if="scope.row.statusDescription === scope.row.previousStatusDescription")
                                     el-tooltip(placement="top")
                                         template(#content)
-                                            span(v-if="scope.row.previousStatus === 'active'") Active
-                                            span(v-else-if="scope.row.previousStatus === 'join me'") Join Me
-                                            span(v-else-if="scope.row.previousStatus === 'ask me'") Ask Me
-                                            span(v-else-if="scope.row.previousStatus === 'busy'") Do Not Disturb
-                                            span(v-else) Offline
+                                            span(v-if="scope.row.previousStatus === 'active'") {{ $t('dialog.user.status.active') }}
+                                            span(v-else-if="scope.row.previousStatus === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                            span(v-else-if="scope.row.previousStatus === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                            span(v-else-if="scope.row.previousStatus === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                            span(v-else) {{ $t('dialog.user.status.offline') }}
                                         i.x-user-status(:class="statusClass(scope.row.previousStatus)")
                                     span
                                         i.el-icon-right
                                     el-tooltip(placement="top")
                                         template(#content)
-                                            span(v-if="scope.row.status === 'active'") Active
-                                            span(v-else-if="scope.row.status === 'join me'") Join Me
-                                            span(v-else-if="scope.row.status === 'ask me'") Ask Me
-                                            span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
-                                            span(v-else) Offline
+                                            span(v-if="scope.row.status === 'active'") {{ $t('dialog.user.status.active') }}
+                                            span(v-else-if="scope.row.status === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                            span(v-else-if="scope.row.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                            span(v-else-if="scope.row.status === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                            span(v-else) {{ $t('dialog.user.status.offline') }}
                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                 template(v-else)
                                     el-tooltip(placement="top")
                                         template(#content)
-                                            span(v-if="scope.row.status === 'active'") Online
-                                            span(v-else-if="scope.row.status === 'join me'") Join Me
-                                            span(v-else-if="scope.row.status === 'ask me'") Ask Me
-                                            span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
-                                            span(v-else) Offline
+                                            span(v-if="scope.row.status === 'active'") {{ $t('dialog.user.status.active') }}
+                                            span(v-else-if="scope.row.status === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                            span(v-else-if="scope.row.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                            span(v-else-if="scope.row.status === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                            span(v-else) {{ $t('dialog.user.status.offline') }}
                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                     span  ‎
                                     span(v-text="scope.row.statusDescription")
@@ -3421,7 +3421,7 @@ html
                             span(v-text="scope.row.count")
 
             //- dialog: export world list
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="worldExportDialogRef" :visible.sync="worldExportDialogVisible" title="World Favorites Export" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="worldExportDialogRef" :visible.sync="worldExportDialogVisible" :title="$t('dialog.world_export.header')" width="650px")
                 el-dropdown(@click.native.stop trigger="click" size="small")
                     el-button(size="mini")
                         span(v-if="worldExportFavoriteGroup") {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{ worldExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
@@ -3442,60 +3442,60 @@ html
                 el-input(type="textarea" v-if="worldExportDialogVisible" v-model="worldExportContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: World import dialog
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="worldImportDialog" :visible.sync="worldImportDialog.visible" title="World Favorites Import" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="worldImportDialog" :visible.sync="worldImportDialog.visible" :title="$t('dialog.world_import.header')" width="650px")
                 div(style="font-size:12px")
-                    | Enter a list of world IDs
+                    | {{ $t('dialog.world_import.description') }}
                 el-input(type="textarea" v-model="worldImportDialog.input" size="mini" rows="10" resize="none" style="margin-top:15px")
-                el-button(size="small" @click="processWorldImportList" :disabled="!worldImportDialog.input") Process List
-                span(v-if="worldImportDialog.progress" style="margin-top:10px") #[i.el-icon-loading(style="margin-right:5px")] Progress: {{ worldImportDialog.progress }}/{{ worldImportDialog.progressTotal }}
+                el-button(size="small" @click="processWorldImportList" :disabled="!worldImportDialog.input") {{ $t('dialog.world_import.process_list') }}
+                span(v-if="worldImportDialog.progress" style="margin-top:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.world_import.process_progress') }} {{ worldImportDialog.progress }}/{{ worldImportDialog.progressTotal }}
                 br
                 el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px")
                     el-button(size="mini")
                         span(v-if="worldImportDialog.worldImportFavoriteGroup") {{ worldImportDialog.worldImportFavoriteGroup.displayName }} ({{ worldImportDialog.worldImportFavoriteGroup.count }}/{{ worldImportDialog.worldImportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
-                        span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) {{ $t('dialog.world_import.select_vrchat_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default="dropdown")
                         template(v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
                 el-dropdown(@click.native.stop trigger="click" size="small" style="margin:5px")
                     el-button(size="mini")
                         span(v-if="worldImportDialog.worldImportLocalFavoriteGroup") {{ worldImportDialog.worldImportLocalFavoriteGroup }} ({{ getLocalWorldFavoriteGroupLength(worldImportDialog.worldImportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
-                        span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) {{ $t('dialog.world_import.select_local_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default="dropdown")
                         template(v-for="group in localWorldFavoriteGroups" :key="group")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldImportLocalGroup(group)" ) {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
-                el-button(size="small" @click="importWorldImportTable" style="margin:5px" :disabled="worldImportTable.data.length === 0 || (!worldImportDialog.worldImportFavoriteGroup && !worldImportDialog.worldImportLocalFavoriteGroup)") Import Worlds
-                el-button(v-if="worldImportDialog.loading" size="small" @click="cancelWorldImport" style="margin-top:10px") Cancel
+                el-button(size="small" @click="importWorldImportTable" style="margin:5px" :disabled="worldImportTable.data.length === 0 || (!worldImportDialog.worldImportFavoriteGroup && !worldImportDialog.worldImportLocalFavoriteGroup)") {{ $t('dialog.world_import.import') }}
+                el-button(v-if="worldImportDialog.loading" size="small" @click="cancelWorldImport" style="margin-top:10px") {{ $t('dialog.world_import.cancel') }}
                 span(v-if="worldImportDialog.worldImportFavoriteGroup") {{ worldImportTable.data.length }} / {{ worldImportDialog.worldImportFavoriteGroup.capacity - worldImportDialog.worldImportFavoriteGroup.count }}
-                span(v-if="worldImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] Import Progress: {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
+                span(v-if="worldImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.world_import.import_progress') }} {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
                 br
-                el-button(size="small" @click="clearWorldImportTable") Clear Table
+                el-button(size="small" @click="clearWorldImportTable") {{ $t('dialog.world_import.clear_table') }}
                 template(v-if="worldImportDialog.errors")
-                    el-button(size="small" @click="worldImportDialog.errors = ''" style="margin-left:5px") Clear Errors
-                    h2(style="font-weight:bold;margin:0") Errors:
+                    el-button(size="small" @click="worldImportDialog.errors = ''" style="margin-left:5px") {{ $t('dialog.world_import.clear_errors') }}
+                    h2(style="font-weight:bold;margin:0") {{ $t('dialog.world_import.errors') }}
                     pre(v-text="worldImportDialog.errors" style="white-space:pre-wrap;font-size:12px")
                 data-tables(v-if="worldImportDialog.visible" v-bind="worldImportTable" v-loading="worldImportDialog.loading" style="margin-top:10px")
-                    el-table-column(label="Image" width="70" prop="thumbnailImageUrl")
+                    el-table-column(:label="$t('table.import.image')" width="70" prop="thumbnailImageUrl")
                         template(v-once #default="scope")
                             el-popover(placement="right" height="500px" trigger="hover")
                                 img.friends-list-avatar(slot="reference" v-lazy="scope.row.thumbnailImageUrl")
                                 img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(scope.row.imageUrl)")
-                    el-table-column(label="Name" prop="name")
+                    el-table-column(:label="$t('table.import.name')" prop="name")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.name" @click="showWorldDialog(scope.row.id)")
-                    el-table-column(label="Author" width="120" prop="authorName")
+                    el-table-column(:label="$t('table.import.author')" width="120" prop="authorName")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.authorName" @click="showUserDialog(scope.row.authorId)")
-                    el-table-column(label="Status" width="70" prop="releaseStatus")
+                    el-table-column(:label="$t('table.import.status')" width="70" prop="releaseStatus")
                         template(v-once #default="scope")
                             span(v-text="scope.row.releaseStatus" v-if="scope.row.releaseStatus === 'public'" style="color:#67c23a")
                             span(v-text="scope.row.releaseStatus" v-else-if="scope.row.releaseStatus === 'private'" style="color:#f56c6c")
                             span(v-text="scope.row.releaseStatus" v-else)
-                    el-table-column(label="Action" width="90" align="right")
+                    el-table-column(:label="$t('table.import.action')" width="90" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="deleteItemWorldImport(scope.row)")
 
             //- dialog: export avatar list
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarExportDialogRef" :visible.sync="avatarExportDialogVisible" title="Avatar Favorites Export" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarExportDialogRef" :visible.sync="avatarExportDialogVisible" :title="$t('dialog.avatar_export.header')" width="650px")
                 el-dropdown(@click.native.stop trigger="click" size="small")
                     el-button(size="mini")
                         span(v-if="avatarExportFavoriteGroup") {{ avatarExportFavoriteGroup.displayName }} ({{ avatarExportFavoriteGroup.count }}/{{ avatarExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
@@ -3508,53 +3508,53 @@ html
                 el-input(type="textarea" v-if="avatarExportDialogVisible" v-model="avatarExportContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: Avatar import dialog
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarImportDialog" :visible.sync="avatarImportDialog.visible" title="Avatar Favorites Import" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarImportDialog" :visible.sync="avatarImportDialog.visible" :title="$t('dialog.avatar_import.header')" width="650px")
                 div(style="font-size:12px")
-                    | Enter a list of avatar IDs
+                    | {{ $t('dialog.avatar_import.description') }}
                 el-input(type="textarea" v-model="avatarImportDialog.input" size="mini" rows="10" resize="none" style="margin-top:15px")
-                el-button(size="small" @click="processAvatarImportList" :disabled="!avatarImportDialog.input") Process List
-                span(v-if="avatarImportDialog.progress" style="margin-top:10px") #[i.el-icon-loading(style="margin-right:5px")] Progress: {{ avatarImportDialog.progress }}/{{ avatarImportDialog.progressTotal }}
+                el-button(size="small" @click="processAvatarImportList" :disabled="!avatarImportDialog.input") {{ $t('dialog.avatar_import.process_list') }}
+                span(v-if="avatarImportDialog.progress" style="margin-top:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.avatar_import.process_progress') }} {{ avatarImportDialog.progress }}/{{ avatarImportDialog.progressTotal }}
                 br
                 el-dropdown(@click.native.stop trigger="click" size="small")
                     el-button(size="mini")
                         span(v-if="avatarImportDialog.avatarImportFavoriteGroup") {{ avatarImportDialog.avatarImportFavoriteGroup.displayName }} ({{ avatarImportDialog.avatarImportFavoriteGroup.count }}/{{ avatarImportDialog.avatarImportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
-                        span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) {{ $t('dialog.avatar_import.select_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default="dropdown")
                         template(v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                el-button(size="small" @click="importAvatarImportTable" style="margin:5px" :disabled="avatarImportTable.data.length === 0 || !avatarImportDialog.avatarImportFavoriteGroup") Import Avatars
-                el-button(v-if="avatarImportDialog.loading" size="small" @click="cancelAvatarImport" style="margin-top:10px") Cancel
+                el-button(size="small" @click="importAvatarImportTable" style="margin:5px" :disabled="avatarImportTable.data.length === 0 || !avatarImportDialog.avatarImportFavoriteGroup") {{ $t('dialog.avatar_import.import') }}
+                el-button(v-if="avatarImportDialog.loading" size="small" @click="cancelAvatarImport" style="margin-top:10px") {{ $t('dialog.avatar_import.cancel') }}
                 span(v-if="avatarImportDialog.avatarImportFavoriteGroup") {{ avatarImportTable.data.length }} / {{ avatarImportDialog.avatarImportFavoriteGroup.capacity - avatarImportDialog.avatarImportFavoriteGroup.count }}
-                span(v-if="avatarImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] Import Progress: {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
+                span(v-if="avatarImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.avatar_import.import_progress') }} {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
                 br
-                el-button(size="small" @click="clearAvatarImportTable") Clear Table
+                el-button(size="small" @click="clearAvatarImportTable") {{ $t('dialog.avatar_import.clear_table') }}
                 template(v-if="avatarImportDialog.errors")
-                    el-button(size="small" @click="avatarImportDialog.errors = ''" style="margin-left:5px") Clear Errors
-                    h2(style="font-weight:bold;margin:0") Errors:
+                    el-button(size="small" @click="avatarImportDialog.errors = ''" style="margin-left:5px") {{ $t('dialog.avatar_import.clear_errors') }}
+                    h2(style="font-weight:bold;margin:0") {{ $t('dialog.avatar_import.errors') }}
                     pre(v-text="avatarImportDialog.errors" style="white-space:pre-wrap;font-size:12px")
                 data-tables(v-if="avatarImportDialog.visible" v-bind="avatarImportTable" v-loading="avatarImportDialog.loading" style="margin-top:10px")
-                    el-table-column(label="Image" width="70" prop="thumbnailImageUrl")
+                    el-table-column(:label="$t('table.import.image')" width="70" prop="thumbnailImageUrl")
                         template(v-once #default="scope")
                             el-popover(placement="right" height="500px" trigger="hover")
                                 img.friends-list-avatar(slot="reference" v-lazy="scope.row.thumbnailImageUrl")
                                 img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(scope.row.imageUrl)")
-                    el-table-column(label="Name" prop="name")
+                    el-table-column(:label="$t('table.import.name')" prop="name")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.name" @click="showAvatarDialog(scope.row.id)")
-                    el-table-column(label="Author" width="120" prop="authorName")
+                    el-table-column(:label="$t('table.import.author')" width="120" prop="authorName")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.authorName" @click="showUserDialog(scope.row.authorId)")
-                    el-table-column(label="Status" width="70" prop="releaseStatus")
+                    el-table-column(:label="$t('table.import.status')" width="70" prop="releaseStatus")
                         template(v-once #default="scope")
                             span(v-text="scope.row.releaseStatus" v-if="scope.row.releaseStatus === 'public'" style="color:#67c23a")
                             span(v-text="scope.row.releaseStatus" v-else-if="scope.row.releaseStatus === 'private'" style="color:#f56c6c")
                             span(v-text="scope.row.releaseStatus" v-else)
-                    el-table-column(label="Action" width="90" align="right")
+                    el-table-column(:label="$t('table.import.action')" width="90" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="deleteItemAvatarImport(scope.row)")
 
             //- dialog: export friend list
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="friendExportDialogRef" :visible.sync="friendExportDialogVisible" title="Friend Favorites Export" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="friendExportDialogRef" :visible.sync="friendExportDialogVisible" :title="$t('dialog.friend_export.header')" width="650px")
                 el-dropdown(@click.native.stop trigger="click" size="small")
                     el-button(size="mini")
                         span(v-if="friendExportFavoriteGroup") {{ friendExportFavoriteGroup.displayName }} ({{ friendExportFavoriteGroup.count }}/{{ friendExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
@@ -3567,75 +3567,75 @@ html
                 el-input(type="textarea" v-if="friendExportDialogVisible" v-model="friendExportContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: Friend import dialog
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="friendImportDialog" :visible.sync="friendImportDialog.visible" title="Friend Favorites Import" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="friendImportDialog" :visible.sync="friendImportDialog.visible" :title="$t('dialog.friend_import.header')" width="650px")
                 div(style="font-size:12px")
-                    | Enter a list of user IDs
+                    | {{ $t('dialog.friend_import.description') }}
                 el-input(type="textarea" v-model="friendImportDialog.input" size="mini" rows="10" resize="none" style="margin-top:15px")
-                el-button(size="small" @click="processFriendImportList" :disabled="!friendImportDialog.input") Process List
-                span(v-if="friendImportDialog.progress" style="margin-top:10px") #[i.el-icon-loading(style="margin-right:5px")] Progress: {{ friendImportDialog.progress }}/{{ friendImportDialog.progressTotal }}
+                el-button(size="small" @click="processFriendImportList" :disabled="!friendImportDialog.input") {{ $t('dialog.friend_import.process_list') }}
+                span(v-if="friendImportDialog.progress" style="margin-top:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.friend_import.process_progress') }} {{ friendImportDialog.progress }}/{{ friendImportDialog.progressTotal }}
                 br
                 el-dropdown(@click.native.stop trigger="click" size="small")
                     el-button(size="mini")
                         span(v-if="friendImportDialog.friendImportFavoriteGroup") {{ friendImportDialog.friendImportFavoriteGroup.displayName }} ({{ friendImportDialog.friendImportFavoriteGroup.count }}/{{ friendImportDialog.friendImportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
-                        span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) {{ $t('dialog.friend_import.select_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default="dropdown")
                         template(v-for="groupAPI in API.favoriteFriendGroups" :key="groupAPI.name")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectFriendImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                el-button(size="small" @click="importFriendImportTable" style="margin:5px" :disabled="friendImportTable.data.length === 0 || !friendImportDialog.friendImportFavoriteGroup") Import Friends
-                el-button(v-if="friendImportDialog.loading" size="small" @click="cancelFriendImport" style="margin-top:10px") Cancel
+                el-button(size="small" @click="importFriendImportTable" style="margin:5px" :disabled="friendImportTable.data.length === 0 || !friendImportDialog.friendImportFavoriteGroup") {{ $t('dialog.friend_import.import') }}
+                el-button(v-if="friendImportDialog.loading" size="small" @click="cancelFriendImport" style="margin-top:10px") {{ $t('dialog.friend_import.cancel') }}
                 span(v-if="friendImportDialog.friendImportFavoriteGroup") {{ friendImportTable.data.length }} / {{ friendImportDialog.friendImportFavoriteGroup.capacity - friendImportDialog.friendImportFavoriteGroup.count }}
-                span(v-if="friendImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] Import Progress: {{ friendImportDialog.importProgress }}/{{ friendImportDialog.importProgressTotal }}
+                span(v-if="friendImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.friend_import.import_progress') }} {{ friendImportDialog.importProgress }}/{{ friendImportDialog.importProgressTotal }}
                 br
-                el-button(size="small" @click="clearFriendImportTable") Clear Table
+                el-button(size="small" @click="clearFriendImportTable") {{ $t('dialog.friend_import.clear_table') }}
                 template(v-if="friendImportDialog.errors")
-                    el-button(size="small" @click="friendImportDialog.errors = ''" style="margin-left:5px") Clear Errors
-                    h2(style="font-weight:bold;margin:0") Errors:
+                    el-button(size="small" @click="friendImportDialog.errors = ''" style="margin-left:5px") {{ $t('dialog.friend_import.clear_errors') }}
+                    h2(style="font-weight:bold;margin:0") {{ $t('dialog.friend_import.errors') }}
                     pre(v-text="friendImportDialog.errors" style="white-space:pre-wrap;font-size:12px")
                 data-tables(v-if="friendImportDialog.visible" v-bind="friendImportTable" v-loading="friendImportDialog.loading" style="margin-top:10px")
-                    el-table-column(label="Image" width="70" prop="currentAvatarThumbnailImageUrl")
+                    el-table-column(:label="$t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl")
                         template(v-once #default="scope")
                             el-popover(placement="right" height="500px" trigger="hover")
                                 img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row)")
                                 img.friends-list-avatar(v-lazy="userImageFull(scope.row)" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(userImageFull(scope.row))")
-                    el-table-column(label="Name" prop="displayName")
+                    el-table-column(:label="$t('table.import.name')" prop="displayName")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.displayName" @click="showUserDialog(scope.row.id)")
-                    el-table-column(label="Action" width="90" align="right")
+                    el-table-column(:label="$t('table.import.action')" width="90" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="deleteItemFriendImport(scope.row)")
 
             //- dialog: Note export dialog
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="noteExportDialog" :visible.sync="noteExportDialog.visible" title="Note Export" width="1000px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="noteExportDialog" :visible.sync="noteExportDialog.visible" :title="$t('dialog.note_export.header')" width="1000px")
                 div(style="font-size:12px")
-                    | This process will export all of your VRCX memos and import them into VRChat notes. #[br]
-                    | Be warned of the following limitations: #[br]
-                    | - API endpoint has a rate limit that requires a large delay between requests. #[br]
-                    | - Character limit of 256 per note. #[br]
-                    | - Swear words filter (no fun allowed). #[br]
-                    | - No new lines (they will replaced with a space). #[br]
-                    | - This will overwrite any existing VRChat notes for these users. #[br]
-                    | - Any edits made here wont affect VRCX memos but will affect VRChat notes once exported. #[br]
-                el-button(size="small" @click="updateNoteExportDialog" :disabled="noteExportDialog.loading" style="margin-top:10px") Refresh
-                el-button(size="small" @click="exportNoteExport" :disabled="noteExportDialog.loading" style="margin-top:10px") Export
-                el-button(v-if="noteExportDialog.loading" size="small" @click="cancelNoteExport" style="margin-top:10px") Cancel
-                span(v-if="noteExportDialog.loading" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] Progress: {{ noteExportDialog.progress }}/{{ noteExportDialog.progressTotal }}
+                    | {{ $t('dialog.note_export.description1') }} #[br]
+                    | {{ $t('dialog.note_export.description2') }} #[br]
+                    | {{ $t('dialog.note_export.description3') }} #[br]
+                    | {{ $t('dialog.note_export.description4') }} #[br]
+                    | {{ $t('dialog.note_export.description5') }} #[br]
+                    | {{ $t('dialog.note_export.description6') }} #[br]
+                    | {{ $t('dialog.note_export.description7') }} #[br]
+                    | {{ $t('dialog.note_export.description8') }} #[br]
+                el-button(size="small" @click="updateNoteExportDialog" :disabled="noteExportDialog.loading" style="margin-top:10px") {{ $t('dialog.note_export.refresh') }}
+                el-button(size="small" @click="exportNoteExport" :disabled="noteExportDialog.loading" style="margin-top:10px") {{ $t('dialog.note_export.export') }}
+                el-button(v-if="noteExportDialog.loading" size="small" @click="cancelNoteExport" style="margin-top:10px") {{ $t('dialog.note_export.cancel') }}
+                span(v-if="noteExportDialog.loading" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.note_export.progress') }} {{ noteExportDialog.progress }}/{{ noteExportDialog.progressTotal }}
                 template(v-if="noteExportDialog.errors")
-                    el-button(size="small" @click="noteExportDialog.errors = ''") Clear Errors
-                    h2(style="font-weight:bold;margin:0") Errors:
+                    el-button(size="small" @click="noteExportDialog.errors = ''") {{ $t('dialog.note_export.clear_errors') }}
+                    h2(style="font-weight:bold;margin:0") {{ $t('dialog.note_export.errors') }}
                     pre(v-text="noteExportDialog.errors" style="white-space:pre-wrap;font-size:12px")
                 data-tables(v-if="noteExportDialog.visible" v-bind="noteExportTable" v-loading="noteExportDialog.loading" style="margin-top:10px")
-                    el-table-column(label="Image" width="70" prop="currentAvatarThumbnailImageUrl")
+                    el-table-column(:label="$t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl")
                         template(v-once #default="scope")
                             el-popover(placement="right" height="500px" trigger="hover")
                                 img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row.ref)")
                                 img.friends-list-avatar(v-lazy="userImageFull(scope.row.ref)" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(userImageFull(scope.row.ref))")
-                    el-table-column(label="Name" width="170" prop="name")
+                    el-table-column(:label="$t('table.import.name')" width="170" prop="name")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.name" @click="showUserDialog(scope.row.id)")
-                    el-table-column(label="Note" prop="memo")
+                    el-table-column(:label="$t('table.import.note')" prop="memo")
                         template(v-once #default="scope")
                             el-input(v-model="scope.row.memo" type="textarea" maxlength="256" show-word-limit :rows="2" :autosize="{ minRows: 1, maxRows: 10 }" size="mini" resize="none")
-                    el-table-column(label="Skip Export" width="90" align="right")
+                    el-table-column(:label="$t('table.import.skip_export')" width="90" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="removeFromNoteExportTable(scope.row)")
 

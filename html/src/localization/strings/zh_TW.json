@@ -38,6 +38,16 @@
             "filter_placeholder": "篩選遊戲紀錄",
             "search_placeholder": "搜尋遊戲紀錄"
         },
+        "player_list": {
+            "photon": {
+                "current": "目前",
+                "previous": "上一個",
+                "search_placeholder": "搜尋",
+                "filter_placeholder": "篩選",
+                "chatbox_blacklist": "聊天框黑名單",
+                "status_tooltip": "VRCX Companion 狀態"
+            }
+        },
         "search": {
             "search_placeholder": "搜尋",
             "clear_results_tooltip": "清除搜尋結果",
@@ -411,7 +421,7 @@
                         "filter_everyone": "所有人",
                         "message_timeout": "訊息時長"
                     },
-                    "event_hud": {
+                    "timeout_hud": {
                         "header": "玩家愈時 HUD",
                         "enable": "啟用",
                         "enable_tooltip": "需要啟用 SteamVR 疊層選項",
@@ -467,7 +477,7 @@
                 "invite_to_group": "邀情到群組",
                 "manage_gallery_icon": "管理相簿 / 圖示",
                 "accept_friend_request": "接受好友邀請",
-                "deny_friend_request": "回絕好友邀請",
+                "decline_friend_request": "回絕好友邀請",
                 "cancel_friend_request": "取消好友邀請",
                 "send_friend_request": "傳送好友邀請",
                 "show_avatar_author": "顯示角色作者",
@@ -611,12 +621,16 @@
             }
         },
         "avatar": {
-            "header": "角色",
             "tags": {
                 "public": "公開",
                 "private": "私人",
                 "fallback": "備用",
                 "cache": "快取"
+            },
+            "labels": {
+                "public": "（公開）",
+                "private": "（私人）",
+                "own": "（自有）"
             },
             "actions": {
                 "delete_cache_tooltip": "從快取中刪除角色",
@@ -807,6 +821,72 @@
         "discord_names": {
             "header": "Discord 名稱",
             "description": "點擊好友列表中的「讀取缺失的項目」來搜尋整個好友列表"
+        },
+        "world_export": {
+            "header": "世界收藏匯出"
+        },
+        "world_import": {
+            "header": "世界收藏匯入",
+            "description": "輸入世界 ID 列表",
+            "process_list": "讀取列表",
+            "process_progress": "進度：",
+            "select_vrchat_group_placeholder": "選擇 VRChat 群組",
+            "select_local_group_placeholder": "選擇本地群組",
+            "import": "匯入世界",
+            "cancel": "取消",
+            "import_progress": "匯入進度：",
+            "clear_table": "清除表格",
+            "errors": "錯誤：",
+            "clear_errors": "清除錯誤"
+        },
+        "avatar_export": {
+            "header": "角色收藏匯出"
+        },
+        "avatar_import": {
+            "header": "角色收藏匯入",
+            "description": "輸入角色 ID 列表",
+            "process_list": "讀取列表",
+            "process_progress": "進度：",
+            "select_group_placeholder": "選擇群組",
+            "import": "匯入角色",
+            "cancel": "取消",
+            "import_progress": "匯入進度：",
+            "clear_table": "清除表格",
+            "errors": "錯誤：",
+            "clear_errors": "清除錯誤"
+        },
+        "friend_export": {
+            "header": "好友收藏匯出"
+        },
+        "friend_import": {
+            "header": "好友收藏匯入",
+            "description": "輸入玩家 ID 列表",
+            "process_list": "讀取列表",
+            "process_progress": "進度：",
+            "select_group_placeholder": "選擇群組",
+            "import": "匯入好友",
+            "cancel": "取消",
+            "import_progress": "匯入進度：",
+            "clear_table": "清除表格",
+            "errors": "錯誤：",
+            "clear_errors": "清除錯誤"
+        },
+        "note_export": {
+            "header": "備註匯出",
+            "description1": "這個過程將匯出你所有的 VRCX 備忘錄並將它們匯入到 VRChat 備註中。",
+            "description2": "請注意以下限制：",
+            "description3": "- API 接口有速率限制，每個請求之間會有很大的延遲。",
+            "description4": "- 每個備註的字數限制為 256 個字元。",
+            "description5": "- 髒話過濾器（沒有樂趣）。",
+            "description6": "- 不能換行（將會被替換成空格）。",
+            "description7": "- 這將會覆蓋這些玩家現有的任何 VRChat 備註。",
+            "description8": "- 在這裡所做的任何編輯都不會影響 VRCX 備忘錄，但會在匯出後會影響 VRChat 備註。",
+            "refresh": "重新整理",
+            "export": "匯出",
+            "cancel": "取消",
+            "progress": "進度：",
+            "errors": "錯誤：",
+            "clear_errors": "清除錯誤"
         }
     },
     "table": {
@@ -832,7 +912,11 @@
             "status": "狀態",
             "rank": "階級",
             "language": "語言",
-            "bioLink": "社交連結"
+            "bioLink": "社交連結",
+            "user": "玩家",
+            "type": "種類",
+            "detail": "詳細",
+            "date": "時間"
         },
         "friendLog": {
             "date": "時間",
@@ -874,6 +958,15 @@
         "social_status": {
             "no": "No.",
             "status": "狀蓋"
+        },
+        "import": {
+            "image": "圖片",
+            "name": "名稱",
+            "author": "作者",
+            "status": "狀態",
+            "note": "備註",
+            "skip_export": "跳過匯出",
+            "action": "動作"
         }
     }
 }
