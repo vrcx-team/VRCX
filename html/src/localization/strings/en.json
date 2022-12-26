@@ -1,5 +1,5 @@
 {
-    "language": "English",
+    "language": "English (en)",
     "translator": "-",
     "nav_tooltip": {
         "feed": "Feed",
@@ -214,6 +214,7 @@
             "appearance": {
                 "appearance": {
                     "header": "Appearance",
+                    "language": "Language",
                     "theme_mode": "Theme mode",
                     "theme_mode_system": "System",
                     "theme_mode_light": "Light",
@@ -227,8 +228,7 @@
                     "sort_instance_users_by_time": "time",
                     "sort_instance_users_by_alphabet": "alphabetical",
                     "table_max_size": "Table Max Size",
-                    "page_size": "Page Size:",
-                    "language": "Language"
+                    "page_size": "Page Size:"
                 },
                 "timedate": {
                     "header": "Time/Date",
@@ -875,6 +875,18 @@
             "errors": "Errors:",
             "clear_errors": "Clear Errors"
         },
+        "avatar_database_provider": {
+            "header": "Avatar Database Provider",
+            "add_provider": "Add Provider"
+        },
+        "invite_to_group": {
+            "header": "Invite To Group",
+            "description": "Don't spam invite users, inviting too many users to a group is known to cause a ban.",
+            "choose_group_placeholder": "Choose Group",
+            "groups": "Groups",
+            "choose_friends_placeholder": "Choose Friends",
+            "selected_users": "Selected Users"
+        },
         "note_export": {
             "header": "Note Export",
             "description1": "This process will export all of your VRCX memos and import them into VRChat notes.",
@@ -891,6 +903,58 @@
             "progress": "Progress:",
             "errors": "Errors:",
             "clear_errors": "Clear Errors"
+        },
+        "edit_invite_message": {
+            "header": "Edit Invite Message",
+            "description": "1 hour edit cool down time.",
+            "cancel": "Cancel",
+            "save": "Save"
+        },
+        "invite_message": {
+            "header": "Send Invite Message",
+            "confirmation": "Are you sure you want to send?",
+            "cancel": "Cancel",
+            "refresh": "Refresh",
+            "confirm": "Confirm"
+        },
+        "invite_request_message": {
+            "header": "Send Invite Request Message",
+            "cancel": "Cancel",
+            "refresh": "Refresh"
+        },
+        "invite_response_message": {
+            "header": "Send Invite Response Message",
+            "confirmation": "Are you sure you want to send?",
+            "cancel": "Cancel",
+            "refresh": "Refresh",
+            "confirm": "Confirm"
+        },
+        "invite_request_response_message": {
+            "header": "Send Invite Request Response Message",
+            "cancel": "Cancel",
+            "refresh": "Refresh"
+        },
+        "edit_send_invite_message": {
+            "header": "Edit and Send Invite Message",
+            "description": "1 hour edit cool down time.",
+            "cancel": "Cancel",
+            "send": "Send"
+        },
+        "edit_send_invite_response_message": {
+            "header": "Edit and Send Invite Response Message",
+            "description": "1 hour edit cool down time.",
+            "cancel": "Cancel",
+            "send": "Send"
+        },
+        "open_source": {
+            "header": "Open Source Software Notice",
+            "description": "VRCX is based on open source software. It was possible because of their contribution."
+        },
+        "primary_password": {
+            "header": "Primary Password Required",
+            "password_placeholder": "Input new password",
+            "re_input_placeholder": "Re-input password",
+            "ok": "OK"
         }
     },
     "table": {
@@ -958,6 +1022,18 @@
             "lastLogin": "Last Login",
             "dateJoined": "Date Joined",
             "unfriend": "Unfriend"
+        },
+        "profile": {
+            "invite_messages": {
+                "slot": "Slot",
+                "message": "Message",
+                "cool_down": "Cool Down",
+                "action": "Action"
+            },
+            "previous_display_name": {
+                "date": "Date",
+                "name": "Name"
+            }
         },
         "social_status": {
             "no": "No.",

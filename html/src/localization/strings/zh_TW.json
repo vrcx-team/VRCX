@@ -1,5 +1,5 @@
 {
-    "language": "繁體中文",
+    "language": "繁體中文 (zh_TW)",
     "translator": "Kamiya",
     "nav_tooltip": {
         "feed": "動態",
@@ -211,6 +211,7 @@
             "appearance": {
                 "appearance": {
                     "header": "外觀",
+                    "language": "語言 (Language)",
                     "theme_mode": "主題",
                     "theme_mode_system": "系統",
                     "theme_mode_light": "淺色",
@@ -871,6 +872,18 @@
             "errors": "錯誤：",
             "clear_errors": "清除錯誤"
         },
+        "avatar_database_provider": {
+            "header": "角色資料庫提供方",
+            "add_provider": "新增提供方"
+        },
+        "invite_to_group": {
+            "header": "邀請到群組",
+            "description": "請不要濫用群組邀請，邀請太多玩家加入群組會導致你被停權。",
+            "choose_group_placeholder": "選擇群組",
+            "groups": "群組",
+            "choose_friends_placeholder": "選擇好友",
+            "selected_users": "已選擇的玩家"
+        },
         "note_export": {
             "header": "備註匯出",
             "description1": "這個過程將匯出你所有的 VRCX 備忘錄並將它們匯入到 VRChat 備註中。",
@@ -887,6 +900,58 @@
             "progress": "進度：",
             "errors": "錯誤：",
             "clear_errors": "清除錯誤"
+        },
+        "edit_invite_message": {
+            "header": "編輯邀請訊息",
+            "description": "一小時編輯冷卻時間。",
+            "cancel": "取消",
+            "save": "儲存"
+        },
+        "invite_message": {
+            "header": "傳送邀請的訊息",
+            "confirmation": "你確定你要傳送邀請？",
+            "cancel": "取消",
+            "refresh": "重新整理",
+            "confirm": "確定"
+        },
+        "invite_request_message": {
+            "header": "傳送邀請請求的訊息",
+            "cancel": "取消",
+            "refresh": "重新整理"
+        },
+        "invite_response_message": {
+            "header": "傳送邀請回覆的訊息",
+            "confirmation": "你確定你要傳送邀請回覆？",
+            "cancel": "取消",
+            "refresh": "重新整理",
+            "confirm": "確定"
+        },
+        "invite_request_response_message": {
+            "header": "傳送邀請請求回覆的訊息",
+            "cancel": "取消",
+            "refresh": "重新整理"
+        },
+        "edit_send_invite_message": {
+            "header": "編輯並傳送邀請訊息",
+            "description": "一小時編輯冷卻時間。",
+            "cancel": "取消",
+            "send": "傳送"
+        },
+        "edit_send_invite_response_message": {
+            "header": "編輯並傳送邀請回覆訊息",
+            "description": "一小時編輯冷卻時間。",
+            "cancel": "取消",
+            "send": "傳送"
+        },
+        "open_source": {
+            "header": "開放原始碼軟體授權條款",
+            "description": "VRCX 是基於開放原始碼軟體上開發的。沒有他們的貢獻的話，這個程式是不可能開發出來的。"
+        },
+        "primary_password": {
+            "header": "需要設定主密碼",
+            "password_placeholder": "輸入新密碼",
+            "re_input_placeholder": "確認密碼",
+            "ok": "OK"
         }
     },
     "table": {
@@ -954,6 +1019,18 @@
             "lastLogin": "最後登入",
             "dateJoined": "加入時間",
             "unfriend": "解除好友"
+        },
+        "profile": {
+            "invite_messages": {
+                "slot": "欄位",
+                "message": "訊息",
+                "cool_down": "編輯冷卻",
+                "action": "動作"
+            },
+            "previous_display_name": {
+                "date": "時間",
+                "name": "名稱"
+            }
         },
         "social_status": {
             "no": "No.",

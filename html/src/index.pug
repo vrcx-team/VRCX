@@ -1122,12 +1122,12 @@ html
                         div.options-container(style="margin-top:0")
                             span.header {{ $t("view.settings.appearance.appearance.header") }}
                             div.options-container-item
-                                span.name {{ $t('view.settings.appearance.appearance.language') }} 
+                                span.name {{ $t('view.settings.appearance.appearance.language') }}
                                 el-dropdown(@click.native.stop trigger="click" size="small")
                                     el-button(size="mini")
                                         span {{ $i18n.messages[appLanguage]?.language }} #[i.el-icon-arrow-down.el-icon--right]
                                     el-dropdown-menu(#default="dropdown")
-                                        el-dropdown-item(v-for="(obj, language) in $i18n.messages" v-text="obj.language" @click.native="changeAppLanguage(language)") 
+                                        el-dropdown-item(v-for="(obj, language) in $i18n.messages" v-text="obj.language" @click.native="changeAppLanguage(language)")
                             div.options-container-item
                                 span.name {{ $t('view.settings.appearance.appearance.theme_mode') }}
                                 el-radio-group(v-model="themeMode" size="mini")
@@ -3172,115 +3172,115 @@ html
                     el-button(type="primary" size="small" @click="saveSharedFeedFilters") Save
 
             //- dialog: Edit Invite Message
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="editInviteMessageDialog" :visible.sync="editInviteMessageDialog.visible" title="Edit Invite Message" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="editInviteMessageDialog" :visible.sync="editInviteMessageDialog.visible" :title="$t('dialog.edit_invite_message.header')" width="400px")
                 div(style='font-size:12px')
-                    span 1 hour edit cool down time.
+                    span {{ $t('dialog.edit_invite_message.description') }}
                 el-input(type="textarea" v-model="editInviteMessageDialog.newMessage" size="mini" maxlength="64" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
                 template(#footer)
-                    el-button(type="small" @click="cancelEditInviteMessage") Cancel
-                    el-button(type="primary" size="small" @click="saveEditInviteMessage") Save
+                    el-button(type="small" @click="cancelEditInviteMessage") {{ $t('dialog.edit_invite_message.cancel') }}
+                    el-button(type="primary" size="small" @click="saveEditInviteMessage") {{ $t('dialog.edit_invite_message.save') }}
 
             //- dialog: Edit And Send Invite Response Message
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="editAndSendInviteResponseDialog" :visible.sync="editAndSendInviteResponseDialog.visible" title="Edit and Send Invite Message" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="editAndSendInviteResponseDialog" :visible.sync="editAndSendInviteResponseDialog.visible" :title="$t('dialog.edit_send_invite_response_message.header')" width="400px")
                 div(style='font-size:12px')
-                    span 1 hour edit cool down time.
+                    span {{ $t('dialog.edit_send_invite_response_message.description') }}
                 el-input(type="textarea" v-model="editAndSendInviteResponseDialog.newMessage" size="mini" maxlength="64" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
                 template(#footer)
-                    el-button(type="small" @click="cancelEditAndSendInviteResponse") Cancel
-                    el-button(type="primary" size="small" @click="saveEditAndSendInviteResponse") Send
+                    el-button(type="small" @click="cancelEditAndSendInviteResponse") {{ $t('dialog.edit_send_invite_response_message.cancel') }}
+                    el-button(type="primary" size="small" @click="saveEditAndSendInviteResponse") {{ $t('dialog.edit_send_invite_response_message.send') }}
 
             //- dialog Table: Send Invite Response Message
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" title="Send Invite Response Message" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" :title="$t('dialog.invite_response_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteResponseDialogVisible" v-bind="inviteResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
-                    el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
-                    el-table-column(label="Message" prop="message")
-                    el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
+                    el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
+                    el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
+                    el-table-column(:label="$t('table.profile.invite_messages.cool_down')" prop="updatedAt" sortable="custom" width="110" align="right")
                         template(v-once #default="scope")
                             countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
-                    el-table-column(label="Action" width="70" align="right")
+                    el-table-column(:label="$t('table.profile.invite_messages.action')" width="70" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditAndSendInviteResponseDialog('response', scope.row)")
                 template(#footer)
-                    el-button(type="small" @click="cancelSendInviteResponse") Cancel
-                    el-button(type="small" @click="API.refreshInviteMessageTableData('response')") Refresh
+                    el-button(type="small" @click="cancelSendInviteResponse") {{ $t('dialog.invite_response_message.cancel') }}
+                    el-button(type="small" @click="API.refreshInviteMessageTableData('response')") {{ $t('dialog.invite_response_message.refresh') }}
 
             //- dialog Table: Send Invite Request Response Message
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" title="Send Invite Request Response Message" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" :title="$t('dialog.invite_request_response_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteRequestResponseDialogVisible" v-bind="inviteRequestResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
-                    el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
-                    el-table-column(label="Message" prop="message")
-                    el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
+                    el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
+                    el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
+                    el-table-column(:label="$t('table.profile.invite_messages.cool_down')" prop="updatedAt" sortable="custom" width="110" align="right")
                         template(v-once #default="scope")
                             countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
-                    el-table-column(label="Action" width="70" align="right")
+                    el-table-column(:label="$t('table.profile.invite_messages.action')" width="70" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditAndSendInviteResponseDialog('requestResponse', scope.row)")
                 template(#footer)
-                    el-button(type="small" @click="cancelSendInviteRequestResponse") Cancel
-                    el-button(type="small" @click="API.refreshInviteMessageTableData('requestResponse')") Refresh
+                    el-button(type="small" @click="cancelSendInviteRequestResponse") {{ $t('dialog.invite_request_response_message.cancel') }}
+                    el-button(type="small" @click="API.refreshInviteMessageTableData('requestResponse')") {{ $t('dialog.invite_request_response_message.refresh') }}
 
             //- dialog: Send Invite Response Message Confirm
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteResponseConfirmDialog" :visible.sync="sendInviteResponseConfirmDialog.visible" title="Send Invite Response Message" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteResponseConfirmDialog" :visible.sync="sendInviteResponseConfirmDialog.visible" :title="$t('dialog.invite_response_message.header')" width="400px")
                 div(style='font-size:12px')
-                    span Are you sure you want to send?
+                    span {{ $t('dialog.invite_response_message.confirmation') }}
                 template(#footer)
-                    el-button(type="small" @click="cancelInviteResponseConfirm") Cancel
-                    el-button(type="primary" size="small" @click="sendInviteResponseConfirm") Confirm
+                    el-button(type="small" @click="cancelInviteResponseConfirm") {{ $t('dialog.invite_response_message.cancel') }}
+                    el-button(type="primary" size="small" @click="sendInviteResponseConfirm") {{ $t('dialog.invite_response_message.confirm') }}
 
             //- dialog Table: Send Invite Message
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteDialog" :visible.sync="sendInviteDialogVisible" title="Send Invite Message" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteDialog" :visible.sync="sendInviteDialogVisible" :title="$t('dialog.invite_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteDialogVisible" v-bind="inviteMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
-                    el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
-                    el-table-column(label="Message" prop="message")
-                    el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
+                    el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
+                    el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
+                    el-table-column(:label="$t('table.profile.invite_messages.cool_down')" prop="updatedAt" sortable="custom" width="110" align="right")
                         template(v-once #default="scope")
                             countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
-                    el-table-column(label="Action" width="70" align="right")
+                    el-table-column(:label="$t('table.profile.invite_messages.action')" width="70" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditAndSendInviteDialog('message', scope.row)")
                 template(#footer)
-                    el-button(type="small" @click="cancelSendInvite") Cancel
-                    el-button(type="small" @click="API.refreshInviteMessageTableData('message')") Refresh
+                    el-button(type="small" @click="cancelSendInvite") {{ $t('dialog.invite_message.cancel') }}
+                    el-button(type="small" @click="API.refreshInviteMessageTableData('message')") {{ $t('dialog.invite_message.refresh') }}
 
             //- dialog Table: Send Invite Request Message
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" title="Send Invite Request Message" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" :title="$t('dialog.invite_request_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteRequestDialogVisible" v-bind="inviteRequestMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
-                    el-table-column(label="Slot" prop="slot" sortable="custom" width="70")
-                    el-table-column(label="Message" prop="message")
-                    el-table-column(label="Cool Down" prop="updatedAt" sortable="custom" width="110" align="right")
+                    el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
+                    el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
+                    el-table-column(:label="$t('table.profile.invite_messages.cool_down')" prop="updatedAt" sortable="custom" width="110" align="right")
                         template(v-once #default="scope")
                             countdown-timer(:datetime="scope.row.updatedAt" :hours="1")
-                    el-table-column(label="Action" width="70" align="right")
+                    el-table-column(:label="$t('table.profile.invite_messages.action')" width="70" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditAndSendInviteDialog('request', scope.row)")
                 template(#footer)
-                    el-button(type="small" @click="cancelSendInviteRequest") Cancel
-                    el-button(type="small" @click="API.refreshInviteMessageTableData('request')") Refresh
+                    el-button(type="small" @click="cancelSendInviteRequest") {{ $t('dialog.invite_request_message.cancel') }}
+                    el-button(type="small" @click="API.refreshInviteMessageTableData('request')") {{ $t('dialog.invite_request_message.refresh') }}
 
             //- dialog: Send Invite Message Confirm
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteConfirmDialog" :visible.sync="sendInviteConfirmDialog.visible" title="Send Invite Message" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteConfirmDialog" :visible.sync="sendInviteConfirmDialog.visible" :title="$t('dialog.invite_message.header')" width="400px")
                 div(style='font-size:12px')
-                    span Are you sure you want to send?
+                    span {{ $t('dialog.invite_message.confirmation') }}
                 template(#footer)
-                    el-button(type="small" @click="cancelInviteConfirm") Cancel
-                    el-button(type="primary" size="small" @click="sendInviteConfirm") Confirm
+                    el-button(type="small" @click="cancelInviteConfirm") {{ $t('dialog.invite_message.cancel') }}
+                    el-button(type="primary" size="small" @click="sendInviteConfirm") {{ $t('dialog.invite_message.confirm') }}
 
             //- dialog: Edit And Send Invite Message
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="editAndSendInviteDialog" :visible.sync="editAndSendInviteDialog.visible" title="Edit and Send Invite Message" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="editAndSendInviteDialog" :visible.sync="editAndSendInviteDialog.visible" :title="$t('dialog.edit_send_invite_message.header')" width="400px")
                 div(style='font-size:12px')
-                    span 1 hour edit cool down time.
+                    span {{ $t('dialog.edit_send_invite_message.description') }}
                 el-input(type="textarea" v-model="editAndSendInviteDialog.newMessage" size="mini" maxlength="64" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
                 template(#footer)
-                    el-button(type="small" @click="cancelEditAndSendInvite") Cancel
-                    el-button(type="primary" size="small" @click="saveEditAndSendInvite") Send
+                    el-button(type="small" @click="cancelEditAndSendInvite") {{ $t('dialog.edit_send_invite_message.cancel') }}
+                    el-button(type="primary" size="small" @click="saveEditAndSendInvite") {{ $t('dialog.edit_send_invite_message.send') }}
 
             //- dialog: Change avatar image
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" title="Change Avatar Image" width="800px")
@@ -3647,11 +3647,11 @@ html
                             el-button(type="text" icon="el-icon-close" size="mini" @click="removeFromNoteExportTable(scope.row)")
 
             //- dialog: avatar database provider
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarProviderDialog" :visible.sync="avatarProviderDialog.visible" title="Avatar Database Provider" width="600px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarProviderDialog" :visible.sync="avatarProviderDialog.visible" :title="$t('dialog.avatar_database_provider.header')" width="600px")
                 div
                     el-input(v-for="(provider, index) in avatarRemoteDatabaseProviderList" :key="index" :value="provider" v-model="avatarRemoteDatabaseProviderList[index]" @change="saveAvatarProviderList" size="small" style="margin-top:5px")
                         el-button(slot="append" icon="el-icon-delete" @click="removeAvatarProvider(provider)")
-                    el-button(@click="avatarRemoteDatabaseProviderList.push('')" size="mini" style="margin-top:5px") Add Provider
+                    el-button(@click="avatarRemoteDatabaseProviderList.push('')" size="mini" style="margin-top:5px") {{ $t('dialog.avatar_database_provider.add_provider') }}
 
             //- dialog: chatbox blacklist
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="chatboxBlacklistDialog" :visible.sync="chatboxBlacklistDialog.visible" title="Chatbox Blacklist" width="600px")
@@ -3666,19 +3666,19 @@ html
                         span {{user[1]}}
 
             //- dialog: invite group
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteGroupDialog" :visible.sync="inviteGroupDialog.visible" title="Invite To Group" width="450px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteGroupDialog" :visible.sync="inviteGroupDialog.visible" :title="$t('dialog.invite_to_group.header')" width="450px")
                 div(v-if="inviteGroupDialog.visible" v-loading="inviteGroupDialog.loading")
-                    span Don't spam invite users, inviting too many users to a group is known to cause a ban.
+                    span {{ $t('dialog.invite_to_group.description') }}
                     br
-                    el-select(v-model="inviteGroupDialog.groupId" clearable placeholder="Choose Group" filterable :disabled="inviteGroupDialog.loading" @change="isAllowedToInviteToGroup" style="margin-top:15px")
-                        el-option-group(v-if="inviteGroupDialog.groups.length" label="Groups" style="width:410px")
+                    el-select(v-model="inviteGroupDialog.groupId" clearable :placeholder="$t('dialog.invite_to_group.choose_group_placeholder')" filterable :disabled="inviteGroupDialog.loading" @change="isAllowedToInviteToGroup" style="margin-top:15px")
+                        el-option-group(v-if="inviteGroupDialog.groups.length" :label="$t('dialog.invite_to_group.groups')" style="width:410px")
                             el-option.x-friend-item(v-for="group in inviteGroupDialog.groups" :key="group.id" :label="group.name" :value="group.id" style="height:auto")
                                 .avatar
                                     img(v-lazy="group.iconUrl")
                                 .detail
                                     span.name(v-text="group.name")
-                    el-select(v-model="inviteGroupDialog.userIds" clearable placeholder="Choose Friends" filterable :disabled="inviteGroupDialog.loading" style="width:100%;margin-top:15px")
-                        el-option-group(v-if="inviteGroupDialog.userId" label="Selected User")
+                    el-select(v-model="inviteGroupDialog.userIds" clearable :placeholder="$t('dialog.invite_to_group.choose_friends_placeholder')" filterable :disabled="inviteGroupDialog.loading" style="width:100%;margin-top:15px")
+                        el-option-group(v-if="inviteGroupDialog.userId" :label="$t('dialog.invite_to_group.selected_users')")
                             el-option.x-friend-item(:key="inviteGroupDialog.userObject.id" :label="inviteGroupDialog.userObject.displayName" :value="inviteGroupDialog.userObject.id" style="height:auto")
                                 template(v-if="inviteGroupDialog.userObject.id")
                                     .avatar(:class="userStatusClass(inviteGroupDialog.userObject)")
@@ -3686,7 +3686,7 @@ html
                                     .detail
                                         span.name(v-text="inviteGroupDialog.userObject.displayName" :style="{'color':inviteGroupDialog.userObject.$userColour}")
                                 span(v-else v-text="inviteGroupDialog.userId")
-                        el-option-group(v-if="friendsGroup0.length" label="VIP")
+                        el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
                             el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
@@ -3694,7 +3694,7 @@ html
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup1.length" label="ONLINE")
+                        el-option-group(v-if="friendsGroup1.length" :label="$t('side_panel.online')")
                             el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
@@ -3702,7 +3702,7 @@ html
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup2.length" label="ACTIVE")
+                        el-option-group(v-if="friendsGroup2.length" :label="$t('side_panel.active')")
                             el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar
@@ -3710,7 +3710,7 @@ html
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup3.length" label="OFFLINE")
+                        el-option-group(v-if="friendsGroup3.length" :label="$t('side_panel.offline')")
                             el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar
@@ -3722,10 +3722,10 @@ html
                     el-button(type="primary" size="small" :disabled="inviteGroupDialog.loading || !inviteGroupDialog.userIds.length" @click="sendGroupInvite()") Invite
 
             //- dialog: open source software notice
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" title="Open Source Software Notice" width="650px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" :title="$t('dialog.open_source.header')" width="650px")
                 div(v-if="ossDialog" style="height:350px;overflow:hidden scroll;word-break:break-all")
                     div
-                        span VRCX is based on open source software. It was possible because of their contribution.
+                        span {{ $t('dialog.open_source.description') }}
                     div(style="margin-top:15px")
                         p(style="font-weight:bold") animate.css
                         pre(style="font-size:12px;white-space:pre-line").
@@ -4057,12 +4057,12 @@ html
                 :before-close="enablePrimaryPasswordDialog.beforeClose"
                 ref="primaryPasswordDialog"
                 :close-on-click-modal="false"
-                title="Primary Password Required"
+                :title="$t('dialog.primary_password.header')"
                 width="400px"
             )
                 el-input(
                     v-model="enablePrimaryPasswordDialog.password"
-                    placeholder="Input new password"
+                    :placeholder="$t('dialog.primary_password.password_placeholder')"
                     type="password"
                     size="mini"
                     maxlength="32"
@@ -4071,7 +4071,7 @@ html
                 )
                 el-input(
                     v-model="enablePrimaryPasswordDialog.rePassword"
-                    placeholder="Re-input password"
+                    :placeholder="$t('dialog.primary_password.re_input_placeholder')"
                     type="password"
                     style="margin-top:5px"
                     size="mini"
@@ -4082,6 +4082,6 @@ html
                     el-button(
                         type="primary" size="small" @click="setPrimaryPassword"
                         :disabled="enablePrimaryPasswordDialog.password.length===0||enablePrimaryPasswordDialog.password!==enablePrimaryPasswordDialog.rePassword"
-                    ) OK
+                    ) {{ $t('dialog.primary_password.ok') }}
         script(src="vendor.js")
         script(src="app.js")
