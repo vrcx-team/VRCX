@@ -39,9 +39,6 @@
             "search_placeholder": "Search"
         },
         "player_list": {
-            "capacity": "Capacoty",
-            "last_updated": "Last Updated",
-            "created_at": "Created At",
             "photon": {
                 "current": "Current",
                 "previous": "Previous",
@@ -735,6 +732,12 @@
             "vrchat_favorites": "VRChat Favorites",
             "local_favorites": "Local Favorites"
         },
+        "invite": {
+            "header": "傳送邀請",
+            "select_placeholder": "選擇好友",
+            "invite_with_message": "訊息邀請",
+            "invite": "邀請"
+        },
         "social_status": {
             "header": "Social Status",
             "history": "History",
@@ -790,12 +793,43 @@
             "unity_manual": "Unity Manual",
             "save": "Save"
         },
+        "config_json": {
+            "header": "VRChat Config JSON",
+            "description1": "These options are for advanced users only.",
+            "description2": "Leave field empty to set as default, game restart required to apply settings.",
+            "cache_size": "Cache Size:",
+            "refresh": "Refresh",
+            "delete_all_cache": "Delete all cache",
+            "delete_cache": "Delete Cache",
+            "delete_old_cache": "Delete old versions from cache",
+            "sweep_cache": "Sweep Cache",
+            "camera_resolution": "Camera Resolution",
+            "screenshot_resolution": "Screenshot Resolution",
+            "disable_discord_presence": "Disable Discord Rich Presence",
+            "vrchat_docs": "VRChat Docs",
+            "cancel": "Cancel",
+            "save": "Save"
+        },
         "youtube_api": {
             "header": "YouTube API",
             "description": "Enter your YouTube API Key (optional)",
             "placeholder": "YouTube API Key",
             "guide": "Guide",
             "save": "Save"
+        },
+        "set_world_tags": {
+            "header": "Set World Tags",
+            "enable_debugging": "Enable world debugging for others",
+            "seprator": "Enter tags comma separated",
+            "cancel": "Cancel",
+            "save": "Save"
+        },
+        "download_history": {
+            "header": "Download History",
+            "queue": "Queue:",
+            "history": "History:",
+            "cancel_all": "Cancel All",
+            "close": "Close"
         },
         "vrcx_updater": {
             "header": "VRCX Updater",
@@ -825,6 +859,22 @@
         "discord_names": {
             "header": "Discord Names",
             "description": "Click load missing entries in the Friends List tab to search entire friends list"
+        },
+        "notification_position": {
+            "header": "Notification Position",
+            "description": "Choose a notification position.",
+            "ok": "OK"
+        },
+        "shared_feed_filters": {
+            "notification": "Notification Filters",
+            "wrist": "Wrist Feed Filters",
+            "on": "On",
+            "off": "Off",
+            "favorite": "VIP",
+            "friends": "Friends",
+            "everyone": "Everyone",
+            "cancel": "Cancel",
+            "save": "Save"
         },
         "world_export": {
             "header": "World Favorites Export"
@@ -878,6 +928,12 @@
         "avatar_database_provider": {
             "header": "Avatar Database Provider",
             "add_provider": "Add Provider"
+        },
+        "chatbox_blacklist": {
+            "header": "Chatbox Blacklist",
+            "keyword_blacklist": "Keyword Blacklist",
+            "user_blacklist": "User Blacklist",
+            "add_item": "Add Item"
         },
         "invite_to_group": {
             "header": "Invite To Group",
@@ -945,6 +1001,30 @@
             "description": "1 hour edit cool down time.",
             "cancel": "Cancel",
             "send": "Send"
+        },
+        "gallery_icons": {
+            "header": "Gallery and Icons",
+            "description": "Recommended image size 1200x900px",
+            "gallery": "Gallery",
+            "icons": "Icons",
+            "refresh": "Refresh",
+            "upload": "Upload",
+            "clear": "Clear"
+        },
+        "change_content_image": {
+            "avatar": "Change Avatar Image",
+            "world": "Change World Image",
+            "description": "Recommended image size: 1200x900px (4:3)",
+            "refresh": "Refresh",
+            "upload": "Upload Image"
+        },
+        "previous_images": {
+            "header": "Previous Images"
+        },
+        "previous_instances": {
+            "header": "Previous Instances",
+            "info": "Previous Instance Info",
+            "search_placeholder": "Search"
         },
         "open_source": {
             "header": "Open Source Software Notice",
@@ -1039,6 +1119,13 @@
             "no": "No.",
             "status": "Status"
         },
+        "download_history": {
+            "time": "Time",
+            "name": "Name",
+            "type": "Type",
+            "status": "Status",
+            "cancel": "Cancel"
+        },
         "import": {
             "image": "Image",
             "name": "Name",
@@ -1046,6 +1133,16 @@
             "status": "Status",
             "note": "Note",
             "skip_export": "Skip Export",
+            "action": "Action"
+        },
+        "previous_instances": {
+            "date": "Date",
+            "display_name": "Display Name",
+            "world": "World",
+            "instance_name": "Instance Name",
+            "instance_creator": "Instance Creator",
+            "time": "Time",
+            "count": "Count",
             "action": "Action"
         }
     }

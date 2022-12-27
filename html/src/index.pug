@@ -2400,17 +2400,17 @@ html
                         el-button(v-else style="display:block;width:100%;margin:10px 0" @click="addLocalWorldFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
 
             //- dialog: invite
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" title="Invite" width="450px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" :title="$t('dialog.invite.header')" width="450px")
                 div(v-if="inviteDialog.visible" v-loading="inviteDialog.loading")
                     location(:location="inviteDialog.worldId" :link="false")
-                    el-select(v-model="inviteDialog.userIds" multiple clearable placeholder="Choose Friends" filterable :disabled="inviteDialog.loading" style="width:100%;margin-top:15px")
-                        el-option-group(v-if="API.currentUser" label="ME")
+                    el-select(v-model="inviteDialog.userIds" multiple clearable :placeholder="$t('dialog.invite.select_placeholder')" filterable :disabled="inviteDialog.loading" style="width:100%;margin-top:15px")
+                        el-option-group(v-if="API.currentUser" :label="$t('side_panel.me')")
                             el-option.x-friend-item(:label="API.currentUser.displayName" :value="API.currentUser.id" style="height:auto")
                                 .avatar(:class="userStatusClass(API.currentUser)")
                                     img(v-lazy="userImage(API.currentUser)")
                                 .detail
                                     span.name(v-text="API.currentUser.displayName")
-                        el-option-group(v-if="friendsGroup0.length" label="VIP")
+                        el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
                             el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
@@ -2418,7 +2418,7 @@ html
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup1.length" label="ONLINE")
+                        el-option-group(v-if="friendsGroup1.length" :label="$t('side_panel.online')")
                             el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
@@ -2426,7 +2426,7 @@ html
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup2.length" label="ACTIVE")
+                        el-option-group(v-if="friendsGroup2.length" :label="$t('side_panel.active')")
                             el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar
@@ -2435,8 +2435,8 @@ html
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
                 template(#footer)
-                    el-button(size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="showSendInviteDialog()") Invite With Message
-                    el-button(type="primary" size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="sendInvite()") Invite
+                    el-button(size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="showSendInviteDialog()") {{ $t('dialog.invite.invite_with_message') }}
+                    el-button(type="primary" size="small" :disabled="inviteDialog.loading || !inviteDialog.userIds.length" @click="sendInvite()") {{ $t('dialog.invite.invite') }}
 
             //- dialog: social status
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="socialStatusDialog" :visible.sync="socialStatusDialog.visible" :title="$t('dialog.social_status.header')" width="400px")
@@ -2582,31 +2582,31 @@ html
                         el-button(type="primary" size="small" :disabled="launchOptionsDialog.loading" @click="updateLaunchOptions" style="margin-left:auto") {{ $t('dialog.launch_options.save') }}
 
             //- dialog: VRChat Config JSON
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="VRChatConfigDialog" :visible.sync="VRChatConfigDialog.visible" title="VRChat Config JSON" width="420px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="VRChatConfigDialog" :visible.sync="VRChatConfigDialog.visible" :title="$t('dialog.config_json.header')" width="420px")
                 div(style='font-size:12px;word-break:keep-all')
-                    | These options are for advanced users only. #[br]
-                    | Leave field empty to set as default, game restart required to apply settings.
+                    | {{ $t('dialog.config_json.description1') }} #[br]
+                    | {{ $t('dialog.config_json.description2') }}
                 br
-                span Cache Size:
+                span {{ $t('dialog.config_json.cache_size') }}
                 span(v-text="VRChatUsedCacheSize")
                 span /
                 span(v-text="VRChatTotalCacheSize")
                 span GB
-                el-tooltip(placement="top" content="Refresh" :disabled="hideTooltips")
+                el-tooltip(placement="top" :content="$t('dialog.config_json.refresh')" :disabled="hideTooltips")
                     el-button(type="default" :loading="VRChatCacheSizeLoading" @click="getVRChatCacheSize" size="small" icon="el-icon-refresh" circle style="margin-left:5px")
                 br
-                span Delete all cache
-                el-button(size="small" style="margin-left:5px" icon="el-icon-delete" @click="showDeleteAllVRChatCacheConfirm()") Delete Cache
+                span {{ $t('dialog.config_json.delete_all_cache') }}
+                el-button(size="small" style="margin-left:5px" icon="el-icon-delete" @click="showDeleteAllVRChatCacheConfirm()") {{ $t('dialog.config_json.delete_cache') }}
                 br
-                span Delete old versions from cache
-                el-button(size="small" style="margin-left:5px" icon="el-icon-folder-delete" @click="sweepVRChatCache()") Sweep Cache
+                span {{ $t('dialog.config_json.delete_old_cache') }}
+                el-button(size="small" style="margin-left:5px" icon="el-icon-folder-delete" @click="sweepVRChatCache()") {{ $t('dialog.config_json.sweep_cache') }}
                 br
                 div(style="display:inline-block;margin-top:10px" v-for="(item, value) in VRChatConfigList" :key="value")
                     span(v-text="item.name" style="word-break:keep-all")
                     |:
                     el-input(v-model="VRChatConfigFile[value]" :placeholder="item.default" size="mini" :type="item.type?item.type:'text'" :min="item.min" :max="item.max")
                 div(style="display:inline-block;margin-top:10px")
-                    span Camera Resolution
+                    span {{ $t('dialog.config_json.camera_resolution') }}
                     br
                     el-dropdown(@command="(command) => setVRChatCameraResolution(command)" size="small" trigger="click" style="margin-top:5px")
                         el-button(size="small")
@@ -2614,18 +2614,18 @@ html
                         el-dropdown-menu(#default="dropdown")
                             el-dropdown-item(v-for="row in VRChatResolutions" :key="row.index" v-text="row.name" :command="row")
                 div(style="display:inline-block;margin-top:10px;margin-left:10px")
-                    span Screenshot Resolution
+                    span {{ $t('dialog.config_json.screenshot_resolution') }}
                     br
                     el-dropdown(@command="(command) => setVRChatScreenshotResolution(command)" size="small" trigger="click" style="margin-top:5px")
                         el-button(size="small")
                             span #[span(v-text="getVRChatScreenshotResolution()")] #[i.el-icon-arrow-down.el-icon--right]
                         el-dropdown-menu(#default="dropdown")
                             el-dropdown-item(v-for="row in VRChatResolutions" :key="row.index" v-text="row.name" :command="row")
-                el-checkbox(v-model="VRChatConfigFile.disableRichPresence" style="margin-top:5px;display:block") Disable Discord Rich Presence
+                el-checkbox(v-model="VRChatConfigFile.disableRichPresence" style="margin-top:5px;display:block") {{ $t('dialog.config_json.disable_discord_presence') }}
                 template(#footer)
-                    el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')") VRChat Docs
-                    el-button(size="small" @click="VRChatConfigDialog.visible = false") Cancel
-                    el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="saveVRChatConfigFile") Save
+                    el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')") {{ $t('dialog.config_json.vrchat_docs') }}
+                    el-button(size="small" @click="VRChatConfigDialog.visible = false") {{ $t('dialog.config_json.cancel') }}
+                    el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="saveVRChatConfigFile") {{ $t('dialog.config_json.save') }}
 
             //- dialog: YouTube Api Dialog
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="youTubeApiDialog" :visible.sync="youTubeApiDialog.visible" :title="$t('dialog.youtube_api.header')" width="400px")
@@ -2638,44 +2638,44 @@ html
                         el-button(type="primary" size="small" @click="testYouTubeApiKey" style="margin-left:auto") {{ $t('dialog.youtube_api.save') }}
 
             //- dialog: Set World Tags
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="setWorldTagsDialog" :visible.sync="setWorldTagsDialog.visible" title="Set World Tags" width="400px")
-                el-checkbox(v-model="setWorldTagsDialog.debugAllowed") Enable world debugging for others
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="setWorldTagsDialog" :visible.sync="setWorldTagsDialog.visible" :title="$t('dialog.set_world_tags.header')" width="400px")
+                el-checkbox(v-model="setWorldTagsDialog.debugAllowed") {{ $t('dialog.set_world_tags.enable_debugging') }}
                 div(style='font-size:12px;margin-top:10px')
-                    | Enter tags comma separated #[br]
+                    | {{ $t('dialog.set_world_tags.seprator') }} #[br]
                 el-input(type="textarea" v-model="setWorldTagsDialog.tags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
                 template(#footer)
                     div(style="display:flex")
-                        el-button(size="small" @click="setWorldTagsDialog.visible = false") Cancel
-                        el-button(type="primary" size="small" @click="saveSetWorldTagsDialog") Save
+                        el-button(size="small" @click="setWorldTagsDialog.visible = false") {{ $t('dialog.set_world_tags.cancel') }}
+                        el-button(type="primary" size="small" @click="saveSetWorldTagsDialog") {{ $t('dialog.set_world_tags.save') }}
 
             //- dialog: Cache Download
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="downloadDialog" :visible.sync="downloadDialog.visible" title="Download History" width="770px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="downloadDialog" :visible.sync="downloadDialog.visible" :title="$t('dialog.download_history.header')" width="770px")
                 template(v-if="downloadDialog.visible")
                     div(v-if="downloadInProgress && downloadCurrent.ref")
                         span(v-text="downloadCurrent.ref.name")
                         el-button(type="text" icon="el-icon-close" size="mini" @click="cancelDownload(downloadCurrent.id)" style="margin-left:5px")
                         el-progress(:percentage="downloadProgress" :format="downloadProgressText")
                     template(v-if="downloadQueueTable.data.length >= 1")
-                        span(style="margin-top:15px") Queue:
+                        span(style="margin-top:15px") {{ $t('dialog.download_history.queue') }}
                         data-tables(v-bind="downloadQueueTable" style="margin-top:10px")
-                            el-table-column(label="Name" prop="name")
-                            el-table-column(label="Type" prop="type" width="70")
-                            el-table-column(label="Cancel" width="60" align="right")
+                            el-table-column(:label="$t('table.download_history.name')" prop="name")
+                            el-table-column(:label="$t('table.download_history.type')" prop="type" width="70")
+                            el-table-column(:label="$t('table.download_history.cancel')" width="60" align="right")
                                 template(v-once #default="scope")
                                     el-button(type="text" icon="el-icon-close" size="mini" @click="cancelDownload(scope.row.ref.id)")
-                    span(style="margin-top:15px") History:
+                    span(style="margin-top:15px") {{ $t('dialog.download_history.history') }}
                     data-tables(v-bind="downloadHistoryTable" style="margin-top:10px")
-                        el-table-column(label="Time" prop="date" width="90")
+                        el-table-column(:label="$t('table.download_history.time')" prop="date" width="90")
                             template(v-once #default="scope")
                                 timer(:epoch="scope.row.date")
-                        el-table-column(label="Name" prop="name")
+                        el-table-column(:label="$t('table.download_history.name')" prop="name")
                             template(v-once #default="scope")
                                 span(v-text="scope.row.ref.name")
-                        el-table-column(label="Type" prop="type" width="70")
-                        el-table-column(label="Status" prop="status" width="80")
+                        el-table-column(:label="$t('table.download_history.type')" prop="type" width="70")
+                        el-table-column(:label="$t('table.download_history.status')" prop="status" width="80")
                 template(#footer)
-                    el-button(v-if="downloadQueue.size >= 1" size="small" @click="cancelAllDownloads") Cancel All
-                    el-button(size="small" @click="downloadDialog.visible = false") Close
+                    el-button(v-if="downloadQueue.size >= 1" size="small" @click="cancelAllDownloads") {{ $t('dialog.download_history.cancel_all') }}
+                    el-button(size="small" @click="downloadDialog.visible = false") {{ $t('dialog.download_history.close') }}
 
             //- dialog: update VRCX
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="VRCXUpdateDialog" :visible.sync="VRCXUpdateDialog.visible" :title="$t('dialog.vrcx_updater.header')" width="400px")
@@ -2732,10 +2732,10 @@ html
                 el-input(type="textarea" v-if="discordNamesDialogVisible" v-model="discordNamesContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px")
 
             //- dialog: Notification position
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="notificationPositionDialog" :visible.sync="notificationPositionDialog.visible" title="Notification Position" width="400px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="notificationPositionDialog" :visible.sync="notificationPositionDialog.visible" :title="$t('dialog.notification_position.header')" width="400px")
                 div(style='font-size:12px;')
-                    | Choose a notification position.
-                .notification-position.svg(version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 200" style="margin-top:15px;" xml:space="preserve")
+                    | {{ $t('dialog.notification_position.description') }}
+                svg.notification-position(version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 200" style="margin-top:15px;" xml:space="preserve")
                     path(style="fill:black;" d="M291.89,5A3.11,3.11,0,0,1,295,8.11V160.64a3.11,3.11,0,0,1-3.11,3.11H8.11A3.11,3.11,0,0,1,5,160.64V8.11A3.11,3.11,0,0,1,8.11,5H291.89m0-5H8.11A8.11,8.11,0,0,0,0,8.11V160.64a8.11,8.11,0,0,0,8.11,8.11H291.89a8.11,8.11,0,0,0,8.11-8.11V8.11A8.11,8.11,0,0,0,291.89,0Z")
                     rect(style="fill:#c4c4c4;" x="5" y="5" width="290" height="158.75" rx="2.5")
                 el-radio-group(v-model="notificationPosition" size="mini" @change="changeNotificationPosition")
@@ -2750,173 +2750,173 @@ html
                     el-radio(label="bottomRight" v-model="notificationPosition" style="margin:0;position:absolute;right:25px;top:280px;") ‎
                 template(#footer)
                     div(style="display:flex")
-                        el-button(type="primary" size="small" style="margin-left:auto" @click="notificationPositionDialog.visible = false") OK
+                        el-button(type="primary" size="small" style="margin-left:auto" @click="notificationPositionDialog.visible = false") {{ $t('dialog.notification_position.ok') }}
 
             //- dialog: Noty feed filters
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" title="Notification Filters" width="550px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="notyFeedFiltersDialog" :visible.sync="notyFeedFiltersDialog.visible" :title="$t('dialog.shared_feed_filters.notification')" width="550px")
                 .toggle-list
                     .toggle-item
                         span.toggle-name OnPlayerJoining
                         el-radio-group(v-model="sharedFeedFilters.noty.OnPlayerJoining" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name OnPlayerJoined
                         el-radio-group(v-model="sharedFeedFilters.noty.OnPlayerJoined" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name OnPlayerLeft
                         el-radio-group(v-model="sharedFeedFilters.noty.OnPlayerLeft" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name Online
                         el-radio-group(v-model="sharedFeedFilters.noty.Online" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Offline
                         el-radio-group(v-model="sharedFeedFilters.noty.Offline" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name GPS
                         el-radio-group(v-model="sharedFeedFilters.noty.GPS" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Status
                         el-radio-group(v-model="sharedFeedFilters.noty.Status" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Invite
                         el-radio-group(v-model="sharedFeedFilters.noty.invite" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Request Invite
                         el-radio-group(v-model="sharedFeedFilters.noty.requestInvite" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Invite Response
                         el-radio-group(v-model="sharedFeedFilters.noty.inviteResponse" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Request Invite Response
                         el-radio-group(v-model="sharedFeedFilters.noty.requestInviteResponse" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Friend Request
                         el-radio-group(v-model="sharedFeedFilters.noty.friendRequest" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name New Friend
                         el-radio-group(v-model="sharedFeedFilters.noty.Friend" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Unfriend
                         el-radio-group(v-model="sharedFeedFilters.noty.Unfriend" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Display Name
                         el-radio-group(v-model="sharedFeedFilters.noty.DisplayName" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Trust Level
                         el-radio-group(v-model="sharedFeedFilters.noty.TrustLevel" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Group Announcement
                         el-radio-group(v-model="sharedFeedFilters.noty['group.announcement']" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Join/Leave
                         el-radio-group(v-model="sharedFeedFilters.noty['group.informative']" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Invite
                         el-radio-group(v-model="sharedFeedFilters.noty['group.invite']" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Join Request
                         el-radio-group(v-model="sharedFeedFilters.noty['group.joinRequest']" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Portal Spawn
                         el-radio-group(v-model="sharedFeedFilters.noty.PortalSpawn" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name Video Play
                             el-tooltip(placement="top" style="margin-left:5px" content="Requires VRCX YouTube API option enabled")
                                 i.el-icon-warning
                         el-radio-group(v-model="sharedFeedFilters.noty.VideoPlay" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Events
                         el-radio-group(v-model="sharedFeedFilters.noty.Event" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Blocked Player Joins
                         el-radio-group(v-model="sharedFeedFilters.noty.BlockedOnPlayerJoined" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name Blocked Player Leaves
                         el-radio-group(v-model="sharedFeedFilters.noty.BlockedOnPlayerLeft" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name Muted Player Joins
                         el-radio-group(v-model="sharedFeedFilters.noty.MutedOnPlayerJoined" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name Muted Player Leaves
                         el-radio-group(v-model="sharedFeedFilters.noty.MutedOnPlayerLeft" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     template(v-if="photonLoggingEnabled")
                         br
                         .toggle-item
@@ -2924,211 +2924,211 @@ html
                         .toggle-item
                             span.toggle-name Lobby Avatar Change
                             el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="VIP")
-                                el-radio-button(label="Friends")
-                                el-radio-button(label="Everyone")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                                el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                                el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                         .toggle-item
                             span.toggle-name Lobby ChatBox Message
                             el-radio-group(v-model="sharedFeedFilters.noty.ChatBoxMessage" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="VIP")
-                                el-radio-button(label="Friends")
-                                el-radio-button(label="Everyone")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                                el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                                el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                         .toggle-item
                             span.toggle-name Blocked
                             el-radio-group(v-model="sharedFeedFilters.noty.Blocked" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="On")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                         .toggle-item
                             span.toggle-name Unblocked
                             el-radio-group(v-model="sharedFeedFilters.noty.Unblocked" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="On")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                         .toggle-item
                             span.toggle-name Muted
                             el-radio-group(v-model="sharedFeedFilters.noty.Muted" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="On")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                         .toggle-item
                             span.toggle-name Unmuted
                             el-radio-group(v-model="sharedFeedFilters.noty.Unmuted" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="On")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                 template(#footer)
-                    el-button(type="small" @click="cancelSharedFeedFilters") Cancel
-                    el-button(type="primary" size="small" style="margin-left:10px" @click="saveSharedFeedFilters") Save
+                    el-button(type="small" @click="cancelSharedFeedFilters") {{ $t('dialog.shared_feed_filters.cancel') }}
+                    el-button(type="primary" size="small" style="margin-left:10px" @click="saveSharedFeedFilters") {{ $t('dialog.shared_feed_filters.save') }}
 
             //- dialog: wrist feed filters
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" title="Wrist Feed Filters" width="550px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" :title="$t('dialog.shared_feed_filters.wrist')" width="550px")
                 .toggle-list
                     .toggle-item
                         span.toggle-name Self Location
                         el-radio-group(v-model="sharedFeedFilters.wrist.Location" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name OnPlayerJoining
                         el-radio-group(v-model="sharedFeedFilters.wrist.OnPlayerJoining" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name OnPlayerJoined
                         el-radio-group(v-model="sharedFeedFilters.wrist.OnPlayerJoined" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name OnPlayerLeft
                         el-radio-group(v-model="sharedFeedFilters.wrist.OnPlayerLeft" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name Online
                         el-radio-group(v-model="sharedFeedFilters.wrist.Online" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Offline
                         el-radio-group(v-model="sharedFeedFilters.wrist.Offline" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name GPS
                         el-radio-group(v-model="sharedFeedFilters.wrist.GPS" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Status
                         el-radio-group(v-model="sharedFeedFilters.wrist.Status" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Invite
                         el-radio-group(v-model="sharedFeedFilters.wrist.invite" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Request Invite
                         el-radio-group(v-model="sharedFeedFilters.wrist.requestInvite" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Invite Response
                         el-radio-group(v-model="sharedFeedFilters.wrist.inviteResponse" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Request Invite Response
                         el-radio-group(v-model="sharedFeedFilters.wrist.requestInviteResponse" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Friend Request
                         el-radio-group(v-model="sharedFeedFilters.wrist.friendRequest" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name New Friend
                         el-radio-group(v-model="sharedFeedFilters.wrist.Friend" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Unfriend
                         el-radio-group(v-model="sharedFeedFilters.wrist.Unfriend" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Display Name
                         el-radio-group(v-model="sharedFeedFilters.wrist.DisplayName" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Trust Level
                         el-radio-group(v-model="sharedFeedFilters.wrist.TrustLevel" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Group Announcement
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.announcement']" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Join/Leave
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.informative']" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Invite
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.invite']" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Join Request
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.joinRequest']" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Portal Spawn
                         el-radio-group(v-model="sharedFeedFilters.wrist.PortalSpawn" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name Video Play
                             el-tooltip(placement="top" style="margin-left:5px" content="Requires VRCX YouTube API option enabled")
                                 i.el-icon-warning
                         el-radio-group(v-model="sharedFeedFilters.wrist.VideoPlay" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Events
                         el-radio-group(v-model="sharedFeedFilters.wrist.Event" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="On")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Blocked Player Joins
                         el-radio-group(v-model="sharedFeedFilters.wrist.BlockedOnPlayerJoined" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name Blocked Player Leaves
                         el-radio-group(v-model="sharedFeedFilters.wrist.BlockedOnPlayerLeft" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name Muted Player Joins
                         el-radio-group(v-model="sharedFeedFilters.wrist.MutedOnPlayerJoined" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     .toggle-item
                         span.toggle-name Muted Player Leaves
                         el-radio-group(v-model="sharedFeedFilters.wrist.MutedOnPlayerLeft" size="mini")
-                            el-radio-button(label="Off")
-                            el-radio-button(label="VIP")
-                            el-radio-button(label="Friends")
-                            el-radio-button(label="Everyone")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     template(v-if="photonLoggingEnabled")
                         br
                         .toggle-item
@@ -3136,40 +3136,40 @@ html
                         .toggle-item
                             span.toggle-name Lobby Avatar Change
                             el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="VIP")
-                                el-radio-button(label="Friends")
-                                el-radio-button(label="Everyone")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                                el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                                el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                         .toggle-item
                             span.toggle-name Lobby ChatBox Message
                             el-radio-group(v-model="sharedFeedFilters.wrist.ChatBoxMessage" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="VIP")
-                                el-radio-button(label="Friends")
-                                el-radio-button(label="Everyone")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                                el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                                el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                         .toggle-item
                             span.toggle-name Blocked
                             el-radio-group(v-model="sharedFeedFilters.wrist.Blocked" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="On")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                         .toggle-item
                             span.toggle-name Unblocked
                             el-radio-group(v-model="sharedFeedFilters.wrist.Unblocked" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="On")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                         .toggle-item
                             span.toggle-name Muted
                             el-radio-group(v-model="sharedFeedFilters.wrist.Muted" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="On")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                         .toggle-item
                             span.toggle-name Unmuted
                             el-radio-group(v-model="sharedFeedFilters.wrist.Unmuted" size="mini")
-                                el-radio-button(label="Off")
-                                el-radio-button(label="On")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                 template(#footer)
-                    el-button(type="small" @click="cancelSharedFeedFilters") Cancel
-                    el-button(type="primary" size="small" @click="saveSharedFeedFilters") Save
+                    el-button(type="small" @click="cancelSharedFeedFilters") {{ $t('dialog.shared_feed_filters.cancel') }}
+                    el-button(type="primary" size="small" @click="saveSharedFeedFilters") {{ $t('dialog.shared_feed_filters.save') }}
 
             //- dialog: Edit Invite Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="editInviteMessageDialog" :visible.sync="editInviteMessageDialog.visible" :title="$t('dialog.edit_invite_message.header')" width="400px")
@@ -3283,14 +3283,14 @@ html
                     el-button(type="primary" size="small" @click="saveEditAndSendInvite") {{ $t('dialog.edit_send_invite_message.send') }}
 
             //- dialog: Change avatar image
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" title="Change Avatar Image" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" :title="$t('dialog.change_content_image.avatar')" width="800px")
                 div(v-if="changeAvatarImageDialogVisible" v-loading="changeAvatarImageDialogLoading")
                     input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
-                    span Recommended image size 1200x900px (4:3)
+                    span {{ $t('dialog.change_content_image.description') }}
                     br
                     el-button-group(style="padding-bottom:10px;padding-top:10px")
-                        el-button(type="default" size="small" @click="displayPreviousImages('Avatar', 'Change')" icon="el-icon-refresh") Refresh
-                        el-button(type="default" size="small" @click="uploadAvatarImage" icon="el-icon-upload2") Upload Image
+                        el-button(type="default" size="small" @click="displayPreviousImages('Avatar', 'Change')" icon="el-icon-refresh") {{ $t('dialog.change_content_image.refresh') }}
+                        el-button(type="default" size="small" @click="uploadAvatarImage" icon="el-icon-upload2") {{ $t('dialog.change_content_image.upload') }}
                         //- el-button(type="default" size="small" @click="deleteAvatarImage" icon="el-icon-delete") Delete Latest Image
                     br
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
@@ -3298,14 +3298,14 @@ html
                             img.image(v-lazy="image.file.url")
 
             //- dialog: Change world image
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" title="Change World Image" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" :title="$t('dialog.change_content_image.world')" width="800px")
                 div(v-if="changeWorldImageDialogVisible" v-loading="changeWorldImageDialogLoading")
                     input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
-                    span Recommended image size 1200x900px (4:3)
+                    span {{ $t('dialog.change_content_image.description') }}
                     br
                     el-button-group(style="padding-bottom:10px;padding-top:10px")
-                        el-button(type="default" size="small" @click="displayPreviousImages('World', 'Change')" icon="el-icon-refresh") Refresh
-                        el-button(type="default" size="small" @click="uploadWorldImage" icon="el-icon-upload2") Upload Image
+                        el-button(type="default" size="small" @click="displayPreviousImages('World', 'Change')" icon="el-icon-refresh") {{ $t('dialog.change_content_image.refresh') }}
+                        el-button(type="default" size="small" @click="uploadWorldImage" icon="el-icon-upload2") {{ $t('dialog.change_content_image.upload') }}
                         //- el-button(type="default" size="small" @click="deleteWorldImage" icon="el-icon-delete") Delete Latest Image
                     br
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
@@ -3313,7 +3313,7 @@ html
                             img.image(v-lazy="image.file.url")
 
             //- dialog: Display previous avatar/world images
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousImagesDialog" :visible.sync="previousImagesDialogVisible" title="Previous Images" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousImagesDialog" :visible.sync="previousImagesDialogVisible" :title="$t('dialog.previous_images.header')" width="800px")
                 div(v-if="previousImagesDialogVisible")
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
                         el-popover.x-change-image-item(placement="right" width="500px" trigger="click")
@@ -3321,17 +3321,17 @@ html
                             img.x-link(v-lazy="image.file.url" style="width:500px;height:375px" @click="downloadAndSaveImage(image.file.url)")
 
             //- dialog: Gallery/VRCPlusIcons
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="galleryDialog" :visible.sync="galleryDialogVisible" title="Gallery and Icons" width="100%")
-                span(style="padding-bottom:10px") Recommended image size 1200x900px (4:3)
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="galleryDialog" :visible.sync="galleryDialogVisible" :title="$t('dialog.gallery_icons.header')" width="100%")
+                span(style="padding-bottom:10px") {{ $t('dialog.gallery_icons.description') }} (4:3)
                 el-tabs(type="card")
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogGalleryLoading")
-                        span(slot="label") Gallery
+                        span(slot="label") {{ $t('dialog.gallery_icons.gallery') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
                         input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
                         el-button-group
-                            el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") Refresh
-                            el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") Upload
-                            el-button(type="default" size="small" @click="setProfilePicOverride('')" icon="el-icon-close" :disabled="!API.currentUser.profilePicOverride") Clear
+                            el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
+                            el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
+                            el-button(type="default" size="small" @click="setProfilePicOverride('')" icon="el-icon-close" :disabled="!API.currentUser.profilePicOverride") {{ $t('dialog.gallery_icons.clear') }}
                         br
                         .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in galleryTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setProfilePicOverride(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentProfilePic(image.id) }")
@@ -3340,13 +3340,13 @@ html
                                 el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteGalleryImage(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
-                        span(slot="label") Icons
+                        span(slot="label") {{ $t('dialog.gallery_icons.icons') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ VRCPlusIconsTable.length }}/64
                         input(type="file" accept="image/*" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
                         el-button-group
-                            el-button(type="default" size="small" @click="refreshVRCPlusIconsTable" icon="el-icon-refresh") Refresh
-                            el-button(type="default" size="small" @click="displayVRCPlusIconUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") Upload
-                            el-button(type="default" size="small" @click="setVRCPlusIcon('')" icon="el-icon-close" :disabled="!API.currentUser.userIcon") Clear
+                            el-button(type="default" size="small" @click="refreshVRCPlusIconsTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
+                            el-button(type="default" size="small" @click="displayVRCPlusIconUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
+                            el-button(type="default" size="small" @click="setVRCPlusIcon('')" icon="el-icon-close" :disabled="!API.currentUser.userIcon") {{ $t('dialog.gallery_icons.clear') }}
                         br
                         .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in VRCPlusIconsTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setVRCPlusIcon(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(image.id) }")
@@ -3356,74 +3356,74 @@ html
                                 el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
 
             //- dialog Table: Previous Instances User
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesUserDialog" :visible.sync="previousInstancesUserDialog.visible" title="Previous Instances" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesUserDialog" :visible.sync="previousInstancesUserDialog.visible" :title="$t('dialog.previous_instances.header')" width="800px")
                 span(v-text="previousInstancesUserDialog.userRef.displayName" style="font-size:14px")
-                el-input(v-model="previousInstancesUserDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
+                el-input(v-model="previousInstancesUserDialogTable.filters[0].value" :placeholder="$t('dialog.previous_instances.search_placeholder')" style="display:block;width:150px;margin-top:15px")
                 data-tables(v-if="previousInstancesUserDialog.visible" v-bind="previousInstancesUserDialogTable" v-loading="previousInstancesUserDialog.loading" style="margin-top:10px")
-                    el-table-column(label="Date" prop="created_at" sortable width="120")
+                    el-table-column(:label="$t('table.previous_instances.date')" prop="created_at" sortable width="120")
                         template(v-once #default="scope")
                             el-tooltip(placement="left")
                                 template(#content)
                                     span {{ scope.row.created_at | formatDate('long') }}
                                 span {{ scope.row.created_at | formatDate('short') }}
-                    el-table-column(label="World" prop="name" sortable)
+                    el-table-column(:label="$t('table.previous_instances.world')" prop="name" sortable)
                         template(v-once #default="scope")
                             location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
-                    el-table-column(label="Instance Creator" prop="location" width="160")
+                    el-table-column(:label="$t('table.previous_instances.instance_creator')" prop="location" width="160")
                         template(v-once #default="scope")
                             display-name(:userid="scope.row.$location.userId" :location="scope.row.$location.tag" :key="previousInstancesUserDialog.forceUpdate")
-                    el-table-column(label="Time" prop="time" width="90" sortable)
+                    el-table-column(:label="$t('table.previous_instances.time')" prop="time" width="90" sortable)
                         template(v-once #default="scope")
                             span(v-text="scope.row.timer")
-                    el-table-column(label="Action" width="90" align="right")
+                    el-table-column(:label="$t('table.previous_instances.action')" width="90" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-info" size="mini" @click="showLaunchDialog(scope.row.location)")
                             el-button(type="text" icon="el-icon-tickets" size="mini" @click="showPreviousInstanceInfoDialog(scope.row.location)")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogUserInstance(scope.row)")
 
             //- dialog Table: Previous Instances World
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesWorldDialog" :visible.sync="previousInstancesWorldDialog.visible" title="Previous Instances" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesWorldDialog" :visible.sync="previousInstancesWorldDialog.visible" :title="$t('dialog.previous_instances.header')" width="800px")
                 span(v-text="previousInstancesWorldDialog.worldRef.name" style="font-size:14px")
-                el-input(v-model="previousInstancesWorldDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
+                el-input(v-model="previousInstancesWorldDialogTable.filters[0].value" :placeholder="$t('dialog.previous_instances.search_placeholder')" style="display:block;width:150px;margin-top:15px")
                 data-tables(v-if="previousInstancesWorldDialog.visible" v-bind="previousInstancesWorldDialogTable" v-loading="previousInstancesWorldDialog.loading" style="margin-top:10px")
-                    el-table-column(label="Date" prop="created_at" sortable width="120")
+                    el-table-column(:label="$t('table.previous_instances.date')" prop="created_at" sortable width="120")
                         template(v-once #default="scope")
                             el-tooltip(placement="left")
                                 template(#content)
                                     span {{ scope.row.created_at | formatDate('long') }}
                                 span {{ scope.row.created_at | formatDate('short') }}
-                    el-table-column(label="Instance Name" prop="name")
+                    el-table-column(:label="$t('table.previous_instances.instance_name')" prop="name")
                         template(v-once #default="scope")
                             location-world(:locationobject="scope.row.$location" :grouphint="scope.row.groupName" :currentuserid="API.currentUser.id")
-                    el-table-column(label="Instance Creator" prop="location")
+                    el-table-column(:label="$t('table.previous_instances.instance_creator')" prop="location")
                         template(v-once #default="scope")
                             display-name(:userid="scope.row.$location.userId" :location="scope.row.$location.tag" :key="previousInstancesWorldDialog.forceUpdate")
-                    el-table-column(label="Time" prop="time" width="90" sortable)
+                    el-table-column(:label="$t('table.previous_instances.time')" prop="time" width="90" sortable)
                         template(v-once #default="scope")
                             span(v-text="scope.row.timer")
-                    el-table-column(label="Action" width="90" align="right")
+                    el-table-column(:label="$t('table.previous_instances.action')" width="90" align="right")
                         template(v-once #default="scope")
                             el-button(type="text" icon="el-icon-tickets" size="mini" @click="showPreviousInstanceInfoDialog(scope.row.location)")
                             el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogWorldInstance(scope.row)")
 
             //- dialog Table: Previous Instance Info
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstanceInfoDialog" :visible.sync="previousInstanceInfoDialog.visible" title="Previous Instance Info" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstanceInfoDialog" :visible.sync="previousInstanceInfoDialog.visible" :title="$t('dialog.previous_instances.info')" width="800px")
                 location(:location="previousInstanceInfoDialog.$location.tag" style="font-size:14px")
                 el-input(v-model="previousInstanceInfoDialogTable.filters[0].value" placeholder="Search" style="display:block;width:150px;margin-top:15px")
                 data-tables(v-if="previousInstanceInfoDialog.visible" v-bind="previousInstanceInfoDialogTable" v-loading="previousInstanceInfoDialog.loading" style="margin-top:10px")
-                    el-table-column(label="Date" prop="created_at" sortable width="120")
+                    el-table-column(:label="$t('table.previous_instances.date')" prop="created_at" sortable width="120")
                         template(v-once #default="scope")
                             el-tooltip(placement="left")
                                 template(#content)
                                     span {{ scope.row.created_at | formatDate('long') }}
                                 span {{ scope.row.created_at | formatDate('short') }}
-                    el-table-column(label="Display Name" prop="displayName" sortable)
+                    el-table-column(:label="$t('table.previous_instances.display_name')" prop="displayName" sortable)
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)")
-                    el-table-column(label="Time" prop="time" width="90" sortable)
+                    el-table-column(:label="$t('table.previous_instances.time')" prop="time" width="90" sortable)
                         template(v-once #default="scope")
                             span(v-text="scope.row.timer")
-                    el-table-column(label="Count" prop="count" width="90" sortable)
+                    el-table-column(:label="$t('table.previous_instances.count')" prop="count" width="90" sortable)
                         template(v-once #default="scope")
                             span(v-text="scope.row.count")
 
@@ -3654,14 +3654,14 @@ html
                     el-button(@click="avatarRemoteDatabaseProviderList.push('')" size="mini" style="margin-top:5px") {{ $t('dialog.avatar_database_provider.add_provider') }}
 
             //- dialog: chatbox blacklist
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="chatboxBlacklistDialog" :visible.sync="chatboxBlacklistDialog.visible" title="Chatbox Blacklist" width="600px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="chatboxBlacklistDialog" :visible.sync="chatboxBlacklistDialog.visible" :title="$t('dialog.chatbox_blacklist.header')" width="600px")
                 div(v-loading="chatboxBlacklistDialog.loading" v-if="chatboxBlacklistDialog.visible")
-                    h2 Keyword Blacklist
+                    h2 {{ $t('dialog.chatbox_blacklist.keyword_blacklist') }}
                     el-input(v-for="(item, index) in chatboxBlacklist" :key="index" :value="item" v-model="chatboxBlacklist[index]" size="small" style="margin-top:5px" @change="saveChatboxBlacklist")
                         el-button(slot="append" icon="el-icon-delete" @click="chatboxBlacklist.splice(index, 1); saveChatboxBlacklist()")
-                    el-button(@click="chatboxBlacklist.push('')" size="mini" style="margin-top:5px") Add Item
+                    el-button(@click="chatboxBlacklist.push('')" size="mini" style="margin-top:5px") {{ $t('dialog.chatbox_blacklist.add_item') }}
                     br
-                    h2 User Blacklist
+                    h2 {{ $t('dialog.chatbox_blacklist.user_blacklist') }}
                     el-tag(v-for="user in chatboxUserBlacklist" type="info" disable-transitions="true" :key="user[0]" style="margin-right:5px;margin-top:5px" closable @close="deleteChatboxUserBlacklist(user[0])")
                         span {{user[1]}}
 

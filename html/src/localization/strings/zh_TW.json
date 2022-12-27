@@ -732,6 +732,12 @@
             "vrchat_favorites": "VRChat 收藏",
             "local_favorites": "本地收藏"
         },
+        "invite": {
+            "header": "Invite",
+            "select_placeholder": "Choose Friends",
+            "invite_with_message": "Invite With Message",
+            "invite": "Invite"
+        },
         "social_status": {
             "header": "社交狀態",
             "history": "過去的社交狀態",
@@ -787,11 +793,35 @@
             "unity_manual": "Unity 手冊",
             "save": "儲存"
         },
+        "config_json": {
+            "header": "VRChat JSON 設定檔",
+            "description1": "這些選項僅適用於高級玩家。",
+            "description2": "將輸入框留白來設為預設值，設定需要重新啟動遊戲才會套用。",
+            "cache_size": "快取大小：",
+            "refresh": "重新整理",
+            "delete_all_cache": "刪除所有快取",
+            "delete_cache": "刪除快取",
+            "delete_old_cache": "從快取中刪除舊版本",
+            "sweep_cache": "清理快取",
+            "camera_resolution": "相機解析度",
+            "screenshot_resolution": "螢幕截圖解析度",
+            "disable_discord_presence": "停用 Discord 遊戲狀態",
+            "vrchat_docs": "VRChat 文檔",
+            "cancel": "取消",
+            "save": "儲存"
+        },
         "youtube_api": {
             "header": "YouTube API",
             "description": "輸入你的 YouTube API 金鑰（選擇性）",
             "placeholder": "YouTube API 金鑰",
             "guide": "教學",
+            "save": "儲存"
+        },
+        "set_world_tags": {
+            "header": "設定世界標籤",
+            "enable_debugging": "為其他人啟用世界偵錯",
+            "seprator": "使用逗號來分隔每個標籤",
+            "cancel": "取消",
             "save": "儲存"
         },
         "vrcx_updater": {
@@ -822,6 +852,22 @@
         "discord_names": {
             "header": "Discord 名稱",
             "description": "點擊好友列表中的「讀取缺失的項目」來搜尋整個好友列表"
+        },
+        "notification_position": {
+            "header": "通知位置",
+            "description": "選擇通知位置",
+            "ok": "OK"
+        },
+        "shared_feed_filters": {
+            "notification": "通知篩選器",
+            "wrist": "手腕動態篩選器",
+            "on": "開啟",
+            "off": "關閉",
+            "favorite": "收藏",
+            "friends": "好友",
+            "everyone": "所有人",
+            "cancel": "取消",
+            "save": "儲存"
         },
         "world_export": {
             "header": "世界收藏匯出"
@@ -876,6 +922,12 @@
             "header": "角色資料庫提供方",
             "add_provider": "新增提供方"
         },
+        "chatbox_blacklist": {
+            "header": "聊天框黑名單",
+            "keyword_blacklist": "關鍵字黑名單",
+            "user_blacklist": "玩家黑名單",
+            "add_item": "新增項目"
+        },
         "invite_to_group": {
             "header": "邀請到群組",
             "description": "請不要濫用群組邀請，邀請太多玩家加入群組會導致你被停權。",
@@ -883,6 +935,13 @@
             "groups": "群組",
             "choose_friends_placeholder": "選擇好友",
             "selected_users": "已選擇的玩家"
+        },
+        "download_history": {
+            "header": "下載紀錄",
+            "queue": "下載佇列：",
+            "history": "歷史紀錄：",
+            "cancel_all": "取消全部",
+            "close": "關閉"
         },
         "note_export": {
             "header": "備註匯出",
@@ -942,6 +1001,30 @@
             "description": "一小時編輯冷卻時間。",
             "cancel": "取消",
             "send": "傳送"
+        },
+        "gallery_icons": {
+            "header": "相簿和圖示",
+            "description": "推薦圖片尺寸：1200 像素 x 900 像素",
+            "gallery": "相簿",
+            "icons": "圖示",
+            "refresh": "重新整理",
+            "upload": "上傳",
+            "clear": "清除"
+        },
+        "change_content_image": {
+            "avatar": "變更角色圖片",
+            "world": "變更世界圖片",
+            "description": "推薦圖片尺寸：1200 像素 x 900 像素 (4:3)",
+            "refresh": "重新整理",
+            "upload": "上傳圖片"
+        },
+        "previous_images": {
+            "header": "過去的圖片"
+        },
+        "previous_instances": {
+            "header": "過去的房間",
+            "info": "過去的房間資訊",
+            "search_placeholder": "搜尋"
         },
         "open_source": {
             "header": "開放原始碼軟體授權條款",
@@ -1036,6 +1119,13 @@
             "no": "No.",
             "status": "狀蓋"
         },
+        "download_history": {
+            "time": "時間",
+            "name": "名稱",
+            "type": "種類",
+            "status": "狀態",
+            "cancel": "取消"
+        },
         "import": {
             "image": "圖片",
             "name": "名稱",
@@ -1043,6 +1133,16 @@
             "status": "狀態",
             "note": "備註",
             "skip_export": "跳過匯出",
+            "action": "動作"
+        },
+        "previous_instances": {
+            "date": "日期",
+            "display_name": "顯示名稱",
+            "world": "世界",
+            "instance_name": "房間名稱",
+            "instance_creator": "房間創建者",
+            "time": "時間",
+            "count": "次數",
             "action": "動作"
         }
     }
