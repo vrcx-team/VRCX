@@ -19578,45 +19578,7 @@ speechSynthesis.getVoices();
     // VRChat Config JSON
 
     $app.data.VRChatConfigFile = {};
-
-    $app.data.VRChatConfigList = {
-        cache_size: {
-            name: 'Max Cache Size [GB] (min 20)',
-            default: '20',
-            type: 'number',
-            min: 20
-        },
-        cache_expiry_delay: {
-            name: 'Cache Expiry [Days] (30 - 150)',
-            default: '30',
-            type: 'number',
-            min: 30,
-            max: 150
-        },
-        cache_directory: {
-            name: 'Custom Cache Folder Location',
-            default: '%AppData%\\..\\LocalLow\\VRChat\\vrchat'
-        },
-        dynamic_bone_max_affected_transform_count: {
-            name: 'Dynamic Bones Limit Max Transforms (0 disable all transforms)',
-            default: '32',
-            type: 'number',
-            min: 0
-        },
-        dynamic_bone_max_collider_check_count: {
-            name: 'Dynamic Bones Limit Max Collider Collisions (0 disable all colliders)',
-            default: '8',
-            type: 'number',
-            min: 0
-        },
-        fpv_steadycam_fov: {
-            name: 'First-Person Steadycam FOV',
-            default: '50',
-            type: 'number',
-            min: 30,
-            max: 110
-        }
-    };
+    $app.data.VRChatConfigList = {};
 
     $app.methods.readVRChatConfigFile = async function () {
         this.VRChatConfigFile = {};
@@ -19648,6 +19610,44 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.showVRChatConfig = async function () {
+        this.VRChatConfigList = {
+            cache_size: {
+                name: i18n.t('dialog.config_json.max_cache_size'),
+                default: '20',
+                type: 'number',
+                min: 20
+            },
+            cache_expiry_delay: {
+                name: i18n.t('dialog.config_json.cache_expiry_delay'),
+                default: '30',
+                type: 'number',
+                min: 30,
+                max: 150
+            },
+            cache_directory: {
+                name: i18n.t('dialog.config_json.cache_directory'),
+                default: '%AppData%\\..\\LocalLow\\VRChat\\vrchat'
+            },
+            // dynamic_bone_max_affected_transform_count: {
+            //     name: 'Dynamic Bones Limit Max Transforms (0 disable all transforms)',
+            //     default: '32',
+            //     type: 'number',
+            //     min: 0
+            // },
+            // dynamic_bone_max_collider_check_count: {
+            //     name: 'Dynamic Bones Limit Max Collider Collisions (0 disable all colliders)',
+            //     default: '8',
+            //     type: 'number',
+            //     min: 0
+            // },
+            fpv_steadycam_fov: {
+                name: i18n.t('dialog.config_json.fpv_steadycam_fov'),
+                default: '50',
+                type: 'number',
+                min: 30,
+                max: 110
+            }
+        };
         await this.readVRChatConfigFile();
         this.$nextTick(() => adjustDialogZ(this.$refs.VRChatConfigDialog.$el));
         this.VRChatConfigDialog.visible = true;
