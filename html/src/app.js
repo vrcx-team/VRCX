@@ -215,6 +215,8 @@ speechSynthesis.getVoices();
         messages: localizedStrings
     });
 
+    var $t = i18n.t.bind(i18n);
+
     var $appDarkStyle = document.createElement('link');
     $appDarkStyle.disabled = true;
     $appDarkStyle.rel = 'stylesheet';
@@ -19612,20 +19614,20 @@ speechSynthesis.getVoices();
     $app.methods.showVRChatConfig = async function () {
         this.VRChatConfigList = {
             cache_size: {
-                name: i18n.t('dialog.config_json.max_cache_size'),
+                name: $t('dialog.config_json.max_cache_size'),
                 default: '20',
                 type: 'number',
                 min: 20
             },
             cache_expiry_delay: {
-                name: i18n.t('dialog.config_json.cache_expiry_delay'),
+                name: $t('dialog.config_json.cache_expiry_delay'),
                 default: '30',
                 type: 'number',
                 min: 30,
                 max: 150
             },
             cache_directory: {
-                name: i18n.t('dialog.config_json.cache_directory'),
+                name: $t('dialog.config_json.cache_directory'),
                 default: '%AppData%\\..\\LocalLow\\VRChat\\vrchat'
             },
             // dynamic_bone_max_affected_transform_count: {
@@ -19641,7 +19643,7 @@ speechSynthesis.getVoices();
             //     min: 0
             // },
             fpv_steadycam_fov: {
-                name: i18n.t('dialog.config_json.fpv_steadycam_fov'),
+                name: $t('dialog.config_json.fpv_steadycam_fov'),
                 default: '50',
                 type: 'number',
                 min: 30,
