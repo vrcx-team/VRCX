@@ -164,6 +164,7 @@ This can be caused by a many different things here's a list of things to try:
 - Browse to `%AppData%\VRCX\` then select `VRCX.sqlite3`.
 - File > Export > Database to SQL file...
 - Click Save and place the file somewhere.
+- File > Close Database
 - Rename `VRCX.sqlite3` in `%AppData%\VRCX\` to something like `Backup.sqlite3`.
 - File > Import > Database from SQL file...
 - Click Yes to creating a new database.
