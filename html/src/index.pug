@@ -1637,7 +1637,7 @@ html
                                     img.x-link(slot="reference" v-lazy="userDialog.ref.userIcon" style="flex:none;width:120px;height:120px;border-radius:4px;object-fit:cover")
                                     img.x-link(v-lazy="userDialog.ref.userIcon" style="height:500px" @click="downloadAndSaveImage(userDialog.ref.userIcon)")
                             div(style="flex:none")
-                                template(v-if="API.currentUser.id !== userDialog.ref.id")
+                                template(v-if="(API.currentUser.id !== userDialog.ref.id && userDialog.isFriend) || userDialog.isFavorite")
                                     el-tooltip(v-if="userDialog.isFavorite" placement="top" :content="$t('dialog.user.actions.unfavorite_tooltip')" :disabled="hideTooltips")
                                         el-button(@click="userDialogCommand('Delete Favorite')" type="warning" icon="el-icon-star-on" circle)
                                     el-tooltip(v-else placement="top" :content="$t('dialog.user.actions.favorite_tooltip')" :disabled="hideTooltips")

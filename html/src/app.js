@@ -882,17 +882,14 @@ speechSynthesis.getVoices();
                 } else if (L.worldId) {
                     var ref = API.cachedWorlds.get(L.worldId);
                     if (typeof ref === 'undefined') {
-                        API.getWorld({
-                            worldId: L.worldId
-                        }).then((args) => {
+                        $app.getWorldName(L.worldId).then((worldName) => {
                             if (L.tag === instanceId) {
                                 if (L.instanceId) {
-                                    this.text = `${args.json.name} #${L.instanceName} ${L.accessType}`;
+                                    this.text = `${worldName} #${L.instanceName} ${L.accessType}`;
                                 } else {
-                                    this.text = args.json.name;
+                                    this.text = worldName;
                                 }
                             }
-                            return args;
                         });
                     } else if (L.instanceId) {
                         this.text = `${ref.name} #${L.instanceName} ${L.accessType}`;
@@ -904,9 +901,8 @@ speechSynthesis.getVoices();
                     this.groupName = this.grouphint;
                 } else if (L.groupId) {
                     this.groupName = L.groupId;
-                    API.getCachedGroup({groupId: L.groupId}).then((args) => {
-                        this.groupName = args.json.name;
-                        return args;
+                    $app.getGroupName(instanceId).then((groupName) => {
+                        this.groupName = groupName;
                     });
                 }
                 this.region = '';
@@ -1011,11 +1007,8 @@ speechSynthesis.getVoices();
                     this.groupName = this.grouphint;
                 } else if (this.locationobject.groupId) {
                     this.groupName = this.locationobject.groupId;
-                    API.getCachedGroup({
-                        groupId: this.locationobject.groupId
-                    }).then((args) => {
-                        this.groupName = args.json.name;
-                        return args;
+                    $app.getGroupName(this.location).then((groupName) => {
+                        this.groupName = groupName;
                     });
                 }
             },
@@ -1440,11 +1433,11 @@ speechSynthesis.getVoices();
                 ref.$homeLocation = this.parseLocation(ref.homeLocation);
                 // apply home location name to user dialog
                 if ($app.userDialog.visible && $app.userDialog.id === ref.id) {
-                    API.getCachedWorld({
-                        worldId: API.currentUser.homeLocation
-                    }).then((args) => {
-                        $app.userDialog.$homeLocationName = args.ref.name;
-                    });
+                    $app.getWorldName(API.currentUser.homeLocation).then(
+                        (worldName) => {
+                            $app.userDialog.$homeLocationName = worldName;
+                        }
+                    );
                 }
             }
             ref.$isVRCPlus = ref.tags.includes('system_supporter');
@@ -4367,7 +4360,13 @@ speechSynthesis.getVoices();
 
             case 'group-joined':
             case 'group-left':
-                // content.groupId
+                var groupId = content.groupId;
+                if (
+                    $app.groupDialog.visible &&
+                    $app.groupDialog.id === groupId
+                ) {
+                    $app.showGroupDialog(groupId);
+                }
                 break;
             case 'group-member-updated':
                 // content {
@@ -10148,13 +10147,7 @@ speechSynthesis.getVoices();
     ) {
         var worldName = shortName;
         if (instanceId) {
-            var L = API.parseLocation(instanceId);
-            try {
-                var args = await API.getCachedWorld({
-                    worldId: L.worldId
-                });
-                worldName = args.ref.name;
-            } catch (err) {}
+            worldName = await this.getWorldName(instanceId);
         }
         this.addEntryPhotonEvent({
             photonId,
@@ -14370,11 +14363,11 @@ speechSynthesis.getVoices();
         D.dateFriended = '';
         D.unFriended = false;
         if (userId === API.currentUser.id) {
-            API.getCachedWorld({
-                worldId: API.currentUser.homeLocation
-            }).then((args) => {
-                D.$homeLocationName = args.ref.name;
-            });
+            this.getWorldName(API.currentUser.homeLocation).then(
+                (worldName) => {
+                    D.$homeLocationName = worldName;
+                }
+            );
         }
         API.getCachedUser({
             userId
@@ -21670,20 +21663,43 @@ speechSynthesis.getVoices();
     $app.methods.updateDatabaseVersion = async function () {
         var databaseVersion = 4;
         if (this.databaseVersion !== databaseVersion) {
+            var msgBox = this.$message({
+                message: 'DO NOT CLOSE VRCX, database upgrade in process...',
+                type: 'warning',
+                duration: 0
+            });
             console.log(
                 `Updating database from ${this.databaseVersion} to ${databaseVersion}...`
             );
-            await database.cleanLegendFromFriendLog(); // fix friendLog spammed with crap
-            await database.fixGameLogTraveling(); // fix bug with gameLog location being set as traveling
-            await database.fixNegativeGPS(); // fix GPS being a negative value due to VRCX bug with traveling
-            await database.fixBrokenLeaveEntries(); // fix user instance timer being higher than current user location timer
-            await database.fixBrokenGroupInvites(); // fix notification v2 in wrong table
-            if (this.databaseVersion && this.databaseVersion < 4) {
+            try {
+                await database.cleanLegendFromFriendLog(); // fix friendLog spammed with crap
+                await database.fixGameLogTraveling(); // fix bug with gameLog location being set as traveling
+                await database.fixNegativeGPS(); // fix GPS being a negative value due to VRCX bug with traveling
+                await database.fixBrokenLeaveEntries(); // fix user instance timer being higher than current user location timer
+                await database.fixBrokenGroupInvites(); // fix notification v2 in wrong table
                 await database.updateTableForGroupNames(); // alter tables to include group name
+                this.databaseVersion = databaseVersion;
+                configRepository.setInt(
+                    'VRCX_databaseVersion',
+                    databaseVersion
+                );
+                console.log('Database update complete.');
+                msgBox.close();
+                this.$message({
+                    message: 'Database upgrade complete',
+                    type: 'success'
+                });
+            } catch (err) {
+                console.error(err);
+                msgBox.close();
+                this.$message({
+                    message:
+                        'Database upgrade failed, check console for details',
+                    type: 'error',
+                    duration: 120000
+                });
+                AppApi.ShowDevTools();
             }
-            this.databaseVersion = databaseVersion;
-            configRepository.setInt('VRCX_databaseVersion', databaseVersion);
-            console.log('Database update complete.');
         }
     };
 

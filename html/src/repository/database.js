@@ -1830,18 +1830,23 @@ class Database {
     }
 
     async updateTableForGroupNames() {
-        try {
-            var tables = [];
-            await sqliteService.execute((dbRow) => {
-                tables.push(dbRow[0]);
-            }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_feed_gps' OR name LIKE '%_feed_online_offline' OR name = 'gamelog_location'`);
-            tables.forEach((tableName) => {
+        var tables = [];
+        await sqliteService.execute((dbRow) => {
+            tables.push(dbRow[0]);
+        }, `SELECT name FROM sqlite_schema WHERE type='table' AND name LIKE '%_feed_gps' OR name LIKE '%_feed_online_offline' OR name = 'gamelog_location'`);
+        for (var tableName of tables) {
+            try {
+                await sqliteService.executeNonQuery(
+                    `SELECT group_name FROM ${tableName} LIMIT 1`
+                );
+            } catch (e) {
+                if (e.indexOf('no such column') === -1) {
+                    throw e;
+                }
                 sqliteService.executeNonQuery(
                     `ALTER TABLE ${tableName} ADD group_name TEXT DEFAULT ''`
                 );
-            });
-        } catch (e) {
-            console.error(e);
+            }
         }
     }
 }

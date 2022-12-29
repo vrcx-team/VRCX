@@ -402,6 +402,7 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.playNoty = function (json) {
         var {noty, message, image} = JSON.parse(json);
+        var message = escapeTag(message);
         var text = '';
         var img = '';
         if (image) {
@@ -422,7 +423,7 @@ Vue.component('marquee-text', MarqueeText);
                     noty.displayName
                 }</strong> is in ${this.displayLocation(
                     noty.location,
-                    noty.worldName
+                    escapeTag(noty.worldName)
                 )}`;
                 break;
             case 'Online':
@@ -430,7 +431,7 @@ Vue.component('marquee-text', MarqueeText);
                 if (noty.worldName) {
                     locationName = ` to ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        escapeTag(noty.worldName)
                     )}`;
                 }
                 text = `<strong>${noty.displayName}</strong> has logged in${locationName}`;
@@ -439,14 +440,16 @@ Vue.component('marquee-text', MarqueeText);
                 text = `<strong>${noty.displayName}</strong> has logged out`;
                 break;
             case 'Status':
-                text = `<strong>${noty.displayName}</strong> status is now <i>${noty.status}</i> ${noty.statusDescription}`;
+                text = `<strong>${noty.displayName}</strong> status is now <i>${
+                    noty.status
+                }</i> ${escapeTag(noty.statusDescription)}`;
                 break;
             case 'invite':
                 text = `<strong>${
                     noty.senderUsername
                 }</strong> has invited you to ${this.displayLocation(
                     noty.details.worldId,
-                    noty.details.worldName
+                    escapeTag(noty.details.worldName)
                 )}${message}`;
                 break;
             case 'requestInvite':
@@ -474,16 +477,16 @@ Vue.component('marquee-text', MarqueeText);
                 text = `<strong>${noty.previousDisplayName}</strong> changed their name to ${noty.displayName}`;
                 break;
             case 'group.announcement':
-                text = noty.message;
+                text = escapeTag(noty.message);
                 break;
             case 'group.informative':
-                text = noty.message;
+                text = escapeTag(noty.message);
                 break;
             case 'group.invite':
-                text = noty.message;
+                text = escapeTag(noty.message);
                 break;
             case 'group.joinRequest':
-                text = noty.message;
+                text = escapeTag(noty.message);
                 break;
             case 'PortalSpawn':
                 if (noty.displayName) {
@@ -491,23 +494,29 @@ Vue.component('marquee-text', MarqueeText);
                         noty.displayName
                     }</strong> has spawned a portal to ${this.displayLocation(
                         noty.instanceId,
-                        noty.worldName
+                        escapeTag(noty.worldName)
                     )}`;
                 } else {
                     text = 'User has spawned a portal';
                 }
                 break;
             case 'AvatarChange':
-                text = `<strong>${noty.displayName}</strong> changed into avatar ${noty.name}`;
+                text = `<strong>${
+                    noty.displayName
+                }</strong> changed into avatar ${escapeTag(noty.name)}`;
                 break;
             case 'ChatBoxMessage':
-                text = `<strong>${noty.displayName}</strong> said ${noty.text}`;
+                text = `<strong>${noty.displayName}</strong> said ${escapeTag(
+                    noty.text
+                )}`;
                 break;
             case 'Event':
-                text = noty.data;
+                text = escapeTag(noty.data);
                 break;
             case 'VideoPlay':
-                text = `<strong>Now playing:</strong> ${noty.notyName}`;
+                text = `<strong>Now playing:</strong> ${escapeTag(
+                    noty.notyName
+                )}`;
                 break;
             case 'BlockedOnPlayerJoined':
                 text = `Blocked user <strong>${noty.displayName}</strong> has joined`;
