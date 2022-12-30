@@ -21,7 +21,7 @@
             "register": "註冊",
             "forgotPassword": "忘記密碼？",
             "field": {
-                "username": "玩家名稱或電子郵件",
+                "username": "玩家名稱或電子信箱",
                 "password": "密碼",
                 "saveCredentials": "儲存登入資料",
                 "devEndpoint": "開發接口",
@@ -1039,6 +1039,217 @@
             "password_placeholder": "輸入新密碼",
             "re_input_placeholder": "確認密碼",
             "ok": "OK"
+        }
+    },
+    "prompt": {
+        "totp": {
+            "header": "雙重認證",
+            "description": "輸入你的身份驗證器應用程式中的數字代碼",
+            "use_otp": "使用一次性密碼",
+            "verify": "驗證",
+            "input_placeholder": "驗證碼",
+            "input_error": "無效的代碼"
+        },
+        "otp": {
+            "header": "雙重認證",
+            "description": "輸入你儲存的其中一個備份驗證碼",
+            "use_otp": "使用驗證碼",
+            "verify": "驗證",
+            "input_placeholder": "備份驗證碼",
+            "input_error": "無效的代碼"
+        },
+        "email_otp": {
+            "header": "雙重認證",
+            "description": "輸入寄送到電子信箱的數字代碼",
+            "cancel": "取消",
+            "verify": "驗證",
+            "input_placeholder": "代碼",
+            "input_error": "無效的代碼"
+        },
+        "primary_password": {
+            "header": "需要主密碼",
+            "description": "請輸入你的主密碼"
+        },
+        "change_favorite_group_name": {
+            "header": "變更收藏群組名稱",
+            "description": "輸入新名稱",
+            "cancel": "取消",
+            "change": "變更",
+            "input_placeholder": "名稱",
+            "input_error": "需要名稱",
+            "message": {
+                "success": "已重新命名收藏群組"
+            }
+        },
+        "direct_access_user_id": {
+            "header": "直接存取",
+            "description": "輸入玩家連結或玩家 ID (UUID)",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "需要玩家連結 / 玩家 ID",
+            "message": {
+                "error": "無效的連結或 ID"
+            }
+        },
+        "direct_access_username": {
+            "header": "直接存取",
+            "description": "輸入玩家名稱",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "需要玩家名稱"
+        },
+        "direct_access_world_id": {
+            "header": "直接存取",
+            "description": "輸入世界連結或世界 ID (UUID)",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "需要世界連結 / 世界 ID",
+            "message": {
+                "error": "無效的連結或 ID"
+            }
+        },
+        "direct_access_avatar_id": {
+            "header": "直接存取",
+            "description": "輸入角色連結或角色 ID (UUID)",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "需要角色連結 / 角色 ID",
+            "message": {
+                "error": "無效的連結或 ID"
+            }
+        },
+        "direct_access_omni": {
+            "header": "直接存取",
+            "description": "輸入玩家 / 世界 / 房間 / 角色連結 或 ID (UUID)",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "需要連結或 ID",
+            "message": {
+                "error": "無效的連結或 ID"
+            }
+        },
+        "notification_timeout": {
+            "header": "通知顯示時間",
+            "description": "輸入秒數",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "請輸入有效的秒數"
+        },
+        "overlay_message_timeout": {
+            "header": "訊息疊層顯示時間",
+            "description": "輸入秒數",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "請輸入有效的秒數"
+        },
+        "rename_avatar": {
+            "header": "重新命名角色",
+            "description": "輸入角色名稱",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "請輸入有效的名稱",
+            "message": {
+                "success": "已重新命名角色"
+            }
+        },
+        "change_avatar_description": {
+            "header": "變更角色敘述",
+            "description": "輸入角色敘述",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "請輸入有效的敘述",
+            "message": {
+                "success": "已變更角色敘述"
+            }
+        },
+        "rename_world": {
+            "header": "重新命名世界",
+            "description": "輸入世界名稱",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "請輸入有效的名稱",
+            "message": {
+                "success": "已重新命名世界"
+            }
+        },
+        "change_world_description": {
+            "header": "變更世界敘述",
+            "description": "輸入世界敘述",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "請輸入有效的敘述",
+            "message": {
+                "success": "已變更世界敘述"
+            }
+        },
+        "change_world_capacity": {
+            "header": "變更世界最大人數",
+            "description": "輸入世界最大人數, 最大：40",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "請輸入有效的人數",
+            "message": {
+                "success": "已變更世界最大人數"
+            }
+        },
+        "change_world_preview": {
+            "header": "變更 YouTube 預覽",
+            "description": "輸入世界 YouTube 預覽",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "請輸入有效的 Youtube 連結",
+            "message": {
+                "error": "無效的 Youtube 連結",
+                "success": "世界 YouTube 預覽已變更"
+            }
+        },
+        "change_table_size": {
+            "header": "最大表格大小",
+            "description": "較大的資料表大小可能會影響內存用量和性能 （預設：1000）",
+            "cancel": "取消",
+            "save": "儲存",
+            "input_error": "請輸入有效的行數"
+        },
+        "photon_lobby_timeout": {
+            "header": "玩家愈時閥值",
+            "description": "輸入秒數（預設：3）",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "請輸入有效的秒數"
+        },
+        "auto_clear_cache": {
+            "header": "VRCX 快取清除間隔",
+            "description": "輸入小時數，較大的數值可能會影響內存用量和性能 （預設：24，關閉：0）",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "請輸入有效的小時數"
+        },
+        "new_local_favorite_group": {
+            "header": "新增收藏群組",
+            "description": "輸入世界收藏群組名稱",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "請輸入有效的名稱",
+            "message": {
+                "error": "名稱為 {name} 的群組已存在"
+            }
+        },
+        "local_favorite_group_rename": {
+            "header": "重新命名收藏群組",
+            "description": "輸入世界收藏群組名稱",
+            "cancel": "取消",
+            "save": "儲存",
+            "input_error": "請輸入有效的名稱",
+            "message": {
+                "error": "名稱為 {name} 的群組已存在"
+            }
+        },
+        "pending_offline_delay": {
+            "header": "待確認離線",
+            "description": "設定將玩家標記為離線之前的延遲秒數（預設：110）",
+            "cancel": "取消",
+            "save": "儲存",
+            "input_error": "請輸入有效的秒數"
         }
     },
     "table": {

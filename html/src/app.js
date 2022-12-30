@@ -6419,15 +6419,15 @@ speechSynthesis.getVoices();
 
     $app.methods.promptTOTP = function () {
         this.$prompt(
-            'Enter a numeric code from your authenticator app',
-            'Two-factor Authentication',
+            $t('prompt.totp.description'),
+            $t('prompt.totp.header'),
             {
                 distinguishCancelAndClose: true,
-                cancelButtonText: 'Use OTP',
-                confirmButtonText: 'Verify',
-                inputPlaceholder: 'Code',
+                cancelButtonText: $t('prompt.totp.use_otp'),
+                confirmButtonText: $t('prompt.totp.verify'),
+                inputPlaceholder: $t('prompt.totp.input_placeholder'),
                 inputPattern: /^[0-9]{6}$/,
-                inputErrorMessage: 'Invalid Code',
+                inputErrorMessage: $t('prompt.totp.input_error'),
                 callback: (action, instance) => {
                     if (action === 'confirm') {
                         API.verifyTOTP({
@@ -6451,15 +6451,15 @@ speechSynthesis.getVoices();
 
     $app.methods.promptOTP = function () {
         this.$prompt(
-            'Enter one of your saved recovery codes',
-            'Two-factor Authentication',
+            $t('prompt.otp.description'),
+            $t('prompt.otp.header'),
             {
                 distinguishCancelAndClose: true,
-                cancelButtonText: 'Use TOTP',
-                confirmButtonText: 'Verify',
-                inputPlaceholder: 'Code',
+                cancelButtonText: $t('prompt.otp.use_otp'),
+                confirmButtonText: $t('prompt.otp.verify'),
+                inputPlaceholder: $t('prompt.otp.input_placeholder'),
                 inputPattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,
-                inputErrorMessage: 'Invalid Code',
+                inputErrorMessage: $t('prompt.otp.input_error'),
                 callback: (action, instance) => {
                     if (action === 'confirm') {
                         API.verifyOTP({
@@ -6483,15 +6483,15 @@ speechSynthesis.getVoices();
 
     $app.methods.promptEmailOTP = function () {
         this.$prompt(
-            'Enter a numeric code that was sent to your email',
-            'Email Two-factor Authentication',
+            $t('prompt.email_otp.description'),
+            $t('prompt.email_otp.header'),
             {
                 distinguishCancelAndClose: true,
-                cancelButtonText: 'Cancel',
-                confirmButtonText: 'Verify',
-                inputPlaceholder: 'Code',
+                cancelButtonText: $t('prompt.email_otp.cancel'),
+                confirmButtonText: $t('prompt.email_otp.verify'),
+                inputPlaceholder: $t('prompt.email_otp.input_placeholder'),
                 inputPattern: /^[0-9]{6}$/,
-                inputErrorMessage: 'Invalid Code',
+                inputErrorMessage: $t('prompt.email_otp.input_error'),
                 callback: (action, instance) => {
                     if (action === 'confirm') {
                         API.verifyEmailOTP({
@@ -6627,8 +6627,8 @@ speechSynthesis.getVoices();
                 resolve(args.password);
             }
             $app.$prompt(
-                'Please enter your Primary Password.',
-                'Primary Password Required',
+                $t('prompt.primary_password.description'),
+                $t('prompt.primary_password.header'),
                 {
                     inputType: 'password',
                     inputPattern: /[\s\S]{1,32}/
@@ -6663,8 +6663,8 @@ speechSynthesis.getVoices();
             this.enablePrimaryPasswordDialog.visible = true;
         } else {
             this.$prompt(
-                'Please enter your Primary Password.',
-                'Primary Password Required',
+                $t('prompt.primary_password.description'),
+                $t('prompt.primary_password.header'),
                 {
                     inputType: 'password',
                     inputPattern: /[\s\S]{1,32}/
@@ -6918,8 +6918,8 @@ speechSynthesis.getVoices();
                             this.enablePrimaryPassword
                         ) {
                             $app.$prompt(
-                                'Please enter your Primary Password.',
-                                'Primary Password Required',
+                                $t('prompt.primary_password.description'),
+                                $t('prompt.primary_password.header'),
                                 {
                                     inputType: 'password',
                                     inputPattern: /[\s\S]{1,32}/
@@ -11793,14 +11793,14 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.changeFavoriteGroupName = function (ctx) {
-        this.$prompt('Enter a new name', 'Change Group Name', {
+        this.$prompt($t('prompt.change_favorite_group_name.description'), $t('prompt.change_favorite_group_name.header'), {
             distinguishCancelAndClose: true,
-            cancelButtonText: 'Cancel',
-            confirmButtonText: 'Change',
-            inputPlaceholder: 'Name',
+            cancelButtonText: $t('prompt.change_favorite_group_name.cancel'),
+            confirmButtonText: $t('prompt.change_favorite_group_name.change'),
+            inputPlaceholder: $t('prompt.change_favorite_group_name.input_placeholder'),
             inputValue: ctx.displayName,
             inputPattern: /\S+/,
-            inputErrorMessage: 'Name is required',
+            inputErrorMessage: $t('prompt.change_favorite_group_name.input_error'),
             callback: (action, instance) => {
                 if (action === 'confirm') {
                     API.saveFavoriteGroup({
@@ -11809,7 +11809,7 @@ speechSynthesis.getVoices();
                         displayName: instance.inputValue
                     }).then((args) => {
                         this.$message({
-                            message: 'Group renamed',
+                            message: $t('prompt.change_favorite_group_name.message.success'),
                             type: 'success'
                         });
                         return args;
@@ -13465,12 +13465,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptUserIdDialog = function () {
-        this.$prompt('Enter a User URL or ID (UUID)', 'Direct Access', {
+        this.$prompt($t('prompt.direct_access_user_id.description'), $t('prompt.direct_access_user_id.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.direct_access_user_id.ok'),
+            cancelButtonText: $t('prompt.direct_access_user_id.cancel'),
             inputPattern: /\S+/,
-            inputErrorMessage: 'User URL/ID is required',
+            inputErrorMessage: $t('prompt.direct_access_user_id.input_error'),
             callback: (action, instance) => {
                 if (action === 'confirm' && instance.inputValue) {
                     var testUrl = instance.inputValue.substring(0, 15);
@@ -13480,7 +13480,7 @@ speechSynthesis.getVoices();
                             this.showUserDialog(userId);
                         } else {
                             this.$message({
-                                message: 'Invalid URL',
+                                message: $t('prompt.direct_access_user_id.message.error'),
                                 type: 'error'
                             });
                         }
@@ -13493,12 +13493,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptUsernameDialog = function () {
-        this.$prompt('Enter a Username', 'Direct Access', {
+        this.$prompt($t('prompt.direct_access_username.description'), $t('prompt.direct_access_username.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.direct_access_username.ok'),
+            cancelButtonText: $t('prompt.direct_access_username.cancel'),
             inputPattern: /\S+/,
-            inputErrorMessage: 'Username is required',
+            inputErrorMessage: $t('prompt.direct_access_username.input_error'),
             callback: (action, instance) => {
                 if (action === 'confirm' && instance.inputValue) {
                     this.lookupUser({displayName: instance.inputValue});
@@ -13508,17 +13508,17 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptWorldDialog = function () {
-        this.$prompt('Enter a World URL or ID (UUID)', 'Direct Access', {
+        this.$prompt($t('prompt.direct_access_world_id.description'), $t('prompt.direct_access_world_id.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.direct_access_world_id.ok'),
+            cancelButtonText: $t('prompt.direct_access_world_id.cancel'),
             inputPattern: /\S+/,
-            inputErrorMessage: 'World URL/ID is required',
+            inputErrorMessage: $t('prompt.direct_access_world_id.input_error'),
             callback: (action, instance) => {
                 if (action === 'confirm' && instance.inputValue) {
                     if (!this.directAccessWorld(instance.inputValue)) {
                         this.$message({
-                            message: 'Invalid URL/id',
+                            message: $t('prompt.direct_access_world_id.message.error'),
                             type: 'error'
                         });
                     }
@@ -13528,12 +13528,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptAvatarDialog = function () {
-        this.$prompt('Enter a Avatar URL or ID (UUID)', 'Direct Access', {
+        this.$prompt($t('prompt.direct_access_avatar_id.description'), $t('prompt.direct_access_avatar_id.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.direct_access_avatar_id.ok'),
+            cancelButtonText: $t('prompt.direct_access_avatar_id.cancel'),
             inputPattern: /\S+/,
-            inputErrorMessage: 'Avatar URL/ID is required',
+            inputErrorMessage: $t('prompt.direct_access_avatar_id.input_error'),
             callback: (action, instance) => {
                 if (action === 'confirm' && instance.inputValue) {
                     var testUrl = instance.inputValue.substring(0, 15);
@@ -13543,7 +13543,7 @@ speechSynthesis.getVoices();
                             this.showAvatarDialog(avatarId);
                         } else {
                             this.$message({
-                                message: 'Invalid URL',
+                                message: $t('prompt.direct_access_avatar_id.message.error'),
                                 type: 'error'
                             });
                         }
@@ -13557,20 +13557,20 @@ speechSynthesis.getVoices();
 
     $app.methods.promptOmniDirectDialog = function () {
         this.$prompt(
-            'Enter a User/World/Instance/Avatar/Group URL or ID (UUID)',
-            'Direct Access',
+            $t('prompt.direct_access_omni.description'),
+            $t('prompt.direct_access_omni.header'),
             {
                 distinguishCancelAndClose: true,
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel',
+                confirmButtonText: $t('prompt.direct_access_omni.ok'),
+                cancelButtonText: $t('prompt.direct_access_omni.cancel'),
                 inputPattern: /\S+/,
-                inputErrorMessage: 'URL/ID is required',
+                inputErrorMessage: $t('prompt.direct_access_omni.input_error'),
                 callback: (action, instance) => {
                     if (action === 'confirm' && instance.inputValue) {
                         var input = instance.inputValue;
                         if (!this.directAccessParse(input)) {
                             this.$message({
-                                message: 'Invalid URL/ID',
+                                message: $t('prompt.direct_access_omni.message.error'),
                                 type: 'error'
                             });
                         }
@@ -13702,13 +13702,13 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptNotificationTimeout = function () {
-        this.$prompt('Enter amount of seconds', 'Notification Timeout', {
+        this.$prompt($t('prompt.notification_timeout.description'), $t('prompt.notification_timeout.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.notification_timeout.ok'),
+            cancelButtonText: $t('prompt.notification_timeout.cancel'),
             inputValue: this.notificationTimeout / 1000,
             inputPattern: /\d+$/,
-            inputErrorMessage: 'Valid number is required',
+            inputErrorMessage: $t('prompt.notification_timeout.input_error'),
             callback: (action, instance) => {
                 if (
                     action === 'confirm' &&
@@ -13729,13 +13729,13 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptPhotonOverlayMessageTimeout = function () {
-        this.$prompt('Enter amount of seconds', 'Overlay Message Timeout', {
+        this.$prompt($t('prompt.overlay_message_timeout.description'), $t('prompt.overlay_message_timeout.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.overlay_message_timeout.ok'),
+            cancelButtonText: $t('prompt.overlay_message_timeout.cancel'),
             inputValue: this.photonOverlayMessageTimeout / 1000,
             inputPattern: /\d+$/,
-            inputErrorMessage: 'Valid number is required',
+            inputErrorMessage: $t('prompt.overlay_message_timeout.input_error'),
             callback: (action, instance) => {
                 if (
                     action === 'confirm' &&
@@ -13756,12 +13756,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptRenameAvatar = function (avatar) {
-        this.$prompt('Enter avatar name', 'Rename Avatar', {
+        this.$prompt($t('prompt.rename_avatar.description'), $t('prompt.rename_avatar.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.rename_avatar.ok'),
+            cancelButtonText: $t('prompt.rename_avatar.cancel'),
             inputValue: avatar.ref.name,
-            inputErrorMessage: 'Valid name is required',
+            inputErrorMessage: $t('prompt.rename_avatar.input_error'),
             callback: (action, instance) => {
                 if (
                     action === 'confirm' &&
@@ -13772,7 +13772,7 @@ speechSynthesis.getVoices();
                         name: instance.inputValue
                     }).then((args) => {
                         this.$message({
-                            message: 'Avatar renamed',
+                            message: $t('prompt.rename_avatar.message.success'),
                             type: 'success'
                         });
                         return args;
@@ -13783,12 +13783,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptChangeAvatarDescription = function (avatar) {
-        this.$prompt('Enter avatar description', 'Change Description', {
+        this.$prompt($t('prompt.change_avatar_description.description'), $t('prompt.change_avatar_description.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.change_avatar_description.ok'),
+            cancelButtonText: $t('prompt.change_avatar_description.cancel'),
             inputValue: avatar.ref.description,
-            inputErrorMessage: 'Valid description is required',
+            inputErrorMessage: $t('prompt.change_avatar_description.input_error'),
             callback: (action, instance) => {
                 if (
                     action === 'confirm' &&
@@ -13799,7 +13799,7 @@ speechSynthesis.getVoices();
                         description: instance.inputValue
                     }).then((args) => {
                         this.$message({
-                            message: 'Avatar description changed',
+                            message: $t('prompt.change_avatar_description.message.success'),
                             type: 'success'
                         });
                         return args;
@@ -13810,12 +13810,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptRenameWorld = function (world) {
-        this.$prompt('Enter world name', 'Rename World', {
+        this.$prompt($t('prompt.rename_world.description'), $t('prompt.rename_world.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.rename_world.ok'),
+            cancelButtonText: $t('prompt.rename_world.cancel'),
             inputValue: world.ref.name,
-            inputErrorMessage: 'Valid name is required',
+            inputErrorMessage: $t('prompt.rename_world.input_error'),
             callback: (action, instance) => {
                 if (
                     action === 'confirm' &&
@@ -13826,7 +13826,7 @@ speechSynthesis.getVoices();
                         name: instance.inputValue
                     }).then((args) => {
                         this.$message({
-                            message: 'World renamed',
+                            message: $t('prompt.rename_world.message.success'),
                             type: 'success'
                         });
                         return args;
@@ -13837,12 +13837,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptChangeWorldDescription = function (world) {
-        this.$prompt('Enter world description', 'Change Description', {
+        this.$prompt($t('prompt.change_world_description.description'), $t('prompt.change_world_description.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.change_world_description.ok'),
+            cancelButtonText: $t('prompt.change_world_description.cancel'),
             inputValue: world.ref.description,
-            inputErrorMessage: 'Valid description is required',
+            inputErrorMessage: $t('prompt.change_world_description.input_error'),
             callback: (action, instance) => {
                 if (
                     action === 'confirm' &&
@@ -13853,7 +13853,7 @@ speechSynthesis.getVoices();
                         description: instance.inputValue
                     }).then((args) => {
                         this.$message({
-                            message: 'World description changed',
+                            message: $t('prompt.change_world_description.message.success'),
                             type: 'success'
                         });
                         return args;
@@ -13864,13 +13864,13 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptChangeWorldCapacity = function (world) {
-        this.$prompt('Enter world capacity, Max: 40', 'Change Capacity', {
+        this.$prompt($t('prompt.change_world_capacity.description'), $t('prompt.change_world_capacity.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.change_world_capacity.ok'),
+            cancelButtonText: $t('prompt.change_world_capacity.cancel'),
             inputValue: world.ref.capacity,
             inputPattern: /\d+$/,
-            inputErrorMessage: 'Valid number is required',
+            inputErrorMessage: $t('prompt.change_world_capacity.input_error'),
             callback: (action, instance) => {
                 if (
                     action === 'confirm' &&
@@ -13881,7 +13881,7 @@ speechSynthesis.getVoices();
                         capacity: instance.inputValue
                     }).then((args) => {
                         this.$message({
-                            message: 'World capacity changed',
+                            message: $t('prompt.change_world_capacity.message.success'),
                             type: 'success'
                         });
                         return args;
@@ -13892,12 +13892,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptChangeWorldYouTubePreview = function (world) {
-        this.$prompt('Enter world YouTube preview', 'Change YouTube Preview', {
+        this.$prompt($t('prompt.change_world_preview.description'), $t('prompt.change_world_preview.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.change_world_preview.ok'),
+            cancelButtonText: $t('prompt.change_world_preview.cancel'),
             inputValue: world.ref.previewYoutubeId,
-            inputErrorMessage: 'Valid YouTube URL is required',
+            inputErrorMessage: $t('prompt.change_world_preview.input_error'),
             callback: (action, instance) => {
                 if (
                     action === 'confirm' &&
@@ -13916,7 +13916,7 @@ speechSynthesis.getVoices();
                             }
                         } catch {
                             this.$message({
-                                message: 'Invalid YouTube URL',
+                                message: $t('prompt.change_world_preview.message.error'),
                                 type: 'error'
                             });
                             return;
@@ -13928,7 +13928,7 @@ speechSynthesis.getVoices();
                             previewYoutubeId: instance.inputValue
                         }).then((args) => {
                             this.$message({
-                                message: 'World YouTube preview changed',
+                                message: $t('prompt.change_world_preview.message.success'),
                                 type: 'success'
                             });
                             return args;
@@ -13941,15 +13941,15 @@ speechSynthesis.getVoices();
 
     $app.methods.promptMaxTableSizeDialog = function () {
         this.$prompt(
-            'Larger table sizes may impact RAM usage and performance (default: 1000)',
-            'Max Table Size',
+            $t('prompt.change_table_size.description'),
+            $t('prompt.change_table_size.header'),
             {
                 distinguishCancelAndClose: true,
-                confirmButtonText: 'Save',
-                cancelButtonText: 'Cancel',
+                confirmButtonText: $t('prompt.change_table_size.save'),
+                cancelButtonText: $t('prompt.change_table_size.cancel'),
                 inputValue: this.maxTableSize,
                 inputPattern: /\d+$/,
-                inputErrorMessage: 'Valid number is required',
+                inputErrorMessage: $t('prompt.change_table_size.input_error'),
                 callback: (action, instance) => {
                     if (action === 'confirm' && instance.inputValue) {
                         this.maxTableSize = instance.inputValue;
@@ -13978,15 +13978,15 @@ speechSynthesis.getVoices();
 
     $app.methods.promptPhotonLobbyTimeoutThreshold = function () {
         this.$prompt(
-            'Enter amount of seconds (default: 3)',
-            'User Timeout Threshold',
+            $t('prompt.photon_lobby_timeout.description'),
+            $t('prompt.photon_lobby_timeout.header'),
             {
                 distinguishCancelAndClose: true,
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel',
+                confirmButtonText: $t('prompt.photon_lobby_timeout.ok'),
+                cancelButtonText: $t('prompt.photon_lobby_timeout.cancel'),
                 inputValue: this.photonLobbyTimeoutThreshold / 1000,
                 inputPattern: /\d+$/,
-                inputErrorMessage: 'Valid number is required',
+                inputErrorMessage: $t('prompt.photon_lobby_timeout.input_error'),
                 callback: (action, instance) => {
                     if (
                         action === 'confirm' &&
@@ -14008,15 +14008,15 @@ speechSynthesis.getVoices();
 
     $app.methods.promptAutoClearVRCXCacheFrequency = function () {
         this.$prompt(
-            'Enter amount of hours, larger values may impact RAM usage and performance (default: 24, disabled: 0)',
-            'Clear VRCX Cache Timer',
+            $t('prompt.auto_clear_cache.description'),
+            $t('prompt.auto_clear_cache.header'),
             {
                 distinguishCancelAndClose: true,
-                confirmButtonText: 'OK',
-                cancelButtonText: 'Cancel',
+                confirmButtonText: $t('prompt.auto_clear_cache.ok'),
+                cancelButtonText: $t('prompt.auto_clear_cache.cancel'),
                 inputValue: this.clearVRCXCacheFrequency / 3600 / 2,
                 inputPattern: /\d+$/,
-                inputErrorMessage: 'Valid number is required',
+                inputErrorMessage: $t('prompt.auto_clear_cache.input_error'),
                 callback: (action, instance) => {
                     if (
                         action === 'confirm' &&
@@ -22675,12 +22675,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptNewLocalWorldFavoriteGroup = function () {
-        this.$prompt('Enter a world favorite group name', 'New Group', {
+        this.$prompt($t('prompt.new_local_favorite_group.description'), $t('prompt.new_local_favorite_group.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.new_local_favorite_group.ok'),
+            cancelButtonText: $t('prompt.new_local_favorite_group.cancel'),
             inputPattern: /\S+/,
-            inputErrorMessage: 'Name is required',
+            inputErrorMessage: $t('prompt.new_local_favorite_group.input_error'),
             callback: (action, instance) => {
                 if (action === 'confirm' && instance.inputValue) {
                     this.newLocalWorldFavoriteGroup(instance.inputValue);
@@ -22692,7 +22692,7 @@ speechSynthesis.getVoices();
     $app.methods.newLocalWorldFavoriteGroup = function (group) {
         if (this.localWorldFavoriteGroups.includes(group)) {
             $app.$message({
-                message: `Group already exists with the name ${group}`,
+                message: $t('prompt.new_local_favorite_group.message.error', { name: group }),
                 type: 'error'
             });
             return;
@@ -22707,12 +22707,12 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptLocalWorldFavoriteGroupRename = function (group) {
-        this.$prompt('Enter a world favorite group name', 'Rename Group', {
+        this.$prompt($t('prompt.local_favorite_group_rename.description'), $t('prompt.local_favorite_group_rename.header'), {
             distinguishCancelAndClose: true,
-            confirmButtonText: 'Save',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: $t('prompt.local_favorite_group_rename.save'),
+            cancelButtonText: $t('prompt.local_favorite_group_rename.cancel'),
             inputPattern: /\S+/,
-            inputErrorMessage: 'Name is required',
+            inputErrorMessage: $t('prompt.local_favorite_group_rename.input_error'),
             inputValue: group,
             callback: (action, instance) => {
                 if (action === 'confirm' && instance.inputValue) {
@@ -22728,7 +22728,7 @@ speechSynthesis.getVoices();
     $app.methods.renameLocalWorldFavoriteGroup = function (newName, group) {
         if (this.localWorldFavoriteGroups.includes(newName)) {
             $app.$message({
-                message: `Group already exists with the name ${newName}`,
+                message: $t('prompt.local_favorite_group_rename.message.error', { name: newName }),
                 type: 'error'
             });
             return;
@@ -22818,15 +22818,15 @@ speechSynthesis.getVoices();
 
     $app.methods.promptSetPendingOffline = function () {
         this.$prompt(
-            'Set pending offline delay in seconds (default: 110)',
-            'Pending Offline',
+            $t('prompt.pending_offline_delay.description'),
+            $t('prompt.pending_offline_delay.header'),
             {
                 distinguishCancelAndClose: true,
-                confirmButtonText: 'Save',
-                cancelButtonText: 'Cancel',
+                confirmButtonText: $t('prompt.pending_offline_delay.save'),
+                cancelButtonText: $t('prompt.pending_offline_delay.cancel'),
                 inputValue: this.pendingOfflineDelay / 1000,
                 inputPattern: /\d+$/,
-                inputErrorMessage: 'Valid number is required',
+                inputErrorMessage: $t('prompt.pending_offline_delay.input_error'),
                 callback: (action, instance) => {
                     if (
                         action === 'confirm' &&

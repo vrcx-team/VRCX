@@ -1041,6 +1041,217 @@
             "ok": "OK"
         }
     },
+    "prompt": {
+        "totp": {
+            "header": "Two-factor Authentication",
+            "description": "Enter a numeric code from your authenticator app",
+            "use_otp": "Use OTP",
+            "verify": "Verify",
+            "input_placeholder": "Code",
+            "input_error": "Invalid Code"
+        },
+        "otp": {
+            "header": "Two-factor Authentication",
+            "description": "Enter one of your saved recovery codes",
+            "use_otp": "Use TOTP",
+            "verify": "Verify",
+            "input_placeholder": "Code",
+            "input_error": "Invalid Code"
+        },
+        "email_otp": {
+            "header": "Two-factor Authentication",
+            "description": "Enter a numeric code that was sent to your email",
+            "cancel": "Cancel",
+            "verify": "Verify",
+            "input_placeholder": "Code",
+            "input_error": "Invalid Code"
+        },
+        "primary_password": {
+            "header": "Primary Password Required",
+            "description": "Please enter your Primary Password."
+        },
+        "change_favorite_group_name": {
+            "header": "Change Group Name",
+            "description": "Enter a new name",
+            "cancel": "Cancel",
+            "change": "Change",
+            "input_placeholder": "Name",
+            "input_error": "Name is required",
+            "message": {
+                "success": "Group renamed"
+            }
+        },
+        "direct_access_user_id": {
+            "header": "Direct Access",
+            "description": "Enter a User URL or ID (UUID)",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "User URL/ID is required",
+            "message": {
+                "error": "Invalid URL/ID"
+            }
+        },
+        "direct_access_username": {
+            "header": "Direct Access",
+            "description": "Enter a Username",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Username is required"
+        },
+        "direct_access_world_id": {
+            "header": "Direct Access",
+            "description": "Enter a World URL or ID (UUID)",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "World URL/ID is required",
+            "message": {
+                "error": "Invalid URL/ID"
+            }
+        },
+        "direct_access_avatar_id": {
+            "header": "Direct Access",
+            "description": "Enter a Avatar URL or ID (UUID)",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Avatar URL/ID is required",
+            "message": {
+                "error": "Invalid URL/ID"
+            }
+        },
+        "direct_access_omni": {
+            "header": "Direct Access",
+            "description": "Enter a User/World/Instance/Avatar/Group URL or ID (UUID)",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "URL/ID is required",
+            "message": {
+                "error": "Invalid URL/ID"
+            }
+        },
+        "notification_timeout": {
+            "header": "Notification Timeout",
+            "description": "Enter amount of seconds",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid number is required"
+        },
+        "overlay_message_timeout": {
+            "header": "Overlay Message Timeout",
+            "description": "Enter amount of seconds",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid number is required"
+        },
+        "rename_avatar": {
+            "header": "Rename Avatar",
+            "description": "Enter avatar name",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid name is required",
+            "message": {
+                "success": "Avatar renamed"
+            }
+        },
+        "change_avatar_description": {
+            "header": "Change Description",
+            "description": "Enter avatar description",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid description is required",
+            "message": {
+                "success": "Avatar description changed"
+            }
+        },
+        "rename_world": {
+            "header": "Rename World",
+            "description": "Enter world name",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid name is required",
+            "message": {
+                "success": "World renamed"
+            }
+        },
+        "change_world_description": {
+            "header": "Change Description",
+            "description": "Enter world description",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid description is required",
+            "message": {
+                "success": "World description changed"
+            }
+        },
+        "change_world_capacity": {
+            "header": "Change Capacity",
+            "description": "Enter world capacity, Max: 40",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid number is required",
+            "message": {
+                "success": "World capacity changed"
+            }
+        },
+        "change_world_preview": {
+            "header": "Change YouTube Preview",
+            "description": "Enter world YouTube preview",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid YouTube URL is required",
+            "message": {
+                "error": "Invalid YouTube URL",
+                "success": "World YouTube preview changed"
+            }
+        },
+        "change_table_size": {
+            "header": "Max Table Size",
+            "description": "Larger table sizes may impact RAM usage and performance (default: 1000)",
+            "cancel": "Cancel",
+            "save": "Save",
+            "input_error": "Valid number is required"
+        },
+        "photon_lobby_timeout": {
+            "header": "User Timeout Threshold",
+            "description": "Enter amount of seconds (default: 3)",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid number is required"
+        },
+        "auto_clear_cache": {
+            "header": "Clear VRCX Cache Timer",
+            "description": "Enter amount of hours, larger values may impact RAM usage and performance (default: 24, disabled: 0)",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid number is required"
+        },
+        "new_local_favorite_group": {
+            "header": "New Group",
+            "description": "Enter a world favorite group name",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Name is required",
+            "message": {
+                "error": "Group already exists with the name {name}"
+            }
+        },
+        "local_favorite_group_rename": {
+            "header": "Rename Group",
+            "description": "Enter a world favorite group name",
+            "cancel": "Cancel",
+            "save": "Save",
+            "input_error": "Name is required",
+            "message": {
+                "error": "Group already exists with the name {name}"
+            }
+        },
+        "pending_offline_delay": {
+            "header": "Pending Offline",
+            "description": "Set pending offline delay in seconds (default: 110)",
+            "cancel": "Cancel",
+            "save": "Save",
+            "input_error": "Valid number is required"
+        }
+    },
     "table": {
         "feed": {
             "date": "Date",
