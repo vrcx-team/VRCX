@@ -396,3 +396,14 @@ i.x-user-status.busy {
     right: -160px;
     bottom: 0;
 }
+
+.tracker-container {
+    flex: 1 1 auto;
+    text-align: center;
+    line-height: 16px;
+}
+
+.tracker-device img {
+    width: 32px;
+    height: 32px;
+}

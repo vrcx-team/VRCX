@@ -382,10 +382,34 @@ Vue.component('marquee-text', MarqueeText);
                     devices.forEach((device) => {
                         device[2] = parseInt(device[2], 10);
                     });
+                    devices.sort((a, b) => {
+                        if (a[0] === b[0]) {
+                            return 0;
+                        }
+                        if (a[0] === 'base') {
+                            return 1;
+                        }
+                        if (a[0].toLowerCase().includes('controller')) {
+                            return -1;
+                        }
+                        return 0;
+                    });
+                    devices.sort((a, b) => {
+                        if (a[1] === b[1]) {
+                            return 0;
+                        }
+                        if (a[1] === 'connected') {
+                            return -1;
+                        }
+                        if (a[1] === 'disconnected') {
+                            return 1;
+                        }
+                        return 0;
+                    });
                     this.devices = devices;
                 });
             } else {
-                this.devices = '';
+                this.devices = [];
             }
             if (this.config.pcUptimeOnFeed) {
                 AppApi.GetUptime().then((uptime) => {
