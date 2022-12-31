@@ -10,7 +10,6 @@ import Noty from 'noty';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import ElementUI from 'element-ui';
-import locale from 'element-ui/lib/locale/lang/en';
 import * as workerTimers from 'worker-timers';
 import MarqueeText from 'vue-marquee-text-component';
 import * as localizedStrings from './localization/localizedStrings.js';
@@ -40,7 +39,7 @@ Vue.component('marquee-text', MarqueeText);
     });
 
     Vue.use(ElementUI, {
-        locale
+        i18n: (key, value) => i18n.t(key, value)
     });
 
     var escapeTag = (s) =>

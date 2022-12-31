@@ -12,7 +12,6 @@ import VueLazyload from 'vue-lazyload';
 import VueI18n from 'vue-i18n';
 import {DataTables} from 'vue-data-tables';
 import ElementUI from 'element-ui';
-import locale from 'element-ui/lib/locale/lang/en';
 import {v4 as uuidv4} from 'uuid';
 import * as workerTimers from 'worker-timers';
 import 'default-passive-events';
@@ -127,8 +126,18 @@ speechSynthesis.getVoices();
         timeout: 6000
     });
 
+    Vue.use(VueI18n);
+
+    var i18n = new VueI18n({
+        locale: 'en',
+        fallbackLocale: 'en',
+        messages: localizedStrings
+    });
+
+    var $t = i18n.t.bind(i18n);
+
     Vue.use(ElementUI, {
-        locale
+        i18n: (key, value) => i18n.t(key, value)
     });
 
     var removeFromArray = function (array, item) {
@@ -206,16 +215,6 @@ speechSynthesis.getVoices();
     });
 
     Vue.use(DataTables);
-
-    Vue.use(VueI18n);
-
-    var i18n = new VueI18n({
-        locale: 'en',
-        fallbackLocale: 'en',
-        messages: localizedStrings
-    });
-
-    var $t = i18n.t.bind(i18n);
 
     var $appDarkStyle = document.createElement('link');
     $appDarkStyle.disabled = true;
@@ -6418,67 +6417,59 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptTOTP = function () {
-        this.$prompt(
-            $t('prompt.totp.description'),
-            $t('prompt.totp.header'),
-            {
-                distinguishCancelAndClose: true,
-                cancelButtonText: $t('prompt.totp.use_otp'),
-                confirmButtonText: $t('prompt.totp.verify'),
-                inputPlaceholder: $t('prompt.totp.input_placeholder'),
-                inputPattern: /^[0-9]{6}$/,
-                inputErrorMessage: $t('prompt.totp.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm') {
-                        API.verifyTOTP({
-                            code: instance.inputValue.trim()
+        this.$prompt($t('prompt.totp.description'), $t('prompt.totp.header'), {
+            distinguishCancelAndClose: true,
+            cancelButtonText: $t('prompt.totp.use_otp'),
+            confirmButtonText: $t('prompt.totp.verify'),
+            inputPlaceholder: $t('prompt.totp.input_placeholder'),
+            inputPattern: /^[0-9]{6}$/,
+            inputErrorMessage: $t('prompt.totp.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm') {
+                    API.verifyTOTP({
+                        code: instance.inputValue.trim()
+                    })
+                        .catch((err) => {
+                            this.promptTOTP();
+                            throw err;
                         })
-                            .catch((err) => {
-                                this.promptTOTP();
-                                throw err;
-                            })
-                            .then((args) => {
-                                API.getCurrentUser();
-                                return args;
-                            });
-                    } else if (action === 'cancel') {
-                        this.promptOTP();
-                    }
+                        .then((args) => {
+                            API.getCurrentUser();
+                            return args;
+                        });
+                } else if (action === 'cancel') {
+                    this.promptOTP();
                 }
             }
-        );
+        });
     };
 
     $app.methods.promptOTP = function () {
-        this.$prompt(
-            $t('prompt.otp.description'),
-            $t('prompt.otp.header'),
-            {
-                distinguishCancelAndClose: true,
-                cancelButtonText: $t('prompt.otp.use_otp'),
-                confirmButtonText: $t('prompt.otp.verify'),
-                inputPlaceholder: $t('prompt.otp.input_placeholder'),
-                inputPattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,
-                inputErrorMessage: $t('prompt.otp.input_error'),
-                callback: (action, instance) => {
-                    if (action === 'confirm') {
-                        API.verifyOTP({
-                            code: instance.inputValue.trim()
+        this.$prompt($t('prompt.otp.description'), $t('prompt.otp.header'), {
+            distinguishCancelAndClose: true,
+            cancelButtonText: $t('prompt.otp.use_otp'),
+            confirmButtonText: $t('prompt.otp.verify'),
+            inputPlaceholder: $t('prompt.otp.input_placeholder'),
+            inputPattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,
+            inputErrorMessage: $t('prompt.otp.input_error'),
+            callback: (action, instance) => {
+                if (action === 'confirm') {
+                    API.verifyOTP({
+                        code: instance.inputValue.trim()
+                    })
+                        .catch((err) => {
+                            this.promptOTP();
+                            throw err;
                         })
-                            .catch((err) => {
-                                this.promptOTP();
-                                throw err;
-                            })
-                            .then((args) => {
-                                API.getCurrentUser();
-                                return args;
-                            });
-                    } else if (action === 'cancel') {
-                        this.promptTOTP();
-                    }
+                        .then((args) => {
+                            API.getCurrentUser();
+                            return args;
+                        });
+                } else if (action === 'cancel') {
+                    this.promptTOTP();
                 }
             }
-        );
+        });
     };
 
     $app.methods.promptEmailOTP = function () {
@@ -11793,30 +11784,44 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.changeFavoriteGroupName = function (ctx) {
-        this.$prompt($t('prompt.change_favorite_group_name.description'), $t('prompt.change_favorite_group_name.header'), {
-            distinguishCancelAndClose: true,
-            cancelButtonText: $t('prompt.change_favorite_group_name.cancel'),
-            confirmButtonText: $t('prompt.change_favorite_group_name.change'),
-            inputPlaceholder: $t('prompt.change_favorite_group_name.input_placeholder'),
-            inputValue: ctx.displayName,
-            inputPattern: /\S+/,
-            inputErrorMessage: $t('prompt.change_favorite_group_name.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm') {
-                    API.saveFavoriteGroup({
-                        type: ctx.type,
-                        group: ctx.name,
-                        displayName: instance.inputValue
-                    }).then((args) => {
-                        this.$message({
-                            message: $t('prompt.change_favorite_group_name.message.success'),
-                            type: 'success'
+        this.$prompt(
+            $t('prompt.change_favorite_group_name.description'),
+            $t('prompt.change_favorite_group_name.header'),
+            {
+                distinguishCancelAndClose: true,
+                cancelButtonText: $t(
+                    'prompt.change_favorite_group_name.cancel'
+                ),
+                confirmButtonText: $t(
+                    'prompt.change_favorite_group_name.change'
+                ),
+                inputPlaceholder: $t(
+                    'prompt.change_favorite_group_name.input_placeholder'
+                ),
+                inputValue: ctx.displayName,
+                inputPattern: /\S+/,
+                inputErrorMessage: $t(
+                    'prompt.change_favorite_group_name.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (action === 'confirm') {
+                        API.saveFavoriteGroup({
+                            type: ctx.type,
+                            group: ctx.name,
+                            displayName: instance.inputValue
+                        }).then((args) => {
+                            this.$message({
+                                message: $t(
+                                    'prompt.change_favorite_group_name.message.success'
+                                ),
+                                type: 'success'
+                            });
+                            return args;
                         });
-                        return args;
-                    });
+                    }
                 }
             }
-        });
+        );
     };
 
     $app.methods.clearFavoriteGroup = function (ctx) {
@@ -13465,94 +13470,126 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptUserIdDialog = function () {
-        this.$prompt($t('prompt.direct_access_user_id.description'), $t('prompt.direct_access_user_id.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.direct_access_user_id.ok'),
-            cancelButtonText: $t('prompt.direct_access_user_id.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: $t('prompt.direct_access_user_id.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    var testUrl = instance.inputValue.substring(0, 15);
-                    if (testUrl === 'https://vrchat.') {
-                        var userId = this.parseUserUrl(instance.inputValue);
-                        if (userId) {
-                            this.showUserDialog(userId);
+        this.$prompt(
+            $t('prompt.direct_access_user_id.description'),
+            $t('prompt.direct_access_user_id.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.direct_access_user_id.ok'),
+                cancelButtonText: $t('prompt.direct_access_user_id.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: $t(
+                    'prompt.direct_access_user_id.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        var testUrl = instance.inputValue.substring(0, 15);
+                        if (testUrl === 'https://vrchat.') {
+                            var userId = this.parseUserUrl(instance.inputValue);
+                            if (userId) {
+                                this.showUserDialog(userId);
+                            } else {
+                                this.$message({
+                                    message: $t(
+                                        'prompt.direct_access_user_id.message.error'
+                                    ),
+                                    type: 'error'
+                                });
+                            }
                         } else {
-                            this.$message({
-                                message: $t('prompt.direct_access_user_id.message.error'),
-                                type: 'error'
-                            });
+                            this.showUserDialog(instance.inputValue);
                         }
-                    } else {
-                        this.showUserDialog(instance.inputValue);
                     }
                 }
             }
-        });
+        );
     };
 
     $app.methods.promptUsernameDialog = function () {
-        this.$prompt($t('prompt.direct_access_username.description'), $t('prompt.direct_access_username.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.direct_access_username.ok'),
-            cancelButtonText: $t('prompt.direct_access_username.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: $t('prompt.direct_access_username.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    this.lookupUser({displayName: instance.inputValue});
+        this.$prompt(
+            $t('prompt.direct_access_username.description'),
+            $t('prompt.direct_access_username.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.direct_access_username.ok'),
+                cancelButtonText: $t('prompt.direct_access_username.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: $t(
+                    'prompt.direct_access_username.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        this.lookupUser({displayName: instance.inputValue});
+                    }
                 }
             }
-        });
+        );
     };
 
     $app.methods.promptWorldDialog = function () {
-        this.$prompt($t('prompt.direct_access_world_id.description'), $t('prompt.direct_access_world_id.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.direct_access_world_id.ok'),
-            cancelButtonText: $t('prompt.direct_access_world_id.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: $t('prompt.direct_access_world_id.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    if (!this.directAccessWorld(instance.inputValue)) {
-                        this.$message({
-                            message: $t('prompt.direct_access_world_id.message.error'),
-                            type: 'error'
-                        });
-                    }
-                }
-            }
-        });
-    };
-
-    $app.methods.promptAvatarDialog = function () {
-        this.$prompt($t('prompt.direct_access_avatar_id.description'), $t('prompt.direct_access_avatar_id.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.direct_access_avatar_id.ok'),
-            cancelButtonText: $t('prompt.direct_access_avatar_id.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: $t('prompt.direct_access_avatar_id.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    var testUrl = instance.inputValue.substring(0, 15);
-                    if (testUrl === 'https://vrchat.') {
-                        var avatarId = this.parseAvatarUrl(instance.inputValue);
-                        if (avatarId) {
-                            this.showAvatarDialog(avatarId);
-                        } else {
+        this.$prompt(
+            $t('prompt.direct_access_world_id.description'),
+            $t('prompt.direct_access_world_id.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.direct_access_world_id.ok'),
+                cancelButtonText: $t('prompt.direct_access_world_id.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: $t(
+                    'prompt.direct_access_world_id.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        if (!this.directAccessWorld(instance.inputValue)) {
                             this.$message({
-                                message: $t('prompt.direct_access_avatar_id.message.error'),
+                                message: $t(
+                                    'prompt.direct_access_world_id.message.error'
+                                ),
                                 type: 'error'
                             });
                         }
-                    } else {
-                        this.showAvatarDialog(instance.inputValue);
                     }
                 }
             }
-        });
+        );
+    };
+
+    $app.methods.promptAvatarDialog = function () {
+        this.$prompt(
+            $t('prompt.direct_access_avatar_id.description'),
+            $t('prompt.direct_access_avatar_id.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.direct_access_avatar_id.ok'),
+                cancelButtonText: $t('prompt.direct_access_avatar_id.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: $t(
+                    'prompt.direct_access_avatar_id.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        var testUrl = instance.inputValue.substring(0, 15);
+                        if (testUrl === 'https://vrchat.') {
+                            var avatarId = this.parseAvatarUrl(
+                                instance.inputValue
+                            );
+                            if (avatarId) {
+                                this.showAvatarDialog(avatarId);
+                            } else {
+                                this.$message({
+                                    message: $t(
+                                        'prompt.direct_access_avatar_id.message.error'
+                                    ),
+                                    type: 'error'
+                                });
+                            }
+                        } else {
+                            this.showAvatarDialog(instance.inputValue);
+                        }
+                    }
+                }
+            }
+        );
     };
 
     $app.methods.promptOmniDirectDialog = function () {
@@ -13570,7 +13607,9 @@ speechSynthesis.getVoices();
                         var input = instance.inputValue;
                         if (!this.directAccessParse(input)) {
                             this.$message({
-                                message: $t('prompt.direct_access_omni.message.error'),
+                                message: $t(
+                                    'prompt.direct_access_omni.message.error'
+                                ),
                                 type: 'error'
                             });
                         }
@@ -13702,233 +13741,94 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptNotificationTimeout = function () {
-        this.$prompt($t('prompt.notification_timeout.description'), $t('prompt.notification_timeout.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.notification_timeout.ok'),
-            cancelButtonText: $t('prompt.notification_timeout.cancel'),
-            inputValue: this.notificationTimeout / 1000,
-            inputPattern: /\d+$/,
-            inputErrorMessage: $t('prompt.notification_timeout.input_error'),
-            callback: (action, instance) => {
-                if (
-                    action === 'confirm' &&
-                    instance.inputValue &&
-                    !isNaN(instance.inputValue)
-                ) {
-                    this.notificationTimeout = Math.trunc(
-                        Number(instance.inputValue) * 1000
-                    );
-                    configRepository.setString(
-                        'VRCX_notificationTimeout',
-                        this.notificationTimeout
-                    );
-                    this.updateVRConfigVars();
+        this.$prompt(
+            $t('prompt.notification_timeout.description'),
+            $t('prompt.notification_timeout.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.notification_timeout.ok'),
+                cancelButtonText: $t('prompt.notification_timeout.cancel'),
+                inputValue: this.notificationTimeout / 1000,
+                inputPattern: /\d+$/,
+                inputErrorMessage: $t(
+                    'prompt.notification_timeout.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (
+                        action === 'confirm' &&
+                        instance.inputValue &&
+                        !isNaN(instance.inputValue)
+                    ) {
+                        this.notificationTimeout = Math.trunc(
+                            Number(instance.inputValue) * 1000
+                        );
+                        configRepository.setString(
+                            'VRCX_notificationTimeout',
+                            this.notificationTimeout
+                        );
+                        this.updateVRConfigVars();
+                    }
                 }
             }
-        });
+        );
     };
 
     $app.methods.promptPhotonOverlayMessageTimeout = function () {
-        this.$prompt($t('prompt.overlay_message_timeout.description'), $t('prompt.overlay_message_timeout.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.overlay_message_timeout.ok'),
-            cancelButtonText: $t('prompt.overlay_message_timeout.cancel'),
-            inputValue: this.photonOverlayMessageTimeout / 1000,
-            inputPattern: /\d+$/,
-            inputErrorMessage: $t('prompt.overlay_message_timeout.input_error'),
-            callback: (action, instance) => {
-                if (
-                    action === 'confirm' &&
-                    instance.inputValue &&
-                    !isNaN(instance.inputValue)
-                ) {
-                    this.photonOverlayMessageTimeout = Math.trunc(
-                        Number(instance.inputValue) * 1000
-                    );
-                    configRepository.setString(
-                        'VRCX_photonOverlayMessageTimeout',
-                        this.photonOverlayMessageTimeout
-                    );
-                    this.updateVRConfigVars();
+        this.$prompt(
+            $t('prompt.overlay_message_timeout.description'),
+            $t('prompt.overlay_message_timeout.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.overlay_message_timeout.ok'),
+                cancelButtonText: $t('prompt.overlay_message_timeout.cancel'),
+                inputValue: this.photonOverlayMessageTimeout / 1000,
+                inputPattern: /\d+$/,
+                inputErrorMessage: $t(
+                    'prompt.overlay_message_timeout.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (
+                        action === 'confirm' &&
+                        instance.inputValue &&
+                        !isNaN(instance.inputValue)
+                    ) {
+                        this.photonOverlayMessageTimeout = Math.trunc(
+                            Number(instance.inputValue) * 1000
+                        );
+                        configRepository.setString(
+                            'VRCX_photonOverlayMessageTimeout',
+                            this.photonOverlayMessageTimeout
+                        );
+                        this.updateVRConfigVars();
+                    }
                 }
             }
-        });
+        );
     };
 
     $app.methods.promptRenameAvatar = function (avatar) {
-        this.$prompt($t('prompt.rename_avatar.description'), $t('prompt.rename_avatar.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.rename_avatar.ok'),
-            cancelButtonText: $t('prompt.rename_avatar.cancel'),
-            inputValue: avatar.ref.name,
-            inputErrorMessage: $t('prompt.rename_avatar.input_error'),
-            callback: (action, instance) => {
-                if (
-                    action === 'confirm' &&
-                    instance.inputValue !== avatar.ref.name
-                ) {
-                    API.saveAvatar({
-                        id: avatar.id,
-                        name: instance.inputValue
-                    }).then((args) => {
-                        this.$message({
-                            message: $t('prompt.rename_avatar.message.success'),
-                            type: 'success'
-                        });
-                        return args;
-                    });
-                }
-            }
-        });
-    };
-
-    $app.methods.promptChangeAvatarDescription = function (avatar) {
-        this.$prompt($t('prompt.change_avatar_description.description'), $t('prompt.change_avatar_description.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.change_avatar_description.ok'),
-            cancelButtonText: $t('prompt.change_avatar_description.cancel'),
-            inputValue: avatar.ref.description,
-            inputErrorMessage: $t('prompt.change_avatar_description.input_error'),
-            callback: (action, instance) => {
-                if (
-                    action === 'confirm' &&
-                    instance.inputValue !== avatar.ref.description
-                ) {
-                    API.saveAvatar({
-                        id: avatar.id,
-                        description: instance.inputValue
-                    }).then((args) => {
-                        this.$message({
-                            message: $t('prompt.change_avatar_description.message.success'),
-                            type: 'success'
-                        });
-                        return args;
-                    });
-                }
-            }
-        });
-    };
-
-    $app.methods.promptRenameWorld = function (world) {
-        this.$prompt($t('prompt.rename_world.description'), $t('prompt.rename_world.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.rename_world.ok'),
-            cancelButtonText: $t('prompt.rename_world.cancel'),
-            inputValue: world.ref.name,
-            inputErrorMessage: $t('prompt.rename_world.input_error'),
-            callback: (action, instance) => {
-                if (
-                    action === 'confirm' &&
-                    instance.inputValue !== world.ref.name
-                ) {
-                    API.saveWorld({
-                        id: world.id,
-                        name: instance.inputValue
-                    }).then((args) => {
-                        this.$message({
-                            message: $t('prompt.rename_world.message.success'),
-                            type: 'success'
-                        });
-                        return args;
-                    });
-                }
-            }
-        });
-    };
-
-    $app.methods.promptChangeWorldDescription = function (world) {
-        this.$prompt($t('prompt.change_world_description.description'), $t('prompt.change_world_description.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.change_world_description.ok'),
-            cancelButtonText: $t('prompt.change_world_description.cancel'),
-            inputValue: world.ref.description,
-            inputErrorMessage: $t('prompt.change_world_description.input_error'),
-            callback: (action, instance) => {
-                if (
-                    action === 'confirm' &&
-                    instance.inputValue !== world.ref.description
-                ) {
-                    API.saveWorld({
-                        id: world.id,
-                        description: instance.inputValue
-                    }).then((args) => {
-                        this.$message({
-                            message: $t('prompt.change_world_description.message.success'),
-                            type: 'success'
-                        });
-                        return args;
-                    });
-                }
-            }
-        });
-    };
-
-    $app.methods.promptChangeWorldCapacity = function (world) {
-        this.$prompt($t('prompt.change_world_capacity.description'), $t('prompt.change_world_capacity.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.change_world_capacity.ok'),
-            cancelButtonText: $t('prompt.change_world_capacity.cancel'),
-            inputValue: world.ref.capacity,
-            inputPattern: /\d+$/,
-            inputErrorMessage: $t('prompt.change_world_capacity.input_error'),
-            callback: (action, instance) => {
-                if (
-                    action === 'confirm' &&
-                    instance.inputValue !== world.ref.capacity
-                ) {
-                    API.saveWorld({
-                        id: world.id,
-                        capacity: instance.inputValue
-                    }).then((args) => {
-                        this.$message({
-                            message: $t('prompt.change_world_capacity.message.success'),
-                            type: 'success'
-                        });
-                        return args;
-                    });
-                }
-            }
-        });
-    };
-
-    $app.methods.promptChangeWorldYouTubePreview = function (world) {
-        this.$prompt($t('prompt.change_world_preview.description'), $t('prompt.change_world_preview.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.change_world_preview.ok'),
-            cancelButtonText: $t('prompt.change_world_preview.cancel'),
-            inputValue: world.ref.previewYoutubeId,
-            inputErrorMessage: $t('prompt.change_world_preview.input_error'),
-            callback: (action, instance) => {
-                if (
-                    action === 'confirm' &&
-                    instance.inputValue !== world.ref.previewYoutubeId
-                ) {
-                    if (instance.inputValue.length > 11) {
-                        try {
-                            var url = new URL(instance.inputValue);
-                            var id1 = url.pathname;
-                            var id2 = url.searchParams.get('v');
-                            if (id1 && id1.length === 12) {
-                                instance.inputValue = id1.substring(1, 12);
-                            }
-                            if (id2 && id2.length === 11) {
-                                instance.inputValue = id2;
-                            }
-                        } catch {
-                            this.$message({
-                                message: $t('prompt.change_world_preview.message.error'),
-                                type: 'error'
-                            });
-                            return;
-                        }
-                    }
-                    if (instance.inputValue !== world.ref.previewYoutubeId) {
-                        API.saveWorld({
-                            id: world.id,
-                            previewYoutubeId: instance.inputValue
+        this.$prompt(
+            $t('prompt.rename_avatar.description'),
+            $t('prompt.rename_avatar.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.rename_avatar.ok'),
+                cancelButtonText: $t('prompt.rename_avatar.cancel'),
+                inputValue: avatar.ref.name,
+                inputErrorMessage: $t('prompt.rename_avatar.input_error'),
+                callback: (action, instance) => {
+                    if (
+                        action === 'confirm' &&
+                        instance.inputValue !== avatar.ref.name
+                    ) {
+                        API.saveAvatar({
+                            id: avatar.id,
+                            name: instance.inputValue
                         }).then((args) => {
                             this.$message({
-                                message: $t('prompt.change_world_preview.message.success'),
+                                message: $t(
+                                    'prompt.rename_avatar.message.success'
+                                ),
                                 type: 'success'
                             });
                             return args;
@@ -13936,7 +13836,206 @@ speechSynthesis.getVoices();
                     }
                 }
             }
-        });
+        );
+    };
+
+    $app.methods.promptChangeAvatarDescription = function (avatar) {
+        this.$prompt(
+            $t('prompt.change_avatar_description.description'),
+            $t('prompt.change_avatar_description.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.change_avatar_description.ok'),
+                cancelButtonText: $t('prompt.change_avatar_description.cancel'),
+                inputValue: avatar.ref.description,
+                inputErrorMessage: $t(
+                    'prompt.change_avatar_description.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (
+                        action === 'confirm' &&
+                        instance.inputValue !== avatar.ref.description
+                    ) {
+                        API.saveAvatar({
+                            id: avatar.id,
+                            description: instance.inputValue
+                        }).then((args) => {
+                            this.$message({
+                                message: $t(
+                                    'prompt.change_avatar_description.message.success'
+                                ),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                    }
+                }
+            }
+        );
+    };
+
+    $app.methods.promptRenameWorld = function (world) {
+        this.$prompt(
+            $t('prompt.rename_world.description'),
+            $t('prompt.rename_world.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.rename_world.ok'),
+                cancelButtonText: $t('prompt.rename_world.cancel'),
+                inputValue: world.ref.name,
+                inputErrorMessage: $t('prompt.rename_world.input_error'),
+                callback: (action, instance) => {
+                    if (
+                        action === 'confirm' &&
+                        instance.inputValue !== world.ref.name
+                    ) {
+                        API.saveWorld({
+                            id: world.id,
+                            name: instance.inputValue
+                        }).then((args) => {
+                            this.$message({
+                                message: $t(
+                                    'prompt.rename_world.message.success'
+                                ),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                    }
+                }
+            }
+        );
+    };
+
+    $app.methods.promptChangeWorldDescription = function (world) {
+        this.$prompt(
+            $t('prompt.change_world_description.description'),
+            $t('prompt.change_world_description.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.change_world_description.ok'),
+                cancelButtonText: $t('prompt.change_world_description.cancel'),
+                inputValue: world.ref.description,
+                inputErrorMessage: $t(
+                    'prompt.change_world_description.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (
+                        action === 'confirm' &&
+                        instance.inputValue !== world.ref.description
+                    ) {
+                        API.saveWorld({
+                            id: world.id,
+                            description: instance.inputValue
+                        }).then((args) => {
+                            this.$message({
+                                message: $t(
+                                    'prompt.change_world_description.message.success'
+                                ),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                    }
+                }
+            }
+        );
+    };
+
+    $app.methods.promptChangeWorldCapacity = function (world) {
+        this.$prompt(
+            $t('prompt.change_world_capacity.description'),
+            $t('prompt.change_world_capacity.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.change_world_capacity.ok'),
+                cancelButtonText: $t('prompt.change_world_capacity.cancel'),
+                inputValue: world.ref.capacity,
+                inputPattern: /\d+$/,
+                inputErrorMessage: $t(
+                    'prompt.change_world_capacity.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (
+                        action === 'confirm' &&
+                        instance.inputValue !== world.ref.capacity
+                    ) {
+                        API.saveWorld({
+                            id: world.id,
+                            capacity: instance.inputValue
+                        }).then((args) => {
+                            this.$message({
+                                message: $t(
+                                    'prompt.change_world_capacity.message.success'
+                                ),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                    }
+                }
+            }
+        );
+    };
+
+    $app.methods.promptChangeWorldYouTubePreview = function (world) {
+        this.$prompt(
+            $t('prompt.change_world_preview.description'),
+            $t('prompt.change_world_preview.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.change_world_preview.ok'),
+                cancelButtonText: $t('prompt.change_world_preview.cancel'),
+                inputValue: world.ref.previewYoutubeId,
+                inputErrorMessage: $t(
+                    'prompt.change_world_preview.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (
+                        action === 'confirm' &&
+                        instance.inputValue !== world.ref.previewYoutubeId
+                    ) {
+                        if (instance.inputValue.length > 11) {
+                            try {
+                                var url = new URL(instance.inputValue);
+                                var id1 = url.pathname;
+                                var id2 = url.searchParams.get('v');
+                                if (id1 && id1.length === 12) {
+                                    instance.inputValue = id1.substring(1, 12);
+                                }
+                                if (id2 && id2.length === 11) {
+                                    instance.inputValue = id2;
+                                }
+                            } catch {
+                                this.$message({
+                                    message: $t(
+                                        'prompt.change_world_preview.message.error'
+                                    ),
+                                    type: 'error'
+                                });
+                                return;
+                            }
+                        }
+                        if (
+                            instance.inputValue !== world.ref.previewYoutubeId
+                        ) {
+                            API.saveWorld({
+                                id: world.id,
+                                previewYoutubeId: instance.inputValue
+                            }).then((args) => {
+                                this.$message({
+                                    message: $t(
+                                        'prompt.change_world_preview.message.success'
+                                    ),
+                                    type: 'success'
+                                });
+                                return args;
+                            });
+                        }
+                    }
+                }
+            }
+        );
     };
 
     $app.methods.promptMaxTableSizeDialog = function () {
@@ -13986,7 +14085,9 @@ speechSynthesis.getVoices();
                 cancelButtonText: $t('prompt.photon_lobby_timeout.cancel'),
                 inputValue: this.photonLobbyTimeoutThreshold / 1000,
                 inputPattern: /\d+$/,
-                inputErrorMessage: $t('prompt.photon_lobby_timeout.input_error'),
+                inputErrorMessage: $t(
+                    'prompt.photon_lobby_timeout.input_error'
+                ),
                 callback: (action, instance) => {
                     if (
                         action === 'confirm' &&
@@ -22675,24 +22776,32 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptNewLocalWorldFavoriteGroup = function () {
-        this.$prompt($t('prompt.new_local_favorite_group.description'), $t('prompt.new_local_favorite_group.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.new_local_favorite_group.ok'),
-            cancelButtonText: $t('prompt.new_local_favorite_group.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: $t('prompt.new_local_favorite_group.input_error'),
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    this.newLocalWorldFavoriteGroup(instance.inputValue);
+        this.$prompt(
+            $t('prompt.new_local_favorite_group.description'),
+            $t('prompt.new_local_favorite_group.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.new_local_favorite_group.ok'),
+                cancelButtonText: $t('prompt.new_local_favorite_group.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: $t(
+                    'prompt.new_local_favorite_group.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        this.newLocalWorldFavoriteGroup(instance.inputValue);
+                    }
                 }
             }
-        });
+        );
     };
 
     $app.methods.newLocalWorldFavoriteGroup = function (group) {
         if (this.localWorldFavoriteGroups.includes(group)) {
             $app.$message({
-                message: $t('prompt.new_local_favorite_group.message.error', { name: group }),
+                message: $t('prompt.new_local_favorite_group.message.error', {
+                    name: group
+                }),
                 type: 'error'
             });
             return;
@@ -22707,28 +22816,41 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.promptLocalWorldFavoriteGroupRename = function (group) {
-        this.$prompt($t('prompt.local_favorite_group_rename.description'), $t('prompt.local_favorite_group_rename.header'), {
-            distinguishCancelAndClose: true,
-            confirmButtonText: $t('prompt.local_favorite_group_rename.save'),
-            cancelButtonText: $t('prompt.local_favorite_group_rename.cancel'),
-            inputPattern: /\S+/,
-            inputErrorMessage: $t('prompt.local_favorite_group_rename.input_error'),
-            inputValue: group,
-            callback: (action, instance) => {
-                if (action === 'confirm' && instance.inputValue) {
-                    this.renameLocalWorldFavoriteGroup(
-                        instance.inputValue,
-                        group
-                    );
+        this.$prompt(
+            $t('prompt.local_favorite_group_rename.description'),
+            $t('prompt.local_favorite_group_rename.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t(
+                    'prompt.local_favorite_group_rename.save'
+                ),
+                cancelButtonText: $t(
+                    'prompt.local_favorite_group_rename.cancel'
+                ),
+                inputPattern: /\S+/,
+                inputErrorMessage: $t(
+                    'prompt.local_favorite_group_rename.input_error'
+                ),
+                inputValue: group,
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        this.renameLocalWorldFavoriteGroup(
+                            instance.inputValue,
+                            group
+                        );
+                    }
                 }
             }
-        });
+        );
     };
 
     $app.methods.renameLocalWorldFavoriteGroup = function (newName, group) {
         if (this.localWorldFavoriteGroups.includes(newName)) {
             $app.$message({
-                message: $t('prompt.local_favorite_group_rename.message.error', { name: newName }),
+                message: $t(
+                    'prompt.local_favorite_group_rename.message.error',
+                    {name: newName}
+                ),
                 type: 'error'
             });
             return;
@@ -22826,7 +22948,9 @@ speechSynthesis.getVoices();
                 cancelButtonText: $t('prompt.pending_offline_delay.cancel'),
                 inputValue: this.pendingOfflineDelay / 1000,
                 inputPattern: /\d+$/,
-                inputErrorMessage: $t('prompt.pending_offline_delay.input_error'),
+                inputErrorMessage: $t(
+                    'prompt.pending_offline_delay.input_error'
+                ),
                 callback: (action, instance) => {
                     if (
                         action === 'confirm' &&
