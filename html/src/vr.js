@@ -8,10 +8,12 @@ import '@fontsource/noto-sans-kr';
 import '@fontsource/noto-sans-jp';
 import Noty from 'noty';
 import Vue from 'vue';
+import VueI18n from 'vue-i18n';
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 import * as workerTimers from 'worker-timers';
 import MarqueeText from 'vue-marquee-text-component';
+import * as localizedStrings from './localization/localizedStrings.js';
 Vue.component('marquee-text', MarqueeText);
 
 (async function () {
@@ -27,6 +29,14 @@ Vue.component('marquee-text', MarqueeText);
         layout: 'topCenter',
         theme: 'relax',
         timeout: 3000
+    });
+
+    Vue.use(VueI18n);
+
+    var i18n = new VueI18n({
+        locale: 'en',
+        fallbackLocale: 'en',
+        messages: localizedStrings
     });
 
     Vue.use(ElementUI, {
@@ -163,6 +173,7 @@ Vue.component('marquee-text', MarqueeText);
     };
 
     var $app = {
+        i18n,
         data: {
             // 1 = 대시보드랑 손목에 보이는거
             // 2 = 항상 화면에 보이는 거
@@ -674,6 +685,38 @@ Vue.component('marquee-text', MarqueeText);
         };
         Vue.filter('formatDate', formatDate);
     };
+
+    // App: Language
+
+    $app.data.appLanguage = 'en';
+    /*
+    if (configRepository.getString('VRCX_appLanguage')) {
+        $app.data.appLanguage = configRepository.getString('VRCX_appLanguage');
+        i18n.locale = $app.data.appLanguage;
+    } else {
+        AppApi.CurrentLanguage().then((result) => {
+            if (!result) {
+                console.error('Failed to get current language');
+                $app.changeAppLanguage('en');
+                return;
+            }
+            var lang = result.split('-')[0];
+            i18n.availableLocales.forEach((ref) => {
+                var refLang = ref.split('_')[0];
+                if (refLang === lang) {
+                    $app.changeAppLanguage(ref);
+                }
+            });
+        });
+    }
+
+    $app.methods.changeAppLanguage = function (language) {
+        console.log('Language changed:', language);
+        this.appLanguage = language;
+        i18n.locale = language;
+        configRepository.setString('VRCX_appLanguage', language);
+    };
+    */
 
     $app = new Vue($app);
     window.$app = $app;

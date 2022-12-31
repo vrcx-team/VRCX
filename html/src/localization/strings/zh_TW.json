@@ -1360,5 +1360,17 @@
             "count": "次數",
             "action": "動作"
         }
+    },
+    "vr": {
+        "status": {
+            "timer": "時長：",
+            "players": "玩家人數：",
+            "cpu": "CPU：",
+            "online": "線上：",
+            "devices": {
+                "left": "左：",
+                "right": "右："
+            }
+        }
     }
 }
