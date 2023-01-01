@@ -2805,45 +2805,49 @@ speechSynthesis.getVoices();
 
     API.refreshNotifications = async function () {
         this.isNotificationsLoading = true;
-        this.expireFriendRequestNotifications();
-        var params = {
-            n: 100,
-            offset: 0
-        };
-        var count = 50; // 5000 max
-        for (var i = 0; i < count; i++) {
-            var args = await this.getNotifications(params);
-            $app.unseenNotifications = [];
-            params.offset += 100;
-            if (args.json.length < 100) {
-                break;
+        try {
+            this.expireFriendRequestNotifications();
+            var params = {
+                n: 100,
+                offset: 0
+            };
+            var count = 50; // 5000 max
+            for (var i = 0; i < count; i++) {
+                var args = await this.getNotifications(params);
+                $app.unseenNotifications = [];
+                params.offset += 100;
+                if (args.json.length < 100) {
+                    break;
+                }
             }
-        }
-        var params = {
-            n: 100,
-            offset: 0
-        };
-        var count = 50; // 5000 max
-        for (var i = 0; i < count; i++) {
-            var args = await this.getNotificationsV2(params);
-            $app.unseenNotifications = [];
-            params.offset += 100;
-            if (args.json.length < 100) {
-                break;
+            var params = {
+                n: 100,
+                offset: 0
+            };
+            var count = 50; // 5000 max
+            for (var i = 0; i < count; i++) {
+                var args = await this.getNotificationsV2(params);
+                $app.unseenNotifications = [];
+                params.offset += 100;
+                if (args.json.length < 100) {
+                    break;
+                }
             }
-        }
-        var params = {
-            n: 100,
-            offset: 0
-        };
-        var count = 50; // 5000 max
-        for (var i = 0; i < count; i++) {
-            var args = await this.getHiddenFriendRequests(params);
-            $app.unseenNotifications = [];
-            params.offset += 100;
-            if (args.json.length < 100) {
-                break;
+            var params = {
+                n: 100,
+                offset: 0
+            };
+            var count = 50; // 5000 max
+            for (var i = 0; i < count; i++) {
+                var args = await this.getHiddenFriendRequests(params);
+                $app.unseenNotifications = [];
+                params.offset += 100;
+                if (args.json.length < 100) {
+                    break;
+                }
             }
+        } catch (err) {
+            console.error(err);
         }
         this.isNotificationsLoading = false;
     };
@@ -2931,6 +2935,28 @@ speechSynthesis.getVoices();
                 notificationId: json.id
             }
         });
+    });
+
+    API.$on('NOTIFICATION:V2:UPDATE', function (args) {
+        var notificationId = args.params.notificationId;
+        var json = args.json;
+        if (!json) {
+            return;
+        }
+        json.id = notificationId;
+        this.$emit('NOTIFICATION', {
+            json,
+            params: {
+                notificationId
+            }
+        });
+        if (json.seen) {
+            this.$emit('NOTIFICATION:SEE', {
+                params: {
+                    notificationId
+                }
+            });
+        }
     });
 
     /*
@@ -4181,6 +4207,16 @@ speechSynthesis.getVoices();
                         }
                     });
                 }
+                break;
+
+            case 'notification-v2-update':
+                console.log('notification-v2-update', content);
+                this.$emit('NOTIFICATION:V2:UPDATE', {
+                    json: content.updates,
+                    params: {
+                        notificationId: content.id
+                    }
+                });
                 break;
 
             case 'see-notification':
@@ -11161,6 +11197,9 @@ speechSynthesis.getVoices();
         var partyId = `${L.worldId}:${L.instanceName}`;
         var partySize = this.lastLocation.playerList.size;
         var partyMaxSize = L.worldCapacity;
+        if (partySize > partyMaxSize) {
+            partyMaxSize = partySize;
+        }
         var buttonText = 'Join';
         var buttonUrl = L.joinUrl;
         if (!this.discordJoinButton) {

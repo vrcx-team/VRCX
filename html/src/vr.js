@@ -393,14 +393,21 @@ Vue.component('marquee-text', MarqueeText);
 
             if (!this.config.hideDevicesFromFeed) {
                 AppApi.GetVRDevices().then((devices) => {
+                    var deviceList = [];
+                    var baseStations = 0;
                     devices.forEach((device) => {
                         device[2] = parseInt(device[2], 10);
+                        if (device[0] === 'base' && device[1] === 'connected') {
+                            baseStations++;
+                        } else {
+                            deviceList.unshift(device);
+                        }
                     });
-                    devices.sort((a, b) => {
+                    deviceList.sort((a, b) => {
                         if (a[0] === b[0]) {
                             return 0;
                         }
-                        if (a[0] === 'base') {
+                        if (a[0] === 'tracker' || a[0] === 'base') {
                             return 1;
                         }
                         if (a[0].toLowerCase().includes('controller')) {
@@ -408,7 +415,7 @@ Vue.component('marquee-text', MarqueeText);
                         }
                         return 0;
                     });
-                    devices.sort((a, b) => {
+                    deviceList.sort((a, b) => {
                         if (a[1] === b[1]) {
                             return 0;
                         }
@@ -420,7 +427,10 @@ Vue.component('marquee-text', MarqueeText);
                         }
                         return 0;
                     });
-                    this.devices = devices;
+                    if (baseStations > 0) {
+                        deviceList.push(['base', 'connected', baseStations]);
+                    }
+                    this.devices = deviceList;
                 });
             } else {
                 this.devices = [];
