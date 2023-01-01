@@ -177,13 +177,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.Common">
-      <Version>108.4.130</Version>
+      <Version>107.1.120</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.OffScreen">
-      <Version>108.4.130</Version>
+      <Version>107.1.120</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
-      <Version>108.4.130</Version>
+      <Version>107.1.120</Version>
     </PackageReference>
     <PackageReference Include="DiscordRichPresence">
       <Version>1.1.3.18</Version>

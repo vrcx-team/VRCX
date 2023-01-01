@@ -409,45 +409,36 @@ html
                                             span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] has unmuted you
                 .x-containerbottom
-                    div(style="display:flex;flex-direction:row")
-                        template(v-if="devices.length")
-                            div(v-for="device in devices" style="flex:none;text-align:center;width:62px;height:82px")
-                                template(v-if="device[0] === 'tracker'")
-                                    img(v-if="device[1] !== 'connected'" src="images/tracker_status_off.png" style="width:32px;height:32px")
-                                    img(v-else-if="device[2] < 20" src="images/tracker_status_ready_low.png" style="width:32px;height:32px")
-                                    img(v-else src="images/tracker_status_ready.png" style="width:32px;height:32px")
-                                    br
-                                    span {{ device[2] }}%
-                                template(v-else-if="device[0] === 'leftController'")
-                                    img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" style="width:32px;height:32px")
-                                    img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" style="width:32px;height:32px")
-                                    img(v-else src="images/controller_status_ready.png" style="width:32px;height:32px")
-                                    br
-                                    span {{ $t('vr.status.devices.left') }}{{ device[2] }}%
-                                template(v-else-if="device[0] === 'rightController'")
-                                    img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" style="width:32px;height:32px")
-                                    img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" style="width:32px;height:32px")
-                                    img(v-else src="images/controller_status_ready.png" style="width:32px;height:32px")
-                                    br
-                                    span {{ $t('vr.status.devices.right') }}{{ device[2] }}%
-                                template(v-else-if="device[0] === 'controller'")
-                                    img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" style="width:32px;height:32px")
-                                    img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" style="width:32px;height:32px")
-                                    img(v-else src="images/controller_status_ready.png" style="width:32px;height:32px")
-                                    br
-                                    span {{ device[2] }}%
-                                template(v-else-if="device[0] === 'base'")
-                                    img(v-if="device[1] !== 'connected'" src="images/base_status_off.png" style="width:32px;height:32px")
-                                    img(v-else-if="device[2] < 20" src="images/base_status_ready_low.png" style="width:32px;height:32px")
-                                    img(v-else src="images/base_status_ready.png" style="width:32px;height:32px")
-                                    br
-                                    span {{ device[2] }}%
-                                template(v-else)
-                                    img(v-if="device[1] !== 'connected'" src="images/other_status_off.png" style="width:32px;height:32px")
-                                    img(v-else-if="device[2] < 20" src="images/other_status_ready_low.png" style="width:32px;height:32px")
-                                    img(v-else src="images/other_status_ready.png" style="width:32px;height:32px")
-                                    br
-                                    span {{ device[2] }}%
+                    div(style="display:flex;flex-direction:row;flex-wrap:wrap")
+                        div(v-for="device in devices" class="tracker-container")
+                            template(v-if="device[0] === 'leftController'")
+                                img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" class="tracker-device")
+                                img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" class="tracker-device")
+                                img(v-else src="images/controller_status_ready.png" class="tracker-device")
+                                span {{ $t('vr.status.devices.left') }}{{ device[2] }}%
+                            template(v-else-if="device[0] === 'rightController'")
+                                img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" class="tracker-device")
+                                img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" class="tracker-device")
+                                img(v-else src="images/controller_status_ready.png" class="tracker-device")
+                                span {{ $t('vr.status.devices.right') }}{{ device[2] }}%
+                            template(v-else-if="device[0] === 'controller'")
+                                img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" class="tracker-device")
+                                img(v-else-if="device[2] < 20" src="images/controller_status_ready_low.png" class="tracker-device")
+                                img(v-else src="images/controller_status_ready.png" class="tracker-device")
+                                span {{ device[2] }}%
+                            template(v-else-if="device[0] === 'tracker'")
+                                img(v-if="device[1] !== 'connected'" src="images/tracker_status_off.png" class="tracker-device")
+                                img(v-else-if="device[2] < 20" src="images/tracker_status_ready_low.png" class="tracker-device")
+                                img(v-else src="images/tracker_status_ready.png" class="tracker-device")
+                                span {{ device[2] }}%
+                            template(v-else-if="device[0] === 'base'")
+                                img(v-if="device[1] !== 'connected'" src="images/base_status_off.png" class="tracker-device")
+                                img(v-else src="images/base_status_ready.png" class="tracker-device")
+                            template(v-else)
+                                img(v-if="device[1] !== 'connected'" src="images/other_status_off.png" class="tracker-device")
+                                img(v-else-if="device[2] < 20" src="images/other_status_ready_low.png" class="tracker-device")
+                                img(v-else src="images/other_status_ready.png" class="tracker-device")
+                                span {{ device[2] }}%
                 .x-containerbottom
                     template(v-if="nowPlaying.playing")
                         span(style="float:right;padding-left:10px") {{ nowPlaying.remainingText }}
