@@ -13277,7 +13277,8 @@ speechSynthesis.getVoices();
             notificationTheme,
             backgroundEnabled: this.vrBackgroundEnabled,
             dtHour12: this.dtHour12,
-            pcUptimeOnFeed: this.pcUptimeOnFeed
+            pcUptimeOnFeed: this.pcUptimeOnFeed,
+            appLanguage: this.appLanguage
         };
         var json = JSON.stringify(VRConfigVars);
         AppApi.ExecuteVrFeedFunction('configUpdate', json);
@@ -24267,6 +24268,7 @@ speechSynthesis.getVoices();
         this.appLanguage = language;
         i18n.locale = language;
         configRepository.setString('VRCX_appLanguage', language);
+        this.updateVRConfigVars();
     };
 
     $app = new Vue($app);

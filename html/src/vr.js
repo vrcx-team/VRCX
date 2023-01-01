@@ -38,6 +38,8 @@ Vue.component('marquee-text', MarqueeText);
         messages: localizedStrings
     });
 
+    var $t = i18n.t.bind(i18n);
+
     Vue.use(ElementUI, {
         i18n: (key, value) => i18n.t(key, value)
     });
@@ -177,6 +179,7 @@ Vue.component('marquee-text', MarqueeText);
             // 1 = 대시보드랑 손목에 보이는거
             // 2 = 항상 화면에 보이는 거
             appType: location.href.substr(-1),
+            appLanguage: 'en',
             currentTime: new Date().toJSON(),
             cpuUsage: 0,
             pcUptime: '',
@@ -320,6 +323,7 @@ Vue.component('marquee-text', MarqueeText);
         this.hudFeed = [];
         this.hudTimeout = [];
         this.setDatetimeFormat();
+        this.setAppLanguage(this.config.appLanguage);
     };
 
     $app.methods.updateOnlineFriendCount = function (count) {
@@ -709,37 +713,15 @@ Vue.component('marquee-text', MarqueeText);
         Vue.filter('formatDate', formatDate);
     };
 
-    // App: Language
-
-    $app.data.appLanguage = 'en';
-    /*
-    if (configRepository.getString('VRCX_appLanguage')) {
-        $app.data.appLanguage = configRepository.getString('VRCX_appLanguage');
-        i18n.locale = $app.data.appLanguage;
-    } else {
-        AppApi.CurrentLanguage().then((result) => {
-            if (!result) {
-                console.error('Failed to get current language');
-                $app.changeAppLanguage('en');
-                return;
-            }
-            var lang = result.split('-')[0];
-            i18n.availableLocales.forEach((ref) => {
-                var refLang = ref.split('_')[0];
-                if (refLang === lang) {
-                    $app.changeAppLanguage(ref);
-                }
-            });
-        });
-    }
-
-    $app.methods.changeAppLanguage = function (language) {
-        console.log('Language changed:', language);
-        this.appLanguage = language;
-        i18n.locale = language;
-        configRepository.setString('VRCX_appLanguage', language);
+    $app.methods.setAppLanguage = function (appLanguage) {
+        if (!appLanguage) {
+            return;
+        }
+        if (appLanguage !== this.appLanguage) {
+            this.appLanguage = appLanguage;
+            i18n.locale = this.appLanguage;
+        }
     };
-    */
 
     $app = new Vue($app);
     window.$app = $app;
