@@ -38,7 +38,7 @@ Vue.component('marquee-text', MarqueeText);
         messages: localizedStrings
     });
 
-    var $t = i18n.t.bind(i18n);
+    // var $t = i18n.t.bind(i18n);
 
     Vue.use(ElementUI, {
         i18n: (key, value) => i18n.t(key, value)
