@@ -8,10 +8,11 @@ import '@fontsource/noto-sans-kr';
 import '@fontsource/noto-sans-jp';
 import Noty from 'noty';
 import Vue from 'vue';
+import VueI18n from 'vue-i18n';
 import ElementUI from 'element-ui';
-import locale from 'element-ui/lib/locale/lang/en';
 import * as workerTimers from 'worker-timers';
 import MarqueeText from 'vue-marquee-text-component';
+import * as localizedStrings from './localization/localizedStrings.js';
 Vue.component('marquee-text', MarqueeText);
 
 (async function () {
@@ -29,8 +30,18 @@ Vue.component('marquee-text', MarqueeText);
         timeout: 3000
     });
 
+    Vue.use(VueI18n);
+
+    var i18n = new VueI18n({
+        locale: 'en',
+        fallbackLocale: 'en',
+        messages: localizedStrings
+    });
+
+    var $t = i18n.t.bind(i18n);
+
     Vue.use(ElementUI, {
-        locale
+        i18n: (key, value) => i18n.t(key, value)
     });
 
     var escapeTag = (s) =>
@@ -163,10 +174,12 @@ Vue.component('marquee-text', MarqueeText);
     };
 
     var $app = {
+        i18n,
         data: {
             // 1 = 대시보드랑 손목에 보이는거
             // 2 = 항상 화면에 보이는 거
             appType: location.href.substr(-1),
+            appLanguage: 'en',
             currentTime: new Date().toJSON(),
             cpuUsage: 0,
             pcUptime: '',
@@ -310,6 +323,7 @@ Vue.component('marquee-text', MarqueeText);
         this.hudFeed = [];
         this.hudTimeout = [];
         this.setDatetimeFormat();
+        this.setAppLanguage(this.config.appLanguage);
     };
 
     $app.methods.updateOnlineFriendCount = function (count) {
@@ -697,6 +711,16 @@ Vue.component('marquee-text', MarqueeText);
                 .replace(' pm', '');
         };
         Vue.filter('formatDate', formatDate);
+    };
+
+    $app.methods.setAppLanguage = function (appLanguage) {
+        if (!appLanguage) {
+            return;
+        }
+        if (appLanguage !== this.appLanguage) {
+            this.appLanguage = appLanguage;
+            i18n.locale = this.appLanguage;
+        }
     };
 
     $app = new Vue($app);

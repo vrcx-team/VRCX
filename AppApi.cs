@@ -5,26 +5,26 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using CefSharp;
-using Microsoft.Win32;
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Management;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using System.IO;
-using System.Security.Cryptography;
-using System.Net;
-using Windows.UI.Notifications;
-using Windows.Data.Xml.Dom;
 using librsync.net;
-using System.Net.Sockets;
-using System.Text;
-using System.Collections.Generic;
-using System.Threading;
-using System.IO.Pipes;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.IO.Pipes;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Forms;
+using Windows.Data.Xml.Dom;
+using Windows.UI.Notifications;
 
 namespace VRCX
 {
@@ -410,7 +410,12 @@ namespace VRCX
 
         public string CurrentCulture()
         {
-            return System.Globalization.CultureInfo.CurrentCulture.ToString();
+            return CultureInfo.CurrentCulture.ToString();
+        }
+
+        public string CurrentLanguage()
+        {
+            return CultureInfo.InstalledUICulture.Name;
         }
 
         public string GetVersion()
