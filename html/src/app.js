@@ -7713,16 +7713,25 @@ speechSynthesis.getVoices();
         return worldName;
     };
 
-    $app.methods.getGroupName = async function (location) {
+    $app.methods.getGroupName = async function (data) {
+        if (!data) {
+            return '';
+        }
         var groupName = '';
-        try {
+        var groupId = data;
+        if (!data.startsWith('grp_')) {
             var L = API.parseLocation(location);
             if (L.groupId) {
-                var args = await API.getCachedGroup({
-                    groupId: L.groupId
-                });
-                groupName = args.ref.name;
+                groupId = L.groupId;
+            } else {
+                return '';
             }
+        }
+        try {
+            var args = await API.getCachedGroup({
+                groupId
+            });
+            groupName = args.ref.name;
         } catch (err) {}
         return groupName;
     };
@@ -9531,6 +9540,7 @@ speechSynthesis.getVoices();
         'OnPlayerLeft',
         'ChangeAvatar',
         'ChangeStatus',
+        'ChangeGroup',
         'PortalSpawn',
         'DeletedPortal',
         'ChatBoxMessage',
@@ -9743,6 +9753,12 @@ speechSynthesis.getVoices();
                             user.avatarDict,
                             gameLogDate
                         );
+                        this.parsePhotonGroupChange(
+                            id,
+                            user.user,
+                            user.groupOnNameplate,
+                            gameLogDate
+                        );
                         this.parsePhotonAvatar(user.avatarDict);
                         this.parsePhotonAvatar(user.favatarDict);
                         var hasInstantiated = false;
@@ -9771,6 +9787,12 @@ speechSynthesis.getVoices();
                         id,
                         user.user,
                         user.avatarDict,
+                        gameLogDate
+                    );
+                    this.parsePhotonGroupChange(
+                        id,
+                        user.user,
+                        user.groupOnNameplate,
                         gameLogDate
                     );
                     this.parsePhotonAvatar(user.avatarDict);
@@ -9805,6 +9827,12 @@ speechSynthesis.getVoices();
                     user.avatarDict,
                     gameLogDate
                 );
+                this.parsePhotonGroupChange(
+                    id,
+                    user.user,
+                    user.groupOnNameplate,
+                    gameLogDate
+                );
                 this.parsePhotonAvatar(user.avatarDict);
                 this.parsePhotonAvatar(user.favatarDict);
                 var lobbyJointime = this.photonLobbyJointime.get(id);
@@ -9831,6 +9859,12 @@ speechSynthesis.getVoices();
                         data.Parameters[254],
                         data.Parameters[249].user,
                         data.Parameters[249].avatarDict,
+                        gameLogDate
+                    );
+                    this.parsePhotonGroupChange(
+                        data.Parameters[254],
+                        data.Parameters[249].user,
+                        data.Parameters[249].groupOnNameplate,
                         gameLogDate
                     );
                     this.parsePhotonAvatar(data.Parameters[249].avatarDict);
@@ -10562,6 +10596,40 @@ speechSynthesis.getVoices();
             });
         }
         this.photonLobbyAvatars.set(user.id, avatar.id);
+    };
+
+    $app.methods.parsePhotonGroupChange = async function (
+        photonId,
+        user,
+        groupId,
+        gameLogDate
+    ) {
+        if (
+            typeof user === 'undefined' ||
+            !this.photonLobbyJointime.has(photonId)
+        ) {
+            return;
+        }
+        var {groupOnNameplate} = this.photonLobbyJointime.get(photonId);
+        if (
+            groupOnNameplate !== groupId &&
+            photonId !== this.photonLobbyCurrentUser
+        ) {
+            var groupName = await this.getGroupName(groupId);
+            var previousGroupName = await this.getGroupName(groupOnNameplate);
+            this.addEntryPhotonEvent({
+                photonId,
+                displayName: user.displayName,
+                userId: user.id,
+                text: `ChangeGroup ${groupName}`,
+                type: 'ChangeGroup',
+                created_at: gameLogDate,
+                groupId,
+                groupName,
+                previousGroupId: groupOnNameplate,
+                previousGroupName
+            });
+        }
     };
 
     $app.methods.parsePhotonAvatar = function (avatar) {
@@ -21127,6 +21195,12 @@ speechSynthesis.getVoices();
                             id,
                             user.user,
                             user.avatarDict,
+                            dateTime
+                        );
+                        this.parsePhotonGroupChange(
+                            id,
+                            user.user,
+                            user.groupOnNameplate,
                             dateTime
                         );
                         this.parsePhotonAvatar(user.avatarDict);

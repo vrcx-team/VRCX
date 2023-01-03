@@ -159,7 +159,7 @@
             "invite_messages": "邀請訊息",
             "invite_response_messages": "邀請回覆訊息",
             "invite_request_messages": "邀請請求訊息",
-            "invite__request_response_messages": "邀請請求回覆訊息",
+            "invite_request_response_messages": "邀請請求回覆訊息",
             "past_display_names": "過去顯示名稱",
             "config_json": "JSON 資料",
             "current_user_json": "目前玩家的 JSON 資料",
@@ -733,10 +733,10 @@
             "local_favorites": "本地收藏"
         },
         "invite": {
-            "header": "Invite",
-            "select_placeholder": "Choose Friends",
-            "invite_with_message": "Invite With Message",
-            "invite": "Invite"
+            "header": "邀請玩家",
+            "select_placeholder": "選擇好友",
+            "invite_with_message": "邀請訊息",
+            "invite": "邀請"
         },
         "social_status": {
             "header": "社交狀態",

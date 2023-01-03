@@ -175,6 +175,13 @@ html
                                                             span(v-else) Offline
                                                         i.x-user-status(:class="statusClass(scope.row.status)" style="margin-right:5px")
                                                 span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription")
+                                            template(v-else-if="scope.row.type === 'ChangeGroup'")
+                                                span.x-link(v-if="scope.row.previousGroupName" v-text="scope.row.previousGroupName" @click="showGroupDialog(scope.row.previousGroupId)" style="margin-right:5px")
+                                                span.x-link(v-else v-text="scope.row.previousGroupId" @click="showGroupDialog(scope.row.previousGroupId)" style="margin-right:5px")
+                                                span
+                                                    i.el-icon-right
+                                                span.x-link(v-if="scope.row.groupName" v-text="scope.row.groupName" @click="showGroupDialog(scope.row.groupId)" style="margin-left:5px")
+                                                span.x-link(v-else v-text="scope.row.groupId" @click="showGroupDialog(scope.row.groupId)" style="margin-left:5px")
                                             span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
                                                 location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName" :link="false")
                                             span(v-else-if="scope.row.type === 'ChatBoxMessage'" v-text="scope.row.text")
@@ -229,6 +236,13 @@ html
                                                             span(v-else) {{ $t('dialog.user.status.offline') }}
                                                         i.x-user-status(:class="statusClass(scope.row.status)")
                                                 span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription" style="margin-left:5px")
+                                            template(v-else-if="scope.row.type === 'ChangeGroup'")
+                                                span.x-link(v-if="scope.row.previousGroupName" v-text="scope.row.previousGroupName" @click="showGroupDialog(scope.row.previousGroupId)" style="margin-right:5px")
+                                                span.x-link(v-else v-text="scope.row.previousGroupId" @click="showGroupDialog(scope.row.previousGroupId)" style="margin-right:5px")
+                                                span
+                                                    i.el-icon-right
+                                                span.x-link(v-if="scope.row.groupName" v-text="scope.row.groupName" @click="showGroupDialog(scope.row.groupId)" style="margin-left:5px")
+                                                span.x-link(v-else v-text="scope.row.groupId" @click="showGroupDialog(scope.row.groupId)" style="margin-left:5px")
                                             span.x-link(v-else-if="scope.row.type === 'PortalSpawn'" @click="showWorldDialog(scope.row.location, scope.row.shortName)")
                                                 location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName" :link="false")
                                             span(v-else-if="scope.row.type === 'ChatBoxMessage'" v-text="scope.row.text")
@@ -453,7 +467,7 @@ html
                             template(v-else-if="scope.row.type === 'Event'")
                                 span(v-text="scope.row.data")
                             template(v-else-if="scope.row.type === 'VideoPlay'")
-                                span(v-if="scope.row.videoId") {{ scope.row.videoId }}:
+                                span(v-if="scope.row.videoId" style="margin-right:5px") {{ scope.row.videoId }}:
                                 span(v-if="scope.row.videoId === 'LSMedia'" v-text="scope.row.videoName")
                                 span.x-link(v-else-if="scope.row.videoName" @click="openExternalLink(scope.row.videoUrl)" v-text="scope.row.videoName")
                                 span.x-link(v-else @click="openExternalLink(scope.row.videoUrl)" v-text="scope.row.videoUrl")
@@ -929,7 +943,7 @@ html
                             template(v-once #default="scope")
                                 el-button(type="text" icon="el-icon-edit" size="mini" @click="showEditInviteMessageDialog('request', scope.row)")
                 div.options-container
-                    span.header {{ $t('view.profile.invite__request_response_messages') }}
+                    span.header {{ $t('view.profile.invite_request_response_messages') }}
                     el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
                         el-button(type="default" @click="inviteRequestResponseMessageTable.visible = true; refreshInviteMessageTable('requestResponse')" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
                     el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
@@ -2448,7 +2462,7 @@ html
                             data-tables(v-bind="socialStatusHistoryTable" @row-click="setSocialStatusFromHistory" style="cursor:pointer")
                                 el-table-column(:label="$t('table.social_status.no')" prop="no" width="50")
                                 el-table-column(:label="$t('table.social_status.status')" prop="status")
-                    el-select(v-model="socialStatusDialog.status" style="dispaly:block;margin-top:10px")
+                    el-select(v-model="socialStatusDialog.status" style="display:block;margin-top:10px")
                         el-option(:label="$t('dialog.user.status.online')" value="active").
                             #[i.x-user-status.online] {{ $t('dialog.user.status.online') }}
                         el-option(:label="$t('dialog.user.status.join_me')" value="join me").
@@ -2459,7 +2473,7 @@ html
                             #[i.x-user-status.busy] {{ $t('dialog.user.status.busy') }}
                         el-option(v-if="API.currentUser.$isModerator" :label="$t('dialog.user.status.offline')" value="offline").
                             #[i.x-user-status.offline] {{ $t('dialog.user.status.offline') }}
-                    el-input(v-model="socialStatusDialog.statusDescription" :placeholder="$t('dialog.social_status.status_placeholder')" maxlength="32" show-word-limit style="dispaly:block;margin-top:10px")
+                    el-input(v-model="socialStatusDialog.statusDescription" :placeholder="$t('dialog.social_status.status_placeholder')" maxlength="32" show-word-limit style="display:block;margin-top:10px")
                 template(#footer)
                     el-button(type="primary" size="small" :disabled="socialStatusDialog.loading" @click="saveSocialStatus") {{ $t('dialog.social_status.update') }}
 
@@ -2574,7 +2588,7 @@ html
                 el-input(type="textarea" v-model="launchOptionsDialog.launchArguments" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
                 div(style="font-size:12px;margin-top:10px")
                     | {{ $t('dialog.launch_options.path_override') }}
-                el-input(type="textarea" v-model="launchOptionsDialog.vrcLaunchPathOverride" placeholder="C:\\Program Files (x86)\\Steam\\steamapps\\common\\VRChat" :rows="1" style="dispaly:block;margin-top:10px")
+                el-input(type="textarea" v-model="launchOptionsDialog.vrcLaunchPathOverride" placeholder="C:\\Program Files (x86)\\Steam\\steamapps\\common\\VRChat" :rows="1" style="display:block;margin-top:10px")
                 template(#footer)
                     div(style="display:flex")
                         el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/launch-options')") {{ $t('dialog.launch_options.vrchat_docs') }}
@@ -2631,7 +2645,7 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="youTubeApiDialog" :visible.sync="youTubeApiDialog.visible" :title="$t('dialog.youtube_api.header')" width="400px")
                 div(style='font-size:12px;')
                     | {{ $t('dialog.youtube_api.description') }} #[br]
-                el-input(type="textarea" v-model="youTubeApiKey" :placeholder="$t('dialog.youtube_api.placeholder')" maxlength="39" show-word-limit style="dispaly:block;margin-top:10px")
+                el-input(type="textarea" v-model="youTubeApiKey" :placeholder="$t('dialog.youtube_api.placeholder')" maxlength="39" show-word-limit style="display:block;margin-top:10px")
                 template(#footer)
                     div(style="display:flex")
                         el-button(size="small" @click="openExternalLink('https://rapidapi.com/blog/how-to-get-youtube-api-key/')") {{ $t('dialog.youtube_api.guide') }}

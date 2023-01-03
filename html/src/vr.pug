@@ -69,7 +69,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | 🎵 #[span.name(v-text="feed.displayName" style="margin-right:5px")]
+                                            | 🎵 #[span.name(v-if="feed.displayName" v-text="feed.displayName" style="margin-right:5px")]
                                             template(v-if="feed.videoName")
                                                 | #[span(v-text="feed.videoName")]
                                             template(v-else)
@@ -489,6 +489,9 @@ html
                                             i.el-icon-right
                                         i.x-user-status(:class="statusClass(feed.status)" style="width:20px;height:20px")
                                     span(v-if="feed.statusDescription !== feed.previousStatusDescription" v-text="feed.statusDescription" style="margin-left:10px")
+                            template(v-else-if="feed.type === 'ChangeGroup'")
+                                span(style="margin-left:10px") ChangeGroup
+                                span(v-text="feed.groupName" style="margin-left:10px")
                             template(v-else-if="feed.type === 'ChatBoxMessage'")
                                 span(style="margin-left:10px") ChatBox
                                 span(v-text="feed.text" style="margin-left:10px;white-space:normal")
