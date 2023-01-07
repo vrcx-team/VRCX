@@ -23802,7 +23802,9 @@ speechSynthesis.getVoices();
         D.announcement = {};
         D.instances = [];
         D.memberRoles = [];
-        D.galleries = {};
+        if (this.groupDialogLastGallery !== groupId) {
+            D.galleries = {};
+        }
         if (this.groupDialogLastMembers !== groupId) {
             D.members = [];
         }
