@@ -12802,6 +12802,9 @@ speechSynthesis.getVoices();
     );
     $app.data.branch = configRepository.getString('VRCX_branch');
     $app.data.maxTableSize = configRepository.getInt('VRCX_maxTableSize');
+    if ($app.data.maxTableSize > 10000) {
+        $app.data.maxTableSize = 1000;
+    }
     database.setmaxTableSize($app.data.maxTableSize);
     $app.data.photonLobbyTimeoutThreshold = configRepository.getString(
         'VRCX_photonLobbyTimeoutThreshold'
@@ -14165,6 +14168,9 @@ speechSynthesis.getVoices();
                 inputErrorMessage: $t('prompt.change_table_size.input_error'),
                 callback: (action, instance) => {
                     if (action === 'confirm' && instance.inputValue) {
+                        if (instance.inputValue > 10000) {
+                            instance.inputValue = 10000;
+                        }
                         this.maxTableSize = instance.inputValue;
                         configRepository.setString(
                             'VRCX_maxTableSize',
@@ -23776,7 +23782,8 @@ speechSynthesis.getVoices();
         announcement: {},
         members: [],
         instances: [],
-        memberRoles: []
+        memberRoles: [],
+        galleries: {}
     };
 
     $app.methods.showGroupDialog = function (groupId) {
@@ -23795,6 +23802,7 @@ speechSynthesis.getVoices();
         D.announcement = {};
         D.instances = [];
         D.memberRoles = [];
+        D.galleries = {};
         if (this.groupDialogLastMembers !== groupId) {
             D.members = [];
         }
@@ -23890,6 +23898,12 @@ speechSynthesis.getVoices();
                             this.groupDialogLastMembers = groupId;
                             this.getGroupDialogGroupMembers();
                         }
+                    } else if (this.$refs.groupDialogTabs.currentName === '2') {
+                        this.groupDialogLastActiveTab = 'Gallery';
+                        if (this.groupDialogLastGallery !== groupId) {
+                            this.groupDialogLastGallery = groupId;
+                            this.getGroupGalleries();
+                        }
                     }
                 }
                 return args1;
@@ -23931,6 +23945,7 @@ speechSynthesis.getVoices();
 
     $app.data.groupDialogLastActiveTab = '';
     $app.data.groupDialogLastMembers = '';
+    $app.data.groupDialogLastGallery = '';
 
     $app.methods.groupDialogTabClick = function (obj) {
         var groupId = this.groupDialog.id;
@@ -23941,6 +23956,11 @@ speechSynthesis.getVoices();
             if (this.groupDialogLastMembers !== groupId) {
                 this.groupDialogLastMembers = groupId;
                 this.getGroupDialogGroupMembers();
+            }
+        } else if (obj.label === 'Gallery') {
+            if (this.groupDialogLastGallery !== groupId) {
+                this.groupDialogLastGallery = groupId;
+                this.getGroupGalleries();
             }
         } else if (obj.label === 'JSON') {
             this.refreshGroupDialogTreeData();
@@ -23954,7 +23974,8 @@ speechSynthesis.getVoices();
             group: D.ref,
             announcement: D.announcement,
             instances: D.instances,
-            members: D.members
+            members: D.members,
+            galleries: D.galleries
         });
     };
 
@@ -24128,6 +24149,92 @@ speechSynthesis.getVoices();
             this.userDialog.representedGroup = args.json;
             return args;
         });
+    };
+
+    // group gallery
+
+    $app.data.isGroupGalleryLoading = false;
+
+    /*
+        params: {
+            groupId: string,
+            galleryId: string,
+            n: number,
+            offset: number
+        }
+    */
+    API.getGroupGallery = function (params) {
+        return this.call(
+            `groups/${params.groupId}/galleries/${params.galleryId}`,
+            {
+                method: 'GET',
+                params: {
+                    n: params.n,
+                    offset: params.offset
+                }
+            }
+        ).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:GALLERY', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:GALLERY', function (args) {
+        for (var json of args.json) {
+            if ($app.groupDialog.id === json.groupId) {
+                if (!$app.groupDialog.galleries[json.galleryId]) {
+                    $app.groupDialog.galleries[json.galleryId] = [];
+                }
+                $app.groupDialog.galleries[json.galleryId].push(json);
+            }
+        }
+    });
+
+    $app.methods.getGroupGalleries = async function () {
+        this.groupDialog.galleries = {};
+        this.isGroupGalleryLoading = true;
+        for (var i = 0; i < this.groupDialog.ref.galleries.length; i++) {
+            var gallery = this.groupDialog.ref.galleries[i];
+            await this.getGroupGallery(this.groupDialog.id, gallery.id);
+        }
+        this.isGroupGalleryLoading = false;
+    };
+
+    $app.methods.getGroupGallery = async function (groupId, galleryId) {
+        try {
+            var params = {
+                groupId,
+                galleryId,
+                n: 100,
+                offset: 0
+            };
+            var count = 50; // 5000 max
+            for (var i = 0; i < count; i++) {
+                var args = await API.getGroupGallery(params);
+                params.offset += 100;
+                if (args.json.length < 100) {
+                    break;
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    $app.methods.groupGalleryStatus = function (gallery) {
+        var style = {};
+        if (!gallery.membersOnly) {
+            style.joinme = true;
+        } else if (!gallery.roleIdsToView) {
+            style.online = true;
+        } else {
+            style.busy = true;
+        }
+        return style;
     };
 
     // group invite users

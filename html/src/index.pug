@@ -2395,6 +2395,20 @@ html
                                     .x-friend-item(v-if="!isGroupMembersDone" v-loading="isGroupMembersLoading" style="width:100%;height:45px;text-align:center" @click="loadMoreGroupMembers")
                                         .detail(v-if="!isGroupMembersLoading")
                                             span.name {{ $t('dialog.group.members.load_more') }}
+                        el-tab-pane(:label="$t('dialog.group.gallery.header')")
+                            el-button(type="default" size="mini" icon="el-icon-refresh" @click="getGroupGalleries" circle)
+                            el-tabs(type="card" v-loading="isGroupGalleryLoading")
+                                template(v-for="(gallery, index) in groupDialog.ref.galleries")
+                                    el-tab-pane
+                                        span(slot="label")
+                                            span(v-text="gallery.name" style="font-weight:bold;font-size:16px")
+                                            i.x-user-status(style="margin-left:5px" :class="groupGalleryStatus(gallery)")
+                                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ groupDialog.galleries[gallery.id] ? groupDialog.galleries[gallery.id].length : 0 }}
+                                        el-carousel(:interval="0" height="600px")
+                                            el-carousel-item(v-for="image in groupDialog.galleries[gallery.id]" :key="image.id")
+                                                el-popover(placement="top" width="700px" trigger="click")
+                                                    img.x-link(slot="reference" v-lazy="image.imageUrl" style="width:100%;height:100%;object-fit:contain")
+                                                    img.x-link(v-lazy="image.imageUrl" style="height:700px" @click="downloadAndSaveImage(image.imageUrl)")
                         el-tab-pane(:label="$t('dialog.group.json.header')")
                             el-button(type="default" @click="refreshGroupDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
                             el-tree(:data="groupDialog.treeData" style="margin-top:5px;font-size:12px")
