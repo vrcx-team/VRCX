@@ -1690,8 +1690,12 @@ html
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided :disabled="userDialog.ref.$isModerator") {{ $t('dialog.user.actions.moderation_block') }}
                                             el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_unmute') }}
                                             el-dropdown-item(v-else icon="el-icon-turn-off-microphone" command="Mute" :disabled="userDialog.ref.$isModerator") {{ $t('dialog.user.actions.moderation_mute') }}
-                                            el-dropdown-item(icon="el-icon-user-solid" command="Show Avatar") #[i.el-icon-check.el-icon--left(v-if="userDialog.isShowAvatar")] {{ $t('dialog.user.actions.moderation_show_avatar') }}
-                                            el-dropdown-item(icon="el-icon-user" command="Hide Avatar") #[i.el-icon-check.el-icon--left(v-if="userDialog.isHideAvatar")] {{ $t('dialog.user.actions.moderation_hide_avatar') }}
+                                            el-dropdown-item(icon="el-icon-user-solid" command="Show Avatar")
+                                                i.el-icon-check.el-icon--left(v-if="userDialog.isShowAvatar")
+                                                span {{ $t('dialog.user.actions.moderation_show_avatar') }}
+                                            el-dropdown-item(icon="el-icon-user" command="Hide Avatar") 
+                                                i.el-icon-check.el-icon--left(v-if="userDialog.isHideAvatar")
+                                                span {{ $t('dialog.user.actions.moderation_hide_avatar') }}
                                             el-dropdown-item(v-if="userDialog.isInteractOff" icon="el-icon-thumb" command="Enable Avatar Interaction" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_enable_avatar_interaction') }}
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Disable Avatar Interaction") {{ $t('dialog.user.actions.moderation_disable_avatar_interaction') }}
                                             template(v-if="userDialog.isFriend")

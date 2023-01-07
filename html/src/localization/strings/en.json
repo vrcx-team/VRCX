@@ -489,8 +489,8 @@
                 "moderation_unblock": "Unblock",
                 "moderation_mute": "Mute",
                 "moderation_unmute": "Unmute",
-                "moderation_hide_avatar": "Show Avatar",
-                "moderation_show_avatar": "Hide Avatar",
+                "moderation_hide_avatar": "Hide Avatar",
+                "moderation_show_avatar": "Show Avatar",
                 "moderation_enable_avatar_interaction": "Enable Avatar Interaction",
                 "moderation_disable_avatar_interaction": "Disable Avatar Interaction",
                 "edit_status": "Social Status",
@@ -1208,7 +1208,7 @@
         },
         "change_table_size": {
             "header": "Max Table Size",
-            "description": "Larger table sizes may impact RAM usage and performance (default: 1000)",
+            "description": "Limit amount of entries loaded from database to UI pages, larger table sizes will impact RAM usage and performance (default: 1000, max: 10000)",
             "cancel": "Cancel",
             "save": "Save",
             "input_error": "Valid number is required"
