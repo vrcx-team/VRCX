@@ -13001,16 +13001,18 @@ speechSynthesis.getVoices();
     $app.data.isStartAtWindowsStartup = configRepository.getBool(
         'VRCX_StartAtWindowsStartup'
     );
-    $app.data.isStartAsMinimizedState =
-        (await VRCXStorage.Get('VRCX_StartAsMinimizedState')) === 'true';
-    $app.data.isCloseToTray = VRCXStorage.Get('VRCX_CloseToTray') === 'true';
+    $app.data.isStartAsMinimizedState = false;
+    $app.data.isCloseToTray = false;
+    VRCXStorage.Get('VRCX_StartAsMinimizedState').then((result) => {
+        $app.isStartAsMinimizedState = result === 'true';
+    });
+    VRCXStorage.Get('VRCX_CloseToTray').then((result) => {
+        $app.isCloseToTray = result === 'true';
+    });
     if (configRepository.getBool('VRCX_CloseToTray')) {
         // move back to JSON
         $app.data.isCloseToTray = configRepository.getBool('VRCX_CloseToTray');
-        await VRCXStorage.Set(
-            'VRCX_CloseToTray',
-            $app.data.isCloseToTray.toString()
-        );
+        VRCXStorage.Set('VRCX_CloseToTray', $app.data.isCloseToTray.toString());
         configRepository.remove('VRCX_CloseToTray');
     }
     var saveVRCXWindowOption = function () {

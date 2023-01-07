@@ -1,6 +1,6 @@
 {
     "root": true,
-    "extends": ["@babel/core", "eslint:all", "prettier"],
+    "extends": ["eslint:all", "prettier"],
     "env": {
         "browser": true,
         "commonjs": true,
@@ -16,7 +16,6 @@
         },
         "requireConfigFile": false,
         "babelOptions": {
-            "presets": ["@babel/preset-env"],
             "parserOpts": {
                 "plugins": ["importAssertions"]
             }
