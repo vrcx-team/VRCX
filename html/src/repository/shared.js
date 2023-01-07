@@ -4,6 +4,22 @@ function transformKey(key) {
     return String(key).toLowerCase();
 }
 
+function waitSynchronous(promise) {
+    if (typeof promise !== 'object' || promise === null) {
+        return promise;
+    }
+    console.log('waitSynchronous', promise);
+    while (true) {
+        var state = promise.getState();
+        if (state === 'resolved') {
+            return promise.get();
+        }
+        if (state === 'rejected') {
+            return null;
+        }
+    }
+}
+
 class SharedRepository {
     remove(key) {
         var _key = transformKey(key);
@@ -12,6 +28,8 @@ class SharedRepository {
 
     getString(key, defaultValue = null) {
         var _key = transformKey(key);
+        // var get = SharedVariable.Get(_key);
+        // var value = waitSynchronous(get);
         var value = SharedVariable.Get(_key);
         if (value === null) {
             return defaultValue;

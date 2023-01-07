@@ -20,7 +20,6 @@ namespace VRCX
             {
                 CachePath = Path.Combine(Program.AppDataDirectory, "cache"),
                 UserDataPath = Path.Combine(Program.AppDataDirectory, "userdata"),
-                IgnoreCertificateErrors = true,
                 LogSeverity = LogSeverity.Disable,
                 WindowlessRenderingEnabled = true,
                 PersistSessionCookies = true,
@@ -34,16 +33,16 @@ namespace VRCX
                 SchemeHandlerFactory = new FolderSchemeHandlerFactory(Application.StartupPath + "/../../../html")
             });*/
 
+            // cefSettings.CefCommandLineArgs.Add("allow-universal-access-from-files");
             // cefSettings.CefCommandLineArgs.Add("ignore-certificate-errors");
-            cefSettings.CefCommandLineArgs.Add("disable-plugins");
+            // cefSettings.CefCommandLineArgs.Add("disable-plugins");
             cefSettings.CefCommandLineArgs.Add("disable-spell-checking");
             cefSettings.CefCommandLineArgs.Add("disable-pdf-extension");
             cefSettings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
-            // cefSettings.CefCommandLineArgs.Add("allow-universal-access-from-files");
             cefSettings.CefCommandLineArgs.Add("disable-web-security");
             cefSettings.SetOffScreenRenderingBestPerformanceArgs();
 
-            CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO
+            // CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
             CefSharpSettings.ShutdownOnExit = false;
 
             // Enable High-DPI support on Windows 7 or newer
