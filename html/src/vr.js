@@ -206,7 +206,8 @@ Vue.component('marquee-text', MarqueeText);
             lastLocationTimer: '',
             onlineForTimer: '',
             wristFeed: [],
-            devices: []
+            devices: [],
+            deviceCount: 0
         },
         computed: {},
         methods: {},
@@ -367,14 +368,11 @@ Vue.component('marquee-text', MarqueeText);
         var length = 16;
         if (!this.config.hideDevicesFromFeed) {
             length -= 2;
-            if (this.devices.length > 7) {
+            if (this.deviceCount > 8) {
                 length -= 1;
             }
         }
         if (this.nowPlaying.playing) {
-            length -= 1;
-        }
-        if (!this.config.hideFriendsFromFeed && this.nowPlaying.playing) {
             length -= 1;
         }
         this.wristFeed.length = length;
@@ -426,6 +424,7 @@ Vue.component('marquee-text', MarqueeText);
                             deviceList.unshift(device);
                         }
                     });
+                    this.deviceCount = deviceList.length;
                     deviceList.sort((a, b) => {
                         if (a[0] === b[0]) {
                             return 0;
@@ -457,6 +456,7 @@ Vue.component('marquee-text', MarqueeText);
                             '',
                             baseStations
                         ]);
+                        this.deviceCount += 1;
                     }
                     this.devices = deviceList;
                 });

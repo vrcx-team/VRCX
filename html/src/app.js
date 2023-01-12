@@ -4736,7 +4736,11 @@ speechSynthesis.getVoices();
             this.checkVRChatDebugLogging();
             this.$nextTick(function () {
                 this.$el.style.display = '';
-                if (!this.enablePrimaryPassword) {
+                if (
+                    !this.enablePrimaryPassword &&
+                    configRepository.getString('lastUserLoggedIn') !== null
+                ) {
+                    // login at startup
                     this.loginForm.loading = true;
                     API.getConfig()
                         .catch((err) => {
@@ -6646,9 +6650,10 @@ speechSynthesis.getVoices();
         $app.$refs.menu.activeIndex = 'feed';
     });
 
-    API.$on('LOGOUT', function () {
-        $app.updateStoredUser(this.currentUser);
+    API.$on('LOGOUT', async function () {
+        await $app.updateStoredUser(this.currentUser);
         webApiService.clearCookies();
+        configRepository.remove('lastUserLoggedIn');
     });
 
     $app.methods.checkPrimaryPassword = function (args) {
@@ -6905,7 +6910,7 @@ speechSynthesis.getVoices();
         websocket: '',
         saveCredentials: false,
         savedCredentials:
-            configRepository.getString('lastUserLoggedIn') !== null
+            configRepository.getString('savedCredentials') !== null
                 ? JSON.parse(configRepository.getString('savedCredentials'))
                 : {},
         lastUserLoggedIn: configRepository.getString('lastUserLoggedIn'),
@@ -20366,6 +20371,7 @@ speechSynthesis.getVoices();
 
     $app.methods.getUserFavoriteWorlds = async function (userId) {
         this.userDialog.isFavoriteWorldsLoading = true;
+        this.$refs.favoriteWorlds.currentName = '0'; // select first tab
         this.userFavoriteWorlds = [];
         var worldLists = [];
         var params = {
@@ -21914,10 +21920,13 @@ speechSynthesis.getVoices();
                 );
                 console.log('Database update complete.');
                 msgBox.close();
-                this.$message({
-                    message: 'Database upgrade complete',
-                    type: 'success'
-                });
+                if (this.databaseVersion) {
+                    // only display when database exists
+                    this.$message({
+                        message: 'Database upgrade complete',
+                        type: 'success'
+                    });
+                }
             } catch (err) {
                 console.error(err);
                 msgBox.close();
@@ -24200,6 +24209,7 @@ speechSynthesis.getVoices();
 
     $app.methods.getGroupGalleries = async function () {
         this.groupDialog.galleries = {};
+        this.$refs.groupDialogGallery.currentName = '0'; // select first tab
         this.isGroupGalleryLoading = true;
         for (var i = 0; i < this.groupDialog.ref.galleries.length; i++) {
             var gallery = this.groupDialog.ref.galleries[i];
@@ -24370,6 +24380,9 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.checkVRChatDebugLogging = async function () {
+        if (this.gameLogDisabled) {
+            return;
+        }
         try {
             var loggingEnabled = await AppApi.GetVRChatRegistryKey(
                 'LOGGING_ENABLED'
