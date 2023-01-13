@@ -203,7 +203,7 @@ button {
 .x-container {
     position: relative;
     flex: none;
-    padding: 10px;
+    padding: 2px 10px 0 10px;
     overflow: hidden;
 }
 
@@ -400,7 +400,8 @@ i.x-user-status.busy {
 .tracker-container {
     flex: 1 1 auto;
     text-align: center;
-    line-height: 16px;
+    line-height: 18px;
+    width: 55px;
 }
 
 .tracker-device img {

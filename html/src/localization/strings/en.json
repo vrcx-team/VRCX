@@ -1369,11 +1369,7 @@
             "timer": "Timer:",
             "players": "Players:",
             "cpu": "CPU:",
-            "online": "Online:",
-            "devices": {
-                "left": "L:",
-                "right": "R:"
-            }
+            "online": "Online:"
         }
     }
 }

@@ -1366,11 +1366,7 @@
             "timer": "時長：",
             "players": "玩家人數：",
             "cpu": "CPU：",
-            "online": "線上：",
-            "devices": {
-                "left": "左：",
-                "right": "右："
-            }
+            "online": "線上："
         }
     }
 }

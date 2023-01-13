@@ -302,6 +302,12 @@ namespace VRCX
                     {
                         batteryPercentage = 1f;
                     }
+                    err = ETrackedPropertyError.TrackedProp_Success;
+                    var isCharging = system.GetBoolTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_DeviceIsCharging_Bool, ref err);
+                    if (err != ETrackedPropertyError.TrackedProp_Success)
+                    {
+                        isCharging = false;
+                    }
                     sb.Clear();
                     system.GetStringTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_TrackingSystemName_String, sb, (uint)sb.Capacity, ref err);
                     var isOculus = sb.ToString().IndexOf("oculus", StringComparison.OrdinalIgnoreCase) >= 0;
@@ -364,7 +370,10 @@ namespace VRCX
                         system.IsTrackedDeviceConnected(i)
                             ? "connected"
                             : "disconnected",
-                        (batteryPercentage * 100).ToString()
+                        isCharging
+                            ? "charging"
+                            : "discharging",
+                        (batteryPercentage * 100).ToString(),
                     };
                     _deviceListLock.EnterWriteLock();
                     try

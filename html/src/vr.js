@@ -324,6 +324,7 @@ Vue.component('marquee-text', MarqueeText);
         this.hudTimeout = [];
         this.setDatetimeFormat();
         this.setAppLanguage(this.config.appLanguage);
+        this.updateFeedLength();
     };
 
     $app.methods.updateOnlineFriendCount = function (count) {
@@ -347,6 +348,7 @@ Vue.component('marquee-text', MarqueeText);
                 circle.style.opacity = 0;
             }
         }
+        this.updateFeedLength();
     };
 
     $app.methods.lastLocationUpdate = function (json) {
@@ -355,6 +357,27 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.wristFeedUpdate = function (json) {
         this.wristFeed = JSON.parse(json);
+        this.updateFeedLength();
+    };
+
+    $app.methods.updateFeedLength = function () {
+        if (this.appType === '2' || this.wristFeed.length === 0) {
+            return;
+        }
+        var length = 16;
+        if (!this.config.hideDevicesFromFeed) {
+            length -= 2;
+            if (this.devices.length > 7) {
+                length -= 1;
+            }
+        }
+        if (this.nowPlaying.playing) {
+            length -= 1;
+        }
+        if (!this.config.hideFriendsFromFeed && this.nowPlaying.playing) {
+            length -= 1;
+        }
+        this.wristFeed.length = length;
     };
 
     $app.methods.updateStatsLoop = async function () {
@@ -396,7 +419,7 @@ Vue.component('marquee-text', MarqueeText);
                     var deviceList = [];
                     var baseStations = 0;
                     devices.forEach((device) => {
-                        device[2] = parseInt(device[2], 10);
+                        device[3] = parseInt(device[3], 10);
                         if (device[0] === 'base' && device[1] === 'connected') {
                             baseStations++;
                         } else {
@@ -428,7 +451,12 @@ Vue.component('marquee-text', MarqueeText);
                         return 0;
                     });
                     if (baseStations > 0) {
-                        deviceList.push(['base', 'connected', baseStations]);
+                        deviceList.push([
+                            'base',
+                            'connected',
+                            '',
+                            baseStations
+                        ]);
                     }
                     this.devices = deviceList;
                 });

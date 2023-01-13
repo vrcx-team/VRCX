@@ -1369,11 +1369,7 @@
             "timer": "시간:",
             "players": "인원수:",
             "cpu": "CPU:",
-            "online": "온라인:",
-            "devices": {
-                "left": "왼쪽:",
-                "right": "오른쪽:"
-            }
+            "online": "온라인:"
         }
     }
 }
