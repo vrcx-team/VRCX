@@ -375,7 +375,9 @@ Vue.component('marquee-text', MarqueeText);
         if (this.nowPlaying.playing) {
             length -= 1;
         }
-        this.wristFeed.length = length;
+        if (length < this.wristFeed.length) {
+            this.wristFeed.length = length;
+        }
     };
 
     $app.methods.updateStatsLoop = async function () {

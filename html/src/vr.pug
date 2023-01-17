@@ -481,13 +481,13 @@ html
                     div(v-for="feed in hudFeed")
                         .item #[span(v-if="feed.isMaster") 👑]<strong>{{ feed.displayName }}</strong>
                             template(v-if="feed.type === 'ChangeAvatar'")
-                                span(style="margin-left:10px") ChangeAvatar
+                                span(style="margin-left:10px;color:#a3a3a3") ChangeAvatar
                                 span(v-if="!feed.inCache" style="color:#aaa;margin-left:10px") #[i.el-icon-download]
                                 span(v-text="feed.avatar.name" style="margin-left:10px")
                                 span(v-if="feed.avatar.releaseStatus === 'public'" style="margin-left:10px;color:#67c23a") (Public)
                                 span(v-else-if="feed.avatar.releaseStatus === 'private'" style="margin-left:10px;color:#e6a23c") (Private)
                             template(v-else-if="feed.type === 'ChangeStatus'")
-                                span(style="margin-left:10px") ChangeStatus
+                                span(style="margin-left:10px;color:#a3a3a3") ChangeStatus
                                     template(v-if="feed.status !== feed.previousStatus")
                                         i.x-user-status(:class="statusClass(feed.previousStatus)" style="margin-left:10px;width:20px;height:20px")
                                         span
@@ -495,23 +495,26 @@ html
                                         i.x-user-status(:class="statusClass(feed.status)" style="width:20px;height:20px")
                                     span(v-if="feed.statusDescription !== feed.previousStatusDescription" v-text="feed.statusDescription" style="margin-left:10px")
                             template(v-else-if="feed.type === 'ChangeGroup'")
-                                span(style="margin-left:10px") ChangeGroup
+                                span(style="margin-left:10px;color:#a3a3a3") ChangeGroup
                                 span(v-text="feed.groupName" style="margin-left:10px")
                             template(v-else-if="feed.type === 'ChatBoxMessage'")
-                                span(style="margin-left:10px") ChatBox
+                                span(style="margin-left:10px;color:#a3a3a3") ChatBox
                                 span(v-text="feed.text" style="margin-left:10px;white-space:normal")
                             template(v-else-if="feed.type === 'PortalSpawn'")
-                                span(style="margin-left:10px") PortalSpawn
+                                span(style="margin-left:10px;color:#a3a3a3") PortalSpawn
                                 location(:location="feed.location" :hint="feed.worldName" :link="false" style="margin-left:10px")
                             template(v-else-if="feed.type === 'OnPlayerJoined'")
-                                span(style="margin-left:10px") has joined -
+                                span(style="margin-left:10px;color:#a3a3a3") has joined
+                                span(v-if="feed.platform === 'Desktop'" style="color:#409eff;margin-left:10px") PC
+                                span(v-else-if="feed.platform === 'VR'" style="color:#409eff;margin-left:10px") VR
+                                span(v-else-if="feed.platform === 'Quest'" style="color:#67c23a;margin-left:10px") Q
                                 span(v-if="!feed.inCache" style="color:#aaa;margin-left:10px") #[i.el-icon-download]
                                 span(v-text="feed.avatar.name" style="margin-left:10px")
                             template(v-else-if="feed.type === 'SpawnEmoji'")
-                                span(style="margin-left:10px") SpawnEmoji
+                                span(style="margin-left:10px;color:#a3a3a3") SpawnEmoji
                                 span(v-text="feed.text" style="margin-left:10px")
                             span(v-else-if="feed.color === 'yellow'" v-text="feed.text" style="color:yellow;margin-left:10px")
-                            span(v-else style="margin-left:10px" v-text="feed.text")
+                            span(v-else style="margin-left:10px;color:#a3a3a3" v-text="feed.text")
                             template(v-if="feed.combo > 1")
                                 span.combo(style="margin-left:10px") x{{ feed.combo }}
                 .hud-timeout(v-if="hudTimeout.length > 0")

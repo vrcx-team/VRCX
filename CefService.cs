@@ -42,6 +42,9 @@ namespace VRCX
             cefSettings.CefCommandLineArgs.Add("disable-web-security");
             cefSettings.SetOffScreenRenderingBestPerformanceArgs();
 
+            if (Program.LaunchDebug)
+                cefSettings.RemoteDebuggingPort = 8088;
+
             // CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
             CefSharpSettings.ShutdownOnExit = false;
 
