@@ -856,7 +856,7 @@ html
                                     el-button(type="text" icon="el-icon-delete" size="mini" style="margin-left:5px" @click="deleteNotificationLog(scope.row)")
 
             //- profile
-            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'profile'")
+            .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'profile'" v-if="$refs.menu && $refs.menu.activeIndex === 'profile'")
                 div.options-container(style="margin-top:0")
                     span.header {{ $t('view.profile.profile.header') }}
                     .x-friend-list(style="margin-top:10px")
@@ -990,6 +990,17 @@ html
                     el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
                         el-button(type="default" @click="currentUserTreeData = []" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     el-tree(v-if="currentUserTreeData.length > 0" :data="currentUserTreeData" style="margin-top:10px;font-size:12px")
+                        template(#default="scope")
+                            span
+                                span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
+                                span(v-if="!scope.data.children" v-text="scope.data.value")
+                div.options-container
+                    span.header {{ $t('view.profile.feedback') }}
+                    el-tooltip(placement="top" :content="$t('view.profile.refresh_tooltip')" :disabled="hideTooltips")
+                        el-button(type="default" @click="getCurrentUserFeedback()" size="mini" icon="el-icon-refresh" circle style="margin-left:5px")
+                    el-tooltip(placement="top" :content="$t('view.profile.clear_results_tooltip')" :disabled="hideTooltips")
+                        el-button(type="default" @click="currentUserFeedbackData = []" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                    el-tree(v-if="currentUserFeedbackData.length > 0" :data="currentUserFeedbackData" style="margin-top:10px;font-size:12px")
                         template(#default="scope")
                             span
                                 span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
@@ -2722,7 +2733,7 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="VRCXUpdateDialog" :visible.sync="VRCXUpdateDialog.visible" :title="$t('dialog.vrcx_updater.header')" width="400px")
                 div(v-loading="checkingForVRCXUpdate" style="margin-top:15px")
                     div(v-if="VRCXUpdateDialog.updatePending" style="margin-bottom:15px")
-                        span(v-text="pendingVRCXUpdate")
+                        span(v-text="pendingVRCXInstall")
                         br
                         span {{ $t('dialog.vrcx_updater.ready_for_update') }}
                     el-select(v-model="branch" @change="loadBranchVersions" style="display:inline-block;width:150px;margin-right:15px")
@@ -2732,7 +2743,7 @@ html
                     div(v-if="!VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release === appVersion" style="margin-top:15px")
                         span {{ $t('dialog.vrcx_updater.latest_version') }}
                 template(#footer)
-                    el-button(v-if="(VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release !== pendingVRCXUpdate) || VRCXUpdateDialog.release !== appVersion" type="primary" size="small" @click="installVRCXUpdate") {{ $t('dialog.vrcx_updater.download') }}
+                    el-button(v-if="(VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release !== pendingVRCXInstall) || VRCXUpdateDialog.release !== appVersion" type="primary" size="small" @click="installVRCXUpdate") {{ $t('dialog.vrcx_updater.download') }}
                     el-button(v-if="VRCXUpdateDialog.updatePending" type="primary" size="small" @click="restartVRCX") {{ $t('dialog.vrcx_updater.install') }}
 
             //- dialog: launch

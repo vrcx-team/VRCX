@@ -255,7 +255,7 @@ namespace VRCX
             return ImageCache.GetImage(url, fileId, version);
         }
 
-        public void DesktopNotification(string BoldText, string Text, string Image)
+        public void DesktopNotification(string BoldText, string Text = "", string Image = "")
         {
             XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
             XmlNodeList stringElements = toastXml.GetElementsByTagName("text");
@@ -288,7 +288,7 @@ namespace VRCX
             public string sourceApp { get; set; }
         }
 
-        public void XSNotification(string Title, string Content, int Timeout, string Image)
+        public void XSNotification(string Title, string Content, int Timeout, string Image = "")
         {
             bool UseBase64Icon;
             string Icon;

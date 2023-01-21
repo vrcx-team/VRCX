@@ -488,12 +488,12 @@ html
                                 span(v-else-if="feed.avatar.releaseStatus === 'private'" style="margin-left:10px;color:#e6a23c") (Private)
                             template(v-else-if="feed.type === 'ChangeStatus'")
                                 span(style="margin-left:10px;color:#a3a3a3") ChangeStatus
-                                    template(v-if="feed.status !== feed.previousStatus")
-                                        i.x-user-status(:class="statusClass(feed.previousStatus)" style="margin-left:10px;width:20px;height:20px")
-                                        span
-                                            i.el-icon-right
-                                        i.x-user-status(:class="statusClass(feed.status)" style="width:20px;height:20px")
-                                    span(v-if="feed.statusDescription !== feed.previousStatusDescription" v-text="feed.statusDescription" style="margin-left:10px")
+                                span(v-if="feed.status !== feed.previousStatus")
+                                    i.x-user-status(:class="statusClass(feed.previousStatus)" style="margin-left:10px;width:20px;height:20px")
+                                    span
+                                        i.el-icon-right
+                                    i.x-user-status(:class="statusClass(feed.status)" style="width:20px;height:20px")
+                                span(v-if="feed.statusDescription !== feed.previousStatusDescription" v-text="feed.statusDescription" style="margin-left:10px")
                             template(v-else-if="feed.type === 'ChangeGroup'")
                                 span(style="margin-left:10px;color:#a3a3a3") ChangeGroup
                                 span(v-text="feed.groupName" style="margin-left:10px")

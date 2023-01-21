@@ -90,9 +90,9 @@ Vue.component('marquee-text', MarqueeText);
 
     Vue.component('location', {
         template:
-            '<span><span style="margin-right:5px">{{ text }}</span>' +
-            '<span v-if="groupName" style="margin-right:5px">({{ groupName }})</span>' +
-            '<span class="flags" :class="region" style="display:inline-block;margin-bottom:2px"></span>' +
+            '<span><span>{{ text }}</span>' +
+            '<span v-if="groupName">({{ groupName }})</span>' +
+            '<span class="flags" :class="region" style="display:inline-block;margin-bottom:2px;margin-left:5px"></span>' +
             '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
         props: {
             location: String,

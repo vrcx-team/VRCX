@@ -826,9 +826,9 @@ speechSynthesis.getVoices();
         template:
             "<span><span @click=\"showWorldDialog\" :class=\"{ 'x-link': link && this.location !== 'private' && this.location !== 'offline'}\">" +
             '<i v-if="isTraveling" class="el-icon el-icon-loading" style="display:inline-block;margin-right:5px"></i>' +
-            '<span style="margin-right:5px">{{ text }}</span></span>' +
-            '<span v-if="groupName" @click="showGroupDialog" class="x-link" style="margin-right:5px">({{ groupName }})</span>' +
-            '<span class="flags" :class="region" style="display:inline-block"></span>' +
+            '<span>{{ text }}</span></span>' +
+            '<span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>' +
+            '<span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
             '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
         props: {
             location: String,
@@ -955,9 +955,9 @@ speechSynthesis.getVoices();
         template:
             '<span><span @click="showLaunchDialog" class="x-link">' +
             '<i v-if="isUnlocked" class="el-icon el-icon-unlock" style="display:inline-block;margin-right:5px"></i>' +
-            '<span style="margin-right:5px"> #{{ instanceName }} {{ accessType }}</span></span>' +
-            '<span v-if="groupName" @click="showGroupDialog" class="x-link" style="margin-right:5px">({{ groupName }})</span>' +
-            '<span class="flags" :class="region" style="display:inline-block"></span>' +
+            '<span> #{{ instanceName }} {{ accessType }}</span></span>' +
+            '<span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>' +
+            '<span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
             '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
         props: {
             locationobject: Object,
@@ -1009,9 +1009,11 @@ speechSynthesis.getVoices();
                     this.groupName = this.grouphint;
                 } else if (this.locationobject.groupId) {
                     this.groupName = this.locationobject.groupId;
-                    $app.getGroupName(this.location).then((groupName) => {
-                        this.groupName = groupName;
-                    });
+                    $app.getGroupName(this.locationobject.groupId).then(
+                        (groupName) => {
+                            this.groupName = groupName;
+                        }
+                    );
                 }
             },
             showLaunchDialog() {
@@ -1188,14 +1190,19 @@ speechSynthesis.getVoices();
         args.ref = this.applyCurrentUser(json);
         var location = '';
         var travelingToLocation = '';
-        if (json.presence?.world && $app.isRealInstance(json.presence.world)) {
-            location = `${json.presence.world}:${json.presence.instance}`;
+        if (json.presence?.world) {
+            if ($app.isRealInstance(json.presence.world)) {
+                location = `${json.presence.world}:${json.presence.instance}`;
+            } else {
+                location = json.presence.world;
+            }
         }
-        if (
-            json.presence?.travelingToWorld &&
-            $app.isRealInstance(json.presence.travelingToWorld)
-        ) {
-            travelingToLocation = `${json.presence.travelingToWorld}:${json.presence.travelingToInstance}`;
+        if (json.presence?.travelingToWorld) {
+            if ($app.isRealInstance(json.presence.travelingToWorld)) {
+                travelingToLocation = `${json.presence.travelingToWorld}:${json.presence.travelingToInstance}`;
+            } else {
+                travelingToLocation = json.presence.travelingToWorld;
+            }
         }
         this.applyUser({
             id: json.id,
@@ -1888,6 +1895,24 @@ speechSynthesis.getVoices();
                 params
             };
             this.$emit('USER:CURRENT:SAVE', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            userId: string
+        }
+    */
+    API.getUserFeedback = function (params) {
+        return this.call(`users/${params.userId}/feedback`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('USER:FEEDBACK', args);
             return args;
         });
     };
@@ -3785,7 +3810,11 @@ speechSynthesis.getVoices();
             return;
         }
         this.isFavoriteLoading = true;
-        await this.getFavoriteLimits();
+        try {
+            await this.getFavoriteLimits();
+        } catch (err) {
+            console.error(err);
+        }
         this.expireFavorites();
         this.bulk({
             fn: 'getFavorites',
@@ -7760,10 +7789,9 @@ speechSynthesis.getVoices();
         var groupName = '';
         var groupId = data;
         if (!data.startsWith('grp_')) {
-            var L = API.parseLocation(location);
-            if (L.groupId) {
-                groupId = L.groupId;
-            } else {
+            var L = API.parseLocation(data);
+            groupId = L.groupId;
+            if (!L.groupId) {
                 return '';
             }
         }
@@ -9489,7 +9517,7 @@ speechSynthesis.getVoices();
         if (!this.photonLobbyWatcherLoop) {
             return;
         }
-        if (this.photonLobbyCurrent.size <= 1) {
+        if (this.photonLobbyCurrent.size === 0) {
             this.photonLobbyWatcherLoopStop();
             return;
         }
@@ -10466,8 +10494,12 @@ speechSynthesis.getVoices();
                 type: 'ChangeStatus',
                 status: photonUser.status,
                 previousStatus: ref.status,
-                statusDescription: photonUser.statusDescription,
-                previousStatusDescription: ref.statusDescription,
+                statusDescription: this.replaceBioSymbols(
+                    photonUser.statusDescription
+                ),
+                previousStatusDescription: this.replaceBioSymbols(
+                    ref.statusDescription
+                ),
                 created_at: Date.parse(gameLogDate)
             });
         }
@@ -10479,6 +10511,8 @@ speechSynthesis.getVoices();
             return;
         }
         var avatar = user.avatarDict;
+        avatar.name = this.replaceBioSymbols(avatar.name);
+        avatar.description = this.replaceBioSymbols(avatar.description);
         var platform = '';
         if (user.last_platform === 'android') {
             platform = 'Quest';
@@ -10613,6 +10647,8 @@ speechSynthesis.getVoices();
             oldAvatarId !== avatar.id &&
             photonId !== this.photonLobbyCurrentUser
         ) {
+            avatar.name = this.replaceBioSymbols(avatar.name);
+            avatar.description = this.replaceBioSymbols(avatar.description);
             this.checkVRChatCache(avatar).then((cacheInfo) => {
                 var inCache = false;
                 if (cacheInfo[0] > 0) {
@@ -10662,7 +10698,7 @@ speechSynthesis.getVoices();
         }
         var {groupOnNameplate} = this.photonLobbyJointime.get(photonId);
         if (
-            groupOnNameplate &&
+            typeof groupOnNameplate !== 'undefined' &&
             groupOnNameplate !== groupId &&
             photonId !== this.photonLobbyCurrentUser
         ) {
@@ -11410,11 +11446,6 @@ speechSynthesis.getVoices();
     $app.methods.lookupUser = async function (ref) {
         if (ref.userId) {
             this.showUserDialog(ref.userId);
-            return;
-        }
-        if (ref.displayName === 'F⁄A-18E Super Hornet') {
-            // :eyes:
-            this.showUserDialog('usr_5cd9007b-1802-45fe-92e2-0b6617639344');
             return;
         }
         if (!ref.displayName || ref.displayName.substring(0, 3) === 'ID:') {
@@ -12683,6 +12714,7 @@ speechSynthesis.getVoices();
 
     $app.data.configTreeData = [];
     $app.data.currentUserTreeData = [];
+    $app.data.currentUserFeedbackData = [];
     $app.data.pastDisplayNameTable = {
         data: [],
         tableProps: {
@@ -19768,7 +19800,7 @@ speechSynthesis.getVoices();
             var name = ref.displayName;
             if (ref.statusDescription) {
                 var statusRegex =
-                    /(?:^|\n*)(?:(?:[^\n:]|\|)*(?::|˸|discord)[\t\v\f\r]*)?([^\n]*(#|＃)(?: )?\d{4})/gi.exec(
+                    /(?:^|\n*)(?:(?:[^\n:])*(?::|˸|discord)[\t\v\f\r]*)?([^\n]*(#|＃)(?: )?\d{4})/gi.exec(
                         ref.statusDescription
                     );
                 if (statusRegex) {
@@ -19777,7 +19809,7 @@ speechSynthesis.getVoices();
             }
             if (!discord && ref.bio) {
                 var bioRegex =
-                    /(?:^|\n*)(?:(?:[^\n:]|\|)*(?::|˸|discord)[\t\v\f\r]*)?([^\n]*(#|＃)(?: )?\d{4})/gi.exec(
+                    /(?:^|\n*)(?:(?:[^\n:])*(?::|˸|discord)[\t\v\f\r]*)?([^\n]*(#|＃)(?: )?\d{4})/gi.exec(
                         ref.bio
                     );
                 if (bioRegex) {
@@ -21842,11 +21874,9 @@ speechSynthesis.getVoices();
     $app.methods.isRealInstance = function (instanceId) {
         switch (instanceId) {
             case 'offline':
-                return false;
             case 'private':
-                return false;
             case 'traveling':
-                return false;
+            case 'local':
             case '':
                 return false;
         }
@@ -24565,6 +24595,16 @@ speechSynthesis.getVoices();
         i18n.locale = language;
         configRepository.setString('VRCX_appLanguage', language);
         this.updateVRConfigVars();
+    };
+
+    API.$on('USER:FEEDBACK', function (args) {
+        if (args.params.userId === this.currentUser.id) {
+            $app.currentUserFeedbackData = buildTreeData(args.json);
+        }
+    });
+
+    $app.methods.getCurrentUserFeedback = function () {
+        return API.getUserFeedback({userId: API.currentUser.id});
     };
 
     $app = new Vue($app);
