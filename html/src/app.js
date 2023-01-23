@@ -955,7 +955,7 @@ speechSynthesis.getVoices();
         template:
             '<span><span @click="showLaunchDialog" class="x-link">' +
             '<i v-if="isUnlocked" class="el-icon el-icon-unlock" style="display:inline-block;margin-right:5px"></i>' +
-            '<span> #{{ instanceName }} {{ accessType }}</span></span>' +
+            '<span>#{{ instanceName }} {{ accessType }}</span></span>' +
             '<span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>' +
             '<span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
             '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
@@ -9090,9 +9090,9 @@ speechSynthesis.getVoices();
             return;
         }
         var userId = '';
-        if (gameLog.userDisplayName) {
+        if (gameLog.displayName) {
             for (var ref of API.cachedUsers.values()) {
-                if (ref.displayName === gameLog.userDisplayName) {
+                if (ref.displayName === gameLog.displayName) {
                     userId = ref.id;
                     break;
                 }
@@ -9151,21 +9151,18 @@ speechSynthesis.getVoices();
             case 'player-joined':
                 var joinTime = Date.parse(gameLog.dt);
                 var userMap = {
-                    displayName: gameLog.userDisplayName,
+                    displayName: gameLog.displayName,
                     userId,
                     joinTime
                 };
-                this.lastLocation.playerList.set(
-                    gameLog.userDisplayName,
-                    userMap
-                );
+                this.lastLocation.playerList.set(gameLog.displayName, userMap);
                 if (userId) {
                     var ref = API.cachedUsers.get(userId);
                     if (userId === API.currentUser.id) {
                         // skip
                     } else if (this.friends.has(userId)) {
                         this.lastLocation.friendList.set(
-                            gameLog.userDisplayName,
+                            gameLog.displayName,
                             userMap
                         );
                         if (
@@ -9183,7 +9180,7 @@ speechSynthesis.getVoices();
                 } else {
                     // try fetch userId from previous encounter using database
                     database
-                        .getUserIdFromDisplayName(gameLog.userDisplayName)
+                        .getUserIdFromDisplayName(gameLog.displayName)
                         .then((oldUserId) => {
                             if (oldUserId && this.isGameRunning) {
                                 API.getUser({userId: oldUserId});
@@ -9195,7 +9192,7 @@ speechSynthesis.getVoices();
                 var entry = {
                     created_at: gameLog.dt,
                     type: 'OnPlayerJoined',
-                    displayName: gameLog.userDisplayName,
+                    displayName: gameLog.displayName,
                     location,
                     userId,
                     time: 0
@@ -9203,23 +9200,15 @@ speechSynthesis.getVoices();
                 database.addGamelogJoinLeaveToDatabase(entry);
                 break;
             case 'player-left':
-                if (
-                    !this.lastLocation.playerList.has(gameLog.userDisplayName)
-                ) {
+                if (!this.lastLocation.playerList.has(gameLog.displayName)) {
                     return;
                 }
                 var time = 0;
-                var ref = this.lastLocation.playerList.get(
-                    gameLog.userDisplayName
-                );
+                var ref = this.lastLocation.playerList.get(gameLog.displayName);
                 if (typeof ref !== 'undefined') {
                     time = Date.now() - ref.joinTime;
-                    this.lastLocation.playerList.delete(
-                        gameLog.userDisplayName
-                    );
-                    this.lastLocation.friendList.delete(
-                        gameLog.userDisplayName
-                    );
+                    this.lastLocation.playerList.delete(gameLog.displayName);
+                    this.lastLocation.friendList.delete(gameLog.displayName);
                 }
                 this.photonLobbyAvatars.delete(userId);
                 this.updateVRLastLocation();
@@ -11313,6 +11302,11 @@ speechSynthesis.getVoices();
                         break;
                     case 'group':
                         L.accessName = `Group #${L.instanceName} (${platform})`;
+                        this.getGroupName(L.groupId).then((groupName) => {
+                            if (groupName) {
+                                L.accessName = `Group(${groupName}) #${L.instanceName} (${platform})`;
+                            }
+                        });
                         break;
                 }
             }
@@ -24605,6 +24599,28 @@ speechSynthesis.getVoices();
 
     $app.methods.getCurrentUserFeedback = function () {
         return API.getUserFeedback({userId: API.currentUser.id});
+    };
+
+    $app.methods.gameLogIsFriend = function (row) {
+        if (typeof row.isFriend !== 'undefined') {
+            return row.isFriend;
+        }
+        if (!row.userId) {
+            return false;
+        }
+        row.isFriend = this.friends.has(row.userId);
+        return row.isFriend;
+    };
+
+    $app.methods.gameLogIsFavorite = function (row) {
+        if (typeof row.isFavorite !== 'undefined') {
+            return row.isFavorite;
+        }
+        if (!row.userId || API.cachedFavoritesByObjectId.size === 0) {
+            return false;
+        }
+        row.isFavorite = API.cachedFavoritesByObjectId.has(row.userId);
+        return row.isFavorite;
     };
 
     $app = new Vue($app);

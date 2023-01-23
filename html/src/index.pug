@@ -465,6 +465,13 @@ html
                         template(v-once #default="scope")
                             span.x-link(v-if="scope.row.location && scope.row.type !== 'Location'" v-text="scope.row.type" @click="showWorldDialog(scope.row.location)")
                             span(v-else v-text="scope.row.type")
+                    el-table-column(:label="$t('table.gameLog.icon')" prop="isFriend" width="60")
+                        template(v-once #default="scope")
+                            template(v-if="gameLogIsFriend(scope.row)")
+                                el-tooltip(v-if="gameLogIsFavorite(scope.row)" placement="top" content="Favorite")
+                                    span ⭐
+                                el-tooltip(v-else placement="top" content="Friend")
+                                    span 💚
                     el-table-column(:label="$t('table.gameLog.user')" prop="displayName" width="180")
                         template(v-once #default="scope")
                             span.x-link(v-if="scope.row.displayName" v-text="scope.row.displayName" @click="lookupUser(scope.row)" style="padding-right:10px")
@@ -1564,7 +1571,7 @@ html
                                 .detail
                                     span.name(v-if="!hideUserMemos && friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                    span.extra(v-if="friend.pendingOffline") #[i.el-icon-warning-outline] {{ $t('side_panel.penfing_offline') }}
+                                    span.extra(v-if="friend.pendingOffline") #[i.el-icon-warning-outline] {{ $t('side_panel.pending_offline') }}
                                     location.extra(v-else :location="friend.ref.location" :traveling="friend.ref.travelingToLocation" :link="false")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
@@ -1580,7 +1587,7 @@ html
                                 .detail
                                     span.name(v-if="!hideUserMemos && friend.$nickName" :style="{'color':friend.ref.$userColour}") {{ friend.ref.displayName }} ({{ friend.$nickName }})
                                     span.name(v-else v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                    span.extra(v-if="friend.pendingOffline") #[i.el-icon-warning-outline] {{ $t('side_panel.penfing_offline') }}
+                                    span.extra(v-if="friend.pendingOffline") #[i.el-icon-warning-outline] {{ $t('side_panel.pending_offline') }}
                                     location.extra(v-else :location="friend.ref.location" :traveling="friend.ref.travelingToLocation" :link="false")
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
@@ -1986,9 +1993,9 @@ html
                             div(style="flex:none;margin-left:10px")
                                 el-tooltip(v-if="worldDialog.inCache" placement="top" :content="$t('dialog.world.actions.delete_cache_tooltip')" :disabled="hideTooltips")
                                     el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(worldDialog.ref)" :disabled="isGameRunning && worldDialog.cacheLocked")
-                                el-tooltip(v-if="worldDialog.isFavorite" placement="top" :content="$t('dialog.world.actions.unfavorite_tooltip')" :disabled="hideTooltips")
+                                el-tooltip(v-if="worldDialog.isFavorite" placement="top" :content="$t('dialog.world.actions.favorites_tooltip')" :disabled="hideTooltips")
                                     el-button(type="default" icon="el-icon-star-on" circle @click="worldDialogCommand('Add Favorite')" style="margin-left:5px")
-                                el-tooltip(v-else placement="top" :content="$t('dialog.world.actions.favorite_tooltip')" :disabled="hideTooltips")
+                                el-tooltip(v-else placement="top" :content="$t('dialog.world.actions.favorites_tooltip')" :disabled="hideTooltips")
                                     el-button(type="default" icon="el-icon-star-off" circle @click="worldDialogCommand('Add Favorite')" style="margin-left:5px")
                                 el-dropdown(trigger="click" @command="worldDialogCommand" size="small" style="margin-left:5px")
                                     el-button(type="default" icon="el-icon-more" circle)

@@ -351,7 +351,7 @@ img.friends-list-avatar {
 }
 
 .x-friend-item > .avatar.active::after {
-    background: #dfca43;
+    background: #f4e05e;
 }
 
 .x-friend-item > .avatar.online::after {
@@ -363,11 +363,11 @@ img.friends-list-avatar {
 }
 
 .x-friend-item > .avatar.askme::after {
-    background: #fd9200;
+    background: #ff9500;
 }
 
 .x-friend-item > .avatar.busy::after {
-    background: #f56c6c;
+    background: #ff2c2c;
 }
 
 .x-friend-item > .avatar.offline::after {
@@ -485,7 +485,7 @@ i.x-user-status {
 }
 
 i.x-user-status.active {
-    background: #dfca43;
+    background: #f4e05e;
 }
 
 i.x-user-status.online {
@@ -497,11 +497,11 @@ i.x-user-status.joinme {
 }
 
 i.x-user-status.askme {
-    background: #fd9200;
+    background: #ff9500;
 }
 
 i.x-user-status.busy {
-    background: #f56c6c;
+    background: #ff2c2c;
 }
 
 .x-tag-friend {
@@ -586,7 +586,7 @@ i.x-user-status.busy {
 
 .toggle-list .toggle-name {
     display: inline-block;
-    min-width: 170px;
+    min-width: 190px;
     padding-right: 5px;
     text-align: right;
 }

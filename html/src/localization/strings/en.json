@@ -30,7 +30,7 @@
             }
         },
         "feed": {
-            "favorites_only_tooltip": "Filter VIP only",
+            "favorites_only_tooltip": "Filter favorites only",
             "filter_placeholder": "Filter",
             "search_placeholder": "Search"
         },
@@ -120,7 +120,7 @@
             "load": "Load missing entries",
             "load_notice": "This takes a lot of API requests so use it sparingly",
             "load_tooltip": "Load",
-            "favorites_only_tooltip": "Filter VIP only",
+            "favorites_only_tooltip": "Filter favorites only",
             "search_placeholder": "Search",
             "filter_placeholder": "Filter",
             "refresh_tooltip": "Refresh",
@@ -243,7 +243,7 @@
                         "sort_by_status": "Sort by status",
                         "sort_gps_to_top": "Sort GPS to top",
                         "sort_gps_to_top_notice": "(online for only)",
-                        "sort_favorite_by": "Sort VIP by",
+                        "sort_favorite_by": "Sort Favorites by",
                         "sort_favorite_by_alphabet": "alphabetical",
                         "sort_favorite_by_online_time": "online for",
                         "sort_online_by": "Sort Online by",
@@ -418,7 +418,7 @@
                         "enable": "Enable",
                         "enable_tooltip": "Requires SteamVR overlay to be enabled",
                         "filter": "Filter",
-                        "filter_favorites": "VIP",
+                        "filter_favorites": "Favorites",
                         "filter_friends": "Friends",
                         "filter_everyone": "Everyone",
                         "message_timeout": "Message Timeout"
@@ -428,7 +428,7 @@
                         "enable": "Enable",
                         "enable_tooltip": "Requires SteamVR overlay to be enabled",
                         "filter": "Filter",
-                        "filter_favorites": "VIP",
+                        "filter_favorites": "Favorites",
                         "filter_friends": "Friends",
                         "filter_everyone": "Everyone",
                         "timeout_threshold": "Timeout Threshold"
@@ -446,11 +446,11 @@
         "refresh_tooltip": "Refresh friends",
         "friends": "FRIENDS",
         "me": "ME",
-        "favorite": "VIP",
+        "favorite": "FAVORITES",
         "online": "ONLINE",
         "active": "ACTIVE",
         "offline": "OFFLINE",
-        "penfing_offline": "Pending Offline"
+        "pending_offline": "Pending Offline"
     },
     "dialog": {
         "user": {
@@ -568,8 +568,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "Delete world from cache",
-                "favorite_tooltip": "Add to favorites",
-                "unfavorite_tooltip": "Remove from favorites",
+                "favorites_tooltip": "Favorites",
                 "refresh": "Refresh",
                 "new_instance": "New Instance",
                 "make_home": "Make Home",
@@ -878,7 +877,7 @@
             "wrist": "Wrist Feed Filters",
             "on": "On",
             "off": "Off",
-            "favorite": "VIP",
+            "favorite": "Favorites",
             "friends": "Friends",
             "everyone": "Everyone",
             "cancel": "Cancel",
@@ -1266,6 +1265,7 @@
         "gameLog": {
             "date": "Date",
             "type": "Type",
+            "icon": "Icons",
             "user": "User",
             "detail": "Detail"
         },

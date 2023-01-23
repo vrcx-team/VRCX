@@ -18,11 +18,11 @@ class GameLogService {
                 break;
 
             case 'player-joined':
-                gameLog.userDisplayName = args[0];
+                gameLog.displayName = args[0];
                 break;
 
             case 'player-left':
-                gameLog.userDisplayName = args[0];
+                gameLog.displayName = args[0];
                 break;
 
             case 'notification':

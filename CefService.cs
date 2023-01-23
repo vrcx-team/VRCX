@@ -45,7 +45,7 @@ namespace VRCX
             if (Program.LaunchDebug)
                 cefSettings.RemoteDebuggingPort = 8088;
 
-            // CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
+            CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
             CefSharpSettings.ShutdownOnExit = false;
 
             // Enable High-DPI support on Windows 7 or newer
