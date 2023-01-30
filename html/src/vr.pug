@@ -20,7 +20,7 @@ html
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
                                             i.el-icon-loading(v-if="feed.isTraveling" style="margin-right:5px")
-                                            | #[span.name(v-text="feed.displayName")] #[location(:location="feed.location" :hint="feed.worldName")]
+                                            | #[span.name(v-text="feed.displayName")] #[location(:location="feed.location" :hint="feed.worldName" :grouphint="feed.groupName")]
                                 div(v-else-if="feed.type === 'Offline'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -32,7 +32,7 @@ html
                                             span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.displayName")] ✔
                                             template(v-if="feed.worldName")
-                                                | #[location(:location="feed.location" :hint="feed.worldName" style="margin-left:5px")]
+                                                | #[location(:location="feed.location" :hint="feed.worldName" :grouphint="feed.groupName" style="margin-left:5px")]
                                 div(v-else-if="feed.type === 'Status'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -64,7 +64,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            location(:location="feed.location" :hint="feed.worldName")
+                                            location(:location="feed.location" :hint="feed.worldName" :grouphint="feed.groupName")
                                 div(v-else-if="feed.type === 'VideoPlay'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -145,7 +145,7 @@ html
                                             span.time {{ feed.created_at | formatDate }}
                                             template(v-if="feed.displayName")
                                                 | ✨ #[span.name(v-text="feed.displayName" style="margin-right:5px")]
-                                                | #[location(:location="feed.instanceId" :hint="feed.worldName")]
+                                                | #[location(:location="feed.instanceId" :hint="feed.worldName" :grouphint="feed.groupName")]
                                             template(v-else)
                                                 | ✨ User has spawned a portal
                                 div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
@@ -217,9 +217,9 @@ html
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
                                             template(v-if="feed.isTraveling")
-                                                | #[span.name(v-text="feed.displayName")] is traveling to #[location(:location="feed.location" :hint="feed.worldName")]
+                                                | #[span.name(v-text="feed.displayName")] is traveling to #[location(:location="feed.location" :hint="feed.worldName" :grouphint="feed.groupName")]
                                             template(v-else)
-                                                | #[span.name(v-text="feed.displayName")] is in #[location(:location="feed.location" :hint="feed.worldName")]
+                                                | #[span.name(v-text="feed.displayName")] is in #[location(:location="feed.location" :hint="feed.worldName" :grouphint="feed.groupName")]
                                 div(v-else-if="feed.type === 'Offline'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -232,7 +232,7 @@ html
                                             | #[span.name(v-text="feed.displayName")]
                                             span(style="margin-left:5px;margin-right:5px") has logged in
                                             template(v-if="feed.worldName")
-                                                | to #[location(:location="feed.location" :hint="feed.worldName")]
+                                                | to #[location(:location="feed.location" :hint="feed.worldName" :grouphint="feed.groupName")]
                                 div(v-else-if="feed.type === 'Status'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -263,7 +263,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            location(:location="feed.location" :hint="feed.worldName")
+                                            location(:location="feed.location" :hint="feed.worldName" :grouphint="feed.groupName")
                                 div(v-else-if="feed.type === 'VideoPlay'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -345,7 +345,7 @@ html
                                             span.time {{ feed.created_at | formatDate }}
                                             template(v-if="feed.displayName")
                                                 | #[span.name(v-text="feed.displayName")] has spawned a portal to
-                                                | #[location(:location="feed.instanceId" :hint="feed.worldName" style="margin-left:5px")]
+                                                | #[location(:location="feed.instanceId" :hint="feed.worldName" :grouphint="feed.groupName" style="margin-left:5px")]
                                             template(v-else)
                                                 | User has spawned a portal
                                 div(v-else-if="feed.type === 'AvatarChange'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
@@ -479,7 +479,7 @@ html
                     circle(class="np-progress-circle-stroke" cx="60" cy="60" stroke="white" r="30" fill="transparent" stroke-width="60")
                 .hud-feed
                     div(v-for="feed in hudFeed")
-                        .item #[span(v-if="feed.isMaster") 👑]<strong>{{ feed.displayName }}</strong>
+                        .item(:class="{ friend: feed.isFriend, favorite: feed.isFavorite }") #[span(v-if="feed.isMaster") 👑]#[strong.name(v-text="feed.displayName")]
                             template(v-if="feed.type === 'ChangeAvatar'")
                                 span(style="margin-left:10px;color:#a3a3a3") ChangeAvatar
                                 span(v-if="!feed.inCache" style="color:#aaa;margin-left:10px") #[i.el-icon-download]
@@ -502,7 +502,7 @@ html
                                 span(v-text="feed.text" style="margin-left:10px;white-space:normal")
                             template(v-else-if="feed.type === 'PortalSpawn'")
                                 span(style="margin-left:10px;color:#a3a3a3") PortalSpawn
-                                location(:location="feed.location" :hint="feed.worldName" :link="false" style="margin-left:10px")
+                                location(:location="feed.location" :hint="feed.worldName" :grouphint="feed.groupName" :link="false" style="margin-left:10px")
                             template(v-else-if="feed.type === 'OnPlayerJoined'")
                                 span(style="margin-left:10px;color:#a3a3a3") has joined
                                 span(v-if="feed.platform === 'Desktop'" style="color:#409eff;margin-left:10px") PC

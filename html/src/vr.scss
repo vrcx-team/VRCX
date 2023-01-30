@@ -255,11 +255,15 @@ button {
     font-weight: bold;
 }
 
-.x-friend-item.friend .name {
+.item .name {
+    color: #c5c5c5;
+}
+
+.friend .name {
     color: #fff;
 }
 
-.x-friend-item.favorite .name {
+.favorite .name {
     color: #ff0;
 }
 

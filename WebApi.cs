@@ -55,6 +55,7 @@ namespace VRCX
         public void ClearCookies()
         {
             _cookieContainer = new CookieContainer();
+            SaveCookies();
         }
 
         internal void LoadCookies()

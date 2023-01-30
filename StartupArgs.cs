@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace VRCX
 {
-    class StartupArgs
+    internal class StartupArgs
     {
         public static string LaunchCommand;
         public static Process[] processList;
@@ -22,6 +22,9 @@ namespace VRCX
             string[] args = Environment.GetCommandLineArgs();
             processList = Process.GetProcessesByName("VRCX");
 
+            bool isDebug = false;
+            Debug.Assert(isDebug = true);
+            
             foreach (string arg in args)
             {
                 if (arg.Contains("--gpufix"))
@@ -33,7 +36,7 @@ namespace VRCX
                 if (arg.Length > 8 && arg.Substring(0, 8) == "--config")
                     Program.ConfigLocation = arg.Substring(9);
 
-                if (arg.Length >= 7 && arg.Substring(0, 7) == "--debug")
+                if ((arg.Length >= 7 && arg.Substring(0, 7) == "--debug") || isDebug)
                     Program.LaunchDebug = true;
             }
 

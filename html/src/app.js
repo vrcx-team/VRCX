@@ -412,6 +412,12 @@ speechSynthesis.getVoices();
                 if (response.status === 200) {
                     this.$throw(0, 'Invalid JSON response');
                 }
+                if (response.status === 504 || response.status === 502) {
+                    // ignore expected API errors
+                    throw new Error(
+                        `${response.status}: ${response.data} ${endpoint}`
+                    );
+                }
                 this.$throw(response.status, endpoint);
                 return {};
             })
@@ -461,16 +467,17 @@ speechSynthesis.getVoices();
                 }
                 if (
                     init.method === 'GET' &&
-                    (status === 404 || status === 403)
+                    (status === 404 || status === 403) &&
+                    !endpoint.startsWith('auth/user')
                 ) {
                     this.failedGetRequests.set(endpoint, Date.now());
                 }
-                if (status === 404 && endpoint.substring(0, 6) === 'users/') {
+                if (status === 404 && endpoint.startsWith('users/')) {
                     throw new Error(`404: ${data.error.message} ${endpoint}`);
                 }
                 if (
                     status === 404 &&
-                    endpoint.substring(0, 7) === 'invite/' &&
+                    endpoint.startsWith('invite/') &&
                     init.inviteId
                 ) {
                     this.expireNotification(init.inviteId);
@@ -4300,6 +4307,19 @@ speechSynthesis.getVoices();
                 this.$emit('NOTIFICATION:SEE', {
                     params: {
                         notificationId: content
+                    }
+                });
+                break;
+
+            case 'response-notification':
+                this.$emit('NOTIFICATION:HIDE', {
+                    params: {
+                        notificationId: content.notificationId
+                    }
+                });
+                this.$emit('NOTIFICATION:SEE', {
+                    params: {
+                        notificationId: content.notificationId
                     }
                 });
                 break;
@@ -9685,9 +9705,14 @@ speechSynthesis.getVoices();
         if (input.photonId === this.photonLobbyMaster) {
             isMaster = true;
         }
+        var userId = this.getUserIdFromPhotonId(input.photonId);
+        var isFavorite = API.cachedFavoritesByObjectId.has(userId);
+        var isFriend = this.friends.has(userId);
         var feed = {
             displayName: this.getDisplayNameFromPhotonId(input.photonId),
-            userId: this.getUserIdFromPhotonId(input.photonId),
+            userId,
+            isFavorite,
+            isFriend,
             isMaster,
             ...input
         };
@@ -9705,10 +9730,9 @@ speechSynthesis.getVoices();
             ) {
                 if (
                     feed.userId &&
-                    ((this.photonEventOverlayFilter === 'VIP' &&
-                        API.cachedFavoritesByObjectId.has(feed.userId)) ||
+                    ((this.photonEventOverlayFilter === 'VIP' && isFavorite) ||
                         (this.photonEventOverlayFilter === 'Friends' &&
-                            this.friends.has(feed.userId)))
+                            isFriend))
                 ) {
                     AppApi.ExecuteVrOverlayFunction(
                         'addEntryHudFeed',
@@ -11530,7 +11554,7 @@ speechSynthesis.getVoices();
         this.searchUserParams = {
             n: 10,
             offset: 0,
-            search: this.searchText
+            search: this.replaceBioSymbols(this.searchText)
         };
         await this.moreSearchUser();
     };
@@ -11608,7 +11632,7 @@ speechSynthesis.getVoices();
                 break;
             default:
                 params.sort = 'relevance';
-                params.search = this.searchText;
+                params.search = this.replaceBioSymbols(this.searchText);
                 break;
         }
         params.order = ref.sortOrder || 'descending';
