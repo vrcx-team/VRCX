@@ -2064,6 +2064,7 @@ html
                                                         el-dropdown-menu(#default="dropdown")
                                                             el-dropdown-item(@click.native="copyWorldId(worldDialog.id)") {{ $t('dialog.world.info.copy_id') }}
                                                             el-dropdown-item(@click.native="copyWorldUrl(worldDialog.id)") {{ $t('dialog.world.info.copy_url') }}
+                                                            el-dropdown-item(@click.native="copyWorldName(worldDialog.ref.name)") {{ $t('dialog.world.info.copy_name') }}
                                     .x-friend-item(v-if="worldDialog.ref.previewYoutubeId" style="width:350px" @click="openExternalLink(`https://www.youtube.com/watch?v=${worldDialog.ref.previewYoutubeId}`)")
                                         .detail
                                             span.name {{ $t('dialog.world.info.youtube_preview') }}
@@ -2335,7 +2336,7 @@ html
                                         el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
                                             el-button(v-if="room.tag !== lastLocation.location" @click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                         span(v-if="room.occupants" style="margin-left:5px") {{ room.occupants }}  #[template(v-if="room.friendCount > 0") ({{ room.friendCount }})]
-                                    .x-friend-list(style="margin:10px 0;max-height:unset" v-if="room.users.length")
+                                    .x-friend-list(style="margin:10px 0;padding:0;max-height:unset" v-if="room.users.length")
                                         .x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
                                             .avatar(:class="userStatusClass(user)")
                                                 img(v-lazy="userImage(user)")

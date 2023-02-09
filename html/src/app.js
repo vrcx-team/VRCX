@@ -17622,6 +17622,14 @@ speechSynthesis.getVoices();
         this.copyToClipboard(`https://vrchat.com/home/world/${worldId}`);
     };
 
+    $app.methods.copyWorldName = function (worldName) {
+        this.$message({
+            message: 'World name copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(worldName);
+    };
+
     $app.methods.copyUser = function (userId) {
         this.$message({
             message: 'User URL copied to clipboard',

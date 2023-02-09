@@ -601,6 +601,7 @@
                 "id_tooltip": "Copy to clipboard",
                 "copy_id": "Copy ID",
                 "copy_url": "Copy URL",
+                "copy_name": "Copy Name",
                 "youtube_preview": "Youtube Preview",
                 "players": "Players",
                 "favorites": "Favorites",
