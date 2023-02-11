@@ -58,6 +58,10 @@ class GameLogService {
                 gameLog.photonId = args[1];
                 break;
 
+            case 'screenshot':
+                gameLog.screenshotPath = args[0]
+                break;
+                
             case 'vrc-quit':
                 break;
 

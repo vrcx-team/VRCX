@@ -381,6 +381,14 @@
                         "enable_tooltip": "Requires SteamVR overlay to be enabled",
                         "dance_world_only": "Dance worlds only"
                     },
+                    "screenshot_helper": {
+                        "header": "Screenshot Helper",
+                        "description": "Will store the world ID and world name in the file metadata of any pictures you take in-game.",
+                        "description_tooltip": "Unfortunately, windows doesn't support viewing PNG text chunks(few things do) natively, but you can view it using a command-line tool like exiftool, a png chunk inspector, or a hex editor.",
+                        "enable": "Enable",
+                        "modify_filename": "Modify Filename",
+                        "modify_filename_tooltip": "Will add the World ID to screenshot filename, in addition to file metadata."
+                    },
                     "cache_debug": {
                         "header": "VRCX Instance Cache/Debug",
                         "disable_gamelog": "Disable GameLog",

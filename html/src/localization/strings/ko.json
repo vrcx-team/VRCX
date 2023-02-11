@@ -380,6 +380,14 @@
                         "enable_tooltip": "스팀VR 오버레이 사용 필요",
                         "dance_world_only": "댄스 월드에서만 사용"
                     },
+                    "screenshot_helper": {
+                        "header": "스크린샷 도우미",
+                        "description": "게임 내에서 찍은 사진의 파일 메타데이터에 월드 ID와 월드 이름을 저장합니다.",
+                        "description_tooltip": "안타깝게도 Windows는 기본적으로 PNG 텍스트 청크 보기를 지원하지 않지만(몇 가지 기능은 지원), exiftool, PNG chunk inspector 또는 헥스 에디터와 같은 명령줄 도구를 사용하여 볼 수 있습니다.",
+                        "enable": "사용",
+                        "modify_filename": "파일 이름 수정",
+                        "modify_filename_tooltip": "파일 메타데이터 외에 스크린샷 파일 이름에 월드 ID를 추가합니다."
+                    },
                     "cache_debug": {
                         "header": "VRCX 인스턴스 캐시/디버그",
                         "disable_gamelog": "게임 기록 하지 않기",

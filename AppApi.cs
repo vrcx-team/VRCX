@@ -634,5 +634,27 @@ namespace VRCX
             {
             }
         }
+
+        public void AddScreenshotMetadata(string path, string worldName, string worldId, bool changeFilename = false)
+        {
+            try
+            {
+                string fileName = Path.GetFileNameWithoutExtension(path);
+                if (!File.Exists(path) || !path.EndsWith(".png") || !fileName.StartsWith("VRChat_")) return;
+
+                if (changeFilename)
+                {
+                    var newFileName = $"{fileName}_{worldId}";
+                    var newPath = Path.Combine(Path.GetDirectoryName(path), newFileName + Path.GetExtension(path));
+                    File.Move(path, newPath);
+                    path = newPath;
+                }
+
+                string metadataString = $"{Program.Version}||{worldId}||{worldName}";
+
+                ScreenshotHelper.WritePNGDescription(path, metadataString);
+            }
+            catch { }
+        }
     }
 }

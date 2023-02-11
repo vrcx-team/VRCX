@@ -89,6 +89,7 @@
     <Compile Include="ImageCache.cs" />
     <Compile Include="IPCClient.cs" />
     <Compile Include="IPCServer.cs" />
+    <Compile Include="ScreenshotHelper.cs" />
     <Compile Include="StartupArgs.cs" />
     <Compile Include="Update.cs" />
     <Compile Include="CefService.cs" />
