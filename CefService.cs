@@ -1,4 +1,5 @@
 using CefSharp;
+using CefSharp.SchemeHandler;
 using CefSharp.WinForms;
 using System;
 using System.IO;
@@ -26,12 +27,16 @@ namespace VRCX
                 PersistUserPreferences = true
             };
 
-            /*cefSettings.RegisterScheme(new CefCustomScheme
+            cefSettings.RegisterScheme(new CefCustomScheme
             {
-                SchemeName = "vrcx",
-                DomainName = "app",
-                SchemeHandlerFactory = new FolderSchemeHandlerFactory(Application.StartupPath + "/../../../html")
-            });*/
+                SchemeName = "localnjs",
+                DomainName = "vrcx",
+                SchemeHandlerFactory = new FolderSchemeHandlerFactory(
+                    rootFolder: Path.Combine(Program.BaseDirectory, "html"),
+                    hostName: "vrcx",
+                    defaultPage: "index.html"
+                )
+            });
 
             // cefSettings.CefCommandLineArgs.Add("allow-universal-access-from-files");
             // cefSettings.CefCommandLineArgs.Add("ignore-certificate-errors");
