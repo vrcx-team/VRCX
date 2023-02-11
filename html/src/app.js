@@ -20082,12 +20082,10 @@ speechSynthesis.getVoices();
     // Screenshot Helper
 
     $app.methods.saveScreenshotHelper = function () {
-        console.log("save helper toggle press")
         configRepository.setBool('VRCX_screenshotHelper', this.screenshotHelper);
     };
 
     $app.methods.saveScreenshotHelperModifyFilename = function () {
-        console.log("save helper filename toggle press")
         configRepository.setBool('VRCX_screenshotHelperSaveFilename', this.screenshotHelperModifyFilename);
     };
 
