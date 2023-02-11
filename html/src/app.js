@@ -21955,7 +21955,7 @@ speechSynthesis.getVoices();
     API.$on('LOGIN', async function () {
         $app.avatarHistory = new Set();
         var historyArray = await database.getAvatarHistory();
-        $app.avatarHistoryArray = historyArray;
+        $app.avatarHistoryArray = historyArray.reverse();
         for (var i = 0; i < historyArray.length; i++) {
             $app.avatarHistory.add(historyArray[i].id);
             this.applyAvatar(historyArray[i]);
