@@ -374,6 +374,12 @@
                         "enable": "啟用",
                         "youtube_api_key": "Youtube API 金鑰"
                     },
+                    "video_progress_pie": {
+                        "header": "影片進度圓餅疊層",
+                        "enable": "啟用",
+                        "enable_tooltip": "需要啟用 SteamVR 疊層選項",
+                        "dance_world_only": "僅限跳舞世界"
+                    },
                     "screenshot_helper": {
                         "header": "屏幕截图助手",
                         "description": "将在你在游戏中拍摄的任何照片的文件元数据中存储世界ID和世界名称。",
