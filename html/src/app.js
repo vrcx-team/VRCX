@@ -6540,7 +6540,17 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.data.twoFactorAuthDialogVisible = false;
+
+    API.$on('LOGIN', function () {
+        $app.twoFactorAuthDialogVisible = false;
+    });
+
     $app.methods.promptTOTP = function () {
+        if (this.twoFactorAuthDialogVisible) {
+            return;
+        }
+        this.twoFactorAuthDialogVisible = true;
         this.$prompt($t('prompt.totp.description'), $t('prompt.totp.header'), {
             distinguishCancelAndClose: true,
             cancelButtonText: $t('prompt.totp.use_otp'),
@@ -6564,11 +6574,19 @@ speechSynthesis.getVoices();
                 } else if (action === 'cancel') {
                     this.promptOTP();
                 }
+            },
+            beforeClose: (action, instance, done) => {
+                this.twoFactorAuthDialogVisible = false;
+                done();
             }
         });
     };
 
     $app.methods.promptOTP = function () {
+        if (this.twoFactorAuthDialogVisible) {
+            return;
+        }
+        this.twoFactorAuthDialogVisible = true;
         this.$prompt($t('prompt.otp.description'), $t('prompt.otp.header'), {
             distinguishCancelAndClose: true,
             cancelButtonText: $t('prompt.otp.use_otp'),
@@ -6592,11 +6610,19 @@ speechSynthesis.getVoices();
                 } else if (action === 'cancel') {
                     this.promptTOTP();
                 }
+            },
+            beforeClose: (action, instance, done) => {
+                this.twoFactorAuthDialogVisible = false;
+                done();
             }
         });
     };
 
     $app.methods.promptEmailOTP = function () {
+        if (this.twoFactorAuthDialogVisible) {
+            return;
+        }
+        this.twoFactorAuthDialogVisible = true;
         this.$prompt(
             $t('prompt.email_otp.description'),
             $t('prompt.email_otp.header'),
@@ -6621,6 +6647,10 @@ speechSynthesis.getVoices();
                                 return args;
                             });
                     }
+                },
+                beforeClose: (action, instance, done) => {
+                    this.twoFactorAuthDialogVisible = false;
+                    done();
                 }
             }
         );
@@ -21955,7 +21985,7 @@ speechSynthesis.getVoices();
     API.$on('LOGIN', async function () {
         $app.avatarHistory = new Set();
         var historyArray = await database.getAvatarHistory();
-        $app.avatarHistoryArray = historyArray.reverse();
+        $app.avatarHistoryArray = historyArray;
         for (var i = 0; i < historyArray.length; i++) {
             $app.avatarHistory.add(historyArray[i].id);
             this.applyAvatar(historyArray[i]);
