@@ -39,7 +39,7 @@ namespace VRCX
             {
             }
 
-            Browser = new ChromiumWebBrowser("localnjs://vrcx/")
+            Browser = new ChromiumWebBrowser("file://vrcx/index.html")
             {
                 DragHandler = new NoopDragHandler(),
                 MenuHandler = new CustomMenuHandler(),

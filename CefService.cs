@@ -26,16 +26,17 @@ namespace VRCX
                 PersistSessionCookies = true,
                 PersistUserPreferences = true
             };
-
+            
             cefSettings.RegisterScheme(new CefCustomScheme
             {
-                SchemeName = "localnjs",
+                SchemeName = "file",
                 DomainName = "vrcx",
                 SchemeHandlerFactory = new FolderSchemeHandlerFactory(
                     rootFolder: Path.Combine(Program.BaseDirectory, "html"),
-                    hostName: "vrcx",
+                    schemeName: "file",
                     defaultPage: "index.html"
-                )
+                ),
+                IsLocal = true
             });
 
             // cefSettings.CefCommandLineArgs.Add("allow-universal-access-from-files");
