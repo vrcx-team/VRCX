@@ -1073,7 +1073,7 @@
         "email_otp": {
             "header": "Two-factor Authentication",
             "description": "Enter a numeric code that was sent to your email",
-            "cancel": "Cancel",
+            "resend": "Resend Email",
             "verify": "Verify",
             "input_placeholder": "Code",
             "input_error": "Invalid Code"

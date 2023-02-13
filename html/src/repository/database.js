@@ -1583,7 +1583,7 @@ class Database {
                 updated_at: dbRow[12],
                 version: dbRow[13]
             };
-            data.unshift(row);
+            data.push(row);
         }, `SELECT * FROM ${Database.userPrefix}_avatar_history INNER JOIN cache_avatar ON cache_avatar.id = ${Database.userPrefix}_avatar_history.avatar_id ORDER BY ${Database.userPrefix}_avatar_history.created_at DESC LIMIT 100`);
         return data;
     }
