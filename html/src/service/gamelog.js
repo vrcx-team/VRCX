@@ -59,9 +59,9 @@ class GameLogService {
                 break;
 
             case 'screenshot':
-                gameLog.screenshotPath = args[0]
+                gameLog.screenshotPath = args[0];
                 break;
-                
+
             case 'vrc-quit':
                 break;
 
