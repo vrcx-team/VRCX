@@ -9333,6 +9333,22 @@ speechSynthesis.getVoices();
                     this.nowPlaying.offset = parseInt(timestamp, 10);
                 }
                 return;
+            case 'screenshot':
+                if (!this.isGameRunning || !this.screenshotHelper) return;
+
+                var entry = {
+                    created_at: gameLog.dt,
+                    type: 'Event',
+                    //location: location,
+                    data: "Screenshot Processed: " + gameLog.screenshotPath.replace(/^.*[\\\/]/, ''),
+                };
+
+                let world = API.parseLocation(this.lastLocation.location);
+                let worldID = world.worldId;
+
+                database.addGamelogEventToDatabase(entry);
+                AppApi.AddScreenshotMetadata(gameLog.screenshotPath, this.lastLocation.name, worldID, this.screenshotHelperModifyFilename);
+                break;
             case 'api-request':
                 var bias = Date.parse(gameLog.dt) + 60 * 1000;
                 if (
@@ -13537,6 +13553,9 @@ speechSynthesis.getVoices();
     $app.data.progressPieFilter = configRepository.getBool(
         'VRCX_progressPieFilter'
     );
+
+    $app.data.screenshotHelper = configRepository.getBool('VRCX_screenshotHelper');
+    $app.data.screenshotHelperModifyFilename = configRepository.getBool('VRCX_screenshotHelperModifyFilename');
 
     $app.methods.updateVRConfigVars = function () {
         var notificationTheme = 'relax';
@@ -20119,6 +20138,16 @@ speechSynthesis.getVoices();
     $app.methods.setVRChatScreenshotResolution = function (res) {
         this.VRChatConfigFile.screenshot_res_height = res.height;
         this.VRChatConfigFile.screenshot_res_width = res.width;
+    };
+
+    // Screenshot Helper
+
+    $app.methods.saveScreenshotHelper = function () {
+        configRepository.setBool('VRCX_screenshotHelper', this.screenshotHelper);
+    };
+
+    $app.methods.saveScreenshotHelperModifyFilename = function () {
+        configRepository.setBool('VRCX_screenshotHelperModifyFilename', this.screenshotHelperModifyFilename);
     };
 
     // YouTube API

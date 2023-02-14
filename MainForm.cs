@@ -39,9 +39,7 @@ namespace VRCX
             {
             }
 
-            Browser = new ChromiumWebBrowser(
-                Path.Combine(Program.BaseDirectory, "html/index.html")
-            )
+            Browser = new ChromiumWebBrowser("file://vrcx/index.html")
             {
                 DragHandler = new NoopDragHandler(),
                 MenuHandler = new CustomMenuHandler(),

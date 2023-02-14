@@ -380,6 +380,14 @@
                         "enable_tooltip": "需要啟用 SteamVR 疊層選項",
                         "dance_world_only": "僅限跳舞世界"
                     },
+                    "screenshot_helper": {
+                        "header": "屏幕截图助手",
+                        "description": "将在你在游戏中拍摄的任何照片的文件元数据中存储世界ID和世界名称。",
+                        "description_tooltip": "不幸的是，windows不支持本机查看PNG文本块（很多东西都不支持），但你可以使用exiftool等命令行工具、png块检查器或十六进制编辑器来查看。",
+                        "enable": "啟用",
+                        "modify_filename": "修改文件名",
+                        "modify_filename_tooltip": "除了文件元数据外，将把世界ID添加到截图文件名中。"
+                    },
                     "cache_debug": {
                         "header": "VRCX 世界快取/除錯",
                         "disable_gamelog": "關閉遊戲紀錄",

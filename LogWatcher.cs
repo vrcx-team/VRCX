@@ -168,7 +168,7 @@ namespace VRCX
 
             m_FirstRun = false;
         }
-
+        
         private void ParseLog(FileInfo fileInfo, LogContext logContext)
         {
             try
@@ -227,7 +227,8 @@ namespace VRCX
                                     ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) == true ||
                                     ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) == true ||
                                     ParseLogWorldVRCX(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) == true)
+                                    ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) == true ||
+                                    ParseLogScreenshot(fileInfo, logContext, line, offset) == true)
                                 {
                                     continue;
                                 }
@@ -342,6 +343,22 @@ namespace VRCX
             }
 
             return false;
+        }
+
+        private bool ParseLogScreenshot(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // This won't work with VRChat's new "Multi Layer" camera mode, since it doesn't output any logs like normal pictures.
+            // 2023.02.08 12:31:35 Log        -  [VRC Camera] Took screenshot to: C:\Users\Tea\Pictures\VRChat\2023-02\VRChat_2023-02-08_12-31-35.104_1920x1080.png
+            if (!line.Contains("[VRC Camera] Took screenshot to: "))
+                return false;
+
+            var lineOffset = line.LastIndexOf("] Took screenshot to: ");
+            if (lineOffset < 0)
+                return true;
+                
+            var screenshotPath = line.Substring(lineOffset + 22);
+            AppendLog(new[] { fileInfo.Name, ConvertLogTimeToISO8601(line), "screenshot", screenshotPath });
+            return true;
         }
 
         private bool ParseLogLocationDestination(FileInfo fileInfo, LogContext logContext, string line, int offset)
