@@ -9201,13 +9201,14 @@ speechSynthesis.getVoices();
                 }
                 break;
             case 'location':
+                var worldName = this.replaceBioSymbols(gameLog.worldName);
                 if (this.isGameRunning) {
                     this.lastLocationReset(gameLog.dt);
                     this.clearNowPlaying();
                     this.lastLocation = {
                         date: Date.parse(gameLog.dt),
                         location: gameLog.location,
-                        name: gameLog.worldName,
+                        name: worldName,
                         playerList: new Map(),
                         friendList: new Map()
                     };
@@ -9224,7 +9225,7 @@ speechSynthesis.getVoices();
                     type: 'Location',
                     location: gameLog.location,
                     worldId: L.worldId,
-                    worldName: gameLog.worldName,
+                    worldName,
                     time: 0
                 };
                 this.addGamelogLocationToDatabase(entry);
@@ -9282,7 +9283,7 @@ speechSynthesis.getVoices();
                 break;
             case 'player-left':
                 if (!this.lastLocation.playerList.has(gameLog.displayName)) {
-                    return;
+                    break;
                 }
                 var time = 0;
                 var ref = this.lastLocation.playerList.get(gameLog.displayName);
@@ -9306,7 +9307,7 @@ speechSynthesis.getVoices();
                 break;
             case 'portal-spawn':
                 if (this.ipcEnabled && this.isGameRunning) {
-                    return;
+                    break;
                 }
                 var entry = {
                     created_at: gameLog.dt,
@@ -9322,32 +9323,57 @@ speechSynthesis.getVoices();
             case 'video-play':
                 gameLog.videoUrl = decodeURI(gameLog.videoUrl);
                 if (this.lastVideoUrl === gameLog.videoUrl) {
-                    return;
+                    break;
                 }
                 this.lastVideoUrl = gameLog.videoUrl;
                 this.addGameLogVideo(gameLog, location, userId);
-                return;
+                break;
             case 'video-sync':
                 var timestamp = gameLog.timestamp.replace(/,/g, '');
                 if (this.nowPlaying.playing) {
                     this.nowPlaying.offset = parseInt(timestamp, 10);
                 }
-                return;
+                break;
             case 'screenshot':
-                if (!this.isGameRunning || !this.screenshotHelper) return;
-
-                var entry = {
-                    created_at: gameLog.dt,
-                    type: 'Event',
-                    //location: location,
-                    data: "Screenshot Processed: " + gameLog.screenshotPath.replace(/^.*[\\\/]/, ''),
+                if (!this.isGameRunning || !this.screenshotHelper) {
+                    break;
+                }
+                // var entry = {
+                //     created_at: gameLog.dt,
+                //     type: 'Event',
+                //     data: `Screenshot Processed: ${gameLog.screenshotPath.replace(
+                //         /^.*[\\/]/,
+                //         ''
+                //     )}`
+                // };
+                // database.addGamelogEventToDatabase(entry);
+                var location = API.parseLocation(this.lastLocation.location);
+                var metadata = {
+                    application: 'VRCX',
+                    version: 1,
+                    author: {
+                        id: API.currentUser.id,
+                        displayName: API.currentUser.displayName
+                    },
+                    world: {
+                        id: location.worldId,
+                        name: this.lastLocation.name,
+                        instanceId: this.lastLocation.location
+                    },
+                    players: []
                 };
-
-                let world = API.parseLocation(this.lastLocation.location);
-                let worldID = world.worldId;
-
-                database.addGamelogEventToDatabase(entry);
-                AppApi.AddScreenshotMetadata(gameLog.screenshotPath, this.lastLocation.name, worldID, this.screenshotHelperModifyFilename);
+                for (var user of this.lastLocation.playerList.values()) {
+                    metadata.players.push({
+                        id: user.userId,
+                        displayName: user.displayName
+                    });
+                }
+                AppApi.AddScreenshotMetadata(
+                    gameLog.screenshotPath,
+                    JSON.stringify(metadata),
+                    location.worldId,
+                    this.screenshotHelperModifyFilename
+                );
                 break;
             case 'api-request':
                 var bias = Date.parse(gameLog.dt) + 60 * 1000;
@@ -9357,7 +9383,7 @@ speechSynthesis.getVoices();
                     this.lastLocation.location === 'traveling' ||
                     bias < Date.now()
                 ) {
-                    return;
+                    break;
                 }
                 var userId = '';
                 try {
@@ -9375,7 +9401,7 @@ speechSynthesis.getVoices();
                 if (userId && !API.cachedUsers.has(userId)) {
                     API.getUser({userId});
                 }
-                return;
+                break;
             case 'vrcx':
                 // VideoPlay(PyPyDance) "https://jd.pypy.moe/api/v1/videos/jr1NX4Jo8GE.mp4",0.1001,239.606,"0905 : [J-POP] 【まなこ】金曜日のおはよう 踊ってみた (vernities)"
                 var type = gameLog.data.substr(0, gameLog.data.indexOf(' '));
@@ -9388,10 +9414,10 @@ speechSynthesis.getVoices();
                 } else if (type === 'LSMedia') {
                     this.addGameLogLSMedia(gameLog, location);
                 }
-                return;
+                break;
             case 'photon-id':
                 if (!this.isGameRunning || !this.friendLogInitStatus) {
-                    return;
+                    break;
                 }
                 var photonId = parseInt(gameLog.photonId, 10);
                 var ref = this.photonLobby.get(photonId);
@@ -9400,7 +9426,7 @@ speechSynthesis.getVoices();
                         if (ctx.displayName === gameLog.displayName) {
                             this.photonLobby.set(photonId, ctx);
                             this.photonLobbyCurrent.set(photonId, ctx);
-                            return;
+                            break;
                         }
                     }
                     var ctx = {
@@ -9410,14 +9436,14 @@ speechSynthesis.getVoices();
                     this.photonLobbyCurrent.set(photonId, ctx);
                     this.getCurrentInstanceUserList();
                 }
-                return;
+                break;
             case 'notification':
                 // var entry = {
                 //     created_at: gameLog.dt,
                 //     type: 'Notification',
                 //     data: gameLog.json
                 // };
-                return;
+                break;
             case 'event':
                 var entry = {
                     created_at: gameLog.dt,
@@ -9433,7 +9459,7 @@ speechSynthesis.getVoices();
                     !this.isGameRunning ||
                     bias < Date.now()
                 ) {
-                    return;
+                    break;
                 }
                 AppApi.QuitGame().then((processCount) => {
                     if (processCount > 1) {
@@ -13554,8 +13580,12 @@ speechSynthesis.getVoices();
         'VRCX_progressPieFilter'
     );
 
-    $app.data.screenshotHelper = configRepository.getBool('VRCX_screenshotHelper');
-    $app.data.screenshotHelperModifyFilename = configRepository.getBool('VRCX_screenshotHelperModifyFilename');
+    $app.data.screenshotHelper = configRepository.getBool(
+        'VRCX_screenshotHelper'
+    );
+    $app.data.screenshotHelperModifyFilename = configRepository.getBool(
+        'VRCX_screenshotHelperModifyFilename'
+    );
 
     $app.methods.updateVRConfigVars = function () {
         var notificationTheme = 'relax';
@@ -20143,11 +20173,14 @@ speechSynthesis.getVoices();
     // Screenshot Helper
 
     $app.methods.saveScreenshotHelper = function () {
-        configRepository.setBool('VRCX_screenshotHelper', this.screenshotHelper);
-    };
-
-    $app.methods.saveScreenshotHelperModifyFilename = function () {
-        configRepository.setBool('VRCX_screenshotHelperModifyFilename', this.screenshotHelperModifyFilename);
+        configRepository.setBool(
+            'VRCX_screenshotHelper',
+            this.screenshotHelper
+        );
+        configRepository.setBool(
+            'VRCX_screenshotHelperModifyFilename',
+            this.screenshotHelperModifyFilename
+        );
     };
 
     // YouTube API

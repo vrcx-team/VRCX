@@ -1457,7 +1457,7 @@ html
                                     span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.modify_filename') }}
                                         el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')")
                                             i.el-icon-info
-                                    el-switch(v-model="screenshotHelperModifyFilename" @change="saveScreenshotHelperModifyFilename")
+                                    el-switch(v-model="screenshotHelperModifyFilename" @change="saveScreenshotHelper")
                             div.options-container(v-if="photonLoggingEnabled")
                                 span.header {{ $t('view.settings.advanced.photon.header') }}
                                 div.options-container-item

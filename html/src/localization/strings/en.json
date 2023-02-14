@@ -383,7 +383,7 @@
                     },
                     "screenshot_helper": {
                         "header": "Screenshot Helper",
-                        "description": "Will store the world ID and world name in the file metadata of any pictures you take in-game.",
+                        "description": "Will store the world ID, world name and players in instance inside the file metadata of any pictures you take in-game.",
                         "description_tooltip": "Unfortunately, windows doesn't support viewing PNG text chunks(few things do) natively, but you can view it using a command-line tool like exiftool, a png chunk inspector, or a hex editor.",
                         "enable": "Enable",
                         "modify_filename": "Modify Filename",
