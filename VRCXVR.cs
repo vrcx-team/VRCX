@@ -130,13 +130,13 @@ namespace VRCX
             );
 
             _browser1 = new OffScreenBrowser(
-                Path.Combine(Program.BaseDirectory, "html/vr.html?1"),
+                "file://vrcx/vr.html?1",
                 512,
                 512
             );
 
             _browser2 = new OffScreenBrowser(
-                Path.Combine(Program.BaseDirectory, "html/vr.html?2"),
+                "file://vrcx/vr.html?2",
                 1024,
                 1024
             );
