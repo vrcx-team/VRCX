@@ -4,11 +4,6 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-using CefSharp;
-using librsync.net;
-using Microsoft.Win32;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,14 +18,20 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
+using CefSharp;
+using librsync.net;
+using Microsoft.Win32;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace VRCX
 {
     public class AppApi
     {
         public static readonly AppApi Instance;
+
+        private static readonly MD5 _hasher = MD5.Create();
 
         static AppApi()
         {
@@ -39,24 +40,24 @@ namespace VRCX
 
         public string MD5File(string Blob)
         {
-            byte[] fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
-            byte[] md5 = MD5.Create().ComputeHash(fileData);
-            return System.Convert.ToBase64String(md5);
+            var fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
+            var md5 = MD5.Create().ComputeHash(fileData);
+            return Convert.ToBase64String(md5);
         }
 
         public string SignFile(string Blob)
         {
-            byte[] fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
-            Stream sig = Librsync.ComputeSignature(new MemoryStream(fileData));
+            var fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
+            var sig = Librsync.ComputeSignature(new MemoryStream(fileData));
             var memoryStream = new MemoryStream();
             sig.CopyTo(memoryStream);
-            byte[] sigBytes = memoryStream.ToArray();
-            return System.Convert.ToBase64String(sigBytes);
+            var sigBytes = memoryStream.ToArray();
+            return Convert.ToBase64String(sigBytes);
         }
 
         public string FileLength(string Blob)
         {
-            byte[] fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
+            var fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
             return fileData.Length.ToString();
         }
 
@@ -68,6 +69,7 @@ namespace VRCX
             {
                 return "";
             }
+
             var json = File.ReadAllText(configFile);
             return json;
         }
@@ -94,6 +96,7 @@ namespace VRCX
                     }
                 }
             }
+
             var cachePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat";
             return cachePath;
         }
@@ -122,12 +125,13 @@ namespace VRCX
             {
                 isGameRunning = true;
             }
+
             if (Process.GetProcessesByName("vrserver").Length > 0)
             {
                 isSteamVRRunning = true;
             }
 
-            return new bool[]
+            return new[]
             {
                 isGameRunning,
                 isSteamVRRunning
@@ -152,7 +156,7 @@ namespace VRCX
                 {
                     // "C:\Program Files (x86)\Steam\steam.exe" -- "%1"
                     var match = Regex.Match(key.GetValue(string.Empty) as string, "^\"(.+?)\\\\steam.exe\"");
-                    if (match.Success == true)
+                    if (match.Success)
                     {
                         var path = match.Groups[1].Value;
                         // var _arguments = Uri.EscapeDataString(arguments);
@@ -178,7 +182,7 @@ namespace VRCX
                 {
                     // "C:\Program Files (x86)\Steam\steamapps\common\VRChat\launch.exe" "%1" %*
                     var match = Regex.Match(key.GetValue(string.Empty) as string, "(?!\")(.+?\\\\VRChat.*)(!?\\\\launch.exe\")");
-                    if (match.Success == true)
+                    if (match.Success)
                     {
                         var path = match.Groups[1].Value;
                         StartGameFromPath(path, arguments);
@@ -206,8 +210,8 @@ namespace VRCX
 
         public void OpenLink(string url)
         {
-            if (url.StartsWith("http://") == true ||
-                url.StartsWith("https://") == true)
+            if (url.StartsWith("http://") ||
+                url.StartsWith("https://"))
             {
                 Process.Start(url).Close();
             }
@@ -257,45 +261,31 @@ namespace VRCX
 
         public void DesktopNotification(string BoldText, string Text = "", string Image = "")
         {
-            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
-            XmlNodeList stringElements = toastXml.GetElementsByTagName("text");
-            String imagePath = Path.Combine(Program.BaseDirectory, "VRCX.ico");
-            if (!String.IsNullOrEmpty(Image))
+            var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
+            var stringElements = toastXml.GetElementsByTagName("text");
+            var imagePath = Path.Combine(Program.BaseDirectory, "VRCX.ico");
+            if (!string.IsNullOrEmpty(Image))
             {
                 imagePath = Image;
             }
+
             stringElements[0].AppendChild(toastXml.CreateTextNode(BoldText));
             stringElements[1].AppendChild(toastXml.CreateTextNode(Text));
-            XmlNodeList imageElements = toastXml.GetElementsByTagName("image");
+            var imageElements = toastXml.GetElementsByTagName("image");
             imageElements[0].Attributes.GetNamedItem("src").NodeValue = imagePath;
-            ToastNotification toast = new ToastNotification(toastXml);
+            var toast = new ToastNotification(toastXml);
             ToastNotificationManager.CreateToastNotifier("VRCX").Show(toast);
-        }
-
-        private struct XSOMessage
-        {
-            public int messageType { get; set; }
-            public int index { get; set; }
-            public float volume { get; set; }
-            public string audioPath { get; set; }
-            public float timeout { get; set; }
-            public string title { get; set; }
-            public string content { get; set; }
-            public string icon { get; set; }
-            public float height { get; set; }
-            public float opacity { get; set; }
-            public bool useBase64Icon { get; set; }
-            public string sourceApp { get; set; }
         }
 
         public void XSNotification(string Title, string Content, int Timeout, string Image = "")
         {
             bool UseBase64Icon;
             string Icon;
-            if (String.IsNullOrEmpty(Image))
+            if (string.IsNullOrEmpty(Image))
             {
                 UseBase64Icon = true;
-                Icon = "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAHaGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDUgNzkuMTYzNDk5LCAyMDE4LzA4LzEzLTE2OjQwOjIyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIxLTA0LTA4VDE0OjU3OjAxKzEyOjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMS0wNC0wOFQxNjozMzoxMCsxMjowMCIgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyMS0wNC0wOFQxNjozMzoxMCsxMjowMCIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo2YTY5MmQzYi03ZTJkLTNiNGUtYTMzZC1hN2MwOTNlOGU0OTkiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDo1NTE2MWIyMi1hYzgxLTY3NDYtODAyYi1kODIzYWFmN2RjYjciIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo3ZjJjNTA2ZS02YTVhLWRhNGEtOTg5Mi02NDZiMzQ0MGQxZTgiPiA8cGhvdG9zaG9wOkRvY3VtZW50QW5jZXN0b3JzPiA8cmRmOkJhZz4gPHJkZjpsaT5hZG9iZTpkb2NpZDpwaG90b3Nob3A6NmJmOGE5MTgtY2QzZS03OTRjLTk3NzktMzM0YjYwZWJiNTYyPC9yZGY6bGk+IDwvcmRmOkJhZz4gPC9waG90b3Nob3A6RG9jdW1lbnRBbmNlc3RvcnM+IDx4bXBNTTpIaXN0b3J5PiA8cmRmOlNlcT4gPHJkZjpsaSBzdEV2dDphY3Rpb249ImNyZWF0ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6N2YyYzUwNmUtNmE1YS1kYTRhLTk4OTItNjQ2YjM0NDBkMWU4IiBzdEV2dDp3aGVuPSIyMDIxLTA0LTA4VDE0OjU3OjAxKzEyOjAwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoV2luZG93cykiLz4gPHJkZjpsaSBzdEV2dDphY3Rpb249InNhdmVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOmJhM2ZjODI3LTM0ZjQtYjU0OC05ZGFiLTZhMTZlZmQzZjAxMSIgc3RFdnQ6d2hlbj0iMjAyMS0wNC0wOFQxNTowMTozMSsxMjowMCIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTkgKFdpbmRvd3MpIiBzdEV2dDpjaGFuZ2VkPSIvIi8+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJzYXZlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDo2YTY5MmQzYi03ZTJkLTNiNGUtYTMzZC1hN2MwOTNlOGU0OTkiIHN0RXZ0OndoZW49IjIwMjEtMDQtMDhUMTY6MzM6MTArMTI6MDAiIHN0RXZ0OnNv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";
+                Icon =
+                    "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAHaGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDUgNzkuMTYzNDk5LCAyMDE4LzA4LzEzLTE2OjQwOjIyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIxLTA0LTA4VDE0OjU3OjAxKzEyOjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMS0wNC0wOFQxNjozMzoxMCsxMjowMCIgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyMS0wNC0wOFQxNjozMzoxMCsxMjowMCIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo2YTY5MmQzYi03ZTJkLTNiNGUtYTMzZC1hN2MwOTNlOGU0OTkiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDo1NTE2MWIyMi1hYzgxLTY3NDYtODAyYi1kODIzYWFmN2RjYjciIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo3ZjJjNTA2ZS02YTVhLWRhNGEtOTg5Mi02NDZiMzQ0MGQxZTgiPiA8cGhvdG9zaG9wOkRvY3VtZW50QW5jZXN0b3JzPiA8cmRmOkJhZz4gPHJkZjpsaT5hZG9iZTpkb2NpZDpwaG90b3Nob3A6NmJmOGE5MTgtY2QzZS03OTRjLTk3NzktMzM0YjYwZWJiNTYyPC9yZGY6bGk+IDwvcmRmOkJhZz4gPC9waG90b3Nob3A6RG9jdW1lbnRBbmNlc3RvcnM+IDx4bXBNTTpIaXN0b3J5PiA8cmRmOlNlcT4gPHJkZjpsaSBzdEV2dDphY3Rpb249ImNyZWF0ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6N2YyYzUwNmUtNmE1YS1kYTRhLTk4OTItNjQ2YjM0NDBkMWU4IiBzdEV2dDp3aGVuPSIyMDIxLTA0LTA4VDE0OjU3OjAxKzEyOjAwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxOSAoV2luZG93cykiLz4gPHJkZjpsaSBzdEV2dDphY3Rpb249InNhdmVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOmJhM2ZjODI3LTM0ZjQtYjU0OC05ZGFiLTZhMTZlZmQzZjAxMSIgc3RFdnQ6d2hlbj0iMjAyMS0wNC0wOFQxNTowMTozMSsxMjowMCIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTkgKFdpbmRvd3MpIiBzdEV2dDpjaGFuZ2VkPSIvIi8+IDxyZGY6bGkgc3RFdnQ6YWN0aW9uPSJzYXZlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDo2YTY5MmQzYi03ZTJkLTNiNGUtYTMzZC1hN2MwOTNlOGU0OTkiIHN0RXZ0OndoZW49IjIwMjEtMDQtMDhUMTY6MzM6MTArMTI6MDAiIHN0RXZ0OnNv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";
             }
             else
             {
@@ -303,11 +293,11 @@ namespace VRCX
                 Icon = Image;
             }
 
-            IPAddress broadcastIP = IPAddress.Parse("127.0.0.1");
-            Socket broadcastSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            IPEndPoint endPoint = new IPEndPoint(broadcastIP, 42069);
+            var broadcastIP = IPAddress.Parse("127.0.0.1");
+            var broadcastSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            var endPoint = new IPEndPoint(broadcastIP, 42069);
 
-            XSOMessage msg = new XSOMessage();
+            var msg = new XSOMessage();
             msg.messageType = 1;
             msg.title = Title;
             msg.content = Content;
@@ -318,21 +308,21 @@ namespace VRCX
             msg.useBase64Icon = UseBase64Icon;
             msg.icon = Icon;
 
-            byte[] byteBuffer = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(msg);
+            var byteBuffer = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(msg);
             broadcastSocket.SendTo(byteBuffer, endPoint);
         }
 
         public void DownloadVRCXUpdate(string url)
         {
             var Location = Path.Combine(Program.AppDataDirectory, "update.exe");
-            WebClient client = new WebClient();
+            var client = new WebClient();
             client.Headers.Add("user-agent", Program.Version);
             client.DownloadFile(new Uri(url), Location);
         }
 
         public void RestartApplication()
         {
-            Process VRCXProcess = new Process();
+            var VRCXProcess = new Process();
             VRCXProcess.StartInfo.FileName = Path.Combine(Program.BaseDirectory, "VRCX.exe");
             VRCXProcess.StartInfo.UseShellExecute = false;
             VRCXProcess.StartInfo.Arguments = "/Upgrade";
@@ -353,7 +343,7 @@ namespace VRCX
             ipcClient.Connect();
             if (!ipcClient.IsConnected)
                 return;
-            var buffer = Encoding.UTF8.GetBytes($"{{\"type\":\"VRCXLaunch\"}}" + (char)0x00);
+            var buffer = Encoding.UTF8.GetBytes("{\"type\":\"VRCXLaunch\"}" + (char)0x00);
             ipcClient.BeginWrite(buffer, 0, buffer.Length, IPCClient.OnSend, ipcClient);
         }
 
@@ -377,22 +367,19 @@ namespace VRCX
 
         public string GetLaunchCommand()
         {
-            string command = StartupArgs.LaunchCommand;
+            var command = StartupArgs.LaunchCommand;
             StartupArgs.LaunchCommand = string.Empty;
             return command;
         }
 
         public void FocusWindow()
         {
-            MainForm.Instance.Invoke(new Action(() =>
-            {
-                MainForm.Instance.Focus_Window();
-            }));
+            MainForm.Instance.Invoke(new Action(() => { MainForm.Instance.Focus_Window(); }));
         }
 
         public string CustomCssPath()
         {
-            var output = String.Empty;
+            var output = string.Empty;
             var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX\\custom.css");
             if (File.Exists(filePath))
                 output = filePath;
@@ -401,7 +388,7 @@ namespace VRCX
 
         public string CustomScriptPath()
         {
-            var output = String.Empty;
+            var output = string.Empty;
             var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX\\custom.js");
             if (File.Exists(filePath))
                 output = filePath;
@@ -442,28 +429,27 @@ namespace VRCX
             }
         }
 
-        private static readonly MD5 _hasher = MD5.Create();
-
         public int GetColourFromUserID(string userId)
         {
             var hash = _hasher.ComputeHash(Encoding.UTF8.GetBytes(userId));
-            return hash[3] << 8 | hash[4];
+            return (hash[3] << 8) | hash[4];
         }
 
-        public Dictionary<string, int> GetColourBulk(List<Object> userIds)
+        public Dictionary<string, int> GetColourBulk(List<object> userIds)
         {
-            Dictionary<string, int> output = new Dictionary<string, int>();
+            var output = new Dictionary<string, int>();
             foreach (string userId in userIds)
             {
                 output.Add(userId, GetColourFromUserID(userId));
             }
+
             return output;
         }
 
         public string GetClipboard()
         {
-            var clipboard = String.Empty;
-            Thread thread = new Thread(() => clipboard = Clipboard.GetText());
+            var clipboard = string.Empty;
+            var thread = new Thread(() => clipboard = Clipboard.GetText());
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             thread.Join();
@@ -475,8 +461,8 @@ namespace VRCX
             // https://answers.unity.com/questions/177945/playerprefs-changing-the-name-of-keys.html?childToView=208076#answer-208076
             // VRC_GROUP_ORDER_usr_032383a7-748c-4fb2-94e4-bcb928e5de6b_h2810492971
             uint hash = 5381;
-            foreach (char c in key)
-                hash = hash * 33 ^ c;
+            foreach (var c in key)
+                hash = (hash * 33) ^ c;
             var keyName = key + "_h" + hash;
 
             using (var regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\VRChat\VRChat"))
@@ -502,8 +488,8 @@ namespace VRCX
         public bool SetVRChatRegistryKey(string key, string value)
         {
             uint hash = 5381;
-            foreach (char c in key)
-                hash = hash * 33 ^ c;
+            foreach (var c in key)
+                hash = (hash * 33) ^ c;
             var keyName = key + "_h" + hash;
 
             using (var regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\VRChat\VRChat", true))
@@ -523,11 +509,13 @@ namespace VRCX
                         setValue = value;
                         break;
                 }
+
                 if (setValue == null)
                     return false;
 
                 regKey.SetValue(keyName, setValue, type);
             }
+
             return true;
         }
 
@@ -555,6 +543,7 @@ namespace VRCX
                     output.Add(userId, type);
                 }
             }
+
             return output;
         }
 
@@ -579,6 +568,7 @@ namespace VRCX
                     }
                 }
             }
+
             return 0;
         }
 
@@ -602,6 +592,7 @@ namespace VRCX
                 sb.Append(type.ToString("000"));
                 lines.Add(sb.ToString());
             }
+
             try
             {
                 File.WriteAllLines(filePath, lines);
@@ -610,6 +601,7 @@ namespace VRCX
             {
                 return false;
             }
+
             return true;
         }
 
@@ -619,7 +611,7 @@ namespace VRCX
             {
                 using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
                 {
-                    if (enabled == true)
+                    if (enabled)
                     {
                         var path = Application.ExecutablePath;
                         key.SetValue("VRCX", $"\"{path}\" --startup");
@@ -650,6 +642,27 @@ namespace VRCX
             }
 
             ScreenshotHelper.WritePNGDescription(path, metadataString);
+        }
+
+        public void FlashWindow()
+        {
+            MainForm.Instance.BeginInvoke(new MethodInvoker(() => { WinformThemer.Flash(MainForm.Instance); }));
+        }
+
+        private struct XSOMessage
+        {
+            public int messageType { get; set; }
+            public int index { get; set; }
+            public float volume { get; set; }
+            public string audioPath { get; set; }
+            public float timeout { get; set; }
+            public string title { get; set; }
+            public string content { get; set; }
+            public string icon { get; set; }
+            public float height { get; set; }
+            public float opacity { get; set; }
+            public bool useBase64Icon { get; set; }
+            public string sourceApp { get; set; }
         }
     }
 }
