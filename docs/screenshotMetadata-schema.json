@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "This schema is primarily for any developers that want to interface with this outside of VRCX and want an easy way to view/generate the format without crawling through the codebase. It's also for me a couple months from now when I come back to this and have no idea what was done."
+  "title": "VRChat Screenshot JSON",
+  "description": "JSON object attached by VRCX to screenshot files taken by users in-game.",
+  "type": "object",
+  "required": ["application", "version", "author", "world", "players"],
+  "properties": {
+    "application": {
+      "type": "string",
+	  "default": "VRCX"
+      "description": "Name of the application writing to the screenshot. Should be VRCX."
+    },
+    "version": {
+      "type": "integer",
+      "description": "The version of this schema. If the format changes, this number should change."
+	  "const": 1
+    },
+    "author": {
+      "type": "object",
+      "description": "The details of the user that took the picture.",
+      "required": ["id", "displayName"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the user."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The display name of the user."
+        }
+      }
+    },
+    "world": {
+      "type": "object",
+      "description": "Information about the world the picture was taken in.",
+      "required": ["id", "name", "instanceId"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the world."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the world."
+        },
+        "instanceId": {
+          "type": "string",
+          "description": "The full ID of the game instance."
+        }
+      }
+    },
+    "players": {
+      "type": "array",
+      "description": "A list of players in the world at the time the picture was taken.",
+      "items": {
+        "type": "object",
+        "required": ["id", "displayName"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the player in the world."
+          },
+          "displayName": {
+            "type": "string",
+            "description": "The display name of the player in the world."
+          }
+        }
+      }
+    }
+  }
+}
