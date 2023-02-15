@@ -20185,6 +20185,25 @@ speechSynthesis.getVoices();
         );
     };
 
+    /**
+     * This function should only ever be called by .NET
+     * Function receives an unmodified json string grabbed from the screenshot file
+     * Error checking and and verification of data is done in .NET already; In the case that the data/file is invalid, a JSON object with the token "error" will be returned containing a description of the problem.
+     * Example: {"error":"Invalid file selected. Please select a valid VRChat screenshot."}
+     * See docs/screenshotMetadata.json for schema
+     * @param {string} metadata - JSON string grabbed from PNG file
+     */
+    $app.methods.displayScreenshotMetadata = function (metadata) {
+        let json = JSON.parse(metadata);
+        console.log(json);
+
+        if (json.error) {
+            console.error(json.error)
+            // let user know about error somehow
+            return;
+        }
+    }
+
     // YouTube API
 
     $app.data.youTubeApiKey = '';

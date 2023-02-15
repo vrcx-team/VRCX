@@ -32,6 +32,7 @@ namespace VRCX
         public static readonly AppApi Instance;
 
         private static readonly MD5 _hasher = MD5.Create();
+        private static bool dialogOpen;
 
         static AppApi()
         {
@@ -644,6 +645,66 @@ namespace VRCX
             ScreenshotHelper.WritePNGDescription(path, metadataString);
         }
 
+        // Create a function that opens a file dialog so a user can choose a .png file. Print the name of the file after it is chosen
+        public void OpenScreenshotFileDialog()
+        {
+            if (dialogOpen) return;
+            dialogOpen = true;
+
+            Thread thread = new Thread(() =>
+            {
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    openFileDialog.DefaultExt = ".png";
+                    openFileDialog.Filter = "PNG Files (*.png)|*.png";
+                    openFileDialog.FilterIndex = 1;
+                    openFileDialog.RestoreDirectory = true;
+                    openFileDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        dialogOpen = false;
+                        var path = openFileDialog.FileName;
+                        var fileName = Path.GetFileNameWithoutExtension(path);
+
+                        const string fileNamePrefix = "VRChat_";
+                        JObject metadata = new JObject();
+
+                        if (File.Exists(path) && path.EndsWith(".png") && fileName.StartsWith(fileNamePrefix))
+                        {
+                            string metadataString = ScreenshotHelper.ReadPNGDescription(path);
+
+                            if (!String.IsNullOrEmpty(metadataString))
+                            {
+                                try
+                                {
+                                    metadata = JObject.Parse(metadataString);
+                                }
+                                catch (JsonReaderException ex)
+                                {
+                                    metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. ({ex.Message}) Text: {metadataString}");
+                                }
+                            }
+                            else
+                            {
+                                metadata.Add("error", "No metadata found in this file.");
+                            }
+                        }
+                        else
+                        {
+                            metadata.Add("error", "Invalid file selected. Please select a valid VRChat screenshot.");
+                        }
+
+
+                        ExecuteAppFunction("displayScreenshotMetadata", metadata.ToString(Formatting.None));
+                    }
+                }
+            });
+
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+        }
+        
         public void FlashWindow()
         {
             MainForm.Instance.BeginInvoke(new MethodInvoker(() => { WinformThemer.Flash(MainForm.Instance); }));

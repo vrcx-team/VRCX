@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,11 +18,11 @@ namespace VRCX
             
             var png = File.ReadAllBytes(path);
 
-            int newChunkIndex = FindChunk(png, "IHDR");
+            int newChunkIndex = FindEndOfChunk(png, "IHDR");
             if (newChunkIndex == -1) return false;
 
             // If this file already has a text chunk, chances are it got logged twice for some reason. Stop.
-            int existingiTXt = FindChunk(png, "iTXt");
+            int existingiTXt = FindChunkIndex(png, "iTXt");
             if (existingiTXt != -1) return false;
 
             var newChunk = new PNGChunk("iTXt");
@@ -35,6 +36,19 @@ namespace VRCX
             return true;
         }
 
+        public static string ReadPNGDescription(string path)
+        {
+            if (!File.Exists(path) || !IsPNGFile(path)) return null;
+            
+            var png = File.ReadAllBytes(path);
+            PNGChunk existingiTXt = FindChunk(png, "iTXt");
+            if (existingiTXt == null) return null;
+
+            string text = existingiTXt.GetText("Description");
+
+            return text;
+        }
+
         public static bool IsPNGFile(string path)
         {
             var png = File.ReadAllBytes(path);
@@ -42,7 +56,7 @@ namespace VRCX
             return pngSignatureBytes.SequenceEqual(pngSignature);
         }
 
-        static int FindChunk(byte[] png, string type)
+        static int FindChunkIndex(byte[] png, string type)
         {
             int index = 8;
 
@@ -59,12 +73,43 @@ namespace VRCX
 
                 if (name == type)
                 {
-                    return index + length + 12;
+                    return index;
                 }
                 index += length + 12;
             }
-
+            
             return -1;
+        }
+
+        static int FindEndOfChunk(byte[] png, string type)
+        {
+            int index = FindChunkIndex(png, type);
+            if (index == -1) return index;
+
+            byte[] chunkLength = new byte[4];
+            Array.Copy(png, index, chunkLength, 0, 4);
+            Array.Reverse(chunkLength);
+            int length = BitConverter.ToInt32(chunkLength, 0);
+
+            return index + length + 12;
+        }
+
+        static PNGChunk FindChunk(byte[] png, string type)
+        {
+            int index = FindChunkIndex(png, type);
+            if (index == -1) return null;
+
+            byte[] chunkLength = new byte[4];
+            Array.Copy(png, index, chunkLength, 0, 4);
+            Array.Reverse(chunkLength);
+            int length = BitConverter.ToInt32(chunkLength, 0);
+
+            byte[] chunkData = new byte[length];
+            Array.Copy(png, index + 8, chunkData, 0, length);
+
+            string test = BitConverter.ToString(chunkData);
+
+            return new PNGChunk(type, chunkData);
         }
     }
 
@@ -75,9 +120,11 @@ namespace VRCX
 
     // Proper practice here for arbitrary image processing would be to check the PNG file being passed for any existing iTXt chunks with the same keyword that we're trying to use; If we find one, we replace that chunk's data instead of creating a new chunk.
     // Luckily, VRChat should never do this! Bugs notwithstanding, we should never re-process a png file either. So we're just going to skip that logic.
+    // This code would be HORRIBLE for general parsing of PNG files/metadata. It's not really meant to do that, it's just meant to do exactly what we need it to do.
     internal class PNGChunk
     {
         public string ChunkType;
+        public List<byte> ChunkBytes;
         public List<byte> ChunkDataBytes;
         public int ChunkDataLength;
 
@@ -90,6 +137,13 @@ namespace VRCX
         {
             this.ChunkType = chunkType;
             this.ChunkDataBytes = new List<byte>();
+        }
+
+        public PNGChunk(string chunkType, byte[] bytes)
+        {
+            this.ChunkType = chunkType;
+            this.ChunkDataBytes = bytes.ToList();
+            this.ChunkDataLength = bytes.Length;
         }
 
         // Construct iTXt chunk data
@@ -118,6 +172,13 @@ namespace VRCX
             chunk.AddRange(BitConverter.GetBytes(Crc32(ChunkDataBytes.ToArray(), 0, ChunkDataLength, tEXtCRC)).Reverse()); // Add chunk CRC32 hash
 
             return chunk.ToArray();
+        }
+
+        public string GetText(string keyword)
+        {
+            int offset = Encoding.ASCII.GetByteCount(keyword) + 5;
+            // Read string from PNG chunk
+            return Encoding.UTF8.GetString(ChunkDataBytes.ToArray(), offset, ChunkDataBytes.Count - offset);
         }
 
         // https://web.archive.org/web/20150825201508/http://upokecenter.dreamhosters.com/articles/png-image-encoder-in-c/
