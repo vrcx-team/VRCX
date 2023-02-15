@@ -659,7 +659,12 @@ namespace VRCX
                     openFileDialog.Filter = "PNG Files (*.png)|*.png";
                     openFileDialog.FilterIndex = 1;
                     openFileDialog.RestoreDirectory = true;
-                    openFileDialog.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+
+                    string initialPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+                    if (Directory.Exists(initialPath))
+                    {
+                        openFileDialog.InitialDirectory = initialPath;
+                    }
 
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
