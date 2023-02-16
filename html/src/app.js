@@ -412,7 +412,11 @@ speechSynthesis.getVoices();
                 if (response.status === 200) {
                     this.$throw(0, 'Invalid JSON response');
                 }
-                if (response.status === 504 || response.status === 502) {
+                if (
+                    response.status === 504 ||
+                    response.status === 502 ||
+                    response.status === 429
+                ) {
                     // ignore expected API errors
                     throw new Error(
                         `${response.status}: ${response.data} ${endpoint}`
@@ -9337,7 +9341,7 @@ speechSynthesis.getVoices();
                 }
                 break;
             case 'screenshot':
-                if (!this.isGameRunning || !this.screenshotHelper) {
+                if (!this.screenshotHelper) {
                     break;
                 }
                 // var entry = {
@@ -9358,8 +9362,8 @@ speechSynthesis.getVoices();
                         displayName: API.currentUser.displayName
                     },
                     world: {
-                        id: location.worldId,
                         name: this.lastLocation.name,
+                        id: location.worldId,
                         instanceId: this.lastLocation.location
                     },
                     players: []

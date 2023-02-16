@@ -163,6 +163,7 @@
             "past_display_names": "過去顯示名稱",
             "config_json": "JSON 資料",
             "current_user_json": "目前玩家的 JSON 資料",
+            "feedback": "反饋",
             "refresh_tooltip": "重新整理",
             "clear_results_tooltip": "清除結果"
         },
@@ -731,6 +732,9 @@
                 "friends_only": "好友",
                 "load_more": "載入更多……"
             },
+            "gallery": {
+                "header": "畫廊"
+            },
             "json": {
                 "header": "原始資料"
             }
@@ -1061,6 +1065,7 @@
         "otp": {
             "header": "雙重認證",
             "description": "輸入你儲存的其中一個備份驗證碼",
+            "resend": "重新傳送驗證碼",
             "use_otp": "使用驗證碼",
             "verify": "驗證",
             "input_placeholder": "備份驗證碼",
@@ -1213,7 +1218,7 @@
         },
         "change_table_size": {
             "header": "最大表格大小",
-            "description": "較大的資料表大小可能會影響內存用量和性能 （預設：1000）",
+            "description": "限制從資料庫讀取紀錄到介面的數量，較大的資料表大小可能會影響內存用量和效能 （預設：1000）",
             "cancel": "取消",
             "save": "儲存",
             "input_error": "請輸入有效的行數"
