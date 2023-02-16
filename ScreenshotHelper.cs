@@ -51,9 +51,14 @@ namespace VRCX
 
         public static bool IsPNGFile(string path)
         {
-            var png = File.ReadAllBytes(path);
-            var pngSignature = png.Take(8).ToArray();
-            return pngSignatureBytes.SequenceEqual(pngSignature);
+            // Read only the first 8 bytes of the file to check if it's a PNG file instead of reading the entire thing into memory just to see check a couple bytes.
+            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                if (fs.Length < 33) return false;
+                
+                byte[] signature = new byte[8];
+                fs.Read(signature, 0, 8);
+                return signature.SequenceEqual(pngSignatureBytes);
         }
 
         static int FindChunkIndex(byte[] png, string type)
