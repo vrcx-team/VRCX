@@ -651,35 +651,47 @@ namespace VRCX
             if (dialogOpen) return;
             dialogOpen = true;
 
-            Thread thread = new Thread(() =>
+            var thread = new Thread(() =>
             {
-                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                using (var openFileDialog = new OpenFileDialog())
                 {
                     openFileDialog.DefaultExt = ".png";
                     openFileDialog.Filter = "PNG Files (*.png)|*.png";
                     openFileDialog.FilterIndex = 1;
                     openFileDialog.RestoreDirectory = true;
 
-                    string initialPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+                    var initialPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
                     if (Directory.Exists(initialPath))
                     {
                         openFileDialog.InitialDirectory = initialPath;
                     }
 
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+                    dialogOpen = false;
+                    var path = openFileDialog.FileName;
+                    var fileName = Path.GetFileNameWithoutExtension(path);
+
+                    const string fileNamePrefix = "VRChat_";
+                    var metadata = new JObject();
+
+                    if (File.Exists(path) && path.EndsWith(".png") && fileName.StartsWith(fileNamePrefix))
                     {
-                        dialogOpen = false;
-                        var path = openFileDialog.FileName;
-                        var fileName = Path.GetFileNameWithoutExtension(path);
+                        var metadataString = ScreenshotHelper.ReadPNGDescription(path);
 
-                        const string fileNamePrefix = "VRChat_";
-                        JObject metadata = new JObject();
-
-                        if (File.Exists(path) && path.EndsWith(".png") && fileName.StartsWith(fileNamePrefix))
+                        if (!string.IsNullOrEmpty(metadataString))
                         {
-                            string metadataString = ScreenshotHelper.ReadPNGDescription(path);
-
-                            if (!String.IsNullOrEmpty(metadataString))
+                            if (metadataString.StartsWith("lfs"))
+                            {
+                                try
+                                {
+                                    metadata = ScreenshotHelper.ParseLfsPicture(metadataString);
+                                }
+                                catch (Exception ex)
+                                {
+                                    metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. ({ex.Message}) Text: {metadataString}");
+                                }
+                            }
+                            else
                             {
                                 try
                                 {
@@ -690,26 +702,28 @@ namespace VRCX
                                     metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. ({ex.Message}) Text: {metadataString}");
                                 }
                             }
-                            else
-                            {
-                                metadata.Add("error", "No metadata found in this file.");
-                            }
                         }
                         else
                         {
-                            metadata.Add("error", "Invalid file selected. Please select a valid VRChat screenshot.");
+                            metadata.Add("error", "No metadata found in this file.");
                         }
-
-
-                        ExecuteAppFunction("displayScreenshotMetadata", metadata.ToString(Formatting.None));
                     }
+                    else
+                    {
+                        metadata.Add("error", "Invalid file selected. Please select a valid VRChat screenshot.");
+                    }
+
+                    metadata.Add("fileName", fileName);
+                    metadata.Add("filePath", path);
+                    metadata.Add("fileSize", $"{(new FileInfo(path).Length / 1024f / 1024f).ToString("0.00")} MB");
+                    ExecuteAppFunction("displayScreenshotMetadata", metadata.ToString(Formatting.Indented));
                 }
             });
 
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
         }
-        
+
         public void FlashWindow()
         {
             MainForm.Instance.BeginInvoke(new MethodInvoker(() => { WinformThemer.Flash(MainForm.Instance); }));

@@ -3795,6 +3795,27 @@ html
                 template(#footer)
                     el-button(type="primary" size="small" :disabled="inviteGroupDialog.loading || !inviteGroupDialog.userIds.length" @click="sendGroupInvite()") Invite
 
+            //- dialog: screenshot metadata
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="screenshotMetadataDialog" :visible.sync="screenshotMetadataDialog.visible" :title="$t('dialog.screenshot_metadata.header')" width="600px")
+                div(v-if="screenshotMetadataDialog.visible")
+                    location(:location="screenshotMetadataDialog.metadata.world.instanceId" :hint="screenshotMetadataDialog.metadata.world.name")
+                    br
+                    span.x-link(v-text="screenshotMetadataDialog.metadata.author.displayName" @click="showUserDialog(screenshotMetadataDialog.metadata.author.id)" style="color:#909399;font-family:monospace")
+                    br
+                    span(v-text="screenshotMetadataDialog.metadata.fileName")
+                    el-tag(type="info" effect="plain" size="mini" style="margin-left:5px" v-text="screenshotMetadataDialog.metadata.fileSize")
+                    el-popover(placement="right" width="500px" trigger="click")
+                        img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.filePath" style="flex:none;height:315px;border-radius:4px;margin-top:5px")
+                        img(v-lazy="screenshotMetadataDialog.metadata.filePath" style="width:1200px")
+                    br
+                    template(v-if="screenshotMetadataDialog.metadata.error")
+                        span(v-text="screenshotMetadataDialog.metadata.error")
+                        br
+                    span(v-for="user in screenshotMetadataDialog.metadata.players" style="margin-top:5px")
+                        span.x-link(v-text="user.displayName" @click="lookupUser(user)")
+                        span(v-if="user.x" v-text="'('+user.x+', '+user.y+', '+user.z+')'" style="margin-left:5px;color:#909399;font-family:monospace")
+                        br
+
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" :title="$t('dialog.open_source.header')" width="650px")
                 div(v-if="ossDialog" style="height:350px;overflow:hidden scroll;word-break:break-all")

@@ -917,7 +917,7 @@ speechSynthesis.getVoices();
                 this.region = '';
                 if ($app.isRealInstance(instanceId)) {
                     this.region = L.region;
-                    if (!L.region) {
+                    if (!L.region && L.instanceId) {
                         this.region = 'us';
                     }
                 }
@@ -20194,15 +20194,34 @@ speechSynthesis.getVoices();
      * @param {string} metadata - JSON string grabbed from PNG file
      */
     $app.methods.displayScreenshotMetadata = function (metadata) {
-        let json = JSON.parse(metadata);
+        var json = JSON.parse(metadata);
         console.log(json);
 
         if (json.error) {
-            console.error(json.error)
-            // let user know about error somehow
+            this.$message({
+                message: json.error,
+                type: 'error'
+            });
+            console.error(json.error);
             return;
+            // let user know about error somehow
         }
-    }
+        this.screenshotMetadataDialog.metadata = json;
+        this.showScreenshotMetadataDialog();
+    };
+
+    $app.data.screenshotMetadataDialog = {
+        visible: false,
+        metadata: {}
+    };
+
+    $app.methods.showScreenshotMetadataDialog = function () {
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.screenshotMetadataDialog.$el)
+        );
+        var D = this.screenshotMetadataDialog;
+        D.visible = true;
+    };
 
     // YouTube API
 
