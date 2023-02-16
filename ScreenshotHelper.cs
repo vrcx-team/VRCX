@@ -11,7 +11,17 @@ namespace VRCX
     internal static class ScreenshotHelper
     {
         private static byte[] pngSignatureBytes = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-        
+
+        /// <summary>
+        /// Writes a text description into a PNG file at the specified path.
+        /// Creates an iTXt PNG chunk in the target file, using the Description tag, with the specified text.
+        /// </summary>
+        /// <param name="path">The file path of the PNG file in which the description is to be written.</param>
+        /// <param name="text">The text description that is to be written into the PNG file.</param>
+        /// <returns>
+        ///   <c>true</c> if the text description is successfully written to the PNG file;
+        ///   otherwise, <c>false</c>.
+        /// </returns>
         public static bool WritePNGDescription(string path, string text)
         {
             if (!File.Exists(path) || !IsPNGFile(path)) return false;
@@ -36,6 +46,14 @@ namespace VRCX
             return true;
         }
 
+        /// <summary>
+        /// Reads a text description from a PNG file at the specified path.
+        /// Reads any existing iTXt PNG chunk in the target file, using the Description tag.
+        /// </summary>
+        /// <param name="path">The file path of the PNG file in which the description is to be read from.</param>
+        /// <returns>
+        ///  The text description that is read from the PNG file.
+        /// </returns>
         public static string ReadPNGDescription(string path)
         {
             if (!File.Exists(path) || !IsPNGFile(path)) return null;
@@ -49,6 +67,11 @@ namespace VRCX
             return text;
         }
 
+        /// <summary>
+        /// Determines whether the specified file is a PNG file. We do this by checking if the first 8 bytes in the file path match the PNG signature.
+        /// </summary>
+        /// <param name="path">The path of the file to check.</param>
+        /// <returns></returns>
         public static bool IsPNGFile(string path)
         {
             // Read only the first 8 bytes of the file to check if it's a PNG file instead of reading the entire thing into memory just to see check a couple bytes.
@@ -59,10 +82,18 @@ namespace VRCX
                 byte[] signature = new byte[8];
                 fs.Read(signature, 0, 8);
                 return signature.SequenceEqual(pngSignatureBytes);
+            }
         }
 
+        /// <summary>
+        /// Finds the index of the first byte of the specified chunk type in the specified PNG file.
+        /// </summary>
+        /// <param name="png">Array of bytes representing a PNG file.</param>
+        /// <param name="type">Type of PMG chunk to find</param>
+        /// <returns></returns>
         static int FindChunkIndex(byte[] png, string type)
         {
+            // The first 8 bytes of the file are the png signature, so we can skip them.
             int index = 8;
 
             while (index < png.Length)
@@ -76,6 +107,7 @@ namespace VRCX
 
                 int length = BitConverter.ToInt32(chunkLength, 0);
 
+                // We don't need to reverse strings since UTF-8 strings aren't affected by endianess, given that they're a sequence of bytes. 
                 byte[] chunkName = new byte[4];
                 Array.Copy(png, index + 4, chunkName, 0, 4);
                 string name = Encoding.UTF8.GetString(chunkName);
@@ -84,12 +116,20 @@ namespace VRCX
                 {
                     return index;
                 }
+
+                // The chunk length is 4 bytes, the chunk name is 4 bytes, the chunk data is length bytes, and the chunk CRC is 4 bytes.
                 index += length + 12;
             }
             
             return -1;
         }
 
+        /// <summary>
+        /// Finds the index of the end of the specified chunk type in the specified PNG file.
+        /// </summary>
+        /// <param name="png">Array of bytes representing a PNG file.</param>
+        /// <param name="type">Type of PMG chunk to find</param>
+        /// <returns></returns>
         static int FindEndOfChunk(byte[] png, string type)
         {
             int index = FindChunkIndex(png, type);
@@ -103,6 +143,12 @@ namespace VRCX
             return index + length + 12;
         }
 
+        /// <summary>
+        /// Finds the specified chunk type in the specified PNG file and returns it as a PNGChunk.
+        /// </summary>
+        /// <param name="png">Array of bytes representing a PNG file</param>
+        /// <param name="type">Type of PMG chunk to find</param>
+        /// <returns>PNGChunk</returns>
         static PNGChunk FindChunk(byte[] png, string type)
         {
             int index = FindChunkIndex(png, type);
@@ -115,8 +161,6 @@ namespace VRCX
 
             byte[] chunkData = new byte[length];
             Array.Copy(png, index + 8, chunkData, 0, length);
-
-            string test = BitConverter.ToString(chunkData);
 
             return new PNGChunk(type, chunkData);
         }
@@ -156,7 +200,11 @@ namespace VRCX
             this.ChunkDataLength = bytes.Length;
         }
 
-        // Construct iTXt chunk data
+        /// <summary>
+        /// Initializes this PNGChunk's data in the format of an iTXt chunk with the specified keyword and text.
+        /// </summary>
+        /// <param name="keyword">Keyword for text chunk</param>
+        /// <param name="text">Text data for text chunk</param>
         public void InitializeTextChunk(string keyword, string text)
         {
             // Create our chunk data byte array
@@ -171,7 +219,10 @@ namespace VRCX
             ChunkDataLength = ChunkDataBytes.Count;
         }
 
-        // Construct & return PNG chunk
+        /// <summary>
+        /// Constructs and returns a full, coherent PNG chunk from this PNGChunk's data.
+        /// </summary>
+        /// <returns>PNG chunk byte array</returns>
         public byte[] ConstructChunkByteArray()
         {
             List<byte> chunk = new List<byte>();
@@ -194,6 +245,11 @@ namespace VRCX
             return chunk.ToArray();
         }
 
+        /// <summary>
+        /// Gets the text from an iTXt chunk
+        /// </summary>
+        /// <param name="keyword">Keyword of the text chunk</param>
+        /// <returns>Text from chunk.</returns>
         public string GetText(string keyword)
         {
             int offset = keywordEncoding.GetByteCount(keyword) + 5;
@@ -201,6 +257,7 @@ namespace VRCX
             return Encoding.UTF8.GetString(ChunkDataBytes.ToArray(), offset, ChunkDataBytes.Count - offset);
         }
 
+        // Crc32 implementation from
         // https://web.archive.org/web/20150825201508/http://upokecenter.dreamhosters.com/articles/png-image-encoder-in-c/
         private static uint Crc32(byte[] stream, int offset, int length, uint crc)
         {
