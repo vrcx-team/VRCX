@@ -69,12 +69,16 @@ namespace VRCX
             {
                 byte[] chunkLength = new byte[4];
                 Array.Copy(png, index, chunkLength, 0, 4);
-                Array.Reverse(chunkLength);
+
+                // BitConverter wants little endian(unless your system is big endian for some reason), PNG multi-byte integers are big endian. So we reverse the array.
+                http://www.libpng.org/pub/png/spec/1.2/PNG-DataRep.html
+                if (BitConverter.IsLittleEndian) Array.Reverse(chunkLength); 
+
                 int length = BitConverter.ToInt32(chunkLength, 0);
 
                 byte[] chunkName = new byte[4];
                 Array.Copy(png, index + 4, chunkName, 0, 4);
-                string name = Encoding.ASCII.GetString(chunkName);
+                string name = Encoding.UTF8.GetString(chunkName);
 
                 if (name == type)
                 {
@@ -132,11 +136,12 @@ namespace VRCX
         public List<byte> ChunkBytes;
         public List<byte> ChunkDataBytes;
         public int ChunkDataLength;
+        private readonly Encoding keywordEncoding = Encoding.GetEncoding("ISO-8859-1"); // ISO-8859-1/Latin1 is the encoding used for the keyword in text chunks. 
 
         // crc lookup table
         private static uint[] crcTable;
         // init lookup table and store crc for iTXt
-        private static uint tEXtCRC = Crc32(new byte[] { (byte)'i', (byte)'T', (byte)'X', (byte)'t' }, 0, 4, 0);
+        private static uint iTXtCrc = Crc32(new byte[] { (byte)'i', (byte)'T', (byte)'X', (byte)'t' }, 0, 4, 0);
 
         public PNGChunk(string chunkType)
         {
@@ -155,7 +160,7 @@ namespace VRCX
         public void InitializeTextChunk(string keyword, string text)
         {
             // Create our chunk data byte array
-            ChunkDataBytes.AddRange(Encoding.UTF8.GetBytes(keyword)); // keyword
+            ChunkDataBytes.AddRange(keywordEncoding.GetBytes(keyword)); // keyword
             ChunkDataBytes.Add(0x0); // Null separator
             ChunkDataBytes.Add(0x0); // Compression flag
             ChunkDataBytes.Add(0x0); // Compression method
@@ -171,17 +176,27 @@ namespace VRCX
         {
             List<byte> chunk = new List<byte>();
 
-            chunk.AddRange(BitConverter.GetBytes(ChunkDataLength).Reverse()); // add data length
-            chunk.AddRange(Encoding.ASCII.GetBytes(ChunkType)); // add chunk type
+            byte[] chunkLengthBytes = BitConverter.GetBytes(ChunkDataLength);
+            byte[] chunkCRCBytes = BitConverter.GetBytes(Crc32(ChunkDataBytes.ToArray(), 0, ChunkDataLength, iTXtCrc));
+
+            // Reverse the chunk length bytes/CRC bytes if system is little endian since PNG integers are big endian
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(chunkLengthBytes);
+                Array.Reverse(chunkCRCBytes);
+            }
+
+            chunk.AddRange(chunkLengthBytes); // add data length
+            chunk.AddRange(Encoding.UTF8.GetBytes(ChunkType)); // add chunk type
             chunk.AddRange(ChunkDataBytes); // Add chunk data
-            chunk.AddRange(BitConverter.GetBytes(Crc32(ChunkDataBytes.ToArray(), 0, ChunkDataLength, tEXtCRC)).Reverse()); // Add chunk CRC32 hash
+            chunk.AddRange(chunkCRCBytes); // Add chunk CRC32 hash. 
 
             return chunk.ToArray();
         }
 
         public string GetText(string keyword)
         {
-            int offset = Encoding.ASCII.GetByteCount(keyword) + 5;
+            int offset = keywordEncoding.GetByteCount(keyword) + 5;
             // Read string from PNG chunk
             return Encoding.UTF8.GetString(ChunkDataBytes.ToArray(), offset, ChunkDataBytes.Count - offset);
         }
