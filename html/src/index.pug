@@ -1403,6 +1403,7 @@ html
                                 el-button-group
                                     el-button(size="small" icon="el-icon-s-operation" @click="showVRChatConfig()") VRChat config.json
                                     el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") {{ $t('view.settings.advanced.advanced.launch_options') }}
+                                    el-button(size="small" icon="el-icon-picture" @click="showScreenshotMetadataDialog()") {{ $t('view.settings.advanced.advanced.screenshot_metadata') }}
                             div.options-container
                                 span.sub-header {{ $t('view.settings.advanced.advanced.pending_offline.header') }}
                                 div.options-container-item
@@ -3798,15 +3799,17 @@ html
             //- dialog: screenshot metadata
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="screenshotMetadataDialog" :visible.sync="screenshotMetadataDialog.visible" :title="$t('dialog.screenshot_metadata.header')" width="600px")
                 div(v-if="screenshotMetadataDialog.visible")
-                    location(:location="screenshotMetadataDialog.metadata.world.instanceId" :hint="screenshotMetadataDialog.metadata.world.name")
-                    br
-                    span.x-link(v-text="screenshotMetadataDialog.metadata.author.displayName" @click="showUserDialog(screenshotMetadataDialog.metadata.author.id)" style="color:#909399;font-family:monospace")
-                    br
+                    el-button(size="small" icon="el-icon-folder-opened" @click="AppApi.OpenScreenshotFileDialog()") {{ $t('dialog.screenshot_metadata.browse') }}
                     span(v-text="screenshotMetadataDialog.metadata.fileName")
-                    el-tag(type="info" effect="plain" size="mini" style="margin-left:5px" v-text="screenshotMetadataDialog.metadata.fileSize")
+                    el-tag(v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="mini" style="margin-left:5px" v-text="screenshotMetadataDialog.metadata.fileSize")
+                    br
+                    location(v-if="screenshotMetadataDialog.metadata.world" :location="screenshotMetadataDialog.metadata.world.instanceId" :hint="screenshotMetadataDialog.metadata.world.name")
+                    br
+                    span.x-link(v-if="screenshotMetadataDialog.metadata.author" v-text="screenshotMetadataDialog.metadata.author.displayName" @click="showUserDialog(screenshotMetadataDialog.metadata.author.id)" style="color:#909399;font-family:monospace")
+                    br
                     el-popover(placement="right" width="500px" trigger="click")
                         img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.filePath" style="flex:none;height:315px;border-radius:4px;margin-top:5px")
-                        img(v-lazy="screenshotMetadataDialog.metadata.filePath" style="width:1200px")
+                        img(v-lazy="screenshotMetadataDialog.metadata.filePath" style="max-width:1200px;max-height:900px")
                     br
                     template(v-if="screenshotMetadataDialog.metadata.error")
                         span(v-text="screenshotMetadataDialog.metadata.error")

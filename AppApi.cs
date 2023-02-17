@@ -680,7 +680,7 @@ namespace VRCX
 
                         if (!string.IsNullOrEmpty(metadataString))
                         {
-                            if (metadataString.StartsWith("lfs"))
+                            if (metadataString.StartsWith("lfs") || metadataString.StartsWith("screenshotmanager"))
                             {
                                 try
                                 {
