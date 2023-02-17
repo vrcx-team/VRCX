@@ -666,8 +666,9 @@ namespace VRCX
                         openFileDialog.InitialDirectory = initialPath;
                     }
 
-                    if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+                    if (openFileDialog.ShowDialog() != DialogResult.OK) { dialogOpen = false; return; }
                     dialogOpen = false;
+
                     var path = openFileDialog.FileName;
                     var fileName = Path.GetFileNameWithoutExtension(path);
 
