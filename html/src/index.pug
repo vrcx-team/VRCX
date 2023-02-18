@@ -3797,9 +3797,10 @@ html
                     el-button(type="primary" size="small" :disabled="inviteGroupDialog.loading || !inviteGroupDialog.userIds.length" @click="sendGroupInvite()") Invite
 
             //- dialog: screenshot metadata
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="screenshotMetadataDialog" :visible.sync="screenshotMetadataDialog.visible" :title="$t('dialog.screenshot_metadata.header')" width="600px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="screenshotMetadataDialog" :visible.sync="screenshotMetadataDialog.visible" :title="$t('dialog.screenshot_metadata.header')" width="1050px")
                 div(v-if="screenshotMetadataDialog.visible")
                     el-button(size="small" icon="el-icon-folder-opened" @click="AppApi.OpenScreenshotFileDialog()") {{ $t('dialog.screenshot_metadata.browse') }}
+                    br
                     span(v-text="screenshotMetadataDialog.metadata.fileName")
                     el-tag(v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="mini" style="margin-left:5px" v-text="screenshotMetadataDialog.metadata.fileSize")
                     br
@@ -3807,9 +3808,19 @@ html
                     br
                     span.x-link(v-if="screenshotMetadataDialog.metadata.author" v-text="screenshotMetadataDialog.metadata.author.displayName" @click="showUserDialog(screenshotMetadataDialog.metadata.author.id)" style="color:#909399;font-family:monospace")
                     br
-                    el-popover(placement="right" width="500px" trigger="click")
-                        img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.filePath" style="flex:none;height:315px;border-radius:4px;margin-top:5px")
-                        img(v-lazy="screenshotMetadataDialog.metadata.filePath" style="max-width:1200px;max-height:900px")
+                    el-carousel(ref="screenshotMetadataCarousel" :interval="0" initial-index="1" indicator-position="none" height="600px" style="margin-top:10px" @change="screenshotMetadataCarouselChange")
+                        el-carousel-item
+                            el-popover(placement="top" width="700px" trigger="click")
+                                img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.previousFilePath" style="width:100%;height:100%;object-fit:contain")
+                                img(v-lazy="screenshotMetadataDialog.metadata.previousFilePath" style="height:700px")
+                        el-carousel-item
+                            el-popover(placement="top" width="700px" trigger="click")
+                                img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.filePath" style="width:100%;height:100%;object-fit:contain")
+                                img(v-lazy="screenshotMetadataDialog.metadata.filePath" style="height:700px")
+                        el-carousel-item
+                            el-popover(placement="top" width="700px" trigger="click")
+                                img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.nextFilePath" style="width:100%;height:100%;object-fit:contain")
+                                img(v-lazy="screenshotMetadataDialog.metadata.nextFilePath" style="height:700px")
                     br
                     template(v-if="screenshotMetadataDialog.metadata.error")
                         span(v-text="screenshotMetadataDialog.metadata.error")

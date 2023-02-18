@@ -20194,19 +20194,13 @@ speechSynthesis.getVoices();
      * @param {string} metadata - JSON string grabbed from PNG file
      */
     $app.methods.displayScreenshotMetadata = function (metadata) {
+        var D = this.screenshotMetadataDialog;
         var json = JSON.parse(metadata);
         console.log(json);
-
-        if (json.error) {
-            this.$message({
-                message: json.error,
-                type: 'error'
-            });
-            console.error(json.error);
-            return;
-            // let user know about error somehow
+        D.metadata = json;
+        if (typeof this.$refs.screenshotMetadataCarousel !== 'undefined') {
+            this.$refs.screenshotMetadataCarousel.setActiveItem(1);
         }
-        this.screenshotMetadataDialog.metadata = json;
         this.showScreenshotMetadataDialog();
     };
 
@@ -20221,6 +20215,24 @@ speechSynthesis.getVoices();
         );
         var D = this.screenshotMetadataDialog;
         D.visible = true;
+    };
+
+    $app.methods.screenshotMetadataCarouselChange = function (index) {
+        var D = this.screenshotMetadataDialog;
+        if (index === 0) {
+            if (D.metadata.previousFilePath) {
+                AppApi.GetScreenshotMetadata(D.metadata.previousFilePath);
+            } else {
+                AppApi.GetScreenshotMetadata(D.metadata.filePath);
+            }
+        }
+        if (index === 2) {
+            if (D.metadata.nextFilePath) {
+                AppApi.GetScreenshotMetadata(D.metadata.nextFilePath);
+            } else {
+                AppApi.GetScreenshotMetadata(D.metadata.filePath);
+            }
+        }
     };
 
     // YouTube API

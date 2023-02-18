@@ -666,63 +666,88 @@ namespace VRCX
                         openFileDialog.InitialDirectory = initialPath;
                     }
 
-                    if (openFileDialog.ShowDialog() != DialogResult.OK) { dialogOpen = false; return; }
+                    if (openFileDialog.ShowDialog() != DialogResult.OK)
+                    {
+                        dialogOpen = false;
+                        return;
+                    }
+
                     dialogOpen = false;
 
                     var path = openFileDialog.FileName;
-                    var fileName = Path.GetFileNameWithoutExtension(path);
+                    if (string.IsNullOrEmpty(path))
+                        return;
 
-                    const string fileNamePrefix = "VRChat_";
-                    var metadata = new JObject();
-
-                    if (File.Exists(path) && path.EndsWith(".png") && fileName.StartsWith(fileNamePrefix))
-                    {
-                        var metadataString = ScreenshotHelper.ReadPNGDescription(path);
-
-                        if (!string.IsNullOrEmpty(metadataString))
-                        {
-                            if (metadataString.StartsWith("lfs") || metadataString.StartsWith("screenshotmanager"))
-                            {
-                                try
-                                {
-                                    metadata = ScreenshotHelper.ParseLfsPicture(metadataString);
-                                }
-                                catch (Exception ex)
-                                {
-                                    metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. ({ex.Message}) Text: {metadataString}");
-                                }
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    metadata = JObject.Parse(metadataString);
-                                }
-                                catch (JsonReaderException ex)
-                                {
-                                    metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. ({ex.Message}) Text: {metadataString}");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            metadata.Add("error", "No metadata found in this file.");
-                        }
-                    }
-                    else
-                    {
-                        metadata.Add("error", "Invalid file selected. Please select a valid VRChat screenshot.");
-                    }
-
-                    metadata.Add("fileName", fileName);
-                    metadata.Add("filePath", path);
-                    metadata.Add("fileSize", $"{(new FileInfo(path).Length / 1024f / 1024f).ToString("0.00")} MB");
-                    ExecuteAppFunction("displayScreenshotMetadata", metadata.ToString(Formatting.Indented));
+                    GetScreenshotMetadata(path);
                 }
             });
 
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
+        }
+
+        public void GetScreenshotMetadata(string path)
+        {
+            var fileName = Path.GetFileNameWithoutExtension(path);
+
+            const string fileNamePrefix = "VRChat_";
+            var metadata = new JObject();
+
+            if (File.Exists(path) && path.EndsWith(".png") && fileName.StartsWith(fileNamePrefix))
+            {
+                var metadataString = ScreenshotHelper.ReadPNGDescription(path);
+
+                if (!string.IsNullOrEmpty(metadataString))
+                {
+                    if (metadataString.StartsWith("lfs") || metadataString.StartsWith("screenshotmanager"))
+                    {
+                        try
+                        {
+                            metadata = ScreenshotHelper.ParseLfsPicture(metadataString);
+                        }
+                        catch (Exception ex)
+                        {
+                            metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. ({ex.Message}) Text: {metadataString}");
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            metadata = JObject.Parse(metadataString);
+                        }
+                        catch (JsonReaderException ex)
+                        {
+                            metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. ({ex.Message}) Text: {metadataString}");
+                        }
+                    }
+                }
+                else
+                {
+                    metadata.Add("error", "No metadata found in this file.");
+                }
+            }
+            else
+            {
+                metadata.Add("error", "Invalid file selected. Please select a valid VRChat screenshot.");
+            }
+
+            var files = Directory.GetFiles(Path.GetDirectoryName(path), "*.png");
+            var index = Array.IndexOf(files, path);
+            if (index > 0)
+            {
+                metadata.Add("previousFilePath", files[index - 1]);
+            }
+
+            if (index < files.Length - 1)
+            {
+                metadata.Add("nextFilePath", files[index + 1]);
+            }
+
+            metadata.Add("fileName", fileName);
+            metadata.Add("filePath", path);
+            metadata.Add("fileSize", $"{(new FileInfo(path).Length / 1024f / 1024f).ToString("0.00")} MB");
+            ExecuteAppFunction("displayScreenshotMetadata", metadata.ToString(Formatting.Indented));
         }
 
         public void FlashWindow()
