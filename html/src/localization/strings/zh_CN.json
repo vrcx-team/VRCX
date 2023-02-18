@@ -35,8 +35,8 @@
             "search_placeholder": "搜索动态"
         },
         "game_log": {
-            "filter_placeholder": "筛选游戏记录",
-            "search_placeholder": "搜索游戏记录"
+            "filter_placeholder": "筛选游戏日志",
+            "search_placeholder": "搜索游戏日志"
         },
         "player_list": {
             "photon": {
@@ -70,7 +70,7 @@
                 "local": "本地",
                 "remote": "远程",
                 "sort_name": "依名称排序",
-                "sort_update": "依更新排序",
+                "sort_update": "依更新时间排序",
                 "sort_created": "依建立时间排序"
             },
             "prev_page": "上一页",
