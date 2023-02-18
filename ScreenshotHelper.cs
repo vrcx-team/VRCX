@@ -114,6 +114,10 @@ namespace VRCX
                 {
                     return index;
                 }
+                else if (name == "IEND") // Nothing should exist past IEND in a normal png file, so we should stop parsing here to avoid trying to parse junk data.
+                {
+                    return -1;
+                }
 
                 // The chunk length is 4 bytes, the chunk name is 4 bytes, the chunk data is length bytes, and the chunk CRC is 4 bytes.
                 index += length + 12;

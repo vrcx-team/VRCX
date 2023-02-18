@@ -695,7 +695,18 @@ namespace VRCX
 
             if (File.Exists(path) && path.EndsWith(".png") && fileName.StartsWith(fileNamePrefix))
             {
-                var metadataString = ScreenshotHelper.ReadPNGDescription(path);
+                string metadataString = null;
+                bool readPNGFailed = false;
+
+                try 
+                {
+                    metadataString = ScreenshotHelper.ReadPNGDescription(path);
+                }
+                catch (Exception ex)
+                {
+                    metadata.Add("error", $"VRCX encountered an error while trying to parse this file. The file might be an invalid/corrupted PNG file.\n({ex.Message})");
+                    readPNGFailed = true;
+                }
 
                 if (!string.IsNullOrEmpty(metadataString))
                 {
@@ -707,7 +718,7 @@ namespace VRCX
                         }
                         catch (Exception ex)
                         {
-                            metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. ({ex.Message}) Text: {metadataString}");
+                            metadata.Add("error", $"This file contains invalid LFS/SSM metadata unable to be parsed by VRCX. \n({ex.Message})\n Text: {metadataString}");
                         }
                     }
                     else
@@ -718,13 +729,14 @@ namespace VRCX
                         }
                         catch (JsonReaderException ex)
                         {
-                            metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. ({ex.Message}) Text: {metadataString}");
+                            metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. \n({ex.Message})\n Text: {metadataString}");
                         }
                     }
                 }
                 else
                 {
-                    metadata.Add("error", "No metadata found in this file.");
+                    if (!readPNGFailed)
+                        metadata.Add("error", "No metadata found in this file.");
                 }
             }
             else
