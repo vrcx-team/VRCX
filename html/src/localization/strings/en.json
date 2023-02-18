@@ -348,6 +348,7 @@
                 "advanced": {
                     "header": "Advanced",
                     "launch_options": "Launch Options",
+                    "screenshot_metadata": "Screenshot Metadata",
                     "pending_offline": {
                         "header": "Pending Offline",
                         "description": "Delay before marking user as offline (fixes false positives)",
@@ -1051,6 +1052,10 @@
             "password_placeholder": "Input new password",
             "re_input_placeholder": "Re-input password",
             "ok": "OK"
+        },
+        "screenshot_metadata": {
+            "header": "Screenshot Metadata",
+            "browse": "Browse"
         }
     },
     "prompt": {
