@@ -450,7 +450,7 @@
         "search_result_active": "活跃",
         "search_result_offline": "离线",
         "search_result_more": "搜索更多：",
-        "direct_access_tooltip": "直接存取剪贴板的 ID / 链接",
+        "direct_access_tooltip": "直接读取剪贴板的 ID / 链接",
         "refresh_tooltip": "刷新好友",
         "friends": "好友",
         "me": "我",
