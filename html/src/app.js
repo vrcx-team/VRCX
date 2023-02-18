@@ -20198,9 +20198,6 @@ speechSynthesis.getVoices();
         var json = JSON.parse(metadata);
         console.log(json);
         D.metadata = json;
-        if (typeof this.$refs.screenshotMetadataCarousel !== 'undefined') {
-            this.$refs.screenshotMetadataCarousel.setActiveItem(1);
-        }
         this.showScreenshotMetadataDialog();
     };
 
@@ -20232,6 +20229,9 @@ speechSynthesis.getVoices();
             } else {
                 AppApi.GetScreenshotMetadata(D.metadata.filePath);
             }
+        }
+        if (typeof this.$refs.screenshotMetadataCarousel !== 'undefined') {
+            this.$refs.screenshotMetadataCarousel.setActiveItem(1);
         }
     };
 

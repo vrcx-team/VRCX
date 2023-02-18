@@ -114,7 +114,8 @@ namespace VRCX
                 {
                     return index;
                 }
-                else if (name == "IEND") // Nothing should exist past IEND in a normal png file, so we should stop parsing here to avoid trying to parse junk data.
+
+                if (name == "IEND") // Nothing should exist past IEND in a normal png file, so we should stop parsing here to avoid trying to parse junk data.
                 {
                     return -1;
                 }
