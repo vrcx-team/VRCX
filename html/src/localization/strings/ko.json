@@ -163,6 +163,7 @@
             "past_display_names": "이전 닉네임",
             "config_json": "설정 JSON",
             "current_user_json": "현재 유저 JSON",
+            "feedback": "피드백",
             "refresh_tooltip": "새로고침",
             "clear_results_tooltip": "비우기"
         },
@@ -1064,6 +1065,7 @@
         "otp": {
             "header": "2단계 인증",
             "description": "복구 코드 중 하나를 입력하세요",
+            "resend": "이메일 재전송",
             "use_otp": "TOTP 사용",
             "verify": "확인",
             "input_placeholder": "코드",
