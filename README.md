@@ -104,7 +104,7 @@ To install a theme place `custom.css` into your `%AppData%\VRCX` folder then pre
 [Pink Theme](https://github.com/kamiya10/VRCX-theme/tree/main/pink) by [Kamiya](https://github.com/kamiya10)
 ![pink-theme](https://user-images.githubusercontent.com/11171153/190136121-4d6ba6e5-4a04-43b2-8264-0325c858f2d8.png)
 
-[Material 3](https://kamiya.tk/VRCX/themes/m3/m3) by [Kamiya](https://github.com/kamiya10)
+[Material 3](https://github.com/kamiya10/VRCX-theme/tree/main/m3) by [Kamiya](https://github.com/kamiya10)
 ![material-3](https://user-images.githubusercontent.com/11171153/190136730-65268fac-1dab-4528-813c-b4d5e5e86f7d.png)
 
 ## VRCX launch parameters
