@@ -4926,7 +4926,7 @@ speechSynthesis.getVoices();
             callback: (action) => {
                 if (action === 'confirm') {
                     AppApi.OpenLink(
-                        'https://github.com/pypy-vrc/VRCX/releases/latest'
+                        'https://github.com/vrcx-team/VRCX/releases/latest'
                     );
                 }
             }
@@ -21055,8 +21055,8 @@ speechSynthesis.getVoices();
     $app.data.branches = {
         Stable: {
             name: 'Stable',
-            urlReleases: 'https://vrcx.pypy.moe/releases/pypy-vrc.json',
-            urlLatest: 'https://vrcx.pypy.moe/releases/latest/pypy-vrc.json'
+            urlReleases: 'https://vrcx.pypy.moe/releases/vrcx-team.json',
+            urlLatest: 'https://vrcx.pypy.moe/releases/latest/vrcx-team.json'
         },
         Nightly: {
             name: 'Nightly',

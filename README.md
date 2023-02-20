@@ -1,6 +1,6 @@
 # VRCX
 
-[![GitHub Workflow Status](https://github.com/pypy-vrc/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/pypy-vrc/VRCX/actions/workflows/github_actions.yml)
+[![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white)](https://vrcx.pypy.moe/discord)
 
 VRCX is an assistant application for VRChat that provides information about and managing friendship. This application makes use of the unofficial VRChat API SDK.
@@ -11,7 +11,7 @@ pypy & Natsumi are not responsible for any problems caused by VRCX. **_Use at yo
 
 ## How to install VRCX
 
-- Download latest release setup from [here](https://github.com/pypy-vrc/VRCX/releases/latest).
+- Download latest release setup from [here](https://github.com/vrcx-team/VRCX/releases/latest).
 - Run `VRCX_Setup.exe`.
 
 ## Is VRCX against VRChat ToS?
@@ -208,7 +208,7 @@ Guide made by [RinLovesYou](https://github.com/RinLovesYou)
 
 - Get source code
 
-  - Download latest source code [zip](https://github.com/pypy-vrc/VRCX/archive/master.zip) or clone repo with `git clone`.
+  - Download latest source code [zip](https://github.com/vrcx-team/VRCX/archive/master.zip) or clone repo with `git clone`.
 
 - Build .NET
 
