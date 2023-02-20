@@ -354,7 +354,7 @@
                         "set_delay": "지연 시간 설정"
                     },
                     "primary_password": {
-                        "header": "Primary 비밀번호",
+                        "header": "잠금 비밀번호",
                         "description": "비밀번호 암호화 사용 (자동 로그인 불가)"
                     },
                     "vrchat_quit_fix": {
@@ -383,7 +383,7 @@
                     },
                     "screenshot_helper": {
                         "header": "스크린샷 도우미",
-                        "description": "게임 내에서 찍은 사진의 파일 메타데이터에 월드 ID와 월드 이름을 저장합니다.",
+                        "description": "게임 내에서 찍은 사진의 메타데이터에 월드 ID, 월드 이름 그리고 함께 있던 플레이어를 저장합니다.",
                         "description_tooltip": "안타깝게도 Windows는 기본적으로 PNG 텍스트 청크 보기를 지원하지 않지만(몇 가지 기능은 지원), exiftool, PNG chunk inspector 또는 헥스 에디터와 같은 명령줄 도구를 사용하여 볼 수 있습니다.",
                         "enable": "사용",
                         "modify_filename": "파일 이름 수정",
@@ -610,6 +610,7 @@
                 "id_tooltip": "클립보드에 복사",
                 "copy_id": "ID 복사",
                 "copy_url": "URL 복사",
+                "copy_name": "이름 복사",
                 "youtube_preview": "유튜브 미리보기",
                 "players": "유저 수",
                 "favorites": "즐겨찾기 수",
@@ -1047,10 +1048,14 @@
             "description": "VRCX 는 오픈 소스 소프트웨어에 기반하고 있습니다. 그들의 기여에 감사드립니다."
         },
         "primary_password": {
-            "header": "Primary 비밀번호 필요",
+            "header": "잠금 비밀번호 필요",
             "password_placeholder": "새 비밀번호 입력",
             "re_input_placeholder": "한번 더 입력",
             "ok": "확인"
+        },
+        "screenshot_metadata": {
+            "header": "스크린샷 메타데이터",
+            "browse": "찾아보기"
         }
     },
     "prompt": {
@@ -1065,7 +1070,6 @@
         "otp": {
             "header": "2단계 인증",
             "description": "복구 코드 중 하나를 입력하세요",
-            "resend": "이메일 재전송",
             "use_otp": "TOTP 사용",
             "verify": "확인",
             "input_placeholder": "코드",
@@ -1074,14 +1078,14 @@
         "email_otp": {
             "header": "2단계 인증",
             "description": "이메일로 전송된 숫자 코드를 입력하세요",
-            "cancel": "취소",
+            "resend": "이메일 재전송",
             "verify": "확인",
             "input_placeholder": "코드",
             "input_error": "잘못된 코드"
         },
         "primary_password": {
-            "header": "Primary 비밀번호 필요",
-            "description": "Primary 비밀번호를 입력 해주세요"
+            "header": "잠금 비밀번호 필요",
+            "description": "잠금 비밀번호를 입력 해주세요"
         },
         "change_favorite_group_name": {
             "header": "그룹 이름 변경",
@@ -1275,6 +1279,7 @@
         "gameLog": {
             "date": "날짜",
             "type": "타입",
+            "icon": "이미지",
             "user": "유저",
             "detail": "상세"
         },
