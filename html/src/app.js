@@ -412,11 +412,7 @@ speechSynthesis.getVoices();
                 if (response.status === 200) {
                     this.$throw(0, 'Invalid JSON response');
                 }
-                if (
-                    response.status === 504 ||
-                    response.status === 502 ||
-                    response.status === 429
-                ) {
+                if (response.status === 504 || response.status === 502) {
                     // ignore expected API errors
                     throw new Error(
                         `${response.status}: ${response.data} ${endpoint}`
@@ -491,6 +487,9 @@ speechSynthesis.getVoices();
                     endpoint.startsWith('invite/myself/to/')
                 ) {
                     throw new Error(`403: ${data.error.message} ${endpoint}`);
+                }
+                if (status === 429) {
+                    throw new Error(`429: ${data.error.message} ${endpoint}`);
                 }
                 if (data && data.error === Object(data.error)) {
                     this.$throw(
@@ -4798,6 +4797,7 @@ speechSynthesis.getVoices();
         watch: {},
         el: '#x-app',
         mounted() {
+            AppApi.SetUserAgent();
             AppApi.GetVersion().then((version) => {
                 this.appVersion = version;
                 this.comapreAppVersion();
@@ -13326,7 +13326,7 @@ speechSynthesis.getVoices();
         configRepository.setInt('VRCX_asidewidth', $app.data.asideWidth);
     }
     if (!configRepository.getString('VRCX_autoUpdateVRCX')) {
-        $app.data.autoUpdateVRCX = 'Notify';
+        $app.data.autoUpdateVRCX = 'Auto Download';
         configRepository.setString(
             'VRCX_autoUpdateVRCX',
             $app.data.autoUpdateVRCX
@@ -20123,11 +20123,19 @@ speechSynthesis.getVoices();
         this.WriteVRChatConfigFile();
     };
 
-    $app.data.VRChatResolutions = [
+    $app.data.VRChatScreenshotResolutions = [
         {name: '1280x720 (720p)', width: 1280, height: 720},
         {name: '1920x1080 (1080p Default)', width: '', height: ''},
         {name: '2560x1440 (1440p)', width: 2560, height: 1440},
         {name: '3840x2160 (4K)', width: 3840, height: 2160}
+    ];
+
+    $app.data.VRChatCameraResolutions = [
+        {name: '1280x720 (720p)', width: 1280, height: 720},
+        {name: '1920x1080 (1080p Default)', width: '', height: ''},
+        {name: '2560x1440 (1440p)', width: 2560, height: 1440},
+        {name: '3840x2160 (4K)', width: 3840, height: 2160},
+        {name: '7680x4320 (8K)', width: 7680, height: 4320}
     ];
 
     $app.methods.getVRChatResolution = function (res) {
@@ -20140,6 +20148,8 @@ speechSynthesis.getVoices();
                 return '2560x1440 (2K)';
             case '3840x2160':
                 return '3840x2160 (4K)';
+            case '7680x4320':
+                return '7680x4320 (8K)';
         }
         return `${res} (Custom)`;
     };
@@ -20200,8 +20210,29 @@ speechSynthesis.getVoices();
     $app.methods.displayScreenshotMetadata = function (metadata) {
         var D = this.screenshotMetadataDialog;
         var json = JSON.parse(metadata);
-        console.log(json);
         D.metadata = json;
+
+        // VRChat_3840x2160_2022-02-02_03-21-39.771
+        // VRChat_2023-02-16_10-39-25.274_3840x2160
+        var regex = json.fileName.match(
+            /VRChat_((\d{3,})x(\d{3,})_(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{1,})|(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{3})_(\d{3,})x(\d{3,}))/
+        );
+        if (regex) {
+            if (typeof regex[2] !== 'undefined') {
+                // old format
+                var date = `${regex[4]}-${regex[5]}-${regex[6]}`;
+                var time = `${regex[7]}:${regex[8]}:${regex[9]}`;
+                D.metadata.dateTime = Date.parse(`${date} ${time}`);
+                D.metadata.resolution = `${regex[2]}x${regex[3]}`;
+            } else if (typeof regex[11] !== 'undefined') {
+                // new format
+                var date = `${regex[11]}-${regex[12]}-${regex[13]}`;
+                var time = `${regex[14]}:${regex[15]}:${regex[16]}`;
+                D.metadata.dateTime = Date.parse(`${date} ${time}`);
+                D.metadata.resolution = `${regex[18]}x${regex[19]}`;
+            }
+        }
+
         this.showScreenshotMetadataDialog();
     };
 
@@ -21277,7 +21308,10 @@ speechSynthesis.getVoices();
             /\D/g,
             ''
         );
+        // limit to 8 characters because 2019.4.31f1c1 is a thing
+        currentUnityVersion = currentUnityVersion.slice(0, 8);
         var assetVersion = version.replace(/\D/g, '');
+        assetVersion = assetVersion.slice(0, 8);
         if (parseInt(assetVersion, 10) <= parseInt(currentUnityVersion, 10)) {
             return true;
         }

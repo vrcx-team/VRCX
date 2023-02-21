@@ -1024,6 +1024,8 @@ class Database {
         var avatar = true;
         var online = true;
         var offline = true;
+        var aviPublic = search.includes('public');
+        var aviPrivate = search.includes('private');
         if (filters.length > 0) {
             gps = false;
             status = false;
@@ -1103,6 +1105,12 @@ class Database {
             }, `SELECT * FROM ${Database.userPrefix}_feed_bio WHERE (display_name LIKE '%${search}%' OR bio LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (avatar) {
+            var query = '';
+            if (aviPrivate) {
+                query = 'OR user_id = owner_id';
+            } else if (aviPublic) {
+                query = 'OR user_id != owner_id';
+            }
             await sqliteService.execute((dbRow) => {
                 var row = {
                     rowId: dbRow[0],
@@ -1118,7 +1126,7 @@ class Database {
                     previousCurrentAvatarThumbnailImageUrl: dbRow[9]
                 };
                 feedDatabase.unshift(row);
-            }, `SELECT * FROM ${Database.userPrefix}_feed_avatar WHERE (display_name LIKE '%${search}%' OR avatar_name LIKE '%${search}%') ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+            }, `SELECT * FROM ${Database.userPrefix}_feed_avatar WHERE ((display_name LIKE '%${search}%' OR avatar_name LIKE '%${search}%') ${query}) ${vipQuery} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (online || offline) {
             var query = '';

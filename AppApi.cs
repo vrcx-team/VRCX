@@ -696,9 +696,9 @@ namespace VRCX
             if (File.Exists(path) && path.EndsWith(".png") && fileName.StartsWith(fileNamePrefix))
             {
                 string metadataString = null;
-                bool readPNGFailed = false;
+                var readPNGFailed = false;
 
-                try 
+                try
                 {
                     metadataString = ScreenshotHelper.ReadPNGDescription(path);
                 }
@@ -765,6 +765,14 @@ namespace VRCX
         public void FlashWindow()
         {
             MainForm.Instance.BeginInvoke(new MethodInvoker(() => { WinformThemer.Flash(MainForm.Instance); }));
+        }
+
+        public void SetUserAgent()
+        {
+            using (var client = MainForm.Instance.Browser.GetDevToolsClient())
+            {
+                _ = client.Network.SetUserAgentOverrideAsync(Program.Version);
+            }
         }
 
         private struct XSOMessage
