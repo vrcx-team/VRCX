@@ -348,6 +348,7 @@
                 "advanced": {
                     "header": "高级设置",
                     "launch_options": "启动选项",
+                    "screenshot_metadata": "屏幕截图元数据查看器",
                     "pending_offline": {
                         "header": "待确认离线",
                         "description": "将玩家标记为离线之前的延迟（防止误判）",
@@ -1054,7 +1055,7 @@
         },
         "screenshot_metadata": {
             "header": "屏幕截图元数据查看器",
-            "browse": "屏幕截图元数据查看器"
+            "browse": "选择文件"
         }
     },
     "prompt": {
