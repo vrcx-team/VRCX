@@ -1051,6 +1051,10 @@
             "password_placeholder": "输入新密码",
             "re_input_placeholder": "确认密码",
             "ok": "OK"
+        },
+        "screenshot_metadata": {
+            "header": "屏幕截图元数据查看器",
+            "browse": "屏幕截图元数据查看器"
         }
     },
     "prompt": {
