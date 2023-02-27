@@ -3800,9 +3800,11 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="screenshotMetadataDialog" :visible.sync="screenshotMetadataDialog.visible" :title="$t('dialog.screenshot_metadata.header')" width="1050px")
                 div(v-if="screenshotMetadataDialog.visible")
                     el-button(size="small" icon="el-icon-folder-opened" @click="AppApi.OpenScreenshotFileDialog()") {{ $t('dialog.screenshot_metadata.browse') }}
-                    span(v-if="!screenshotMetadataDialog.metadata.resolution" v-text="screenshotMetadataDialog.metadata.fileName" style="margin-left:5px")
+                    el-button(v-if="API.currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath" size="small" icon="el-icon-upload2" @click="uploadScreenshotToGallery") {{ $t('dialog.screenshot_metadata.upload') }}
+                    span(v-text="screenshotMetadataDialog.metadata.fileName" style="margin-left:5px")
+                    br
                     span(v-if="screenshotMetadataDialog.metadata.dateTime" style="margin-left:5px") {{ screenshotMetadataDialog.metadata.dateTime | formatDate('long') }}
-                    span(v-if="screenshotMetadataDialog.metadata.resolution" v-text="screenshotMetadataDialog.metadata.resolution" style="margin-left:5px")
+                    span(v-if="screenshotMetadataDialog.metadata.fileResolution" v-text="screenshotMetadataDialog.metadata.fileResolution" style="margin-left:5px")
                     el-tag(v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="mini" style="margin-left:5px" v-text="screenshotMetadataDialog.metadata.fileSize")
                     br
                     location(v-if="screenshotMetadataDialog.metadata.world" :location="screenshotMetadataDialog.metadata.world.instanceId" :hint="screenshotMetadataDialog.metadata.world.name")

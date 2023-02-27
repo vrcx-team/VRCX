@@ -1055,7 +1055,8 @@
         },
         "screenshot_metadata": {
             "header": "Screenshot Metadata",
-            "browse": "Browse"
+            "browse": "Browse",
+            "upload": "Upload"
         }
     },
     "prompt": {

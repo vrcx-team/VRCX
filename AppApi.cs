@@ -689,11 +689,8 @@ namespace VRCX
         public void GetScreenshotMetadata(string path)
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
-
-            const string fileNamePrefix = "VRChat_";
             var metadata = new JObject();
-
-            if (File.Exists(path) && path.EndsWith(".png") && fileName.StartsWith(fileNamePrefix))
+            if (File.Exists(path) && path.EndsWith(".png"))
             {
                 string metadataString = null;
                 var readPNGFailed = false;
@@ -756,9 +753,14 @@ namespace VRCX
                 metadata.Add("nextFilePath", files[index + 1]);
             }
 
+            metadata.Add("fileResolution", ScreenshotHelper.ReadPNGResolution(path));
+            var creationDate = File.GetCreationTime(path);
+            metadata.Add("creationDate", creationDate.ToString("yyyy-MM-dd HH:mm:ss"));
             metadata.Add("fileName", fileName);
             metadata.Add("filePath", path);
-            metadata.Add("fileSize", $"{(new FileInfo(path).Length / 1024f / 1024f).ToString("0.00")} MB");
+            var fileSizeBytes = new FileInfo(path).Length;
+            metadata.Add("fileSizeBytes", fileSizeBytes.ToString());
+            metadata.Add("fileSize", $"{(fileSizeBytes / 1024f / 1024f).ToString("0.00")} MB");
             ExecuteAppFunction("displayScreenshotMetadata", metadata.ToString(Formatting.Indented));
         }
 
@@ -773,6 +775,16 @@ namespace VRCX
             {
                 _ = client.Network.SetUserAgentOverrideAsync(Program.Version);
             }
+        }
+
+        public string GetFileBase64(string path)
+        {
+            if (File.Exists(path))
+            {
+                return Convert.ToBase64String(File.ReadAllBytes(path));
+            }
+
+            return null;
         }
 
         private struct XSOMessage

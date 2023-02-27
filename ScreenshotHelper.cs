@@ -66,6 +66,19 @@ namespace VRCX
             return text;
         }
 
+        public static string ReadPNGResolution(string path)
+        {
+            if (!File.Exists(path) || !IsPNGFile(path)) return null;
+
+            var png = File.ReadAllBytes(path);
+            var existingpHYs = FindChunk(png, "IHDR");
+            if (existingpHYs == null) return null;
+
+            var text = existingpHYs.GetResolution();
+
+            return text;
+        }
+
         /// <summary>
         ///     Determines whether the specified file is a PNG file. We do this by checking if the first 8 bytes in the file path match the PNG signature.
         /// </summary>
@@ -358,8 +371,14 @@ namespace VRCX
         public string GetText(string keyword)
         {
             var offset = keywordEncoding.GetByteCount(keyword) + 5;
-            // Read string from PNG chunk
             return Encoding.UTF8.GetString(ChunkDataBytes.ToArray(), offset, ChunkDataBytes.Count - offset);
+        }
+
+        public string GetResolution()
+        {
+            var x = BitConverter.ToInt32(ChunkDataBytes.Take(4).Reverse().ToArray(), 0);
+            var y = BitConverter.ToInt32(ChunkDataBytes.Skip(4).Take(4).Reverse().ToArray(), 0);
+            return $"{x}x{y}";
         }
 
         // Crc32 implementation from

@@ -20212,25 +20212,31 @@ speechSynthesis.getVoices();
         var json = JSON.parse(metadata);
         D.metadata = json;
 
-        // VRChat_3840x2160_2022-02-02_03-21-39.771
-        // VRChat_2023-02-16_10-39-25.274_3840x2160
         var regex = json.fileName.match(
             /VRChat_((\d{3,})x(\d{3,})_(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{1,})|(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{3})_(\d{3,})x(\d{3,}))/
         );
         if (regex) {
-            if (typeof regex[2] !== 'undefined') {
+            if (typeof regex[2] !== 'undefined' && regex[4].length === 4) {
                 // old format
+                // VRChat_3840x2160_2022-02-02_03-21-39.771
                 var date = `${regex[4]}-${regex[5]}-${regex[6]}`;
                 var time = `${regex[7]}:${regex[8]}:${regex[9]}`;
                 D.metadata.dateTime = Date.parse(`${date} ${time}`);
-                D.metadata.resolution = `${regex[2]}x${regex[3]}`;
-            } else if (typeof regex[11] !== 'undefined') {
+                // D.metadata.resolution = `${regex[2]}x${regex[3]}`;
+            } else if (
+                typeof regex[11] !== 'undefined' &&
+                regex[11].length === 4
+            ) {
                 // new format
+                // VRChat_2023-02-16_10-39-25.274_3840x2160
                 var date = `${regex[11]}-${regex[12]}-${regex[13]}`;
                 var time = `${regex[14]}:${regex[15]}:${regex[16]}`;
                 D.metadata.dateTime = Date.parse(`${date} ${time}`);
-                D.metadata.resolution = `${regex[18]}x${regex[19]}`;
+                // D.metadata.resolution = `${regex[18]}x${regex[19]}`;
             }
+        }
+        if (!D.metadata.dateTime) {
+            D.metadata.dateTime = Date.parse(json.creationDate);
         }
 
         this.showScreenshotMetadataDialog();
@@ -20238,7 +20244,8 @@ speechSynthesis.getVoices();
 
     $app.data.screenshotMetadataDialog = {
         visible: false,
-        metadata: {}
+        metadata: {},
+        isUploading: false
     };
 
     $app.methods.showScreenshotMetadataDialog = function () {
@@ -20268,6 +20275,40 @@ speechSynthesis.getVoices();
         if (typeof this.$refs.screenshotMetadataCarousel !== 'undefined') {
             this.$refs.screenshotMetadataCarousel.setActiveItem(1);
         }
+    };
+
+    $app.methods.uploadScreenshotToGallery = function () {
+        var D = this.screenshotMetadataDialog;
+        if (D.metadata.fileSizeBytes > 10000000) {
+            $app.$message({
+                message: 'File size too large',
+                type: 'error'
+            });
+            return;
+        }
+        D.isUploading = true;
+        AppApi.GetFileBase64(D.metadata.filePath)
+            .then((base64Body) => {
+                API.uploadGalleryImage(base64Body)
+                    .then((args) => {
+                        $app.$message({
+                            message: 'Gallery image uploaded',
+                            type: 'success'
+                        });
+                        return args;
+                    })
+                    .finally(() => {
+                        D.isUploading = false;
+                    });
+            })
+            .catch((err) => {
+                $app.$message({
+                    message: 'Failed to upload gallery image',
+                    type: 'error'
+                });
+                console.error(err);
+                D.isUploading = false;
+            });
     };
 
     // YouTube API
@@ -21475,6 +21516,9 @@ speechSynthesis.getVoices();
                 }
                 this.photonLastEvent7List = Date.parse(data.dt);
                 break;
+            case 'VrcxMessage':
+                this.eventVrcxMessage(data);
+                break;
             case 'Ping':
                 if (!this.photonLoggingEnabled) {
                     this.photonLoggingEnabled = true;
@@ -21511,6 +21555,18 @@ speechSynthesis.getVoices();
 
     $app.data.photonEventCount = 0;
     $app.data.photonEventIcon = false;
+
+    $app.methods.eventVrcxMessage = function (data) {
+        console.log(data);
+        var entry = {
+            created_at: new Date().toJSON(),
+            type: 'Event',
+            data: data.Data
+        };
+        database.addGamelogEventToDatabase(entry);
+        this.queueGameLogNoty(entry);
+        this.addGameLog(entry);
+    };
 
     $app.methods.photonEventPulse = function () {
         this.photonEventCount++;
