@@ -30,7 +30,7 @@
             }
         },
         "feed": {
-            "favorites_only_tooltip": "仅筛选收藏",
+            "favorites_only_tooltip": "仅显示星标好友",
             "filter_placeholder": "筛选动态",
             "search_placeholder": "搜索动态"
         },
@@ -62,7 +62,7 @@
             "avatar": {
                 "header": "模型",
                 "search_provider": "搜索提供方",
-                "refresh_tooltip": "刷新自己的模型",
+                "refresh_tooltip": "刷新搜索结果",
                 "result_count": "{count} 个搜索结果",
                 "all": "所有",
                 "public": "公开",
@@ -84,16 +84,16 @@
                 "header": "世界",
                 "vrchat_favorites": "VRChat 收藏",
                 "local_favorites": "本地收藏",
-                "new_group": "新群组"
+                "new_group": "创建新的收藏夹"
             },
             "avatars": {
                 "header": "模型"
             },
-            "refresh_tooltip": "刷新所有收藏",
+            "refresh_tooltip": "刷新所有收藏夹",
             "export": "导出",
             "import": "导入",
             "move_tooltip": "移动",
-            "unfavorite_tooltip": "解除收藏",
+            "unfavorite_tooltip": "取消收藏",
             "visibility_tooltip": "更改可见性",
             "rename_tooltip": "重新命名",
             "clear_tooltip": "清除",
@@ -121,7 +121,7 @@
             "load_notice": "这会向 API 发送大量请求，所以请谨慎使用",
             "load_tooltip": "读取",
             "cancel_tooltip": "取消",
-            "favorites_only_tooltip": "仅筛选收藏",
+            "favorites_only_tooltip": "仅显示星标好友",
             "search_placeholder": "搜索好友",
             "filter_placeholder": "筛选好友",
             "refresh_tooltip": "刷新",
@@ -134,10 +134,10 @@
                 "two_factor": "双重认证 (2FA)",
                 "two_factor_enabled": "已启用",
                 "two_factor_disabled": "已停用",
-                "logout": "注销",
+                "logout": "登出账户",
                 "export_friend_list": "导出好友列表",
                 "export_own_avatars": "导出自己创建的模型",
-                "discord_names": "Discord 名称",
+                "discord_names": "查看好友的Discord 名称",
                 "export_notes": "导出备注"
             },
             "game_info": {
@@ -163,7 +163,7 @@
             "past_display_names": "曾使用的显示名称",
             "config_json": "JSON 信息",
             "current_user_json": "目前玩家的 JSON 信息",
-            "feedback": "行为报告记录",
+            "feedback": "举报记录",
             "refresh_tooltip": "刷新",
             "clear_results_tooltip": "清除结果"
         },
@@ -217,7 +217,7 @@
                     "theme_mode_system": "跟随系统",
                     "theme_mode_light": "浅色",
                     "theme_mode_dark": "深色",
-                    "vrcplus_profile_icons": "VRChat+ 个人信息图标",
+                    "vrcplus_profile_icons": "VRC+ 个人信息图标",
                     "disable_tooltips": "关闭提示",
                     "sort_favorite_by": "收藏排序依据",
                     "sort_favorite_by_name": "名称",
@@ -225,7 +225,7 @@
                     "sort_instance_users_by": "房间玩家排序依据",
                     "sort_instance_users_by_time": "时间",
                     "sort_instance_users_by_alphabet": "字母顺序",
-                    "table_max_size": "表格大小",
+                    "table_max_size": "最大显示记录设置",
                     "page_size": "页面大小："
                 },
                 "timedate": {
@@ -266,7 +266,7 @@
                     "export_notes": "导出备注"
                 },
                 "user_colors": {
-                    "header": "玩家名称颜色",
+                    "header": "玩家名称显示颜色",
                     "random_colors_from_user_id": "从玩家 ID 随机挑选颜色"
                 }
             },
@@ -348,6 +348,7 @@
                 "advanced": {
                     "header": "高级设置",
                     "launch_options": "启动选项",
+                    "screenshot_metadata": "屏幕截图元数据查看器",
                     "pending_offline": {
                         "header": "待确认离线",
                         "description": "将玩家标记为离线之前的延迟（防止误判）",
@@ -473,7 +474,7 @@
             "previous_display_names": "曾使用的显示名称：",
             "tags": {
                 "friend_no": "第 {number} 位好友",
-                "vrchat_team": "VRChat 团队"
+                "vrchat_team": "VRChat 工作人员"
             },
             "actions": {
                 "favorite_tooltip": "添加到我的收藏",
@@ -536,11 +537,11 @@
                 "avatar_cloning_allow": "允许",
                 "avatar_cloning_deny": "不允许",
                 "home_location": "出生点",
-                "accuracy_notice": "本地数据库的数据可能不精确"
+                "accuracy_notice": "本地数据库的数据可能不准确"
             },
             "groups": {
-                "header": "群组",
-                "total_count": "总共 {count}",
+                "header": "加入的群组",
+                "total_count": "总共有 {count} 个群组",
                 "own_groups": "拥有群组",
                 "mutual_groups": "共同群组",
                 "groups": "群组"
@@ -579,7 +580,7 @@
                 "favorite_tooltip": "添加到我的收藏",
                 "unfavorite_tooltip": "从我的收藏中移除",
                 "refresh": "刷新",
-                "new_instance": "新房间",
+                "new_instance": "创建新房间",
                 "make_home": "设为出生点",
                 "reset_home": "重置出生点",
                 "show_previous_instances": "显示加入过的房间",
@@ -592,7 +593,7 @@
                 "change_image": "更改图片",
                 "download_package": "下载 Unity Package",
                 "publish_to_labs": "发布到社区实验室",
-                "unpublish": "取消发布",
+                "unpublish": "取消公开状态",
                 "delete": "删除"
             },
             "instances": {
@@ -672,7 +673,7 @@
                 "platform": "平台"
             },
             "json": {
-                "header": "原始资料"
+                "header": "原始JSON信息"
             }
         },
         "group": {
@@ -681,8 +682,8 @@
                 "public": "公开",
                 "private": "私人",
                 "open": "开放",
-                "request": "请求加入",
-                "invite": "仅邀请加入",
+                "request": "需要请求加入",
+                "invite": "仅允许邀请加入",
                 "closed": "不允许任何人加入",
                 "joined": "已加入",
                 "banned": "您已被群组封禁",
@@ -720,7 +721,7 @@
                 "id": "群组 ID",
                 "id_tooltip": "复制 ID 到剪贴板",
                 "joined_at": "加入时间",
-                "roles": "身份",
+                "roles": "身份组",
                 "role_description": "描述：",
                 "role_updated_at": "更新时间：",
                 "role_created_at": "创建时间：",
@@ -736,7 +737,7 @@
                 "header": "相册"
             },
             "json": {
-                "header": "原始信息"
+                "header": "原始JSON信息"
             }
         },
         "favorite": {
@@ -854,7 +855,7 @@
             "short_url_notice": "短链接会在一段时间后过期",
             "location": "地点",
             "copy_tooltip": "复制到剪贴板",
-            "start_as_desktop": "以桌面模式启动（无 VR）",
+            "start_as_desktop": "以桌面模式启动（不使用 VR）",
             "info": "信息",
             "invite": "邀请",
             "launch": "启动"
@@ -863,7 +864,7 @@
             "header": "导出好友列表"
         },
         "export_own_avatars": {
-            "header": "导出私有模型"
+            "header": "导出自己创建的模型"
         },
         "discord_names": {
             "header": "Discord 名称",
@@ -886,7 +887,7 @@
             "save": "保存"
         },
         "world_export": {
-            "header": "世界收藏导出"
+            "header": "导出世界收藏夹"
         },
         "world_import": {
             "header": "世界收藏导入",
@@ -898,39 +899,39 @@
             "import": "导入世界",
             "cancel": "取消",
             "import_progress": "导入进度：",
-            "clear_table": "清除表格",
+            "clear_table": "清除显示结果",
             "errors": "错误：",
             "clear_errors": "清除错误"
         },
         "avatar_export": {
-            "header": "模型收藏导出"
+            "header": "导出模型收藏夹"
         },
         "avatar_import": {
-            "header": "导入模型收藏",
+            "header": "导入模型收藏夹",
             "description": "输入模型 ID 列表",
             "process_list": "读取列表",
             "process_progress": "进度：",
             "select_group_placeholder": "选择群组",
-            "import": "导入模型",
+            "import": "导入",
             "cancel": "取消",
             "import_progress": "导入进度：",
-            "clear_table": "清除表格",
+            "clear_table": "清除显示结果",
             "errors": "错误：",
-            "clear_errors": "清除错误"
+            "clear_errors": "清除错误信息"
         },
         "friend_export": {
-            "header": "导出好友收藏"
+            "header": "导出好友收藏夹"
         },
         "friend_import": {
-            "header": "导入好友收藏",
+            "header": "导入好友收藏夹",
             "description": "输入玩家 ID 列表",
             "process_list": "读取列表",
             "process_progress": "进度：",
             "select_group_placeholder": "选择群组",
-            "import": "导入好友",
+            "import": "导入",
             "cancel": "取消",
             "import_progress": "导入进度：",
-            "clear_table": "清除表格",
+            "clear_table": "清除显示结果",
             "errors": "错误：",
             "clear_errors": "清除错误"
         },
@@ -974,7 +975,7 @@
             "cancel": "取消",
             "progress": "进度：",
             "errors": "错误：",
-            "clear_errors": "清除错误"
+            "clear_errors": "清除错误信息"
         },
         "edit_invite_message": {
             "header": "编辑邀请消息",
@@ -1051,6 +1052,10 @@
             "password_placeholder": "输入新密码",
             "re_input_placeholder": "确认密码",
             "ok": "OK"
+        },
+        "screenshot_metadata": {
+            "header": "屏幕截图元数据查看器",
+            "browse": "选择文件"
         }
     },
     "prompt": {
@@ -1065,7 +1070,7 @@
         "otp": {
             "header": "双重认证",
             "description": "输入你保存的其中一个备用验证码",
-            "resend": "重新发送验证码",
+            "cancel": "取消",
             "use_otp": "使用验证码",
             "verify": "验证",
             "input_placeholder": "备用验证码",
@@ -1074,24 +1079,24 @@
         "email_otp": {
             "header": "双重认证",
             "description": "输入发送到电子邮箱的数字代码",
-            "cancel": "取消",
+            "resend": "重新发送验证码",
             "verify": "验证",
-            "input_placeholder": "代码",
-            "input_error": "无效的代码"
+            "input_placeholder": "输入验证码",
+            "input_error": "无效的验证码"
         },
         "primary_password": {
             "header": "需要主密码",
             "description": "请输入你的主密码"
         },
         "change_favorite_group_name": {
-            "header": "更改收藏组名",
+            "header": "更改收藏夹名称",
             "description": "输入新名称",
             "cancel": "取消",
             "change": "更改",
-            "input_placeholder": "名称",
-            "input_error": "需要名称",
+            "input_placeholder": "输入你想要的名称",
+            "input_error": "请输入有效的名称",
             "message": {
-                "success": "已重新命名收藏群组"
+                "success": "已重新命名收藏夹"
             }
         },
         "direct_access_user_id": {
@@ -1232,19 +1237,19 @@
         },
         "auto_clear_cache": {
             "header": "VRCX 缓存清除间隔",
-            "description": "输入小时数，较大的数值可能会影响内存用量和性能 （默认：24，关闭：0）",
+            "description": "输入小时数，较大的数值可能会影响性能 （默认：24，关闭：0）",
             "cancel": "取消",
             "ok": "OK",
             "input_error": "请输入有效的小时数"
         },
         "new_local_favorite_group": {
             "header": "新增收藏夹",
-            "description": "输入世界收藏夹名",
+            "description": "输入收藏夹名称",
             "cancel": "取消",
             "ok": "OK",
             "input_error": "请输入有效的名称",
             "message": {
-                "error": "名称为 {name} 的收藏已存在"
+                "error": "名称为 {name} 的收藏夹已存在"
             }
         },
         "local_favorite_group_rename": {
@@ -1275,6 +1280,7 @@
         "gameLog": {
             "date": "时间",
             "type": "类型",
+            "icon": "图标",
             "user": "玩家",
             "detail": "详细信息"
         },
