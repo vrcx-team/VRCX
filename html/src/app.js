@@ -9905,11 +9905,23 @@ speechSynthesis.getVoices();
     $app.methods.getPhotonIdFromDisplayName = function (displayName) {
         var photonId = '';
         if (displayName) {
-            this.photonLobbyCurrent.forEach((ref, id) => {
+            this.photonLobby.forEach((ref, id) => {
                 if (
                     typeof ref !== 'undefined' &&
                     ref.displayName === displayName
                 ) {
+                    photonId = id;
+                }
+            });
+        }
+        return photonId;
+    };
+
+    $app.methods.getPhotonIdFromUserId = function (userId) {
+        var photonId = '';
+        if (userId) {
+            this.photonLobby.forEach((ref, id) => {
+                if (typeof ref !== 'undefined' && ref.id === userId) {
                     photonId = id;
                 }
             });
@@ -10248,6 +10260,32 @@ speechSynthesis.getVoices();
                 this.queueGameLogNoty(entry);
                 this.addGameLog(entry);
                 break;
+            case 70:
+                // Portal Spawn
+                if (data.Parameters[245][0] === 20) {
+                    var portalId = data.Parameters[245][1];
+                    var userId = data.Parameters[245][2];
+                    var shortName = data.Parameters[245][5];
+                    var worldName = data.Parameters[245][8].name;
+                    this.lastPortalList.set(portalId, Date.parse(gameLogDate));
+                    this.addPhotonPortalSpawn(
+                        gameLogDate,
+                        userId,
+                        shortName,
+                        worldName
+                    );
+                } else if (data.Parameters[245][0] === 22) {
+                    var portalId = data.Parameters[245][1];
+                    this.lastPortalList.delete(portalId);
+                    var date = this.lastPortalList.get(portalId);
+                    var time = timeToText(Date.parse(gameLogDate) - date);
+                    this.addEntryPhotonEvent({
+                        text: `DeletedPortal ${time}`,
+                        type: 'DeletedPortal',
+                        created_at: gameLogDate
+                    });
+                }
+                break;
         }
     };
 
@@ -10417,6 +10455,39 @@ speechSynthesis.getVoices();
             location: this.lastLocation.location,
             userId: ref.id,
             instanceId,
+            worldName
+        });
+    };
+
+    $app.methods.addPhotonPortalSpawn = async function (
+        gameLogDate,
+        userId,
+        shortName,
+        worldName
+    ) {
+        var instance = await API.getInstanceFromShortName({shortName});
+        var location = instance.json.location;
+        // var newShortName = instance.json.shortName;
+        // var portalType = 'Secure';
+        // if (shortName === newShortName) {
+        //     portalType = 'Unlocked';
+        // }
+        this.addEntryPhotonEvent({
+            photonId: this.getPhotonIdFromUserId(userId),
+            text: `PortalSpawn to ${worldName}`,
+            type: 'PortalSpawn',
+            shortName,
+            location,
+            worldName,
+            created_at: gameLogDate
+        });
+        this.addPhotonEventToGameLog({
+            created_at: gameLogDate,
+            type: 'PortalSpawn',
+            displayName: this.getDisplayName(userId),
+            location: this.lastLocation.location,
+            userId,
+            instanceId: location,
             worldName
         });
     };
@@ -15732,6 +15803,9 @@ speechSynthesis.getVoices();
                     moderated: userId,
                     type: 'interactOff'
                 });
+                break;
+            case 'Report Hacking':
+                $app.reportUserForHacking(userId);
                 break;
             case 'Unfriend':
                 API.deleteFriend({
@@ -25008,6 +25082,41 @@ speechSynthesis.getVoices();
         var D = this.gallerySelectDialog;
         D.visible = false;
         console.log(imageUrl, fileId);
+    };
+
+    $app.methods.reportUserForHacking = function (userId) {
+        API.reportUser({
+            userId,
+            contentType: 'user',
+            reason: 'behavior-hacking',
+            type: 'report'
+        });
+    };
+
+    /*
+        params: {
+            userId: string,
+            contentType: string,
+            reason: string,
+            type: string
+        }
+    */
+    API.reportUser = function (params) {
+        return this.call(`feedback/${params.userId}/user`, {
+            method: 'POST',
+            params: {
+                contentType: params.contentType,
+                reason: params.reason,
+                type: params.type
+            }
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('FEEDBACK:REPORT:USER', args);
+            return args;
+        });
     };
 
     $app = new Vue($app);

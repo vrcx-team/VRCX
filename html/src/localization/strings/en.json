@@ -507,6 +507,7 @@
                 "edit_status": "Social Status",
                 "edit_language": "Language",
                 "edit_bio": "Bio",
+                "report_hacking": "Report For Hacking",
                 "unfriend": "Unfriend",
                 "logout": "Logout"
             },

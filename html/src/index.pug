@@ -1741,6 +1741,7 @@ html
                                                 span {{ $t('dialog.user.actions.moderation_hide_avatar') }}
                                             el-dropdown-item(v-if="userDialog.isInteractOff" icon="el-icon-thumb" command="Enable Avatar Interaction" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_enable_avatar_interaction') }}
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Disable Avatar Interaction") {{ $t('dialog.user.actions.moderation_disable_avatar_interaction') }}
+                                            el-dropdown-item(icon="el-icon-s-flag" command="Report Hacking" :disabled="userDialog.ref.$isModerator") {{ $t('dialog.user.actions.report_hacking') }}
                                             template(v-if="userDialog.isFriend")
                                                 el-dropdown-item(icon="el-icon-delete" command="Unfriend" divided style="color:#F56C6C") {{ $t('dialog.user.actions.unfriend') }}
                     el-tabs(ref="userDialogTabs" @tab-click="userDialogTabClick")
