@@ -479,7 +479,7 @@ html
                     circle(class="np-progress-circle-stroke" cx="60" cy="60" stroke="white" r="30" fill="transparent" stroke-width="60")
                 .hud-feed
                     div(v-for="feed in hudFeed")
-                        .item(:class="{ friend: feed.isFriend, favorite: feed.isFavorite }") #[span(v-if="feed.isMaster") 👑]#[strong.name(v-text="feed.displayName")]
+                        .item(:class="{ friend: feed.isFriend, favorite: feed.isFavorite }") #[span(v-if="feed.isMaster") 👑]#[strong.name(v-text="feed.displayName" :style="{'color':feed.colour}")]
                             template(v-if="feed.type === 'ChangeAvatar'")
                                 span(style="margin-left:10px;color:#a3a3a3") ChangeAvatar
                                 span(v-if="!feed.inCache" style="color:#aaa;margin-left:10px") #[i.el-icon-download]

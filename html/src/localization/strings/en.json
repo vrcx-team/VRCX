@@ -193,7 +193,8 @@
                     "auto_update_off": "Off",
                     "auto_update_notify": "Notify",
                     "auto_update_download": "Auto Download",
-                    "auto_update_install": "Auto Install"
+                    "auto_update_install": "Auto Install",
+                    "change_log": "Change Log"
                 },
                 "application": {
                     "header": "Application",
@@ -1042,6 +1043,19 @@
             "header": "Previous Instances",
             "info": "Previous Instance Info",
             "search_placeholder": "Search"
+        },
+        "change_log": {
+            "header": "Change Log",
+            "close": "Close",
+            "donate": "Donate",
+            "github": "GitHub"
+        },
+        "gallery_select": {
+            "header": "Select Image",
+            "gallery": "Gallery",
+            "none": "None",
+            "refresh": "Refresh",
+            "upload": "Upload"
         },
         "open_source": {
             "header": "Open Source Software Notice",

@@ -1128,6 +1128,7 @@ html
                         div.options-container
                             span.header {{ $t("view.settings.general.vrcx_updater.header") }}
                             div.options-container-item
+                                el-button(size="small" icon="el-icon-document" @click="showChangeLogDialog()") {{ $t("view.settings.general.vrcx_updater.change_log") }}
                                 el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") {{ $t("view.settings.general.vrcx_updater.change_build") }}
                             div.options-container-item
                                 span.name {{ $t("view.settings.general.vrcx_updater.auto_update") }}
@@ -1685,6 +1686,7 @@ html
                                     el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRC+
                                     el-tag.x-tag-platform-pc(v-if="userDialog.ref.last_platform === 'standalonewindows'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
                                     el-tag.x-tag-platform-quest(v-else-if="userDialog.ref.last_platform === 'android'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Quest
+                                    el-tag.name(v-if="userDialog.ref.$customTag" type="info" effect="plain" size="mini" v-text="userDialog.ref.$customTag" :style="{'color':userDialog.ref.$customTagColour, 'border-color':userDialog.ref.$customTagColour}" style="margin-right:5px;margin-top:5px")
                                 div(style="margin-top:5px")
                                     span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
                             div(v-if="userDialog.ref.userIcon" style="flex:none;margin-right:10px")
@@ -3803,7 +3805,7 @@ html
                     el-button(v-if="API.currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath" size="small" icon="el-icon-upload2" @click="uploadScreenshotToGallery") {{ $t('dialog.screenshot_metadata.upload') }}
                     span(v-text="screenshotMetadataDialog.metadata.fileName" style="margin-left:5px")
                     br
-                    span(v-if="screenshotMetadataDialog.metadata.dateTime" style="margin-left:5px") {{ screenshotMetadataDialog.metadata.dateTime | formatDate('long') }}
+                    span(v-if="screenshotMetadataDialog.metadata.dateTime") {{ screenshotMetadataDialog.metadata.dateTime | formatDate('long') }}
                     span(v-if="screenshotMetadataDialog.metadata.fileResolution" v-text="screenshotMetadataDialog.metadata.fileResolution" style="margin-left:5px")
                     el-tag(v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="mini" style="margin-left:5px" v-text="screenshotMetadataDialog.metadata.fileSize")
                     br
@@ -3833,6 +3835,32 @@ html
                         span(v-if="user.x" v-text="'('+user.x+', '+user.y+', '+user.z+')'" style="margin-left:5px;color:#909399;font-family:monospace")
                         br
 
+            //- dialog: change log
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeLogDialog" :visible.sync="changeLogDialog.visible" :title="$t('dialog.change_log.header')" width="800px")
+                .changelog-dialog(v-if="changeLogDialog.visible")
+                    h2(v-text="VRCXUpdateDialog.updateJson.name")
+                    vue-markdown(:source="VRCXUpdateDialog.updateJson.body")
+                template(#footer)
+                    el-button(type="small" @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')") {{ $t('dialog.change_log.github') }}
+                    el-button(type="small" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')") {{ $t('dialog.change_log.donate') }}
+                    el-button(type="small" @click="changeLogDialog.visible = false") {{ $t('dialog.change_log.close') }}
+
+            //- dialog: gallery select
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="gallerySelectDialog" :visible.sync="gallerySelectDialog.visible" :title="$t('dialog.gallery_select.header')" width="100%")
+                div(v-if="gallerySelectDialog.visible")
+                    span(slot="label") {{ $t('dialog.gallery_select.gallery') }}
+                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
+                    br
+                    input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                    el-button-group
+                        el-button(type="default" size="small" @click="selectImageGallerySelect('', '')" icon="el-icon-close") {{ $t('dialog.gallery_select.none') }}
+                        el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_select.refresh') }}
+                        el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_select.upload') }}
+                    br
+                    .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in galleryTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
+                        .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)")
+                            img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
+                
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" :title="$t('dialog.open_source.header')" width="650px")
                 div(v-if="ossDialog" style="height:350px;overflow:hidden scroll;word-break:break-all")

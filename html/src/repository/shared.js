@@ -4,22 +4,6 @@ function transformKey(key) {
     return String(key).toLowerCase();
 }
 
-// function waitSynchronous(promise) {
-//     if (typeof promise !== 'object' || promise === null) {
-//         return promise;
-//     }
-//     console.log('waitSynchronous', promise);
-//     while (true) {
-//         var state = promise.getState();
-//         if (state === 'resolved') {
-//             return promise.get();
-//         }
-//         if (state === 'rejected') {
-//             return null;
-//         }
-//     }
-// }
-
 class SharedRepository {
     remove(key) {
         var _key = transformKey(key);

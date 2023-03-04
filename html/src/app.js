@@ -14,6 +14,7 @@ import {DataTables} from 'vue-data-tables';
 import ElementUI from 'element-ui';
 import {v4 as uuidv4} from 'uuid';
 import * as workerTimers from 'worker-timers';
+import VueMarkdown from 'vue-markdown';
 import 'default-passive-events';
 
 import configRepository from './repository/config.js';
@@ -128,6 +129,8 @@ speechSynthesis.getVoices();
         theme: 'mint',
         timeout: 6000
     });
+
+    Vue.component('vue-markdown', VueMarkdown);
 
     Vue.use(VueI18n);
 
@@ -1682,6 +1685,8 @@ speechSynthesis.getVoices();
                 $lastSeen: '',
                 $nickName: '',
                 $previousLocation: '',
+                $customTag: '',
+                $customTagColour: '',
                 //
                 ...json
             };
@@ -1710,6 +1715,11 @@ speechSynthesis.getVoices();
                     $app.sharedFeed.pendingUpdate = true;
                     $app.updateSharedFeed(false);
                 }
+            }
+            if ($app.customUserTags.has(json.id)) {
+                var tag = this.customUserTags.get(json.id);
+                ref.$customTag = tag.tag;
+                ref.$customTagColour = tag.colour;
             }
             ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
@@ -4901,7 +4911,7 @@ speechSynthesis.getVoices();
         if (lastVersion !== this.appVersion) {
             configRepository.setString('VRCX_lastVRCXVersion', this.appVersion);
             if (configRepository.getString('VRCX_branch') === 'Stable') {
-                this.openChangeLog();
+                this.showChangeLogDialog();
             }
         }
     };
@@ -4916,21 +4926,6 @@ speechSynthesis.getVoices();
             this.branch = 'Stable';
         }
         configRepository.setString('VRCX_branch', this.branch);
-    };
-
-    $app.methods.openChangeLog = function () {
-        this.$confirm('Open Change Log?', 'VRCX has updated', {
-            confirmButtonText: 'Open',
-            cancelButtonText: 'Close',
-            type: 'info',
-            callback: (action) => {
-                if (action === 'confirm') {
-                    AppApi.OpenLink(
-                        'https://github.com/vrcx-team/VRCX/releases/latest'
-                    );
-                }
-            }
-        });
     };
 
     $app.methods.languageClass = function (language) {
@@ -9817,12 +9812,18 @@ speechSynthesis.getVoices();
         var userId = this.getUserIdFromPhotonId(input.photonId);
         var isFavorite = API.cachedFavoritesByObjectId.has(userId);
         var isFriend = this.friends.has(userId);
+        var colour = '';
+        var tagRef = this.customUserTags.get(userId);
+        if (typeof tagRef !== 'undefined' && tagRef.colour) {
+            colour = tagRef.colour;
+        }
         var feed = {
             displayName: this.getDisplayNameFromPhotonId(input.photonId),
             userId,
             isFavorite,
             isFriend,
             isMaster,
+            colour,
             ...input
         };
         this.photonEventTable.data.unshift(feed);
@@ -14855,28 +14856,38 @@ speechSynthesis.getVoices();
                     }
                     this.applyUserDialogLocation(true);
                     if (this.$refs.userDialogTabs.currentName === '0') {
-                        this.userDialogLastActiveTab = 'Info';
+                        this.userDialogLastActiveTab = $t(
+                            'dialog.user.info.header'
+                        );
                     } else if (this.$refs.userDialogTabs.currentName === '1') {
-                        this.userDialogLastActiveTab = 'Groups';
+                        this.userDialogLastActiveTab = $t(
+                            'dialog.user.groups.header'
+                        );
                         if (this.userDialogLastGroup !== userId) {
                             this.userDialogLastGroup = userId;
                             this.getUserGroups(userId);
                         }
                     } else if (this.$refs.userDialogTabs.currentName === '2') {
-                        this.userDialogLastActiveTab = 'Worlds';
+                        this.userDialogLastActiveTab = $t(
+                            'dialog.user.worlds.header'
+                        );
                         this.setUserDialogWorlds(userId);
                         if (this.userDialogLastWorld !== userId) {
                             this.userDialogLastWorld = userId;
                             this.refreshUserDialogWorlds();
                         }
                     } else if (this.$refs.userDialogTabs.currentName === '3') {
-                        this.userDialogLastActiveTab = 'Favorite Worlds';
+                        this.userDialogLastActiveTab = $t(
+                            'dialog.user.favorite_worlds.header'
+                        );
                         if (this.userDialogLastFavoriteWorld !== userId) {
                             this.userDialogLastFavoriteWorld = userId;
                             this.getUserFavoriteWorlds(userId);
                         }
                     } else if (this.$refs.userDialogTabs.currentName === '4') {
-                        this.userDialogLastActiveTab = 'Avatars';
+                        this.userDialogLastActiveTab = $t(
+                            'dialog.user.avatars.header'
+                        );
                         this.setUserDialogAvatars(userId);
                         this.userDialogLastAvatar = userId;
                         if (
@@ -14887,7 +14898,9 @@ speechSynthesis.getVoices();
                         }
                         this.setUserDialogAvatarsRemote(userId);
                     } else if (this.$refs.userDialogTabs.currentName === '5') {
-                        this.userDialogLastActiveTab = 'JSON';
+                        this.userDialogLastActiveTab = $t(
+                            'dialog.user.json.header'
+                        );
                         this.refreshUserDialogTreeData();
                     }
                     if (args.cache) {
@@ -19984,12 +19997,12 @@ speechSynthesis.getVoices();
         if (this.userDialogLastActiveTab === obj.label) {
             return;
         }
-        if (obj.label === 'Groups') {
+        if (obj.label === $t('dialog.user.groups.header')) {
             if (this.userDialogLastGroup !== userId) {
                 this.userDialogLastGroup = userId;
                 this.getUserGroups(userId);
             }
-        } else if (obj.label === 'Avatars') {
+        } else if (obj.label === $t('dialog.user.avatars.header')) {
             this.setUserDialogAvatars(userId);
             if (this.userDialogLastAvatar !== userId) {
                 this.userDialogLastAvatar = userId;
@@ -20002,18 +20015,18 @@ speechSynthesis.getVoices();
                     this.setUserDialogAvatarsRemote(userId);
                 }
             }
-        } else if (obj.label === 'Worlds') {
+        } else if (obj.label === $t('dialog.user.worlds.header')) {
             this.setUserDialogWorlds(userId);
             if (this.userDialogLastWorld !== userId) {
                 this.userDialogLastWorld = userId;
                 this.refreshUserDialogWorlds();
             }
-        } else if (obj.label === 'Favorite Worlds') {
+        } else if (obj.label === $t('dialog.user.favorite_worlds.header')) {
             if (this.userDialogLastFavoriteWorld !== userId) {
                 this.userDialogLastFavoriteWorld = userId;
                 this.getUserFavoriteWorlds(userId);
             }
-        } else if (obj.label === 'JSON') {
+        } else if (obj.label === $t('dialog.user.json.header')) {
             this.refreshUserDialogTreeData();
         }
         this.userDialogLastActiveTab = obj.label;
@@ -21117,7 +21130,8 @@ speechSynthesis.getVoices();
         updatePending: false,
         updatePendingIsLatest: false,
         release: '',
-        releases: []
+        releases: [],
+        json: {}
     };
 
     $app.data.checkingForVRCXUpdate = false;
@@ -21292,6 +21306,7 @@ speechSynthesis.getVoices();
             console.log(json, response);
         }
         if (json === Object(json) && json.name && json.published_at) {
+            this.VRCXUpdateDialog.updateJson = json;
             this.latestAppVersion = json.name;
             var name = json.name;
             this.VRCXUpdateDialog.updatePendingIsLatest = false;
@@ -21555,17 +21570,42 @@ speechSynthesis.getVoices();
 
     $app.data.photonEventCount = 0;
     $app.data.photonEventIcon = false;
+    $app.data.customUserTags = new Map();
+
+    $app.methods.addCustomTag = function (data) {
+        this.customUserTags.set(data.UserId, {
+            tag: data.Tag,
+            colour: data.TagColour
+        });
+        var ref = API.cachedUsers.get(data.UserId);
+        if (typeof ref !== 'undefined') {
+            ref.$customTag = data.Tag;
+            ref.$customTagColour = data.TagColour;
+        }
+    };
 
     $app.methods.eventVrcxMessage = function (data) {
-        console.log(data);
-        var entry = {
-            created_at: new Date().toJSON(),
-            type: 'Event',
-            data: data.Data
-        };
-        database.addGamelogEventToDatabase(entry);
-        this.queueGameLogNoty(entry);
-        this.addGameLog(entry);
+        switch (data.MsgType) {
+            case 'CustomTag':
+                this.addCustomTag(data);
+                break;
+            case 'Noty':
+                var entry = {
+                    created_at: new Date().toJSON(),
+                    type: 'Event',
+                    data: data.Data
+                };
+                database.addGamelogEventToDatabase(entry);
+                this.queueGameLogNoty(entry);
+                this.addGameLog(entry);
+                if (data.Tag) {
+                    this.addCustomTag(data);
+                }
+                break;
+            default:
+                console.log('VRCXMessage:', data);
+                break;
+        }
     };
 
     $app.methods.photonEventPulse = function () {
@@ -24036,6 +24076,18 @@ speechSynthesis.getVoices();
         });
     };
 
+    API.getRequestedGroups = function () {
+        return this.call(`users/${this.currentUser.id}/groups/requested`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json
+            };
+            this.$emit('GROUP:REQUESTED', args);
+            return args;
+        });
+    };
+
     /*
         params: {
             groupId: string
@@ -24343,17 +24395,17 @@ speechSynthesis.getVoices();
         if (this.groupDialogLastActiveTab === obj.label) {
             return;
         }
-        if (obj.label === 'Members') {
+        if (obj.label === $t('dialog.group.members.header')) {
             if (this.groupDialogLastMembers !== groupId) {
                 this.groupDialogLastMembers = groupId;
                 this.getGroupDialogGroupMembers();
             }
-        } else if (obj.label === 'Gallery') {
+        } else if (obj.label === $t('dialog.group.gallery.header')) {
             if (this.groupDialogLastGallery !== groupId) {
                 this.groupDialogLastGallery = groupId;
                 this.getGroupGalleries();
             }
-        } else if (obj.label === 'JSON') {
+        } else if (obj.label === $t('dialog.group.json.header')) {
             this.refreshGroupDialogTreeData();
         }
         this.groupDialogLastActiveTab = obj.label;
@@ -24922,6 +24974,40 @@ speechSynthesis.getVoices();
         }
         row.isFavorite = API.cachedFavoritesByObjectId.has(row.userId);
         return row.isFavorite;
+    };
+
+    $app.data.changeLogDialog = {
+        visible: false
+    };
+
+    $app.methods.showChangeLogDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.changeLogDialog.$el));
+        this.changeLogDialog.visible = true;
+        if (
+            typeof this.VRCXUpdateDialog.updateJson === 'object' &&
+            Object.keys(this.VRCXUpdateDialog.updateJson).length === 0
+        ) {
+            this.checkForVRCXUpdate();
+        }
+    };
+
+    $app.data.gallerySelectDialog = {
+        visible: false,
+        destenationFeild: ''
+    };
+
+    $app.methods.showGallerySelectDialog = function (destenationFeild) {
+        this.$nextTick(() => adjustDialogZ(this.$refs.gallerySelectDialog.$el));
+        var D = this.gallerySelectDialog;
+        D.destenationFeild = destenationFeild;
+        D.visible = true;
+        this.refreshGalleryTable();
+    };
+
+    $app.methods.selectImageGallerySelect = function (imageUrl, fileId) {
+        var D = this.gallerySelectDialog;
+        D.visible = false;
+        console.log(imageUrl, fileId);
     };
 
     $app = new Vue($app);
