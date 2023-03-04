@@ -218,22 +218,23 @@ namespace VRCX
             }
         }
 
-        public void ShowVRForm()
-        {
-            try
-            {
-                MainForm.Instance.BeginInvoke(new MethodInvoker(() =>
-                {
-                    if (VRForm.Instance == null)
-                    {
-                        new VRForm().Show();
-                    }
-                }));
-            }
-            catch
-            {
-            }
-        }
+        // broken since adding ExecuteVrFeedFunction(
+        // public void ShowVRForm()
+        // {
+        //     try
+        //     {
+        //         MainForm.Instance.BeginInvoke(new MethodInvoker(() =>
+        //         {
+        //             if (VRForm.Instance == null)
+        //             {
+        //                 new VRForm().Show();
+        //             }
+        //         }));
+        //     }
+        //     catch
+        //     {
+        //     }
+        // }
 
         public void SetVR(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
         {
@@ -242,7 +243,12 @@ namespace VRCX
 
         public void RefreshVR()
         {
-            VRCXVR.Instance.Refresh();
+            VRCXVR.Instance.Restart();
+        }
+
+        public void RestartVR()
+        {
+            VRCXVR.Instance.Restart();
         }
 
         public string[][] GetVRDevices()
@@ -350,20 +356,24 @@ namespace VRCX
 
         public void ExecuteAppFunction(string function, string json)
         {
-            if (MainForm.Instance != null)
+            if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading)
                 MainForm.Instance.Browser.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         public void ExecuteVrFeedFunction(string function, string json)
         {
-            if (VRCXVR._browser1 != null)
-                VRCXVR._browser1.ExecuteScriptAsync($"$app.{function}", json);
+            if (VRCXVR._browser1 == null) return;
+            if (VRCXVR._browser1.IsLoading)
+                VRCXVR.Instance.Restart();
+            VRCXVR._browser1.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         public void ExecuteVrOverlayFunction(string function, string json)
         {
-            if (VRCXVR._browser2 != null)
-                VRCXVR._browser2.ExecuteScriptAsync($"$app.{function}", json);
+            if (VRCXVR._browser2 == null) return;
+            if (VRCXVR._browser2.IsLoading)
+                VRCXVR.Instance.Restart();
+            VRCXVR._browser2.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         public string GetLaunchCommand()

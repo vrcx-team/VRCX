@@ -4,17 +4,16 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
 using CefSharp;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using Valve.VR;
 using Device = SharpDX.Direct3D11.Device;
 
@@ -22,26 +21,26 @@ namespace VRCX
 {
     public class VRCXVR
     {
-        public static readonly VRCXVR Instance;
+        public static VRCXVR Instance;
         private static readonly float[] _rotation = { 0f, 0f, 0f };
         private static readonly float[] _translation = { 0f, 0f, 0f };
         private static readonly float[] _translationLeft = { -7f / 100f, -5f / 100f, 6f / 100f };
         private static readonly float[] _translationRight = { 7f / 100f, -5f / 100f, 6f / 100f };
         private static readonly float[] _rotationLeft = { 90f * (float)(Math.PI / 180f), 90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
         private static readonly float[] _rotationRight = { -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
-        private readonly ReaderWriterLockSlim _deviceListLock;
-        private List<string[]> _deviceList;
-        private Thread _thread;
-        private Device _device;
-        private Texture2D _texture1;
-        private Texture2D _texture2;
         public static OffScreenBrowser _browser1;
         public static OffScreenBrowser _browser2;
+        private readonly List<string[]> _deviceList;
+        private readonly ReaderWriterLockSlim _deviceListLock;
         private bool _active;
+        private Device _device;
         private bool _hmdOverlayActive;
-        private bool _wristOverlayActive;
         private bool _menuButton;
         private int _overlayHand;
+        private Texture2D _texture1;
+        private Texture2D _texture2;
+        private Thread _thread;
+        private bool _wristOverlayActive;
 
         static VRCXVR()
         {
@@ -73,6 +72,14 @@ namespace VRCX
             thread.Join();
         }
 
+        public void Restart()
+        {
+            Exit();
+            Instance = new VRCXVR();
+            Instance.Init();
+            MainForm.Instance.Browser.ExecuteScriptAsync("console.log('VRCXVR Restarted');");
+        }
+
         private void ThreadLoop()
         {
             var active = false;
@@ -91,15 +98,15 @@ namespace VRCX
             // nextOverlay = DateTime.MaxValue;
             // https://stackoverflow.com/questions/38312597/how-to-choose-a-specific-graphics-device-in-sharpdx-directx-11/38596725#38596725
             Factory f = new Factory1();
-            Adapter a = f.GetAdapter(1);
+            var a = f.GetAdapter(1);
 
-            DeviceCreationFlags flags = DeviceCreationFlags.BgraSupport;
+            var flags = DeviceCreationFlags.BgraSupport;
 
             _device = Program.GPUFix ? new Device(a, flags) : new Device(DriverType.Hardware, DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport);
 
             _texture1 = new Texture2D(
                 _device,
-                new Texture2DDescription()
+                new Texture2DDescription
                 {
                     Width = 512,
                     Height = 512,
@@ -115,7 +122,7 @@ namespace VRCX
 
             _texture2 = new Texture2D(
                 _device,
-                new Texture2DDescription()
+                new Texture2DDescription
                 {
                     Width = 1024,
                     Height = 1024,
@@ -164,6 +171,7 @@ namespace VRCX
                         {
                             continue;
                         }
+
                         var _err = EVRInitError.None;
                         system = OpenVR.Init(ref _err, EVRApplicationType.VRApplication_Background);
                         nextInit = DateTime.UtcNow.AddSeconds(5);
@@ -171,8 +179,10 @@ namespace VRCX
                         {
                             continue;
                         }
+
                         active = true;
                     }
+
                     while (system.PollNextEvent(ref e, (uint)Marshal.SizeOf(e)))
                     {
                         var type = (EVREventType)e.eventType;
@@ -185,6 +195,7 @@ namespace VRCX
                             break;
                         }
                     }
+
                     if (system != null)
                     {
                         if (DateTime.UtcNow.CompareTo(nextDeviceUpdate) >= 0)
@@ -195,8 +206,10 @@ namespace VRCX
                             {
                                 nextOverlay = DateTime.UtcNow.AddSeconds(10);
                             }
+
                             nextDeviceUpdate = DateTime.UtcNow.AddSeconds(0.1);
                         }
+
                         var overlay = OpenVR.Overlay;
                         if (overlay != null)
                         {
@@ -208,6 +221,7 @@ namespace VRCX
                                 overlay.DestroyOverlay(dashboardHandle);
                                 dashboardHandle = 0;
                             }
+
                             err = ProcessOverlay1(overlay, ref overlayHandle1, ref overlayVisible1, dashboardVisible, overlayIndex, nextOverlay);
                             if (err != EVROverlayError.None &&
                                 overlayHandle1 != 0)
@@ -215,6 +229,7 @@ namespace VRCX
                                 overlay.DestroyOverlay(overlayHandle1);
                                 overlayHandle1 = 0;
                             }
+
                             err = ProcessOverlay2(overlay, ref overlayHandle2, ref overlayVisible2, dashboardVisible);
                             if (err != EVROverlayError.None &&
                                 overlayHandle2 != 0)
@@ -259,8 +274,8 @@ namespace VRCX
 
         public void Refresh()
         {
-            _browser1.ExecuteScriptAsync("location.reload()");
-            _browser2.ExecuteScriptAsync("location.reload()");
+            _browser1.Reload();
+            _browser2.Reload();
         }
 
         public string[][] GetDevices()
@@ -287,6 +302,7 @@ namespace VRCX
             {
                 _deviceListLock.ExitWriteLock();
             }
+
             var sb = new StringBuilder(256);
             var state = new VRControllerState_t();
             for (var i = 0u; i < OpenVR.k_unMaxTrackedDeviceCount; ++i)
@@ -302,12 +318,14 @@ namespace VRCX
                     {
                         batteryPercentage = 1f;
                     }
+
                     err = ETrackedPropertyError.TrackedProp_Success;
                     var isCharging = system.GetBoolTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_DeviceIsCharging_Bool, ref err);
                     if (err != ETrackedPropertyError.TrackedProp_Success)
                     {
                         isCharging = false;
                     }
+
                     sb.Clear();
                     system.GetStringTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_TrackingSystemName_String, sb, (uint)sb.Capacity, ref err);
                     var isOculus = sb.ToString().IndexOf("oculus", StringComparison.OrdinalIgnoreCase) >= 0;
@@ -319,11 +337,11 @@ namespace VRCX
                     if (role == ETrackedControllerRole.LeftHand || role == ETrackedControllerRole.RightHand)
                     {
                         if (_overlayHand == 0 ||
-                            _overlayHand == 1 && role == ETrackedControllerRole.LeftHand ||
-                            _overlayHand == 2 && role == ETrackedControllerRole.RightHand)
+                            (_overlayHand == 1 && role == ETrackedControllerRole.LeftHand) ||
+                            (_overlayHand == 2 && role == ETrackedControllerRole.RightHand))
                         {
                             if (system.GetControllerState(i, ref state, (uint)Marshal.SizeOf(state)) &&
-                                (state.ulButtonPressed & (_menuButton ? 2u : (isOculus ? 128u : 4u))) != 0)
+                                (state.ulButtonPressed & (_menuButton ? 2u : isOculus ? 128u : 4u)) != 0)
                             {
                                 if (role == ETrackedControllerRole.LeftHand)
                                 {
@@ -340,6 +358,7 @@ namespace VRCX
                             }
                         }
                     }
+
                     var type = string.Empty;
                     if (devClass == ETrackedDeviceClass.Controller)
                     {
@@ -364,6 +383,7 @@ namespace VRCX
                     {
                         type = "base";
                     }
+
                     var item = new[]
                     {
                         type,
@@ -373,7 +393,7 @@ namespace VRCX
                         isCharging
                             ? "charging"
                             : "discharging",
-                        (batteryPercentage * 100).ToString(),
+                        (batteryPercentage * 100).ToString()
                     };
                     _deviceListLock.EnterWriteLock();
                     try
@@ -401,17 +421,20 @@ namespace VRCX
                     {
                         return err;
                     }
+
                     ulong handle = 0;
                     err = overlay.CreateDashboardOverlay("VRCX", "VRCX", ref dashboardHandle, ref handle);
                     if (err != EVROverlayError.None)
                     {
                         return err;
                     }
+
                     err = overlay.SetOverlayWidthInMeters(dashboardHandle, 1.5f);
                     if (err != EVROverlayError.None)
                     {
                         return err;
                     }
+
                     err = overlay.SetOverlayInputMethod(dashboardHandle, VROverlayInputMethod.Mouse);
                     if (err != EVROverlayError.None)
                     {
@@ -474,22 +497,26 @@ namespace VRCX
                     {
                         return err;
                     }
+
                     overlayVisible = false;
                     err = overlay.CreateOverlay("VRCX1", "VRCX1", ref overlayHandle);
                     if (err != EVROverlayError.None)
                     {
                         return err;
                     }
+
                     err = overlay.SetOverlayAlpha(overlayHandle, 0.9f);
                     if (err != EVROverlayError.None)
                     {
                         return err;
                     }
+
                     err = overlay.SetOverlayWidthInMeters(overlayHandle, 1f);
                     if (err != EVROverlayError.None)
                     {
                         return err;
                     }
+
                     err = overlay.SetOverlayInputMethod(overlayHandle, VROverlayInputMethod.None);
                     if (err != EVROverlayError.None)
                     {
@@ -520,7 +547,7 @@ namespace VRCX
                     m8 = m.M13,
                     m9 = m.M23,
                     m10 = m.M33,
-                    m11 = m.M43,
+                    m11 = m.M43
                 };
                 err = overlay.SetOverlayTransformTrackedDeviceRelative(overlayHandle, overlayIndex, ref hm34);
                 if (err != EVROverlayError.None)
@@ -541,6 +568,7 @@ namespace VRCX
                 {
                     return err;
                 }
+
                 if (!overlayVisible)
                 {
                     err = overlay.ShowOverlay(overlayHandle);
@@ -548,6 +576,7 @@ namespace VRCX
                     {
                         return err;
                     }
+
                     overlayVisible = true;
                 }
             }
@@ -558,6 +587,7 @@ namespace VRCX
                 {
                     return err;
                 }
+
                 overlayVisible = false;
             }
 
@@ -577,27 +607,32 @@ namespace VRCX
                     {
                         return err;
                     }
+
                     overlayVisible = false;
                     err = overlay.CreateOverlay("VRCX2", "VRCX2", ref overlayHandle);
                     if (err != EVROverlayError.None)
                     {
                         return err;
                     }
+
                     err = overlay.SetOverlayAlpha(overlayHandle, 0.9f);
                     if (err != EVROverlayError.None)
                     {
                         return err;
                     }
+
                     err = overlay.SetOverlayWidthInMeters(overlayHandle, 1f);
                     if (err != EVROverlayError.None)
                     {
                         return err;
                     }
+
                     err = overlay.SetOverlayInputMethod(overlayHandle, VROverlayInputMethod.None);
                     if (err != EVROverlayError.None)
                     {
                         return err;
                     }
+
                     var m = Matrix.Scaling(1f);
                     m *= Matrix.Translation(0, -0.3f, -1.5f);
                     var hm34 = new HmdMatrix34_t
@@ -613,7 +648,7 @@ namespace VRCX
                         m8 = m.M13,
                         m9 = m.M23,
                         m10 = m.M33,
-                        m11 = m.M43,
+                        m11 = m.M43
                     };
                     err = overlay.SetOverlayTransformTrackedDeviceRelative(overlayHandle, OpenVR.k_unTrackedDeviceIndex_Hmd, ref hm34);
                     if (err != EVROverlayError.None)
@@ -634,6 +669,7 @@ namespace VRCX
                 {
                     return err;
                 }
+
                 if (!overlayVisible)
                 {
                     err = overlay.ShowOverlay(overlayHandle);
@@ -641,6 +677,7 @@ namespace VRCX
                     {
                         return err;
                     }
+
                     overlayVisible = true;
                 }
             }
@@ -651,6 +688,7 @@ namespace VRCX
                 {
                     return err;
                 }
+
                 overlayVisible = false;
             }
 
