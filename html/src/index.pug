@@ -3839,8 +3839,8 @@ html
             //- dialog: change log
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeLogDialog" :visible.sync="changeLogDialog.visible" :title="$t('dialog.change_log.header')" width="800px")
                 .changelog-dialog(v-if="changeLogDialog.visible")
-                    h2(v-text="VRCXUpdateDialog.updateJson.name")
-                    vue-markdown(:source="VRCXUpdateDialog.updateJson.body")
+                    h2(v-text="VRCXUpdateDialog.updateJson?.name")
+                    vue-markdown(:source="VRCXUpdateDialog.updateJson?.body")
                 template(#footer)
                     el-button(type="small" @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')") {{ $t('dialog.change_log.github') }}
                     el-button(type="small" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')") {{ $t('dialog.change_log.donate') }}
