@@ -5,13 +5,16 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using System;
+using System.Collections.Generic;
 using System.IO.Pipes;
+using System.Threading.Tasks;
 
 namespace VRCX
 {
-    class IPCServer
+    internal class IPCServer
     {
         public static readonly IPCServer Instance;
+        public static readonly List<IPCClient> Clients = new List<IPCClient>();
 
         static IPCServer()
         {
@@ -23,10 +26,18 @@ namespace VRCX
             new IPCServer().CreateIPCServer();
         }
 
+        public static async Task Send(IPCPacket ipcPacket)
+        {
+            foreach (var client in Clients)
+            {
+                await client.Send(ipcPacket);
+            }
+        }
+
         public void CreateIPCServer()
         {
             var ipcServer = new NamedPipeServerStream("vrcx-ipc", PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-            ipcServer.BeginWaitForConnection(asyncResult => DoAccept(asyncResult), ipcServer);
+            ipcServer.BeginWaitForConnection(DoAccept, ipcServer);
         }
 
         private void DoAccept(IAsyncResult asyncResult)
@@ -42,7 +53,9 @@ namespace VRCX
                 Console.WriteLine(e);
             }
 
-            new IPCClient(ipcServer).BeginRead();
+            var ipcClient = new IPCClient(ipcServer);
+            Clients.Add(ipcClient);
+            ipcClient.BeginRead();
             CreateIPCServer();
         }
     }

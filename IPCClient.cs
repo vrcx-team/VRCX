@@ -4,29 +4,61 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-using CefSharp;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.IO.Pipes;
 using System.Text;
+using System.Threading.Tasks;
+using CefSharp;
+using Newtonsoft.Json;
 
 namespace VRCX
 {
     internal class IPCClient
     {
-        private NamedPipeServerStream _ipcServer;
-        private byte[] _recvBuffer = new byte[1024 * 8];
+        private static readonly UTF8Encoding noBomEncoding = new UTF8Encoding(false, false);
+        private readonly NamedPipeServerStream _ipcServer;
+        private readonly byte[] _recvBuffer = new byte[1024 * 8];
+        private readonly MemoryStream memoryStream;
+        private readonly byte[] packetBuffer = new byte[1024 * 1024];
+        private readonly Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
         private string _currentPacket;
 
         public IPCClient(NamedPipeServerStream ipcServer)
         {
+            memoryStream = new MemoryStream(packetBuffer);
+            serializer.Culture = CultureInfo.InvariantCulture;
+            serializer.Formatting = Formatting.None;
+
             _ipcServer = ipcServer;
         }
 
         public void BeginRead()
         {
             _ipcServer.BeginRead(_recvBuffer, 0, _recvBuffer.Length, OnRead, _ipcServer);
+        }
+
+        public async Task Send(IPCPacket ipcPacket)
+        {
+            try
+            {
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                using (var streamWriter = new StreamWriter(memoryStream, noBomEncoding, 65535, true))
+                using (var writer = new JsonTextWriter(streamWriter))
+                {
+                    serializer.Serialize(writer, ipcPacket);
+                    streamWriter.Write((char)0x00);
+                    streamWriter.Flush();
+                }
+
+                var length = (int)memoryStream.Position;
+                _ipcServer?.BeginWrite(packetBuffer, 0, length, OnSend, null);
+            }
+            catch
+            {
+                IPCServer.Clients.Remove(this);
+            }
         }
 
         private void OnRead(IAsyncResult asyncResult)
@@ -37,6 +69,7 @@ namespace VRCX
 
                 if (bytesRead <= 0)
                 {
+                    IPCServer.Clients.Remove(this);
                     _ipcServer.Close();
                     return;
                 }
@@ -69,7 +102,14 @@ namespace VRCX
         public static void OnSend(IAsyncResult asyncResult)
         {
             var ipcClient = (NamedPipeClientStream)asyncResult.AsyncState;
-            ipcClient.EndWrite(asyncResult);
+            ipcClient?.EndWrite(asyncResult);
+        }
+
+        public static void Close(IAsyncResult asyncResult)
+        {
+            var ipcClient = (NamedPipeClientStream)asyncResult.AsyncState;
+            ipcClient?.EndWrite(asyncResult);
+            ipcClient?.Close();
         }
     }
 }

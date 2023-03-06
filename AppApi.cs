@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -346,12 +345,20 @@ namespace VRCX
 
         public void IPCAnnounceStart()
         {
-            var ipcClient = new NamedPipeClientStream(".", "vrcx-ipc", PipeDirection.InOut);
-            ipcClient.Connect();
-            if (!ipcClient.IsConnected)
-                return;
-            var buffer = Encoding.UTF8.GetBytes("{\"type\":\"VRCXLaunch\"}" + (char)0x00);
-            ipcClient.BeginWrite(buffer, 0, buffer.Length, IPCClient.OnSend, ipcClient);
+            IPCServer.Send(new IPCPacket
+            {
+                Type = "VRCXLaunch"
+            });
+        }
+
+        public void SendIpc(string type, string data)
+        {
+            IPCServer.Send(new IPCPacket
+            {
+                Type = "VrcxMessage",
+                MsgType = type,
+                Data = data
+            });
         }
 
         public void ExecuteAppFunction(string function, string json)

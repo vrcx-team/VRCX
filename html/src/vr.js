@@ -726,6 +726,15 @@ Vue.component('marquee-text', MarqueeText);
         this.cleanHudFeed();
     };
 
+    $app.methods.updateHudFeedTag = function (json) {
+        var ref = JSON.parse(json);
+        this.hudFeed.forEach((item) => {
+            if (item.userId === ref.userId) {
+                item.colour = ref.colour;
+            }
+        });
+    };
+
     $app.data.hudTimeout = [];
 
     $app.methods.updateHudTimeout = function (json) {

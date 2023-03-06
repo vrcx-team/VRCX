@@ -19,17 +19,17 @@ namespace VRCX
 
         public static void ArgsCheck()
         {
-            string[] args = Environment.GetCommandLineArgs();
+            var args = Environment.GetCommandLineArgs();
             processList = Process.GetProcessesByName("VRCX");
 
-            bool isDebug = false;
+            var isDebug = false;
             Debug.Assert(isDebug = true);
-            
-            foreach (string arg in args)
+
+            foreach (var arg in args)
             {
                 if (arg.Contains("--gpufix"))
                     Program.GPUFix = true;
-                
+
                 if (arg.Length > 12 && arg.Substring(0, 12) == "/uri=vrcx://")
                     LaunchCommand = arg.Substring(12);
 
@@ -40,7 +40,7 @@ namespace VRCX
                     Program.LaunchDebug = true;
             }
 
-            if (processList.Length > 1 && String.IsNullOrEmpty(LaunchCommand))
+            if (processList.Length > 1 && string.IsNullOrEmpty(LaunchCommand))
             {
                 var result = MessageBox.Show("VRCX is already running, start another instance?", "VRCX", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
@@ -63,7 +63,7 @@ namespace VRCX
             if (ipcClient.IsConnected)
             {
                 var buffer = Encoding.UTF8.GetBytes($"{{\"type\":\"LaunchCommand\",\"command\":\"{LaunchCommand}\"}}" + (char)0x00);
-                ipcClient.BeginWrite(buffer, 0, buffer.Length, IPCClient.OnSend, ipcClient);
+                ipcClient.BeginWrite(buffer, 0, buffer.Length, IPCClient.Close, ipcClient);
             }
         }
     }
