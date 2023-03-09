@@ -1561,13 +1561,13 @@ html
                     el-tooltip(placement="bottom" :content="$t('side_panel.direct_access_tooltip')" :disabled="hideTooltips")
                         el-button(type="default" @click="directAccessPaste" size="mini" icon="el-icon-discover" circle)
                     el-tooltip(placement="bottom" :content="$t('side_panel.refresh_tooltip')" :disabled="hideTooltips")
-                        el-button(type="default" @click="API.closeWebSocket(); API.getCurrentUser(); API.refreshFriends()" :loading="API.isRefreshFriendsLoading" size="mini" icon="el-icon-refresh" circle style="margin-right:10px")
+                        el-button(type="default" @click="refreshFriendsList" :loading="API.isRefreshFriendsLoading" size="mini" icon="el-icon-refresh" circle style="margin-right:10px")
                 .x-friend-list(style="padding-bottom:10px")
                     .x-friend-group(style="padding:5px 0 0")
                         span {{ $t('side_panel.friends') }} &horbar; {{ onlineFriendCount }}/{{ friends.size }}
-                    .x-friend-group(style="padding:10px 0 5px")
+                    .x-friend-group.x-link(@click="isFriendsGroupMe = !isFriendsGroupMe" style="padding:10px 0 5px")
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroupMe }")
-                        span.x-link(@click="isFriendsGroupMe = !isFriendsGroupMe" style="margin-left:5px") {{ $t('side_panel.me') }}
+                        span(style="margin-left:5px") {{ $t('side_panel.me') }}
                     div(v-show="isFriendsGroupMe")
                         .x-friend-item(:key="API.currentUser.id" @click="showUserDialog(API.currentUser.id)")
                             .avatar(:class="userStatusClass(API.currentUser)")
@@ -1576,9 +1576,9 @@ html
                                 span.name(v-text="API.currentUser.displayName" :style="{'color':API.currentUser.$userColour}")
                                 location.extra(v-if="isGameRunning === true" :location="lastLocation.location" :traveling="lastLocationDestination" :link="false")
                                 span.extra(v-else v-text="API.currentUser.statusDescription" :link="false")
-                    .x-friend-group(v-show="friendsGroup0.length")
+                    .x-friend-group.x-link(@click="isFriendsGroup0 = !isFriendsGroup0" v-show="friendsGroup0.length")
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup0 }")
-                        span.x-link(@click="isFriendsGroup0 = !isFriendsGroup0" style="margin-left:5px") {{ $t('side_panel.favorite') }} &horbar; {{ friendsGroup0.length }}
+                        span(style="margin-left:5px") {{ $t('side_panel.favorite') }} &horbar; {{ friendsGroup0.length }}
                     div(v-show="isFriendsGroup0")
                         .x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" @click="showUserDialog(friend.id)")
                             template(v-if="friend.ref")
@@ -1592,9 +1592,9 @@ html
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
-                    .x-friend-group(v-show="friendsGroup1.length")
+                    .x-friend-group.x-link(@click="isFriendsGroup1 = !isFriendsGroup1" v-show="friendsGroup1.length")
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup1 }")
-                        span.x-link(@click="isFriendsGroup1 = !isFriendsGroup1" style="margin-left:5px") {{ $t('side_panel.online') }} &horbar; {{ friendsGroup1.length }}
+                        span(style="margin-left:5px") {{ $t('side_panel.online') }} &horbar; {{ friendsGroup1.length }}
                     div(v-show="isFriendsGroup1")
                         .x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" @click="showUserDialog(friend.id)")
                             template(v-if="friend.ref")
@@ -1608,9 +1608,9 @@ html
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
-                    .x-friend-group(v-show="friendsGroup2.length")
+                    .x-friend-group.x-link(@click="isFriendsGroup2 = !isFriendsGroup2" v-show="friendsGroup2.length")
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup2 }")
-                        span.x-link(@click="isFriendsGroup2 = !isFriendsGroup2" style="margin-left:5px") {{ $t('side_panel.active') }} &horbar; {{ friendsGroup2.length }}
+                        span(style="margin-left:5px") {{ $t('side_panel.active') }} &horbar; {{ friendsGroup2.length }}
                     div(v-show="isFriendsGroup2")
                         .x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" @click="showUserDialog(friend.id)")
                             template(v-if="friend.ref")
@@ -1623,9 +1623,9 @@ html
                             template(v-else)
                                 span(v-text="friend.name || friend.id")
                                 el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
-                    .x-friend-group(v-show="friendsGroup3.length")
+                    .x-friend-group.x-link(@click="isFriendsGroup3 = !isFriendsGroup3" v-show="friendsGroup3.length")
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup3 }")
-                        span.x-link(@click="isFriendsGroup3 = !isFriendsGroup3" style="margin-left:5px") {{ $t('side_panel.offline') }} &horbar; {{ friendsGroup3.length }}
+                        span(style="margin-left:5px") {{ $t('side_panel.offline') }} &horbar; {{ friendsGroup3.length }}
                     div(v-show="isFriendsGroup3")
                         .x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" @click="showUserDialog(friend.id)")
                             template(v-if="friend.ref")
@@ -1682,6 +1682,7 @@ html
                                     el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px;margin-top:5px")
                                     el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.user.tags.friend_no', { number: userDialog.friend.no }) }}
                                     el-tag.x-tag-troll(v-if="userDialog.ref.$isTroll" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Nuisance
+                                    el-tag.x-tag-troll(v-if="userDialog.ref.$isProbableTroll" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Almost Nuisance
                                     el-tag.x-tag-vip(v-if="userDialog.ref.$isModerator" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px")  {{ $t('dialog.user.tags.vrchat_team') }}
                                     el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRC+
                                     el-tag.x-tag-platform-pc(v-if="userDialog.ref.last_platform === 'standalonewindows'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
@@ -3839,8 +3840,8 @@ html
             //- dialog: change log
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeLogDialog" :visible.sync="changeLogDialog.visible" :title="$t('dialog.change_log.header')" width="800px")
                 .changelog-dialog(v-if="changeLogDialog.visible")
-                    h2(v-text="VRCXUpdateDialog.updateJson?.name")
-                    vue-markdown(:source="VRCXUpdateDialog.updateJson?.body")
+                    h2(v-text="changeLogDialog.buildName")
+                    vue-markdown(:source="changeLogDialog.changeLog" :linkify="false")
                 template(#footer)
                     el-button(type="small" @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')") {{ $t('dialog.change_log.github') }}
                     el-button(type="small" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')") {{ $t('dialog.change_log.donate') }}
