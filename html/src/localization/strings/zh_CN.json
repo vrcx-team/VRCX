@@ -193,7 +193,8 @@
                     "auto_update_off": "关闭",
                     "auto_update_notify": "显示通知",
                     "auto_update_download": "自动下载",
-                    "auto_update_install": "自动安装"
+                    "auto_update_install": "自动安装",
+                    "change_log": "更新日志"
                 },
                 "application": {
                     "header": "应用程序首选项",
@@ -506,6 +507,7 @@
                 "edit_status": "社交状态",
                 "edit_language": "语言",
                 "edit_bio": "自我介绍",
+                "report_hacking": "报告这个用户的作弊行为(例如盗模)",
                 "unfriend": "解除好友关系",
                 "logout": "注销"
             },
@@ -1042,6 +1044,19 @@
             "header": "曾一起加入过的房间",
             "info": "曾一起加入的房间信息",
             "search_placeholder": "搜索"
+        },
+        "change_log": {
+            "header": "更新日志",
+            "close": "关闭",
+            "donate": "捐赠支持",
+            "github": "在GitHub上查看"
+        },
+        "gallery_select": {
+            "header": "选择图片",
+            "gallery": "相册",
+            "none": "无",
+            "refresh": "刷新",
+            "upload": "上传"
         },
         "open_source": {
             "header": "开放源代码许可条款",
