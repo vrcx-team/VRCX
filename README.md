@@ -22,6 +22,7 @@ _VRChat's official stance on usage of the API, as listed in their Discord #faq c
 ![vrchat api](https://user-images.githubusercontent.com/11171153/114227156-b559c400-99c8-11eb-9df6-ee6615b8118e.png)
 
 # Screenshots
+<details><summary>Screenshot(click to open)</summary>
 
 ### Login
 
@@ -93,6 +94,8 @@ _VRChat's official stance on usage of the API, as listed in their Discord #faq c
 
 ![overlay1](https://user-images.githubusercontent.com/82102170/178281800-af4c69da-a0f5-43d8-9515-e960e1a16b39.png)
 ![overlay2](https://user-images.githubusercontent.com/82102170/178281884-ea1df88c-f16c-4c83-825c-c285f49b1ff1.png)
+
+</details>
 
 ## Themes
 
