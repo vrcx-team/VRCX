@@ -1,6 +1,6 @@
 {
     "language": "繁體中文 (zh_TW)",
-    "translator": "Kamiya",
+    "translator": "Kamiya,XoF_eLtTiL",
     "nav_tooltip": {
         "feed": "動態",
         "game_log": "遊戲紀錄",
@@ -24,7 +24,7 @@
                 "username": "玩家名稱或電子信箱",
                 "password": "密碼",
                 "saveCredentials": "儲存登入資料",
-                "devEndpoint": "開發接口",
+                "devEndpoint": "開發介面",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
             }
@@ -115,8 +115,8 @@
         },
         "friend_list": {
             "header": "好友列表",
-            "bulk_unfriend": "批量解除好友",
-            "bulk_unfriend_selection": "批量解除已選擇的好友",
+            "bulk_unfriend": "批次解除好友",
+            "bulk_unfriend_selection": "批次解除已選擇的好友",
             "load": "讀取缺失的項目",
             "load_notice": "這會向 API 傳送大量請求，所以請謹慎使用",
             "load_tooltip": "讀取",
@@ -163,7 +163,7 @@
             "past_display_names": "過去顯示名稱",
             "config_json": "JSON 資料",
             "current_user_json": "目前玩家的 JSON 資料",
-            "feedback": "反饋",
+            "feedback": "回饋",
             "refresh_tooltip": "重新整理",
             "clear_results_tooltip": "清除結果"
         },
@@ -193,7 +193,8 @@
                     "auto_update_off": "關閉",
                     "auto_update_notify": "通知",
                     "auto_update_download": "自動下載",
-                    "auto_update_install": "自動安裝"
+                    "auto_update_install": "自動安裝",
+					"change_log": "更新日誌"
                 },
                 "application": {
                     "header": "應用程式",
@@ -348,6 +349,7 @@
                 "advanced": {
                     "header": "進階設定",
                     "launch_options": "啟動選項",
+					 "screenshot_metadata": "螢幕截圖詳細資訊",
                     "pending_offline": {
                         "header": "待確認離線",
                         "description": "將玩家標記為離線之前延遲（防止誤判）",
@@ -382,12 +384,12 @@
                         "dance_world_only": "僅限跳舞世界"
                     },
                     "screenshot_helper": {
-                        "header": "屏幕截图助手",
-                        "description": "将在你在游戏中拍摄的任何照片的文件元数据中存储世界ID和世界名称。",
-                        "description_tooltip": "不幸的是，windows不支持本机查看PNG文本块（很多东西都不支持），但你可以使用exiftool等命令行工具、png块检查器或十六进制编辑器来查看。",
+                        "header": "螢幕截圖助手",
+                        "description": "將在你在遊戲中拍攝的任何照片的文件元數據中儲存世界ID和世界名稱。",
+                        "description_tooltip": "不幸的是，windows不支持本機查看PNG文本塊（很多東西都不支持），但你可以使用exiftool等命令行工具、png塊檢查器或十六進位制編輯器來查看。",
                         "enable": "啟用",
-                        "modify_filename": "修改文件名",
-                        "modify_filename_tooltip": "除了文件元数据外，将把世界ID添加到截图文件名中。"
+                        "modify_filename": "修改檔案名",
+                        "modify_filename_tooltip": "除了文件元數據外，將把世界ID新增到截圖檔案名中。"
                     },
                     "cache_debug": {
                         "header": "VRCX 世界快取/除錯",
@@ -439,7 +441,7 @@
                         "filter_favorites": "收藏",
                         "filter_friends": "好友",
                         "filter_everyone": "所有人",
-                        "timeout_threshold": "愈時閾值"
+                        "timeout_threshold": "超時閾值"
                     }
                 }
             }
@@ -476,7 +478,7 @@
                 "vrchat_team": "VRChat 團隊"
             },
             "actions": {
-                "favorite_tooltip": "添加到我的收藏",
+                "favorite_tooltip": "新增到我的收藏",
                 "unfavorite_tooltip": "從我的收藏中移除",
                 "refresh": "重新整理",
                 "copy_url": "複製玩家連結",
@@ -505,6 +507,7 @@
                 "edit_status": "社交狀態",
                 "edit_language": "語言",
                 "edit_bio": "自我介紹",
+				"report_hacking": "檢舉駭客行為",
                 "unfriend": "解除好友",
                 "logout": "登出"
             },
@@ -515,9 +518,9 @@
                 "refresh_user_count_tooltip": "重新整理房間人數",
                 "instance_creator": "房間建立者",
                 "note": "備註",
-                "note_placeholder": "點擊添加備註",
+                "note_placeholder": "點擊新增備註",
                 "memo": "備忘錄",
-                "memo_placeholder": "點擊添加備忘錄",
+                "memo_placeholder": "點擊新增備忘錄",
                 "avatar_info": "角色資訊",
                 "avatar_info_last_seen": "最後已知角色資訊",
                 "represented_group": "代表群組",
@@ -576,8 +579,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "從快取中刪除世界",
-                "favorite_tooltip": "添加到我的收藏",
-                "unfavorite_tooltip": "從我的收藏中移除",
+                "favorite_tooltip": "新增到我的收藏",
                 "refresh": "重新整理",
                 "new_instance": "新房間",
                 "make_home": "設為家點",
@@ -610,6 +612,7 @@
                 "id_tooltip": "複製到剪貼簿",
                 "copy_id": "複製 ID",
                 "copy_url": "複製連結",
+				"copy_name": "複製名稱",
                 "youtube_preview": "YouTube 預覽",
                 "players": "玩家人數",
                 "favorites": "收藏次數",
@@ -644,7 +647,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "從快取中刪除角色",
-                "favorite_tooltip": "添加到我的收藏",
+                "favorite_tooltip": "新增到我的收藏",
                 "unfavorite_tooltip": "從我的收藏中移除",
                 "refresh": "重新整理",
                 "select": "選擇角色",
@@ -801,7 +804,7 @@
             "description": "這些選項僅適用於高級玩家。",
             "example": "變更 FPS 限制：--fps=<N> 例：",
             "path_override": "VRChat 位置覆蓋",
-            "vrchat_docs": "VRChat 文檔",
+            "vrchat_docs": "VRChat 文件",
             "unity_manual": "Unity 手冊",
             "save": "儲存"
         },
@@ -822,7 +825,7 @@
             "camera_resolution": "相機解析度",
             "screenshot_resolution": "螢幕截圖解析度",
             "disable_discord_presence": "停用 Discord 遊戲狀態",
-            "vrchat_docs": "VRChat 文檔",
+            "vrchat_docs": "VRChat 文件",
             "cancel": "取消",
             "save": "儲存"
         },
@@ -839,6 +842,13 @@
             "seprator": "使用逗號來分隔每個標籤",
             "cancel": "取消",
             "save": "儲存"
+        },
+        "download_history": {
+            "header": "Download History",
+            "queue": "Queue:",
+            "history": "History:",
+            "cancel_all": "Cancel All",
+            "close": "Close"
         },
         "vrcx_updater": {
             "header": "VRCX 更新器",
@@ -952,18 +962,11 @@
             "choose_friends_placeholder": "選擇好友",
             "selected_users": "已選擇的玩家"
         },
-        "download_history": {
-            "header": "下載紀錄",
-            "queue": "下載佇列：",
-            "history": "歷史紀錄：",
-            "cancel_all": "取消全部",
-            "close": "關閉"
-        },
         "note_export": {
             "header": "備註匯出",
             "description1": "這個過程將匯出你所有的 VRCX 備忘錄並將它們匯入到 VRChat 備註中。",
             "description2": "請注意以下限制：",
-            "description3": "- API 接口有速率限制，每個請求之間會有很大的延遲。",
+            "description3": "- API 介面有速率限制，每個請求之間會有很大的延遲。",
             "description4": "- 每個備註的字數限制為 256 個字元。",
             "description5": "- 髒話過濾器（沒有樂趣）。",
             "description6": "- 不能換行（將會被替換成空格）。",
@@ -1042,6 +1045,19 @@
             "info": "過去的房間資訊",
             "search_placeholder": "搜尋"
         },
+        "change_log": {
+            "header": "更新日誌",
+            "close": "關閉",
+            "donate": "贊助",
+            "github": "GitHub"
+        },
+        "gallery_select": {
+            "header": "選擇圖片",
+            "gallery": "相簿",
+            "none": "無",
+            "refresh": "重新刷新",
+            "upload": "上傳"
+		},
         "open_source": {
             "header": "開放原始碼軟體授權條款",
             "description": "VRCX 是基於開放原始碼軟體上開發的。沒有他們的貢獻的話，這個程式是不可能開發出來的。"
@@ -1050,7 +1066,12 @@
             "header": "需要設定主密碼",
             "password_placeholder": "輸入新密碼",
             "re_input_placeholder": "確認密碼",
-            "ok": "OK"
+            "ok": "OK"        
+		},
+        "screenshot_metadata": {
+            "header": "螢幕截圖詳細資料",
+            "browse": "瀏覽",
+            "upload": "上傳
         }
     },
     "prompt": {
@@ -1065,7 +1086,6 @@
         "otp": {
             "header": "雙重認證",
             "description": "輸入你儲存的其中一個備份驗證碼",
-            "resend": "重新傳送驗證碼",
             "use_otp": "使用驗證碼",
             "verify": "驗證",
             "input_placeholder": "備份驗證碼",
@@ -1218,13 +1238,13 @@
         },
         "change_table_size": {
             "header": "最大表格大小",
-            "description": "限制從資料庫讀取紀錄到介面的數量，較大的資料表大小可能會影響內存用量和效能 （預設：1000）",
+            "description": "限制從資料庫讀取紀錄到介面的數量，較大的資料表大小可能會影響記憶體用量和效能 （預設：1000）",
             "cancel": "取消",
             "save": "儲存",
             "input_error": "請輸入有效的行數"
         },
         "photon_lobby_timeout": {
-            "header": "玩家愈時閥值",
+            "header": "玩家超時閾值",
             "description": "輸入秒數（預設：3）",
             "cancel": "取消",
             "ok": "OK",
@@ -1232,7 +1252,7 @@
         },
         "auto_clear_cache": {
             "header": "VRCX 快取清除間隔",
-            "description": "輸入小時數，較大的數值可能會影響內存用量和性能 （預設：24，關閉：0）",
+            "description": "輸入小時數，較大的數值可能會影響記憶體用量和性能 （預設：24，關閉：0）",
             "cancel": "取消",
             "ok": "OK",
             "input_error": "請輸入有效的小時數"
@@ -1275,6 +1295,7 @@
         "gameLog": {
             "date": "時間",
             "type": "類型",
+			"icon": "頭像",
             "user": "玩家",
             "detail": "詳細"
         },
