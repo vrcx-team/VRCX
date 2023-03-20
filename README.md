@@ -22,77 +22,102 @@ _VRChat's official stance on usage of the API, as listed in their Discord #faq c
 ![vrchat api](https://user-images.githubusercontent.com/11171153/114227156-b559c400-99c8-11eb-9df6-ee6615b8118e.png)
 
 # Screenshots
+<details><summary><h2>Screenshot(click to open)</h2></summary>
 
 ### Login
 
-![login](https://user-images.githubusercontent.com/82102170/178106023-6ae98d45-0cc8-4174-baf9-4e6188082853.png)
-![2fa](https://user-images.githubusercontent.com/82102170/178106050-975072a4-766a-4b00-8ebb-2ba829f1506b.png)
+![login](https://user-images.githubusercontent.com/82102170/224703139-9cb24dda-3839-4f75-a665-cca69f9e08ea.png)
+![2fa](https://user-images.githubusercontent.com/82102170/224703275-103e78fd-e917-428d-b901-6817d6b59b29.png)
 
 ### Feed
 
-![01feed](https://user-images.githubusercontent.com/82102170/178106390-644e34b1-76cd-4f44-811a-ed05c7ff60b8.png)
+![feed](https://user-images.githubusercontent.com/82102170/224714129-772d7418-034a-4fe3-aa2e-22ea71154d9a.png)
 
 ### GameLog
 
-![02gamelog](https://user-images.githubusercontent.com/82102170/178106694-29ff1659-7050-43a1-ae54-b9e1171145ac.png)
+![gamelog](https://user-images.githubusercontent.com/82102170/224714186-75cbf46d-f7b2-4a16-bcc5-2ec06d7f4b0d.png)
 
 ### UserInfo
 
-![03search](https://user-images.githubusercontent.com/82102170/178106833-68d5584e-3cf6-4ffb-9ef1-19c359915e82.png)
-![note](https://user-images.githubusercontent.com/82102170/178106941-36960e75-e0ac-489a-975e-bf47824911a4.png)
+#### Me
+![me](https://user-images.githubusercontent.com/82102170/224704240-b10aba50-29b9-4ef4-b35a-958107a32cd6.png)
+
+#### Friend
+![friend](https://user-images.githubusercontent.com/82102170/224714608-ac49621f-c28f-4266-8af8-715f4b9f2367.png)
 
 ### World
 
-![09w1](https://user-images.githubusercontent.com/82102170/178107058-7eb833d0-7a37-4780-a654-5e002e3cc95f.png)
-![09w2](https://user-images.githubusercontent.com/82102170/178107085-0815d23b-fb3c-4434-b57a-cce9ac524e00.png)
+![instance](https://user-images.githubusercontent.com/82102170/224715566-67782a5e-f948-402b-b78d-1b2dd5e2382f.png)
+![info](https://user-images.githubusercontent.com/82102170/224715824-c0c4220e-4f20-4799-8419-f8138de35b7a.png)
 
 ### Favorite
 
-![04favavatar](https://user-images.githubusercontent.com/82102170/178107292-ec8691e8-657b-4266-9780-7027437483af.png)
-![04favworld](https://user-images.githubusercontent.com/82102170/178107326-63b9d1bc-93e1-47d1-bb32-e77244ca961b.png)
-![04favuser](https://user-images.githubusercontent.com/82102170/178107414-f2371c29-89d7-4155-9053-7cebf3ad2bd6.png)
+#### Friend
+![friend](https://user-images.githubusercontent.com/82102170/224716414-5c6720bd-6d38-4e2d-9353-6bfaee47700e.png)
 
-### FriendsLog
+#### World
+![world](https://user-images.githubusercontent.com/82102170/224716652-ca54f3d1-449b-43f9-81f3-7bd0833c7d9d.png)
 
-![05fr](https://user-images.githubusercontent.com/82102170/178107611-191b272f-1640-401c-b553-bc0cf7a8cfa0.png)
+#### Avatar
+![avatar](https://user-images.githubusercontent.com/82102170/224717146-37681b38-61ef-4302-8104-212c2161dc12.png)
+
+### FriendLog
+
+![friendlog](https://user-images.githubusercontent.com/82102170/224717793-dbbccdfd-4f89-4597-b38e-8070549b2cf8.png)
 
 ### Moderation
 
-![06mo](https://user-images.githubusercontent.com/82102170/178107715-59d1d35f-595e-4cc0-8c1d-4142f9d49635.png)
+![moderation](https://user-images.githubusercontent.com/82102170/224718331-87ab30b2-aae1-4bbf-9472-7279af48bd5d.png)
 
 ### Notification
 
-![07no](https://user-images.githubusercontent.com/82102170/178107869-f8292dce-6d3f-4d5a-89f5-f4bc11ac943d.png)
+![notification](https://user-images.githubusercontent.com/82102170/224718963-706e2d99-fc35-41a5-be2c-ff45681ab084.png)
 
 ### PlayerList
 
-![10playerlist](https://user-images.githubusercontent.com/82102170/178107947-dc153a6e-c553-48f9-bc86-45b45a7de86e.png)
+![image](https://user-images.githubusercontent.com/82102170/224722231-54de7848-340c-4e9d-adce-30bccb6f2e8c.png)
 
 ### Settings
 
-![08op1](https://user-images.githubusercontent.com/82102170/178108340-9da1fd80-71e6-4c69-b210-f28f3f259fe1.png)
-![08op2](https://user-images.githubusercontent.com/82102170/178108364-32f79f72-005c-45da-b8f1-20dd77443a6a.png)
-![08op3](https://user-images.githubusercontent.com/82102170/178108373-930c36ea-78e7-4f32-ab85-59f934fb3297.png)
-![08op4](https://user-images.githubusercontent.com/82102170/178108383-2165fef6-293d-44a9-8f39-7e007939f7e4.png)
-![08op5](https://user-images.githubusercontent.com/82102170/178108402-d921c47e-b581-4b9b-8b6f-fa553d4d34de.png)
-![08op6](https://user-images.githubusercontent.com/82102170/178109408-42d5106d-b68f-4201-918b-6aaf648e19a3.png)
+#### General
+![general](https://user-images.githubusercontent.com/82102170/224722538-9e320d5d-5348-4696-9a3d-720e7027b06c.png)
 
-### Join
+#### Appearance
+![appearance_1](https://user-images.githubusercontent.com/82102170/224724725-8e319924-91cb-41f9-96b4-0ec438aeaa76.png)
+![appearance_2](https://user-images.githubusercontent.com/82102170/224724776-002c8ac3-69f3-4d7a-877f-54faf574a6f4.png)
 
-![join](https://user-images.githubusercontent.com/82102170/178108718-a75d2371-c46f-45e4-aa75-558b10211f46.png)
 
-### NewInstance
+#### Notifications
+![notif](https://user-images.githubusercontent.com/82102170/224723929-edafafd1-69d1-4367-bc1c-1097f7478dba.png)
 
-![newin](https://user-images.githubusercontent.com/82102170/178108739-858033d4-435c-4b13-be60-b3111e57f72a.png)
+#### Wrist Overlay
+![overlay](https://user-images.githubusercontent.com/82102170/224723886-415487fa-5c99-4b07-a6ab-2c8477aa576c.png)
 
-### Discord Rich Presence
+#### Discord Presence
+![rpc_setting](https://user-images.githubusercontent.com/82102170/224724105-3e97c7a3-6aa0-414b-a363-7bae56b9b3b1.png)
 
-![dis](https://user-images.githubusercontent.com/82102170/178109155-7888e67a-c02d-4732-aebb-4fceb162984d.png)
+#### Advanced
+![advance_1](https://user-images.githubusercontent.com/82102170/224724348-84ef6fca-5a00-45db-915d-ed42d244f0ca.png)
+![advance_2](https://user-images.githubusercontent.com/82102170/224724480-07618cd1-fbf5-4f1e-a85f-f7fb94e7d70f.png)
 
-### VR Overlay
+
+### Other
+
+#### Join
+![join](https://user-images.githubusercontent.com/82102170/224725201-8eb04169-af9c-476b-a5c5-58986d17d2e6.png)
+
+#### Create Instance
+![create](https://user-images.githubusercontent.com/82102170/224725526-7eab7b52-fec7-4c23-a941-7c4c29e8c944.png)
+
+#### Discord Rich Presence
+![rpc](https://user-images.githubusercontent.com/82102170/224725991-3fc81a3d-ca15-4dcb-a057-d713803bd666.png)
+
+### VR Overlay(old)
 
 ![overlay1](https://user-images.githubusercontent.com/82102170/178281800-af4c69da-a0f5-43d8-9515-e960e1a16b39.png)
 ![overlay2](https://user-images.githubusercontent.com/82102170/178281884-ea1df88c-f16c-4c83-825c-c285f49b1ff1.png)
+
+</details>
 
 ## Themes
 
