@@ -194,7 +194,7 @@
                     "auto_update_notify": "通知",
                     "auto_update_download": "自動下載",
                     "auto_update_install": "自動安裝",
-					"change_log": "更新日誌"
+                    "change_log": "更新日誌"
                 },
                 "application": {
                     "header": "應用程式",
@@ -349,7 +349,7 @@
                 "advanced": {
                     "header": "進階設定",
                     "launch_options": "啟動選項",
-					 "screenshot_metadata": "螢幕截圖詳細資訊",
+                    "screenshot_metadata": "螢幕截圖詳細資訊",
                     "pending_offline": {
                         "header": "待確認離線",
                         "description": "將玩家標記為離線之前延遲（防止誤判）",
@@ -507,7 +507,7 @@
                 "edit_status": "社交狀態",
                 "edit_language": "語言",
                 "edit_bio": "自我介紹",
-				"report_hacking": "檢舉駭客行為",
+                "report_hacking": "檢舉駭客行為",
                 "unfriend": "解除好友",
                 "logout": "登出"
             },
@@ -612,7 +612,7 @@
                 "id_tooltip": "複製到剪貼簿",
                 "copy_id": "複製 ID",
                 "copy_url": "複製連結",
-				"copy_name": "複製名稱",
+                "copy_name": "複製名稱",
                 "youtube_preview": "YouTube 預覽",
                 "players": "玩家人數",
                 "favorites": "收藏次數",
@@ -1057,7 +1057,7 @@
             "none": "無",
             "refresh": "重新刷新",
             "upload": "上傳"
-		},
+        },
         "open_source": {
             "header": "開放原始碼軟體授權條款",
             "description": "VRCX 是基於開放原始碼軟體上開發的。沒有他們的貢獻的話，這個程式是不可能開發出來的。"
@@ -1066,12 +1066,12 @@
             "header": "需要設定主密碼",
             "password_placeholder": "輸入新密碼",
             "re_input_placeholder": "確認密碼",
-            "ok": "OK"        
-		},
+            "ok": "OK"
+        },
         "screenshot_metadata": {
             "header": "螢幕截圖詳細資料",
             "browse": "瀏覽",
-            "upload": "上傳
+            "upload": "上傳"
         }
     },
     "prompt": {
@@ -1295,7 +1295,7 @@
         "gameLog": {
             "date": "時間",
             "type": "類型",
-			"icon": "頭像",
+            "icon": "頭像",
             "user": "玩家",
             "detail": "詳細"
         },
