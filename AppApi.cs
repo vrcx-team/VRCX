@@ -194,10 +194,13 @@ namespace VRCX
             }
         }
 
-        public void StartGameFromPath(string path, string arguments)
+        public bool StartGameFromPath(string path, string arguments)
         {
             if (!path.EndsWith(".exe"))
                 path = Path.Combine(path, "start_protected_game.exe");
+
+            if (!File.Exists(path))
+                return false;
 
             Process.Start(new ProcessStartInfo
             {
@@ -205,7 +208,8 @@ namespace VRCX
                 FileName = path,
                 UseShellExecute = false,
                 Arguments = arguments
-            }).Close();
+            })?.Close();
+            return true;
         }
 
         public void OpenLink(string url)
@@ -426,6 +430,11 @@ namespace VRCX
         public string GetVersion()
         {
             return Program.Version;
+        }
+
+        public bool VrcClosedGracefully()
+        {
+            return LogWatcher.Instance.VrcClosedGracefully;
         }
 
         public void ChangeTheme(int value)

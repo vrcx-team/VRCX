@@ -359,6 +359,10 @@
                         "header": "Primary Password",
                         "description": "Encrypt password (disables auto login)"
                     },
+                    "relaunch_vrchat": {
+                        "header": "Relaunch VRChat after crashing",
+                        "description": "Rejoin last instance when VRChat crashes"
+                    },
                     "vrchat_quit_fix": {
                         "header": "VRChat Quit Fix",
                         "description": "Kill VRChat after exiting game"

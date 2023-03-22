@@ -4,40 +4,28 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-using CefSharp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
+using CefSharp;
 
 namespace VRCX
 {
     public class LogWatcher
     {
-        private class LogContext
-        {
-            public long Length;
-            public long Position;
-            public string RecentWorldName;
-            public bool ShaderKeywordsLimitReached = false;
-            public bool AudioDeviceChanged = false;
-            public string LastAudioDevice;
-            public string LastVideoError;
-            public string onJoinPhotonDisplayName;
-            public string locationDestination;
-        }
-
         public static readonly LogWatcher Instance;
-        private readonly DirectoryInfo m_LogDirectoryInfo;
         private readonly Dictionary<string, LogContext> m_LogContextMap; // <FileName, LogContext>
-        private readonly ReaderWriterLockSlim m_LogListLock;
+        private readonly DirectoryInfo m_LogDirectoryInfo;
         private readonly List<string[]> m_LogList;
-        private Thread m_Thread;
-        private bool m_ResetLog;
+        private readonly ReaderWriterLockSlim m_LogListLock;
         private bool m_FirstRun = true;
-        private static DateTime tillDate = DateTime.Now;
+        private bool m_ResetLog;
+        private Thread m_Thread;
+        private DateTime tillDate = DateTime.Now;
+        public bool VrcClosedGracefully;
 
         // NOTE
         // FileSystemWatcher() is unreliable
@@ -102,7 +90,7 @@ namespace VRCX
 
         private void Update()
         {
-            if (m_ResetLog == true)
+            if (m_ResetLog)
             {
                 m_FirstRun = true;
                 m_ResetLog = false;
@@ -121,7 +109,7 @@ namespace VRCX
             var deletedNameSet = new HashSet<string>(m_LogContextMap.Keys);
             m_LogDirectoryInfo.Refresh();
 
-            if (m_LogDirectoryInfo.Exists == true)
+            if (m_LogDirectoryInfo.Exists)
             {
                 var fileInfos = m_LogDirectoryInfo.GetFiles("output_log_*.txt", SearchOption.TopDirectoryOnly);
 
@@ -141,7 +129,7 @@ namespace VRCX
                         continue;
                     }
 
-                    if (m_LogContextMap.TryGetValue(fileInfo.Name, out LogContext logContext) == true)
+                    if (m_LogContextMap.TryGetValue(fileInfo.Name, out var logContext))
                     {
                         deletedNameSet.Remove(fileInfo.Name);
                     }
@@ -168,7 +156,7 @@ namespace VRCX
 
             m_FirstRun = false;
         }
-        
+
         private void ParseLog(FileInfo fileInfo, LogContext logContext)
         {
             try
@@ -187,8 +175,16 @@ namespace VRCX
                                 break;
                             }
 
+                            if (line.Length == 0)
+                            {
+                                continue;
+                            }
+
                             // 2020.10.31 23:36:28 Log        -  [VRCFlowManagerVRC] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
                             // 2021.02.03 10:18:58 Log        -  [ǄǄǅǅǅǄǄǅǅǄǅǅǅǅǄǄǄǅǅǄǄǅǅǅǅǄǅǅǅǅǄǄǄǄǄǅǄǅǄǄǄǅǅǄǅǅǅ] Destination fetching: wrld_4432ea9b-729c-46e3-8eaf-846aa0a37fdd
+
+                            if (ParseLogUdonException(fileInfo, line))
+                                continue;
 
                             if (line.Length <= 36 ||
                                 line[31] != '-')
@@ -198,12 +194,12 @@ namespace VRCX
                             }
 
                             if (DateTime.TryParseExact(
-                                line.Substring(0, 19),
-                                "yyyy.MM.dd HH:mm:ss",
-                                CultureInfo.InvariantCulture,
-                                DateTimeStyles.AssumeLocal,
-                                out DateTime lineDate
-                            ))
+                                    line.Substring(0, 19),
+                                    "yyyy.MM.dd HH:mm:ss",
+                                    CultureInfo.InvariantCulture,
+                                    DateTimeStyles.AssumeLocal,
+                                    out var lineDate
+                                ))
                             {
                                 if (DateTime.Compare(lineDate, tillDate) <= 0)
                                 {
@@ -214,33 +210,31 @@ namespace VRCX
                             var offset = 34;
                             if (line[offset] == '[')
                             {
-                                if (ParseLogOnPlayerJoinedOrLeft(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogLocation(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogLocationDestination(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogPortalSpawn(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogNotification(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogAPIRequest(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogJoinBlocked(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogAvatarPedestalChange(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogVideoError(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogVideoChange(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogWorldVRCX(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogScreenshot(fileInfo, logContext, line, offset) == true)
+                                if (ParseLogOnPlayerJoinedOrLeft(fileInfo, logContext, line, offset) ||
+                                    ParseLogLocation(fileInfo, logContext, line, offset) ||
+                                    ParseLogLocationDestination(fileInfo, logContext, line, offset) ||
+                                    ParseLogPortalSpawn(fileInfo, logContext, line, offset) ||
+                                    ParseLogNotification(fileInfo, logContext, line, offset) ||
+                                    ParseLogAPIRequest(fileInfo, logContext, line, offset) ||
+                                    ParseLogJoinBlocked(fileInfo, logContext, line, offset) ||
+                                    ParseLogAvatarPedestalChange(fileInfo, logContext, line, offset) ||
+                                    ParseLogVideoError(fileInfo, logContext, line, offset) ||
+                                    ParseLogVideoChange(fileInfo, logContext, line, offset) ||
+                                    ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) ||
+                                    ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) ||
+                                    ParseLogWorldVRCX(fileInfo, logContext, line, offset) ||
+                                    ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) ||
+                                    ParseLogScreenshot(fileInfo, logContext, line, offset))
                                 {
-                                    continue;
                                 }
                             }
                             else
                             {
-                                if (ParseLogShaderKeywordsLimit(fileInfo, logContext, line, offset) == true ||
-                                    ParseLogSDK2VideoPlay(fileInfo, logContext, line, offset) == true ||
-                                    ParseApplicationQuit(fileInfo, logContext, line, offset) == true ||
-                                    ParseOpenVRInit(fileInfo, logContext, line, offset) == true)
+                                if (ParseLogShaderKeywordsLimit(fileInfo, logContext, line, offset) ||
+                                    ParseLogSDK2VideoPlay(fileInfo, logContext, line, offset) ||
+                                    ParseApplicationQuit(fileInfo, logContext, line, offset) ||
+                                    ParseOpenVRInit(fileInfo, logContext, line, offset))
                                 {
-                                    continue;
                                 }
                             }
                         }
@@ -263,6 +257,7 @@ namespace VRCX
                     if (MainForm.Instance != null && MainForm.Instance.Browser != null)
                         MainForm.Instance.Browser.ExecuteScriptAsync("$app.addGameLogEvent", logLine);
                 }
+
                 m_LogList.Add(item);
             }
             finally
@@ -276,12 +271,12 @@ namespace VRCX
             // 2020.10.31 23:36:22
 
             if (DateTime.TryParseExact(
-                line.Substring(0, 19),
-                "yyyy.MM.dd HH:mm:ss",
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeLocal,
-                out DateTime dt
-            ) == false)
+                    line.Substring(0, 19),
+                    "yyyy.MM.dd HH:mm:ss",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeLocal,
+                    out var dt
+                ) == false)
             {
                 dt = DateTime.UtcNow;
             }
@@ -334,10 +329,11 @@ namespace VRCX
                     logContext.RecentWorldName
                 });
 
-                logContext.onJoinPhotonDisplayName = String.Empty;
-                logContext.LastAudioDevice = String.Empty;
-                logContext.LastVideoError = String.Empty;
-                logContext.locationDestination = String.Empty;
+                logContext.onJoinPhotonDisplayName = string.Empty;
+                logContext.LastAudioDevice = string.Empty;
+                logContext.LastVideoError = string.Empty;
+                logContext.locationDestination = string.Empty;
+                VrcClosedGracefully = false;
 
                 return true;
             }
@@ -355,7 +351,7 @@ namespace VRCX
             var lineOffset = line.LastIndexOf("] Took screenshot to: ");
             if (lineOffset < 0)
                 return true;
-                
+
             var screenshotPath = line.Substring(lineOffset + 22);
             AppendLog(new[] { fileInfo.Name, ConvertLogTimeToISO8601(line), "screenshot", screenshotPath });
             return true;
@@ -377,7 +373,7 @@ namespace VRCX
                     logContext.locationDestination
                 });
 
-                logContext.locationDestination = String.Empty;
+                logContext.locationDestination = string.Empty;
 
                 return true;
             }
@@ -481,6 +477,7 @@ namespace VRCX
                 });
                 return true;
             }
+
             return false;
         }
 
@@ -491,7 +488,7 @@ namespace VRCX
 
             if (line.Contains("Maximum number (384) of shader global keywords exceeded"))
             {
-                if (logContext.ShaderKeywordsLimitReached == true)
+                if (logContext.ShaderKeywordsLimitReached)
                     return true;
 
                 AppendLog(new[]
@@ -766,7 +763,7 @@ namespace VRCX
                 if (pos < 0)
                     return false;
 
-                if (!String.IsNullOrEmpty(logContext.onJoinPhotonDisplayName))
+                if (!string.IsNullOrEmpty(logContext.onJoinPhotonDisplayName))
                 {
                     var endPos = line.LastIndexOf(" (");
                     var photonId = line.Substring(pos + 9, endPos - (pos + 9));
@@ -779,7 +776,7 @@ namespace VRCX
                         logContext.onJoinPhotonDisplayName,
                         photonId
                     });
-                    logContext.onJoinPhotonDisplayName = String.Empty;
+                    logContext.onJoinPhotonDisplayName = string.Empty;
 
                     return true;
                 }
@@ -830,12 +827,13 @@ namespace VRCX
                 lineOffset += 3;
                 var endPos = line.Length - 1;
                 var audioDevice = line.Substring(lineOffset, endPos - lineOffset);
-                if (String.IsNullOrEmpty(logContext.LastAudioDevice))
+                if (string.IsNullOrEmpty(logContext.LastAudioDevice))
                 {
                     logContext.AudioDeviceChanged = false;
                     logContext.LastAudioDevice = audioDevice;
                     return true;
                 }
+
                 if (!logContext.AudioDeviceChanged || logContext.LastAudioDevice == audioDevice)
                     return true;
 
@@ -856,6 +854,27 @@ namespace VRCX
             return false;
         }
 
+        private bool ParseLogUdonException(FileInfo fileInfo, string line)
+        {
+            // 2022.11.29 04:27:33 Error      -  [UdonBehaviour] An exception occurred during Udon execution, this UdonBehaviour will be halted.
+            // VRC.Udon.VM.UdonVMException: An exception occurred in an UdonVM, execution will be halted. --->VRC.Udon.VM.UdonVMException: An exception occurred during EXTERN to 'VRCSDKBaseVRCPlayerApi.__get_displayName__SystemString'. --->System.NullReferenceException: Object reference not set to an instance of an object.
+            var lineOffset = line.IndexOf(" ---> VRC.Udon.VM.UdonVMException: ");
+            if (lineOffset < 0)
+                return false;
+
+            var data = line.Substring(lineOffset);
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "udon-exception",
+                data
+            });
+
+            return true;
+        }
+
         private bool ParseApplicationQuit(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2022.06.12 01:51:46 Log        -  VRCApplication: OnApplicationQuit at 1603.499
@@ -869,6 +888,8 @@ namespace VRCX
                 ConvertLogTimeToISO8601(line),
                 "vrc-quit"
             });
+
+            VrcClosedGracefully = true;
 
             return true;
         }
@@ -890,12 +911,12 @@ namespace VRCX
             return true;
         }
 
-        private void ParseDesktopMode(FileInfo fileInfo, string line)
+        private bool ParseDesktopMode(FileInfo fileInfo, string line)
         {
             //    XR Device: None
 
             if (string.Compare(line, 0, "    XR Device: None", 0, 19, StringComparison.Ordinal) != 0)
-                return;
+                return false;
 
             AppendLog(new[]
             {
@@ -903,6 +924,8 @@ namespace VRCX
                 ConvertLogTimeToISO8601(line),
                 "desktop-mode"
             });
+
+            return true;
         }
 
         public string[][] Get()
@@ -938,6 +961,19 @@ namespace VRCX
             }
 
             return new string[][] { };
+        }
+
+        private class LogContext
+        {
+            public bool AudioDeviceChanged;
+            public string LastAudioDevice;
+            public string LastVideoError;
+            public long Length;
+            public string locationDestination;
+            public string onJoinPhotonDisplayName;
+            public long Position;
+            public string RecentWorldName;
+            public bool ShaderKeywordsLimitReached;
         }
     }
 }

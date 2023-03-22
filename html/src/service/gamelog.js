@@ -71,6 +71,10 @@ class GameLogService {
             case 'desktop-mode':
                 break;
 
+            case 'udon-exception':
+                gameLog.data = args[0];
+                break;
+
             default:
                 break;
         }
