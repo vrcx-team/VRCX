@@ -213,13 +213,15 @@ Guide made by [RinLovesYou](https://github.com/RinLovesYou)
 
   - Start over with a clean wine prefix. Either create one for VRCX or `rm -rf ~/.wine` and use the main prefix.
 
-  - `winetricks --force dotnet472` yes, you'll have to sit through all of the installers (there's a lot of them).
+  - Ensure you are NOT using DXVK either within your prefix or for your VRCX.exe. VRCX requires WineD3D to operate.
 
-  - `winetricks corefonts`
+  - `winetricks --force -q dotnet472 corefonts` Silent and easy automation of the process of installing dependencies.
 
-  - `winetricks winecfg`
+  - `wine winecfg -v win10` Set your prefix windows version.
 
-  - Set it to Windows 10 for good measure, you should just be able to run `wine VRCX.exe` now. Should you get an error about CEFSharp, you can try wine `VRCX.exe -no-cef-sandbox`
+  - You will require the `Linux` branch as CEF newer than 108 is currently incompatible with wine staging 8.4 as of this moment. It can be found in the Actions tab under the Linux branch. Download and extract the VRCX artifact.
+
+  - You should just be able to run `wine VRCX.exe` now. Should you get an error about CEFSharp, you can try wine `VRCX.exe -no-cef-sandbox`
 
 - Notes
 
