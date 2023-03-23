@@ -1154,6 +1154,12 @@ html
                                 span.name {{ $t("view.settings.general.application.tray") }}
                                 el-switch(v-model="isCloseToTray")
                             div.options-container
+                        div.options-container
+                            span.header {{ $t("view.settings.general.game_log.header") }}
+                            div.options-container-item
+                                span.name {{ $t("view.settings.general.game_log.resource_load") }}
+                                el-switch(v-model="logResourceLoad" @change="saveGameLogOptions")
+                            div.options-container
                         div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                             span.header {{ $t("view.settings.general.legal_notice.header" )}}
                             div.options-container-item
