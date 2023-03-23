@@ -41,6 +41,11 @@ class GameLogService {
                 gameLog.displayName = args[1];
                 break;
 
+            case 'resource-load':
+                gameLog.resourceUrl = args[0];
+                gameLog.resourceType = args[1]; 
+                break;
+
             case 'video-sync':
                 gameLog.timestamp = args[0];
                 break;

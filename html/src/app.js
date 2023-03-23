@@ -9378,6 +9378,16 @@ speechSynthesis.getVoices();
                     this.nowPlaying.offset = parseInt(timestamp, 10);
                 }
                 break;
+            case 'resource-load':
+                var entry = {
+                    created_at: gameLog.dt,
+                    type: gameLog.resourceType === 'string' ? 'StringLoad' : 'ImageLoad',
+                    resourceUrl: gameLog.resourceUrl,
+                    resourceType: gameLog.resourceType,
+                    location
+                };
+                database.addGamelogResourceLoadToDatabase(entry);
+                break;
             case 'screenshot':
                 if (!this.screenshotHelper) {
                     break;

@@ -57,6 +57,9 @@ class Database {
             `CREATE TABLE IF NOT EXISTS gamelog_video_play (id INTEGER PRIMARY KEY, created_at TEXT, video_url TEXT, video_name TEXT, video_id TEXT, location TEXT, display_name TEXT, user_id TEXT, UNIQUE(created_at, video_url))`
         );
         await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS gamelog_resource_load (id INTEGER PRIMARY KEY, created_at TEXT, resource_url TEXT, resource_type TEXT, location TEXT, UNIQUE(created_at, resource_url))`
+        );
+        await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS gamelog_event (id INTEGER PRIMARY KEY, created_at TEXT, data TEXT, UNIQUE(created_at, data))`
         );
         await sqliteService.executeNonQuery(
@@ -502,6 +505,17 @@ class Database {
             var row = {
                 rowId: dbRow[0],
                 created_at: dbRow[1],
+                type: dbRow[3] === 'string' ? 'StringLoad' : 'ImageLoad',
+                resourceUrl: dbRow[2],
+                resourceType: dbRow[3],
+                location: dbRow[4]
+            };
+            gamelogDatabase.unshift(row);
+        }, `SELECT * FROM gamelog_resource_load WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                rowId: dbRow[0],
+                created_at: dbRow[1],
                 type: 'Event',
                 data: dbRow[2]
             };
@@ -617,6 +631,18 @@ class Database {
                 '@location': entry.location,
                 '@display_name': entry.displayName,
                 '@user_id': entry.userId
+            }
+        );
+    }
+
+    addGamelogResourceLoadToDatabase(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO gamelog_resource_load (created_at, resource_url, resource_type, location) VALUES (@created_at, @resource_url, @resource_type, @location)`,
+            {
+                '@created_at': entry.created_at,
+                '@resource_url': entry.resourceUrl,
+                '@resource_type': entry.resourceType,
+                '@location': entry.location
             }
         );
     }
@@ -813,6 +839,14 @@ class Database {
         await sqliteService.execute((row) => {
             size = row[0];
         }, `SELECT COUNT(*) FROM gamelog_video_play`);
+        return size;
+    }
+
+    async getResourceLoadTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM gamelog_resource_load`);
         return size;
     }
 
@@ -1176,6 +1210,8 @@ class Database {
         var portalspawn = true;
         var msgevent = true;
         var videoplay = true;
+        var resourceload_string = true;
+        var resourceload_image = true;
         if (filters.length > 0) {
             location = false;
             onplayerjoined = false;
@@ -1183,6 +1219,8 @@ class Database {
             portalspawn = false;
             msgevent = false;
             videoplay = false;
+            resourceload_string = false;
+            resourceload_image = false;
             filters.forEach((filter) => {
                 switch (filter) {
                     case 'Location':
@@ -1202,6 +1240,12 @@ class Database {
                         break;
                     case 'VideoPlay':
                         videoplay = true;
+                        break;
+                    case 'StringLoad':
+                        resourceload_string = true;
+                        break;
+                    case 'ImageLoad':
+                        resourceload_image = true;
                         break;
                 }
             });
@@ -1286,6 +1330,27 @@ class Database {
                 gamelogDatabase.unshift(row);
             }, `SELECT * FROM gamelog_video_play WHERE video_url LIKE '%${search}%' OR video_name LIKE '%${search}%' OR display_name LIKE '%${search}%' ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
+        if (resourceload_string || resourceload_image) {
+            var checkString = '';
+            var checkImage = '';
+            if (!resourceload_string) {
+                checkString = `AND resource_type != 'string'`;
+            }
+            if (!resourceload_image) {
+                checkString = `AND resource_type != 'image'`;
+            }
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    type: dbRow[3] === 'string' ? 'StringLoad' : 'ImageLoad',
+                    resourceUrl: dbRow[2],
+                    resourceType: dbRow[3],
+                    location: dbRow[4]
+                };
+                gamelogDatabase.unshift(row);
+            }, `SELECT * FROM gamelog_resource_load WHERE resource_url LIKE '%${search}%' ${checkString} ${checkImage} ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
             var B = b.created_at;
@@ -1324,6 +1389,9 @@ class Database {
         await sqliteService.execute((dbRow) => {
             gamelogDatabase.unshift(dbRow[0]);
         }, 'SELECT created_at FROM gamelog_video_play ORDER BY id DESC LIMIT 1');
+        await sqliteService.execute((dbRow) => {
+            gamelogDatabase.unshift(dbRow[0]);
+        }, 'SELECT created_at FROM gamelog_resource_load ORDER BY id DESC LIMIT 1');
         if (gamelogDatabase.length > 0) {
             gamelogDatabase.sort();
             var newDate = gamelogDatabase[gamelogDatabase.length - 1];
