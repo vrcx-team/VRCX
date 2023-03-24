@@ -179,13 +179,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.Common">
-      <Version>110.0.250</Version>
+      <Version>111.2.20</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.OffScreen">
-      <Version>110.0.250</Version>
+      <Version>111.2.20</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
-      <Version>110.0.250</Version>
+      <Version>111.2.20</Version>
     </PackageReference>
     <PackageReference Include="DiscordRichPresence">
       <Version>1.1.3.18</Version>
@@ -194,7 +194,7 @@
       <Version>7.1.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.2</Version>
+      <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="SharpDX.D3DCompiler">
       <Version>4.2.0</Version>
@@ -215,7 +215,7 @@
       <Version>1.0.117</Version>
     </PackageReference>
     <PackageReference Include="System.Text.Json">
-      <Version>7.0.1</Version>
+      <Version>7.0.2</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

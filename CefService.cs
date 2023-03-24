@@ -50,13 +50,13 @@ namespace VRCX
             cefSettings.SetOffScreenRenderingBestPerformanceArgs(); // causes white screen sometimes?
 
             if (Program.LaunchDebug)
+            {
                 cefSettings.RemoteDebuggingPort = 8088;
+                cefSettings.CefCommandLineArgs["remote-allow-origins"] = "*";
+            }
 
             CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
             CefSharpSettings.ShutdownOnExit = false;
-
-            // Enable High-DPI support on Windows 7 or newer
-            Cef.EnableHighDPISupport();
 
             if (Cef.Initialize(cefSettings) == false)
             {
