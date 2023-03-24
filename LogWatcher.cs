@@ -224,7 +224,9 @@ namespace VRCX
                                     ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) ||
                                     ParseLogWorldVRCX(fileInfo, logContext, line, offset) ||
                                     ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) ||
-                                    ParseLogScreenshot(fileInfo, logContext, line, offset))
+                                    ParseLogScreenshot(fileInfo, logContext, line, offset) ||
+                                    ParseLogStringDownload(fileInfo, logContext, line, offset) ||
+                                    ParseLogImageDownload(fileInfo, logContext, line, offset))
                                 {
                                 }
                             }
@@ -925,6 +927,40 @@ namespace VRCX
                 "desktop-mode"
             });
 
+            return true;
+        }
+
+        private bool ParseLogStringDownload(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2023.03.23 11:37:21 Log        -  [String Download] Attempting to load String from URL 'https://pastebin.com/raw/BaW6NL2L'
+            string check = "] Attempting to load String from URL '";
+            if (!line.Contains(check))
+                return false;
+
+            var lineOffset = line.LastIndexOf(check);
+            if (lineOffset < 0)
+                return true;
+
+            var stringData = line.Substring(lineOffset + check.Length);
+            stringData = stringData.Remove(stringData.Length - 1);
+            AppendLog(new[] { fileInfo.Name, ConvertLogTimeToISO8601(line), "resource-load", stringData, "string" });
+            return true;
+        }
+
+        private bool ParseLogImageDownload(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2023.03.23 11:32:25 Log        -  [Image Download] Attempting to load image from URL 'https://i.imgur.com/lCfUMX0.jpeg'
+            string check = "] Attempting to load image from URL '";
+            if (!line.Contains(check))
+                return false;
+
+            var lineOffset = line.LastIndexOf(check);
+            if (lineOffset < 0)
+                return true;
+
+            var imageData = line.Substring(lineOffset + check.Length);
+            imageData = imageData.Remove(imageData.Length - 1);
+            AppendLog(new[] { fileInfo.Name, ConvertLogTimeToISO8601(line), "resource-load", imageData, "image" });
             return true;
         }
 

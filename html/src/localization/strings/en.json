@@ -202,6 +202,10 @@
                     "minimized": "Start as minimized state",
                     "tray": "Close to tray"
                 },
+                "game_log": {
+                    "header": "Game Log",
+                    "resource_load": "Log Resource Load entries"
+                },
                 "legal_notice": {
                     "header": "Legal Notice",
                     "info": "VRCX is an assistant application for VRChat that provides information about and managing friendship. This application makes use of the unofficial VRChat API SDK.",

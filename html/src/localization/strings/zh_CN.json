@@ -202,6 +202,9 @@
                     "minimized": "以最小化的形式启动",
                     "tray": "最小化到系统托盘"
                 },
+                "game_log": {
+                    "header": "游戏日志"
+                },
                 "legal_notice": {
                     "header": "法律声明",
                     "info": "VRCX 是一个提供VRChat好友管理的辅助应用程序。这个程序使用非官方的 VRChat API (VRCSDK)。",

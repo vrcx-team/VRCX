@@ -451,7 +451,7 @@ html
                     template(#tool)
                         div(style="margin:0 0 10px;display:flex;align-items:center")
                             el-select(v-model="gameLogTable.filter" @change="gameLogTableLookup" multiple clearable collapse-tags style="flex:1" :placeholder="$t('view.game_log.filter_placeholder')")
-                                el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'PortalSpawn', 'Event', 'VideoPlay']" :key="type" :label="type" :value="type")
+                                el-option(v-once v-for="type in ['Location', 'OnPlayerJoined', 'OnPlayerLeft', 'PortalSpawn', 'Event', 'VideoPlay', 'StringLoad', 'ImageLoad']" :key="type" :label="type" :value="type")
                             el-input(v-model="gameLogTable.search" :placeholder="$t('view.game_log.search_placeholder')" @keyup.native.13="gameLogTableLookup" @change="gameLogTableLookup" clearable style="flex:none;width:150px;margin:0 10px")
                             //- el-tooltip(placement="bottom" content="Reload game log" :disabled="hideTooltips")
                             //-     el-button(type="default" @click="resetGameLog" icon="el-icon-refresh" circle style="flex:none")
@@ -486,6 +486,10 @@ html
                                 span(v-if="scope.row.videoId === 'LSMedia'" v-text="scope.row.videoName")
                                 span.x-link(v-else-if="scope.row.videoName" @click="openExternalLink(scope.row.videoUrl)" v-text="scope.row.videoName")
                                 span.x-link(v-else @click="openExternalLink(scope.row.videoUrl)" v-text="scope.row.videoUrl")
+                            template(v-else-if="scope.row.type === 'ImageLoad'")
+                                span.x-link(@click="openExternalLink(scope.row.resourceUrl)" v-text="scope.row.resourceUrl")
+                            template(v-else-if="scope.row.type === 'StringLoad'")
+                                span.x-link(@click="openExternalLink(scope.row.resourceUrl)" v-text="scope.row.resourceUrl")
                             template(v-else-if="scope.row.type === 'Notification' || scope.row.type === 'OnPlayerJoined' || scope.row.type === 'OnPlayerLeft'")
                             span.x-link(v-else v-text="scope.row.data")
 
@@ -1149,6 +1153,12 @@ html
                             div.options-container-item
                                 span.name {{ $t("view.settings.general.application.tray") }}
                                 el-switch(v-model="isCloseToTray")
+                            div.options-container
+                        div.options-container
+                            span.header {{ $t("view.settings.general.game_log.header") }}
+                            div.options-container-item
+                                span.name {{ $t("view.settings.general.game_log.resource_load") }}
+                                el-switch(v-model="logResourceLoad" @change="saveGameLogOptions")
                             div.options-container
                         div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                             span.header {{ $t("view.settings.general.legal_notice.header" )}}
