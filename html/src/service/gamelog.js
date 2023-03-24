@@ -41,9 +41,9 @@ class GameLogService {
                 gameLog.displayName = args[1];
                 break;
 
-            case 'resource-load':
+            case 'resource-load-string':
+            case 'resource-load-image':
                 gameLog.resourceUrl = args[0];
-                gameLog.resourceType = args[1]; 
                 break;
 
             case 'video-sync':

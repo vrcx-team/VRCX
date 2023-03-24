@@ -505,9 +505,8 @@ class Database {
             var row = {
                 rowId: dbRow[0],
                 created_at: dbRow[1],
-                type: dbRow[3] === 'string' ? 'StringLoad' : 'ImageLoad',
+                type: dbRow[3],
                 resourceUrl: dbRow[2],
-                resourceType: dbRow[3],
                 location: dbRow[4]
             };
             gamelogDatabase.unshift(row);
@@ -641,7 +640,7 @@ class Database {
             {
                 '@created_at': entry.created_at,
                 '@resource_url': entry.resourceUrl,
-                '@resource_type': entry.resourceType,
+                '@resource_type': entry.type,
                 '@location': entry.location
             }
         );
@@ -1334,18 +1333,17 @@ class Database {
             var checkString = '';
             var checkImage = '';
             if (!resourceload_string) {
-                checkString = `AND resource_type != 'string'`;
+                checkString = `AND resource_type != 'StringLoad'`;
             }
             if (!resourceload_image) {
-                checkString = `AND resource_type != 'image'`;
+                checkString = `AND resource_type != 'ImageLoad'`;
             }
             await sqliteService.execute((dbRow) => {
                 var row = {
                     rowId: dbRow[0],
                     created_at: dbRow[1],
-                    type: dbRow[3] === 'string' ? 'StringLoad' : 'ImageLoad',
+                    type: dbRow[3],
                     resourceUrl: dbRow[2],
-                    resourceType: dbRow[3],
                     location: dbRow[4]
                 };
                 gamelogDatabase.unshift(row);

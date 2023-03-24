@@ -933,7 +933,7 @@ namespace VRCX
         private bool ParseLogStringDownload(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2023.03.23 11:37:21 Log        -  [String Download] Attempting to load String from URL 'https://pastebin.com/raw/BaW6NL2L'
-            string check = "] Attempting to load String from URL '";
+            var check = "] Attempting to load String from URL '";
             if (!line.Contains(check))
                 return false;
 
@@ -943,14 +943,20 @@ namespace VRCX
 
             var stringData = line.Substring(lineOffset + check.Length);
             stringData = stringData.Remove(stringData.Length - 1);
-            AppendLog(new[] { fileInfo.Name, ConvertLogTimeToISO8601(line), "resource-load", stringData, "string" });
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "resource-load-string",
+                stringData
+            });
             return true;
         }
 
         private bool ParseLogImageDownload(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2023.03.23 11:32:25 Log        -  [Image Download] Attempting to load image from URL 'https://i.imgur.com/lCfUMX0.jpeg'
-            string check = "] Attempting to load image from URL '";
+            var check = "] Attempting to load image from URL '";
             if (!line.Contains(check))
                 return false;
 
@@ -960,7 +966,13 @@ namespace VRCX
 
             var imageData = line.Substring(lineOffset + check.Length);
             imageData = imageData.Remove(imageData.Length - 1);
-            AppendLog(new[] { fileInfo.Name, ConvertLogTimeToISO8601(line), "resource-load", imageData, "image" });
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "resource-load-image",
+                imageData
+            });
             return true;
         }
 
