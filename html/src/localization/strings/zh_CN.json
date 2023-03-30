@@ -203,7 +203,8 @@
                     "tray": "最小化到系统托盘"
                 },
                 "game_log": {
-                    "header": "游戏日志"
+                    "header": "游戏日志",
+                    "resource_load": "显示世界内网络资源的加载详情"
                 },
                 "legal_notice": {
                     "header": "法律声明",
@@ -361,6 +362,10 @@
                     "primary_password": {
                         "header": "主密码",
                         "description": "使用主密码加密VRCX数据（将停用自动登录）"
+                    },
+                    "relaunch_vrchat": {
+                        "header": "在崩溃后重启VRChat",
+                        "description": "重新加入崩溃前的房间"
                     },
                     "vrchat_quit_fix": {
                         "header": "修复VRChat 关闭问题",
@@ -1073,7 +1078,8 @@
         },
         "screenshot_metadata": {
             "header": "屏幕截图元数据查看器",
-            "browse": "选择文件"
+            "browse": "选择文件",
+            "upload":"上传"
         }
     },
     "prompt": {
