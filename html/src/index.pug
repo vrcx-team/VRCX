@@ -46,8 +46,8 @@ html
                                 el-button(native-type="submit" type="primary" :loading="loginForm.loading" style="width:100%") {{ $t("view.login.login") }}
                         el-button(type="primary" @click="openExternalLink('https://vrchat.com/register')" :loading="loginForm.loading" style="width:100%") {{ $t("view.login.register") }}
                         div(style="text-align:center;font-size:12px")
-                            p #[a(@click="openExternalLink('https://vrchat.com/home/password')") {{ $t("view.login.forgotPassword") }}]
-                            p &copy; 2019-2022 #[a(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] (mina#5656) & #[a(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
+                            p #[a.x-link(@click="openExternalLink('https://vrchat.com/home/password')") {{ $t("view.login.forgotPassword") }}]
+                            p &copy; 2019-2022 #[a.x-link(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] (mina#5656) & #[a.x-link(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
                             p {{ $t("view.settings.general.legal_notice.info") }}
                             p {{ $t("view.settings.general.legal_notice.disclaimer1") }}
                             p {{ $t("view.settings.general.legal_notice.disclaimer2") }}
@@ -492,6 +492,9 @@ html
                                 span.x-link(@click="openExternalLink(scope.row.resourceUrl)" v-text="scope.row.resourceUrl")
                             template(v-else-if="scope.row.type === 'Notification' || scope.row.type === 'OnPlayerJoined' || scope.row.type === 'OnPlayerLeft'")
                             span.x-link(v-else v-text="scope.row.data")
+                    el-table-column(:label="$t('table.gameLog.action')" width="80" align="right")
+                        template(v-once #default="scope")
+                            el-button(v-if="scope.row.type !== 'OnPlayerJoined' && scope.row.type !== 'OnPlayerLeft' && scope.row.type !== 'Location' && scope.row.type !== 'PortalSpawn'" type="text" icon="el-icon-close" size="mini" @click="deleteGameLogEntry(scope.row)")
 
             //- search
             .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'search'")
@@ -1163,7 +1166,7 @@ html
                         div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                             span.header {{ $t("view.settings.general.legal_notice.header" )}}
                             div.options-container-item
-                                p &copy; 2019-2022 #[a(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] (mina#5656) & #[a(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
+                                p &copy; 2019-2022 #[a.x-link(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] (mina#5656) & #[a.x-link(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
                                 p {{ $t("view.settings.general.legal_notice.info" )}}
                                 p {{ $t("view.settings.general.legal_notice.disclaimer1" )}}
                                 p {{ $t("view.settings.general.legal_notice.disclaimer2" )}}
@@ -3856,6 +3859,7 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeLogDialog" :visible.sync="changeLogDialog.visible" :title="$t('dialog.change_log.header')" width="800px")
                 .changelog-dialog(v-if="changeLogDialog.visible")
                     h2(v-text="changeLogDialog.buildName")
+                    span {{ $t('dialog.change_log.description') }} #[a.x-link(@click="openExternalLink('https://www.patreon.com/Natsumi_VRCX')") Patreon], #[a.x-link(@click="openExternalLink('https://ko-fi.com/natsumi_sama')") Ko-fi].
                     vue-markdown(:source="changeLogDialog.changeLog" :linkify="false")
                 template(#footer)
                     el-button(type="small" @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')") {{ $t('dialog.change_log.github') }}

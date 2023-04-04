@@ -1503,6 +1503,54 @@ class Database {
         );
     }
 
+    deleteGameLogEntry(input) {
+        switch (input.type) {
+            case 'VideoPlay':
+                this.deleteGameLogVideoPlay(input);
+                break;
+            case 'Event':
+                this.deleteGameLogEvent(input);
+                break;
+            case 'StringLoad':
+            case 'ImageLoad':
+                this.deleteGameLogResourceLoad(input);
+                break;
+        }
+    }
+
+    deleteGameLogVideoPlay(input) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM gamelog_video_play WHERE created_at = @created_at AND video_url = @video_url AND location = @location`,
+            {
+                '@created_at': input.created_at,
+                '@video_url': input.videoUrl,
+                '@location': input.location
+            }
+        );
+    }
+
+    deleteGameLogEvent(input) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM gamelog_event WHERE created_at = @created_at AND data = @data`,
+            {
+                '@created_at': input.created_at,
+                '@data': input.data
+            }
+        );
+    }
+
+    deleteGameLogResourceLoad(input) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM gamelog_resource_load WHERE created_at = @created_at AND resource_url = @resource_url AND location = @location`,
+            {
+                '@created_at': input.created_at,
+                '@resource_url': input.resourceUrl,
+                '@type': input.type,
+                '@location': input.location
+            }
+        );
+    }
+
     async getpreviousInstancesByWorldId(input) {
         var data = new Map();
         await sqliteService.execute(

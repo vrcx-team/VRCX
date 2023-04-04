@@ -1720,7 +1720,7 @@ speechSynthesis.getVoices();
                 }
             }
             if ($app.customUserTags.has(json.id)) {
-                var tag = this.customUserTags.get(json.id);
+                var tag = $app.customUserTags.get(json.id);
                 ref.$customTag = tag.tag;
                 ref.$customTagColour = tag.colour;
             }
@@ -9208,6 +9208,25 @@ speechSynthesis.getVoices();
             console.log('gameLog:', gameLog);
         }
         this.addGameLogEntry(gameLog, this.lastLocation.location);
+    };
+
+    $app.methods.deleteGameLogEntry = function (row) {
+        this.$confirm('Continue? Delete Log', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    removeFromArray(this.gameLogTable.data, row);
+                    database.deleteGameLogEntry(row);
+                    console.log(row);
+                    database.getGamelogDatabase().then((data) => {
+                        this.gameLogSessionTable = data;
+                        this.updateSharedFeed(true);
+                    });
+                }
+            }
+        });
     };
 
     $app.data.lastLocationDestination = '';
@@ -17546,6 +17565,20 @@ speechSynthesis.getVoices();
         )
     };
 
+    API.$on('LOGIN', function () {
+        var D = $app.launchOptionsDialog;
+        if (
+            D.vrcLaunchPathOverride === null ||
+            D.vrcLaunchPathOverride === 'null'
+        ) {
+            D.vrcLaunchPathOverride = '';
+            configRepository.setString(
+                'vrcLaunchPathOverride',
+                D.vrcLaunchPathOverride
+            );
+        }
+    });
+
     API.$on('LOGOUT', function () {
         $app.launchOptionsDialog.visible = false;
     });
@@ -20764,15 +20797,19 @@ speechSynthesis.getVoices();
         }
         var lastLocation = this.lastLocation.location;
         AppApi.VrcClosedGracefully().then((result) => {
-            console.log(result, lastLocation);
             if (result || !this.isRealInstance(lastLocation)) {
                 return;
             }
             AppApi.FocusWindow();
+            var message = 'VRChat crashed, attempting to rejoin last instance';
+            this.$message({
+                message,
+                type: 'info'
+            });
             var entry = {
                 created_at: new Date().toJSON(),
                 type: 'Event',
-                data: 'VRChat crashed, attempting to rejoin last instance'
+                data: message
             };
             database.addGamelogEventToDatabase(entry);
             this.queueGameLogNoty(entry);

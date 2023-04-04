@@ -808,7 +808,7 @@
             "launch": "Launch"
         },
         "launch_options": {
-            "header": "Launch Options",
+            "header": "VRChat Launch Options",
             "description": "These options are for advanced users only.",
             "example": "to change max fps: --fps=<N> e.g.)",
             "path_override": "VRChat Path Override",
@@ -1055,6 +1055,7 @@
         },
         "change_log": {
             "header": "Change Log",
+            "description": "Consider donating to support future development of VRCX",
             "close": "Close",
             "donate": "Donate",
             "github": "GitHub"
@@ -1305,7 +1306,8 @@
             "type": "Type",
             "icon": "Icons",
             "user": "User",
-            "detail": "Detail"
+            "detail": "Detail",
+            "action": "Action"
         },
         "playerList": {
             "avatar": "Avatar",
