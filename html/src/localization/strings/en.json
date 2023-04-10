@@ -204,7 +204,7 @@
                 },
                 "game_log": {
                     "header": "Game Log",
-                    "resource_load": "Log Resource Load entries"
+                    "resource_load": "Log Udon resource load"
                 },
                 "legal_notice": {
                     "header": "Legal Notice",
