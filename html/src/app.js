@@ -9504,6 +9504,8 @@ speechSynthesis.getVoices();
                     this.addGameLogZuwaZuwaDance(gameLog, location);
                 } else if (type === 'LSMedia') {
                     this.addGameLogLSMedia(gameLog, location);
+                } else if (type === 'Movie&Chill') {
+                    this.addGameLogMovieAndChill(gameLog, location);
                 }
                 break;
             case 'photon-id':
@@ -11318,6 +11320,54 @@ speechSynthesis.getVoices();
         this.setNowPlaying(entry);
     };
 
+    $app.methods.addGameLogMovieAndChill = function (gameLog, location) {
+        // [VRCX] Movie&Chill CurrentTime,Length,PlayerName,MovieName
+        var data = /Movie&Chill ([\d.]+),([\d.]+),(.+?),(.*)/g.exec(
+            gameLog.data
+        );
+        if (!data) {
+            return;
+        }
+        var videoPos = Number(data[1]);
+        var videoLength = Number(data[2]);
+        var displayName = data[3];
+        var videoName = data[4];
+        var videoUrl = videoName;
+        var videoId = 'Movie&Chill';
+        if (videoUrl === this.nowPlaying.url) {
+            var entry = {
+                created_at: gameLog.dt,
+                videoUrl,
+                videoLength,
+                videoPos
+            };
+            this.setNowPlaying(entry);
+            return;
+        }
+        var userId = '';
+        if (displayName) {
+            for (var ref of API.cachedUsers.values()) {
+                if (ref.displayName === displayName) {
+                    userId = ref.id;
+                    break;
+                }
+            }
+        }
+        var entry = {
+            created_at: gameLog.dt,
+            type: 'VideoPlay',
+            videoUrl,
+            videoId,
+            videoName,
+            videoLength,
+            location,
+            displayName,
+            userId,
+            videoPos
+        };
+        this.setNowPlaying(entry);
+    };
+
     $app.methods.lookupYouTubeVideo = async function (videoId) {
         var data = null;
         var apiKey = 'AIzaSyA-iUQCpWf5afEL3NanEOSxbzziPMU3bxY';
@@ -11618,8 +11668,11 @@ speechSynthesis.getVoices();
             buttonText = '';
             buttonUrl = '';
         } else if (this.isRpcWorld(L.tag)) {
-            // dance world rpc
-            if (L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1') {
+            // custom world rpc
+            if (
+                L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1' ||
+                L.worldId === 'wrld_10e5e467-fc65-42ed-8957-f02cace1398c'
+            ) {
                 appId = '784094509008551956';
                 bigIcon = 'pypy';
             } else if (
@@ -11640,6 +11693,12 @@ speechSynthesis.getVoices();
             ) {
                 appId = '968292722391785512';
                 bigIcon = 'ls_media';
+            } else if (
+                L.worldId === 'wrld_791ebf58-54ce-4d3a-a0a0-39f10e1b20b2' ||
+                L.worldId === 'wrld_86a09fce-a34e-4deb-81be-53c843f97e98'
+            ) {
+                appId = '1095440531821170820';
+                bigIcon = 'movie_and_chill';
             }
             if (this.nowPlaying.name) {
                 L.worldName = this.nowPlaying.name;
@@ -13757,7 +13816,10 @@ speechSynthesis.getVoices();
             'wrld_52bdcdab-11cd-4325-9655-0fb120846945',
             'wrld_2d40da63-8f1f-4011-8a9e-414eb8530acd',
             'wrld_99211ba0-1878-493f-b64e-d3552c10b7cb',
-            'wrld_1b68f7a8-8aea-4900-b7a2-3fc4139ac817'
+            'wrld_1b68f7a8-8aea-4900-b7a2-3fc4139ac817',
+            'wrld_10e5e467-fc65-42ed-8957-f02cace1398c',
+            'wrld_791ebf58-54ce-4d3a-a0a0-39f10e1b20b2',
+            'wrld_86a09fce-a34e-4deb-81be-53c843f97e98'
         ];
         var L = API.parseLocation(location);
         if (rpcWorlds.includes(L.worldId)) {
