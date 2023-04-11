@@ -709,6 +709,10 @@ class Database {
         if (row.$isExpired) {
             expired = 1;
         }
+        if (!entry.created_at || !entry.type || !entry.id) {
+            console.error('Notification is missing required field', entry);
+            throw new Error('Notification is missing required field');
+        }
         sqliteService.executeNonQuery(
             `INSERT OR IGNORE INTO ${Database.userPrefix}_notifications (id, created_at, type, sender_user_id, sender_username, receiver_user_id, message, world_id, world_name, image_url, invite_message, request_message, response_message, expired) VALUES (@id, @created_at, @type, @sender_user_id, @sender_username, @receiver_user_id, @message, @world_id, @world_name, @image_url, @invite_message, @request_message, @response_message, @expired)`,
             {
@@ -1949,6 +1953,12 @@ class Database {
                 `DELETE FROM ${tableName} WHERE type LIKE '%.%'`
             );
         });
+    }
+
+    fixBrokenNotifications() {
+        sqliteService.executeNonQuery(
+            `DELETE FROM ${Database.userPrefix}_notifications WHERE (created_at is null or created_at = '')`
+        );
     }
 
     async updateTableForGroupNames() {
