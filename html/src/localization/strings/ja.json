@@ -135,10 +135,10 @@
                 "two_factor_enabled": "有効",
                 "two_factor_disabled": "無効",
                 "logout": "ログアウト",
-                "export_friend_list": "フレンドリストを書き出す",
-                "export_own_avatars": "自分のアバターを書き出す",
+                "export_friend_list": "フレンドリストをエクスポート",
+                "export_own_avatars": "自分のアバターをエクスポート",
                 "discord_names": "Discordの名前",
-                "export_notes": "ノートを書き出す"
+                "export_notes": "ノートをエクスポート"
             },
             "game_info": {
                 "header": "ゲーム情報",
@@ -267,8 +267,8 @@
                     "header": "ユーザーダイアログ",
                     "hide_vrchat_notes": "VRChatのノートを表示しない",
                     "hide_vrcx_memos": "VRCXのメモを表示しない",
-                    "export_vrcx_memos_into_vrchat_notes": "VRCXのメモをVRChatのノートに書き出す",
-                    "export_notes": "ノートを書き出す"
+                    "export_vrcx_memos_into_vrchat_notes": "VRCXのメモをVRChatのノートにエクスポート",
+                    "export_notes": "ノートをエクスポート"
                 },
                 "user_colors": {
                     "header": "ユーザーの色",
@@ -921,7 +921,7 @@
             "clear_errors": "エラーを消去"
         },
         "avatar_export": {
-            "header": "Avatar Favorites Export"
+            "header": "お気に入りアバターをエクスポート"
         },
         "avatar_import": {
             "header": "Avatar Favorites Import",
