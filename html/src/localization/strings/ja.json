@@ -42,29 +42,29 @@
             "photon": {
                 "current": "現在",
                 "previous": "前",
-                "search_placeholder": "Search",
-                "filter_placeholder": "Filter",
-                "chatbox_blacklist": "Chatbox Blacklist",
-                "status_tooltip": "VRCX Companion Status"
+                "search_placeholder": "検索",
+                "filter_placeholder": "フィルター",
+                "chatbox_blacklist": "チャットボックス ブラックリスト",
+                "status_tooltip": "VRCXコンパニオンの状態"
             }
         },
         "search": {
-            "search_placeholder": "Search",
-            "clear_results_tooltip": "Clear Search Results",
+            "search_placeholder": "検索",
+            "clear_results_tooltip": "検索結果を消去",
             "user": {
-                "header": "User"
+                "header": "ユーザー"
             },
             "world": {
-                "header": "World",
-                "category": "Search by category",
-                "community_lab": "Include community labs"
+                "header": "ワールド",
+                "category": "カテゴリで検索",
+                "community_lab": "コミュニティ ラボを表示"
             },
             "avatar": {
-                "header": "Avatar",
+                "header": "アバター",
                 "search_provider": "Search Provider",
-                "refresh_tooltip": "Refresh own avatars",
-                "result_count": "Results {count}",
-                "all": "All",
+                "refresh_tooltip": "自分のアバターを更新",
+                "result_count": "結果: {count}",
+                "all": "全て",
                 "public": "Public",
                 "private": "Private",
                 "local": "Local",
