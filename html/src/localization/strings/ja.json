@@ -651,25 +651,25 @@
             "labels": {
                 "public": "(Public)",
                 "private": "(Private)",
-                "own": "(Own)"
+                "own": "(自分)"
             },
             "actions": {
-                "delete_cache_tooltip": "Delete avatar from cache",
-                "favorite_tooltip": "Add to favorites",
-                "unfavorite_tooltip": "Remove from favorites",
-                "refresh": "Refresh",
-                "select": "Select Avatar",
-                "select_fallback": "Select Fallback Avatar",
-                "block": "Block Avatar",
-                "unblock": "Unblock Avatar",
-                "show_previous_images": "Show Previous Images",
-                "make_public": "Make Public",
-                "make_private": "Make Private",
-                "rename": "Rename",
-                "change_description": "Change Description",
-                "change_image": "Change Image",
-                "download_package": "Download Unity Package",
-                "delete": "Delete"
+                "delete_cache_tooltip": "キャッシュからアバターを削除",
+                "favorite_tooltip": "お気に入りに追加",
+                "unfavorite_tooltip": "お気に入りから削除",
+                "refresh": "更新",
+                "select": "アバターを使用",
+                "select_fallback": "フォールバックアバターを使用",
+                "block": "アバターをブロック",
+                "unblock": "アバターをブロック解除",
+                "show_previous_images": "以前の画像",
+                "make_public": "アバターを公開化",
+                "make_private": "アバターを非公開化",
+                "rename": "名前を変更",
+                "change_description": "説明を変更",
+                "change_image": "画像を変更",
+                "download_package": "Unity Packageをダウンロード",
+                "delete": "削除"
             },
             "info": {
                 "header": "Info",
