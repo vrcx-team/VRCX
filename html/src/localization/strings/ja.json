@@ -672,15 +672,15 @@
                 "delete": "削除"
             },
             "info": {
-                "header": "Info",
-                "id": "Avatar ID",
-                "id_tooltip": "Copy to clipboard",
-                "copy_id": "Copy ID",
-                "copy_url": "Copy URL",
-                "created_at": "Created At",
-                "last_updated": "Last Updated",
-                "version": "Version",
-                "platform": "Platform"
+                "header": "情報",
+                "id": "アバターID",
+                "id_tooltip": "クリップボードにコピー",
+                "copy_id": "IDをコピー",
+                "copy_url": "URLをコピー",
+                "created_at": "作成日時",
+                "last_updated": "最終更新日時",
+                "version": "バージョン",
+                "platform": "プラットフォーム"
             },
             "json": {
                 "header": "JSON"
@@ -688,19 +688,19 @@
         },
         "group": {
             "tags": {
-                "verified": "Verified",
-                "public": "Public",
-                "private": "Private",
-                "open": "Open",
-                "request": "Request",
-                "invite": "Invite",
-                "closed": "Closed",
-                "joined": "Joined",
-                "banned": "Banned",
-                "visible": "Visible",
-                "friends": "Friends",
-                "hidden": "Hidden",
-                "subscribed": "Subscribed"
+                "verified": "認証済み",
+                "public": "公開",
+                "private": "非公開",
+                "open": "自由参加可能",
+                "request": "リクエスト制",
+                "invite": "招待制",
+                "closed": "参加不可能",
+                "joined": "参加済み",
+                "banned": "BAN",
+                "visible": "可視性: 全員",
+                "friends": "可視性: フレンドのみ",
+                "hidden": "可視性: 自分のみ",
+                "subscribed": "お知らせ受信可能"
             },
             "actions": {
                 "represent_tooltip": "Set Representing",
