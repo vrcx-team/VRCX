@@ -230,8 +230,8 @@
                     "sort_instance_users_by": "インスタンス人数を並び替え:",
                     "sort_instance_users_by_time": "時間順",
                     "sort_instance_users_by_alphabet": "アルファベット順",
-                    "table_max_size": "テーブルの最大サイズ",
-                    "page_size": "ページサイズ:"
+                    "table_max_size": "テーブルの最大数",
+                    "page_size": "ページ数:"
                 },
                 "timedate": {
                     "header": "時刻と日付",
@@ -351,82 +351,82 @@
             },
             "advanced": {
                 "advanced": {
-                    "header": "Advanced",
-                    "launch_options": "Launch Options",
-                    "screenshot_metadata": "Screenshot Metadata",
+                    "header": "詳細設定",
+                    "launch_options": "起動オプション",
+                    "screenshot_metadata": "スクリーンショットのメタデータ",
                     "pending_offline": {
-                        "header": "Pending Offline",
-                        "description": "Delay before marking user as offline (fixes false positives)",
-                        "set_delay": "Set Delay"
+                        "header": "オフラインの保留",
+                        "description": "オフラインと判定されるまでの時間 (誤検知対策)",
+                        "set_delay": "遅延時間を設定"
                     },
                     "primary_password": {
-                        "header": "Primary Password",
-                        "description": "Encrypt password (disables auto login)"
+                        "header": "プライマリーパスワード",
+                        "description": "パスワードを暗号化 (自動ログイン無効化)"
                     },
                     "relaunch_vrchat": {
-                        "header": "Relaunch VRChat after crashing",
-                        "description": "Rejoin last instance when VRChat crashes"
+                        "header": "VRChatがクラッシュした場合に自動再起動する",
+                        "description": "クラッシュ時、自動でインスタンスに再参加"
                     },
                     "vrchat_quit_fix": {
-                        "header": "VRChat Quit Fix",
-                        "description": "Kill VRChat after exiting game"
+                        "header": "VRChat終了時の挙動を修正する",
+                        "description": "ゲーム終了時、VRChatのプロセスを強制終了"
                     },
                     "auto_cache_management": {
-                        "header": "Automatically Manage Cache When Closing VRChat",
-                        "description": "Auto delete old versions from cache"
+                        "header": "VRChat終了時にキャッシュを自動で管理する",
+                        "description": "旧バージョンのキャッシュを自動削除"
                     },
                     "remote_database": {
-                        "header": "Remote Avatar Database",
-                        "enable": "Enable",
-                        "avatar_database_provider": "Avatar Database Provider"
+                        "header": "リモートアバターデータベース",
+                        "enable": "有効化",
+                        "avatar_database_provider": "アバターデータベースプロバイダー"
                     },
                     "youtube_api": {
                         "header": "Youtube API",
-                        "enable": "Enable",
-                        "youtube_api_key": "Youtube API Key"
+                        "enable": "有効化",
+                        "youtube_api_key": "Youtube APIキー"
                     },
                     "video_progress_pie": {
-                        "header": "Progress pie overlay for videos",
-                        "enable": "Enable",
-                        "enable_tooltip": "Requires SteamVR overlay to be enabled",
-                        "dance_world_only": "Dance worlds only"
+                        "header": "動画にプログレスをオーバーレイ表示",
+                        "enable": "有効化",
+                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です",
+                        "dance_world_only": "ダンスワールドのみ"
                     },
                     "screenshot_helper": {
-                        "header": "Screenshot Helper",
-                        "description": "Will store the world ID, world name and players in instance inside the file metadata of any pictures you take in-game.",
-                        "description_tooltip": "Unfortunately, windows doesn't support viewing PNG text chunks(few things do) natively, but you can view it using a command-line tool like exiftool, a png chunk inspector, or a hex editor.",
-                        "enable": "Enable",
-                        "modify_filename": "Modify Filename",
-                        "modify_filename_tooltip": "Will add the World ID to screenshot filename, in addition to file metadata."
+                        "header": "スクリーンショット ヘルパー",
+                        "description": "ゲーム内で撮影した写真のメタデータに「ワールドID」「ワールド名」「インスタンス内のプレイヤー」を保存します",
+                        "description_tooltip": "残念ながら、Windowsは (ごく一部を除く) PNGテキストチャンクの表示をサポートしていないため、表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用して表示することが出来ます",
+                        "enable": "有効化",
+                        "modify_filename": "ファイル名を変更",
+                        "modify_filename_tooltip": "スクリーンショットのファイル名にワールドIDを追加"
                     },
                     "cache_debug": {
-                        "header": "VRCX Instance Cache/Debug",
-                        "disable_gamelog": "Disable GameLog",
-                        "disable_gamelog_notice": "(will likely break things)",
-                        "user_cache": "User cache:",
-                        "world_cache": "World cache:",
-                        "avatar_cache": "Avatar cache:",
-                        "avatar_name_cache": "Avatar Name cache:",
-                        "clear_cache": "Clear Cache",
-                        "auto_clear_cache": "Auto Clear Cache",
-                        "download_history": "Download History",
-                        "show_console": "Show Console"
+                        "header": "VRCXインスタンス キャッシュ/デバッグ",
+                        "disable_gamelog": "ゲームログを無効化",
+                        "disable_gamelog_notice": "(何かが壊れる可能性があります)",
+                        "user_cache": "ユーザーキャッシュ:",
+                        "world_cache": "ワールドキャッシュ:",
+                        "avatar_cache": "アバターキャッシュ:",
+                        "avatar_name_cache": "アバター名キャッシュ:",
+                        "clear_cache": "キャッシュを削除",
+                        "auto_clear_cache": "キャッシュの自動削除",
+                        "download_history": "ダウンロード履歴",
+                        "show_console": "コンソールを表示"
                     },
                     "sqlite_table_size": {
-                        "header": "SQLite Table Size",
-                        "refresh": "Refresh",
+                        "header": "SQLite テーブル数",
+                        "refresh": "更新",
                         "gps": "GPS:",
-                        "status": "Status:",
-                        "bio": "Bio:",
-                        "avatar": "Avatar:",
-                        "online_offline": "Online/Offline:",
-                        "friend_log_history": "Friend Log History:",
-                        "notification": "Notifications:",
-                        "location": "Location:",
-                        "join_leave": "Join/Leave:",
-                        "portal_spawn": "Portal Spawn:",
-                        "video_play": "Video Play:",
-                        "event": "Event:"
+                        "status": "ステータス:",
+                        "bio": "プロフィール:",
+                        "avatar": "アバター:",
+                        "online_offline": "オンライン/オフライン:",
+                        "friend_log_history": "フレンドログ履歴:",
+                        "notification": "通知:",
+                        "location": "場所:",
+                        "join_leave": "参加/退出:",
+                        "portal_spawn": "ポータル作成:",
+                        "video_play": "動画再生:",
+                        "event": "イベント:"
                     }
                 },
                 "photon": {
