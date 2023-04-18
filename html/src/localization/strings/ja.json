@@ -597,7 +597,7 @@
                 "rename": "名前を変更",
                 "change_description": "説明を変更",
                 "change_capacity": "最大人数を変更",
-                "change_preview": "YouTubeプレビュー動画を変更",
+                "change_preview": "YouTube プレビュー動画を変更",
                 "change_tags": "タグを変更",
                 "change_image": "画像を変更",
                 "download_package": "Unity Packageをダウンロード",
@@ -606,36 +606,36 @@
                 "delete": "削除"
             },
             "instances": {
-                "header": "Instances",
+                "header": "インスタンス",
                 "public_count": "Public {count}",
                 "private_count": "Private {count}",
-                "capacity_count": "Capacity {count} ({max})",
-                "self_invite_tooltip": "Invite Yourself",
-                "refresh_user_count_tooltip": "Refresh User Count",
-                "instance_creator": "Instance Creator"
+                "capacity_count": "最大人数 {count} ({max})",
+                "self_invite_tooltip": "自分を招待",
+                "refresh_user_count_tooltip": "ユーザー数を更新",
+                "instance_creator": "インスタンス作成者"
             },
             "info": {
-                "header": "Info",
-                "id": "World ID",
-                "id_tooltip": "Copy to clipboard",
-                "copy_id": "Copy ID",
-                "copy_url": "Copy URL",
-                "copy_name": "Copy Name",
-                "youtube_preview": "Youtube Preview",
-                "players": "Players",
-                "favorites": "Favorites",
-                "visits": "Visits",
-                "capacity": "Capacity",
-                "heat": "Heat",
-                "popularity": "Popularity",
-                "created_at": "Created At",
-                "last_updated": "Last Updated",
-                "version": "Version",
-                "platform": "Platform",
-                "last_visited": "Last Visited",
-                "visit_count": "Visit Count",
-                "time_spent": "Time Spent",
-                "accuracy_notice": "Info from local database may not be accurate"
+                "header": "情報",
+                "id": "ワールドID",
+                "id_tooltip": "クリップボードにコピー",
+                "copy_id": "IDをコピー",
+                "copy_url": "URLをコピー",
+                "copy_name": "ワールド名をコピー",
+                "youtube_preview": "YouTube プレビュー動画",
+                "players": "プレイヤー数",
+                "favorites": "お気に入り数",
+                "visits": "総参加回数",
+                "capacity": "最大人数",
+                "heat": "ヒート",
+                "popularity": "人気度",
+                "created_at": "作成日時",
+                "last_updated": "最終更新日時",
+                "version": "バージョン",
+                "platform": "プラットフォーム",
+                "last_visited": "最後に参加した日時",
+                "visit_count": "参加回数",
+                "time_spent": "過ごした時間",
+                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります"
             },
             "json": {
                 "header": "JSON"
@@ -645,8 +645,8 @@
             "tags": {
                 "public": "Public",
                 "private": "Private",
-                "fallback": "Fallback",
-                "cache": "Cache"
+                "fallback": "フォールバック",
+                "cache": "キャッシュ"
             },
             "labels": {
                 "public": "(Public)",
