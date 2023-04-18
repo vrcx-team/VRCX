@@ -130,7 +130,7 @@
         "profile": {
             "profile": {
                 "header": "プロフィール",
-                "last_activity": "最終活動時刻",
+                "last_activity": "最終活動時間",
                 "two_factor": "2段階認証 (2FA)",
                 "two_factor_enabled": "有効",
                 "two_factor_disabled": "無効",
@@ -533,7 +533,7 @@
                 "avatar_info_last_seen": "最後に見たアバター情報",
                 "represented_group": "代表しているグループ",
                 "bio": "自己紹介",
-                "last_seen": "最後に見た日付",
+                "last_seen": "最後に見た日時",
                 "join_count": "Joinした回数",
                 "time_together": "一緒に居た時間",
                 "online_for": "オンライン時間",
@@ -953,464 +953,464 @@
             "clear_errors": "エラーを消去"
         },
         "avatar_database_provider": {
-            "header": "Avatar Database Provider",
-            "add_provider": "Add Provider"
+            "header": "アバターデータベースプロバイダー",
+            "add_provider": "プロバイダーを追加"
         },
         "chatbox_blacklist": {
-            "header": "Chatbox Blacklist",
-            "keyword_blacklist": "Keyword Blacklist",
-            "user_blacklist": "User Blacklist",
-            "add_item": "Add Item"
+            "header": "チャットボックス ブラックリスト",
+            "keyword_blacklist": "キーワード ブラックリスト",
+            "user_blacklist": "ユーザー ブラックリスト",
+            "add_item": "追加"
         },
         "invite_to_group": {
-            "header": "Invite To Group",
-            "description": "Don't spam invite users, inviting too many users to a group is known to cause a ban.",
-            "choose_group_placeholder": "Choose Group",
-            "groups": "Groups",
-            "choose_friends_placeholder": "Choose Friends",
-            "selected_users": "Selected Users"
+            "header": "グループに招待",
+            "description": "招待スパムをしないでください。グループに大量のユーザーを招待するとBANされる可能性があります。",
+            "choose_group_placeholder": "グループを選択",
+            "groups": "グループ",
+            "choose_friends_placeholder": "フレンドを選択",
+            "selected_users": "選択したユーザー"
         },
         "note_export": {
-            "header": "Note Export",
-            "description1": "This process will export all of your VRCX memos and import them into VRChat notes.",
-            "description2": "Be warned of the following limitations:",
-            "description3": "- API endpoint has a rate limit that requires a large delay between requests.",
-            "description4": "- Character limit of 256 per note.",
-            "description5": "- Swear words filter (no fun allowed).",
-            "description6": "- No new lines (they will replaced with a space).",
-            "description7": "- This will overwrite any existing VRChat notes for these users.",
-            "description8": "- Any edits made here wont affect VRCX memos but will affect VRChat notes once exported.",
-            "refresh": "Refresh",
-            "export": "Export",
-            "cancel": "Cancel",
-            "progress": "Progress:",
-            "errors": "Errors:",
-            "clear_errors": "Clear Errors"
+            "header": "ノートをエクスポート",
+            "description1": "これにより、VRCXのノートが全てVRChatのノートにインポートされます。",
+            "description2": "以下の制限にご注意ください:",
+            "description3": "- APIエンドポイントにはレート制限があり、リクエストを送る際は間隔を開ける必要があります。",
+            "description4": "- 1ノートあたり256文字の制限があります。",
+            "description5": "- 汚い言葉はフィルタリングされます (おふざけは禁止されています) 。",
+            "description6": "- 改行はできません。スペースに置き換えられます。",
+            "description7": "- 既にノートが設定されているユーザーのノートは上書きされます。",
+            "description8": "- ここで編集した内容はVRCXのメモには影響しませんが、エクスポートされたVRChatのノートには影響します。",
+            "refresh": "更新",
+            "export": "エクスポート",
+            "cancel": "キャンセル",
+            "progress": "進捗:",
+            "errors": "エラー:",
+            "clear_errors": "エラーを消去"
         },
         "edit_invite_message": {
-            "header": "Edit Invite Message",
-            "description": "1 hour edit cool down time.",
-            "cancel": "Cancel",
-            "save": "Save"
+            "header": "招待メッセージを編集",
+            "description": "編集後は1時間クールダウンが必要です。",
+            "cancel": "キャンセル",
+            "save": "保存"
         },
         "invite_message": {
-            "header": "Send Invite Message",
-            "confirmation": "Are you sure you want to send?",
-            "cancel": "Cancel",
-            "refresh": "Refresh",
-            "confirm": "Confirm"
+            "header": "メッセージ付き招待を送信",
+            "confirmation": "本当に送信しますか？",
+            "cancel": "キャンセル",
+            "refresh": "更新",
+            "confirm": "確定"
         },
         "invite_request_message": {
-            "header": "Send Invite Request Message",
-            "cancel": "Cancel",
-            "refresh": "Refresh"
+            "header": "メッセージ付き招待リクエストを送信",
+            "cancel": "キャンセル",
+            "refresh": "更新"
         },
         "invite_response_message": {
-            "header": "Send Invite Response Message",
-            "confirmation": "Are you sure you want to send?",
-            "cancel": "Cancel",
-            "refresh": "Refresh",
-            "confirm": "Confirm"
+            "header": "招待に返信",
+            "confirmation": "本当に送信しますか？",
+            "cancel": "キャンセル",
+            "refresh": "更新",
+            "confirm": "確定"
         },
         "invite_request_response_message": {
-            "header": "Send Invite Request Response Message",
-            "cancel": "Cancel",
-            "refresh": "Refresh"
+            "header": "招待リクエストに返信",
+            "cancel": "キャンセル",
+            "refresh": "更新"
         },
         "edit_send_invite_message": {
-            "header": "Edit and Send Invite Message",
-            "description": "1 hour edit cool down time.",
-            "cancel": "Cancel",
-            "send": "Send"
+            "header": "招待メッセージを編集して送信",
+            "description": "編集後は1時間クールダウンが必要です。",
+            "cancel": "キャンセル",
+            "send": "送信"
         },
         "edit_send_invite_response_message": {
-            "header": "Edit and Send Invite Response Message",
-            "description": "1 hour edit cool down time.",
-            "cancel": "Cancel",
-            "send": "Send"
+            "header": "招待への返信メッセージを編集して送信",
+            "description": "編集後は1時間クールダウンが必要です。",
+            "cancel": "キャンセル",
+            "send": "送信"
         },
         "gallery_icons": {
-            "header": "Gallery and Icons",
-            "description": "Recommended image size 1200x900px",
-            "gallery": "Gallery",
-            "icons": "Icons",
-            "refresh": "Refresh",
-            "upload": "Upload",
-            "clear": "Clear"
+            "header": "ギャラリーとアイコン",
+            "description": "推奨画像サイズ: 1200x900",
+            "gallery": "ギャラリー",
+            "icons": "アイコン",
+            "refresh": "更新",
+            "upload": "アップロード",
+            "clear": "消去"
         },
         "change_content_image": {
-            "avatar": "Change Avatar Image",
-            "world": "Change World Image",
-            "description": "Recommended image size: 1200x900px (4:3)",
-            "refresh": "Refresh",
-            "upload": "Upload Image"
+            "avatar": "アバターの画像を変更",
+            "world": "ワールドの画像を変更",
+            "description": "推奨画像サイズ: 1200x900 (4:3)",
+            "refresh": "更新",
+            "upload": "画像をアップロード"
         },
         "previous_images": {
-            "header": "Previous Images"
+            "header": "以前の画像"
         },
         "previous_instances": {
-            "header": "Previous Instances",
-            "info": "Previous Instance Info",
-            "search_placeholder": "Search"
+            "header": "以前のインスタンス",
+            "info": "以前のインスタンス情報",
+            "search_placeholder": "検索"
         },
         "change_log": {
-            "header": "Change Log",
-            "description": "Consider donating to support future development of VRCX",
-            "close": "Close",
-            "donate": "Donate",
+            "header": "更新履歴",
+            "description": "将来のVRCXの開発を支援するために寄付をご検討ください。",
+            "close": "閉じる",
+            "donate": "寄付",
             "github": "GitHub"
         },
         "gallery_select": {
-            "header": "Select Image",
-            "gallery": "Gallery",
-            "none": "None",
-            "refresh": "Refresh",
-            "upload": "Upload"
+            "header": "画像を選択",
+            "gallery": "ギャラリー",
+            "none": "無し",
+            "refresh": "更新",
+            "upload": "アップロード"
         },
         "open_source": {
-            "header": "Open Source Software Notice",
-            "description": "VRCX is based on open source software. It was possible because of their contribution."
+            "header": "オープンソースソフトウェアに関する注意事項",
+            "description": "VRCXはオープンソースソフトウェアをベースに開発されています。彼らの貢献のおかげで実現することができました。"
         },
         "primary_password": {
-            "header": "Primary Password Required",
-            "password_placeholder": "Input new password",
-            "re_input_placeholder": "Re-input password",
+            "header": "プライマリーパスワードが必要です",
+            "password_placeholder": "新しいパスワードを入力",
+            "re_input_placeholder": "パスワードを再入力",
             "ok": "OK"
         },
         "screenshot_metadata": {
-            "header": "Screenshot Metadata",
-            "browse": "Browse",
-            "upload": "Upload"
+            "header": "スクリーンショットのメタデータ",
+            "browse": "参照",
+            "upload": "アップロード"
         }
     },
     "prompt": {
         "totp": {
-            "header": "Two-factor Authentication",
-            "description": "Enter a numeric code from your authenticator app",
-            "use_otp": "Use OTP",
-            "verify": "Verify",
-            "input_placeholder": "Code",
-            "input_error": "Invalid Code"
+            "header": "2段階認証",
+            "description": "認証アプリの数字を入力してください",
+            "use_otp": "OTPを使う",
+            "verify": "認証",
+            "input_placeholder": "コード",
+            "input_error": "無効なコードです"
         },
         "otp": {
-            "header": "Two-factor Authentication",
-            "description": "Enter one of your saved recovery codes",
-            "use_otp": "Use TOTP",
-            "verify": "Verify",
-            "input_placeholder": "Code",
-            "input_error": "Invalid Code"
+            "header": "2段階認証",
+            "description": "保存したリカバリーコードのどれか一つを入力してください",
+            "use_otp": "TOTPを使う",
+            "verify": "認証",
+            "input_placeholder": "コード",
+            "input_error": "無効なコードです"
         },
         "email_otp": {
-            "header": "Two-factor Authentication",
-            "description": "Enter a numeric code that was sent to your email",
-            "resend": "Resend Email",
-            "verify": "Verify",
-            "input_placeholder": "Code",
-            "input_error": "Invalid Code"
+            "header": "2段階認証",
+            "description": "メールに送られてきた数字を入力してください",
+            "resend": "メールを再送信",
+            "verify": "認証",
+            "input_placeholder": "コード",
+            "input_error": "無効なコードです"
         },
         "primary_password": {
-            "header": "Primary Password Required",
-            "description": "Please enter your Primary Password."
+            "header": "プライマリーパスワードが必要です",
+            "description": "プライマリーパスワードを入力してください。"
         },
         "change_favorite_group_name": {
-            "header": "Change Group Name",
-            "description": "Enter a new name",
-            "cancel": "Cancel",
-            "change": "Change",
-            "input_placeholder": "Name",
-            "input_error": "Name is required",
+            "header": "グループ名を変更",
+            "description": "新しい名前を入力してください",
+            "cancel": "キャンセル",
+            "change": "変更",
+            "input_placeholder": "名前",
+            "input_error": "名前が必要です",
             "message": {
-                "success": "Group renamed"
+                "success": "グループの名前を変更しました"
             }
         },
         "direct_access_user_id": {
-            "header": "Direct Access",
-            "description": "Enter a User URL or ID (UUID)",
-            "cancel": "Cancel",
+            "header": "ダイレクトアクセス",
+            "description": "ユーザーURL/IDを入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "User URL/ID is required",
+            "input_error": "ユーザーURL/IDが必要です",
             "message": {
-                "error": "Invalid URL/ID"
+                "error": "無効なURL/IDです"
             }
         },
         "direct_access_username": {
-            "header": "Direct Access",
-            "description": "Enter a Username",
-            "cancel": "Cancel",
+           "header": "ダイレクトアクセス",
+            "description": "ユーザーネームを入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Username is required"
+            "input_error": "ユーザーネームが必要です"
         },
         "direct_access_world_id": {
-            "header": "Direct Access",
-            "description": "Enter a World URL or ID (UUID)",
-            "cancel": "Cancel",
+           "header": "ダイレクトアクセス",
+            "description": "ワールドURL/IDを入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "World URL/ID is required",
+            "input_error": "ワールドURL/IDが必要です",
             "message": {
-                "error": "Invalid URL/ID"
+                "error": "無効なURL/IDです"
             }
         },
         "direct_access_avatar_id": {
-            "header": "Direct Access",
-            "description": "Enter a Avatar URL or ID (UUID)",
-            "cancel": "Cancel",
+           "header": "ダイレクトアクセス",
+            "description": "アバターURL/IDを入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Avatar URL/ID is required",
+            "input_error": "アバターURL/IDが必要です",
             "message": {
-                "error": "Invalid URL/ID"
+                "error": "無効なURL/IDです"
             }
         },
         "direct_access_omni": {
-            "header": "Direct Access",
-            "description": "Enter a User/World/Instance/Avatar/Group URL or ID (UUID)",
-            "cancel": "Cancel",
+           "header": "ダイレクトアクセス",
+            "description": "ユーザー/ワールド/インスタンス/アバター/グループURL/IDを入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "URL/ID is required",
+            "input_error": "URL/IDが必要です",
             "message": {
-                "error": "Invalid URL/ID"
+                "error": "無効なURL/IDです"
             }
         },
         "notification_timeout": {
-            "header": "Notification Timeout",
-            "description": "Enter amount of seconds",
-            "cancel": "Cancel",
+            "header": "通知のタイムアウト時間",
+            "description": "秒数を入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Valid number is required"
+            "input_error": "有効な数字が必要です"
         },
         "overlay_message_timeout": {
-            "header": "Overlay Message Timeout",
-            "description": "Enter amount of seconds",
-            "cancel": "Cancel",
+            "header": "オーバーレイメッセージのタイムアウト時間",
+            "description": "秒数を入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Valid number is required"
+            "input_error": "有効な数字が必要です"
         },
         "rename_avatar": {
-            "header": "Rename Avatar",
-            "description": "Enter avatar name",
-            "cancel": "Cancel",
+            "header": "アバター名を変更",
+            "description": "アバター名を入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Valid name is required",
+            "input_error": "有効な名前が必要です",
             "message": {
-                "success": "Avatar renamed"
+                "success": "アバター名を変更しました"
             }
         },
         "change_avatar_description": {
-            "header": "Change Description",
-            "description": "Enter avatar description",
-            "cancel": "Cancel",
+            "header": "アバターの説明を変更",
+            "description": "アバターの説明を入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Valid description is required",
+            "input_error": "有効な説明文が必要です",
             "message": {
-                "success": "Avatar description changed"
+                "success": "アバターの説明を変更しました"
             }
         },
         "rename_world": {
-            "header": "Rename World",
-            "description": "Enter world name",
-            "cancel": "Cancel",
+            "header": "ワールド名を変更",
+            "description": "ワールド名を入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Valid name is required",
+             "input_error": "有効な名前が必要です",
             "message": {
-                "success": "World renamed"
+                "success": "ワールド名を変更しました"
             }
         },
         "change_world_description": {
-            "header": "Change Description",
-            "description": "Enter world description",
-            "cancel": "Cancel",
+            "header": "ワールドの説明を変更",
+            "description": "ワールドの説明を入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Valid description is required",
+            "input_error": "有効な説明文が必要です",
             "message": {
-                "success": "World description changed"
+                "success": "ワールドの説明を変更しました"
             }
         },
         "change_world_capacity": {
-            "header": "Change Capacity",
-            "description": "Enter world capacity, Max: 40",
-            "cancel": "Cancel",
+            "header": "最大人数を変更",
+            "description": "ワールドの最大人数を入力してください。最高値: 40",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Valid number is required",
+            "input_error": "有効な数字が必要です",
             "message": {
-                "success": "World capacity changed"
+                "success": "ワールドの最大人数を変更しました"
             }
         },
         "change_world_preview": {
-            "header": "Change YouTube Preview",
-            "description": "Enter world YouTube preview",
-            "cancel": "Cancel",
+            "header": "YouTube プレビュー動画を変更",
+            "description": "ワールドのYouTube 動画リンクを入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Valid YouTube URL is required",
+            "input_error": "有効なYouTube URLが必要です",
             "message": {
-                "error": "Invalid YouTube URL",
-                "success": "World YouTube preview changed"
+                "error": "無効なYouTube URLです",
+                "success": "ワールドのYouTube プレビュー動画を変更しました"
             }
         },
         "change_table_size": {
-            "header": "Max Table Size",
-            "description": "Limit amount of entries loaded from database to UI pages, larger table sizes will impact RAM usage and performance (default: 1000, max: 10000)",
-            "cancel": "Cancel",
-            "save": "Save",
-            "input_error": "Valid number is required"
+            "header": "テーブルの最大数",
+            "description": "データベースからUIページに読み込まれるエントリの量を制限します。テーブル数が多くなるとRAM使用量とパフォーマンスに影響を及ぼす可能性があります。 (デフォルト:1000, 最高値: 10000)",
+            "cancel": "キャンセル",
+            "save": "保存",
+            "input_error": "有効な数字が必要です"
         },
         "photon_lobby_timeout": {
-            "header": "User Timeout Threshold",
-            "description": "Enter amount of seconds (default: 3)",
-            "cancel": "Cancel",
+            "header": "ユーザータイムアウト しきい値",
+            "description": "タイムアウトまでの秒数を入力してください (デフォルト: 3)",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Valid number is required"
+            "input_error": "有効な数字が必要です"
         },
         "auto_clear_cache": {
-            "header": "Clear VRCX Cache Timer",
-            "description": "Enter amount of hours, larger values may impact RAM usage and performance (default: 24, disabled: 0)",
-            "cancel": "Cancel",
+            "header": "VRCX キャッシュの自動消去タイマー",
+            "description": "消去までの時間を入力してください。長い時間を指定するとRAM使用量とパフォーマンスに影響を及ぼす可能性があります。 (デフォルト: 24, 無効化: 0)",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Valid number is required"
+            "input_error": "有効な数字が必要です"
         },
         "new_local_favorite_group": {
-            "header": "New Group",
-            "description": "Enter a world favorite group name",
-            "cancel": "Cancel",
+            "header": "新しいグループ",
+            "description": "お気に入りワールド グループ名を入力してください",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Name is required",
+            "input_error": "名前が必要です",
             "message": {
-                "error": "Group already exists with the name {name}"
+                "error": "このグループ名は既に{name}として存在しています。"
             }
         },
         "local_favorite_group_rename": {
             "header": "Rename Group",
-            "description": "Enter a world favorite group name",
-            "cancel": "Cancel",
-            "save": "Save",
-            "input_error": "Name is required",
+            "description": "お気に入りワールド グループ名を入力してください",
+            "cancel": "キャンセル",
+            "save": "保存",
+            "input_error": "名前が必要です",
             "message": {
-                "error": "Group already exists with the name {name}"
+                "error": "このグループ名は既に {name} として存在しています。"
             }
         },
         "pending_offline_delay": {
-            "header": "Pending Offline",
-            "description": "Set pending offline delay in seconds (default: 110)",
-            "cancel": "Cancel",
-            "save": "Save",
-            "input_error": "Valid number is required"
+            "header": "オフラインの保留時間",
+            "description": "オフライン保留の待機秒数を指定してください (デフォルト: 110)",
+            "cancel": "キャンセル",
+            "save": "保存",
+            "input_error": "有効な数字が必要です"
         }
     },
     "table": {
         "feed": {
-            "date": "Date",
-            "type": "Type",
-            "user": "User",
-            "detail": "Detail"
+            "date": "日付",
+            "type": "種類",
+            "user": "ユーザー",
+            "detail": "詳細"
         },
         "gameLog": {
-            "date": "Date",
-            "type": "Type",
-            "icon": "Icons",
-            "user": "User",
-            "detail": "Detail",
-            "action": "Action"
+            "date": "日付",
+            "type": "種類",
+            "icon": "状態",
+            "user": "ユーザー",
+            "detail": "詳細",
+            "action": "アクション"
         },
         "playerList": {
-            "avatar": "Avatar",
-            "timer": "Timer",
+            "avatar": "アバター",
+            "timer": "タイマー",
             "photonId": "Photon ID",
-            "icon": "Icons",
-            "platform": "Platform",
-            "displayName": "Display Name",
-            "status": "Status",
-            "rank": "Rank",
-            "language": "Language",
-            "bioLink": "Bio Links",
-            "date": "Date",
-            "user": "User",
-            "type": "Type",
-            "detail": "Detail"
+            "icon": "アイコン",
+            "platform": "プラットフォーム",
+            "displayName": "表示名",
+            "status": "ステータス",
+            "rank": "ランク",
+            "language": "言語",
+            "bioLink": "自己紹介リンク",
+            "date": "日付",
+            "user": "ユーザー",
+            "type": "種類",
+            "detail": "詳細"
         },
         "friendLog": {
-            "date": "Date",
-            "type": "Type",
-            "user": "User",
-            "action": "Action"
+            "date": "日付",
+            "type": "種類",
+            "user": "ユーザー",
+            "action": "アクション"
         },
         "moderation": {
-            "date": "Date",
-            "type": "Type",
-            "source": "Source",
-            "target": "Target",
-            "action": "Action"
+            "date": "日付",
+            "type": "種類",
+            "source": "誰から",
+            "target": "誰に",
+            "action": "アクション"
         },
         "notification": {
-            "date": "Date",
-            "type": "Type",
-            "user": "User",
-            "photo": "Photo",
-            "message": "Message",
-            "action": "Action"
+            "date": "日付",
+            "type": "種類",
+            "user": "ユーザー",
+            "photo": "画像",
+            "message": "メッセージ",
+            "action": "アクション"
         },
         "friendList": {
             "no": "No.",
-            "avatar": "Avatar",
-            "displayName": "Display Name",
-            "rank": "Rank",
-            "status": "Status",
-            "language": "Language",
-            "bioLink": "Bio Links",
-            "joinCount": "Join Counts",
-            "timeTogether": "Time Together",
-            "lastSeen": "Last Seen",
-            "lastActivity": "Last Activity",
-            "lastLogin": "Last Login",
-            "dateJoined": "Date Joined",
-            "unfriend": "Unfriend"
+            "avatar": "アバター",
+            "displayName": "表示名",
+            "rank": "ランク",
+            "status": "ステータス",
+            "language": "言語",
+            "bioLink": "自己紹介リンク",
+            "joinCount": "Join回数",
+            "timeTogether": "一緒に居た時間",
+            "lastSeen": "最後に見た日時",
+            "lastActivity": "最終活動時間",
+            "lastLogin": "最後のログイン",
+            "dateJoined": "参加日時",
+            "unfriend": "フレンド解除"
         },
         "profile": {
             "invite_messages": {
-                "slot": "Slot",
-                "message": "Message",
-                "cool_down": "Cool Down",
-                "action": "Action"
+                "slot": "スロット",
+                "message": "メッセージ",
+                "cool_down": "クールダウン",
+                "action": "アクション"
             },
             "previous_display_name": {
-                "date": "Date",
-                "name": "Name"
+                "date": "日付",
+                "name": "名前"
             }
         },
         "social_status": {
             "no": "No.",
-            "status": "Status"
+            "status": "ステータス"
         },
         "download_history": {
-            "time": "Time",
-            "name": "Name",
-            "type": "Type",
-            "status": "Status",
-            "cancel": "Cancel"
+            "time": "時間",
+            "name": "名前",
+            "type": "種類",
+            "status": "ステータス",
+            "cancel": "キャンセル"
         },
         "import": {
-            "image": "Image",
-            "name": "Name",
-            "author": "Author",
-            "status": "Status",
-            "note": "Note",
-            "skip_export": "Skip Export",
-            "action": "Action"
+            "image": "画像",
+            "name": "名前",
+            "author": "作者",
+            "status": "ステータス",
+            "note": "ノート",
+            "skip_export": "スキップ",
+            "action": "アクション"
         },
         "previous_instances": {
-            "date": "Date",
-            "display_name": "Display Name",
-            "world": "World",
-            "instance_name": "Instance Name",
-            "instance_creator": "Instance Creator",
-            "time": "Time",
-            "count": "Count",
-            "action": "Action"
+            "date": "日付",
+            "display_name": "表示名",
+            "world": "ワールド",
+            "instance_name": "インスタンス名",
+            "instance_creator": "インスタンス作成者",
+            "time": "時間",
+            "count": "回数",
+            "action": "アクション"
         }
     },
     "vr": {
         "status": {
-            "timer": "Timer:",
-            "players": "Players:",
+            "timer": "タイマー:",
+            "players": "プレイヤー数:",
             "cpu": "CPU:",
-            "online": "Online:"
+            "online": "オンライン:"
         }
     }
 }
