@@ -124,7 +124,7 @@
             "search_placeholder": "検索",
             "filter_placeholder": "フィルター",
             "refresh_tooltip": "更新",
-            "clear_tooltip": "結果を削除",
+            "clear_tooltip": "結果を消去",
             "cancel_tooltip": "キャンセル"
         },
         "profile": {
@@ -165,7 +165,7 @@
             "current_user_json": "現在のユーザーのJSON",
             "feedback": "フィードバック",
             "refresh_tooltip": "更新",
-            "clear_results_tooltip": "結果を削除"
+            "clear_results_tooltip": "結果を消去"
         },
         "settings": {
             "header": "設定",
@@ -407,8 +407,8 @@
                         "world_cache": "ワールドキャッシュ:",
                         "avatar_cache": "アバターキャッシュ:",
                         "avatar_name_cache": "アバター名キャッシュ:",
-                        "clear_cache": "キャッシュを削除",
-                        "auto_clear_cache": "キャッシュの自動削除",
+                        "clear_cache": "キャッシュを消去",
+                        "auto_clear_cache": "キャッシュの自動消去",
                         "download_history": "ダウンロード履歴",
                         "show_console": "コンソールを表示"
                     },
@@ -916,9 +916,9 @@
             "import": "ワールドをインポート",
             "cancel": "キャンセル",
             "import_progress": "インポート進捗:",
-            "clear_table": "Clear Table",
-            "errors": "Errors:",
-            "clear_errors": "Clear Errors"
+            "clear_table": "テーブルを消去",
+            "errors": "エラー:",
+            "clear_errors": "エラーを消去"
         },
         "avatar_export": {
             "header": "Avatar Favorites Export"
