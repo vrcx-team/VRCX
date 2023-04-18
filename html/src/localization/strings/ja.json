@@ -243,41 +243,41 @@
                 "side_panel": {
                     "header": "サイドパネル",
                     "sorting": {
-                        "header": "Sorting",
-                        "sort_private_to_bottom": "Sort Private to bottom",
-                        "sort_by_status": "Sort by status",
-                        "sort_gps_to_top": "Sort GPS to top",
-                        "sort_gps_to_top_notice": "(online for only)",
-                        "sort_favorite_by": "Sort Favorites by",
-                        "sort_favorite_by_alphabet": "alphabetical",
-                        "sort_favorite_by_online_time": "online for",
-                        "sort_online_by": "Sort Online by",
-                        "sort_online_by_alphabet": "alphabetical",
-                        "sort_online_by_online_time": "online for",
-                        "sort_active_by": "Sort Active by",
-                        "sort_active_by_alphabet": "alphabetical",
-                        "sort_active_by_online_time": "online for",
-                        "sort_offline_by": "Sort Offline by",
-                        "sort_offline_by_alphabet": "alphabetical",
-                        "sort_offline_by_offline_time": "offline for"
+                        "header": "並び替え",
+                        "sort_private_to_bottom": "Privateを下に並び替え",
+                        "sort_by_status": "ステータスで並べ替え",
+                        "sort_gps_to_top": "GPSで並べ替え",
+                        "sort_gps_to_top_notice": "(オンラインのみ)",
+                        "sort_favorite_by": "お気に入り欄の並べ替え:",
+                        "sort_favorite_by_alphabet": "アルファベット順",
+                        "sort_favorite_by_online_time": "オンライン",
+                        "sort_online_by": "オンライン欄の並べ替え:",
+                        "sort_online_by_alphabet": "アルファベット順",
+                        "sort_online_by_online_time": "オンライン",
+                        "sort_active_by": "アクティブ欄の並べ替え:",
+                        "sort_active_by_alphabet": "アルファベット順",
+                        "sort_active_by_online_time": "オンライン",
+                        "sort_offline_by": "オフライン欄の並べ替え:",
+                        "sort_offline_by_alphabet": "アルファベット順",
+                        "sort_offline_by_offline_time": "オンライン"
                     },
-                    "width": "Width"
+                    "width": "幅"
                 },
                 "user_dialog": {
-                    "header": "User Dialog",
-                    "hide_vrchat_notes": "Hide VRChat Notes",
-                    "hide_vrcx_memos": "Hide VRCX Memos",
-                    "export_vrcx_memos_into_vrchat_notes": "Export VRCX Memos into VRChat notes",
-                    "export_notes": "Export Notes"
+                    "header": "ユーザーダイアログ",
+                    "hide_vrchat_notes": "VRChatのノートを隠す",
+                    "hide_vrcx_memos": "VRCXのメモを隠す",
+                    "export_vrcx_memos_into_vrchat_notes": "VRCXのメモをVRChatのノートに書き出す",
+                    "export_notes": "ノートを書き出す"
                 },
                 "user_colors": {
-                    "header": "User Colors",
-                    "random_colors_from_user_id": "Random Colors from User ID"
+                    "header": "ユーザーの色",
+                    "random_colors_from_user_id": "ユーザーIDからランダムに色を生成"
                 }
             },
             "notifications": {
                 "notifications": {
-                    "header": "Notifications",
+                    "header": "通知",
                     "notification_filter": "Notification Filter",
                     "steamvr_notifications": {
                         "header": "SteamVR Notifications",
