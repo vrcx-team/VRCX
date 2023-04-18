@@ -67,181 +67,181 @@
                 "all": "全て",
                 "public": "Public",
                 "private": "Private",
-                "local": "Local",
-                "remote": "Remote",
-                "sort_name": "Sort by name",
-                "sort_update": "Sort by update",
-                "sort_created": "Sort by created"
+                "local": "ローカル",
+                "remote": "リモート",
+                "sort_name": "名前順で並び替え",
+                "sort_update": "更新順で並び替え",
+                "sort_created": "作成順で並び替え"
             },
-            "prev_page": "Prev",
-            "next_page": "Next"
+            "prev_page": "前",
+            "next_page": "次"
         },
         "favorite": {
             "friends": {
-                "header": "Friends"
+                "header": "フレンド"
             },
             "worlds": {
-                "header": "Worlds",
-                "vrchat_favorites": "VRChat Favorites",
-                "local_favorites": "Local Favorites",
-                "new_group": "New Group"
+                "header": "ワールド",
+                "vrchat_favorites": "VRChatのお気に入り",
+                "local_favorites": "ローカルのお気に入り",
+                "new_group": "グループを作成"
             },
             "avatars": {
-                "header": "Avatars"
+                "header": "アバター"
             },
-            "refresh_tooltip": "Refresh all favorites",
-            "export": "Export",
-            "import": "Import",
-            "move_tooltip": "Move",
-            "unfavorite_tooltip": "Unfavorite",
-            "visibility_tooltip": "Change Visibility",
-            "rename_tooltip": "Rename",
-            "clear_tooltip": "Clear",
-            "delete_tooltip": "Delete"
+            "refresh_tooltip": "全てのお気に入りを更新",
+            "export": "書き出し",
+            "import": "読み込み",
+            "move_tooltip": "移動",
+            "unfavorite_tooltip": "お気に入り解除",
+            "visibility_tooltip": "表示設定を変更",
+            "rename_tooltip": "名前を変更",
+            "clear_tooltip": "クリア",
+            "delete_tooltip": "削除"
         },
         "friend_log": {
-            "filter_placeholder": "Filter",
-            "search_placeholder": "Search"
+            "filter_placeholder": "フィルター",
+            "search_placeholder": "検索"
         },
         "moderation": {
-            "filter_placeholder": "Filter",
-            "search_placeholder": "Search",
-            "refresh_tooltip": "Refresh"
+            "filter_placeholder": "フィルター",
+            "search_placeholder": "検索",
+            "refresh_tooltip": "更新"
         },
         "notification": {
-            "filter_placeholder": "Filter",
-            "search_placeholder": "Search",
-            "refresh_tooltip": "Refresh"
+            "filter_placeholder": "フィルター",
+            "search_placeholder": "検索",
+            "refresh_tooltip": "更新"
         },
         "friend_list": {
-            "header": "Friend List",
-            "bulk_unfriend": "Bulk Unfriend Mode",
-            "bulk_unfriend_selection": "Bulk Unfriend Selection",
-            "load": "Load missing entries",
-            "load_notice": "This takes a lot of API requests so use it sparingly",
-            "load_tooltip": "Load",
-            "favorites_only_tooltip": "Filter favorites only",
-            "search_placeholder": "Search",
-            "filter_placeholder": "Filter",
-            "refresh_tooltip": "Refresh",
-            "clear_tooltip": "Clear Results",
-            "cancel_tooltip": "Cancel"
+            "header": "フレンドリスト",
+            "bulk_unfriend": "一括フレンド解除モード",
+            "bulk_unfriend_selection": "フレンド解除",
+            "load": "不足するエントリを読み込む",
+            "load_notice": "大量にAPIリクエストを送信する為、頻繁に使用しないでください",
+            "load_tooltip": "読み込む",
+            "favorites_only_tooltip": "お気に入りのみ",
+            "search_placeholder": "検索",
+            "filter_placeholder": "フィルター",
+            "refresh_tooltip": "更新",
+            "clear_tooltip": "結果を削除",
+            "cancel_tooltip": "キャンセル"
         },
         "profile": {
             "profile": {
-                "header": "Profile",
-                "last_activity": "Last Activity",
-                "two_factor": "Two-Factor Auth (2FA)",
-                "two_factor_enabled": "Enabled",
-                "two_factor_disabled": "Disabled",
-                "logout": "Logout",
-                "export_friend_list": "Export Friends List",
-                "export_own_avatars": "Export Own Avatars",
-                "discord_names": "Discord Names",
-                "export_notes": "Export Notes"
+                "header": "プロフィール",
+                "last_activity": "最終活動時刻",
+                "two_factor": "2段階認証 (2FA)",
+                "two_factor_enabled": "有効",
+                "two_factor_disabled": "無効",
+                "logout": "ログアウト",
+                "export_friend_list": "フレンドリストを書き出す",
+                "export_own_avatars": "自分のアバターを書き出す",
+                "discord_names": "Discordの名前",
+                "export_notes": "ノートを書き出す"
             },
             "game_info": {
-                "header": "Game Info",
-                "online_users": "Online Users",
-                "user_online": "{count} users online.",
-                "refresh": "Click to refresh"
+                "header": "ゲーム情報",
+                "online_users": "オンラインユーザー数",
+                "user_online": "{count} 人のユーザーがオンライン",
+                "refresh": "クリックして更新"
             },
             "vrc_sdk_downloads": {
-                "header": "VRC SDK Downloads"
+                "header": "VRC SDK ダウンロード"
             },
             "direct_access": {
-                "header": "Direct Access",
-                "username": "Username",
-                "user_id": "User ID",
-                "world_instance": "World/Instance",
-                "avatar": "Avatar"
+                "header": "ダイレクトアクセス",
+                "username": "ユーザーネーム",
+                "user_id": "ユーザーID",
+                "world_instance": "ワールド/インスタンス",
+                "avatar": "アバター"
             },
-            "invite_messages": "Invite Messages",
-            "invite_response_messages": "Invite Response Messages",
-            "invite_request_messages": "Invite Request Messages",
-            "invite_request_response_messages": "Invite Request Response Messages",
-            "past_display_names": "Past Display Names",
-            "config_json": "Config JSON",
-            "current_user_json": "Current User JSON",
-            "feedback": "Feedback",
-            "refresh_tooltip": "Refresh",
-            "clear_results_tooltip": "Clear results"
+            "invite_messages": "招待送信用メッセージ",
+            "invite_response_messages": "招待返信用メッセージ",
+            "invite_request_messages": "招待リクエスト送信用メッセージ",
+            "invite_request_response_messages": "招待リクエスト返信用メッセージ",
+            "past_display_names": "過去の表示名",
+            "config_json": "設定のJSON",
+            "current_user_json": "現在のユーザーのJSON",
+            "feedback": "フィードバック",
+            "refresh_tooltip": "更新",
+            "clear_results_tooltip": "結果を削除"
         },
         "settings": {
-            "header": "Settings",
+            "header": "設定",
             "category": {
-                "general": "General",
-                "appearance": "Appearance",
-                "notifications": "Notifications",
-                "wrist_overlay": "Wrist Overlay",
+                "general": "一般",
+                "appearance": "外観",
+                "notifications": "通知",
+                "wrist_overlay": "手首のオーバーレイ",
                 "discord_presence": "Discord Presence",
-                "advanced": "Advanced"
+                "advanced": "詳細"
             },
             "general": {
                 "general": {
-                    "header": "General",
-                    "version": "Version",
-                    "latest_app_version": "Latest Version",
-                    "latest_app_version_refresh": "Click to refresh",
-                    "repository_url": "Repository URL",
-                    "support": "Support"
+                    "header": "一般",
+                    "version": "バージョン",
+                    "latest_app_version": "最新バージョン",
+                    "latest_app_version_refresh": "クリックして更新",
+                    "repository_url": "リポジトリURL",
+                    "support": "サポート"
                 },
                 "vrcx_updater": {
-                    "header": "VRCX Updater",
-                    "change_build": "Change build",
-                    "auto_update": "Auto update",
-                    "auto_update_off": "Off",
-                    "auto_update_notify": "Notify",
-                    "auto_update_download": "Auto Download",
-                    "auto_update_install": "Auto Install",
-                    "change_log": "Change Log"
+                    "header": "VRCX アップデーター",
+                    "change_build": "ビルドを変更",
+                    "auto_update": "自動更新",
+                    "auto_update_off": "オフ",
+                    "auto_update_notify": "通知だけ",
+                    "auto_update_download": "自動ダウンロード",
+                    "auto_update_install": "自動インストール",
+                    "change_log": "更新履歴"
                 },
                 "application": {
-                    "header": "Application",
-                    "startup": "Start as Windows startup",
-                    "minimized": "Start as minimized state",
-                    "tray": "Close to tray"
+                    "header": "アプリケーション",
+                    "startup": "Windowsと一緒に起動",
+                    "minimized": "最小化した状態で起動",
+                    "tray": "トレイに格納した状態で起動"
                 },
                 "game_log": {
-                    "header": "Game Log",
-                    "resource_load": "Log Udon resource load"
+                    "header": "ゲームログ",
+                    "resource_load": "Udonのリソース負荷を記録"
                 },
                 "legal_notice": {
-                    "header": "Legal Notice",
-                    "info": "VRCX is an assistant application for VRChat that provides information about and managing friendship. This application makes use of the unofficial VRChat API SDK.",
-                    "disclaimer1": "VRCX is not endorsed by VRChat and does not reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat properties. VRChat and all associated properties are trademarks or registered trademarks of VRChat Inc. VRChat © VRChat Inc.",
-                    "disclaimer2": "pypy & Natsumi are not responsible for any problems caused by VRCX. Use at your own risk!",
-                    "open_source_software_notice": "Open Source Software Notice"
+                    "header": "法律上の注意事項",
+                    "info": "VRCXはVRChatのアシスタント用アプリケーションで、フレンドに関する情報の提供や管理を行うツールです。本アプリケーションは非公式の「VRChat API SDK」を使用しています。",
+                    "disclaimer1": "VRCXはVRChatによって承認されておらず、VRChatまたはVRChatの公式に関与する者の意見や見解を反映していません。VRChat及び関連する全てのプロパティはVRChat株式会社の商標または登録商標です。 VRChat © VRChat株式会社",
+                    "disclaimer2": "pypyとNatsumiはVRCXの使用によって発生したいかなる問題にも責任を負いません。自己責任でご使用ください！",
+                    "open_source_software_notice": "オープンソースソフトウェアに関する注意事項"
                 }
             },
             "appearance": {
                 "appearance": {
-                    "header": "Appearance",
-                    "language": "Language",
-                    "theme_mode": "Theme mode",
-                    "theme_mode_system": "System",
-                    "theme_mode_light": "Light",
-                    "theme_mode_dark": "Dark",
-                    "vrcplus_profile_icons": "VRCPlus Profile Icons",
-                    "disable_tooltips": "Disable Tooltips",
-                    "sort_favorite_by": "Sort Favorites by",
-                    "sort_favorite_by_name": "name",
-                    "sort_favorite_by_date": "date",
-                    "sort_instance_users_by": "Sort Instance Users by",
-                    "sort_instance_users_by_time": "time",
-                    "sort_instance_users_by_alphabet": "alphabetical",
-                    "table_max_size": "Table Max Size",
-                    "page_size": "Page Size:"
+                    "header": "外観",
+                    "language": "言語",
+                    "theme_mode": "テーマ",
+                    "theme_mode_system": "システム",
+                    "theme_mode_light": "ライト",
+                    "theme_mode_dark": "ダーク",
+                    "vrcplus_profile_icons": "VRC+ プロフィールアイコン",
+                    "disable_tooltips": "ツールチップを無効化",
+                    "sort_favorite_by": "お気に入りを並び替え:",
+                    "sort_favorite_by_name": "名前",
+                    "sort_favorite_by_date": "日付",
+                    "sort_instance_users_by": "インスタンス人数を並び替え:",
+                    "sort_instance_users_by_time": "時間",
+                    "sort_instance_users_by_alphabet": "アルファベット順",
+                    "table_max_size": "テーブルの最大サイズ",
+                    "page_size": "ページサイズe:"
                 },
                 "timedate": {
-                    "header": "Time/Date",
-                    "time_format": "Time Format",
-                    "time_format_24": "24 Hour",
-                    "time_format_12": "12 Hour",
-                    "force_iso_date_format": "Force ISO Date Format"
+                    "header": "時刻と日付",
+                    "time_format": "時間のフォーマット",
+                    "time_format_24": "24時間",
+                    "time_format_12": "12時間",
+                    "force_iso_date_format": "ISO日付フォーマットを強制"
                 },
                 "side_panel": {
-                    "header": "Side Panel",
+                    "header": "サイドパネル",
                     "sorting": {
                         "header": "Sorting",
                         "sort_private_to_bottom": "Sort Private to bottom",
