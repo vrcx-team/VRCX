@@ -191,7 +191,7 @@
                     "change_build": "ビルドを変更",
                     "auto_update": "自動更新",
                     "auto_update_off": "オフ",
-                    "auto_update_notify": "通知だけ",
+                    "auto_update_notify": "通知のみ",
                     "auto_update_download": "自動ダウンロード",
                     "auto_update_install": "自動インストール",
                     "change_log": "更新履歴"
@@ -225,13 +225,13 @@
                     "vrcplus_profile_icons": "VRC+ プロフィールアイコン",
                     "disable_tooltips": "ツールチップを無効化",
                     "sort_favorite_by": "お気に入りを並び替え:",
-                    "sort_favorite_by_name": "名前",
-                    "sort_favorite_by_date": "日付",
+                    "sort_favorite_by_name": "名前順",
+                    "sort_favorite_by_date": "日付順",
                     "sort_instance_users_by": "インスタンス人数を並び替え:",
-                    "sort_instance_users_by_time": "時間",
+                    "sort_instance_users_by_time": "時間順",
                     "sort_instance_users_by_alphabet": "アルファベット順",
                     "table_max_size": "テーブルの最大サイズ",
-                    "page_size": "ページサイズe:"
+                    "page_size": "ページサイズ:"
                 },
                 "timedate": {
                     "header": "時刻と日付",
@@ -250,23 +250,23 @@
                         "sort_gps_to_top_notice": "(オンラインのみ)",
                         "sort_favorite_by": "お気に入り欄の並べ替え:",
                         "sort_favorite_by_alphabet": "アルファベット順",
-                        "sort_favorite_by_online_time": "オンライン",
+                        "sort_favorite_by_online_time": "オンライン順",
                         "sort_online_by": "オンライン欄の並べ替え:",
                         "sort_online_by_alphabet": "アルファベット順",
-                        "sort_online_by_online_time": "オンライン",
+                        "sort_online_by_online_time": "オンライン順",
                         "sort_active_by": "アクティブ欄の並べ替え:",
                         "sort_active_by_alphabet": "アルファベット順",
-                        "sort_active_by_online_time": "オンライン",
+                        "sort_active_by_online_time": "オンライン順",
                         "sort_offline_by": "オフライン欄の並べ替え:",
                         "sort_offline_by_alphabet": "アルファベット順",
-                        "sort_offline_by_offline_time": "オンライン"
+                        "sort_offline_by_offline_time": "オンライン順"
                     },
                     "width": "幅"
                 },
                 "user_dialog": {
                     "header": "ユーザーダイアログ",
-                    "hide_vrchat_notes": "VRChatのノートを隠す",
-                    "hide_vrcx_memos": "VRCXのメモを隠す",
+                    "hide_vrchat_notes": "VRChatのノートを表示しない",
+                    "hide_vrcx_memos": "VRCXのメモを表示しない",
                     "export_vrcx_memos_into_vrchat_notes": "VRCXのメモをVRChatのノートに書き出す",
                     "export_notes": "ノートを書き出す"
                 },
@@ -278,75 +278,75 @@
             "notifications": {
                 "notifications": {
                     "header": "通知",
-                    "notification_filter": "Notification Filter",
+                    "notification_filter": "通知フィルター",
                     "steamvr_notifications": {
-                        "header": "SteamVR Notifications",
-                        "steamvr_overlay": "SteamVR Overlay",
-                        "overlay_notifications": "Overlay Notifications",
-                        "notification_position": "Notification Position",
-                        "xsoverlay_notifications": "XSOverlay Notifications",
-                        "user_images": "User Images (slower)",
-                        "notification_timeout": "Notification Timeout"
+                        "header": "SteamVRの通知",
+                        "steamvr_overlay": "SteamVR オーバーレイ",
+                        "overlay_notifications": "通知オーバーレイ",
+                        "notification_position": "通知の位置",
+                        "xsoverlay_notifications": "XSOverlay通知",
+                        "user_images": "ユーザー画像を使用 (遅い)",
+                        "notification_timeout": "通知のタイムアウト時間"
                     },
                     "desktop_notifications": {
-                        "header": "Desktop Notifications",
-                        "when_to_display": "When to display",
-                        "when_to_display_never": "Never",
-                        "when_to_display_desktop": "Desktop Mode",
-                        "when_to_display_inside_vr": "Inside VR",
-                        "when_to_display_outside_vr": "Outside VR",
-                        "when_to_display_game_closed": "Game Closed",
-                        "when_to_display_game_running": "Game Running",
-                        "when_to_display_always": "Always"
+                        "header": "デスクトップの通知",
+                        "when_to_display": "表示タイミング",
+                        "when_to_display_never": "表示しない",
+                        "when_to_display_desktop": "デスクトップモード",
+                        "when_to_display_inside_vr": "VR中",
+                        "when_to_display_outside_vr": "VR以外",
+                        "when_to_display_game_closed": "ゲーム終了時",
+                        "when_to_display_game_running": "ゲーム実行時",
+                        "when_to_display_always": "常に表示"
                     },
                     "text_to_speech": {
-                        "header": "Text-To-Speech Options",
-                        "when_to_play": "Notification TTS. When to play",
-                        "when_to_play_never": "Never",
-                        "when_to_play_inside_vr": "Inside VR",
-                        "when_to_play_game_closed": "Game Closed",
-                        "when_to_play_game_running": "Game Running",
-                        "when_to_play_always": "Always",
-                        "tts_voice": "TTS Voice"
+                        "header": "音声読み上げ設定",
+                        "when_to_play": "読み上げ通知の表示タイミング",
+                        "when_to_play_never": "表示しない",
+                        "when_to_play_inside_vr": "VR中",
+                        "when_to_play_game_closed": "ゲーム終了時",
+                        "when_to_play_game_running": "ゲーム実行時",
+                        "when_to_play_always": "常に表示",
+                        "tts_voice": "読み上げボイス"
                     }
                 }
             },
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
-                    "header": "SteamVR Wrist Overlay",
-                    "description": "* It runs automatically when VRChat is running.",
-                    "grip": "Grip: Vive or Other Controllers Grab, Oculus X/A Buttons",
-                    "menu": "Menu: Vive Menu, Index B, Oculus Y/B Buttons",
-                    "steamvr_overlay": "SteamVR Overlay",
-                    "wrist_feed_overlay": "Wrist Feed Overlay",
-                    "hide_private_worlds": "Hide Private Worlds",
-                    "start_overlay_with": "Start Overlay With",
-                    "overlay_button": "Overlay Button",
-                    "overlay_button_grip": "Grip",
-                    "overlay_button_menu": "Menu",
-                    "display_overlay_on": "Display Overlay On",
-                    "display_overlay_on_left": "Left Hand",
-                    "display_overlay_on_right": "Right Hand",
-                    "display_overlay_on_both": "Both Hand",
-                    "background_color": "Background Color",
-                    "minimal_feed_icons": "Minimal Feed Icons",
-                    "hide_vr_devices": "Hide VR Devices",
-                    "hide_cpu_usage": "Hide CPU Usage",
-                    "hide_game_uptime": "Hide Game Uptime",
-                    "show_pc_uptime": "Show PC Uptime",
-                    "wrist_feed_filters": "Wrist Feed Filters"
+                    "header": "SteamVR 手首オーバーレイ",
+                    "description": "* VRChatが起動している時に自動的に実行されます。",
+                    "grip": "グリップ: Viveコントローラー等での「グラブ」、Oculusコントローラーでの「X/Aボタン」",
+                    "menu": "メニュー: Viveコントローラーでの「メニューボタン」、Indexコントローラーでの「Bボタン」、Oculusコントローラーでの「Y/Bボタン」",
+                    "steamvr_overlay": "SteamVR オーバーレイ",
+                    "wrist_feed_overlay": "手首のフィードオーバーレイ",
+                    "hide_private_worlds": "Private ワールドを表示しない",
+                    "start_overlay_with": "オーバーレイの起動タイミング",
+                    "overlay_button": "オーバーレイボタン",
+                    "overlay_button_grip": "グリップ",
+                    "overlay_button_menu": "メニュー",
+                    "display_overlay_on": "オーバーレイを表示する手",
+                    "display_overlay_on_left": "左手",
+                    "display_overlay_on_right": "右手",
+                    "display_overlay_on_both": "両手",
+                    "background_color": "背景色",
+                    "minimal_feed_icons": "小さいフィードアイコン",
+                    "hide_vr_devices": "VRデバイスを表示しない",
+                    "hide_cpu_usage": "CPU使用率を表示しない",
+                    "hide_game_uptime": "ゲームの起動時間を表示しない",
+                    "show_pc_uptime": "PCの起動時間を表示する",
+                    "wrist_feed_filters": "手首フィードフィルター"
                 }
             },
             "discord_presence": {
                 "discord_presence": {
                     "header": "Discord Presence",
-                    "description": "* Only works when VRChat is running.",
-                    "enable": "Enable",
-                    "enable_tooltip": "Recommended to disable Rich Presence in VRChat config.json to stop it from conflicting",
-                    "instance_type_player_count": "Instance type/player count",
-                    "join_button": "Join button (public only)",
-                    "hide_details_in_private": "Hide world details in private",
-                    "hide_images": "Hide World Images"
+                    "description": "* VRChatが起動している時しか動作しません。",
+                    "enable": "有効化",
+                    "enable_tooltip": "競合を防ぐ為、VRChatのconfig.jsonでDiscord Rich Presenceを無効化する事を推奨します。",
+                    "instance_type_player_count": "インスタンス詳細/プレイヤー数",
+                    "join_button": "Joinボタン (Publicのみ)",
+                    "hide_details_in_private": "Privateでは詳細を表示しない",
+                    "hide_images": "ワールドの画像を表示しない"
                 }
             },
             "advanced": {
