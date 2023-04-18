@@ -90,8 +90,8 @@
                 "header": "アバター"
             },
             "refresh_tooltip": "全てのお気に入りを更新",
-            "export": "書き出し",
-            "import": "読み込み",
+            "export": "エクスポート",
+            "import": "インポート",
             "move_tooltip": "移動",
             "unfavorite_tooltip": "お気に入り解除",
             "visibility_tooltip": "表示設定を変更",
@@ -394,7 +394,7 @@
                     "screenshot_helper": {
                         "header": "スクリーンショット ヘルパー",
                         "description": "ゲーム内で撮影した写真のメタデータに「ワールドID」「ワールド名」「インスタンス内のプレイヤー」を保存します",
-                        "description_tooltip": "残念ながら、Windowsは (ごく一部を除く) PNGテキストチャンクの表示をサポートしていないため、表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用して表示することが出来ます",
+                        "description_tooltip": "残念ながら、Windowsは (ごく一部を除く) PNGテキストチャンクの表示をサポートしていないため、表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用して表示することができます",
                         "enable": "有効化",
                         "modify_filename": "ファイル名を変更",
                         "modify_filename_tooltip": "スクリーンショットのファイル名にワールドIDを追加"
@@ -703,219 +703,219 @@
                 "subscribed": "お知らせ受信可能"
             },
             "actions": {
-                "represent_tooltip": "Set Representing",
-                "unrepresent_tooltip": "Stop Representing",
-                "cancel_join_request_tooltip": "Cancel join request",
-                "pending_request_tooltip": "Pending invite",
-                "request_join_tooltip": "Request to join",
-                "invite_required_tooltip": "Invite required",
-                "join_group_tooltip": "Join Group",
-                "refresh": "Refresh",
-                "unsubscribe": "Unsubscribe From Announcements",
-                "subscribe": "Subscribe To Announcements",
-                "invite_to_group": "Invite To Group",
-                "visibility_everyone": "Visibility Everyone",
-                "visibility_friends": "Visibility Friends",
-                "visibility_hidden": "Visibility Hidden",
-                "leave": "Leave Group"
+                "represent_tooltip": "代表グループに設定",
+                "unrepresent_tooltip": "代表グループでなくする",
+                "cancel_join_request_tooltip": "参加リクエストをキャンセル",
+                "pending_request_tooltip": "保留中の招待",
+                "request_join_tooltip": "参加リクエストを送信",
+                "invite_required_tooltip": "招待が必要",
+                "join_group_tooltip": "グループに参加",
+                "refresh": "更新",
+                "unsubscribe": "お知らせの受信を停止",
+                "subscribe": "お知らせを受信可能に設定",
+                "invite_to_group": "グループに招待",
+                "visibility_everyone": "可視性: 全員",
+                "visibility_friends": "可視性: フレンドのみ",
+                "visibility_hidden": "可視性: 自分のみ",
+                "leave": "グループから抜ける"
             },
             "info": {
-                "header": "Info",
-                "announcement": "Announcement",
-                "rules": "Rules",
-                "members": "Members",
-                "created_at": "Created At",
-                "links": "Links",
-                "url": "Group URL",
-                "url_tooltip": "Copy URL to clipboard",
-                "id": "Group ID",
-                "id_tooltip": "Copy ID to clipboard",
-                "joined_at": "Joined At",
-                "roles": "Roles",
-                "role_description": "Description:",
-                "role_updated_at": "Updated At:",
-                "role_created_at": "Created At:",
-                "role_permissions": "Permissions:"
+                "header": "情報",
+                "announcement": "お知らせ",
+                "rules": "ルール",
+                "members": "メンバー数",
+                "created_at": "作成日時",
+                "links": "リンク",
+                "url": "グループURL",
+                "url_tooltip": "URLをコピー",
+                "id": "グループID",
+                "id_tooltip": "IDをコピー",
+                "joined_at": "参加日時",
+                "roles": "役職",
+                "role_description": "説明:",
+                "role_updated_at": "更新日:",
+                "role_created_at": "作成日:",
+                "role_permissions": "権限:"
             },
             "members": {
-                "header": "Members",
-                "all_members": "All Members",
-                "friends_only": "Friends Only",
-                "load_more": "Load more..."
+                "header": "メンバー",
+                "all_members": "全員",
+                "friends_only": "フレンドのみ",
+                "load_more": "もっと見る..."
             },
             "gallery": {
-                "header": "Gallery"
+                "header": "ギャラリー"
             },
             "json": {
                 "header": "JSON"
             }
         },
         "favorite": {
-            "header": "Choose Group",
-            "vrchat_favorites": "VRChat Favorites",
-            "local_favorites": "Local Favorites"
+            "header": "グループを選択",
+            "vrchat_favorites": "VRChatのお気に入り",
+            "local_favorites": "ローカルのお気に入り"
         },
         "invite": {
-            "header": "Invite",
-            "select_placeholder": "Choose Friends",
-            "invite_with_message": "Invite With Message",
-            "invite": "Invite"
+            "header": "招待",
+            "select_placeholder": "フレンドを選択",
+            "invite_with_message": "メッセージ付きで招待を送信",
+            "invite": "招待を送信"
         },
         "social_status": {
-            "header": "Social Status",
-            "history": "History",
-            "status_placeholder": "Status",
-            "update": "Update"
+            "header": "ソーシャルステータス",
+            "history": "履歴",
+            "status_placeholder": "ステータス",
+            "update": "更新"
         },
         "language": {
-            "header": "Language",
-            "add_language": "Add Language",
-            "select_language": "Select Language",
+            "header": "言語",
+            "add_language": "言語を追加",
+            "select_language": "言語を選択",
             "ok": "OK",
-            "cancel": "Cancel"
+            "cancel": "キャンセル"
         },
         "bio": {
-            "header": "Bio",
-            "bio_placeholder": "Please input a bio",
-            "add_link": "Add Link",
-            "update": "Update"
+            "header": "自己紹介",
+            "bio_placeholder": "自己紹介を入力してください",
+            "add_link": "リンクを追加",
+            "update": "更新"
         },
         "new_instance": {
-            "header": "New Instance",
-            "access_type": "Access Type",
+            "header": "新しいインスタンス",
+            "access_type": "インスタンスタイプ",
             "access_type_public": "Public",
             "access_type_group": "Group",
             "access_type_friend_plus": "Friends+",
             "access_type_friend": "Friends",
             "access_type_invite_plus": "Invite+",
             "access_type_invite": "Invite",
-            "region": "Region",
+            "region": "地域",
             "region_usw": "US West",
             "region_use": "US East",
             "region_eu": "Europe",
             "region_jp": "Japan",
-            "world_id": "World ID",
-            "instance_id": "Instance ID",
-            "instance_id_placeholder": "Random",
-            "instance_creator": "Instance Creator",
-            "instance_creator_placeholder": "Choose User",
-            "group_id": "Group ID",
-            "location": "Location",
+            "world_id": "ワールドID",
+            "instance_id": "インスタンスID",
+            "instance_id_placeholder": "ランダム",
+            "instance_creator": "インスタンス作成者",
+            "instance_creator_placeholder": "ユーザーを選択",
+            "group_id": "グループID",
+            "location": "場所",
             "url": "URL",
-            "copy_url": "Copy URL",
-            "self_invite": "Self invite",
-            "invite": "Invite",
-            "launch": "Launch"
+            "copy_url": "URLをコピー",
+            "self_invite": "自分を招待",
+            "invite": "招待",
+            "launch": "起動"
         },
         "launch_options": {
-            "header": "VRChat Launch Options",
-            "description": "These options are for advanced users only.",
-            "example": "to change max fps: --fps=<N> e.g.)",
-            "path_override": "VRChat Path Override",
-            "vrchat_docs": "VRChat Docs",
-            "unity_manual": "Unity Manual",
-            "save": "Save"
+            "header": "VRChat 起動オプション",
+            "description": "これらのオプションは上級者向けです。",
+            "example": "最高FPSを変更するには: --fps=<N> 例:",
+            "path_override": "VRChatのパスを上書き",
+            "vrchat_docs": "VRChat ドキュメント",
+            "unity_manual": "Unity マニュアル",
+            "save": "保存"
         },
         "config_json": {
             "header": "VRChat Config JSON",
-            "description1": "These options are for advanced users only.",
-            "description2": "Leave field empty to set as default, game restart required to apply settings.",
-            "cache_size": "Cache Size:",
-            "refresh": "Refresh",
-            "delete_all_cache": "Delete all cache",
-            "delete_cache": "Delete Cache",
-            "delete_old_cache": "Delete old versions from cache",
-            "sweep_cache": "Sweep Cache",
-            "max_cache_size": "Max Cache Size [GB] (min 20)",
-            "cache_expiry_delay": "Cache Expiry [Days] (30 - 150)",
-            "cache_directory": "Custom Cache Folder Location",
-            "fpv_steadycam_fov": "First-Person Steadycam FOV",
-            "camera_resolution": "Camera Resolution",
-            "screenshot_resolution": "Screenshot Resolution",
-            "disable_discord_presence": "Disable Discord Rich Presence",
-            "vrchat_docs": "VRChat Docs",
-            "cancel": "Cancel",
-            "save": "Save"
+            "description1": "これらのオプションは上級者向けです。",
+            "description2": "デフォルトに設定するには空欄にしてください。設定を適用させるにはゲームを再起動する必要があります。",
+            "cache_size": "キャッシュサイズ:",
+            "refresh": "更新",
+            "delete_all_cache": "全てのキャッシュを削除",
+            "delete_cache": "削除",
+            "delete_old_cache": "旧バージョンのキャッシュを削除",
+            "sweep_cache": "掃除",
+            "max_cache_size": "最大キャッシュサイズ [GB] (最小 20)",
+            "cache_expiry_delay": "キャッシュの有効期限 [日] (30 - 150)",
+            "cache_directory": "カスタムキャッシュフォルダー",
+            "fpv_steadycam_fov": "一人称Steadycamの視野角",
+            "camera_resolution": "カメラ解像度",
+            "screenshot_resolution": "スクリーンショット解像度",
+            "disable_discord_presence": "Discord Rich Presenceを無効化",
+            "vrchat_docs": "VRChat ドキュメント",
+            "cancel": "キャンセル",
+            "save": "保存"
         },
         "youtube_api": {
             "header": "YouTube API",
-            "description": "Enter your YouTube API Key (optional)",
-            "placeholder": "YouTube API Key",
-            "guide": "Guide",
-            "save": "Save"
+            "description": "YouTube APIキーを入力してください (任意)",
+            "placeholder": "YouTube APIキー",
+            "guide": "ガイド",
+            "save": "保存"
         },
         "set_world_tags": {
-            "header": "Set World Tags",
-            "enable_debugging": "Enable world debugging for others",
-            "seprator": "Enter tags comma separated",
-            "cancel": "Cancel",
-            "save": "Save"
+            "header": "ワールドのタグを設定",
+            "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
+            "seprator": "タグをコンマ区切りで入力してください",
+            "cancel": "キャンセル",
+            "save": "保存"
         },
         "download_history": {
-            "header": "Download History",
-            "queue": "Queue:",
-            "history": "History:",
-            "cancel_all": "Cancel All",
-            "close": "Close"
+            "header": "ダウンロード履歴",
+            "queue": "キュー:",
+            "history": "履歴:",
+            "cancel_all": "全てキャンセル",
+            "close": "閉じる"
         },
         "vrcx_updater": {
-            "header": "VRCX Updater",
-            "latest_version": "VRCX is up to date.",
-            "ready_for_update": "Ready for install, restart VRCX to apply.",
-            "download": "Download",
-            "install": "Install"
+            "header": "VRCX アップデーター",
+            "latest_version": "VRCXは最新版です。",
+            "ready_for_update": "インストールの準備が完了しました。VRCXを再起動して適用してください。",
+            "download": "ダウンロード",
+            "install": "インストール"
         },
         "launch": {
-            "header": "Launch",
+            "header": "起動",
             "url": "URL",
-            "short_url": "Short URL",
-            "short_url_notice": "Short URL's expire after a set period of time",
-            "location": "Location",
-            "copy_tooltip": "Copy to clipboard",
-            "start_as_desktop": "Start as Desktop (No VR)",
-            "info": "Info",
-            "invite": "Invite",
-            "launch": "Launch"
+            "short_url": "短縮URL",
+            "short_url_notice": "短縮URLは一定時間後に失効します",
+            "location": "場所",
+            "copy_tooltip": "クリップボードにコピー",
+            "start_as_desktop": "デスクトップモードで起動 (VR無し)",
+            "info": "情報",
+            "invite": "招待",
+            "launch": "起動"
         },
         "export_friends_list": {
-            "header": "Export Friends List"
+            "header": "フレンドリスト"
         },
         "export_own_avatars": {
-            "header": "Export Own Avatars"
+            "header": "自分のアバター"
         },
         "discord_names": {
-            "header": "Discord Names",
-            "description": "Click load missing entries in the Friends List tab to search entire friends list"
+            "header": "Discordの名前",
+            "description": "フレンドリストタブの「不足するエントリを読み込む」をクリックすると、フレンドリスト全体を検索することができます"
         },
         "notification_position": {
-            "header": "Notification Position",
-            "description": "Choose a notification position.",
+            "header": "通知の位置",
+            "description": "通知の位置を選択してください。",
             "ok": "OK"
         },
         "shared_feed_filters": {
-            "notification": "Notification Filters",
-            "wrist": "Wrist Feed Filters",
+            "notification": "通知フィルター",
+            "wrist": "手首のフィードオーバーレイ",
             "on": "On",
             "off": "Off",
-            "favorite": "Favorites",
-            "friends": "Friends",
-            "everyone": "Everyone",
-            "cancel": "Cancel",
-            "save": "Save"
+            "favorite": "お気に入り",
+            "friends": "フレンド",
+            "everyone": "全員",
+            "cancel": "キャンセル",
+            "save": "保存"
         },
         "world_export": {
-            "header": "World Favorites Export"
+            "header": "お気に入りワールドをエクスポート"
         },
         "world_import": {
-            "header": "World Favorites Import",
-            "description": "Enter a list of world IDs",
-            "process_list": "Process List",
-            "process_progress": "Progress:",
-            "select_vrchat_group_placeholder": "Select Group",
-            "select_local_group_placeholder": "Select Group",
-            "import": "Import Worlds",
-            "cancel": "Cancel",
-            "import_progress": "Import Progress:",
+            "header": "お気に入りワールドをインポート",
+            "description": "ワールドIDのリストを入力してください",
+            "process_list": "処理リスト",
+            "process_progress": "進捗:",
+            "select_vrchat_group_placeholder": "グループを選択",
+            "select_local_group_placeholder": "グループを選択",
+            "import": "ワールドをインポート",
+            "cancel": "キャンセル",
+            "import_progress": "インポート進捗:",
             "clear_table": "Clear Table",
             "errors": "Errors:",
             "clear_errors": "Clear Errors"
