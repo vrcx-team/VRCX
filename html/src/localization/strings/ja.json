@@ -301,7 +301,7 @@
                     },
                     "text_to_speech": {
                         "header": "音声読み上げ設定",
-                        "when_to_play": "読み上げ通知の表示タイミング",
+                        "when_to_play": "読み上げタイミング",
                         "when_to_play_never": "表示しない",
                         "when_to_play_inside_vr": "VR中",
                         "when_to_play_game_closed": "ゲーム終了時",
@@ -430,7 +430,7 @@
                     }
                 },
                 "photon": {
-                    "header": "Photon Logging Overlay",
+                    "header": "Photon ログオーバーレイ",
                     "event_hud": {
                         "header": "Photon Event HUD",
                         "enable": "Enable",
