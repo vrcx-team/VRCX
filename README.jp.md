@@ -167,7 +167,7 @@ _VRChat Discordの #faq に記載されている、APIの使用に関する公�
 
 この現象は、さまざまな原因で引き起こされる可能性があります:
 
-- [Microsoft Visual C++ Redistributable 2019](https://aka.ms/vs/17/release/vc_redist.x64.exe)をインストールする。
+- [Microsoft Visual C++ Redistributable 2019](https://aka.ms/vs/17/release/vc_redist.x64.exe)をインストールしてみてください。
 - PCを再起動してみてください。おそらく他のプロセスがデータベースファイルを読もうとしているかもしれません。
 - アンチウイルスソフトを無効化してみてください。AvastとAVGはCef/VRCXを削除してしまう可能性があります。
 - AverMedia AssistCentralをアンイストールしてみてください。原因は不明ですが、VRCXに問題を起こしてしまいます。
