@@ -11,7 +11,7 @@ pypyとNatsumiはVRCXの使用によって発生したいかなる問題にも�
 
 ## インストール方法
 
-- 最新のリリースを[ダウンロード](https://github.com/vrcx-team/VRCX/releases/latest)
+- 最新のリリースを[ダウンロード](https://github.com/vrcx-team/VRCX/releases/latest)する
 - `VRCX_Setup.exe` を実行
 
 ## VRChatの利用規約に違反しますか？
@@ -211,45 +211,45 @@ _VRChat Discordの #faq に記載されている、APIの使用に関する公�
 
   > Wine 7.0rc5以降を使用している必要があります！それ以前のバージョンではテストしていません。Wine 7.0以降ではVRCXの動作に必要な「.NET Framework」のフルインストールが可能になりました。
 
-  - Start over with a clean wine prefix. Either create one for VRCX or `rm -rf ~/.wine` and use the main prefix.
+  - クリーンなWine Prefixで実行します。VRCX用に新規で作成するか、`rm -rf ~/.wine`でメインのPrefixを使用します。
 
-  - Ensure you are NOT using DXVK either within your prefix or for your VRCX.exe. VRCX requires WineD3D to operate.
+  - Prefix内でもVRCX.exeでも、DXVKを使用して**いない**ことを確認してください。VRCXの動作にはWineD3Dが必要です。
 
-  - `winetricks --force -q dotnet472 corefonts` Silent and easy automation of the process of installing dependencies.
+  - `winetricks --force -q dotnet472 corefonts` 依存関係をインストールするプロセスを静かに、かつ簡単に自動化できます。
 
-  - `wine winecfg -v win10` Set your prefix windows version.
+  - `wine winecfg -v win10` Prefixで使用するWindowsのバージョンを指定します。
 
-  - You will require the `Linux` branch as CEF newer than 108 is currently incompatible with wine staging 8.4 as of this moment. It can be found in the Actions tab under the Linux branch. Download and extract the VRCX artifact.
+  - 108より新しいCEFは、現時点ではwine staging 8.4と互換性がないため、`Linux`ブランチが必要です。LinuxブランチのActionsタブにあるVRCXのArtifactをダウンロードし、展開します。
 
-  - You should just be able to run `wine VRCX.exe` now. Should you get an error about CEFSharp, you can try wine `VRCX.exe -no-cef-sandbox`
+  - これで `wine VRCX.exe` が実行できるようになるはずです。CEFSharpに関するエラーが出た場合は`wine VRCX.exe -no-cef-sandbox`を試してみてください。
 
-- Notes
+- メモ
 
-  - VRCX on Linux is known to have a nasty memory leak so keep an eye on memory usage or restart it frequently.
+  - Linux上でのVRCXはメモリリークが発生することが知られています。メモリ使用量に注意するか、あるいはこまめに再起動するようにしてください。
 
-  - If you have a laptop that uses hardware muxing with an Intel iGPU you'll need to set your graphics device in `nvidia-settings` to only the NVIDIA GPU.
+  - Intel iGPU + NVIDIA GPUのノートパソコンを使用している場合は`nvidia-settings`でグラフィックデバイスをNVIDIA GPUに強制する必要があります。
 
   ![image](https://camo.githubusercontent.com/ed672a01defae989c4bf5963c0cc9db973b42203e1e5e927f3341c6a9115beb8/68747470733a2f2f63646e2e646973636f72646170702e636f6d2f6174746163686d656e74732f3835343037313233363336333535303736362f3933353531333532313839373233343435322f756e6b6e6f776e2e706e67)
 
-## How to build VRCX from source
+## ソースコードからビルドする方法
 
-- Get source code
+- ソースコードを入手
 
-  - Download latest source code [zip](https://github.com/vrcx-team/VRCX/archive/master.zip) or clone repo with `git clone`.
+  - 最新の[zip](https://github.com/vrcx-team/VRCX/archive/master.zip)をダウンロードするか、`git clone`でクローンする。
 
-- Build .NET
+- .NETでビルド
 
-  - Install [Visual Studio](https://visualstudio.microsoft.com/) if it's not already installed.
-  - In Visual Studio "Open Project/Solution" and browse to the [Solution file](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file) provided inside the downloaded source code.
-  - Set [Configuration](https://docs.microsoft.com/en-us/visualstudio/ide/understanding-build-configurations?view=vs-2019) to `Release` and Platform to `x64`
-  - Restore [NuGet](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore#restore-packages-automatically-using-visual-studio) packages.
-  - [Build](https://docs.microsoft.com/en-us/visualstudio/ide/building-and-cleaning-projects-and-solutions-in-visual-studio) Solution.
+  - [Visual Studio](https://visualstudio.microsoft.com/)をインストールする。
+  - Visual Studioを起動し、「プロジェクトやソリューションを開く」をクリックし、ソースコード内の[ソリューション ファイル](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file)を開く。
+  - [ビルド構成](https://docs.microsoft.com/en-us/visualstudio/ide/understanding-build-configurations?view=vs-2019)から`Debug`を`Release`に変更し、プラットフォームを`x64`に変更する。
+  - [NuGet](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore#restore-packages-automatically-using-visual-studio)パッケージを復元する。
+  - ソリューションを[ビルド](https://docs.microsoft.com/en-us/visualstudio/ide/building-and-cleaning-projects-and-solutions-in-visual-studio)する。
 
-- Build Node.js
+- Node.jsでビルド
 
-  - Download and install [Node.js](https://nodejs.org/en/download/).
-  - Run `build-node.js.cmd`.
-  - Run `make-junction.cmd`.
+  - [Node.js](https://nodejs.org/en/download/)をダウンロードし、インストールする。
+  - `build-node.js.cmd`を実行する。
+  - `make-junction.cmd`を実行する。
 
-- Create release zip
-  - Run `make-zip.cmd` for [Bandizip](https://www.bandisoft.com/bandizip) or `make-zip-7z.cmd` for [7-Zip](https://www.7-zip.org).
+- リリース用zipを作成
+  - [Bandizip](https://www.bandisoft.com/bandizip)用の`make-zip.cmd`または[7-Zip](https://www.7-zip.org)用の`make-zip-7z.cmd`を実行する。
