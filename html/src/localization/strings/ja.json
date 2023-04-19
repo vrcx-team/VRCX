@@ -782,7 +782,7 @@
         },
         "new_instance": {
             "header": "新しいインスタンス",
-            "access_type": "インスタンスタイプ",
+            "access_type": "アクセスタイプ",
             "access_type_public": "Public",
             "access_type_group": "Group",
             "access_type_friend_plus": "Friends+",
@@ -797,7 +797,7 @@
             "world_id": "ワールドID",
             "instance_id": "インスタンスID",
             "instance_id_placeholder": "ランダム",
-            "instance_creator": "インスタンス作成者",
+            "instance_creator": "インスタンス作者",
             "instance_creator_placeholder": "ユーザーを選択",
             "group_id": "グループID",
             "location": "場所",
