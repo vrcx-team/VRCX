@@ -11,7 +11,7 @@ pypyとNatsumiはVRCXの使用によって発生したいかなる問題にも�
 
 ## インストール方法
 
-- 最新のリリースを [ダウンロード](https://github.com/vrcx-team/VRCX/releases/latest)
+- 最新のリリースを[ダウンロード](https://github.com/vrcx-team/VRCX/releases/latest)
 - `VRCX_Setup.exe` を実行
 
 ## VRCXはVRChatの利用規約に違反しますか？
@@ -148,68 +148,68 @@ _VRChat Discordの #faq に記載されている、APIの使用に関する公�
 - `vrcx://import/friend/usr_id,usr_id...` お気に入りフレンドのインポートダイアログを開きます。
 - `vrcx://addavatardb/https://website/vrcx_search.php` リモートアバターデータベースプロバイダーのダイアログを開きます。
 
-## Keyboard shortcuts
+## ショートカットキー
 
-- `Ctrl + Shift + I` open Chromium DevTools.
-- `Ctrl + R` restart VRCX.
-- `Shift + Alt + R` reload custom css.
+- `Ctrl + Shift + I` Chromium DevToolsを開きます。
+- `Ctrl + R` VRCXを再起動します。
+- `Shift + Alt + R` カスタムCSSを再読み込みします。
 
-## Common issues
+## よくある問題
 
-### **VRCX running slow**
+### **VRCXの動作が重い**
 
-- Settings > Appearance > Max Table Size
-  - Lower this value to something like 100 this will decrease the amount of table entries stored in RAM.
-- Settings > Advanced > Auto Clear Cache
-  - Lower this interval to something like 3 hours this will decrease the amount of unnecessary worlds, users and avatars stored in RAM.
+- 設定 > 外観> テーブルの最大数
+  - この値を100ぐらいまで下げることで、RAMに保存されるエントリの量が減ります。
+- 設定 > 詳細> キャッシュの自動消去
+  - 間隔を3ぐらいまで下げることで、RAMに保存される不要なワールド、ユーザー、アバターの量が減ります。
 
-### **VRCX opens to a white screen**
+### **白い画面で固まる**
 
-This can be caused by a many different things here's a list of things to try:
+この現象は、さまざまな原因で引き起こされる可能性があります:
 
-- Install [Microsoft Visual C++ Redistributable 2019](https://aka.ms/vs/17/release/vc_redist.x64.exe).
-- Reboot your computer, maybe another process is trying to read the database file.
-- Disable antivirus software, Avast and AVG are known to delete Cef/VRCX.
-- Remove AVerMedia AssistCentral this is known to cause problems with VRCX for some unknown reason.
-- Unstable RAM can be a potential cause, remove any RAM overclock and run MemTest86.
-- Run VRCX as administrator, this can fix it on some rare occasions.
-- Test a fresh database, first close VRCX then backup your current database by opening `%AppData%\VRCX\` and renaming `VRCX.sqlite3` to something like `Backup.sqlite3`, if this solves it but you'd like to still keep your data follow the steps bellow on how to repair your database.
+- [Microsoft Visual C++ Redistributable 2019](https://aka.ms/vs/17/release/vc_redist.x64.exe)をインストールする。
+- PCを再起動してみてください。おそらく他のプロセスがデータベースファイルを読もうとしているかもしれません。
+- アンチウイルスソフトを無効化してみてください。AvastとAVGはCef/VRCXを削除してしまう可能性があります。
+- AverMedia AssistCentralをアンイストールしてみてください。原因は不明ですが、VRCXに問題を起こしてしまいます。
+- RAMが不安定な可能性があります。もしオーバークロックしているなら定格に戻し、MemTest86を実行してください。
+- VRCXを管理者として実行してみてください。理由は不明ですが、まれに直ることがあります。
+- データベースを再作成してみてください。VRCXを終了し、 `%AppData%\VRCX` を開いて、 `VRCX.sqlite3` を `Backup.sqlite3` などにリネームして現在のデータベースをバックアップします。もし以前のデータを保持したい場合は以下の手順に従ってデータベースを修復してください。
 
-### **SteamVR Overlay not working**
+### **SteamVR オーバーレイが動かない**
 
-- Try launch VRCX with the launch parameter `--gpufix`.
-- Disable SteamVR safe mode.
-- If your computer has an iGPU follow these [steps](https://www.windowsdigitals.com/force-chrome-firefox-game-to-use-nvidia-gpu-integrated-graphics/).
+- VRCXを `--gpufix` の起動オプション付きで起動してみてください。
+- SteamVRのセーフモードを無効化してください。
+- もし内蔵GPUを搭載しているPCを使用しているなら、[こちらの手順](https://www.windowsdigitals.com/force-chrome-firefox-game-to-use-nvidia-gpu-integrated-graphics/)に従ってみてください。
 
-### **How to repair VRCX database**
+### **データベースを修復する方法**
 
-- Close VRCX.
-- Install [DB Browser for SQLite](https://sqlitebrowser.org/).
-- File > Open Database...
-- Browse to `%AppData%\VRCX\` then select `VRCX.sqlite3`.
-- File > Export > Database to SQL file...
-- Click Save and place the file somewhere.
-- File > Close Database
-- Rename `VRCX.sqlite3` in `%AppData%\VRCX\` to something like `Backup.sqlite3`.
-- File > Import > Database from SQL file...
-- Click Yes to creating a new database.
-- Save it in `%AppData%\VRCX\` as `VRCX.sqlite3`.
-- File > Write Changes.
-- Close DB Browser and delete the no longer needed `*.sql` export file.
+- VRCXを終了する。
+- [DB Browser for SQLite](https://sqlitebrowser.org/)をインストールする。
+- ファイル > データベースを開く...
+- `%AppData%\VRCX\` に移動し、 `VRCX.sqlite3` を選択する。
+- ファイル > エクスポート > データベースをSQLファイルへ...
+- 保存ボタンをクリックし、適当な場所にファイルを保存する。
+- ファイル > データベースを閉じる
+- `%AppData%\VRCX\` にある `VRCX.sqlite3` の名前を `Backup.sqlite3` などに変更する。
+- ファイル > インポート > SQLからデータベースへ...
+- はいを押して新しいデータベースを作成。
+- `%AppData%\VRCX\` に移動し、 `VRCX.sqlite3` と名前を付けて保存。
+- ファイル > 変更を書き込み
+- DB Browserを閉じ、不要になった `*.sql` ファイルを削除。
 
-## How to run VRCX on Linux
+## Linuxで実行する方法
 
-Guide made by [RinLovesYou](https://github.com/RinLovesYou)
+[RinLovesYou](https://github.com/RinLovesYou)氏のガイドより。
 
-- Installing Wine
+- Wineをインストール
 
-  - Arch Linux: Wine can be installed by enabling the [multilib](https://wiki.archlinux.org/title/Multilib) repository and running `sudo pacman -S wine`
+  - Arch Linux: [multilib](https://wiki.archlinux.org/title/Multilib)リポジトリを有効化し、 `sudo pacman -S wine` を実行することでインストールできます。
 
-  - Ubuntu: Please refer to the [wiki](https://wiki.winehq.org/Ubuntu)
+  - Ubuntu: [wiki](https://wiki.winehq.org/Ubuntu)を参照してください。
 
 - Winetricks Magic
 
-  > It is imperative that you are using Wine 7.0rc5 or later! this has not been tested on earlier versions. Wine 7.0 Finally allows for full installation of the .net framework, which is needed for VRCX to function.
+  > Wine 7.0rc5以降を使用している必要があります！それ以前のバージョンではテストしていません。Wine 7.0以降ではVRCXの動作に必要な「.NET Framework」のフルインストールが可能になりました。
 
   - Start over with a clean wine prefix. Either create one for VRCX or `rm -rf ~/.wine` and use the main prefix.
 
