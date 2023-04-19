@@ -3,26 +3,26 @@
 [![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white)](https://vrcx.pypy.moe/discord)
 
-VRCX is an assistant application for VRChat that provides information about and managing friendship. This application makes use of the unofficial VRChat API SDK.
+VRCXはVRChatのアシスタント用アプリケーションで、フレンドに関する情報の提供や管理を行うツールです。本アプリケーションは非公式の「VRChat API SDK」を使用しています。
 
-VRCX is not endorsed by VRChat and does not reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat properties. VRChat and all associated properties are trademarks or registered trademarks of VRChat Inc. VRChat © VRChat Inc.
+VRCXはVRChatによって承認されておらず、VRChatまたはVRChatの公式に関与する者の意見や見解を反映していません。VRChat及び関連する全てのプロパティはVRChat株式会社の商標または登録商標です。VRChat © VRChat株式会社
 
-pypy & Natsumi are not responsible for any problems caused by VRCX. **_Use at your own risk!_**
+pypyとNatsumiはVRCXの使用によって発生したいかなる問題にも責任を負いません。**_自己責任でご使用ください！_**
 
-## How to install VRCX
+## インストール方法
 
-- Download latest release setup from [here](https://github.com/vrcx-team/VRCX/releases/latest).
-- Run `VRCX_Setup.exe`.
+- 最新のリリースを [ダウンロード](https://github.com/vrcx-team/VRCX/releases/latest)
+- `VRCX_Setup.exe` を実行
 
-## Is VRCX against VRChat ToS?
+## VRCXはVRChatの利用規約に違反しますか？
 
-**TL;DR:** no.
+**一言で言えば:** いいえ。
 
-_VRChat's official stance on usage of the API, as listed in their Discord #faq channel._
+_VRChat Discordの #faq に記載されている、APIの使用に関する公式声明です。_
 ![vrchat api](https://user-images.githubusercontent.com/11171153/114227156-b559c400-99c8-11eb-9df6-ee6615b8118e.png)
 
-# Screenshots
-<details><summary><h2>Screenshot(click to open)</h2></summary>
+# スクリーンショット
+<details><summary><h2>クリックして展開</h2></summary>
 
 ### Login
 
