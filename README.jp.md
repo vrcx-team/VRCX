@@ -24,95 +24,92 @@ _VRChat Discordの #faq に記載されている、APIの使用に関する公�
 # スクリーンショット
 <details><summary><h2>クリックして展開</h2></summary>
 
-### Login
+### ログイン
 
-![login](https://user-images.githubusercontent.com/82102170/224703139-9cb24dda-3839-4f75-a665-cca69f9e08ea.png)
-![2fa](https://user-images.githubusercontent.com/82102170/224703275-103e78fd-e917-428d-b901-6817d6b59b29.png)
+![login](https://cdn.discordapp.com/attachments/1098123459634139167/1098150151471759430/image.png)
+![2fa](https://cdn.discordapp.com/attachments/1098123459634139167/1098150435002527794/image.png)
 
-### Feed
+### フィード
 
-![feed](https://user-images.githubusercontent.com/82102170/224714129-772d7418-034a-4fe3-aa2e-22ea71154d9a.png)
+![feed](https://cdn.discordapp.com/attachments/1098123459634139167/1098151111963181066/image.png)
 
-### GameLog
+### ゲームログ
 
-![gamelog](https://user-images.githubusercontent.com/82102170/224714186-75cbf46d-f7b2-4a16-bcc5-2ec06d7f4b0d.png)
+![gamelog](https://cdn.discordapp.com/attachments/1098123459634139167/1098151427148370010/image.png)
 
-### UserInfo
+### ユーザー情報
 
-#### Me
-![me](https://user-images.githubusercontent.com/82102170/224704240-b10aba50-29b9-4ef4-b35a-958107a32cd6.png)
+#### 自分
+![me](https://cdn.discordapp.com/attachments/1098123459634139167/1098151750277537792/image.png)
 
-#### Friend
-![friend](https://user-images.githubusercontent.com/82102170/224714608-ac49621f-c28f-4266-8af8-715f4b9f2367.png)
+#### フレンド
+![friend](https://cdn.discordapp.com/attachments/1098123459634139167/1098152156294565949/image.png)
 
-### World
+### ワールド
 
-![instance](https://user-images.githubusercontent.com/82102170/224715566-67782a5e-f948-402b-b78d-1b2dd5e2382f.png)
-![info](https://user-images.githubusercontent.com/82102170/224715824-c0c4220e-4f20-4799-8419-f8138de35b7a.png)
+![instance](https://cdn.discordapp.com/attachments/1098123459634139167/1098153504834588782/image.png)
+![info](https://cdn.discordapp.com/attachments/1098123459634139167/1098153774377336883/image.png)
 
-### Favorite
+### お気に入り
 
-#### Friend
-![friend](https://user-images.githubusercontent.com/82102170/224716414-5c6720bd-6d38-4e2d-9353-6bfaee47700e.png)
+#### フレンド
+![friend](https://cdn.discordapp.com/attachments/1098123459634139167/1098157650761490452/image.png)
 
-#### World
-![world](https://user-images.githubusercontent.com/82102170/224716652-ca54f3d1-449b-43f9-81f3-7bd0833c7d9d.png)
+#### ワールド
+![world](https://cdn.discordapp.com/attachments/1098123459634139167/1098158554944376832/image.png)
 
-#### Avatar
-![avatar](https://user-images.githubusercontent.com/82102170/224717146-37681b38-61ef-4302-8104-212c2161dc12.png)
+#### アバター
+![avatar](https://cdn.discordapp.com/attachments/1098123459634139167/1098158789254983691/image.png)
 
-### FriendLog
+### フレンドログ
 
-![friendlog](https://user-images.githubusercontent.com/82102170/224717793-dbbccdfd-4f89-4597-b38e-8070549b2cf8.png)
+![friendlog](https://cdn.discordapp.com/attachments/1098123459634139167/1098159999936643113/image.png)
 
-### Moderation
+### モデレーション
 
-![moderation](https://user-images.githubusercontent.com/82102170/224718331-87ab30b2-aae1-4bbf-9472-7279af48bd5d.png)
+![moderation](https://cdn.discordapp.com/attachments/1098123459634139167/1098161183229493258/image.png)
 
-### Notification
+### 通知
 
-![notification](https://user-images.githubusercontent.com/82102170/224718963-706e2d99-fc35-41a5-be2c-ff45681ab084.png)
+![notification](https://cdn.discordapp.com/attachments/1098123459634139167/1098161309847134328/image.png)
 
-### PlayerList
+### プレイヤーリスト
 
-![image](https://user-images.githubusercontent.com/82102170/224722231-54de7848-340c-4e9d-adce-30bccb6f2e8c.png)
+![image](https://cdn.discordapp.com/attachments/1098123459634139167/1098161447348994108/image.png)
 
-### Settings
+### 設定
 
-#### General
-![general](https://user-images.githubusercontent.com/82102170/224722538-9e320d5d-5348-4696-9a3d-720e7027b06c.png)
+#### 一般
+![general](https://cdn.discordapp.com/attachments/1098123459634139167/1098161646989492264/image.png)
 
-#### Appearance
-![appearance_1](https://user-images.githubusercontent.com/82102170/224724725-8e319924-91cb-41f9-96b4-0ec438aeaa76.png)
-![appearance_2](https://user-images.githubusercontent.com/82102170/224724776-002c8ac3-69f3-4d7a-877f-54faf574a6f4.png)
+#### 外観
+![appearance](https://cdn.discordapp.com/attachments/1098123459634139167/1098161809220960267/image.png)
 
 
-#### Notifications
-![notif](https://user-images.githubusercontent.com/82102170/224723929-edafafd1-69d1-4367-bc1c-1097f7478dba.png)
+#### 通知
+![notif](https://cdn.discordapp.com/attachments/1098123459634139167/1098162131234472006/image.png)
 
-#### Wrist Overlay
-![overlay](https://user-images.githubusercontent.com/82102170/224723886-415487fa-5c99-4b07-a6ab-2c8477aa576c.png)
+#### 手首オーバーレイ
+![overlay](https://cdn.discordapp.com/attachments/1098123459634139167/1098162284574036008/image.png)
 
 #### Discord Presence
-![rpc_setting](https://user-images.githubusercontent.com/82102170/224724105-3e97c7a3-6aa0-414b-a363-7bae56b9b3b1.png)
+![rpc_setting](https://cdn.discordapp.com/attachments/1098123459634139167/1098162381718302731/image.png)
 
-#### Advanced
-![advance_1](https://user-images.githubusercontent.com/82102170/224724348-84ef6fca-5a00-45db-915d-ed42d244f0ca.png)
-![advance_2](https://user-images.githubusercontent.com/82102170/224724480-07618cd1-fbf5-4f1e-a85f-f7fb94e7d70f.png)
+#### 詳細
+![advance_1](https://cdn.discordapp.com/attachments/1098123459634139167/1098162553642811503/image.png)
 
-
-### Other
+### その他
 
 #### Join
-![join](https://user-images.githubusercontent.com/82102170/224725201-8eb04169-af9c-476b-a5c5-58986d17d2e6.png)
+![join](https://cdn.discordapp.com/attachments/1098123459634139167/1098162833662947388/image.png)
 
-#### Create Instance
-![create](https://user-images.githubusercontent.com/82102170/224725526-7eab7b52-fec7-4c23-a941-7c4c29e8c944.png)
+#### インスタンス作成
+![create](https://cdn.discordapp.com/attachments/1098123459634139167/1098163388267376700/image.png)
 
 #### Discord Rich Presence
 ![rpc](https://user-images.githubusercontent.com/82102170/224725991-3fc81a3d-ca15-4dcb-a057-d713803bd666.png)
 
-### VR Overlay(old)
+### VR オーバーレイ (旧バージョン)
 
 ![overlay1](https://user-images.githubusercontent.com/82102170/178281800-af4c69da-a0f5-43d8-9515-e960e1a16b39.png)
 ![overlay2](https://user-images.githubusercontent.com/82102170/178281884-ea1df88c-f16c-4c83-825c-c285f49b1ff1.png)
