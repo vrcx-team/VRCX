@@ -119,9 +119,9 @@ _VRChat Discordの #faq に記載されている、APIの使用に関する公�
 
 </details>
 
-## Themes
+## テーマ
 
-To install a theme place `custom.css` into your `%AppData%\VRCX` folder then press `Shift + Alt + R`.
+テーマをインストールするには `custom.css` を `%AppData%\VRCX` フォルダーに配置し、 `Shift+Alt+R` を押してください。
 
 [Dark Vanilla](https://github.com/MintLily/Dark-Vanilla/tree/main/VRCX) by [MintLily](https://github.com/MintLily)
 ![dark-vanilla](https://user-images.githubusercontent.com/11171153/190136499-13ab2fe3-9fed-4b45-a764-e8665993d994.png)
@@ -132,21 +132,21 @@ To install a theme place `custom.css` into your `%AppData%\VRCX` folder then pre
 [Material 3](https://github.com/kamiya10/VRCX-theme/tree/main/m3) by [Kamiya](https://github.com/kamiya10)
 ![material-3](https://user-images.githubusercontent.com/11171153/190136730-65268fac-1dab-4528-813c-b4d5e5e86f7d.png)
 
-## VRCX launch parameters
+## 起動オプション
 
-- `--debug` launch Chromium DevTools with VRCX.
-- `--config="C:\VRCX.sqlite3"` set a custom path for VRCX database.
-- `--gpufix` set VRCX overlay rendering GPU to index 1 forcing the overlay to render to a secondary dedicated GPU or if you're using an integrated GPU it will force rendering to your dedicated GPU.
-- `vrcx://user/usr_id` open VRCX user dialog.
-- `vrcx://avatar/avtr_id` open VRCX avatar dialog.
-- `vrcx://group/grp_id` open VRCX group dialog.
-- `vrcx://world/wrld_id` open VRCX world dialog.
-- `vrcx://world/wrld_id:12345` open VRCX world dialog with instance.
-- `vrcx://world/https://vrch.at/0gmbxjpj` open VRCX world dialog with unlocked instance.
-- `vrcx://import/avatar/avtr_id,avtr_id...` open VRCX avatar favorites import dialog.
-- `vrcx://import/world/wrld_id,wrld_id...` open VRCX world favorites import dialog.
-- `vrcx://import/friend/usr_id,usr_id...` open VRCX friend favorites import dialog.
-- `vrcx://addavatardb/https://website/vrcx_search.php` open VRCX remote avatar database provider dialog.
+- `--debug` Chromium DevTools付きでVRCXを起動します。
+- `--config="C:\VRCX.sqlite3"` VRCXで使用するデータベースのカスタムパスを指定します。
+- `--gpufix` VRCXのオーバーレイ描画用GPUをIndex 1に設定することで、セカンダリGPUに描画を強制し、また統合GPUを使用している場合は、専用GPUに描画を強制します。
+- `vrcx://user/usr_id` ユーザーダイアログを開きます。
+- `vrcx://avatar/avtr_id` アバターダイアログを開きます。
+- `vrcx://group/grp_id` グループダイアログを開きます。
+- `vrcx://world/wrld_id` ワールドダイアログを開きます。
+- `vrcx://world/wrld_id:12345` インスタンス情報付きのワールドダイアログを開きます。
+- `vrcx://world/https://vrch.at/0gmbxjpj` アンロックされたインスタンス情報付きのワールドダイアログを開きます。
+- `vrcx://import/avatar/avtr_id,avtr_id...` お気に入りアバターのインポートダイアログを開きます。
+- `vrcx://import/world/wrld_id,wrld_id...` お気に入りワールドのインポートダイアログを開きます。
+- `vrcx://import/friend/usr_id,usr_id...` お気に入りフレンドのインポートダイアログを開きます。
+- `vrcx://addavatardb/https://website/vrcx_search.php` リモートアバターデータベースプロバイダーのダイアログを開きます。
 
 ## Keyboard shortcuts
 
