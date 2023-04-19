@@ -14,7 +14,7 @@ pypyとNatsumiはVRCXの使用によって発生したいかなる問題にも�
 - 最新のリリースを[ダウンロード](https://github.com/vrcx-team/VRCX/releases/latest)
 - `VRCX_Setup.exe` を実行
 
-## VRCXはVRChatの利用規約に違反しますか？
+## VRChatの利用規約に違反しますか？
 
 **一言で言えば:** いいえ。
 
