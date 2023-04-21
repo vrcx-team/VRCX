@@ -1526,6 +1526,8 @@ html
                                 div.options-container-item
                                     span.name {{ $t('view.settings.advanced.advanced.cache_debug.avatar_cache') }} #[span(v-text="API.cachedAvatars.size")]
                                 div.options-container-item
+                                    span.name {{ $t('view.settings.advanced.advanced.cache_debug.group_cache') }} #[span(v-text="API.cachedGroups.size")]
+                                div.options-container-item
                                     span.name {{ $t('view.settings.advanced.advanced.cache_debug.avatar_name_cache') }} #[span(v-text="API.cachedAvatarNames.size")]
                                 div.options-container-item
                                     el-button(size="small" icon="el-icon-delete-solid" @click="clearVRCXCache") {{ $t('view.settings.advanced.advanced.cache_debug.clear_cache') }}

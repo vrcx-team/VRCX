@@ -7280,10 +7280,13 @@ speechSynthesis.getVoices();
 
     $app.methods.getMemo = async function (userId) {
         try {
-            var row = await database.getMemo(userId);
-            return row.memo;
+            return await database.getMemo(userId);
         } catch (err) {}
-        return '';
+        return {
+            userId: '',
+            editedAt: '',
+            memo: ''
+        };
     };
 
     $app.methods.saveMemo = function (id, memo) {
@@ -7531,11 +7534,13 @@ speechSynthesis.getVoices();
         };
         if (this.friendLogInitStatus) {
             this.getMemo(id).then((memo) => {
-                ctx.memo = memo;
-                ctx.$nickName = '';
-                if (memo) {
-                    var array = memo.split('\n');
-                    ctx.$nickName = array[0];
+                if (memo.userId === id) {
+                    ctx.memo = memo.memo;
+                    ctx.$nickName = '';
+                    if (memo.memo) {
+                        var array = memo.memo.split('\n');
+                        ctx.$nickName = array[0];
+                    }
                 }
             });
         }
@@ -14764,7 +14769,13 @@ speechSynthesis.getVoices();
         unFriended: false
     };
 
+    $app.data.ignoreUserMemoSave = false;
+
     $app.watch['userDialog.memo'] = function () {
+        if (this.ignoreUserMemoSave) {
+            this.ignoreUserMemoSave = false;
+            return;
+        }
         var D = this.userDialog;
         this.saveMemo(D.id, D.memo);
     };
@@ -14959,19 +14970,23 @@ speechSynthesis.getVoices();
         var D = this.userDialog;
         D.id = userId;
         D.treeData = [];
+        this.ignoreUserMemoSave = true;
         D.memo = '';
         D.note = '';
         D.noteSaving = false;
         this.getMemo(userId).then((memo) => {
-            D.memo = memo;
-            var ref = this.friends.get(userId);
-            if (ref) {
-                ref.memo = String(memo || '');
-                if (memo) {
-                    var array = memo.split('\n');
-                    ref.$nickName = array[0];
-                } else {
-                    ref.$nickName = '';
+            if (memo.userId === userId) {
+                this.ignoreUserMemoSave = true;
+                D.memo = memo.memo;
+                var ref = this.friends.get(userId);
+                if (ref) {
+                    ref.memo = String(memo.memo || '');
+                    if (memo.memo) {
+                        var array = memo.memo.split('\n');
+                        ref.$nickName = array[0];
+                    } else {
+                        ref.$nickName = '';
+                    }
                 }
             }
         });
