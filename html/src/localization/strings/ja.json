@@ -547,7 +547,8 @@
                 "avatar_cloning_allow": "許可",
                 "avatar_cloning_deny": "拒否",
                 "home_location": "ホームワールド",
-                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります"
+                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります",
+                "instance_full": "満員"
             },
             "groups": {
                 "header": "グループ",
@@ -612,6 +613,7 @@
                 "capacity_count": "最大人数 {count} ({max})",
                 "self_invite_tooltip": "自分を招待",
                 "refresh_user_count_tooltip": "ユーザー数を更新",
+                "instance_full": "満員",
                 "instance_creator": "インスタンス作成者"
             },
             "info": {
@@ -722,6 +724,7 @@
             "info": {
                 "header": "情報",
                 "announcement": "お知らせ",
+                "instance_full": "満員",
                 "rules": "ルール",
                 "members": "メンバー数",
                 "created_at": "作成日時",
@@ -732,6 +735,7 @@
                 "id_tooltip": "IDをコピー",
                 "joined_at": "参加日時",
                 "roles": "役職",
+                "role": "役職:",
                 "role_description": "説明:",
                 "role_updated_at": "更新日:",
                 "role_created_at": "作成日:",
@@ -1134,14 +1138,14 @@
             }
         },
         "direct_access_username": {
-           "header": "ダイレクトアクセス",
+            "header": "ダイレクトアクセス",
             "description": "ユーザーネームを入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
             "input_error": "ユーザーネームが必要です"
         },
         "direct_access_world_id": {
-           "header": "ダイレクトアクセス",
+            "header": "ダイレクトアクセス",
             "description": "ワールドURL/IDを入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
@@ -1151,7 +1155,7 @@
             }
         },
         "direct_access_avatar_id": {
-           "header": "ダイレクトアクセス",
+            "header": "ダイレクトアクセス",
             "description": "アバターURL/IDを入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
@@ -1161,7 +1165,7 @@
             }
         },
         "direct_access_omni": {
-           "header": "ダイレクトアクセス",
+            "header": "ダイレクトアクセス",
             "description": "ユーザー/ワールド/インスタンス/アバター/グループURL/IDを入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
@@ -1209,7 +1213,7 @@
             "description": "ワールド名を入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
-             "input_error": "有効な名前が必要です",
+            "input_error": "有効な名前が必要です",
             "message": {
                 "success": "ワールド名を変更しました"
             }
