@@ -505,7 +505,13 @@ namespace VRCX
                         return Encoding.ASCII.GetString((byte[])data);
 
                     case RegistryValueKind.DWord:
-                        return data;
+                        if (data.GetType() != typeof(long))
+                            return data;
+
+                        long.TryParse(data.ToString(), out var longValue);
+                        var bytes = BitConverter.GetBytes(longValue);
+                        var doubleValue = BitConverter.ToDouble(bytes, 0);
+                        return doubleValue;
                 }
             }
 
