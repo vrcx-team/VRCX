@@ -406,6 +406,7 @@
                         "user_cache": "ユーザーキャッシュ:",
                         "world_cache": "ワールドキャッシュ:",
                         "avatar_cache": "アバターキャッシュ:",
+                        "group_cache": "グループキャッシュ:",
                         "avatar_name_cache": "アバター名キャッシュ:",
                         "clear_cache": "キャッシュを消去",
                         "auto_clear_cache": "キャッシュの自動消去",
