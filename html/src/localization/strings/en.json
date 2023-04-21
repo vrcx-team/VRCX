@@ -547,7 +547,8 @@
                 "avatar_cloning_allow": "Allowed",
                 "avatar_cloning_deny": "Deny",
                 "home_location": "Home Location",
-                "accuracy_notice": "Info from local database may not be accurate"
+                "accuracy_notice": "Info from local database may not be accurate",
+                "instance_full": "full"
             },
             "groups": {
                 "header": "Groups",
@@ -612,6 +613,7 @@
                 "capacity_count": "Capacity {count} ({max})",
                 "self_invite_tooltip": "Invite Yourself",
                 "refresh_user_count_tooltip": "Refresh User Count",
+                "instance_full": "full",
                 "instance_creator": "Instance Creator"
             },
             "info": {
@@ -722,6 +724,7 @@
             "info": {
                 "header": "Info",
                 "announcement": "Announcement",
+                "instance_full": "full",
                 "rules": "Rules",
                 "members": "Members",
                 "created_at": "Created At",
@@ -732,6 +735,7 @@
                 "id_tooltip": "Copy ID to clipboard",
                 "joined_at": "Joined At",
                 "roles": "Roles",
+                "role": "Role:",
                 "role_description": "Description:",
                 "role_updated_at": "Updated At:",
                 "role_created_at": "Created At:",
