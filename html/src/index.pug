@@ -2431,6 +2431,7 @@ html
                                                     template(v-for="(role, rIndex) in groupDialog.memberRoles" :key="rIndex")
                                                         el-tooltip(placement="top")
                                                             template(#content)
+                                                                span {{ $t('dialog.group.info.role') }} {{ role.name }}
                                                                 span {{ $t('dialog.group.info.role_description') }} {{ role.description }}
                                                                 br
                                                                 span(v-if="role.updatedAt") {{ $t('dialog.group.info.role_updated_at') }} {{ role.updatedAt | formatDate('long') }}
@@ -2812,7 +2813,7 @@ html
                     el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") {{ $t('dialog.launch.start_as_desktop') }}
                     el-button(size="small" @click="showPreviousInstanceInfoDialog(launchDialog.location)") {{ $t('dialog.launch.info') }}
                     el-button(size="small" @click="showInviteDialog(launchDialog.location)" :disabled="!checkCanInvite(launchDialog.location)") {{ $t('dialog.launch.invite') }}
-                    el-button(type="primary" size="small" @click="launchGame(launchDialog.location, launchDialog.secureOrShortName)" :disabled="!launchDialog.secureOrShortName") {{ $t('dialog.launch.launch') }}
+                    el-button(type="primary" size="small" @click="launchGame(launchDialog.location, launchDialog.secureOrShortName, launchDialog.desktop)" :disabled="!launchDialog.secureOrShortName") {{ $t('dialog.launch.launch') }}
 
             //- dialog: export friends list
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportFriendsListDialog" :title="$t('dialog.export_friends_list.header')" width="650px")

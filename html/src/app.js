@@ -1932,7 +1932,10 @@ speechSynthesis.getVoices();
     */
     API.getUserFeedback = function (params) {
         return this.call(`users/${params.userId}/feedback`, {
-            method: 'GET'
+            method: 'GET',
+            params: {
+                n: 100
+            }
         }).then((json) => {
             var args = {
                 json,
@@ -11468,7 +11471,6 @@ speechSynthesis.getVoices();
     $app.methods.updateNowPlaying = function () {
         var np = this.nowPlaying;
         if (!this.nowPlaying.playing) {
-            this.nowPlaying.playing = false;
             return;
         }
         var now = Date.now() / 1000;
@@ -15397,6 +15399,7 @@ speechSynthesis.getVoices();
             users.push({
                 ref,
                 timer: ref.$location_at,
+                $trustSortNum: ref.$trustSortNum ? ref.$trustSortNum : 0,
                 photonId,
                 isMaster,
                 inVRMode,
@@ -17869,7 +17872,7 @@ speechSynthesis.getVoices();
         )}`;
     };
 
-    $app.methods.launchGame = function (location, shortName) {
+    $app.methods.launchGame = function (location, shortName, desktopMode) {
         var D = this.launchDialog;
         var args = [];
         if (shortName) {
@@ -17881,7 +17884,7 @@ speechSynthesis.getVoices();
         if (launchArguments) {
             args.push(launchArguments);
         }
-        if (D.desktop) {
+        if (desktopMode) {
             args.push('--no-vr');
         }
         if (vrcLaunchPathOverride) {
@@ -20861,6 +20864,7 @@ speechSynthesis.getVoices();
             return;
         }
         var lastLocation = this.lastLocation.location;
+        var desktopMode = this.isGameNoVR;
         AppApi.VrcClosedGracefully().then((result) => {
             if (result || !this.isRealInstance(lastLocation)) {
                 return;
@@ -20879,7 +20883,7 @@ speechSynthesis.getVoices();
             database.addGamelogEventToDatabase(entry);
             this.queueGameLogNoty(entry);
             this.addGameLog(entry);
-            this.launchGame(lastLocation);
+            this.launchGame(lastLocation, '', desktopMode);
         });
     };
 
