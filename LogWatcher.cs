@@ -189,7 +189,7 @@ namespace VRCX
                             if (line.Length <= 36 ||
                                 line[31] != '-')
                             {
-                                ParseDesktopMode(fileInfo, line);
+                                ParseDesktopModeOld(fileInfo, line);
                                 continue;
                             }
 
@@ -235,7 +235,8 @@ namespace VRCX
                                 if (ParseLogShaderKeywordsLimit(fileInfo, logContext, line, offset) ||
                                     ParseLogSDK2VideoPlay(fileInfo, logContext, line, offset) ||
                                     ParseApplicationQuit(fileInfo, logContext, line, offset) ||
-                                    ParseOpenVRInit(fileInfo, logContext, line, offset))
+                                    ParseOpenVRInit(fileInfo, logContext, line, offset) ||
+                                    ParseDesktopMode(fileInfo, logContext, line, offset))
                                 {
                                 }
                             }
@@ -899,8 +900,12 @@ namespace VRCX
         private bool ParseOpenVRInit(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2022.07.29 02:52:14 Log        -  OpenVR initialized!
+            
+            // 2023.04.22 16:52:28 Log        -  Initializing VRSDK.
+            // 2023.04.22 16:52:29 Log        -  StartVRSDK: Open VR Loader
 
-            if (string.Compare(line, offset, "OpenVR initialized!", 0, 19, StringComparison.Ordinal) != 0)
+            if (string.Compare(line, offset, "OpenVR initialized!", 0, 19, StringComparison.Ordinal) != 0 &&
+                string.Compare(line, offset, "Initializing VRSDK.", 0, 19, StringComparison.Ordinal) != 0)
                 return false;
 
             AppendLog(new[]
@@ -912,8 +917,25 @@ namespace VRCX
 
             return true;
         }
+        
+        private bool ParseDesktopMode(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2023.04.22 16:54:18 Log        -  VR Disabled
 
-        private bool ParseDesktopMode(FileInfo fileInfo, string line)
+            if (string.Compare(line, offset, "VR Disabled", 0, 11, StringComparison.Ordinal) != 0)
+                return false;
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "desktop-mode"
+            });
+
+            return true;
+        }
+
+        private bool ParseDesktopModeOld(FileInfo fileInfo, string line)
         {
             //    XR Device: None
 
