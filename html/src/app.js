@@ -5039,7 +5039,6 @@ speechSynthesis.getVoices();
                                 API.currentUser.$online_for = Date.now();
                                 API.currentUser.$offline_for = '';
                             } else {
-                                this.isGameNoVR = false;
                                 configRepository.setBool(
                                     'isGameNoVR',
                                     this.isGameNoVR
@@ -9566,12 +9565,12 @@ speechSynthesis.getVoices();
                 database.addGamelogEventToDatabase(entry);
                 break;
             case 'vrc-quit':
-                var bias = Date.parse(gameLog.dt) + 1000;
-                if (
-                    !this.vrcQuitFix ||
-                    !this.isGameRunning ||
-                    bias < Date.now()
-                ) {
+                if (!this.vrcQuitFix || !this.isGameRunning) {
+                    break;
+                }
+                var bias = Date.parse(gameLog.dt) + 3000;
+                if (bias < Date.now()) {
+                    console.log('QuitFix: Bias too low, not killing VRC');
                     break;
                 }
                 AppApi.QuitGame().then((processCount) => {
@@ -17958,13 +17957,37 @@ speechSynthesis.getVoices();
         )}`;
     };
 
-    $app.methods.launchGame = function (location, shortName, desktopMode) {
+    $app.methods.launchGame = async function (
+        location,
+        shortName,
+        desktopMode
+    ) {
         var D = this.launchDialog;
         var args = [];
         if (shortName) {
             args.push(`vrchat://launch?id=${location}&shortName=${shortName}`);
         } else {
-            args.push(`vrchat://launch?id=${location}`);
+            // fetch shortName
+            var newShortName = '';
+            var L = API.parseLocation(location);
+            var response = await API.getInstanceShortName({
+                worldId: L.worldId,
+                instanceId: L.instanceId
+            });
+            if (response.json) {
+                if (response.json.shortName) {
+                    newShortName = response.json.shortName;
+                } else {
+                    newShortName = response.json.secureName;
+                }
+            }
+            if (newShortName) {
+                args.push(
+                    `vrchat://launch?id=${location}&shortName=${newShortName}`
+                );
+            } else {
+                args.push(`vrchat://launch?id=${location}`);
+            }
         }
         var {launchArguments, vrcLaunchPathOverride} = this.launchOptionsDialog;
         if (launchArguments) {
@@ -17998,6 +18021,7 @@ speechSynthesis.getVoices();
                 type: 'success'
             });
         }
+        console.log('Launch Game', args.join(' '), desktopMode);
         D.visible = false;
     };
 
