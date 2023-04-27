@@ -1,7 +1,7 @@
 import en from './strings/en.json' assert {type: 'JSON'};
 import elements_en from 'element-ui/lib/locale/lang/en';
 
-import ja from './strings/ja.json' assert { type: 'JSON' };
+import ja from './strings/ja.json' assert {type: 'JSON'};
 import elements_ja from 'element-ui/lib/locale/lang/ja';
 
 import zh_TW from './strings/zh_TW.json' assert {type: 'JSON'};
