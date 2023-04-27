@@ -1998,6 +1998,7 @@ html
                                         span.extra(v-text="avatar.releaseStatus" v-else)
                         el-tab-pane(:label="$t('dialog.user.json.header')")
                             el-button(type="default" @click="refreshUserDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
+                            el-button(type="default" @click="downloadAndSaveJson(userDialog.id, userDialog.ref)" size="mini" icon="el-icon-download" circle style="margin-left:5px")
                             el-tree(:data="userDialog.treeData" style="margin-top:5px;font-size:12px")
                                 template(#default="scope")
                                     span
@@ -2172,6 +2173,7 @@ html
                                         span.extra(v-else) {{ worldDialog.timeSpent | timeToText }}
                         el-tab-pane(:label="$t('dialog.world.json.header')")
                             el-button(type="default" @click="refreshWorldDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
+                            el-button(type="default" @click="downloadAndSaveJson(worldDialog.id, worldDialog.ref)" size="mini" icon="el-icon-download" circle style="margin-left:5px")
                             el-tree(:data="worldDialog.treeData" style="margin-top:5px;font-size:12px")
                                 template(#default="scope")
                                     span
@@ -2258,6 +2260,13 @@ html
                                         span.extra(v-else) -
                         el-tab-pane(:label="$t('dialog.avatar.json.header')")
                             el-button(type="default" @click="refreshAvatarDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
+                            el-button(type="default" @click="getAvatarFileAnalysis" size="mini" icon="el-icon-question" circle style="margin-left:5px")
+                            el-button(type="default" @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)" size="mini" icon="el-icon-download" circle style="margin-left:5px")
+                            el-tree(v-if="Object.keys(avatarDialog.fileAnalysis).length > 0" :data="avatarDialog.fileAnalysis" style="margin-top:5px;font-size:12px")
+                                template(#default="scope")
+                                    span
+                                        span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
+                                        span(v-if="!scope.data.children" v-text="scope.data.value")
                             el-tree(:data="avatarDialog.treeData" style="margin-top:5px;font-size:12px")
                                 template(#default="scope")
                                     span
@@ -2449,11 +2458,12 @@ html
                                                                     br
                                                             span {{ role.name }}{{ rIndex < groupDialog.memberRoles.length - 1 ? ', ' : '' }}
                         el-tab-pane(:label="$t('dialog.group.members.header')")
-                            template(v-if="groupDialog.visible && groupDialog.ref.membershipStatus === 'member'")
+                            template(v-if="groupDialog.visible")
                                 span(v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')" style="font-weight:bold;font-size:16px") {{ $t('dialog.group.members.all_members') }}
                                 span(v-else style="font-weight:bold;font-size:16px") {{ $t('dialog.group.members.friends_only') }}
                                 br
-                                el-button(type="default" @click="getGroupDialogGroupMembers()" size="mini" icon="el-icon-refresh" circle)
+                                el-button(type="default" @click="loadAllGroupMembers" size="mini" icon="el-icon-refresh" :loading="isGroupMembersLoading" circle)
+                                el-button(type="default" @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)" size="mini" icon="el-icon-download" circle style="margin-left:5px")
                                 span(style="font-size:14px;margin-left:5px;margin-right:5px") {{ groupDialog.members.length }}/{{ groupDialog.ref.memberCount }}
                                 ul.infinite-list.x-friend-list(v-if="groupDialog.members.length > 0" v-infinite-scroll="loadMoreGroupMembers" style="margin-top:10px;overflow:auto;max-height:250px")
                                     li.infinite-list-item.x-friend-item(v-for="user in groupDialog.members" :key="user.id" @click="showUserDialog(user.userId)" class="x-friend-item-border")
@@ -2466,7 +2476,7 @@ html
                                         .detail(v-if="!isGroupMembersLoading")
                                             span.name {{ $t('dialog.group.members.load_more') }}
                         el-tab-pane(:label="$t('dialog.group.gallery.header')")
-                            el-button(type="default" size="mini" icon="el-icon-refresh" @click="getGroupGalleries" circle)
+                            el-button(type="default" size="mini" icon="el-icon-refresh" @click="getGroupGalleries" :loading="isGroupGalleryLoading" circle)
                             el-tabs(type="card" v-loading="isGroupGalleryLoading" ref="groupDialogGallery")
                                 template(v-for="(gallery, index) in groupDialog.ref.galleries")
                                     el-tab-pane
@@ -2482,6 +2492,7 @@ html
                                                     img.x-link(v-lazy="image.imageUrl" style="height:700px" @click="downloadAndSaveImage(image.imageUrl)")
                         el-tab-pane(:label="$t('dialog.group.json.header')")
                             el-button(type="default" @click="refreshGroupDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
+                            el-button(type="default" @click="downloadAndSaveJson(groupDialog.id, groupDialog.ref)" size="mini" icon="el-icon-download" circle style="margin-left:5px")
                             el-tree(:data="groupDialog.treeData" style="margin-top:5px;font-size:12px")
                                 template(#default="scope")
                                     span
@@ -3459,16 +3470,13 @@ html
                                 el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
 
             //- dialog Table: Previous Instances User
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesUserDialog" :visible.sync="previousInstancesUserDialog.visible" :title="$t('dialog.previous_instances.header')" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesUserDialog" :visible.sync="previousInstancesUserDialog.visible" :title="$t('dialog.previous_instances.header')" width="1000px")
                 span(v-text="previousInstancesUserDialog.userRef.displayName" style="font-size:14px")
                 el-input(v-model="previousInstancesUserDialogTable.filters[0].value" :placeholder="$t('dialog.previous_instances.search_placeholder')" style="display:block;width:150px;margin-top:15px")
                 data-tables(v-if="previousInstancesUserDialog.visible" v-bind="previousInstancesUserDialogTable" v-loading="previousInstancesUserDialog.loading" style="margin-top:10px")
-                    el-table-column(:label="$t('table.previous_instances.date')" prop="created_at" sortable width="120")
+                    el-table-column(:label="$t('table.previous_instances.date')" prop="created_at" sortable width="170")
                         template(v-once #default="scope")
-                            el-tooltip(placement="left")
-                                template(#content)
-                                    span {{ scope.row.created_at | formatDate('long') }}
-                                span {{ scope.row.created_at | formatDate('short') }}
+                            span {{ scope.row.created_at | formatDate('long') }}
                     el-table-column(:label="$t('table.previous_instances.world')" prop="name" sortable)
                         template(v-once #default="scope")
                             location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
@@ -3485,16 +3493,13 @@ html
                             el-button(type="text" icon="el-icon-close" size="mini" @click="confirmDeleteGameLogUserInstance(scope.row)")
 
             //- dialog Table: Previous Instances World
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesWorldDialog" :visible.sync="previousInstancesWorldDialog.visible" :title="$t('dialog.previous_instances.header')" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesWorldDialog" :visible.sync="previousInstancesWorldDialog.visible" :title="$t('dialog.previous_instances.header')" width="1000px")
                 span(v-text="previousInstancesWorldDialog.worldRef.name" style="font-size:14px")
                 el-input(v-model="previousInstancesWorldDialogTable.filters[0].value" :placeholder="$t('dialog.previous_instances.search_placeholder')" style="display:block;width:150px;margin-top:15px")
                 data-tables(v-if="previousInstancesWorldDialog.visible" v-bind="previousInstancesWorldDialogTable" v-loading="previousInstancesWorldDialog.loading" style="margin-top:10px")
-                    el-table-column(:label="$t('table.previous_instances.date')" prop="created_at" sortable width="120")
+                    el-table-column(:label="$t('table.previous_instances.date')" prop="created_at" sortable width="170")
                         template(v-once #default="scope")
-                            el-tooltip(placement="left")
-                                template(#content)
-                                    span {{ scope.row.created_at | formatDate('long') }}
-                                span {{ scope.row.created_at | formatDate('short') }}
+                            span {{ scope.row.created_at | formatDate('long') }}
                     el-table-column(:label="$t('table.previous_instances.instance_name')" prop="name")
                         template(v-once #default="scope")
                             location-world(:locationobject="scope.row.$location" :grouphint="scope.row.groupName" :currentuserid="API.currentUser.id")

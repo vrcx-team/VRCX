@@ -2607,7 +2607,7 @@ speechSynthesis.getVoices();
             var {unityPackages} = ref;
             Object.assign(ref, json);
             if (
-                json.unityPackages.length > 0 &&
+                json.unityPackages?.length > 0 &&
                 unityPackages.length > 0 &&
                 !json.unityPackages.assetUrl
             ) {
@@ -16798,7 +16798,8 @@ speechSynthesis.getVoices();
         fileSize: '',
         inCache: false,
         cacheSize: 0,
-        cacheLocked: false
+        cacheLocked: false,
+        fileAnalysis: {}
     };
 
     API.$on('LOGOUT', function () {
@@ -16828,6 +16829,7 @@ speechSynthesis.getVoices();
         D.visible = true;
         D.loading = true;
         D.id = avatarId;
+        D.fileAnalysis = {};
         D.treeData = [];
         D.fileSize = '';
         D.inCache = false;
@@ -24917,27 +24919,22 @@ speechSynthesis.getVoices();
         D.members = [];
         this.isGroupMembersDone = false;
         this.loadMoreGroupMembersParams = {
-            n: 25,
+            n: 100,
             offset: 0,
             groupId: D.id
         };
-        if (this.hasGroupPermission(D.ref, 'group-members-viewall')) {
-            // friend only group view perms only allow max n=25
-            this.loadMoreGroupMembersParams.n = 100;
+        if (D.inGroup) {
+            await API.getGroupMember({
+                groupId: D.id,
+                userId: API.currentUser.id
+            }).then((args) => {
+                if (args.json) {
+                    args.json.user = API.currentUser;
+                    D.members.push(args.json);
+                }
+                return args;
+            });
         }
-        if (!D.inGroup) {
-            return;
-        }
-        await API.getGroupMember({
-            groupId: D.id,
-            userId: API.currentUser.id
-        }).then((args) => {
-            if (args.json) {
-                args.json.user = API.currentUser;
-                D.members.push(args.json);
-            }
-            return args;
-        });
         await this.loadMoreGroupMembers();
     };
 
@@ -24949,7 +24946,6 @@ speechSynthesis.getVoices();
         this.isGroupMembersLoading = true;
         await API.getGroupMembers(params)
             .finally(() => {
-                params.offset += params.n;
                 this.isGroupMembersLoading = false;
             })
             .then((args) => {
@@ -24969,8 +24965,23 @@ speechSynthesis.getVoices();
                     ...this.groupDialog.members,
                     ...args.json
                 ];
+                params.offset += params.n;
                 return args;
+            })
+            .catch((err) => {
+                this.isGroupMembersDone = true;
+                throw err;
             });
+    };
+
+    $app.methods.loadAllGroupMembers = async function () {
+        if (this.isGroupMembersLoading) {
+            return;
+        }
+        await this.getGroupDialogGroupMembers();
+        while (this.groupDialog.visible && !this.isGroupMembersDone) {
+            await this.loadMoreGroupMembers();
+        }
     };
 
     $app.methods.hasGroupPermission = function (ref, permission) {
@@ -25289,6 +25300,30 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.methods.downloadAndSaveJson = function (fileName, data) {
+        if (!fileName || !data) {
+            return;
+        }
+        try {
+            var link = document.createElement('a');
+            link.setAttribute(
+                'href',
+                `data:application/json;charset=utf-8,${encodeURIComponent(
+                    JSON.stringify(data, null, 2)
+                )}`
+            );
+            link.setAttribute('download', `${fileName}.json`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch {
+            new Noty({
+                type: 'error',
+                text: escapeTag('Failed to download JSON.')
+            }).show();
+        }
+    };
+
     $app.methods.setPlayerModeration = function (userId, type) {
         var D = this.userDialog;
         AppApi.SetVRChatUserModeration(API.currentUser.id, userId, type).then(
@@ -25450,6 +25485,53 @@ speechSynthesis.getVoices();
 
     $app.methods.changeLogRemoveLinks = function (text) {
         return text.replace(/([^!])\[[^\]]+\]\([^)]+\)/g, '$1');
+    };
+
+    /*
+        params: {
+            fileId: string,
+            version: number
+        }
+    */
+    API.getFileAnalysis = function (params) {
+        return this.call(`analysis/${params.fileId}/${params.version}`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('FILE:ANALYSIS', args);
+            return args;
+        });
+    };
+
+    API.$on('FILE:ANALYSIS', function (args) {
+        if (!$app.avatarDialog.visible) {
+            return;
+        }
+        $app.avatarDialog.fileAnalysis = buildTreeData(args.json);
+    });
+
+    $app.methods.getAvatarFileAnalysis = function () {
+        var D = this.avatarDialog;
+        var assetUrl = '';
+        for (let i = D.ref.unityPackages.length - 1; i > -1; i--) {
+            var unityPackage = D.ref.unityPackages[i];
+            if (
+                unityPackage.platform === 'standalonewindows' &&
+                this.compareUnityVersion(unityPackage.unityVersion)
+            ) {
+                assetUrl = unityPackage.assetUrl;
+                break;
+            }
+        }
+        var fileId = extractFileId(assetUrl);
+        var version = parseInt(extractFileVersion(assetUrl), 10);
+        if (!fileId || !version) {
+            return;
+        }
+        API.getFileAnalysis({fileId, version});
     };
 
     $app = new Vue($app);
