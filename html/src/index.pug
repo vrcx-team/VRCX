@@ -744,7 +744,7 @@ html
                     el-table-column(:label="$t('table.friendLog.type')" prop="type" width="150")
                     el-table-column(:label="$t('table.friendLog.user')" prop="displayName")
                         template(v-once #default="scope")
-                            span(v-if="scope.row.type === 'DisplayName'") {{ scope.row.previousDisplayName }} #[i.el-icon-right]
+                            span(v-if="scope.row.type === 'DisplayName'") {{ scope.row.previousDisplayName }} #[i.el-icon-right]&nbsp;
                             span.x-link(v-text="scope.row.displayName || scope.row.userId" @click="showUserDialog(scope.row.userId)")
                             template(v-if="scope.row.type === 'TrustLevel'")
                                 span  ({{ scope.row.previousTrustLevel }} #[i.el-icon-right] {{ scope.row.trustLevel }})
@@ -1422,7 +1422,7 @@ html
                                 span.sub-header {{ $t('view.settings.advanced.advanced.primary_password.header') }}
                                 div.options-container-item
                                     span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.primary_password.description') }}
-                                    el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange" :disabled="!loginForm.savedCredentials[API.currentUser.username]")
+                                    el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange" :disabled="!loginForm.savedCredentials[API.currentUser.id]")
                                 span.sub-header {{ $t('view.settings.advanced.advanced.relaunch_vrchat.header') }}
                                 div.options-container-item
                                     span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.relaunch_vrchat.description') }}

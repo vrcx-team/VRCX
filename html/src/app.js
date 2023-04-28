@@ -4884,6 +4884,7 @@ speechSynthesis.getVoices();
             this.refreshCustomCss();
             this.refreshCustomScript();
             this.checkVRChatDebugLogging();
+            this.migrateStoredUsers();
             this.$nextTick(function () {
                 this.$el.style.display = '';
                 if (
@@ -6847,6 +6848,7 @@ speechSynthesis.getVoices();
         // eslint-disable-next-line require-atomic-updates
         $app.loginForm.lastUserLoggedIn = '';
         configRepository.remove('lastUserLoggedIn');
+        workerTimers.setTimeout(() => location.reload(), 500);
     });
 
     $app.methods.checkPrimaryPassword = function (args) {
@@ -6899,20 +6901,22 @@ speechSynthesis.getVoices();
                 }
             )
                 .then(({value}) => {
-                    for (let name in this.loginForm.savedCredentials) {
+                    for (let userId in this.loginForm.savedCredentials) {
                         security
                             .decrypt(
-                                this.loginForm.savedCredentials[name]
+                                this.loginForm.savedCredentials[userId]
                                     .loginParmas.password,
                                 value
                             )
                             .then((pt) => {
                                 this.saveCredentials = {
-                                    username: name,
+                                    username:
+                                        this.loginForm.savedCredentials[userId]
+                                            .loginParmas.username,
                                     password: pt
                                 };
                                 this.updateStoredUser(
-                                    this.loginForm.savedCredentials[name].user
+                                    this.loginForm.savedCredentials[userId].user
                                 );
                                 configRepository.setBool(
                                     'enablePrimaryPassword',
@@ -6942,17 +6946,22 @@ speechSynthesis.getVoices();
         this.enablePrimaryPasswordDialog.visible = false;
         if (this.enablePrimaryPassword) {
             let key = this.enablePrimaryPasswordDialog.password;
-            for (let name in this.loginForm.savedCredentials) {
+            for (let userId in this.loginForm.savedCredentials) {
                 security
                     .encrypt(
-                        this.loginForm.savedCredentials[name].loginParmas
+                        this.loginForm.savedCredentials[userId].loginParmas
                             .password,
                         key
                     )
                     .then((ct) => {
-                        this.saveCredentials = {username: name, password: ct};
+                        this.saveCredentials = {
+                            username:
+                                this.loginForm.savedCredentials[userId]
+                                    .loginParmas.username,
+                            password: ct
+                        };
                         this.updateStoredUser(
-                            this.loginForm.savedCredentials[name].user
+                            this.loginForm.savedCredentials[userId].user
                         );
                     });
             }
@@ -6962,7 +6971,7 @@ speechSynthesis.getVoices();
     $app.methods.updateStoredUser = async function (currentUser) {
         var savedCredentials = {};
         if (configRepository.getString('savedCredentials') !== null) {
-            var savedCredentials = JSON.parse(
+            savedCredentials = JSON.parse(
                 configRepository.getString('savedCredentials')
             );
         }
@@ -6971,20 +6980,38 @@ speechSynthesis.getVoices();
                 user: currentUser,
                 loginParmas: this.saveCredentials
             };
-            savedCredentials[currentUser.username] = credentialsToSave;
+            savedCredentials[currentUser.id] = credentialsToSave;
             delete this.saveCredentials;
-        } else if (
-            typeof savedCredentials[currentUser.username] !== 'undefined'
-        ) {
-            savedCredentials[currentUser.username].user = currentUser;
-            savedCredentials[currentUser.username].cookies =
+        } else if (typeof savedCredentials[currentUser.id] !== 'undefined') {
+            savedCredentials[currentUser.id].user = currentUser;
+            savedCredentials[currentUser.id].cookies =
                 await webApiService.getCookies();
         }
         this.loginForm.savedCredentials = savedCredentials;
         var jsonCredentialsArray = JSON.stringify(savedCredentials);
         configRepository.setString('savedCredentials', jsonCredentialsArray);
-        this.loginForm.lastUserLoggedIn = currentUser.username;
-        configRepository.setString('lastUserLoggedIn', currentUser.username);
+        this.loginForm.lastUserLoggedIn = currentUser.id;
+        configRepository.setString('lastUserLoggedIn', currentUser.id);
+    };
+
+    $app.methods.migrateStoredUsers = function () {
+        var savedCredentials = {};
+        if (configRepository.getString('savedCredentials') !== null) {
+            savedCredentials = JSON.parse(
+                configRepository.getString('savedCredentials')
+            );
+        }
+        for (let name in savedCredentials) {
+            var userId = savedCredentials[name]?.user?.id;
+            if (userId && userId !== name) {
+                savedCredentials[userId] = savedCredentials[name];
+                delete savedCredentials[name];
+            }
+        }
+        configRepository.setString(
+            'savedCredentials',
+            JSON.stringify(savedCredentials)
+        );
     };
 
     $app.methods.relogin = function (user) {
@@ -7062,11 +7089,11 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.methods.deleteSavedLogin = function (username) {
+    $app.methods.deleteSavedLogin = function (userId) {
         var savedCredentials = JSON.parse(
             configRepository.getString('savedCredentials')
         );
-        delete savedCredentials[username];
+        delete savedCredentials[userId];
         // Disable primary password when no account is available.
         if (Object.keys(savedCredentials).length === 0) {
             this.enablePrimaryPassword = false;

@@ -109,6 +109,8 @@ namespace VRCX
 
         public string GetCookies()
         {
+            _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
+
             using (var memoryStream = new MemoryStream())
             {
                 new BinaryFormatter().Serialize(memoryStream, _cookieContainer);
@@ -122,6 +124,8 @@ namespace VRCX
             {
                 _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
             }
+
+            _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
         }
 
 #pragma warning disable CS4014
