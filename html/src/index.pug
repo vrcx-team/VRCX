@@ -28,7 +28,7 @@ html
                                         span.name(v-text="user.user.displayName")
                                         span.extra(v-text="user.user.username")
                                         span.extra(v-text="user.loginParmas.endpoint")
-                                el-button(type="default" @click="deleteSavedLogin(user.user.username)" size="mini" icon="el-icon-delete" circle)
+                                el-button(type="default" @click="deleteSavedLogin(user.user.id)" size="mini" icon="el-icon-delete" circle)
                     div(style="margin:15px")
                         h2(style="font-weight:bold;text-align:center;margin:0") {{ $t("view.login.login") }}
                         el-form(ref="loginForm" :model="loginForm" :rules="loginForm.rules" @submit.native.prevent="login()")
