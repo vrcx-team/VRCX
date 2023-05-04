@@ -14,7 +14,7 @@ pypy と Natsumi は VRCX の使用によって発生したいかなる問題に
 ## インストール方法
 
 - 最新のリリースを[ダウンロード](https://github.com/vrcx-team/VRCX/releases/latest)
-- `VRCX_Setup.exe`を実行
+- `VRCX_Setup.exe` を実行
 
 ## これは VRChat の利用規約に違反しますか？
 
@@ -224,7 +224,7 @@ _VRChat Discord の #faq に記載されている、API の使用に関する公
 
   > Wine 7.0rc5 以降を使用している必要があります！それ以前のバージョンではテストしていません。Wine 7.0 以降では VRCX の動作に必要な「.NET Framework」のフルインストールが可能になりました。
 
-  - クリーンな Wine Prefix で実行します。VRCX 用に新規で作成するか、`rm -rf ~/.wine`でメインの Prefix を使用します。
+  - クリーンな Wine Prefix で実行します。VRCX 用に新規で作成するか、`rm -rf ~/.wine` でメインの Prefix を使用します。
 
   - Prefix 内でも VRCX.exe でも、DXVK を使用して**いない**ことを確認してください。VRCX の動作には WineD3D が必要です。
 
@@ -232,15 +232,15 @@ _VRChat Discord の #faq に記載されている、API の使用に関する公
 
   - `wine winecfg -v win10` Prefix で使用する Windows のバージョンを指定します。
 
-  - 108 より新しい CEF は、現時点では wine staging 8.4 と互換性がないため、`Linux`ブランチが必要です。Linux ブランチの Actions タブにある VRCX の Artifact をダウンロードし、展開します。
+  - 108 より新しい CEF は、現時点では wine staging 8.4 と互換性がないため、`Linux` ブランチが必要です。Linux ブランチの Actions タブにある VRCX の Artifact をダウンロードし、展開します。
 
-  - これで `wine VRCX.exe` が実行できるようになるはずです。CEFSharp に関するエラーが出た場合は`wine VRCX.exe -no-cef-sandbox`を試してみてください。
+  - これで `wine VRCX.exe` が実行できるようになるはずです。CEFSharp に関するエラーが出た場合は `wine VRCX.exe -no-cef-sandbox` を試してみてください。
 
 - メモ
 
   - Linux 上での VRCX はメモリリークが発生することが知られています。メモリ使用量に注意するか、あるいはこまめに再起動するようにしてください。
 
-  - Intel iGPU + NVIDIA GPU のノートパソコンを使用している場合は`nvidia-settings`でグラフィックデバイスを NVIDIA GPU に強制する必要があります。
+  - Intel iGPU + NVIDIA GPU のノートパソコンを使用している場合は `nvidia-settings` でグラフィックデバイスを NVIDIA GPU に強制する必要があります。
 
   ![image](https://camo.githubusercontent.com/ed672a01defae989c4bf5963c0cc9db973b42203e1e5e927f3341c6a9115beb8/68747470733a2f2f63646e2e646973636f72646170702e636f6d2f6174746163686d656e74732f3835343037313233363336333535303736362f3933353531333532313839373233343435322f756e6b6e6f776e2e706e67)
 
@@ -248,21 +248,21 @@ _VRChat Discord の #faq に記載されている、API の使用に関する公
 
 - ソースコードを入手
 
-  - 最新の[zip](https://github.com/vrcx-team/VRCX/archive/master.zip)をダウンロードするか、`git clone`でクローンする。
+  - 最新の[zip](https://github.com/vrcx-team/VRCX/archive/master.zip)をダウンロードするか、 `git clone` でクローンする。
 
 - .NET でビルド
 
-  - [Visual Studio](https://visualstudio.microsoft.com/)をインストールする。
+  - [Visual Studio](https://visualstudio.microsoft.com/) をインストールする。
   - Visual Studio を起動し、「プロジェクトやソリューションを開く」をクリックし、ソースコード内の[ソリューション ファイル](https://docs.microsoft.com/en-us/visualstudio/extensibility/internals/solution-dot-sln-file)を開く。
-  - [ビルド構成](https://docs.microsoft.com/en-us/visualstudio/ide/understanding-build-configurations?view=vs-2019)から`Debug`を`Release`に変更し、プラットフォームを`x64`に変更する。
-  - [NuGet](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore#restore-packages-automatically-using-visual-studio)パッケージを復元する。
+  - [ビルド構成](https://docs.microsoft.com/en-us/visualstudio/ide/understanding-build-configurations?view=vs-2019)から `Debug` を `Release` に変更し、プラットフォームを `x64` に変更する。
+  - [NuGet](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore#restore-packages-automatically-using-visual-studio) パッケージを復元する。
   - ソリューションを[ビルド](https://docs.microsoft.com/en-us/visualstudio/ide/building-and-cleaning-projects-and-solutions-in-visual-studio)する。
 
 - Node.js でビルド
 
-  - [Node.js](https://nodejs.org/en/download/)をダウンロードし、インストールする。
-  - `build-node.js.cmd`を実行する。
-  - `make-junction.cmd`を実行する。
+  - [Node.js](https://nodejs.org/en/download/) をダウンロードし、インストールする。
+  - `build-node.js.cmd` を実行する。
+  - `make-junction.cmd` を実行する。
 
 - リリース用 zip を作成
-  - [Bandizip](https://www.bandisoft.com/bandizip)用の`make-zip.cmd`または[7-Zip](https://www.7-zip.org)用の`make-zip-7z.cmd`を実行する。
+  - [Bandizip](https://www.bandisoft.com/bandizip) 用の `make-zip.cmd` または [7-Zip](https://www.7-zip.org) 用の `make-zip-7z.cmd` を実行する。
