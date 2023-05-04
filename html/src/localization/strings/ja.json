@@ -1278,7 +1278,7 @@
             "ok": "OK",
             "input_error": "名前を入力してください",
             "message": {
-                "error": "このグループ名は既に{name}として存在しています。"
+                "error": "このグループ名は既に {name} として存在しています。"
             }
         },
         "local_favorite_group_rename": {
