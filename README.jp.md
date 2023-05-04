@@ -16,7 +16,7 @@ pypy と Natsumi は VRCX の使用によって発生したいかなる問題に
 - 最新のリリースを[ダウンロード](https://github.com/vrcx-team/VRCX/releases/latest)
 - `VRCX_Setup.exe`を実行
 
-## VRChat の利用規約に違反しますか？
+## これは VRChat の利用規約に違反しますか？
 
 **一言で言えば:** いいえ。
 
@@ -171,16 +171,16 @@ _VRChat Discord の #faq に記載されている、API の使用に関する公
 
 ### **VRCX の動作が重い**
 
-- 設定 > 外観> テーブルの最大数
+- 設定 > 外観 > テーブルの最大数
   - 値を 100 ぐらいまで下げることで、RAM に保存されるエントリの量が減ります。
-- 設定 > 詳細> キャッシュの自動消去
+- 設定 > 詳細 > キャッシュの自動消去
   - 値を 3 ぐらいまで下げることで、RAM に保存される不要なワールド、ユーザー、アバターの量が減ります。
 
 ### **白い画面で固まる**
 
 この現象は、さまざまな原因で引き起こされる可能性があります:
 
-- [Microsoft Visual C++ Redistributable 2019](https://aka.ms/vs/17/release/vc_redist.x64.exe)をインストールしてみてください。
+- [Microsoft Visual C++ Redistributable 2019](https://aka.ms/vs/17/release/vc_redist.x64.exe) をインストールしてみてください。
 - PC を再起動してみてください。他のプロセスがデータベースファイルを読もうとしている可能性があります。
 - アンチウイルスソフトを無効化してみてください。Avast と AVG は Cef/VRCX を削除してしまいます。
 - AverMedia AssistCentral をアンイストールしてみてください。原因は不明ですが、VRCX に問題を起こしてしまいます。
