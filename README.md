@@ -3,6 +3,8 @@
 [![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white)](https://vrcx.pypy.moe/discord)
 
+| **English** | [日本語](./README.jp.md) |
+
 VRCX is an assistant application for VRChat that provides information about and managing friendship. This application makes use of the unofficial VRChat API SDK.
 
 VRCX is not endorsed by VRChat and does not reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat properties. VRChat and all associated properties are trademarks or registered trademarks of VRChat Inc. VRChat © VRChat Inc.
@@ -22,6 +24,7 @@ _VRChat's official stance on usage of the API, as listed in their Discord #faq c
 ![vrchat api](https://user-images.githubusercontent.com/11171153/114227156-b559c400-99c8-11eb-9df6-ee6615b8118e.png)
 
 # Screenshots
+
 <details><summary><h2>Screenshot(click to open)</h2></summary>
 
 ### Login
@@ -40,9 +43,11 @@ _VRChat's official stance on usage of the API, as listed in their Discord #faq c
 ### UserInfo
 
 #### Me
+
 ![me](https://user-images.githubusercontent.com/82102170/224704240-b10aba50-29b9-4ef4-b35a-958107a32cd6.png)
 
 #### Friend
+
 ![friend](https://user-images.githubusercontent.com/82102170/224714608-ac49621f-c28f-4266-8af8-715f4b9f2367.png)
 
 ### World
@@ -53,12 +58,15 @@ _VRChat's official stance on usage of the API, as listed in their Discord #faq c
 ### Favorite
 
 #### Friend
+
 ![friend](https://user-images.githubusercontent.com/82102170/224716414-5c6720bd-6d38-4e2d-9353-6bfaee47700e.png)
 
 #### World
+
 ![world](https://user-images.githubusercontent.com/82102170/224716652-ca54f3d1-449b-43f9-81f3-7bd0833c7d9d.png)
 
 #### Avatar
+
 ![avatar](https://user-images.githubusercontent.com/82102170/224717146-37681b38-61ef-4302-8104-212c2161dc12.png)
 
 ### FriendLog
@@ -80,36 +88,43 @@ _VRChat's official stance on usage of the API, as listed in their Discord #faq c
 ### Settings
 
 #### General
+
 ![general](https://user-images.githubusercontent.com/82102170/224722538-9e320d5d-5348-4696-9a3d-720e7027b06c.png)
 
 #### Appearance
+
 ![appearance_1](https://user-images.githubusercontent.com/82102170/224724725-8e319924-91cb-41f9-96b4-0ec438aeaa76.png)
 ![appearance_2](https://user-images.githubusercontent.com/82102170/224724776-002c8ac3-69f3-4d7a-877f-54faf574a6f4.png)
 
-
 #### Notifications
+
 ![notif](https://user-images.githubusercontent.com/82102170/224723929-edafafd1-69d1-4367-bc1c-1097f7478dba.png)
 
 #### Wrist Overlay
+
 ![overlay](https://user-images.githubusercontent.com/82102170/224723886-415487fa-5c99-4b07-a6ab-2c8477aa576c.png)
 
 #### Discord Presence
+
 ![rpc_setting](https://user-images.githubusercontent.com/82102170/224724105-3e97c7a3-6aa0-414b-a363-7bae56b9b3b1.png)
 
 #### Advanced
+
 ![advance_1](https://user-images.githubusercontent.com/82102170/224724348-84ef6fca-5a00-45db-915d-ed42d244f0ca.png)
 ![advance_2](https://user-images.githubusercontent.com/82102170/224724480-07618cd1-fbf5-4f1e-a85f-f7fb94e7d70f.png)
-
 
 ### Other
 
 #### Join
+
 ![join](https://user-images.githubusercontent.com/82102170/224725201-8eb04169-af9c-476b-a5c5-58986d17d2e6.png)
 
 #### Create Instance
+
 ![create](https://user-images.githubusercontent.com/82102170/224725526-7eab7b52-fec7-4c23-a941-7c4c29e8c944.png)
 
 #### Discord Rich Presence
+
 ![rpc](https://user-images.githubusercontent.com/82102170/224725991-3fc81a3d-ca15-4dcb-a057-d713803bd666.png)
 
 ### VR Overlay(old)
