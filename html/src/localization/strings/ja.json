@@ -302,11 +302,11 @@
                     "text_to_speech": {
                         "header": "音声読み上げ設定",
                         "when_to_play": "読み上げタイミング",
-                        "when_to_play_never": "表示しない",
+                        "when_to_play_never": "読み上げない",
                         "when_to_play_inside_vr": "VR中",
                         "when_to_play_game_closed": "ゲーム終了時",
                         "when_to_play_game_running": "ゲーム実行時",
-                        "when_to_play_always": "常に表示",
+                        "when_to_play_always": "常に読み上げ",
                         "tts_voice": "読み上げボイス"
                     }
                 }
@@ -328,7 +328,7 @@
                     "display_overlay_on_left": "左手",
                     "display_overlay_on_right": "右手",
                     "display_overlay_on_both": "両手",
-                    "background_color": "背景色",
+                    "background_color": "背景に色を付ける",
                     "minimal_feed_icons": "小さいフィードアイコン",
                     "hide_vr_devices": "VRデバイスを表示しない",
                     "hide_cpu_usage": "CPU使用率を表示しない",
@@ -386,7 +386,7 @@
                         "youtube_api_key": "Youtube APIキー"
                     },
                     "video_progress_pie": {
-                        "header": "動画にプログレスをオーバーレイ表示",
+                        "header": "動画のプログレスをオーバーレイ表示",
                         "enable": "有効化",
                         "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です",
                         "dance_world_only": "ダンスワールドのみ"
