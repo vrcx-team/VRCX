@@ -505,9 +505,9 @@ html
                                 location(:location="feed.location" :hint="feed.worldName" :grouphint="feed.groupName" :link="false" style="margin-left:10px")
                             template(v-else-if="feed.type === 'OnPlayerJoined'")
                                 span(style="margin-left:10px;color:#a3a3a3") has joined
-                                span(v-if="feed.platform === 'Desktop'" style="color:#409eff;margin-left:10px") PC
+                                span(v-if="feed.platform === 'Desktop'" style="color:#409eff;margin-left:10px") Desktop
                                 span(v-else-if="feed.platform === 'VR'" style="color:#409eff;margin-left:10px") VR
-                                span(v-else-if="feed.platform === 'Quest'" style="color:#67c23a;margin-left:10px") Q
+                                span(v-else-if="feed.platform === 'Quest'" style="color:#67c23a;margin-left:10px") Quest
                                 span(v-if="!feed.inCache" style="color:#aaa;margin-left:10px") #[i.el-icon-download]
                                 span(v-text="feed.avatar.name" style="margin-left:10px")
                             template(v-else-if="feed.type === 'SpawnEmoji'")

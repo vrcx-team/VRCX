@@ -746,7 +746,18 @@
                 "header": "Members",
                 "all_members": "All Members",
                 "friends_only": "Friends Only",
-                "load_more": "Load more..."
+                "load_more": "Load more...",
+                "sort_by": "Sort By:",
+                "sorting": {
+                    "user_id": "User ID (Ascending)",
+                    "joined_at_asc": "Joined At (Ascending)",
+                    "joined_at_desc": "Joined At (Descending)"
+                },
+                "filter": "Filter:",
+                "filters": {
+                    "everyone": "Everyone",
+                    "users_with_no_role": "Users With No Role"
+                }
             },
             "gallery": {
                 "header": "Gallery"
