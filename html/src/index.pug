@@ -188,9 +188,9 @@ html
                                                 location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName" :link="false")
                                             span(v-else-if="scope.row.type === 'ChatBoxMessage'" v-text="scope.row.text")
                                             span(v-else-if="scope.row.type === 'OnPlayerJoined'")
-                                                span(v-if="scope.row.platform === 'Desktop'" style="color:#409eff") PC&nbsp;
+                                                span(v-if="scope.row.platform === 'Desktop'" style="color:#409eff") Desktop&nbsp;
                                                 span(v-else-if="scope.row.platform === 'VR'" style="color:#409eff") VR&nbsp;
-                                                span(v-else-if="scope.row.platform === 'Quest'" style="color:#67c23a") Q&nbsp;
+                                                span(v-else-if="scope.row.platform === 'Quest'" style="color:#67c23a") Quest&nbsp;
                                                 span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
                                                 | &nbsp;
                                                 span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
@@ -252,9 +252,9 @@ html
                                                 location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName" :link="false")
                                             span(v-else-if="scope.row.type === 'ChatBoxMessage'" v-text="scope.row.text")
                                             span(v-else-if="scope.row.type === 'OnPlayerJoined'")
-                                                span(v-if="scope.row.platform === 'Desktop'" style="color:#409eff") PC&nbsp;
+                                                span(v-if="scope.row.platform === 'Desktop'" style="color:#409eff") Desktop&nbsp;
                                                 span(v-else-if="scope.row.platform === 'VR'" style="color:#409eff") VR&nbsp;
-                                                span(v-else-if="scope.row.platform === 'Quest'" style="color:#67c23a") Q&nbsp;
+                                                span(v-else-if="scope.row.platform === 'Quest'" style="color:#67c23a") Quest&nbsp;
                                                 span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
                                                 | &nbsp;
                                                 span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
@@ -1721,7 +1721,7 @@ html
                                     el-tooltip(v-else placement="top" :content="$t('dialog.user.actions.favorite_tooltip')" :disabled="hideTooltips")
                                         el-button(type="default" @click="userDialogCommand('Add Favorite')" icon="el-icon-star-off" circle)
                                 el-dropdown(trigger="click" @command="userDialogCommand" size="small")
-                                    el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest || userDialog.isShowAvatar) ? 'success' : (userDialog.isBlock || userDialog.isMute || userDialog.isHideAvatar) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
+                                    el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") {{ $t('dialog.user.actions.refresh') }}
                                         el-dropdown-item(icon="el-icon-s-order" command="Copy User") {{ $t('dialog.user.actions.copy_url') }}
@@ -2465,7 +2465,21 @@ html
                                 el-button(type="default" @click="loadAllGroupMembers" size="mini" icon="el-icon-refresh" :loading="isGroupMembersLoading" circle)
                                 el-button(type="default" @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)" size="mini" icon="el-icon-download" circle style="margin-left:5px")
                                 span(style="font-size:14px;margin-left:5px;margin-right:5px") {{ groupDialog.members.length }}/{{ groupDialog.ref.memberCount }}
-                                ul.infinite-list.x-friend-list(v-if="groupDialog.members.length > 0" v-infinite-scroll="loadMoreGroupMembers" style="margin-top:10px;overflow:auto;max-height:250px")
+                                div(v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')" style="float:right")
+                                    span(style="margin-right:5px") {{ $t('dialog.group.members.sort_by') }}
+                                    el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="isGroupMembersLoading")
+                                        el-button(size="mini")
+                                            span {{ groupDialog.memberSortOrder.name }} #[i.el-icon-arrow-down.el-icon--right]
+                                        el-dropdown-menu(#default="dropdown")
+                                            el-dropdown-item(v-for="(item) in groupDialogSortingOptions" v-text="item.name" @click.native="setGroupMemberSortOrder(item)")
+                                    span(style="margin-right:5px") {{ $t('dialog.group.members.filter') }}
+                                    el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="isGroupMembersLoading")
+                                        el-button(size="mini")
+                                            span {{ groupDialog.memberFilter.name }} #[i.el-icon-arrow-down.el-icon--right]
+                                        el-dropdown-menu(#default="dropdown")
+                                            el-dropdown-item(v-for="(item) in groupDialogFilterOptions" v-text="item.name" @click.native="setGroupMemberFilter(item)")
+                                            el-dropdown-item(v-for="(item) in groupDialog.memberRoles" v-text="item.name" @click.native="setGroupMemberFilter(item)")
+                                ul.infinite-list.x-friend-list(v-if="groupDialog.members.length > 0" v-infinite-scroll="loadMoreGroupMembers" style="margin-top:10px;overflow:auto;max-height:250px;min-width:130px")
                                     li.infinite-list-item.x-friend-item(v-for="user in groupDialog.members" :key="user.id" @click="showUserDialog(user.userId)" class="x-friend-item-border")
                                         .avatar
                                             img(v-lazy="userImage(user.user)")

@@ -22692,7 +22692,7 @@ speechSynthesis.getVoices();
 
     API.$on('LOGIN', async function () {
         $app.avatarHistory = new Set();
-        var historyArray = await database.getAvatarHistory();
+        var historyArray = await database.getAvatarHistory(API.currentUser.id);
         $app.avatarHistoryArray = historyArray;
         for (var i = 0; i < historyArray.length; i++) {
             $app.avatarHistory.add(historyArray[i].id);
@@ -24641,6 +24641,32 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.data.groupDialogSortingOptions = {
+        joinedAtDesc: {
+            name: $t('dialog.group.members.sorting.joined_at_desc'),
+            value: 'joinedAt:desc'
+        },
+        joinedAtAsc: {
+            name: $t('dialog.group.members.sorting.joined_at_asc'),
+            value: 'joinedAt:asc'
+        },
+        userId: {
+            name: $t('dialog.group.members.sorting.user_id'),
+            value: ''
+        }
+    };
+
+    $app.data.groupDialogFilterOptions = {
+        everyone: {
+            name: $t('dialog.group.members.filters.everyone'),
+            id: null
+        },
+        usersWithNoRole: {
+            name: $t('dialog.group.members.filters.users_with_no_role'),
+            id: ''
+        }
+    };
+
     $app.data.groupDialog = {
         visible: false,
         loading: false,
@@ -24654,6 +24680,8 @@ speechSynthesis.getVoices();
         members: [],
         instances: [],
         memberRoles: [],
+        memberFilter: $app.data.groupDialogFilterOptions.everyone,
+        memberSortOrder: $app.data.groupDialogSortingOptions.joinedAtDesc,
         galleries: {}
     };
 
@@ -24678,6 +24706,7 @@ speechSynthesis.getVoices();
         }
         if (this.groupDialogLastMembers !== groupId) {
             D.members = [];
+            D.memberFilter = this.groupDialogFilterOptions.everyone;
         }
         API.getCachedGroup({
             groupId
@@ -24950,6 +24979,12 @@ speechSynthesis.getVoices();
             offset: 0,
             groupId: D.id
         };
+        if (D.memberSortOrder.value) {
+            this.loadMoreGroupMembersParams.sort = D.memberSortOrder.value;
+        }
+        if (D.memberFilter.id !== null) {
+            this.loadMoreGroupMembersParams.roleId = D.memberFilter.id;
+        }
         if (D.inGroup) {
             await API.getGroupMember({
                 groupId: D.id,
@@ -24957,7 +24992,10 @@ speechSynthesis.getVoices();
             }).then((args) => {
                 if (args.json) {
                     args.json.user = API.currentUser;
-                    D.members.push(args.json);
+                    if (D.memberFilter.id === null) {
+                        // when flitered by role don't include self
+                        D.members.push(args.json);
+                    }
                 }
                 return args;
             });
@@ -24969,6 +25007,7 @@ speechSynthesis.getVoices();
         if (this.isGroupMembersDone || this.isGroupMembersLoading) {
             return;
         }
+        var D = this.groupDialog;
         var params = this.loadMoreGroupMembersParams;
         this.isGroupMembersLoading = true;
         await API.getGroupMembers(params)
@@ -24979,19 +25018,20 @@ speechSynthesis.getVoices();
                 for (var i = 0; i < args.json.length; i++) {
                     var member = args.json[i];
                     if (member.userId === API.currentUser.id) {
-                        // remove self from array
-                        // when fetching only friends self is included
-                        args.json.splice(i, 1);
+                        if (
+                            D.members.length > 0 &&
+                            D.members[0].userId === API.currentUser.id
+                        ) {
+                            // remove duplicate and keep sort order
+                            D.members.splice(0, 1);
+                        }
                         break;
                     }
                 }
                 if (args.json.length < params.n) {
                     this.isGroupMembersDone = true;
                 }
-                this.groupDialog.members = [
-                    ...this.groupDialog.members,
-                    ...args.json
-                ];
+                D.members = [...D.members, ...args.json];
                 params.offset += params.n;
                 return args;
             })
@@ -25009,6 +25049,24 @@ speechSynthesis.getVoices();
         while (this.groupDialog.visible && !this.isGroupMembersDone) {
             await this.loadMoreGroupMembers();
         }
+    };
+
+    $app.methods.setGroupMemberSortOrder = async function (sortOrder) {
+        var D = this.groupDialog;
+        if (D.memberSortOrder === sortOrder) {
+            return;
+        }
+        D.memberSortOrder = sortOrder;
+        await this.getGroupDialogGroupMembers();
+    };
+
+    $app.methods.setGroupMemberFilter = async function (filter) {
+        var D = this.groupDialog;
+        if (D.memberFilter === filter) {
+            return;
+        }
+        D.memberFilter = filter;
+        await this.getGroupDialogGroupMembers();
     };
 
     $app.methods.hasGroupPermission = function (ref, permission) {

@@ -1693,7 +1693,7 @@ class Database {
         );
     }
 
-    async getAvatarHistory() {
+    async getAvatarHistory(currentUserId) {
         var data = [];
         await sqliteService.execute((dbRow) => {
             var row = {
@@ -1710,7 +1710,7 @@ class Database {
                 version: dbRow[13]
             };
             data.push(row);
-        }, `SELECT * FROM ${Database.userPrefix}_avatar_history INNER JOIN cache_avatar ON cache_avatar.id = ${Database.userPrefix}_avatar_history.avatar_id ORDER BY ${Database.userPrefix}_avatar_history.created_at DESC LIMIT 100`);
+        }, `SELECT * FROM ${Database.userPrefix}_avatar_history INNER JOIN cache_avatar ON cache_avatar.id = ${Database.userPrefix}_avatar_history.avatar_id WHERE author_id != "${currentUserId}" ORDER BY ${Database.userPrefix}_avatar_history.created_at DESC LIMIT 100`);
         return data;
     }
 
