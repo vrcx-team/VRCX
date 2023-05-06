@@ -1124,7 +1124,7 @@ html
                                         span.name {{ $t("view.settings.general.general.latest_app_version") }}
                                         span.extra(v-if="latestAppVersion" v-text="latestAppVersion")
                                         span.extra(v-else) {{ $t("view.settings.general.general.latest_app_version_refresh") }}
-                                .x-friend-item(@click="openExternalLink('https://github.com/pvrcx-team/VRCX')")
+                                .x-friend-item(@click="openExternalLink('https://github.com/vrcx-team/VRCX')")
                                     .detail
                                         span.name {{ $t("view.settings.general.general.repository_url") }}
                                         span.extra https://github.com/vrcx-team/VRCX
@@ -1757,7 +1757,7 @@ html
                                             el-dropdown-item(icon="el-icon-user-solid" command="Show Avatar")
                                                 i.el-icon-check.el-icon--left(v-if="userDialog.isShowAvatar")
                                                 span {{ $t('dialog.user.actions.moderation_show_avatar') }}
-                                            el-dropdown-item(icon="el-icon-user" command="Hide Avatar") 
+                                            el-dropdown-item(icon="el-icon-user" command="Hide Avatar")
                                                 i.el-icon-check.el-icon--left(v-if="userDialog.isHideAvatar")
                                                 span {{ $t('dialog.user.actions.moderation_hide_avatar') }}
                                             el-dropdown-item(v-if="userDialog.isInteractOff" icon="el-icon-thumb" command="Enable Avatar Interaction" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_enable_avatar_interaction') }}
@@ -3906,7 +3906,7 @@ html
                     .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in galleryTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                         .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)")
                             img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
-                
+
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" :title="$t('dialog.open_source.header')" width="650px")
                 div(v-if="ossDialog" style="height:350px;overflow:hidden scroll;word-break:break-all")
