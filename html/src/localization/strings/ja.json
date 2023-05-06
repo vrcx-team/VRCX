@@ -746,7 +746,18 @@
                 "header": "メンバー",
                 "all_members": "全員",
                 "friends_only": "フレンドのみ",
-                "load_more": "もっと見る..."
+                "load_more": "もっと見る...",
+                "sort_by": "ソート順:",
+                "sorting": {
+                    "user_id": "ユーザーID (登順)",
+                    "joined_at_asc": "参加順 (昇順)",
+                    "joined_at_desc": "Joined 参加順 (降順)"
+                },
+                "filter": "フィルター:",
+                "filters": {
+                    "everyone": "全員",
+                    "users_with_no_role": "ロール無しユーザー"
+                }
             },
             "gallery": {
                 "header": "ギャラリー"
