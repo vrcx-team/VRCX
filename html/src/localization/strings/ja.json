@@ -1095,7 +1095,11 @@
         },
         "screenshot_metadata": {
             "header": "スクリーンショットのメタデータ",
+            "drag": "画像をここにドラッグ",
             "browse": "参照",
+            "last_screenshot": "最後に見た画像",
+            "copy_image": "画像をコピー",
+            "open_folder": "フォルダーを開く",
             "upload": "アップロード"
         }
     },
