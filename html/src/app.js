@@ -89,8 +89,11 @@ speechSynthesis.getVoices();
             $app.refreshCustomCss();
         }
 
-        let carouselNavigation = { 'ArrowLeft': 0, 'ArrowRight': 2 }[e.key]
-        if (carouselNavigation !== undefined && $app.screenshotMetadataDialog?.visible) {
+        let carouselNavigation = {ArrowLeft: 0, ArrowRight: 2}[e.key];
+        if (
+            typeof carouselNavigation !== 'undefined' &&
+            $app.screenshotMetadataDialog?.visible
+        ) {
             $app.screenshotMetadataCarouselChange(carouselNavigation);
         }
     });
@@ -20636,21 +20639,29 @@ speechSynthesis.getVoices();
             D.metadata.dateTime = Date.parse(json.creationDate);
         }
 
-        this.showScreenshotMetadataDialog();
+        this.openScreenshotMetadataDialog();
     };
-    
+
     $app.data.screenshotMetadataDialog = {
         visible: false,
         metadata: {},
         isUploading: false
     };
 
-    $app.methods.showScreenshotMetadataDialog = function () {
+    $app.methods.openScreenshotMetadataDialog = function () {
         this.$nextTick(() =>
             adjustDialogZ(this.$refs.screenshotMetadataDialog.$el)
         );
         var D = this.screenshotMetadataDialog;
         D.visible = true;
+    };
+
+    $app.methods.showScreenshotMetadataDialog = function () {
+        var D = this.screenshotMetadataDialog;
+        if (!D.metadata.filePath) {
+            AppApi.GetLastScreenshot();
+        }
+        this.openScreenshotMetadataDialog();
     };
 
     $app.methods.screenshotMetadataCarouselChange = function (index) {
@@ -20712,16 +20723,36 @@ speechSynthesis.getVoices();
      * This function is called by .NET(CefCustomDragHandler#CefCustomDragHandler) when a file is dragged over a drop zone in the app window.
      * @param {string} filePath - The full path to the file being dragged into the window
      */
-    $app.methods.dragEnterCef = function(filePath) {
-        this.currentlyDroppingFile = filePath
+    $app.methods.dragEnterCef = function (filePath) {
+        this.currentlyDroppingFile = filePath;
     };
 
-    $app.methods.handleDrop = function(event) {        
-        if (this.currentlyDroppingFile == null) return
-        console.log("Dropped file into window: ", this.currentlyDroppingFile)
+    $app.methods.handleDrop = function (event) {
+        if (this.currentlyDroppingFile === null) {
+            return;
+        }
+        console.log('Dropped file into window: ', this.currentlyDroppingFile);
         AppApi.GetScreenshotMetadata(this.currentlyDroppingFile);
 
-        event.preventDefault()
+        event.preventDefault();
+    };
+
+    $app.methods.copyImageToClipboard = function (path) {
+        AppApi.CopyImageToClipboard(path).then(() => {
+            this.$message({
+                message: 'Image copied to clipboard',
+                type: 'success'
+            });
+        });
+    };
+
+    $app.methods.openImageFolder = function (path) {
+        AppApi.OpenImageFolder(path).then(() => {
+            this.$message({
+                message: 'Opened image folder',
+                type: 'success'
+            });
+        });
     };
 
     // YouTube API

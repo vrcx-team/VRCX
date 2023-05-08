@@ -3846,9 +3846,16 @@ html
             //- dialog: screenshot metadata
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="screenshotMetadataDialog" :visible.sync="screenshotMetadataDialog.visible" :title="$t('dialog.screenshot_metadata.header')" width="1050px")
                 div(v-if="screenshotMetadataDialog.visible" @dragover.prevent @dragenter.prevent @drop="handleDrop" style="-webkit-app-region: drag")
+                    span(style="margin-left:5px;color:#909399;font-family:monospace") {{ $t('dialog.screenshot_metadata.drag') }}
+                    br
                     el-button(size="small" icon="el-icon-folder-opened" @click="AppApi.OpenScreenshotFileDialog()") {{ $t('dialog.screenshot_metadata.browse') }}
+                    el-button(size="small" icon="el-icon-picture-outline" @click="AppApi.GetLastScreenshot()") {{ $t('dialog.screenshot_metadata.last_screenshot') }}
+                    el-button(size="small" icon="el-icon-copy-document" @click="copyImageToClipboard(screenshotMetadataDialog.metadata.filePath)") {{ $t('dialog.screenshot_metadata.copy_image') }}
+                    el-button(size="small" icon="el-icon-folder" @click="openImageFolder(screenshotMetadataDialog.metadata.filePath)") {{ $t('dialog.screenshot_metadata.open_folder') }}
                     el-button(v-if="API.currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath" size="small" icon="el-icon-upload2" @click="uploadScreenshotToGallery") {{ $t('dialog.screenshot_metadata.upload') }}
-                    span(v-text="screenshotMetadataDialog.metadata.fileName" style="margin-left:5px")
+                    br
+                    br
+                    span(v-text="screenshotMetadataDialog.metadata.fileName")
                     br
                     span(v-if="screenshotMetadataDialog.metadata.dateTime") {{ screenshotMetadataDialog.metadata.dateTime | formatDate('long') }}
                     span(v-if="screenshotMetadataDialog.metadata.fileResolution" v-text="screenshotMetadataDialog.metadata.fileResolution" style="margin-left:5px")

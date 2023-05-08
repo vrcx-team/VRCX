@@ -1095,7 +1095,11 @@
         },
         "screenshot_metadata": {
             "header": "Screenshot Metadata",
+            "drag": "Drag and drop a screenshot here",
             "browse": "Browse",
+            "last_screenshot": "Last Screenshot",
+            "copy_image": "Copy Image",
+            "open_folder": "Open Folder",
             "upload": "Upload"
         }
     },

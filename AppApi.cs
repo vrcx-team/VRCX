@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -794,6 +795,46 @@ namespace VRCX
             metadata.Add("fileSizeBytes", fileSizeBytes.ToString());
             metadata.Add("fileSize", $"{(fileSizeBytes / 1024f / 1024f).ToString("0.00")} MB");
             ExecuteAppFunction("displayScreenshotMetadata", metadata.ToString(Formatting.Indented));
+        }
+
+        public void GetLastScreenshot()
+        {
+            // Get the last screenshot taken by VRChat
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+            if (!Directory.Exists(path))
+                return;
+
+            var lastDirectory = Directory.GetDirectories(path).OrderByDescending(Directory.GetCreationTime).FirstOrDefault();
+            if (lastDirectory == null)
+                return;
+
+            var lastScreenshot = Directory.GetFiles(lastDirectory, "*.png").OrderByDescending(File.GetCreationTime).FirstOrDefault();
+            if (lastScreenshot == null)
+                return;
+
+            GetScreenshotMetadata(lastScreenshot);
+        }
+
+        public void CopyImageToClipboard(string path)
+        {
+            // check if the file exists and is any image file type
+            if (File.Exists(path) && (path.EndsWith(".png") || path.EndsWith(".jpg") || path.EndsWith(".jpeg") || path.EndsWith(".gif") || path.EndsWith(".bmp") || path.EndsWith(".webp")))
+            {
+                MainForm.Instance.BeginInvoke(new MethodInvoker(() =>
+                {
+                    var image = Image.FromFile(path);
+                    Clipboard.SetImage(image);
+                }));
+            }
+        }
+
+        public void OpenImageFolder(string path)
+        {
+            if (!File.Exists(path))
+                return;
+
+            // open folder with file highlighted
+            Process.Start("explorer.exe", $"/select,\"{path}\"");
         }
 
         public void FlashWindow()
