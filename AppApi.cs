@@ -24,6 +24,7 @@ using librsync.net;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Runtime.InteropServices;
 
 namespace VRCX
 {
@@ -833,8 +834,41 @@ namespace VRCX
             if (!File.Exists(path))
                 return;
 
-            // open folder with file highlighted
-            Process.Start("explorer.exe", $"/select,\"{path}\"");
+            string folderPath = Path.GetDirectoryName(path);
+            IntPtr pidlFolder;
+            IntPtr pidlFile;
+            uint psfgaoOut;
+
+            // Convert our managed strings to PIDLs. PIDLs are essentially pointers to the actual file system objects, separate from the "display name", which is the human-readable path to the file/folder. We're parsing the display name into a PIDL here.
+            // The windows shell uses PIDLs to identify objects in winapi calls, so we'll need to use them to open the folder and select the file. Cool stuff!
+            int result = WinApi.SHParseDisplayName(folderPath, IntPtr.Zero, out pidlFolder, 0, out psfgaoOut);
+            if (result != 0)
+            {
+                return;
+            }
+
+            result = WinApi.SHParseDisplayName(path, IntPtr.Zero, out pidlFile, 0, out psfgaoOut);
+            if (result != 0)
+            {
+                // Free the PIDL we allocated earlier if we failed to parse the display name of the file.
+                Marshal.FreeCoTaskMem(pidlFolder);
+                return;
+            }
+
+            IntPtr[] files = new IntPtr[] { pidlFile };
+
+            try
+            {
+                // Open the containing folder and select our file. SHOpenFolderAndSelectItems will respect existing explorer instances, open a new one if none exist, will properly handle paths > 120 chars, and work with third-party filesystem viewers that hook into winapi calls.
+                // It can select multiple items, but we only need to select one. 
+                WinApi.SHOpenFolderAndSelectItems(pidlFolder, (uint)files.Length, files, 0);
+            }
+            finally
+            {
+                // Free the PIDLs we allocated earlier
+                Marshal.FreeCoTaskMem(pidlFolder);
+                Marshal.FreeCoTaskMem(pidlFile);
+            }
         }
 
         public void FlashWindow()
