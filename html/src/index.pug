@@ -11,7 +11,7 @@ html
         link(rel="stylesheet" href="app.css")
         link(rel="stylesheet" href="flags.css")
     body
-        .x-app#x-app(style="display:none")
+        .x-app#x-app(style="display:none" @dragenter.prevent @dragover.prevent @drop.prevent)
             //- login
             .x-login-container(v-show="!API.isLoggedIn" v-loading="loginForm.loading")
                 div(style="position:absolute;margin:5px")
@@ -3845,7 +3845,7 @@ html
 
             //- dialog: screenshot metadata
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="screenshotMetadataDialog" :visible.sync="screenshotMetadataDialog.visible" :title="$t('dialog.screenshot_metadata.header')" width="1050px")
-                div(v-if="screenshotMetadataDialog.visible")
+                div(v-if="screenshotMetadataDialog.visible" @dragover.prevent @dragenter.prevent @drop="handleDrop" style="-webkit-app-region: drag")
                     el-button(size="small" icon="el-icon-folder-opened" @click="AppApi.OpenScreenshotFileDialog()") {{ $t('dialog.screenshot_metadata.browse') }}
                     el-button(v-if="API.currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath" size="small" icon="el-icon-upload2" @click="uploadScreenshotToGallery") {{ $t('dialog.screenshot_metadata.upload') }}
                     span(v-text="screenshotMetadataDialog.metadata.fileName" style="margin-left:5px")

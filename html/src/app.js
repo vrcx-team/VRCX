@@ -72,6 +72,12 @@ speechSynthesis.getVoices();
         configRepository.setBool('migrate_config_20201101', true);
     }
 
+    // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
+    // This issue persists on prompts created with prompt(), unfortunately. Not sure how to fix that.
+    document.body.addEventListener('drop', function (e) {
+        e.preventDefault();
+    });
+
     document.addEventListener('keyup', function (e) {
         if (e.ctrlKey) {
             if (e.key === 'I') {
@@ -81,6 +87,11 @@ speechSynthesis.getVoices();
             }
         } else if (e.altKey && e.key === 'R') {
             $app.refreshCustomCss();
+        }
+
+        let carouselNavigation = { 'ArrowLeft': 0, 'ArrowRight': 2 }[e.key]
+        if (carouselNavigation !== undefined && $app.screenshotMetadataDialog?.visible) {
+            $app.screenshotMetadataCarouselChange(carouselNavigation);
         }
     });
 
@@ -20627,7 +20638,7 @@ speechSynthesis.getVoices();
 
         this.showScreenshotMetadataDialog();
     };
-
+    
     $app.data.screenshotMetadataDialog = {
         visible: false,
         metadata: {},
@@ -20695,6 +20706,22 @@ speechSynthesis.getVoices();
                 console.error(err);
                 D.isUploading = false;
             });
+    };
+
+    /**
+     * This function is called by .NET(CefCustomDragHandler#CefCustomDragHandler) when a file is dragged over a drop zone in the app window.
+     * @param {string} filePath - The full path to the file being dragged into the window
+     */
+    $app.methods.dragEnterCef = function(filePath) {
+        this.currentlyDroppingFile = filePath
+    };
+
+    $app.methods.handleDrop = function(event) {        
+        if (this.currentlyDroppingFile == null) return
+        console.log("Dropped file into window: ", this.currentlyDroppingFile)
+        AppApi.GetScreenshotMetadata(this.currentlyDroppingFile);
+
+        event.preventDefault()
     };
 
     // YouTube API

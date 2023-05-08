@@ -41,7 +41,7 @@ namespace VRCX
 
             Browser = new ChromiumWebBrowser("file://vrcx/index.html")
             {
-                DragHandler = new NoopDragHandler(),
+                DragHandler = new CustomDragHandler(),
                 MenuHandler = new CustomMenuHandler(),
                 DownloadHandler = new CustomDownloadHandler(),
                 BrowserSettings =
