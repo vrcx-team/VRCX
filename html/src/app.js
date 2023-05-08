@@ -88,6 +88,11 @@ speechSynthesis.getVoices();
         } else if (e.altKey && e.key === 'R') {
             $app.refreshCustomCss();
         }
+
+        let carouselNavigation = { 'ArrowLeft': 0, 'ArrowRight': 2 }[e.key]
+        if (carouselNavigation !== undefined && $app.screenshotMetadataDialog?.visible) {
+            $app.screenshotMetadataCarouselChange(carouselNavigation);
+        }
     });
 
     VRCXStorage.GetArray = async function (key) {
