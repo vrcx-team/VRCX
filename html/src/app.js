@@ -20586,6 +20586,12 @@ speechSynthesis.getVoices();
         this.VRChatConfigFile.screenshot_res_width = res.width;
     };
 
+    // Auto Launch Shortcuts
+
+    $app.methods.openShortcutFolder = function () {
+        AppApi.OpenShortcutFolder();
+    }
+
     // Screenshot Helper
 
     $app.methods.saveScreenshotHelper = function () {
@@ -20747,7 +20753,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.openImageFolder = function (path) {
-        AppApi.OpenImageFolder(path).then(() => {
+        AppApi.OpenFolderAndSelectItem(path).then(() => {
             this.$message({
                 message: 'Opened image folder',
                 type: 'success'

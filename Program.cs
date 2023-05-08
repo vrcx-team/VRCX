@@ -84,6 +84,7 @@ namespace VRCX
             Discord.Instance.Init();
             WebApi.Instance.Init();
             LogWatcher.Instance.Init();
+            AutoAppLaunchManager.Instance.Init();
 
             CefService.Instance.Init();
             IPCServer.Instance.Init();
@@ -93,6 +94,7 @@ namespace VRCX
             VRCXVR.Instance.Exit();
             CefService.Instance.Exit();
 
+            AutoAppLaunchManager.Instance.Exit();
             LogWatcher.Instance.Exit();
             WebApi.Instance.Exit();
 

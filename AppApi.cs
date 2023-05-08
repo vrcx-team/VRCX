@@ -829,16 +829,26 @@ namespace VRCX
             }
         }
 
-        public void OpenImageFolder(string path)
+        public void OpenShortcutFolder()
         {
-            if (!File.Exists(path))
+            var path = AutoAppLaunchManager.Instance.AppShortcutDirectory;
+            if (!Directory.Exists(path))
                 return;
 
-            string folderPath = Path.GetDirectoryName(path);
+            OpenFolderAndSelectItem(path, true);
+        }
+
+        public void OpenFolderAndSelectItem(string path, bool isFolder = false)
+        {
+            // I don't think it's quite meant for it, but SHOpenFolderAndSelectItems can open folders by passing the folder path as the item to select, as a child to itself, somehow. So we'll check to see if 'path' is a folder as well.
+            if (!File.Exists(path) && !Directory.Exists(path))
+                return;
+
+            string folderPath = isFolder ? path : Path.GetDirectoryName(path);
             IntPtr pidlFolder;
             IntPtr pidlFile;
             uint psfgaoOut;
-
+                
             // Convert our managed strings to PIDLs. PIDLs are essentially pointers to the actual file system objects, separate from the "display name", which is the human-readable path to the file/folder. We're parsing the display name into a PIDL here.
             // The windows shell uses PIDLs to identify objects in winapi calls, so we'll need to use them to open the folder and select the file. Cool stuff!
             int result = WinApi.SHParseDisplayName(folderPath, IntPtr.Zero, out pidlFolder, 0, out psfgaoOut);
