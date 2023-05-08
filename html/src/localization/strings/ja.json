@@ -302,11 +302,11 @@
                     "text_to_speech": {
                         "header": "音声読み上げ設定",
                         "when_to_play": "読み上げタイミング",
-                        "when_to_play_never": "表示しない",
+                        "when_to_play_never": "読み上げない",
                         "when_to_play_inside_vr": "VR中",
                         "when_to_play_game_closed": "ゲーム終了時",
                         "when_to_play_game_running": "ゲーム実行時",
-                        "when_to_play_always": "常に表示",
+                        "when_to_play_always": "常に読み上げ",
                         "tts_voice": "読み上げボイス"
                     }
                 }
@@ -328,7 +328,7 @@
                     "display_overlay_on_left": "左手",
                     "display_overlay_on_right": "右手",
                     "display_overlay_on_both": "両手",
-                    "background_color": "背景色",
+                    "background_color": "背景に色を付ける",
                     "minimal_feed_icons": "小さいフィードアイコン",
                     "hide_vr_devices": "VRデバイスを表示しない",
                     "hide_cpu_usage": "CPU使用率を表示しない",
@@ -386,7 +386,7 @@
                         "youtube_api_key": "Youtube APIキー"
                     },
                     "video_progress_pie": {
-                        "header": "動画にプログレスをオーバーレイ表示",
+                        "header": "動画のプログレスをオーバーレイ表示",
                         "enable": "有効化",
                         "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です",
                         "dance_world_only": "ダンスワールドのみ"
@@ -746,7 +746,18 @@
                 "header": "メンバー",
                 "all_members": "全員",
                 "friends_only": "フレンドのみ",
-                "load_more": "もっと見る..."
+                "load_more": "もっと見る...",
+                "sort_by": "ソート順:",
+                "sorting": {
+                    "user_id": "ユーザーID (登順)",
+                    "joined_at_asc": "参加順 (昇順)",
+                    "joined_at_desc": "Joined 参加順 (降順)"
+                },
+                "filter": "フィルター:",
+                "filters": {
+                    "everyone": "全員",
+                    "users_with_no_role": "ロール無しユーザー"
+                }
             },
             "gallery": {
                 "header": "ギャラリー"
@@ -1180,21 +1191,21 @@
             "description": "秒数を入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な数字が必要です"
+            "input_error": "有効な数字を入力してください"
         },
         "overlay_message_timeout": {
             "header": "オーバーレイメッセージのタイムアウト時間",
             "description": "秒数を入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な数字が必要です"
+            "input_error": "有効な数字を入力してください"
         },
         "rename_avatar": {
             "header": "アバター名を変更",
             "description": "アバター名を入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な名前が必要です",
+            "input_error": "有効な名前を入力してください",
             "message": {
                 "success": "アバター名を変更しました"
             }
@@ -1204,7 +1215,7 @@
             "description": "アバターの説明を入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な説明文が必要です",
+            "input_error": "有効な説明文を入力してください",
             "message": {
                 "success": "アバターの説明を変更しました"
             }
@@ -1214,7 +1225,7 @@
             "description": "ワールド名を入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な名前が必要です",
+            "input_error": "有効な名前を入力してください",
             "message": {
                 "success": "ワールド名を変更しました"
             }
@@ -1224,7 +1235,7 @@
             "description": "ワールドの説明を入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な説明文が必要です",
+            "input_error": "有効な説明文を入力してください",
             "message": {
                 "success": "ワールドの説明を変更しました"
             }
@@ -1234,7 +1245,7 @@
             "description": "ワールドの最大人数を入力してください。最高値: 40",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な数字が必要です",
+            "input_error": "有効な数字を入力してください",
             "message": {
                 "success": "ワールドの最大人数を変更しました"
             }
@@ -1244,7 +1255,7 @@
             "description": "ワールドのYouTube 動画リンクを入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効なYouTube URLが必要です",
+            "input_error": "有効なYouTube URLを入力してください",
             "message": {
                 "error": "無効なYouTube URLです",
                 "success": "ワールドのYouTube プレビュー動画を変更しました"
@@ -1252,33 +1263,33 @@
         },
         "change_table_size": {
             "header": "テーブルの最大数",
-            "description": "データベースからUIページに読み込まれるエントリの量を制限します。テーブル数が多くなるとRAM使用量とパフォーマンスに影響を及ぼす可能性があります。 (デフォルト:1000, 最高値: 10000)",
+            "description": "データベースからUIページに読み込まれるエントリの量を制限します。テーブル数が多いとRAM使用量とパフォーマンスに影響を及ぼす可能性があります。 (デフォルト:1000, 最高値: 10000)",
             "cancel": "キャンセル",
             "save": "保存",
-            "input_error": "有効な数字が必要です"
+            "input_error": "有効な数字を入力してください"
         },
         "photon_lobby_timeout": {
             "header": "ユーザータイムアウト しきい値",
             "description": "タイムアウトまでの秒数を入力してください (デフォルト: 3)",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な数字が必要です"
+            "input_error": "有効な数字を入力してください"
         },
         "auto_clear_cache": {
             "header": "VRCX キャッシュの自動消去タイマー",
             "description": "消去までの時間を入力してください。長い時間を指定するとRAM使用量とパフォーマンスに影響を及ぼす可能性があります。 (デフォルト: 24, 無効化: 0)",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な数字が必要です"
+            "input_error": "有効な数字を入力してください"
         },
         "new_local_favorite_group": {
             "header": "新しいグループ",
             "description": "お気に入りワールド グループ名を入力してください",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "名前が必要です",
+            "input_error": "名前を入力してください",
             "message": {
-                "error": "このグループ名は既に{name}として存在しています。"
+                "error": "このグループ名は既に {name} として存在しています。"
             }
         },
         "local_favorite_group_rename": {
@@ -1286,7 +1297,7 @@
             "description": "お気に入りワールド グループ名を入力してください",
             "cancel": "キャンセル",
             "save": "保存",
-            "input_error": "名前が必要です",
+            "input_error": "名前を入力してください",
             "message": {
                 "error": "このグループ名は既に {name} として存在しています。"
             }
@@ -1296,7 +1307,7 @@
             "description": "オフライン保留の待機秒数を指定してください (デフォルト: 110)",
             "cancel": "キャンセル",
             "save": "保存",
-            "input_error": "有効な数字が必要です"
+            "input_error": "有効な数字を入力してください"
         }
     },
     "table": {
