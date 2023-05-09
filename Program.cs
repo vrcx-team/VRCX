@@ -80,6 +80,7 @@ namespace VRCX
 
             SQLite.Instance.Init();
             VRCXStorage.Load();
+            LoadFromConfig();
             CpuMonitor.Instance.Init();
             Discord.Instance.Init();
             WebApi.Instance.Init();
@@ -100,6 +101,12 @@ namespace VRCX
             CpuMonitor.Instance.Exit();
             VRCXStorage.Save();
             SQLite.Instance.Exit();
+        }
+
+        private static void LoadFromConfig()
+        {
+            GPUFix = VRCXStorage.Instance.Get("GPU_Fix") == "true";
+            LaunchDebug = VRCXStorage.Instance.Get("Launch_Debug") == "true";
         }
     }
 }
