@@ -7,6 +7,11 @@ using System.Timers;
 
 namespace VRCX
 {
+    // I don't think this applies to our use case, but I'm leaving it here for reference.
+    // https://stackoverflow.com/questions/2519673/process-hasexited-returns-true-even-though-process-is-running
+    // "When a process is started, it is assigned a PID. If the User is then prompted with the User Account Control dialog and selects 'Yes', the process is re-started and assigned a new PID."
+    // There's no docs for this, but Process.HasExited also seems to be checked every time the property is accessed, so it's not cached. Which means Process.Refresh() is not needed for our use case.
+
     /// <summary>
     /// A class that monitors given processes and raises events when they are started or exited.
     /// Intended to be used to monitor VRChat and VRChat-related processes.
@@ -72,6 +77,8 @@ namespace VRCX
                         monitoredProcess.ProcessExited();
                         ProcessExited.Invoke(monitoredProcess);
                     }
+
+                    monitoredProcess.Process.Refresh();
                 }
                 else
                 {
