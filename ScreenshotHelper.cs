@@ -187,7 +187,11 @@ namespace VRCX
             var metadata = new JObject();
             // lfs|2|author:usr_032383a7-748c-4fb2-94e4-bcb928e5de6b,Natsumi-sama|world:wrld_b016712b-5ce6-4bcb-9144-c8ed089b520f,35372,pet park test|pos:-60.49379,-0.002925932,5.805772|players:usr_9d73bff9-4543-4b6f-a004-9e257869ff50,-0.85,-0.17,-0.58,Olivia.;usr_3097f91e-a816-4c7a-a625-38fbfdee9f96,12.30,13.72,0.08,Zettai Ryouiki;usr_032383a7-748c-4fb2-94e4-bcb928e5de6b,0.68,0.32,-0.28,Natsumi-sama;usr_7525f45f-517e-442b-9abc-fbcfedb29f84,0.51,0.64,0.70,Weyoun
             // lfs|2|author:usr_8c0a2f22-26d4-4dc9-8396-2ab40e3d07fc,knah|world:wrld_fb4edc80-6c48-43f2-9bd1-2fa9f1345621,35341,Luminescent Ledge|pos:8.231676,0.257298,-0.1983307|rq:2|players:usr_65b9eeeb-7c91-4ad2-8ce4-addb1c161cd6,0.74,0.59,1.57,Jakkuba;usr_6a50647f-d971-4281-90c3-3fe8caf2ba80,8.07,9.76,0.16,SopwithPup;usr_8c0a2f22-26d4-4dc9-8396-2ab40e3d07fc,0.26,1.03,-0.28,knah;usr_7f593ad1-3e9e-4449-a623-5c1c0a8d8a78,0.15,0.60,1.46,NekOwneD
+            // lfs|cvr|1|author:047b30bd-089d-887c-8734-b0032df5d176,Hordini|world:2e73b387-c6d4-45e9-b998-0fd6aa122c1d,i+efec20004ef1cd8b-404003-93833f-1aee112a,Bono's Basement (Anime) (#816724)|pos:2.196716,0.01250899,-3.817466|players:5301af21-eb8d-7b36-3ef4-b623fa51c2c6,3.778407,0.01250887,-3.815876,DDAkebono;f9e5c36c-41b0-7031-1185-35b4034010c0,4.828233,0.01250893,-3.920135,Natsumi
             var lfs = metadataString.Split('|');
+            if (lfs[1] == "cvr")
+                lfs = lfs.Skip(1).ToArray();
+
             var version = int.Parse(lfs[1]);
             var application = lfs[0];
             metadata.Add("application", application);
@@ -219,6 +223,16 @@ namespace VRCX
                 {
                     case "author":
                         var author = split[1].Split(',');
+                        if (application == "cvr")
+                        {
+                            metadata.Add("author", new JObject
+                            {
+                                { "id", "" },
+                                { "displayName", $"{author[1]} ({author[0]})" }
+                            });
+                            break;
+                        }
+
                         metadata.Add("author", new JObject
                         {
                             { "id", author[0] },
@@ -226,7 +240,17 @@ namespace VRCX
                         });
                         break;
                     case "world":
-                        if (version == 1)
+                        if (application == "cvr")
+                        {
+                            var world = split[1].Split(',');
+                            metadata.Add("world", new JObject
+                            {
+                                { "id", "" },
+                                { "name", $"{world[2]} ({world[0]})" },
+                                { "instanceId", "" }
+                            });
+                        }
+                        else if (version == 1)
                         {
                             metadata.Add("world", new JObject
                             {
@@ -265,14 +289,28 @@ namespace VRCX
                         foreach (var player in players)
                         {
                             var playerSplit = player.Split(',');
-                            playersArray.Add(new JObject
+                            if (application == "cvr")
                             {
-                                { "id", playerSplit[0] },
-                                { "x", playerSplit[1] },
-                                { "y", playerSplit[2] },
-                                { "z", playerSplit[3] },
-                                { "displayName", playerSplit[4] }
-                            });
+                                playersArray.Add(new JObject
+                                {
+                                    { "id", "" },
+                                    { "x", playerSplit[1] },
+                                    { "y", playerSplit[2] },
+                                    { "z", playerSplit[3] },
+                                    { "displayName", $"{playerSplit[4]} ({playerSplit[0]})" }
+                                });
+                            }
+                            else
+                            {
+                                playersArray.Add(new JObject
+                                {
+                                    { "id", playerSplit[0] },
+                                    { "x", playerSplit[1] },
+                                    { "y", playerSplit[2] },
+                                    { "z", playerSplit[3] },
+                                    { "displayName", playerSplit[4] }
+                                });
+                            }
                         }
 
                         metadata.Add("players", playersArray);

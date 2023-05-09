@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -24,7 +25,6 @@ using librsync.net;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Runtime.InteropServices;
 
 namespace VRCX
 {
@@ -38,6 +38,17 @@ namespace VRCX
         static AppApi()
         {
             Instance = new AppApi();
+
+            ProcessMonitor.Instance.ProcessStarted += Instance.OnProcessStateChanged;
+            ProcessMonitor.Instance.ProcessExited += Instance.OnProcessStateChanged;
+        }
+
+        private void OnProcessStateChanged(MonitoredProcess monitoredProcess)
+        {
+            if (!monitoredProcess.HasName("VRChat") && !monitoredProcess.HasName("vrserver"))
+                return;
+
+            CheckGameRunning();
         }
 
         public string MD5File(string Blob)
@@ -118,7 +129,7 @@ namespace VRCX
             Cef.GetGlobalCookieManager().DeleteCookies();
         }
 
-        public bool[] CheckGameRunning()
+        public void CheckGameRunning()
         {
             var isGameRunning = false;
             var isSteamVRRunning = false;
@@ -133,11 +144,8 @@ namespace VRCX
                 isSteamVRRunning = true;
             }
 
-            return new[]
-            {
-                isGameRunning,
-                isSteamVRRunning
-            };
+            if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading)
+                MainForm.Instance.Browser.ExecuteScriptAsync("$app.updateIsGameRunning", isGameRunning, isSteamVRRunning);
         }
 
         public int QuitGame()
@@ -722,6 +730,9 @@ namespace VRCX
 
         public void GetScreenshotMetadata(string path)
         {
+            if (string.IsNullOrEmpty(path))
+                return;
+
             var fileName = Path.GetFileNameWithoutExtension(path);
             var metadata = new JObject();
             if (File.Exists(path) && path.EndsWith(".png"))
@@ -749,7 +760,7 @@ namespace VRCX
                         }
                         catch (Exception ex)
                         {
-                            metadata.Add("error", $"This file contains invalid LFS/SSM metadata unable to be parsed by VRCX. \n({ex.Message})\n Text: {metadataString}");
+                            metadata.Add("error", $"This file contains invalid LFS/SSM metadata unable to be parsed by VRCX. \n({ex.Message})\nText: {metadataString}");
                         }
                     }
                     else
@@ -760,7 +771,7 @@ namespace VRCX
                         }
                         catch (JsonReaderException ex)
                         {
-                            metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. \n({ex.Message})\n Text: {metadataString}");
+                            metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. \n({ex.Message})\nText: {metadataString}");
                         }
                     }
                 }
@@ -844,14 +855,14 @@ namespace VRCX
             if (!File.Exists(path) && !Directory.Exists(path))
                 return;
 
-            string folderPath = isFolder ? path : Path.GetDirectoryName(path);
+            var folderPath = isFolder ? path : Path.GetDirectoryName(path);
             IntPtr pidlFolder;
             IntPtr pidlFile;
             uint psfgaoOut;
-                
+
             // Convert our managed strings to PIDLs. PIDLs are essentially pointers to the actual file system objects, separate from the "display name", which is the human-readable path to the file/folder. We're parsing the display name into a PIDL here.
             // The windows shell uses PIDLs to identify objects in winapi calls, so we'll need to use them to open the folder and select the file. Cool stuff!
-            int result = WinApi.SHParseDisplayName(folderPath, IntPtr.Zero, out pidlFolder, 0, out psfgaoOut);
+            var result = WinApi.SHParseDisplayName(folderPath, IntPtr.Zero, out pidlFolder, 0, out psfgaoOut);
             if (result != 0)
             {
                 return;
@@ -865,7 +876,7 @@ namespace VRCX
                 return;
             }
 
-            IntPtr[] files = new IntPtr[] { pidlFile };
+            IntPtr[] files = { pidlFile };
 
             try
             {

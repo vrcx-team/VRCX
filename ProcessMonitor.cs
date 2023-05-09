@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Timers;
 
 namespace VRCX
@@ -13,24 +12,13 @@ namespace VRCX
     // There's no docs for this, but Process.HasExited also seems to be checked every time the property is accessed, so it's not cached. Which means Process.Refresh() is not needed for our use case.
 
     /// <summary>
-    /// A class that monitors given processes and raises events when they are started or exited.
-    /// Intended to be used to monitor VRChat and VRChat-related processes.
+    ///     A class that monitors given processes and raises events when they are started or exited.
+    ///     Intended to be used to monitor VRChat and VRChat-related processes.
     /// </summary>
     internal class ProcessMonitor
     {
-        public static ProcessMonitor Instance { get; private set; }
-        private Dictionary<string, MonitoredProcess> monitoredProcesses;
-        private Timer monitorProcessTimer;
-
-        /// <summary>
-        /// Raised when a monitored process is started.
-        /// </summary>
-        public event Action<MonitoredProcess> ProcessStarted;
-
-        /// <summary>
-        /// Raised when a monitored process is exited.
-        /// </summary>
-        public event Action<MonitoredProcess> ProcessExited;
+        private readonly Dictionary<string, MonitoredProcess> monitoredProcesses;
+        private readonly Timer monitorProcessTimer;
 
         static ProcessMonitor()
         {
@@ -46,9 +34,21 @@ namespace VRCX
             monitorProcessTimer.Elapsed += MonitorProcessTimer_Elapsed;
         }
 
+        public static ProcessMonitor Instance { get; private set; }
+
+        /// <summary>
+        ///     Raised when a monitored process is started.
+        /// </summary>
+        public event Action<MonitoredProcess> ProcessStarted;
+
+        /// <summary>
+        ///     Raised when a monitored process is exited.
+        /// </summary>
+        public event Action<MonitoredProcess> ProcessExited;
+
         public void Init()
         {
-            AddProcess("VRChat");
+            AddProcess("vrchat");
             AddProcess("vrserver");
             monitorProcessTimer.Start();
         }
@@ -68,14 +68,14 @@ namespace VRCX
             {
                 var monitoredProcess = keyValuePair.Value;
                 var process = monitoredProcess.Process;
-                string name = monitoredProcess.ProcessName;
+                var name = monitoredProcess.ProcessName;
 
                 if (monitoredProcess.IsRunning)
                 {
                     if (monitoredProcess.Process == null || monitoredProcess.Process.HasExited)
                     {
                         monitoredProcess.ProcessExited();
-                        ProcessExited.Invoke(monitoredProcess);
+                        ProcessExited?.Invoke(monitoredProcess);
                     }
 
                     monitoredProcess.Process.Refresh();
@@ -97,13 +97,13 @@ namespace VRCX
                 if (process != null)
                 {
                     monitoredProcess.ProcessStarted(process);
-                    ProcessStarted.Invoke(monitoredProcess);
+                    ProcessStarted?.Invoke(monitoredProcess);
                 }
             }
         }
 
         /// <summary>
-        /// Checks if a process if currently being monitored and if it is running.
+        ///     Checks if a process if currently being monitored and if it is running.
         /// </summary>
         /// <param name="processName">The name of the process to check for.</param>
         /// <param name="ensureCheck">If true, will manually check if the given process is running should the the monitored process not be initialized yet.</param>
@@ -116,9 +116,7 @@ namespace VRCX
                 var process = monitoredProcesses[processName];
 
                 if (ensureCheck && process.Process == null)
-                {
                     return Process.GetProcessesByName(processName).FirstOrDefault() != null;
-                }
 
                 return process.IsRunning;
             }
@@ -127,21 +125,19 @@ namespace VRCX
         }
 
         /// <summary>
-        /// Adds a process to be monitored.
+        ///     Adds a process to be monitored.
         /// </summary>
         /// <param name="process"></param>
         public void AddProcess(Process process)
         {
             if (monitoredProcesses.ContainsKey(process.ProcessName.ToLower()))
-            {
                 return;
-            }
 
             monitoredProcesses.Add(process.ProcessName.ToLower(), new MonitoredProcess(process));
         }
 
         /// <summary>
-        /// Adds a process to be monitored.
+        ///     Adds a process to be monitored.
         /// </summary>
         /// <param name="processName"></param>
         public void AddProcess(string processName)
@@ -155,7 +151,7 @@ namespace VRCX
         }
 
         /// <summary>
-        /// Removes a process from being monitored.
+        ///     Removes a process from being monitored.
         /// </summary>
         /// <param name="processName"></param>
         public void RemoveProcess(string processName)
@@ -163,17 +159,12 @@ namespace VRCX
             if (monitoredProcesses.ContainsKey(processName.ToLower()))
             {
                 monitoredProcesses.Remove(processName);
-            }            
+            }
         }
-
     }
 
     internal class MonitoredProcess
     {
-        public Process Process { get; private set; }
-        public string ProcessName { get; private set; }
-        public bool IsRunning { get; private set; }
-
         public MonitoredProcess(Process process)
         {
             Process = process;
@@ -189,6 +180,10 @@ namespace VRCX
             IsRunning = false;
         }
 
+        public Process Process { get; private set; }
+        public string ProcessName { get; private set; }
+        public bool IsRunning { get; private set; }
+
         public bool HasName(string processName)
         {
             return ProcessName.Equals(processName, StringComparison.OrdinalIgnoreCase);
@@ -197,7 +192,7 @@ namespace VRCX
         public void ProcessExited()
         {
             IsRunning = false;
-            Process.Dispose();
+            Process?.Dispose();
             Process = null;
         }
 
