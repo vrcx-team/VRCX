@@ -3,23 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
-using System.Windows.Forms;
 
 namespace VRCX
 {
     /// <summary>
-    /// Planned feature overview
-    /// General summary of feature: Automatically launch user-defined apps when VRChat is launched, and close thm when VRChat is closed. 
-    /// The feature should: 
-    /// - Allow users to add/remove apps to the list of apps to be launched
-    /// - Automatically launch apps when VRChat is launched
-    /// - Automatically close apps when VRChat is closed
-    /// - Monitor the list of apps to be launched for changes
-    /// - Allow users to enable/disable the feature
-    /// - Monitor the VRChat process/log(?) for changes
+    /// The class responsible for launching user-defined applications when VRChat opens/closes.
     /// </summary>
     public class AutoAppLaunchManager
     {
@@ -28,10 +16,7 @@ namespace VRCX
         public readonly string AppShortcutDirectory;
 
         private DateTime startTime = DateTime.Now;
-        private string[] shortcutFiles;
-        private System.Timers.Timer processMonitorTimer;
-        private Process vrchatProcess;
-        private List<Process> monitoredProcesses;
+        private List<Process> startedProcesses = new List<Process>();
         private static readonly byte[] shortcutSignatureBytes = { 0x4C, 0x00, 0x00, 0x00 }; // signature for ShellLinkHeader\
 
         static AutoAppLaunchManager() 
@@ -48,39 +33,73 @@ namespace VRCX
                 Directory.CreateDirectory(AppShortcutDirectory);
             }
 
-            // I just realized languages other than English exist! Damn.
-            /*string readmePath = Path.Combine(AppShortcutDirectory, "README.txt");
-            if (!File.Exists(readmePath))
+            ProcessMonitor.Instance.ProcessStarted += OnProcessStarted;
+            ProcessMonitor.Instance.ProcessExited += OnProcessExited;
+        }
+
+        private void OnProcessExited(MonitoredProcess monitoredProcess)
+        {
+            if (startedProcesses.Count == 0 || !monitoredProcess.HasName("VRChat"))
+                return;
+
+            foreach (var process in startedProcesses)
             {
-                File.WriteAllText(readmePath, "Any windows shortcuts placed in this folder will be automatically launched and closed according to the current state of the VRChat process if the feature is enabled.");
-            }*/
+                if (!process.HasExited)
+                    process.Kill();
+            }
 
-            processMonitorTimer = new System.Timers.Timer();
-            processMonitorTimer.Interval = 1000;
-            processMonitorTimer.Elapsed += Timer_Elapsed;
+            startedProcesses.Clear();
+        }
 
-            shortcutFiles = FindShortcutFiles(AppShortcutDirectory);
-            monitoredProcesses = new List<Process>();
+        private void OnProcessStarted(MonitoredProcess monitoredProcess)
+        {
+            if (!monitoredProcess.HasName("VRChat") || monitoredProcess.Process.StartTime < startTime) 
+                return;
+
+            if (startedProcesses.Count > 0)
+            {
+                foreach (var process in startedProcesses)
+                {
+                    if (!process.HasExited)
+                        process.Kill();
+                }
+
+                startedProcesses.Clear();
+            }
+
+            var shortcutFiles = FindShortcutFiles(AppShortcutDirectory);
+
+            if (shortcutFiles.Length > 0)
+            {
+                foreach (var file in shortcutFiles)
+                {
+                    var process = Process.Start(file);
+                    startedProcesses.Add(process);
+                }
+            }
         }
 
         internal void Init()
         {
-            processMonitorTimer.Start();
+            // What are you lookin at?
         }
 
         internal void Exit()
         {
             Enabled = false;
-            vrchatProcess = null;
-            processMonitorTimer.Stop();
 
-            foreach (var process in monitoredProcesses)
+            foreach (var process in startedProcesses)
             {
                 if (!process.HasExited)
                     process.Kill();
             }
         }
 
+        /// <summary>
+        /// Finds windows shortcut files in a given folder.
+        /// </summary>
+        /// <param name="folderPath">The folder path.</param>
+        /// <returns>An array of shortcut paths. If none, then empty.</returns>
         private static string[] FindShortcutFiles(string folderPath)
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
@@ -98,6 +117,11 @@ namespace VRCX
             return ret.ToArray();
         }
 
+        /// <summary>
+        /// Determines whether the specified file path is a shortcut by checking the file header.
+        /// </summary>
+        /// <param name="filePath">The file path.</param>
+        /// <returns><c>true</c> if the given file path is a shortcut, otherwise <c>false</c></returns>
         private static bool IsShortcutFile(string filePath)
         {
             byte[] headerBytes = new byte[4];
@@ -110,51 +134,6 @@ namespace VRCX
             }
 
             return headerBytes.SequenceEqual(shortcutSignatureBytes);
-        }
-
-
-        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            if (!Enabled) return;
-
-            if (vrchatProcess == null)
-            {
-                var process = Process.GetProcessesByName("VRChat").FirstOrDefault();
-
-                // Make sure the process is newer than the start time of VRCX.
-                if (process != null && process.StartTime > this.startTime)
-                {
-                    vrchatProcess = process;
-                }
-            }
-            else
-            {
-                if (vrchatProcess.HasExited)
-                {
-                    vrchatProcess = null;
-
-                    foreach (var process in monitoredProcesses)
-                    {
-                        if (!process.HasExited)
-                            process.Kill();
-                    }
-
-                    monitoredProcesses.Clear();
-
-                    return;
-                }
-
-                if (shortcutFiles.Length > 0 && monitoredProcesses.Count == 0)
-                {
-                    foreach (var file in shortcutFiles) 
-                    {
-                        var process = Process.Start(file);
-                        //process.EnableRaisingEvents = true;
-                        //process.Exited += ProcessExited;
-                        monitoredProcesses.Add(process);
-                    }
-                }
-            }
         }
     }
 }

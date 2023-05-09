@@ -78,6 +78,7 @@ namespace VRCX
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            ProcessMonitor.Instance.Init();
             SQLite.Instance.Init();
             VRCXStorage.Load();
             CpuMonitor.Instance.Init();
@@ -102,6 +103,7 @@ namespace VRCX
             CpuMonitor.Instance.Exit();
             VRCXStorage.Save();
             SQLite.Instance.Exit();
+            ProcessMonitor.Instance.Exit();
         }
     }
 }
