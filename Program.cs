@@ -81,6 +81,7 @@ namespace VRCX
             ProcessMonitor.Instance.Init();
             SQLite.Instance.Init();
             VRCXStorage.Load();
+            LoadFromConfig();
             CpuMonitor.Instance.Init();
             Discord.Instance.Init();
             WebApi.Instance.Init();
@@ -104,6 +105,12 @@ namespace VRCX
             VRCXStorage.Save();
             SQLite.Instance.Exit();
             ProcessMonitor.Instance.Exit();
+        }
+
+        private static void LoadFromConfig()
+        {
+            if (!GPUFix) GPUFix = VRCXStorage.Instance.Get("GPU_Fix") == "true";
+            if (!LaunchDebug) LaunchDebug = VRCXStorage.Instance.Get("Launch_Debug") == "true";
         }
     }
 }
