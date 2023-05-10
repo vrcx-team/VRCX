@@ -134,12 +134,12 @@ namespace VRCX
             var isGameRunning = false;
             var isSteamVRRunning = false;
 
-            if (ProcessMonitor.Instance.IsProcessRunning("VRChat", true))
+            if (ProcessMonitor.Instance.IsProcessRunning("VRChat"))
             {
                 isGameRunning = true;
             }
 
-            if (ProcessMonitor.Instance.IsProcessRunning("vrserver", true))
+            if (ProcessMonitor.Instance.IsProcessRunning("vrserver"))
             {
                 isSteamVRRunning = true;
             }
