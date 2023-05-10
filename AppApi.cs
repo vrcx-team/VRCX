@@ -670,6 +670,15 @@ namespace VRCX
             }
         }
 
+        // what the fuck even is this
+        // refactor when
+        // #AppApiLivesDontMatter
+        public void SetAppLauncherSettings(bool enabled, bool killOnExit)
+        {
+            AutoAppLaunchManager.Instance.Enabled = enabled;
+            AutoAppLaunchManager.Instance.Enabled = killOnExit;
+        }
+
         public void AddScreenshotMetadata(string path, string metadataString, string worldId, bool changeFilename = false)
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
