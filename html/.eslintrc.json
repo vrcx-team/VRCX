@@ -85,6 +85,7 @@
         "sort-keys": 0,
         "sort-vars": 0,
         "strict": 0,
-        "vars-on-top": 0
+        "vars-on-top": 0,
+        "object-curly-spacing": ["error", "always"]
     }
 }
