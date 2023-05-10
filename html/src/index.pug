@@ -1418,6 +1418,9 @@ html
                                     el-button(size="small" icon="el-icon-s-operation" @click="showVRChatConfig()") VRChat config.json
                                     el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") {{ $t('view.settings.advanced.advanced.launch_options') }}
                                     el-button(size="small" icon="el-icon-picture" @click="showScreenshotMetadataDialog()") {{ $t('view.settings.advanced.advanced.screenshot_metadata') }}
+                                    el-button(size="small" icon="el-icon-folder" @click="openShortcutFolder()") {{ $t('view.settings.advanced.advanced.auto_launch') }}
+                                        el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.auto_launch_tooltip')")
+                                            i.el-icon-warning
                             div.options-container
                                 span.sub-header {{ $t('view.settings.advanced.advanced.primary_password.header') }}
                                 div.options-container-item
@@ -3880,7 +3883,7 @@ html
                                 img(v-lazy="screenshotMetadataDialog.metadata.nextFilePath" style="height:700px")
                     br
                     template(v-if="screenshotMetadataDialog.metadata.error")
-                        pre(v-text="screenshotMetadataDialog.metadata.error")
+                        pre(v-text="screenshotMetadataDialog.metadata.error" style="white-space:pre-wrap;font-size:12px")
                         br
                     span(v-for="user in screenshotMetadataDialog.metadata.players" style="margin-top:5px")
                         span.x-link(v-text="user.displayName" @click="lookupUser(user)")

@@ -4885,6 +4885,7 @@ speechSynthesis.getVoices();
                     this.checkForVRCXUpdate();
                 }
             });
+            AppApi.CheckGameRunning();
             API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
             API.$on('SHOW_WORLD_DIALOG_SHORTNAME', (tag) =>
                 this.verifyShortName('', tag)
@@ -5045,51 +5046,55 @@ speechSynthesis.getVoices();
                     this.nextClearVRCXCacheCheck = this.clearVRCXCacheFrequency;
                     this.clearVRCXCache();
                 }
-                AppApi.CheckGameRunning().then(
-                    ([isGameRunning, isSteamVRRunning]) => {
-                        this.updateOpenVR(isGameRunning, isSteamVRRunning);
-                        if (isGameRunning !== this.isGameRunning) {
-                            this.isGameRunning = isGameRunning;
-                            if (isGameRunning) {
-                                API.currentUser.$online_for = Date.now();
-                                API.currentUser.$offline_for = '';
-                            } else {
-                                configRepository.setBool(
-                                    'isGameNoVR',
-                                    this.isGameNoVR
-                                );
-                                API.currentUser.$online_for = '';
-                                API.currentUser.$offline_for = Date.now();
-                                this.autoVRChatCacheManagement();
-                                this.checkIfGameCrashed();
-                                this.ipcTimeout = 0;
-                            }
-                            this.lastLocationReset();
-                            this.clearNowPlaying();
-                            this.updateVRLastLocation();
-                            workerTimers.setTimeout(
-                                () => this.checkVRChatDebugLogging(),
-                                60000
-                            );
-                            this.nextDiscordUpdate = 0;
-                        }
-                        if (isSteamVRRunning !== this.isSteamVRRunning) {
-                            this.isSteamVRRunning = isSteamVRRunning;
-                        }
-                        if (--this.nextDiscordUpdate <= 0) {
-                            this.nextDiscordUpdate = 7;
-                            if (this.discordActive) {
-                                this.updateDiscord();
-                            }
-                        }
+                if (--this.nextDiscordUpdate <= 0) {
+                    this.nextDiscordUpdate = 7;
+                    if (this.discordActive) {
+                        this.updateDiscord();
                     }
-                );
+                }
             }
         } catch (err) {
             API.isRefreshFriendsLoading = false;
             console.error(err);
         }
         workerTimers.setTimeout(() => this.updateLoop(), 500);
+    };
+
+    $app.methods.updateIsGameRunning = function (
+        isGameRunning,
+        isSteamVRRunning
+    ) {
+        console.log(
+            `updateIsGameRunning isGameRunning:${isGameRunning} isSteamVRRunning:${isSteamVRRunning}`
+        );
+        if (isGameRunning !== this.isGameRunning) {
+            this.isGameRunning = isGameRunning;
+            if (isGameRunning) {
+                API.currentUser.$online_for = Date.now();
+                API.currentUser.$offline_for = '';
+            } else {
+                configRepository.setBool('isGameNoVR', this.isGameNoVR);
+                API.currentUser.$online_for = '';
+                API.currentUser.$offline_for = Date.now();
+                this.autoVRChatCacheManagement();
+                this.checkIfGameCrashed();
+                this.ipcTimeout = 0;
+            }
+            this.lastLocationReset();
+            this.clearNowPlaying();
+            this.updateVRLastLocation();
+            workerTimers.setTimeout(
+                () => this.checkVRChatDebugLogging(),
+                60000
+            );
+            this.nextDiscordUpdate = 0;
+            console.log('isGameRunning changed', isGameRunning);
+        }
+        if (isSteamVRRunning !== this.isSteamVRRunning) {
+            this.isSteamVRRunning = isSteamVRRunning;
+            console.log('isSteamVRRunning changed', isSteamVRRunning);
+        }
+        this.updateOpenVR();
     };
 
     $app.data.debug = false;
@@ -9631,10 +9636,12 @@ speechSynthesis.getVoices();
             case 'openvr-init':
                 this.isGameNoVR = false;
                 configRepository.setBool('isGameNoVR', this.isGameNoVR);
+                this.updateOpenVR();
                 break;
             case 'desktop-mode':
                 this.isGameNoVR = true;
                 configRepository.setBool('isGameNoVR', this.isGameNoVR);
+                this.updateOpenVR();
                 break;
             case 'udon-exception':
                 console.log('UdonException', gameLog.data);
@@ -13384,7 +13391,7 @@ speechSynthesis.getVoices();
         this.updateVRConfigVars();
         this.updateVRLastLocation();
         AppApi.ExecuteVrOverlayFunction('notyClear', '');
-        this.updateOpenVR(this.isGameRunning, this.isSteamVRRunning);
+        this.updateOpenVR();
     };
     $app.methods.saveSortFavoritesOption = function () {
         this.getLocalWorldFavorites();
@@ -13523,6 +13530,7 @@ speechSynthesis.getVoices();
         if (!this.timeoutHudOverlay) {
             AppApi.ExecuteVrOverlayFunction('updateHudTimeout', '[]');
         }
+        this.updateOpenVR();
     };
     $app.data.logResourceLoad = configRepository.getBool(
         'VRCX_logResourceLoad'
@@ -13973,12 +13981,12 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.methods.updateOpenVR = function (isGameRunning, isSteamVRRunning) {
+    $app.methods.updateOpenVR = function () {
         if (
             this.openVR &&
             !this.isGameNoVR &&
-            isSteamVRRunning &&
-            (isGameRunning || this.openVRAlways)
+            this.isSteamVRRunning &&
+            (this.isGameRunning || this.openVRAlways)
         ) {
             var hmdOverlay = false;
             if (
@@ -15006,6 +15014,9 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.showUserDialog = function (userId) {
+        if (!userId) {
+            return;
+        }
         this.$nextTick(() => adjustDialogZ(this.$refs.userDialog.$el));
         var D = this.userDialog;
         D.id = userId;
@@ -20586,6 +20597,12 @@ speechSynthesis.getVoices();
         this.VRChatConfigFile.screenshot_res_width = res.width;
     };
 
+    // Auto Launch Shortcuts
+
+    $app.methods.openShortcutFolder = function () {
+        AppApi.OpenShortcutFolder();
+    };
+
     // Screenshot Helper
 
     $app.methods.saveScreenshotHelper = function () {
@@ -20747,7 +20764,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.openImageFolder = function (path) {
-        AppApi.OpenImageFolder(path).then(() => {
+        AppApi.OpenFolderAndSelectItem(path).then(() => {
             this.$message({
                 message: 'Opened image folder',
                 type: 'success'
@@ -20804,6 +20821,7 @@ speechSynthesis.getVoices();
             this.progressPieFilter
         );
         this.updateVRLastLocation();
+        this.updateOpenVR();
     };
 
     $app.methods.showYouTubeApiDialog = function () {

@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -37,6 +38,17 @@ namespace VRCX
         static AppApi()
         {
             Instance = new AppApi();
+
+            ProcessMonitor.Instance.ProcessStarted += Instance.OnProcessStateChanged;
+            ProcessMonitor.Instance.ProcessExited += Instance.OnProcessStateChanged;
+        }
+
+        private void OnProcessStateChanged(MonitoredProcess monitoredProcess)
+        {
+            if (!monitoredProcess.HasName("VRChat") && !monitoredProcess.HasName("vrserver"))
+                return;
+
+            CheckGameRunning();
         }
 
         public string MD5File(string Blob)
@@ -117,26 +129,23 @@ namespace VRCX
             Cef.GetGlobalCookieManager().DeleteCookies();
         }
 
-        public bool[] CheckGameRunning()
+        public void CheckGameRunning()
         {
             var isGameRunning = false;
             var isSteamVRRunning = false;
 
-            if (Process.GetProcessesByName("vrchat").Length > 0)
+            if (ProcessMonitor.Instance.IsProcessRunning("VRChat", true))
             {
                 isGameRunning = true;
             }
 
-            if (Process.GetProcessesByName("vrserver").Length > 0)
+            if (ProcessMonitor.Instance.IsProcessRunning("vrserver", true))
             {
                 isSteamVRRunning = true;
             }
 
-            return new[]
-            {
-                isGameRunning,
-                isSteamVRRunning
-            };
+            if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading)
+                MainForm.Instance.Browser.ExecuteScriptAsync("$app.updateIsGameRunning", isGameRunning, isSteamVRRunning);
         }
 
         public int QuitGame()
@@ -721,6 +730,9 @@ namespace VRCX
 
         public void GetScreenshotMetadata(string path)
         {
+            if (string.IsNullOrEmpty(path))
+                return;
+
             var fileName = Path.GetFileNameWithoutExtension(path);
             var metadata = new JObject();
             if (File.Exists(path) && path.EndsWith(".png"))
@@ -748,7 +760,7 @@ namespace VRCX
                         }
                         catch (Exception ex)
                         {
-                            metadata.Add("error", $"This file contains invalid LFS/SSM metadata unable to be parsed by VRCX. \n({ex.Message})\n Text: {metadataString}");
+                            metadata.Add("error", $"This file contains invalid LFS/SSM metadata unable to be parsed by VRCX. \n({ex.Message})\nText: {metadataString}");
                         }
                     }
                     else
@@ -759,7 +771,7 @@ namespace VRCX
                         }
                         catch (JsonReaderException ex)
                         {
-                            metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. \n({ex.Message})\n Text: {metadataString}");
+                            metadata.Add("error", $"This file contains invalid metadata unable to be parsed by VRCX. \n({ex.Message})\nText: {metadataString}");
                         }
                     }
                 }
@@ -828,13 +840,56 @@ namespace VRCX
             }
         }
 
-        public void OpenImageFolder(string path)
+        public void OpenShortcutFolder()
         {
-            if (!File.Exists(path))
+            var path = AutoAppLaunchManager.Instance.AppShortcutDirectory;
+            if (!Directory.Exists(path))
                 return;
 
-            // open folder with file highlighted
-            Process.Start("explorer.exe", $"/select,\"{path}\"");
+            OpenFolderAndSelectItem(path, true);
+        }
+
+        public void OpenFolderAndSelectItem(string path, bool isFolder = false)
+        {
+            // I don't think it's quite meant for it, but SHOpenFolderAndSelectItems can open folders by passing the folder path as the item to select, as a child to itself, somehow. So we'll check to see if 'path' is a folder as well.
+            if (!File.Exists(path) && !Directory.Exists(path))
+                return;
+
+            var folderPath = isFolder ? path : Path.GetDirectoryName(path);
+            IntPtr pidlFolder;
+            IntPtr pidlFile;
+            uint psfgaoOut;
+
+            // Convert our managed strings to PIDLs. PIDLs are essentially pointers to the actual file system objects, separate from the "display name", which is the human-readable path to the file/folder. We're parsing the display name into a PIDL here.
+            // The windows shell uses PIDLs to identify objects in winapi calls, so we'll need to use them to open the folder and select the file. Cool stuff!
+            var result = WinApi.SHParseDisplayName(folderPath, IntPtr.Zero, out pidlFolder, 0, out psfgaoOut);
+            if (result != 0)
+            {
+                return;
+            }
+
+            result = WinApi.SHParseDisplayName(path, IntPtr.Zero, out pidlFile, 0, out psfgaoOut);
+            if (result != 0)
+            {
+                // Free the PIDL we allocated earlier if we failed to parse the display name of the file.
+                Marshal.FreeCoTaskMem(pidlFolder);
+                return;
+            }
+
+            IntPtr[] files = { pidlFile };
+
+            try
+            {
+                // Open the containing folder and select our file. SHOpenFolderAndSelectItems will respect existing explorer instances, open a new one if none exist, will properly handle paths > 120 chars, and work with third-party filesystem viewers that hook into winapi calls.
+                // It can select multiple items, but we only need to select one. 
+                WinApi.SHOpenFolderAndSelectItems(pidlFolder, (uint)files.Length, files, 0);
+            }
+            finally
+            {
+                // Free the PIDLs we allocated earlier
+                Marshal.FreeCoTaskMem(pidlFolder);
+                Marshal.FreeCoTaskMem(pidlFile);
+            }
         }
 
         public void FlashWindow()

@@ -78,12 +78,14 @@ namespace VRCX
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            ProcessMonitor.Instance.Init();
             SQLite.Instance.Init();
             VRCXStorage.Load();
             CpuMonitor.Instance.Init();
             Discord.Instance.Init();
             WebApi.Instance.Init();
             LogWatcher.Instance.Init();
+            AutoAppLaunchManager.Instance.Init();
 
             CefService.Instance.Init();
             IPCServer.Instance.Init();
@@ -93,6 +95,7 @@ namespace VRCX
             VRCXVR.Instance.Exit();
             CefService.Instance.Exit();
 
+            AutoAppLaunchManager.Instance.Exit();
             LogWatcher.Instance.Exit();
             WebApi.Instance.Exit();
 
@@ -100,6 +103,7 @@ namespace VRCX
             CpuMonitor.Instance.Exit();
             VRCXStorage.Save();
             SQLite.Instance.Exit();
+            ProcessMonitor.Instance.Exit();
         }
     }
 }
