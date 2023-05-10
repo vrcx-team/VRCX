@@ -27,12 +27,12 @@ async function encrypt(plaintext, key) {
     let sharedKey = await window.crypto.subtle.importKey(
         'raw',
         stdAESKey(key),
-        {name: 'AES-GCM', length: 256},
+        { name: 'AES-GCM', length: 256 },
         true,
         ['encrypt']
     );
     let cipher = await window.crypto.subtle.encrypt(
-        {name: 'AES-GCM', iv},
+        { name: 'AES-GCM', iv },
         sharedKey,
         new TextEncoder().encode(plaintext)
     );
@@ -49,12 +49,12 @@ async function decrypt(ciphertext, key) {
     let sharedKey = await window.crypto.subtle.importKey(
         'raw',
         stdAESKey(key),
-        {name: 'AES-GCM', length: 256},
+        { name: 'AES-GCM', length: 256 },
         true,
         ['decrypt']
     );
     let plaintext = await window.crypto.subtle.decrypt(
-        {name: 'AES-GCM', iv: text.slice(0, 12)},
+        { name: 'AES-GCM', iv: text.slice(0, 12) },
         sharedKey,
         text.slice(12)
     );

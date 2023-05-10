@@ -1986,4 +1986,4 @@ class Database {
 var self = new Database();
 window.database = self;
 
-export {self as default, Database};
+export { self as default, Database };

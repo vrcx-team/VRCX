@@ -163,7 +163,7 @@ Vue.component('marquee-text', MarqueeText);
     });
 
     var removeFromArray = function (array, item) {
-        var {length} = array;
+        var { length } = array;
         for (var i = 0; i < length; ++i) {
             if (array[i] === item) {
                 array.splice(i, 1);
@@ -479,7 +479,7 @@ Vue.component('marquee-text', MarqueeText);
     };
 
     $app.methods.playNoty = function (json) {
-        var {noty, message, image} = JSON.parse(json);
+        var { noty, message, image } = JSON.parse(json);
         var message = escapeTag(message);
         var text = '';
         var img = '';

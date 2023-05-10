@@ -105,4 +105,4 @@ class SharedRepository {
 var self = new SharedRepository();
 window.sharedRepository = self;
 
-export {self as default, SharedRepository};
+export { self as default, SharedRepository };
