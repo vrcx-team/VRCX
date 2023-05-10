@@ -9803,15 +9803,8 @@ speechSynthesis.getVoices();
             return;
         }
         var dtNow = Date.now();
-        var bias = this.lastLocationDestinationTime + 5 * 1000;
-        var bias1 = this.lastLocation.date + 30 * 1000;
-        var bias2 = this.photonLastEvent7List + 2 * 1000;
-        if (
-            dtNow < bias ||
-            dtNow < bias1 ||
-            dtNow > bias2 ||
-            this.lastLocation.playerList.size <= 1
-        ) {
+        var bias2 = this.photonLastEvent7List + 1.5 * 1000;
+        if (dtNow > bias2 || this.lastLocation.playerList.size <= 1) {
             if (this.photonLobbyTimeout.length > 0) {
                 AppApi.ExecuteVrOverlayFunction('updateHudTimeout', '[]');
             }
@@ -9826,7 +9819,10 @@ speechSynthesis.getVoices();
                 if (this.photonLobbyJointime.has(id)) {
                     var {joinTime} = this.photonLobbyJointime.get(id);
                 }
-                if (!joinTime || joinTime + 120000 < dtNow) {
+                if (!joinTime) {
+                    console.log(`${id} missing join time`);
+                }
+                if (joinTime && joinTime + 120000 < dtNow) {
                     // wait 2mins for user to load in
                     hudTimeout.unshift({
                         userId: this.getUserIdFromPhotonId(id),
@@ -10844,8 +10840,8 @@ speechSynthesis.getVoices();
         var lastEvent = this.photonEvent7List.get(parseInt(photonId, 10));
         if (typeof lastEvent !== 'undefined') {
             var timeSinceLastEvent = Date.now() - Date.parse(lastEvent);
-            if (timeSinceLastEvent > 20 * 1000) {
-                // 20 seconds
+            if (timeSinceLastEvent > 10 * 1000) {
+                // 10 seconds
                 text = `has timed out after ${timeToText(timeSinceLastEvent)}`;
             }
         }
@@ -21082,6 +21078,10 @@ speechSynthesis.getVoices();
         var desktopMode = this.isGameNoVR;
         AppApi.VrcClosedGracefully().then((result) => {
             if (result || !this.isRealInstance(lastLocation)) {
+                return;
+            }
+            if (!desktopMode && !this.isSteamVRRunning) {
+                console.log("SteamVR isn't running, not relaunching VRChat");
                 return;
             }
             AppApi.FocusWindow();
