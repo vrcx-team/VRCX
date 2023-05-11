@@ -13884,6 +13884,14 @@ speechSynthesis.getVoices();
         'VRCX_screenshotHelperModifyFilename'
     );
 
+    $app.data.enableAppLauncher = configRepository.getBool(
+        'VRCX_enableAppLauncher'
+    , false);
+
+    $app.data.enableAppLauncherAutoClose = configRepository.getBool(
+        'VRCX_enableAppLauncherAutoClose'
+    , true);
+
     $app.methods.updateVRConfigVars = function () {
         var notificationTheme = 'relax';
         if (this.isDarkMode) {
@@ -20662,6 +20670,20 @@ speechSynthesis.getVoices();
     $app.methods.openShortcutFolder = function () {
         AppApi.OpenShortcutFolder();
     };
+
+    $app.methods.updateAppLauncherSettings = function() {
+        configRepository.setBool(
+            'VRCX_enableAppLauncher',
+            this.enableAppLauncher
+        );
+        configRepository.setBool(
+            'VRCX_enableAppLauncherAutoClose',
+            this.enableAppLauncherAutoClose
+        );
+        
+        AppApi.SetAppLauncherSettings(this.enableAppLauncher, this.enableAppLauncherAutoClose);
+    }
+    $app.methods.updateAppLauncherSettings(); // rly?
 
     // Screenshot Helper
 
