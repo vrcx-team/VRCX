@@ -13513,7 +13513,7 @@ speechSynthesis.getVoices();
     VRCXStorage.Get('VRCX_CloseToTray').then((result) => {
         $app.isCloseToTray = result === 'true';
     });
-    VRCXStorage.Get('GPU_Fix').then((result) => {
+    VRCXStorage.Get('VRCX_GPU_Fix').then((result) => {
         $app.gpuFix = result === 'true';
     });
     if (configRepository.getBool('VRCX_CloseToTray')) {
@@ -13532,7 +13532,7 @@ speechSynthesis.getVoices();
             this.isStartAsMinimizedState.toString()
         );
         VRCXStorage.Set('VRCX_CloseToTray', this.isCloseToTray.toString());
-        VRCXStorage.Set('GPU_Fix', this.gpuFix.toString());
+        VRCXStorage.Set('VRCX_GPU_Fix', this.gpuFix.toString());
         AppApi.SetStartup(this.isStartAtWindowsStartup);
     };
     $app.data.photonEventOverlay = configRepository.getBool(
