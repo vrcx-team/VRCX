@@ -676,7 +676,7 @@ namespace VRCX
         public void SetAppLauncherSettings(bool enabled, bool killOnExit)
         {
             AutoAppLaunchManager.Instance.Enabled = enabled;
-            AutoAppLaunchManager.Instance.Enabled = killOnExit;
+            AutoAppLaunchManager.Instance.KillChildrenOnExit = killOnExit;
         }
 
         public void AddScreenshotMetadata(string path, string metadataString, string worldId, bool changeFilename = false)
