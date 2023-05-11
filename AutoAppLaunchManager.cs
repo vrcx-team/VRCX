@@ -14,7 +14,7 @@ namespace VRCX
         public static AutoAppLaunchManager Instance { get; private set; }
         public static readonly string VRChatProcessName = "VRChat";
 
-        public bool Enabled = true;
+        public bool Enabled = false;
         /// <summary> Whether or not to kill child processes when VRChat closes. </summary>
         public bool KillChildrenOnExit = true;
         public readonly string AppShortcutDirectory;
@@ -52,7 +52,7 @@ namespace VRCX
 
         private void OnProcessStarted(MonitoredProcess monitoredProcess)
         {
-            if (!monitoredProcess.HasName(VRChatProcessName) || monitoredProcess.Process.StartTime < startTime)
+            if (!Enabled || !monitoredProcess.HasName(VRChatProcessName) || monitoredProcess.Process.StartTime < startTime)
                 return;
 
             if (KillChildrenOnExit)
