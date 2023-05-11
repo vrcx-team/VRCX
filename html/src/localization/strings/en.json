@@ -408,6 +408,8 @@
                     },
                     "cache_debug": {
                         "header": "VRCX Instance Cache/Debug",
+                        "udon_exception_logging": "Udon Exception Logging",
+                        "gpu_fix": "SteamVR Overlay GPU Fix",
                         "disable_gamelog": "Disable GameLog",
                         "disable_gamelog_notice": "(will likely break things)",
                         "user_cache": "User cache:",

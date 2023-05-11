@@ -71,9 +71,9 @@ mixin settingsTab()
                     ], "saveAutoUpdateVRCX")
                 //- General | Application
                 +simpleSettingsCategory("view.settings.general.application.header")
-                    +simpleSwitch("view.settings.general.application.startup", "isStartAtWindowsStartup")
-                    +simpleSwitch("view.settings.general.application.minimized", "isStartAsMinimizedState")
-                    +simpleSwitch("view.settings.general.application.tray", "isCloseToTray")
+                    +simpleSwitch("view.settings.general.application.startup", "isStartAtWindowsStartup", "saveVRCXWindowOption")
+                    +simpleSwitch("view.settings.general.application.minimized", "isStartAsMinimizedState", "saveVRCXWindowOption")
+                    +simpleSwitch("view.settings.general.application.tray", "isCloseToTray", "saveVRCXWindowOption")
                     div.options-container
                 //- General | Game Log
                 +simpleSettingsCategory("view.settings.general.game_log.header")
@@ -468,6 +468,8 @@ mixin settingsTab()
                             span.name {{ $t('view.settings.advanced.advanced.pending_offline.description') }}
                             el-button-group(style="display:block")
                                 el-button(size="small" icon="el-icon-s-operation" @click="promptSetPendingOffline") {{ $t('view.settings.advanced.advanced.pending_offline.set_delay') }}
+                        +simpleSwitch("view.settings.advanced.advanced.cache_debug.udon_exception_logging", "udonExceptionLogging", "saveOpenVROption")
+                        +simpleSwitch("view.settings.advanced.advanced.cache_debug.gpu_fix", "gpuFix", "saveVRCXWindowOption")
                         div.options-container-item
                             span.name {{ $t('view.settings.advanced.advanced.cache_debug.disable_gamelog') }}
                             el-switch(v-model="gameLogDisabled" @change="disableGameLogDialog")

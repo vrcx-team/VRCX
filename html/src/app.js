@@ -9032,6 +9032,7 @@ speechSynthesis.getVoices();
         this.photonLobbyUserData = new Map();
         this.photonLobbyWatcherLoopStop();
         this.photonLobbyAvatars = new Map();
+        this.photonLobbyLastModeration = new Map();
         this.photonLobbyJointime = new Map();
         this.photonEvent7List = new Map();
         this.photonLastEvent7List = '';
@@ -9674,7 +9675,9 @@ speechSynthesis.getVoices();
                 this.updateOpenVR();
                 break;
             case 'udon-exception':
-                console.log('UdonException', gameLog.data);
+                if (this.udonExceptionLogging) {
+                    console.log('UdonException', gameLog.data);
+                }
                 // var entry = {
                 //     created_at: gameLog.dt,
                 //     type: 'Event',
@@ -9707,6 +9710,7 @@ speechSynthesis.getVoices();
     $app.data.photonLobbyUserData = new Map();
     $app.data.photonLobbyCurrent = new Map();
     $app.data.photonLobbyAvatars = new Map();
+    $app.data.photonLobbyLastModeration = new Map();
     $app.data.photonLobbyWatcherLoop = false;
     $app.data.photonLobbyTimeout = [];
     $app.data.photonLobbyJointime = new Map();
@@ -10305,10 +10309,12 @@ speechSynthesis.getVoices();
                 break;
             case 254:
                 // Leave
-                this.photonUserLeave(data.Parameters[254], gameLogDate);
-                this.photonLobbyCurrent.delete(data.Parameters[254]);
-                this.photonLobbyJointime.delete(data.Parameters[254]);
-                this.photonEvent7List.delete(data.Parameters[254]);
+                var photonId = data.Parameters[254];
+                this.photonUserLeave(photonId, gameLogDate);
+                this.photonLobbyCurrent.delete(photonId);
+                this.photonLobbyLastModeration.delete(photonId);
+                this.photonLobbyJointime.delete(photonId);
+                this.photonEvent7List.delete(photonId);
                 this.parsePhotonLobbyIds(data.Parameters[252]);
                 if (typeof data.Parameters[203] !== 'undefined') {
                     this.setPhotonLobbyMaster(
@@ -10891,6 +10897,7 @@ speechSynthesis.getVoices();
         gameLogDate
     ) {
         database.getModeration(ref.id).then((row) => {
+            var lastType = this.photonLobbyLastModeration.get(photonId);
             var type = '';
             var text = '';
             if (block) {
@@ -10910,7 +10917,7 @@ speechSynthesis.getVoices();
                 }
                 if (block === row.block && mute === row.mute) {
                     // no change
-                    if (type) {
+                    if (type && type !== lastType) {
                         this.addEntryPhotonEvent({
                             photonId,
                             text: `Moderation ${text}`,
@@ -10919,9 +10926,11 @@ speechSynthesis.getVoices();
                             created_at: gameLogDate
                         });
                     }
+                    this.photonLobbyLastModeration.set(photonId, type);
                     return;
                 }
             }
+            this.photonLobbyLastModeration.set(photonId, type);
             this.moderationAgainstTable.forEach((item) => {
                 if (item.userId === ref.id && item.type === type) {
                     removeFromArray(this.moderationAgainstTable, item);
@@ -13419,6 +13428,10 @@ speechSynthesis.getVoices();
             'VRCX_randomUserColours',
             this.randomUserColours
         );
+        configRepository.setBool(
+            'VRCX_udonExceptionLogging',
+            this.udonExceptionLogging
+        );
         this.updateSharedFeed(true);
         this.updateVRConfigVars();
         this.updateVRLastLocation();
@@ -13493,11 +13506,15 @@ speechSynthesis.getVoices();
     );
     $app.data.isStartAsMinimizedState = false;
     $app.data.isCloseToTray = false;
+    $app.data.gpuFix = false;
     VRCXStorage.Get('VRCX_StartAsMinimizedState').then((result) => {
         $app.isStartAsMinimizedState = result === 'true';
     });
     VRCXStorage.Get('VRCX_CloseToTray').then((result) => {
         $app.isCloseToTray = result === 'true';
+    });
+    VRCXStorage.Get('GPU_Fix').then((result) => {
+        $app.gpuFix = result === 'true';
     });
     if (configRepository.getBool('VRCX_CloseToTray')) {
         // move back to JSON
@@ -13505,7 +13522,7 @@ speechSynthesis.getVoices();
         VRCXStorage.Set('VRCX_CloseToTray', $app.data.isCloseToTray.toString());
         configRepository.remove('VRCX_CloseToTray');
     }
-    var saveVRCXWindowOption = function () {
+    $app.methods.saveVRCXWindowOption = function () {
         configRepository.setBool(
             'VRCX_StartAtWindowsStartup',
             this.isStartAtWindowsStartup
@@ -13515,11 +13532,9 @@ speechSynthesis.getVoices();
             this.isStartAsMinimizedState.toString()
         );
         VRCXStorage.Set('VRCX_CloseToTray', this.isCloseToTray.toString());
+        VRCXStorage.Set('GPU_Fix', this.gpuFix.toString());
         AppApi.SetStartup(this.isStartAtWindowsStartup);
     };
-    $app.watch.isStartAtWindowsStartup = saveVRCXWindowOption;
-    $app.watch.isStartAsMinimizedState = saveVRCXWindowOption;
-    $app.watch.isCloseToTray = saveVRCXWindowOption;
     $app.data.photonEventOverlay = configRepository.getBool(
         'VRCX_PhotonEventOverlay'
     );
@@ -13538,6 +13553,9 @@ speechSynthesis.getVoices();
     $app.data.photonLoggingEnabled = false;
     $app.data.gameLogDisabled = configRepository.getBool(
         'VRCX_gameLogDisabled'
+    );
+    $app.data.udonExceptionLogging = configRepository.getBool(
+        'VRCX_udonExceptionLogging'
     );
     $app.data.instanceUsersSortAlphabetical = configRepository.getBool(
         'VRCX_instanceUsersSortAlphabetical'
