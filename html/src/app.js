@@ -13878,7 +13878,8 @@ speechSynthesis.getVoices();
 
     $app.data.screenshotHelper = configRepository.getBool(
         'VRCX_screenshotHelper'
-    );
+    , true);
+
     $app.data.screenshotHelperModifyFilename = configRepository.getBool(
         'VRCX_screenshotHelperModifyFilename'
     );
