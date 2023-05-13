@@ -4911,6 +4911,7 @@ speechSynthesis.getVoices();
                 }
             });
             AppApi.CheckGameRunning();
+            AppApi.SetAppLauncherSettings(this.enableAppLauncher, this.enableAppLauncherAutoClose);
             API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
             API.$on('SHOW_WORLD_DIALOG_SHORTNAME', (tag) =>
                 this.verifyShortName('', tag)
@@ -5089,9 +5090,6 @@ speechSynthesis.getVoices();
         isGameRunning,
         isSteamVRRunning
     ) {
-        console.log(
-            `updateIsGameRunning isGameRunning:${isGameRunning} isSteamVRRunning:${isSteamVRRunning}`
-        );
         if (isGameRunning !== this.isGameRunning) {
             this.isGameRunning = isGameRunning;
             if (isGameRunning) {
@@ -5113,11 +5111,11 @@ speechSynthesis.getVoices();
                 60000
             );
             this.nextDiscordUpdate = 0;
-            console.log('isGameRunning changed', isGameRunning);
+            console.log('isGameRunning:', isGameRunning);
         }
         if (isSteamVRRunning !== this.isSteamVRRunning) {
             this.isSteamVRRunning = isSteamVRRunning;
-            console.log('isSteamVRRunning changed', isSteamVRRunning);
+            console.log('isSteamVRRunning:', isSteamVRRunning);
         }
         this.updateOpenVR();
     };
@@ -13904,7 +13902,7 @@ speechSynthesis.getVoices();
 
     $app.data.enableAppLauncher = configRepository.getBool(
         'VRCX_enableAppLauncher'
-    , false);
+        , true);
 
     $app.data.enableAppLauncherAutoClose = configRepository.getBool(
         'VRCX_enableAppLauncherAutoClose'
@@ -20701,7 +20699,6 @@ speechSynthesis.getVoices();
         
         AppApi.SetAppLauncherSettings(this.enableAppLauncher, this.enableAppLauncherAutoClose);
     }
-    $app.methods.updateAppLauncherSettings(); // rly?
 
     // Screenshot Helper
 

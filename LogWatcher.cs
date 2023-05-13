@@ -220,6 +220,7 @@ namespace VRCX
                                     ParseLogAvatarPedestalChange(fileInfo, logContext, line, offset) ||
                                     ParseLogVideoError(fileInfo, logContext, line, offset) ||
                                     ParseLogVideoChange(fileInfo, logContext, line, offset) ||
+                                    ParseLogAVProVideoChange(fileInfo, logContext, line, offset) ||
                                     ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) ||
                                     ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) ||
                                     ParseLogWorldVRCX(fileInfo, logContext, line, offset) ||
@@ -604,6 +605,31 @@ namespace VRCX
                 return false;
 
             var data = line.Substring(offset + 44);
+            data = data.Remove(data.Length - 1);
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "video-play",
+                data
+            });
+
+            return true;
+        }
+
+        private bool ParseLogAVProVideoChange(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2023.05.12 15:53:48 Log        -  [Video Playback] Resolving URL 'rtspt://topaz.chat/live/kiriri520'
+
+            if (string.Compare(line, offset, "[Video Playback] Resolving URL '", 0, 32, StringComparison.Ordinal) != 0)
+                return false;
+
+            var pos = line.LastIndexOf("'");
+            if (pos < 0)
+                return false;
+
+            var data = line.Substring(offset + 32);
             data = data.Remove(data.Length - 1);
 
             AppendLog(new[]
