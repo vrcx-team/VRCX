@@ -204,7 +204,7 @@
                 },
                 "game_log": {
                     "header": "遊戲紀錄",
-					"resource_load": "Udon 資源載入紀錄"
+                    "resource_load": "Udon 資源載入紀錄"
                 },
                 "legal_notice": {
                     "header": "法律聲明",
@@ -362,7 +362,7 @@
                     "primary_password": {
                         "header": "主密碼",
                         "description": "密碼加密（將停用自動登入）"
-						 },
+                    },
                     "relaunch_vrchat": {
                         "header": "VRChat 崩潰後自動重啟",
                         "description": "自動重新加入 VRChat 崩潰前所在的房間"
@@ -406,7 +406,7 @@
                         "user_cache": "玩家快取：",
                         "world_cache": "世界快取：",
                         "avatar_cache": "角色快取：",
-						"group_cache": "群組快取:",
+                        "group_cache": "群組快取:",
                         "avatar_name_cache": "角色名稱快取：",
                         "clear_cache": "清除快取",
                         "auto_clear_cache": "自動清除快取",
@@ -549,7 +549,7 @@
                 "avatar_cloning_deny": "不允許",
                 "home_location": "家點",
                 "accuracy_notice": "本地資料庫的資料可能不精確",
-				"instance_full": "已滿"
+                "instance_full": "已滿"
             },
             "groups": {
                 "header": "群組",
@@ -614,7 +614,7 @@
                 "capacity_count": "玩家上限 {count} ({max})",
                 "self_invite_tooltip": "自我邀請",
                 "refresh_user_count_tooltip": "重新整理房間人數",
-				"instance_full": "已滿",
+                "instance_full": "已滿",
                 "instance_creator": "房間建立者"
             },
             "info": {
@@ -725,7 +725,7 @@
             "info": {
                 "header": "資訊",
                 "announcement": "公告",
-				"instance_full": "已滿",
+                "instance_full": "已滿",
                 "rules": "規則",
                 "members": "成員",
                 "created_at": "創建時間",
@@ -736,7 +736,7 @@
                 "id_tooltip": "複製 ID 到剪貼簿",
                 "joined_at": "加入時間",
                 "roles": "身分",
-				"role": "身分:",
+                "role": "身分:",
                 "role_description": "敘述：",
                 "role_updated_at": "更新時間：",
                 "role_created_at": "創建時間：",
@@ -747,7 +747,7 @@
                 "all_members": "所有成員",
                 "friends_only": "好友",
                 "load_more": "載入更多……",
-				"sort_by": "排序方式:",
+                "sort_by": "排序方式:",
                 "sorting": {
                     "user_id": "玩家 ID（升序）",
                     "joined_at_asc": "加入時間（升序）",
@@ -1071,7 +1071,7 @@
         },
         "change_log": {
             "header": "更新日誌",
-			"description": "考虑捐赠以支持 VRCX 的未来发展",
+            "description": "考虑捐赠以支持 VRCX 的未来发展",
             "close": "關閉",
             "donate": "贊助",
             "github": "GitHub"
@@ -1095,9 +1095,9 @@
         },
         "screenshot_metadata": {
             "header": "螢幕截圖詳細資料",
-			"drag": "將螢幕截圖拽移到這裡",
+            "drag": "將螢幕截圖拽移到這裡",
             "browse": "瀏覽",
-			"last_screenshot": "最後一張螢幕截圖",
+            "last_screenshot": "最後一張螢幕截圖",
             "copy_image": "複製圖片",
             "open_folder": "開啟資料夾",
             "upload": "上傳"
@@ -1327,7 +1327,7 @@
             "icon": "頭像",
             "user": "玩家",
             "detail": "詳細",
-			"action": "動作"
+            "action": "動作"
         },
         "playerList": {
             "avatar": "角色",
