@@ -61,7 +61,7 @@
             },
             "avatar": {
                 "header": "角色",
-                "search_provider": "搜尋提供芳",
+                "search_provider": "搜尋提供方",
                 "refresh_tooltip": "重新整理自己的角色",
                 "result_count": "{count} 個搜尋結果",
                 "all": "所有",
@@ -227,7 +227,7 @@
                     "sort_favorite_by": "收藏排序依據",
                     "sort_favorite_by_name": "名稱",
                     "sort_favorite_by_date": "時間",
-                    "sort_instance_users_by": "坊間玩家排序依據",
+                    "sort_instance_users_by": "房間玩家排序依據",
                     "sort_instance_users_by_time": "時間",
                     "sort_instance_users_by_alphabet": "字母順序",
                     "table_max_size": "表格大小",
@@ -392,12 +392,12 @@
                         "dance_world_only": "僅限跳舞世界"
                     },
                     "screenshot_helper": {
-                        "header": "螢幕截圖助手",
-                        "description": "將在你在遊戲中拍攝的任何照片的文件元數據中儲存世界ID和世界名稱。",
-                        "description_tooltip": "不幸的是，windows不支持本機查看PNG文本塊（很多東西都不支持），但你可以使用exiftool等命令行工具、png塊檢查器或十六進位制編輯器來查看。",
+                        "header": "螢幕截圖助理",
+                        "description": "當你在遊戲中拍照時，VRCX 會將一些額外的資訊自動保存到照片檔案中，包括你所在的遊戲世界 ID、世界名稱以及當時遊戲中的玩家數量。",
+                        "description_tooltip": "不幸的是，Windows 沒有本身支援查看 PNG 圖片的文字塊（很少有程式支援），但你可以使用命令列工具如 exiftool、PNG 文字塊檢查器或十六進位編輯器來查看。",
                         "enable": "啟用",
-                        "modify_filename": "修改檔案名",
-                        "modify_filename_tooltip": "除了文件元數據外，將把世界ID新增到截圖檔案名中。"
+                        "modify_filename": "修改檔案名稱",
+                        "modify_filename_tooltip": "在拍攝遊戲截圖時，除了在照片的檔案元資料中儲存世界 ID 外，還會將世界 ID 加入到截圖的檔案名稱中。"
                     },
                     "cache_debug": {
                         "header": "VRCX 世界快取/除錯",
@@ -406,7 +406,7 @@
                         "user_cache": "玩家快取：",
                         "world_cache": "世界快取：",
                         "avatar_cache": "角色快取：",
-                        "group_cache": "群組快取:",
+                        "group_cache": "群組快取：",
                         "avatar_name_cache": "角色名稱快取：",
                         "clear_cache": "清除快取",
                         "auto_clear_cache": "自動清除快取",
@@ -736,7 +736,7 @@
                 "id_tooltip": "複製 ID 到剪貼簿",
                 "joined_at": "加入時間",
                 "roles": "身分",
-                "role": "身分:",
+                "role": "身分：",
                 "role_description": "敘述：",
                 "role_updated_at": "更新時間：",
                 "role_created_at": "創建時間：",
@@ -747,13 +747,13 @@
                 "all_members": "所有成員",
                 "friends_only": "好友",
                 "load_more": "載入更多……",
-                "sort_by": "排序方式:",
+                "sort_by": "排序方式：",
                 "sorting": {
                     "user_id": "玩家 ID（升序）",
                     "joined_at_asc": "加入時間（升序）",
                     "joined_at_desc": "加入時間（降序）"
                 },
-                "filter": "過濾器:",
+                "filter": "過濾器：",
                 "filters": {
                     "everyone": "所有人",
                     "users_with_no_role": "沒有身分的玩家"
@@ -868,11 +868,11 @@
             "save": "儲存"
         },
         "download_history": {
-            "header": "Download History",
-            "queue": "Queue:",
-            "history": "History:",
-            "cancel_all": "Cancel All",
-            "close": "Close"
+            "header": "下載紀錄",
+            "queue": "佇列：",
+            "history": "紀錄：",
+            "cancel_all": "取消全部",
+            "close": "關閉"
         },
         "vrcx_updater": {
             "header": "VRCX 更新器",
@@ -1071,7 +1071,7 @@
         },
         "change_log": {
             "header": "更新日誌",
-            "description": "考虑捐赠以支持 VRCX 的未来发展",
+            "description": "考慮捐款來支持未來 VRCX 的開發：",
             "close": "關閉",
             "donate": "贊助",
             "github": "GitHub"
@@ -1095,7 +1095,7 @@
         },
         "screenshot_metadata": {
             "header": "螢幕截圖詳細資料",
-            "drag": "將螢幕截圖拽移到這裡",
+            "drag": "將螢幕截圖拖曳到這裡",
             "browse": "瀏覽",
             "last_screenshot": "最後一張螢幕截圖",
             "copy_image": "複製圖片",
