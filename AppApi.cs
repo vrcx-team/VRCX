@@ -134,12 +134,12 @@ namespace VRCX
             var isGameRunning = false;
             var isSteamVRRunning = false;
 
-            if (ProcessMonitor.Instance.IsProcessRunning("VRChat", true))
+            if (ProcessMonitor.Instance.IsProcessRunning("VRChat"))
             {
                 isGameRunning = true;
             }
 
-            if (ProcessMonitor.Instance.IsProcessRunning("vrserver", true))
+            if (ProcessMonitor.Instance.IsProcessRunning("vrserver"))
             {
                 isSteamVRRunning = true;
             }
@@ -668,6 +668,15 @@ namespace VRCX
             catch
             {
             }
+        }
+
+        // what the fuck even is this
+        // refactor when
+        // #AppApiLivesDontMatter
+        public void SetAppLauncherSettings(bool enabled, bool killOnExit)
+        {
+            AutoAppLaunchManager.Instance.Enabled = enabled;
+            AutoAppLaunchManager.Instance.KillChildrenOnExit = killOnExit;
         }
 
         public void AddScreenshotMetadata(string path, string metadataString, string worldId, bool changeFilename = false)

@@ -109,8 +109,8 @@ namespace VRCX
 
         private static void LoadFromConfig()
         {
-            if (!GPUFix) GPUFix = VRCXStorage.Instance.Get("GPU_Fix") == "true";
-            if (!LaunchDebug) LaunchDebug = VRCXStorage.Instance.Get("Launch_Debug") == "true";
+            if (!GPUFix)
+                GPUFix = VRCXStorage.Instance.Get("VRCX_GPUFix") == "true";
         }
     }
 }

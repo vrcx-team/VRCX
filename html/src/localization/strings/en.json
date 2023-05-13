@@ -354,8 +354,6 @@
                     "header": "Advanced",
                     "launch_options": "Launch Options",
                     "screenshot_metadata": "Screenshot Metadata",
-                    "auto_launch": "Auto-Launch Folder",
-                    "auto_launch_tooltip": "To auto-launch apps with VRChat, place shortcuts in this folder.",
                     "pending_offline": {
                         "header": "Pending Offline",
                         "description": "Delay before marking user as offline (fixes false positives)",
@@ -401,8 +399,17 @@
                         "modify_filename": "Modify Filename",
                         "modify_filename_tooltip": "Will add the World ID to screenshot filename, in addition to file metadata."
                     },
+                    "app_launcher": {
+                        "header": "App Launcher",
+                        "folder": "Auto-Launch Folder",
+                        "folder_tooltip": "To auto-launch apps with VRChat, place shortcuts in this folder.",
+                        "enable": "Enable",
+                        "auto_close": "Auto close apps"
+                    },
                     "cache_debug": {
                         "header": "VRCX Instance Cache/Debug",
+                        "udon_exception_logging": "Udon Exception Logging",
+                        "gpu_fix": "SteamVR Overlay GPU Fix",
                         "disable_gamelog": "Disable GameLog",
                         "disable_gamelog_notice": "(will likely break things)",
                         "user_cache": "User cache:",

@@ -77,8 +77,6 @@ namespace VRCX
                         monitoredProcess.ProcessExited();
                         ProcessExited?.Invoke(monitoredProcess);
                     }
-
-                    monitoredProcess.Process.Refresh();
                 }
                 else
                 {

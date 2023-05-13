@@ -12,19 +12,23 @@ namespace VRCX
     public class AutoAppLaunchManager
     {
         public static AutoAppLaunchManager Instance { get; private set; }
-        public bool Enabled = true;
+        public static readonly string VRChatProcessName = "VRChat";
+
+        public bool Enabled = false;
+        /// <summary> Whether or not to kill child processes when VRChat closes. </summary>
+        public bool KillChildrenOnExit = true;
         public readonly string AppShortcutDirectory;
 
         private DateTime startTime = DateTime.Now;
-        private List<Process> startedProcesses = new List<Process>();
+        private Dictionary<string, Process> startedProcesses = new Dictionary<string, Process>();
         private static readonly byte[] shortcutSignatureBytes = { 0x4C, 0x00, 0x00, 0x00 }; // signature for ShellLinkHeader\
 
-        static AutoAppLaunchManager() 
+        static AutoAppLaunchManager()
         {
             Instance = new AutoAppLaunchManager();
         }
 
-        public AutoAppLaunchManager() 
+        public AutoAppLaunchManager()
         {
             AppShortcutDirectory = Path.Combine(Program.AppDataDirectory, "startup");
 
@@ -39,11 +43,41 @@ namespace VRCX
 
         private void OnProcessExited(MonitoredProcess monitoredProcess)
         {
-            if (startedProcesses.Count == 0 || !monitoredProcess.HasName("VRChat"))
+            if (startedProcesses.Count == 0 || !monitoredProcess.HasName(VRChatProcessName))
                 return;
 
-            foreach (var process in startedProcesses)
+            if (KillChildrenOnExit)
+                KillChildProcesses();
+        }
+
+        private void OnProcessStarted(MonitoredProcess monitoredProcess)
+        {
+            if (!Enabled || !monitoredProcess.HasName(VRChatProcessName) || monitoredProcess.Process.StartTime < startTime)
+                return;
+
+            if (KillChildrenOnExit)
+                KillChildProcesses();
+
+            var shortcutFiles = FindShortcutFiles(AppShortcutDirectory);
+
+            foreach (var file in shortcutFiles)
             {
+                if (!IsChildProcessRunning(file))
+                {
+                    StartChildProcess(file);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Kills all running child processes.
+        /// </summary>
+        internal void KillChildProcesses()
+        {
+            foreach (var pair in startedProcesses)
+            {
+                var process = pair.Value;
+
                 if (!process.HasExited)
                     process.Kill();
             }
@@ -51,32 +85,40 @@ namespace VRCX
             startedProcesses.Clear();
         }
 
-        private void OnProcessStarted(MonitoredProcess monitoredProcess)
+        /// <summary>
+        /// Starts a new child process.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        internal void StartChildProcess(string path)
         {
-            if (!monitoredProcess.HasName("VRChat") || monitoredProcess.Process.StartTime < startTime) 
-                return;
+            var process = Process.Start(path);
+            startedProcesses.Add(path, process);
+        }
 
-            if (startedProcesses.Count > 0)
+        /// <summary>
+        /// Updates the child processes list.
+        /// Removes any processes that have exited.
+        /// </summary>
+        internal void UpdateChildProcesses()
+        {
+            foreach (var pair in startedProcesses.ToList())
             {
-                foreach (var process in startedProcesses)
-                {
-                    if (!process.HasExited)
-                        process.Kill();
-                }
-
-                startedProcesses.Clear();
+                var process = pair.Value;
+                if (process.HasExited)
+                    startedProcesses.Remove(pair.Key);
             }
+        }
 
-            var shortcutFiles = FindShortcutFiles(AppShortcutDirectory);
-
-            if (shortcutFiles.Length > 0)
-            {
-                foreach (var file in shortcutFiles)
-                {
-                    var process = Process.Start(file);
-                    startedProcesses.Add(process);
-                }
-            }
+        /// <summary>
+        /// Checks to see if a given file matches a current running child process.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <returns>
+        ///   <c>true</c> if child process running; otherwise, <c>false</c>.
+        /// </returns>
+        internal bool IsChildProcessRunning(string path)
+        {
+            return startedProcesses.ContainsKey(path);
         }
 
         internal void Init()
@@ -88,11 +130,7 @@ namespace VRCX
         {
             Enabled = false;
 
-            foreach (var process in startedProcesses)
-            {
-                if (!process.HasExited)
-                    process.Kill();
-            }
+            KillChildProcesses();
         }
 
         /// <summary>
