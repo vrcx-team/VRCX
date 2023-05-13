@@ -4911,7 +4911,10 @@ speechSynthesis.getVoices();
                 }
             });
             AppApi.CheckGameRunning();
-            AppApi.SetAppLauncherSettings(this.enableAppLauncher, this.enableAppLauncherAutoClose);
+            AppApi.SetAppLauncherSettings(
+                this.enableAppLauncher,
+                this.enableAppLauncherAutoClose
+            );
             API.$on('SHOW_WORLD_DIALOG', (tag) => this.showWorldDialog(tag));
             API.$on('SHOW_WORLD_DIALOG_SHORTNAME', (tag) =>
                 this.verifyShortName('', tag)
@@ -13893,20 +13896,23 @@ speechSynthesis.getVoices();
     );
 
     $app.data.screenshotHelper = configRepository.getBool(
-        'VRCX_screenshotHelper'
-    , true);
+        'VRCX_screenshotHelper',
+        true
+    );
 
     $app.data.screenshotHelperModifyFilename = configRepository.getBool(
         'VRCX_screenshotHelperModifyFilename'
     );
 
     $app.data.enableAppLauncher = configRepository.getBool(
-        'VRCX_enableAppLauncher'
-        , true);
+        'VRCX_enableAppLauncher',
+        true
+    );
 
     $app.data.enableAppLauncherAutoClose = configRepository.getBool(
-        'VRCX_enableAppLauncherAutoClose'
-    , true);
+        'VRCX_enableAppLauncherAutoClose',
+        true
+    );
 
     $app.methods.updateVRConfigVars = function () {
         var notificationTheme = 'relax';
@@ -20687,7 +20693,7 @@ speechSynthesis.getVoices();
         AppApi.OpenShortcutFolder();
     };
 
-    $app.methods.updateAppLauncherSettings = function() {
+    $app.methods.updateAppLauncherSettings = function () {
         configRepository.setBool(
             'VRCX_enableAppLauncher',
             this.enableAppLauncher
@@ -20696,9 +20702,12 @@ speechSynthesis.getVoices();
             'VRCX_enableAppLauncherAutoClose',
             this.enableAppLauncherAutoClose
         );
-        
-        AppApi.SetAppLauncherSettings(this.enableAppLauncher, this.enableAppLauncherAutoClose);
-    }
+
+        AppApi.SetAppLauncherSettings(
+            this.enableAppLauncher,
+            this.enableAppLauncherAutoClose
+        );
+    };
 
     // Screenshot Helper
 
