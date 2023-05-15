@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace VRCX
 {
@@ -22,6 +23,34 @@ namespace VRCX
         private DateTime startTime = DateTime.Now;
         private Dictionary<string, Process> startedProcesses = new Dictionary<string, Process>();
         private static readonly byte[] shortcutSignatureBytes = { 0x4C, 0x00, 0x00, 0x00 }; // signature for ShellLinkHeader\
+
+        private const uint TH32CS_SNAPPROCESS = 2;
+
+        // Requires access rights 'PROCESS_QUERY_INFORMATION' and 'PROCESS_VM_READ'
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr CreateToolhelp32Snapshot(uint dwFlags, uint th32ProcessID);
+
+        [DllImport("kernel32.dll")]
+        public static extern bool Process32First(IntPtr hSnapshot, ref PROCESSENTRY32 lppe);
+
+        [DllImport("kernel32.dll")]
+        public static extern bool Process32Next(IntPtr hSnapshot, ref PROCESSENTRY32 lppe);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct PROCESSENTRY32
+        {
+            public uint dwSize;
+            public uint cntUsage;
+            public uint th32ProcessID;
+            public IntPtr th32DefaultHeapID;
+            public uint th32ModuleID;
+            public uint cntThreads;
+            public uint th32ParentProcessID;
+            public int pcPriClassBase;
+            public uint dwFlags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+            public string szExeFile;
+        };
 
         static AutoAppLaunchManager()
         {
@@ -79,10 +108,54 @@ namespace VRCX
                 var process = pair.Value;
 
                 if (!process.HasExited)
-                    process.Kill();
+                {
+                    KillProcessTree(process.Id);
+                    //process.Kill();
+                }
             }
 
             startedProcesses.Clear();
+        }
+
+        // TODO: Proper error handling for winapi calls.
+        // Will fail if process is protected, has admin rights, user account is limited(?), or process is dead
+        // catch win32exceptions
+
+        // This is a recursive function that kills a process and all of its children.
+        // It uses the CreateToolhelp32Snapshot winapi func to get a snapshot of all running processes, loops through them with Process32First/Process32Next, and kills any processes that have the given pid as their parent.
+        public static void KillProcessTree(int pid)
+        {
+            IntPtr snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+            if (snapshot == IntPtr.Zero)
+            {
+                return;
+            }
+
+            // Gonna be honest, not gonna spin up a 32bit windows VM to make sure this works. but it should.
+            PROCESSENTRY32 procEntry = new PROCESSENTRY32();
+            procEntry.dwSize = (uint)Marshal.SizeOf(typeof(PROCESSENTRY32));
+
+            if (Process32First(snapshot, ref procEntry))
+            {
+                do
+                {
+                    if (procEntry.th32ParentProcessID == pid)
+                    {
+                        KillProcessTree((int)procEntry.th32ProcessID);  // Recursively kill child processes
+                    }
+                }
+                while (Process32Next(snapshot, ref procEntry));
+            }
+
+            try
+            {
+                Process proc = Process.GetProcessById(pid);
+                proc.Kill();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         /// <summary>
