@@ -19363,15 +19363,72 @@ speechSynthesis.getVoices();
                     continue;
                 }
             }
-            var inCurrentWorld = false;
-            if (this.lastLocation.playerList.has(ctx.ref.displayName)) {
-                inCurrentWorld = true;
-            }
-            this.getUserStats(ctx.ref, inCurrentWorld);
             ctx.ref.$friendNum = ctx.no;
             results.push(ctx.ref);
         }
+        this.getAllUserStats();
         this.friendsListTable.data = results;
+    };
+
+    $app.methods.getAllUserStats = function () {
+        var userIds = [];
+        var displayNames = [];
+        for (var ctx of this.friends.values()) {
+            userIds.push(ctx.id);
+            if (ctx.ref?.displayName) {
+                displayNames.push(ctx.ref.displayName);
+            }
+        }
+
+        database.getAllUserStats(userIds, displayNames).then((data) => {
+            var friendListMap = new Map();
+            for (var item of data) {
+                if (!item.userId) {
+                    // find userId from previous data with matching displayName
+                    for (var ref of data) {
+                        if (
+                            ref.displayName === item.displayName &&
+                            ref.userId
+                        ) {
+                            item.userId = ref.userId;
+                        }
+                    }
+                    // if still no userId, find userId from friends list
+                    if (!item.userId) {
+                        for (var ref of this.friends.values()) {
+                            if (
+                                ref?.ref?.id &&
+                                ref.ref.displayName === item.displayName
+                            ) {
+                                item.userId = ref.id;
+                            }
+                        }
+                    }
+                    // if still no userId, skip
+                    if (!item.userId) {
+                        continue;
+                    }
+                }
+
+                var friend = friendListMap.get(item.userId);
+                if (!friend) {
+                    friendListMap.set(item.userId, item);
+                    continue;
+                }
+                friend.timeSpent += item.timeSpent;
+                friend.joinCount += item.joinCount;
+                friend.displayName = item.displayName;
+                friendListMap.set(item.userId, friend);
+            }
+            for (var item of friendListMap.values()) {
+                var ref = this.friends.get(item.userId);
+                if (ref?.ref) {
+                    ref.ref.$joinCount = item.joinCount;
+                    ref.ref.$lastSeen = item.created_at;
+                    ref.ref.$timeSpent = item.timeSpent;
+                }
+            }
+        });
     };
 
     $app.methods.getUserStats = async function (ctx) {

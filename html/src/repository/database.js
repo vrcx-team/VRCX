@@ -1042,6 +1042,53 @@ class Database {
         return ref;
     }
 
+    async getAllUserStats(userIds, displayNames) {
+        var data = [];
+        // this makes me most sad
+        var userIdsString = '';
+        for (var userId of userIds) {
+            userIdsString += `'${userId}', `;
+        }
+        userIdsString = userIdsString.slice(0, -2);
+        var displayNamesString = '';
+        for (var displayName of displayNames) {
+            displayNamesString += `'${displayName.replaceAll("'", "''")}', `;
+        }
+        displayNamesString = displayNamesString.slice(0, -2);
+
+        await sqliteService.execute(
+            (dbRow) => {
+                var row = {
+                    created_at: dbRow[0],
+                    userId: dbRow[1],
+                    timeSpent: dbRow[2],
+                    joinCount: dbRow[3],
+                    displayName: dbRow[4]
+                };
+                data.push(row);
+            },
+            `SELECT
+                g.created_at,
+                g.user_id,
+                SUM(g.time) AS timeSpent,
+                COUNT(DISTINCT g.location) AS joinCount,
+                g.display_name,
+                MAX(g.id) AS max_id
+            FROM
+                gamelog_join_leave g
+            WHERE
+                g.user_id IN (${userIdsString})
+                OR g.display_name IN (${displayNamesString})
+            GROUP BY
+                g.user_id,
+                g.display_name
+            ORDER BY
+                g.user_id DESC
+            `
+        );
+        return data;
+    }
+
     async lookupFeedDatabase(search, filters, vipList) {
         var search = search.replaceAll("'", "''");
         var vipQuery = '';
