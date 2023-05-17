@@ -399,8 +399,17 @@
                         "modify_filename": "ファイル名を変更",
                         "modify_filename_tooltip": "スクリーンショットのファイル名にワールドIDを追加"
                     },
+                    "app_launcher": {
+                        "header": "アプリケーションの自動起動",
+                        "folder": "フォルダー",
+                        "folder_tooltip": "VRChatと一緒に起動させたいアプリケーションのショートカットを配置してください",
+                        "enable": "有効化",
+                        "auto_close": "VRChat終了時に自動終了"
+                    },
                     "cache_debug": {
                         "header": "VRCXインスタンス キャッシュ/デバッグ",
+                        "udon_exception_logging": "Udonの例外エラーを記録",
+                        "gpu_fix": "GPU Fixを有効化",
                         "disable_gamelog": "ゲームログを無効化",
                         "disable_gamelog_notice": "(何かが壊れる可能性があります)",
                         "user_cache": "ユーザーキャッシュ:",
