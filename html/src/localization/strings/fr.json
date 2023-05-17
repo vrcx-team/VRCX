@@ -1,0 +1,1446 @@
+{
+    "language": "Français (fr)",
+    "translator": "Hactazia",
+    "nav_tooltip": {
+        "feed": "Actualité",
+        "game_log": "Historique de jeu",
+        "player_list": "Liste des joueurs",
+        "search": "Rechercher",
+        "favorites": "Favoris",
+        "friend_log": "Historique des amis",
+        "moderation": "Modération",
+        "notification": "Notification",
+        "friend_list": "Liste des amis",
+        "profile": "Profil",
+        "settings": "Paramètres"
+    },
+    "view": {
+        "login": {
+            "savedAccounts": "Comptes sauvegadés",
+            "login": "Connexion",
+            "register": "Inscription",
+            "forgotPassword": "Mot de passe oublié ?",
+            "field": {
+                "username": "Nom d'utilisateur ou Email",
+                "password": "Mot de passe",
+                "saveCredentials": "Sauvegarder les identifiants",
+                "devEndpoint": "Dev Endpoint",
+                "endpoint": "Endpoint",
+                "websocket": "WebSocket"
+            }
+        },
+        "feed": {
+            "favorites_only_tooltip": "Filtrer les favoris seulement",
+            "filter_placeholder": "Filtrer",
+            "search_placeholder": "Rechercher"
+        },
+        "game_log": {
+            "filter_placeholder": "Filtrer",
+            "search_placeholder": "Rechercher"
+        },
+        "player_list": {
+            "photon": {
+                "current": "Actuel",
+                "previous": "Précédant",
+                "search_placeholder": "Rechercher",
+                "filter_placeholder": "Filtrer",
+                "chatbox_blacklist": "Liste noire des boîtes de dialogue",
+                "status_tooltip": "Statut du Compagnon VRCX"
+            }
+        },
+        "search": {
+            "search_placeholder": "Rechercher",
+            "clear_results_tooltip": "Vider les résultats de la recherche",
+            "user": {
+                "header": "Utilisateur"
+            },
+            "world": {
+                "header": "Monde",
+                "category": "Rechercher par catégorie",
+                "community_lab": "Inclure les « Community labs »"
+            },
+            "avatar": {
+                "header": "Avatar",
+                "search_provider": "Gestionnaire de recherche",
+                "refresh_tooltip": "Rafraîchir ses propres avatars",
+                "result_count": "{count} Résultats",
+                "all": "Tout",
+                "public": "Public",
+                "private": "Privé",
+                "local": "Locale",
+                "remote": "À distance",
+                "sort_name": "Trier par nom",
+                "sort_update": "Trier par date de mise à jour",
+                "sort_created": "Trier par date de création"
+            },
+            "prev_page": "Précédent",
+            "next_page": "Suivant"
+        },
+        "favorite": {
+            "friends": {
+                "header": "Amis"
+            },
+            "worlds": {
+                "header": "Mondes",
+                "vrchat_favorites": "Favoris VRChat",
+                "local_favorites": "Favoris locaux",
+                "new_group": "Nouveau groupe"
+            },
+            "avatars": {
+                "header": "Avatars"
+            },
+            "refresh_tooltip": "Actualiser les favoris",
+            "export": "Exporter",
+            "import": "Importer",
+            "move_tooltip": "Déplacer",
+            "unfavorite_tooltip": "Retirer des favoris",
+            "visibility_tooltip": "Changer la visibilité",
+            "rename_tooltip": "Renommer",
+            "clear_tooltip": "Vider",
+            "delete_tooltip": "Supprimer"
+        },
+        "friend_log": {
+            "filter_placeholder": "Filtrer",
+            "search_placeholder": "Rechercher"
+        },
+        "moderation": {
+            "filter_placeholder": "Filtrer",
+            "search_placeholder": "Rechercher",
+            "refresh_tooltip": "Actualiser"
+        },
+        "notification": {
+            "filter_placeholder": "Filtrer",
+            "search_placeholder": "Rechercher",
+            "refresh_tooltip": "Actualiser"
+        },
+        "friend_list": {
+            "header": "Liste des amis",
+            "bulk_unfriend": "Mode suppression des amis",
+            "bulk_unfriend_selection": "Valider la suppression des amis",
+            "load": "Charger les données manquantes",
+            "load_notice": "Cela nécessite beaucoup de requêtes API, il faut donc l'utiliser avec parcimonie",
+            "load_tooltip": "Charger",
+            "favorites_only_tooltip": "Filtrer uniquement les favoris",
+            "search_placeholder": "Rechercher",
+            "filter_placeholder": "Filtrer",
+            "refresh_tooltip": "Actualiser",
+            "clear_tooltip": "Vider",
+            "cancel_tooltip": "Annuler"
+        },
+        "profile": {
+            "profile": {
+                "header": "Profil",
+                "last_activity": "Dernière activité",
+                "two_factor": "Authentification à double facteurs (2FA)",
+                "two_factor_enabled": "Activé",
+                "two_factor_disabled": "Désactivé",
+                "logout": "Se déconnecter",
+                "export_friend_list": "Exporter la liste d'amis",
+                "export_own_avatars": "Exporter ses propres avatars",
+                "discord_names": "Noms Discord",
+                "export_notes": "Exporter des notes"
+            },
+            "game_info": {
+                "header": "Info jeu",
+                "online_users": "Utilisateurs en ligne",
+                "user_online": "{count} utilisateurs en ligne.",
+                "refresh": "Cliquez pour actualiser"
+            },
+            "vrc_sdk_downloads": {
+                "header": "Télécharger le SDK de VRChat"
+            },
+            "direct_access": {
+                "header": "Accès direct",
+                "username": "Nom d'utilisateur",
+                "user_id": "ID de l'utilisateur",
+                "world_instance": "Monde / Instance",
+                "avatar": "Avatar"
+            },
+            "invite_messages": "Message d'invitation",
+            "invite_response_messages": "Message de réponse d'invitation",
+            "invite_request_messages": "Message de requête d'invitation",
+            "invite_request_response_messages": "Message de requête de réponse d'invitation",
+            "past_display_names": "Anciens noms d'affichage",
+            "config_json": "JSON de la configuration",
+            "current_user_json": "JSON de l'utilisateur connecté",
+            "feedback": "Rétroaction",
+            "refresh_tooltip": "Actualiser",
+            "clear_results_tooltip": "Vider les résultats"
+        },
+        "settings": {
+            "header": "Paramètres",
+            "category": {
+                "general": "Général",
+                "appearance": "Apparence",
+                "notifications": "Notifications",
+                "wrist_overlay": "Overlay du poignet",
+                "discord_presence": "Présence sur Discord",
+                "advanced": "Avancés"
+            },
+            "general": {
+                "general": {
+                    "header": "Général",
+                    "version": "Version",
+                    "latest_app_version": "Dernière version",
+                    "latest_app_version_refresh": "Cliquez pour actualiser",
+                    "repository_url": "URL du dépôt",
+                    "support": "Soutien"
+                },
+                "vrcx_updater": {
+                    "header": "Updater de VRCX",
+                    "change_build": "Changer de build",
+                    "auto_update": "Mise à jour automatique",
+                    "auto_update_off": "Arrêté",
+                    "auto_update_notify": "Informer",
+                    "auto_update_download": "Téléchargement automatique",
+                    "auto_update_install": "Installation automatique",
+                    "change_log": "Journal des modifications"
+                },
+                "application": {
+                    "header": "Application",
+                    "startup": "Lancer au démarrage de Windows",
+                    "minimized": "Lancer en arrière plan",
+                    "tray": "Minimiser dans la barre des tâches"
+                },
+                "game_log": {
+                    "header": "Historique de jeu",
+                    "resource_load": "Charge de ressources du journal Udon"
+                },
+                "legal_notice": {
+                    "header": "Mentions légales",
+                    "info": "VRCX est une application d'assistance pour VRChat qui fournit des informations sur les amitiés et les gère. Cette application utilise l'API SDK non officielle de VRChat.",
+                    "disclaimer1": "VRCX n'est pas soutenu par VRChat et ne reflète pas les points de vue ou les opinions de VRChat ou de toute personne officiellement impliquée dans la production ou la gestion des propriétés de VRChat. VRChat et toutes les propriétés associées sont des marques commerciales ou des marques déposées de VRChat Inc. VRChat © VRChat Inc.",
+                    "disclaimer2": "pypy & Natsumi ne sont pas responsables des problèmes causés par VRCX. Utilisez-le à vos risques et périls !",
+                    "open_source_software_notice": "Mentions relatives aux logiciels libres"
+                }
+            },
+            "appearance": {
+                "appearance": {
+                    "header": "Apparence",
+                    "language": "Language",
+                    "theme_mode": "Thèmes des couleurs",
+                    "theme_mode_system": "Système",
+                    "theme_mode_light": "Clair",
+                    "theme_mode_dark": "Sombre",
+                    "vrcplus_profile_icons": "Icônes des profils VRCPlus",
+                    "disable_tooltips": "Désactiver les infobulles",
+                    "sort_favorite_by": "Trier les favoris par",
+                    "sort_favorite_by_name": "nom",
+                    "sort_favorite_by_date": "date",
+                    "sort_instance_users_by": "Trier les utilisateurs dans les instanceq par",
+                    "sort_instance_users_by_time": "temps",
+                    "sort_instance_users_by_alphabet": "alphabétique",
+                    "table_max_size": "Taille maximale du tableau",
+                    "page_size": "Taille de page :"
+                },
+                "timedate": {
+                    "header": "Date et heure",
+                    "time_format": "Format de l'heure",
+                    "time_format_24": "24H",
+                    "time_format_12": "12H",
+                    "force_iso_date_format": "Forcer le format ISO de la date"
+                },
+                "side_panel": {
+                    "header": "Panneau latéral",
+                    "sorting": {
+                        "header": "Tri",
+                        "sort_private_to_bottom": "Trier les privé vers le bas",
+                        "sort_by_status": "Trier par statut",
+                        "sort_gps_to_top": "Trier les GPS vers le haut",
+                        "sort_gps_to_top_notice": "(seulement en ligne)",
+                        "sort_favorite_by": "Trier les favoris par",
+                        "sort_favorite_by_alphabet": "alphabétique",
+                        "sort_favorite_by_online_time": "en ligne depuis",
+                        "sort_online_by": "Trier les en ligne par",
+                        "sort_online_by_alphabet": "alphabétique",
+                        "sort_online_by_online_time": "en ligne depuis",
+                        "sort_active_by": "Trier les actifs par",
+                        "sort_active_by_alphabet": "alphabétique",
+                        "sort_active_by_online_time": "en ligne depuis",
+                        "sort_offline_by": "Trier les hors ligne par",
+                        "sort_offline_by_alphabet": "alphabétique",
+                        "sort_offline_by_offline_time": "hors ligne depuis"
+                    },
+                    "width": "Largeur"
+                },
+                "user_dialog": {
+                    "header": "Boîte d'information utilisateur",
+                    "hide_vrchat_notes": "Cacher les notes de VRChat",
+                    "hide_vrcx_memos": "Cacher les mémos VRCX",
+                    "export_vrcx_memos_into_vrchat_notes": "Exporter des mémos VRCX en notes VRChat",
+                    "export_notes": "Exporter des notes"
+                },
+                "user_colors": {
+                    "header": "Couleurs de l'utilisateur",
+                    "random_colors_from_user_id": "Couleurs aléatoires à partir de l'ID de l'utilisateur"
+                }
+            },
+            "notifications": {
+                "notifications": {
+                    "header": "Notifications",
+                    "notification_filter": "Filtre des notifications",
+                    "steamvr_notifications": {
+                        "header": "Notifications SteamVR",
+                        "steamvr_overlay": "Overlay dans SteamVR",
+                        "overlay_notifications": "Overlay des Notifications",
+                        "notification_position": "Position des notifications",
+                        "xsoverlay_notifications": "Notifications XSOverlay",
+                        "user_images": "Images de l'utilisateur (plus lent)",
+                        "notification_timeout": "Délai des notifications"
+                    },
+                    "desktop_notifications": {
+                        "header": "Notifications sur le bureau",
+                        "when_to_display": "Quand l'afficher",
+                        "when_to_display_never": "Jamais",
+                        "when_to_display_desktop": "Mode bureau",
+                        "when_to_display_inside_vr": "Durant la VR",
+                        "when_to_display_outside_vr": "En dehors de la VR",
+                        "when_to_display_game_closed": "Jeu fermé",
+                        "when_to_display_game_running": "Jeu en cours",
+                        "when_to_display_always": "En permanence"
+                    },
+                    "text_to_speech": {
+                        "header": "Options de la synthèse vocale",
+                        "when_to_play": "Quand la jouer",
+                        "when_to_play_never": "Jamais",
+                        "when_to_play_inside_vr": "Durant la VR",
+                        "when_to_play_game_closed": "Jeu fermé",
+                        "when_to_play_game_running": "Jeu en cours",
+                        "when_to_play_always": "En permanence",
+                        "tts_voice": "Voix de la synthèse vocale"
+                    }
+                }
+            },
+            "wrist_overlay": {
+                "steamvr_wrist_overlay": {
+                    "header": "Overlay SteamVR au poignet",
+                    "description": "* S'exécute automatiquement lorsque VRChat est en cours d'exécution.",
+                    "grip": "Maintien : Poignée pour manettes Vive ou autres, boutons Oculus X/A",
+                    "menu": "Menu : Menu Vive, Index B, Boutons Y/B Oculus",
+                    "steamvr_overlay": "Overlay SteamVR",
+                    "wrist_feed_overlay": "Overlay d'actualité au poignet",
+                    "hide_private_worlds": "Cacher les mondes privés",
+                    "start_overlay_with": "Démarrer l'Overlay avec",
+                    "overlay_button": "Bouton de l'Overlay",
+                    "overlay_button_grip": "Maintien",
+                    "overlay_button_menu": "Menu",
+                    "display_overlay_on": "Affichage de l'Overlay sur",
+                    "display_overlay_on_left": "Main gauche",
+                    "display_overlay_on_right": "Main droite",
+                    "display_overlay_on_both": "Les deux mains",
+                    "background_color": "Couleur de fond",
+                    "minimal_feed_icons": "Icônes d'actualité minimales",
+                    "hide_vr_devices": "Cacher les dispositifs de VR",
+                    "hide_cpu_usage": "Cacher l'utilisation du processeur",
+                    "hide_game_uptime": "Cacher le temps de fonctionnement du jeu",
+                    "show_pc_uptime": "Afficher le temps de fonctionnement du PC",
+                    "wrist_feed_filters": "Filtres d'actualité au poignet"
+                }
+            },
+            "discord_presence": {
+                "discord_presence": {
+                    "header": "Présence sur Discord",
+                    "description": "* Ne fonctionne que lorsque VRChat est en cours d'exécution.",
+                    "enable": "Activé",
+                    "enable_tooltip": "Il est recommandé de désactiver Rich Presence dans le fichier config.json de VRChat pour éviter les conflits.",
+                    "instance_type_player_count": "Type d'instance / nombre de joueurs",
+                    "join_button": "Bouton rejoindre (en public uniquement)",
+                    "hide_details_in_private": "Cacher les détails en monde privé",
+                    "hide_images": "Cacher les images du monde"
+                }
+            },
+            "advanced": {
+                "advanced": {
+                    "header": "Avancés",
+                    "launch_options": "Options de démarrage",
+                    "screenshot_metadata": "Métadonnées d'une capture d'écran",
+                    "pending_offline": {
+                        "header": "En attendant l'hors ligne",
+                        "description": "Délai avant de marquer l'utilisateur comme étant hors ligne (corrige les faux positifs)",
+                        "set_delay": "Réglage du délai"
+                    },
+                    "primary_password": {
+                        "header": "Mot de passe principal",
+                        "description": "Encodage du mot de passe (désactive la connexion automatique)"
+                    },
+                    "relaunch_vrchat": {
+                        "header": "Relancer VRChat après un crash",
+                        "description": "Rejoindre la dernière instance lorsque VRChat crash"
+                    },
+                    "vrchat_quit_fix": {
+                        "header": "Correction de l'arrêt de VRChat",
+                        "description": "Arrêter VRChat après avoir quitté le jeu"
+                    },
+                    "auto_cache_management": {
+                        "header": "Gérer automatiquement le cache lors de la fermeture de VRChat",
+                        "description": "Suppression automatique des anciennes versions du cache"
+                    },
+                    "remote_database": {
+                        "header": "Base de données d'avatars à distance",
+                        "enable": "Activé",
+                        "avatar_database_provider": "Gestionnaire de la base de données d'avatars"
+                    },
+                    "youtube_api": {
+                        "header": "API Youtube",
+                        "enable": "Activé",
+                        "youtube_api_key": "Clé de l'API Youtube"
+                    },
+                    "video_progress_pie": {
+                        "header": "Overlay d'un graphique de progression pour les vidéos",
+                        "enable": "Activé",
+                        "enable_tooltip": "Nécessite l'activation de l'Overlay SteamVR",
+                        "dance_world_only": "Monde de danse seulement"
+                    },
+                    "screenshot_helper": {
+                        "header": "Aide pour les captures d'écran",
+                        "description": "Stocke l'ID du monde, le nom du monde et les joueurs en instance dans les métadonnées du fichier de toutes les photos que vous prenez dans le jeu.",
+                        "description_tooltip": "Malheureusement, Windows ne permet pas de visualiser les blocs de texte PNG (peu de choses le font) en mode natif, mais vous pouvez les visualiser à l'aide d'un outil en ligne de commande comme exiftool, d'un inspecteur de blocs PNG ou d'un éditeur hexagonal.",
+                        "enable": "Activé",
+                        "modify_filename": "Modifier le nom du fichier",
+                        "modify_filename_tooltip": "Ajoute l'ID du monde au nom du fichier de la capture d'écran, en plus des métadonnées du fichier."
+                    },
+                    "app_launcher": {
+                        "header": "Lanceur d'application",
+                        "folder": "Dossier de lancement automatique",
+                        "folder_tooltip": "Pour lancer automatiquement des applications avec VRChat, placez des raccourcis dans ce dossier.",
+                        "enable": "Activé",
+                        "auto_close": "Fermeture automatique des applications"
+                    },
+                    "cache_debug": {
+                        "header": "Cache/débogage d'instance VRCX",
+                        "udon_exception_logging": "Enregistrement des exceptions d'Udon",
+                        "gpu_fix": "Correction du GPU de l'Overlay SteamVR",
+                        "disable_gamelog": "Désactiver l'historique du jeu",
+                        "disable_gamelog_notice": "(ce qui risque de tout casser)",
+                        "user_cache": "Cache utilisateur :",
+                        "world_cache": "Cache de monde :",
+                        "avatar_cache": "Cache avatar :",
+                        "group_cache": "Cache de groupe :",
+                        "avatar_name_cache": "Cache du nom de l'avatar :",
+                        "clear_cache": "Vider le cache",
+                        "auto_clear_cache": "Vidage automatique du cache",
+                        "download_history": "Télécharger l'historique",
+                        "show_console": "Afficher la console"
+                    },
+                    "sqlite_table_size": {
+                        "header": "Taille du tableau SQLite",
+                        "refresh": "Actualiser",
+                        "gps": "GPS :",
+                        "status": "Statut :",
+                        "bio": "Bio :",
+                        "avatar": "Avatar :",
+                        "online_offline": "En ligne / hors ligne :",
+                        "friend_log_history": "Historique du journal des amis :",
+                        "notification": "Notifications :",
+                        "location": "Lieu :",
+                        "join_leave": "Rejoindre / Quitter :",
+                        "portal_spawn": "Portail d'accès :",
+                        "video_play": "Lecture de vidéo :",
+                        "event": "Événement :"
+                    }
+                },
+                "photon": {
+                    "header": "Overlay de l'historique de Photon",
+                    "event_hud": {
+                        "header": "Interface des événements de Photon",
+                        "enable": "Activé",
+                        "enable_tooltip": "Nécessite l'activation de l'Overlay SteamVR",
+                        "filter": "Filtrer",
+                        "filter_favorites": "Favoris",
+                        "filter_friends": "Amis",
+                        "filter_everyone": "Tout le monde",
+                        "message_timeout": "Délai d'attente des messages"
+                    },
+                    "timeout_hud": {
+                        "header": "User Timeout HUD",
+                        "enable": "Activé",
+                        "enable_tooltip": "Nécessite l'activation de l'Overlay SteamVR",
+                        "filter": "Filtrer",
+                        "filter_favorites": "Favoris",
+                        "filter_friends": "Amis",
+                        "filter_everyone": "Tout le monde",
+                        "timeout_threshold": "Délai d'attente des seuils"
+                    }
+                }
+            }
+        }
+    },
+    "side_panel": {
+        "search_placeholder": "Rechercher",
+        "search_result_active": "En ligne",
+        "search_result_offline": "Hors ligne",
+        "search_result_more": "Plus de recherche :",
+        "direct_access_tooltip": "Accès direct à l'ID/URL à partir du presse-papiers",
+        "refresh_tooltip": "Actualiser les amis",
+        "friends": "AMIS",
+        "me": "MOI",
+        "favorite": "FAVORIS",
+        "online": "EN LIGNE",
+        "active": "ACTIF",
+        "offline": "HORS LIGNE",
+        "pending_offline": "En attendant l'hors ligne"
+    },
+    "dialog": {
+        "user": {
+            "status": {
+                "active": "Actif",
+                "offline": "Hors ligne",
+                "online": "En ligne",
+                "join_me": "Rejoignez-moi",
+                "ask_me": "Demandez-moi",
+                "busy": "Ne pas déranger"
+            },
+            "previous_display_names": "Noms d'affichage antérieurs :",
+            "tags": {
+                "friend_no": "Ami N°{number}",
+                "vrchat_team": "Équipe VRChat"
+            },
+            "actions": {
+                "favorite_tooltip": "Ajouter aux favoris",
+                "unfavorite_tooltip": "Supprimer des favoris",
+                "refresh": "Actualiser",
+                "copy_url": "Copier l'URL de l'utilisateur",
+                "invite": "Inviter",
+                "invite_with_message": "Inviter avec un message",
+                "request_invite": "Demander une invitation",
+                "request_invite_with_message": "Demander une invitation avec un messag",
+                "invite_to_group": "Inviter à un groupe",
+                "manage_gallery_icon": "Gérer la galerie et les icônes",
+                "accept_friend_request": "Accepter la demande d'ami",
+                "decline_friend_request": "Refuser la demande d'ami",
+                "cancel_friend_request": "Annuler la demande d'ami",
+                "send_friend_request": "Envoyer une demande d'ami",
+                "show_avatar_author": "Afficher l'auteur de l'avatar",
+                "show_fallback_avatar": "Afficher les détails de l'avatar fallback",
+                "show_previous_instances": "Afficher les instances précédentes",
+                "show_previous_images": "Afficher les images précédentes",
+                "moderation_block": "Bloquer",
+                "moderation_unblock": "Débloquer",
+                "moderation_mute": "Mettre en sourdine",
+                "moderation_unmute": "Rétablir le son",
+                "moderation_hide_avatar": "Cacher l'avatar",
+                "moderation_show_avatar": "Afficher l'avatar",
+                "moderation_enable_avatar_interaction": "Activer l'interaction avec l'avatar",
+                "moderation_disable_avatar_interaction": "Désactiver l'interaction avec l'avatar",
+                "edit_status": "Statut social",
+                "edit_language": "Language",
+                "edit_bio": "Bio",
+                "report_hacking": "Signaler un piratage",
+                "unfriend": "Supprimer des amis",
+                "logout": "Se déconnecter"
+            },
+            "info": {
+                "header": "Infos",
+                "launch_invite_tooltip": "Lancer / inviter",
+                "self_invite_tooltip": "S'inviter",
+                "refresh_user_count_tooltip": "Actualiser le nombre d'utilisateurs",
+                "instance_creator": "Créateur de l'instance",
+                "note": "Note",
+                "note_placeholder": "Cliquez pour ajouter une note",
+                "memo": "Memo",
+                "memo_placeholder": "Cliquez pour ajouter un memo",
+                "avatar_info": "Informations de l'avatar",
+                "avatar_info_last_seen": "Informations sur l'avatar vu la dernière fois",
+                "represented_group": "Groupe représenté",
+                "bio": "Bio",
+                "last_seen": "Ensemble la dernière fois",
+                "join_count": "Nombre de fois ensemble",
+                "time_together": "Le temps passé ensemble",
+                "online_for": "En ligne depuis",
+                "offline_for": "Hors ligne depuis",
+                "last_activity": "Dernière activité",
+                "last_login": "Dernière connexion",
+                "date_joined": "Date d'inscription",
+                "friended": "Amis depuis",
+                "unfriended": "Supprimé des amis depuis",
+                "avatar_cloning": "Clonage des avatars",
+                "avatar_cloning_allow": "Autorisé",
+                "avatar_cloning_deny": "Refusé",
+                "home_location": "Lieu d'accueil",
+                "accuracy_notice": "Les informations provenant de la base de données locale peuvent ne pas être exactes",
+                "instance_full": "complète"
+            },
+            "groups": {
+                "header": "Groupes",
+                "total_count": "{count} au total",
+                "own_groups": "Propres groupes",
+                "mutual_groups": "Groupes mutuels",
+                "groups": "Groupes"
+            },
+            "worlds": {
+                "header": "Mondes",
+                "total_count": "{count} au total",
+                "sort_by_name": "Trier par nom",
+                "sort_by_update": "Trier par mise à jour"
+            },
+            "favorite_worlds": {
+                "header": "Mondes favoris"
+            },
+            "avatars": {
+                "header": "Avatars",
+                "total_count": "{count} au total",
+                "sort_by_name": "Trier par nom",
+                "sort_by_update": "Trier par mise à jour",
+                "all": "Tout",
+                "public": "Public",
+                "private": "Privé"
+            },
+            "json": {
+                "header": "JSON"
+            }
+        },
+        "world": {
+            "tags": {
+                "public": "Public",
+                "private": "Privé",
+                "labs": "Labs",
+                "cache": "Cache"
+            },
+            "actions": {
+                "delete_cache_tooltip": "Supprimer le monde du cache",
+                "favorites_tooltip": "Favoris",
+                "refresh": "Actualiser",
+                "new_instance": "Nouvelle instance",
+                "make_home": "Définir comme lieu d'accueil",
+                "reset_home": "Réinitialiser l'accueil",
+                "show_previous_instances": "Afficher les instances précédentes",
+                "show_previous_images": "Afficher les images précédentes",
+                "rename": "Renommer",
+                "change_description": "Changer la description",
+                "change_capacity": "Changer la capacité",
+                "change_preview": "Changer l'aperçu Youtube",
+                "change_tags": "Changer les étiquettes",
+                "change_image": "Changer l'image",
+                "download_package": "Télécharger le package Unity",
+                "publish_to_labs": "Publier comme Labs",
+                "unpublish": "Dépublier",
+                "delete": "Supprimer"
+            },
+            "instances": {
+                "header": "Instances",
+                "public_count": "{count} en public",
+                "private_count": "{count} en privé",
+                "capacity_count": "Capacité : {count} ({max})",
+                "self_invite_tooltip": "S'inviter",
+                "refresh_user_count_tooltip": "Actualiser le nombre d'utilisateurs",
+                "instance_full": "complète",
+                "instance_creator": "Créateur de l'instance"
+            },
+            "info": {
+                "header": "Infos",
+                "id": "ID du monde",
+                "id_tooltip": "Copier dans le presse-papiers",
+                "copy_id": "Copier l'ID",
+                "copy_url": "Copier l'URL",
+                "copy_name": "Copier le nom",
+                "youtube_preview": "Aperçu Youtube",
+                "players": "Joueurs",
+                "favorites": "Favoris",
+                "visits": "Visites",
+                "capacity": "Capacité",
+                "heat": "Chaleur",
+                "popularity": "Popularité",
+                "created_at": "Créé le",
+                "last_updated": "Dernière mise à jour",
+                "version": "Version",
+                "platform": "Plateforme",
+                "last_visited": "Dernière visite",
+                "visit_count": "Nombre de visites",
+                "time_spent": "Temps passé",
+                "accuracy_notice": "Les informations provenant de la base de données locale peuvent ne pas être exactes"
+            },
+            "json": {
+                "header": "JSON"
+            }
+        },
+        "avatar": {
+            "tags": {
+                "public": "Public",
+                "private": "Privé",
+                "fallback": "Fallback",
+                "cache": "Cache"
+            },
+            "labels": {
+                "public": "(Public)",
+                "private": "(Privé)",
+                "own": "(À moi)"
+            },
+            "actions": {
+                "delete_cache_tooltip": "Supprimer l'avatar du cache",
+                "favorite_tooltip": "Ajouter aux favoris",
+                "unfavorite_tooltip": "Supprimer des favoris",
+                "refresh": "Actualiser",
+                "select": "Sélectionner un avatar",
+                "select_fallback": "Sélectionner l'avatar fallback",
+                "block": "Bloquer l'avatar",
+                "unblock": "Débloquer l'avatar",
+                "show_previous_images": "Afficher les images précédentes",
+                "make_public": "Rendre public",
+                "make_private": "Rendre privé",
+                "rename": "Renommer",
+                "change_description": "Changer la description",
+                "change_image": "Changer l'image",
+                "download_package": "Télécharger le package Unity",
+                "delete": "Supprimer"
+            },
+            "info": {
+                "header": "Infos",
+                "id": "ID de l'avatar",
+                "id_tooltip": "Copier dans le presse-papiers",
+                "copy_id": "Copier l'ID",
+                "copy_url": "Copier l'URL",
+                "created_at": "Créé le",
+                "last_updated": "Dernière mise à jour",
+                "version": "Version",
+                "platform": "Plateforme"
+            },
+            "json": {
+                "header": "JSON"
+            }
+        },
+        "group": {
+            "tags": {
+                "verified": "Vérifié",
+                "public": "Public",
+                "private": "Privé",
+                "open": "Ouvert",
+                "request": "Demandé",
+                "invite": "Invité",
+                "closed": "Fermé",
+                "joined": "Rejoint",
+                "banned": "Bannis",
+                "visible": "Visible",
+                "friends": "Amis",
+                "hidden": "Caché",
+                "subscribed": "Abonné"
+            },
+            "actions": {
+                "represent_tooltip": "Mettre en bannière",
+                "unrepresent_tooltip": "Enlever de la bannière",
+                "cancel_join_request_tooltip": "Annuler la demande d'adhésion",
+                "pending_request_tooltip": "Invitation en attente",
+                "request_join_tooltip": "Demander l'adhésion",
+                "invite_required_tooltip": "Invitation nécessaire",
+                "join_group_tooltip": "Rejoindre le groupe",
+                "refresh": "Actualiser",
+                "unsubscribe": "Se désabonner des annonces",
+                "subscribe": "S'abonner aux annonces",
+                "invite_to_group": "Inviter au groupe",
+                "visibility_everyone": "Tout le monde peut me voir",
+                "visibility_friends": "Mes amis peuvent me voir",
+                "visibility_hidden": "Personne ne peut me voir",
+                "leave": "Quitter le groupe"
+            },
+            "info": {
+                "header": "Infos",
+                "announcement": "Annonces",
+                "instance_full": "complet",
+                "rules": "Régles",
+                "members": "Membres",
+                "created_at": "Créé le",
+                "links": "Liens",
+                "url": "URL du groupe",
+                "url_tooltip": "Copier l'URL dans le presse-papiers",
+                "id": "ID du Groupe",
+                "id_tooltip": "Copier l'ID dans le presse-papiers",
+                "joined_at": "Rejoint le",
+                "roles": "Rôles",
+                "role": "Rôle :",
+                "role_description": "Description :",
+                "role_updated_at": "Mis à jour le :",
+                "role_created_at": "Créé le :",
+                "role_permissions": "Permissions :"
+            },
+            "members": {
+                "header": "Membres",
+                "all_members": "Tous les membres",
+                "friends_only": "Amis uniquement",
+                "load_more": "En charger plus",
+                "sort_by": "Trier par :",
+                "sorting": {
+                    "user_id": "ID de l'utilisateur (croissant)",
+                    "joined_at_asc": "Rejoint le (croissant)",
+                    "joined_at_desc": "Rejoint le (décroissant)"
+                },
+                "filter": "Filtrer :",
+                "filters": {
+                    "everyone": "Tout le monde",
+                    "users_with_no_role": "Utilisateurs sans rôle"
+                }
+            },
+            "gallery": {
+                "header": "Galerie"
+            },
+            "json": {
+                "header": "JSON"
+            }
+        },
+        "favorite": {
+            "header": "Choisir un groupe",
+            "vrchat_favorites": "Favoris VRChat",
+            "local_favorites": "Favoris locaux"
+        },
+        "invite": {
+            "header": "Inviter",
+            "select_placeholder": "Choisir des amis",
+            "invite_with_message": "Inviter avec un message",
+            "invite": "Inviter"
+        },
+        "social_status": {
+            "header": "Statut social",
+            "history": "Historique",
+            "status_placeholder": "Statut",
+            "update": "Mise à jour"
+        },
+        "language": {
+            "header": "Language",
+            "add_language": "Ajouter une langue",
+            "select_language": "Sélectionner la langue",
+            "ok": "OK",
+            "cancel": "Annuler"
+        },
+        "bio": {
+            "header": "Bio",
+            "bio_placeholder": "Veuillez saisir une biographie",
+            "add_link": "Ajouter un lien",
+            "update": "Mise à jour"
+        },
+        "new_instance": {
+            "header": "Nouvelle instance",
+            "access_type": "Type d'accès",
+            "access_type_public": "Public",
+            "access_type_group": "Groupe",
+            "access_type_friend_plus": "Amis+",
+            "access_type_friend": "Amis",
+            "access_type_invite_plus": "Invite+",
+            "access_type_invite": "Invite",
+            "region": "Région",
+            "region_usw": "Ouest des États-Unis",
+            "region_use": "Est des États-Unis",
+            "region_eu": "Europe",
+            "region_jp": "Japon",
+            "world_id": "ID du monde",
+            "instance_id": "ID de l'instance",
+            "instance_id_placeholder": "Aléatoire",
+            "instance_creator": "Créateur de l'instance",
+            "instance_creator_placeholder": "Choisir un utilisateur",
+            "group_id": "ID du groupe",
+            "location": "Lieu",
+            "url": "URL",
+            "copy_url": "Copier l'URL",
+            "self_invite": "S'inviter",
+            "invite": "Inviter",
+            "launch": "Lancer"
+        },
+        "launch_options": {
+            "header": "Options de démarrage de VRChat",
+            "description": "Ces options sont réservées aux utilisateurs avancés.",
+            "example": "Pour modifier le nombre d'images par seconde maximum : --fps=<N> par exemple)",
+            "path_override": "Remplacement du chemin d'accès à VRChat",
+            "vrchat_docs": "Documentation de VRChat",
+            "unity_manual": "Documentation d'Unity",
+            "save": "Sauvegarder"
+        },
+        "config_json": {
+            "header": "Configuration de VRChat",
+            "description1": "Ces options sont réservées aux utilisateurs avancés.",
+            "description2": "Laissez le champ vide pour définir la valeur par défaut. Le redémarrage du jeu est nécessaire pour appliquer les paramètres.",
+            "cache_size": "Taille du cache :",
+            "refresh": "Actualiser",
+            "delete_all_cache": "Effacer tout le cache",
+            "delete_cache": "Supprimer le cache",
+            "delete_old_cache": "Supprimer les anciennes versions du cache",
+            "sweep_cache": "Balayer le cache",
+            "max_cache_size": "Taille maximale du cache [Go] (min 20)",
+            "cache_expiry_delay": "Expiration du cache [jours] (30 - 150)",
+            "cache_directory": "Emplacement du dossier de cache personnalisé",
+            "fpv_steadycam_fov": "Angle de vue à la première personne",
+            "camera_resolution": "Résolution de l'appareil photo",
+            "screenshot_resolution": "Résolution des captures d'écran",
+            "disable_discord_presence": "Désactiver la présence Discord",
+            "vrchat_docs": "Documentation de VRChat",
+            "cancel": "Annuler",
+            "save": "Sauvegarder"
+        },
+        "youtube_api": {
+            "header": "API YouTube",
+            "description": "Saisissez votre clé API YouTube (facultatif)",
+            "placeholder": "Clé API YouTube",
+            "guide": "Guide",
+            "save": "Sauvegarder"
+        },
+        "set_world_tags": {
+            "header": "Définir les étiquettes du monde",
+            "enable_debugging": "Activer le débogage du monde pour les autres",
+            "seprator": "Saisir les étiquettes en les séparant par des virgules",
+            "cancel": "Annuler",
+            "save": "Sauvegarder"
+        },
+        "download_history": {
+            "header": "Télécharger l'historique",
+            "queue": "File d'attente :",
+            "history": "Historique :",
+            "cancel_all": "Annuler tout",
+            "close": "Fermer"
+        },
+        "vrcx_updater": {
+            "header": "VRCX Updater",
+            "latest_version": "VRCX est à jour.",
+            "ready_for_update": "Prêt pour l'installation, redémarrer VRCX pour l'appliquer.",
+            "download": "Télécharger",
+            "install": "Installer"
+        },
+        "launch": {
+            "header": "Lancement",
+            "url": "URL",
+            "short_url": "URL court",
+            "short_url_notice": "Les URL courts expirent au bout d'un certain temps.",
+            "location": "Lieu",
+            "copy_tooltip": "Copier dans le presse-papiers",
+            "start_as_desktop": "Démarrer en tant que bureau (pas de VR)",
+            "info": "Infos",
+            "invite": "Inviter",
+            "launch": "Lancer"
+        },
+        "export_friends_list": {
+            "header": "Exporter la liste d'amis"
+        },
+        "export_own_avatars": {
+            "header": "Exporter ses propres avatars"
+        },
+        "discord_names": {
+            "header": "Noms Discord",
+            "description": "Cliquez sur charger les entrées manquantes dans l'onglet Liste d'amis pour effectuer une recherche dans l'ensemble de la liste d'amis."
+        },
+        "notification_position": {
+            "header": "Position des notifications",
+            "description": "Choisissez une position des notifications.",
+            "ok": "OK"
+        },
+        "shared_feed_filters": {
+            "notification": "Filtres des notifications",
+            "wrist": "Filtres d'actualité au poignet",
+            "on": "Activé",
+            "off": "Désactivé",
+            "favorite": "Favoris",
+            "friends": "Amis",
+            "everyone": "Tout le monde",
+            "cancel": "Annuler",
+            "save": "Sauvegarder"
+        },
+        "world_export": {
+            "header": "Exporter les mondes favoris"
+        },
+        "world_import": {
+            "header": "Importer les mondes favoris",
+            "description": "Saisir une liste d'ID mondes",
+            "process_list": "Liste des processus",
+            "process_progress": "Progression :",
+            "select_vrchat_group_placeholder": "Sélectionner un groupe VRChat",
+            "select_local_group_placeholder": "Sélectionner un groupe local",
+            "import": "Mondes importés",
+            "cancel": "Annuler",
+            "import_progress": "Progression de l'importation :",
+            "clear_table": "Vider la table",
+            "errors": "Erreurs :",
+            "clear_errors": "Vider les erreurs"
+        },
+        "avatar_export": {
+            "header": "Exporter les avatars favoris"
+        },
+        "avatar_import": {
+            "header": "Importer les avatars favoris",
+            "description": "Saisir une liste d'ID avatars",
+            "process_list": "Liste des processus",
+            "process_progress": "Progression :",
+            "select_group_placeholder": "Sélectionner un groupe",
+            "import": "Avatars importés",
+            "cancel": "Annuler",
+            "import_progress": "Progression de l'importation :",
+            "clear_table": "Vider la table",
+            "errors": "Erreurs :",
+            "clear_errors": "Vider les erreurs"
+        },
+        "friend_export": {
+            "header": "Exporter les amis favoris"
+        },
+        "friend_import": {
+            "header": "Importer les amis favoris",
+            "description": "Saisir une liste d'ID amis",
+            "process_list": "Liste des processus",
+            "process_progress": "Progression :",
+            "select_group_placeholder": "Sélectionner un groupe",
+            "import": "Amis importés",
+            "cancel": "Annuler",
+            "import_progress": "Progression de l'importation :",
+            "clear_table": "Vider la table",
+            "errors": "Erreurs :",
+            "clear_errors": "Vider les erreurs"
+            
+        },
+        "avatar_database_provider": {
+            "header": "Gestionnaire de la base de données d'avatars",
+            "add_provider": "Ajouter un gestionnaire"
+        },
+        "chatbox_blacklist": {
+            "header": "Liste noire des boîtes de dialogue",
+            "keyword_blacklist": "Liste noire de mots-clés",
+            "user_blacklist": "Liste noire des utilisateurs",
+            "add_item": "Ajouter un élément"
+        },
+        "invite_to_group": {
+            "header": "Inviter au groupe",
+            "description": "N'invitez pas de spammeurs, l'invitation d'un trop grand nombre d'utilisateurs à un groupe est connue pour entraîner un bannissement.",
+            "choose_group_placeholder": "Choisir un groupe",
+            "groups": "Groupes",
+            "choose_friends_placeholder": "Choisir des amis",
+            "selected_users": "Utilisateurs sélectionnés"
+        },
+        "note_export": {
+            "header": "Exporter les notes",
+            "description1": "Ce processus exportera tous vos mémos VRCX et les importera dans les notes VRChat.",
+            "description2": "Il convient d'être attentif aux limitations suivantes :",
+            "description3": "- L'API a une limite de trafic qui nécessite un délai important entre les requêtes.",
+            "description4": "- Limitation à 256 caractères par note.",
+            "description5": "- Filtre sur les gros mots (pas d'amusement autorisé).",
+            "description6": "- Pas de retour à la ligne (elles seront remplacées par un espace).",
+            "description7": "- Cela remplacera toutes les notes VRChat existantes pour ces utilisateurs.",
+            "description8": "- Les modifications apportées ici n'affecteront pas les mémos VRCX mais affecteront les notes VRChat une fois exportées.",
+            "refresh": "Actualiser",
+            "export": "Exporter",
+            "cancel": "Annuler",
+            "progress": "Progression :",
+            "errors": "Erreurs :",
+            "clear_errors": "Vider les erreurs"
+        },
+        "edit_invite_message": {
+            "header": "Édition du message d'invitation",
+            "description": "1 heure pour la suivante édition.",
+            "cancel": "Annuler",
+            "save": "Sauvegarder"
+        },
+        "invite_message": {
+            "header": "Envoyer le message d'invitation",
+            "confirmation": "Êtes-vous sûr de vouloir envoyer ?",
+            "cancel": "Annuler",
+            "refresh": "Actualiser",
+            "confirm": "Confirmer"
+        },
+        "invite_request_message": {
+            "header": "Envoyer un message de demande d'invitation",
+            "cancel": "Annuler",
+            "refresh": "Actualiser"
+        },
+        "invite_response_message": {
+            "header": "Envoyer un message de réponse à l'invitation",
+            "confirmation": "Êtes-vous sûr de vouloir envoyer ?",
+            "cancel": "Annuler",
+            "refresh": "Actualiser",
+            "confirm": "Confirmer"
+        },
+        "invite_request_response_message": {
+            "header": "Envoyer un message de réponse à la demande d'invitation",
+            "cancel": "Annuler",
+            "refresh": "Actualiser"
+        },
+        "edit_send_invite_message": {
+            "header": "Modifier et envoyer un message d'invitation",
+            "description": "1 heure pour la suivante édition.",
+            "cancel": "Annuler",
+            "send": "Envoyer"
+        },
+        "edit_send_invite_response_message": {
+            "header": "Modifier et envoyer le message de réponse à l'invitation",
+            "description": "1 heure pour la suivante édition.",
+            "cancel": "Annuler",
+            "send": "Envoyer"
+        },
+        "gallery_icons": {
+            "header": "Galerie et icônes",
+            "description": "Taille d'image recommandée : 1200x900px (4:3)",
+            "gallery": "Galerie",
+            "icons": "Icônes",
+            "refresh": "Actualiser",
+            "upload": "Uploader",
+            "clear": "Vider"
+        },
+        "change_content_image": {
+            "avatar": "Changer l'image de l'avatar",
+            "world": "Changer l'image du monde",
+            "description": "Taille d'image recommandée : 1200x900px (4:3)",
+            "refresh": "Actualiser",
+            "upload": "Uploader l'image"
+        },
+        "previous_images": {
+            "header": "Images précédentes"
+        },
+        "previous_instances": {
+            "header": "Instances précédentes",
+            "info": "Informations sur l'instance précédente",
+            "search_placeholder": "Rechercher"
+        },
+        "change_log": {
+            "header": "Historique des modifications",
+            "description": "Envisagez de faire un don pour soutenir le développement futur de VRCX.",
+            "close": "Fermer",
+            "donate": "Faire un don",
+            "github": "GitHub"
+        },
+        "gallery_select": {
+            "header": "Sélectionner une image",
+            "gallery": "Galerie",
+            "none": "Rien",
+            "refresh": "Actualiser",
+            "upload": "Upload"
+        },
+        "open_source": {
+            "header": "Mentions relatives aux logiciels libres",
+            "description": "VRCX est basé sur un logiciel libre. Il a été possible grâce à leurs contributions."
+        },
+        "primary_password": {
+            "header": "Mot de passe primaire nécessaire",
+            "password_placeholder": "Saisir le nouveau mot de passe",
+            "re_input_placeholder": "Confirmation du mot de passe",
+            "ok": "OK"
+        },
+        "screenshot_metadata": {
+            "header": "Métadonnées de la capture d'écran",
+            "drag": "Glissez-déposez une capture d'écran ici",
+            "browse": "Parcourir",
+            "last_screenshot": "Dernière capture d'écran",
+            "copy_image": "Copier l'image",
+            "open_folder": "Ouvrir un dossier",
+            "upload": "Upload"
+        }
+    },
+    "prompt": {
+        "totp": {
+            "header": "Authentification à double facteur",
+            "description": "Saisissez un code numérique à partir de votre application d'authentification",
+            "use_otp": "Utiliser un mot de passe à usage unique (OTP)",
+            "verify": "Vérifier",
+            "input_placeholder": "Code",
+            "input_error": "Code incorrect"
+        },
+        "otp": {
+            "header": "Authentification à double facteur",
+            "description": "Saisissez l'un des codes de récupération que vous avez enregistrés",
+            "use_otp": "Utiliser un mot de passe à usage unique basé sur le temps (TOTP)",
+            "verify": "Vérifier",
+            "input_placeholder": "Code",
+            "input_error": "Code incorrect"
+        },
+        "email_otp": {
+            "header": "Authentification à double facteur",
+            "description": "Saisissez un code numérique qui vous a été envoyé par email",
+            "resend": "Renvoyer l'email",
+            "verify": "Vérifier",
+            "input_placeholder": "Code",
+            "input_error": "Code incorrect"
+        },
+        "primary_password": {
+            "header": "Mot de passe primaire nécessaire",
+            "description": "Veuillez saisir votre mot de passe principal."
+        },
+        "change_favorite_group_name": {
+            "header": "Changer le nom du groupe",
+            "description": "Saisir un nouveau nom",
+            "cancel": "Annuler",
+            "change": "Changer",
+            "input_placeholder": "Nom",
+            "input_error": "Un nom est nécessaire",
+            "message": {
+                "success": "Groupe renommé"
+            }
+        },
+        "direct_access_user_id": {
+            "header": "Accès direct",
+            "description": "Saisir l'URL ou l'ID de l'utilisateur (UUID)",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un URL / ID d'utilisateur est nécessaire",
+            "message": {
+                "error": "URL / ID invalide"
+            }
+        },
+        "direct_access_username": {
+            "header": "Accès direct",
+            "description": "Saisir un nom d'utilisateur",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un nom d'utilisateur est nécessaire"
+        },
+        "direct_access_world_id": {
+            "header": "Accès direct",
+            "description": "Saisir l'URL ou l'ID du monde (UUID)",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un URL / ID de monde est nécessaire",
+            "message": {
+                "error": "URL / ID invalide"
+            }
+        },
+        "direct_access_avatar_id": {
+            "header": "Accès direct",
+            "description": "Saisir l'URL ou l'ID d'un avatar (UUID)",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un URL / ID d'avatar est nécessaire",
+            "message": {
+                "error": "URL / ID invalide"
+            }
+        },
+        "direct_access_omni": {
+            "header": "Accès direct",
+            "description": "Saisir l'URL ou l'ID d'un utilisateur/monde/instance/avatar/groupe (UUID)",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un URL / ID est nécessaire",
+            "message": {
+                "error": "URL / ID invalide"
+            }
+        },
+        "notification_timeout": {
+            "header": "Délai des notifications",
+            "description": "Saisir le nombre de secondes",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un numéro valide est nécessaire"
+        },
+        "overlay_message_timeout": {
+            "header": "Délai d'attente des messages",
+            "description": "Saisir le nombre de secondes",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un numéro valide est nécessaire"
+        },
+        "rename_avatar": {
+            "header": "Renommer l'avatar",
+            "description": "Saisir un nom pour l'avatar",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un nom valide est nécessaire",
+            "message": {
+                "success": "Avatar renommé"
+            }
+        },
+        "change_avatar_description": {
+            "header": "Changer la description",
+            "description": "Saisir une description pour l'avatar",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Une description valide est nécessaire",
+            "message": {
+                "success": "La description de l'avatar a été modifiée"
+            }
+        },
+        "rename_world": {
+            "header": "Renommer le monde",
+            "description": "Saisir un nom pour le monde",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un nom valide est nécessaire",
+            "message": {
+                "success": "Monde renommé"
+            }
+        },
+        "change_world_description": {
+            "header": "Changer la description",
+            "description": "Saisir une description pour le monde",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Une description valide est nécessaire",
+            "message": {
+                "success": "La description du monde a été modifiée"
+            }
+        },
+        "change_world_capacity": {
+            "header": "Changer la capacité",
+            "description": "Saisir la capacité du monde, Maximum : 40",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un numéro valide est nécessaire",
+            "message": {
+                "success": "La capacité du monde a été changée"
+            }
+        },
+        "change_world_preview": {
+            "header": "Changer l'aperçu YouTube",
+            "description": "Saisir un URL pour l'aperçu YouTube",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Une URL YouTube valide est nécessaire",
+            "message": {
+                "error": "URL YouTube invalide",
+                "success": "L'aperçu YouTube a été changé"
+            }
+        },
+        "change_table_size": {
+            "header": "Taille maximale du tableau",
+            "description": "Limite le nombre d'entrées chargées depuis la base de données. Des tableaux plus grands auront un impact sur l'utilisation de la RAM et sur les performances (par défaut : 1000, max : 10000).",
+            "cancel": "Annuler",
+            "save": "Sauvegarder",
+            "input_error": "Un numéro valide est nécessaire"
+        },
+        "photon_lobby_timeout": {
+            "header": "Seuil d'attente de l'utilisateur",
+            "description": "Saisir le nombre de secondes (par défaut : 3)",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un numéro valide est nécessaire"
+        },
+        "auto_clear_cache": {
+            "header": "Effacer la temporisation du cache VRCX",
+            "description": "Saisir le nombre d'heures, des valeurs plus élevées peuvent avoir un impact sur l'utilisation de la RAM et les performances (par défaut : 24, désactivé : 0)",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un numéro valide est nécessaire"
+        },
+        "new_local_favorite_group": {
+            "header": "Nouveau groupe",
+            "description": "Saisir un nom de groupe favori du monde",
+            "cancel": "Annuler",
+            "ok": "OK",
+            "input_error": "Un nom est nécessaire",
+            "message": {
+                "error": "Il existe déjà un groupe portant le nom {name}"
+            }
+        },
+        "local_favorite_group_rename": {
+            "header": "Renommer le groupe",
+            "description": "Saisir un nom de groupe favori du monde",
+            "cancel": "Annuler",
+            "save": "Sauvegarder",
+            "input_error": "Un nom est nécessaire",
+            "message": {
+                "error": "Il existe déjà un groupe portant le nom {name}"
+            }
+        },
+        "pending_offline_delay": {
+            "header": "En attendant l'hors ligne",
+            "description": "Définir le délai avant la mise hors ligne, en secondes (par défaut : 110)",
+            "cancel": "Annuler",
+            "save": "Sauvegarder",
+            "input_error": "Un numéro valide est nécessaire"
+        }
+    },
+    "table": {
+        "feed": {
+            "date": "Date",
+            "type": "Type",
+            "user": "Utilisateur",
+            "detail": "Détail"
+        },
+        "gameLog": {
+            "date": "Date",
+            "type": "Type",
+            "icon": "Icônes",
+            "user": "Utilisateur",
+            "detail": "Détail",
+            "action": "Action"
+        },
+        "playerList": {
+            "avatar": "Avatar",
+            "timer": "Depuis",
+            "photonId": "ID Photon",
+            "icon": "Icônes",
+            "platform": "Platforme",
+            "displayName": "Nom d'affichage",
+            "status": "Statut",
+            "rank": "Rang",
+            "language": "Language",
+            "bioLink": "Liens",
+            "date": "Date",
+            "user": "Utilisateur",
+            "type": "Type",
+            "detail": "Détail"
+        },
+        "friendLog": {
+            "date": "Date",
+            "type": "Type",
+            "user": "Utilisateur",
+            "action": "Action"
+        },
+        "moderation": {
+            "date": "Date",
+            "type": "Type",
+            "source": "Par",
+            "target": "Sur",
+            "action": "Action"
+        },
+        "notification": {
+            "date": "Date",
+            "type": "Type",
+            "user": "Utilisateur",
+            "photo": "Photo",
+            "message": "Message",
+            "action": "Action"
+        },
+        "friendList": {
+            "no": "N°",
+            "avatar": "Avatar",
+            "displayName": "Nom d'affichage",
+            "rank": "Rang",
+            "status": "Statut",
+            "language": "Language",
+            "bioLink": "Liens",
+            "joinCount": "Fois ensemble",
+            "timeTogether": "Temps ensemble",
+            "lastSeen": "Vu le",
+            "lastActivity": "Dernière activité",
+            "lastLogin": "Dernière connexion",
+            "dateJoined": "Date d'inscription",
+            "unfriend": "Plus amis depuis"
+        },
+        "profile": {
+            "invite_messages": {
+                "slot": "Slot",
+                "message": "Message",
+                "cool_down": "Délai d'attente",
+                "action": "Action"
+            },
+            "previous_display_name": {
+                "date": "Date",
+                "name": "Nom"
+            }
+        },
+        "social_status": {
+            "no": "N°",
+            "status": "Statut"
+        },
+        "download_history": {
+            "time": "Depuis",
+            "name": "Nom",
+            "type": "Type",
+            "status": "Statut",
+            "cancel": "Annuler"
+        },
+        "import": {
+            "image": "Image",
+            "name": "Nom",
+            "author": "Auteur",
+            "status": "Statut",
+            "note": "Note",
+            "skip_export": "Ignorer l'exportation",
+            "action": "Action"
+        },
+        "previous_instances": {
+            "date": "Date",
+            "display_name": "Nom d'affichage",
+            "world": "Monde",
+            "instance_name": "Nom de l'instance",
+            "instance_creator": "Créateur de l'instance",
+            "time": "Depuis",
+            "count": "Nombre",
+            "action": "Action"
+        }
+    },
+    "vr": {
+        "status": {
+            "timer": "Depuis :",
+            "players": "Joueurs :",
+            "cpu": "CPU :",
+            "online": "En ligne :"
+        }
+    }
+}
