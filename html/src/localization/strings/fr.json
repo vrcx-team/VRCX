@@ -976,7 +976,6 @@
             "clear_table": "Vider la table",
             "errors": "Erreurs :",
             "clear_errors": "Vider les erreurs"
-            
         },
         "avatar_database_provider": {
             "header": "Gestionnaire de la base de données d'avatars",
