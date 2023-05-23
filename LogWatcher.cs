@@ -14,6 +14,9 @@ using CefSharp;
 
 namespace VRCX
 {
+    /// <summary>
+    /// Monitors the VRChat log files for changes and provides access to the log data.
+    /// </summary>
     public class LogWatcher
     {
         public static readonly LogWatcher Instance;
@@ -88,6 +91,9 @@ namespace VRCX
             }
         }
 
+        /// <summary>
+        /// Updates the log watcher by checking for new log files and updating the log list.
+        /// </summary>
         private void Update()
         {
             if (m_ResetLog)
@@ -157,6 +163,11 @@ namespace VRCX
             m_FirstRun = false;
         }
 
+        /// <summary>
+        /// Parses the log file starting from the current position and updates the log context.
+        /// </summary>
+        /// <param name="fileInfo">The file information of the log file to parse.</param>
+        /// <param name="logContext">The log context to update.</param>
         private void ParseLog(FileInfo fileInfo, LogContext logContext)
         {
             try

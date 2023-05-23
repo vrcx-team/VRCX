@@ -107,6 +107,9 @@ namespace VRCX
             ProcessMonitor.Instance.Exit();
         }
 
+        /// <summary>
+        /// Sets GPUFix to true if it is not already set and the VRCX_GPUFix key in the database is true.
+        /// </summary>
         private static void LoadFromConfig()
         {
             if (!GPUFix)
