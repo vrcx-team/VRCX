@@ -1156,6 +1156,10 @@ html
                             el-radio-button(label="friends") {{ $t('dialog.new_instance.access_type_friend') }}
                             el-radio-button(label="invite+") {{ $t('dialog.new_instance.access_type_invite_plus') }}
                             el-radio-button(label="invite") {{ $t('dialog.new_instance.access_type_invite') }}
+                    el-form-item(:label="$t('dialog.new_instance.group_access_type')" v-if="newInstanceDialog.accessType === 'group'")
+                        el-radio-group(v-model="newInstanceDialog.groupAccessType" size="mini" @change="buildInstance")
+                            el-radio-button(label="members") {{ $t('dialog.new_instance.group_access_type_members') }}
+                            el-radio-button(label="public") {{ $t('dialog.new_instance.group_access_type_public') }}
                     //- el-form-item(label="Strict" v-if="newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite'")
                     //-     el-checkbox(v-model="newInstanceDialog.strict") Prevent non friends joining via URL/Instance ID
                     el-form-item(:label="$t('dialog.new_instance.region')")
@@ -1209,7 +1213,13 @@ html
                                             span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                     span(v-else v-text="friend.id")
                     el-form-item(:label="$t('dialog.new_instance.group_id')" v-if="newInstanceDialog.accessType === 'group'")
-                        el-input(v-model="newInstanceDialog.groupId" placeholder="grp_UUID" size="mini")
+                        el-select(v-model="newInstanceDialog.groupId" clearable :placeholder="$t('dialog.new_instance.group_placeholder')" filterable style="width:100%")
+                            el-option-group(:label="$t('dialog.new_instance.group_placeholder')")
+                                el-option.x-friend-item(v-for="group in API.currentUserGroups.values()" :key="group.id" :label="group.name" :value="group.id" style="height:auto;width:478px")
+                                    .avatar
+                                        img(v-lazy="group.iconUrl")
+                                    .detail
+                                        span.name(v-text="group.name")
                     el-form-item(:label="$t('dialog.new_instance.location')")
                         el-input(v-model="newInstanceDialog.location" size="mini" readonly)
                     el-form-item(:label="$t('dialog.new_instance.url')")
