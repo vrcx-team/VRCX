@@ -1038,6 +1038,7 @@ class Database {
                 '@displayName': input.displayName
             }
         );
+        instances.delete('');
         ref.joinCount = instances.size;
         return ref;
     }
