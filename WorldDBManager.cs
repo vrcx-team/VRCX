@@ -94,7 +94,7 @@ END;";
                             break;
                         }
 
-                        JavascriptResponse worldId = await MainForm.Instance.Browser.EvaluateScriptAsPromiseAsync("return new Promise(async function(resolve, reject) { resolve(await $app.API.actuallyGetCurrentLocation()); });", TimeSpan.FromSeconds(5));
+                        JavascriptResponse worldId = await MainForm.Instance.Browser.EvaluateScriptAsync("$app.API.getUserApiCurrentLocation();", TimeSpan.FromSeconds(5));
                         currentWorldId = worldId.Result.ToString();
                         SendTextResponse(context.Response, $"Initialized World ID: {worldId.Result}");                     
                         break;
