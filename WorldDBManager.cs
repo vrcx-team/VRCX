@@ -12,7 +12,8 @@ namespace VRCX
     {
         private readonly HttpListener listener;
         private readonly SQLiteWorld sqlite;
-        private readonly static string dbInitQuery = @"CREATE TABLE IF NOT EXISTS worlds (
+        private readonly static string dbInitQuery = @"
+CREATE TABLE IF NOT EXISTS worlds (
     id INTEGER PRIMARY KEY,
     world_id TEXT UNIQUE
 );
@@ -22,8 +23,8 @@ CREATE TABLE IF NOT EXISTS data (
     world_id text NOT NULL,
     key TEXT NOT NULL,
     value TEXT NOT NULL,
-    last_accessed DATETIME DEFAULT unixepoch(),
-    last_modified DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_accessed DATETIME DEFAULT (strftime('%s', 'now')),
+    last_modified DATETIME DEFAULT (strftime('%s', 'now')),
     FOREIGN KEY (world_id) REFERENCES worlds(world_id) ON DELETE CASCADE,
     UNIQUE (world_id, key)
 );
@@ -32,14 +33,14 @@ CREATE TRIGGER IF NOT EXISTS data_update_trigger
 AFTER UPDATE ON data
 FOR EACH ROW
 BEGIN
-    UPDATE data SET last_modified = CURRENT_TIMESTAMP WHERE id = OLD.id;
+    UPDATE data SET last_modified = (strftime('%s', 'now')) WHERE id = OLD.id;
 END;
 
 CREATE TRIGGER IF NOT EXISTS data_insert_trigger
 AFTER INSERT ON data
 FOR EACH ROW
 BEGIN
-    UPDATE data SET last_accessed = CURRENT_TIMESTAMP, last_modified = CURRENT_TIMESTAMP WHERE id = NEW.id;
+    UPDATE data SET last_accessed = (strftime('%s', 'now')), last_modified = (strftime('%s', 'now')) WHERE id = NEW.id;
 END;";
         private string currentWorldId = null;
 
@@ -58,7 +59,7 @@ END;";
 
             sqlite.Init();
 
-            //sqlite.ExecuteNonQuery(dbInitQuery, null);
+            sqlite.ExecuteNonQuery(dbInitQuery, null);
 
             while (true)
             {
@@ -76,6 +77,16 @@ END;";
                     case "/vrcx/init":
                         if (request.QueryString["debug"] == "true")
                         {
+                            sqlite.ExecuteNonQuery("INSERT OR IGNORE INTO worlds (world_id) VALUES (@world_id)", new Dictionary<string, object>() {
+                                {"@world_id", "wrld_12345"}
+                            });
+
+                            sqlite.ExecuteNonQuery("INSERT OR IGNORE INTO data (world_id, key, value) VALUES (@world_id, @key, @value)", new Dictionary<string, object>() {
+                                {"@world_id", "wrld_12345"},
+                                {"@key", "test"},
+                                {"@value", "testvalue"}
+                            });
+
                             currentWorldId = "wrld_12345";
                             SendTextResponse(context.Response, $"Initialized World ID: {currentWorldId}");
                             break;
