@@ -469,7 +469,12 @@ mixin settingsTab()
                             el-button-group(style="display:block")
                                 el-button(size="small" icon="el-icon-s-operation" @click="promptSetPendingOffline") {{ $t('view.settings.advanced.advanced.pending_offline.set_delay') }}
                         +simpleSwitch("view.settings.advanced.advanced.cache_debug.udon_exception_logging", "udonExceptionLogging", "saveOpenVROption")
-                        +simpleSwitch("view.settings.advanced.advanced.cache_debug.gpu_fix", "gpuFix", "saveVRCXWindowOption")
+                        div.options-container-item
+                            span.name {{ $t('view.settings.advanced.advanced.cache_debug.gpu_fix') }}
+                                el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.cache_debug.gpu_fix_warning')")
+                                    i.el-icon-warning
+                            el-switch(v-model="gpuFix" @change="saveVRCXWindowOption")
+                            span.name(style="margin-left:15px") {{ $t('view.settings.advanced.advanced.cache_debug.gpu_fix_notice') }}
                         div.options-container-item
                             span.name {{ $t('view.settings.advanced.advanced.cache_debug.disable_gamelog') }}
                             el-switch(v-model="gameLogDisabled" @change="disableGameLogDialog")

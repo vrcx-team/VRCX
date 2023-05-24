@@ -786,7 +786,8 @@ html
                                         span.extra(v-else) -
                         el-tab-pane(:label="$t('dialog.avatar.json.header')")
                             el-button(type="default" @click="refreshAvatarDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
-                            el-button(type="default" @click="getAvatarFileAnalysis" size="mini" icon="el-icon-question" circle style="margin-left:5px")
+                            el-tooltip(placement="top" :content="$t('dialog.avatar.json.file_analysis')" :disabled="hideTooltips")
+                                el-button(type="default" @click="getAvatarFileAnalysis" size="mini" icon="el-icon-question" circle style="margin-left:5px")
                             el-button(type="default" @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)" size="mini" icon="el-icon-download" circle style="margin-left:5px")
                             el-tree(v-if="Object.keys(avatarDialog.fileAnalysis).length > 0" :data="avatarDialog.fileAnalysis" style="margin-top:5px;font-size:12px")
                                 template(#default="scope")
