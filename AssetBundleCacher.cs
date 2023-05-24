@@ -59,6 +59,12 @@ namespace VRCX
             return AppApi.Instance.GetVRChatCacheLocation();
         }
 
+        /// <summary>
+        /// Gets the full location of the VRChat cache for a specific asset bundle.
+        /// </summary>
+        /// <param name="id">The ID of the asset bundle.</param>
+        /// <param name="version">The version of the asset bundle.</param>
+        /// <returns>The full location of the VRChat cache for the specified asset bundle.</returns>
         public string GetVRChatCacheFullLocation(string id, int version)
         {
             var cachePath = GetVRChatCacheLocation();
@@ -67,6 +73,12 @@ namespace VRCX
             return Path.Combine(cachePath, idHash, versionLocation);
         }
 
+        /// <summary>
+        /// Checks the VRChat cache for a specific asset bundle.
+        /// </summary>
+        /// <param name="id">The ID of the asset bundle.</param>
+        /// <param name="version">The version of the asset bundle.</param>
+        /// <returns>An array containing the file size and lock status of the asset bundle.</returns>
         public long[] CheckVRChatCache(string id, int version)
         {
             long FileSize = -1;
