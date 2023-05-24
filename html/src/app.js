@@ -1866,6 +1866,16 @@ speechSynthesis.getVoices();
         });
     };
 
+    API.actuallyGetUser = async function (userId) {
+        return await new Promise((resolve, reject) => {
+            this.call(`users/${userId}`, {
+                method: 'GET'
+            }).then((json) => {
+                resolve(json)
+            });
+        })
+    };
+
     /*
         params: {
             userId: string
@@ -2033,6 +2043,12 @@ speechSynthesis.getVoices();
             }
         });
     });
+
+    API.actuallyGetCurrentLocation = async function () {
+        let user = await this.actuallyGetUser(this.currentUser.id);
+        let location = API.parseLocation(user.location);
+        return location.worldId;
+    };
 
     API.applyWorld = function (json) {
         var ref = this.cachedWorlds.get(json.id);

@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace VRCX
@@ -78,6 +79,8 @@ namespace VRCX
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            var server = new WorldDBManager("http://127.0.0.1:8081/");
+            Task.Run(server.Start);
             ProcessMonitor.Instance.Init();
             SQLite.Instance.Init();
             VRCXStorage.Load();
