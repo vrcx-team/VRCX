@@ -235,6 +235,7 @@ namespace VRCX
                                     ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) ||
                                     ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) ||
                                     ParseLogWorldVRCX(fileInfo, logContext, line, offset) ||
+                                    ParseLogWorldDataVRCX(fileInfo, logContext, line, offset) ||
                                     ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) ||
                                     ParseLogScreenshot(fileInfo, logContext, line, offset) ||
                                     ParseLogStringDownload(fileInfo, logContext, line, offset) ||
@@ -600,6 +601,21 @@ namespace VRCX
                 "vrcx",
                 data
             });
+
+            return true;
+        }
+
+        private bool ParseLogWorldDataVRCX(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // [VRCX-World] store:test:testvalue
+
+            if (string.Compare(line, offset, "[VRCX-World] ", 0, 13, StringComparison.Ordinal) != 0)
+                return false;
+
+            var data = line.Substring(offset + 13);
+            var split = data.Split(new[] {':'}, 3);
+
+            WorldDBManager.Instance.ProcessLogWorldDataRequest(split);
 
             return true;
         }

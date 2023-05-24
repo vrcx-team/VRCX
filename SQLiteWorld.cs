@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace VRCX
 {
@@ -89,9 +90,10 @@ namespace VRCX
             }
         }
 
-        public void Execute(Action<object[]> callback, string sql, IDictionary<string, object> args = null)
+        public async Task<object[][]> ExecuteAsync(string sql, IDictionary<string, object> args = null)
         {
             m_ConnectionLock.EnterReadLock();
+
             try
             {
                 using (SQLiteCommand command = new SQLiteCommand(sql, m_Connection))
@@ -103,27 +105,21 @@ namespace VRCX
                             _ = command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
                         }
                     }
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
+                        List<object[]> rows = new List<object[]>();
                         if (reader.HasRows)
                         {
-                            while (reader.Read())
+                            while (await reader.ReadAsync())
                             {
                                 object[] values = new object[reader.FieldCount];
                                 _ = reader.GetValues(values);
-                                callback(values);
+                                rows.Add(values);
                             }
                         }
-                        else
-                        {
-                            callback(new object[0]);
-                        }
+                        return rows.ToArray();
                     }
                 }
-            }
-            catch
-            {
-                // We really need to stop swallowing exceptions... eventually.
             }
             finally
             {
@@ -148,6 +144,33 @@ namespace VRCX
                         }
                     }
                     result = command.ExecuteNonQuery();
+                }
+            }
+            finally
+            {
+                m_ConnectionLock.ExitWriteLock();
+            }
+
+            return result;
+        }
+
+        public async Task<int> ExecuteNonQueryAsync(string sql, IDictionary<string, object> args = null)
+        {
+            int result = -1;
+
+            m_ConnectionLock.EnterWriteLock();
+            try
+            {
+                using (SQLiteCommand command = new SQLiteCommand(sql, m_Connection))
+                {
+                    if (args != null)
+                    {
+                        foreach (KeyValuePair<string, object> arg in args)
+                        {
+                            _ = command.Parameters.Add(new SQLiteParameter(arg.Key, arg.Value));
+                        }
+                    }
+                    result = await command.ExecuteNonQueryAsync();
                 }
             }
             finally
