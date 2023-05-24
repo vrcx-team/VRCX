@@ -410,6 +410,8 @@
                         "header": "VRCX Instance Cache/Debug",
                         "udon_exception_logging": "Udon Exception Logging",
                         "gpu_fix": "SteamVR Overlay GPU Fix",
+                        "gpu_fix_notice": "(requires restart)",
+                        "gpu_fix_warning": "Only enable this option if the SteamVR overlay isn't working and you have 2 GPUs",
                         "disable_gamelog": "Disable GameLog",
                         "disable_gamelog_notice": "(will likely break things)",
                         "user_cache": "User cache:",
@@ -695,7 +697,8 @@
                 "platform": "Platform"
             },
             "json": {
-                "header": "JSON"
+                "header": "JSON",
+                "file_analysis": "File Analysis"
             }
         },
         "group": {

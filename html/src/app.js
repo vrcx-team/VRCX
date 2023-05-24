@@ -1524,6 +1524,19 @@ speechSynthesis.getVoices();
             ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
+            // update group list
+            if (json.presence?.groups) {
+                for (var groupId of json.presence.groups) {
+                    if (!this.currentUserGroups.has(groupId)) {
+                        $app.onGroupJoined(groupId);
+                    }
+                }
+                for (var groupId of this.currentUserGroups.keys()) {
+                    if (!json.presence.groups.includes(groupId)) {
+                        $app.onGroupLeft(groupId);
+                    }
+                }
+            }
         } else {
             ref = {
                 id: '',
@@ -3640,7 +3653,6 @@ speechSynthesis.getVoices();
         this.isFavoriteLoading = false;
         this.isFavoriteGroupLoading = false;
         this.refreshFavorites();
-        $app.getCurrentUserGroups();
     });
 
     API.$on('FAVORITE', function (args) {
@@ -4321,6 +4333,7 @@ speechSynthesis.getVoices();
     // #region | API: WebSocket
 
     API.webSocket = null;
+    API.lastWebSocketMessage = '';
 
     API.$on('LOGOUT', function () {
         this.closeWebSocket();
@@ -4356,6 +4369,7 @@ speechSynthesis.getVoices();
             return;
         }
         if (typeof content.user !== 'undefined') {
+            // I forgot about this...
             delete content.user.state;
         }
         switch (type) {
@@ -4589,31 +4603,22 @@ speechSynthesis.getVoices();
                         userId: content.userId
                     }
                 });
+
+                // update current user location
+                API.currentUser.location = content.location;
+                API.currentUser.presence.instance = content.instance;
+                API.currentUser.presence.world = content.world?.id;
+
                 break;
 
             case 'group-joined':
                 var groupId = content.groupId;
-                if (
-                    $app.groupDialog.visible &&
-                    $app.groupDialog.id === groupId
-                ) {
-                    $app.showGroupDialog(groupId);
-                }
-                if (!this.currentUserGroups.has(groupId)) {
-                    this.currentUserGroups.set(groupId);
-                    this.getGroup({ groupId });
-                }
+                $app.onGroupJoined(groupId);
                 break;
 
             case 'group-left':
                 var groupId = content.groupId;
-                if (
-                    $app.groupDialog.visible &&
-                    $app.groupDialog.id === groupId
-                ) {
-                    $app.showGroupDialog(groupId);
-                }
-                this.currentUserGroups.delete(groupId);
+                $app.onGroupLeft(groupId);
                 break;
 
             case 'group-member-updated':
@@ -4678,6 +4683,11 @@ speechSynthesis.getVoices();
             };
             socket.onmessage = ({ data }) => {
                 try {
+                    if (this.lastWebSocketMessage === data) {
+                        // pls no spam
+                        return;
+                    }
+                    this.lastWebSocketMessage = data;
                     var json = JSON.parse(data);
                     try {
                         json.content = JSON.parse(json.content);
@@ -8675,6 +8685,7 @@ speechSynthesis.getVoices();
         // eslint-disable-next-line require-atomic-updates
         $app.notificationTable.data = await database.getNotifications();
         await this.refreshNotifications();
+        await $app.getCurrentUserGroups();
         if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
             await $app.getFriendLog();
         } else {
@@ -25332,6 +25343,25 @@ speechSynthesis.getVoices();
             responseType: response,
             responseData
         });
+    };
+
+    $app.methods.onGroupJoined = function (groupId) {
+        if (this.groupDialog.visible && this.groupDialog.id === groupId) {
+            this.showGroupDialog(groupId);
+        }
+        if (!API.currentUserGroups.has(groupId)) {
+            API.currentUserGroups.set(groupId);
+            if (this.friendLogInitStatus) {
+                API.getGroup({ groupId });
+            }
+        }
+    };
+
+    $app.methods.onGroupLeft = function (groupId) {
+        if (this.groupDialog.visible && this.groupDialog.id === groupId) {
+            this.showGroupDialog(groupId);
+        }
+        API.currentUserGroups.delete(groupId);
     };
 
     // group members
