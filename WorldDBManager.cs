@@ -62,10 +62,14 @@ END;";
 
             while (true)
             {
-                if (MainForm.Instance?.Browser == null) continue;
-
                 var context = await listener.GetContextAsync();
                 var request = context.Request;
+
+                if (MainForm.Instance?.Browser == null)
+                {
+                    SendTextResponse(context.Response, "503: VRCX not yet initialized.", 503);
+                    continue;
+                };
 
                 switch (request.Url.LocalPath)
                 {
