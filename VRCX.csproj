@@ -94,7 +94,6 @@
     <Compile Include="ProcessMonitor.cs" />
     <Compile Include="ScreenshotHelper.cs" />
     <Compile Include="SQLite.cs" />
-    <Compile Include="SQLiteWorld.cs" />
     <Compile Include="StartupArgs.cs" />
     <Compile Include="Update.cs" />
     <Compile Include="CefService.cs" />
