@@ -5,6 +5,7 @@ using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using CefSharp;
+using Newtonsoft.Json;
 
 namespace VRCX
 {
@@ -12,37 +13,8 @@ namespace VRCX
     {
         public static WorldDBManager Instance;
         private readonly HttpListener listener;
-        private readonly SQLiteWorld sqlite;
-        private readonly static string dbInitQuery = @"
-CREATE TABLE IF NOT EXISTS worlds (
-    id INTEGER PRIMARY KEY,
-    world_id TEXT UNIQUE
-);
+        private readonly WorldDatabase worldDB;
 
-CREATE TABLE IF NOT EXISTS data (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    world_id text NOT NULL,
-    key TEXT NOT NULL,
-    value TEXT NOT NULL,
-    last_accessed DATETIME DEFAULT (strftime('%s', 'now')),
-    last_modified DATETIME DEFAULT (strftime('%s', 'now')),
-    FOREIGN KEY (world_id) REFERENCES worlds(world_id) ON DELETE CASCADE,
-    UNIQUE (world_id, key)
-);
-
-CREATE TRIGGER IF NOT EXISTS data_update_trigger
-AFTER UPDATE ON data
-FOR EACH ROW
-BEGIN
-    UPDATE data SET last_modified = (strftime('%s', 'now')) WHERE id = OLD.id;
-END;
-
-CREATE TRIGGER IF NOT EXISTS data_insert_trigger
-AFTER INSERT ON data
-FOR EACH ROW
-BEGIN
-    UPDATE data SET last_accessed = (strftime('%s', 'now')), last_modified = (strftime('%s', 'now')) WHERE id = NEW.id;
-END;";
         private string currentWorldId = null;
 
         public WorldDBManager(string url)
@@ -52,25 +24,23 @@ END;";
             listener = new HttpListener();
             listener.Prefixes.Add(url);
 
-            sqlite = new SQLiteWorld(Path.Combine(Program.AppDataDirectory, "VRCX-world.db"));
+            worldDB = new WorldDatabase(Path.Combine(Program.AppDataDirectory, "VRCX-WorldData.db"));
         }
 
         public async Task Start()
         {
             listener.Start();
 
-            sqlite.Init();
-
-            sqlite.ExecuteNonQuery(dbInitQuery, null);
-
             while (true)
             {
                 var context = await listener.GetContextAsync();
                 var request = context.Request;
+                var responseData = new WorldDataRequestResponse(false, null, null);
 
                 if (MainForm.Instance?.Browser == null)
                 {
-                    SendTextResponse(context.Response, "503: VRCX not yet initialized.", 503);
+                    responseData.Error = "VRCX not yet initialized. Try again in a moment.";
+                    SendJsonResponse(context.Response, responseData);
                     continue;
                 };
 
@@ -79,68 +49,110 @@ END;";
                     case "/vrcx/init":
                         if (request.QueryString["debug"] == "true")
                         {
-                            sqlite.ExecuteNonQuery("INSERT OR IGNORE INTO worlds (world_id) VALUES (@world_id)", new Dictionary<string, object>() {
-                                {"@world_id", "wrld_12345"}
-                            });
-
-                            sqlite.ExecuteNonQuery("INSERT OR IGNORE INTO data (world_id, key, value) VALUES (@world_id, @key, @value)", new Dictionary<string, object>() {
-                                {"@world_id", "wrld_12345"},
-                                {"@key", "test"},
-                                {"@value", "testvalue"}
-                            });
+                            worldDB.AddWorld("wrld_12345", "12345");
+                            worldDB.AddDataEntry("wrld_12345", "test", "testvalue");
 
                             currentWorldId = "wrld_12345";
-                            SendTextResponse(context.Response, $"Initialized World ID: {currentWorldId}");
+                            responseData.OK = true;
+                            responseData.Data = "12345";
+                            SendJsonResponse(context.Response, responseData);
                             break;
                         }
 
-                        JavascriptResponse worldId = await MainForm.Instance.Browser.EvaluateScriptAsync("$app.API.getUserApiCurrentLocation();", TimeSpan.FromSeconds(5));
-                        currentWorldId = worldId.Result.ToString();
-                        SendTextResponse(context.Response, $"Initialized World ID: {worldId.Result}");                     
+                        string worldId = await GetCurrentWorldID();
+                        currentWorldId = worldId;
+
+                        var existsInDB = worldDB.DoesWorldExist(currentWorldId);
+                        string connectionKey;
+
+                        if (!existsInDB)
+                        {
+                            connectionKey = GenerateWorldConnectionKey(currentWorldId);
+                            worldDB.AddWorld(currentWorldId, connectionKey);
+                        }
+                        else
+                        {
+                            connectionKey = worldDB.GetWorldConnectionKey(currentWorldId);
+                        }
+
+                        responseData.OK = true;
+                        responseData.Data = connectionKey;
+                        SendJsonResponse(context.Response, responseData);
                         break;
                     case "/vrcx/get":
+                        // TODO: Fix currentWorldId not being reset when leaving a world, so the next world would be able to access the previous world's data if they failed to init first.
+                        // How do I do that reliably? I dunno lol
                         var key = request.QueryString["key"];
                         if (key == null)
                         {
-                            SendTextResponse(context.Response, "400: Missing key parameter.", 400);
+                            responseData.Error = "Missing key parameter.";
+                            SendJsonResponse(context.Response, responseData, 400);
                             break;
                         }
 
                         if (String.IsNullOrEmpty(currentWorldId))
                         {
-                            SendTextResponse(context.Response, "400: World ID not initialized.", 400);
+                            responseData.Error = "World ID not initialized.";
+                            SendJsonResponse(context.Response, responseData, 400);
                             break;
                         }
 
-                        var values = await sqlite.ExecuteAsync("SELECT `value` FROM `data` WHERE `key` = @key AND `world_id` = @world_id", new Dictionary<string, object>() {
-                            {"@key", key},
-                            {"@world_id", currentWorldId}
-                        });
+                        var value = worldDB.GetDataEntry(currentWorldId, key);
 
-                        if (values.Length == 0)
+                        if (value == null)
                         {
-                            SendTextResponse(context.Response, $"No data found for key '{key}' @ {currentWorldId}");
+                            responseData.Error = $"No data found for key '{key}' under world id '{currentWorldId}'.";
+                            SendJsonResponse(context.Response, responseData, 404);
                             break;
                         }
 
-                        SendTextResponse(context.Response, $"SQL Key '{key}' for world '{currentWorldId}' = '{values[0][0]}'");
+                        responseData.OK = true;
+                        responseData.Data = value.Value;
+                        SendJsonResponse(context.Response, responseData);
                         break;
                     case "/vrcx/getbulk":
                         // TODO: Implement
-                        SendTextResponse(context.Response, "501: Not Implemented.", 501);
+                        responseData.Error = "Not implemented.";
+                        SendJsonResponse(context.Response, responseData, 501);
                         break;
                     default:
-                        SendTextResponse(context.Response, "404: Invalid VRCX endpoint.", 404);
+                        responseData.Error = "Invalid VRCX endpoint.";
+                        SendJsonResponse(context.Response, responseData, 404);
                         break;
                 }
             }
 
         }
 
+        private string GenerateWorldConnectionKey(string worldId)
+        {
+            // This doesn't really *need* to be unique, just something a naughty world can't guess.
+            // Even if they had another world's key, they wouldn't be able to access its data unless something went wrong.
+            // We mainly just use this to make sure data requests in the log are initialized and coming from the same world that initialized the connection.
+            // Even if this was abusable, we're talking vrchat here. No one is storing their credit cards in a world. At least, I hope not.
+
+            return (worldId + Guid.NewGuid().ToString()).GetHashCode().ToString("x");
+        }
+
+        private async Task<string> GetCurrentWorldID()
+        {
+            JavascriptResponse funcResult = await MainForm.Instance.Browser.EvaluateScriptAsync("$app.API.actuallyGetCurrentLocation();", TimeSpan.FromSeconds(5));
+            string worldId = funcResult?.Result?.ToString();
+
+            if (String.IsNullOrEmpty(worldId))
+            {
+                // implement
+                return null;
+            }
+
+            return worldId;
+        }
+
         private HttpListenerResponse SendTextResponse(HttpListenerResponse response, string text, int statusCode = 200)
         {
             response.ContentType = "text/plain";
             response.StatusCode = statusCode;
+            response.AddHeader("Cache-Control", "no-cache");
 
             var buffer = System.Text.Encoding.UTF8.GetBytes(text);
             response.ContentLength64 = buffer.Length;
@@ -149,11 +161,16 @@ END;";
             return response;
         }
 
-        private HttpListenerResponse SendJsonResponse(HttpListenerResponse response, string json, int statusCode = 200)
+        private HttpListenerResponse SendJsonResponse(HttpListenerResponse response, WorldDataRequestResponse responseData, int statusCode = 200)
         {
             response.ContentType = "application/json";
             response.StatusCode = statusCode;
+            response.AddHeader("Cache-Control", "no-cache");
 
+            responseData.StatusCode = statusCode;
+
+            // Use newtonsoft.json to serialize WorldDataRequestResponse to json
+            var json = JsonConvert.SerializeObject(responseData);
             var buffer = System.Text.Encoding.UTF8.GetBytes(json);
             response.ContentLength64 = buffer.Length;
             response.OutputStream.Write(buffer, 0, buffer.Length);
@@ -170,51 +187,21 @@ END;";
             if (key == null || value == null) return; // TODO: Store error for "last error" request
             if (String.IsNullOrEmpty(currentWorldId)) return;
 
-            var result = await sqlite.ExecuteAsync("SELECT `world_id` FROM `worlds` WHERE `world_id` = @world_id", new Dictionary<string, object>() {
-                {"@world_id", currentWorldId}
-            });
+            var exists = worldDB.DoesWorldExist(currentWorldId);
 
-            if (result.Length == 0)
+            if (!exists)
             {
-                await sqlite.ExecuteNonQueryAsync("INSERT OR IGNORE INTO worlds (world_id) VALUES (@world_id)", new Dictionary<string, object>() {
-                    {"@world_id", currentWorldId}
-                });
+                worldDB.AddWorld(currentWorldId, GenerateWorldConnectionKey(currentWorldId));
             }
 
-            await sqlite.ExecuteNonQueryAsync("INSERT OR REPLACE INTO data (world_id, key, value) VALUES (@world_id, @key, @value)", new Dictionary<string, object>() {
-                {"@world_id", currentWorldId},
-                {"@key", key},
-                {"@value", value}
-            });
-
-            /*sqlite.Execute((values) =>
-            {
-                if (values.Length == 0)
-                {
-                    sqlite.ExecuteNonQuery("INSERT OR IGNORE INTO worlds (world_id) VALUES (@world_id)", new Dictionary<string, object>() {
-                        {"@world_id", currentWorldId}
-                    });
-                }
-
-                sqlite.ExecuteNonQuery("INSERT OR REPLACE INTO data (world_id, key, value) VALUES (@world_id, @key, @value)", new Dictionary<string, object>() {
-                    {"@world_id", currentWorldId},
-                    {"@key", key},
-                    {"@value", value}
-                });
-            },
-                "SELECT `value` FROM `data` WHERE `key` = @key AND `world_id` = @world_id",
-                new Dictionary<string, object>() {
-                    {"@key", key},
-                    {"@world_id", currentWorldId}
-                }
-            );*/
+            worldDB.AddDataEntry(currentWorldId, key, value);
         }
 
         public void Stop()
         {
             listener.Stop();
             listener.Close();
-            sqlite.Exit();
+            worldDB.Close();
         }
     }
 }

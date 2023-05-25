@@ -87,6 +87,7 @@
     <Compile Include="CefCustomDownloadHandler.cs" />
     <Compile Include="CefCustomDragHandler.cs" />
     <Compile Include="CefCustomMenuHandler.cs" />
+    <Compile Include="WorldDatabase.cs" />
     <Compile Include="ImageCache.cs" />
     <Compile Include="IPCClient.cs" />
     <Compile Include="IPCServer.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="AppApi.cs" />
     <Compile Include="VRCXStorage.cs" />
     <Compile Include="JsonSerializer.cs" />
+    <Compile Include="WorldDataRequestResponse.cs" />
     <Compile Include="WorldDBManager.cs" />
     <Compile Include="WinApi.cs" />
     <Compile Include="WinformBase.cs">
