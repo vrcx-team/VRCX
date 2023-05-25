@@ -60,8 +60,8 @@ namespace VRCX
 
         internal void LoadCookies()
         {
-            SQLite.Instance.ExecuteNonQuery("CREATE TABLE IF NOT EXISTS `cookies` (`key` TEXT PRIMARY KEY, `value` TEXT)");
-            SQLite.Instance.Execute((values) =>
+            SQLiteLegacy.Instance.ExecuteNonQuery("CREATE TABLE IF NOT EXISTS `cookies` (`key` TEXT PRIMARY KEY, `value` TEXT)");
+            SQLiteLegacy.Instance.Execute((values) =>
             {
                 try
                 {
@@ -92,7 +92,7 @@ namespace VRCX
                 using (var memoryStream = new MemoryStream())
                 {
                     new BinaryFormatter().Serialize(memoryStream, _cookieContainer);
-                    SQLite.Instance.ExecuteNonQuery(
+                    SQLiteLegacy.Instance.ExecuteNonQuery(
                         "INSERT OR REPLACE INTO `cookies` (`key`, `value`) VALUES (@key, @value)",
                         new Dictionary<string, object>() {
                             {"@key", "default"},

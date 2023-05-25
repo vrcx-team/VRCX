@@ -1,3 +1,4 @@
+using System;
 using CefSharp;
 
 namespace VRCX
@@ -11,7 +12,7 @@ namespace VRCX
             repository.Register("SharedVariable", SharedVariable.Instance, false);
             repository.Register("WebApi", WebApi.Instance, true);
             repository.Register("VRCXStorage", VRCXStorage.Instance, true);
-            repository.Register("SQLite", SQLite.Instance, true);
+            repository.Register("SQLite", SQLiteLegacy.Instance, true);
             repository.Register("LogWatcher", LogWatcher.Instance, true);
             repository.Register("Discord", Discord.Instance, true);
             repository.Register("AssetBundleCacher", AssetBundleCacher.Instance, true);

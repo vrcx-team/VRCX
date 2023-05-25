@@ -92,6 +92,7 @@
     <Compile Include="IPCServer.cs" />
     <Compile Include="ProcessMonitor.cs" />
     <Compile Include="ScreenshotHelper.cs" />
+    <Compile Include="SQLite.cs" />
     <Compile Include="SQLiteWorld.cs" />
     <Compile Include="StartupArgs.cs" />
     <Compile Include="Update.cs" />
@@ -102,7 +103,7 @@
     <Compile Include="NoopDragHandler.cs" />
     <Compile Include="OpenVR\openvr_api.cs" />
     <Compile Include="WebApi.cs" />
-    <Compile Include="SQLite.cs" />
+    <Compile Include="SQLiteLegacy.cs" />
     <Compile Include="SharedVariable.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="VRForm.cs">
@@ -224,6 +225,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(ProjectDir)OpenVR\win64\openvr_api.dll"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "$(ProjectDir)OpenVR\win64\openvr_api.dll"
+xcopy /y "$(ProjectDir)lib\sqlite3.dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -82,7 +82,7 @@ namespace VRCX
             var server = new WorldDBManager("http://127.0.0.1:8081/");
             Task.Run(server.Start);
             ProcessMonitor.Instance.Init();
-            SQLite.Instance.Init();
+            SQLiteLegacy.Instance.Init();
             VRCXStorage.Load();
             LoadFromConfig();
             CpuMonitor.Instance.Init();
@@ -106,7 +106,7 @@ namespace VRCX
             Discord.Instance.Exit();
             CpuMonitor.Instance.Exit();
             VRCXStorage.Save();
-            SQLite.Instance.Exit();
+            SQLiteLegacy.Instance.Exit();
             ProcessMonitor.Instance.Exit();
         }
 
