@@ -118,8 +118,9 @@ html
                                 img(v-lazy="userImage(API.currentUser)")
                             .detail
                                 span.name(v-text="API.currentUser.displayName" :style="{'color':API.currentUser.$userColour}")
-                                location.extra(v-if="isGameRunning === true" :location="lastLocation.location" :traveling="lastLocationDestination" :link="false")
-                                span.extra(v-else v-text="API.currentUser.statusDescription" :link="false")
+                                location.extra(v-if="isGameRunning" :location="lastLocation.location" :traveling="lastLocationDestination" :link="false")
+                                location.extra(v-else-if="isRealInstance(API.currentUser.$locationTag) || isRealInstance(API.currentUser.$travelingToLocation)" :location="API.currentUser.$locationTag" :traveling="API.currentUser.$travelingToLocation" :link="false")
+                                span.extra(v-else v-text="API.currentUser.statusDescription")
                     .x-friend-group.x-link(@click="isFriendsGroup0 = !isFriendsGroup0" v-show="friendsGroup0.length")
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup0 }")
                         span(style="margin-left:5px") {{ $t('side_panel.favorite') }} &horbar; {{ friendsGroup0.length }}
@@ -201,7 +202,7 @@ html
                                     el-tooltip(v-if="userDialog.ref.status" placement="top")
                                         template(#content)
                                             span(v-if="userDialog.ref.state === 'active'") {{ $t('dialog.user.status.active') }}
-                                            span(v-else-if="userDialog.ref.location === 'offline'") {{ $t('dialog.user.status.offline') }}
+                                            span(v-else-if="userDialog.ref.state === 'offline'") {{ $t('dialog.user.status.offline') }}
                                             span(v-else-if="userDialog.ref.status === 'active'") {{ $t('dialog.user.status.online') }}
                                             span(v-else-if="userDialog.ref.status === 'join me'") {{ $t('dialog.user.status.join_me') }}
                                             span(v-else-if="userDialog.ref.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
