@@ -10,11 +10,14 @@ namespace VRCX
     [Table("data")]
     public class WorldData
     {
-        [PrimaryKey, Column("world_id")]
+        [PrimaryKey, AutoIncrement]
+        [Column("id")]
+        public int Id { get; set; }
+        [Column("world_id"), NotNull]
         public string WorldId { get; set; }
-        [Column("key")]
+        [Column("key"), NotNull]
         public string Key { get; set; }
-        [Column("value")]
+        [Column("value"), NotNull]
         public string Value { get; set; }
         [Column("last_accessed")]
         public DateTimeOffset LastAccessed { get; set; }
@@ -28,9 +31,9 @@ namespace VRCX
         [PrimaryKey, AutoIncrement]
         [Column("id")]
         public int Id { get; set; }
-        [PrimaryKey, Column("world_id")]
+        [PrimaryKey, Column("world_id"), NotNull]
         public string WorldId { get; set; }
-        [Column("connection_key")]
+        [Column("connection_key"), NotNull]
         public string ConnectionKey { get; set; }
         [Column("allow_external_read")]
         public bool AllowExternalRead { get; set; }
@@ -41,15 +44,15 @@ namespace VRCX
         private static SQLiteConnection sqlite;
         private readonly static string dbInitQuery = @"
 CREATE TABLE IF NOT EXISTS worlds (
-    id INTEGER PRIMARY KEY,
-    world_id TEXT UNIQUE,
-    connection_key TEXT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    world_id TEXT NOT NULL UNIQUE,
+    connection_key TEXT NOT NULL,
     allow_external_read INTEGER DEFAULT 0
 );
-
+\
 CREATE TABLE IF NOT EXISTS data (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    world_id text NOT NULL,
+    world_id TEXT NOT NULL,
     key TEXT NOT NULL,
     value TEXT NOT NULL,
     last_accessed INTEGER DEFAULT (strftime('%s', 'now')),
@@ -57,14 +60,14 @@ CREATE TABLE IF NOT EXISTS data (
     FOREIGN KEY (world_id) REFERENCES worlds(world_id) ON DELETE CASCADE,
     UNIQUE (world_id, key)
 );
-
+\
 CREATE TRIGGER IF NOT EXISTS data_update_trigger
 AFTER UPDATE ON data
 FOR EACH ROW
 BEGIN
     UPDATE data SET last_modified = (strftime('%s', 'now')) WHERE id = OLD.id;
 END;
-
+\
 CREATE TRIGGER IF NOT EXISTS data_insert_trigger
 AFTER INSERT ON data
 FOR EACH ROW
@@ -76,6 +79,15 @@ END;";
             var options = new SQLiteConnectionString(databaseLocation, true);
             sqlite = new SQLiteConnection(options);
             sqlite.Execute(dbInitQuery);
+
+            // TODO: Split these init queries into their own functions so we can call/update them individually.
+            var queries = dbInitQuery.Split('\\');
+            sqlite.BeginTransaction();
+            foreach (var query in queries)
+            {
+                sqlite.Execute(query);
+            }
+            sqlite.Commit();
         }
 
         /// <summary>
@@ -120,6 +132,7 @@ END;";
         /// <param name="connectionKey">The connection key of the world to add.</param>
         public void AddWorld(string worldId, string connectionKey)
         {
+            // * This will throw an error if the world already exists
             sqlite.Insert(new World() { WorldId = worldId, ConnectionKey = connectionKey });
         }
 
