@@ -613,10 +613,8 @@ namespace VRCX
                 return false;
 
             var data = line.Substring(offset + 13);
-            var split = data.Split(new[] {':'}, 3);
 
-            WorldDBManager.Instance.ProcessLogWorldDataRequest(split);
-
+            WorldDBManager.Instance.ProcessLogWorldDataRequest(data);
             return true;
         }
 
@@ -954,7 +952,7 @@ namespace VRCX
         private bool ParseOpenVRInit(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2022.07.29 02:52:14 Log        -  OpenVR initialized!
-            
+
             // 2023.04.22 16:52:28 Log        -  Initializing VRSDK.
             // 2023.04.22 16:52:29 Log        -  StartVRSDK: Open VR Loader
 
@@ -971,7 +969,7 @@ namespace VRCX
 
             return true;
         }
-        
+
         private bool ParseDesktopMode(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2023.04.22 16:54:18 Log        -  VR Disabled

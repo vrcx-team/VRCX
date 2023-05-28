@@ -102,6 +102,13 @@ END;";
             return query.Any();
         }
 
+        public string GetWorldByConnectionKey(string connectionKey)
+        {
+            var query = sqlite.Table<World>().Where(w => w.ConnectionKey == connectionKey).Select(w => w.WorldId);
+
+            return query.FirstOrDefault();
+        }
+
         public string GetWorldConnectionKey(string worldId)
         {
             var query = sqlite.Table<World>().Where(w => w.WorldId == worldId).Select(w => w.ConnectionKey);

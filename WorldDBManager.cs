@@ -16,11 +16,12 @@ namespace VRCX
         private readonly WorldDatabase worldDB;
 
         private string currentWorldId = null;
+        private string lastError = null;
 
         public WorldDBManager(string url)
         {
             Instance = this;
-            // http://localhost:32767
+            // http://localhost:22500
             listener = new HttpListener();
             listener.Prefixes.Add(url);
 
@@ -37,10 +38,10 @@ namespace VRCX
                 var request = context.Request;
                 var responseData = new WorldDataRequestResponse(false, null, null);
 
-                if (MainForm.Instance?.Browser == null)
+                if (MainForm.Instance?.Browser == null || MainForm.Instance.Browser.IsLoading)
                 {
                     responseData.Error = "VRCX not yet initialized. Try again in a moment.";
-                    SendJsonResponse(context.Response, responseData);
+                    SendJsonResponse(context.Response, responseData, 503);
                     continue;
                 };
 
@@ -49,8 +50,11 @@ namespace VRCX
                     case "/vrcx/init":
                         if (request.QueryString["debug"] == "true")
                         {
-                            worldDB.AddWorld("wrld_12345", "12345");
-                            worldDB.AddDataEntry("wrld_12345", "test", "testvalue");
+                            if (!worldDB.DoesWorldExist("wrld_12345"))
+                            {
+                                worldDB.AddWorld("wrld_12345", "12345");
+                                worldDB.AddDataEntry("wrld_12345", "test", "testvalue");
+                            }
 
                             currentWorldId = "wrld_12345";
                             responseData.OK = true;
@@ -60,6 +64,14 @@ namespace VRCX
                         }
 
                         string worldId = await GetCurrentWorldID();
+
+                        if (String.IsNullOrEmpty(worldId))
+                        {
+                            responseData.Error = "Failed to get/verify current world ID.";
+                            SendJsonResponse(context.Response, responseData, 500);
+                            break;
+                        }
+
                         currentWorldId = worldId;
 
                         var existsInDB = worldDB.DoesWorldExist(currentWorldId);
@@ -107,7 +119,14 @@ namespace VRCX
                         }
 
                         responseData.OK = true;
+                        responseData.Error = null;
                         responseData.Data = value.Value;
+                        SendJsonResponse(context.Response, responseData);
+                        break;
+                    case "/vrcx/lasterror":
+                        responseData.OK = lastError == null;
+                        responseData.Data = lastError;
+                        lastError = null;
                         SendJsonResponse(context.Response, responseData);
                         break;
                     case "/vrcx/getbulk":
@@ -126,12 +145,9 @@ namespace VRCX
 
         private string GenerateWorldConnectionKey(string worldId)
         {
-            // This doesn't really *need* to be unique, just something a naughty world can't guess.
-            // Even if they had another world's key, they wouldn't be able to access its data unless something went wrong.
-            // We mainly just use this to make sure data requests in the log are initialized and coming from the same world that initialized the connection.
-            // Even if this was abusable, we're talking vrchat here. No one is storing their credit cards in a world. At least, I hope not.
-
-            return (worldId + Guid.NewGuid().ToString()).GetHashCode().ToString("x");
+            // Ditched the old method of generating a short key, since we're just going with json anyway who cares about a longer identifier
+            // Since we can rely on this GUID being unique, we can use it to identify the world on requests instead of trying to keep track of the user's current world.
+            return Guid.NewGuid().ToString();
         }
 
         private async Task<string> GetCurrentWorldID()
@@ -142,23 +158,11 @@ namespace VRCX
             if (String.IsNullOrEmpty(worldId))
             {
                 // implement
+                // wait what was i going to do here again
                 return null;
             }
 
             return worldId;
-        }
-
-        private HttpListenerResponse SendTextResponse(HttpListenerResponse response, string text, int statusCode = 200)
-        {
-            response.ContentType = "text/plain";
-            response.StatusCode = statusCode;
-            response.AddHeader("Cache-Control", "no-cache");
-
-            var buffer = System.Text.Encoding.UTF8.GetBytes(text);
-            response.ContentLength64 = buffer.Length;
-            response.OutputStream.Write(buffer, 0, buffer.Length);
-            response.Close();
-            return response;
         }
 
         private HttpListenerResponse SendJsonResponse(HttpListenerResponse response, WorldDataRequestResponse responseData, int statusCode = 200)
@@ -178,23 +182,37 @@ namespace VRCX
             return response;
         }
 
-        public async void ProcessLogWorldDataRequest(string[] args)
+        public async void ProcessLogWorldDataRequest(string json)
         {
-            string type = args[0];
-            string key = args[1];
-            string value = args[2];
+            // Current format: 
+            // {
+            //     "requestType": "store",
+            //     "connectionKey": "abc123",
+            //     "key": "example_key",
+            //     "value": "example_value"
+            // }
+            // TODO: limits
+            WorldDataRequest request = JsonConvert.DeserializeObject<WorldDataRequest>(json);
 
-            if (key == null || value == null) return; // TODO: Store error for "last error" request
+            if (request.Key == null || request.Value == null) return; // TODO: Store error for "last error" request
+            if (request.ConnectionKey == null) return; // TODO: Store error for "last error" request
             if (String.IsNullOrEmpty(currentWorldId)) return;
 
-            var exists = worldDB.DoesWorldExist(currentWorldId);
-
-            if (!exists)
+            if (!Guid.TryParse(request.ConnectionKey, out Guid guid))
             {
-                worldDB.AddWorld(currentWorldId, GenerateWorldConnectionKey(currentWorldId));
+                // invalid guid
+                return; // TODO: store error for "last error" request
             }
 
-            worldDB.AddDataEntry(currentWorldId, key, value);
+            string worldId = worldDB.GetWorldByConnectionKey(request.ConnectionKey);
+
+            if (worldId == null)
+            {
+                // invalid connection key
+                return; // TODO: store error for "last error" request
+            }
+
+            worldDB.AddDataEntry(worldId, request.Key, request.Value);
         }
 
         public void Stop()
