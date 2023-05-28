@@ -102,6 +102,11 @@ END;";
             return query.Any();
         }
 
+        /// <summary>
+        /// Gets the ID of the world with the specified connection key from the database.
+        /// </summary>
+        /// <param name="connectionKey">The connection key of the world to get the ID for.</param>
+        /// <returns>The ID of the world with the specified connection key, or null if no such world exists in the database.</returns>
         public string GetWorldByConnectionKey(string connectionKey)
         {
             var query = sqlite.Table<World>().Where(w => w.ConnectionKey == connectionKey).Select(w => w.WorldId);
@@ -109,6 +114,11 @@ END;";
             return query.FirstOrDefault();
         }
 
+        /// <summary>
+        /// Gets the connection key for a world from the database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to get the connection key for.</param>
+        /// <returns>The connection key for the specified world, or null if the world does not exist in the database.</returns>
         public string GetWorldConnectionKey(string worldId)
         {
             var query = sqlite.Table<World>().Where(w => w.WorldId == worldId).Select(w => w.ConnectionKey);
@@ -116,6 +126,12 @@ END;";
             return query.FirstOrDefault();
         }
 
+        /// <summary>
+        /// Sets the connection key for a world in the database. If the world already exists in the database, the connection key is updated. Otherwise, a new world is added to the database with the specified connection key.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to set the connection key for.</param>
+        /// <param name="connectionKey">The connection key to set for the world.</param>
+        /// <returns>The connection key that was set.</returns>
         public string SetWorldConnectionKey(string worldId, string connectionKey)
         {
             var query = sqlite.Table<World>().Where(w => w.WorldId == worldId).Select(w => w.ConnectionKey);
@@ -143,11 +159,23 @@ END;";
             sqlite.Insert(new World() { WorldId = worldId, ConnectionKey = connectionKey });
         }
 
+        /// <summary>
+        /// Adds or replaces a data entry in the database with the specified world ID, key, and value.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to add the data entry for.</param>
+        /// <param name="key">The key of the data entry to add or replace.</param>
+        /// <param name="value">The value of the data entry to add or replace.</param>
         public void AddDataEntry(string worldId, string key, string value)
         {
             sqlite.InsertOrReplace(new WorldData() { WorldId = worldId, Key = key, Value = value });
         }
 
+        /// <summary>
+        /// Gets the data entry with the specified world ID and key from the database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to get the data entry for.</param>
+        /// <param name="key">The key of the data entry to get.</param>
+        /// <returns>The data entry with the specified world ID and key, or null if no such data entry exists in the database.</returns>
         public WorldData GetDataEntry(string worldId, string key)
         {
             var query = sqlite.Table<WorldData>().Where(w => w.WorldId == worldId && w.Key == key);

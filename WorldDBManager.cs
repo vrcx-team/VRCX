@@ -143,6 +143,10 @@ namespace VRCX
 
         }
 
+        /// <summary>
+        /// Generates a unique identifier for a world connection request.
+        /// </summary>
+        /// <returns>A string representation of a GUID that can be used to identify the world on requests.</returns>
         private string GenerateWorldConnectionKey()
         {
             // Ditched the old method of generating a short key, since we're just going with json anyway who cares about a longer identifier
@@ -150,6 +154,10 @@ namespace VRCX
             return Guid.NewGuid().ToString();
         }
 
+        /// <summary>
+        /// Gets the ID of the current world by evaluating a JavaScript function in the main browser instance.
+        /// </summary>
+        /// <returns>The ID of the current world as a string, or null if it could not be retrieved.</returns>
         private async Task<string> GetCurrentWorldID()
         {
             JavascriptResponse funcResult = await MainForm.Instance.Browser.EvaluateScriptAsync("$app.API.actuallyGetCurrentLocation();", TimeSpan.FromSeconds(5));
@@ -165,6 +173,13 @@ namespace VRCX
             return worldId;
         }
 
+        /// <summary>
+        /// Sends a JSON response to an HTTP listener request with the specified response data and status code.
+        /// </summary>
+        /// <param name="response">The HTTP listener response object.</param>
+        /// <param name="responseData">The response data to be serialized to JSON.</param>
+        /// <param name="statusCode">The HTTP status code to be returned.</param>
+        /// <returns>The HTTP listener response object.</returns>
         private HttpListenerResponse SendJsonResponse(HttpListenerResponse response, WorldDataRequestResponse responseData, int statusCode = 200)
         {
             response.ContentType = "application/json";
@@ -182,6 +197,10 @@ namespace VRCX
             return response;
         }
 
+        /// <summary>
+        /// Processes a JSON request containing world data and logs it to the world database.
+        /// </summary>
+        /// <param name="json">The JSON request containing the world data.</param>
         public async void ProcessLogWorldDataRequest(string json)
         {
             // Current format: 
