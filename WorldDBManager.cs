@@ -79,7 +79,7 @@ namespace VRCX
 
                         if (!existsInDB)
                         {
-                            connectionKey = GenerateWorldConnectionKey(currentWorldId);
+                            connectionKey = GenerateWorldConnectionKey();
                             worldDB.AddWorld(currentWorldId, connectionKey);
                         }
                         else
@@ -143,7 +143,7 @@ namespace VRCX
 
         }
 
-        private string GenerateWorldConnectionKey(string worldId)
+        private string GenerateWorldConnectionKey()
         {
             // Ditched the old method of generating a short key, since we're just going with json anyway who cares about a longer identifier
             // Since we can rely on this GUID being unique, we can use it to identify the world on requests instead of trying to keep track of the user's current world.
