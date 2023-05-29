@@ -218,7 +218,7 @@ namespace VRCX
             if (request.ConnectionKey == null) return; // TODO: Store error for "last error" request
             if (String.IsNullOrEmpty(currentWorldId)) return;
 
-            if (!Guid.TryParse(request.ConnectionKey, out Guid guid))
+            if (!Guid.TryParse(request.ConnectionKey, out Guid _))
             {
                 // invalid guid
                 return; // TODO: store error for "last error" request
