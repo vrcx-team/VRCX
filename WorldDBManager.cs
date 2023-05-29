@@ -246,7 +246,7 @@ namespace VRCX
             }
 
 
-            worldDB.AddDataEntry(worldId, request.Key, request.Value);
+            worldDB.AddDataEntry(worldId, request.Key, request.Value, newDataSize);
             worldDB.UpdateWorldDataSize(worldId, newTotalDataSize);
         }
 

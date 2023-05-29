@@ -183,9 +183,10 @@ END;";
         /// <param name="worldId">The ID of the world to add the data entry for.</param>
         /// <param name="key">The key of the data entry to add or replace.</param>
         /// <param name="value">The value of the data entry to add or replace.</param>
-        public void AddDataEntry(string worldId, string key, string value)
+        /// <param name="dataSize">The size of the data entry to add or replace, in bytes. If null, the size is calculated from the value automatically.</param>
+        public void AddDataEntry(string worldId, string key, string value, int? dataSize = null)
         {
-            int byteSize = Encoding.UTF8.GetByteCount(value);
+            int byteSize = dataSize ?? Encoding.UTF8.GetByteCount(value);
             sqlite.InsertOrReplace(new WorldData() { WorldId = worldId, Key = key, Value = value, ValueSize = byteSize });
         }
 
