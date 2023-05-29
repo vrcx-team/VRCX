@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text;
 using System;
 using System.Collections.Generic;
@@ -131,9 +132,39 @@ namespace VRCX
                         SendJsonResponse(context.Response, responseData);
                         break;
                     case "/vrcx/getbulk":
-                        // TODO: Implement
-                        responseData.Error = "Not implemented.";
-                        SendJsonResponse(context.Response, responseData, 501);
+                        var keys = request.QueryString["keys"];
+                        var keyArray = keys.Split(',');
+
+                        if (String.IsNullOrEmpty(currentWorldId))
+                        {
+                            responseData.Error = "World ID not initialized.";
+                            SendJsonResponse(context.Response, responseData, 400);
+                            break;
+                        }
+
+                        var values = worldDB.GetDataEntries(currentWorldId, keyArray).ToList();
+
+                        if (values == null)
+                        {
+                            responseData.Error = $"No data found for keys '{keys}' under world id '{currentWorldId}'.";
+                            SendJsonResponse(context.Response, responseData, 404);
+                            break;
+                        }
+
+                        // Build a dictionary of key/value pairs to send back. If a key doesn't exist in the database, the key will be included in the response as requested but with a null value.
+                        var data = new Dictionary<string, string>();
+                        for (int i = 0; i < keyArray.Length; i++)
+                        {
+                            string dataKey = keyArray[i];
+                            string dataValue = values.Where(x => x.Key == dataKey).FirstOrDefault()?.Value; // get the value from the list of data entries, if it exists, otherwise null
+
+                            data.Add(dataKey, dataValue);
+                        }
+
+                        responseData.OK = true;
+                        responseData.Error = null;
+                        responseData.Data = JsonConvert.SerializeObject(data);
+                        SendJsonResponse(context.Response, responseData);
                         break;
                     default:
                         responseData.Error = "Invalid VRCX endpoint.";
