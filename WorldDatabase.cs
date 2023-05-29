@@ -165,6 +165,11 @@ END;";
             sqlite.Insert(new World() { WorldId = worldId, ConnectionKey = connectionKey });
         }
 
+        /// <summary>
+        /// Gets the total data size shared across all rows, in bytes, for the world with the specified ID from the database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to get the total data size for.</param>
+        /// <returns>The total data size for the world, in bytes.</returns>
         public int GetWorldDataSize(string worldId)
         {
             var query = sqlite.Table<World>().Where(w => w.WorldId == worldId).Select(w => w.TotalDataSize);
@@ -172,6 +177,11 @@ END;";
             return query.FirstOrDefault();
         }
 
+        /// <summary>
+        /// Updates the total data size, in bytes for the world with the specified ID in the database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to update the total data size for.</param>
+        /// <param name="size">The new total data size for the world, in bytes.</param>
         public void UpdateWorldDataSize(string worldId, int size)
         {
             sqlite.Execute("UPDATE worlds SET total_data_size = ? WHERE world_id = ?", size, worldId);
@@ -203,6 +213,12 @@ END;";
             return query.FirstOrDefault();
         }
 
+        /// <summary>
+        /// Gets the size of the data entry, in bytes, with the specified world ID and key from the database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to get the data entry size for.</param>
+        /// <param name="key">The key of the data entry to get the size for.</param>
+        /// <returns>The size of the data entry with the specified world ID and key, or 0 if no such data entry exists in the database.</returns>
         public int GetDataEntrySize(string worldId, string key)
         {
             var query = sqlite.Table<WorldData>().Where(w => w.WorldId == worldId && w.Key == key).Select(w => w.ValueSize);

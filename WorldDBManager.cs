@@ -218,20 +218,22 @@ namespace VRCX
             if (request.ConnectionKey == null) return; // TODO: Store error for "last error" request
             if (String.IsNullOrEmpty(currentWorldId)) return;
 
+            // Make sure the connection key is a valid GUID. No point in doing anything else if it's not.
             if (!Guid.TryParse(request.ConnectionKey, out Guid _))
             {
                 // invalid guid
                 return; // TODO: store error for "last error" request
             }
 
+            // Get the world ID from the connection key
             string worldId = worldDB.GetWorldByConnectionKey(request.ConnectionKey);
-
             if (worldId == null)
             {
                 // invalid connection key
                 return; // TODO: store error for "last error" request
             }
 
+            // Get/calculate the old and new data sizes for this key/the world
             int oldTotalDataSize = worldDB.GetWorldDataSize(worldId);
             int oldDataSize = worldDB.GetDataEntrySize(worldId, request.Key);
             int newDataSize = Encoding.UTF8.GetByteCount(request.Value);
