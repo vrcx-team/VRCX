@@ -188,7 +188,7 @@ END;";
         }
 
         /// <summary>
-        /// Adds or replaces a data entry in the database with the specified world ID, key, and value.
+        /// Adds or updates a data entry in the database with the specified world ID, key, and value.
         /// </summary>
         /// <param name="worldId">The ID of the world to add the data entry for.</param>
         /// <param name="key">The key of the data entry to add or replace.</param>
@@ -197,7 +197,18 @@ END;";
         public void AddDataEntry(string worldId, string key, string value, int? dataSize = null)
         {
             int byteSize = dataSize ?? Encoding.UTF8.GetByteCount(value);
-            sqlite.InsertOrReplace(new WorldData() { WorldId = worldId, Key = key, Value = value, ValueSize = byteSize });
+
+            // check if entry already exists; 
+            // INSERT OR REPLACE(InsertOrReplace method) deletes the old row and creates a new one, incrementing the id, which I don't want
+            var query = sqlite.Table<WorldData>().Where(w => w.WorldId == worldId && w.Key == key);
+            if (query.Any())
+            {
+                sqlite.Execute("UPDATE data SET value = ?, value_size = ? WHERE world_id = ? AND key = ?", value, byteSize, worldId, key);
+            }
+            else
+            {
+                sqlite.Insert(new WorldData() { WorldId = worldId, Key = key, Value = value, ValueSize = byteSize });
+            }
         }
 
         /// <summary>
