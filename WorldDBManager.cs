@@ -1,3 +1,4 @@
+using System.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -231,7 +232,22 @@ namespace VRCX
                 return; // TODO: store error for "last error" request
             }
 
+            int oldTotalDataSize = worldDB.GetWorldDataSize(worldId);
+            int oldDataSize = worldDB.GetDataEntrySize(worldId, request.Key);
+            int newDataSize = Encoding.UTF8.GetByteCount(request.Value);
+            int newTotalDataSize = oldTotalDataSize + newDataSize - oldDataSize;
+
+            // Make sure we don't exceed 10MB total size for this world
+            if (newTotalDataSize > 1024 * 1024 * 10)
+            {
+                // too much data
+                throw new Exception("Too much data");
+                return; // TODO: store error for "last error" request
+            }
+
+
             worldDB.AddDataEntry(worldId, request.Key, request.Value);
+            worldDB.UpdateWorldDataSize(worldId, newTotalDataSize);
         }
 
         public void Stop()

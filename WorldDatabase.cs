@@ -19,6 +19,8 @@ namespace VRCX
         public string Key { get; set; }
         [Column("value"), NotNull]
         public string Value { get; set; }
+        [Column("value_size"), NotNull]
+        public int ValueSize { get; set; }
         [Column("last_accessed")]
         public DateTimeOffset LastAccessed { get; set; }
         [Column("last_modified")]
@@ -35,6 +37,8 @@ namespace VRCX
         public string WorldId { get; set; }
         [Column("connection_key"), NotNull]
         public string ConnectionKey { get; set; }
+        [Column("total_data_size"), NotNull]
+        public int TotalDataSize { get; set; }
         [Column("allow_external_read")]
         public bool AllowExternalRead { get; set; }
     }
@@ -47,6 +51,7 @@ CREATE TABLE IF NOT EXISTS worlds (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     world_id TEXT NOT NULL UNIQUE,
     connection_key TEXT NOT NULL,
+    total_data_size INTEGER DEFAULT 0
     allow_external_read INTEGER DEFAULT 0
 );
 \
@@ -55,6 +60,7 @@ CREATE TABLE IF NOT EXISTS data (
     world_id TEXT NOT NULL,
     key TEXT NOT NULL,
     value TEXT NOT NULL,
+    value_size INTEGER NOT NULL DEFAULT 0,
     last_accessed INTEGER DEFAULT (strftime('%s', 'now')),
     last_modified INTEGER DEFAULT (strftime('%s', 'now')),
     FOREIGN KEY (world_id) REFERENCES worlds(world_id) ON DELETE CASCADE,
@@ -159,6 +165,18 @@ END;";
             sqlite.Insert(new World() { WorldId = worldId, ConnectionKey = connectionKey });
         }
 
+        public int GetWorldDataSize(string worldId)
+        {
+            var query = sqlite.Table<World>().Where(w => w.WorldId == worldId).Select(w => w.TotalDataSize);
+
+            return query.FirstOrDefault();
+        }
+
+        public void UpdateWorldDataSize(string worldId, int size)
+        {
+            sqlite.Execute("UPDATE worlds SET total_data_size = ? WHERE world_id = ?", size, worldId);
+        }
+
         /// <summary>
         /// Adds or replaces a data entry in the database with the specified world ID, key, and value.
         /// </summary>
@@ -167,7 +185,8 @@ END;";
         /// <param name="value">The value of the data entry to add or replace.</param>
         public void AddDataEntry(string worldId, string key, string value)
         {
-            sqlite.InsertOrReplace(new WorldData() { WorldId = worldId, Key = key, Value = value });
+            int byteSize = Encoding.UTF8.GetByteCount(value);
+            sqlite.InsertOrReplace(new WorldData() { WorldId = worldId, Key = key, Value = value, ValueSize = byteSize });
         }
 
         /// <summary>
@@ -179,6 +198,13 @@ END;";
         public WorldData GetDataEntry(string worldId, string key)
         {
             var query = sqlite.Table<WorldData>().Where(w => w.WorldId == worldId && w.Key == key);
+
+            return query.FirstOrDefault();
+        }
+
+        public int GetDataEntrySize(string worldId, string key)
+        {
+            var query = sqlite.Table<WorldData>().Where(w => w.WorldId == worldId && w.Key == key).Select(w => w.ValueSize);
 
             return query.FirstOrDefault();
         }
