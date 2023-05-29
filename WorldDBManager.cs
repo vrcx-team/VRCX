@@ -43,86 +43,19 @@ namespace VRCX
                 if (MainForm.Instance?.Browser == null || MainForm.Instance.Browser.IsLoading)
                 {
                     responseData.Error = "VRCX not yet initialized. Try again in a moment.";
-                    SendJsonResponse(context.Response, responseData, 503);
+                    responseData.StatusCode = 503;
+                    SendJsonResponse(context.Response, responseData);
                     continue;
                 };
 
                 switch (request.Url.LocalPath)
                 {
                     case "/vrcx/init":
-                        if (request.QueryString["debug"] == "true")
-                        {
-                            if (!worldDB.DoesWorldExist("wrld_12345"))
-                            {
-                                worldDB.AddWorld("wrld_12345", "12345");
-                                worldDB.AddDataEntry("wrld_12345", "test", "testvalue");
-                            }
-
-                            currentWorldId = "wrld_12345";
-                            responseData.OK = true;
-                            responseData.Data = "12345";
-                            SendJsonResponse(context.Response, responseData);
-                            break;
-                        }
-
-                        string worldId = await GetCurrentWorldID();
-
-                        if (String.IsNullOrEmpty(worldId))
-                        {
-                            responseData.Error = "Failed to get/verify current world ID.";
-                            SendJsonResponse(context.Response, responseData, 500);
-                            break;
-                        }
-
-                        currentWorldId = worldId;
-
-                        var existsInDB = worldDB.DoesWorldExist(currentWorldId);
-                        string connectionKey;
-
-                        if (!existsInDB)
-                        {
-                            connectionKey = GenerateWorldConnectionKey();
-                            worldDB.AddWorld(currentWorldId, connectionKey);
-                        }
-                        else
-                        {
-                            connectionKey = worldDB.GetWorldConnectionKey(currentWorldId);
-                        }
-
-                        responseData.OK = true;
-                        responseData.Data = connectionKey;
+                        responseData = await HandleInitRequest(context);
                         SendJsonResponse(context.Response, responseData);
                         break;
                     case "/vrcx/get":
-                        // TODO: Fix currentWorldId not being reset when leaving a world, so the next world would be able to access the previous world's data if they failed to init first.
-                        // How do I do that reliably? I dunno lol
-                        var key = request.QueryString["key"];
-                        if (key == null)
-                        {
-                            responseData.Error = "Missing key parameter.";
-                            SendJsonResponse(context.Response, responseData, 400);
-                            break;
-                        }
-
-                        if (String.IsNullOrEmpty(currentWorldId))
-                        {
-                            responseData.Error = "World ID not initialized.";
-                            SendJsonResponse(context.Response, responseData, 400);
-                            break;
-                        }
-
-                        var value = worldDB.GetDataEntry(currentWorldId, key);
-
-                        if (value == null)
-                        {
-                            responseData.Error = $"No data found for key '{key}' under world id '{currentWorldId}'.";
-                            SendJsonResponse(context.Response, responseData, 404);
-                            break;
-                        }
-
-                        responseData.OK = true;
-                        responseData.Error = null;
-                        responseData.Data = value.Value;
+                        responseData = await HandleDataRequest(context);
                         SendJsonResponse(context.Response, responseData);
                         break;
                     case "/vrcx/lasterror":
@@ -132,47 +65,164 @@ namespace VRCX
                         SendJsonResponse(context.Response, responseData);
                         break;
                     case "/vrcx/getbulk":
-                        var keys = request.QueryString["keys"];
-                        var keyArray = keys.Split(',');
-
-                        if (String.IsNullOrEmpty(currentWorldId))
-                        {
-                            responseData.Error = "World ID not initialized.";
-                            SendJsonResponse(context.Response, responseData, 400);
-                            break;
-                        }
-
-                        var values = worldDB.GetDataEntries(currentWorldId, keyArray).ToList();
-
-                        if (values == null)
-                        {
-                            responseData.Error = $"No data found for keys '{keys}' under world id '{currentWorldId}'.";
-                            SendJsonResponse(context.Response, responseData, 404);
-                            break;
-                        }
-
-                        // Build a dictionary of key/value pairs to send back. If a key doesn't exist in the database, the key will be included in the response as requested but with a null value.
-                        var data = new Dictionary<string, string>();
-                        for (int i = 0; i < keyArray.Length; i++)
-                        {
-                            string dataKey = keyArray[i];
-                            string dataValue = values.Where(x => x.Key == dataKey).FirstOrDefault()?.Value; // get the value from the list of data entries, if it exists, otherwise null
-
-                            data.Add(dataKey, dataValue);
-                        }
-
-                        responseData.OK = true;
-                        responseData.Error = null;
-                        responseData.Data = JsonConvert.SerializeObject(data);
+                        responseData = await HandleBulkDataRequest(context);
                         SendJsonResponse(context.Response, responseData);
                         break;
                     default:
                         responseData.Error = "Invalid VRCX endpoint.";
-                        SendJsonResponse(context.Response, responseData, 404);
+                        responseData.StatusCode = 404;
+                        SendJsonResponse(context.Response, responseData);
                         break;
                 }
             }
 
+        }
+
+        private async Task<WorldDataRequestResponse> HandleInitRequest(HttpListenerContext context)
+        {
+            var request = context.Request;
+            var responseData = new WorldDataRequestResponse(false, null, null);
+
+            if (request.QueryString["debug"] == "true")
+            {
+                if (!worldDB.DoesWorldExist("wrld_12345"))
+                {
+                    worldDB.AddWorld("wrld_12345", "12345");
+                    worldDB.AddDataEntry("wrld_12345", "test", "testvalue");
+                }
+
+                currentWorldId = "wrld_12345";
+                responseData.OK = true;
+                responseData.Data = "12345";
+                return responseData;
+                SendJsonResponse(context.Response, responseData);
+            }
+
+            string worldId = await GetCurrentWorldID();
+
+            if (String.IsNullOrEmpty(worldId))
+            {
+                responseData.Error = "Failed to get/verify current world ID.";
+                responseData.StatusCode = 500;
+                return responseData;
+                SendJsonResponse(context.Response, responseData);
+            }
+
+            currentWorldId = worldId;
+
+            var existsInDB = worldDB.DoesWorldExist(currentWorldId);
+            string connectionKey;
+
+            if (!existsInDB)
+            {
+                connectionKey = GenerateWorldConnectionKey();
+                worldDB.AddWorld(currentWorldId, connectionKey);
+            }
+            else
+            {
+                connectionKey = worldDB.GetWorldConnectionKey(currentWorldId);
+            }
+
+            responseData.OK = true;
+            responseData.Data = connectionKey;
+            return responseData;
+            SendJsonResponse(context.Response, responseData);
+        }
+
+        private async Task<WorldDataRequestResponse> HandleDataRequest(HttpListenerContext context)
+        {
+            var request = context.Request;
+            var responseData = new WorldDataRequestResponse(false, null, null);
+
+            var key = request.QueryString["key"];
+            if (key == null)
+            {
+                responseData.Error = "Missing key parameter.";
+                responseData.StatusCode = 400;
+                return responseData;
+                SendJsonResponse(context.Response, responseData);
+            }
+
+            var worldId = await GetCurrentWorldID();
+
+            if (String.IsNullOrEmpty(currentWorldId) || (worldId != currentWorldId && currentWorldId != "wrld_12345"))
+            {
+                responseData.Error = "World ID not initialized.";
+                responseData.StatusCode = 400;
+                return responseData;
+                SendJsonResponse(context.Response, responseData);
+            }
+
+            var value = worldDB.GetDataEntry(currentWorldId, key);
+
+            if (value == null)
+            {
+                responseData.Error = $"No data found for key '{key}' under world id '{currentWorldId}'.";
+                responseData.StatusCode = 404;
+                return responseData;
+                SendJsonResponse(context.Response, responseData);
+            }
+
+            responseData.OK = true;
+            responseData.StatusCode = 200;
+            responseData.Error = null;
+            responseData.Data = value.Value;
+            return responseData;
+            SendJsonResponse(context.Response, responseData);
+        }
+
+        private async Task<WorldDataRequestResponse> HandleBulkDataRequest(HttpListenerContext context)
+        {
+            var request = context.Request;
+            var responseData = new WorldDataRequestResponse(false, null, null);
+
+            var keys = request.QueryString["keys"];
+            if (keys == null)
+            {
+                responseData.Error = "Missing/invalid keys parameter.";
+                responseData.StatusCode = 400;
+                return responseData;
+                SendJsonResponse(context.Response, responseData, 400);
+            }
+
+            var keyArray = keys.Split(',');
+
+            currentWorldId = await GetCurrentWorldID();
+
+            if (String.IsNullOrEmpty(currentWorldId))
+            {
+                responseData.Error = "World ID not initialized.";
+                responseData.StatusCode = 400;
+                return responseData;
+                SendJsonResponse(context.Response, responseData, 400);
+            }
+
+            var values = worldDB.GetDataEntries(currentWorldId, keyArray).ToList();
+
+            if (values == null)
+            {
+                responseData.Error = $"No data found for keys '{keys}' under world id '{currentWorldId}'.";
+                responseData.StatusCode = 404;
+                return responseData;
+                SendJsonResponse(context.Response, responseData, 404);
+            }
+
+            // Build a dictionary of key/value pairs to send back. If a key doesn't exist in the database, the key will be included in the response as requested but with a null value.
+            var data = new Dictionary<string, string>();
+            for (int i = 0; i < keyArray.Length; i++)
+            {
+                string dataKey = keyArray[i];
+                string dataValue = values.Where(x => x.Key == dataKey).FirstOrDefault()?.Value; // get the value from the list of data entries, if it exists, otherwise null
+
+                data.Add(dataKey, dataValue);
+            }
+
+            responseData.OK = true;
+            responseData.StatusCode = 200;
+            responseData.Error = null;
+            responseData.Data = JsonConvert.SerializeObject(data);
+            return responseData;
+            SendJsonResponse(context.Response, responseData);
         }
 
         /// <summary>
@@ -193,6 +243,17 @@ namespace VRCX
         private async Task<string> GetCurrentWorldID()
         {
             JavascriptResponse funcResult = await MainForm.Instance.Browser.EvaluateScriptAsync("$app.API.actuallyGetCurrentLocation();", TimeSpan.FromSeconds(5));
+
+            try
+            {
+                funcResult = await MainForm.Instance.Browser.EvaluateScriptAsync("$app.API.actuallyGetCurrentLocation();", TimeSpan.FromSeconds(5));
+            }
+            catch (Exception ex)
+            {
+                lastError = ex.Message;
+                return null;
+            }
+
             string worldId = funcResult?.Result?.ToString();
 
             if (String.IsNullOrEmpty(worldId))
@@ -212,13 +273,11 @@ namespace VRCX
         /// <param name="responseData">The response data to be serialized to JSON.</param>
         /// <param name="statusCode">The HTTP status code to be returned.</param>
         /// <returns>The HTTP listener response object.</returns>
-        private HttpListenerResponse SendJsonResponse(HttpListenerResponse response, WorldDataRequestResponse responseData, int statusCode = 200)
+        private HttpListenerResponse SendJsonResponse(HttpListenerResponse response, WorldDataRequestResponse responseData)
         {
             response.ContentType = "application/json";
-            response.StatusCode = statusCode;
+            response.StatusCode = responseData.StatusCode;
             response.AddHeader("Cache-Control", "no-cache");
-
-            responseData.StatusCode = statusCode;
 
             // Use newtonsoft.json to serialize WorldDataRequestResponse to json
             var json = JsonConvert.SerializeObject(responseData);
@@ -243,7 +302,24 @@ namespace VRCX
             //     "value": "example_value"
             // }
             // TODO: limits
-            WorldDataRequest request = JsonConvert.DeserializeObject<WorldDataRequest>(json);
+            // Evaluate if string is valid json with newtonsoft.json
+
+            WorldDataRequest request;
+
+            try // try to deserialize the json into a WorldDataRequest object
+            {
+                request = JsonConvert.DeserializeObject<WorldDataRequest>(json);
+            }
+            catch (JsonReaderException ex)
+            {
+                // invalid json
+                return; // TODO: store error for "last error" request
+            }
+            catch (Exception ex)
+            {
+                // something else happened lol
+                return; // TODO: store error for "last error" request
+            }
 
             if (request.Key == null || request.Value == null) return; // TODO: Store error for "last error" request
             if (request.ConnectionKey == null) return; // TODO: Store error for "last error" request
