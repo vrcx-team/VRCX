@@ -31,7 +31,7 @@ namespace VRCX
         [PrimaryKey, AutoIncrement]
         [Column("id")]
         public int Id { get; set; }
-        [PrimaryKey, Column("world_id"), NotNull]
+        [Column("world_id"), NotNull]
         public string WorldId { get; set; }
         [Column("connection_key"), NotNull]
         public string ConnectionKey { get; set; }
