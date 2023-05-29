@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS worlds (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     world_id TEXT NOT NULL UNIQUE,
     connection_key TEXT NOT NULL,
-    total_data_size INTEGER DEFAULT 0
+    total_data_size INTEGER DEFAULT 0,
     allow_external_read INTEGER DEFAULT 0
 );
 \

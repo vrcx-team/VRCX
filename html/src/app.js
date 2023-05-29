@@ -2098,7 +2098,7 @@ speechSynthesis.getVoices();
 
     // TODO: traveling to world checks
     API.actuallyGetCurrentLocation = async function () {
-        const gameLogLocation = $app.lastLocation.locaion;
+        const gameLogLocation = $app.lastLocation.location;
         console.log('gameLog Location', gameLogLocation);
 
         const presence = this.currentUser.presence;
