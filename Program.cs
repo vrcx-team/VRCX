@@ -79,8 +79,10 @@ namespace VRCX
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var server = new WorldDBManager("http://127.0.0.1:8081/");
-            Task.Run(server.Start);
+            // I'll re-do this whole function eventually I swear
+            var worldDBServer = new WorldDBManager("http://127.0.0.1:22500/");
+            Task.Run(worldDBServer.Start);
+
             ProcessMonitor.Instance.Init();
             SQLiteLegacy.Instance.Init();
             VRCXStorage.Load();
@@ -102,6 +104,7 @@ namespace VRCX
             AutoAppLaunchManager.Instance.Exit();
             LogWatcher.Instance.Exit();
             WebApi.Instance.Exit();
+            worldDBServer.Stop();
 
             Discord.Instance.Exit();
             CpuMonitor.Instance.Exit();
