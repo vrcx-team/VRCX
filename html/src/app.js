@@ -2118,7 +2118,7 @@ speechSynthesis.getVoices();
             console.log('ok presence return');
             return presence.world;
         }
-        let args = await this.getUser(this.currentUser.id);
+        let args = await this.getUser({ userId: this.currentUser.id });
         let user = args.json
 
         console.log('presence bad, got user', user);
