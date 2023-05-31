@@ -159,12 +159,18 @@ END;";
         /// </summary>
         /// <param name="worldId">The ID of the world to add.</param>
         /// <param name="connectionKey">The connection key of the world to add.</param>
+        /// <exception cref="SQLiteException">Thrown if a world with the specified ID already exists in the database.</exception>
         public void AddWorld(string worldId, string connectionKey)
         {
-            // * This will throw an error if the world already exists
+            // * This will throw an error if the world already exists.. so don't do that
             sqlite.Insert(new World() { WorldId = worldId, ConnectionKey = connectionKey });
         }
 
+        /// <summary>
+        /// Gets the world with the specified ID from the database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to get.</param>
+        /// <returns>The world with the specified ID, or null if no such world exists in the database.</returns>
         public World GetWorld(string worldId)
         {
             var query = sqlite.Table<World>().Where(w => w.WorldId == worldId);

@@ -78,6 +78,11 @@ namespace VRCX
 
         }
 
+        /// <summary>
+        /// Handles an HTTP listener request to initialize a connection to the world db manager.
+        /// </summary>
+        /// <param name="context">The HTTP listener context object.</param>
+        /// <returns>A <see cref="WorldDataRequestResponse"/> object containing the response data.</returns>
         private async Task<WorldDataRequestResponse> HandleInitRequest(HttpListenerContext context)
         {
             var request = context.Request;
@@ -128,6 +133,11 @@ namespace VRCX
             return responseData;
         }
 
+        /// <summary>
+        /// Handles an HTTP listener request for data from the world database.
+        /// </summary>
+        /// <param name="context">The HTTP listener context object.</param>
+        /// <returns>A <see cref="WorldDataRequestResponse"/> object containing the response data.</returns>
         private async Task<WorldDataRequestResponse> HandleDataRequest(HttpListenerContext context)
         {
             var request = context.Request;
@@ -187,6 +197,11 @@ namespace VRCX
             return responseData;
         }
 
+        /// <summary>
+        /// Handles an HTTP listener request for bulk data from the world database.
+        /// </summary>
+        /// <param name="context">The HTTP listener context object.</param>
+        /// <returns>A <see cref="WorldDataRequestResponse"/> object containing the response data.</returns>
         private async Task<WorldDataRequestResponse> HandleBulkDataRequest(HttpListenerContext context)
         {
             var request = context.Request;
@@ -245,6 +260,7 @@ namespace VRCX
         {
             // Ditched the old method of generating a short key, since we're just going with json anyway who cares about a longer identifier
             // Since we can rely on this GUID being unique, we can use it to identify the world on requests instead of trying to keep track of the user's current world.
+            // I uhh, should probably make sure this is actually unique though. Just in case. I'll do that later.
             return Guid.NewGuid().ToString();
         }
 
@@ -272,6 +288,7 @@ namespace VRCX
             {
                 // implement
                 // wait what was i going to do here again
+                // seriously i forgot, hope it wasn't important
                 return null;
             }
 
@@ -337,7 +354,8 @@ namespace VRCX
                 return;
             }
 
-            if (String.IsNullOrEmpty(request.Key)) {
+            if (String.IsNullOrEmpty(request.Key))
+            {
                 this.lastError = "`key` is missing or null";
                 return;
             }
