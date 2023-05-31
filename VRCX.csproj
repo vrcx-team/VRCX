@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -87,11 +87,13 @@
     <Compile Include="CefCustomDownloadHandler.cs" />
     <Compile Include="CefCustomDragHandler.cs" />
     <Compile Include="CefCustomMenuHandler.cs" />
+    <Compile Include="WorldDatabase.cs" />
     <Compile Include="ImageCache.cs" />
     <Compile Include="IPCClient.cs" />
     <Compile Include="IPCServer.cs" />
     <Compile Include="ProcessMonitor.cs" />
     <Compile Include="ScreenshotHelper.cs" />
+    <Compile Include="SQLite.cs" />
     <Compile Include="StartupArgs.cs" />
     <Compile Include="Update.cs" />
     <Compile Include="CefService.cs" />
@@ -101,7 +103,7 @@
     <Compile Include="NoopDragHandler.cs" />
     <Compile Include="OpenVR\openvr_api.cs" />
     <Compile Include="WebApi.cs" />
-    <Compile Include="SQLite.cs" />
+    <Compile Include="SQLiteLegacy.cs" />
     <Compile Include="SharedVariable.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="VRForm.cs">
@@ -123,6 +125,8 @@
     <Compile Include="AppApi.cs" />
     <Compile Include="VRCXStorage.cs" />
     <Compile Include="JsonSerializer.cs" />
+    <Compile Include="WorldDataRequestResponse.cs" />
+    <Compile Include="WorldDBManager.cs" />
     <Compile Include="WinApi.cs" />
     <Compile Include="WinformBase.cs">
       <SubType>Form</SubType>
@@ -222,6 +226,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(ProjectDir)OpenVR\win64\openvr_api.dll"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "$(ProjectDir)OpenVR\win64\openvr_api.dll"
+xcopy /y "$(ProjectDir)lib\sqlite3.dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>

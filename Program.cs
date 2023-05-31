@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace VRCX
@@ -78,8 +79,12 @@ namespace VRCX
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            // I'll re-do this whole function eventually I swear
+            var worldDBServer = new WorldDBManager("http://127.0.0.1:22500/");
+            Task.Run(worldDBServer.Start);
+
             ProcessMonitor.Instance.Init();
-            SQLite.Instance.Init();
+            SQLiteLegacy.Instance.Init();
             VRCXStorage.Load();
             LoadFromConfig();
             CpuMonitor.Instance.Init();
@@ -99,14 +104,18 @@ namespace VRCX
             AutoAppLaunchManager.Instance.Exit();
             LogWatcher.Instance.Exit();
             WebApi.Instance.Exit();
+            worldDBServer.Stop();
 
             Discord.Instance.Exit();
             CpuMonitor.Instance.Exit();
             VRCXStorage.Save();
-            SQLite.Instance.Exit();
+            SQLiteLegacy.Instance.Exit();
             ProcessMonitor.Instance.Exit();
         }
 
+        /// <summary>
+        /// Sets GPUFix to true if it is not already set and the VRCX_GPUFix key in the database is true.
+        /// </summary>
         private static void LoadFromConfig()
         {
             if (!GPUFix)

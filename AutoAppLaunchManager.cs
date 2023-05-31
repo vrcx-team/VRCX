@@ -22,7 +22,7 @@ namespace VRCX
 
         private DateTime startTime = DateTime.Now;
         private Dictionary<string, Process> startedProcesses = new Dictionary<string, Process>();
-        private static readonly byte[] shortcutSignatureBytes = { 0x4C, 0x00, 0x00, 0x00 }; // signature for ShellLinkHeader\
+        private static readonly byte[] shortcutSignatureBytes = { 0x4C, 0x00, 0x00, 0x00 }; // signature for ShellLinkHeader
 
         private const uint TH32CS_SNAPPROCESS = 2;
 
@@ -123,6 +123,11 @@ namespace VRCX
 
         // This is a recursive function that kills a process and all of its children.
         // It uses the CreateToolhelp32Snapshot winapi func to get a snapshot of all running processes, loops through them with Process32First/Process32Next, and kills any processes that have the given pid as their parent.
+        
+        /// <summary>
+        /// Kills a process and all of its child processes.
+        /// </summary>
+        /// <param name="pid">The process ID of the parent process.</param>
         public static void KillProcessTree(int pid)
         {
             IntPtr snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);

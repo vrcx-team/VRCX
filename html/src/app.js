@@ -2092,6 +2092,47 @@ speechSynthesis.getVoices();
         });
     });
 
+    API.getUserApiCurrentLocation = function () {
+        return this.currentUser?.presence?.world;
+    };
+
+    // TODO: traveling to world checks
+    API.actuallyGetCurrentLocation = async function () {
+        const gameLogLocation = $app.lastLocation.location;
+        console.log('gameLog Location', gameLogLocation);
+
+        const presence = this.currentUser.presence;
+        let presenceLocation = this.currentUser.$locationTag;
+        if (presenceLocation === 'traveling') {
+            console.log("User is traveling, using $travelingToLocation", this.currentUser.$travelingToLocation);
+            presenceLocation = this.currentUser.$travelingToLocation;
+        }
+        console.log('presence Location', presenceLocation);
+
+        // We want to use presence if it's valid to avoid extra API calls, but its prone to being outdated when this function is called.
+        // So we check if the presence location is the same as the gameLog location; If it is, the presence is (probably) valid and we can use it.
+        // If it's not, we need to get the user manually to get the correct location.
+        // If the user happens to be offline or the api is just being dumb, we assume that the user logged into VRCX is different than the one in-game and return the gameLog location.
+        // This is really dumb.
+        if (presenceLocation === gameLogLocation) {
+            console.log('ok presence return');
+            return presence.world;
+        }
+        let args = await this.getUser({ userId: this.currentUser.id });
+        let user = args.json
+
+        console.log('presence bad, got user', user);
+        if (!$app.isRealInstance(user.location)) {
+            console.warn(
+                'presence invalid, user offline and/or instance invalid. returning gamelog location: ',
+                gameLogLocation
+            );
+            return gameLogLocation;
+        }
+        console.warn('presence outdated, got user api location instead: ', user.location);
+        return this.parseLocation(user.location).worldId;
+    };
+
     API.applyWorld = function (json) {
         var ref = this.cachedWorlds.get(json.id);
         if (typeof ref === 'undefined') {
