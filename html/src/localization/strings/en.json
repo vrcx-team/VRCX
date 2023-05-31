@@ -73,6 +73,9 @@
                 "sort_update": "Sort by update",
                 "sort_created": "Sort by created"
             },
+            "group": {
+                "header": "Group"
+            },
             "prev_page": "Prev",
             "next_page": "Next"
         },

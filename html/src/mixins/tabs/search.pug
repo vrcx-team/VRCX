@@ -71,3 +71,18 @@ mixin searchTab()
                 el-button-group(style="margin-top:15px")
                     el-button(v-if="searchAvatarPageNum" @click="moreSearchAvatar(-1)" icon="el-icon-back" size="small") {{ $t('view.search.prev_page') }}
                     el-button(v-if="searchAvatarResults.length > 10 && (searchAvatarPageNum + 1) * 10 < searchAvatarResults.length" @click="moreSearchAvatar(1)" icon="el-icon-right" size="small") {{ $t('view.search.next_page') }}
+            el-tab-pane(:label="$t('view.search.group.header')" v-loading="isSearchGroupLoading" style="min-height:60px")
+                .x-friend-list
+                    .x-friend-item(v-for="group in searchGroupResults" :key="group.id" @click="showGroupDialog(group.id)")
+                        template(v-once)
+                            .avatar
+                                img(v-lazy="group.iconUrl")
+                            .detail
+                                span.name
+                                    span(v-text="group.name")
+                                    span(style="margin-left:5px;font-weight:normal") ({{ group.memberCount }})
+                                    span(style="margin-left:5px;color:#909399;font-weight:normal;font-family:monospace;font-size:12px") {{ group.shortCode }}.{{ group.discriminator }}
+                                span.extra(v-text="group.description")
+                el-button-group(style="margin-top:15px")
+                    el-button(v-if="searchGroupParams.offset" @click="moreSearchGroup(-1)" icon="el-icon-back" size="small") {{ $t('view.search.prev_page') }}
+                    el-button(v-if="searchGroupResults.length" @click="moreSearchGroup(1)" icon="el-icon-right" size="small") {{ $t('view.search.next_page') }}
