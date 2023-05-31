@@ -234,6 +234,8 @@ html
                                     el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRC+
                                     el-tag.x-tag-platform-pc(v-if="userDialog.ref.last_platform === 'standalonewindows'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
                                     el-tag.x-tag-platform-quest(v-else-if="userDialog.ref.last_platform === 'android'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Quest
+                                    el-tag.x-tag-platform-ios(v-else-if="userDialog.ref.last_platform === 'ios'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
+                                    el-tag.x-tag-platform-other(v-else-if="userDialog.ref.last_platform" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ userDialog.ref.last_platform }}
                                     el-tag.name(v-if="userDialog.ref.$customTag" type="info" effect="plain" size="mini" v-text="userDialog.ref.$customTag" :style="{'color':userDialog.ref.$customTagColour, 'border-color':userDialog.ref.$customTagColour}" style="margin-right:5px;margin-top:5px")
                                 div(style="margin-top:5px")
                                     span(v-text="userDialog.ref.statusDescription" style="font-size:12px")
@@ -552,6 +554,7 @@ html
                                     el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.private') }}
                                     el-tag.x-tag-platform-pc(v-if="worldDialog.isPC" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
                                     el-tag.x-tag-platform-quest(v-if="worldDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Quest
+                                    el-tag.x-tag-platform-ios(v-if="worldDialog.isIos" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
                                     el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px;margin-top:5px")
                                     el-tag(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px")
                                         span(v-text="worldDialog.cacheSize")
@@ -1161,6 +1164,7 @@ html
                     el-form-item(:label="$t('dialog.new_instance.group_access_type')" v-if="newInstanceDialog.accessType === 'group'")
                         el-radio-group(v-model="newInstanceDialog.groupAccessType" size="mini" @change="buildInstance")
                             el-radio-button(label="members") {{ $t('dialog.new_instance.group_access_type_members') }}
+                            el-radio-button(label="plus") {{ $t('dialog.new_instance.group_access_type_plus') }}
                             el-radio-button(label="public") {{ $t('dialog.new_instance.group_access_type_public') }}
                     //- el-form-item(label="Strict" v-if="newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite'")
                     //-     el-checkbox(v-model="newInstanceDialog.strict") Prevent non friends joining via URL/Instance ID

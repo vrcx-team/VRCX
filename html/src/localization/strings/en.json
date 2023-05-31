@@ -819,6 +819,7 @@
             "access_type_invite": "Invite",
             "group_access_type": "Group Access",
             "group_access_type_members": "Members",
+            "group_access_type_plus": "Plus",
             "group_access_type_public": "Public",
             "region": "Region",
             "region_usw": "US West",
