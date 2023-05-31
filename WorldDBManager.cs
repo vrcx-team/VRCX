@@ -50,23 +50,27 @@ namespace VRCX
 
                 switch (request.Url.LocalPath)
                 {
-                    case "/vrcx/init":
+                    case "/vrcx/data/init":
                         responseData = await HandleInitRequest(context);
                         SendJsonResponse(context.Response, responseData);
                         break;
-                    case "/vrcx/get":
+                    case "/vrcx/data/get":
                         responseData = await HandleDataRequest(context);
                         SendJsonResponse(context.Response, responseData);
                         break;
-                    case "/vrcx/lasterror":
+                    case "/vrcx/data/lasterror":
                         responseData.OK = lastError == null;
                         responseData.Data = lastError;
                         lastError = null;
                         SendJsonResponse(context.Response, responseData);
                         break;
-                    case "/vrcx/getbulk":
+                    case "/vrcx/data/getbulk":
                         responseData = await HandleBulkDataRequest(context);
                         SendJsonResponse(context.Response, responseData);
+                        break;
+                    case "/vrcx/status":
+                        context.Response.StatusCode = 200;
+                        context.Response.Close();
                         break;
                     default:
                         responseData.Error = "Invalid VRCX endpoint.";
