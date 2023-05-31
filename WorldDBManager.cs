@@ -278,7 +278,6 @@ namespace VRCX
             }
             catch (Exception ex)
             {
-                lastError = ex.Message;
                 return null;
             }
 
