@@ -181,9 +181,9 @@ namespace VRCX
 
             var keyArray = keys.Split(',');
 
-            currentWorldId = await GetCurrentWorldID();
+            var worldId = await GetCurrentWorldID();
 
-            if (String.IsNullOrEmpty(currentWorldId))
+            if (String.IsNullOrEmpty(currentWorldId) || (worldId != currentWorldId && currentWorldId != "wrld_12345"))
             {
                 responseData.Error = "World ID not initialized.";
                 responseData.StatusCode = 400;
