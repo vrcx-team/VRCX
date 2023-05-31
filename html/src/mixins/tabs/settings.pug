@@ -165,7 +165,7 @@ mixin settingsTab()
                         el-switch(v-model="orderFriendsGroup3" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_offline_time')" @change="saveOrderFriendGroup")
                     span.sub-header {{ $t('view.settings.appearance.side_panel.width') }}
                     div.options-container-item
-                        el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{236: ''}" :min="141" :max="500" style="width:300px")
+                        el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{350: ''}" :min="141" :max="500" style="width:300px")
                 //- Appearance | User Dialog
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_dialog.header') }}
@@ -333,11 +333,11 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.discord_presence.discord_presence.instance_type_player_count') }}
                         el-switch(v-model="discordInstance" @change="saveDiscordOption" :disabled="!discordActive")
                     div.options-container-item
-                        span.name {{ $t('view.settings.discord_presence.discord_presence.join_button') }}
-                        el-switch(v-model="discordJoinButton" @change="saveDiscordOption" :disabled="!discordActive")
-                    div.options-container-item
                         span.name {{ $t('view.settings.discord_presence.discord_presence.hide_details_in_private') }}
                         el-switch(v-model="discordHideInvite" @change="saveDiscordOption" :disabled="!discordActive")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.discord_presence.discord_presence.join_button') }}
+                        el-switch(v-model="discordJoinButton" @change="saveDiscordOption" :disabled="!discordActive")
                     div.options-container-item
                         span.name {{ $t('view.settings.discord_presence.discord_presence.hide_images') }}
                         el-switch(v-model="discordHideImage" @change="saveDiscordOption" :disabled="!discordActive")

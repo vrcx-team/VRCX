@@ -47,37 +47,6 @@ speechSynthesis.getVoices();
 
     await configRepository.init();
 
-    // #region | Init: Migrate old legacy database data to new format
-    if (configRepository.getBool('migrate_config_20201101') === null) {
-        var legacyConfigKeys = [
-            'orderFriendGroup0',
-            'orderFriendGroup1',
-            'orderFriendGroup2',
-            'orderFriendGroup3',
-            'discordActive',
-            'discordInstance',
-            'openVR',
-            'openVRAlways',
-            'VRCX_hidePrivateFromFeed',
-            'VRCX_hideLoginsFromFeed',
-            'VRCX_hideDevicesFromFeed',
-            'VRCX_VIPNotifications',
-            'VRCX_minimalFeed',
-            'isDarkMode',
-            'VRCX_StartAtWindowsStartup',
-            'VRCX_StartAsMinimizedState',
-            'VRCX_CloseToTray',
-            'launchAsDesktop'
-        ];
-        for (var _key of legacyConfigKeys) {
-            configRepository.setBool(
-                _key,
-                (await VRCXStorage.Get(_key)) === 'true'
-            );
-        }
-        configRepository.setBool('migrate_config_20201101', true);
-    }
-
     // #endregion
     // #region | Init: drop/keyup event listeners
     // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
@@ -5134,7 +5103,10 @@ speechSynthesis.getVoices();
         if (!this.appVersion) {
             return;
         }
-        var lastVersion = configRepository.getString('VRCX_lastVRCXVersion');
+        var lastVersion = configRepository.getString(
+            'VRCX_lastVRCXVersion',
+            ''
+        );
         if (!lastVersion) {
             configRepository.setString('VRCX_lastVRCXVersion', this.appVersion);
             return;
@@ -7052,7 +7024,8 @@ speechSynthesis.getVoices();
     };
 
     $app.data.enablePrimaryPassword = configRepository.getBool(
-        'enablePrimaryPassword'
+        'enablePrimaryPassword',
+        false
     );
     $app.data.enablePrimaryPasswordDialog = {
         visible: false,
@@ -7552,43 +7525,6 @@ speechSynthesis.getVoices();
     $app.data.sortFriendsGroup1 = false;
     $app.data.sortFriendsGroup2 = false;
     $app.data.sortFriendsGroup3 = false;
-    $app.data.orderFriendsGroup0 =
-        configRepository.getBool('orderFriendGroup0');
-    $app.data.orderFriendsGroup1 =
-        configRepository.getBool('orderFriendGroup1');
-    $app.data.orderFriendsGroup2 =
-        configRepository.getBool('orderFriendGroup2');
-    $app.data.orderFriendsGroup3 =
-        configRepository.getBool('orderFriendGroup3');
-    $app.data.orderFriendsGroupPrivate = configRepository.getBool(
-        'orderFriendGroupPrivate'
-    );
-    $app.data.orderFriendsGroupStatus = configRepository.getBool(
-        'orderFriendsGroupStatus'
-    );
-    $app.data.orderFriendsGroupGPS = configRepository.getBool(
-        'orderFriendGroupGPS'
-    );
-    $app.methods.saveOrderFriendGroup = function () {
-        configRepository.setBool('orderFriendGroup0', this.orderFriendsGroup0);
-        configRepository.setBool('orderFriendGroup1', this.orderFriendsGroup1);
-        configRepository.setBool('orderFriendGroup2', this.orderFriendsGroup2);
-        configRepository.setBool('orderFriendGroup3', this.orderFriendsGroup3);
-        configRepository.setBool(
-            'orderFriendGroupPrivate',
-            this.orderFriendsGroupPrivate
-        );
-        configRepository.setBool(
-            'orderFriendsGroupStatus',
-            this.orderFriendsGroupStatus
-        );
-        configRepository.setBool(
-            'orderFriendGroupGPS',
-            this.orderFriendsGroupGPS
-        );
-        this.sortFriendsGroup0 = true;
-        this.sortFriendsGroup1 = true;
-    };
 
     $app.methods.fetchActiveFriend = function (userId) {
         this.pendingActiveFriends.add(userId);
@@ -8700,10 +8636,7 @@ speechSynthesis.getVoices();
         return true;
     };
 
-    $app.data.tablePageSize = 10;
-    if (configRepository.getInt('VRCX_tablePageSize')) {
-        $app.data.tablePageSize = configRepository.getInt('VRCX_tablePageSize');
-    }
+    $app.data.tablePageSize = configRepository.getInt('VRCX_tablePageSize', 15);
 
     $app.data.feedTable = {
         data: [],
@@ -8786,6 +8719,7 @@ speechSynthesis.getVoices();
                 throw err;
             }
         }
+        $app.getAvatarHistory();
         $app.getAllMemos();
         if ($app.randomUserColours) {
             $app.getNameColour(this.currentUser.id).then((colour) => {
@@ -9240,21 +9174,6 @@ speechSynthesis.getVoices();
         joinUrl: '',
         statusName: '',
         statusImage: ''
-    };
-    $app.data.discordActive = configRepository.getBool('discordActive');
-    $app.data.discordInstance = configRepository.getBool('discordInstance');
-    $app.data.discordJoinButton = configRepository.getBool('discordJoinButton');
-    $app.data.discordHideInvite = configRepository.getBool('discordHideInvite');
-    $app.data.discordHideImage = configRepository.getBool('discordHideImage');
-    $app.methods.saveDiscordOption = function () {
-        configRepository.setBool('discordActive', this.discordActive);
-        configRepository.setBool('discordInstance', this.discordInstance);
-        configRepository.setBool('discordJoinButton', this.discordJoinButton);
-        configRepository.setBool('discordHideInvite', this.discordHideInvite);
-        configRepository.setBool('discordHideImage', this.discordHideImage);
-        this.lastLocation$.tag = '';
-        this.nextDiscordUpdate = 7;
-        this.updateDiscord();
     };
 
     $app.methods.gameLogSearch = function (row) {
@@ -13274,48 +13193,35 @@ speechSynthesis.getVoices();
             JSON.stringify(this.notificationTable.filters[0].value)
         );
     };
-    if (configRepository.getString('VRCX_feedTableFilters')) {
-        $app.data.feedTable.filter = JSON.parse(
-            configRepository.getString('VRCX_feedTableFilters')
-        );
-        $app.data.feedTable.vip = configRepository.getBool(
-            'VRCX_feedTableVIPFilter'
-        );
-    }
-    if (configRepository.getString('VRCX_gameLogTableFilters')) {
-        $app.data.gameLogTable.filter = JSON.parse(
-            configRepository.getString('VRCX_gameLogTableFilters')
-        );
-    }
-    if (configRepository.getString('VRCX_friendLogTableFilters')) {
-        $app.data.friendLogTable.filters[0].value = JSON.parse(
-            configRepository.getString('VRCX_friendLogTableFilters')
-        );
-    }
-    if (configRepository.getString('VRCX_playerModerationTableFilters')) {
-        $app.data.playerModerationTable.filters[0].value = JSON.parse(
-            configRepository.getString('VRCX_playerModerationTableFilters')
-        );
-    }
-    if (configRepository.getString('VRCX_notificationTableFilters')) {
-        $app.data.notificationTable.filters[0].value = JSON.parse(
-            configRepository.getString('VRCX_notificationTableFilters')
-        );
-    }
-    if (configRepository.getString('VRCX_photonEventTypeFilter')) {
-        $app.data.photonEventTableTypeFilter = JSON.parse(
-            configRepository.getString('VRCX_photonEventTypeFilter')
-        );
-        $app.data.photonEventTable.filters[1].value =
-            $app.data.photonEventTableTypeFilter;
-        $app.data.photonEventTablePrevious.filters[1].value =
-            $app.data.photonEventTableTypeFilter;
-    }
-    if (configRepository.getString('VRCX_photonEventTypeOverlayFilter')) {
-        $app.data.photonEventTableTypeOverlayFilter = JSON.parse(
-            configRepository.getString('VRCX_photonEventTypeOverlayFilter')
-        );
-    }
+    $app.data.feedTable.filter = JSON.parse(
+        configRepository.getString('VRCX_feedTableFilters', '[]')
+    );
+    $app.data.feedTable.vip = configRepository.getBool(
+        'VRCX_feedTableVIPFilter',
+        false
+    );
+    $app.data.gameLogTable.filter = JSON.parse(
+        configRepository.getString('VRCX_gameLogTableFilters', '[]')
+    );
+    $app.data.friendLogTable.filters[0].value = JSON.parse(
+        configRepository.getString('VRCX_friendLogTableFilters', '[]')
+    );
+    $app.data.playerModerationTable.filters[0].value = JSON.parse(
+        configRepository.getString('VRCX_playerModerationTableFilters', '[]')
+    );
+    $app.data.notificationTable.filters[0].value = JSON.parse(
+        configRepository.getString('VRCX_notificationTableFilters', '[]')
+    );
+    $app.data.photonEventTableTypeFilter = JSON.parse(
+        configRepository.getString('VRCX_photonEventTypeFilter', '[]')
+    );
+    $app.data.photonEventTable.filters[1].value =
+        $app.data.photonEventTableTypeFilter;
+    $app.data.photonEventTablePrevious.filters[1].value =
+        $app.data.photonEventTableTypeFilter;
+    $app.data.photonEventTableTypeOverlayFilter = JSON.parse(
+        configRepository.getString('VRCX_photonEventTypeOverlayFilter', '[]')
+    );
 
     // #endregion
     // #region | App: Profile + Settings
@@ -13432,100 +13338,121 @@ speechSynthesis.getVoices();
         layout: 'table'
     };
     $app.data.visits = 0;
-    $app.data.openVR = configRepository.getBool('openVR');
-    $app.data.openVRAlways = configRepository.getBool('openVRAlways');
-    $app.data.overlaybutton = configRepository.getBool('VRCX_overlaybutton');
-    $app.data.overlayHand = configRepository.getInt('VRCX_overlayHand');
-    if (typeof $app.data.overlayHand !== 'number') {
-        $app.data.overlayHand = 0;
-    }
+    $app.data.openVR = configRepository.getBool('openVR', false);
+    $app.data.openVRAlways = configRepository.getBool('openVRAlways', false);
+    $app.data.overlaybutton = configRepository.getBool(
+        'VRCX_overlaybutton',
+        false
+    );
+    $app.data.overlayHand = configRepository.getInt('VRCX_overlayHand', 0);
     $app.data.hidePrivateFromFeed = configRepository.getBool(
-        'VRCX_hidePrivateFromFeed'
+        'VRCX_hidePrivateFromFeed',
+        false
     );
     $app.data.hideDevicesFromFeed = configRepository.getBool(
-        'VRCX_hideDevicesFromFeed'
+        'VRCX_hideDevicesFromFeed',
+        false
     );
     $app.data.hideCpuUsageFromFeed = configRepository.getBool(
-        'VRCX_hideCpuUsageFromFeed'
+        'VRCX_hideCpuUsageFromFeed',
+        false
     );
     $app.data.hideUptimeFromFeed = configRepository.getBool(
-        'VRCX_hideUptimeFromFeed'
+        'VRCX_hideUptimeFromFeed',
+        false
     );
-    $app.data.pcUptimeOnFeed = configRepository.getBool('VRCX_pcUptimeOnFeed');
+    $app.data.pcUptimeOnFeed = configRepository.getBool(
+        'VRCX_pcUptimeOnFeed',
+        false
+    );
     $app.data.overlayNotifications = configRepository.getBool(
-        'VRCX_overlayNotifications'
+        'VRCX_overlayNotifications',
+        true
     );
-    $app.data.overlayWrist = configRepository.getBool('VRCX_overlayWrist');
+    $app.data.overlayWrist = configRepository.getBool(
+        'VRCX_overlayWrist',
+        false
+    );
     $app.data.xsNotifications = configRepository.getBool(
-        'VRCX_xsNotifications'
+        'VRCX_xsNotifications',
+        true
     );
     $app.data.imageNotifications = configRepository.getBool(
-        'VRCX_imageNotifications'
+        'VRCX_imageNotifications',
+        true
     );
-    $app.data.desktopToast = configRepository.getString('VRCX_desktopToast');
-    $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
+    $app.data.desktopToast = configRepository.getString(
+        'VRCX_desktopToast',
+        'Never'
+    );
+    $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed', false);
     $app.data.displayVRCPlusIconsAsAvatar = configRepository.getBool(
-        'displayVRCPlusIconsAsAvatar'
+        'displayVRCPlusIconsAsAvatar',
+        true
     );
-    $app.data.hideTooltips = configRepository.getBool('VRCX_hideTooltips');
+    $app.data.hideTooltips = configRepository.getBool(
+        'VRCX_hideTooltips',
+        false
+    );
     $app.data.notificationTTS = configRepository.getString(
-        'VRCX_notificationTTS'
+        'VRCX_notificationTTS',
+        'Never'
     );
     $app.data.notificationTTSVoice = configRepository.getString(
-        'VRCX_notificationTTSVoice'
+        'VRCX_notificationTTSVoice',
+        '0'
     );
     $app.data.notificationTimeout = configRepository.getString(
-        'VRCX_notificationTimeout'
+        'VRCX_notificationTimeout',
+        '3000'
     );
     $app.data.autoSweepVRChatCache = configRepository.getBool(
-        'VRCX_autoSweepVRChatCache'
+        'VRCX_autoSweepVRChatCache',
+        false
     );
     $app.data.relaunchVRChatAfterCrash = configRepository.getBool(
-        'VRCX_relaunchVRChatAfterCrash'
+        'VRCX_relaunchVRChatAfterCrash',
+        false
     );
-    $app.data.vrcQuitFix = configRepository.getBool('VRCX_vrcQuitFix');
+    $app.data.vrcQuitFix = configRepository.getBool('VRCX_vrcQuitFix', true);
     $app.data.vrBackgroundEnabled = configRepository.getBool(
-        'VRCX_vrBackgroundEnabled'
+        'VRCX_vrBackgroundEnabled',
+        false
     );
-    $app.data.asideWidth = configRepository.getInt('VRCX_asidewidth');
+    $app.data.asideWidth = configRepository.getInt('VRCX_asidewidth', 350);
     $app.data.autoUpdateVRCX = configRepository.getString(
-        'VRCX_autoUpdateVRCX'
+        'VRCX_autoUpdateVRCX',
+        'Auto Download'
     );
-    $app.data.branch = configRepository.getString('VRCX_branch');
-    $app.data.maxTableSize = configRepository.getInt('VRCX_maxTableSize');
+    $app.data.branch = configRepository.getString('VRCX_branch', 'Stable');
+    $app.data.maxTableSize = configRepository.getInt('VRCX_maxTableSize', 1000);
     if ($app.data.maxTableSize > 10000) {
         $app.data.maxTableSize = 1000;
     }
     database.setmaxTableSize($app.data.maxTableSize);
     $app.data.photonLobbyTimeoutThreshold = configRepository.getString(
-        'VRCX_photonLobbyTimeoutThreshold'
+        'VRCX_photonLobbyTimeoutThreshold',
+        6000
     );
     $app.data.clearVRCXCacheFrequency = configRepository.getString(
-        'VRCX_clearVRCXCacheFrequency'
-    );
-    $app.data.nextClearVRCXCacheCheck = configRepository.getString(
-        'VRCX_clearVRCXCacheFrequency'
+        'VRCX_clearVRCXCacheFrequency',
+        '172800'
     );
     $app.data.avatarRemoteDatabase = configRepository.getBool(
-        'VRCX_avatarRemoteDatabase'
+        'VRCX_avatarRemoteDatabase',
+        true
     );
     $app.data.avatarRemoteDatabaseProvider = '';
-    $app.data.avatarRemoteDatabaseProviderList = [];
-    if (configRepository.getString('VRCX_avatarRemoteDatabaseProviderList')) {
-        $app.data.avatarRemoteDatabaseProviderList = JSON.parse(
-            configRepository.getString('VRCX_avatarRemoteDatabaseProviderList')
-        );
-    }
-    $app.data.pendingOfflineDelay = configRepository.getInt(
-        'VRCX_pendingOfflineDelay'
+    $app.data.avatarRemoteDatabaseProviderList = JSON.parse(
+        configRepository.getString(
+            'VRCX_avatarRemoteDatabaseProviderList',
+            '[]'
+        )
     );
-    if (!configRepository.getInt('VRCX_pendingOfflineDelay')) {
-        $app.data.pendingOfflineDelay = 110000;
-        configRepository.setInt(
-            'VRCX_pendingOfflineDelay',
-            $app.data.pendingOfflineDelay
-        );
-    }
+    $app.data.pendingOfflineDelay = configRepository.getInt(
+        'VRCX_pendingOfflineDelay',
+        110000
+    );
     if (configRepository.getString('VRCX_avatarRemoteDatabaseProvider')) {
         // move existing provider to new list
         var avatarRemoteDatabaseProvider = configRepository.getString(
@@ -13550,12 +13477,22 @@ speechSynthesis.getVoices();
         $app.data.avatarRemoteDatabaseProvider =
             $app.data.avatarRemoteDatabaseProviderList[0];
     }
-    $app.data.sortFavorites = configRepository.getBool('VRCX_sortFavorites');
-    $app.data.randomUserColours = configRepository.getBool(
-        'VRCX_randomUserColours'
+    $app.data.sortFavorites = configRepository.getBool(
+        'VRCX_sortFavorites',
+        true
     );
-    $app.data.hideUserNotes = configRepository.getBool('VRCX_hideUserNotes');
-    $app.data.hideUserMemos = configRepository.getBool('VRCX_hideUserMemos');
+    $app.data.randomUserColours = configRepository.getBool(
+        'VRCX_randomUserColours',
+        false
+    );
+    $app.data.hideUserNotes = configRepository.getBool(
+        'VRCX_hideUserNotes',
+        false
+    );
+    $app.data.hideUserMemos = configRepository.getBool(
+        'VRCX_hideUserMemos',
+        false
+    );
     $app.methods.saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -13657,10 +13594,10 @@ speechSynthesis.getVoices();
         );
         this.updateVRConfigVars();
     };
-    $app.data.themeMode = configRepository.getString('VRCX_ThemeMode');
-    if (!$app.data.themeMode) {
-        $app.data.themeMode = 'system';
-    }
+    $app.data.themeMode = configRepository.getString(
+        'VRCX_ThemeMode',
+        'system'
+    );
     var systemIsDarkMode = () =>
         window.matchMedia('(prefers-color-scheme: dark)').matches;
     $app.data.isDarkMode =
@@ -13698,7 +13635,8 @@ speechSynthesis.getVoices();
         }
     };
     $app.data.isStartAtWindowsStartup = configRepository.getBool(
-        'VRCX_StartAtWindowsStartup'
+        'VRCX_StartAtWindowsStartup',
+        false
     );
     $app.data.isStartAsMinimizedState = false;
     $app.data.isCloseToTray = false;
@@ -13732,29 +13670,36 @@ speechSynthesis.getVoices();
         AppApi.SetStartup(this.isStartAtWindowsStartup);
     };
     $app.data.photonEventOverlay = configRepository.getBool(
-        'VRCX_PhotonEventOverlay'
+        'VRCX_PhotonEventOverlay',
+        false
     );
     $app.data.timeoutHudOverlay = configRepository.getBool(
-        'VRCX_TimeoutHudOverlay'
+        'VRCX_TimeoutHudOverlay',
+        false
     );
     $app.data.timeoutHudOverlayFilter = configRepository.getString(
-        'VRCX_TimeoutHudOverlayFilter'
+        'VRCX_TimeoutHudOverlayFilter',
+        'Everyone'
     );
     $app.data.photonEventOverlayFilter = configRepository.getString(
-        'VRCX_PhotonEventOverlayFilter'
+        'VRCX_PhotonEventOverlayFilter',
+        'Everyone'
     );
     $app.data.photonOverlayMessageTimeout = Number(
-        configRepository.getString('VRCX_photonOverlayMessageTimeout')
+        configRepository.getString('VRCX_photonOverlayMessageTimeout', 6000)
     );
     $app.data.photonLoggingEnabled = false;
     $app.data.gameLogDisabled = configRepository.getBool(
-        'VRCX_gameLogDisabled'
+        'VRCX_gameLogDisabled',
+        false
     );
     $app.data.udonExceptionLogging = configRepository.getBool(
-        'VRCX_udonExceptionLogging'
+        'VRCX_udonExceptionLogging',
+        false
     );
     $app.data.instanceUsersSortAlphabetical = configRepository.getBool(
-        'VRCX_instanceUsersSortAlphabetical'
+        'VRCX_instanceUsersSortAlphabetical',
+        false
     );
     $app.methods.saveEventOverlay = function () {
         configRepository.setBool(
@@ -13780,196 +13725,168 @@ speechSynthesis.getVoices();
         this.updateVRConfigVars();
     };
     $app.data.logResourceLoad = configRepository.getBool(
-        'VRCX_logResourceLoad'
+        'VRCX_logResourceLoad',
+        false
     );
     $app.methods.saveGameLogOptions = function () {
         configRepository.setBool('VRCX_logResourceLoad', this.logResourceLoad);
     };
+    $app.data.orderFriendsGroup0 = configRepository.getBool(
+        'orderFriendGroup0',
+        true
+    );
+    $app.data.orderFriendsGroup1 = configRepository.getBool(
+        'orderFriendGroup1',
+        true
+    );
+    $app.data.orderFriendsGroup2 = configRepository.getBool(
+        'orderFriendGroup2',
+        true
+    );
+    $app.data.orderFriendsGroup3 = configRepository.getBool(
+        'orderFriendGroup3',
+        true
+    );
+    $app.data.orderFriendsGroupPrivate = configRepository.getBool(
+        'orderFriendGroupPrivate',
+        false
+    );
+    $app.data.orderFriendsGroupStatus = configRepository.getBool(
+        'orderFriendsGroupStatus',
+        false
+    );
+    $app.data.orderFriendsGroupGPS = configRepository.getBool(
+        'orderFriendGroupGPS',
+        true
+    );
+    $app.methods.saveOrderFriendGroup = function () {
+        configRepository.setBool('orderFriendGroup0', this.orderFriendsGroup0);
+        configRepository.setBool('orderFriendGroup1', this.orderFriendsGroup1);
+        configRepository.setBool('orderFriendGroup2', this.orderFriendsGroup2);
+        configRepository.setBool('orderFriendGroup3', this.orderFriendsGroup3);
+        configRepository.setBool(
+            'orderFriendGroupPrivate',
+            this.orderFriendsGroupPrivate
+        );
+        configRepository.setBool(
+            'orderFriendsGroupStatus',
+            this.orderFriendsGroupStatus
+        );
+        configRepository.setBool(
+            'orderFriendGroupGPS',
+            this.orderFriendsGroupGPS
+        );
+        this.sortFriendsGroup0 = true;
+        this.sortFriendsGroup1 = true;
+    };
+    $app.data.discordActive = configRepository.getBool('discordActive', false);
+    $app.data.discordInstance = configRepository.getBool(
+        'discordInstance',
+        true
+    );
+    $app.data.discordJoinButton = configRepository.getBool(
+        'discordJoinButton',
+        false
+    );
+    $app.data.discordHideInvite = configRepository.getBool(
+        'discordHideInvite',
+        true
+    );
+    $app.data.discordHideImage = configRepository.getBool(
+        'discordHideImage',
+        false
+    );
+    $app.methods.saveDiscordOption = function () {
+        configRepository.setBool('discordActive', this.discordActive);
+        configRepository.setBool('discordInstance', this.discordInstance);
+        configRepository.setBool('discordJoinButton', this.discordJoinButton);
+        configRepository.setBool('discordHideInvite', this.discordHideInvite);
+        configRepository.setBool('discordHideImage', this.discordHideImage);
+        this.lastLocation$.tag = '';
+        this.nextDiscordUpdate = 7;
+        this.updateDiscord();
+    };
 
     // setting defaults
-    if (!configRepository.getString('VRCX_notificationPosition')) {
-        $app.data.notificationPosition = 'topCenter';
-        configRepository.setString(
-            'VRCX_notificationPosition',
-            $app.data.notificationPosition
-        );
-    }
-    if (!configRepository.getString('VRCX_notificationTimeout')) {
-        $app.data.notificationTimeout = 3000;
-        configRepository.setString(
-            'VRCX_notificationTimeout',
-            $app.data.notificationTimeout
-        );
-    }
-    if (!configRepository.getString('VRCX_notificationTTSVoice')) {
-        $app.data.notificationTTSVoice = '0';
-        configRepository.setString(
-            'VRCX_notificationTTSVoice',
-            $app.data.notificationTTSVoice
-        );
-    }
-    if (!configRepository.getString('VRCX_desktopToast')) {
-        $app.data.desktopToast = 'Never';
-        configRepository.setString('VRCX_desktopToast', $app.data.desktopToast);
-    }
-    if (!configRepository.getString('VRCX_notificationTTS')) {
-        $app.data.notificationTTS = 'Never';
-        configRepository.setString(
-            'VRCX_notificationTTS',
-            $app.data.notificationTTS
-        );
-    }
-    if (!configRepository.getBool('VRCX_vrBackgroundEnabled')) {
-        $app.data.vrBackgroundEnabled = false;
-        configRepository.setBool(
-            'VRCX_vrBackgroundEnabled',
-            $app.data.vrBackgroundEnabled
-        );
-    }
-    if (!configRepository.getInt('VRCX_asidewidth')) {
-        $app.data.asideWidth = 236;
-        configRepository.setInt('VRCX_asidewidth', $app.data.asideWidth);
-    }
-    if (!configRepository.getString('VRCX_autoUpdateVRCX')) {
-        $app.data.autoUpdateVRCX = 'Auto Download';
-        configRepository.setString(
-            'VRCX_autoUpdateVRCX',
-            $app.data.autoUpdateVRCX
-        );
-    }
-    if (!configRepository.getString('VRCX_branch')) {
-        $app.data.branch = 'Stable';
-        configRepository.setString('VRCX_branch', $app.data.branch);
-    }
-    if (!configRepository.getInt('VRCX_maxTableSize')) {
-        $app.data.maxTableSize = 1000;
-        configRepository.setInt('VRCX_maxTableSize', $app.data.maxTableSize);
-        database.setmaxTableSize($app.data.maxTableSize);
-    }
-    if (!configRepository.getString('VRCX_photonLobbyTimeoutThreshold')) {
-        $app.data.photonLobbyTimeoutThreshold = 3000;
-        configRepository.setString(
-            'VRCX_photonLobbyTimeoutThreshold',
-            $app.data.photonLobbyTimeoutThreshold
-        );
-    }
-    if (!configRepository.getString('VRCX_clearVRCXCacheFrequency')) {
-        $app.data.clearVRCXCacheFrequency = 172800; // 24 hours
-        configRepository.setString(
-            'VRCX_clearVRCXCacheFrequency',
-            $app.data.clearVRCXCacheFrequency
-        );
-    }
-    if (!configRepository.getString('VRCX_TimeoutHudOverlayFilter')) {
-        $app.data.timeoutHudOverlayFilter = 'Everyone';
-        configRepository.setString(
-            'VRCX_TimeoutHudOverlayFilter',
-            $app.data.timeoutHudOverlayFilter
-        );
-    }
-    if (!configRepository.getString('VRCX_PhotonEventOverlayFilter')) {
-        $app.data.photonEventOverlayFilter = 'Everyone';
-        configRepository.setString(
-            'VRCX_PhotonEventOverlayFilter',
-            $app.data.photonEventOverlayFilter
-        );
-    }
-    if (!configRepository.getString('VRCX_photonOverlayMessageTimeout')) {
-        $app.data.photonOverlayMessageTimeout = 6000;
-        configRepository.setString(
-            'VRCX_photonOverlayMessageTimeout',
-            $app.data.photonOverlayMessageTimeout
-        );
-    }
-    if (!configRepository.getBool('VRCX_instanceUsersSortAlphabetical')) {
-        $app.data.instanceUsersSortAlphabetical = false;
-        configRepository.setBool(
-            'VRCX_instanceUsersSortAlphabetical',
-            $app.data.instanceUsersSortAlphabetical
-        );
-    }
-    if (!configRepository.getString('sharedFeedFilters')) {
-        var sharedFeedFilters = {
-            noty: {
-                Location: 'Off',
-                OnPlayerJoined: 'VIP',
-                OnPlayerLeft: 'VIP',
-                OnPlayerJoining: 'VIP',
-                Online: 'VIP',
-                Offline: 'VIP',
-                GPS: 'Off',
-                Status: 'Off',
-                invite: 'Friends',
-                requestInvite: 'Friends',
-                inviteResponse: 'Friends',
-                requestInviteResponse: 'Friends',
-                friendRequest: 'On',
-                Friend: 'On',
-                Unfriend: 'On',
-                DisplayName: 'VIP',
-                TrustLevel: 'VIP',
-                'group.announcement': 'On',
-                'group.informative': 'On',
-                'group.invite': 'On',
-                'group.joinRequest': 'Off',
-                PortalSpawn: 'Everyone',
-                Event: 'On',
-                VideoPlay: 'Off',
-                BlockedOnPlayerJoined: 'Off',
-                BlockedOnPlayerLeft: 'Off',
-                MutedOnPlayerJoined: 'Off',
-                MutedOnPlayerLeft: 'Off',
-                AvatarChange: 'Off',
-                ChatBoxMessage: 'Off',
-                Blocked: 'Off',
-                Unblocked: 'Off',
-                Muted: 'Off',
-                Unmuted: 'Off'
-            },
-            wrist: {
-                Location: 'On',
-                OnPlayerJoined: 'Everyone',
-                OnPlayerLeft: 'Everyone',
-                OnPlayerJoining: 'Friends',
-                Online: 'Friends',
-                Offline: 'Friends',
-                GPS: 'Friends',
-                Status: 'Friends',
-                invite: 'Friends',
-                requestInvite: 'Friends',
-                inviteResponse: 'Friends',
-                requestInviteResponse: 'Friends',
-                friendRequest: 'On',
-                Friend: 'On',
-                Unfriend: 'On',
-                DisplayName: 'Friends',
-                TrustLevel: 'Friends',
-                'group.announcement': 'On',
-                'group.informative': 'On',
-                'group.invite': 'On',
-                'group.joinRequest': 'On',
-                PortalSpawn: 'Everyone',
-                Event: 'On',
-                VideoPlay: 'On',
-                BlockedOnPlayerJoined: 'Off',
-                BlockedOnPlayerLeft: 'Off',
-                MutedOnPlayerJoined: 'Off',
-                MutedOnPlayerLeft: 'Off',
-                AvatarChange: 'Everyone',
-                ChatBoxMessage: 'Off',
-                Blocked: 'On',
-                Unblocked: 'On',
-                Muted: 'On',
-                Unmuted: 'On'
-            }
-        };
-        configRepository.setString(
+    var sharedFeedFilters = {
+        noty: {
+            Location: 'Off',
+            OnPlayerJoined: 'VIP',
+            OnPlayerLeft: 'VIP',
+            OnPlayerJoining: 'VIP',
+            Online: 'VIP',
+            Offline: 'VIP',
+            GPS: 'Off',
+            Status: 'Off',
+            invite: 'Friends',
+            requestInvite: 'Friends',
+            inviteResponse: 'Friends',
+            requestInviteResponse: 'Friends',
+            friendRequest: 'On',
+            Friend: 'On',
+            Unfriend: 'On',
+            DisplayName: 'VIP',
+            TrustLevel: 'VIP',
+            'group.announcement': 'On',
+            'group.informative': 'On',
+            'group.invite': 'On',
+            'group.joinRequest': 'Off',
+            PortalSpawn: 'Everyone',
+            Event: 'On',
+            VideoPlay: 'Off',
+            BlockedOnPlayerJoined: 'Off',
+            BlockedOnPlayerLeft: 'Off',
+            MutedOnPlayerJoined: 'Off',
+            MutedOnPlayerLeft: 'Off',
+            AvatarChange: 'Off',
+            ChatBoxMessage: 'Off',
+            Blocked: 'Off',
+            Unblocked: 'Off',
+            Muted: 'Off',
+            Unmuted: 'Off'
+        },
+        wrist: {
+            Location: 'On',
+            OnPlayerJoined: 'Everyone',
+            OnPlayerLeft: 'Everyone',
+            OnPlayerJoining: 'Friends',
+            Online: 'Friends',
+            Offline: 'Friends',
+            GPS: 'Friends',
+            Status: 'Friends',
+            invite: 'Friends',
+            requestInvite: 'Friends',
+            inviteResponse: 'Friends',
+            requestInviteResponse: 'Friends',
+            friendRequest: 'On',
+            Friend: 'On',
+            Unfriend: 'On',
+            DisplayName: 'Friends',
+            TrustLevel: 'Friends',
+            'group.announcement': 'On',
+            'group.informative': 'On',
+            'group.invite': 'On',
+            'group.joinRequest': 'On',
+            PortalSpawn: 'Everyone',
+            Event: 'On',
+            VideoPlay: 'On',
+            BlockedOnPlayerJoined: 'Off',
+            BlockedOnPlayerLeft: 'Off',
+            MutedOnPlayerJoined: 'Off',
+            MutedOnPlayerLeft: 'Off',
+            AvatarChange: 'Everyone',
+            ChatBoxMessage: 'Off',
+            Blocked: 'On',
+            Unblocked: 'On',
+            Muted: 'On',
+            Unmuted: 'On'
+        }
+    };
+    $app.data.sharedFeedFilters = JSON.parse(
+        configRepository.getString(
             'sharedFeedFilters',
             JSON.stringify(sharedFeedFilters)
-        );
-    }
-    $app.data.sharedFeedFilters = JSON.parse(
-        configRepository.getString('sharedFeedFilters')
+        )
     );
     if (!$app.data.sharedFeedFilters.noty.Blocked) {
         $app.data.sharedFeedFilters.noty.Blocked = 'Off';
@@ -13992,8 +13909,8 @@ speechSynthesis.getVoices();
         $app.data.sharedFeedFilters.wrist['group.joinRequest'] = 'On';
     }
 
-    if (!configRepository.getString('VRCX_trustColor')) {
-        configRepository.setString(
+    $app.data.trustColor = JSON.parse(
+        configRepository.getString(
             'VRCX_trustColor',
             JSON.stringify({
                 untrusted: '#CCCCCC',
@@ -14004,10 +13921,7 @@ speechSynthesis.getVoices();
                 vip: '#FF2626',
                 troll: '#782F2F'
             })
-        );
-    }
-    $app.data.trustColor = JSON.parse(
-        configRepository.getString('VRCX_trustColor')
+        )
     );
 
     $app.methods.updatetrustColor = function () {
@@ -14015,12 +13929,10 @@ speechSynthesis.getVoices();
             'VRCX_randomUserColours',
             this.randomUserColours
         );
-        if (this.trustColor) {
-            configRepository.setString(
-                'VRCX_trustColor',
-                JSON.stringify(this.trustColor)
-            );
-        }
+        configRepository.setString(
+            'VRCX_trustColor',
+            JSON.stringify(this.trustColor)
+        );
         if (this.randomUserColours) {
             this.getNameColour(API.currentUser.id).then((colour) => {
                 API.currentUser.$userColour = colour;
@@ -14037,7 +13949,18 @@ speechSynthesis.getVoices();
 
     $app.methods.updatetrustColorClasses = function () {
         var trustColor = JSON.parse(
-            configRepository.getString('VRCX_trustColor')
+            configRepository.getString(
+                'VRCX_trustColor',
+                JSON.stringify({
+                    untrusted: '#CCCCCC',
+                    basic: '#1778FF',
+                    known: '#2BCF5C',
+                    trusted: '#FF7B42',
+                    veteran: '#B18FFF',
+                    vip: '#FF2626',
+                    troll: '#782F2F'
+                })
+            )
         );
         if (document.getElementById('trustColor') !== null) {
             document.getElementById('trustColor').outerHTML = '';
@@ -14073,7 +13996,8 @@ speechSynthesis.getVoices();
     };
 
     $app.data.notificationPosition = configRepository.getString(
-        'VRCX_notificationPosition'
+        'VRCX_notificationPosition',
+        'topCenter'
     );
     $app.methods.changeNotificationPosition = function () {
         configRepository.setString(
@@ -14083,12 +14007,16 @@ speechSynthesis.getVoices();
         this.updateVRConfigVars();
     };
 
-    $app.data.youTubeApi = configRepository.getBool('VRCX_youtubeAPI');
-    $app.data.youTubeApiKey = configRepository.getString('VRCX_youtubeAPIKey');
+    $app.data.youTubeApi = configRepository.getBool('VRCX_youtubeAPI', true);
+    $app.data.youTubeApiKey = configRepository.getString(
+        'VRCX_youtubeAPIKey',
+        ''
+    );
 
-    $app.data.progressPie = configRepository.getBool('VRCX_progressPie');
+    $app.data.progressPie = configRepository.getBool('VRCX_progressPie', false);
     $app.data.progressPieFilter = configRepository.getBool(
-        'VRCX_progressPieFilter'
+        'VRCX_progressPieFilter',
+        true
     );
 
     $app.data.screenshotHelper = configRepository.getBool(
@@ -14097,7 +14025,8 @@ speechSynthesis.getVoices();
     );
 
     $app.data.screenshotHelperModifyFilename = configRepository.getBool(
-        'VRCX_screenshotHelperModifyFilename'
+        'VRCX_screenshotHelperModifyFilename',
+        false
     );
 
     $app.data.enableAppLauncher = configRepository.getBool(
@@ -22888,8 +22817,8 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.data.dtHour12 = configRepository.getBool('VRCX_dtHour12');
-    $app.data.dtIsoFormat = configRepository.getBool('VRCX_dtIsoFormat');
+    $app.data.dtHour12 = configRepository.getBool('VRCX_dtHour12', false);
+    $app.data.dtIsoFormat = configRepository.getBool('VRCX_dtIsoFormat', false);
     $app.methods.setDatetimeFormat = async function () {
         var currentCulture = await AppApi.CurrentCulture();
         var hour12 = configRepository.getBool('VRCX_dtHour12');
@@ -22966,7 +22895,8 @@ speechSynthesis.getVoices();
     $app.methods.setDatetimeFormat();
 
     $app.data.enableCustomEndpoint = configRepository.getBool(
-        'VRCX_enableCustomEndpoint'
+        'VRCX_enableCustomEndpoint',
+        false
     );
     $app.methods.toggleCustomEndpoint = function () {
         configRepository.setBool(
@@ -23205,15 +23135,15 @@ speechSynthesis.getVoices();
     $app.data.avatarHistory = new Set();
     $app.data.avatarHistoryArray = [];
 
-    API.$on('LOGIN', async function () {
-        $app.avatarHistory = new Set();
+    $app.methods.getAvatarHistory = async function () {
+        this.avatarHistory = new Set();
         var historyArray = await database.getAvatarHistory(API.currentUser.id);
-        $app.avatarHistoryArray = historyArray;
+        this.avatarHistoryArray = historyArray;
         for (var i = 0; i < historyArray.length; i++) {
-            $app.avatarHistory.add(historyArray[i].id);
-            this.applyAvatar(historyArray[i]);
+            this.avatarHistory.add(historyArray[i].id);
+            API.applyAvatar(historyArray[i]);
         }
-    });
+    };
 
     $app.methods.addAvatarToHistory = function (avatarId) {
         API.getAvatar({ avatarId }).then((args) => {
@@ -23255,16 +23185,22 @@ speechSynthesis.getVoices();
         database.clearAvatarHistory();
     };
 
-    $app.data.databaseVersion = configRepository.getInt('VRCX_databaseVersion');
+    $app.data.databaseVersion = configRepository.getInt(
+        'VRCX_databaseVersion',
+        0
+    );
 
     $app.methods.updateDatabaseVersion = async function () {
         var databaseVersion = 5;
         if (this.databaseVersion !== databaseVersion) {
-            var msgBox = this.$message({
-                message: 'DO NOT CLOSE VRCX, database upgrade in process...',
-                type: 'warning',
-                duration: 0
-            });
+            if (this.databaseVersion) {
+                var msgBox = this.$message({
+                    message:
+                        'DO NOT CLOSE VRCX, database upgrade in process...',
+                    type: 'warning',
+                    duration: 0
+                });
+            }
             console.log(
                 `Updating database from ${this.databaseVersion} to ${databaseVersion}...`
             );
@@ -23276,13 +23212,12 @@ speechSynthesis.getVoices();
                 await database.fixBrokenGroupInvites(); // fix notification v2 in wrong table
                 await database.updateTableForGroupNames(); // alter tables to include group name
                 database.fixBrokenNotifications(); // fix notifications being null
-                this.databaseVersion = databaseVersion;
                 configRepository.setInt(
                     'VRCX_databaseVersion',
                     databaseVersion
                 );
                 console.log('Database update complete.');
-                msgBox.close();
+                msgBox?.close();
                 if (this.databaseVersion) {
                     // only display when database exists
                     this.$message({
@@ -23290,9 +23225,10 @@ speechSynthesis.getVoices();
                         type: 'success'
                     });
                 }
+                this.databaseVersion = databaseVersion;
             } catch (err) {
                 console.error(err);
-                msgBox.close();
+                msgBox?.close();
                 this.$message({
                     message:
                         'Database upgrade failed, check console for details',

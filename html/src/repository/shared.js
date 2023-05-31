@@ -12,8 +12,6 @@ class SharedRepository {
 
     getString(key, defaultValue = null) {
         var _key = transformKey(key);
-        // var get = SharedVariable.Get(_key);
-        // var value = waitSynchronous(get);
         var value = SharedVariable.Get(_key);
         if (value === null) {
             return defaultValue;

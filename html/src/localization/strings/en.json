@@ -389,7 +389,7 @@
                         "header": "Progress pie overlay for videos",
                         "enable": "Enable",
                         "enable_tooltip": "Requires SteamVR overlay to be enabled",
-                        "dance_world_only": "Dance worlds only"
+                        "dance_world_only": "Supported world only"
                     },
                     "screenshot_helper": {
                         "header": "Screenshot Helper",
