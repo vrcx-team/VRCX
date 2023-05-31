@@ -2104,6 +2104,7 @@ speechSynthesis.getVoices();
         const presence = this.currentUser.presence;
         let presenceLocation = this.currentUser.$locationTag;
         if (presenceLocation === 'traveling') {
+            console.log("User is traveling, using $travelingToLocation", this.currentUser.$travelingToLocation);
             presenceLocation = this.currentUser.$travelingToLocation;
         }
         console.log('presence Location', presenceLocation);
@@ -2117,7 +2118,9 @@ speechSynthesis.getVoices();
             console.log('ok presence return');
             return presence.world;
         }
-        let user = await this.getUser({ userId: this.currentUser.id });
+        let args = await this.getUser(this.currentUser.id);
+        let user = args.json
+
         console.log('presence bad, got user', user);
         if (!$app.isRealInstance(user.location)) {
             console.warn(
@@ -2126,7 +2129,7 @@ speechSynthesis.getVoices();
             );
             return gameLogLocation;
         }
-        console.warn('presence outdated, got user api location');
+        console.warn('presence outdated, got user api location instead: ', user.location);
         return this.parseLocation(user.location).worldId;
     };
 
