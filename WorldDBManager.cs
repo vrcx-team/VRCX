@@ -40,7 +40,7 @@ namespace VRCX
                 var request = context.Request;
                 var responseData = new WorldDataRequestResponse(false, null, null);
 
-                if (MainForm.Instance?.Browser == null || MainForm.Instance.Browser.IsLoading)
+                if (MainForm.Instance?.Browser == null || MainForm.Instance.Browser.IsLoading || !MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
                 {
                     responseData.Error = "VRCX not yet initialized. Try again in a moment.";
                     responseData.StatusCode = 503;
@@ -93,9 +93,9 @@ namespace VRCX
 
                 currentWorldId = "wrld_12345";
                 responseData.OK = true;
+                responseData.StatusCode = 200;
                 responseData.Data = "12345";
                 return responseData;
-                SendJsonResponse(context.Response, responseData);
             }
 
             string worldId = await GetCurrentWorldID();
@@ -105,7 +105,6 @@ namespace VRCX
                 responseData.Error = "Failed to get/verify current world ID.";
                 responseData.StatusCode = 500;
                 return responseData;
-                SendJsonResponse(context.Response, responseData);
             }
 
             currentWorldId = worldId;
@@ -124,9 +123,9 @@ namespace VRCX
             }
 
             responseData.OK = true;
+            responseData.StatusCode = 200;
             responseData.Data = connectionKey;
             return responseData;
-            SendJsonResponse(context.Response, responseData);
         }
 
         private async Task<WorldDataRequestResponse> HandleDataRequest(HttpListenerContext context)
@@ -140,7 +139,6 @@ namespace VRCX
                 responseData.Error = "Missing key parameter.";
                 responseData.StatusCode = 400;
                 return responseData;
-                SendJsonResponse(context.Response, responseData);
             }
 
             var worldId = await GetCurrentWorldID();
@@ -150,7 +148,6 @@ namespace VRCX
                 responseData.Error = "World ID not initialized.";
                 responseData.StatusCode = 400;
                 return responseData;
-                SendJsonResponse(context.Response, responseData);
             }
 
             var value = worldDB.GetDataEntry(currentWorldId, key);
@@ -160,7 +157,6 @@ namespace VRCX
                 responseData.Error = $"No data found for key '{key}' under world id '{currentWorldId}'.";
                 responseData.StatusCode = 404;
                 return responseData;
-                SendJsonResponse(context.Response, responseData);
             }
 
             responseData.OK = true;
@@ -168,7 +164,6 @@ namespace VRCX
             responseData.Error = null;
             responseData.Data = value.Value;
             return responseData;
-            SendJsonResponse(context.Response, responseData);
         }
 
         private async Task<WorldDataRequestResponse> HandleBulkDataRequest(HttpListenerContext context)
@@ -182,7 +177,6 @@ namespace VRCX
                 responseData.Error = "Missing/invalid keys parameter.";
                 responseData.StatusCode = 400;
                 return responseData;
-                SendJsonResponse(context.Response, responseData, 400);
             }
 
             var keyArray = keys.Split(',');
@@ -194,7 +188,6 @@ namespace VRCX
                 responseData.Error = "World ID not initialized.";
                 responseData.StatusCode = 400;
                 return responseData;
-                SendJsonResponse(context.Response, responseData, 400);
             }
 
             var values = worldDB.GetDataEntries(currentWorldId, keyArray).ToList();
@@ -204,7 +197,6 @@ namespace VRCX
                 responseData.Error = $"No data found for keys '{keys}' under world id '{currentWorldId}'.";
                 responseData.StatusCode = 404;
                 return responseData;
-                SendJsonResponse(context.Response, responseData, 404);
             }
 
             // Build a dictionary of key/value pairs to send back. If a key doesn't exist in the database, the key will be included in the response as requested but with a null value.
@@ -222,7 +214,6 @@ namespace VRCX
             responseData.Error = null;
             responseData.Data = JsonConvert.SerializeObject(data);
             return responseData;
-            SendJsonResponse(context.Response, responseData);
         }
 
         /// <summary>
