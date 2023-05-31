@@ -165,6 +165,12 @@ END;";
             sqlite.Insert(new World() { WorldId = worldId, ConnectionKey = connectionKey });
         }
 
+        public World GetWorld(string worldId)
+        {
+            var query = sqlite.Table<World>().Where(w => w.WorldId == worldId);
+            return query.FirstOrDefault();
+        }
+
         /// <summary>
         /// Gets the total data size shared across all rows, in bytes, for the world with the specified ID from the database.
         /// </summary>

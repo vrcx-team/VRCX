@@ -141,28 +141,49 @@ namespace VRCX
                 return responseData;
             }
 
-            var worldId = await GetCurrentWorldID();
+            var worldIdOverride = request.QueryString["world"];
 
-            if (String.IsNullOrEmpty(currentWorldId) || (worldId != currentWorldId && currentWorldId != "wrld_12345"))
+            if (worldIdOverride != null)
+            {
+                var world = worldDB.GetWorld(worldIdOverride);
+
+                if (world == null)
+                {
+                    responseData.OK = false;
+                    responseData.Error = $"World ID '{worldIdOverride}' not initialized in this user's database.";
+                    responseData.StatusCode = 200;
+                    responseData.Data = null;
+                    return responseData;
+                }
+
+                if (!world.AllowExternalRead)
+                {
+                    responseData.OK = false;
+                    responseData.Error = $"World ID '{worldIdOverride}' does not allow external reads.";
+                    responseData.StatusCode = 200;
+                    responseData.Data = null;
+                    return responseData;
+                }
+            }
+
+            if (currentWorldId == "wrld_12345" && worldIdOverride == null)
+                worldIdOverride = "wrld_12345";
+
+            var worldId = worldIdOverride ?? await GetCurrentWorldID();
+
+            if (worldIdOverride == null && (String.IsNullOrEmpty(currentWorldId) || worldId != currentWorldId))
             {
                 responseData.Error = "World ID not initialized.";
                 responseData.StatusCode = 400;
                 return responseData;
             }
 
-            var value = worldDB.GetDataEntry(currentWorldId, key);
-
-            if (value == null)
-            {
-                responseData.Error = $"No data found for key '{key}' under world id '{currentWorldId}'.";
-                responseData.StatusCode = 404;
-                return responseData;
-            }
+            var value = worldDB.GetDataEntry(worldId, key);
 
             responseData.OK = true;
             responseData.StatusCode = 200;
             responseData.Error = null;
-            responseData.Data = value.Value;
+            responseData.Data = value?.Value;
             return responseData;
         }
 
@@ -192,19 +213,19 @@ namespace VRCX
 
             var values = worldDB.GetDataEntries(currentWorldId, keyArray).ToList();
 
-            if (values == null)
+            /*if (values == null)
             {
                 responseData.Error = $"No data found for keys '{keys}' under world id '{currentWorldId}'.";
                 responseData.StatusCode = 404;
                 return responseData;
-            }
+            }*/
 
             // Build a dictionary of key/value pairs to send back. If a key doesn't exist in the database, the key will be included in the response as requested but with a null value.
             var data = new Dictionary<string, string>();
             for (int i = 0; i < keyArray.Length; i++)
             {
                 string dataKey = keyArray[i];
-                string dataValue = values.Where(x => x.Key == dataKey).FirstOrDefault()?.Value; // get the value from the list of data entries, if it exists, otherwise null
+                string dataValue = values?.Where(x => x.Key == dataKey).FirstOrDefault()?.Value; // Get the value from the list of data entries, if it exists, otherwise null
 
                 data.Add(dataKey, dataValue);
             }
@@ -292,8 +313,10 @@ namespace VRCX
             //     "key": "example_key",
             //     "value": "example_value"
             // }
-            // TODO: limits
-            // Evaluate if string is valid json with newtonsoft.json
+
+            // * I could rate limit the processing of this, but I don't think it's necessary.
+            // * At the amount of data you'd need to be spitting out to lag vrcx, you'd fill up the log file and lag out VRChat far before VRCX would have any issues; at least in my testing.
+            // As long as malicious worlds can't permanently *store* stupid amounts of unculled data, this is pretty safe with the 10MB cap. If a world wants to just fill up a users HDD with logs, they can do that already anyway.
 
             WorldDataRequest request;
 
@@ -303,32 +326,49 @@ namespace VRCX
             }
             catch (JsonReaderException ex)
             {
+                this.lastError = ex.Message;
                 // invalid json
-                return; // TODO: store error for "last error" request
+                return;
             }
             catch (Exception ex)
             {
+                this.lastError = ex.Message;
                 // something else happened lol
-                return; // TODO: store error for "last error" request
+                return;
             }
 
-            if (request.Key == null || request.Value == null) return; // TODO: Store error for "last error" request
-            if (request.ConnectionKey == null) return; // TODO: Store error for "last error" request
-            if (String.IsNullOrEmpty(currentWorldId)) return;
+            if (String.IsNullOrEmpty(request.Key)) {
+                this.lastError = "`key` is missing or null";
+                return;
+            }
+
+            if (String.IsNullOrEmpty(request.Value))
+            {
+                this.lastError = "`value` is missing or null";
+                return;
+            }
+
+            if (String.IsNullOrEmpty(request.ConnectionKey))
+            {
+                this.lastError = "`connectionKey` is missing or null";
+                return;
+            }
 
             // Make sure the connection key is a valid GUID. No point in doing anything else if it's not.
             if (!Guid.TryParse(request.ConnectionKey, out Guid _))
             {
+                this.lastError = "Invalid GUID provided as connection key";
                 // invalid guid
-                return; // TODO: store error for "last error" request
+                return;
             }
 
             // Get the world ID from the connection key
             string worldId = worldDB.GetWorldByConnectionKey(request.ConnectionKey);
             if (worldId == null)
             {
+                this.lastError = "Invalid connection key";
                 // invalid connection key
-                return; // TODO: store error for "last error" request
+                return;
             }
 
             // Get/calculate the old and new data sizes for this key/the world
@@ -338,11 +378,13 @@ namespace VRCX
             int newTotalDataSize = oldTotalDataSize + newDataSize - oldDataSize;
 
             // Make sure we don't exceed 10MB total size for this world
+            // This works, I tested it. Hopefully this prevents/limits any possible abuse. 
             if (newTotalDataSize > 1024 * 1024 * 10)
             {
+                this.lastError = $"You have hit the 10MB total data cap. The previous data entry was *not* stored. Your request was {newDataSize} bytes, your current shared byte total is {oldTotalDataSize} and you went over the table limit by {newTotalDataSize - (1024 * 1024 * 10)} bytes.";
                 // too much data
-                throw new Exception("Too much data");
-                return; // TODO: store error for "last error" request
+                //throw new Exception("Too much data");
+                return;
             }
 
 
