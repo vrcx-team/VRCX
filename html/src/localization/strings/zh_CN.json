@@ -560,7 +560,7 @@
                 "avatar_cloning_deny": "不允许",
                 "home_location": "出生点",
                 "accuracy_notice": "本地数据库的数据可能不准确",
-                "instance_full": "已满"
+                "instance_full": "房间已满"
             },
             "groups": {
                 "header": "加入的群组",
@@ -627,7 +627,7 @@
                 "self_invite_tooltip": "自我邀请",
                 "refresh_user_count_tooltip": "刷新房间人数",
                 "instance_creator": "房间建立者",
-                "instance_full": "full"
+                "instance_full": "房间已满"
             },
             "info": {
                 "header": "信息",
@@ -737,7 +737,7 @@
             "info": {
                 "header": "信息",
                 "announcement": "公告",
-                "instance_full": "full",
+                "instance_full": "房间已满",
                 "rules": "规则",
                 "members": "成员",
                 "created_at": "创建时间",
