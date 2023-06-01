@@ -692,6 +692,7 @@ speechSynthesis.getVoices();
             instanceId: '',
             instanceName: '',
             accessType: '',
+            accessTypeName: '',
             region: '',
             shortName: '',
             userId: null,
@@ -772,6 +773,14 @@ speechSynthesis.getVoices();
                     // Group
                     ctx.accessType = 'group';
                 }
+                ctx.accessTypeName = ctx.accessType;
+                if (ctx.groupAccessType !== null) {
+                    if (ctx.groupAccessType === 'public') {
+                        ctx.accessTypeName = 'groupPublic';
+                    } else if (ctx.groupAccessType === 'plus') {
+                        ctx.accessTypeName = 'groupPlus';
+                    }
+                }
             } else {
                 ctx.worldId = _tag;
             }
@@ -837,7 +846,7 @@ speechSynthesis.getVoices();
             "<span><span @click=\"showWorldDialog\" :class=\"{ 'x-link': link && this.location !== 'private' && this.location !== 'offline'}\">" +
             '<i v-if="isTraveling" class="el-icon el-icon-loading" style="display:inline-block;margin-right:5px"></i>' +
             '<span>{{ text }}</span></span>' +
-            '<span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>' +
+            '<span v-if="groupName" @click.stop="showGroupDialog" class="x-link">({{ groupName }})</span>' +
             '<span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
             '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
         props: {
@@ -879,14 +888,6 @@ speechSynthesis.getVoices();
                 }
                 this.text = instanceId;
                 var L = API.parseLocation(instanceId);
-                var groupAccessType = '';
-                if (L.groupAccessType) {
-                    if (L.groupAccessType === 'public') {
-                        groupAccessType = 'Public';
-                    } else if (L.groupAccessType === 'plus') {
-                        groupAccessType = 'Plus';
-                    }
-                }
                 if (L.isOffline) {
                     this.text = 'Offline';
                 } else if (L.isPrivate) {
@@ -895,7 +896,7 @@ speechSynthesis.getVoices();
                     this.text = 'Traveling';
                 } else if (typeof this.hint === 'string' && this.hint !== '') {
                     if (L.instanceId) {
-                        this.text = `${this.hint} #${L.instanceName} ${L.accessType}${groupAccessType}`;
+                        this.text = `${this.hint} #${L.instanceName} ${L.accessTypeName}`;
                     } else {
                         this.text = this.hint;
                     }
@@ -905,14 +906,14 @@ speechSynthesis.getVoices();
                         $app.getWorldName(L.worldId).then((worldName) => {
                             if (L.tag === instanceId) {
                                 if (L.instanceId) {
-                                    this.text = `${worldName} #${L.instanceName} ${L.accessType}${groupAccessType}`;
+                                    this.text = `${worldName} #${L.instanceName} ${L.accessTypeName}`;
                                 } else {
                                     this.text = worldName;
                                 }
                             }
                         });
                     } else if (L.instanceId) {
-                        this.text = `${ref.name} #${L.instanceName} ${L.accessType}${groupAccessType}`;
+                        this.text = `${ref.name} #${L.instanceName} ${L.accessTypeName}`;
                     } else {
                         this.text = ref.name;
                     }
@@ -973,7 +974,7 @@ speechSynthesis.getVoices();
         template:
             '<span><span @click="showLaunchDialog" class="x-link">' +
             '<i v-if="isUnlocked" class="el-icon el-icon-unlock" style="display:inline-block;margin-right:5px"></i>' +
-            '<span>#{{ instanceName }} {{ accessType }}{{ groupAccessType }}</span></span>' +
+            '<span>#{{ instanceName }} {{ accessTypeName }}</span></span>' +
             '<span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>' +
             '<span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
             '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
@@ -990,8 +991,7 @@ speechSynthesis.getVoices();
             return {
                 location: this.location,
                 instanceName: this.instanceName,
-                accessType: this.accessType,
-                groupAccessType: this.groupAccessType,
+                accessTypeName: this.accessTypeName,
                 region: this.region,
                 shortName: this.shortName,
                 isUnlocked: this.isUnlocked,
@@ -1003,7 +1003,7 @@ speechSynthesis.getVoices();
             parse() {
                 this.location = this.locationobject.tag;
                 this.instanceName = this.locationobject.instanceName;
-                this.accessType = this.locationobject.accessType;
+                this.accessTypeName = this.locationobject.accessTypeName;
                 this.strict = this.locationobject.strict;
                 this.shortName = this.locationobject.shortName;
 
@@ -1016,15 +1016,6 @@ speechSynthesis.getVoices();
                     this.currentuserid === this.locationobject.userId
                 ) {
                     this.isUnlocked = true;
-                }
-
-                this.groupAccessType = '';
-                if (this.locationobject.groupAccessType) {
-                    if (this.locationobject.groupAccessType === 'public') {
-                        this.groupAccessType = 'Public';
-                    } else if (this.locationobject.groupAccessType === 'plus') {
-                        this.groupAccessType = 'Plus';
-                    }
                 }
 
                 this.region = this.locationobject.region;
@@ -6115,7 +6106,8 @@ speechSynthesis.getVoices();
                 this.speak(
                     `${noty.displayName} is in ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`
                 );
                 break;
@@ -6124,7 +6116,8 @@ speechSynthesis.getVoices();
                 if (noty.worldName) {
                     locationName = ` to ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`;
                 }
                 this.speak(`${noty.displayName} has logged in${locationName}`);
@@ -6143,7 +6136,8 @@ speechSynthesis.getVoices();
                         noty.senderUsername
                     } has invited you to ${this.displayLocation(
                         noty.details.worldId,
-                        noty.details.worldName
+                        noty.details.worldName,
+                        noty.groupName
                     )}${message}`
                 );
                 break;
@@ -6202,7 +6196,8 @@ speechSynthesis.getVoices();
                             noty.displayName
                         } has spawned a portal to ${this.displayLocation(
                             noty.instanceId,
-                            noty.worldName
+                            noty.worldName,
+                            noty.groupName
                         )}`
                     );
                 } else {
@@ -6282,7 +6277,8 @@ speechSynthesis.getVoices();
                     'VRCX',
                     `${noty.displayName} is in ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`,
                     timeout,
                     image
@@ -6293,7 +6289,8 @@ speechSynthesis.getVoices();
                 if (noty.worldName) {
                     locationName = ` to ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`;
                 }
                 AppApi.XSNotification(
@@ -6416,7 +6413,8 @@ speechSynthesis.getVoices();
                             noty.displayName
                         } has spawned a portal to ${this.displayLocation(
                             noty.instanceId,
-                            noty.worldName
+                            noty.worldName,
+                            noty.groupName
                         )}`,
                         timeout,
                         image
@@ -6548,7 +6546,8 @@ speechSynthesis.getVoices();
                     noty.displayName,
                     `is in ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`,
                     image
                 );
@@ -6558,7 +6557,8 @@ speechSynthesis.getVoices();
                 if (noty.worldName) {
                     locationName = ` to ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`;
                 }
                 AppApi.DesktopNotification(
@@ -6677,7 +6677,8 @@ speechSynthesis.getVoices();
                         noty.displayName,
                         `has spawned a portal to ${this.displayLocation(
                             noty.instanceId,
-                            noty.worldName
+                            noty.worldName,
+                            noty.groupName
                         )}`,
                         image
                     );
@@ -6768,7 +6769,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.displayLocation = function (location, worldName) {
+    $app.methods.displayLocation = function (location, worldName, groupName) {
         var text = worldName;
         var L = API.parseLocation(location);
         if (L.isOffline) {
@@ -6778,8 +6779,10 @@ speechSynthesis.getVoices();
         } else if (L.isTraveling) {
             text = 'Traveling';
         } else if (L.worldId) {
-            if (L.instanceId) {
-                text = `${worldName} ${L.accessType}`;
+            if (groupName) {
+                text = `${worldName} ${L.accessTypeName}(${groupName})`;
+            } else if (L.instanceId) {
+                text = `${worldName} ${L.accessTypeName}`;
             }
         }
         return text;

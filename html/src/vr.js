@@ -125,13 +125,13 @@ Vue.component('marquee-text', MarqueeText);
                     this.text = 'Traveling';
                 } else if (typeof this.hint === 'string' && this.hint !== '') {
                     if (L.instanceId) {
-                        this.text = `${this.hint} #${L.instanceName} ${L.accessType}`;
+                        this.text = `${this.hint} #${L.instanceName} ${L.accessTypeName}`;
                     } else {
                         this.text = this.hint;
                     }
                 } else if (L.worldId) {
                     if (L.instanceId) {
-                        this.text = ` #${L.instanceName} ${L.accessType}`;
+                        this.text = ` #${L.instanceName} ${L.accessTypeName}`;
                     } else {
                         this.text = this.location;
                     }
@@ -235,6 +235,7 @@ Vue.component('marquee-text', MarqueeText);
             instanceId: '',
             instanceName: '',
             accessType: '',
+            accessTypeName: '',
             region: '',
             shortName: '',
             userId: null,
@@ -242,6 +243,7 @@ Vue.component('marquee-text', MarqueeText);
             privateId: null,
             friendsId: null,
             groupId: null,
+            groupAccessType: null,
             canRequestInvite: false,
             strict: false
         };
@@ -283,6 +285,8 @@ Vue.component('marquee-text', MarqueeText);
                             ctx.region = value;
                         } else if (key === 'group') {
                             ctx.groupId = value;
+                        } else if (key === 'groupAccessType') {
+                            ctx.groupAccessType = value;
                         } else if (key === 'strict') {
                             ctx.strict = true;
                         }
@@ -311,6 +315,14 @@ Vue.component('marquee-text', MarqueeText);
                 } else if (ctx.groupId !== null) {
                     // Group
                     ctx.accessType = 'group';
+                }
+                ctx.accessTypeName = ctx.accessType;
+                if (ctx.groupAccessType !== null) {
+                    if (ctx.groupAccessType === 'public') {
+                        ctx.accessTypeName = 'groupPublic';
+                    } else if (ctx.groupAccessType === 'plus') {
+                        ctx.accessTypeName = 'groupPlus';
+                    }
                 }
             } else {
                 ctx.worldId = _tag;
@@ -501,7 +513,8 @@ Vue.component('marquee-text', MarqueeText);
                     noty.displayName
                 }</strong> is in ${this.displayLocation(
                     noty.location,
-                    escapeTag(noty.worldName)
+                    escapeTag(noty.worldName),
+                    escapeTag(noty.groupName)
                 )}`;
                 break;
             case 'Online':
@@ -509,7 +522,8 @@ Vue.component('marquee-text', MarqueeText);
                 if (noty.worldName) {
                     locationName = ` to ${this.displayLocation(
                         noty.location,
-                        escapeTag(noty.worldName)
+                        escapeTag(noty.worldName),
+                        escapeTag(noty.groupName)
                     )}`;
                 }
                 text = `<strong>${noty.displayName}</strong> has logged in${locationName}`;
@@ -572,7 +586,8 @@ Vue.component('marquee-text', MarqueeText);
                         noty.displayName
                     }</strong> has spawned a portal to ${this.displayLocation(
                         noty.instanceId,
-                        escapeTag(noty.worldName)
+                        escapeTag(noty.worldName),
+                        escapeTag(noty.groupName)
                     )}`;
                 } else {
                     text = 'User has spawned a portal';
@@ -654,7 +669,7 @@ Vue.component('marquee-text', MarqueeText);
         return style;
     };
 
-    $app.methods.displayLocation = function (location, worldName) {
+    $app.methods.displayLocation = function (location, worldName, groupName) {
         var text = worldName;
         var L = this.parseLocation(location);
         if (L.isOffline) {
@@ -664,8 +679,10 @@ Vue.component('marquee-text', MarqueeText);
         } else if (L.isTraveling) {
             text = 'Traveling';
         } else if (L.worldId) {
-            if (L.instanceId) {
-                text = `${worldName} ${L.accessType}`;
+            if (groupName) {
+                text = `${worldName} ${L.accessTypeName}(${groupName})`;
+            } else if (L.instanceId) {
+                text = `${worldName} ${L.accessTypeName}`;
             }
         }
         return text;
