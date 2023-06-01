@@ -46,7 +46,7 @@ namespace VRCX
                 {
                     if (MainForm.Instance?.Browser == null || MainForm.Instance.Browser.IsLoading || !MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
                     {
-                        logger.Warn("Received a request to {0} while VRCX is still initializing the browser window. Responding with error 503.", request.Url)
+                        logger.Warn("Received a request to {0} while VRCX is still initializing the browser window. Responding with error 503.", request.Url);
 
                         responseData.Error = "VRCX not yet initialized. Try again in a moment.";
                         responseData.StatusCode = 503;
