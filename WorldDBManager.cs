@@ -112,19 +112,15 @@ namespace VRCX
                 }
 
                 currentWorldId = "wrld_12345";
-                responseData.OK = true;
-                responseData.StatusCode = 200;
-                responseData.Data = "12345";
-                return responseData;
+
+                return ConstructSuccessResponse("12345");
             }
 
             string worldId = await GetCurrentWorldID();
 
             if (String.IsNullOrEmpty(worldId))
             {
-                responseData.Error = "Failed to get/verify current world ID.";
-                responseData.StatusCode = 500;
-                return responseData;
+                return ConstructErrorResponse(500, "Failed to get/verify current world ID.");
             }
 
             currentWorldId = worldId;
@@ -142,10 +138,7 @@ namespace VRCX
                 connectionKey = worldDB.GetWorldConnectionKey(currentWorldId);
             }
 
-            responseData.OK = true;
-            responseData.StatusCode = 200;
-            responseData.Data = connectionKey;
-            return responseData;
+            return ConstructSuccessResponse(connectionKey);
         }
 
         /// <summary>
@@ -161,9 +154,7 @@ namespace VRCX
             var key = request.QueryString["key"];
             if (key == null)
             {
-                responseData.Error = "Missing key parameter.";
-                responseData.StatusCode = 400;
-                return responseData;
+                return ConstructErrorResponse(400, "Missing key parameter.");
             }
 
             var worldIdOverride = request.QueryString["world"];
@@ -174,20 +165,12 @@ namespace VRCX
 
                 if (world == null)
                 {
-                    responseData.OK = false;
-                    responseData.Error = $"World ID '{worldIdOverride}' not initialized in this user's database.";
-                    responseData.StatusCode = 200;
-                    responseData.Data = null;
-                    return responseData;
+                    return ConstructErrorResponse(200, $"World ID '{worldIdOverride}' not initialized in this user's database.");
                 }
 
                 if (!world.AllowExternalRead)
                 {
-                    responseData.OK = false;
-                    responseData.Error = $"World ID '{worldIdOverride}' does not allow external reads.";
-                    responseData.StatusCode = 200;
-                    responseData.Data = null;
-                    return responseData;
+                    return ConstructErrorResponse(200, $"World ID '{worldIdOverride}' does not allow external reads.");
                 }
             }
 
@@ -198,18 +181,13 @@ namespace VRCX
 
             if (worldIdOverride == null && (String.IsNullOrEmpty(currentWorldId) || worldId != currentWorldId))
             {
-                responseData.Error = "World ID not initialized.";
-                responseData.StatusCode = 400;
-                return responseData;
+                return ConstructErrorResponse(400, "World ID not initialized.");
             }
 
             var value = worldDB.GetDataEntry(worldId, key);
 
-            responseData.OK = true;
-            responseData.StatusCode = 200;
-            responseData.Error = null;
-            responseData.Data = value?.Value;
-            return responseData;
+            // This is intended to be null if the key doesn't exist.
+            return ConstructSuccessResponse(value?.Value);
         }
 
         /// <summary>
@@ -225,9 +203,7 @@ namespace VRCX
             var keys = request.QueryString["keys"];
             if (keys == null)
             {
-                responseData.Error = "Missing/invalid keys parameter.";
-                responseData.StatusCode = 400;
-                return responseData;
+                return ConstructErrorResponse(400, "Missing/invalid keys parameter.");
             }
 
             var keyArray = keys.Split(',');
@@ -236,9 +212,7 @@ namespace VRCX
 
             if (String.IsNullOrEmpty(currentWorldId) || (worldId != currentWorldId && currentWorldId != "wrld_12345"))
             {
-                responseData.Error = "World ID not initialized.";
-                responseData.StatusCode = 400;
-                return responseData;
+                return ConstructErrorResponse(400, "World ID not initialized.");
             }
 
             var values = worldDB.GetDataEntries(currentWorldId, keyArray).ToList();
@@ -260,11 +234,7 @@ namespace VRCX
                 data.Add(dataKey, dataValue);
             }
 
-            responseData.OK = true;
-            responseData.StatusCode = 200;
-            responseData.Error = null;
-            responseData.Data = JsonConvert.SerializeObject(data);
-            return responseData;
+            return ConstructSuccessResponse(JsonConvert.SerializeObject(data));
         }
 
         /// <summary>
@@ -307,6 +277,29 @@ namespace VRCX
             }
 
             return worldId;
+        }
+
+        private WorldDataRequestResponse ConstructSuccessResponse(string data = null)
+        {
+            var responseData = new WorldDataRequestResponse(true, null, null);
+
+            responseData.StatusCode = 200;
+            responseData.Error = null;
+            responseData.OK = true;
+            responseData.Data = data;
+            return responseData;
+        }
+
+        private WorldDataRequestResponse ConstructErrorResponse(int statusCode, string error)
+        {
+            var responseData = new WorldDataRequestResponse(true, null, null);
+
+            responseData.StatusCode = statusCode;
+            responseData.Error = error;
+            responseData.OK = false;
+            responseData.Data = null;
+
+            return responseData;
         }
 
         /// <summary>
