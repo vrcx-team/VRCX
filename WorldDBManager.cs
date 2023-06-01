@@ -150,6 +150,7 @@ namespace VRCX
                 connectionKey = worldDB.GetWorldConnectionKey(currentWorldId);
             }
 
+            logger.Info("Initialized connection to world ID '{0}' with connection key '{1}'.", currentWorldId, connectionKey);
             return ConstructSuccessResponse(connectionKey);
         }
 
@@ -197,6 +198,7 @@ namespace VRCX
 
             var value = worldDB.GetDataEntry(worldId, key);
 
+            logger.Debug("Serving a request for data with key '{0}' from world ID '{1}'.", key, worldId);
             // This is intended to be null if the key doesn't exist.
             return ConstructSuccessResponse(value?.Value);
         }
@@ -244,6 +246,7 @@ namespace VRCX
                 data.Add(dataKey, dataValue);
             }
 
+            logger.Debug("Serving a request for bulk data with keys '{0}' from world ID '{1}'.", keys, currentWorldId);
             return ConstructSuccessResponse(JsonConvert.SerializeObject(data));
         }
 
