@@ -56,6 +56,7 @@ namespace VRCX
 
                     logger.Debug("Received a request to '{0}'", request.Url);
 
+                    // TODO: Maybe an endpoint for getting a group of arbitrary keys by a group 'name'? eg; /getgroup?name=testgroup1 would return all keys with the column group set to 'testgroup1'
                     switch (request.Url.LocalPath)
                     {
                         case "/vrcx/data/init":
@@ -64,6 +65,10 @@ namespace VRCX
                             break;
                         case "/vrcx/data/get":
                             responseData = await HandleDataRequest(context);
+                            SendJsonResponse(context.Response, responseData);
+                            break;
+                        case "/vrcx/data/getall":
+                            responseData = await HandleAllDataRequest(context);
                             SendJsonResponse(context.Response, responseData);
                             break;
                         case "/vrcx/data/lasterror":
@@ -201,6 +206,56 @@ namespace VRCX
             logger.Debug("Serving a request for data with key '{0}' from world ID '{1}'.", key, worldId);
             // This is intended to be null if the key doesn't exist.
             return ConstructSuccessResponse(value?.Value);
+        }
+
+        /// <summary>
+        /// Handles an HTTP listener request for all data from the world database for a given world.
+        /// </summary>
+        /// <param name="context">The HTTP listener context object.</param>
+        /// <returns>A <see cref="WorldDataRequestResponse"/> object containing the response data.</returns>
+        private async Task<WorldDataRequestResponse> HandleAllDataRequest(HttpListenerContext context)
+        {
+            var request = context.Request;
+
+            var worldIdOverride = request.QueryString["world"];
+
+            if (worldIdOverride != null)
+            {
+                var world = worldDB.GetWorld(worldIdOverride);
+
+                if (world == null)
+                {
+                    return ConstructErrorResponse(200, $"World ID '{worldIdOverride}' not initialized in this user's database.");
+                }
+
+                if (!world.AllowExternalRead)
+                {
+                    return ConstructErrorResponse(200, $"World ID '{worldIdOverride}' does not allow external reads.");
+                }
+            }
+
+            if (currentWorldId == "wrld_12345" && worldIdOverride == null)
+                worldIdOverride = "wrld_12345";
+
+            var worldId = worldIdOverride ?? await GetCurrentWorldID();
+
+            if (worldIdOverride == null && (String.IsNullOrEmpty(currentWorldId) || worldId != currentWorldId))
+            {
+                return ConstructErrorResponse(400, "World ID not initialized.");
+            }
+
+            var entries = worldDB.GetAllDataEntries(worldId);
+
+            logger.Debug("Serving a request for all data from world ID '{0}'.", worldId);
+
+            var data = new Dictionary<string, string>();
+            foreach (var entry in entries)
+            {
+                data.Add(entry.Key, entry.Value);
+            }
+
+            // This is intended to be null if the key doesn't exist.
+            return ConstructSuccessResponse(JsonConvert.SerializeObject(data));
         }
 
         /// <summary>
