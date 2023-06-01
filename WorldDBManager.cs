@@ -16,6 +16,7 @@ namespace VRCX
         public static WorldDBManager Instance;
         private readonly HttpListener listener;
         private readonly WorldDatabase worldDB;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private string currentWorldId = null;
         private string lastError = null;
@@ -34,6 +35,7 @@ namespace VRCX
         {
             listener.Start();
 
+            logger.Info("Listening for requests on {0}", listener.Prefixes.First());
             while (true)
             {
                 var context = await listener.GetContextAsync();
@@ -44,11 +46,15 @@ namespace VRCX
                 {
                     if (MainForm.Instance?.Browser == null || MainForm.Instance.Browser.IsLoading || !MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
                     {
+                        logger.Warn("Received a request to {0} while VRCX is still initializing the browser window. Responding with error 503.", request.Url)
+
                         responseData.Error = "VRCX not yet initialized. Try again in a moment.";
                         responseData.StatusCode = 503;
                         SendJsonResponse(context.Response, responseData);
                         continue;
                     };
+
+                    logger.Debug("Received a request to '{0}'", request.Url);
 
                     switch (request.Url.LocalPath)
                     {
@@ -82,9 +88,16 @@ namespace VRCX
                             SendJsonResponse(context.Response, responseData);
                             break;
                     }
+
+                    if (context.Response.StatusCode != 200)
+                    {
+                        logger.Warn("Received a request to '{0}' that returned a non-successful response. Error: {1} - {2}", request.Url, responseData.StatusCode, responseData.Error);
+                    }
                 }
                 catch (Exception ex)
                 {
+                    logger.Error(ex, $"Exception while processing the url '{request.Url}'.");
+
                     responseData.Error = $"VRCX has encountered an exception while processing the url '{request.Url}': {ex.Message}";
                     responseData.StatusCode = 500;
                     SendJsonResponse(context.Response, responseData);
@@ -101,7 +114,6 @@ namespace VRCX
         private async Task<WorldDataRequestResponse> HandleInitRequest(HttpListenerContext context)
         {
             var request = context.Request;
-            var responseData = new WorldDataRequestResponse(false, null, null);
 
             if (request.QueryString["debug"] == "true")
             {
@@ -149,7 +161,6 @@ namespace VRCX
         private async Task<WorldDataRequestResponse> HandleDataRequest(HttpListenerContext context)
         {
             var request = context.Request;
-            var responseData = new WorldDataRequestResponse(false, null, null);
 
             var key = request.QueryString["key"];
             if (key == null)
@@ -198,7 +209,6 @@ namespace VRCX
         private async Task<WorldDataRequestResponse> HandleBulkDataRequest(HttpListenerContext context)
         {
             var request = context.Request;
-            var responseData = new WorldDataRequestResponse(false, null, null);
 
             var keys = request.QueryString["keys"];
             if (keys == null)
@@ -263,6 +273,7 @@ namespace VRCX
             }
             catch (Exception ex)
             {
+                logger.Error(ex, "Failed to evaluate actuallyGetCurrentLocation JS function to get current world ID.");
                 return null;
             }
 
@@ -273,6 +284,7 @@ namespace VRCX
                 // implement
                 // wait what was i going to do here again
                 // seriously i forgot, hope it wasn't important
+                logger.Warn("actuallyGetCurrentLocation returned null or empty.");
                 return null;
             }
 
@@ -350,12 +362,14 @@ namespace VRCX
             }
             catch (JsonReaderException ex)
             {
+                logger.Error(ex, json.ToString());
                 this.lastError = ex.Message;
                 // invalid json
                 return;
             }
             catch (Exception ex)
             {
+                logger.Error(ex, json.ToString());
                 this.lastError = ex.Message;
                 // something else happened lol
                 return;
@@ -363,18 +377,21 @@ namespace VRCX
 
             if (String.IsNullOrEmpty(request.Key))
             {
+                logger.Warn("World {0} tried to store data with no key provided", request.Key);
                 this.lastError = "`key` is missing or null";
                 return;
             }
 
             if (String.IsNullOrEmpty(request.Value))
             {
+                logger.Warn("World {0} tried to store data with no value provided", request.Key);
                 this.lastError = "`value` is missing or null";
                 return;
             }
 
             if (String.IsNullOrEmpty(request.ConnectionKey))
             {
+                logger.Warn("World {0} tried to store data with no connection key provided", request.Key);
                 this.lastError = "`connectionKey` is missing or null";
                 return;
             }
@@ -382,6 +399,7 @@ namespace VRCX
             // Make sure the connection key is a valid GUID. No point in doing anything else if it's not.
             if (!Guid.TryParse(request.ConnectionKey, out Guid _))
             {
+                logger.Warn("World {0} tried to store data with an invalid GUID as a connection key {1}", request.Key, request.ConnectionKey);
                 this.lastError = "Invalid GUID provided as connection key";
                 // invalid guid
                 return;
@@ -391,6 +409,7 @@ namespace VRCX
             string worldId = worldDB.GetWorldByConnectionKey(request.ConnectionKey);
             if (worldId == null)
             {
+                logger.Warn("World {0} tried to store data with invalid connection key {1}", request.Key, request.ConnectionKey);
                 this.lastError = "Invalid connection key";
                 // invalid connection key
                 return;
@@ -406,6 +425,7 @@ namespace VRCX
             // This works, I tested it. Hopefully this prevents/limits any possible abuse. 
             if (newTotalDataSize > 1024 * 1024 * 10)
             {
+                logger.Warn("World {0} exceeded 10MB total data size trying to store key {0}. {1}:{2} + {3} = {4}", request.Key, worldId, oldTotalDataSize - oldDataSize, newDataSize, newTotalDataSize);
                 this.lastError = $"You have hit the 10MB total data cap. The previous data entry was *not* stored. Your request was {newDataSize} bytes, your current shared byte total is {oldTotalDataSize} and you went over the table limit by {newTotalDataSize - (1024 * 1024 * 10)} bytes.";
                 // too much data
                 //throw new Exception("Too much data");
@@ -415,6 +435,8 @@ namespace VRCX
 
             worldDB.AddDataEntry(worldId, request.Key, request.Value, newDataSize);
             worldDB.UpdateWorldDataSize(worldId, newTotalDataSize);
+            logger.Info("World {0} stored data entry {1} with size {2} bytes", worldId, request.Key, newDataSize);
+            logger.Debug("{0} : {1}", request.Key, request.Value);
         }
 
         public void Stop()
