@@ -2105,16 +2105,24 @@ speechSynthesis.getVoices();
             userLocation
         );
 
-        if (!$app.isRealInstance(userLocation)) {
-            console.warn(
-                `PWI: user location invalid (${userLocation}), returning gamelog location: `,
-                gameLogLocation
-            );
+        if ($app.isRealInstance(userLocation)) {
+            console.warn('PWI: returning user location', userLocation);
+            const L = this.parseLocation(userLocation);
+            return L.worldId;
+        }
+
+        if ($app.isRealInstance(gameLogLocation)) {
+            console.warn(`PWI: returning gamelog location: `, gameLogLocation);
             const L = this.parseLocation(gameLogLocation);
             return L.worldId;
         }
-        const L = this.parseLocation(userLocation);
-        return L.worldId;
+
+        console.error(
+            `PWI: all locations invalid: `,
+            gameLogLocation,
+            userLocation
+        );
+        return null;
     };
 
     API.applyWorld = function (json) {

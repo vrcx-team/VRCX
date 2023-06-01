@@ -1017,6 +1017,10 @@ namespace VRCX
 
             var stringData = line.Substring(lineOffset + check.Length);
             stringData = stringData.Remove(stringData.Length - 1);
+
+            if (stringData.StartsWith("http://127.0.0.1:22500") || stringData.StartsWith("http://localhost:22500"))
+                return true; // ignore own requests
+            
             AppendLog(new[]
             {
                 fileInfo.Name,
@@ -1040,6 +1044,10 @@ namespace VRCX
 
             var imageData = line.Substring(lineOffset + check.Length);
             imageData = imageData.Remove(imageData.Length - 1);
+            
+            if (imageData.StartsWith("http://127.0.0.1:22500") || imageData.StartsWith("http://localhost:22500"))
+                return true; // ignore own requests
+            
             AppendLog(new[]
             {
                 fileInfo.Name,
