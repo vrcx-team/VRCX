@@ -285,7 +285,7 @@ namespace VRCX
         /// <returns>The ID of the current world as a string, or null if it could not be retrieved.</returns>
         private async Task<string> GetCurrentWorldID()
         {
-            JavascriptResponse funcResult = await MainForm.Instance.Browser.EvaluateScriptAsync("$app.API.actuallyGetCurrentLocation();", TimeSpan.FromSeconds(5));
+            JavascriptResponse funcResult;
 
             try
             {
