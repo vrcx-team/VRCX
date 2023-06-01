@@ -2083,7 +2083,7 @@ speechSynthesis.getVoices();
             );
             presenceLocation = this.currentUser.$travelingToLocation;
         }
-        console.log('presence Location', presenceLocation);
+        console.log("presence location/travelingToLocation:", presenceLocation)
 
         // We want to use presence if it's valid to avoid extra API calls, but its prone to being outdated when this function is called.
         // So we check if the presence location is the same as the gameLog location; If it is, the presence is (probably) valid and we can use it.
@@ -2091,8 +2091,8 @@ speechSynthesis.getVoices();
         // If the user happens to be offline or the api is just being dumb, we assume that the user logged into VRCX is different than the one in-game and return the gameLog location.
         // This is really dumb.
         if (presenceLocation === gameLogLocation) {
-            console.log('ok presence return');
-            return presence.world;
+            console.log('ok presence return ', this.parseLocation(presenceLocation).worldId);
+            return this.parseLocation(presenceLocation).worldId;
         }
         let args = await this.getUser({ userId: this.currentUser.id });
         let user = args.json;

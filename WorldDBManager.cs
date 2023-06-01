@@ -40,43 +40,54 @@ namespace VRCX
                 var request = context.Request;
                 var responseData = new WorldDataRequestResponse(false, null, null);
 
-                if (MainForm.Instance?.Browser == null || MainForm.Instance.Browser.IsLoading || !MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
+                try
                 {
-                    responseData.Error = "VRCX not yet initialized. Try again in a moment.";
-                    responseData.StatusCode = 503;
-                    SendJsonResponse(context.Response, responseData);
-                    continue;
-                };
+                    if (MainForm.Instance?.Browser == null || MainForm.Instance.Browser.IsLoading || !MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
+                    {
+                        responseData.Error = "VRCX not yet initialized. Try again in a moment.";
+                        responseData.StatusCode = 503;
+                        SendJsonResponse(context.Response, responseData);
+                        continue;
+                    };
 
-                switch (request.Url.LocalPath)
+                    switch (request.Url.LocalPath)
+                    {
+                        case "/vrcx/data/init":
+                            responseData = await HandleInitRequest(context);
+                            SendJsonResponse(context.Response, responseData);
+                            break;
+                        case "/vrcx/data/get":
+                            responseData = await HandleDataRequest(context);
+                            SendJsonResponse(context.Response, responseData);
+                            break;
+                        case "/vrcx/data/lasterror":
+                            responseData.OK = lastError == null;
+                            responseData.StatusCode = 200;
+                            responseData.Data = lastError;
+                            lastError = null;
+                            SendJsonResponse(context.Response, responseData);
+                            break;
+                        case "/vrcx/data/getbulk":
+                            responseData = await HandleBulkDataRequest(context);
+                            SendJsonResponse(context.Response, responseData);
+                            break;
+                        case "/vrcx/status":
+                            // Send a blank 200 response to indicate that the server is running.
+                            context.Response.StatusCode = 200;
+                            context.Response.Close();
+                            break;
+                        default:
+                            responseData.Error = "Invalid VRCX endpoint.";
+                            responseData.StatusCode = 404;
+                            SendJsonResponse(context.Response, responseData);
+                            break;
+                    }
+                }
+                catch (Exception ex)
                 {
-                    case "/vrcx/data/init":
-                        responseData = await HandleInitRequest(context);
-                        SendJsonResponse(context.Response, responseData);
-                        break;
-                    case "/vrcx/data/get":
-                        responseData = await HandleDataRequest(context);
-                        SendJsonResponse(context.Response, responseData);
-                        break;
-                    case "/vrcx/data/lasterror":
-                        responseData.OK = lastError == null;
-                        responseData.Data = lastError;
-                        lastError = null;
-                        SendJsonResponse(context.Response, responseData);
-                        break;
-                    case "/vrcx/data/getbulk":
-                        responseData = await HandleBulkDataRequest(context);
-                        SendJsonResponse(context.Response, responseData);
-                        break;
-                    case "/vrcx/status":
-                        context.Response.StatusCode = 200;
-                        context.Response.Close();
-                        break;
-                    default:
-                        responseData.Error = "Invalid VRCX endpoint.";
-                        responseData.StatusCode = 404;
-                        SendJsonResponse(context.Response, responseData);
-                        break;
+                    responseData.Error = $"VRCX has encountered an exception while processing the url '{request.Url}': {ex.Message}";
+                    responseData.StatusCode = 500;
+                    SendJsonResponse(context.Response, responseData);
                 }
             }
 
