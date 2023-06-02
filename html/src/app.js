@@ -2071,19 +2071,17 @@ speechSynthesis.getVoices();
 
     // TODO: traveling to world checks
     API.actuallyGetCurrentLocation = async function () {
-        const gameLogLocation = $app.lastLocation.location;
-        console.log('gameLog Location', gameLogLocation);
+        let gameLogLocation = $app.lastLocation.location;
+        if (gameLogLocation === 'traveling') {
+            gameLogLocation = $app.lastLocationDestination;
+        }
+        console.log('PWI: gameLog Location:', gameLogLocation);
 
-        const presence = this.currentUser.presence;
         let presenceLocation = this.currentUser.$locationTag;
         if (presenceLocation === 'traveling') {
-            console.log(
-                'User is traveling, using $travelingToLocation',
-                this.currentUser.$travelingToLocation
-            );
             presenceLocation = this.currentUser.$travelingToLocation;
         }
-        console.log('presence Location', presenceLocation);
+        console.log('PWI: presence Location:', presenceLocation);
 
         // We want to use presence if it's valid to avoid extra API calls, but its prone to being outdated when this function is called.
         // So we check if the presence location is the same as the gameLog location; If it is, the presence is (probably) valid and we can use it.
@@ -2091,25 +2089,40 @@ speechSynthesis.getVoices();
         // If the user happens to be offline or the api is just being dumb, we assume that the user logged into VRCX is different than the one in-game and return the gameLog location.
         // This is really dumb.
         if (presenceLocation === gameLogLocation) {
-            console.log('ok presence return');
-            return presence.world;
+            console.log('PWI: locations match:', presenceLocation);
+            const L = this.parseLocation(presenceLocation);
+            return L.worldId;
         }
-        let args = await this.getUser({ userId: this.currentUser.id });
-        let user = args.json;
 
-        console.log('presence bad, got user', user);
-        if (!$app.isRealInstance(user.location)) {
-            console.warn(
-                'presence invalid, user offline and/or instance invalid. returning gamelog location: ',
-                gameLogLocation
-            );
-            return gameLogLocation;
+        const args = await this.getUser({ userId: this.currentUser.id });
+        const user = args.json;
+        let userLocation = user.location;
+        if (userLocation === 'traveling') {
+            userLocation = user.travelingToLocation;
         }
         console.warn(
-            'presence outdated, got user api location instead: ',
-            user.location
+            "PWI: location didn't match, fetched user location",
+            userLocation
         );
-        return this.parseLocation(user.location).worldId;
+
+        if ($app.isRealInstance(userLocation)) {
+            console.warn('PWI: returning user location', userLocation);
+            const L = this.parseLocation(userLocation);
+            return L.worldId;
+        }
+
+        if ($app.isRealInstance(gameLogLocation)) {
+            console.warn(`PWI: returning gamelog location: `, gameLogLocation);
+            const L = this.parseLocation(gameLogLocation);
+            return L.worldId;
+        }
+
+        console.error(
+            `PWI: all locations invalid: `,
+            gameLogLocation,
+            userLocation
+        );
+        return null;
     };
 
     API.applyWorld = function (json) {

@@ -4,6 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+using NLog;
+using NLog.Targets;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,6 +21,7 @@ namespace VRCX
         public static string Version { get; private set; }
         public static bool LaunchDebug;
         public static bool GPUFix;
+        private static NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
         static Program()
         {
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -43,15 +46,58 @@ namespace VRCX
             }
         }
 
+        private static void ConfigureLogger()
+        {
+            NLog.LogManager.Setup().LoadConfiguration(builder =>
+            {
+
+                var fileTarget = new FileTarget("fileTarget")
+                {
+                    FileName = Path.Combine(AppDataDirectory, "logs", "VRCX.log"),
+                    //Layout = "${longdate} [${level:uppercase=true}] ${logger} - ${message} ${exception:format=tostring}",
+                    // Layout with padding between the level/logger and message so that the message always starts at the same column
+                    Layout = "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
+                    ArchiveFileName = Path.Combine(AppDataDirectory, "VRCX.{#}.log"),
+                    ArchiveNumbering = ArchiveNumberingMode.DateAndSequence,
+                    ArchiveEvery = FileArchivePeriod.Day,
+                    MaxArchiveFiles = 4,
+                    MaxArchiveDays = 7,
+                    ArchiveAboveSize = 10000000,
+                    ArchiveOldFileOnStartup = true,
+                    ConcurrentWrites = true,
+                    KeepFileOpen = true,
+                    AutoFlush = true,
+                    Encoding = System.Text.Encoding.UTF8
+                };
+
+                if (Program.LaunchDebug)
+                {
+                    builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteTo(fileTarget);
+                }
+                else
+                {
+#if DEBUG
+                    // Archive maximum of 3 files 10MB each, kept for a maximum of 7 days
+                    builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteTo(fileTarget);
+#else
+                    builder.ForLogger().FilterMinLevel(LogLevel.Debug).WriteTo(fileTarget);
+#endif
+                }
+            });
+        }
+
         [STAThread]
         private static void Main()
         {
+            ConfigureLogger();
+
             try
             {
                 Run();
             }
             catch (Exception e)
             {
+                logger.Fatal(e, "Unhandled Exception, program dying");
                 MessageBox.Show(e.ToString(), "PLEASE REPORT IN https://vrcx.pypy.moe/discord", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(0);
             }
@@ -79,6 +125,8 @@ namespace VRCX
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            logger.Info("{0} Starting...", Version);
+
             // I'll re-do this whole function eventually I swear
             var worldDBServer = new WorldDBManager("http://127.0.0.1:22500/");
             Task.Run(worldDBServer.Start);
@@ -97,6 +145,7 @@ namespace VRCX
             IPCServer.Instance.Init();
             VRCXVR.Instance.Init();
             Application.Run(new MainForm());
+            logger.Info("{0} Exiting...", Version);
             WebApi.Instance.SaveCookies();
             VRCXVR.Instance.Exit();
             CefService.Instance.Exit();

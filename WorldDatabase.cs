@@ -250,6 +250,17 @@ END;";
         }
 
         /// <summary>
+        /// Gets all data entries for the world with the specified ID from the database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to get the data entries for.</param>
+        /// <returns>An enumerable collection of all data entries for the world with the specified ID.</returns>
+        public IEnumerable<WorldData> GetAllDataEntries(string worldId)
+        {
+            var query = sqlite.Table<WorldData>().Where(w => w.WorldId == worldId);
+            return query.ToList();
+        }
+
+        /// <summary>
         /// Gets the size of the data entry, in bytes, with the specified world ID and key from the database.
         /// </summary>
         /// <param name="worldId">The ID of the world to get the data entry size for.</param>
