@@ -155,6 +155,16 @@ END;";
         }
 
         /// <summary>
+        /// Sets the value of the allow_external_read field for the world with the specified ID in the database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to set the allow_external_read field for.</param>
+        /// <param name="allowExternalRead">The value to set for the allow_external_read field.</param>
+        public void SetWorldAllowExternalRead(string worldId, bool allowExternalRead)
+        {
+            sqlite.Execute("UPDATE worlds SET allow_external_read = ? WHERE world_id = ?", allowExternalRead, worldId);
+        }
+
+        /// <summary>
         /// Adds a new world to the database.
         /// </summary>
         /// <param name="worldId">The ID of the world to add.</param>
