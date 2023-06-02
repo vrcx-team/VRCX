@@ -478,6 +478,7 @@
         "direct_access_tooltip": "Direct access ID/URL from clipboard",
         "refresh_tooltip": "Refresh friends",
         "friends": "FRIENDS",
+        "groups": "GROUPS",
         "me": "ME",
         "favorite": "FAVORITES",
         "online": "ONLINE",

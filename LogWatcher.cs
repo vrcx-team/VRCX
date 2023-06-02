@@ -239,7 +239,8 @@ namespace VRCX
                                     ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) ||
                                     ParseLogScreenshot(fileInfo, logContext, line, offset) ||
                                     ParseLogStringDownload(fileInfo, logContext, line, offset) ||
-                                    ParseLogImageDownload(fileInfo, logContext, line, offset))
+                                    ParseLogImageDownload(fileInfo, logContext, line, offset) ||
+                                    ParseVoteKick(fileInfo, logContext, line, offset))
                                 {
                                 }
                             }
@@ -1054,6 +1055,24 @@ namespace VRCX
                 ConvertLogTimeToISO8601(line),
                 "resource-load-image",
                 imageData
+            });
+            return true;
+        }
+        
+        private bool ParseVoteKick(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2023.06.02 01:08:04 Log        -  [Behaviour] Received executive message: You have been kicked from the instance by majority vote
+            // 2023.06.02 01:11:58 Log        -  [Behaviour] You have been kicked from this world for an hour.
+
+            if (string.Compare(line, offset, "[Behaviour] Received executive message: ", 0, 40, StringComparison.Ordinal) != 0)
+                return false;
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "event",
+                line.Substring(offset + 40)
             });
             return true;
         }

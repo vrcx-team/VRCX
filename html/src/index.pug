@@ -121,6 +121,18 @@ html
                                 location.extra(v-if="isGameRunning" :location="lastLocation.location" :traveling="lastLocationDestination" :link="false")
                                 location.extra(v-else-if="isRealInstance(API.currentUser.$locationTag) || isRealInstance(API.currentUser.$travelingToLocation)" :location="API.currentUser.$locationTag" :traveling="API.currentUser.$travelingToLocation" :link="false")
                                 span.extra(v-else v-text="API.currentUser.statusDescription")
+                    .x-friend-group.x-link(@click="isGroupInstances = !isGroupInstances")
+                        i.el-icon-arrow-right(:class="{ rotate: isGroupInstances }")
+                        span(style="margin-left:5px") {{ $t('side_panel.groups') }} &horbar; {{ groupInstances.length }}
+                    div(v-show="isGroupInstances")
+                        .x-friend-item(v-for="instance in groupInstances" :key="instance.id" @click="showGroupDialog(instance.ownerId)")
+                            .avatar
+                                img(v-lazy="instance.$group.iconUrl")
+                            .detail
+                                span.name
+                                    span(v-text="instance.$group.name")
+                                    span(style="font-weight:normal;margin-left:5px") ({{ instance.userCount }}/{{ instance.capacity }})
+                                location.extra(:location="instance.location" :link="false")
                     .x-friend-group.x-link(@click="isFriendsGroup0 = !isFriendsGroup0" v-show="friendsGroup0.length")
                         i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup0 }")
                         span(style="margin-left:5px") {{ $t('side_panel.favorite') }} &horbar; {{ friendsGroup0.length }}
