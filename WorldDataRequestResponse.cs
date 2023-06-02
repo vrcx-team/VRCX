@@ -30,6 +30,8 @@ namespace VRCX
         /// <value></value>
         [JsonProperty("statusCode")]
         public int StatusCode { get; set; }
+        [JsonProperty("connectionKey")]
+        public string ConnectionKey { get; set; }
 
         public WorldDataRequestResponse(bool ok, string error, string data)
         {
