@@ -38,7 +38,7 @@ Download and run the latest installer (`VRCX_Setup.exe`) from [here](https://git
   - You can send/receive invites and friend requests from VRCX as well as see the instance info of invites that you receive.
 - :scroll: See stats/players for your current instance
 - :tv: See the links to videos and that are playing in the world you're in, as well as various other logged data.
-- :bar_chart: Better Discord Rich Presence
+- :bar_chart: Improved Discord Rich Presence
   - You can optionally display more information about your current instance in Discord.
   - This includes the world thumbnail, name, instance ID, and player count, depending on your settings and whether the lobby is private. You can also add a join button for public lobbies!
 - :crystal_ball: VR Overlay with configurable live feed of all supported events/notifications
