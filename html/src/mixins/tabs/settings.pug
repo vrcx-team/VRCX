@@ -31,7 +31,7 @@ mixin settingsTab()
     .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'settings'")
         div.options-container(style="margin-top:0")
             span.header {{ $t("view.settings.header") }}
-        el-tabs(type="card" style="margin-top:10px")
+        el-tabs(type="card" style="height: calc(100vh - 51px")
             el-tab-pane(:label="$t('view.settings.category.general')")
                 //- General | General
                 div.options-container(style="margin-top:0")

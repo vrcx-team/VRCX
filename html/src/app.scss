@@ -705,3 +705,19 @@ i.x-user-status.busy {
     padding: 3px;
     top: 0 !important;
 }
+
+.el-tab-pane {
+    height: 100%;
+}
+
+.el-tabs {
+    // height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+}
+
+.el-tabs__content {
+    flex: 1;
+    max-height: 100%;
+    overflow: auto;
+}

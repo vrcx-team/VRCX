@@ -13655,6 +13655,10 @@ speechSynthesis.getVoices();
         false
     );
     $app.data.asideWidth = configRepository.getInt('VRCX_asidewidth', 350);
+    if ($app.data.asideWidth === 236) {
+        $app.data.asideWidth = 350;
+        configRepository.setInt('VRCX_asidewidth', $app.data.asideWidth);
+    }
     $app.data.autoUpdateVRCX = configRepository.getString(
         'VRCX_autoUpdateVRCX',
         'Auto Download'
