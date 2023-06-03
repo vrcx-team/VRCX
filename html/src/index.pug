@@ -1553,6 +1553,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
+                        span.toggle-name Instance Queue Ready
+                        el-radio-group(v-model="sharedFeedFilters.noty['group.queueReady']" size="mini")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    .toggle-item
                         span.toggle-name Portal Spawn
                         el-radio-group(v-model="sharedFeedFilters.noty.PortalSpawn" size="mini")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
@@ -1762,6 +1767,11 @@ html
                     .toggle-item
                         span.toggle-name Group Join Request
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.joinRequest']" size="mini")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    .toggle-item
+                        span.toggle-name Instance Queue Ready
+                        el-radio-group(v-model="sharedFeedFilters.wrist['group.queueReady']" size="mini")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
@@ -2347,8 +2357,8 @@ html
                     span {{ $t('dialog.invite_to_group.description') }}
                     br
                     el-select(v-model="inviteGroupDialog.groupId" clearable :placeholder="$t('dialog.invite_to_group.choose_group_placeholder')" filterable :disabled="inviteGroupDialog.loading" @change="isAllowedToInviteToGroup" style="margin-top:15px")
-                        el-option-group(v-if="inviteGroupDialog.groups.length" :label="$t('dialog.invite_to_group.groups')" style="width:410px")
-                            el-option.x-friend-item(v-for="group in inviteGroupDialog.groups" :key="group.id" :label="group.name" :value="group.id" style="height:auto")
+                        el-option-group(v-if="API.currentUserGroups.size" :label="$t('dialog.invite_to_group.groups')" style="width:410px")
+                            el-option.x-friend-item(v-for="group in API.currentUserGroups.values()" :key="group.id" :label="group.name" :value="group.id" style="height:auto")
                                 .avatar
                                     img(v-lazy="group.iconUrl")
                                 .detail

@@ -580,6 +580,9 @@ Vue.component('marquee-text', MarqueeText);
             case 'group.joinRequest':
                 text = escapeTag(noty.message);
                 break;
+            case 'group.queueReady':
+                text = escapeTag(noty.message);
+                break;
             case 'PortalSpawn':
                 if (noty.displayName) {
                     text = `<strong>${
