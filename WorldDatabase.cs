@@ -283,6 +283,16 @@ END;";
             return query.FirstOrDefault();
         }
 
+        public void DeleteDataEntry(string worldId, string key)
+        {
+            sqlite.Execute("DELETE FROM data WHERE world_id = ? AND key = ?", worldId, key);
+        }
+
+        public void DeleteAllDataEntriesForWorld(string worldId)
+        {
+            sqlite.Execute("DELETE FROM data WHERE world_id = ?", worldId);
+        }
+
         public void Close()
         {
             sqlite.Close();

@@ -453,6 +453,8 @@ namespace VRCX
                 return;
             }
 
+
+
             // Make sure the connection key is a valid GUID. No point in doing anything else if it's not.
             if (!debugWorld && !Guid.TryParse(request.ConnectionKey, out Guid _))
             {
@@ -465,6 +467,7 @@ namespace VRCX
             // Get the world ID from the connection key
             string worldId = worldDB.GetWorldByConnectionKey(request.ConnectionKey);
 
+            // World ID is null, which means the connection key is invalid (or someone just deleted a world from the DB while VRCX was running lol).
             if (worldId == null)
             {
                 logger.Warn("World tried to store data under {0} with an invalid connection key {1}", request.Key, request.ConnectionKey);
@@ -473,42 +476,124 @@ namespace VRCX
                 return;
             }
 
-            if (String.IsNullOrEmpty(request.Key))
-            {
-                logger.Warn("World {0} tried to store data with no key provided", worldId);
-                this.lastError = "`key` is missing or null";
-                return;
-            }
+            string requestType = request.RequestType.ToLower();
 
-            if (String.IsNullOrEmpty(request.Value))
+            switch (requestType)
             {
-                logger.Warn("World {0} tried to store data under key {1} with no value provided", worldId, request.Key);
-                this.lastError = "`value` is missing or null";
-                return;
-            }
+                case "store":
+                    if (String.IsNullOrEmpty(request.Key))
+                    {
+                        logger.Warn("World {0} tried to store data with no key provided", worldId);
+                        this.lastError = "`key` is missing or null";
+                        return;
+                    }
 
+                    if (String.IsNullOrEmpty(request.Value))
+                    {
+                        logger.Warn("World {0} tried to store data under key {1} with no value provided", worldId, request.Key);
+                        this.lastError = "`value` is missing or null";
+                        return;
+                    }
+
+                    StoreWorldData(worldId, request.Key, request.Value);
+                    break;
+                case "delete":
+                    if (String.IsNullOrEmpty(request.Key))
+                    {
+                        logger.Warn("World {0} tried to delete data with no key provided", worldId);
+                        this.lastError = "`key` is missing or null";
+                        return;
+                    }
+
+                    DeleteWorldData(worldId, request.Key);
+                    break;
+                case "delete-all":
+                    logger.Info("World {0} requested to delete all data.", worldId);
+                    worldDB.DeleteAllDataEntriesForWorld(worldId);
+                    break;
+                case "set-setting":
+                    if (String.IsNullOrEmpty(request.Key))
+                    {
+                        logger.Warn("World {0} tried to delete data with no key provided", worldId);
+                        this.lastError = "`key` is missing or null";
+                        return;
+                    }
+
+                    if (String.IsNullOrEmpty(request.Value))
+                    {
+                        logger.Warn("World {0} tried to set settings with no value provided", worldId);
+                        this.lastError = "`value` is missing or null";
+                        return;
+                    }
+
+                    SetWorldProperty(worldId, request.Key, request.Value);
+                    break;
+                default:
+                    logger.Warn("World {0} sent an invalid request type '{0}'", worldId, request.RequestType);
+                    this.lastError = "Invalid request type";
+                    // invalid request type
+                    return;
+            }
+        }
+
+        private void LogWarning(string message, params object[] args)
+        {
+            logger.Warn("World {0} - " + message, args);
+            this.lastError = String.Format(message, args);
+        }
+
+
+        public void SetWorldProperty(string worldId, string key, string value)
+        {
+            switch (key)
+            {
+                case "externalReads":
+                    if (bool.TryParse(value, out bool result))
+                    {
+                        worldDB.SetWorldAllowExternalRead(worldId, result);
+                    }
+                    else
+                    {
+                        logger.Warn("World {0} tried to set externalReads to an invalid value '{1}'", worldId, value);
+                        this.lastError = "Invalid value for externalReads";
+                        return;
+                    }
+                    break;
+            }
+        }
+
+        public void StoreWorldData(string worldId, string key, string value)
+        {
             // Get/calculate the old and new data sizes for this key/the world
             int oldTotalDataSize = worldDB.GetWorldDataSize(worldId);
-            int oldDataSize = worldDB.GetDataEntrySize(worldId, request.Key);
-            int newDataSize = Encoding.UTF8.GetByteCount(request.Value);
+            int oldDataSize = worldDB.GetDataEntrySize(worldId, key);
+            int newDataSize = Encoding.UTF8.GetByteCount(value);
             int newTotalDataSize = oldTotalDataSize + newDataSize - oldDataSize;
 
-            // Make sure we don't exceed 10MB total size for this world
+            // Make sure we don't exceed 10MB total size for a world
             // This works, I tested it. Hopefully this prevents/limits any possible abuse. 
             if (newTotalDataSize > 1024 * 1024 * 10)
             {
-                logger.Warn("World {0} exceeded 10MB total data size trying to store key {0}. {1}:{2} + {3} = {4}", request.Key, worldId, oldTotalDataSize - oldDataSize, newDataSize, newTotalDataSize);
+                logger.Warn("World {0} exceeded 10MB total data size trying to store key {0}. {1}:{2} + {3} = {4}", key, worldId, oldTotalDataSize - oldDataSize, newDataSize, newTotalDataSize);
                 this.lastError = $"You have hit the 10MB total data cap. The previous data entry was *not* stored. Your request was {newDataSize} bytes, your current shared byte total is {oldTotalDataSize} and you went over the table limit by {newTotalDataSize - (1024 * 1024 * 10)} bytes.";
-                // too much data
-                //throw new Exception("Too much data");
                 return;
             }
 
-
-            worldDB.AddDataEntry(worldId, request.Key, request.Value, newDataSize);
+            worldDB.AddDataEntry(worldId, key, value, newDataSize);
             worldDB.UpdateWorldDataSize(worldId, newTotalDataSize);
-            logger.Info("World {0} stored data entry {1} with size {2} bytes", worldId, request.Key, newDataSize);
-            logger.Debug("{0} : {1}", request.Key, request.Value);
+            logger.Info("World {0} stored data entry {1} with size {2} bytes", worldId, key, newDataSize);
+            logger.Debug("{0} : {1}", key, value);
+        }
+
+        public void DeleteWorldData(string worldId, string key)
+        {
+            int oldTotalDataSize = worldDB.GetWorldDataSize(worldId);
+            int oldDataSize = worldDB.GetDataEntrySize(worldId, key);
+            int newTotalDataSize = oldTotalDataSize - oldDataSize;
+
+            worldDB.DeleteDataEntry(worldId, key);
+            worldDB.UpdateWorldDataSize(worldId, newTotalDataSize);
+            logger.Info("World {0} deleted data entry {1} with size {2} bytes.", worldId, key, oldDataSize);
         }
 
         public void Stop()
