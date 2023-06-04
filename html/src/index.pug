@@ -1237,7 +1237,7 @@ html
                     el-form-item(:label="$t('dialog.new_instance.group_id')" v-if="newInstanceDialog.accessType === 'group'")
                         el-select(v-model="newInstanceDialog.groupId" clearable :placeholder="$t('dialog.new_instance.group_placeholder')" filterable style="width:100%")
                             el-option-group(:label="$t('dialog.new_instance.group_placeholder')")
-                                el-option.x-friend-item(v-for="group in API.currentUserGroups.values()" :key="group.id" :label="group.name" :value="group.id" style="height:auto;width:478px")
+                                el-option.x-friend-item(v-if="group" v-for="group in API.currentUserGroups.values()" :key="group.id" :label="group.name" :value="group.id" style="height:auto;width:478px")
                                     .avatar
                                         img(v-lazy="group.iconUrl")
                                     .detail

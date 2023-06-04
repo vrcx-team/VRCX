@@ -4820,7 +4820,7 @@ speechSynthesis.getVoices();
                     created_at: new Date().toJSON(),
                     type: 'group.queueReady',
                     imageUrl: group?.iconUrl,
-                    message: `Instance ready to join ${groupName}- ${worldName}`,
+                    message: `Instance ready to join ${groupName} - ${worldName}`,
                     location: instanceId,
                     groupName,
                     worldName
@@ -25794,7 +25794,11 @@ speechSynthesis.getVoices();
             this.showGroupDialog(groupId);
         }
         if (!API.currentUserGroups.has(groupId)) {
-            API.currentUserGroups.set(groupId);
+            API.currentUserGroups.set(groupId, {
+                id: groupId,
+                name: '',
+                iconUrl: ''
+            });
             if (this.friendLogInitStatus) {
                 API.getGroup({ groupId });
             }
