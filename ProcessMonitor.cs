@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Timers;
 
 namespace VRCX
@@ -46,6 +47,12 @@ namespace VRCX
         /// </summary>
         public event Action<MonitoredProcess> ProcessExited;
 
+        /// <summary>
+        /// Flag that specifies the access rights to query limited information about a process.
+        /// This won't throw an exception when we try to access info about an elevated process
+        /// </summary>
+        private const int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
+
         public void Init()
         {
             AddProcess("vrchat");
@@ -57,6 +64,35 @@ namespace VRCX
         {
             monitorProcessTimer.Stop();
             monitoredProcesses.Values.ToList().ForEach(x => x.ProcessExited());
+        }
+
+        /// <summary>
+        /// Determines whether the specified process has exited using WinAPI's GetExitCodeProcess running with PROCESS_QUERY_LIMITED_INFORMATION.
+        /// We do this because Process.HasExited in .net framework opens a handle with PROCESS_QUERY_INFORMATION, which will throw an exception if the process is elevated.
+        /// GetExitCodeProcess works with PROCESS_QUERY_LIMITED_INFORMATION, which will not throw an exception if the process is elevated.
+        /// https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodeprocess
+        /// </summary>
+        /// <param name="process">The process to check.</param>
+        /// <returns>true if the process has exited; otherwise, false.</returns>
+        internal static bool HasProcessExited(int processId)
+        {
+            IntPtr hProcess = WinApi.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, processId);
+            if (hProcess == IntPtr.Zero)
+            {
+                // this is probably fine
+                return true;
+                //throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+            }
+
+            bool exited;
+            if (!WinApi.GetExitCodeProcess(hProcess, out uint exitCode))
+            {
+                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+            }
+
+            // Fun fact, If a program uses STILL_ACTIVE (259) as an exit code, GetExitCodeProcess will return 259, since it returns... the exit code. This would break this function.
+            exited = exitCode != 259;
+            return exited;
         }
 
         private void MonitorProcessTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -72,7 +108,7 @@ namespace VRCX
 
                 if (monitoredProcess.IsRunning)
                 {
-                    if (monitoredProcess.Process == null || monitoredProcess.Process.HasExited)
+                    if (monitoredProcess.Process == null || HasProcessExited(monitoredProcess.Process.Id))
                     {
                         monitoredProcess.ProcessExited();
                         ProcessExited?.Invoke(monitoredProcess);
@@ -168,7 +204,7 @@ namespace VRCX
             Process = process;
             ProcessName = process.ProcessName.ToLower();
 
-            if (!process.HasExited)
+            if (process != null && !ProcessMonitor.HasProcessExited(process.Id))
                 IsRunning = true;
         }
 
