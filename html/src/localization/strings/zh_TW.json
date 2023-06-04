@@ -71,9 +71,9 @@
                 "remote": "遠端",
                 "sort_name": "依名稱排序",
                 "sort_update": "依更新排序",
-                "sort_created": "依建立時間排序"			
+                "sort_created": "依建立時間排序"
             },
-			            "group": {
+            "group": {
                 "header": "群組"
             },
             "prev_page": "上一頁",
@@ -401,7 +401,7 @@
                         "enable": "啟用",
                         "modify_filename": "修改檔案名稱",
                         "modify_filename_tooltip": "在拍攝遊戲截圖時，除了在照片的檔案元資料中儲存世界 ID 外，還會將世界 ID 加入到截圖的檔案名稱中。"
-						 },
+					},
                     "app_launcher": {
                         "header": "應用程式啟動器",
                         "folder": "自動啟動資料夾",
@@ -414,7 +414,7 @@
                         "udon_exception_logging": "Udon 異常紀錄",
                         "gpu_fix": "SteamVR 疊層 GPU 修復",
                         "gpu_fix_notice": "(需要重新啟動)",
-                        "gpu_fix_warning": "只有在 SteamVR 疊層不工作並且你有2個 GPU 的情況下才會啟用這個選項。",
+                        "gpu_fix_warning": "只有在 SteamVR 疊層不工作並且你有 2 個 GPU 的情況下才會啟用這個選項",
                         "disable_gamelog": "關閉遊戲紀錄",
                         "disable_gamelog_notice": "（可能會弄壞很多東西）",
                         "user_cache": "玩家快取：",
@@ -484,7 +484,7 @@
         "online": "上線",
         "active": "活躍",
         "offline": "離線",
-        "penfing_offline": "待確認離線"
+        "pending_offline": "待確認離線"
     },
     "dialog": {
         "user": {
@@ -1361,10 +1361,10 @@
             "rank": "階級",
             "language": "語言",
             "bioLink": "社交連結",
+            "date": "時間",
             "user": "玩家",
             "type": "種類",
-            "detail": "詳細",
-            "date": "時間"
+            "detail": "詳細"
         },
         "friendLog": {
             "date": "時間",
