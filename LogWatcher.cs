@@ -14,6 +14,9 @@ using CefSharp;
 
 namespace VRCX
 {
+    /// <summary>
+    /// Monitors the VRChat log files for changes and provides access to the log data.
+    /// </summary>
     public class LogWatcher
     {
         public static readonly LogWatcher Instance;
@@ -88,6 +91,9 @@ namespace VRCX
             }
         }
 
+        /// <summary>
+        /// Updates the log watcher by checking for new log files and updating the log list.
+        /// </summary>
         private void Update()
         {
             if (m_ResetLog)
@@ -157,6 +163,11 @@ namespace VRCX
             m_FirstRun = false;
         }
 
+        /// <summary>
+        /// Parses the log file starting from the current position and updates the log context.
+        /// </summary>
+        /// <param name="fileInfo">The file information of the log file to parse.</param>
+        /// <param name="logContext">The log context to update.</param>
         private void ParseLog(FileInfo fileInfo, LogContext logContext)
         {
             try
@@ -224,10 +235,12 @@ namespace VRCX
                                     ParseLogUsharpVideoPlay(fileInfo, logContext, line, offset) ||
                                     ParseLogUsharpVideoSync(fileInfo, logContext, line, offset) ||
                                     ParseLogWorldVRCX(fileInfo, logContext, line, offset) ||
+                                    ParseLogWorldDataVRCX(fileInfo, logContext, line, offset) ||
                                     ParseLogOnAudioConfigurationChanged(fileInfo, logContext, line, offset) ||
                                     ParseLogScreenshot(fileInfo, logContext, line, offset) ||
                                     ParseLogStringDownload(fileInfo, logContext, line, offset) ||
-                                    ParseLogImageDownload(fileInfo, logContext, line, offset))
+                                    ParseLogImageDownload(fileInfo, logContext, line, offset) ||
+                                    ParseVoteKick(fileInfo, logContext, line, offset))
                                 {
                                 }
                             }
@@ -593,6 +606,19 @@ namespace VRCX
             return true;
         }
 
+        private bool ParseLogWorldDataVRCX(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // [VRCX-World] store:test:testvalue
+
+            if (string.Compare(line, offset, "[VRCX-World] ", 0, 13, StringComparison.Ordinal) != 0)
+                return false;
+
+            var data = line.Substring(offset + 13);
+
+            WorldDBManager.Instance.ProcessLogWorldDataRequest(data);
+            return true;
+        }
+
         private bool ParseLogVideoChange(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2021.04.20 13:37:69 Log        -  [Video Playback] Attempting to resolve URL 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
@@ -927,7 +953,7 @@ namespace VRCX
         private bool ParseOpenVRInit(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2022.07.29 02:52:14 Log        -  OpenVR initialized!
-            
+
             // 2023.04.22 16:52:28 Log        -  Initializing VRSDK.
             // 2023.04.22 16:52:29 Log        -  StartVRSDK: Open VR Loader
 
@@ -944,7 +970,7 @@ namespace VRCX
 
             return true;
         }
-        
+
         private bool ParseDesktopMode(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2023.04.22 16:54:18 Log        -  VR Disabled
@@ -992,6 +1018,10 @@ namespace VRCX
 
             var stringData = line.Substring(lineOffset + check.Length);
             stringData = stringData.Remove(stringData.Length - 1);
+
+            if (stringData.StartsWith("http://127.0.0.1:22500") || stringData.StartsWith("http://localhost:22500"))
+                return true; // ignore own requests
+            
             AppendLog(new[]
             {
                 fileInfo.Name,
@@ -1015,12 +1045,34 @@ namespace VRCX
 
             var imageData = line.Substring(lineOffset + check.Length);
             imageData = imageData.Remove(imageData.Length - 1);
+            
+            if (imageData.StartsWith("http://127.0.0.1:22500") || imageData.StartsWith("http://localhost:22500"))
+                return true; // ignore own requests
+            
             AppendLog(new[]
             {
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
                 "resource-load-image",
                 imageData
+            });
+            return true;
+        }
+        
+        private bool ParseVoteKick(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2023.06.02 01:08:04 Log        -  [Behaviour] Received executive message: You have been kicked from the instance by majority vote
+            // 2023.06.02 01:11:58 Log        -  [Behaviour] You have been kicked from this world for an hour.
+
+            if (string.Compare(line, offset, "[Behaviour] Received executive message: ", 0, 40, StringComparison.Ordinal) != 0)
+                return false;
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "event",
+                line.Substring(offset + 40)
             });
             return true;
         }

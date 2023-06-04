@@ -4,10 +4,9 @@
   "i18n-ally.sourceLanguage": "en",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "[javascript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
-  },
-  "[jade]": {
-    "editor.defaultFormatter": "svipas.prettier-plus"
+  "omnisharp.enableRoslynAnalyzers": true,
+  "omnisharp.useModernNet": false,
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
   }
 }

@@ -127,8 +127,8 @@ input,
 textarea,
 select,
 button {
-    font-family: 'Noto Sans JP', 'Noto Sans KR', 'Meiryo UI', 'Malgun Gothic',
-        'Segoe UI', sans-serif;
+    font-family: 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC', 'Noto Sans SC',
+        'Meiryo UI', 'Malgun Gothic', 'Segoe UI', sans-serif;
     line-height: normal;
 }
 
@@ -524,6 +524,16 @@ i.x-user-status.busy {
     border-color: #67c23a !important;
 }
 
+.x-tag-platform-ios {
+    color: #c7c7ce !important;
+    border-color: #c7c7ce !important;
+}
+
+.x-tag-platform-other {
+    color: #ff4177 !important;
+    border-color: #ff4177 !important;
+}
+
 .el-tree-node {
     white-space: normal;
 }
@@ -689,4 +699,25 @@ i.x-user-status.busy {
 
 .changelog-dialog img {
     width: 100%;
+}
+
+.vrc-instance-queue-message {
+    padding: 3px;
+    top: 0 !important;
+}
+
+.el-tab-pane {
+    height: 100%;
+}
+
+.el-tabs {
+    // height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+}
+
+.el-tabs__content {
+    flex: 1;
+    max-height: 100%;
+    overflow: auto;
 }

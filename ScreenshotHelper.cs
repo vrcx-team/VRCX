@@ -181,7 +181,11 @@ namespace VRCX
             return new PNGChunk(type, chunkData);
         }
 
-        // parse LFS screenshot PNG metadata
+        /// <summary>
+        /// Parses the metadata string of a vrchat screenshot with taken with LFS and returns a JObject containing the parsed data.
+        /// </summary>
+        /// <param name="metadataString">The metadata string to parse.</param>
+        /// <returns>A JObject containing the parsed data.</returns>
         public static JObject ParseLfsPicture(string metadataString)
         {
             var metadata = new JObject();

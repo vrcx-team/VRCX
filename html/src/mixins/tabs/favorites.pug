@@ -1,5 +1,5 @@
 mixin favoritesTab()            
-    .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'favorite'" v-if="$refs.menu && $refs.menu.activeIndex === 'favorite'")
+    .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'favorite'")
         el-tooltip(placement="bottom" :content="$t('view.favorite.refresh_tooltip')" :disabled="hideTooltips")
             el-button(type="default" :loading="API.isFavoriteLoading" @click="API.refreshFavorites(); getLocalWorldFavorites()" size="small" icon="el-icon-refresh" circle style="position:relative;float:right;z-index:1")
         el-tabs(ref="favoriteTabRef" type="card" v-loading="API.isFavoriteLoading")

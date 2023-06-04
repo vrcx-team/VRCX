@@ -25,13 +25,13 @@ mixin simpleRadioGroup(nameTrKey, model, options, onChange="")
         br
         el-radio-group(v-model=model @change=onChange size="mini")
             each option in options
-                el-radio-button(label="#{option.label}") {{ $t('#{option.translationKey}') }}
+                el-radio-button(label=option.label) {{ $t('#{option.translationKey}') }}
 
 mixin settingsTab()
     .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'settings'")
         div.options-container(style="margin-top:0")
             span.header {{ $t("view.settings.header") }}
-        el-tabs(type="card" style="margin-top:10px")
+        el-tabs(type="card" style="height: calc(100vh - 51px")
             el-tab-pane(:label="$t('view.settings.category.general')")
                 //- General | General
                 div.options-container(style="margin-top:0")
@@ -165,7 +165,7 @@ mixin settingsTab()
                         el-switch(v-model="orderFriendsGroup3" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_offline_time')" @change="saveOrderFriendGroup")
                     span.sub-header {{ $t('view.settings.appearance.side_panel.width') }}
                     div.options-container-item
-                        el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{236: ''}" :min="141" :max="500" style="width:300px")
+                        el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{350: ''}" :min="141" :max="500" style="width:300px")
                 //- Appearance | User Dialog
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_dialog.header') }}
@@ -333,11 +333,11 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.discord_presence.discord_presence.instance_type_player_count') }}
                         el-switch(v-model="discordInstance" @change="saveDiscordOption" :disabled="!discordActive")
                     div.options-container-item
-                        span.name {{ $t('view.settings.discord_presence.discord_presence.join_button') }}
-                        el-switch(v-model="discordJoinButton" @change="saveDiscordOption" :disabled="!discordActive")
-                    div.options-container-item
                         span.name {{ $t('view.settings.discord_presence.discord_presence.hide_details_in_private') }}
                         el-switch(v-model="discordHideInvite" @change="saveDiscordOption" :disabled="!discordActive")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.discord_presence.discord_presence.join_button') }}
+                        el-switch(v-model="discordJoinButton" @change="saveDiscordOption" :disabled="!discordActive")
                     div.options-container-item
                         span.name {{ $t('view.settings.discord_presence.discord_presence.hide_images') }}
                         el-switch(v-model="discordHideImage" @change="saveDiscordOption" :disabled="!discordActive")
@@ -469,7 +469,12 @@ mixin settingsTab()
                             el-button-group(style="display:block")
                                 el-button(size="small" icon="el-icon-s-operation" @click="promptSetPendingOffline") {{ $t('view.settings.advanced.advanced.pending_offline.set_delay') }}
                         +simpleSwitch("view.settings.advanced.advanced.cache_debug.udon_exception_logging", "udonExceptionLogging", "saveOpenVROption")
-                        +simpleSwitch("view.settings.advanced.advanced.cache_debug.gpu_fix", "gpuFix", "saveVRCXWindowOption")
+                        div.options-container-item
+                            span.name {{ $t('view.settings.advanced.advanced.cache_debug.gpu_fix') }}
+                                el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.cache_debug.gpu_fix_warning')")
+                                    i.el-icon-warning
+                            el-switch(v-model="gpuFix" @change="saveVRCXWindowOption")
+                            span.name(style="margin-left:15px") {{ $t('view.settings.advanced.advanced.cache_debug.gpu_fix_notice') }}
                         div.options-container-item
                             span.name {{ $t('view.settings.advanced.advanced.cache_debug.disable_gamelog') }}
                             el-switch(v-model="gameLogDisabled" @change="disableGameLogDialog")

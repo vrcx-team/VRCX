@@ -73,6 +73,9 @@
                 "sort_update": "Sort by update",
                 "sort_created": "Sort by created"
             },
+            "group": {
+                "header": "Group"
+            },
             "prev_page": "Prev",
             "next_page": "Next"
         },
@@ -389,7 +392,7 @@
                         "header": "Progress pie overlay for videos",
                         "enable": "Enable",
                         "enable_tooltip": "Requires SteamVR overlay to be enabled",
-                        "dance_world_only": "Dance worlds only"
+                        "dance_world_only": "Supported world only"
                     },
                     "screenshot_helper": {
                         "header": "Screenshot Helper",
@@ -410,6 +413,8 @@
                         "header": "VRCX Instance Cache/Debug",
                         "udon_exception_logging": "Udon Exception Logging",
                         "gpu_fix": "SteamVR Overlay GPU Fix",
+                        "gpu_fix_notice": "(requires restart)",
+                        "gpu_fix_warning": "Only enable this option if the SteamVR overlay isn't working and you have 2 GPUs",
                         "disable_gamelog": "Disable GameLog",
                         "disable_gamelog_notice": "(will likely break things)",
                         "user_cache": "User cache:",
@@ -472,7 +477,8 @@
         "search_result_more": "Search More:",
         "direct_access_tooltip": "Direct access ID/URL from clipboard",
         "refresh_tooltip": "Refresh friends",
-        "friends": "FRIENDS",
+        "groups": "Group Instances",
+        "friends": "Friends",
         "me": "ME",
         "favorite": "FAVORITES",
         "online": "ONLINE",
@@ -695,7 +701,8 @@
                 "platform": "Platform"
             },
             "json": {
-                "header": "JSON"
+                "header": "JSON",
+                "file_analysis": "File Analysis"
             }
         },
         "group": {
@@ -814,6 +821,10 @@
             "access_type_friend": "Friends",
             "access_type_invite_plus": "Invite+",
             "access_type_invite": "Invite",
+            "group_access_type": "Group Access",
+            "group_access_type_members": "Members",
+            "group_access_type_plus": "Plus",
+            "group_access_type_public": "Public",
             "region": "Region",
             "region_usw": "US West",
             "region_use": "US East",
@@ -824,7 +835,8 @@
             "instance_id_placeholder": "Random",
             "instance_creator": "Instance Creator",
             "instance_creator_placeholder": "Choose User",
-            "group_id": "Group ID",
+            "group_placeholder": "Choose Group",
+            "group_id": "Group",
             "location": "Location",
             "url": "URL",
             "copy_url": "Copy URL",

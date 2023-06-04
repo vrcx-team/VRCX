@@ -59,6 +59,12 @@ namespace VRCX
             return AppApi.Instance.GetVRChatCacheLocation();
         }
 
+        /// <summary>
+        /// Gets the full location of the VRChat cache for a specific asset bundle.
+        /// </summary>
+        /// <param name="id">The ID of the asset bundle.</param>
+        /// <param name="version">The version of the asset bundle.</param>
+        /// <returns>The full location of the VRChat cache for the specified asset bundle.</returns>
         public string GetVRChatCacheFullLocation(string id, int version)
         {
             var cachePath = GetVRChatCacheLocation();
@@ -67,6 +73,12 @@ namespace VRCX
             return Path.Combine(cachePath, idHash, versionLocation);
         }
 
+        /// <summary>
+        /// Checks the VRChat cache for a specific asset bundle.
+        /// </summary>
+        /// <param name="id">The ID of the asset bundle.</param>
+        /// <param name="version">The version of the asset bundle.</param>
+        /// <returns>An array containing the file size and lock status of the asset bundle.</returns>
         public long[] CheckVRChatCache(string id, int version)
         {
             long FileSize = -1;
@@ -155,6 +167,11 @@ namespace VRCX
             DownloadProgress = -16;
         }
 
+        /// <summary>
+        /// Deletes the cache directory for a specific asset bundle.
+        /// </summary>
+        /// <param name="id">The ID of the asset bundle to delete.</param>
+        /// <param name="version">The version of the asset bundle to delete.</param>
         public void DeleteCache(string id, int version)
         {
             var FullLocation = GetVRChatCacheFullLocation(id, version);
@@ -162,6 +179,9 @@ namespace VRCX
                 Directory.Delete(FullLocation, true);
         }
 
+        /// <summary>
+        /// Deletes the entire VRChat cache directory.
+        /// </summary>
         public void DeleteAllCache()
         {
             var cachePath = GetVRChatCacheLocation();
@@ -172,6 +192,9 @@ namespace VRCX
             }
         }
 
+        /// <summary>
+        /// Removes empty directories from the VRChat cache directory and deletes old versions of cached asset bundles.
+        /// </summary>
         public void SweepCache()
         {
             var cachePath = GetVRChatCacheLocation();
@@ -201,6 +224,10 @@ namespace VRCX
             }
         }
 
+        /// <summary>
+        /// Returns the size of the VRChat cache directory in bytes.
+        /// </summary>
+        /// <returns>The size of the VRChat cache directory in bytes.</returns>
         public long GetCacheSize()
         {
             var cachePath = GetVRChatCacheLocation();
@@ -214,6 +241,12 @@ namespace VRCX
             }
         }
 
+
+        /// <summary>
+        /// Recursively calculates the size of a directory and all its subdirectories.
+        /// </summary>
+        /// <param name="d">The directory to calculate the size of.</param>
+        /// <returns>The size of the directory and all its subdirectories in bytes.</returns>
         public long DirSize(DirectoryInfo d)
         {
             long size = 0;

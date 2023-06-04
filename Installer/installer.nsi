@@ -81,18 +81,13 @@ Function .onInit
     ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "UninstallString"
     StrCmp $R0 "" done
 
-    ; wait for process to fully quit during upgrade
-    ${If} ${Silent}
-        Sleep 2000
-    ${EndIf}
-
-    ; If VRCX is already running, display a warning message and exit
+    ; If VRCX is already running, display a warning message
     StrCpy $1 "VRCX.exe"
     nsProcess::_FindProcess "$1"
     Pop $R1
     ${If} $R1 = 0
-        MessageBox MB_OK|MB_ICONEXCLAMATION "VRCX is still running. Cannot install this software.$\nPlease close VRCX and try again." /SD IDOK
-        Abort
+        MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "VRCX is still running. $\n$\nClick `OK` to kill the running process or `Cancel` to cancel this installer." /SD IDOK IDCANCEL cancel
+            nsExec::ExecToStack "taskkill /IM VRCX.exe"
     ${EndIf}
 
     MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "VRCX is already installed. $\n$\nClick `OK` to upgrade the existing installation or `Cancel` to cancel this upgrade." /SD IDOK IDCANCEL cancel
@@ -101,11 +96,7 @@ Function .onInit
         Abort
     next:
         StrCpy $upgradeInstallation "true"
-
     done:
-    ${If} $upgradeInstallation == "false"
-        SetSilent normal
-    ${EndIf}
 FunctionEnd
 
 Function createDesktopShortcut
@@ -132,7 +123,7 @@ Section "Install" SecInstall
 
     afterupgrade:
 
-    ReadRegStr $R0 HKCR "Installer\Dependencies\VC,redist.x64,amd64,14.34,bundle" "Version"
+    ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\DevDiv\vc\Servicing\14.0\RuntimeMinimum" "Version"
     IfErrors 0 VSRedistInstalled
 
     inetc::get "https://aka.ms/vs/17/release/vc_redist.x64.exe" $TEMP\vcredist_x64.exe

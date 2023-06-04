@@ -17,6 +17,7 @@ namespace VRCX
     public partial class MainForm : WinformBase
     {
         public static MainForm Instance;
+        private static NLog.Logger jslogger = NLog.LogManager.GetLogger("Javascript");
         public ChromiumWebBrowser Browser;
         private int LastLocationX;
         private int LastLocationY;
@@ -58,6 +59,10 @@ namespace VRCX
             };
 
             Util.ApplyJavascriptBindings(Browser.JavascriptObjectRepository);
+            Browser.ConsoleMessage += (_, args) =>
+            {
+                jslogger.Debug(args.Message + " (" + args.Source + ":" + args.Line + ")");
+            };
 
             Controls.Add(Browser);
         }

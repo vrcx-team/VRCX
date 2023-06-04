@@ -47,37 +47,6 @@ speechSynthesis.getVoices();
 
     await configRepository.init();
 
-    // #region | Init: Migrate old legacy database data to new format
-    if (configRepository.getBool('migrate_config_20201101') === null) {
-        var legacyConfigKeys = [
-            'orderFriendGroup0',
-            'orderFriendGroup1',
-            'orderFriendGroup2',
-            'orderFriendGroup3',
-            'discordActive',
-            'discordInstance',
-            'openVR',
-            'openVRAlways',
-            'VRCX_hidePrivateFromFeed',
-            'VRCX_hideLoginsFromFeed',
-            'VRCX_hideDevicesFromFeed',
-            'VRCX_VIPNotifications',
-            'VRCX_minimalFeed',
-            'isDarkMode',
-            'VRCX_StartAtWindowsStartup',
-            'VRCX_StartAsMinimizedState',
-            'VRCX_CloseToTray',
-            'launchAsDesktop'
-        ];
-        for (var _key of legacyConfigKeys) {
-            configRepository.setBool(
-                _key,
-                (await VRCXStorage.Get(_key)) === 'true'
-            );
-        }
-        configRepository.setBool('migrate_config_20201101', true);
-    }
-
     // #endregion
     // #region | Init: drop/keyup event listeners
     // Make sure file drops outside of the screenshot manager don't navigate to the file path dropped.
@@ -439,6 +408,15 @@ speechSynthesis.getVoices();
                 if (response.status === 200) {
                     this.$throw(0, 'Invalid JSON response');
                 }
+                if (
+                    response.status === 429 &&
+                    init.url.endsWith('/instances/groups')
+                ) {
+                    $app.nextGroupInstanceRefresh = 120; // 1min
+                    throw new Error(
+                        `${response.status}: rate limited ${endpoint}`
+                    );
+                }
                 if (response.status === 504 || response.status === 502) {
                     // ignore expected API errors
                     throw new Error(
@@ -471,7 +449,7 @@ speechSynthesis.getVoices();
                     status === 401 &&
                     data.error.message === '"Missing Credentials"'
                 ) {
-                    if (endpoint.substring(0, 10) === 'auth/user?') {
+                    if (endpoint.substring(0, 9) === 'auth/user') {
                         this.$emit('AUTOLOGIN');
                     }
                     throw new Error('401: Missing Credentials');
@@ -514,9 +492,6 @@ speechSynthesis.getVoices();
                     endpoint.startsWith('invite/myself/to/')
                 ) {
                     throw new Error(`403: ${data.error.message} ${endpoint}`);
-                }
-                if (status === 429) {
-                    throw new Error(`429: ${data.error.message} ${endpoint}`);
                 }
                 if (data && data.error === Object(data.error)) {
                     this.$throw(
@@ -691,7 +666,6 @@ speechSynthesis.getVoices();
 
     API.applyConfig = function (json) {
         var ref = {
-            clientApiKey: '',
             ...json
         };
         this.cachedConfig = ref;
@@ -724,6 +698,7 @@ speechSynthesis.getVoices();
             instanceId: '',
             instanceName: '',
             accessType: '',
+            accessTypeName: '',
             region: '',
             shortName: '',
             userId: null,
@@ -731,6 +706,7 @@ speechSynthesis.getVoices();
             privateId: null,
             friendsId: null,
             groupId: null,
+            groupAccessType: null,
             canRequestInvite: false,
             strict: false
         };
@@ -772,6 +748,8 @@ speechSynthesis.getVoices();
                             ctx.region = value;
                         } else if (key === 'group') {
                             ctx.groupId = value;
+                        } else if (key === 'groupAccessType') {
+                            ctx.groupAccessType = value;
                         } else if (key === 'strict') {
                             ctx.strict = true;
                         }
@@ -800,6 +778,14 @@ speechSynthesis.getVoices();
                 } else if (ctx.groupId !== null) {
                     // Group
                     ctx.accessType = 'group';
+                }
+                ctx.accessTypeName = ctx.accessType;
+                if (ctx.groupAccessType !== null) {
+                    if (ctx.groupAccessType === 'public') {
+                        ctx.accessTypeName = 'groupPublic';
+                    } else if (ctx.groupAccessType === 'plus') {
+                        ctx.accessTypeName = 'groupPlus';
+                    }
                 }
             } else {
                 ctx.worldId = _tag;
@@ -866,7 +852,7 @@ speechSynthesis.getVoices();
             "<span><span @click=\"showWorldDialog\" :class=\"{ 'x-link': link && this.location !== 'private' && this.location !== 'offline'}\">" +
             '<i v-if="isTraveling" class="el-icon el-icon-loading" style="display:inline-block;margin-right:5px"></i>' +
             '<span>{{ text }}</span></span>' +
-            '<span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>' +
+            '<span v-if="groupName" @click="showGroupDialog" :class="{ \'x-link\': link}">({{ groupName }})</span>' +
             '<span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
             '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
         props: {
@@ -916,7 +902,7 @@ speechSynthesis.getVoices();
                     this.text = 'Traveling';
                 } else if (typeof this.hint === 'string' && this.hint !== '') {
                     if (L.instanceId) {
-                        this.text = `${this.hint} #${L.instanceName} ${L.accessType}`;
+                        this.text = `${this.hint} #${L.instanceName} ${L.accessTypeName}`;
                     } else {
                         this.text = this.hint;
                     }
@@ -926,14 +912,14 @@ speechSynthesis.getVoices();
                         $app.getWorldName(L.worldId).then((worldName) => {
                             if (L.tag === instanceId) {
                                 if (L.instanceId) {
-                                    this.text = `${worldName} #${L.instanceName} ${L.accessType}`;
+                                    this.text = `${worldName} #${L.instanceName} ${L.accessTypeName}`;
                                 } else {
                                     this.text = worldName;
                                 }
                             }
                         });
                     } else if (L.instanceId) {
-                        this.text = `${ref.name} #${L.instanceName} ${L.accessType}`;
+                        this.text = `${ref.name} #${L.instanceName} ${L.accessTypeName}`;
                     } else {
                         this.text = ref.name;
                     }
@@ -947,7 +933,7 @@ speechSynthesis.getVoices();
                     });
                 }
                 this.region = '';
-                if ($app.isRealInstance(instanceId)) {
+                if (!L.isOffline && !L.isPrivate && !L.isTraveling) {
                     this.region = L.region;
                     if (!L.region && L.instanceId) {
                         this.region = 'us';
@@ -970,7 +956,7 @@ speechSynthesis.getVoices();
                 }
             },
             showGroupDialog() {
-                if (!this.location) {
+                if (!this.location || !this.link) {
                     return;
                 }
                 var L = API.parseLocation(this.location);
@@ -994,7 +980,7 @@ speechSynthesis.getVoices();
         template:
             '<span><span @click="showLaunchDialog" class="x-link">' +
             '<i v-if="isUnlocked" class="el-icon el-icon-unlock" style="display:inline-block;margin-right:5px"></i>' +
-            '<span>#{{ instanceName }} {{ accessType }}</span></span>' +
+            '<span>#{{ instanceName }} {{ accessTypeName }}</span></span>' +
             '<span v-if="groupName" @click="showGroupDialog" class="x-link">({{ groupName }})</span>' +
             '<span class="flags" :class="region" style="display:inline-block;margin-left:5px"></span>' +
             '<i v-if="strict" class="el-icon el-icon-lock" style="display:inline-block;margin-left:5px"></i></span>',
@@ -1011,7 +997,7 @@ speechSynthesis.getVoices();
             return {
                 location: this.location,
                 instanceName: this.instanceName,
-                accessType: this.accessType,
+                accessTypeName: this.accessTypeName,
                 region: this.region,
                 shortName: this.shortName,
                 isUnlocked: this.isUnlocked,
@@ -1023,7 +1009,7 @@ speechSynthesis.getVoices();
             parse() {
                 this.location = this.locationobject.tag;
                 this.instanceName = this.locationobject.instanceName;
-                this.accessType = this.locationobject.accessType;
+                this.accessTypeName = this.locationobject.accessTypeName;
                 this.strict = this.locationobject.strict;
                 this.shortName = this.locationobject.shortName;
 
@@ -1228,51 +1214,75 @@ speechSynthesis.getVoices();
     API.$on('USER:CURRENT', function (args) {
         var { json } = args;
         args.ref = this.applyCurrentUser(json);
-        var location = '';
-        var travelingToLocation = '';
-        if (json.presence?.world) {
+
+        // when isGameRunning use gameLog instead of API
+        var $location = this.parseLocation($app.lastLocation.location);
+        var $travelingLocation = this.parseLocation(
+            $app.lastLocationDestination
+        );
+        var location = $app.lastLocation.location;
+        var instanceId = $location.instanceId;
+        var worldId = $location.worldId;
+        var travelingToLocation = $app.lastLocationDestination;
+        var travelingToWorld = $travelingLocation.worldId;
+        var travelingToInstance = $travelingLocation.instanceId;
+        if (!$app.isGameRunning) {
             if ($app.isRealInstance(json.presence.world)) {
                 location = `${json.presence.world}:${json.presence.instance}`;
-            } else {
-                location = json.presence.world;
-            }
-        }
-        if (json.presence?.travelingToWorld) {
-            if ($app.isRealInstance(json.presence.travelingToWorld)) {
                 travelingToLocation = `${json.presence.travelingToWorld}:${json.presence.travelingToInstance}`;
             } else {
+                location = json.presence.world;
                 travelingToLocation = json.presence.travelingToWorld;
             }
+            instanceId = json.presence.instance;
+            worldId = json.presence.world;
+            travelingToInstance = json.presence.travelingToInstance;
+            travelingToWorld = json.presence.travelingToWorld;
         }
+
         this.applyUser({
-            id: json.id,
-            displayName: json.displayName,
+            allowAvatarCopying: json.allowAvatarCopying,
             bio: json.bio,
             bioLinks: json.bioLinks,
             currentAvatarImageUrl: json.currentAvatarImageUrl,
             currentAvatarThumbnailImageUrl: json.currentAvatarThumbnailImageUrl,
+            date_joined: json.date_joined,
+            developerType: json.developerType,
+            displayName: json.displayName,
+            friendKey: json.friendKey,
+            // json.friendRequestStatus - missing from currentUser
+            id: json.id,
+            // instanceId - missing from currentUser
+            isFriend: json.isFriend,
+            last_activity: json.last_activity,
+            last_login: json.last_login,
+            last_platform: json.last_platform,
+            // location - missing from currentUser
+            // note - missing from currentUser
+            profilePicOverride: json.profilePicOverride,
+            state: json.state,
             status: json.status,
             statusDescription: json.statusDescription,
-            state: json.state,
             tags: json.tags,
-            developerType: json.developerType,
-            last_login: json.last_login,
-            last_activity: json.last_activity,
-            last_platform: json.last_platform,
-            date_joined: json.date_joined,
-            allowAvatarCopying: json.allowAvatarCopying,
+            // travelingToInstance - missing from currentUser
+            // travelingToLocation - missing from currentUser
+            // travelingToWorld - missing from currentUser
             userIcon: json.userIcon,
+            // worldId - missing from currentUser
             fallbackAvatar: json.fallbackAvatar,
-            profilePicOverride: json.profilePicOverride,
-            isFriend: false,
 
-            // Presence
+            // Location from gameLog/presence
             location,
+            instanceId,
+            worldId,
             travelingToLocation,
-            instanceId: json.presence?.instance,
-            worldId: json.presence?.world,
-            travelingToInstance: json.presence?.travelingToInstance,
-            travelingToWorld: json.presence?.travelingToWorld
+            travelingToInstance,
+            travelingToWorld,
+
+            // set VRCX online/offline timers
+            $online_for: this.currentUser.$online_for,
+            $offline_for: this.currentUser.$offline_for,
+            $travelingToTime: this.currentUser.$travelingToTime
         });
     });
 
@@ -1325,7 +1335,7 @@ speechSynthesis.getVoices();
             }
             $app.saveCredentials = params;
         }
-        return this.call(`auth/user?apiKey=${this.cachedConfig.clientApiKey}`, {
+        return this.call('auth/user', {
             method: 'GET',
             headers: {
                 Authorization: `Basic ${auth}`
@@ -1487,6 +1497,21 @@ speechSynthesis.getVoices();
         }
     };
 
+    API.applyPresenceLocation = function (ref) {
+        var presence = ref.presence;
+        if ($app.isRealInstance(presence.world)) {
+            ref.$locationTag = `${presence.world}:${presence.instance}`;
+        } else {
+            ref.$locationTag = presence.world;
+        }
+        if ($app.isRealInstance(presence.travelingToWorld)) {
+            ref.$travelingToLocation = `${presence.travelingToWorld}:${presence.travelingToInstance}`;
+        } else {
+            ref.$travelingToLocation = presence.travelingToWorld;
+        }
+        $app.updateCurrentUserLocation();
+    };
+
     API.applyCurrentUser = function (json) {
         var ref = this.currentUser;
         if (this.isLoggedIn) {
@@ -1508,37 +1533,57 @@ speechSynthesis.getVoices();
             ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
+            this.applyPresenceLocation(ref);
+            // update group list
+            if (json.presence?.groups) {
+                for (var groupId of json.presence.groups) {
+                    if (!this.currentUserGroups.has(groupId)) {
+                        $app.onGroupJoined(groupId);
+                    }
+                }
+                for (var groupId of this.currentUserGroups.keys()) {
+                    if (!json.presence.groups.includes(groupId)) {
+                        $app.onGroupLeft(groupId);
+                    }
+                }
+            }
         } else {
             ref = {
-                id: '',
-                username: '',
-                displayName: '',
-                userIcon: '',
-                profilePicOverride: '',
+                acceptedTOSVersion: 0,
+                accountDeletionDate: null,
+                accountDeletionLog: null,
+                activeFriends: [],
+                allowAvatarCopying: false,
                 bio: '',
                 bioLinks: [],
-                pastDisplayNames: [],
-                friends: [],
-                currentAvatarImageUrl: '',
-                currentAvatarThumbnailImageUrl: '',
                 currentAvatar: '',
                 currentAvatarAssetUrl: '',
-                fallbackAvatar: '',
-                homeLocation: '',
-                twoFactorAuthEnabled: false,
-                status: '',
-                statusDescription: '',
-                state: '',
-                tags: [],
-                developerType: '',
-                last_login: '',
-                last_activity: '',
-                last_platform: '',
+                currentAvatarImageUrl: '',
+                currentAvatarThumbnailImageUrl: '',
                 date_joined: '',
-                allowAvatarCopying: false,
-                onlineFriends: [],
-                activeFriends: [],
+                developerType: '',
+                displayName: '',
+                emailVerified: false,
+                fallbackAvatar: '',
+                friendGroupNames: [],
+                friendKey: '',
+                friends: [],
+                hasBirthday: false,
+                hasEmail: false,
+                hasLoggedInFromClient: false,
+                hasPendingEmail: false,
+                homeLocation: '',
+                id: '',
+                isFriend: false,
+                last_activity: '',
+                last_login: '',
+                last_platform: '',
+                obfuscatedEmail: '',
+                obfuscatedPendingEmail: '',
+                oculusId: '',
                 offlineFriends: [],
+                onlineFriends: [],
+                pastDisplayNames: [],
                 presence: {
                     avatarThumbnail: '',
                     displayName: '',
@@ -1546,7 +1591,6 @@ speechSynthesis.getVoices();
                     id: '',
                     instance: '',
                     instanceType: '',
-                    isRejoining: '0',
                     platform: '',
                     profilePicOverride: '',
                     status: '',
@@ -1555,6 +1599,21 @@ speechSynthesis.getVoices();
                     world: '',
                     ...json.presence
                 },
+                profilePicOverride: '',
+                state: '',
+                status: '',
+                statusDescription: '',
+                statusFirstTime: false,
+                statusHistory: [],
+                steamDetails: {},
+                steamId: '',
+                tags: [],
+                twoFactorAuthEnabled: false,
+                twoFactorAuthEnabledDate: null,
+                unsubscribe: false,
+                updated_at: '',
+                userIcon: '',
+                username: '',
                 // VRCX
                 $online_for: Date.now(),
                 $offline_for: '',
@@ -1569,12 +1628,15 @@ speechSynthesis.getVoices();
                 $userColour: '',
                 $trustSortNum: 1,
                 $languages: [],
+                $locationTag: '',
+                $travelingToLocation: '',
                 ...json
             };
             ref.$homeLocation = this.parseLocation(ref.homeLocation);
             ref.$isVRCPlus = ref.tags.includes('system_supporter');
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
+            this.applyPresenceLocation(ref);
             this.currentUser = ref;
             this.isLoggedIn = true;
             this.$emit('LOGIN', {
@@ -1586,7 +1648,7 @@ speechSynthesis.getVoices();
     };
 
     API.getCurrentUser = function () {
-        return this.call(`auth/user?apiKey=${this.cachedConfig.clientApiKey}`, {
+        return this.call('auth/user', {
             method: 'GET'
         }).then((json) => {
             var args = {
@@ -1626,30 +1688,6 @@ speechSynthesis.getVoices();
 
     API.applyUser = function (json) {
         var ref = this.cachedUsers.get(json.id);
-        // some missing variables on currentUser
-        if (json.id === API.currentUser.id) {
-            json.status = API.currentUser.status;
-            json.statusDescription = API.currentUser.statusDescription;
-            if ($app.isGameRunning) {
-                json.state = 'online';
-            } else {
-                json.state = 'active';
-            }
-            json.last_login = API.currentUser.last_login;
-            json.last_activity = API.currentUser.last_activity;
-            if ($app.lastLocation.location === 'traveling') {
-                json.location = 'traveling';
-                json.travelingToLocation = $app.lastLocationDestination;
-                json.$travelingToTime = $app.lastLocationDestinationTime;
-            } else if ($app.lastLocation.location) {
-                json.location = $app.lastLocation.location;
-                json.$location_at = $app.lastLocation.date;
-            } else {
-                json.location = '';
-            }
-            json.$online_for = API.currentUser.$online_for;
-            json.$offline_for = API.currentUser.$offline_for;
-        }
         if (typeof json.statusDescription !== 'undefined') {
             json.statusDescription = $app.replaceBioSymbols(
                 json.statusDescription
@@ -1668,33 +1706,36 @@ speechSynthesis.getVoices();
         }
         if (typeof ref === 'undefined') {
             ref = {
-                id: '',
-                displayName: '',
-                userIcon: '',
-                profilePicOverride: '',
+                allowAvatarCopying: false,
                 bio: '',
                 bioLinks: [],
                 currentAvatarImageUrl: '',
                 currentAvatarThumbnailImageUrl: '',
-                fallbackAvatar: '',
+                date_joined: '',
+                developerType: '',
+                displayName: '',
+                friendKey: '',
+                friendRequestStatus: '',
+                id: '',
+                instanceId: '',
+                isFriend: false,
+                last_activity: '',
+                last_login: '',
+                last_platform: '',
+                location: '',
+                note: '',
+                profilePicOverride: '',
+                state: '',
                 status: '',
                 statusDescription: '',
-                state: '',
                 tags: [],
-                developerType: '',
-                last_login: '',
-                last_activity: '',
-                last_platform: '',
-                date_joined: '',
-                allowAvatarCopying: false,
-                isFriend: false,
-                location: '',
-                worldId: '',
-                instanceId: '',
                 travelingToInstance: '',
                 travelingToLocation: '',
                 travelingToWorld: '',
-                note: '',
+                userIcon: '',
+                worldId: '',
+                // only in bulk request
+                fallbackAvatar: '',
                 // VRCX
                 $location: {},
                 $location_at: Date.now(),
@@ -1827,6 +1868,9 @@ speechSynthesis.getVoices();
                     }
                 }
             }
+        }
+        if (ref.id === this.currentUser.id) {
+            $app.updateCurrentUserLocation();
         }
         this.$emit('USER:APPLY', ref);
         return ref;
@@ -2017,6 +2061,66 @@ speechSynthesis.getVoices();
             }
         });
     });
+
+    API.getUserApiCurrentLocation = function () {
+        return this.currentUser?.presence?.world;
+    };
+
+    // TODO: traveling to world checks
+    API.actuallyGetCurrentLocation = async function () {
+        let gameLogLocation = $app.lastLocation.location;
+        if (gameLogLocation === 'traveling') {
+            gameLogLocation = $app.lastLocationDestination;
+        }
+        console.log('PWI: gameLog Location:', gameLogLocation);
+
+        let presenceLocation = this.currentUser.$locationTag;
+        if (presenceLocation === 'traveling') {
+            presenceLocation = this.currentUser.$travelingToLocation;
+        }
+        console.log('PWI: presence Location:', presenceLocation);
+
+        // We want to use presence if it's valid to avoid extra API calls, but its prone to being outdated when this function is called.
+        // So we check if the presence location is the same as the gameLog location; If it is, the presence is (probably) valid and we can use it.
+        // If it's not, we need to get the user manually to get the correct location.
+        // If the user happens to be offline or the api is just being dumb, we assume that the user logged into VRCX is different than the one in-game and return the gameLog location.
+        // This is really dumb.
+        if (presenceLocation === gameLogLocation) {
+            console.log('PWI: locations match:', presenceLocation);
+            const L = this.parseLocation(presenceLocation);
+            return L.worldId;
+        }
+
+        const args = await this.getUser({ userId: this.currentUser.id });
+        const user = args.json;
+        let userLocation = user.location;
+        if (userLocation === 'traveling') {
+            userLocation = user.travelingToLocation;
+        }
+        console.warn(
+            "PWI: location didn't match, fetched user location",
+            userLocation
+        );
+
+        if ($app.isRealInstance(userLocation)) {
+            console.warn('PWI: returning user location', userLocation);
+            const L = this.parseLocation(userLocation);
+            return L.worldId;
+        }
+
+        if ($app.isRealInstance(gameLogLocation)) {
+            console.warn(`PWI: returning gamelog location: `, gameLogLocation);
+            const L = this.parseLocation(gameLogLocation);
+            return L.worldId;
+        }
+
+        console.error(
+            `PWI: all locations invalid: `,
+            gameLogLocation,
+            userLocation
+        );
+        return null;
+    };
 
     API.applyWorld = function (json) {
         var ref = this.cachedWorlds.get(json.id);
@@ -2226,6 +2330,31 @@ speechSynthesis.getVoices();
     API.getInstance = function (params) {
         return this.call(`instances/${params.worldId}:${params.instanceId}`, {
             method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('INSTANCE', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            worldId: string,
+            type: string,
+            region: string,
+            ownerId: string,
+            roleIds: string[],
+            groupAccessType: string,
+            queueEnabled: boolean
+        }
+    */
+    API.createInstance = function (params) {
+        return this.call('instances', {
+            method: 'POST',
+            params
         }).then((json) => {
             var args = {
                 json,
@@ -3613,6 +3742,8 @@ speechSynthesis.getVoices();
         this.cachedFavoritesByObjectId.clear();
         this.cachedFavoriteGroups.clear();
         this.cachedFavoriteGroupsByTypeName.clear();
+        this.currentUserGroups.clear();
+        this.queuedInstances.clear();
         this.favoriteFriendGroups = [];
         this.favoriteWorldGroups = [];
         this.favoriteAvatarGroups = [];
@@ -4299,6 +4430,7 @@ speechSynthesis.getVoices();
     // #region | API: WebSocket
 
     API.webSocket = null;
+    API.lastWebSocketMessage = '';
 
     API.$on('LOGOUT', function () {
         this.closeWebSocket();
@@ -4334,6 +4466,7 @@ speechSynthesis.getVoices();
             return;
         }
         if (typeof content.user !== 'undefined') {
+            // I forgot about this...
             delete content.user.state;
         }
         switch (type) {
@@ -4567,19 +4700,48 @@ speechSynthesis.getVoices();
                         userId: content.userId
                     }
                 });
+
+                // update current user location
+                this.currentUser.presence.instance = content.instance;
+                this.currentUser.presence.world = content.world?.id;
+                this.currentUser.$locationTag = content.location;
+                $app.updateCurrentUserLocation();
                 break;
 
             case 'group-joined':
+                var groupId = content.groupId;
+                $app.onGroupJoined(groupId);
+                break;
+
             case 'group-left':
                 var groupId = content.groupId;
-                if (
-                    $app.groupDialog.visible &&
-                    $app.groupDialog.id === groupId
-                ) {
-                    $app.showGroupDialog(groupId);
-                }
+                $app.onGroupLeft(groupId);
                 break;
+
+            case 'group-role-updated':
+                var groupId = content.role.groupId;
+                console.log('group-role-updated', content);
+
+                // content {
+                //   role: {
+                //     createdAt: string,
+                //     description: string,
+                //     groupId: string,
+                //     id: string,
+                //     isManagementRole: boolean,
+                //     isSelfAssignable: boolean,
+                //     name: string,
+                //     order: number,
+                //     permissions: string[],
+                //     requiresPurchase: boolean,
+                //     requiresTwoFactor: boolean
+                break;
+
             case 'group-member-updated':
+                var groupId = content.groupId;
+                $app.onGroupJoined(groupId);
+                console.log('group-member-updated', content);
+
                 // content {
                 //   groupId: string,
                 //   id: string,
@@ -4591,6 +4753,81 @@ speechSynthesis.getVoices();
                 //   userId: string,
                 //   visibility: string
                 // }
+                break;
+
+            case 'instance-queue-joined':
+            case 'instance-queue-position':
+                var instanceId = content.instanceLocation;
+                var ref = this.queuedInstances.get(instanceId);
+                if (typeof ref === 'undefined') {
+                    ref = {
+                        $msgBox: null,
+                        $groupName: '',
+                        $worldName: '',
+                        location: instanceId,
+                        position: 0,
+                        queueSize: 0
+                    };
+                }
+                if (content.position) {
+                    ref.position = content.position;
+                }
+                if (content.queueSize) {
+                    ref.queueSize = content.queueSize;
+                }
+                if (!ref.$msgBox) {
+                    ref.$msgBox = $app.$message({
+                        message: '',
+                        type: 'info',
+                        duration: 0,
+                        showClose: true,
+                        customClass: 'vrc-instance-queue-message'
+                    });
+                }
+                if (!ref.$groupName) {
+                    $app.getGroupName(instanceId).then((name) => {
+                        ref.$groupName = name;
+                        ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${name} `;
+                    });
+                }
+                if (!ref.$worldName) {
+                    $app.getWorldName(instanceId).then((name) => {
+                        ref.$worldName = name;
+                    });
+                }
+
+                ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${ref.$groupName} `;
+                API.queuedInstances.set(instanceId, ref);
+                break;
+
+            case 'instance-queue-ready':
+                var instanceId = content.instanceLocation;
+                // var expiry = Date.parse(content.expiry);
+                var ref = this.queuedInstances.get(instanceId);
+                if (typeof ref !== 'undefined') {
+                    ref.$msgBox.close();
+                    this.queuedInstances.delete(instanceId);
+                }
+                var L = this.parseLocation(instanceId);
+                var group = this.cachedGroups.get(L.groupId);
+                var groupName = group?.name ? group.name : '';
+                var worldName = ref.$worldName ? ref.$worldName : '';
+                $app.$message({
+                    message: `Instance ready to join ${groupName} - ${worldName}`,
+                    type: 'success'
+                });
+                var noty = {
+                    created_at: new Date().toJSON(),
+                    type: 'group.queueReady',
+                    imageUrl: group?.iconUrl,
+                    message: `Instance ready to join ${groupName} - ${worldName}`,
+                    location: instanceId,
+                    groupName,
+                    worldName
+                };
+                $app.queueNotificationNoty(noty);
+                $app.notificationTable.data.push(noty);
+                $app.updateSharedFeed(true);
                 break;
 
             default:
@@ -4641,6 +4878,11 @@ speechSynthesis.getVoices();
             };
             socket.onmessage = ({ data }) => {
                 try {
+                    if (this.lastWebSocketMessage === data) {
+                        // pls no spam
+                        return;
+                    }
+                    this.lastWebSocketMessage = data;
                     var json = JSON.parse(data);
                     try {
                         json.content = JSON.parse(json.content);
@@ -4792,6 +5034,9 @@ speechSynthesis.getVoices();
         },
         methods: {
             update() {
+                if (!this.epoch) {
+                    this.text = '';
+                }
                 this.text = timeToText(Date.now() - this.epoch);
             }
         },
@@ -4881,6 +5126,7 @@ speechSynthesis.getVoices();
             API,
             nextCurrentUserRefresh: 0,
             nextFriendsRefresh: 0,
+            nextGroupInstanceRefresh: 0,
             nextAppUpdateCheck: 7200,
             ipcTimeout: 0,
             nextClearVRCXCacheCheck: 0,
@@ -5003,7 +5249,10 @@ speechSynthesis.getVoices();
         if (!this.appVersion) {
             return;
         }
-        var lastVersion = configRepository.getString('VRCX_lastVRCXVersion');
+        var lastVersion = configRepository.getString(
+            'VRCX_lastVRCXVersion',
+            ''
+        );
         if (!lastVersion) {
             configRepository.setString('VRCX_lastVRCXVersion', this.appVersion);
             return;
@@ -5054,6 +5303,13 @@ speechSynthesis.getVoices();
                     API.getCurrentUser().catch((err1) => {
                         throw err1;
                     });
+                    AppApi.CheckGameRunning();
+                }
+                if (--this.nextGroupInstanceRefresh <= 0) {
+                    if (this.friendLogInitStatus) {
+                        this.nextGroupInstanceRefresh = 600; // 5min
+                        API.getUsersGroupInstances();
+                    }
                 }
                 if (--this.nextAppUpdateCheck <= 0) {
                     if (this.branch === 'Stable') {
@@ -5942,7 +6198,8 @@ speechSynthesis.getVoices();
                 this.speak(
                     `${noty.displayName} is in ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`
                 );
                 break;
@@ -5951,7 +6208,8 @@ speechSynthesis.getVoices();
                 if (noty.worldName) {
                     locationName = ` to ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`;
                 }
                 this.speak(`${noty.displayName} has logged in${locationName}`);
@@ -5970,7 +6228,8 @@ speechSynthesis.getVoices();
                         noty.senderUsername
                     } has invited you to ${this.displayLocation(
                         noty.details.worldId,
-                        noty.details.worldName
+                        noty.details.worldName,
+                        noty.groupName
                     )}${message}`
                 );
                 break;
@@ -6022,6 +6281,9 @@ speechSynthesis.getVoices();
             case 'group.joinRequest':
                 this.speak(noty.message);
                 break;
+            case 'group.queueReady':
+                this.speak(noty.message);
+                break;
             case 'PortalSpawn':
                 if (noty.displayName) {
                     this.speak(
@@ -6029,7 +6291,8 @@ speechSynthesis.getVoices();
                             noty.displayName
                         } has spawned a portal to ${this.displayLocation(
                             noty.instanceId,
-                            noty.worldName
+                            noty.worldName,
+                            noty.groupName
                         )}`
                     );
                 } else {
@@ -6109,7 +6372,8 @@ speechSynthesis.getVoices();
                     'VRCX',
                     `${noty.displayName} is in ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`,
                     timeout,
                     image
@@ -6120,7 +6384,8 @@ speechSynthesis.getVoices();
                 if (noty.worldName) {
                     locationName = ` to ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`;
                 }
                 AppApi.XSNotification(
@@ -6235,6 +6500,9 @@ speechSynthesis.getVoices();
             case 'group.joinRequest':
                 AppApi.XSNotification('VRCX', noty.message, timeout, image);
                 break;
+            case 'group.queueReady':
+                AppApi.XSNotification('VRCX', noty.message, timeout, image);
+                break;
             case 'PortalSpawn':
                 if (noty.displayName) {
                     AppApi.XSNotification(
@@ -6243,7 +6511,8 @@ speechSynthesis.getVoices();
                             noty.displayName
                         } has spawned a portal to ${this.displayLocation(
                             noty.instanceId,
-                            noty.worldName
+                            noty.worldName,
+                            noty.groupName
                         )}`,
                         timeout,
                         image
@@ -6375,7 +6644,8 @@ speechSynthesis.getVoices();
                     noty.displayName,
                     `is in ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`,
                     image
                 );
@@ -6385,7 +6655,8 @@ speechSynthesis.getVoices();
                 if (noty.worldName) {
                     locationName = ` to ${this.displayLocation(
                         noty.location,
-                        noty.worldName
+                        noty.worldName,
+                        noty.groupName
                     )}`;
                 }
                 AppApi.DesktopNotification(
@@ -6498,13 +6769,21 @@ speechSynthesis.getVoices();
                     image
                 );
                 break;
+            case 'group.queueReady':
+                AppApi.DesktopNotification(
+                    'Instance Queue Ready',
+                    noty.message,
+                    image
+                );
+                break;
             case 'PortalSpawn':
                 if (noty.displayName) {
                     AppApi.DesktopNotification(
                         noty.displayName,
                         `has spawned a portal to ${this.displayLocation(
                             noty.instanceId,
-                            noty.worldName
+                            noty.worldName,
+                            noty.groupName
                         )}`,
                         image
                     );
@@ -6595,7 +6874,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.displayLocation = function (location, worldName) {
+    $app.methods.displayLocation = function (location, worldName, groupName) {
         var text = worldName;
         var L = API.parseLocation(location);
         if (L.isOffline) {
@@ -6605,8 +6884,10 @@ speechSynthesis.getVoices();
         } else if (L.isTraveling) {
             text = 'Traveling';
         } else if (L.worldId) {
-            if (L.instanceId) {
-                text = `${worldName} ${L.accessType}`;
+            if (groupName) {
+                text = `${worldName} ${L.accessTypeName}(${groupName})`;
+            } else if (L.instanceId) {
+                text = `${worldName} ${L.accessTypeName}`;
             }
         }
         return text;
@@ -6920,7 +7201,8 @@ speechSynthesis.getVoices();
     };
 
     $app.data.enablePrimaryPassword = configRepository.getBool(
-        'enablePrimaryPassword'
+        'enablePrimaryPassword',
+        false
     );
     $app.data.enablePrimaryPasswordDialog = {
         visible: false,
@@ -7408,6 +7690,8 @@ speechSynthesis.getVoices();
     $app.data.isFriendsGroup1 = true;
     $app.data.isFriendsGroup2 = true;
     $app.data.isFriendsGroup3 = false;
+    $app.data.isGroupInstances = false;
+    $app.data.groupInstances = [];
     $app.data.friendsGroup0_ = [];
     $app.data.friendsGroup1_ = [];
     $app.data.friendsGroup2_ = [];
@@ -7420,43 +7704,6 @@ speechSynthesis.getVoices();
     $app.data.sortFriendsGroup1 = false;
     $app.data.sortFriendsGroup2 = false;
     $app.data.sortFriendsGroup3 = false;
-    $app.data.orderFriendsGroup0 =
-        configRepository.getBool('orderFriendGroup0');
-    $app.data.orderFriendsGroup1 =
-        configRepository.getBool('orderFriendGroup1');
-    $app.data.orderFriendsGroup2 =
-        configRepository.getBool('orderFriendGroup2');
-    $app.data.orderFriendsGroup3 =
-        configRepository.getBool('orderFriendGroup3');
-    $app.data.orderFriendsGroupPrivate = configRepository.getBool(
-        'orderFriendGroupPrivate'
-    );
-    $app.data.orderFriendsGroupStatus = configRepository.getBool(
-        'orderFriendsGroupStatus'
-    );
-    $app.data.orderFriendsGroupGPS = configRepository.getBool(
-        'orderFriendGroupGPS'
-    );
-    $app.methods.saveOrderFriendGroup = function () {
-        configRepository.setBool('orderFriendGroup0', this.orderFriendsGroup0);
-        configRepository.setBool('orderFriendGroup1', this.orderFriendsGroup1);
-        configRepository.setBool('orderFriendGroup2', this.orderFriendsGroup2);
-        configRepository.setBool('orderFriendGroup3', this.orderFriendsGroup3);
-        configRepository.setBool(
-            'orderFriendGroupPrivate',
-            this.orderFriendsGroupPrivate
-        );
-        configRepository.setBool(
-            'orderFriendsGroupStatus',
-            this.orderFriendsGroupStatus
-        );
-        configRepository.setBool(
-            'orderFriendGroupGPS',
-            this.orderFriendsGroupGPS
-        );
-        this.sortFriendsGroup0 = true;
-        this.sortFriendsGroup1 = true;
-    };
 
     $app.methods.fetchActiveFriend = function (userId) {
         this.pendingActiveFriends.add(userId);
@@ -8299,11 +8546,11 @@ speechSynthesis.getVoices();
             } else if (user.userId) {
                 id = user.userId;
             }
-            if (id && id === API.currentUser.id) {
+            if (id === API.currentUser.id) {
                 return this.statusClass(user.status);
             }
             if (!user.isFriend) {
-                return '';
+                return style;
             }
             if (pendingOffline) {
                 // Pending offline
@@ -8323,12 +8570,12 @@ speechSynthesis.getVoices();
                     // Offline
                     style.offline = true;
                 }
-            } else if (user.location === 'offline') {
-                // Offline
-                style.offline = true;
             } else if (user.state === 'active') {
                 // Active
                 style.active = true;
+            } else if (user.location === 'offline') {
+                // Offline
+                style.offline = true;
             } else if (user.status === 'active') {
                 // Online
                 style.online = true;
@@ -8501,6 +8748,12 @@ speechSynthesis.getVoices();
         if (!value) {
             return true;
         }
+        if (
+            value.startsWith('wrld_') &&
+            String(row.location).toUpperCase().includes(value)
+        ) {
+            return true;
+        }
         switch (row.type) {
             case 'GPS':
                 if (String(row.displayName).toUpperCase().includes(value)) {
@@ -8562,10 +8815,7 @@ speechSynthesis.getVoices();
         return true;
     };
 
-    $app.data.tablePageSize = 10;
-    if (configRepository.getInt('VRCX_tablePageSize')) {
-        $app.data.tablePageSize = configRepository.getInt('VRCX_tablePageSize');
-    }
+    $app.data.tablePageSize = configRepository.getInt('VRCX_tablePageSize', 15);
 
     $app.data.feedTable = {
         data: [],
@@ -8637,6 +8887,7 @@ speechSynthesis.getVoices();
         // eslint-disable-next-line require-atomic-updates
         $app.notificationTable.data = await database.getNotifications();
         await this.refreshNotifications();
+        await $app.getCurrentUserGroups();
         if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
             await $app.getFriendLog();
         } else {
@@ -8647,6 +8898,7 @@ speechSynthesis.getVoices();
                 throw err;
             }
         }
+        $app.getAvatarHistory();
         $app.getAllMemos();
         if ($app.randomUserColours) {
             $app.getNameColour(this.currentUser.id).then((colour) => {
@@ -8746,6 +8998,12 @@ speechSynthesis.getVoices();
         if (props.location && ref.id === $app.userDialog.id) {
             // update user dialog instance occupants
             $app.applyUserDialogLocation(true);
+        }
+        if (props.location && ref.$location.worldId === $app.worldDialog.id) {
+            $app.applyWorldDialogInstances();
+        }
+        if (props.location && ref.$location.groupId === $app.groupDialog.id) {
+            $app.applyGroupDialogInstances();
         }
         if (
             props.location &&
@@ -9035,11 +9293,11 @@ speechSynthesis.getVoices();
         this.photonLobbyAvatars = new Map();
         this.photonLobbyLastModeration = new Map();
         this.photonLobbyJointime = new Map();
+        this.photonLobbyActivePortals = new Map();
         this.photonEvent7List = new Map();
         this.photonLastEvent7List = '';
         this.photonLastChatBoxMsg = new Map();
         this.moderationEventQueue = new Map();
-        this.lastPortalList = new Map();
         if (this.photonEventTable.data.length > 0) {
             this.photonEventTablePrevious.data = this.photonEventTable.data;
             this.photonEventTable.data = [];
@@ -9096,25 +9354,16 @@ speechSynthesis.getVoices();
         statusName: '',
         statusImage: ''
     };
-    $app.data.discordActive = configRepository.getBool('discordActive');
-    $app.data.discordInstance = configRepository.getBool('discordInstance');
-    $app.data.discordJoinButton = configRepository.getBool('discordJoinButton');
-    $app.data.discordHideInvite = configRepository.getBool('discordHideInvite');
-    $app.data.discordHideImage = configRepository.getBool('discordHideImage');
-    $app.methods.saveDiscordOption = function () {
-        configRepository.setBool('discordActive', this.discordActive);
-        configRepository.setBool('discordInstance', this.discordInstance);
-        configRepository.setBool('discordJoinButton', this.discordJoinButton);
-        configRepository.setBool('discordHideInvite', this.discordHideInvite);
-        configRepository.setBool('discordHideImage', this.discordHideImage);
-        this.lastLocation$.tag = '';
-        this.nextDiscordUpdate = 7;
-        this.updateDiscord();
-    };
 
     $app.methods.gameLogSearch = function (row) {
         var value = this.gameLogTable.search.toUpperCase();
         if (!value) {
+            return true;
+        }
+        if (
+            value.startsWith('wrld_') &&
+            String(row.location).toUpperCase().includes(value)
+        ) {
             return true;
         }
         switch (row.type) {
@@ -9702,7 +9951,6 @@ speechSynthesis.getVoices();
         database.addGamelogLocationToDatabase(entry);
     };
 
-    $app.data.lastPortalList = new Map();
     $app.data.moderationEventQueue = new Map();
     $app.data.moderationAgainstTable = [];
     $app.data.photonLobby = new Map();
@@ -9715,6 +9963,7 @@ speechSynthesis.getVoices();
     $app.data.photonLobbyWatcherLoop = false;
     $app.data.photonLobbyTimeout = [];
     $app.data.photonLobbyJointime = new Map();
+    $app.data.photonLobbyActivePortals = new Map();
     $app.data.photonEvent7List = new Map();
     $app.data.photonLastEvent7List = '';
     $app.data.photonLastChatBoxMsg = new Map();
@@ -9857,8 +10106,8 @@ speechSynthesis.getVoices();
                 if (!joinTime) {
                     console.log(`${id} missing join time`);
                 }
-                if (joinTime && joinTime + 120000 < dtNow) {
-                    // wait 2mins for user to load in
+                if (joinTime && joinTime + 40000 < dtNow) {
+                    // wait 40secs for user to load in
                     hudTimeout.unshift({
                         userId: this.getUserIdFromPhotonId(id),
                         displayName: this.getDisplayNameFromPhotonId(id),
@@ -10401,6 +10650,15 @@ speechSynthesis.getVoices();
                             }
                         });
                     }
+                } else if (data.Parameters[245]['0'] === 13) {
+                    var msg = data.Parameters[245]['2'];
+                    this.addEntryPhotonEvent({
+                        photonId,
+                        text: msg,
+                        type: 'Moderation',
+                        color: 'yellow',
+                        created_at: gameLogDate
+                    });
                 }
                 break;
             case 202:
@@ -10468,23 +10726,52 @@ speechSynthesis.getVoices();
                     var userId = data.Parameters[245][2];
                     var shortName = data.Parameters[245][5];
                     var worldName = data.Parameters[245][8].name;
-                    this.lastPortalList.set(portalId, Date.parse(gameLogDate));
                     this.addPhotonPortalSpawn(
                         gameLogDate,
                         userId,
                         shortName,
                         worldName
                     );
+                    this.photonLobbyActivePortals.set(portalId, {
+                        userId,
+                        shortName,
+                        worldName,
+                        created_at: Date.parse(gameLogDate),
+                        playerCount: 0,
+                        pendingLeave: 0
+                    });
                 } else if (data.Parameters[245][0] === 22) {
                     var portalId = data.Parameters[245][1];
-                    var date = this.lastPortalList.get(portalId);
-                    var time = timeToText(Date.parse(gameLogDate) - date);
+                    var text = 'DeletedPortal';
+                    var ref = this.photonLobbyActivePortals.get(portalId);
+                    if (typeof ref !== 'undefined') {
+                        var worldName = ref.worldName;
+                        var playerCount = ref.playerCount;
+                        var time = timeToText(
+                            Date.parse(gameLogDate) - ref.created_at
+                        );
+                        text = `DeletedPortal after ${time} with ${playerCount} players to "${worldName}"`;
+                    }
                     this.addEntryPhotonEvent({
-                        text: `DeletedPortal ${time}`,
+                        text,
                         type: 'DeletedPortal',
                         created_at: gameLogDate
                     });
-                    this.lastPortalList.delete(portalId);
+                    this.photonLobbyActivePortals.delete(portalId);
+                } else if (data.Parameters[245][0] === 23) {
+                    var portalId = data.Parameters[245][1];
+                    var playerCount = data.Parameters[245][3];
+                    var ref = this.photonLobbyActivePortals.get(portalId);
+                    if (typeof ref !== 'undefined') {
+                        ref.pendingLeave++;
+                        ref.playerCount = playerCount;
+                    }
+                } else if (data.Parameters[245][0] === 24) {
+                    this.addEntryPhotonEvent({
+                        text: 'PortalError failed to create portal',
+                        type: 'DeletedPortal',
+                        created_at: gameLogDate
+                    });
                 }
                 break;
         }
@@ -10873,6 +11160,9 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.photonUserLeave = function (photonId, gameLogDate) {
+        if (!this.photonLobbyCurrent.has(photonId)) {
+            return;
+        }
         var text = 'has left';
         var lastEvent = this.photonEvent7List.get(parseInt(photonId, 10));
         if (typeof lastEvent !== 'undefined') {
@@ -10882,6 +11172,12 @@ speechSynthesis.getVoices();
                 text = `has timed out after ${timeToText(timeSinceLastEvent)}`;
             }
         }
+        this.photonLobbyActivePortals.forEach((portal) => {
+            if (portal.pendingLeave > 0) {
+                text = `has left through portal to "${portal.worldName}"`;
+                portal.pendingLeave--;
+            }
+        });
         this.addEntryPhotonEvent({
             photonId,
             text,
@@ -11687,6 +11983,14 @@ speechSynthesis.getVoices();
                 } else {
                     var platform = 'VR';
                 }
+                var groupAccessType = '';
+                if (L.groupAccessType) {
+                    if (L.groupAccessType === 'public') {
+                        groupAccessType = 'Public';
+                    } else if (L.groupAccessType === 'plus') {
+                        groupAccessType = 'Plus';
+                    }
+                }
                 switch (L.accessType) {
                     case 'public':
                         L.joinUrl = this.getLaunchURL(L);
@@ -11708,7 +12012,7 @@ speechSynthesis.getVoices();
                         L.accessName = `Group #${L.instanceName} (${platform})`;
                         this.getGroupName(L.groupId).then((groupName) => {
                             if (groupName) {
-                                L.accessName = `Group(${groupName}) #${L.instanceName} (${platform})`;
+                                L.accessName = `Group${groupAccessType}(${groupName}) #${L.instanceName} (${platform})`;
                             }
                         });
                         break;
@@ -11893,9 +12197,12 @@ speechSynthesis.getVoices();
     $app.data.searchAvatarFilter = '';
     $app.data.searchAvatarSort = '';
     $app.data.searchAvatarFilterRemote = '';
+    $app.data.searchGroupResults = [];
+    $app.data.searchGroupParams = {};
     $app.data.isSearchUserLoading = false;
     $app.data.isSearchWorldLoading = false;
     $app.data.isSearchAvatarLoading = false;
+    $app.data.isSearchGroupLoading = false;
 
     API.$on('LOGIN', function () {
         $app.searchText = '';
@@ -11910,6 +12217,8 @@ speechSynthesis.getVoices();
         $app.searchAvatarFilter = '';
         $app.searchAvatarSort = '';
         $app.searchAvatarFilterRemote = '';
+        $app.searchGroupResults = [];
+        $app.searchGroupParams = {};
         $app.isSearchUserLoading = false;
         $app.isSearchWorldLoading = false;
         $app.isSearchAvatarLoading = false;
@@ -11924,6 +12233,8 @@ speechSynthesis.getVoices();
         this.searchAvatarResults = [];
         this.searchAvatarPage = [];
         this.searchAvatarPageNum = 0;
+        this.searchGroupParams = {};
+        this.searchGroupResults = [];
     };
 
     $app.methods.search = function () {
@@ -11936,6 +12247,9 @@ speechSynthesis.getVoices();
                 break;
             case '2':
                 this.searchAvatar();
+                break;
+            case '3':
+                this.searchGroup();
                 break;
         }
     };
@@ -12183,6 +12497,41 @@ speechSynthesis.getVoices();
             offset,
             offset + 10
         );
+    };
+
+    $app.methods.searchGroup = async function () {
+        this.searchGroupParams = {
+            n: 10,
+            offset: 0,
+            query: this.replaceBioSymbols(this.searchText)
+        };
+        await this.moreSearchGroup();
+    };
+
+    $app.methods.moreSearchGroup = async function (go) {
+        var params = this.searchGroupParams;
+        if (go) {
+            params.offset += params.n * go;
+            if (params.offset < 0) {
+                params.offset = 0;
+            }
+        }
+        this.isSearchGroupLoading = true;
+        await API.groupSearch(params)
+            .finally(() => {
+                this.isSearchGroupLoading = false;
+            })
+            .then((args) => {
+                var map = new Map();
+                for (var json of args.json) {
+                    var ref = API.cachedGroups.get(json.id);
+                    if (typeof ref !== 'undefined') {
+                        map.set(ref.id, ref);
+                    }
+                }
+                this.searchGroupResults = Array.from(map.values());
+                return args;
+            });
     };
 
     // #endregion
@@ -13079,48 +13428,35 @@ speechSynthesis.getVoices();
             JSON.stringify(this.notificationTable.filters[0].value)
         );
     };
-    if (configRepository.getString('VRCX_feedTableFilters')) {
-        $app.data.feedTable.filter = JSON.parse(
-            configRepository.getString('VRCX_feedTableFilters')
-        );
-        $app.data.feedTable.vip = configRepository.getBool(
-            'VRCX_feedTableVIPFilter'
-        );
-    }
-    if (configRepository.getString('VRCX_gameLogTableFilters')) {
-        $app.data.gameLogTable.filter = JSON.parse(
-            configRepository.getString('VRCX_gameLogTableFilters')
-        );
-    }
-    if (configRepository.getString('VRCX_friendLogTableFilters')) {
-        $app.data.friendLogTable.filters[0].value = JSON.parse(
-            configRepository.getString('VRCX_friendLogTableFilters')
-        );
-    }
-    if (configRepository.getString('VRCX_playerModerationTableFilters')) {
-        $app.data.playerModerationTable.filters[0].value = JSON.parse(
-            configRepository.getString('VRCX_playerModerationTableFilters')
-        );
-    }
-    if (configRepository.getString('VRCX_notificationTableFilters')) {
-        $app.data.notificationTable.filters[0].value = JSON.parse(
-            configRepository.getString('VRCX_notificationTableFilters')
-        );
-    }
-    if (configRepository.getString('VRCX_photonEventTypeFilter')) {
-        $app.data.photonEventTableTypeFilter = JSON.parse(
-            configRepository.getString('VRCX_photonEventTypeFilter')
-        );
-        $app.data.photonEventTable.filters[1].value =
-            $app.data.photonEventTableTypeFilter;
-        $app.data.photonEventTablePrevious.filters[1].value =
-            $app.data.photonEventTableTypeFilter;
-    }
-    if (configRepository.getString('VRCX_photonEventTypeOverlayFilter')) {
-        $app.data.photonEventTableTypeOverlayFilter = JSON.parse(
-            configRepository.getString('VRCX_photonEventTypeOverlayFilter')
-        );
-    }
+    $app.data.feedTable.filter = JSON.parse(
+        configRepository.getString('VRCX_feedTableFilters', '[]')
+    );
+    $app.data.feedTable.vip = configRepository.getBool(
+        'VRCX_feedTableVIPFilter',
+        false
+    );
+    $app.data.gameLogTable.filter = JSON.parse(
+        configRepository.getString('VRCX_gameLogTableFilters', '[]')
+    );
+    $app.data.friendLogTable.filters[0].value = JSON.parse(
+        configRepository.getString('VRCX_friendLogTableFilters', '[]')
+    );
+    $app.data.playerModerationTable.filters[0].value = JSON.parse(
+        configRepository.getString('VRCX_playerModerationTableFilters', '[]')
+    );
+    $app.data.notificationTable.filters[0].value = JSON.parse(
+        configRepository.getString('VRCX_notificationTableFilters', '[]')
+    );
+    $app.data.photonEventTableTypeFilter = JSON.parse(
+        configRepository.getString('VRCX_photonEventTypeFilter', '[]')
+    );
+    $app.data.photonEventTable.filters[1].value =
+        $app.data.photonEventTableTypeFilter;
+    $app.data.photonEventTablePrevious.filters[1].value =
+        $app.data.photonEventTableTypeFilter;
+    $app.data.photonEventTableTypeOverlayFilter = JSON.parse(
+        configRepository.getString('VRCX_photonEventTypeOverlayFilter', '[]')
+    );
 
     // #endregion
     // #region | App: Profile + Settings
@@ -13237,100 +13573,125 @@ speechSynthesis.getVoices();
         layout: 'table'
     };
     $app.data.visits = 0;
-    $app.data.openVR = configRepository.getBool('openVR');
-    $app.data.openVRAlways = configRepository.getBool('openVRAlways');
-    $app.data.overlaybutton = configRepository.getBool('VRCX_overlaybutton');
-    $app.data.overlayHand = configRepository.getInt('VRCX_overlayHand');
-    if (typeof $app.data.overlayHand !== 'number') {
-        $app.data.overlayHand = 0;
-    }
+    $app.data.openVR = configRepository.getBool('openVR', false);
+    $app.data.openVRAlways = configRepository.getBool('openVRAlways', false);
+    $app.data.overlaybutton = configRepository.getBool(
+        'VRCX_overlaybutton',
+        false
+    );
+    $app.data.overlayHand = configRepository.getInt('VRCX_overlayHand', 0);
     $app.data.hidePrivateFromFeed = configRepository.getBool(
-        'VRCX_hidePrivateFromFeed'
+        'VRCX_hidePrivateFromFeed',
+        false
     );
     $app.data.hideDevicesFromFeed = configRepository.getBool(
-        'VRCX_hideDevicesFromFeed'
+        'VRCX_hideDevicesFromFeed',
+        false
     );
     $app.data.hideCpuUsageFromFeed = configRepository.getBool(
-        'VRCX_hideCpuUsageFromFeed'
+        'VRCX_hideCpuUsageFromFeed',
+        false
     );
     $app.data.hideUptimeFromFeed = configRepository.getBool(
-        'VRCX_hideUptimeFromFeed'
+        'VRCX_hideUptimeFromFeed',
+        false
     );
-    $app.data.pcUptimeOnFeed = configRepository.getBool('VRCX_pcUptimeOnFeed');
+    $app.data.pcUptimeOnFeed = configRepository.getBool(
+        'VRCX_pcUptimeOnFeed',
+        false
+    );
     $app.data.overlayNotifications = configRepository.getBool(
-        'VRCX_overlayNotifications'
+        'VRCX_overlayNotifications',
+        true
     );
-    $app.data.overlayWrist = configRepository.getBool('VRCX_overlayWrist');
+    $app.data.overlayWrist = configRepository.getBool(
+        'VRCX_overlayWrist',
+        false
+    );
     $app.data.xsNotifications = configRepository.getBool(
-        'VRCX_xsNotifications'
+        'VRCX_xsNotifications',
+        true
     );
     $app.data.imageNotifications = configRepository.getBool(
-        'VRCX_imageNotifications'
+        'VRCX_imageNotifications',
+        true
     );
-    $app.data.desktopToast = configRepository.getString('VRCX_desktopToast');
-    $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed');
+    $app.data.desktopToast = configRepository.getString(
+        'VRCX_desktopToast',
+        'Never'
+    );
+    $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed', false);
     $app.data.displayVRCPlusIconsAsAvatar = configRepository.getBool(
-        'displayVRCPlusIconsAsAvatar'
+        'displayVRCPlusIconsAsAvatar',
+        true
     );
-    $app.data.hideTooltips = configRepository.getBool('VRCX_hideTooltips');
+    $app.data.hideTooltips = configRepository.getBool(
+        'VRCX_hideTooltips',
+        false
+    );
     $app.data.notificationTTS = configRepository.getString(
-        'VRCX_notificationTTS'
+        'VRCX_notificationTTS',
+        'Never'
     );
     $app.data.notificationTTSVoice = configRepository.getString(
-        'VRCX_notificationTTSVoice'
+        'VRCX_notificationTTSVoice',
+        '0'
     );
     $app.data.notificationTimeout = configRepository.getString(
-        'VRCX_notificationTimeout'
+        'VRCX_notificationTimeout',
+        '3000'
     );
     $app.data.autoSweepVRChatCache = configRepository.getBool(
-        'VRCX_autoSweepVRChatCache'
+        'VRCX_autoSweepVRChatCache',
+        false
     );
     $app.data.relaunchVRChatAfterCrash = configRepository.getBool(
-        'VRCX_relaunchVRChatAfterCrash'
+        'VRCX_relaunchVRChatAfterCrash',
+        false
     );
-    $app.data.vrcQuitFix = configRepository.getBool('VRCX_vrcQuitFix');
+    $app.data.vrcQuitFix = configRepository.getBool('VRCX_vrcQuitFix', true);
     $app.data.vrBackgroundEnabled = configRepository.getBool(
-        'VRCX_vrBackgroundEnabled'
+        'VRCX_vrBackgroundEnabled',
+        false
     );
-    $app.data.asideWidth = configRepository.getInt('VRCX_asidewidth');
+    $app.data.asideWidth = configRepository.getInt('VRCX_asidewidth', 350);
+    if ($app.data.asideWidth === 236) {
+        $app.data.asideWidth = 350;
+        configRepository.setInt('VRCX_asidewidth', $app.data.asideWidth);
+    }
     $app.data.autoUpdateVRCX = configRepository.getString(
-        'VRCX_autoUpdateVRCX'
+        'VRCX_autoUpdateVRCX',
+        'Auto Download'
     );
-    $app.data.branch = configRepository.getString('VRCX_branch');
-    $app.data.maxTableSize = configRepository.getInt('VRCX_maxTableSize');
+    $app.data.branch = configRepository.getString('VRCX_branch', 'Stable');
+    $app.data.maxTableSize = configRepository.getInt('VRCX_maxTableSize', 1000);
     if ($app.data.maxTableSize > 10000) {
         $app.data.maxTableSize = 1000;
     }
     database.setmaxTableSize($app.data.maxTableSize);
     $app.data.photonLobbyTimeoutThreshold = configRepository.getString(
-        'VRCX_photonLobbyTimeoutThreshold'
+        'VRCX_photonLobbyTimeoutThreshold',
+        6000
     );
     $app.data.clearVRCXCacheFrequency = configRepository.getString(
-        'VRCX_clearVRCXCacheFrequency'
-    );
-    $app.data.nextClearVRCXCacheCheck = configRepository.getString(
-        'VRCX_clearVRCXCacheFrequency'
+        'VRCX_clearVRCXCacheFrequency',
+        '172800'
     );
     $app.data.avatarRemoteDatabase = configRepository.getBool(
-        'VRCX_avatarRemoteDatabase'
+        'VRCX_avatarRemoteDatabase',
+        true
     );
     $app.data.avatarRemoteDatabaseProvider = '';
-    $app.data.avatarRemoteDatabaseProviderList = [];
-    if (configRepository.getString('VRCX_avatarRemoteDatabaseProviderList')) {
-        $app.data.avatarRemoteDatabaseProviderList = JSON.parse(
-            configRepository.getString('VRCX_avatarRemoteDatabaseProviderList')
-        );
-    }
-    $app.data.pendingOfflineDelay = configRepository.getInt(
-        'VRCX_pendingOfflineDelay'
+    $app.data.avatarRemoteDatabaseProviderList = JSON.parse(
+        configRepository.getString(
+            'VRCX_avatarRemoteDatabaseProviderList',
+            '[]'
+        )
     );
-    if (!configRepository.getInt('VRCX_pendingOfflineDelay')) {
-        $app.data.pendingOfflineDelay = 110000;
-        configRepository.setInt(
-            'VRCX_pendingOfflineDelay',
-            $app.data.pendingOfflineDelay
-        );
-    }
+    $app.data.pendingOfflineDelay = configRepository.getInt(
+        'VRCX_pendingOfflineDelay',
+        110000
+    );
     if (configRepository.getString('VRCX_avatarRemoteDatabaseProvider')) {
         // move existing provider to new list
         var avatarRemoteDatabaseProvider = configRepository.getString(
@@ -13355,12 +13716,22 @@ speechSynthesis.getVoices();
         $app.data.avatarRemoteDatabaseProvider =
             $app.data.avatarRemoteDatabaseProviderList[0];
     }
-    $app.data.sortFavorites = configRepository.getBool('VRCX_sortFavorites');
-    $app.data.randomUserColours = configRepository.getBool(
-        'VRCX_randomUserColours'
+    $app.data.sortFavorites = configRepository.getBool(
+        'VRCX_sortFavorites',
+        true
     );
-    $app.data.hideUserNotes = configRepository.getBool('VRCX_hideUserNotes');
-    $app.data.hideUserMemos = configRepository.getBool('VRCX_hideUserMemos');
+    $app.data.randomUserColours = configRepository.getBool(
+        'VRCX_randomUserColours',
+        false
+    );
+    $app.data.hideUserNotes = configRepository.getBool(
+        'VRCX_hideUserNotes',
+        false
+    );
+    $app.data.hideUserMemos = configRepository.getBool(
+        'VRCX_hideUserMemos',
+        false
+    );
     $app.methods.saveOpenVROption = function () {
         configRepository.setBool('openVR', this.openVR);
         configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -13462,10 +13833,10 @@ speechSynthesis.getVoices();
         );
         this.updateVRConfigVars();
     };
-    $app.data.themeMode = configRepository.getString('VRCX_ThemeMode');
-    if (!$app.data.themeMode) {
-        $app.data.themeMode = 'system';
-    }
+    $app.data.themeMode = configRepository.getString(
+        'VRCX_ThemeMode',
+        'system'
+    );
     var systemIsDarkMode = () =>
         window.matchMedia('(prefers-color-scheme: dark)').matches;
     $app.data.isDarkMode =
@@ -13503,7 +13874,8 @@ speechSynthesis.getVoices();
         }
     };
     $app.data.isStartAtWindowsStartup = configRepository.getBool(
-        'VRCX_StartAtWindowsStartup'
+        'VRCX_StartAtWindowsStartup',
+        false
     );
     $app.data.isStartAsMinimizedState = false;
     $app.data.isCloseToTray = false;
@@ -13537,29 +13909,36 @@ speechSynthesis.getVoices();
         AppApi.SetStartup(this.isStartAtWindowsStartup);
     };
     $app.data.photonEventOverlay = configRepository.getBool(
-        'VRCX_PhotonEventOverlay'
+        'VRCX_PhotonEventOverlay',
+        false
     );
     $app.data.timeoutHudOverlay = configRepository.getBool(
-        'VRCX_TimeoutHudOverlay'
+        'VRCX_TimeoutHudOverlay',
+        false
     );
     $app.data.timeoutHudOverlayFilter = configRepository.getString(
-        'VRCX_TimeoutHudOverlayFilter'
+        'VRCX_TimeoutHudOverlayFilter',
+        'Everyone'
     );
     $app.data.photonEventOverlayFilter = configRepository.getString(
-        'VRCX_PhotonEventOverlayFilter'
+        'VRCX_PhotonEventOverlayFilter',
+        'Everyone'
     );
     $app.data.photonOverlayMessageTimeout = Number(
-        configRepository.getString('VRCX_photonOverlayMessageTimeout')
+        configRepository.getString('VRCX_photonOverlayMessageTimeout', 6000)
     );
     $app.data.photonLoggingEnabled = false;
     $app.data.gameLogDisabled = configRepository.getBool(
-        'VRCX_gameLogDisabled'
+        'VRCX_gameLogDisabled',
+        false
     );
     $app.data.udonExceptionLogging = configRepository.getBool(
-        'VRCX_udonExceptionLogging'
+        'VRCX_udonExceptionLogging',
+        false
     );
     $app.data.instanceUsersSortAlphabetical = configRepository.getBool(
-        'VRCX_instanceUsersSortAlphabetical'
+        'VRCX_instanceUsersSortAlphabetical',
+        false
     );
     $app.methods.saveEventOverlay = function () {
         configRepository.setBool(
@@ -13582,198 +13961,173 @@ speechSynthesis.getVoices();
             AppApi.ExecuteVrOverlayFunction('updateHudTimeout', '[]');
         }
         this.updateOpenVR();
+        this.updateVRConfigVars();
     };
     $app.data.logResourceLoad = configRepository.getBool(
-        'VRCX_logResourceLoad'
+        'VRCX_logResourceLoad',
+        false
     );
     $app.methods.saveGameLogOptions = function () {
         configRepository.setBool('VRCX_logResourceLoad', this.logResourceLoad);
     };
+    $app.data.orderFriendsGroup0 = configRepository.getBool(
+        'orderFriendGroup0',
+        true
+    );
+    $app.data.orderFriendsGroup1 = configRepository.getBool(
+        'orderFriendGroup1',
+        true
+    );
+    $app.data.orderFriendsGroup2 = configRepository.getBool(
+        'orderFriendGroup2',
+        true
+    );
+    $app.data.orderFriendsGroup3 = configRepository.getBool(
+        'orderFriendGroup3',
+        true
+    );
+    $app.data.orderFriendsGroupPrivate = configRepository.getBool(
+        'orderFriendGroupPrivate',
+        false
+    );
+    $app.data.orderFriendsGroupStatus = configRepository.getBool(
+        'orderFriendsGroupStatus',
+        false
+    );
+    $app.data.orderFriendsGroupGPS = configRepository.getBool(
+        'orderFriendGroupGPS',
+        true
+    );
+    $app.methods.saveOrderFriendGroup = function () {
+        configRepository.setBool('orderFriendGroup0', this.orderFriendsGroup0);
+        configRepository.setBool('orderFriendGroup1', this.orderFriendsGroup1);
+        configRepository.setBool('orderFriendGroup2', this.orderFriendsGroup2);
+        configRepository.setBool('orderFriendGroup3', this.orderFriendsGroup3);
+        configRepository.setBool(
+            'orderFriendGroupPrivate',
+            this.orderFriendsGroupPrivate
+        );
+        configRepository.setBool(
+            'orderFriendsGroupStatus',
+            this.orderFriendsGroupStatus
+        );
+        configRepository.setBool(
+            'orderFriendGroupGPS',
+            this.orderFriendsGroupGPS
+        );
+        this.sortFriendsGroup0 = true;
+        this.sortFriendsGroup1 = true;
+    };
+    $app.data.discordActive = configRepository.getBool('discordActive', false);
+    $app.data.discordInstance = configRepository.getBool(
+        'discordInstance',
+        true
+    );
+    $app.data.discordJoinButton = configRepository.getBool(
+        'discordJoinButton',
+        false
+    );
+    $app.data.discordHideInvite = configRepository.getBool(
+        'discordHideInvite',
+        true
+    );
+    $app.data.discordHideImage = configRepository.getBool(
+        'discordHideImage',
+        false
+    );
+    $app.methods.saveDiscordOption = function () {
+        configRepository.setBool('discordActive', this.discordActive);
+        configRepository.setBool('discordInstance', this.discordInstance);
+        configRepository.setBool('discordJoinButton', this.discordJoinButton);
+        configRepository.setBool('discordHideInvite', this.discordHideInvite);
+        configRepository.setBool('discordHideImage', this.discordHideImage);
+        this.lastLocation$.tag = '';
+        this.nextDiscordUpdate = 7;
+        this.updateDiscord();
+    };
 
     // setting defaults
-    if (!configRepository.getString('VRCX_notificationPosition')) {
-        $app.data.notificationPosition = 'topCenter';
-        configRepository.setString(
-            'VRCX_notificationPosition',
-            $app.data.notificationPosition
-        );
-    }
-    if (!configRepository.getString('VRCX_notificationTimeout')) {
-        $app.data.notificationTimeout = 3000;
-        configRepository.setString(
-            'VRCX_notificationTimeout',
-            $app.data.notificationTimeout
-        );
-    }
-    if (!configRepository.getString('VRCX_notificationTTSVoice')) {
-        $app.data.notificationTTSVoice = '0';
-        configRepository.setString(
-            'VRCX_notificationTTSVoice',
-            $app.data.notificationTTSVoice
-        );
-    }
-    if (!configRepository.getString('VRCX_desktopToast')) {
-        $app.data.desktopToast = 'Never';
-        configRepository.setString('VRCX_desktopToast', $app.data.desktopToast);
-    }
-    if (!configRepository.getString('VRCX_notificationTTS')) {
-        $app.data.notificationTTS = 'Never';
-        configRepository.setString(
-            'VRCX_notificationTTS',
-            $app.data.notificationTTS
-        );
-    }
-    if (!configRepository.getBool('VRCX_vrBackgroundEnabled')) {
-        $app.data.vrBackgroundEnabled = false;
-        configRepository.setBool(
-            'VRCX_vrBackgroundEnabled',
-            $app.data.vrBackgroundEnabled
-        );
-    }
-    if (!configRepository.getInt('VRCX_asidewidth')) {
-        $app.data.asideWidth = 236;
-        configRepository.setInt('VRCX_asidewidth', $app.data.asideWidth);
-    }
-    if (!configRepository.getString('VRCX_autoUpdateVRCX')) {
-        $app.data.autoUpdateVRCX = 'Auto Download';
-        configRepository.setString(
-            'VRCX_autoUpdateVRCX',
-            $app.data.autoUpdateVRCX
-        );
-    }
-    if (!configRepository.getString('VRCX_branch')) {
-        $app.data.branch = 'Stable';
-        configRepository.setString('VRCX_branch', $app.data.branch);
-    }
-    if (!configRepository.getInt('VRCX_maxTableSize')) {
-        $app.data.maxTableSize = 1000;
-        configRepository.setInt('VRCX_maxTableSize', $app.data.maxTableSize);
-        database.setmaxTableSize($app.data.maxTableSize);
-    }
-    if (!configRepository.getString('VRCX_photonLobbyTimeoutThreshold')) {
-        $app.data.photonLobbyTimeoutThreshold = 3000;
-        configRepository.setString(
-            'VRCX_photonLobbyTimeoutThreshold',
-            $app.data.photonLobbyTimeoutThreshold
-        );
-    }
-    if (!configRepository.getString('VRCX_clearVRCXCacheFrequency')) {
-        $app.data.clearVRCXCacheFrequency = 172800; // 24 hours
-        configRepository.setString(
-            'VRCX_clearVRCXCacheFrequency',
-            $app.data.clearVRCXCacheFrequency
-        );
-    }
-    if (!configRepository.getString('VRCX_TimeoutHudOverlayFilter')) {
-        $app.data.timeoutHudOverlayFilter = 'Everyone';
-        configRepository.setString(
-            'VRCX_TimeoutHudOverlayFilter',
-            $app.data.timeoutHudOverlayFilter
-        );
-    }
-    if (!configRepository.getString('VRCX_PhotonEventOverlayFilter')) {
-        $app.data.photonEventOverlayFilter = 'Everyone';
-        configRepository.setString(
-            'VRCX_PhotonEventOverlayFilter',
-            $app.data.photonEventOverlayFilter
-        );
-    }
-    if (!configRepository.getString('VRCX_photonOverlayMessageTimeout')) {
-        $app.data.photonOverlayMessageTimeout = 6000;
-        configRepository.setString(
-            'VRCX_photonOverlayMessageTimeout',
-            $app.data.photonOverlayMessageTimeout
-        );
-    }
-    if (!configRepository.getBool('VRCX_instanceUsersSortAlphabetical')) {
-        $app.data.instanceUsersSortAlphabetical = false;
-        configRepository.setBool(
-            'VRCX_instanceUsersSortAlphabetical',
-            $app.data.instanceUsersSortAlphabetical
-        );
-    }
-    if (!configRepository.getString('sharedFeedFilters')) {
-        var sharedFeedFilters = {
-            noty: {
-                Location: 'Off',
-                OnPlayerJoined: 'VIP',
-                OnPlayerLeft: 'VIP',
-                OnPlayerJoining: 'VIP',
-                Online: 'VIP',
-                Offline: 'VIP',
-                GPS: 'Off',
-                Status: 'Off',
-                invite: 'Friends',
-                requestInvite: 'Friends',
-                inviteResponse: 'Friends',
-                requestInviteResponse: 'Friends',
-                friendRequest: 'On',
-                Friend: 'On',
-                Unfriend: 'On',
-                DisplayName: 'VIP',
-                TrustLevel: 'VIP',
-                'group.announcement': 'On',
-                'group.informative': 'On',
-                'group.invite': 'On',
-                'group.joinRequest': 'Off',
-                PortalSpawn: 'Everyone',
-                Event: 'On',
-                VideoPlay: 'Off',
-                BlockedOnPlayerJoined: 'Off',
-                BlockedOnPlayerLeft: 'Off',
-                MutedOnPlayerJoined: 'Off',
-                MutedOnPlayerLeft: 'Off',
-                AvatarChange: 'Off',
-                ChatBoxMessage: 'Off',
-                Blocked: 'Off',
-                Unblocked: 'Off',
-                Muted: 'Off',
-                Unmuted: 'Off'
-            },
-            wrist: {
-                Location: 'On',
-                OnPlayerJoined: 'Everyone',
-                OnPlayerLeft: 'Everyone',
-                OnPlayerJoining: 'Friends',
-                Online: 'Friends',
-                Offline: 'Friends',
-                GPS: 'Friends',
-                Status: 'Friends',
-                invite: 'Friends',
-                requestInvite: 'Friends',
-                inviteResponse: 'Friends',
-                requestInviteResponse: 'Friends',
-                friendRequest: 'On',
-                Friend: 'On',
-                Unfriend: 'On',
-                DisplayName: 'Friends',
-                TrustLevel: 'Friends',
-                'group.announcement': 'On',
-                'group.informative': 'On',
-                'group.invite': 'On',
-                'group.joinRequest': 'On',
-                PortalSpawn: 'Everyone',
-                Event: 'On',
-                VideoPlay: 'On',
-                BlockedOnPlayerJoined: 'Off',
-                BlockedOnPlayerLeft: 'Off',
-                MutedOnPlayerJoined: 'Off',
-                MutedOnPlayerLeft: 'Off',
-                AvatarChange: 'Everyone',
-                ChatBoxMessage: 'Off',
-                Blocked: 'On',
-                Unblocked: 'On',
-                Muted: 'On',
-                Unmuted: 'On'
-            }
-        };
-        configRepository.setString(
+    var sharedFeedFilters = {
+        noty: {
+            Location: 'Off',
+            OnPlayerJoined: 'VIP',
+            OnPlayerLeft: 'VIP',
+            OnPlayerJoining: 'VIP',
+            Online: 'VIP',
+            Offline: 'VIP',
+            GPS: 'Off',
+            Status: 'Off',
+            invite: 'Friends',
+            requestInvite: 'Friends',
+            inviteResponse: 'Friends',
+            requestInviteResponse: 'Friends',
+            friendRequest: 'On',
+            Friend: 'On',
+            Unfriend: 'On',
+            DisplayName: 'VIP',
+            TrustLevel: 'VIP',
+            'group.announcement': 'On',
+            'group.informative': 'On',
+            'group.invite': 'On',
+            'group.joinRequest': 'Off',
+            'group.queueReady': 'On',
+            PortalSpawn: 'Everyone',
+            Event: 'On',
+            VideoPlay: 'Off',
+            BlockedOnPlayerJoined: 'Off',
+            BlockedOnPlayerLeft: 'Off',
+            MutedOnPlayerJoined: 'Off',
+            MutedOnPlayerLeft: 'Off',
+            AvatarChange: 'Off',
+            ChatBoxMessage: 'Off',
+            Blocked: 'Off',
+            Unblocked: 'Off',
+            Muted: 'Off',
+            Unmuted: 'Off'
+        },
+        wrist: {
+            Location: 'On',
+            OnPlayerJoined: 'Everyone',
+            OnPlayerLeft: 'Everyone',
+            OnPlayerJoining: 'Friends',
+            Online: 'Friends',
+            Offline: 'Friends',
+            GPS: 'Friends',
+            Status: 'Friends',
+            invite: 'Friends',
+            requestInvite: 'Friends',
+            inviteResponse: 'Friends',
+            requestInviteResponse: 'Friends',
+            friendRequest: 'On',
+            Friend: 'On',
+            Unfriend: 'On',
+            DisplayName: 'Friends',
+            TrustLevel: 'Friends',
+            'group.announcement': 'On',
+            'group.informative': 'On',
+            'group.invite': 'On',
+            'group.joinRequest': 'On',
+            'group.queueReady': 'On',
+            PortalSpawn: 'Everyone',
+            Event: 'On',
+            VideoPlay: 'On',
+            BlockedOnPlayerJoined: 'Off',
+            BlockedOnPlayerLeft: 'Off',
+            MutedOnPlayerJoined: 'Off',
+            MutedOnPlayerLeft: 'Off',
+            AvatarChange: 'Everyone',
+            ChatBoxMessage: 'Off',
+            Blocked: 'On',
+            Unblocked: 'On',
+            Muted: 'On',
+            Unmuted: 'On'
+        }
+    };
+    $app.data.sharedFeedFilters = JSON.parse(
+        configRepository.getString(
             'sharedFeedFilters',
             JSON.stringify(sharedFeedFilters)
-        );
-    }
-    $app.data.sharedFeedFilters = JSON.parse(
-        configRepository.getString('sharedFeedFilters')
+        )
     );
     if (!$app.data.sharedFeedFilters.noty.Blocked) {
         $app.data.sharedFeedFilters.noty.Blocked = 'Off';
@@ -13795,9 +14149,13 @@ speechSynthesis.getVoices();
         $app.data.sharedFeedFilters.wrist['group.invite'] = 'On';
         $app.data.sharedFeedFilters.wrist['group.joinRequest'] = 'On';
     }
+    if (!$app.data.sharedFeedFilters.noty['group.queueReady']) {
+        $app.data.sharedFeedFilters.noty['group.queueReady'] = 'On';
+        $app.data.sharedFeedFilters.wrist['group.queueReady'] = 'On';
+    }
 
-    if (!configRepository.getString('VRCX_trustColor')) {
-        configRepository.setString(
+    $app.data.trustColor = JSON.parse(
+        configRepository.getString(
             'VRCX_trustColor',
             JSON.stringify({
                 untrusted: '#CCCCCC',
@@ -13808,10 +14166,7 @@ speechSynthesis.getVoices();
                 vip: '#FF2626',
                 troll: '#782F2F'
             })
-        );
-    }
-    $app.data.trustColor = JSON.parse(
-        configRepository.getString('VRCX_trustColor')
+        )
     );
 
     $app.methods.updatetrustColor = function () {
@@ -13819,12 +14174,10 @@ speechSynthesis.getVoices();
             'VRCX_randomUserColours',
             this.randomUserColours
         );
-        if (this.trustColor) {
-            configRepository.setString(
-                'VRCX_trustColor',
-                JSON.stringify(this.trustColor)
-            );
-        }
+        configRepository.setString(
+            'VRCX_trustColor',
+            JSON.stringify(this.trustColor)
+        );
         if (this.randomUserColours) {
             this.getNameColour(API.currentUser.id).then((colour) => {
                 API.currentUser.$userColour = colour;
@@ -13841,7 +14194,18 @@ speechSynthesis.getVoices();
 
     $app.methods.updatetrustColorClasses = function () {
         var trustColor = JSON.parse(
-            configRepository.getString('VRCX_trustColor')
+            configRepository.getString(
+                'VRCX_trustColor',
+                JSON.stringify({
+                    untrusted: '#CCCCCC',
+                    basic: '#1778FF',
+                    known: '#2BCF5C',
+                    trusted: '#FF7B42',
+                    veteran: '#B18FFF',
+                    vip: '#FF2626',
+                    troll: '#782F2F'
+                })
+            )
         );
         if (document.getElementById('trustColor') !== null) {
             document.getElementById('trustColor').outerHTML = '';
@@ -13877,7 +14241,8 @@ speechSynthesis.getVoices();
     };
 
     $app.data.notificationPosition = configRepository.getString(
-        'VRCX_notificationPosition'
+        'VRCX_notificationPosition',
+        'topCenter'
     );
     $app.methods.changeNotificationPosition = function () {
         configRepository.setString(
@@ -13887,12 +14252,16 @@ speechSynthesis.getVoices();
         this.updateVRConfigVars();
     };
 
-    $app.data.youTubeApi = configRepository.getBool('VRCX_youtubeAPI');
-    $app.data.youTubeApiKey = configRepository.getString('VRCX_youtubeAPIKey');
+    $app.data.youTubeApi = configRepository.getBool('VRCX_youtubeAPI', true);
+    $app.data.youTubeApiKey = configRepository.getString(
+        'VRCX_youtubeAPIKey',
+        ''
+    );
 
-    $app.data.progressPie = configRepository.getBool('VRCX_progressPie');
+    $app.data.progressPie = configRepository.getBool('VRCX_progressPie', false);
     $app.data.progressPieFilter = configRepository.getBool(
-        'VRCX_progressPieFilter'
+        'VRCX_progressPieFilter',
+        true
     );
 
     $app.data.screenshotHelper = configRepository.getBool(
@@ -13901,7 +14270,8 @@ speechSynthesis.getVoices();
     );
 
     $app.data.screenshotHelperModifyFilename = configRepository.getBool(
-        'VRCX_screenshotHelperModifyFilename'
+        'VRCX_screenshotHelperModifyFilename',
+        false
     );
 
     $app.data.enableAppLauncher = configRepository.getBool(
@@ -14311,7 +14681,11 @@ speechSynthesis.getVoices();
                 if (instanceId) {
                     var shortName = urlParams.get('shortName');
                     var location = `${worldId}:${instanceId}`;
-                    return this.verifyShortName(location, shortName);
+                    if (shortName) {
+                        return this.verifyShortName(location, shortName);
+                    }
+                    this.showWorldDialog(location);
+                    return true;
                 } else if (worldId) {
                     this.showWorldDialog(worldId);
                     return true;
@@ -15351,29 +15725,25 @@ speechSynthesis.getVoices();
         var users = [];
         var friendCount = 0;
         var playersInInstance = this.lastLocation.playerList;
-        var currentLocation = this.lastLocation.location;
-        if (this.lastLocation.location === 'traveling') {
-            currentLocation = this.lastLocationDestination;
-        }
-        if (currentLocation === L.tag && playersInInstance.size > 0) {
+        var cachedCurrentUser = API.cachedUsers.get(API.currentUser.id);
+        var currentLocation = cachedCurrentUser.$location.tag;
+        if (!L.isOffline && currentLocation === L.tag) {
             var ref = API.cachedUsers.get(API.currentUser.id);
-            if (typeof ref === 'undefined') {
-                ref = API.currentUser;
-            }
-            if (playersInInstance.has(ref.displayName)) {
+            if (typeof ref !== 'undefined') {
                 users.push(ref); // add self
             }
+        }
+        // dont use gamelog when using api location
+        if (
+            this.lastLocation.location === L.tag &&
+            playersInInstance.size > 0
+        ) {
             var friendsInInstance = this.lastLocation.friendList;
             for (var friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
-                var addUser = true;
-                for (var k = 0; k < users.length; k++) {
-                    var user = users[k];
-                    if (friend.displayName === user.displayName) {
-                        addUser = false;
-                        break;
-                    }
-                }
+                var addUser = !users.some(function (user) {
+                    return friend.displayName === user.displayName;
+                });
                 if (addUser) {
                     var ref = API.cachedUsers.get(friend.userId);
                     if (typeof ref !== 'undefined') {
@@ -15382,7 +15752,8 @@ speechSynthesis.getVoices();
                 }
             }
             friendCount = users.length - 1;
-        } else if (L.isOffline === false) {
+        }
+        if (!L.isOffline) {
             for (var friend of this.friends.values()) {
                 if (typeof friend.ref === 'undefined') {
                     continue;
@@ -15395,7 +15766,13 @@ speechSynthesis.getVoices();
                         // don't add offline friends to private instances
                         continue;
                     }
-                    users.push(friend.ref);
+                    // if friend isn't in instance add them
+                    var addUser = !users.some(function (user) {
+                        return friend.name === user.displayName;
+                    });
+                    if (addUser) {
+                        users.push(friend.ref);
+                    }
                 }
             }
             friendCount = users.length;
@@ -15423,7 +15800,7 @@ speechSynthesis.getVoices();
                 json: {}
             };
         }
-        if (L.isOffline || L.isPrivate || L.isTraveling || L.worldId === '') {
+        if (!this.isRealInstance(L.tag)) {
             D.instance = {
                 id: L.instanceId,
                 tag: L.tag,
@@ -15576,10 +15953,10 @@ speechSynthesis.getVoices();
         var playersInInstance = this.lastLocation.playerList;
         if (playersInInstance.size > 0) {
             var ref = API.cachedUsers.get(API.currentUser.id);
-            if (typeof ref === 'undefined') {
-                ref = API.currentUser;
-            }
-            if (playersInInstance.has(ref.displayName)) {
+            if (
+                typeof ref !== 'undefined' &&
+                playersInInstance.has(ref.displayName)
+            ) {
                 pushUser(ref);
             }
             for (var player of playersInInstance.values()) {
@@ -15587,14 +15964,9 @@ speechSynthesis.getVoices();
                 if (player.displayName === API.currentUser.displayName) {
                     continue;
                 }
-                var addUser = true;
-                for (var k = 0; k < users.length; k++) {
-                    var user = users[k];
-                    if (player.displayName === user.displayName) {
-                        addUser = false;
-                        break;
-                    }
-                }
+                var addUser = !users.some(function (user) {
+                    return player.displayName === user.displayName;
+                });
                 if (addUser) {
                     var ref = API.cachedUsers.get(player.userId);
                     if (typeof ref !== 'undefined') {
@@ -15625,6 +15997,7 @@ speechSynthesis.getVoices();
         ref: {},
         isPC: false,
         isQuest: false,
+        isIos: false,
         inCache: false,
         cacheSize: '',
         fileCreatedAt: '',
@@ -15642,6 +16015,7 @@ speechSynthesis.getVoices();
                 ref: {},
                 isPC: false,
                 isQuest: false,
+                isIos: false,
                 inCache: false,
                 cacheSize: '',
                 fileCreatedAt: '',
@@ -15653,6 +16027,7 @@ speechSynthesis.getVoices();
                 ref: {},
                 isPC: false,
                 isQuest: false,
+                isIos: false,
                 inCache: false,
                 cacheSize: '',
                 fileCreatedAt: '',
@@ -15664,11 +16039,12 @@ speechSynthesis.getVoices();
                 worldId: L.worldId
             }).then((args) => {
                 this.currentInstanceWorld.ref = args.ref;
-                var { isPC, isQuest } = this.getAvailablePlatforms(
+                var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
                     args.ref.unityPackages
                 );
                 this.currentInstanceWorld.isPC = isPC;
                 this.currentInstanceWorld.isQuest = isQuest;
+                this.currentInstanceWorld.isIos = isIos;
                 this.checkVRChatCache(args.ref).then((cacheInfo) => {
                     if (cacheInfo[0] > 0) {
                         this.currentInstanceWorld.inCache = true;
@@ -15690,11 +16066,12 @@ speechSynthesis.getVoices();
                 worldId: this.currentInstanceLocation.worldId
             }).then((args) => {
                 this.currentInstanceWorld.ref = args.ref;
-                var { isPC, isQuest } = this.getAvailablePlatforms(
+                var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
                     args.ref.unityPackages
                 );
                 this.currentInstanceWorld.isPC = isPC;
                 this.currentInstanceWorld.isQuest = isQuest;
+                this.currentInstanceWorld.isIos = isIos;
                 this.checkVRChatCache(args.ref).then((cacheInfo) => {
                     if (cacheInfo[0] > 0) {
                         this.currentInstanceWorld.inCache = true;
@@ -15710,16 +16087,19 @@ speechSynthesis.getVoices();
     $app.methods.getAvailablePlatforms = function (unityPackages) {
         var isPC = false;
         var isQuest = false;
+        var isIos = false;
         if (typeof unityPackages === 'object') {
             for (var unityPackage of unityPackages) {
                 if (unityPackage.platform === 'standalonewindows') {
                     isPC = true;
                 } else if (unityPackage.platform === 'android') {
                     isQuest = true;
+                } else if (unityPackage.platform === 'ios') {
+                    isIos = true;
                 }
             }
         }
-        return { isPC, isQuest };
+        return { isPC, isQuest, isIos };
     };
 
     $app.methods.selectCurrentInstanceRow = function (val) {
@@ -16229,7 +16609,11 @@ speechSynthesis.getVoices();
     $app.methods.refreshUserDialogTreeData = function () {
         var D = this.userDialog;
         if (D.id === API.currentUser.id) {
-            D.treeData = buildTreeData(API.currentUser);
+            var treeData = {
+                ...API.currentUser,
+                ...D.ref
+            };
+            D.treeData = buildTreeData(treeData);
             return;
         }
         D.treeData = buildTreeData(D.ref);
@@ -16279,7 +16663,8 @@ speechSynthesis.getVoices();
         visitCount: 0,
         timeSpent: 0,
         isPC: false,
-        isQuest: false
+        isQuest: false,
+        isIos: false
     };
 
     API.$on('LOGOUT', function () {
@@ -16404,6 +16789,7 @@ speechSynthesis.getVoices();
         D.timeSpent = 0;
         D.isPC = false;
         D.isQuest = false;
+        D.isIos = false;
         var LL = API.parseLocation(this.lastLocation.location);
         var currentWorldMatch = false;
         if (LL.worldId === D.id) {
@@ -16446,11 +16832,12 @@ speechSynthesis.getVoices();
                             D.id
                         );
                     }
-                    var { isPC, isQuest } = this.getAvailablePlatforms(
+                    var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
                         args.ref.unityPackages
                     );
                     D.isPC = isPC;
                     D.isQuest = isQuest;
+                    D.isIos = isIos;
                     this.updateVRChatWorldCache();
                     if (args.cache) {
                         API.getWorld(args.params)
@@ -16476,17 +16863,19 @@ speechSynthesis.getVoices();
             return;
         }
         var instances = {};
-        for (var [id, occupants] of D.ref.instances) {
-            instances[id] = {
-                id,
-                tag: `${D.id}:${id}`,
-                occupants,
-                friendCount: 0,
-                full: false,
-                users: [],
-                shortName: '',
-                json: {}
-            };
+        if (D.ref.instances) {
+            for (var [id, occupants] of D.ref.instances) {
+                instances[id] = {
+                    id,
+                    tag: `${D.id}:${id}`,
+                    occupants,
+                    friendCount: 0,
+                    full: false,
+                    users: [],
+                    shortName: '',
+                    json: {}
+                };
+            }
         }
         var { instanceId, shortName } = D.$location;
         if (instanceId && typeof instances[instanceId] === 'undefined') {
@@ -16502,17 +16891,14 @@ speechSynthesis.getVoices();
                 json: {}
             };
         }
-        var currentLocation = this.lastLocation.location;
-        if (this.lastLocation.location === 'traveling') {
-            currentLocation = this.lastLocationDestination;
-        }
-        var lastLocation$ = API.parseLocation(currentLocation);
+        var cachedCurrentUser = API.cachedUsers.get(API.currentUser.id);
+        var lastLocation$ = cachedCurrentUser.$location;
         var playersInInstance = this.lastLocation.playerList;
         if (lastLocation$.worldId === D.id && playersInInstance.size > 0) {
             var friendsInInstance = this.lastLocation.friendList;
             var instance = {
                 id: lastLocation$.instanceId,
-                tag: currentLocation,
+                tag: lastLocation$.tag,
                 $location: {},
                 occupants: playersInInstance.size,
                 friendCount: friendsInInstance.size,
@@ -16522,23 +16908,11 @@ speechSynthesis.getVoices();
                 json: {}
             };
             instances[instance.id] = instance;
-            var ref = API.cachedUsers.get(API.currentUser.id);
-            if (typeof ref === 'undefined') {
-                ref = API.currentUser;
-            }
-            if (playersInInstance.has(ref.displayName)) {
-                instance.users.push(ref); // add self
-            }
             for (var friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
-                var addUser = true;
-                for (var k = 0; k < instance.users.length; k++) {
-                    var user = instance.users[k];
-                    if (friend.displayName === user.displayName) {
-                        addUser = false;
-                        break;
-                    }
-                }
+                var addUser = !instance.users.some(function (user) {
+                    return friend.displayName === user.displayName;
+                });
                 if (addUser) {
                     var ref = API.cachedUsers.get(friend.userId);
                     if (typeof ref !== 'undefined') {
@@ -16553,7 +16927,8 @@ speechSynthesis.getVoices();
                 typeof ref.$location === 'undefined' ||
                 ref.$location.worldId !== D.id ||
                 (ref.$location.instanceId === lastLocation$.instanceId &&
-                    playersInInstance.size > 0)
+                    playersInInstance.size > 0 &&
+                    ref.location !== 'traveling')
             ) {
                 continue;
             }
@@ -16574,6 +16949,26 @@ speechSynthesis.getVoices();
                 instances[instanceId] = instance;
             }
             instance.users.push(ref);
+        }
+        var ref = API.cachedUsers.get(API.currentUser.id);
+        if (typeof ref !== 'undefined' && ref.$location.worldId === D.id) {
+            var { instanceId } = ref.$location;
+            var instance = instances[instanceId];
+            if (typeof instance === 'undefined') {
+                instance = {
+                    id: instanceId,
+                    tag: `${D.id}:${instanceId}`,
+                    $location: {},
+                    occupants: 0,
+                    friendCount: 0,
+                    full: false,
+                    users: [],
+                    shortName: '',
+                    json: {}
+                };
+                instances[instanceId] = instance;
+            }
+            instance.users.push(ref); // add self
         }
         var rooms = [];
         for (var instance of Object.values(instances)) {
@@ -16652,20 +17047,18 @@ speechSynthesis.getVoices();
                     id: instance.instanceId,
                     tag: instance.location,
                     $location: {},
-                    occupants: instance.memberCount,
+                    occupants: instance.userCount,
                     friendCount: 0,
                     full: false,
                     users: [],
-                    shortName: '',
-                    json: {}
+                    shortName: instance.shortName,
+                    json: instance
                 };
             }
         }
-        var currentLocation = this.lastLocation.location;
-        if (this.lastLocation.location === 'traveling') {
-            currentLocation = this.lastLocationDestination;
-        }
-        var lastLocation$ = API.parseLocation(currentLocation);
+        var cachedCurrentUser = API.cachedUsers.get(API.currentUser.id);
+        var lastLocation$ = cachedCurrentUser.$location;
+        var currentLocation = lastLocation$.tag;
         var playersInInstance = this.lastLocation.playerList;
         if (lastLocation$.groupId === D.id && playersInInstance.size > 0) {
             var friendsInInstance = this.lastLocation.friendList;
@@ -16681,23 +17074,11 @@ speechSynthesis.getVoices();
                 json: {}
             };
             instances[currentLocation] = instance;
-            var ref = API.cachedUsers.get(API.currentUser.id);
-            if (typeof ref === 'undefined') {
-                ref = API.currentUser;
-            }
-            if (playersInInstance.has(ref.displayName)) {
-                instance.users.push(ref); // add self
-            }
             for (var friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
-                var addUser = true;
-                for (var k = 0; k < instance.users.length; k++) {
-                    var user = instance.users[k];
-                    if (friend.displayName === user.displayName) {
-                        addUser = false;
-                        break;
-                    }
-                }
+                var addUser = !instance.users.some(function (user) {
+                    return friend.displayName === user.displayName;
+                });
                 if (addUser) {
                     var ref = API.cachedUsers.get(friend.userId);
                     if (typeof ref !== 'undefined') {
@@ -16712,7 +17093,8 @@ speechSynthesis.getVoices();
                 typeof ref.$location === 'undefined' ||
                 ref.$location.groupId !== D.id ||
                 (ref.$location.instanceId === lastLocation$.instanceId &&
-                    playersInInstance.size > 0)
+                    playersInInstance.size > 0 &&
+                    ref.location !== 'traveling')
             ) {
                 continue;
             }
@@ -16733,6 +17115,26 @@ speechSynthesis.getVoices();
                 instances[tag] = instance;
             }
             instance.users.push(ref);
+        }
+        var ref = API.cachedUsers.get(API.currentUser.id);
+        if (typeof ref !== 'undefined' && ref.$location.groupId === D.id) {
+            var { instanceId, tag } = ref.$location;
+            var instance = instances[tag];
+            if (typeof instance === 'undefined') {
+                instance = {
+                    id: instanceId,
+                    tag,
+                    $location: {},
+                    occupants: 0,
+                    friendCount: 0,
+                    full: false,
+                    users: [],
+                    shortName: '',
+                    json: {}
+                };
+                instances[tag] = instance;
+            }
+            instance.users.push(ref); // add self
         }
         var rooms = [];
         for (var instance of Object.values(instances)) {
@@ -17436,11 +17838,11 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.showInviteDialog = function (tag) {
-        this.$nextTick(() => adjustDialogZ(this.$refs.inviteDialog.$el));
-        var L = API.parseLocation(tag);
-        if (L.isOffline || L.isPrivate || L.isTraveling || L.worldId === '') {
+        if (!this.isRealInstance(tag)) {
             return;
         }
+        this.$nextTick(() => adjustDialogZ(this.$refs.inviteDialog.$el));
+        var L = API.parseLocation(tag);
         API.getCachedWorld({
             worldId: L.worldId
         }).then((args) => {
@@ -17630,6 +18032,7 @@ speechSynthesis.getVoices();
         accessType: '',
         region: '',
         groupId: '',
+        groupAccessType: '',
         strict: false,
         location: '',
         shortName: '',
@@ -17662,6 +18065,7 @@ speechSynthesis.getVoices();
                 tags.push(`~friends(${userId})`);
             } else if (D.accessType === 'group') {
                 tags.push(`~group(${D.groupId})`);
+                tags.push(`~groupAccessType(${D.groupAccessType})`);
             } else {
                 tags.push(`~private(${userId})`);
             }
@@ -17758,6 +18162,10 @@ speechSynthesis.getVoices();
             'instanceDialogGroupId',
             this.newInstanceDialog.groupId
         );
+        configRepository.setString(
+            'instanceDialogGroupAccessType',
+            this.newInstanceDialog.groupAccessType
+        );
         configRepository.setBool(
             'instanceDialogStrict',
             this.newInstanceDialog.strict
@@ -17774,40 +18182,29 @@ speechSynthesis.getVoices();
     $app.watch['newInstanceDialog.strict'] = saveNewInstanceDialog;
 
     $app.methods.showNewInstanceDialog = function (tag) {
-        this.$nextTick(() => adjustDialogZ(this.$refs.newInstanceDialog.$el));
-        var L = API.parseLocation(tag);
-        if (L.isOffline || L.isPrivate || L.isTraveling || L.worldId === '') {
+        if (!this.isRealInstance(tag)) {
             return;
         }
+        this.$nextTick(() => adjustDialogZ(this.$refs.newInstanceDialog.$el));
         var D = this.newInstanceDialog;
+        var L = API.parseLocation(tag);
         D.worldId = L.worldId;
-        D.accessType = 'public';
-        if (configRepository.getString('instanceDialogAccessType') !== null) {
-            D.accessType = configRepository.getString(
-                'instanceDialogAccessType'
-            );
-        }
-        D.region = 'US West';
-        if (configRepository.getString('instanceRegion') !== null) {
-            D.region = configRepository.getString('instanceRegion');
-        }
-        D.instanceName = '';
-        if (configRepository.getString('instanceDialogInstanceName') !== null) {
-            D.instanceName = configRepository.getString(
-                'instanceDialogInstanceName'
-            );
-        }
-        D.userId = '';
-        if (configRepository.getString('instanceDialogUserId') !== null) {
-            D.userId = configRepository.getString('instanceDialogUserId');
-        }
-        if (configRepository.getString('instanceDialogGroupId') !== null) {
-            D.groupId = configRepository.getString('instanceDialogGroupId');
-        }
+        D.accessType = configRepository.getString(
+            'instanceDialogAccessType',
+            'public'
+        );
+        D.region = configRepository.getString('instanceRegion', 'US West');
+        D.instanceName = configRepository.getString(
+            'instanceDialogInstanceName',
+            ''
+        );
+        D.userId = configRepository.getString('instanceDialogUserId', '');
+        D.groupId = configRepository.getString('instanceDialogGroupId', '');
+        D.groupAccessType = configRepository.getString(
+            'instanceDialogGroupAccessType',
+            'members'
+        );
         D.strict = false;
-        // if (configRepository.getBool('instanceDialogStrict') !== null) {
-        //     D.strict = configRepository.getBool('instanceDialogStrict');
-        // }
         D.shortName = '';
         this.buildInstance();
         this.updateNewInstanceDialog();
@@ -18043,6 +18440,9 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.showLaunchDialog = function (tag, shortName) {
+        if (!this.isRealInstance(tag)) {
+            return;
+        }
         this.$nextTick(() => adjustDialogZ(this.$refs.launchDialog.$el));
         var D = this.launchDialog;
         D.tag = tag;
@@ -18051,9 +18451,6 @@ speechSynthesis.getVoices();
         D.shortName = shortName;
         var L = API.parseLocation(tag);
         L.shortName = shortName;
-        if (L.isOffline || L.isPrivate || L.isTraveling || L.worldId === '') {
-            return;
-        }
         if (shortName) {
             D.shortUrl = `https://vrch.at/${shortName}`;
         }
@@ -19363,15 +19760,72 @@ speechSynthesis.getVoices();
                     continue;
                 }
             }
-            var inCurrentWorld = false;
-            if (this.lastLocation.playerList.has(ctx.ref.displayName)) {
-                inCurrentWorld = true;
-            }
-            this.getUserStats(ctx.ref, inCurrentWorld);
             ctx.ref.$friendNum = ctx.no;
             results.push(ctx.ref);
         }
+        this.getAllUserStats();
         this.friendsListTable.data = results;
+    };
+
+    $app.methods.getAllUserStats = function () {
+        var userIds = [];
+        var displayNames = [];
+        for (var ctx of this.friends.values()) {
+            userIds.push(ctx.id);
+            if (ctx.ref?.displayName) {
+                displayNames.push(ctx.ref.displayName);
+            }
+        }
+
+        database.getAllUserStats(userIds, displayNames).then((data) => {
+            var friendListMap = new Map();
+            for (var item of data) {
+                if (!item.userId) {
+                    // find userId from previous data with matching displayName
+                    for (var ref of data) {
+                        if (
+                            ref.displayName === item.displayName &&
+                            ref.userId
+                        ) {
+                            item.userId = ref.userId;
+                        }
+                    }
+                    // if still no userId, find userId from friends list
+                    if (!item.userId) {
+                        for (var ref of this.friends.values()) {
+                            if (
+                                ref?.ref?.id &&
+                                ref.ref.displayName === item.displayName
+                            ) {
+                                item.userId = ref.id;
+                            }
+                        }
+                    }
+                    // if still no userId, skip
+                    if (!item.userId) {
+                        continue;
+                    }
+                }
+
+                var friend = friendListMap.get(item.userId);
+                if (!friend) {
+                    friendListMap.set(item.userId, item);
+                    continue;
+                }
+                friend.timeSpent += item.timeSpent;
+                friend.joinCount += item.joinCount;
+                friend.displayName = item.displayName;
+                friendListMap.set(item.userId, friend);
+            }
+            for (var item of friendListMap.values()) {
+                var ref = this.friends.get(item.userId);
+                if (ref?.ref) {
+                    ref.ref.$joinCount = item.joinCount;
+                    ref.ref.$lastSeen = item.created_at;
+                    ref.ref.$timeSpent = item.timeSpent;
+                }
+            }
+        });
     };
 
     $app.methods.getUserStats = async function (ctx) {
@@ -21419,6 +21873,13 @@ speechSynthesis.getVoices();
             userId
         };
         var args = await API.getGroups(params);
+        if (userId === API.currentUser.id) {
+            // update current user groups
+            API.currentUserGroups.clear();
+            args.json.forEach((group) => {
+                API.currentUserGroups.set(group.id, group);
+            });
+        }
         this.userGroups.groups = args.json;
         for (var i = 0; i < args.json.length; ++i) {
             var group = args.json[i];
@@ -21443,6 +21904,14 @@ speechSynthesis.getVoices();
         if (userId === API.currentUser.id) {
             this.sortCurrentUserGroups();
         }
+    };
+
+    $app.methods.getCurrentUserGroups = async function () {
+        var args = await API.getGroups({ n: 100, userId: API.currentUser.id });
+        API.currentUserGroups.clear();
+        args.json.forEach((group) => {
+            API.currentUserGroups.set(group.id, group);
+        });
     };
 
     $app.methods.sortCurrentUserGroups = function () {
@@ -22108,6 +22577,19 @@ speechSynthesis.getVoices();
                 );
                 this.photonEventPulse();
                 break;
+            case 'OnOperationRequest':
+                if (!this.isGameRunning) {
+                    console.log('Game closed, skipped event', data);
+                    return;
+                }
+                if (this.debugPhotonLogging) {
+                    console.log(
+                        'OnOperationRequest',
+                        data.OnOperationRequestData.OperationCode,
+                        data.OnOperationRequestData
+                    );
+                }
+                break;
             case 'VRCEvent':
                 if (!this.isGameRunning) {
                     console.log('Game closed, skipped event', data);
@@ -22585,8 +23067,8 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.data.dtHour12 = configRepository.getBool('VRCX_dtHour12');
-    $app.data.dtIsoFormat = configRepository.getBool('VRCX_dtIsoFormat');
+    $app.data.dtHour12 = configRepository.getBool('VRCX_dtHour12', false);
+    $app.data.dtIsoFormat = configRepository.getBool('VRCX_dtIsoFormat', false);
     $app.methods.setDatetimeFormat = async function () {
         var currentCulture = await AppApi.CurrentCulture();
         var hour12 = configRepository.getBool('VRCX_dtHour12');
@@ -22663,7 +23145,8 @@ speechSynthesis.getVoices();
     $app.methods.setDatetimeFormat();
 
     $app.data.enableCustomEndpoint = configRepository.getBool(
-        'VRCX_enableCustomEndpoint'
+        'VRCX_enableCustomEndpoint',
+        false
     );
     $app.methods.toggleCustomEndpoint = function () {
         configRepository.setBool(
@@ -22857,37 +23340,60 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateCurrentUserLocation = function () {
-        if (this.gameLogDisabled) {
-            return;
-        }
-        API.currentUser.location = this.lastLocation.location;
-        API.currentUser.travelingToLocation = this.lastLocationDestination;
         API.currentUser.$travelingToTime = this.lastLocationDestinationTime;
         var ref = API.cachedUsers.get(API.currentUser.id);
-        if (typeof ref !== 'undefined') {
-            var currentLocation = this.lastLocation.location;
+        if (typeof ref === 'undefined') {
+            return;
+        }
+
+        // update cached user with both gameLog and API locations
+        var currentLocation = API.currentUser.$locationTag;
+        if (API.currentUser.$location === 'traveling') {
+            currentLocation = API.currentUser.$travelingToLocation;
+        }
+        ref.location = API.currentUser.$locationTag;
+        ref.travelingToLocation = API.currentUser.$travelingToLocation;
+
+        if (
+            this.isGameRunning &&
+            !this.gameLogDisabled &&
+            this.lastLocation.location !== ''
+        ) {
+            // use gameLog instead of API when game is running
+            currentLocation = this.lastLocation.location;
             if (this.lastLocation.location === 'traveling') {
                 currentLocation = this.lastLocationDestination;
             }
-            ref.$location = API.parseLocation(currentLocation);
             ref.location = this.lastLocation.location;
             ref.travelingToLocation = this.lastLocationDestination;
-            ref.$travelingToTime = this.lastLocationDestinationTime;
+        }
+
+        ref.$online_for = API.currentUser.$online_for;
+        ref.$offline_for = API.currentUser.$offline_for;
+        ref.$location = API.parseLocation(currentLocation);
+        ref.$location_at = this.lastLocation.date;
+        ref.$travelingToTime = this.lastLocationDestinationTime;
+        if (!this.isGameRunning) {
+            ref.$location_at = Date.now();
+            ref.$travelingToTime = Date.now();
+            this.applyUserDialogLocation();
+            this.applyWorldDialogInstances();
+            this.applyGroupDialogInstances();
         }
     };
 
     $app.data.avatarHistory = new Set();
     $app.data.avatarHistoryArray = [];
 
-    API.$on('LOGIN', async function () {
-        $app.avatarHistory = new Set();
+    $app.methods.getAvatarHistory = async function () {
+        this.avatarHistory = new Set();
         var historyArray = await database.getAvatarHistory(API.currentUser.id);
-        $app.avatarHistoryArray = historyArray;
+        this.avatarHistoryArray = historyArray;
         for (var i = 0; i < historyArray.length; i++) {
-            $app.avatarHistory.add(historyArray[i].id);
-            this.applyAvatar(historyArray[i]);
+            this.avatarHistory.add(historyArray[i].id);
+            API.applyAvatar(historyArray[i]);
         }
-    });
+    };
 
     $app.methods.addAvatarToHistory = function (avatarId) {
         API.getAvatar({ avatarId }).then((args) => {
@@ -22929,16 +23435,22 @@ speechSynthesis.getVoices();
         database.clearAvatarHistory();
     };
 
-    $app.data.databaseVersion = configRepository.getInt('VRCX_databaseVersion');
+    $app.data.databaseVersion = configRepository.getInt(
+        'VRCX_databaseVersion',
+        0
+    );
 
     $app.methods.updateDatabaseVersion = async function () {
         var databaseVersion = 5;
         if (this.databaseVersion !== databaseVersion) {
-            var msgBox = this.$message({
-                message: 'DO NOT CLOSE VRCX, database upgrade in process...',
-                type: 'warning',
-                duration: 0
-            });
+            if (this.databaseVersion) {
+                var msgBox = this.$message({
+                    message:
+                        'DO NOT CLOSE VRCX, database upgrade in process...',
+                    type: 'warning',
+                    duration: 0
+                });
+            }
             console.log(
                 `Updating database from ${this.databaseVersion} to ${databaseVersion}...`
             );
@@ -22950,13 +23462,12 @@ speechSynthesis.getVoices();
                 await database.fixBrokenGroupInvites(); // fix notification v2 in wrong table
                 await database.updateTableForGroupNames(); // alter tables to include group name
                 database.fixBrokenNotifications(); // fix notifications being null
-                this.databaseVersion = databaseVersion;
                 configRepository.setInt(
                     'VRCX_databaseVersion',
                     databaseVersion
                 );
                 console.log('Database update complete.');
-                msgBox.close();
+                msgBox?.close();
                 if (this.databaseVersion) {
                     // only display when database exists
                     this.$message({
@@ -22964,9 +23475,10 @@ speechSynthesis.getVoices();
                         type: 'success'
                     });
                 }
+                this.databaseVersion = databaseVersion;
             } catch (err) {
                 console.error(err);
-                msgBox.close();
+                msgBox?.close();
                 this.$message({
                     message:
                         'Database upgrade failed, check console for details',
@@ -24242,6 +24754,8 @@ speechSynthesis.getVoices();
     // #region | App: Groups
 
     API.cachedGroups = new Map();
+    API.currentUserGroups = new Map();
+    API.queuedInstances = new Map();
 
     /*
         params: {
@@ -24267,6 +24781,9 @@ speechSynthesis.getVoices();
     API.$on('GROUP', function (args) {
         args.ref = this.applyGroup(args.json);
         this.cachedGroups.set(args.ref.id, args.ref);
+        if (this.currentUserGroups.has(args.ref.id)) {
+            this.currentUserGroups.set(args.ref.id, args.ref);
+        }
     });
 
     API.$on('GROUP', function (args) {
@@ -24389,6 +24906,7 @@ speechSynthesis.getVoices();
             $app.groupDialog.inGroup = json.membershipStatus === 'member';
             $app.getGroupDialogGroup(groupId);
         }
+        this.currentUserGroups.set(groupId, json);
     });
 
     /*
@@ -24422,6 +24940,7 @@ speechSynthesis.getVoices();
         ) {
             $app.getCurrentUserRepresentedGroup();
         }
+        this.currentUserGroups.delete(groupId);
     });
 
     /*
@@ -24663,9 +25182,12 @@ speechSynthesis.getVoices();
     */
 
     API.getGroupInstances = function (params) {
-        return this.call(`groups/${params.groupId}/instances`, {
-            method: 'GET'
-        }).then((json) => {
+        return this.call(
+            `users/${this.currentUser.id}/instances/groups/${params.groupId}`,
+            {
+                method: 'GET'
+            }
+        ).then((json) => {
             var args = {
                 json,
                 params
@@ -24676,7 +25198,13 @@ speechSynthesis.getVoices();
     };
 
     API.$on('GROUP:INSTANCES', function (args) {
-        for (var json of args.json) {
+        for (var json of args.json.instances) {
+            this.$emit('INSTANCE', {
+                json,
+                params: {
+                    fetchedAt: args.json.fetchedAt
+                }
+            });
             this.$emit('WORLD', {
                 json: json.world,
                 params: {
@@ -24718,6 +25246,99 @@ speechSynthesis.getVoices();
             return args;
         });
     };
+
+    API.getUsersGroupInstances = function () {
+        return this.call(`users/${this.currentUser.id}/instances/groups`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json
+            };
+            this.$emit('GROUP:USER:INSTANCES', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:USER:INSTANCES', function (args) {
+        $app.groupInstances = [];
+        for (var json of args.json.instances) {
+            this.$emit('INSTANCE', {
+                json,
+                params: {
+                    fetchedAt: args.json.fetchedAt
+                }
+            });
+            this.$emit('WORLD', {
+                json: json.world,
+                params: {
+                    worldId: json.world.id
+                }
+            });
+            json.world = this.applyWorld(json.world);
+
+            var ref = this.cachedGroups.get(json.ownerId);
+            if (typeof ref === 'undefined') {
+                if ($app.friendLogInitStatus) {
+                    this.getGroup({ groupId: json.ownerId });
+                }
+                return;
+            }
+            $app.groupInstances.push({
+                $group: ref,
+                ...json
+            });
+        }
+    });
+
+    API.$on('INSTANCE', function (args) {
+        var { json } = args;
+        if (!json) {
+            return;
+        }
+        for (var instance of $app.groupInstances) {
+            if (instance.id === json.id) {
+                instance = {
+                    ...instance,
+                    ...json
+                };
+                break;
+            }
+        }
+    });
+
+    /*
+        params: {
+            query: string,
+            n: number,
+            offset: number,
+            order: string,
+            sortBy: string
+        }
+    */
+    API.groupSearch = function (params) {
+        return this.call(`groups`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:SEARCH', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:SEARCH', function (args) {
+        for (var json of args.json) {
+            this.$emit('GROUP', {
+                json,
+                params: {
+                    groupId: json.id
+                }
+            });
+        }
+    });
 
     /*
         params: {
@@ -24933,6 +25554,7 @@ speechSynthesis.getVoices();
                         D.ownerDisplayName = args1.ref.displayName;
                         return args1;
                     });
+                    this.applyGroupDialogInstances();
                     this.getGroupDialogGroup(groupId);
                 }
             });
@@ -24989,7 +25611,9 @@ speechSynthesis.getVoices();
                             groupId
                         }).then((args3) => {
                             if (groupId === args3.params.groupId) {
-                                this.applyGroupDialogInstances(args3.json);
+                                this.applyGroupDialogInstances(
+                                    args3.json.instances
+                                );
                             }
                         });
                     }
@@ -25163,6 +25787,29 @@ speechSynthesis.getVoices();
             responseType: response,
             responseData
         });
+    };
+
+    $app.methods.onGroupJoined = function (groupId) {
+        if (this.groupDialog.visible && this.groupDialog.id === groupId) {
+            this.showGroupDialog(groupId);
+        }
+        if (!API.currentUserGroups.has(groupId)) {
+            API.currentUserGroups.set(groupId, {
+                id: groupId,
+                name: '',
+                iconUrl: ''
+            });
+            if (this.friendLogInitStatus) {
+                API.getGroup({ groupId });
+            }
+        }
+    };
+
+    $app.methods.onGroupLeft = function (groupId) {
+        if (this.groupDialog.visible && this.groupDialog.id === groupId) {
+            this.showGroupDialog(groupId);
+        }
+        API.currentUserGroups.delete(groupId);
     };
 
     // group members
@@ -25388,8 +26035,7 @@ speechSynthesis.getVoices();
         groupName: '',
         userId: '',
         userIds: '',
-        userObject: {},
-        groups: []
+        userObject: {}
     };
 
     $app.methods.showInviteGroupDialog = function (groupId, userId) {
@@ -25402,7 +26048,6 @@ speechSynthesis.getVoices();
         D.userId = userId;
         D.userObject = {};
         D.visible = true;
-        D.loading = true;
         if (groupId) {
             API.getCachedGroup({
                 groupId
@@ -25415,10 +26060,6 @@ speechSynthesis.getVoices();
                 });
             this.isAllowedToInviteToGroup();
         }
-        API.getGroups({ n: 100, userId: API.currentUser.id }).then((args) => {
-            this.inviteGroupDialog.groups = args.json;
-            D.loading = false;
-        });
 
         if (userId) {
             API.getCachedUser({ userId }).then((args) => {
@@ -25814,6 +26455,9 @@ speechSynthesis.getVoices();
                 assetUrl = unityPackage.assetUrl;
                 break;
             }
+        }
+        if (!assetUrl) {
+            assetUrl = D.ref.assetUrl;
         }
         var fileId = extractFileId(assetUrl);
         var version = parseInt(extractFileVersion(assetUrl), 10);
