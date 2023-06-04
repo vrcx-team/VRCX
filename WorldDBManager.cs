@@ -108,7 +108,7 @@ namespace VRCX
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, $"Exception while processing the url '{request.Url}'.");
+                    logger.Error(ex, $"Exception while processing a request to endpoint '{request.Url}'.");
 
                     responseData.Error = $"VRCX has encountered an exception while processing the url '{request.Url}': {ex.Message}";
                     responseData.StatusCode = 500;
@@ -539,63 +539,78 @@ namespace VRCX
                 return;
             }
 
-            string requestType = request.RequestType.ToLower();
-
-            switch (requestType)
+            try
             {
-                case "store":
-                    if (String.IsNullOrEmpty(request.Key))
-                    {
-                        logger.Warn("World {0} tried to store data with no key provided", worldId);
-                        this.lastError = "`key` is missing or null";
-                        return;
-                    }
+                string requestType = request.RequestType.ToLower();
+                switch (requestType)
+                {
+                    case "store":
+                        if (String.IsNullOrEmpty(request.Key))
+                        {
+                            logger.Warn("World {0} tried to store data with no key provided", worldId);
+                            this.lastError = "`key` is missing or null";
+                            return;
+                        }
 
-                    if (String.IsNullOrEmpty(request.Value))
-                    {
-                        logger.Warn("World {0} tried to store data under key {1} with no value provided", worldId, request.Key);
-                        this.lastError = "`value` is missing or null";
-                        return;
-                    }
+                        if (String.IsNullOrEmpty(request.Value))
+                        {
+                            logger.Warn("World {0} tried to store data under key {1} with no value provided", worldId, request.Key);
+                            this.lastError = "`value` is missing or null";
+                            return;
+                        }
 
-                    StoreWorldData(worldId, request.Key, request.Value);
-                    break;
-                case "delete":
-                    if (String.IsNullOrEmpty(request.Key))
-                    {
-                        logger.Warn("World {0} tried to delete data with no key provided", worldId);
-                        this.lastError = "`key` is missing or null";
-                        return;
-                    }
+                        StoreWorldData(worldId, request.Key, request.Value);
 
-                    DeleteWorldData(worldId, request.Key);
-                    break;
-                case "delete-all":
-                    logger.Info("World {0} requested to delete all data.", worldId);
-                    worldDB.DeleteAllDataEntriesForWorld(worldId);
-                    break;
-                case "set-setting":
-                    if (String.IsNullOrEmpty(request.Key))
-                    {
-                        logger.Warn("World {0} tried to delete data with no key provided", worldId);
-                        this.lastError = "`key` is missing or null";
-                        return;
-                    }
+                        break;
+                    case "delete":
+                        if (String.IsNullOrEmpty(request.Key))
+                        {
+                            logger.Warn("World {0} tried to delete data with no key provided", worldId);
+                            this.lastError = "`key` is missing or null";
+                            return;
+                        }
 
-                    if (String.IsNullOrEmpty(request.Value))
-                    {
-                        logger.Warn("World {0} tried to set settings with no value provided", worldId);
-                        this.lastError = "`value` is missing or null";
-                        return;
-                    }
 
-                    SetWorldProperty(worldId, request.Key, request.Value);
-                    break;
-                default:
-                    logger.Warn("World {0} sent an invalid request type '{0}'", worldId, request.RequestType);
-                    this.lastError = "Invalid request type";
-                    // invalid request type
-                    return;
+                        DeleteWorldData(worldId, request.Key);
+                        break;
+                    case "delete-all":
+
+                        logger.Info("World {0} requested to delete all data.", worldId);
+
+
+                        worldDB.DeleteAllDataEntriesForWorld(worldId);
+                        worldDB.UpdateWorldDataSize(worldId, 0);
+                        break;
+                    case "set-setting":
+                        if (String.IsNullOrEmpty(request.Key))
+                        {
+                            logger.Warn("World {0} tried to delete data with no key provided", worldId);
+                            this.lastError = "`key` is missing or null";
+                            return;
+                        }
+
+                        if (String.IsNullOrEmpty(request.Value))
+                        {
+                            logger.Warn("World {0} tried to set settings with no value provided", worldId);
+                            this.lastError = "`value` is missing or null";
+                            return;
+                        }
+
+                        SetWorldProperty(worldId, request.Key, request.Value);
+                        break;
+                    default:
+                        logger.Warn("World {0} sent an invalid request type '{0}'", worldId, request.RequestType);
+                        this.lastError = "Invalid request type";
+                        // invalid request type
+                        return;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to process world data request for world {0}", worldId);
+                logger.Error("Failed Request: {0}", json);
+                this.lastError = ex.Message;
+                return;
             }
         }
 
