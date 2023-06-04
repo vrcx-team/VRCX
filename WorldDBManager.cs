@@ -46,7 +46,7 @@ namespace VRCX
                 {
                     if (MainForm.Instance?.Browser == null || MainForm.Instance.Browser.IsLoading || !MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
                     {
-                        logger.Warn("Received a request to {0} while VRCX is still initializing the browser window. Responding with error 503.", request.Url);
+                        logger.Error("Received a request to {0} while VRCX is still initializing the browser window. Responding with error 503.", request.Url);
 
                         responseData.Error = "VRCX not yet initialized. Try again in a moment.";
                         responseData.StatusCode = 503;
@@ -84,14 +84,14 @@ namespace VRCX
                             responseData = await HandleBulkDataRequest(context);
                             SendJsonResponse(context.Response, responseData);
                             break;
+                        case "/vrcx/data/settings":
+                            responseData = await HandleSetSettingsRequest(context);
+                            SendJsonResponse(context.Response, responseData);
+                            break;
                         case "/vrcx/status":
                             // Send a blank 200 response to indicate that the server is running.
                             context.Response.StatusCode = 200;
                             context.Response.Close();
-                            break;
-                        case "/vrcx/data/settings":
-                            responseData = await HandleSetSettingsRequest(context);
-                            SendJsonResponse(context.Response, responseData);
                             break;
                         default:
                             responseData.Error = "Invalid VRCX endpoint.";
@@ -212,6 +212,23 @@ namespace VRCX
                 return ConstructErrorResponse(500, "Failed to get/verify current world ID.");
             }
 
+            var worldOverride = request.QueryString["world"];
+            if (worldOverride != null && worldId != worldOverride)
+            {
+                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride);
+                if (!allowed)
+                {
+                    return ConstructSuccessResponse(null, connectionKey);
+                }
+
+                var otherValue = worldDB.GetDataEntry(worldOverride, key);
+
+                logger.Debug("Serving a request for data with key '{0}' from world ID '{1}' requested by world ID '{2}' with connection key {3}.", key, worldOverride, worldId, connectionKey);
+
+                // This value is intended to be null if the key doesn't exist.
+                return ConstructSuccessResponse(otherValue?.Value, connectionKey);
+            }
+
             var value = worldDB.GetDataEntry(worldId, key);
 
             logger.Debug("Serving a request for data with key '{0}' from world ID '{1}' with connection key {2}.", key, worldId, connectionKey);
@@ -227,13 +244,32 @@ namespace VRCX
         private async Task<WorldDataRequestResponse> HandleAllDataRequest(HttpListenerContext context)
         {
             var request = context.Request;
-
-
             var worldId = await GetCurrentWorldID();
 
             if (!TryInitializeWorld(worldId, out string connectionKey))
             {
                 return ConstructErrorResponse(500, "Failed to get/verify current world ID.");
+            }
+
+            var worldOverride = request.QueryString["world"];
+            if (worldOverride != null && worldId != worldOverride)
+            {
+                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride);
+                if (!allowed)
+                {
+                    return ConstructSuccessResponse(null, connectionKey);
+                }
+
+                var otherEntries = worldDB.GetAllDataEntries(worldOverride);
+
+                var otherData = new Dictionary<string, string>();
+                foreach (var entry in otherEntries)
+                {
+                    otherData.Add(entry.Key, entry.Value);
+                }
+
+                logger.Debug("Serving a request for all data ({0} entries) for world ID '{1}' requested by {2} with connection key {3}.", otherData.Count, worldOverride, worldId, connectionKey);
+                return ConstructSuccessResponse(JsonConvert.SerializeObject(otherData), connectionKey);
             }
 
             var entries = worldDB.GetAllDataEntries(worldId);
@@ -270,6 +306,27 @@ namespace VRCX
             if (!TryInitializeWorld(worldId, out string connectionKey))
             {
                 return ConstructErrorResponse(500, "Failed to get/verify current world ID.");
+            }
+
+            var worldOverride = request.QueryString["world"];
+            if (worldOverride != null && worldId != worldOverride)
+            {
+                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride);
+                if (!allowed)
+                {
+                    return ConstructSuccessResponse(null, connectionKey);
+                }
+
+                var otherEntries = worldDB.GetAllDataEntries(worldOverride);
+
+                var otherData = new Dictionary<string, string>();
+                foreach (var entry in otherEntries)
+                {
+                    otherData.Add(entry.Key, entry.Value);
+                }
+
+                logger.Debug("Serving a request for all data ({0} entries) for world ID '{1}' requested by {2} with connection key {3}.", otherData.Count, worldOverride, worldId, connectionKey);
+                return ConstructSuccessResponse(JsonConvert.SerializeObject(otherData), connectionKey);
             }
 
             var values = worldDB.GetDataEntries(worldId, keyArray).ToList();

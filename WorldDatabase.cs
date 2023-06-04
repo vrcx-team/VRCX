@@ -164,6 +164,13 @@ END;";
             sqlite.Execute("UPDATE worlds SET allow_external_read = ? WHERE world_id = ?", allowExternalRead, worldId);
         }
 
+        public bool GetWorldAllowExternalRead(string worldId)
+        {
+            var query = sqlite.Table<World>().Where(w => w.WorldId == worldId).Select(w => w.AllowExternalRead);
+
+            return query.FirstOrDefault();
+        }
+
         /// <summary>
         /// Adds a new world to the database.
         /// </summary>
