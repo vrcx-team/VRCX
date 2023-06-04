@@ -33,7 +33,16 @@ namespace VRCX
 
         public async Task Start()
         {
-            listener.Start();
+            // typing this in vr gonna kms
+            try
+            {
+                listener.Start();
+            }
+            catch (HttpListenerException e)
+            {
+                logger.Error(e, "Failed to start HTTP listener. Is VRCX already running?");
+                return;
+            }
 
             logger.Info("Listening for requests on {0}", listener.Prefixes.First());
             while (true)
