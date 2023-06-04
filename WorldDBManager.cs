@@ -345,6 +345,12 @@ namespace VRCX
             return ConstructSuccessResponse(JsonConvert.SerializeObject(data), connectionKey);
         }
 
+        /// <summary>
+        /// Attempts to initialize a world with the given ID by generating a connection key and adding it to the world database if it does not already exist.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to initialize.</param>
+        /// <param name="connectionKey">The connection key generated for the world.</param>
+        /// <returns>True if the world was successfully initialized, false otherwise.</returns>
         private bool TryInitializeWorld(string worldId, out string connectionKey)
         {
             if (String.IsNullOrEmpty(worldId))
@@ -593,13 +599,12 @@ namespace VRCX
             }
         }
 
-        private void LogWarning(string message, params object[] args)
-        {
-            logger.Warn("World {0} - " + message, args);
-            this.lastError = String.Format(message, args);
-        }
-
-
+        /// <summary>
+        /// Sets a property for a given world in the world database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to set the property for.</param>
+        /// <param name="key">The key of the property to set.</param>
+        /// <param name="value">The value to set the property to.</param>
         public void SetWorldProperty(string worldId, string key, string value)
         {
             switch (key)
@@ -619,6 +624,12 @@ namespace VRCX
             }
         }
 
+        /// <summary>
+        /// Stores a data entry for a given world in the world database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to store the data entry for.</param>
+        /// <param name="key">The key of the data entry to store.</param>
+        /// <param name="value">The value of the data entry to store.</param>
         public void StoreWorldData(string worldId, string key, string value)
         {
             // Get/calculate the old and new data sizes for this key/the world
@@ -642,6 +653,11 @@ namespace VRCX
             logger.Debug("{0} : {1}", key, value);
         }
 
+        /// <summary>
+        /// Deletes a data entry for a given world from the world database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to delete the data entry from.</param>
+        /// <param name="key">The key of the data entry to delete.</param>
         public void DeleteWorldData(string worldId, string key)
         {
             int oldTotalDataSize = worldDB.GetWorldDataSize(worldId);
