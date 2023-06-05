@@ -702,7 +702,7 @@
             },
             "json": {
                 "header": "JSON",
-                "file_analysis": "File Analysis"
+                "file_analysis": "ファイルの分析"
             }
         },
         "group": {
