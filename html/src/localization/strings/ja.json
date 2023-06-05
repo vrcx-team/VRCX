@@ -25,7 +25,7 @@
                 "password": "パスワード",
                 "saveCredentials": "資格情報を保存",
                 "devEndpoint": "開発者用エンドポイント",
-                "endpoint": "Endpoint",
+                "endpoint": "エンドポイント",
                 "websocket": "WebSocket"
             }
         },
@@ -45,7 +45,7 @@
                 "search_placeholder": "検索",
                 "filter_placeholder": "フィルター",
                 "chatbox_blacklist": "チャットボックス ブラックリスト",
-                "status_tooltip": "VRCXコンパニオンの状態"
+                "status_tooltip": "VRCX コンパニオンの状態"
             }
         },
         "search": {
@@ -72,6 +72,9 @@
                 "sort_name": "名前順で並び替え",
                 "sort_update": "更新順で並び替え",
                 "sort_created": "作成順で並び替え"
+            },
+            "group": {
+                "header": "Group"
             },
             "prev_page": "前",
             "next_page": "次"
@@ -410,6 +413,8 @@
                         "header": "VRCXインスタンス キャッシュ/デバッグ",
                         "udon_exception_logging": "Udonの例外エラーを記録",
                         "gpu_fix": "GPU Fixを有効化",
+                        "gpu_fix_notice": "(再起動が必要です)",
+                        "gpu_fix_warning": "SteamVR オーバーレイが機能せず、2つ以上のGPUを使用している時のみこのオプションを有効化してください",
                         "disable_gamelog": "ゲームログを無効化",
                         "disable_gamelog_notice": "(何かが壊れる可能性があります)",
                         "user_cache": "ユーザーキャッシュ:",
@@ -472,6 +477,7 @@
         "search_result_more": "もっと検索:",
         "direct_access_tooltip": "クリップボードからID/URLに直接アクセス",
         "refresh_tooltip": "フレンドを更新",
+        "groups": "グループインスタンス",
         "friends": "フレンド",
         "me": "自分",
         "favorite": "お気に入り",
@@ -695,7 +701,8 @@
                 "platform": "プラットフォーム"
             },
             "json": {
-                "header": "JSON"
+                "header": "JSON",
+                "file_analysis": "File Analysis"
             }
         },
         "group": {
@@ -814,6 +821,10 @@
             "access_type_friend": "Friends",
             "access_type_invite_plus": "Invite+",
             "access_type_invite": "Invite",
+            "group_access_type": "Group Access",
+            "group_access_type_members": "メンバー",
+            "group_access_type_plus": "Plus",
+            "group_access_type_public": "Public",
             "region": "地域",
             "region_usw": "US West",
             "region_use": "US East",
@@ -824,6 +835,7 @@
             "instance_id_placeholder": "ランダム",
             "instance_creator": "インスタンス作者",
             "instance_creator_placeholder": "ユーザーを選択",
+            "group_placeholder": "グループを選択",
             "group_id": "グループID",
             "location": "場所",
             "url": "URL",
@@ -1340,7 +1352,7 @@
         },
         "playerList": {
             "avatar": "アバター",
-            "timer": "タイマー",
+            "timer": "時間",
             "photonId": "Photon ID",
             "icon": "アイコン",
             "platform": "プラットフォーム",
@@ -1436,7 +1448,7 @@
     },
     "vr": {
         "status": {
-            "timer": "タイマー:",
+            "timer": "時間:",
             "players": "プレイヤー数:",
             "cpu": "CPU:",
             "online": "オンライン:"
