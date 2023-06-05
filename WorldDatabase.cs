@@ -278,7 +278,7 @@ END;";
         /// <returns>An enumerable collection of all data entries for the world with the specified ID.</returns>
         public IEnumerable<WorldData> GetAllDataEntries(string worldId)
         {
-            var query = sqlite.Table<WorldData>().Where(w => w.WorldId == worldId);
+            var query = sqlite.Table<WorldData>().Where(w => w.WorldId == worldId).Take(10000);
             return query.ToList();
         }
 

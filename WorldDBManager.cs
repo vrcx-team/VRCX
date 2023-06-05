@@ -29,6 +29,7 @@ namespace VRCX
             listener.Prefixes.Add(url);
 
             worldDB = new WorldDatabase(Path.Combine(Program.AppDataDirectory, "VRCX-WorldData.db"));
+
         }
 
         public async Task Start()
@@ -558,6 +559,13 @@ namespace VRCX
                         {
                             logger.Warn("World {0} tried to store data with no key provided", worldId);
                             this.lastError = "`key` is missing or null";
+                            return;
+                        }
+
+                        if (request.Key.Length > 255)
+                        {
+                            logger.Warn("World {0} tried to store data with a key that was too long ({1}/256 characters)", worldId, request.Key.Length);
+                            this.lastError = "`key` is too long. Keep it below <256 characters.";
                             return;
                         }
 
