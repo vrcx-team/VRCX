@@ -26,11 +26,11 @@ namespace VRCX
             new IPCServer().CreateIPCServer();
         }
 
-        public static async Task Send(IPCPacket ipcPacket)
+        public static void Send(IPCPacket ipcPacket)
         {
             foreach (var client in Clients)
             {
-                await client.Send(ipcPacket);
+                client.Send(ipcPacket);
             }
         }
 

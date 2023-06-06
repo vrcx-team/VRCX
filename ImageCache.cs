@@ -33,7 +33,7 @@ namespace VRCX
 
             using (var client = new WebClient())
             {
-                string cookieString = String.Empty;
+                string cookieString = string.Empty;
                 if (WebApi.Instance != null && WebApi.Instance._cookieContainer != null)
                 {
                     CookieCollection cookies = WebApi.Instance._cookieContainer.GetCookies(new Uri($"https://{imageHost}"));

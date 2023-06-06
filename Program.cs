@@ -16,7 +16,7 @@ namespace VRCX
     public static class Program
     {
         public static string BaseDirectory { get; private set; }
-        public static string AppDataDirectory { get; private set; }
+        public static readonly string AppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX");
         public static string ConfigLocation;
         public static string Version { get; private set; }
         public static bool LaunchDebug;
@@ -25,7 +25,6 @@ namespace VRCX
         static Program()
         {
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            AppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX");
             ConfigLocation = Path.Combine(Program.AppDataDirectory, "VRCX.sqlite3");
 
             if (!Directory.Exists(AppDataDirectory))

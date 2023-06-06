@@ -162,9 +162,8 @@ namespace VRCX
                 Process proc = Process.GetProcessById(pid);
                 proc.Kill();
             }
-            catch (Exception ex)
+            catch
             {
-
             }
         }
 

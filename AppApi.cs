@@ -59,8 +59,11 @@ namespace VRCX
         public string MD5File(string Blob)
         {
             var fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
-            var md5 = MD5.Create().ComputeHash(fileData);
-            return Convert.ToBase64String(md5);
+            using (var md5 = MD5.Create())
+            {
+                var md5Hash = md5.ComputeHash(fileData);
+                return Convert.ToBase64String(md5Hash);
+            }
         }
 
         /// <summary>
@@ -71,11 +74,13 @@ namespace VRCX
         public string SignFile(string Blob)
         {
             var fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
-            var sig = Librsync.ComputeSignature(new MemoryStream(fileData));
-            var memoryStream = new MemoryStream();
-            sig.CopyTo(memoryStream);
-            var sigBytes = memoryStream.ToArray();
-            return Convert.ToBase64String(sigBytes);
+            using (var sig = Librsync.ComputeSignature(new MemoryStream(fileData)))
+            using (var memoryStream = new MemoryStream())
+            {
+                sig.CopyTo(memoryStream);
+                var sigBytes = memoryStream.ToArray();
+                return Convert.ToBase64String(sigBytes);
+            }
         }
 
         /// <summary>
@@ -85,7 +90,7 @@ namespace VRCX
         /// <returns>The length of the file in bytes.</returns>
         public string FileLength(string Blob)
         {
-            var fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
+            var fileData = Convert.FromBase64String(Blob);
             return fileData.Length.ToString();
         }
 
@@ -99,7 +104,7 @@ namespace VRCX
             var configFile = Path.Combine(logPath, @"config.json");
             if (!Directory.Exists(logPath) || !File.Exists(configFile))
             {
-                return "";
+                return string.Empty;
             }
 
             var json = File.ReadAllText(configFile);
@@ -404,7 +409,7 @@ namespace VRCX
                 Icon = Image;
             }
 
-            var broadcastIP = IPAddress.Parse("127.0.0.1");
+            var broadcastIP = IPAddress.Loopback;
             var broadcastSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             var endPoint = new IPEndPoint(broadcastIP, 42069);
 
@@ -415,7 +420,7 @@ namespace VRCX
             msg.height = 110f;
             msg.sourceApp = "VRCX";
             msg.timeout = Timeout;
-            msg.audioPath = "";
+            msg.audioPath = string.Empty;
             msg.useBase64Icon = UseBase64Icon;
             msg.icon = Icon;
 
@@ -430,9 +435,11 @@ namespace VRCX
         public void DownloadVRCXUpdate(string url)
         {
             var Location = Path.Combine(Program.AppDataDirectory, "update.exe");
-            var client = new WebClient();
-            client.Headers.Add("user-agent", Program.Version);
-            client.DownloadFile(new Uri(url), Location);
+            using (var client = new WebClient())
+            {
+                client.Headers.Add("user-agent", Program.Version);
+                client.DownloadFile(new Uri(url), Location);
+            }
         }
 
         /// <summary>

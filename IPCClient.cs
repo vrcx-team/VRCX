@@ -39,7 +39,7 @@ namespace VRCX
             _ipcServer.BeginRead(_recvBuffer, 0, _recvBuffer.Length, OnRead, _ipcServer);
         }
 
-        public async Task Send(IPCPacket ipcPacket)
+        public void Send(IPCPacket ipcPacket)
         {
             try
             {

@@ -363,7 +363,7 @@ namespace VRCX
         /// <returns>True if the world was successfully initialized, false otherwise.</returns>
         private bool TryInitializeWorld(string worldId, out string connectionKey)
         {
-            if (String.IsNullOrEmpty(worldId))
+            if (string.IsNullOrEmpty(worldId))
             {
                 connectionKey = null;
                 return false;
@@ -421,7 +421,7 @@ namespace VRCX
 
             string worldId = funcResult?.Result?.ToString();
 
-            if (String.IsNullOrEmpty(worldId))
+            if (string.IsNullOrEmpty(worldId))
             {
                 // implement
                 // wait what was i going to do here again
@@ -484,7 +484,7 @@ namespace VRCX
         /// Processes a JSON request containing world data and logs it to the world database.
         /// </summary>
         /// <param name="json">The JSON request containing the world data.</param>
-        public async void ProcessLogWorldDataRequest(string json)
+        public void ProcessLogWorldDataRequest(string json)
         {
             // Current format: 
             // {
@@ -519,7 +519,7 @@ namespace VRCX
                 return;
             }
 
-            if (String.IsNullOrEmpty(request.RequestType))
+            if (string.IsNullOrEmpty(request.RequestType))
             {
                 logger.Warn("World tried to store data with no request type provided. Request: ", json);
                 this.lastError = "`requestType` is missing or null";

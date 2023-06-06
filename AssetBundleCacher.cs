@@ -46,7 +46,7 @@ namespace VRCX
         public string GetAssetVersion(int version)
         {
             byte[] bytes = BitConverter.GetBytes(version);
-            string versionHex = String.Empty;
+            string versionHex = string.Empty;
             foreach (byte b in bytes)
             {
                 versionHex += b.ToString("X2");
