@@ -165,6 +165,18 @@ END;";
         }
 
         /// <summary>
+        /// Gets the value of the allow_external_read field for the world with the specified ID from the database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to get the allow_external_read field for.</param>
+        /// <returns>The value of the allow_external_read field for the specified world.</returns>
+        public bool GetWorldAllowExternalRead(string worldId)
+        {
+            var query = sqlite.Table<World>().Where(w => w.WorldId == worldId).Select(w => w.AllowExternalRead);
+
+            return query.FirstOrDefault();
+        }
+
+        /// <summary>
         /// Adds a new world to the database.
         /// </summary>
         /// <param name="worldId">The ID of the world to add.</param>
@@ -266,7 +278,7 @@ END;";
         /// <returns>An enumerable collection of all data entries for the world with the specified ID.</returns>
         public IEnumerable<WorldData> GetAllDataEntries(string worldId)
         {
-            var query = sqlite.Table<WorldData>().Where(w => w.WorldId == worldId);
+            var query = sqlite.Table<WorldData>().Where(w => w.WorldId == worldId).Take(10000);
             return query.ToList();
         }
 
@@ -283,11 +295,20 @@ END;";
             return query.FirstOrDefault();
         }
 
+        /// <summary>
+        /// Deletes the data entry with the specified world ID and key from the database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to delete the data entry from.</param>
+        /// <param name="key">The key of the data entry to delete.</param>
         public void DeleteDataEntry(string worldId, string key)
         {
             sqlite.Execute("DELETE FROM data WHERE world_id = ? AND key = ?", worldId, key);
         }
 
+        /// <summary>
+        /// Deletes all data entries for the world with the specified ID from the database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to delete all data entries for.</param>
         public void DeleteAllDataEntriesForWorld(string worldId)
         {
             sqlite.Execute("DELETE FROM data WHERE world_id = ?", worldId);

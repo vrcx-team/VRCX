@@ -77,6 +77,8 @@ namespace VRCX
 
             if (KillChildrenOnExit)
                 KillChildProcesses();
+            else
+                UpdateChildProcesses();
         }
 
         private void OnProcessStarted(MonitoredProcess monitoredProcess)
@@ -86,6 +88,8 @@ namespace VRCX
 
             if (KillChildrenOnExit)
                 KillChildProcesses();
+            else
+                UpdateChildProcesses();
 
             var shortcutFiles = FindShortcutFiles(AppShortcutDirectory);
 
@@ -107,7 +111,7 @@ namespace VRCX
             {
                 var process = pair.Value;
 
-                if (!process.HasExited)
+                if (!WinApi.HasProcessExited(process.Id))
                 {
                     KillProcessTree(process.Id);
                     //process.Kill();
@@ -137,6 +141,7 @@ namespace VRCX
             }
 
             // Gonna be honest, not gonna spin up a 32bit windows VM to make sure this works. but it should.
+            // Does VRCX even run on 32bit windows?
             PROCESSENTRY32 procEntry = new PROCESSENTRY32();
             procEntry.dwSize = (uint)Marshal.SizeOf(typeof(PROCESSENTRY32));
 
@@ -182,7 +187,7 @@ namespace VRCX
             foreach (var pair in startedProcesses.ToList())
             {
                 var process = pair.Value;
-                if (process.HasExited)
+                if (WinApi.HasProcessExited(process.Id))
                     startedProcesses.Remove(pair.Key);
             }
         }

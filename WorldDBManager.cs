@@ -29,11 +29,21 @@ namespace VRCX
             listener.Prefixes.Add(url);
 
             worldDB = new WorldDatabase(Path.Combine(Program.AppDataDirectory, "VRCX-WorldData.db"));
+
         }
 
         public async Task Start()
         {
-            listener.Start();
+            // typing this in vr gonna kms
+            try
+            {
+                listener.Start();
+            }
+            catch (HttpListenerException e)
+            {
+                logger.Error(e, "Failed to start HTTP listener. Is VRCX already running?");
+                return;
+            }
 
             logger.Info("Listening for requests on {0}", listener.Prefixes.First());
             while (true)
@@ -46,7 +56,7 @@ namespace VRCX
                 {
                     if (MainForm.Instance?.Browser == null || MainForm.Instance.Browser.IsLoading || !MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
                     {
-                        logger.Warn("Received a request to {0} while VRCX is still initializing the browser window. Responding with error 503.", request.Url);
+                        logger.Error("Received a request to {0} while VRCX is still initializing the browser window. Responding with error 503.", request.Url);
 
                         responseData.Error = "VRCX not yet initialized. Try again in a moment.";
                         responseData.StatusCode = 503;
@@ -84,14 +94,14 @@ namespace VRCX
                             responseData = await HandleBulkDataRequest(context);
                             SendJsonResponse(context.Response, responseData);
                             break;
+                        case "/vrcx/data/settings":
+                            responseData = await HandleSetSettingsRequest(context);
+                            SendJsonResponse(context.Response, responseData);
+                            break;
                         case "/vrcx/status":
                             // Send a blank 200 response to indicate that the server is running.
                             context.Response.StatusCode = 200;
                             context.Response.Close();
-                            break;
-                        case "/vrcx/data/settings":
-                            responseData = await HandleSetSettingsRequest(context);
-                            SendJsonResponse(context.Response, responseData);
                             break;
                         default:
                             responseData.Error = "Invalid VRCX endpoint.";
@@ -108,7 +118,7 @@ namespace VRCX
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, $"Exception while processing the url '{request.Url}'.");
+                    logger.Error(ex, $"Exception while processing a request to endpoint '{request.Url}'.");
 
                     responseData.Error = $"VRCX has encountered an exception while processing the url '{request.Url}': {ex.Message}";
                     responseData.StatusCode = 500;
@@ -212,6 +222,23 @@ namespace VRCX
                 return ConstructErrorResponse(500, "Failed to get/verify current world ID.");
             }
 
+            var worldOverride = request.QueryString["world"];
+            if (worldOverride != null && worldId != worldOverride)
+            {
+                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride);
+                if (!allowed)
+                {
+                    return ConstructSuccessResponse(null, connectionKey);
+                }
+
+                var otherValue = worldDB.GetDataEntry(worldOverride, key);
+
+                logger.Debug("Serving a request for data with key '{0}' from world ID '{1}' requested by world ID '{2}' with connection key {3}.", key, worldOverride, worldId, connectionKey);
+
+                // This value is intended to be null if the key doesn't exist.
+                return ConstructSuccessResponse(otherValue?.Value, connectionKey);
+            }
+
             var value = worldDB.GetDataEntry(worldId, key);
 
             logger.Debug("Serving a request for data with key '{0}' from world ID '{1}' with connection key {2}.", key, worldId, connectionKey);
@@ -227,13 +254,32 @@ namespace VRCX
         private async Task<WorldDataRequestResponse> HandleAllDataRequest(HttpListenerContext context)
         {
             var request = context.Request;
-
-
             var worldId = await GetCurrentWorldID();
 
             if (!TryInitializeWorld(worldId, out string connectionKey))
             {
                 return ConstructErrorResponse(500, "Failed to get/verify current world ID.");
+            }
+
+            var worldOverride = request.QueryString["world"];
+            if (worldOverride != null && worldId != worldOverride)
+            {
+                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride);
+                if (!allowed)
+                {
+                    return ConstructSuccessResponse(null, connectionKey);
+                }
+
+                var otherEntries = worldDB.GetAllDataEntries(worldOverride);
+
+                var otherData = new Dictionary<string, string>();
+                foreach (var entry in otherEntries)
+                {
+                    otherData.Add(entry.Key, entry.Value);
+                }
+
+                logger.Debug("Serving a request for all data ({0} entries) for world ID '{1}' requested by {2} with connection key {3}.", otherData.Count, worldOverride, worldId, connectionKey);
+                return ConstructSuccessResponse(JsonConvert.SerializeObject(otherData), connectionKey);
             }
 
             var entries = worldDB.GetAllDataEntries(worldId);
@@ -272,6 +318,27 @@ namespace VRCX
                 return ConstructErrorResponse(500, "Failed to get/verify current world ID.");
             }
 
+            var worldOverride = request.QueryString["world"];
+            if (worldOverride != null && worldId != worldOverride)
+            {
+                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride);
+                if (!allowed)
+                {
+                    return ConstructSuccessResponse(null, connectionKey);
+                }
+
+                var otherEntries = worldDB.GetAllDataEntries(worldOverride);
+
+                var otherData = new Dictionary<string, string>();
+                foreach (var entry in otherEntries)
+                {
+                    otherData.Add(entry.Key, entry.Value);
+                }
+
+                logger.Debug("Serving a request for all data ({0} entries) for world ID '{1}' requested by {2} with connection key {3}.", otherData.Count, worldOverride, worldId, connectionKey);
+                return ConstructSuccessResponse(JsonConvert.SerializeObject(otherData), connectionKey);
+            }
+
             var values = worldDB.GetDataEntries(worldId, keyArray).ToList();
 
             // Build a dictionary of key/value pairs to send back. If a key doesn't exist in the database, the key will be included in the response as requested but with a null value.
@@ -288,6 +355,12 @@ namespace VRCX
             return ConstructSuccessResponse(JsonConvert.SerializeObject(data), connectionKey);
         }
 
+        /// <summary>
+        /// Attempts to initialize a world with the given ID by generating a connection key and adding it to the world database if it does not already exist.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to initialize.</param>
+        /// <param name="connectionKey">The connection key generated for the world.</param>
+        /// <returns>True if the world was successfully initialized, false otherwise.</returns>
         private bool TryInitializeWorld(string worldId, out string connectionKey)
         {
             if (String.IsNullOrEmpty(worldId))
@@ -476,73 +549,94 @@ namespace VRCX
                 return;
             }
 
-            string requestType = request.RequestType.ToLower();
-
-            switch (requestType)
+            try
             {
-                case "store":
-                    if (String.IsNullOrEmpty(request.Key))
-                    {
-                        logger.Warn("World {0} tried to store data with no key provided", worldId);
-                        this.lastError = "`key` is missing or null";
-                        return;
-                    }
+                string requestType = request.RequestType.ToLower();
+                switch (requestType)
+                {
+                    case "store":
+                        if (String.IsNullOrEmpty(request.Key))
+                        {
+                            logger.Warn("World {0} tried to store data with no key provided", worldId);
+                            this.lastError = "`key` is missing or null";
+                            return;
+                        }
 
-                    if (String.IsNullOrEmpty(request.Value))
-                    {
-                        logger.Warn("World {0} tried to store data under key {1} with no value provided", worldId, request.Key);
-                        this.lastError = "`value` is missing or null";
-                        return;
-                    }
+                        if (request.Key.Length > 255)
+                        {
+                            logger.Warn("World {0} tried to store data with a key that was too long ({1}/256 characters)", worldId, request.Key.Length);
+                            this.lastError = "`key` is too long. Keep it below <256 characters.";
+                            return;
+                        }
 
-                    StoreWorldData(worldId, request.Key, request.Value);
-                    break;
-                case "delete":
-                    if (String.IsNullOrEmpty(request.Key))
-                    {
-                        logger.Warn("World {0} tried to delete data with no key provided", worldId);
-                        this.lastError = "`key` is missing or null";
-                        return;
-                    }
+                        if (String.IsNullOrEmpty(request.Value))
+                        {
+                            logger.Warn("World {0} tried to store data under key {1} with no value provided", worldId, request.Key);
+                            this.lastError = "`value` is missing or null";
+                            return;
+                        }
 
-                    DeleteWorldData(worldId, request.Key);
-                    break;
-                case "delete-all":
-                    logger.Info("World {0} requested to delete all data.", worldId);
-                    worldDB.DeleteAllDataEntriesForWorld(worldId);
-                    break;
-                case "set-setting":
-                    if (String.IsNullOrEmpty(request.Key))
-                    {
-                        logger.Warn("World {0} tried to delete data with no key provided", worldId);
-                        this.lastError = "`key` is missing or null";
-                        return;
-                    }
+                        StoreWorldData(worldId, request.Key, request.Value);
 
-                    if (String.IsNullOrEmpty(request.Value))
-                    {
-                        logger.Warn("World {0} tried to set settings with no value provided", worldId);
-                        this.lastError = "`value` is missing or null";
-                        return;
-                    }
+                        break;
+                    case "delete":
+                        if (String.IsNullOrEmpty(request.Key))
+                        {
+                            logger.Warn("World {0} tried to delete data with no key provided", worldId);
+                            this.lastError = "`key` is missing or null";
+                            return;
+                        }
 
-                    SetWorldProperty(worldId, request.Key, request.Value);
-                    break;
-                default:
-                    logger.Warn("World {0} sent an invalid request type '{0}'", worldId, request.RequestType);
-                    this.lastError = "Invalid request type";
-                    // invalid request type
-                    return;
+
+                        DeleteWorldData(worldId, request.Key);
+                        break;
+                    case "delete-all":
+
+                        logger.Info("World {0} requested to delete all data.", worldId);
+
+
+                        worldDB.DeleteAllDataEntriesForWorld(worldId);
+                        worldDB.UpdateWorldDataSize(worldId, 0);
+                        break;
+                    case "set-setting":
+                        if (String.IsNullOrEmpty(request.Key))
+                        {
+                            logger.Warn("World {0} tried to delete data with no key provided", worldId);
+                            this.lastError = "`key` is missing or null";
+                            return;
+                        }
+
+                        if (String.IsNullOrEmpty(request.Value))
+                        {
+                            logger.Warn("World {0} tried to set settings with no value provided", worldId);
+                            this.lastError = "`value` is missing or null";
+                            return;
+                        }
+
+                        SetWorldProperty(worldId, request.Key, request.Value);
+                        break;
+                    default:
+                        logger.Warn("World {0} sent an invalid request type '{0}'", worldId, request.RequestType);
+                        this.lastError = "Invalid request type";
+                        // invalid request type
+                        return;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to process world data request for world {0}", worldId);
+                logger.Error("Failed Request: {0}", json);
+                this.lastError = ex.Message;
+                return;
             }
         }
 
-        private void LogWarning(string message, params object[] args)
-        {
-            logger.Warn("World {0} - " + message, args);
-            this.lastError = String.Format(message, args);
-        }
-
-
+        /// <summary>
+        /// Sets a property for a given world in the world database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to set the property for.</param>
+        /// <param name="key">The key of the property to set.</param>
+        /// <param name="value">The value to set the property to.</param>
         public void SetWorldProperty(string worldId, string key, string value)
         {
             switch (key)
@@ -562,6 +656,12 @@ namespace VRCX
             }
         }
 
+        /// <summary>
+        /// Stores a data entry for a given world in the world database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to store the data entry for.</param>
+        /// <param name="key">The key of the data entry to store.</param>
+        /// <param name="value">The value of the data entry to store.</param>
         public void StoreWorldData(string worldId, string key, string value)
         {
             // Get/calculate the old and new data sizes for this key/the world
@@ -585,6 +685,11 @@ namespace VRCX
             logger.Debug("{0} : {1}", key, value);
         }
 
+        /// <summary>
+        /// Deletes a data entry for a given world from the world database.
+        /// </summary>
+        /// <param name="worldId">The ID of the world to delete the data entry from.</param>
+        /// <param name="key">The key of the data entry to delete.</param>
         public void DeleteWorldData(string worldId, string key)
         {
             int oldTotalDataSize = worldDB.GetWorldDataSize(worldId);
