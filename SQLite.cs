@@ -407,7 +407,7 @@ namespace SQLite
 
 			Handle = handle;
 			if (r != SQLite3.Result.OK) {
-				throw SQLiteException.New (r, String.Format ("Could not open database file: {0} ({1})", DatabasePath, r));
+				throw SQLiteException.New (r, string.Format ("Could not open database file: {0} ({1})", DatabasePath, r));
 			}
 			_open = true;
 
@@ -505,7 +505,6 @@ namespace SQLite
 		{
 			var utf8Length = System.Text.Encoding.UTF8.GetByteCount (s);
 			var bytes = new byte [utf8Length + 1];
-			utf8Length = System.Text.Encoding.UTF8.GetBytes(s, 0, s.Length, bytes, 0);
 			return bytes;
 		}
 #endif
@@ -816,7 +815,7 @@ namespace SQLite
 		public int CreateIndex (string indexName, string tableName, string[] columnNames, bool unique = false)
 		{
 			const string sqlFormat = "create {2} index if not exists \"{3}\" on \"{0}\"(\"{1}\")";
-			var sql = String.Format (sqlFormat, tableName, string.Join ("\", \"", columnNames), unique ? "unique" : string.Empty, indexName);
+			var sql = string.Format (sqlFormat, tableName, string.Join ("\", \"", columnNames), unique ? "unique" : string.Empty, indexName);
 			return Execute (sql);
 		}
 
@@ -1489,7 +1488,7 @@ namespace SQLite
 			// Rolling back without a TO clause rolls backs all transactions
 			//    and leaves the transaction stack empty.
 			try {
-				if (String.IsNullOrEmpty (savepoint)) {
+				if (string.IsNullOrEmpty (savepoint)) {
 					if (Interlocked.Exchange (ref _transactionDepth, 0) > 0) {
 						Execute ("rollback");
 					}
@@ -1541,22 +1540,23 @@ namespace SQLite
 			// Validate the savepoint
 			int firstLen = savepoint.IndexOf ('D');
 			if (firstLen >= 2 && savepoint.Length > firstLen + 1) {
-				int depth;
-				if (Int32.TryParse (savepoint.Substring (firstLen + 1), out depth)) {
-					// TODO: Mild race here, but inescapable without locking almost everywhere.
-					if (0 <= depth && depth < _transactionDepth) {
+                if (int.TryParse(savepoint.Substring(firstLen + 1), out int depth))
+                {
+                    // TODO: Mild race here, but inescapable without locking almost everywhere.
+                    if (0 <= depth && depth < _transactionDepth)
+                    {
 #if NETFX_CORE || USE_SQLITEPCL_RAW || NETCORE
 						Volatile.Write (ref _transactionDepth, depth);
 #elif SILVERLIGHT
 						_transactionDepth = depth;
 #else
-                        Thread.VolatileWrite (ref _transactionDepth, depth);
+                        Thread.VolatileWrite(ref _transactionDepth, depth);
 #endif
-						Execute (cmd + savepoint);
-						return;
-					}
-				}
-			}
+                        Execute(cmd + savepoint);
+                        return;
+                    }
+                }
+            }
 
 			throw new ArgumentException ("savePoint is not valid, and should be the result of a call to SaveTransactionPoint.", "savePoint");
 		}
@@ -2231,10 +2231,8 @@ namespace SQLite
 
 		void OnTableChanged (TableMapping table, NotifyTableChangedAction action)
 		{
-			var ev = TableChanged;
-			if (ev != null)
-				ev (this, new NotifyTableChangedEventArgs (table, action));
-		}
+            TableChanged?.Invoke(this, new NotifyTableChangedEventArgs(table, action));
+        }
 
 		public event EventHandler<NotifyTableChangedEventArgs> TableChanged;
 	}
@@ -2644,9 +2642,7 @@ namespace SQLite
 
 		public void SetAutoIncPK (object obj, long id)
 		{
-			if (_autoPk != null) {
-				_autoPk.SetValue (obj, Convert.ChangeType (id, _autoPk.ColumnType, null));
-			}
+			_autoPk?.SetValue (obj, Convert.ChangeType (id, _autoPk.ColumnType, null));
 		}
 
 		public Column[] InsertColumns {
@@ -2678,7 +2674,7 @@ namespace SQLite
 
 		public class Column
 		{
-			MemberInfo _member;
+            private readonly MemberInfo _member;
 
 			public string Name { get; private set; }
 
@@ -2834,13 +2830,13 @@ namespace SQLite
 		public static EnumCacheInfo GetInfo (Type type)
 		{
 			lock (Cache) {
-				EnumCacheInfo info = null;
-				if (!Cache.TryGetValue (type, out info)) {
-					info = new EnumCacheInfo (type);
-					Cache[type] = info;
-				}
+                if (!Cache.TryGetValue(type, out EnumCacheInfo info))
+                {
+                    info = new EnumCacheInfo(type);
+                    Cache[type] = info;
+                }
 
-				return info;
+                return info;
 			}
 		}
 	}
@@ -2855,10 +2851,9 @@ namespace SQLite
 		{
 			if (obj == null)
 				return typeof (object);
-			var rt = obj as IReflectableType;
-			if (rt != null)
-				return rt.GetTypeInfo ().AsType ();
-			return obj.GetType ();
+            if (obj is IReflectableType rt)
+                return rt.GetTypeInfo().AsType();
+            return obj.GetType ();
 		}
 
 		public static string SqlDecl (TableMapping.Column p, bool storeDateTimeAsTicks, bool storeTimeSpanAsTicks)
@@ -2884,13 +2879,13 @@ namespace SQLite
 		public static string SqlType (TableMapping.Column p, bool storeDateTimeAsTicks, bool storeTimeSpanAsTicks)
 		{
 			var clrType = p.ColumnType;
-			if (clrType == typeof (Boolean) || clrType == typeof (Byte) || clrType == typeof (UInt16) || clrType == typeof (SByte) || clrType == typeof (Int16) || clrType == typeof (Int32) || clrType == typeof (UInt32) || clrType == typeof (Int64)) {
+			if (clrType == typeof (bool) || clrType == typeof (byte) || clrType == typeof (ushort) || clrType == typeof (sbyte) || clrType == typeof (short) || clrType == typeof (int) || clrType == typeof (uint) || clrType == typeof (long)) {
 				return "integer";
 			}
-			else if (clrType == typeof (Single) || clrType == typeof (Double) || clrType == typeof (Decimal)) {
+			else if (clrType == typeof (float) || clrType == typeof (double) || clrType == typeof (decimal)) {
 				return "float";
 			}
-			else if (clrType == typeof (String) || clrType == typeof (StringBuilder) || clrType == typeof (Uri) || clrType == typeof (UriBuilder)) {
+			else if (clrType == typeof (string) || clrType == typeof (StringBuilder) || clrType == typeof (Uri) || clrType == typeof (UriBuilder)) {
 				int? len = p.MaxStringLength;
 
 				if (len.HasValue)
@@ -3024,8 +3019,8 @@ namespace SQLite
 
 	public partial class SQLiteCommand
 	{
-		SQLiteConnection _conn;
-		private List<Binding> _bindings;
+        private readonly SQLiteConnection _conn;
+		private readonly List<Binding> _bindings;
 
 		public string CommandText { get; set; }
 
@@ -3042,10 +3037,9 @@ namespace SQLite
 				_conn.Tracer?.Invoke ("Executing: " + this);
 			}
 
-			var r = SQLite3.Result.OK;
-			var stmt = Prepare ();
-			r = SQLite3.Step (stmt);
-			Finalize (stmt);
+            var stmt = Prepare ();
+            var r = SQLite3.Step(stmt);
+            Finalize (stmt);
 			if (r == SQLite3.Result.Done) {
 				int rowsAffected = SQLite3.Changes (_conn.Handle);
 				return rowsAffected;
@@ -3159,7 +3153,7 @@ namespace SQLite
 				_conn.Tracer?.Invoke ("Executing Query: " + this);
 			}
 
-			T val = default (T);
+			T val = default;
 
 			var stmt = Prepare ();
 
@@ -3199,7 +3193,7 @@ namespace SQLite
 					var colType = SQLite3.ColumnType (stmt, 0);
 					var val = ReadCol (stmt, 0, colType, typeof (T));
 					if (val == null) {
-						yield return default (T);
+						yield return default;
 					}
 					else {
 						yield return (T)val;
@@ -3271,57 +3265,57 @@ namespace SQLite
 				SQLite3.BindNull (stmt, index);
 			}
 			else {
-				if (value is Int32) {
+				if (value is int) {
 					SQLite3.BindInt (stmt, index, (int)value);
 				}
-				else if (value is String) {
+				else if (value is string) {
 					SQLite3.BindText (stmt, index, (string)value, -1, NegativePointer);
 				}
-				else if (value is Byte || value is UInt16 || value is SByte || value is Int16) {
+				else if (value is byte || value is ushort || value is sbyte || value is short) {
 					SQLite3.BindInt (stmt, index, Convert.ToInt32 (value));
 				}
-				else if (value is Boolean) {
+				else if (value is bool) {
 					SQLite3.BindInt (stmt, index, (bool)value ? 1 : 0);
 				}
-				else if (value is UInt32 || value is Int64) {
+				else if (value is uint || value is long) {
 					SQLite3.BindInt64 (stmt, index, Convert.ToInt64 (value));
 				}
-				else if (value is Single || value is Double || value is Decimal) {
+				else if (value is float || value is double || value is decimal) {
 					SQLite3.BindDouble (stmt, index, Convert.ToDouble (value));
 				}
-				else if (value is TimeSpan) {
+				else if (value is TimeSpan span) {
 					if (storeTimeSpanAsTicks) {
-						SQLite3.BindInt64 (stmt, index, ((TimeSpan)value).Ticks);
+						SQLite3.BindInt64 (stmt, index, span.Ticks);
 					}
 					else {
-						SQLite3.BindText (stmt, index, ((TimeSpan)value).ToString (), -1, NegativePointer);
+						SQLite3.BindText (stmt, index, span.ToString (), -1, NegativePointer);
 					}
 				}
-				else if (value is DateTime) {
+				else if (value is DateTime time) {
 					if (storeDateTimeAsTicks) {
-						SQLite3.BindInt64 (stmt, index, ((DateTime)value).Ticks);
+						SQLite3.BindInt64 (stmt, index, time.Ticks);
 					}
 					else {
-						SQLite3.BindText (stmt, index, ((DateTime)value).ToString (dateTimeStringFormat, System.Globalization.CultureInfo.InvariantCulture), -1, NegativePointer);
+						SQLite3.BindText (stmt, index, time.ToString (dateTimeStringFormat, System.Globalization.CultureInfo.InvariantCulture), -1, NegativePointer);
 					}
 				}
-				else if (value is DateTimeOffset) {
-					SQLite3.BindInt64 (stmt, index, ((DateTimeOffset)value).UtcTicks);
+				else if (value is DateTimeOffset offset) {
+					SQLite3.BindInt64 (stmt, index, offset.UtcTicks);
 				}
-				else if (value is byte[]) {
-					SQLite3.BindBlob (stmt, index, (byte[])value, ((byte[])value).Length, NegativePointer);
+				else if (value is byte[] v) {
+					SQLite3.BindBlob (stmt, index, v, v.Length, NegativePointer);
 				}
-				else if (value is Guid) {
-					SQLite3.BindText (stmt, index, ((Guid)value).ToString (), 72, NegativePointer);
+                else if (value is Guid guid) {
+					SQLite3.BindText (stmt, index, guid.ToString (), 72, NegativePointer);
 				}
-				else if (value is Uri) {
-					SQLite3.BindText (stmt, index, ((Uri)value).ToString (), -1, NegativePointer);
+				else if (value is Uri uri) {
+					SQLite3.BindText (stmt, index, uri.ToString (), -1, NegativePointer);
 				}
-				else if (value is StringBuilder) {
-					SQLite3.BindText (stmt, index, ((StringBuilder)value).ToString (), -1, NegativePointer);
+                else if (value is StringBuilder builder) {
+					SQLite3.BindText (stmt, index, builder.ToString (), -1, NegativePointer);
 				}
-				else if (value is UriBuilder) {
-					SQLite3.BindText (stmt, index, ((UriBuilder)value).ToString (), -1, NegativePointer);
+				else if (value is UriBuilder builder1) {
+					SQLite3.BindText (stmt, index, builder1.ToString (), -1, NegativePointer);
 				}
 				else {
 					// Now we could possibly get an enum, retrieve cached info
@@ -3362,13 +3356,13 @@ namespace SQLite
 					clrTypeInfo = clrType.GetTypeInfo ();
 				}
 
-				if (clrType == typeof (String)) {
+				if (clrType == typeof (string)) {
 					return SQLite3.ColumnString (stmt, index);
 				}
-				else if (clrType == typeof (Int32)) {
-					return (int)SQLite3.ColumnInt (stmt, index);
+				else if (clrType == typeof (int)) {
+					return SQLite3.ColumnInt(stmt, index);
 				}
-				else if (clrType == typeof (Boolean)) {
+				else if (clrType == typeof (bool)) {
 					return SQLite3.ColumnInt (stmt, index) == 1;
 				}
 				else if (clrType == typeof (double)) {
@@ -3414,22 +3408,22 @@ namespace SQLite
 					else
 						return SQLite3.ColumnInt (stmt, index);
 				}
-				else if (clrType == typeof (Int64)) {
+				else if (clrType == typeof (long)) {
 					return SQLite3.ColumnInt64 (stmt, index);
 				}
-				else if (clrType == typeof (UInt32)) {
+				else if (clrType == typeof (uint)) {
 					return (uint)SQLite3.ColumnInt64 (stmt, index);
 				}
 				else if (clrType == typeof (decimal)) {
 					return (decimal)SQLite3.ColumnDouble (stmt, index);
 				}
-				else if (clrType == typeof (Byte)) {
+				else if (clrType == typeof (byte)) {
 					return (byte)SQLite3.ColumnInt (stmt, index);
 				}
-				else if (clrType == typeof (UInt16)) {
+				else if (clrType == typeof (ushort)) {
 					return (ushort)SQLite3.ColumnInt (stmt, index);
 				}
-				else if (clrType == typeof (Int16)) {
+				else if (clrType == typeof (short)) {
 					return (short)SQLite3.ColumnInt (stmt, index);
 				}
 				else if (clrType == typeof (sbyte)) {
@@ -3489,17 +3483,17 @@ namespace SQLite
 				clrTypeInfo = clrType.GetTypeInfo ();
 			}
 
-			if (clrType == typeof (String)) {
+			if (clrType == typeof (string)) {
 				fastSetter = CreateTypedSetterDelegate<T, string> (column, (stmt, index) => {
 					return SQLite3.ColumnString (stmt, index);
 				});
 			}
-			else if (clrType == typeof (Int32)) {
+			else if (clrType == typeof (int)) {
 				fastSetter = CreateNullableTypedSetterDelegate<T, int> (column, (stmt, index)=>{
 					return SQLite3.ColumnInt (stmt, index);
 				});
 			}
-			else if (clrType == typeof (Boolean)) {
+			else if (clrType == typeof (bool)) {
 				fastSetter = CreateNullableTypedSetterDelegate<T, bool> (column, (stmt, index) => {
 					return SQLite3.ColumnInt (stmt, index) == 1;
 				});
@@ -3523,11 +3517,11 @@ namespace SQLite
 				else {
 					fastSetter = CreateNullableTypedSetterDelegate<T, TimeSpan> (column, (stmt, index) => {
 						var text = SQLite3.ColumnString (stmt, index);
-						TimeSpan resultTime;
-						if (!TimeSpan.TryParseExact (text, "c", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.TimeSpanStyles.None, out resultTime)) {
-							resultTime = TimeSpan.Parse (text);
-						}
-						return resultTime;
+                        if (!TimeSpan.TryParseExact(text, "c", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.TimeSpanStyles.None, out TimeSpan resultTime))
+                        {
+                            resultTime = TimeSpan.Parse(text);
+                        }
+                        return resultTime;
 					});
 				}
 			}
@@ -3540,11 +3534,11 @@ namespace SQLite
 				else {
 					fastSetter = CreateNullableTypedSetterDelegate<T, DateTime> (column, (stmt, index) => {
 						var text = SQLite3.ColumnString (stmt, index);
-						DateTime resultDate;
-						if (!DateTime.TryParseExact (text, conn.DateTimeStringFormat, System.Globalization.CultureInfo.InvariantCulture, conn.DateTimeStyle, out resultDate)) {
-							resultDate = DateTime.Parse (text);
-						}
-						return resultDate;
+                        if (!DateTime.TryParseExact(text, conn.DateTimeStringFormat, System.Globalization.CultureInfo.InvariantCulture, conn.DateTimeStyle, out DateTime resultDate))
+                        {
+                            resultDate = DateTime.Parse(text);
+                        }
+                        return resultDate;
 					});
 				}
 			}
@@ -3556,13 +3550,13 @@ namespace SQLite
 			else if (clrTypeInfo.IsEnum) {
 				// NOTE: Not sure of a good way (if any?) to do a strongly-typed fast setter like this for enumerated types -- for now, return null and column sets will revert back to the safe (but slow) Reflection-based method of column prop.Set()
 			}
-			else if (clrType == typeof (Int64)) {
-				fastSetter = CreateNullableTypedSetterDelegate<T, Int64> (column, (stmt, index) => {
+			else if (clrType == typeof (long)) {
+				fastSetter = CreateNullableTypedSetterDelegate<T, long> (column, (stmt, index) => {
 					return SQLite3.ColumnInt64 (stmt, index);
 				});
 			}
-			else if (clrType == typeof (UInt32)) {
-				fastSetter = CreateNullableTypedSetterDelegate<T, UInt32> (column, (stmt, index) => {
+			else if (clrType == typeof (uint)) {
+				fastSetter = CreateNullableTypedSetterDelegate<T, uint> (column, (stmt, index) => {
 					return (uint)SQLite3.ColumnInt64 (stmt, index);
 				});
 			}
@@ -3571,18 +3565,18 @@ namespace SQLite
 					return (decimal)SQLite3.ColumnDouble (stmt, index);
 				});
 			}
-			else if (clrType == typeof (Byte)) {
-				fastSetter = CreateNullableTypedSetterDelegate<T, Byte> (column, (stmt, index) => {
+			else if (clrType == typeof (byte)) {
+				fastSetter = CreateNullableTypedSetterDelegate<T, byte> (column, (stmt, index) => {
 					return (byte)SQLite3.ColumnInt (stmt, index);
 				});
 			}
-			else if (clrType == typeof (UInt16)) {
-				fastSetter = CreateNullableTypedSetterDelegate<T, UInt16> (column, (stmt, index) => {
+			else if (clrType == typeof (ushort)) {
+				fastSetter = CreateNullableTypedSetterDelegate<T, ushort> (column, (stmt, index) => {
 					return (ushort)SQLite3.ColumnInt (stmt, index);
 				});
 			}
-			else if (clrType == typeof (Int16)) {
-				fastSetter = CreateNullableTypedSetterDelegate<T, Int16> (column, (stmt, index) => {
+			else if (clrType == typeof (short)) {
+				fastSetter = CreateNullableTypedSetterDelegate<T, short> (column, (stmt, index) => {
 					return (short)SQLite3.ColumnInt (stmt, index);
 				});
 			}
@@ -3804,14 +3798,12 @@ namespace SQLite
 		List<Ordering> _orderBys;
 		int? _limit;
 		int? _offset;
-
-		BaseTableQuery _joinInner;
-		Expression _joinInnerKeySelector;
-		BaseTableQuery _joinOuter;
-		Expression _joinOuterKeySelector;
-		Expression _joinSelector;
-
-		Expression _selector;
+        BaseTableQuery _joinInner;
+        Expression _joinInnerKeySelector;
+        BaseTableQuery _joinOuter;
+        Expression _joinOuterKeySelector;
+        Expression _joinSelector;
+        Expression _selector;
 
 		TableQuery (SQLiteConnection conn, TableMapping table)
 		{
@@ -3939,7 +3931,7 @@ namespace SQLite
 		/// </summary>
 		public TableQuery<T> OrderBy<U> (Expression<Func<T, U>> orderExpr)
 		{
-			return AddOrderBy<U> (orderExpr, true);
+			return AddOrderBy(orderExpr, true);
 		}
 
 		/// <summary>
@@ -3947,7 +3939,7 @@ namespace SQLite
 		/// </summary>
 		public TableQuery<T> OrderByDescending<U> (Expression<Func<T, U>> orderExpr)
 		{
-			return AddOrderBy<U> (orderExpr, false);
+			return AddOrderBy(orderExpr, false);
 		}
 
 		/// <summary>
@@ -3955,7 +3947,7 @@ namespace SQLite
 		/// </summary>
 		public TableQuery<T> ThenBy<U> (Expression<Func<T, U>> orderExpr)
 		{
-			return AddOrderBy<U> (orderExpr, true);
+			return AddOrderBy(orderExpr, true);
 		}
 
 		/// <summary>
@@ -3963,7 +3955,7 @@ namespace SQLite
 		/// </summary>
 		public TableQuery<T> ThenByDescending<U> (Expression<Func<T, U>> orderExpr)
 		{
-			return AddOrderBy<U> (orderExpr, false);
+			return AddOrderBy(orderExpr, false);
 		}
 
 		TableQuery<T> AddOrderBy<U> (Expression<Func<T, U>> orderExpr, bool asc)
@@ -3971,7 +3963,7 @@ namespace SQLite
 			if (orderExpr.NodeType == ExpressionType.Lambda) {
 				var lambda = (LambdaExpression)orderExpr;
 
-				MemberExpression mem = null;
+				MemberExpression mem;
 
 				var unary = lambda.Body as UnaryExpression;
 				if (unary != null && unary.NodeType == ExpressionType.Convert) {
@@ -4255,22 +4247,23 @@ namespace SQLite
 						var m = (PropertyInfo)mem.Member;
 						val = m.GetValue (obj, null);
 					}
-					else if (mem.Member is FieldInfo) {
-						var m = (FieldInfo)mem.Member;
-						val = m.GetValue (obj);
-					}
-					else {
-						throw new NotSupportedException ("MemberExpr: " + mem.Member.GetType ());
-					}
+					else if (mem.Member is FieldInfo m) 
+					{
+                        val = m.GetValue(obj);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException("MemberExpr: " + mem.Member.GetType());
+                    }
 
-					//
-					// Work special magic for enumerables
-					//
-					if (val != null && val is System.Collections.IEnumerable && !(val is string) && !(val is System.Collections.Generic.IEnumerable<byte>)) {
-						var sb = new System.Text.StringBuilder ();
+                    //
+                    // Work special magic for enumerables
+                    //
+                    if (val != null && val is IEnumerable enumerable && !(val is string) && !(val is IEnumerable<byte>)) {
+						var sb = new StringBuilder ();
 						sb.Append ("(");
 						var head = string.Empty;
-						foreach (var a in (System.Collections.IEnumerable)val) {
+						foreach (var a in enumerable) {
 							queryArgs.Add (a);
 							sb.Append (head);
 							sb.Append ("?");

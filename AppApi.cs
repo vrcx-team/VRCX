@@ -73,7 +73,7 @@ namespace VRCX
         /// <returns>The signature of the file as a base64-encoded string.</returns>
         public string SignFile(string Blob)
         {
-            var fileData = Convert.FromBase64CharArray(Blob.ToCharArray(), 0, Blob.Length);
+            var fileData = Convert.FromBase64String(Blob);
             using (var sig = Librsync.ComputeSignature(new MemoryStream(fileData)))
             using (var memoryStream = new MemoryStream())
             {

@@ -34,13 +34,16 @@ namespace VRCX
 
         public string GetAssetId(string id)
         {
-            byte[] hash = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(id));
-            StringBuilder idHex = new StringBuilder(hash.Length * 2);
-            foreach (byte b in hash)
+            using(var sha256 = SHA256.Create())
             {
-                idHex.AppendFormat("{0:x2}", b);
+                byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(id));
+                StringBuilder idHex = new StringBuilder(hash.Length * 2);
+                foreach (byte b in hash)
+                {
+                    idHex.AppendFormat("{0:x2}", b);
+                }
+                return idHex.ToString().ToUpper().Substring(0, 16);
             }
-            return idHex.ToString().ToUpper().Substring(0, 16);
         }
 
         public string GetAssetVersion(int version)
@@ -120,8 +123,7 @@ namespace VRCX
             DownloadCanceled = true;
             try
             {
-                if (client != null)
-                    client.CancelAsync();
+                client?.CancelAsync();
                 if (File.Exists(DownloadTempLocation))
                     File.Delete(DownloadTempLocation);
             }
@@ -231,14 +233,10 @@ namespace VRCX
         public long GetCacheSize()
         {
             var cachePath = GetVRChatCacheLocation();
-            if (Directory.Exists(cachePath))
-            {
-                return DirSize(new DirectoryInfo(cachePath));
-            }
-            else
-            {
-                return 0;
-            }
+
+            if (!Directory.Exists(cachePath)) return 0;
+
+            return DirSize(new DirectoryInfo(cachePath));
         }
 
 
@@ -250,15 +248,10 @@ namespace VRCX
         public long DirSize(DirectoryInfo d)
         {
             long size = 0;
-            FileInfo[] files = d.GetFiles();
+            FileInfo[] files = d.GetFiles("*.*", SearchOption.AllDirectories);
             foreach (FileInfo file in files)
             {
                 size += file.Length;
-            }
-            DirectoryInfo[] directories = d.GetDirectories();
-            foreach (DirectoryInfo directory in directories)
-            {
-                size += DirSize(directory);
             }
             return size;
         }

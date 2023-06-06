@@ -9,11 +9,12 @@ namespace VRCX
     {
         private static readonly string cacheLocation = Path.Combine(Program.AppDataDirectory, "ImageCache");
 
+        private const string IMAGE_HOST1 = "api.vrchat.cloud";
+        private const string IMAGE_HOST2 = "files.vrchat.cloud";
+        private const string IMAGE_HOST3 = "d348imysud55la.cloudfront.net";
+
         public static string GetImage(string url, string fileId, string version)
         {
-            var imageHost = "api.vrchat.cloud";
-            var imageHost1 = "files.vrchat.cloud";
-            var imageHost2 = "d348imysud55la.cloudfront.net";
             var directoryLocation = Path.Combine(cacheLocation, fileId);
             var fileLocation = Path.Combine(directoryLocation, $"{version}.png");
 
@@ -28,7 +29,7 @@ namespace VRCX
             Directory.CreateDirectory(directoryLocation);
 
             Uri uri = new Uri(url);
-            if (uri.Host != imageHost && uri.Host != imageHost1 && uri.Host != imageHost2)
+            if (uri.Host != IMAGE_HOST1 && uri.Host != IMAGE_HOST2 && uri.Host != IMAGE_HOST3)
                 throw new ArgumentException("Invalid image host", url);
 
             using (var client = new WebClient())
@@ -36,7 +37,7 @@ namespace VRCX
                 string cookieString = string.Empty;
                 if (WebApi.Instance != null && WebApi.Instance._cookieContainer != null)
                 {
-                    CookieCollection cookies = WebApi.Instance._cookieContainer.GetCookies(new Uri($"https://{imageHost}"));
+                    CookieCollection cookies = WebApi.Instance._cookieContainer.GetCookies(new Uri($"https://{IMAGE_HOST1}"));
                     foreach (Cookie cookie in cookies)
                         cookieString += $"{cookie.Name}={cookie.Value};";
                 }
@@ -56,13 +57,10 @@ namespace VRCX
         private static void CleanImageCache()
         {
             DirectoryInfo dirInfo = new DirectoryInfo(cacheLocation);
-            var folders = dirInfo.GetDirectories().OrderBy(p => p.LastWriteTime);
-            int i = 0;
-            foreach (DirectoryInfo folder in folders.Reverse())
+            var folders = dirInfo.GetDirectories().OrderByDescending(p => p.LastWriteTime).Skip(1000);
+            foreach (DirectoryInfo folder in folders)
             {
-                i++;
-                if (i > 1000)
-                    folder.Delete(true);
+                folder.Delete(true);
             }
         }
     }

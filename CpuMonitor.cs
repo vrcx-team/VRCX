@@ -13,8 +13,8 @@ namespace VRCX
     {
         public static readonly CpuMonitor Instance;
         public float CpuUsage;
-        private PerformanceCounter _performanceCounter;
-        private Timer _timer;
+        private readonly PerformanceCounter _performanceCounter;
+        private readonly Timer _timer;
 
         static CpuMonitor()
         {

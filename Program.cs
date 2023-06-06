@@ -21,7 +21,7 @@ namespace VRCX
         public static string Version { get; private set; }
         public static bool LaunchDebug;
         public static bool GPUFix;
-        private static NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
+        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
         static Program()
         {
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
