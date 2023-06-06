@@ -4738,7 +4738,7 @@ speechSynthesis.getVoices();
                 break;
 
             case 'group-member-updated':
-                var groupId = content.groupId;
+                var groupId = content.member.groupId;
                 $app.onGroupJoined(groupId);
                 console.log('group-member-updated', content);
 
@@ -4758,76 +4758,15 @@ speechSynthesis.getVoices();
             case 'instance-queue-joined':
             case 'instance-queue-position':
                 var instanceId = content.instanceLocation;
-                var ref = this.queuedInstances.get(instanceId);
-                if (typeof ref === 'undefined') {
-                    ref = {
-                        $msgBox: null,
-                        $groupName: '',
-                        $worldName: '',
-                        location: instanceId,
-                        position: 0,
-                        queueSize: 0
-                    };
-                }
-                if (content.position) {
-                    ref.position = content.position;
-                }
-                if (content.queueSize) {
-                    ref.queueSize = content.queueSize;
-                }
-                if (!ref.$msgBox) {
-                    ref.$msgBox = $app.$message({
-                        message: '',
-                        type: 'info',
-                        duration: 0,
-                        showClose: true,
-                        customClass: 'vrc-instance-queue-message'
-                    });
-                }
-                if (!ref.$groupName) {
-                    $app.getGroupName(instanceId).then((name) => {
-                        ref.$groupName = name;
-                        ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${name} `;
-                    });
-                }
-                if (!ref.$worldName) {
-                    $app.getWorldName(instanceId).then((name) => {
-                        ref.$worldName = name;
-                    });
-                }
-
-                ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${ref.$groupName} `;
-                API.queuedInstances.set(instanceId, ref);
+                var position = content.position ?? 0;
+                var queueSize = content.queueSize ?? 0;
+                $app.instanceQueueUpdate(instanceId, position, queueSize);
                 break;
 
             case 'instance-queue-ready':
                 var instanceId = content.instanceLocation;
                 // var expiry = Date.parse(content.expiry);
-                var ref = this.queuedInstances.get(instanceId);
-                if (typeof ref !== 'undefined') {
-                    ref.$msgBox.close();
-                    this.queuedInstances.delete(instanceId);
-                }
-                var L = this.parseLocation(instanceId);
-                var group = this.cachedGroups.get(L.groupId);
-                var groupName = group?.name ? group.name : '';
-                var worldName = ref.$worldName ? ref.$worldName : '';
-                $app.$message({
-                    message: `Instance ready to join ${groupName} - ${worldName}`,
-                    type: 'success'
-                });
-                var noty = {
-                    created_at: new Date().toJSON(),
-                    type: 'group.queueReady',
-                    imageUrl: group?.iconUrl,
-                    message: `Instance ready to join ${groupName} - ${worldName}`,
-                    location: instanceId,
-                    groupName,
-                    worldName
-                };
-                $app.queueNotificationNoty(noty);
-                $app.notificationTable.data.push(noty);
-                $app.updateSharedFeed(true);
+                $app.instanceQueueReady(instanceId);
                 break;
 
             default:
@@ -5137,9 +5076,7 @@ speechSynthesis.getVoices();
             isSteamVRRunning: false,
             appVersion: '',
             latestAppVersion: '',
-            ossDialog: false,
-            exportFriendsListDialog: false,
-            exportFriendsListContent: ''
+            ossDialog: false
         },
         i18n,
         computed: {},
@@ -5358,6 +5295,7 @@ speechSynthesis.getVoices();
                 configRepository.setBool('isGameNoVR', this.isGameNoVR);
                 API.currentUser.$online_for = '';
                 API.currentUser.$offline_for = Date.now();
+                this.removeAllQueuedInstances();
                 this.autoVRChatCacheManagement();
                 this.checkIfGameCrashed();
                 this.ipcTimeout = 0;
@@ -5453,6 +5391,27 @@ speechSynthesis.getVoices();
                     wristFeed.unshift(feedEntry);
                 } else {
                     var worldRef = API.cachedWorlds.get(ref.$location.worldId);
+                    var groupName = '';
+                    if (ref.$location.groupId) {
+                        var groupRef = API.cachedGroups.get(
+                            ref.$location.groupId
+                        );
+                        if (typeof groupRef !== 'undefined') {
+                            groupName = groupRef.name;
+                        } else {
+                            // no group cache, fetch group and try again
+                            API.getGroup({
+                                groupId: ref.$location.groupId
+                            }).then((args) => {
+                                workerTimers.setTimeout(() => {
+                                    // delay to allow for group cache to update
+                                    $app.sharedFeed.pendingUpdate = true;
+                                    $app.updateSharedFeed(false);
+                                }, 100);
+                                return args;
+                            });
+                        }
+                    }
                     if (typeof worldRef !== 'undefined') {
                         var feedEntry = {
                             created_at: ref.created_at,
@@ -5461,6 +5420,7 @@ speechSynthesis.getVoices();
                             displayName: ref.displayName,
                             location: ref.$location.tag,
                             worldName: worldRef.name,
+                            groupName,
                             previousLocation: '',
                             isFavorite,
                             time: 0,
@@ -7063,6 +7023,10 @@ speechSynthesis.getVoices();
         this.promptEmailOTP();
     };
 
+    $app.data.exportFriendsListDialog = false;
+    $app.data.exportFriendsListCsv = '';
+    $app.data.exportFriendsListJson = '';
+
     $app.methods.showExportFriendsListDialog = function () {
         var { friends } = API.currentUser;
         if (Array.isArray(friends) === false) {
@@ -7075,6 +7039,7 @@ speechSynthesis.getVoices();
             }
             return str;
         };
+        var friendsList = [];
         for (var userId of friends) {
             var ref = this.friends.get(userId);
             var name = (typeof ref !== 'undefined' && ref.name) || '';
@@ -7082,13 +7047,19 @@ speechSynthesis.getVoices();
                 (typeof ref !== 'undefined' && ref.memo.replace(/\n/g, ' ')) ||
                 '';
             lines.push(`${_(userId)},${_(name)},${_(memo)}`);
+            friendsList.push(userId);
         }
-        this.exportFriendsListContent = lines.join('\n');
+        this.exportFriendsListJson = JSON.stringify(
+            { friends: friendsList },
+            null,
+            4
+        );
+        this.exportFriendsListCsv = lines.join('\n');
         this.exportFriendsListDialog = true;
     };
 
     $app.data.exportAvatarsListDialog = false;
-    $app.data.exportAvatarsListContent = '';
+    $app.data.exportAvatarsListCsv = '';
 
     $app.methods.showExportAvatarsListDialog = function () {
         for (var ref of API.cachedAvatars.values()) {
@@ -7132,7 +7103,7 @@ speechSynthesis.getVoices();
                 for (var avatar of avatars) {
                     lines.push(`${_(avatar.id)},${_(avatar.name)}`);
                 }
-                this.exportAvatarsListContent = lines.join('\n');
+                this.exportAvatarsListCsv = lines.join('\n');
                 this.exportAvatarsListDialog = true;
             }
         });
@@ -9609,6 +9580,7 @@ speechSynthesis.getVoices();
                     this.lastLocation.location = 'traveling';
                     this.lastLocationDestination = gameLog.location;
                     this.lastLocationDestinationTime = Date.parse(gameLog.dt);
+                    this.removeQueuedInstance(gameLog.location);
                     this.updateCurrentUserLocation();
                     this.clearNowPlaying();
                     this.updateCurrentInstanceWorld();
@@ -9629,6 +9601,7 @@ speechSynthesis.getVoices();
                         playerList: new Map(),
                         friendList: new Map()
                     };
+                    this.removeQueuedInstance(gameLog.location);
                     this.updateCurrentUserLocation();
                     this.updateVRLastLocation();
                     this.updateCurrentInstanceWorld();
@@ -10894,18 +10867,29 @@ speechSynthesis.getVoices();
     ) {
         var instance = await API.getInstanceFromShortName({ shortName });
         var location = instance.json.location;
+        var L = API.parseLocation(location);
+        var groupName = '';
+        if (L.groupId) {
+            groupName = await this.getGroupName(L.groupId);
+        }
         // var newShortName = instance.json.shortName;
         // var portalType = 'Secure';
         // if (shortName === newShortName) {
         //     portalType = 'Unlocked';
         // }
+        var displayLocation = this.displayLocation(
+            location,
+            worldName,
+            groupName
+        );
         this.addEntryPhotonEvent({
             photonId: this.getPhotonIdFromUserId(userId),
-            text: `PortalSpawn to ${worldName}`,
+            text: `PortalSpawn to ${displayLocation}`,
             type: 'PortalSpawn',
             shortName,
             location,
             worldName,
+            groupName,
             created_at: gameLogDate
         });
         this.addPhotonEventToGameLog({
@@ -10915,7 +10899,8 @@ speechSynthesis.getVoices();
             location: this.lastLocation.location,
             userId,
             instanceId: location,
-            worldName
+            worldName,
+            groupName
         });
     };
 
@@ -11137,6 +11122,8 @@ speechSynthesis.getVoices();
         var platform = '';
         if (user.last_platform === 'android') {
             platform = 'Quest';
+        } else if (user.last_platform === 'ios') {
+            platform = 'iOS';
         } else if (user.inVRMode) {
             platform = 'VR';
         } else {
@@ -13654,10 +13641,15 @@ speechSynthesis.getVoices();
         'VRCX_vrBackgroundEnabled',
         false
     );
-    $app.data.asideWidth = configRepository.getInt('VRCX_asidewidth', 350);
-    if ($app.data.asideWidth === 236) {
-        $app.data.asideWidth = 350;
-        configRepository.setInt('VRCX_asidewidth', $app.data.asideWidth);
+    $app.data.asideWidth = configRepository.getInt('VRCX_sidePanelWidth', 300);
+    if (configRepository.getInt('VRCX_asidewidth')) {
+        // migrate to new defaults
+        $app.data.asideWidth = configRepository.getInt('VRCX_asidewidth');
+        if ($app.data.asideWidth < 300) {
+            $app.data.asideWidth = 300;
+        }
+        configRepository.setInt('VRCX_sidePanelWidth', $app.data.asideWidth);
+        configRepository.remove('VRCX_asidewidth');
     }
     $app.data.autoUpdateVRCX = configRepository.getString(
         'VRCX_autoUpdateVRCX',
@@ -15938,8 +15930,9 @@ speechSynthesis.getVoices();
             }
             users.push({
                 ref,
+                displayName: ref.displayName,
                 timer: ref.$location_at,
-                $trustSortNum: ref.$trustSortNum ? ref.$trustSortNum : 0,
+                $trustSortNum: ref.$trustSortNum ?? 0,
                 photonId,
                 isMaster,
                 inVRMode,
@@ -18025,6 +18018,8 @@ speechSynthesis.getVoices();
     $app.data.newInstanceDialog = {
         visible: false,
         loading: false,
+        instanceCreated: false,
+        queueEnabled: false,
         worldId: '',
         instanceId: '',
         instanceName: '',
@@ -18037,7 +18032,10 @@ speechSynthesis.getVoices();
         location: '',
         shortName: '',
         url: '',
-        secureOrShortName: ''
+        secureOrShortName: '',
+        lastSelectedGroupId: '',
+        selectedGroupRoles: [],
+        roleIds: []
     };
 
     API.$on('LOGOUT', function () {
@@ -18046,6 +18044,7 @@ speechSynthesis.getVoices();
 
     $app.methods.buildInstance = function () {
         var D = this.newInstanceDialog;
+        D.instanceCreated = false;
         var tags = [];
         if (D.instanceName) {
             D.instanceName = D.instanceName.replace(/[^A-Za-z0-9-_]/g, '');
@@ -18091,8 +18090,69 @@ speechSynthesis.getVoices();
         if (D.strict) {
             tags.push('~strict');
         }
+        if (D.groupId && D.groupId !== D.lastSelectedGroupId) {
+            D.roleIds = [];
+            var ref = API.cachedGroups.get(D.groupId);
+            if (typeof ref !== 'undefined') {
+                D.selectedGroupRoles = ref.roles;
+                API.getGroupRoles({
+                    groupId: D.groupId
+                }).then((args) => {
+                    D.lastSelectedGroupId = D.groupId;
+                    D.selectedGroupRoles = args.json;
+                    ref.roles = args.json;
+                });
+            }
+        }
+        if (!D.groupId) {
+            D.roleIds = [];
+            D.selectedGroupRoles = [];
+            D.lastSelectedGroupId = '';
+        }
         D.instanceId = tags.join('');
         this.updateNewInstanceDialog(false);
+        this.saveNewInstanceDialog();
+    };
+
+    $app.methods.createGroupInstance = function () {
+        var D = this.newInstanceDialog;
+        if (D.loading) {
+            return;
+        }
+        D.loading = true;
+        var region = 'us';
+        if (D.region === 'US East') {
+            region = 'use';
+        } else if (D.region === 'Europe') {
+            region = 'eu';
+        } else if (D.region === 'Japan') {
+            region = 'jp';
+        }
+        var roleIds = [];
+        if (D.groupAccessType === 'member') {
+            roleIds = D.roleIds;
+        }
+        API.createInstance({
+            type: 'group',
+            groupAccessType: D.groupAccessType,
+            worldId: D.worldId,
+            ownerId: D.groupId,
+            region,
+            queueEnabled: D.queueEnabled,
+            roleIds
+        })
+            .then((args) => {
+                D.location = args.json.location;
+                D.instanceId = args.json.instanceId;
+                D.secureOrShortName =
+                    args.json.shortName || args.json.secureName;
+                D.instanceCreated = true;
+                this.updateNewInstanceDialog();
+                return args;
+            })
+            .finally(() => {
+                D.loading = false;
+            });
     };
 
     $app.methods.selfInvite = function (location, shortName) {
@@ -18137,7 +18197,7 @@ speechSynthesis.getVoices();
         D.url = this.getLaunchURL(L);
     };
 
-    var saveNewInstanceDialog = function () {
+    $app.methods.saveNewInstanceDialog = function () {
         configRepository.setString(
             'instanceDialogAccessType',
             this.newInstanceDialog.accessType
@@ -18170,16 +18230,11 @@ speechSynthesis.getVoices();
             'instanceDialogStrict',
             this.newInstanceDialog.strict
         );
-        $app.buildInstance();
+        configRepository.setBool(
+            'instanceDialogQueueEnabled',
+            this.newInstanceDialog.queueEnabled
+        );
     };
-    $app.watch['newInstanceDialog.worldId'] =
-        $app.methods.updateNewInstanceDialog;
-    $app.watch['newInstanceDialog.instanceName'] = saveNewInstanceDialog;
-    $app.watch['newInstanceDialog.accessType'] = saveNewInstanceDialog;
-    $app.watch['newInstanceDialog.region'] = saveNewInstanceDialog;
-    $app.watch['newInstanceDialog.userId'] = saveNewInstanceDialog;
-    $app.watch['newInstanceDialog.groupId'] = saveNewInstanceDialog;
-    $app.watch['newInstanceDialog.strict'] = saveNewInstanceDialog;
 
     $app.methods.showNewInstanceDialog = function (tag) {
         if (!this.isRealInstance(tag)) {
@@ -18202,8 +18257,16 @@ speechSynthesis.getVoices();
         D.groupId = configRepository.getString('instanceDialogGroupId', '');
         D.groupAccessType = configRepository.getString(
             'instanceDialogGroupAccessType',
-            'members'
+            'plus'
         );
+        D.queueEnabled = configRepository.getBool(
+            'instanceDialogQueueEnabled',
+            true
+        );
+        D.instanceCreated = false;
+        D.lastSelectedGroupId = '';
+        D.selectedGroupRoles = [];
+        D.roleIds = [];
         D.strict = false;
         D.shortName = '';
         this.buildInstance();
@@ -22176,7 +22239,7 @@ speechSynthesis.getVoices();
 
     $app.methods.setAsideWidth = function () {
         document.getElementById('aside').style.width = `${this.asideWidth}px`;
-        configRepository.setInt('VRCX_asidewidth', this.asideWidth);
+        configRepository.setInt('VRCX_sidePanelWidth', this.asideWidth);
     };
 
     // VRCX auto update
@@ -22509,7 +22572,11 @@ speechSynthesis.getVoices();
                 API.cachedAvatars.delete(id);
             }
         });
-        API.cachedGroups = new Map();
+        API.cachedGroups.forEach((ref, id) => {
+            if (!API.currentUserGroups.has(id)) {
+                API.cachedGroups.delete(id);
+            }
+        });
         API.cachedAvatarNames = new Map();
     };
 
@@ -24757,6 +24824,97 @@ speechSynthesis.getVoices();
     API.currentUserGroups = new Map();
     API.queuedInstances = new Map();
 
+    $app.methods.removeAllQueuedInstances = function () {
+        API.queuedInstances.forEach((ref) => {
+            ref.$msgBox?.close();
+        });
+        API.queuedInstances.clear();
+    };
+
+    $app.methods.removeQueuedInstance = function (instanceId) {
+        var ref = API.queuedInstances.get(instanceId);
+        if (typeof ref !== 'undefined') {
+            ref.$msgBox.close();
+            API.queuedInstances.delete(instanceId);
+        }
+    };
+
+    $app.methods.instanceQueueReady = function (instanceId) {
+        var ref = API.queuedInstances.get(instanceId);
+        if (typeof ref !== 'undefined') {
+            ref.$msgBox.close();
+            API.queuedInstances.delete(instanceId);
+        }
+        var L = API.parseLocation(instanceId);
+        var group = API.cachedGroups.get(L.groupId);
+        var groupName = group?.name ?? '';
+        var worldName = ref?.$worldName ?? '';
+        var displayLocation = $app.displayLocation(
+            instanceId,
+            worldName,
+            groupName
+        );
+        this.$message({
+            message: `Instance ready to join ${displayLocation}`,
+            type: 'success'
+        });
+        var noty = {
+            created_at: new Date().toJSON(),
+            type: 'group.queueReady',
+            imageUrl: group?.iconUrl,
+            message: `Instance ready to join ${displayLocation}`,
+            location: instanceId,
+            groupName,
+            worldName
+        };
+        this.queueNotificationNoty(noty);
+        this.notificationTable.data.push(noty);
+        this.updateSharedFeed(true);
+    };
+
+    $app.methods.instanceQueueUpdate = function (
+        instanceId,
+        position,
+        queueSize
+    ) {
+        var ref = API.queuedInstances.get(instanceId);
+        if (typeof ref === 'undefined') {
+            ref = {
+                $msgBox: null,
+                $groupName: '',
+                $worldName: '',
+                location: instanceId,
+                position: 0,
+                queueSize: 0
+            };
+        }
+        ref.position = position;
+        ref.queueSize = queueSize;
+        if (!ref.$msgBox || ref.$msgBox.closed) {
+            ref.$msgBox = this.$message({
+                message: '',
+                type: 'info',
+                duration: 0,
+                showClose: true,
+                customClass: 'vrc-instance-queue-message'
+            });
+        }
+        if (!ref.$groupName) {
+            this.getGroupName(instanceId).then((name) => {
+                ref.$groupName = name;
+                ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${name} `;
+            });
+        }
+        if (!ref.$worldName) {
+            this.getWorldName(instanceId).then((name) => {
+                ref.$worldName = name;
+            });
+        }
+
+        ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${ref.$groupName} `;
+        API.queuedInstances.set(instanceId, ref);
+    };
+
     /*
         params: {
             groupId: string
@@ -25707,6 +25865,9 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.joinGroup = function (groupId) {
+        if (!groupId) {
+            return null;
+        }
         return API.joinGroup({
             groupId
         }).then((args) => {

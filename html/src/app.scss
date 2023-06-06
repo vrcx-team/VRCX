@@ -706,12 +706,15 @@ i.x-user-status.busy {
     top: 0 !important;
 }
 
+.vrc-instance-queue-message .el-message__content {
+    margin-right: 20px;
+}
+
 .el-tab-pane {
     height: 100%;
 }
 
 .el-tabs {
-    // height: calc(100vh - 60px);
     display: flex;
     flex-direction: column;
 }
@@ -719,5 +722,16 @@ i.x-user-status.busy {
 .el-tabs__content {
     flex: 1;
     max-height: 100%;
-    overflow: auto;
+    overflow-y: auto;
+}
+
+.x-aside-container .el-tabs,
+.x-aside-container .el-tabs__nav-wrap,
+.x-aside-container .el-tabs__item {
+    padding: 0 !important;
+    font-size: 13px;
+}
+
+.x-aside-container .el-tabs__header {
+    padding: 0 1px;
 }

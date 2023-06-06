@@ -17,6 +17,7 @@ mixin playerListTab()
                         el-tag(v-else-if="currentInstanceWorld.ref.releaseStatus === 'private'" type="danger" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.world.tags.private') }}
                         el-tag.x-tag-platform-pc(v-if="currentInstanceWorld.isPC" type="info" effect="plain" size="mini" style="margin-right:5px") PC
                         el-tag.x-tag-platform-quest(v-if="currentInstanceWorld.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px") Quest
+                        el-tag.x-tag-platform-ios(v-if="currentInstanceWorld.isIOS" type="info" effect="plain" size="mini" style="margin-right:5px") iOS
                         el-tag(type="info" effect="plain" size="mini" v-text="currentInstanceWorld.fileSize" style="margin-right:5px")
                         el-tag(v-if="currentInstanceWorld.inCache" type="info" effect="plain" size="mini" style="margin-right:5px")
                             span(v-text="currentInstanceWorld.cacheSize")
@@ -215,11 +216,12 @@ mixin playerListTab()
                             template(v-if="scope.row.ref.last_platform")
                                 span(v-if="scope.row.ref.last_platform === 'standalonewindows'" style="color:#409eff") PC
                                 span(v-else-if="scope.row.ref.last_platform === 'android'" style="color:#67c23a") Q
+                                span(v-else-if="scope.row.ref.last_platform === 'ios'" style="color:#c7c7ce") iOS
                                 span(v-else) {{ scope.row.ref.last_platform }}
                             template(v-if="scope.row.inVRMode !== null")
                                 span(v-if="scope.row.inVRMode") VR
                                 span(v-else) D
-                    el-table-column(:label="$t('table.playerList.displayName')" min-width="140" prop="ref.displayName")
+                    el-table-column(:label="$t('table.playerList.displayName')" min-width="140" prop="displayName" sortable="custom")
                         template(v-once #default="scope")
                             span(v-if="randomUserColours" v-text="scope.row.ref.displayName" :style="{'color':scope.row.ref.$userColour}")
                             span(v-else v-text="scope.row.ref.displayName")

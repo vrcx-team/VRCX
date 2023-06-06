@@ -477,7 +477,7 @@
         "search_result_more": "Search More:",
         "direct_access_tooltip": "Direct access ID/URL from clipboard",
         "refresh_tooltip": "Refresh friends",
-        "groups": "Group Instances",
+        "groups": "Groups",
         "friends": "Friends",
         "me": "ME",
         "favorite": "FAVORITES",
@@ -740,6 +740,7 @@
             },
             "info": {
                 "header": "Info",
+                "instances": "Instances",
                 "announcement": "Announcement",
                 "instance_full": "full",
                 "rules": "Rules",
@@ -836,13 +837,19 @@
             "instance_creator": "Instance Creator",
             "instance_creator_placeholder": "Choose User",
             "group_placeholder": "Choose Group",
+            "role_placeholder": "Choose Roles",
             "group_id": "Group",
             "location": "Location",
             "url": "URL",
             "copy_url": "Copy URL",
             "self_invite": "Self invite",
             "invite": "Invite",
-            "launch": "Launch"
+            "launch": "Launch",
+            "create_instance": "Create Instance",
+            "queueEnabled": "Queue",
+            "normal": "Normal",
+            "group": "Group",
+            "roles": "Roles"
         },
         "launch_options": {
             "header": "VRChat Launch Options",
@@ -915,7 +922,9 @@
             "launch": "Launch"
         },
         "export_friends_list": {
-            "header": "Export Friends List"
+            "header": "Export Friends List",
+            "csv": "CSV",
+            "json": "JSON"
         },
         "export_own_avatars": {
             "header": "Export Own Avatars"

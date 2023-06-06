@@ -494,7 +494,7 @@ namespace VRCX
 
         public void ExecuteAppFunction(string function, string json)
         {
-            if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading)
+            if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
                 MainForm.Instance.Browser.ExecuteScriptAsync($"$app.{function}", json);
         }
 

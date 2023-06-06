@@ -106,10 +106,10 @@ html
                         el-button(type="default" @click="directAccessPaste" size="mini" icon="el-icon-discover" circle)
                     el-tooltip(placement="bottom" :content="$t('side_panel.refresh_tooltip')" :disabled="hideTooltips")
                         el-button(type="default" @click="refreshFriendsList" :loading="API.isRefreshFriendsLoading" size="mini" icon="el-icon-refresh" circle style="margin-right:10px")
-                el-tabs(type="card" stretch="true" style="height: calc(100vh - 60px")
+                el-tabs(type="card" stretch="true" style="height:calc(100vh - 60px")
                     el-tab-pane
                         template(#label)
-                            span {{ $t('side_panel.friends') }}: {{ onlineFriendCount }}/{{ friends.size }}
+                            span {{ $t('side_panel.friends') }} ({{ onlineFriendCount }}/{{ friends.size }})
                         .x-friend-list(style="padding-bottom:10px")
                             .x-friend-group.x-link(@click="isFriendsGroupMe = !isFriendsGroupMe" style="padding:0px 0px 5px")
                                 i.el-icon-arrow-right(:class="{ rotate: isFriendsGroupMe }")
@@ -185,10 +185,9 @@ html
                                     template(v-else)
                                         span(v-text="friend.name || friend.id")
                                         el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
-
                     el-tab-pane
                         template(#label)
-                            span {{ $t('side_panel.groups') }}: {{ groupInstances.length }}
+                            span {{ $t('side_panel.groups') }} ({{ groupInstances.length }})
                         .x-friend-list(style="padding-bottom:10px")
                             .x-friend-item(v-for="instance in groupInstances" :key="instance.id" @click="showGroupDialog(instance.ownerId)")
                                 .avatar
@@ -908,23 +907,7 @@ html
                                     img.x-link(slot="reference" v-lazy="groupDialog.ref.bannerUrl" style="flex:none;width:100%;aspect-ratio:6/1;object-fit:cover;border-radius:4px")
                                     img.x-link(v-lazy="groupDialog.ref.bannerUrl" style="width:854px;height:480px" @click="downloadAndSaveImage(groupDialog.ref.bannerUrl)")
                             .x-friend-list(style="max-height:none")
-                                .x-friend-item(v-if="groupDialog.ref.membershipStatus === 'member'" style="width:100%;cursor:default")
-                                    .detail
-                                        span.name {{ $t('dialog.group.info.announcement') }}
-                                        span(style="display:block" v-text="groupDialog.announcement.title")
-                                        div(v-if="groupDialog.announcement.imageUrl" style="display:inline-block;margin-right:5px")
-                                            el-popover(placement="right" width="500px" trigger="click")
-                                                img.x-link(slot="reference" v-lazy="groupDialog.announcement.imageUrl" style="flex:none;width:60px;height:60px;border-radius:4px;object-fit:cover")
-                                                img.x-link(v-lazy="groupDialog.announcement.imageUrl" style="height:500px" @click="downloadAndSaveImage(groupDialog.announcement.imageUrl)")
-                                        pre.extra(style="display:inline-block;vertical-align:top;font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0") {{ groupDialog.announcement.text || '-' }}
-                                        br
-                                        .extra(v-if="groupDialog.announcement.id" style="float:right;margin-left:5px")
-                                            el-tooltip(placement="bottom")
-                                                template(#content)
-                                                    span {{ groupDialog.announcement.updatedAt | formatDate('long') }}
-                                                span(@click="showUserDialog(groupDialog.announcement.authorId)" style="cursor:pointer")
-                                                    span(v-text="groupDialog.announcementDisplayName" style="margin-right:5px")
-                                                    timer(:epoch="Date.parse(groupDialog.announcement.updatedAt)")
+                                span(v-if="groupDialog.instances.length" style="font-size:12px;font-weight:bold;margin:5px") {{ $t('dialog.group.info.instances') }}
                                 div(v-for="room in groupDialog.instances" :key="room.tag" style="width:100%")
                                     div(style="margin:5px 0")
                                         location(:location="room.tag")
@@ -945,6 +928,23 @@ html
                                                     timer(:epoch="user.$travelingToTime")
                                                 span.extra(v-else)
                                                     timer(:epoch="user.$location_at")
+                                .x-friend-item(v-if="groupDialog.ref.membershipStatus === 'member'" style="width:100%;cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.group.info.announcement') }}
+                                        span(style="display:block" v-text="groupDialog.announcement.title")
+                                        div(v-if="groupDialog.announcement.imageUrl" style="display:inline-block;margin-right:5px")
+                                            el-popover(placement="right" width="500px" trigger="click")
+                                                img.x-link(slot="reference" v-lazy="groupDialog.announcement.imageUrl" style="flex:none;width:60px;height:60px;border-radius:4px;object-fit:cover")
+                                                img.x-link(v-lazy="groupDialog.announcement.imageUrl" style="height:500px" @click="downloadAndSaveImage(groupDialog.announcement.imageUrl)")
+                                        pre.extra(style="display:inline-block;vertical-align:top;font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0") {{ groupDialog.announcement.text || '-' }}
+                                        br
+                                        .extra(v-if="groupDialog.announcement.id" style="float:right;margin-left:5px")
+                                            el-tooltip(placement="bottom")
+                                                template(#content)
+                                                    span {{ groupDialog.announcement.updatedAt | formatDate('long') }}
+                                                span(@click="showUserDialog(groupDialog.announcement.authorId)" style="cursor:pointer")
+                                                    span(v-text="groupDialog.announcementDisplayName" style="margin-right:5px")
+                                                    timer(:epoch="Date.parse(groupDialog.announcement.updatedAt)")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.group.info.rules') }}
@@ -1168,89 +1168,135 @@ html
 
             //- dialog: new instance
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="newInstanceDialog" :visible.sync="newInstanceDialog.visible" :title="$t('dialog.new_instance.header')" width="650px")
-                el-form(v-if="newInstanceDialog.visible" :model="newInstanceDialog" label-width="130px")
-                    el-form-item(:label="$t('dialog.new_instance.access_type')")
-                        el-radio-group(v-model="newInstanceDialog.accessType" size="mini" @change="buildInstance")
-                            el-radio-button(label="public") {{ $t('dialog.new_instance.access_type_public') }}
-                            el-radio-button(label="group") {{ $t('dialog.new_instance.access_type_group') }}
-                            el-radio-button(label="friends+") {{ $t('dialog.new_instance.access_type_friend_plus') }}
-                            el-radio-button(label="friends") {{ $t('dialog.new_instance.access_type_friend') }}
-                            el-radio-button(label="invite+") {{ $t('dialog.new_instance.access_type_invite_plus') }}
-                            el-radio-button(label="invite") {{ $t('dialog.new_instance.access_type_invite') }}
-                    el-form-item(:label="$t('dialog.new_instance.group_access_type')" v-if="newInstanceDialog.accessType === 'group'")
-                        el-radio-group(v-model="newInstanceDialog.groupAccessType" size="mini" @change="buildInstance")
-                            el-radio-button(label="members") {{ $t('dialog.new_instance.group_access_type_members') }}
-                            el-radio-button(label="plus") {{ $t('dialog.new_instance.group_access_type_plus') }}
-                            el-radio-button(label="public") {{ $t('dialog.new_instance.group_access_type_public') }}
-                    //- el-form-item(label="Strict" v-if="newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite'")
-                    //-     el-checkbox(v-model="newInstanceDialog.strict") Prevent non friends joining via URL/Instance ID
-                    el-form-item(:label="$t('dialog.new_instance.region')")
-                        el-radio-group(v-model="newInstanceDialog.region" size="mini" @change="buildInstance")
-                            el-radio-button(label="US West") {{ $t('dialog.new_instance.region_usw') }}
-                            el-radio-button(label="US East") {{ $t('dialog.new_instance.region_use') }}
-                            el-radio-button(label="Europe") {{ $t('dialog.new_instance.region_eu') }}
-                            el-radio-button(label="Japan") {{ $t('dialog.new_instance.region_jp') }}
-                    el-form-item(:label="$t('dialog.new_instance.world_id')")
-                        el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
-                    el-form-item(:label="$t('dialog.new_instance.instance_id')")
-                        el-input(v-model="newInstanceDialog.instanceName" :placeholder="$t('dialog.new_instance.instance_id_placeholder')" size="mini")
-                    el-form-item(:label="$t('dialog.new_instance.instance_creator')" v-if="newInstanceDialog.accessType !== 'public' && newInstanceDialog.accessType !== 'group'")
-                        el-select(v-model="newInstanceDialog.userId" clearable :placeholder="$t('dialog.new_instance.instance_creator_placeholder')" filterable style="width:100%")
-                            el-option-group(v-if="API.currentUser" :label="$t('side_panel.me')")
-                                el-option.x-friend-item(:label="API.currentUser.displayName" :value="API.currentUser.id" style="height:auto")
-                                    .avatar(:class="userStatusClass(API.currentUser)")
-                                        img(v-lazy="userImage(API.currentUser)")
-                                    .detail
-                                        span.name(v-text="API.currentUser.displayName")
-                            el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
-                                el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
-                                    template(v-if="friend.ref")
-                                        .avatar(:class="userStatusClass(friend.ref)")
-                                            img(v-lazy="userImage(friend.ref)")
-                                        .detail
-                                            span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                    span(v-else v-text="friend.id")
-                            el-option-group(v-if="friendsGroup1.length" :label="$t('side_panel.online')")
-                                el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
-                                    template(v-if="friend.ref")
-                                        .avatar(:class="userStatusClass(friend.ref)")
-                                            img(v-lazy="userImage(friend.ref)")
-                                        .detail
-                                            span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                    span(v-else v-text="friend.id")
-                            el-option-group(v-if="friendsGroup2.length" :label="$t('side_panel.active')")
-                                el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
-                                    template(v-if="friend.ref")
-                                        .avatar
-                                            img(v-lazy="userImage(friend.ref)")
-                                        .detail
-                                            span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                    span(v-else v-text="friend.id")
-                            el-option-group(v-if="friendsGroup3.length" :label="$t('side_panel.offline')")
-                                el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
-                                    template(v-if="friend.ref")
-                                        .avatar
-                                            img(v-lazy="userImage(friend.ref)")
-                                        .detail
-                                            span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                    span(v-else v-text="friend.id")
-                    el-form-item(:label="$t('dialog.new_instance.group_id')" v-if="newInstanceDialog.accessType === 'group'")
-                        el-select(v-model="newInstanceDialog.groupId" clearable :placeholder="$t('dialog.new_instance.group_placeholder')" filterable style="width:100%")
-                            el-option-group(:label="$t('dialog.new_instance.group_placeholder')")
-                                el-option.x-friend-item(v-if="group" v-for="group in API.currentUserGroups.values()" :key="group.id" :label="group.name" :value="group.id" style="height:auto;width:478px")
-                                    .avatar
-                                        img(v-lazy="group.iconUrl")
-                                    .detail
-                                        span.name(v-text="group.name")
-                    el-form-item(:label="$t('dialog.new_instance.location')")
-                        el-input(v-model="newInstanceDialog.location" size="mini" readonly)
-                    el-form-item(:label="$t('dialog.new_instance.url')")
-                        el-input(v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
-                template(#footer)
+                el-tabs(type="card" ref="newInstanceTabs")
+                    el-tab-pane(:label="$t('dialog.new_instance.normal')")
+                        el-form(v-if="newInstanceDialog.visible" :model="newInstanceDialog" label-width="130px")
+                            el-form-item(:label="$t('dialog.new_instance.access_type')")
+                                el-radio-group(v-model="newInstanceDialog.accessType" size="mini" @change="buildInstance")
+                                    el-radio-button(label="public") {{ $t('dialog.new_instance.access_type_public') }}
+                                    el-radio-button(label="group") {{ $t('dialog.new_instance.access_type_group') }}
+                                    el-radio-button(label="friends+") {{ $t('dialog.new_instance.access_type_friend_plus') }}
+                                    el-radio-button(label="friends") {{ $t('dialog.new_instance.access_type_friend') }}
+                                    el-radio-button(label="invite+") {{ $t('dialog.new_instance.access_type_invite_plus') }}
+                                    el-radio-button(label="invite") {{ $t('dialog.new_instance.access_type_invite') }}
+                            el-form-item(:label="$t('dialog.new_instance.group_access_type')" v-if="newInstanceDialog.accessType === 'group'")
+                                el-radio-group(v-model="newInstanceDialog.groupAccessType" size="mini" @change="buildInstance")
+                                    el-radio-button(label="members") {{ $t('dialog.new_instance.group_access_type_members') }}
+                                    el-radio-button(label="plus") {{ $t('dialog.new_instance.group_access_type_plus') }}
+                                    el-radio-button(label="public") {{ $t('dialog.new_instance.group_access_type_public') }}
+                            //- el-form-item(label="Strict" v-if="newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite'")
+                            //-     el-checkbox(v-model="newInstanceDialog.strict") Prevent non friends joining via URL/Instance ID
+                            el-form-item(:label="$t('dialog.new_instance.region')")
+                                el-radio-group(v-model="newInstanceDialog.region" size="mini" @change="buildInstance")
+                                    el-radio-button(label="US West") {{ $t('dialog.new_instance.region_usw') }}
+                                    el-radio-button(label="US East") {{ $t('dialog.new_instance.region_use') }}
+                                    el-radio-button(label="Europe") {{ $t('dialog.new_instance.region_eu') }}
+                                    el-radio-button(label="Japan") {{ $t('dialog.new_instance.region_jp') }}
+                            el-form-item(:label="$t('dialog.new_instance.world_id')")
+                                el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" @change="buildInstance")
+                            el-form-item(:label="$t('dialog.new_instance.instance_id')")
+                                el-input(v-model="newInstanceDialog.instanceName" :placeholder="$t('dialog.new_instance.instance_id_placeholder')" size="mini" @change="buildInstance")
+                            el-form-item(:label="$t('dialog.new_instance.instance_creator')" v-if="newInstanceDialog.accessType !== 'public' && newInstanceDialog.accessType !== 'group'")
+                                el-select(v-model="newInstanceDialog.userId" clearable :placeholder="$t('dialog.new_instance.instance_creator_placeholder')" filterable style="width:100%" @change="buildInstance")
+                                    el-option-group(v-if="API.currentUser" :label="$t('side_panel.me')")
+                                        el-option.x-friend-item(:label="API.currentUser.displayName" :value="API.currentUser.id" style="height:auto")
+                                            .avatar(:class="userStatusClass(API.currentUser)")
+                                                img(v-lazy="userImage(API.currentUser)")
+                                            .detail
+                                                span.name(v-text="API.currentUser.displayName")
+                                    el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
+                                        el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                            template(v-if="friend.ref")
+                                                .avatar(:class="userStatusClass(friend.ref)")
+                                                    img(v-lazy="userImage(friend.ref)")
+                                                .detail
+                                                    span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                            span(v-else v-text="friend.id")
+                                    el-option-group(v-if="friendsGroup1.length" :label="$t('side_panel.online')")
+                                        el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                            template(v-if="friend.ref")
+                                                .avatar(:class="userStatusClass(friend.ref)")
+                                                    img(v-lazy="userImage(friend.ref)")
+                                                .detail
+                                                    span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                            span(v-else v-text="friend.id")
+                                    el-option-group(v-if="friendsGroup2.length" :label="$t('side_panel.active')")
+                                        el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                            template(v-if="friend.ref")
+                                                .avatar
+                                                    img(v-lazy="userImage(friend.ref)")
+                                                .detail
+                                                    span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                            span(v-else v-text="friend.id")
+                                    el-option-group(v-if="friendsGroup3.length" :label="$t('side_panel.offline')")
+                                        el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                            template(v-if="friend.ref")
+                                                .avatar
+                                                    img(v-lazy="userImage(friend.ref)")
+                                                .detail
+                                                    span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                            span(v-else v-text="friend.id")
+                            el-form-item(:label="$t('dialog.new_instance.group_id')" v-if="newInstanceDialog.accessType === 'group'")
+                                el-select(v-model="newInstanceDialog.groupId" clearable :placeholder="$t('dialog.new_instance.group_placeholder')" filterable style="width:100%" @change="buildInstance")
+                                    el-option-group(:label="$t('dialog.new_instance.group_placeholder')")
+                                        el-option.x-friend-item(v-if="group" v-for="group in API.currentUserGroups.values()" :key="group.id" :label="group.name" :value="group.id" style="height:auto;width:478px")
+                                            .avatar
+                                                img(v-lazy="group.iconUrl")
+                                            .detail
+                                                span.name(v-text="group.name")
+                            el-form-item(:label="$t('dialog.new_instance.location')")
+                                el-input(v-model="newInstanceDialog.location" size="mini" readonly)
+                            el-form-item(:label="$t('dialog.new_instance.url')")
+                                el-input(v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+                    el-tab-pane(:label="$t('dialog.new_instance.group')")
+                        el-form(v-if="newInstanceDialog.visible" :model="newInstanceDialog" label-width="130px")
+                            el-form-item(:label="$t('dialog.new_instance.group_access_type')")
+                                el-radio-group(v-model="newInstanceDialog.groupAccessType" size="mini" @change="buildInstance")
+                                    el-radio-button(label="members") {{ $t('dialog.new_instance.group_access_type_members') }}
+                                    el-radio-button(label="plus") {{ $t('dialog.new_instance.group_access_type_plus') }}
+                                    el-radio-button(label="public") {{ $t('dialog.new_instance.group_access_type_public') }}
+                            el-form-item(:label="$t('dialog.new_instance.region')")
+                                el-radio-group(v-model="newInstanceDialog.region" size="mini" @change="buildInstance")
+                                    el-radio-button(label="US West") {{ $t('dialog.new_instance.region_usw') }}
+                                    el-radio-button(label="US East") {{ $t('dialog.new_instance.region_use') }}
+                                    el-radio-button(label="Europe") {{ $t('dialog.new_instance.region_eu') }}
+                                    el-radio-button(label="Japan") {{ $t('dialog.new_instance.region_jp') }}
+                            el-form-item(:label="$t('dialog.new_instance.queueEnabled')")
+                                el-checkbox(v-model="newInstanceDialog.queueEnabled" @change="buildInstance")
+                            el-form-item(:label="$t('dialog.new_instance.world_id')")
+                                el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" @change="buildInstance")
+                            el-form-item(:label="$t('dialog.new_instance.group_id')" v-if="newInstanceDialog.accessType === 'group'")
+                                el-select(v-model="newInstanceDialog.groupId" clearable :placeholder="$t('dialog.new_instance.group_placeholder')" filterable style="width:100%" @change="buildInstance")
+                                    el-option-group(:label="$t('dialog.new_instance.group_placeholder')")
+                                        el-option.x-friend-item(v-if="group" v-for="group in API.currentUserGroups.values()" :key="group.id" :label="group.name" :value="group.id" style="height:auto;width:478px")
+                                            .avatar
+                                                img(v-lazy="group.iconUrl")
+                                            .detail
+                                                span.name(v-text="group.name")
+                            el-form-item(:label="$t('dialog.new_instance.roles')" v-if="newInstanceDialog.groupAccessType === 'members'")
+                                el-select(v-model="newInstanceDialog.roleIds" multiple clearable :placeholder="$t('dialog.new_instance.role_placeholder')" style="width:100%" @change="buildInstance")
+                                    el-option-group(:label="$t('dialog.new_instance.role_placeholder')")
+                                        el-option.x-friend-item(v-for="role in newInstanceDialog.selectedGroupRoles" :key="role.id" :label="role.name" :value="role.id" style="height:auto;width:478px")
+                                            .detail
+                                                span.name(v-text="role.name")
+                            template(v-if="newInstanceDialog.instanceCreated")
+                                el-form-item(:label="$t('dialog.new_instance.location')")
+                                    el-input(v-model="newInstanceDialog.location" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+                                el-form-item(:label="$t('dialog.new_instance.url')")
+                                    el-input(v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+                template(#footer v-if="$refs.newInstanceTabs?.currentName === '0'")
                     el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.location)") {{ $t('dialog.new_instance.copy_url') }}
                     el-button(size="small" @click="selfInvite(newInstanceDialog.location)") {{ $t('dialog.new_instance.self_invite') }}
                     el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)" :disabled="(newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') && newInstanceDialog.userId !== API.currentUser.id") {{ $t('dialog.new_instance.invite') }}
                     el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.secureOrShortName)") {{ $t('dialog.new_instance.launch') }}
+                template(#footer v-else)
+                    template(v-if="newInstanceDialog.instanceCreated")
+                        el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.location)") {{ $t('dialog.new_instance.copy_url') }}
+                        el-button(size="small" @click="selfInvite(newInstanceDialog.location)") {{ $t('dialog.new_instance.self_invite') }}
+                        el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)" :disabled="(newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') && newInstanceDialog.userId !== API.currentUser.id") {{ $t('dialog.new_instance.invite') }}
+                        el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.secureOrShortName)") {{ $t('dialog.new_instance.launch') }}
+                    template(v-else)
+                        el-button(type="primary" size="small" @click="createGroupInstance()" :disabled="!newInstanceDialog.groupId") {{ $t('dialog.new_instance.create_instance') }}
 
             //- dialog: launch options
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchOptionsDialog" :visible.sync="launchOptionsDialog.visible" :title="$t('dialog.launch_options.header')" width="500px")
@@ -1405,11 +1451,15 @@ html
 
             //- dialog: export friends list
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportFriendsListDialog" :title="$t('dialog.export_friends_list.header')" width="650px")
-                el-input(type="textarea" v-if="exportFriendsListDialog" v-model="exportFriendsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+                el-tabs(type="card")
+                    el-tab-pane(:label="$t('dialog.export_friends_list.csv')")
+                        el-input(type="textarea" v-if="exportFriendsListDialog" v-model="exportFriendsListCsv" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+                    el-tab-pane(:label="$t('dialog.export_friends_list.json')")
+                        el-input(type="textarea" v-if="exportFriendsListDialog" v-model="exportFriendsListJson" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: export avatars list
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportAvatarsListDialog" :title="$t('dialog.export_own_avatars.header')" width="650px")
-                el-input(type="textarea" v-if="exportAvatarsListDialog" v-model="exportAvatarsListContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+                el-input(type="textarea" v-if="exportAvatarsListDialog" v-model="exportAvatarsListCsv" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
             //- dialog: Discord username list
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="discordNamesDialogVisible" :title="$t('dialog.discord_names.header')" width="650px")

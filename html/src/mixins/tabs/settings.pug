@@ -165,7 +165,7 @@ mixin settingsTab()
                         el-switch(v-model="orderFriendsGroup3" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_offline_time')" @change="saveOrderFriendGroup")
                     span.sub-header {{ $t('view.settings.appearance.side_panel.width') }}
                     div.options-container-item
-                        el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{350: ''}" :min="141" :max="500" style="width:300px")
+                        el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{300: ''}" :min="200" :max="500" style="width:300px")
                 //- Appearance | User Dialog
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_dialog.header') }}
