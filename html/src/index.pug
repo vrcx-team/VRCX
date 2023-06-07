@@ -1265,7 +1265,7 @@ html
                                 el-checkbox(v-model="newInstanceDialog.queueEnabled" @change="buildInstance")
                             el-form-item(:label="$t('dialog.new_instance.world_id')")
                                 el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" @change="buildInstance")
-                            el-form-item(:label="$t('dialog.new_instance.group_id')" v-if="newInstanceDialog.accessType === 'group'")
+                            el-form-item(:label="$t('dialog.new_instance.group_id')")
                                 el-select(v-model="newInstanceDialog.groupId" clearable :placeholder="$t('dialog.new_instance.group_placeholder')" filterable style="width:100%" @change="buildInstance")
                                     el-option-group(:label="$t('dialog.new_instance.group_placeholder')")
                                         el-option.x-friend-item(v-if="group" v-for="group in API.currentUserGroups.values()" :key="group.id" :label="group.name" :value="group.id" style="height:auto;width:478px")
