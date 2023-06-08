@@ -18,7 +18,10 @@ module.exports = {
             import: ['./src/app.js', './src/app.scss'],
             dependOn: 'vendor'
         },
-        'app.dark': './src/app.dark.scss',
+        'theme.dark': './src/theme.dark.scss',
+        'theme.darkvanilla': './src/theme.darkvanilla.scss',
+        'theme.pink': './src/theme.pink.scss',
+        'theme.material3': './src/theme.material3.scss',
         flags: './src/flags.scss',
         vr: {
             import: ['./src/vr.js', './src/vr.scss'],

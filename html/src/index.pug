@@ -19,9 +19,9 @@ html
             //- menu
             .x-menu-container
                 //- download progress, update pending
-                div(v-if="downloadInProgress" @click="showDownloadDialog" style="margin:7px;height:50px;cursor:pointer")
+                .pending-update(v-if="downloadInProgress" @click="showDownloadDialog")
                     el-progress(type="circle" width="50" stroke-width="3" :percentage="downloadProgress" :format="downloadProgressText")
-                div(v-else-if="pendingVRCXUpdate || pendingVRCXInstall" style="margin:7px;height:50px;width:50px")
+                .pending-update(v-else-if="pendingVRCXUpdate || pendingVRCXInstall")
                     el-button(type="default" @click="showVRCXUpdateDialog" size="mini" icon="el-icon-download" circle style="font-size:14px;height:50px;width:50px")
 
                 el-menu(ref="menu" collapse @select="selectMenu")
@@ -106,11 +106,11 @@ html
                         el-button(type="default" @click="directAccessPaste" size="mini" icon="el-icon-discover" circle)
                     el-tooltip(placement="bottom" :content="$t('side_panel.refresh_tooltip')" :disabled="hideTooltips")
                         el-button(type="default" @click="refreshFriendsList" :loading="API.isRefreshFriendsLoading" size="mini" icon="el-icon-refresh" circle style="margin-right:10px")
-                el-tabs(type="card" stretch="true" style="height:calc(100vh - 60px")
+                el-tabs.zero-margin-tabs(stretch="true" style="height:calc(100% - 60px;margin-top:5px")
                     el-tab-pane
                         template(#label)
                             span {{ $t('side_panel.friends') }} ({{ onlineFriendCount }}/{{ friends.size }})
-                        .x-friend-list(style="padding-bottom:10px")
+                        .x-friend-list(style="padding:10px 5px")
                             .x-friend-group.x-link(@click="isFriendsGroupMe = !isFriendsGroupMe" style="padding:0px 0px 5px")
                                 i.el-icon-arrow-right(:class="{ rotate: isFriendsGroupMe }")
                                 span(style="margin-left:5px") {{ $t('side_panel.me') }}
@@ -188,7 +188,7 @@ html
                     el-tab-pane
                         template(#label)
                             span {{ $t('side_panel.groups') }} ({{ groupInstances.length }})
-                        .x-friend-list(style="padding-bottom:10px")
+                        .x-friend-list(style="padding:10px 5px")
                             .x-friend-item(v-for="instance in groupInstances" :key="instance.id" @click="showGroupDialog(instance.ownerId)")
                                 .avatar
                                     img(v-lazy="instance.$group.iconUrl")
@@ -506,7 +506,7 @@ html
                                         span.extra(v-if="world.occupants") ({{ world.occupants }})
                         el-tab-pane(:label="$t('dialog.user.favorite_worlds.header')")
                             el-button(type="default" :loading="userDialog.isFavoriteWorldsLoading" @click="getUserFavoriteWorlds(userDialog.id)" size="mini" icon="el-icon-refresh" circle)
-                            el-tabs(type="card" ref="favoriteWorlds" v-loading="userDialog.isFavoriteWorldsLoading" style="margin-top:10px")
+                            el-tabs.zero-margin-tabs(type="card" ref="favoriteWorlds" v-loading="userDialog.isFavoriteWorldsLoading" style="margin-top:10px")
                                 template(v-for="(list, index) in userFavoriteWorlds" v-if="list")
                                     el-tab-pane
                                         span(slot="label")

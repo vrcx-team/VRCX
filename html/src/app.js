@@ -217,11 +217,6 @@ speechSynthesis.getVoices();
 
     Vue.use(DataTables);
 
-    var $appDarkStyle = document.createElement('link');
-    $appDarkStyle.disabled = true;
-    $appDarkStyle.rel = 'stylesheet';
-    $appDarkStyle.href = `app.dark.css?_=${Date.now()}`;
-    document.head.appendChild($appDarkStyle);
     // #endregion
     // #region | Init: Languages
 
@@ -1230,7 +1225,7 @@ speechSynthesis.getVoices();
         var travelingToLocation = $app.lastLocationDestination;
         var travelingToWorld = $travelingLocation.worldId;
         var travelingToInstance = $travelingLocation.instanceId;
-        if (!$app.isGameRunning) {
+        if (!$app.isGameRunning && json.presence) {
             if ($app.isRealInstance(json.presence.world)) {
                 location = `${json.presence.world}:${json.presence.instance}`;
                 travelingToLocation = `${json.presence.travelingToWorld}:${json.presence.travelingToInstance}`;
@@ -5088,6 +5083,7 @@ speechSynthesis.getVoices();
         watch: {},
         el: '#x-app',
         mounted() {
+            this.changeThemeMode();
             AppApi.SetUserAgent();
             AppApi.GetVersion().then((version) => {
                 this.appVersion = version;
@@ -13833,42 +13829,74 @@ speechSynthesis.getVoices();
         'VRCX_ThemeMode',
         'system'
     );
-    var systemIsDarkMode = () =>
-        window.matchMedia('(prefers-color-scheme: dark)').matches;
-    $app.data.isDarkMode =
-        $app.data.themeMode === 'system'
-            ? systemIsDarkMode()
-            : configRepository.getBool('isDarkMode');
-    $appDarkStyle.disabled = $app.data.isDarkMode === false;
-    $app.watch.isDarkMode = function () {
-        configRepository.setBool('isDarkMode', this.isDarkMode);
-        $appDarkStyle.disabled = this.isDarkMode === false;
+
+    $app.data.isDarkMode = false;
+
+    $app.methods.systemIsDarkMode = function () {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    };
+
+    window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', () => {
+            if ($app.themeMode === 'system') {
+                $app.saveThemeMode();
+            }
+        });
+
+    $app.methods.saveThemeMode = function () {
+        configRepository.setString('VRCX_ThemeMode', this.themeMode);
+        this.changeThemeMode();
+    };
+
+    $app.methods.changeThemeMode = function () {
+        if (document.contains(document.getElementById('app-theme-style'))) {
+            document.getElementById('app-theme-style').remove();
+        }
+        var $appThemeStyle = document.createElement('link');
+        $appThemeStyle.setAttribute('id', 'app-theme-style');
+        $appThemeStyle.rel = 'stylesheet';
+        switch (this.themeMode) {
+            case 'light':
+                $appThemeStyle.href = '';
+                this.isDarkMode = false;
+                break;
+            case 'dark':
+                $appThemeStyle.href = 'theme.dark.css';
+                this.isDarkMode = true;
+                break;
+            case 'darkvanilla':
+                $appThemeStyle.href = 'theme.darkvanilla.css';
+                this.isDarkMode = true;
+                break;
+            case 'pink':
+                $appThemeStyle.href = 'theme.pink.css';
+                this.isDarkMode = true;
+                break;
+            case 'material3':
+                $appThemeStyle.href = 'theme.material3.css';
+                this.isDarkMode = true;
+                break;
+            case 'system':
+                if (this.systemIsDarkMode()) {
+                    $appThemeStyle.href = 'theme.dark.css';
+                    this.isDarkMode = true;
+                } else {
+                    $appThemeStyle.href = '';
+                    this.isDarkMode = false;
+                }
+                break;
+        }
         if (this.isDarkMode) {
             AppApi.ChangeTheme(1);
         } else {
             AppApi.ChangeTheme(0);
         }
+        document.head.appendChild($appThemeStyle);
         this.updateVRConfigVars();
         this.updatetrustColor();
     };
-    if ($app.data.isDarkMode) {
-        AppApi.ChangeTheme(1);
-    } else {
-        AppApi.ChangeTheme(0);
-    }
-    window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', (e) => {
-            $app._data.isDarkMode = e && e.matches;
-        });
-    $app.watch.themeMode = function () {
-        configRepository.setString('VRCX_ThemeMode', this.themeMode);
-        if (this.themeMode === 'system') {
-            this.isDarkMode = systemIsDarkMode();
-        } else {
-            this.isDarkMode = this.themeMode === 'dark';
-        }
-    };
+
     $app.data.isStartAtWindowsStartup = configRepository.getBool(
         'VRCX_StartAtWindowsStartup',
         false
@@ -14166,6 +14194,9 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updatetrustColor = function () {
+        if (typeof API.currentUser?.id === 'undefined') {
+            return;
+        }
         configRepository.setBool(
             'VRCX_randomUserColours',
             this.randomUserColours
