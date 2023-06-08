@@ -17,7 +17,7 @@ namespace VRCX
 {
     public class OffScreenBrowser : ChromiumWebBrowser, IRenderHandler
     {
-        private ReaderWriterLockSlim _paintBufferLock;
+        private readonly ReaderWriterLockSlim _paintBufferLock;
         private GCHandle _paintBuffer;
         private int _width;
         private int _height;

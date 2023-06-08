@@ -213,11 +213,19 @@ a {
     border-radius: 50%;
 }
 
+.pending-update {
+    margin: 7px;
+    height: 50px;
+    width: 50px;
+    cursor: pointer;
+}
+
 .x-aside-container {
     display: flex;
     flex: none;
     flex-direction: column;
     background: #f8f8f8;
+    padding: 5px;
 }
 
 .el-popper.x-quick-search {
@@ -457,15 +465,8 @@ img.friends-list-avatar {
 
 .x-user-dialog > .el-dialog > .el-dialog__body,
 .x-world-dialog > .el-dialog > .el-dialog__body,
-.x-avatar-dialog > .el-dialog > .el-dialog__body {
-    padding: 20px;
-}
-
+.x-avatar-dialog > .el-dialog > .el-dialog__body,
 .x-group-dialog > .el-dialog > .el-dialog__body {
-    padding: 0;
-}
-
-.x-group-dialog > .el-dialog > .el-dialog__body > .group-body {
     padding: 20px;
 }
 
@@ -560,6 +561,7 @@ i.x-user-status.busy {
 
 .options-container {
     margin-top: 30px;
+    padding: 0px 10px 10px 10px;
 }
 
 .options-container .header {
@@ -706,12 +708,15 @@ i.x-user-status.busy {
     top: 0 !important;
 }
 
+.vrc-instance-queue-message .el-message__content {
+    margin-right: 20px;
+}
+
 .el-tab-pane {
     height: 100%;
 }
 
 .el-tabs {
-    // height: calc(100vh - 60px);
     display: flex;
     flex-direction: column;
 }
@@ -719,5 +724,20 @@ i.x-user-status.busy {
 .el-tabs__content {
     flex: 1;
     max-height: 100%;
-    overflow: auto;
+    overflow-y: auto;
+}
+
+.x-aside-container .el-tabs,
+.x-aside-container .el-tabs__nav-wrap,
+.x-aside-container .el-tabs__item {
+    padding: 0 !important;
+    font-size: 13px;
+}
+
+.el-tabs__header {
+    padding: 0 1px;
+}
+
+.zero-margin-tabs .el-tabs__header {
+    margin-bottom: 0;
 }

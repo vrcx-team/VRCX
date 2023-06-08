@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Timers;
 
 namespace VRCX
@@ -72,7 +73,7 @@ namespace VRCX
 
                 if (monitoredProcess.IsRunning)
                 {
-                    if (monitoredProcess.Process == null || monitoredProcess.Process.HasExited)
+                    if (monitoredProcess.Process == null || WinApi.HasProcessExited(monitoredProcess.Process.Id))
                     {
                         monitoredProcess.ProcessExited();
                         ProcessExited?.Invoke(monitoredProcess);
@@ -168,7 +169,7 @@ namespace VRCX
             Process = process;
             ProcessName = process.ProcessName.ToLower();
 
-            if (!process.HasExited)
+            if (process != null && !WinApi.HasProcessExited(process.Id))
                 IsRunning = true;
         }
 

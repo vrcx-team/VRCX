@@ -13,13 +13,16 @@ namespace VRCX
 {
     internal class Update
     {
+        private static readonly string VRCX_Setup_Executable = Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe");
+        private static readonly string Update_Executable = Path.Combine(Program.AppDataDirectory, "update.exe");
+
         public static void Check()
         {
             if (Process.GetProcessesByName("VRCX_Setup").Length > 0)
                 Environment.Exit(0);
-            if (File.Exists(Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe")))
-                File.Delete(Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe"));
-            if (File.Exists(Path.Combine(Program.AppDataDirectory, "update.exe")))
+            if (File.Exists(VRCX_Setup_Executable))
+                File.Delete(VRCX_Setup_Executable);
+            if (File.Exists(Update_Executable))
                 Install();
         }
 
@@ -27,12 +30,12 @@ namespace VRCX
         {
             try
             {
-                File.Move(Path.Combine(Program.AppDataDirectory, "update.exe"), Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe"));
+                File.Move(Update_Executable, VRCX_Setup_Executable);
                 var VRCXProcess = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
-                        FileName = Path.Combine(Program.AppDataDirectory, "VRCX_Setup.exe"),
+                        FileName = VRCX_Setup_Executable,
                         Arguments = "/S"
                     }
                 };

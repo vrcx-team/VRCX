@@ -231,7 +231,7 @@ namespace VRCX
                         {
                             metadata.Add("author", new JObject
                             {
-                                { "id", "" },
+                                { "id", string.Empty },
                                 { "displayName", $"{author[1]} ({author[0]})" }
                             });
                             break;
@@ -249,18 +249,18 @@ namespace VRCX
                             var world = split[1].Split(',');
                             metadata.Add("world", new JObject
                             {
-                                { "id", "" },
+                                { "id", string.Empty },
                                 { "name", $"{world[2]} ({world[0]})" },
-                                { "instanceId", "" }
+                                { "instanceId", string.Empty }
                             });
                         }
                         else if (version == 1)
                         {
                             metadata.Add("world", new JObject
                             {
-                                { "id", "" },
+                                { "id", string.Empty },
                                 { "name", split[1] },
-                                { "instanceId", "" }
+                                { "instanceId", string.Empty }
                             });
                         }
                         else
@@ -297,7 +297,7 @@ namespace VRCX
                             {
                                 playersArray.Add(new JObject
                                 {
-                                    { "id", "" },
+                                    { "id", string.Empty },
                                     { "x", playerSplit[1] },
                                     { "y", playerSplit[2] },
                                     { "z", playerSplit[3] },
@@ -342,7 +342,6 @@ namespace VRCX
         // init lookup table and store crc for iTXt
         private static readonly uint iTXtCrc = Crc32(new[] { (byte)'i', (byte)'T', (byte)'X', (byte)'t' }, 0, 4, 0);
         private readonly Encoding keywordEncoding = Encoding.GetEncoding("ISO-8859-1"); // ISO-8859-1/Latin1 is the encoding used for the keyword in text chunks. 
-        public List<byte> ChunkBytes;
         public List<byte> ChunkDataBytes;
         public int ChunkDataLength;
         public string ChunkType;

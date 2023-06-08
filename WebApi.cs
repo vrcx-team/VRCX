@@ -204,7 +204,7 @@ namespace VRCX
                         string FormDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n";
                         foreach (string key in postData.Keys)
                         {
-                            string item = String.Format(FormDataTemplate, boundary, key, postData[key]);
+                            string item = string.Format(FormDataTemplate, boundary, key, postData[key]);
                             byte[] itemBytes = System.Text.Encoding.UTF8.GetBytes(item);
                             await requestStream.WriteAsync(itemBytes, 0, itemBytes.Length);
                         }
@@ -215,7 +215,7 @@ namespace VRCX
                     string fileName = "image.png";
                     string fileMimeType = "image/png";
                     string HeaderTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n";
-                    string header = String.Format(HeaderTemplate, boundary, fileFormKey, fileName, fileMimeType);
+                    string header = string.Format(HeaderTemplate, boundary, fileFormKey, fileName, fileMimeType);
                     byte[] headerbytes = Encoding.UTF8.GetBytes(header);
                     await requestStream.WriteAsync(headerbytes, 0, headerbytes.Length);
                     using (MemoryStream fileStream = new MemoryStream(fileToUpload))

@@ -16,7 +16,7 @@ namespace VRCX
         private readonly ReaderWriterLockSlim m_Lock;
         private readonly RichPresence m_Presence;
         private DiscordRpcClient m_Client;
-        private Timer m_Timer;
+        private readonly Timer m_Timer;
         private bool m_Active;
         public static string DiscordAppId;
 

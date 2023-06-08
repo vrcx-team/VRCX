@@ -484,7 +484,7 @@ namespace SQLite
 				throw new ArgumentNullException (nameof (key));
 			if (key.Length != 32 && key.Length != 48)
 				throw new ArgumentException ("Key must be 32 bytes (256-bit) or 48 bytes (384-bit)", nameof (key));
-			var s = String.Join ("", key.Select (x => x.ToString ("X2")));
+			var s = string.Join(string.Empty, key.Select (x => x.ToString ("X2")));
 			ExecuteScalar<string> ("pragma key = \"x'" + s + "'\"");
 		}
 
@@ -816,7 +816,7 @@ namespace SQLite
 		public int CreateIndex (string indexName, string tableName, string[] columnNames, bool unique = false)
 		{
 			const string sqlFormat = "create {2} index if not exists \"{3}\" on \"{0}\"(\"{1}\")";
-			var sql = String.Format (sqlFormat, tableName, string.Join ("\", \"", columnNames), unique ? "unique" : "", indexName);
+			var sql = String.Format (sqlFormat, tableName, string.Join ("\", \"", columnNames), unique ? "unique" : string.Empty, indexName);
 			return Execute (sql);
 		}
 
@@ -1720,7 +1720,7 @@ namespace SQLite
 			if (obj == null) {
 				return 0;
 			}
-			return Insert (obj, "", Orm.GetType (obj));
+			return Insert (obj, string.Empty, Orm.GetType (obj));
 		}
 
 		/// <summary>
@@ -1761,7 +1761,7 @@ namespace SQLite
 		/// </returns>
 		public int Insert (object obj, Type objType)
 		{
-			return Insert (obj, "", objType);
+			return Insert (obj, string.Empty, objType);
 		}
 
 		/// <summary>
@@ -2170,7 +2170,7 @@ namespace SQLite
 
 			// Check for errors
 			r = SQLite3.GetResult (destHandle);
-			string msg = "";
+			string msg = string.Empty;
 			if (r != SQLite3.Result.OK) {
 				msg = SQLite3.GetErrmsg (destHandle);
 			}
@@ -2932,16 +2932,16 @@ namespace SQLite
 		public static string Collation (MemberInfo p)
 		{
 #if ENABLE_IL2CPP
-			return (p.GetCustomAttribute<CollationAttribute> ()?.Value) ?? "";
+			return (p.GetCustomAttribute<CollationAttribute> ()?.Value) ?? string.Empty;
 #else
 			return
 				(p.CustomAttributes
 				 .Where (x => typeof (CollationAttribute) == x.AttributeType)
 				 .Select (x => {
 					 var args = x.ConstructorArguments;
-					 return args.Count > 0 ? ((args[0].Value as string) ?? "") : "";
+					 return args.Count > 0 ? ((args[0].Value as string) ?? string.Empty) : string.Empty;
 				 })
-				 .FirstOrDefault ()) ?? "";
+				 .FirstOrDefault ()) ?? string.Empty;
 #endif
 		}
 
@@ -3033,7 +3033,7 @@ namespace SQLite
 		{
 			_conn = conn;
 			_bindings = new List<Binding> ();
-			CommandText = "";
+			CommandText = string.Empty;
 		}
 
 		public int ExecuteNonQuery ()
@@ -4052,7 +4052,7 @@ namespace SQLite
 					cmdText += " where " + w.CommandText;
 				}
 				if ((_orderBys != null) && (_orderBys.Count > 0)) {
-					var t = string.Join (", ", _orderBys.Select (o => "\"" + o.ColumnName + "\"" + (o.Ascending ? "" : " desc")).ToArray ());
+					var t = string.Join (", ", _orderBys.Select (o => "\"" + o.ColumnName + "\"" + (o.Ascending ? string.Empty : " desc")).ToArray ());
 					cmdText += " order by " + t;
 				}
 				if (_limit.HasValue) {
@@ -4127,7 +4127,7 @@ namespace SQLite
 					args[i] = CompileExpr (call.Arguments[i], queryArgs);
 				}
 
-				var sqlCall = "";
+				var sqlCall = string.Empty;
 
 				if (call.Method.Name == "Like" && args.Length == 2) {
 					sqlCall = "(" + args[0].CommandText + " like " + args[1].CommandText + ")";
@@ -4269,7 +4269,7 @@ namespace SQLite
 					if (val != null && val is System.Collections.IEnumerable && !(val is string) && !(val is System.Collections.Generic.IEnumerable<byte>)) {
 						var sb = new System.Text.StringBuilder ();
 						sb.Append ("(");
-						var head = "";
+						var head = string.Empty;
 						foreach (var a in (System.Collections.IEnumerable)val) {
 							queryArgs.Add (a);
 							sb.Append (head);
@@ -4726,7 +4726,7 @@ namespace SQLite
 		public static Result Open (string filename, out Sqlite3DatabaseHandle db, int flags, string vfsName)
 		{
 #if USE_WP8_NATIVE_SQLITE
-			return (Result)Sqlite3.sqlite3_open_v2(filename, out db, flags, vfsName ?? "");
+			return (Result)Sqlite3.sqlite3_open_v2(filename, out db, flags, vfsName ?? string.Empty);
 #else
 			return (Result)Sqlite3.sqlite3_open_v2 (filename, out db, flags, vfsName);
 #endif
