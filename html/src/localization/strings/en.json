@@ -92,6 +92,8 @@
             "avatars": {
                 "header": "Avatars"
             },
+            "bulk_unfavorite_mode": "Bulk Unfavorite Mode",
+            "bulk_unfavorite_selection": "Bulk Unfavorite Selection",
             "refresh_tooltip": "Refresh all favorites",
             "export": "Export",
             "import": "Import",

@@ -12579,7 +12579,8 @@ speechSynthesis.getVoices();
                     type,
                     groupKey: favorite.$groupKey,
                     ref: null,
-                    name: ''
+                    name: '',
+                    $selected: false
                 };
                 this.favoriteObjects.set(objectId, ctx);
                 if (type === 'friend') {
@@ -14444,9 +14445,8 @@ speechSynthesis.getVoices();
     $app.methods.updateOpenVR = function () {
         if (
             this.openVR &&
-            !this.isGameNoVR &&
             this.isSteamVRRunning &&
-            (this.isGameRunning || this.openVRAlways)
+            ((this.isGameRunning && !this.isGameNoVR) || this.openVRAlways)
         ) {
             var hmdOverlay = false;
             if (
@@ -24425,6 +24425,58 @@ speechSynthesis.getVoices();
 
     $app.methods.setAvatarProvider = function (provider) {
         this.avatarRemoteDatabaseProvider = provider;
+    };
+
+    // #endregion
+    // #region | App: bulk unfavorite
+
+    $app.data.bulkUnfavoriteMode = false;
+
+    $app.methods.showBulkUnfavoriteSelectionConfirm = function () {
+        var elementsTicked = [];
+        // check favorites type
+        for (var ctx of this.favoriteFriends) {
+            if (ctx.$selected) {
+                elementsTicked.push(ctx.id);
+            }
+        }
+        for (var ctx of this.favoriteWorlds) {
+            if (ctx.$selected) {
+                elementsTicked.push(ctx.id);
+            }
+        }
+        for (var ctx of this.favoriteAvatars) {
+            if (ctx.$selected) {
+                elementsTicked.push(ctx.id);
+            }
+        }
+        if (elementsTicked.length === 0) {
+            return;
+        }
+        this.$confirm(
+            `Are you sure you want to unfavorite ${elementsTicked.length} favorites?
+            This action cannot be undone.`,
+            `Delete ${elementsTicked.length} favorites?`,
+            {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                type: 'info',
+                callback: (action) => {
+                    if (action === 'confirm') {
+                        this.bulkUnfavoriteSelection(elementsTicked);
+                    }
+                }
+            }
+        );
+    };
+
+    $app.methods.bulkUnfavoriteSelection = function (elementsTicked) {
+        for (var id of elementsTicked) {
+            API.deleteFavorite({
+                objectId: id
+            });
+        }
+        this.bulkUnfavoriteMode = false;
     };
 
     // #endregion

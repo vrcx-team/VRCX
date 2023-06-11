@@ -1865,8 +1865,11 @@ i.x-user-status {
 .el-checkbox__inner::after,
 .el-checkbox__input.is-checked .el-checkbox__inner,
 .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-    all: unset;
+    color: unset;
+    background-color: unset;
+    border: unset;
 }
+
 .el-checkbox__inner::after {
     all: unset;
     height: 20px;

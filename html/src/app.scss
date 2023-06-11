@@ -741,3 +741,18 @@ i.x-user-status.busy {
 .zero-margin-tabs .el-tabs__header {
     margin-bottom: 0;
 }
+
+.x-friend-item .el-checkbox__inner,
+.el-table__row .el-checkbox__inner {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+}
+
+.x-friend-item .el-checkbox__inner::after,
+.el-table__row .el-checkbox__inner::after {
+    width: 8px;
+    height: 14px;
+    left: 8px;
+    top: 2px;
+}
