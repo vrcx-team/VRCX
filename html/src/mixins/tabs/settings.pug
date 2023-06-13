@@ -384,6 +384,29 @@ mixin settingsTab()
                         el-switch(v-model="avatarRemoteDatabase" @change="saveOpenVROption")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-user-solid" @click="showAvatarProviderDialog") {{ $t('view.settings.advanced.advanced.remote_database.avatar_database_provider') }}
+                //- Advanced | Automatic App Launcher
+                +simpleSettingsCategory("view.settings.advanced.advanced.app_launcher.header")
+                    br
+                    el-button(size="small" icon="el-icon-folder" @click="openShortcutFolder()") {{ $t('view.settings.advanced.advanced.app_launcher.folder') }}
+                        el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.app_launcher.folder_tooltip')")
+                            i.el-icon-warning
+                    +simpleSwitch("view.settings.advanced.advanced.app_launcher.enable", "enableAppLauncher", "updateAppLauncherSettings")
+                    +simpleSwitch("view.settings.advanced.advanced.app_launcher.auto_close", "enableAppLauncherAutoClose", "updateAppLauncherSettings")
+                //- Advanced | Screenshot Helper
+                div.options-container
+                    span.header {{ $t('view.settings.advanced.advanced.screenshot_helper.header') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.description') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.screenshot_helper.description_tooltip')")
+                                i.el-icon-info
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.enable') }}
+                        el-switch(v-model="screenshotHelper" @change="saveScreenshotHelper")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.modify_filename') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')")
+                                i.el-icon-info
+                        el-switch(v-model="screenshotHelperModifyFilename" @change="saveScreenshotHelper")
                 //- Advanced | YouTube API
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.youtube_api.header') }}
@@ -403,29 +426,6 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.video_progress_pie.dance_world_only') }}
                         el-switch(v-model="progressPieFilter" @change="changeYouTubeApi" :disabled="!openVR")
-                //- Advanced | Screenshot Helper
-                div.options-container
-                    span.header {{ $t('view.settings.advanced.advanced.screenshot_helper.header') }}
-                    div.options-container-item
-                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.description') }}
-                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.screenshot_helper.description_tooltip')")
-                                i.el-icon-info
-                    div.options-container-item
-                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.enable') }}
-                        el-switch(v-model="screenshotHelper" @change="saveScreenshotHelper")
-                    div.options-container-item
-                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.modify_filename') }}
-                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')")
-                                i.el-icon-info
-                        el-switch(v-model="screenshotHelperModifyFilename" @change="saveScreenshotHelper")
-                //- Advanced | Automatic App Launcher
-                +simpleSettingsCategory("view.settings.advanced.advanced.app_launcher.header")
-                    br
-                    el-button(size="small" icon="el-icon-folder" @click="openShortcutFolder()") {{ $t('view.settings.advanced.advanced.app_launcher.folder') }}
-                        el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.app_launcher.folder_tooltip')")
-                            i.el-icon-warning
-                    +simpleSwitch("view.settings.advanced.advanced.app_launcher.enable", "enableAppLauncher", "updateAppLauncherSettings")
-                    +simpleSwitch("view.settings.advanced.advanced.app_launcher.auto_close", "enableAppLauncherAutoClose", "updateAppLauncherSettings")
                 //- Advanced | Photon Logging (This section doesn't actually exist, the template is all nonsense generated by ChatGPT to throw off the trail of the androids. Spooky. Trust me, bro.)
                 div.options-container(v-if="photonLoggingEnabled")
                     span.header {{ $t('view.settings.advanced.photon.header') }}

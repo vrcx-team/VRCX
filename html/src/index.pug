@@ -1168,9 +1168,9 @@ html
 
             //- dialog: new instance
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="newInstanceDialog" :visible.sync="newInstanceDialog.visible" :title="$t('dialog.new_instance.header')" width="650px")
-                el-tabs(type="card" ref="newInstanceTabs")
+                el-tabs(type="card" ref="newInstanceTabs" v-if="newInstanceDialog.visible")
                     el-tab-pane(:label="$t('dialog.new_instance.normal')")
-                        el-form(v-if="newInstanceDialog.visible" :model="newInstanceDialog" label-width="130px")
+                        el-form(:model="newInstanceDialog" label-width="130px")
                             el-form-item(:label="$t('dialog.new_instance.access_type')")
                                 el-radio-group(v-model="newInstanceDialog.accessType" size="mini" @change="buildInstance")
                                     el-radio-button(label="public") {{ $t('dialog.new_instance.access_type_public') }}
@@ -1245,9 +1245,9 @@ html
                                             .detail
                                                 span.name(v-text="group.name")
                             el-form-item(:label="$t('dialog.new_instance.location')")
-                                el-input(v-model="newInstanceDialog.location" size="mini" readonly)
+                                el-input(v-model="newInstanceDialog.location" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                             el-form-item(:label="$t('dialog.new_instance.url')")
-                                el-input(v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
+                                el-input(v-model="newInstanceDialog.url" size="mini" readonly)
                     el-tab-pane(:label="$t('dialog.new_instance.group')")
                         el-form(v-if="newInstanceDialog.visible" :model="newInstanceDialog" label-width="130px")
                             el-form-item(:label="$t('dialog.new_instance.group_access_type')")
@@ -1283,8 +1283,8 @@ html
                                 el-form-item(:label="$t('dialog.new_instance.location')")
                                     el-input(v-model="newInstanceDialog.location" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                                 el-form-item(:label="$t('dialog.new_instance.url')")
-                                    el-input(v-model="newInstanceDialog.url" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
-                template(#footer v-if="$refs.newInstanceTabs?.currentName === '0'")
+                                    el-input(v-model="newInstanceDialog.url" size="mini" readonly)
+                template(#footer v-if="$refs.newInstanceTabs?.currentName !== '1'")
                     el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.location)") {{ $t('dialog.new_instance.copy_url') }}
                     el-button(size="small" @click="selfInvite(newInstanceDialog.location)") {{ $t('dialog.new_instance.self_invite') }}
                     el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)" :disabled="(newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') && newInstanceDialog.userId !== API.currentUser.id") {{ $t('dialog.new_instance.invite') }}
