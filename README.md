@@ -1,13 +1,14 @@
 <div align="center">
 
-# <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.ico" width="64" height="64"> </img> VRCX 
+# <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.ico" width="64" height="64"> </img> VRCX
+
 [![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
-[![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml) 
+[![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white)](https://vrcx.pypy.moe/discord)
 
 | **English** | [日本語](./README.jp.md) |
 
-VRCX is an assistant/companion application for VRChat that provides information about and helps you accomplish various things related to VRChat in a more convenient fashion than relying on the plain VRChat client (desktop or VR), or website alone. It also includes some other neat features outlined below. 
+VRCX is an assistant/companion application for VRChat that provides information about and helps you accomplish various things related to VRChat in a more convenient fashion than relying on the plain VRChat client (desktop or VR), or website alone. It also includes some other neat features outlined below.
 
 # Getting Started
 
@@ -24,15 +25,17 @@ Download and run the latest installer (`VRCX_Setup.exe`) from [here](https://git
   - Monitor the world/avatar activity of your friends and check their online status.
   - Keep track of when you first added them and when you last saw them.
   - See how much time you've spent together in worlds and how many times.
+  - Keep track of friend name changes.
+  - Save notes to help remember how you met.
 - :electric_plug: Automatically launch apps when you start VRChat
   - You can configure VRCX to launch other apps when you start VRChat.
   - For example, you could have VRCX launch an OSC app or a voice changer app when VRChat opens up.
 - :floppy_disk: World Persistence
   - For worlds that support the feature, VRCX can save world settings, save states, inventories, and other data!
   - **Note**: To use this feature, you must have "Allow Untrusted URLs" enabled in your VRChat settings.
-  - For Developers: [Wiki Page - World Persistence (PWI)](https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI))
+  - For Developers: [Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
 - :mag: Search for avatars, users, worlds, and groups
-- :clipboard: Build a local, unrestricted world favorites list
+- :earth_americas: Build a local, unrestricted world favorites list
 - :camera: Store world data in the pictures you take in-game, so you can remember that one world you took those cool pictures in like... 6 months ago!
 - :bell: Monitor/respond to notifications
   - You can send/receive invites and friend requests from VRCX as well as see the instance info of invites that you receive.
@@ -40,8 +43,13 @@ Download and run the latest installer (`VRCX_Setup.exe`) from [here](https://git
 - :tv: See the links to videos and that are playing in the world you're in, as well as various other logged data.
 - :bar_chart: Improved Discord Rich Presence
   - You can optionally display more information about your current instance in Discord.
+  - World integration for popular worlds like PyPyDance, LSMedia, Movies&Chill and VRDancing.
   - This includes the world thumbnail, name, instance ID, and player count, depending on your settings and whether the lobby is private. You can also add a join button for public lobbies!
 - :crystal_ball: VR Overlay with configurable live feed of all supported events/notifications
+- :outbox_tray: Upload avatar/world images without Unity
+- :page_facing_up: Manage and edit uploaded avatar/world details without Unity
+- :skull: Automatically restart and join last instance when VRC crashes
+- :left_right_arrow: Export/import favorite groups
 
 ## Miscellanous
 
@@ -118,7 +126,7 @@ Download and run the latest installer (`VRCX_Setup.exe`) from [here](https://git
 
 **No.**
 
-VRCX is an external tool that uses the VRChat API to provide the features it does. 
+VRCX is an external tool that uses the VRChat API to provide the features it does.
 
 It does not modify the game in any way, only using the API responsibly to provide the features it does. It is not a mod, or a cheat, or any other form of modification to the game.
 
@@ -127,4 +135,3 @@ To see VRChat's stance on API usage, see the #faq channel in the VRChat Discord.
 ---
 
 VRCX is not endorsed by VRChat and does not reflect the views or opinions of VRChat or anyone officially involved in producing or managing VRChat properties. VRChat and all associated properties are trademarks or registered trademarks of VRChat Inc. VRChat © VRChat Inc.
-
