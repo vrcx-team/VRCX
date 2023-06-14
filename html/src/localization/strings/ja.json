@@ -25,7 +25,7 @@
                 "password": "パスワード",
                 "saveCredentials": "資格情報を保存",
                 "devEndpoint": "開発者用エンドポイント",
-                "endpoint": "Endpoint",
+                "endpoint": "エンドポイント",
                 "websocket": "WebSocket"
             }
         },
@@ -45,7 +45,7 @@
                 "search_placeholder": "検索",
                 "filter_placeholder": "フィルター",
                 "chatbox_blacklist": "チャットボックス ブラックリスト",
-                "status_tooltip": "VRCXコンパニオンの状態"
+                "status_tooltip": "VRCX コンパニオンの状態"
             }
         },
         "search": {
@@ -72,6 +72,9 @@
                 "sort_name": "名前順で並び替え",
                 "sort_update": "更新順で並び替え",
                 "sort_created": "作成順で並び替え"
+            },
+            "group": {
+                "header": "グループ"
             },
             "prev_page": "前",
             "next_page": "次"
@@ -222,6 +225,9 @@
                     "theme_mode_system": "システム",
                     "theme_mode_light": "ライト",
                     "theme_mode_dark": "ダーク",
+                    "theme_mode_darkvanilla": "Dark Vanilla",
+                    "theme_mode_pink": "Pink",
+                    "theme_mode_material3": "Material 3",
                     "vrcplus_profile_icons": "VRC+ プロフィールアイコン",
                     "disable_tooltips": "ツールチップを無効化",
                     "sort_favorite_by": "お気に入りを並び替え:",
@@ -410,6 +416,8 @@
                         "header": "VRCXインスタンス キャッシュ/デバッグ",
                         "udon_exception_logging": "Udonの例外エラーを記録",
                         "gpu_fix": "GPU Fixを有効化",
+                        "gpu_fix_notice": "(再起動が必要です)",
+                        "gpu_fix_warning": "SteamVR オーバーレイが機能せず、2つ以上のGPUを使用している時のみこのオプションを有効化してください",
                         "disable_gamelog": "ゲームログを無効化",
                         "disable_gamelog_notice": "(何かが壊れる可能性があります)",
                         "user_cache": "ユーザーキャッシュ:",
@@ -472,6 +480,7 @@
         "search_result_more": "もっと検索:",
         "direct_access_tooltip": "クリップボードからID/URLに直接アクセス",
         "refresh_tooltip": "フレンドを更新",
+        "groups": "グループインスタンス",
         "friends": "フレンド",
         "me": "自分",
         "favorite": "お気に入り",
@@ -695,7 +704,8 @@
                 "platform": "プラットフォーム"
             },
             "json": {
-                "header": "JSON"
+                "header": "JSON",
+                "file_analysis": "ファイルの分析"
             }
         },
         "group": {
@@ -733,6 +743,7 @@
             },
             "info": {
                 "header": "情報",
+                "instances": "インスタンス",
                 "announcement": "お知らせ",
                 "instance_full": "満員",
                 "rules": "ルール",
@@ -814,6 +825,10 @@
             "access_type_friend": "Friends",
             "access_type_invite_plus": "Invite+",
             "access_type_invite": "Invite",
+            "group_access_type": "グループアクセス",
+            "group_access_type_members": "メンバー",
+            "group_access_type_plus": "Plus",
+            "group_access_type_public": "Public",
             "region": "地域",
             "region_usw": "US West",
             "region_use": "US East",
@@ -824,13 +839,20 @@
             "instance_id_placeholder": "ランダム",
             "instance_creator": "インスタンス作者",
             "instance_creator_placeholder": "ユーザーを選択",
+            "group_placeholder": "グループを選択",
+            "role_placeholder": "ロールを選択",
             "group_id": "グループID",
             "location": "場所",
             "url": "URL",
             "copy_url": "URLをコピー",
             "self_invite": "自分を招待",
             "invite": "招待",
-            "launch": "起動"
+            "launch": "起動",
+            "create_instance": "インスタンスを作成",
+            "queueEnabled": "キュー",
+            "normal": "通常",
+            "group": "グループ",
+            "roles": "ロール"
         },
         "launch_options": {
             "header": "VRChat 起動オプション",
@@ -903,7 +925,9 @@
             "launch": "起動"
         },
         "export_friends_list": {
-            "header": "フレンドリスト"
+            "header": "フレンドリスト",
+            "csv": "CSV",
+            "json": "JSON"
         },
         "export_own_avatars": {
             "header": "自分のアバター"
@@ -1340,7 +1364,7 @@
         },
         "playerList": {
             "avatar": "アバター",
-            "timer": "タイマー",
+            "timer": "時間",
             "photonId": "Photon ID",
             "icon": "アイコン",
             "platform": "プラットフォーム",
@@ -1436,7 +1460,7 @@
     },
     "vr": {
         "status": {
-            "timer": "タイマー:",
+            "timer": "時間:",
             "players": "プレイヤー数:",
             "cpu": "CPU:",
             "online": "オンライン:"
