@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("VRCX")]
-[assembly: AssemblyCopyright("pypy")]
+[assembly: AssemblyCopyright("vrcx-team, pypy, natsumi")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
