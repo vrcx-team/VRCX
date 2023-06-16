@@ -84,13 +84,12 @@ namespace VRCX
 
             lock (startedProcesses)
             {
-                if (startedProcesses.Count == 0)
-                    return;
-
-                childUpdateTimer.Stop();
-
                 if (KillChildrenOnExit)
+                {
+                    childUpdateTimer.Stop();
+
                     KillChildProcesses();
+                }
                 else
                     UpdateChildProcesses();
             }
@@ -115,6 +114,9 @@ namespace VRCX
                     if (!IsChildProcessRunning(file))
                         StartChildProcess(file);
                 }
+
+                if (shortcutFiles.Length == 0)
+                    return;
 
                 timerTicks = 0;
                 childUpdateTimer.Interval = 1000;
