@@ -21952,9 +21952,10 @@ speechSynthesis.getVoices();
         this.downloadQueue.delete(ref.id);
         this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
 
-        var url = this.downloadCurrent.updateZipUrl;
+        var fileUrl = this.downloadCurrent.updateSetupUrl;
+        var hashUrl = this.downloadCurrent.updateHashUrl;
         var size = this.downloadCurrent.size;
-        await AssetBundleCacher.DownloadFile(url, size);
+        await AssetBundleCacher.DownloadFile(fileUrl, hashUrl, size);
         this.downloadFileProgress();
     };
 
@@ -21993,9 +21994,16 @@ speechSynthesis.getVoices();
                 });
                 this.downloadFileComplete('Canceled');
                 return;
+            case -14:
+                this.$message({
+                    message: 'Download failed, hash mismatch',
+                    type: 'error'
+                });
+                this.downloadFileComplete('Failed');
+                return;
             case -15:
                 this.$message({
-                    message: 'Download failed',
+                    message: 'Download failed, size mismatch',
                     type: 'error'
                 });
                 this.downloadFileComplete('Failed');
@@ -22803,7 +22811,8 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.downloadVRCXUpdate = function (
-        updateZipUrl,
+        updateSetupUrl,
+        updateHashUrl,
         size,
         name,
         type,
@@ -22816,7 +22825,8 @@ speechSynthesis.getVoices();
         this.downloadQueue.set('VRCXUpdate', {
             ref,
             type,
-            updateZipUrl,
+            updateSetupUrl,
+            updateHashUrl,
             size,
             autoInstall
         });
@@ -22829,16 +22839,26 @@ speechSynthesis.getVoices();
     $app.methods.installVRCXUpdate = function () {
         for (var release of this.VRCXUpdateDialog.releases) {
             if (release.name === this.VRCXUpdateDialog.release) {
+                var downloadUrl = '';
+                var hashUrl = '';
+                var size = 0;
                 for (var asset of release.assets) {
+                    if (asset.state !== 'uploaded') {
+                        continue;
+                    }
                     if (
-                        (asset.content_type === 'application/x-msdownload' ||
-                            asset.content_type ===
-                                'application/x-msdos-program') &&
-                        asset.state === 'uploaded'
+                        asset.content_type === 'application/x-msdownload' ||
+                        asset.content_type === 'application/x-msdos-program'
                     ) {
-                        var downloadUrl = asset.browser_download_url;
-                        var size = asset.size;
+                        downloadUrl = asset.browser_download_url;
+                        size = asset.size;
                         break;
+                    }
+                    if (
+                        asset.name === 'SHA256SUMS.txt' &&
+                        asset.content_type === 'text/plain'
+                    ) {
+                        hashUrl = asset.browser_download_url;
                     }
                 }
                 if (!downloadUrl) {
@@ -22849,6 +22869,7 @@ speechSynthesis.getVoices();
                 var autoInstall = false;
                 this.downloadVRCXUpdate(
                     downloadUrl,
+                    hashUrl,
                     size,
                     name,
                     type,
@@ -22960,16 +22981,26 @@ speechSynthesis.getVoices();
                 // update already downloaded
                 this.VRCXUpdateDialog.updatePendingIsLatest = true;
             } else if (name > this.appVersion) {
+                var downloadUrl = '';
+                var hashUrl = '';
+                var size = 0;
                 for (var asset of json.assets) {
+                    if (asset.state !== 'uploaded') {
+                        continue;
+                    }
                     if (
-                        (asset.content_type === 'application/x-msdownload' ||
-                            asset.content_type ===
-                                'application/x-msdos-program') &&
-                        asset.state === 'uploaded'
+                        asset.content_type === 'application/x-msdownload' ||
+                        asset.content_type === 'application/x-msdos-program'
                     ) {
-                        var downloadUrl = asset.browser_download_url;
-                        var size = asset.size;
+                        downloadUrl = asset.browser_download_url;
+                        size = asset.size;
                         break;
+                    }
+                    if (
+                        asset.name === 'SHA256SUMS.txt' &&
+                        asset.content_type === 'text/plain'
+                    ) {
+                        hashUrl = asset.browser_download_url;
                     }
                 }
                 if (!downloadUrl) {
@@ -22986,6 +23017,7 @@ speechSynthesis.getVoices();
                     var autoInstall = false;
                     this.downloadVRCXUpdate(
                         downloadUrl,
+                        hashUrl,
                         size,
                         name,
                         type,
@@ -22995,6 +23027,7 @@ speechSynthesis.getVoices();
                     var autoInstall = true;
                     this.downloadVRCXUpdate(
                         downloadUrl,
+                        hashUrl,
                         size,
                         name,
                         type,

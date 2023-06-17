@@ -20,6 +20,12 @@ namespace VRCX
         {
             if (Process.GetProcessesByName("VRCX_Setup").Length > 0)
                 Environment.Exit(0);
+            var setupHash = Path.Combine(Program.AppDataDirectory, "sha256sum.txt");
+            if (File.Exists(setupHash))
+                File.Delete(setupHash);
+            var tempDownload = Path.Combine(Program.AppDataDirectory, "tempDownload.exe");
+            if (File.Exists(tempDownload))
+                File.Delete(tempDownload);
             if (File.Exists(VRCX_Setup_Executable))
                 File.Delete(VRCX_Setup_Executable);
             if (File.Exists(Update_Executable))

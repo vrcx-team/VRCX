@@ -429,20 +429,6 @@ namespace VRCX
         }
 
         /// <summary>
-        /// Downloads the VRCX update executable from the specified URL and saves it to the AppData directory.
-        /// </summary>
-        /// <param name="url">The URL of the VRCX update to download.</param>
-        public void DownloadVRCXUpdate(string url)
-        {
-            var Location = Path.Combine(Program.AppDataDirectory, "update.exe");
-            using (var client = new WebClient())
-            {
-                client.Headers.Add("user-agent", Program.Version);
-                client.DownloadFile(new Uri(url), Location);
-            }
-        }
-
-        /// <summary>
         /// Restarts the VRCX application for an update by launching a new process with the "/Upgrade" argument and exiting the current process.
         /// </summary>
         public void RestartApplication()
