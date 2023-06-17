@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Timers;
 
 namespace VRCX
 {
@@ -21,7 +22,9 @@ namespace VRCX
         public readonly string AppShortcutDirectory;
 
         private DateTime startTime = DateTime.Now;
-        private Dictionary<string, Process> startedProcesses = new Dictionary<string, Process>();
+        private Dictionary<string, HashSet<int>> startedProcesses = new Dictionary<string, HashSet<int>>();
+        private readonly Timer childUpdateTimer;
+        private int timerTicks = 0;
         private static readonly byte[] shortcutSignatureBytes = { 0x4C, 0x00, 0x00, 0x00 }; // signature for ShellLinkHeader
 
         private const uint TH32CS_SNAPPROCESS = 2;
@@ -68,17 +71,28 @@ namespace VRCX
 
             ProcessMonitor.Instance.ProcessStarted += OnProcessStarted;
             ProcessMonitor.Instance.ProcessExited += OnProcessExited;
+
+            childUpdateTimer = new Timer();
+            childUpdateTimer.Interval = 60000;
+            childUpdateTimer.Elapsed += ChildUpdateTimer_Elapsed;
         }
 
         private void OnProcessExited(MonitoredProcess monitoredProcess)
         {
-            if (startedProcesses.Count == 0 || !monitoredProcess.HasName(VRChatProcessName))
+            if (!monitoredProcess.HasName(VRChatProcessName))
                 return;
 
-            if (KillChildrenOnExit)
-                KillChildProcesses();
-            else
-                UpdateChildProcesses();
+            lock (startedProcesses)
+            {
+                if (KillChildrenOnExit)
+                {
+                    childUpdateTimer.Stop();
+
+                    KillChildProcesses();
+                }
+                else
+                    UpdateChildProcesses();
+            }
         }
 
         private void OnProcessStarted(MonitoredProcess monitoredProcess)
@@ -86,19 +100,27 @@ namespace VRCX
             if (!Enabled || !monitoredProcess.HasName(VRChatProcessName) || monitoredProcess.Process.StartTime < startTime)
                 return;
 
-            if (KillChildrenOnExit)
-                KillChildProcesses();
-            else
-                UpdateChildProcesses();
-
-            var shortcutFiles = FindShortcutFiles(AppShortcutDirectory);
-
-            foreach (var file in shortcutFiles)
+            lock (startedProcesses)
             {
-                if (!IsChildProcessRunning(file))
+                if (KillChildrenOnExit)
+                    KillChildProcesses();
+                else
+                    UpdateChildProcesses();
+
+                var shortcutFiles = FindShortcutFiles(AppShortcutDirectory);
+
+                foreach (var file in shortcutFiles)
                 {
-                    StartChildProcess(file);
+                    if (!IsChildProcessRunning(file))
+                        StartChildProcess(file);
                 }
+
+                if (shortcutFiles.Length == 0)
+                    return;
+
+                timerTicks = 0;
+                childUpdateTimer.Interval = 1000;
+                childUpdateTimer.Start();
             }
         }
 
@@ -107,14 +129,16 @@ namespace VRCX
         /// </summary>
         internal void KillChildProcesses()
         {
+            UpdateChildProcesses(); // Ensure the list contains all current child processes.
+
             foreach (var pair in startedProcesses)
             {
-                var process = pair.Value;
+                var processes = pair.Value;
 
-                if (!WinApi.HasProcessExited(process.Id))
+                foreach (var pid in processes)
                 {
-                    KillProcessTree(process.Id);
-                    //process.Kill();
+                    if (!WinApi.HasProcessExited(pid))
+                        KillProcessTree(pid);
                 }
             }
 
@@ -127,17 +151,19 @@ namespace VRCX
 
         // This is a recursive function that kills a process and all of its children.
         // It uses the CreateToolhelp32Snapshot winapi func to get a snapshot of all running processes, loops through them with Process32First/Process32Next, and kills any processes that have the given pid as their parent.
-        
+
         /// <summary>
-        /// Kills a process and all of its child processes.
+        /// Returns the child processes of a process.
         /// </summary>
         /// <param name="pid">The process ID of the parent process.</param>
-        public static void KillProcessTree(int pid)
+        public static List<int> FindChildProcesses(int pid, bool recursive = true)
         {
+            List<int> pids = new List<int>();
+
             IntPtr snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
             if (snapshot == IntPtr.Zero)
             {
-                return;
+                return pids;
             }
 
             // Gonna be honest, not gonna spin up a 32bit windows VM to make sure this works. but it should.
@@ -151,19 +177,37 @@ namespace VRCX
                 {
                     if (procEntry.th32ParentProcessID == pid)
                     {
-                        KillProcessTree((int)procEntry.th32ProcessID);  // Recursively kill child processes
+                        pids.Add((int)procEntry.th32ProcessID);
+
+                        if(recursive) // Recursively find child processes
+                            pids.AddRange(FindChildProcesses((int)procEntry.th32ProcessID));
                     }
                 }
                 while (Process32Next(snapshot, ref procEntry));
             }
 
-            try
+            return pids;
+        }
+
+        /// <summary>
+        /// Kills a process and all of its child processes.
+        /// </summary>
+        /// <param name="pid">The process ID of the parent process.</param>
+        public static void KillProcessTree(int pid)
+        {
+            var pids = FindChildProcesses(pid);
+            pids.Add(pid); // Kill parent
+
+            foreach (int p in pids)
             {
-                Process proc = Process.GetProcessById(pid);
-                proc.Kill();
-            }
-            catch
-            {
+                try
+                {
+                    using (Process proc = Process.GetProcessById(p))
+                        proc.Kill();
+                }
+                catch
+                {
+                }
             }
         }
 
@@ -173,8 +217,8 @@ namespace VRCX
         /// <param name="path">The path.</param>
         internal void StartChildProcess(string path)
         {
-            var process = Process.Start(path);
-            startedProcesses.Add(path, process);
+            using (var process = Process.Start(path))
+                startedProcesses.Add(path, new HashSet<int>() { process.Id });
         }
 
         /// <summary>
@@ -183,10 +227,22 @@ namespace VRCX
         /// </summary>
         internal void UpdateChildProcesses()
         {
-            foreach (var pair in startedProcesses.ToList())
+            foreach (var pair in startedProcesses.ToArray())
             {
-                var process = pair.Value;
-                if (WinApi.HasProcessExited(process.Id))
+                var processes = pair.Value;
+                foreach (var pid in processes.ToArray())
+                {
+                    bool recursiveChildSearch = processes.Count == 1; // Disable recursion when this list may already contain the entire process tree
+                    var childProcesses = FindChildProcesses(pid, recursiveChildSearch);
+
+                    foreach (int childPid in childProcesses) // Monitor child processes
+                        processes.Add(childPid); // HashSet will prevent duplication
+
+                    if (WinApi.HasProcessExited(pid))
+                        processes.Remove(pid);
+                }
+
+                if (processes.Count == 0) // All processes associated with the shortcut have exited.
                     startedProcesses.Remove(pair.Key);
             }
         }
@@ -210,9 +266,26 @@ namespace VRCX
 
         internal void Exit()
         {
+            childUpdateTimer.Stop();
+
             Enabled = false;
 
-            KillChildProcesses();
+            lock (startedProcesses)
+                KillChildProcesses();
+        }
+
+        private void ChildUpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            lock (startedProcesses)
+                UpdateChildProcesses();
+
+            if (timerTicks < 5)
+            {
+                timerTicks++;
+
+                if(timerTicks == 5)
+                    childUpdateTimer.Interval = 60000;
+            }
         }
 
         /// <summary>
