@@ -6,6 +6,19 @@
 ;https://nsis.sourceforge.io/Inetc_plug-in
 
 ;--------------------------------
+;Version
+
+    !define PRODUCT_VERSION "1.0.0.0"
+    !define VERSION "1.0.0.0"
+    VIProductVersion "${PRODUCT_VERSION}"
+    VIFileVersion "${VERSION}"
+    VIAddVersionKey "FileVersion" "${VERSION}"
+    VIAddVersionKey "ProductName" "VRCX"
+    VIAddVersionKey "ProductVersion" "${PRODUCT_VERSION}"
+    VIAddVersionKey "LegalCopyright" "Copyright vrcx-team, pypy, natsumi"
+    VIAddVersionKey "FileDescription" "Friendship management tool for VRChat"
+
+;--------------------------------
 ;Include Modern UI
 
     !include "MUI2.nsh"

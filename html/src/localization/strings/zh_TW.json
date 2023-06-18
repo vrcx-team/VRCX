@@ -73,6 +73,9 @@
                 "sort_update": "依更新排序",
                 "sort_created": "依建立時間排序"
             },
+            "group": {
+                "header": "群組"
+            },
             "prev_page": "上一頁",
             "next_page": "下一頁"
         },
@@ -399,8 +402,19 @@
                         "modify_filename": "修改檔案名稱",
                         "modify_filename_tooltip": "在拍攝遊戲截圖時，除了在照片的檔案元資料中儲存世界 ID 外，還會將世界 ID 加入到截圖的檔案名稱中。"
                     },
+                    "app_launcher": {
+                        "header": "應用程式啟動器",
+                        "folder": "自動啟動資料夾",
+                        "folder_tooltip": "要用 VRChat 自動啟動應用程式，請將捷徑放在這個文件夾中",
+                        "enable": "啟用",
+                        "auto_close": "自動關閉應用程式"
+                    },
                     "cache_debug": {
                         "header": "VRCX 世界快取/除錯",
+                        "udon_exception_logging": "Udon 異常紀錄",
+                        "gpu_fix": "SteamVR 疊層 GPU 修復",
+                        "gpu_fix_notice": "(需要重新啟動)",
+                        "gpu_fix_warning": "只有在 SteamVR 疊層不工作並且你有 2 個 GPU 的情況下才會啟用這個選項",
                         "disable_gamelog": "關閉遊戲紀錄",
                         "disable_gamelog_notice": "（可能會弄壞很多東西）",
                         "user_cache": "玩家快取：",
@@ -463,13 +477,14 @@
         "search_result_more": "搜尋更多：",
         "direct_access_tooltip": "直接存取解貼簿的 ID / 連結",
         "refresh_tooltip": "重新整理好友",
+        "groups": "群組房間",
         "friends": "好友",
         "me": "我",
         "favorite": "收藏",
         "online": "上線",
         "active": "活躍",
         "offline": "離線",
-        "penfing_offline": "待確認離線"
+        "pending_offline": "待確認離線"
     },
     "dialog": {
         "user": {
@@ -686,7 +701,8 @@
                 "platform": "平台"
             },
             "json": {
-                "header": "原始資料"
+                "header": "原始資料",
+                "file_analysis": "文件分析"
             }
         },
         "group": {
@@ -805,6 +821,10 @@
             "access_type_friend": "好友",
             "access_type_invite_plus": "邀請+",
             "access_type_invite": "邀請",
+            "group_access_type": "群組開放權限",
+            "group_access_type_members": "成員",
+            "group_access_type_plus": "成員+",
+            "group_access_type_public": "公開",
             "region": "地區",
             "region_usw": "美國西部",
             "region_use": "美國東部",
@@ -815,6 +835,7 @@
             "instance_id_placeholder": "亂數",
             "instance_creator": "房間建立者",
             "instance_creator_placeholder": "選擇玩家",
+            "group_placeholder": "選擇群組",
             "group_id": "群組 ID",
             "location": "地點",
             "url": "連結",
@@ -1396,7 +1417,7 @@
         },
         "social_status": {
             "no": "No.",
-            "status": "狀蓋"
+            "status": "狀態"
         },
         "download_history": {
             "time": "時間",

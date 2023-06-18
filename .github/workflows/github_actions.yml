@@ -8,13 +8,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Setup Nuget.exe
       uses: nuget/setup-nuget@v1
     - name: Restore packages
       run: nuget restore VRCX.sln
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v1.1
     - name: Build with MSBuild
       run: msbuild VRCX.sln -p:Configuration=Release -p:Platform=x64
     - uses: actions/upload-artifact@v3
@@ -29,9 +29,9 @@ jobs:
         working-directory: html
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
     - name: Restore dependencies

@@ -1168,9 +1168,9 @@ html
 
             //- dialog: new instance
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="newInstanceDialog" :visible.sync="newInstanceDialog.visible" :title="$t('dialog.new_instance.header')" width="650px")
-                el-tabs(type="card" ref="newInstanceTabs" v-if="newInstanceDialog.visible")
+                el-tabs(type="card" v-model="newInstanceDialog.selectedTab")
                     el-tab-pane(:label="$t('dialog.new_instance.normal')")
-                        el-form(:model="newInstanceDialog" label-width="130px")
+                        el-form(v-if="newInstanceDialog.visible" :model="newInstanceDialog" label-width="130px")
                             el-form-item(:label="$t('dialog.new_instance.access_type')")
                                 el-radio-group(v-model="newInstanceDialog.accessType" size="mini" @change="buildInstance")
                                     el-radio-button(label="public") {{ $t('dialog.new_instance.access_type_public') }}
@@ -1284,12 +1284,12 @@ html
                                     el-input(v-model="newInstanceDialog.location" size="mini" readonly @click.native="$event.target.tagName === 'INPUT' && $event.target.select()")
                                 el-form-item(:label="$t('dialog.new_instance.url')")
                                     el-input(v-model="newInstanceDialog.url" size="mini" readonly)
-                template(#footer v-if="$refs.newInstanceTabs?.currentName !== '1'")
+                template(#footer v-if="newInstanceDialog.selectedTab === '0'")
                     el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.location)") {{ $t('dialog.new_instance.copy_url') }}
                     el-button(size="small" @click="selfInvite(newInstanceDialog.location)") {{ $t('dialog.new_instance.self_invite') }}
                     el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)" :disabled="(newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') && newInstanceDialog.userId !== API.currentUser.id") {{ $t('dialog.new_instance.invite') }}
                     el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.secureOrShortName)") {{ $t('dialog.new_instance.launch') }}
-                template(#footer v-else)
+                template(#footer v-else-if="newInstanceDialog.selectedTab === '1'")
                     template(v-if="newInstanceDialog.instanceCreated")
                         el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.location)") {{ $t('dialog.new_instance.copy_url') }}
                         el-button(size="small" @click="selfInvite(newInstanceDialog.location)") {{ $t('dialog.new_instance.self_invite') }}
