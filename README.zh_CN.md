@@ -54,7 +54,7 @@ VRCX是一个用于VRChat的辅助应用程序，它提供有关VRChat的信息�
 ## 一些其他的东西
 
 - 想给VRCX看起来独一无二吗？请查看 [Themes](https://github.com/vrcx-team/VRCX/wiki/Themes)了解如何制作主题
-- 参见[Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source)了解如何从源码构建VRCX。
+- 参见[Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source)（英语）了解如何从源码构建VRCX。
 - 关于如何在Linux上运行VRCX的指南，请看[这里](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux)（英语）
 # 一些界面截图
 
