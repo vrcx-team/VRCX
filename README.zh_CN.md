@@ -7,13 +7,13 @@
 
 | [English](./README.md) | [日本語](./README.jp.md) | **简体中文**
 
-VRCX是一个用于VRChat的辅助应用程序，它提供有关VRChat的信息，并帮助你以更方便的方式完成与VRChat有关的各种事情，而不是仅仅依靠VRChat游戏客户端（PC/VR）或他们的网站。它还包括一些非常有用的功能：
+VRCX是一个用于VRChat的辅助应用，提供有关VRChat的一些信息并帮助你以更方便的方式完成与VRChat有关的各种事情，而不是仅仅依靠VRChat游戏客户端（PC/VR）或他们的网站。它还包括一些非常有用的功能：
 
 # 开始使用
 
 <div align="center">
 
-从[这里](https://github.com/vrcx-team/VRCX/releases/latest)下载并运行最新的安装程序 (`VRCX_Setup.exe`) 
+从[这里](https://github.com/vrcx-team/VRCX/releases/latest)下载最新的安装程序 (`VRCX_Setup.exe`) 
 
 # 特性
 
@@ -22,11 +22,11 @@ VRCX是一个用于VRChat的辅助应用程序，它提供有关VRChat的信息�
 
 - :family: 好友、世界和模型列表管理
   - 在VRChat游戏客户端之外管理你的好友列表、世界/群组和模型。
-  - 监视你好友所在的世界，以及他们的模型活动，同时查看他们的在线状态。
+  - 监视你好友所在的世界，以及他们的模型变动，同时查看他们的在线状态。
   - 跟踪你首次添加他们的时间以及你上次见到他们的时间。
-  - 查看你和朋友们在世界中共度的时间。
-  - 跟踪好友名字的更改。再也不用担心改名之后忘了是谁了！
-  - 设置备注以帮助记住你是怎样认识他们的。
+  - 查看你和朋友们在世界中共度了多长时间。
+  - 跟踪好友名字的更改，再也不用担心改名之后忘了是谁了！
+  - 设置好友备注，这样你就可以知道你是怎么认识他们的
 - :electric_plug: 启动VRChat时自动启动其他应用
   - 你可以配置VRCX，以便在启动VRChat时启动其他应用。
   - 例如，你可以让VRCX在VRChat打开时启动OSC应用或者变声器。
@@ -38,7 +38,7 @@ VRCX是一个用于VRChat的辅助应用程序，它提供有关VRChat的信息�
 - :earth_americas: 使用存储在本地并且无限制的收藏夹！妈妈再也不用担心收藏夹不够用了
 - :camera: 在游戏拍摄的图片中存储世界数据，以便你可以记住你在6个月前拍摄的那个酷炫的世界！
 - :bell: 监视/响应通知
-  - 您可以从VRCX发送/接收邀请和好友请求，以及查看您收到的邀请的房间信息。
+  - 你可以从VRCX发送/接收游玩邀请和好友请求，以及查看你收到的邀请的房间信息。
 - :scroll: 查看当前房间的统计数据/玩家
 - :tv: 查看正在播放的视频和链接，以及其他各种记录的数据。
 - :bar_chart: 改进的Discord Rich Presence集成面板
@@ -46,14 +46,14 @@ VRCX是一个用于VRChat的辅助应用程序，它提供有关VRChat的信息�
   - 针对像PyPyDance、LSMedia、Movies&Chill和VRDancing热门世界的功能集成。
   - 这包括世界缩略图、名称、房间ID和玩家统计，具体取决于你的设置以及房间是否为私人。你还可以为公共房间添加加入按钮！
 - :crystal_ball: VR手柄叠加层，可显示所有支持的事件/通知的实时反馈
-- :outbox_tray: 无需Unity上传模型/世界图像
-- :page_facing_up: 在没有Unity的情况下管理和编辑上传的模型/世界的信息
-- :skull: VRChat崩溃时自动重启并重新加入上一个房间
+- :outbox_tray: 无需Unity上传模型/世界图片
+- :page_facing_up: 在没有Unity的情况下管理上传的模型/世界的信息
+- :skull: VRChat崩溃时自动重启它并重新加入上一个房间
 - :left_right_arrow: 导出/导入收藏夹
 
 ## 一些其他的东西
 
-- 想给VRCX看起来独一无二吗？请查看 [Themes](https://github.com/vrcx-team/VRCX/wiki/Themes)（英语）了解如何制作主题
+- 想让VRCX看起来独一无二吗？请查看 [Themes](https://github.com/vrcx-team/VRCX/wiki/Themes)（英语）了解如何制作主题
 - 参见[Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source)（英语）了解如何从源码构建VRCX。
 - 关于如何在Linux上运行VRCX的指南，请看[这里](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux)（英语）
 # 一些界面截图
@@ -123,7 +123,7 @@ VRCX是一个用于VRChat的辅助应用程序，它提供有关VRChat的信息�
 
 ## VRCX是否违反了VRChat的TOS？
 
-**否，并没有违反**
+**简而言之：没有违反**
 
 VRCX只是一个外部辅助工具，使用VRChat的API来提供功能。
 
