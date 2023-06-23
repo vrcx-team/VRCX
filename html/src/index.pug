@@ -97,8 +97,9 @@ html
                                 template(v-if="item.ref")
                                     .detail
                                         span.name(v-text="item.ref.displayName" :style="{'color':item.ref.$userColour}")
-                                        span.extra(v-if="item.ref.state === 'offline'") {{ $t('side_panel.search_result_offline') }}
-                                        span.extra(v-else-if="item.ref.state === 'active'") {{ $t('side_panel.search_result_active') }}
+                                        span.extra(v-if="!item.ref.isFriend")
+                                        span.extra(v-else-if="item.ref.state === 'offline'") {{ $t('side_panel.search_result_active') }}
+                                        span.extra(v-else-if="item.ref.state === 'active'") {{ $t('side_panel.search_result_offline') }}
                                         location.extra(v-else :location="item.ref.location" :traveling="item.ref.travelingToLocation" :link="false")
                                     img.avatar(v-lazy="userImage(item.ref)")
                                 span(v-else) {{ $t('side_panel.search_result_more') }} #[span(v-text="item.label" style="font-weight:bold")]
@@ -189,14 +190,14 @@ html
                         template(#label)
                             span {{ $t('side_panel.groups') }} ({{ groupInstances.length }})
                         .x-friend-list(style="padding:10px 5px")
-                            .x-friend-item(v-for="instance in groupInstances" :key="instance.id" @click="showGroupDialog(instance.ownerId)")
+                            .x-friend-item(v-for="ref in groupInstances" :key="ref.instance.id" @click="showGroupDialog(ref.instance.ownerId)")
                                 .avatar
-                                    img(v-lazy="instance.$group.iconUrl")
+                                    img(v-lazy="ref.group.iconUrl")
                                 .detail
                                     span.name
-                                        span(v-text="instance.$group.name")
-                                        span(style="font-weight:normal;margin-left:5px") ({{ instance.userCount }}/{{ instance.capacity }})
-                                    location.extra(:location="instance.location" :link="false")
+                                        span(v-text="ref.group.name")
+                                        span(style="font-weight:normal;margin-left:5px") ({{ ref.instance.userCount }}/{{ ref.instance.capacity }})
+                                    location.extra(:location="ref.instance.location" :link="false")
 
 
             //- ## Dialogs ## -\\
@@ -314,16 +315,16 @@ html
                             template(v-if="isFriendOnline(userDialog.friend) || API.currentUser.id === userDialog.id")
                                 div(v-if="userDialog.ref.location" style="display:flex;flex-direction:column;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #e4e7ed14")
                                     div(style="flex:none")
-                                        location(:location="userDialog.ref.location" :traveling="userDialog.ref.travelingToLocation")
                                         template(v-if="isRealInstance(userDialog.$location.tag)")
                                             el-tooltip(placement="top" :content="$t('dialog.user.info.launch_invite_tooltip')" :disabled="hideTooltips")
-                                                launch(:location="userDialog.$location.tag" style="margin-left:5px")
+                                                launch(:location="userDialog.$location.tag")
                                             el-tooltip(placement="top" :content="$t('dialog.user.info.self_invite_tooltip')" :disabled="hideTooltips")
-                                                invite-yourself(:location="userDialog.$location.tag" :shortname="userDialog.$location.shortName" style="margin-left:5px" :disabled="typeof userDialog.instance.json.canRequestInvite !== 'undefined' && !userDialog.instance.json.canRequestInvite")
-                                            el-tooltip(placement="top" :content="$t('dialog.user.info.refresh_user_count_tooltip')" :disabled="hideTooltips")
-                                                el-button(v-if="userDialog.$location.tag !== lastLocation.location" @click="refreshInstancePlayerCount(userDialog.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
-                                            span(v-if="userDialog.instance.occupants" style="margin-left:5px") {{ userDialog.instance.occupants }}  #[template(v-if="userDialog.instance.friendCount > 0") ({{ userDialog.instance.friendCount }})]
-                                            span(v-if="userDialog.instance.full" style="margin-left:5px;color:lightcoral") {{ $t('dialog.user.info.instance_full') }}
+                                                invite-yourself(:location="userDialog.$location.tag" :shortname="userDialog.$location.shortName" style="margin-left:5px" :disabled="typeof userDialog.instance.ref?.canRequestInvite !== 'undefined' && !userDialog.instance.ref.canRequestInvite")
+                                            el-tooltip(placement="top" :content="$t('dialog.user.info.refresh_instance_info')" :disabled="hideTooltips")
+                                                el-button(@click="refreshInstancePlayerCount(userDialog.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
+                                            instance-info(:location="userDialog.$location.tag" :instance="userDialog.instance.ref" :friendcount="userDialog.instance.friendCount" :updateelement="updateInstanceInfo")
+                                            br
+                                        location(:location="userDialog.ref.location" :traveling="userDialog.ref.travelingToLocation")
                                     .x-friend-list(style="flex:1;margin-top:10px;max-height:150px")
                                         .x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)" class="x-friend-item-border")
                                             template(v-if="userDialog.$location.user")
@@ -614,11 +615,10 @@ html
                                 div(style="margin:5px 0")
                                     location-world(:locationobject="room.$location" :currentuserid="API.currentUser.id" :worlddialogshortname="worldDialog.$location.shortName")
                                     el-tooltip(placement="top" :content="$t('dialog.world.instances.self_invite_tooltip')" :disabled="hideTooltips")
-                                        invite-yourself(:location="room.$location.tag" :shortname="room.$location.shortName" style="margin-left:5px" :disabled="typeof room.json.canRequestInvite !== 'undefined' && !room.json.canRequestInvite")
-                                    el-tooltip(placement="top" :content="$t('dialog.world.instances.refresh_user_count_tooltip')" :disabled="hideTooltips")
-                                        el-button(v-if="room.tag !== lastLocation.location" @click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
-                                    span(v-if="room.occupants" style="margin-left:5px") {{ room.occupants }}  #[template(v-if="room.friendCount > 0") ({{ room.friendCount }})]
-                                    span(v-if="room.full" style="margin-left:5px;color:lightcoral") {{ $t('dialog.world.instances.instance_full') }}
+                                        invite-yourself(:location="room.$location.tag" :shortname="room.$location.shortName" style="margin-left:5px" :disabled="typeof room.ref?.canRequestInvite !== 'undefined' && !room.ref.canRequestInvite")
+                                    el-tooltip(placement="top" :content="$t('dialog.world.instances.refresh_instance_info')" :disabled="hideTooltips")
+                                        el-button(@click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
+                                    instance-info(:location="room.tag" :instance="room.ref" :friendcount="room.friendCount" :updateelement="updateInstanceInfo")
                                 .x-friend-list(style="margin:10px 0;max-height:unset" v-if="room.$location.userId || room.users.length")
                                     .x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)" class="x-friend-item-border")
                                         template(v-if="room.$location.user")
@@ -912,11 +912,10 @@ html
                                     div(style="margin:5px 0")
                                         location(:location="room.tag")
                                         el-tooltip(placement="top" content="Invite yourself" :disabled="hideTooltips")
-                                            invite-yourself(:location="room.tag" style="margin-left:5px" :disabled="typeof room.json.canRequestInvite !== 'undefined' && !room.json.canRequestInvite")
+                                            invite-yourself(:location="room.tag" style="margin-left:5px" :disabled="typeof room.ref?.canRequestInvite !== 'undefined' && !room.ref.canRequestInvite")
                                         el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
-                                            el-button(v-if="room.tag !== lastLocation.location" @click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
-                                        span(v-if="room.occupants" style="margin-left:5px") {{ room.occupants }}  #[template(v-if="room.friendCount > 0") ({{ room.friendCount }})]
-                                        span(v-if="room.full" style="margin-left:5px;color:lightcoral") {{ $t('dialog.group.info.instance_full') }}
+                                            el-button(@click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
+                                        instance-info(:location="room.tag" :instance="room.ref" :friendcount="room.friendCount" :updateelement="updateInstanceInfo")
                                     .x-friend-list(style="margin:10px 0;padding:0;max-height:unset" v-if="room.users.length")
                                         .x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
                                             .avatar(:class="userStatusClass(user)")

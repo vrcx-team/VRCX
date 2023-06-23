@@ -24,9 +24,7 @@ mixin playerListTab()
                             |  {{ $t('dialog.world.tags.cache') }}
                         br
                         location-world(:locationobject="currentInstanceLocation" :currentuserid="API.currentUser.id")
-                        span(v-if="lastLocation.playerList.size > 0" style="margin-left:5px")
-                            | {{ lastLocation.playerList.size }}
-                            | #[template(v-if="lastLocation.friendList.size > 0") ({{ lastLocation.friendList.size }})]
+                        instance-info(:location="currentInstanceLocation.tag" :instance="currentInstanceWorld.instance" :friendcount="lastLocation.friendList.size" :updateelement="updateInstanceInfo")
                         | &nbsp;#[timer(v-if="lastLocation.date" :epoch="lastLocation.date")]
                     div(style="margin-top:5px")
                         span(v-show="currentInstanceWorld.ref.name !== currentInstanceWorld.ref.description" v-text="currentInstanceWorld.ref.description" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2")
@@ -207,6 +205,8 @@ mixin playerListTab()
                         template(v-once #default="scope")
                             el-tooltip(v-if="scope.row.isMaster" placement="left" content="Instance Master")
                                 span 👑
+                            el-tooltip(v-if="scope.row.isModerator" placement="left" content="Moderator")
+                                span ⚔️
                             el-tooltip(v-if="scope.row.isFriend" placement="left" content="Friend")
                                 span 💚
                             el-tooltip(v-if="scope.row.timeoutTime" placement="left" content="Timeout")
