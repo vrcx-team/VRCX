@@ -172,9 +172,62 @@ a {
     // modal 시작이 2000이라서
     z-index: 1999;
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
     background: #fff;
+}
+
+.x-login {
+  display: grid;
+  grid-template-rows: repeat(2, auto);
+  align-items: center;
+  max-width: clamp(600px, 60svw, 800px);
+}
+
+.x-login-form-container {
+    display: grid;
+    gap: 8px;
+    justify-items: center;
+    height: fit-content;
+}
+
+.x-login-form-container:has(> div:nth-child(3)) {
+  grid-template-columns: 1fr 1px 1fr;
+}
+
+.x-login-form-container > div {
+  position: relative;
+  height: fit-content;
+  max-width: 280px;
+  padding: 16px;
+}
+
+.x-scroll-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+hr.x-vertical-divider {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    border: 0;
+    background: rgb(255 255 255 / 16%);
+}
+
+.x-saved-account-list {
+  display: grid;
+
+  > .x-friend-item {
+    width: 100%;
+  }
+}
+
+.x-legal-notice-container {
+  margin-top: 8px;
 }
 
 .x-menu-container {
