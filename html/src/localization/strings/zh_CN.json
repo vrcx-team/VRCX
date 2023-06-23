@@ -73,6 +73,9 @@
                 "sort_update": "依更新时间排序",
                 "sort_created": "依建立时间排序"
             },
+            "group": {
+                "header": "群组"
+            },
             "prev_page": "上一页",
             "next_page": "下一页"
         },
@@ -89,6 +92,8 @@
             "avatars": {
                 "header": "模型"
             },
+            "bulk_unfavorite_mode": "批量取消收藏",
+            "bulk_unfavorite_selection": "批量取消收藏",
             "refresh_tooltip": "刷新所有收藏夹",
             "export": "导出",
             "import": "导入",
@@ -174,7 +179,7 @@
                 "appearance": "外观",
                 "notifications": "通知",
                 "wrist_overlay": "手腕叠加层",
-                "discord_presence": "Discord 游戏动态",
+                "discord_presence": "Discord Rich Presence集成面板",
                 "advanced": "高级"
             },
             "general": {
@@ -222,6 +227,9 @@
                     "theme_mode_system": "跟随系统",
                     "theme_mode_light": "浅色",
                     "theme_mode_dark": "深色",
+                    "theme_mode_darkvanilla": "Dark Vanilla",
+                    "theme_mode_pink": "粉色",
+                    "theme_mode_material3": "Material 3",
                     "vrcplus_profile_icons": "VRC+ 个人信息图标",
                     "disable_tooltips": "关闭提示",
                     "sort_favorite_by": "收藏排序依据",
@@ -339,10 +347,10 @@
             },
             "discord_presence": {
                 "discord_presence": {
-                    "header": "Discord 游戏动态",
+                    "header": "Discord Rich Presence集成面板",
                     "description": "* 仅在 VRChat 开启时有效",
                     "enable": "启用",
-                    "enable_tooltip": "建议在 VRChat config.json 中停用原生 Discord 游戏动态来防止冲突",
+                    "enable_tooltip": "建议在 VRChat config.json 中停用原生 Discord 集成面板来防止冲突",
                     "instance_type_player_count": "房间种类 / 玩家人数",
                     "join_button": "加入按钮（仅限公开房间）",
                     "hide_details_in_private": "在私人房间时隐藏世界信息",
@@ -474,6 +482,7 @@
         "search_result_more": "搜索更多：",
         "direct_access_tooltip": "直接读取剪贴板的 ID / 链接",
         "refresh_tooltip": "刷新好友",
+        "groups": "群组房间",
         "friends": "好友",
         "me": "我",
         "favorite": "星标好友",
@@ -635,6 +644,7 @@
                 "id_tooltip": "复制到剪贴板",
                 "copy_id": "复制 ID",
                 "copy_url": "复制链接",
+                "copy_name": "复制名称",
                 "youtube_preview": "YouTube 预览",
                 "players": "玩家人数",
                 "favorites": "收藏次数",
@@ -819,6 +829,7 @@
             "access_type_invite": "邀请",
             "group_access_type": "房间类型",
             "group_access_type_members": "仅限群组成员",
+            "group_access_type_plus": "群组+",
             "group_access_type_public": "公开",
             "region": "地区",
             "region_usw": "美国西部",
@@ -831,13 +842,19 @@
             "instance_creator": "房间建立者",
             "instance_creator_placeholder": "选择玩家",
             "group_placeholder": "选择一个群组",
+            "role_placeholder": "选择身份组",
             "group_id": "群组 ID",
             "location": "地点",
             "url": "链接",
             "copy_url": "复制链接",
             "self_invite": "自我邀请",
             "invite": "邀请",
-            "launch": "启动"
+            "launch": "启动",
+            "create_instance": "创建房间",
+            "queueEnabled": "开启等待队列",
+            "normal": "一般",
+            "group": "群组",
+            "roles": "身份组"
         },
         "launch_options": {
             "header": "启动选项",
@@ -864,7 +881,7 @@
             "fpv_steadycam_fov": "第一人称平滑镜头视野范围",
             "camera_resolution": "相机分辨率",
             "screenshot_resolution": "屏幕截图分辨率",
-            "disable_discord_presence": "停用 Discord 游戏状态",
+            "disable_discord_presence": "停用原生 Discord Rich Presence集成面板",
             "vrchat_docs": "VRChat 文档",
             "cancel": "取消",
             "save": "保存"
@@ -910,7 +927,9 @@
             "launch": "启动"
         },
         "export_friends_list": {
-            "header": "导出好友列表"
+            "header": "导出好友列表",
+            "csv": "CSV",
+            "json": "JSON"
         },
         "export_own_avatars": {
             "header": "导出自己创建的模型"
@@ -1123,7 +1142,7 @@
         "totp": {
             "header": "双重认证",
             "description": "输入你的身份验证器应用程序中的验证代码",
-            "use_otp": "使用一次性密码",
+            "use_otp": "使用电子邮件一次性密码或备用验证码",
             "verify": "验证",
             "input_placeholder": "验证码",
             "input_error": "无效的验证码"
@@ -1343,7 +1362,8 @@
             "type": "类型",
             "icon": "图标",
             "user": "玩家",
-            "detail": "详细信息"
+            "detail": "详细信息",
+            "action": "动作"
         },
         "playerList": {
             "avatar": "模型",
