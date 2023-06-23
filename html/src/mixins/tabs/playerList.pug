@@ -18,6 +18,7 @@ mixin playerListTab()
                         el-tag.x-tag-platform-pc(v-if="currentInstanceWorld.isPC" type="info" effect="plain" size="mini" style="margin-right:5px") PC
                         el-tag.x-tag-platform-quest(v-if="currentInstanceWorld.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px") Quest
                         el-tag.x-tag-platform-ios(v-if="currentInstanceWorld.isIOS" type="info" effect="plain" size="mini" style="margin-right:5px") iOS
+                        el-tag(v-if="currentInstanceWorld.avatarScaling" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling') }}
                         el-tag(type="info" effect="plain" size="mini" v-text="currentInstanceWorld.fileSize" style="margin-right:5px")
                         el-tag(v-if="currentInstanceWorld.inCache" type="info" effect="plain" size="mini" style="margin-right:5px")
                             span(v-text="currentInstanceWorld.cacheSize")

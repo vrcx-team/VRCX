@@ -16266,6 +16266,7 @@ speechSynthesis.getVoices();
         isPC: false,
         isQuest: false,
         isIos: false,
+        avatarScaling: false,
         inCache: false,
         cacheSize: '',
         fileCreatedAt: '',
@@ -16285,6 +16286,7 @@ speechSynthesis.getVoices();
                 isPC: false,
                 isQuest: false,
                 isIos: false,
+                avatarScaling: false,
                 inCache: false,
                 cacheSize: '',
                 fileCreatedAt: '',
@@ -16298,6 +16300,7 @@ speechSynthesis.getVoices();
                 isPC: false,
                 isQuest: false,
                 isIos: false,
+                avatarScaling: false,
                 inCache: false,
                 cacheSize: '',
                 fileCreatedAt: '',
@@ -16315,6 +16318,8 @@ speechSynthesis.getVoices();
                 this.currentInstanceWorld.isPC = isPC;
                 this.currentInstanceWorld.isQuest = isQuest;
                 this.currentInstanceWorld.isIos = isIos;
+                this.currentInstanceWorld.avatarScaling =
+                    args.ref?.tags.includes('feature_avatar_scaling');
                 this.checkVRChatCache(args.ref).then((cacheInfo) => {
                     if (cacheInfo[0] > 0) {
                         this.currentInstanceWorld.inCache = true;
@@ -16936,6 +16941,7 @@ speechSynthesis.getVoices();
         $location: {},
         ref: {},
         isFavorite: false,
+        avatarScaling: false,
         rooms: [],
         treeData: [],
         fileCreatedAt: '',
@@ -17067,6 +17073,8 @@ speechSynthesis.getVoices();
         D.lastVisit = '';
         D.visitCount = '';
         D.timeSpent = 0;
+        D.isFavorite = false;
+        D.avatarScaling = false;
         D.isPC = false;
         D.isQuest = false;
         D.isIos = false;
@@ -17114,6 +17122,9 @@ speechSynthesis.getVoices();
                     }
                     var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
                         args.ref.unityPackages
+                    );
+                    D.avatarScaling = args.ref?.tags.includes(
+                        'feature_avatar_scaling'
                     );
                     D.isPC = isPC;
                     D.isQuest = isQuest;
@@ -18630,7 +18641,8 @@ speechSynthesis.getVoices();
     $app.data.setWorldTagsDialog = {
         visible: false,
         tags: [],
-        debugAllowed: false
+        debugAllowed: false,
+        avatarScaling: false
     };
 
     $app.methods.showSetWorldTagsDialog = function () {
@@ -18645,6 +18657,9 @@ speechSynthesis.getVoices();
             }
             if (tag === 'debug_allowed') {
                 D.debugAllowed = true;
+            }
+            if (tag === 'feature_avatar_scaling') {
+                D.avatarScaling = true;
             }
         });
         D.tags = tags.toString();
@@ -18662,8 +18677,11 @@ speechSynthesis.getVoices();
         if (D.debugAllowed) {
             tags.unshift('debug_allowed');
         }
+        if (D.avatarScaling) {
+            tags.unshift('feature_avatar_scaling');
+        }
         API.saveWorld({
-            id: $app.worldDialog.id,
+            id: this.worldDialog.id,
             tags
         }).then((args) => {
             this.$message({
@@ -18671,6 +18689,12 @@ speechSynthesis.getVoices();
                 type: 'success'
             });
             D.visible = false;
+            if (
+                this.worldDialog.visible &&
+                this.worldDialog.id === args.json.id
+            ) {
+                this.showWorldDialog(args.json.id);
+            }
             return args;
         });
     };
