@@ -41,6 +41,9 @@ class Database {
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS memos (user_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
         );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS world_memos (world_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
+        );
     }
 
     async initTables() {
@@ -172,6 +175,8 @@ class Database {
         sqliteService.executeNonQuery('COMMIT');
     }
 
+    // memos
+
     async getMemo(userId) {
         var row = {};
         await sqliteService.execute(
@@ -218,6 +223,46 @@ class Database {
             `DELETE FROM memos WHERE user_id = @user_id`,
             {
                 '@user_id': userId
+            }
+        );
+    }
+
+    // world memos
+
+    async getWorldMemo(worldId) {
+        var row = {};
+        await sqliteService.execute(
+            (dbRow) => {
+                row = {
+                    worldId: dbRow[0],
+                    editedAt: dbRow[1],
+                    memo: dbRow[2]
+                };
+            },
+            `SELECT * FROM world_memos WHERE world_id = @world_id`,
+            {
+                '@world_id': worldId
+            }
+        );
+        return row;
+    }
+
+    setWorldMemo(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO world_memos (world_id, edited_at, memo) VALUES (@world_id, @edited_at, @memo)`,
+            {
+                '@world_id': entry.worldId,
+                '@edited_at': entry.editedAt,
+                '@memo': entry.memo
+            }
+        );
+    }
+
+    deleteWorldMemo(worldId) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM world_memos WHERE world_id = @world_id`,
+            {
+                '@world_id': worldId
             }
         );
     }

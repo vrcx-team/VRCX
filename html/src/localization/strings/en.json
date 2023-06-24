@@ -644,6 +644,8 @@
             },
             "info": {
                 "header": "Info",
+                "memo": "Memo",
+                "memo_placeholder": "Click to add a memo",
                 "id": "World ID",
                 "id_tooltip": "Copy to clipboard",
                 "copy_id": "Copy ID",

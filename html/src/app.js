@@ -7721,6 +7721,9 @@ speechSynthesis.getVoices();
         }
     };
 
+    // #endregion
+    // #region | User Memos
+
     $app.methods.migrateMemos = async function () {
         var json = JSON.parse(await VRCXStorage.GetAll());
         database.begin();
@@ -7783,6 +7786,32 @@ speechSynthesis.getVoices();
                 }
             }
         });
+    };
+
+    // #endregion
+    // #region | World Memos
+
+    $app.methods.getWorldMemo = async function (worldId) {
+        try {
+            return await database.getWorldMemo(worldId);
+        } catch (err) {}
+        return {
+            worldId: '',
+            editedAt: '',
+            memo: ''
+        };
+    };
+
+    $app.methods.saveWorldMemo = function (worldId, memo) {
+        if (memo) {
+            database.setWorldMemo({
+                worldId,
+                editedAt: new Date().toJSON(),
+                memo
+            });
+        } else {
+            database.deleteWorldMemo(worldId);
+        }
     };
 
     // #endregion
@@ -16942,6 +16971,7 @@ speechSynthesis.getVoices();
         visible: false,
         loading: false,
         id: '',
+        memo: '',
         $location: {},
         ref: {},
         isFavorite: false,
@@ -16959,6 +16989,17 @@ speechSynthesis.getVoices();
         isPC: false,
         isQuest: false,
         isIos: false
+    };
+
+    $app.data.ignoreWorldMemoSave = false;
+
+    $app.watch['worldDialog.memo'] = function () {
+        if (this.ignoreWorldMemoSave) {
+            this.ignoreWorldMemoSave = false;
+            return;
+        }
+        var D = this.worldDialog;
+        this.saveWorldMemo(D.id, D.memo);
     };
 
     API.$on('LOGOUT', function () {
@@ -17082,11 +17123,19 @@ speechSynthesis.getVoices();
         D.isPC = false;
         D.isQuest = false;
         D.isIos = false;
+        this.ignoreWorldMemoSave = true;
+        D.memo = '';
         var LL = API.parseLocation(this.lastLocation.location);
         var currentWorldMatch = false;
         if (LL.worldId === D.id) {
             currentWorldMatch = true;
         }
+        this.getWorldMemo(D.id).then((memo) => {
+            if (memo.worldId === D.id) {
+                this.ignoreWorldMemoSave = true;
+                D.memo = memo.memo;
+            }
+        });
         database.getLastVisit(D.id, currentWorldMatch).then((ref) => {
             if (ref.worldId === D.id) {
                 D.lastVisit = ref.created_at;
