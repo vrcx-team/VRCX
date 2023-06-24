@@ -56,7 +56,7 @@ namespace VRCX
                     //Layout = "${longdate} [${level:uppercase=true}] ${logger} - ${message} ${exception:format=tostring}",
                     // Layout with padding between the level/logger and message so that the message always starts at the same column
                     Layout = "${longdate} [${level:uppercase=true:padding=-5}] ${logger:padding=-20} - ${message} ${exception:format=tostring}",
-                    ArchiveFileName = Path.Combine(AppDataDirectory, "VRCX.{#}.log"),
+                    ArchiveFileName = Path.Combine(AppDataDirectory, "logs", "VRCX.{#}.log"),
                     ArchiveNumbering = ArchiveNumberingMode.DateAndSequence,
                     ArchiveEvery = FileArchivePeriod.Day,
                     MaxArchiveFiles = 4,

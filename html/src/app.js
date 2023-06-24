@@ -2607,6 +2607,9 @@ speechSynthesis.getVoices();
     });
 
     API.$on('INSTANCE', function (args) {
+        if (!args.json?.id) {
+            return;
+        }
         if (
             $app.userDialog.visible &&
             $app.userDialog.ref.$location.tag === args.json.id
@@ -13702,6 +13705,7 @@ speechSynthesis.getVoices();
         },
         layout: 'table'
     };
+    $app.data.emojiTable = [];
     $app.data.VRCPlusIconsTable = [];
     $app.data.galleryTable = [];
     $app.data.inviteMessageTable = {
@@ -22301,7 +22305,8 @@ speechSynthesis.getVoices();
         });
     };
 
-    // gallery
+    // #endregion
+    // #region | Gallery
 
     $app.data.galleryDialog = {};
     $app.data.galleryDialogVisible = false;
@@ -22453,6 +22458,116 @@ speechSynthesis.getVoices();
             $app.galleryTable.push(args.json);
         }
     });
+
+    // #endregion
+    // #region | Emoji
+
+    API.$on('LOGIN', function () {
+        $app.emojiTable = [];
+    });
+
+    $app.methods.refreshEmojiTable = function () {
+        this.galleryDialogIconsLoading = true;
+        var params = {
+            n: 100,
+            tag: 'emoji'
+        };
+        API.getFileList(params);
+    };
+
+    API.$on('FILES:LIST', function (args) {
+        if (args.params.tag === 'emoji') {
+            $app.emojiTable = args.json.reverse();
+            $app.galleryDialogIconsLoading = false;
+        }
+    });
+
+    $app.methods.deleteEmoji = function (fileId) {
+        API.deleteFile(fileId).then((args) => {
+            API.$emit('EMOJI:DELETE', args);
+            return args;
+        });
+    };
+
+    API.$on('EMOJI:DELETE', function (args) {
+        var array = $app.emojiTable;
+        var { length } = array;
+        for (var i = 0; i < length; ++i) {
+            if (args.fileId === array[i].id) {
+                array.splice(i, 1);
+                break;
+            }
+        }
+    });
+
+    $app.methods.onFileChangeEmoji = function (e) {
+        var clearFile = function () {
+            if (document.querySelector('#EmojiUploadButton')) {
+                document.querySelector('#EmojiUploadButton').value = '';
+            }
+        };
+        var files = e.target.files || e.dataTransfer.files;
+        if (!files.length) {
+            return;
+        }
+        if (files[0].size >= 10000000) {
+            // 10MB
+            $app.$message({
+                message: 'File size too large',
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        if (!files[0].type.match(/image.*/)) {
+            $app.$message({
+                message: "File isn't an image",
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        var r = new FileReader();
+        r.onload = function () {
+            var base64Body = btoa(r.result);
+            API.uploadEmoji(base64Body).then((args) => {
+                $app.$message({
+                    message: 'Emoji uploaded',
+                    type: 'success'
+                });
+                return args;
+            });
+        };
+        r.readAsBinaryString(files[0]);
+        clearFile();
+    };
+
+    $app.methods.displayEmojiUpload = function () {
+        document.getElementById('EmojiUploadButton').click();
+    };
+
+    API.uploadEmoji = function (params) {
+        return this.call('emoji', {
+            uploadImage: true,
+            imageData: params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('EMOJI:ADD', args);
+            return args;
+        });
+    };
+
+    API.$on('EMOJI:ADD', function (args) {
+        if (Object.keys($app.emojiTable).length !== 0) {
+            $app.emojiTable.push(args.json);
+        }
+    });
+
+    // #endregion
+    // #region Misc
 
     $app.methods.replaceBioSymbols = function (text) {
         if (!text) {
@@ -23815,7 +23930,7 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 5;
+        var databaseVersion = 6;
         if (this.databaseVersion !== databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({

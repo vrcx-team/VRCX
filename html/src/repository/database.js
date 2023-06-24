@@ -45,7 +45,7 @@ class Database {
 
     async initTables() {
         await sqliteService.executeNonQuery(
-            `CREATE TABLE IF NOT EXISTS gamelog_location (id INTEGER PRIMARY KEY, created_at TEXT, location TEXT, world_id TEXT, world_name TEXT, time INTEGER, groupName TEXT, UNIQUE(created_at, location))`
+            `CREATE TABLE IF NOT EXISTS gamelog_location (id INTEGER PRIMARY KEY, created_at TEXT, location TEXT, world_id TEXT, world_name TEXT, time INTEGER, group_name TEXT, UNIQUE(created_at, location))`
         );
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS gamelog_join_leave (id INTEGER PRIMARY KEY, created_at TEXT, type TEXT, display_name TEXT, location TEXT, user_id TEXT, time INTEGER, UNIQUE(created_at, type, display_name))`
@@ -2273,6 +2273,19 @@ class Database {
                 sqliteService.executeNonQuery(
                     `ALTER TABLE ${tableName} ADD group_name TEXT DEFAULT ''`
                 );
+            }
+        }
+        // Fix gamelog_location column typo
+        try {
+            await sqliteService.executeNonQuery(
+                `SELECT groupName FROM gamelog_location LIMIT 1`
+            );
+            await sqliteService.executeNonQuery(
+                `ALTER TABLE gamelog_location DROP COLUMN groupName`
+            );
+        } catch (e) {
+            if (e.indexOf('no such column') === -1) {
+                throw e;
             }
         }
     }

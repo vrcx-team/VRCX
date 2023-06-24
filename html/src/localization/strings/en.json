@@ -516,7 +516,7 @@
                 "request_invite": "Request Invite",
                 "request_invite_with_message": "Request Invite With Message",
                 "invite_to_group": "Invite To Group",
-                "manage_gallery_icon": "Manage Gallery/Icons",
+                "manage_gallery_icon": "Manage Gallery/Icons/Emoji",
                 "accept_friend_request": "Accept Friend Request",
                 "decline_friend_request": "Decline Friend Request",
                 "cancel_friend_request": "Cancel Friend Request",
@@ -1087,10 +1087,11 @@
             "send": "Send"
         },
         "gallery_icons": {
-            "header": "Gallery and Icons",
+            "header": "Gallery, Icons and Emoji",
             "description": "Recommended image size 1200x900px",
             "gallery": "Gallery",
             "icons": "Icons",
+            "emoji": "Emoji",
             "refresh": "Refresh",
             "upload": "Upload",
             "clear": "Clear"

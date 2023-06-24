@@ -2101,6 +2101,20 @@ html
                             div(style="float:right;margin-top:5px")
                                 el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                    el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
+                        span(slot="label") {{ $t('dialog.gallery_icons.emoji') }}
+                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/64
+                        input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
+                        el-button-group
+                            el-button(type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
+                            el-button(type="default" size="small" @click="displayEmojiUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
+                        br
+                        .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
+                            .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url")
+                                img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
+                            div(style="float:right;margin-top:5px")
+                                el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
+                                el-button(type="default" @click="deleteEmoji(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
 
             //- dialog Table: Previous Instances User
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesUserDialog" :visible.sync="previousInstancesUserDialog.visible" :title="$t('dialog.previous_instances.header')" width="1000px")
