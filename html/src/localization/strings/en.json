@@ -516,7 +516,7 @@
                 "request_invite": "Request Invite",
                 "request_invite_with_message": "Request Invite With Message",
                 "invite_to_group": "Invite To Group",
-                "manage_gallery_icon": "Manage Gallery/Icons/Emoji",
+                "manage_gallery_icon": "Manage Photos/Icons/Emojis",
                 "accept_friend_request": "Accept Friend Request",
                 "decline_friend_request": "Decline Friend Request",
                 "cancel_friend_request": "Cancel Friend Request",
@@ -789,7 +789,7 @@
                 }
             },
             "gallery": {
-                "header": "Gallery"
+                "header": "Photos"
             },
             "json": {
                 "header": "JSON"
@@ -1089,11 +1089,11 @@
             "send": "Send"
         },
         "gallery_icons": {
-            "header": "Gallery, Icons and Emoji",
+            "header": "Photos, Icons and Emojis",
             "description": "Recommended image size 1200x900px",
-            "gallery": "Gallery",
+            "gallery": "Photos",
             "icons": "Icons",
-            "emoji": "Emoji",
+            "emojis": "Emojis",
             "refresh": "Refresh",
             "upload": "Upload",
             "clear": "Clear"
@@ -1122,7 +1122,7 @@
         },
         "gallery_select": {
             "header": "Select Image",
-            "gallery": "Gallery",
+            "gallery": "Photos",
             "none": "None",
             "refresh": "Refresh",
             "upload": "Upload"

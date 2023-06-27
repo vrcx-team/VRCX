@@ -26,7 +26,7 @@ mixin playerListTab()
                         br
                         location-world(:locationobject="currentInstanceLocation" :currentuserid="API.currentUser.id")
                         instance-info(:location="currentInstanceLocation.tag" :instance="currentInstanceWorld.instance" :friendcount="lastLocation.friendList.size" :updateelement="updateInstanceInfo")
-                        | &horbar; #[timer(v-if="lastLocation.date" :epoch="lastLocation.date")]
+                        | &nbsp;&horbar; #[timer(v-if="lastLocation.date" :epoch="lastLocation.date")]
                     div(style="margin-top:5px")
                         span(v-show="currentInstanceWorld.ref.name !== currentInstanceWorld.ref.description" v-text="currentInstanceWorld.ref.description" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2")
                 div(style="display:flex;flex-direction:column;margin-left:20px")

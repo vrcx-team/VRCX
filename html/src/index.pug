@@ -324,7 +324,7 @@ html
                                                 el-button(@click="refreshInstancePlayerCount(userDialog.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
                                             instance-info(:location="userDialog.$location.tag" :instance="userDialog.instance.ref" :friendcount="userDialog.instance.friendCount" :updateelement="updateInstanceInfo")
                                             br
-                                        location(:location="userDialog.ref.location" :traveling="userDialog.ref.travelingToLocation")
+                                        location(:location="userDialog.ref.location" :traveling="userDialog.ref.travelingToLocation" style="margin-top:5px")
                                     .x-friend-list(style="flex:1;margin-top:10px;max-height:150px")
                                         .x-friend-item(v-if="userDialog.$location.userId" @click="showUserDialog(userDialog.$location.userId)" class="x-friend-item-border")
                                             template(v-if="userDialog.$location.user")
@@ -1452,7 +1452,7 @@ html
                     el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") {{ $t('dialog.launch.start_as_desktop') }}
                     el-button(size="small" @click="showPreviousInstanceInfoDialog(launchDialog.location)") {{ $t('dialog.launch.info') }}
                     el-button(size="small" @click="showInviteDialog(launchDialog.location)" :disabled="!checkCanInvite(launchDialog.location)") {{ $t('dialog.launch.invite') }}
-                    el-button(type="primary" size="small" @click="launchGame(launchDialog.location, launchDialog.secureOrShortName, launchDialog.desktop)" :disabled="!launchDialog.secureOrShortName") {{ $t('dialog.launch.launch') }}
+                    el-button(type="primary" size="small" @click="launchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)" :disabled="!launchDialog.secureOrShortName") {{ $t('dialog.launch.launch') }}
 
             //- dialog: export friends list
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportFriendsListDialog" :title="$t('dialog.export_friends_list.header')" width="650px")
@@ -2074,6 +2074,8 @@ html
             //- dialog: Gallery/VRCPlusIcons
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="galleryDialog" :visible.sync="galleryDialogVisible" :title="$t('dialog.gallery_icons.header')" width="100%")
                 span(style="padding-bottom:10px") {{ $t('dialog.gallery_icons.description') }} (4:3)
+                br
+                br
                 el-tabs(type="card")
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogGalleryLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.gallery') }}
@@ -2106,9 +2108,9 @@ html
                                 el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
-                        span(slot="label") {{ $t('dialog.gallery_icons.emoji') }}
-                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/64
-                        input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
+                        span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
+                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/5
+                        //- input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
                         el-button-group
                             el-button(type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayEmojiUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
