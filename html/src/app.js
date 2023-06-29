@@ -1386,6 +1386,10 @@ speechSynthesis.getVoices();
     });
 
     API.$on('USER', function (args) {
+        if (!args?.json?.displayName) {
+            console.error('API.$on(USER) invalid args', args);
+            return;
+        }
         $app.queueUpdateFriend({ id: args.json.id, state: args.json.state });
         args.ref = this.applyUser(args.json);
     });
@@ -2591,7 +2595,12 @@ speechSynthesis.getVoices();
         }
         ref.$location = this.parseLocation(ref.location);
         if (json.world?.id) {
-            ref.world = this.applyWorld(json.world);
+            this.getCachedWorld({
+                worldId: json.world.id
+            }).then((args) => {
+                ref.world = args.ref;
+                return args;
+            });
         }
         if (!json.$fetchedAt) {
             ref.$fetchedAt = new Date().toJSON();
@@ -4702,27 +4711,18 @@ speechSynthesis.getVoices();
                 break;
 
             case 'friend-online':
-                if (
-                    content.location !== 'private' &&
-                    content.location !== 'traveling'
-                ) {
-                    this.$emit('WORLD', {
-                        json: content.world,
+                if (content?.user?.id) {
+                    this.$emit('USER', {
+                        json: {
+                            location: content.location,
+                            travelingToLocation: content.travelingToLocation,
+                            ...content.user
+                        },
                         params: {
-                            worldId: content.world.id
+                            userId: content.userId
                         }
                     });
                 }
-                this.$emit('USER', {
-                    json: {
-                        location: content.location,
-                        travelingToLocation: content.travelingToLocation,
-                        ...content.user
-                    },
-                    params: {
-                        userId: content.userId
-                    }
-                });
                 this.$emit('FRIEND:STATE', {
                     json: {
                         state: 'online'
@@ -4734,12 +4734,14 @@ speechSynthesis.getVoices();
                 break;
 
             case 'friend-active':
-                this.$emit('USER', {
-                    json: content.user,
-                    params: {
-                        userId: content.userId
-                    }
-                });
+                if (content?.user?.id) {
+                    this.$emit('USER', {
+                        json: content.user,
+                        params: {
+                            userId: content.userId
+                        }
+                    });
+                }
                 this.$emit('FRIEND:STATE', {
                     json: {
                         state: 'active'
@@ -4762,6 +4764,8 @@ speechSynthesis.getVoices();
                 break;
 
             case 'friend-update':
+                // is this used anymore?
+                console.error('friend-update', content);
                 this.$emit('USER', {
                     json: content.user,
                     params: {
@@ -4771,36 +4775,32 @@ speechSynthesis.getVoices();
                 break;
 
             case 'friend-location':
-                if (
-                    content.location !== 'private' &&
-                    content.location !== 'traveling'
-                ) {
-                    this.$emit('WORLD', {
-                        json: content.world,
-                        params: {
-                            worldId: content.world.id
-                        }
-                    });
+                if (!content?.user?.id) {
+                    var ref = this.cachedUsers.get(content.userId);
+                    if (typeof ref !== 'undefined') {
+                        this.$emit('USER', {
+                            json: {
+                                ...ref,
+                                location: content.location,
+                                travelingToLocation: content.travelingToLocation
+                            },
+                            params: {
+                                userId: content.userId
+                            }
+                        });
+                    }
+                    break;
                 }
-                if (content.userId === this.currentUser.id) {
-                    this.$emit('USER', {
-                        json: content.user,
-                        params: {
-                            userId: content.userId
-                        }
-                    });
-                } else {
-                    this.$emit('USER', {
-                        json: {
-                            location: content.location,
-                            travelingToLocation: content.travelingToLocation,
-                            ...content.user
-                        },
-                        params: {
-                            userId: content.userId
-                        }
-                    });
-                }
+                this.$emit('USER', {
+                    json: {
+                        location: content.location,
+                        travelingToLocation: content.travelingToLocation,
+                        ...content.user
+                    },
+                    params: {
+                        userId: content.userId
+                    }
+                });
                 break;
 
             case 'user-update':
@@ -10997,20 +10997,25 @@ speechSynthesis.getVoices();
             case 71:
                 // Spawn Emoji
                 var photonId = data.Parameters[254];
+                if (photonId === this.photonLobbyCurrentUser) {
+                    return;
+                }
                 var type = data.Parameters[245][0];
                 var emojiName = '';
+                var imageUrl = '';
                 if (type === 0) {
                     var emojiId = data.Parameters[245][2];
                     emojiName = this.photonEmojis[emojiId];
                 } else if (type === 1) {
-                    // file_id
                     emojiName = data.Parameters[245][1];
+                    imageUrl = `https://api.vrchat.cloud/api/1/file/${emojiName}/1/`;
                 }
                 this.addEntryPhotonEvent({
                     photonId,
                     text: emojiName,
                     type: 'SpawnEmoji',
-                    created_at: gameLogDate
+                    created_at: gameLogDate,
+                    imageUrl
                 });
                 break;
         }
@@ -25892,13 +25897,12 @@ speechSynthesis.getVoices();
                     fetchedAt: args.json.fetchedAt
                 }
             });
-            this.$emit('WORLD', {
-                json: json.world,
-                params: {
-                    worldId: json.world.id
-                }
+            this.getCachedWorld({
+                worldId: json.world.id
+            }).then((args1) => {
+                json.world = args1.ref;
+                return args1;
             });
-            json.world = this.applyWorld(json.world);
         }
     });
 
@@ -25959,13 +25963,6 @@ speechSynthesis.getVoices();
                     fetchedAt: args.json.fetchedAt
                 }
             });
-            this.$emit('WORLD', {
-                json: json.world,
-                params: {
-                    worldId: json.world.id
-                }
-            });
-
             var ref = this.cachedGroups.get(json.ownerId);
             if (typeof ref === 'undefined') {
                 if ($app.friendLogInitStatus) {

@@ -90,11 +90,11 @@ mixin playerListTab()
                                                 i.el-icon-right
                                             el-tooltip(placement="top")
                                                 template(#content)
-                                                    span(v-if="scope.row.status === 'active'") Active
-                                                    span(v-else-if="scope.row.status === 'join me'") Join Me
-                                                    span(v-else-if="scope.row.status === 'ask me'") Ask Me
-                                                    span(v-else-if="scope.row.status === 'busy'") Do Not Disturb
-                                                    span(v-else) Offline
+                                                    span(v-if="scope.row.status === 'active'") {{ $t('dialog.user.status.active') }}
+                                                    span(v-else-if="scope.row.status === 'join me'") {{ $t('dialog.user.status.join_me') }}
+                                                    span(v-else-if="scope.row.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
+                                                    span(v-else-if="scope.row.status === 'busy'") {{ $t('dialog.user.status.busy') }}
+                                                    span(v-else) {{ $t('dialog.user.status.offline') }}
                                                 i.x-user-status(:class="statusClass(scope.row.status)" style="margin-right:5px")
                                         span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription")
                                     template(v-else-if="scope.row.type === 'ChangeGroup'")
@@ -136,8 +136,8 @@ mixin playerListTab()
                                         span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
                                         | &nbsp;
                                         span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
-                                        span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
-                                        span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
+                                        span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") {{ $t('dialog.avatar.labels.public') }}
+                                        span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") {{ $t('dialog.avatar.labels.private') }}
                                         template(v-if="scope.row.avatar.description && scope.row.avatar.name !== scope.row.avatar.description")
                                             |  - {{ scope.row.avatar.description }}
                                     template(v-else-if="scope.row.type === 'ChangeStatus'")
@@ -159,8 +159,8 @@ mixin playerListTab()
                                                     span(v-else-if="scope.row.status === 'ask me'") {{ $t('dialog.user.status.ask_me') }}
                                                     span(v-else-if="scope.row.status === 'busy'") {{ $t('dialog.user.status.busy') }}
                                                     span(v-else) {{ $t('dialog.user.status.offline') }}
-                                                i.x-user-status(:class="statusClass(scope.row.status)")
-                                        span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription" style="margin-left:5px")
+                                                i.x-user-status(:class="statusClass(scope.row.status)" style="margin-right:5px")
+                                        span(v-if="scope.row.statusDescription !== scope.row.previousStatusDescription" v-text="scope.row.statusDescription")
                                     template(v-else-if="scope.row.type === 'ChangeGroup'")
                                         span.x-link(v-if="scope.row.previousGroupName" v-text="scope.row.previousGroupName" @click="showGroupDialog(scope.row.previousGroupId)" style="margin-right:5px")
                                         span.x-link(v-else v-text="scope.row.previousGroupId" @click="showGroupDialog(scope.row.previousGroupId)" style="margin-right:5px")
@@ -178,8 +178,8 @@ mixin playerListTab()
                                         span.x-link(v-text="scope.row.avatar.name" @click="showAvatarDialog(scope.row.avatar.id)")
                                         | &nbsp;
                                         span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
-                                        span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") (Public)
-                                        span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") (Private)
+                                        span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") {{ $t('dialog.avatar.labels.public') }}
+                                        span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") {{ $t('dialog.avatar.labels.private') }}
                                     span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
                                     span(v-else v-text="scope.row.text")
             div.current-instance-table
