@@ -4813,27 +4813,17 @@ speechSynthesis.getVoices();
                 break;
 
             case 'user-location':
-                if (content.world === Object(content.world)) {
-                    this.$emit('WORLD', {
-                        json: content.world,
-                        params: {
-                            worldId: content.world.id
-                        }
-                    });
-                }
-                this.$emit('USER', {
-                    json: {
-                        id: content.userId,
-                        location: content.location
-                    },
-                    params: {
-                        userId: content.userId
-                    }
-                });
-
                 // update current user location
+                if (content.userId !== this.currentUser.id) {
+                    console.error('user-location wrong userId', content);
+                    break;
+                }
+
+                // content.user: {}
+                // content.world: {}
+
                 this.currentUser.presence.instance = content.instance;
-                this.currentUser.presence.world = content.world?.id;
+                this.currentUser.presence.world = content.worldId;
                 this.currentUser.$locationTag = content.location;
                 $app.updateCurrentUserLocation();
                 break;
@@ -23989,7 +23979,7 @@ speechSynthesis.getVoices();
 
     $app.methods.updateDatabaseVersion = async function () {
         var databaseVersion = 6;
-        if (this.databaseVersion !== databaseVersion) {
+        if (this.databaseVersion < databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({
                     message:

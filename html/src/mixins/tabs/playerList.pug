@@ -116,6 +116,13 @@ mixin playerListTab()
                                         span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
                                         span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") {{ $t('dialog.avatar.labels.public') }}
                                         span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") {{ $t('dialog.avatar.labels.private') }}
+                                    span(v-else-if="scope.row.type === 'SpawnEmoji'")
+                                        span(v-if="scope.row.imageUrl")
+                                            el-tooltip(placement="right")
+                                                template(#content)
+                                                    img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(scope.row.imageUrl)")
+                                                span(v-text="scope.row.text")
+                                        span(v-else v-text="scope.row.text")
                                     span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
                                     span(v-else v-text="scope.row.text")
                     el-tab-pane(:label="$t('view.player_list.photon.previous')")
@@ -180,6 +187,13 @@ mixin playerListTab()
                                         span(v-if="!scope.row.inCache" style="color:#aaa") #[i.el-icon-download]&nbsp;
                                         span.avatar-info-public(v-if="scope.row.avatar.releaseStatus === 'public'") {{ $t('dialog.avatar.labels.public') }}
                                         span.avatar-info-own(v-else-if="scope.row.avatar.releaseStatus === 'private'") {{ $t('dialog.avatar.labels.private') }}
+                                    span(v-else-if="scope.row.type === 'SpawnEmoji'")
+                                        span(v-if="scope.row.imageUrl")
+                                            el-tooltip(placement="right")
+                                                template(#content)
+                                                    img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(scope.row.imageUrl)")
+                                                span(v-text="scope.row.text")
+                                        span(v-else v-text="scope.row.text")
                                     span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
                                     span(v-else v-text="scope.row.text")
             div.current-instance-table
