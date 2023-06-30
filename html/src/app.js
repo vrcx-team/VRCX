@@ -12414,7 +12414,8 @@ speechSynthesis.getVoices();
         if (
             !this.isGameRunning ||
             !this.lastLocation.playerList.size ||
-            this.lastLocation.location.isTraveling
+            this.lastLocation.location === '' ||
+            this.lastLocation.location === 'traveling'
         ) {
             return;
         }
