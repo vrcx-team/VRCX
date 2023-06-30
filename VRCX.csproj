@@ -233,5 +233,9 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy /y "$(ProjectDir)OpenVR\win64\openvr_api.dll"
 xcopy /y "$(ProjectDir)lib\sqlite3.dll"</PostBuildEvent>
+    <ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
+    <CopySQLiteInteropFiles>false</CopySQLiteInteropFiles>
+    <CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
+    <CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
   </PropertyGroup>
 </Project>
