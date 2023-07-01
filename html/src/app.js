@@ -5190,6 +5190,7 @@ speechSynthesis.getVoices();
             ipcTimeout: 0,
             nextClearVRCXCacheCheck: 0,
             nextDiscordUpdate: 0,
+            nextAutoStateChange: 0,
             isDiscordActive: false,
             isGameRunning: false,
             isGameNoVR: configRepository.getBool('isGameNoVR'),
@@ -5399,6 +5400,10 @@ speechSynthesis.getVoices();
                     if (this.discordActive) {
                         this.updateDiscord();
                     }
+                }
+                if (--this.nextAutoStateChange <= 0) {
+                    this.nextAutoStateChange = 7;
+                    this.updateAutoStateChange();
                 }
             }
         } catch (err) {
@@ -12405,6 +12410,51 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.methods.updateAutoStateChange = function () {
+        if (
+            !this.isGameRunning ||
+            !this.lastLocation.playerList.size ||
+            this.lastLocation.location === '' ||
+            this.lastLocation.location === 'traveling'
+        ) {
+            return;
+        }
+
+        const otherPeopleExists = this.lastLocation.playerList.size > 1;
+        const prevStatus = API.currentUser.status;
+        let nextStatus = prevStatus;
+
+        switch (this.autoStateChange) {
+            case 'Active or Ask Me':
+                nextStatus = otherPeopleExists ? 'ask me' : 'active';
+                break;
+
+            case 'Active or Busy':
+                nextStatus = otherPeopleExists ? 'busy' : 'active';
+                break;
+
+            case 'Join Me or Ask Me':
+                nextStatus = otherPeopleExists ? 'ask me' : 'join me';
+                break;
+
+            case 'Join Me or Busy':
+                nextStatus = otherPeopleExists ? 'busy' : 'join me';
+                break;
+
+            case 'Ask Me or Busy':
+                nextStatus = otherPeopleExists ? 'ask me' : 'busy';
+                break;
+        }
+
+        if (prevStatus === nextStatus) {
+            return;
+        }
+
+        API.saveCurrentUser({
+            status: nextStatus
+        });
+    };
+
     $app.methods.lookupUser = async function (ref) {
         if (ref.userId) {
             this.showUserDialog(ref.userId);
@@ -14261,6 +14311,16 @@ speechSynthesis.getVoices();
     );
     $app.methods.saveGameLogOptions = function () {
         configRepository.setBool('VRCX_logResourceLoad', this.logResourceLoad);
+    };
+    $app.data.autoStateChange = configRepository.getString(
+        'VRCX_autoStateChange',
+        'Off'
+    );
+    $app.methods.saveAutomationOptions = function () {
+        configRepository.setString(
+            'VRCX_autoStateChange',
+            this.autoStateChange
+        );
     };
     $app.data.orderFriendsGroup0 = configRepository.getBool(
         'orderFriendGroup0',

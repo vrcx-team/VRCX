@@ -211,6 +211,17 @@
                     "header": "VRChat 로그",
                     "resource_load": "Udon 리소스 로드 기록"
                 },
+                "automation": {
+                    "header": "자동화",
+                    "auto_state_change": "자동 상태 변경",
+                    "auto_state_change_tooltip": "인스턴스에 다른 사람이 있을 때 상태를 자동으로 바꿉니다",
+                    "auto_state_change_off": "끄기",
+                    "auto_state_change_active_or_ask_me": "초록불(Active) / 주황불(Ask Me)",
+                    "auto_state_change_active_or_busy": "초록불(Active) / 빨간불(Busy)",
+                    "auto_state_change_join_me_or_ask_me": "파란불(Join Me) / 주황불(Ask Me)",
+                    "auto_state_change_join_me_or_busy": "파란불(Join Me) / 빨간불(Busy)",
+                    "auto_state_change_ask_me_or_busy": "주황불(Ask Me) / 빨간불(Busy)"
+                },
                 "legal_notice": {
                     "header": "법적 공지",
                     "info": "VRCX는 친구 관계에 도움을 줄 만한 정보를 제공하는 보조 프로그램입니다. 비공식 VRChat API SDK를 사용합니다",

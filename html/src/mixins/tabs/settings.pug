@@ -27,6 +27,16 @@ mixin simpleRadioGroup(nameTrKey, model, options, onChange="")
             each option in options
                 el-radio-button(label=option.label) {{ $t('#{option.translationKey}') }}
 
+mixin simpleRadioGroupWithTooltip(nameTrKey, tooltipContent, model, options, onChange="")
+    div.options-container-item
+        span.name {{ $t('#{nameTrKey}') }}
+            el-tooltip(placement="top" style="margin-left:5px" :content=tooltipContent)
+                i.el-icon-warning
+        br
+        el-radio-group(v-model=model @change=onChange size="mini")
+            each option in options
+                el-radio-button(label=option.label) {{ $t('#{option.translationKey}') }}
+
 mixin settingsTab()
     .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'settings'")
         div.options-container(style="margin-top:0;padding:5px")
@@ -77,6 +87,16 @@ mixin settingsTab()
                 //- General | Game Log
                 +simpleSettingsCategory("view.settings.general.game_log.header")
                     +simpleSwitch("view.settings.general.game_log.resource_load", "logResourceLoad", "saveGameLogOptions")
+                //- General | Automation
+                +simpleSettingsCategory("view.settings.general.automation.header")
+                    +simpleRadioGroupWithTooltip("view.settings.general.automation.auto_state_change", "$t('view.settings.general.automation.auto_state_change_tooltip')", "autoStateChange", [
+                        { label: "Off", translationKey: "view.settings.general.automation.auto_state_change_off" },
+                        { label: "Active or Ask Me", translationKey: "view.settings.general.automation.auto_state_change_active_or_ask_me" },
+                        { label: "Active or Busy", translationKey: "view.settings.general.automation.auto_state_change_active_or_busy" },
+                        { label: "Join Me or Ask Me", translationKey: "view.settings.general.automation.auto_state_change_join_me_or_ask_me" },
+                        { label: "Join Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_join_me_or_busy" },
+                        { label: "Ask Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_ask_me_or_busy" },
+                    ], "saveAutomationOptions")
                 //- General | Legal Notice
                 div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                     span.header {{ $t("view.settings.general.legal_notice.header" )}}

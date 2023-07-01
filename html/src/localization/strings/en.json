@@ -211,6 +211,17 @@
                     "header": "Game Log",
                     "resource_load": "Log Udon resource load"
                 },
+                "automation": {
+                    "header": "Automation",
+                    "auto_state_change": "Auto State Change",
+                    "auto_state_change_tooltip": "Automatically change state when there are other people in instance",
+                    "auto_state_change_off": "Off",
+                    "auto_state_change_active_or_ask_me": "Active / Ask Me",
+                    "auto_state_change_active_or_busy": "Active / Busy",
+                    "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
+                    "auto_state_change_join_me_or_busy": "Join Me / Busy",
+                    "auto_state_change_ask_me_or_busy": "Ask Me / Busy"
+                },
                 "legal_notice": {
                     "header": "Legal Notice",
                     "info": "VRCX is an assistant application for VRChat that provides information about and managing friendship. This application makes use of the unofficial VRChat API SDK.",
