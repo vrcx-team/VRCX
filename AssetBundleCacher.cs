@@ -18,6 +18,7 @@ namespace VRCX
     public class AssetBundleCacher
     {
         public static readonly AssetBundleCacher Instance;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         static AssetBundleCacher()
         {
