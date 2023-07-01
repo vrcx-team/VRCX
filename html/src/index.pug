@@ -570,7 +570,7 @@ html
                                     el-tag.x-tag-platform-pc(v-if="worldDialog.isPC" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
                                     el-tag.x-tag-platform-quest(v-if="worldDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Quest
                                     el-tag.x-tag-platform-ios(v-if="worldDialog.isIos" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
-                                    el-tag(v-if="worldDialog.avatarScaling" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling') }}
+                                    el-tag(v-if="worldDialog.avatarScalingDisabled" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
                                     el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px;margin-top:5px")
                                     el-tag(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px")
                                         span(v-text="worldDialog.cacheSize")
@@ -1036,6 +1036,18 @@ html
                                         .detail
                                             span.name(v-text="user.user.displayName" :style="{'color':user.user.$userColour}")
                                             span.extra
+                                                template(v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')")
+                                                    el-tooltip(v-if="user.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
+                                                        i.el-icon-collection-tag(style="margin-right:5px")
+                                                    el-tooltip(v-if="user.visibility !== 'visible'" placement="top")
+                                                        template(#content)
+                                                            span {{ $t('dialog.group.members.visibility') }} {{ user.visibility }}
+                                                        i.el-icon-view(style="margin-right:5px")
+                                                    el-tooltip(v-if="!user.isSubscribedToAnnouncements" placement="top" :content="$t('dialog.group.members.unsubscribed_announcements')")
+                                                        i.el-icon-chat-line-square(style="margin-right:5px")
+                                                template(v-for="roleId in user.roleIds" :key="roleId")
+                                                    span(v-text="groupDialog.ref.roles.find(role => role.id === roleId).name")
+                                                    span(v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1") ,&nbsp;
                                     .x-friend-item(v-if="!isGroupMembersDone" v-loading="isGroupMembersLoading" style="width:100%;height:45px;text-align:center" @click="loadMoreGroupMembers")
                                         .detail(v-if="!isGroupMembersLoading")
                                             span.name {{ $t('dialog.group.members.load_more') }}
@@ -1374,7 +1386,7 @@ html
 
             //- dialog: Set World Tags
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="setWorldTagsDialog" :visible.sync="setWorldTagsDialog.visible" :title="$t('dialog.set_world_tags.header')" width="400px")
-                el-checkbox(v-model="setWorldTagsDialog.avatarScaling") {{ $t('dialog.set_world_tags.avatar_scaling') }}
+                el-checkbox(v-model="setWorldTagsDialog.avatarScalingDisabled") {{ $t('dialog.set_world_tags.avatar_scaling_disabled') }}
                 el-checkbox(v-model="setWorldTagsDialog.debugAllowed") {{ $t('dialog.set_world_tags.enable_debugging') }}
                 div(style='font-size:12px;margin-top:10px')
                     | {{ $t('dialog.set_world_tags.seprator') }} #[br]

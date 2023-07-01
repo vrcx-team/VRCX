@@ -10311,8 +10311,8 @@ speechSynthesis.getVoices();
                 if (!joinTime) {
                     console.log(`${id} missing join time`);
                 }
-                if (joinTime && joinTime + 40000 < dtNow) {
-                    // wait 40secs for user to load in
+                if (joinTime && joinTime + 70000 < dtNow) {
+                    // wait 70secs for user to load in
                     hudTimeout.unshift({
                         userId: this.getUserIdFromPhotonId(id),
                         displayName: this.getDisplayNameFromPhotonId(id),
@@ -11002,15 +11002,17 @@ speechSynthesis.getVoices();
                     var emojiId = data.Parameters[245][2];
                     emojiName = this.photonEmojis[emojiId];
                 } else if (type === 1) {
-                    emojiName = data.Parameters[245][1];
-                    imageUrl = `https://api.vrchat.cloud/api/1/file/${emojiName}/1/`;
+                    emojiName = 'Custom';
+                    var fileId = data.Parameters[245][1];
+                    imageUrl = `https://api.vrchat.cloud/api/1/file/${fileId}/1/`;
                 }
                 this.addEntryPhotonEvent({
                     photonId,
                     text: emojiName,
                     type: 'SpawnEmoji',
                     created_at: gameLogDate,
-                    imageUrl
+                    imageUrl,
+                    fileId
                 });
                 break;
         }
@@ -12357,7 +12359,8 @@ speechSynthesis.getVoices();
                 bigIcon = 'ls_media';
             } else if (
                 L.worldId === 'wrld_791ebf58-54ce-4d3a-a0a0-39f10e1b20b2' ||
-                L.worldId === 'wrld_86a09fce-a34e-4deb-81be-53c843f97e98'
+                L.worldId === 'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e' ||
+                L.worldId === 'wrld_db9d878f-6e76-4776-8bf2-15bcdd7fc445'
             ) {
                 appId = '1095440531821170820';
                 bigIcon = 'movie_and_chill';
@@ -12412,6 +12415,7 @@ speechSynthesis.getVoices();
 
     $app.methods.updateAutoStateChange = function () {
         if (
+            this.autoStateChange === 'Off' ||
             !this.isGameRunning ||
             !this.lastLocation.playerList.size ||
             this.lastLocation.location === '' ||
@@ -14674,7 +14678,8 @@ speechSynthesis.getVoices();
             'wrld_1b68f7a8-8aea-4900-b7a2-3fc4139ac817',
             'wrld_10e5e467-fc65-42ed-8957-f02cace1398c',
             'wrld_791ebf58-54ce-4d3a-a0a0-39f10e1b20b2',
-            'wrld_86a09fce-a34e-4deb-81be-53c843f97e98'
+            'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e',
+            'wrld_db9d878f-6e76-4776-8bf2-15bcdd7fc445'
         ];
         var L = API.parseLocation(location);
         if (rpcWorlds.includes(L.worldId)) {
@@ -16107,6 +16112,10 @@ speechSynthesis.getVoices();
                 if (typeof friend.ref === 'undefined') {
                     continue;
                 }
+                if (friend.ref.location === this.lastLocation.location) {
+                    // don't add friends to currentUser gameLog instance (except when traveling)
+                    continue;
+                }
                 if (friend.ref.$location.tag === L.tag) {
                     if (
                         friend.state !== 'online' &&
@@ -16355,7 +16364,7 @@ speechSynthesis.getVoices();
         isPC: false,
         isQuest: false,
         isIos: false,
-        avatarScaling: false,
+        avatarScalingDisabled: false,
         inCache: false,
         cacheSize: '',
         fileCreatedAt: '',
@@ -16375,7 +16384,7 @@ speechSynthesis.getVoices();
                 isPC: false,
                 isQuest: false,
                 isIos: false,
-                avatarScaling: false,
+                avatarScalingDisabled: false,
                 inCache: false,
                 cacheSize: '',
                 fileCreatedAt: '',
@@ -16389,7 +16398,7 @@ speechSynthesis.getVoices();
                 isPC: false,
                 isQuest: false,
                 isIos: false,
-                avatarScaling: false,
+                avatarScalingDisabled: false,
                 inCache: false,
                 cacheSize: '',
                 fileCreatedAt: '',
@@ -16407,8 +16416,8 @@ speechSynthesis.getVoices();
                 this.currentInstanceWorld.isPC = isPC;
                 this.currentInstanceWorld.isQuest = isQuest;
                 this.currentInstanceWorld.isIos = isIos;
-                this.currentInstanceWorld.avatarScaling =
-                    args.ref?.tags.includes('feature_avatar_scaling');
+                this.currentInstanceWorld.avatarScalingDisabled =
+                    args.ref?.tags.includes('feature_avatar_scaling_disabled');
                 this.checkVRChatCache(args.ref).then((cacheInfo) => {
                     if (cacheInfo[0] > 0) {
                         this.currentInstanceWorld.inCache = true;
@@ -17031,7 +17040,7 @@ speechSynthesis.getVoices();
         $location: {},
         ref: {},
         isFavorite: false,
-        avatarScaling: false,
+        avatarScalingDisabled: false,
         rooms: [],
         treeData: [],
         fileCreatedAt: '',
@@ -17069,7 +17078,9 @@ speechSynthesis.getVoices();
             return;
         }
         D.ref = ref;
-        D.avatarScaling = ref.tags?.includes('feature_avatar_scaling');
+        D.avatarScalingDisabled = ref.tags?.includes(
+            'feature_avatar_scaling_disabled'
+        );
         $app.applyWorldDialogInstances();
         for (var room of D.rooms) {
             if ($app.isRealInstance(room.tag)) {
@@ -17176,7 +17187,7 @@ speechSynthesis.getVoices();
         D.visitCount = '';
         D.timeSpent = 0;
         D.isFavorite = false;
-        D.avatarScaling = false;
+        D.avatarScalingDisabled = false;
         D.isPC = false;
         D.isQuest = false;
         D.isIos = false;
@@ -17233,8 +17244,8 @@ speechSynthesis.getVoices();
                     var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
                         args.ref.unityPackages
                     );
-                    D.avatarScaling = args.ref?.tags.includes(
-                        'feature_avatar_scaling'
+                    D.avatarScalingDisabled = args.ref?.tags.includes(
+                        'feature_avatar_scaling_disabled'
                     );
                     D.isPC = isPC;
                     D.isQuest = isQuest;
@@ -17329,6 +17340,10 @@ speechSynthesis.getVoices();
                     playersInInstance.size > 0 &&
                     ref.location !== 'traveling')
             ) {
+                continue;
+            }
+            if (ref.location === this.lastLocation.location) {
+                // don't add friends to currentUser gameLog instance (except when traveling)
                 continue;
             }
             var { instanceId } = ref.$location;
@@ -17477,6 +17492,10 @@ speechSynthesis.getVoices();
                     playersInInstance.size > 0 &&
                     ref.location !== 'traveling')
             ) {
+                continue;
+            }
+            if (ref.location === this.lastLocation.location) {
+                // don't add friends to currentUser gameLog instance (except when traveling)
                 continue;
             }
             var { instanceId, tag } = ref.$location;
@@ -18752,7 +18771,7 @@ speechSynthesis.getVoices();
         visible: false,
         tags: [],
         debugAllowed: false,
-        avatarScaling: false
+        avatarScalingDisabled: false
     };
 
     $app.methods.showSetWorldTagsDialog = function () {
@@ -18768,8 +18787,8 @@ speechSynthesis.getVoices();
             if (tag === 'debug_allowed') {
                 D.debugAllowed = true;
             }
-            if (tag === 'feature_avatar_scaling') {
-                D.avatarScaling = true;
+            if (tag === 'feature_avatar_scaling_disabled') {
+                D.avatarScalingDisabled = true;
             }
         });
         D.tags = tags.toString();
@@ -18787,8 +18806,8 @@ speechSynthesis.getVoices();
         if (D.debugAllowed) {
             tags.unshift('debug_allowed');
         }
-        if (D.avatarScaling) {
-            tags.unshift('feature_avatar_scaling');
+        if (D.avatarScalingDisabled) {
+            tags.unshift('feature_avatar_scaling_disabled');
         }
         API.saveWorld({
             id: this.worldDialog.id,
@@ -22120,32 +22139,39 @@ speechSynthesis.getVoices();
         if (!this.relaunchVRChatAfterCrash) {
             return;
         }
-        var lastLocation = this.lastLocation.location;
-        var desktopMode = this.isGameNoVR;
+        var { location } = this.lastLocation;
         AppApi.VrcClosedGracefully().then((result) => {
-            if (result || !this.isRealInstance(lastLocation)) {
+            if (result || !this.isRealInstance(location)) {
                 return;
             }
-            if (!desktopMode && !this.isSteamVRRunning) {
-                console.log("SteamVR isn't running, not relaunching VRChat");
-                return;
-            }
-            AppApi.FocusWindow();
-            var message = 'VRChat crashed, attempting to rejoin last instance';
-            this.$message({
-                message,
-                type: 'info'
-            });
-            var entry = {
-                created_at: new Date().toJSON(),
-                type: 'Event',
-                data: message
-            };
-            database.addGamelogEventToDatabase(entry);
-            this.queueGameLogNoty(entry);
-            this.addGameLog(entry);
-            this.launchGame(lastLocation, '', desktopMode);
+            // wait a bit for SteamVR to potentially close before deciding to relaunch
+            workerTimers.setTimeout(
+                () => this.restartCrashedGame(location),
+                1000
+            );
         });
+    };
+
+    $app.methods.restartCrashedGame = function (location) {
+        if (!this.isGameNoVR && !this.isSteamVRRunning) {
+            console.log("SteamVR isn't running, not relaunching VRChat");
+            return;
+        }
+        AppApi.FocusWindow();
+        var message = 'VRChat crashed, attempting to rejoin last instance';
+        this.$message({
+            message,
+            type: 'info'
+        });
+        var entry = {
+            created_at: new Date().toJSON(),
+            type: 'Event',
+            data: message
+        };
+        database.addGamelogEventToDatabase(entry);
+        this.queueGameLogNoty(entry);
+        this.addGameLog(entry);
+        this.launchGame(location, '', this.isGameNoVR);
     };
 
     $app.data.VRChatUsedCacheSize = '';
@@ -22852,13 +22878,14 @@ speechSynthesis.getVoices();
                     ) {
                         downloadUrl = asset.browser_download_url;
                         size = asset.size;
-                        break;
+                        continue;
                     }
                     if (
                         asset.name === 'SHA256SUMS.txt' &&
                         asset.content_type === 'text/plain'
                     ) {
                         hashUrl = asset.browser_download_url;
+                        continue;
                     }
                 }
                 if (!downloadUrl) {
@@ -22994,13 +23021,14 @@ speechSynthesis.getVoices();
                     ) {
                         downloadUrl = asset.browser_download_url;
                         size = asset.size;
-                        break;
+                        continue;
                     }
                     if (
                         asset.name === 'SHA256SUMS.txt' &&
                         asset.content_type === 'text/plain'
                     ) {
                         hashUrl = asset.browser_download_url;
+                        continue;
                     }
                 }
                 if (!downloadUrl) {
@@ -27108,12 +27136,7 @@ speechSynthesis.getVoices();
     $app.methods.showChangeLogDialog = function () {
         this.$nextTick(() => adjustDialogZ(this.$refs.changeLogDialog.$el));
         this.changeLogDialog.visible = true;
-        if (
-            typeof this.VRCXUpdateDialog.updateJson === 'object' &&
-            Object.keys(this.VRCXUpdateDialog.updateJson).length === 0
-        ) {
-            this.checkForVRCXUpdate();
-        }
+        this.checkForVRCXUpdate();
     };
 
     $app.data.gallerySelectDialog = {

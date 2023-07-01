@@ -18,7 +18,7 @@ mixin playerListTab()
                         el-tag.x-tag-platform-pc(v-if="currentInstanceWorld.isPC" type="info" effect="plain" size="mini" style="margin-right:5px") PC
                         el-tag.x-tag-platform-quest(v-if="currentInstanceWorld.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px") Quest
                         el-tag.x-tag-platform-ios(v-if="currentInstanceWorld.isIOS" type="info" effect="plain" size="mini" style="margin-right:5px") iOS
-                        el-tag(v-if="currentInstanceWorld.avatarScaling" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling') }}
+                        el-tag(v-if="currentInstanceWorld.avatarScalingDisabled" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
                         el-tag(type="info" effect="plain" size="mini" v-text="currentInstanceWorld.fileSize" style="margin-right:5px")
                         el-tag(v-if="currentInstanceWorld.inCache" type="info" effect="plain" size="mini" style="margin-right:5px")
                             span(v-text="currentInstanceWorld.cacheSize")
@@ -121,7 +121,7 @@ mixin playerListTab()
                                             el-tooltip(placement="right")
                                                 template(#content)
                                                     img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(scope.row.imageUrl)")
-                                                span(v-text="scope.row.text")
+                                                span(v-text="scope.row.fileId")
                                         span(v-else v-text="scope.row.text")
                                     span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
                                     span(v-else v-text="scope.row.text")
@@ -192,7 +192,7 @@ mixin playerListTab()
                                             el-tooltip(placement="right")
                                                 template(#content)
                                                     img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(scope.row.imageUrl)")
-                                                span(v-text="scope.row.text")
+                                                span(v-text="scope.row.fileId")
                                         span(v-else v-text="scope.row.text")
                                     span(v-else-if="scope.row.color === 'yellow'" v-text="scope.row.text" style="color:yellow")
                                     span(v-else v-text="scope.row.text")

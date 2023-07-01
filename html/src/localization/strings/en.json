@@ -213,8 +213,8 @@
                 },
                 "automation": {
                     "header": "Automation",
-                    "auto_state_change": "Auto State Change",
-                    "auto_state_change_tooltip": "Automatically change state when there are other people in instance",
+                    "auto_state_change": "Auto Status Change",
+                    "auto_state_change_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
                     "auto_state_change_off": "Off",
                     "auto_state_change_active_or_ask_me": "Active / Ask Me",
                     "auto_state_change_active_or_busy": "Active / Busy",
@@ -619,7 +619,7 @@
             "tags": {
                 "public": "Public",
                 "private": "Private",
-                "avatar_scaling": "Avatar Scaling",
+                "avatar_scaling_disabled": "Avatar Scaling Disabled",
                 "labs": "Labs",
                 "cache": "Cache"
             },
@@ -797,7 +797,10 @@
                 "filters": {
                     "everyone": "Everyone",
                     "users_with_no_role": "Users With No Role"
-                }
+                },
+                "unsubscribed_announcements": "Unsubscribed from announcements",
+                "visibility": "Visibility:",
+                "representing": "Representing"
             },
             "gallery": {
                 "header": "Photos"
@@ -913,7 +916,7 @@
         },
         "set_world_tags": {
             "header": "Set World Tags",
-            "avatar_scaling": "Avatar Scaling",
+            "avatar_scaling_disabled": "Avatar Scaling Disabled",
             "enable_debugging": "Enable world debugging for others",
             "seprator": "Enter tags comma separated",
             "cancel": "Cancel",
