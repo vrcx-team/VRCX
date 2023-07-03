@@ -92,6 +92,8 @@
             "avatars": {
                 "header": "アバター"
             },
+            "bulk_unfavorite_mode": "Bulk Unfavorite Mode",
+            "bulk_unfavorite_selection": "Bulk Unfavorite Selection",
             "refresh_tooltip": "全てのお気に入りを更新",
             "export": "エクスポート",
             "import": "インポート",
@@ -208,6 +210,17 @@
                 "game_log": {
                     "header": "ゲームログ",
                     "resource_load": "Udonのリソース負荷を記録"
+                },
+                                "automation": {
+                    "header": "Automation",
+                    "auto_state_change": "Auto Status Change",
+                    "auto_state_change_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
+                    "auto_state_change_off": "Off",
+                    "auto_state_change_active_or_ask_me": "Active / Ask Me",
+                    "auto_state_change_active_or_busy": "Active / Busy",
+                    "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
+                    "auto_state_change_join_me_or_busy": "Join Me / Busy",
+                    "auto_state_change_ask_me_or_busy": "Ask Me / Busy"
                 },
                 "legal_notice": {
                     "header": "法律上の注意事項",
@@ -543,6 +556,10 @@
                 "launch_invite_tooltip": "起動/招待",
                 "self_invite_tooltip": "自分を招待",
                 "refresh_user_count_tooltip": "ユーザー数を更新",
+                "instance_queue": "Queue:",
+                "instance_users": "Users:",
+                "instance_game_version": "Game Version:",
+                "instance_queuing_enabled": "Queuing Enabled",
                 "instance_creator": "インスタンス作成者",
                 "note": "ノート (VRChat)",
                 "note_placeholder": "クリックしてノートを追加",
@@ -602,6 +619,7 @@
             "tags": {
                 "public": "Public",
                 "private": "Private",
+                "avatar_scaling_disabled": "Avatar Scaling Disabled",
                 "labs": "ラボ",
                 "cache": "キャッシュ"
             },
@@ -637,6 +655,8 @@
             },
             "info": {
                 "header": "情報",
+                "memo": "Memo",
+                "memo_placeholder": "Click to add a memo",
                 "id": "ワールドID",
                 "id_tooltip": "クリップボードにコピー",
                 "copy_id": "IDをコピー",
@@ -777,7 +797,10 @@
                 "filters": {
                     "everyone": "全員",
                     "users_with_no_role": "ロール無しユーザー"
-                }
+                },
+                "unsubscribed_announcements": "Unsubscribed from announcements",
+                "visibility": "Visibility:",
+                "representing": "Representing"
             },
             "gallery": {
                 "header": "ギャラリー"
@@ -893,6 +916,7 @@
         },
         "set_world_tags": {
             "header": "ワールドのタグを設定",
+            "avatar_scaling_disabled": "Avatar Scaling Disabled",
             "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
             "seprator": "タグをコンマ区切りで入力してください",
             "cancel": "キャンセル",
@@ -1083,6 +1107,7 @@
             "description": "推奨画像サイズ: 1200x900",
             "gallery": "ギャラリー",
             "icons": "アイコン",
+            "emojis": "Emojis",
             "refresh": "更新",
             "upload": "アップロード",
             "clear": "消去"
