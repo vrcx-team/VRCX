@@ -61,7 +61,7 @@
             },
             "avatar": {
                 "header": "アバター",
-                "search_provider": "Search Provider",
+                "search_provider": "検索プロバイダー",
                 "refresh_tooltip": "自分のアバターを更新",
                 "result_count": "結果: {count}",
                 "all": "全て",
@@ -92,8 +92,8 @@
             "avatars": {
                 "header": "アバター"
             },
-            "bulk_unfavorite_mode": "Bulk Unfavorite Mode",
-            "bulk_unfavorite_selection": "Bulk Unfavorite Selection",
+            "bulk_unfavorite_mode": "一括お気に入り解除モード",
+            "bulk_unfavorite_selection": "お気に入り解除する",
             "refresh_tooltip": "全てのお気に入りを更新",
             "export": "エクスポート",
             "import": "インポート",
@@ -211,11 +211,11 @@
                     "header": "ゲームログ",
                     "resource_load": "Udonのリソース負荷を記録"
                 },
-                                "automation": {
-                    "header": "Automation",
-                    "auto_state_change": "Auto Status Change",
-                    "auto_state_change_tooltip": "Automatically change status when there are other people in the instance (Alone / Company)",
-                    "auto_state_change_off": "Off",
+                    "automation": {
+                    "header": "自動化機能",
+                    "auto_state_change": "自動ステータス変更",
+                    "auto_state_change_tooltip": "自身のいるインスタンスに他のプレイヤーがいる場合、自動的にステータスを変更します。",
+                    "auto_state_change_off": "無効",
                     "auto_state_change_active_or_ask_me": "Active / Ask Me",
                     "auto_state_change_active_or_busy": "Active / Busy",
                     "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
@@ -556,10 +556,10 @@
                 "launch_invite_tooltip": "起動/招待",
                 "self_invite_tooltip": "自分を招待",
                 "refresh_user_count_tooltip": "ユーザー数を更新",
-                "instance_queue": "Queue:",
-                "instance_users": "Users:",
-                "instance_game_version": "Game Version:",
-                "instance_queuing_enabled": "Queuing Enabled",
+                "instance_queue": "待機列:",
+                "instance_users": "ユーザー数:",
+                "instance_game_version": "ゲームバージョン:",
+                "instance_queuing_enabled": "待機列使用可能",
                 "instance_creator": "インスタンス作成者",
                 "note": "ノート (VRChat)",
                 "note_placeholder": "クリックしてノートを追加",
@@ -619,7 +619,7 @@
             "tags": {
                 "public": "Public",
                 "private": "Private",
-                "avatar_scaling_disabled": "Avatar Scaling Disabled",
+                "avatar_scaling_disabled": "Avatar Scaling 無効",
                 "labs": "ラボ",
                 "cache": "キャッシュ"
             },
@@ -655,8 +655,8 @@
             },
             "info": {
                 "header": "情報",
-                "memo": "Memo",
-                "memo_placeholder": "Click to add a memo",
+                "memo": "メモ",
+                "memo_placeholder": "クリックしてメモを追加",
                 "id": "ワールドID",
                 "id_tooltip": "クリップボードにコピー",
                 "copy_id": "IDをコピー",
@@ -916,7 +916,7 @@
         },
         "set_world_tags": {
             "header": "ワールドのタグを設定",
-            "avatar_scaling_disabled": "Avatar Scaling Disabled",
+            "avatar_scaling_disabled": "Avatar Scalingを無効化",
             "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
             "seprator": "タグをコンマ区切りで入力してください",
             "cancel": "キャンセル",
