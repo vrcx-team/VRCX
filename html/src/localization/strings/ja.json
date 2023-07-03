@@ -211,7 +211,7 @@
                     "header": "ゲームログ",
                     "resource_load": "Udonのリソース負荷を記録"
                 },
-                    "automation": {
+                "automation": {
                     "header": "自動化機能",
                     "auto_state_change": "自動ステータス変更",
                     "auto_state_change_tooltip": "自身のいるインスタンスに他のプレイヤーがいる場合、自動的にステータスを変更します。",
@@ -619,7 +619,7 @@
             "tags": {
                 "public": "Public",
                 "private": "Private",
-                "avatar_scaling_disabled": "Avatar Scaling 無効",
+                "avatar_scaling_disabled": "Avatar Scaling 使用不可",
                 "labs": "ラボ",
                 "cache": "キャッシュ"
             },
@@ -1107,7 +1107,7 @@
             "description": "推奨画像サイズ: 1200x900",
             "gallery": "ギャラリー",
             "icons": "アイコン",
-            "emojis": "Emojis",
+            "emojis": "絵文字",
             "refresh": "更新",
             "upload": "アップロード",
             "clear": "消去"
