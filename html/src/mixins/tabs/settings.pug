@@ -513,6 +513,8 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.cache_debug.avatar_name_cache') }} #[span(v-text="API.cachedAvatarNames.size")]
                     div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.cache_debug.instance_cache') }} #[span(v-text="API.cachedInstances.size")]
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-delete-solid" @click="clearVRCXCache") {{ $t('view.settings.advanced.advanced.cache_debug.clear_cache') }}
                         el-button(size="small" icon="el-icon-time" @click="promptAutoClearVRCXCacheFrequency") {{ $t('view.settings.advanced.advanced.cache_debug.auto_clear_cache') }}
                     div.options-container-item

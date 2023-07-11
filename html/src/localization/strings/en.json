@@ -438,6 +438,7 @@
                         "avatar_cache": "Avatar cache:",
                         "group_cache": "Group cache:",
                         "avatar_name_cache": "Avatar Name cache:",
+                        "instance_cache": "Instance cache:",
                         "clear_cache": "Clear Cache",
                         "auto_clear_cache": "Auto Clear Cache",
                         "download_history": "Download History",

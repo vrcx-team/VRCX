@@ -1046,7 +1046,7 @@ html
                                                     el-tooltip(v-if="!user.isSubscribedToAnnouncements" placement="top" :content="$t('dialog.group.members.unsubscribed_announcements')")
                                                         i.el-icon-chat-line-square(style="margin-right:5px")
                                                 template(v-for="roleId in user.roleIds" :key="roleId")
-                                                    span(v-text="groupDialog.ref.roles.find(role => role.id === roleId).name")
+                                                    span(v-for="(role, rIndex) in groupDialog.ref.roles" :key="rIndex" v-if="role.id === roleId" v-text="role.name")
                                                     span(v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1") ,&nbsp;
                                     .x-friend-item(v-if="!isGroupMembersDone" v-loading="isGroupMembersLoading" style="width:100%;height:45px;text-align:center" @click="loadMoreGroupMembers")
                                         .detail(v-if="!isGroupMembersLoading")
@@ -1303,13 +1303,13 @@ html
                     el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.location)") {{ $t('dialog.new_instance.copy_url') }}
                     el-button(size="small" @click="selfInvite(newInstanceDialog.location)") {{ $t('dialog.new_instance.self_invite') }}
                     el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)" :disabled="(newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') && newInstanceDialog.userId !== API.currentUser.id") {{ $t('dialog.new_instance.invite') }}
-                    el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.secureOrShortName)") {{ $t('dialog.new_instance.launch') }}
+                    el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)") {{ $t('dialog.new_instance.launch') }}
                 template(#footer v-else-if="newInstanceDialog.selectedTab === '1'")
                     template(v-if="newInstanceDialog.instanceCreated")
                         el-button(size="small" @click="copyInstanceUrl(newInstanceDialog.location)") {{ $t('dialog.new_instance.copy_url') }}
                         el-button(size="small" @click="selfInvite(newInstanceDialog.location)") {{ $t('dialog.new_instance.self_invite') }}
                         el-button(size="small" @click="showInviteDialog(newInstanceDialog.location)" :disabled="(newInstanceDialog.accessType === 'friends' || newInstanceDialog.accessType === 'invite') && newInstanceDialog.userId !== API.currentUser.id") {{ $t('dialog.new_instance.invite') }}
-                        el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.secureOrShortName)") {{ $t('dialog.new_instance.launch') }}
+                        el-button(type="primary" size="small" @click="showLaunchDialog(newInstanceDialog.location, newInstanceDialog.shortName)") {{ $t('dialog.new_instance.launch') }}
                     template(v-else)
                         el-button(type="primary" size="small" @click="createGroupInstance()" :disabled="!newInstanceDialog.groupId") {{ $t('dialog.new_instance.create_instance') }}
 

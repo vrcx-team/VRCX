@@ -136,7 +136,7 @@ Section "Install" SecInstall
 
     afterupgrade:
 
-    ReadRegStr $R0 HKLM "SOFTWARE\Microsoft\DevDiv\vc\Servicing\14.0\RuntimeMinimum" "Version"
+    ReadRegStr $R0 HKLM "SOFTWARE\Classes\Installer\Dependencies\Microsoft.VS.VC_RuntimeMinimumVSU_amd64,v14" "Version"
     IfErrors 0 VSRedistInstalled
 
     inetc::get "https://aka.ms/vs/17/release/vc_redist.x64.exe" $TEMP\vcredist_x64.exe

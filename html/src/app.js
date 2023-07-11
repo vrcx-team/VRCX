@@ -11927,10 +11927,9 @@ speechSynthesis.getVoices();
     $app.methods.addGameLogLSMedia = function (gameLog, location) {
         // [VRCX] LSMedia 0,4268.981,Natsumi-sama,,
         // [VRCX] LSMedia 0,6298.292,Natsumi-sama,The Outfit (2022), 1080p
-        var data =
-            /LSMedia ([\d.]+),([\d.]+),(.+?),(.+?),(?=[^,]*$) ([\d.]+p)/g.exec(
-                gameLog.data
-            );
+        var data = /LSMedia ([\d.]+),([\d.]+),(.+?),(.+?),(?=[^,]*$)/g.exec(
+            gameLog.data
+        );
         if (!data) {
             return;
         }
@@ -12352,15 +12351,15 @@ speechSynthesis.getVoices();
                 appId = '939473404808007731';
                 bigIcon = 'zuwa_zuwa_dance';
             } else if (
-                L.worldId === 'wrld_99211ba0-1878-493f-b64e-d3552c10b7cb' ||
-                L.worldId === 'wrld_1b68f7a8-8aea-4900-b7a2-3fc4139ac817'
+                L.worldId === 'wrld_1b68f7a8-8aea-4900-b7a2-3fc4139ac817' ||
+                L.worldId === 'wrld_db9d878f-6e76-4776-8bf2-15bcdd7fc445' ||
+                L.worldId === 'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e'
             ) {
                 appId = '968292722391785512';
                 bigIcon = 'ls_media';
             } else if (
                 L.worldId === 'wrld_791ebf58-54ce-4d3a-a0a0-39f10e1b20b2' ||
-                L.worldId === 'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e' ||
-                L.worldId === 'wrld_db9d878f-6e76-4776-8bf2-15bcdd7fc445'
+                L.worldId === 'wrld_86a09fce-a34e-4deb-81be-53c843f97e98'
             ) {
                 appId = '1095440531821170820';
                 bigIcon = 'movie_and_chill';
@@ -14674,10 +14673,10 @@ speechSynthesis.getVoices();
             'wrld_dd6d2888-dbdc-47c2-bc98-3d631b2acd7c',
             'wrld_52bdcdab-11cd-4325-9655-0fb120846945',
             'wrld_2d40da63-8f1f-4011-8a9e-414eb8530acd',
-            'wrld_99211ba0-1878-493f-b64e-d3552c10b7cb',
             'wrld_1b68f7a8-8aea-4900-b7a2-3fc4139ac817',
             'wrld_10e5e467-fc65-42ed-8957-f02cace1398c',
             'wrld_791ebf58-54ce-4d3a-a0a0-39f10e1b20b2',
+            'wrld_86a09fce-a34e-4deb-81be-53c843f97e98',
             'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e',
             'wrld_db9d878f-6e76-4776-8bf2-15bcdd7fc445'
         ];
@@ -18461,6 +18460,8 @@ speechSynthesis.getVoices();
     $app.methods.buildInstance = function () {
         var D = this.newInstanceDialog;
         D.instanceCreated = false;
+        D.shortName = '';
+        D.secureOrShortName = '';
         var tags = [];
         if (D.instanceName) {
             D.instanceName = D.instanceName.replace(/[^A-Za-z0-9-_]/g, '');
@@ -18685,6 +18686,7 @@ speechSynthesis.getVoices();
         D.roleIds = [];
         D.strict = false;
         D.shortName = '';
+        D.secureOrShortName = '';
         this.buildInstance();
         this.updateNewInstanceDialog();
         D.visible = true;
