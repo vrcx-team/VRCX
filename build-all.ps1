@@ -14,7 +14,7 @@ msbuild VRCX.sln -p:Configuration=Release -p:Platform=x64 -p:RestorePackagesConf
 Write-Host "Building Node.js..." -ForegroundColor Green
 cd "html"
 Remove-Item -Path "node_modules" -Force -Recurse -ErrorAction SilentlyContinue
-npm ci
+npm ci --loglevel=error
 npm run prod
 cd ..
 Remove-Item -Path "bin\x64\Release\html" -Force -Recurse -ErrorAction SilentlyContinue
@@ -33,5 +33,10 @@ $nsisPath = "C:\Program Files (x86)\NSIS\makensis.exe"
 Start-Sleep -Seconds 1
 Move-Item VRCX_Setup.exe ..\$SetupName -Force
 cd ..
+
+Write-Host "Creating SHA256-hash..." -ForegroundColor Green
+$hash = Get-FileHash -Path $SetupName -Algorithm SHA256
+$hashLine = "$($hash.Hash)  $SetupName"
+$hashLine | Out-File -FilePath "SHA256SUMS.txt" -Encoding ASCII
 
 Write-Host "Done!" -ForegroundColor Green

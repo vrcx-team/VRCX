@@ -11672,7 +11672,8 @@ speechSynthesis.getVoices();
                 var url = new URL(videoUrl);
                 if (
                     url.origin === 'https://t-ne.x0.to' ||
-                    url.origin === 'https://nextnex.com'
+                    url.origin === 'https://nextnex.com' ||
+                    url.origin === 'https://r.0cm.org'
                 ) {
                     url = new URL(url.searchParams.get('url'));
                 }
@@ -26669,15 +26670,21 @@ speechSynthesis.getVoices();
     $app.methods.sendNotificationResponse = function (
         notificationId,
         responses,
-        response
+        responseType
     ) {
         if (!Array.isArray(responses) || responses.length === 0) {
             return null;
         }
-        var responseData = responses[0].data;
+        var responseData = '';
+        for (var i = 0; i < responses.length; i++) {
+            if (responses[i].type === responseType) {
+                responseData = responses[i].data;
+                break;
+            }
+        }
         return API.sendNotificationResponse({
             notificationId,
-            responseType: response,
+            responseType,
             responseData
         });
     };
