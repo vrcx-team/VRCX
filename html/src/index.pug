@@ -2121,14 +2121,23 @@ html
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/5
-                        //- input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
-                        el-button-group
+                        input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
+                        el-button-group(style="margin-right:10px")
                             el-button(type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayEmojiUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
+                        el-select(v-model="emojiAnimationStyle")
+                            el-option-group {{ $t('dialog.gallery_icons.emoji_animation_styles') }}
+                                el-option.x-friend-item(v-for="(fileName, styleName) in emojiAnimationStyleList" :key="fileName" :label="styleName" :value="styleName" style="height:auto")
+                                    .avatar(style="width:200px;height:200px")
+                                        img(v-lazy="`${emojiAnimationStyleUrl}${fileName}`")
+                                    .detail
+                                        span.name(v-text="styleName" style="margin-right:100px")
                         br
                         .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url")
                                 img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
+                            div(style="display:inline-block;margin:5px")
+                                span {{ image.animationStyle }}
                             div(style="float:right;margin-top:5px")
                                 el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteEmoji(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")

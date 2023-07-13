@@ -6,6 +6,9 @@ using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace VRCX
 {
@@ -128,6 +131,97 @@ namespace VRCX
             _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn
         }
 
+        private static async Task LegacyImageUpload(HttpWebRequest request, IDictionary<string, object> options)
+        {
+            request.Method = "POST";
+            string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
+            request.ContentType = "multipart/form-data; boundary=" + boundary;
+            Stream requestStream = request.GetRequestStream();
+            if (options.TryGetValue("postData", out object postDataObject) == true)
+            {
+                Dictionary<string, string> postData = new Dictionary<string, string>();
+                postData.Add("data", (string)postDataObject);
+                string FormDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n";
+                foreach (string key in postData.Keys)
+                {
+                    string item = string.Format(FormDataTemplate, boundary, key, postData[key]);
+                    byte[] itemBytes = Encoding.UTF8.GetBytes(item);
+                    await requestStream.WriteAsync(itemBytes, 0, itemBytes.Length);
+                }
+            }
+            var imageData = options["imageData"] as string;
+            byte[] fileToUpload = Convert.FromBase64CharArray(imageData.ToCharArray(), 0, imageData.Length);
+            string fileFormKey = "image";
+            string fileName = "image.png";
+            string fileMimeType = "image/png";
+            string HeaderTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n";
+            string header = string.Format(HeaderTemplate, boundary, fileFormKey, fileName, fileMimeType);
+            byte[] headerbytes = Encoding.UTF8.GetBytes(header);
+            await requestStream.WriteAsync(headerbytes, 0, headerbytes.Length);
+            using (MemoryStream fileStream = new MemoryStream(fileToUpload))
+            {
+                byte[] buffer = new byte[1024];
+                int bytesRead = 0;
+                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    await requestStream.WriteAsync(buffer, 0, bytesRead);
+                }
+                fileStream.Close();
+            }
+            byte[] newlineBytes = Encoding.UTF8.GetBytes("\r\n");
+            await requestStream.WriteAsync(newlineBytes, 0, newlineBytes.Length);
+            byte[] endBytes = Encoding.UTF8.GetBytes("--" + boundary + "--");
+            await requestStream.WriteAsync(endBytes, 0, endBytes.Length);
+            requestStream.Close();
+        }
+        
+        private static async Task ImageUpload(HttpWebRequest request, IDictionary<string, object> options)
+        {
+            request.Method = "POST";
+            string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
+            request.ContentType = "multipart/form-data; boundary=" + boundary;
+            Stream requestStream = request.GetRequestStream();
+            if (options.TryGetValue("postData", out object postDataObject))
+            {
+                var jsonPostData = (JObject)JsonConvert.DeserializeObject((string)postDataObject);
+                Dictionary<string, string> postData = new Dictionary<string, string>();
+                string formDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n";
+                if (jsonPostData != null)
+                {
+                    foreach (var data in jsonPostData)
+                    {
+                        string item = string.Format(formDataTemplate, boundary, data.Key, data.Value);
+                        byte[] itemBytes = Encoding.UTF8.GetBytes(item);
+                        await requestStream.WriteAsync(itemBytes, 0, itemBytes.Length);
+                    }
+                }
+            }
+            var imageData = options["imageData"] as string;
+            byte[] fileToUpload = Convert.FromBase64CharArray(imageData.ToCharArray(), 0, imageData.Length);
+            string fileFormKey = "file";
+            string fileName = "blob";
+            string fileMimeType = "image/png";
+            string HeaderTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n";
+            string header = string.Format(HeaderTemplate, boundary, fileFormKey, fileName, fileMimeType);
+            byte[] headerbytes = Encoding.UTF8.GetBytes(header);
+            await requestStream.WriteAsync(headerbytes, 0, headerbytes.Length);
+            using (MemoryStream fileStream = new MemoryStream(fileToUpload))
+            {
+                byte[] buffer = new byte[1024];
+                int bytesRead = 0;
+                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    await requestStream.WriteAsync(buffer, 0, bytesRead);
+                }
+                fileStream.Close();
+            }
+            byte[] newlineBytes = Encoding.UTF8.GetBytes("\r\n");
+            await requestStream.WriteAsync(newlineBytes, 0, newlineBytes.Length);
+            byte[] endBytes = Encoding.UTF8.GetBytes("--" + boundary + "--");
+            await requestStream.WriteAsync(endBytes, 0, endBytes.Length);
+            requestStream.Close();
+        }
+
 #pragma warning disable CS4014
 
         public async void Execute(IDictionary<string, object> options, IJavascriptCallback callback)
@@ -139,7 +233,7 @@ namespace VRCX
                 request.KeepAlive = true;
                 request.UserAgent = Program.Version;
 
-                if (options.TryGetValue("headers", out object headers) == true)
+                if (options.TryGetValue("headers", out object headers))
                 {
                     foreach (var header in (IEnumerable<KeyValuePair<string, object>>)headers)
                     {
@@ -161,7 +255,7 @@ namespace VRCX
                     }
                 }
 
-                if (options.TryGetValue("method", out object method) == true)
+                if (options.TryGetValue("method", out object method))
                 {
                     var _method = (string)method;
                     request.Method = _method;
@@ -176,63 +270,15 @@ namespace VRCX
                         }
                     }
                 }
-
-                if (options.TryGetValue("uploadFilePUT", out object uploadImagePUT) == true)
+                
+                if (options.TryGetValue("uploadImage", out _))
                 {
-                    request.Method = "PUT";
-                    request.ContentType = options["fileMIME"] as string;
-                    var imageData = options["fileData"] as string;
-                    byte[] sentData = Convert.FromBase64CharArray(imageData.ToCharArray(), 0, imageData.Length);
-                    request.ContentLength = sentData.Length;
-                    using (System.IO.Stream sendStream = request.GetRequestStream())
-                    {
-                        await sendStream.WriteAsync(sentData, 0, sentData.Length);
-                        sendStream.Close();
-                    }
+                    await ImageUpload(request, options);
                 }
 
-                if (options.TryGetValue("uploadImage", out object uploadImage) == true)
+                if (options.TryGetValue("uploadImageLegacy", out _))
                 {
-                    request.Method = "POST";
-                    string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
-                    request.ContentType = "multipart/form-data; boundary=" + boundary;
-                    Stream requestStream = request.GetRequestStream();
-                    if (options.TryGetValue("postData", out object postDataObject) == true)
-                    {
-                        Dictionary<string, string> postData = new Dictionary<string, string>();
-                        postData.Add("data", (string)postDataObject);
-                        string FormDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n";
-                        foreach (string key in postData.Keys)
-                        {
-                            string item = string.Format(FormDataTemplate, boundary, key, postData[key]);
-                            byte[] itemBytes = System.Text.Encoding.UTF8.GetBytes(item);
-                            await requestStream.WriteAsync(itemBytes, 0, itemBytes.Length);
-                        }
-                    }
-                    var imageData = options["imageData"] as string;
-                    byte[] fileToUpload = Convert.FromBase64CharArray(imageData.ToCharArray(), 0, imageData.Length);
-                    string fileFormKey = "image";
-                    string fileName = "image.png";
-                    string fileMimeType = "image/png";
-                    string HeaderTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"; filename=\"{2}\"\r\nContent-Type: {3}\r\n\r\n";
-                    string header = string.Format(HeaderTemplate, boundary, fileFormKey, fileName, fileMimeType);
-                    byte[] headerbytes = Encoding.UTF8.GetBytes(header);
-                    await requestStream.WriteAsync(headerbytes, 0, headerbytes.Length);
-                    using (MemoryStream fileStream = new MemoryStream(fileToUpload))
-                    {
-                        byte[] buffer = new byte[1024];
-                        int bytesRead = 0;
-                        while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
-                        {
-                            await requestStream.WriteAsync(buffer, 0, bytesRead);
-                        }
-                        fileStream.Close();
-                    }
-                    byte[] newlineBytes = Encoding.UTF8.GetBytes("\r\n");
-                    await requestStream.WriteAsync(newlineBytes, 0, newlineBytes.Length);
-                    byte[] endBytes = System.Text.Encoding.UTF8.GetBytes("--" + boundary + "--");
-                    await requestStream.WriteAsync(endBytes, 0, endBytes.Length);
-                    requestStream.Close();
+                    await LegacyImageUpload(request, options);
                 }
 
                 try

@@ -1111,7 +1111,8 @@
             "emojis": "Emojis",
             "refresh": "Refresh",
             "upload": "Upload",
-            "clear": "Clear"
+            "clear": "Clear",
+            "emoji_animation_styles": "Animation Styles"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",

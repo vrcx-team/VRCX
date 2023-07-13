@@ -3423,7 +3423,7 @@ speechSynthesis.getVoices();
 
     API.sendInvitePhoto = function (params, receiverUserId) {
         return this.call(`invite/${receiverUserId}/photo`, {
-            uploadImage: true,
+            uploadImageLegacy: true,
             postData: JSON.stringify(params),
             imageData: $app.uploadImage
         }).then((json) => {
@@ -3454,7 +3454,7 @@ speechSynthesis.getVoices();
 
     API.sendRequestInvitePhoto = function (params, receiverUserId) {
         return this.call(`requestInvite/${receiverUserId}/photo`, {
-            uploadImage: true,
+            uploadImageLegacy: true,
             postData: JSON.stringify(params),
             imageData: $app.uploadImage
         }).then((json) => {
@@ -3486,7 +3486,7 @@ speechSynthesis.getVoices();
 
     API.sendInviteResponsePhoto = function (params, inviteId) {
         return this.call(`invite/${inviteId}/response/photo`, {
-            uploadImage: true,
+            uploadImageLegacy: true,
             postData: JSON.stringify(params),
             imageData: $app.uploadImage,
             inviteId
@@ -19367,10 +19367,14 @@ speechSynthesis.getVoices();
         document.getElementById('VRCPlusIconUploadButton').click();
     };
 
-    API.uploadVRCPlusIcon = function (params) {
-        return this.call('icon', {
+    API.uploadVRCPlusIcon = function (imageData) {
+        var params = {
+            tag: 'icon'
+        };
+        return this.call('file/image', {
             uploadImage: true,
-            imageData: params
+            postData: JSON.stringify(params),
+            imageData
         }).then((json) => {
             var args = {
                 json,
@@ -22634,10 +22638,14 @@ speechSynthesis.getVoices();
         document.getElementById('GalleryUploadButton').click();
     };
 
-    API.uploadGalleryImage = function (params) {
-        return this.call('gallery', {
+    API.uploadGalleryImage = function (imageData) {
+        var params = {
+            tag: 'gallery'
+        };
+        return this.call('file/image', {
             uploadImage: true,
-            imageData: params
+            postData: JSON.stringify(params),
+            imageData
         }).then((json) => {
             var args = {
                 json,
@@ -22724,8 +22732,13 @@ speechSynthesis.getVoices();
         }
         var r = new FileReader();
         r.onload = function () {
+            var params = {
+                tag: 'emoji',
+                animationStyle: $app.emojiAnimationStyle.toLowerCase(),
+                maskTag: 'square'
+            };
             var base64Body = btoa(r.result);
-            API.uploadEmoji(base64Body).then((args) => {
+            API.uploadEmoji(base64Body, params).then((args) => {
                 $app.$message({
                     message: 'Emoji uploaded',
                     type: 'success'
@@ -22741,10 +22754,11 @@ speechSynthesis.getVoices();
         document.getElementById('EmojiUploadButton').click();
     };
 
-    API.uploadEmoji = function (params) {
-        return this.call('emoji', {
+    API.uploadEmoji = function (imageData, params) {
+        return this.call('file/image', {
             uploadImage: true,
-            imageData: params
+            postData: JSON.stringify(params),
+            imageData
         }).then((json) => {
             var args = {
                 json,
@@ -22760,6 +22774,39 @@ speechSynthesis.getVoices();
             $app.emojiTable.push(args.json);
         }
     });
+
+    $app.data.emojiAnimationStyle = 'Aura';
+    $app.data.emojiAnimationStyleUrl =
+        'https://assets.vrchat.com/www/images/emoji-previews/';
+    $app.data.emojiAnimationStyleList = {
+        Aura: 'Preview_B2-Aura.gif',
+        Bats: 'Preview_B2-Fall_Bats.gif',
+        Bees: 'Preview_B2-Bees.gif',
+        Bounce: 'Preview_B2-Bounce.gif',
+        Cloud: 'Preview_B2-Cloud.gif',
+        Confetti: 'Preview_B2-Winter_Confetti.gif',
+        Crying: 'Preview_B2-Crying.gif',
+        Dislike: 'Preview_B2-Dislike.gif',
+        Fire: 'Preview_B2-Fire.gif',
+        Idea: 'Preview_B2-Idea.gif',
+        Lasers: 'Preview_B2-Lasers.gif',
+        Like: 'Preview_B2-Like.gif',
+        Magnet: 'Preview_B2-Magnet.gif',
+        Mistletoe: 'Preview_B2-Winter_Mistletoe.gif',
+        Money: 'Preview_B2-Money.gif',
+        Noise: 'Preview_B2-Noise.gif',
+        Orbit: 'Preview_B2-Orbit.gif',
+        Pizza: 'Preview_B2-Pizza.gif',
+        Rain: 'Preview_B2-Rain.gif',
+        Rotate: 'Preview_B2-Rotate.gif',
+        Shake: 'Preview_B2-Shake.gif',
+        Snow: 'Preview_B2-Spin.gif',
+        Snowball: 'Preview_B2-Winter_Snowball.gif',
+        Spin: 'Preview_B2-Spin.gif',
+        Splash: 'Preview_B2-SummerSplash.gif',
+        Stop: 'Preview_B2-Stop.gif',
+        ZZZ: 'Preview_B2-ZZZ.gif'
+    };
 
     // #endregion
     // #region Misc
