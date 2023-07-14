@@ -111,7 +111,7 @@ VRCX は VRChat のアシスタント / コンパニオンアプリケーショ�
 
 <h3>Discord Rich Presence</h3>
 
-<img src="https://user-images.githubusercontent.com/82102170/224725991-3fc81a3d-ca15-4dcb-a057-d713803bd666.png" alt="discord">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251997318-5a71249c-59fc-4ad6-9194-d6b1d4165600.png" alt="discord">
 
 <!-- The other images will be similar to this -->
 </div>

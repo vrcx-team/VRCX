@@ -65,35 +65,35 @@ Download and run the latest installer (`VRCX_Setup.exe`) from [here](https://git
 
 <table>
   <tr>
-    <td align="center"><img src="https://user-images.githubusercontent.com/82102170/224703139-9cb24dda-3839-4f75-a665-cca69f9e08ea.png" alt="login"></td>
-    <td align="center"><img src="https://user-images.githubusercontent.com/82102170/224703275-103e78fd-e917-428d-b901-6817d6b59b29.png" alt="2fa"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251994190-5e6a961e-b2fe-4d3b-bf66-455d8626b8bf.png" alt="login"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251994414-a21faf59-6199-45de-94e7-a093a6b8c0ac.png" alt="2fa"></td>
   </tr>
 </table>
 
 <h3>Feed</h3>
 
-<img src="https://user-images.githubusercontent.com/82102170/224714129-772d7418-034a-4fe3-aa2e-22ea71154d9a.png" alt="feed">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251987020-9839a2c9-47db-4271-b1bf-8e07669a7056.png" alt="feed">
 
 <h3>GameLog</h3>
 
-<img src="https://user-images.githubusercontent.com/82102170/224714186-75cbf46d-f7b2-4a16-bcc5-2ec06d7f4b0d.png" alt="gamelog">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251987498-b82266ed-131d-42ad-be2f-b167f24acf9f.png" alt="gamelog">
 
 <h3>UserInfo</h3>
 
 <h4>Me</h4>
 
-<img src="https://user-images.githubusercontent.com/82102170/224704240-b10aba50-29b9-4ef4-b35a-958107a32cd6.png" alt="me">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251990237-0c863d27-141c-4447-82de-4279ab8973ea.png" alt="me">
 
 <h4>Friend</h4>
 
-<img src="https://user-images.githubusercontent.com/82102170/224714608-ac49621f-c28f-4266-8af8-715f4b9f2367.png" alt="friend">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251989666-8f918786-e632-451d-be29-f92d2c681b80.png" alt="friend">
 
 <h3>World</h3>
 
 <table>
   <tr>
-    <td align="center"><img src="https://user-images.githubusercontent.com/82102170/224715566-67782a5e-f948-402b-b78d-1b2dd5e2382f.png" alt="instance"></td>
-    <td align="center"><img src="https://user-images.githubusercontent.com/82102170/224715824-c0c4220e-4f20-4799-8419-f8138de35b7a.png" alt="info"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251991003-37a986bb-470c-442b-8ada-31918f7b2017.png" alt="instance"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251991217-0d40846f-ac08-48c0-8e4d-18c35fe0999b.png" alt="info"></td>
   </tr>
 </table>
 
@@ -101,23 +101,23 @@ Download and run the latest installer (`VRCX_Setup.exe`) from [here](https://git
 
 <h4>Friend</h4>
 
-<img src="https://user-images.githubusercontent.com/82102170/224716414-5c6720bd-6d38-4e2d-9353-6bfaee47700e.png" alt="friend">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251992424-ba406d0f-787e-4e2d-89bd-4caa0a05d31f.png" alt="friend">
 
 <h4>World</h4>
 
-<img src="https://user-images.githubusercontent.com/82102170/224716652-ca54f3d1-449b-43f9-81f3-7bd0833c7d9d.png" alt="world">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251992950-8f2c6cdc-dc9a-4a60-b59f-9fa80d071359.png" alt="world">
 
 <h4>Avatar</h4>
 
-<img src="https://user-images.githubusercontent.com/82102170/224717146-37681b38-61ef-4302-8104-212c2161dc12.png" alt="avatar">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251993408-66d11100-15a8-484f-b9fd-82be1516c9be.png" alt="avatar">
 
 <h3>Friend Log</h3>
 
-<img src="https://user-images.githubusercontent.com/82102170/224717793-dbbccdfd-4f89-4597-b38e-8070549b2cf8.png" alt="friendlog">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251993741-e2033095-4ceb-4552-8b79-9285325c1e49.png" alt="friendlog">
 
 <h3>Discord Rich Presence</h3>
 
-<img src="https://user-images.githubusercontent.com/82102170/224725991-3fc81a3d-ca15-4dcb-a057-d713803bd666.png" alt="discord">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251997318-5a71249c-59fc-4ad6-9194-d6b1d4165600.png" alt="discord">
 
 <!-- The other images will be similar to this -->
 </div>
