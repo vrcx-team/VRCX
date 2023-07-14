@@ -1111,7 +1111,8 @@
             "emojis": "絵文字",
             "refresh": "更新",
             "upload": "アップロード",
-            "clear": "消去"
+            "clear": "消去",
+            "emoji_animation_styles": "アニメーションスタイル"
         },
         "change_content_image": {
             "avatar": "アバターの画像を変更",
