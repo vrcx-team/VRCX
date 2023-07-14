@@ -61,7 +61,7 @@
             },
             "avatar": {
                 "header": "アバター",
-                "search_provider": "Search Provider",
+                "search_provider": "検索プロバイダー",
                 "refresh_tooltip": "自分のアバターを更新",
                 "result_count": "結果: {count}",
                 "all": "全て",
@@ -92,6 +92,8 @@
             "avatars": {
                 "header": "アバター"
             },
+            "bulk_unfavorite_mode": "一括お気に入り解除モード",
+            "bulk_unfavorite_selection": "お気に入り解除する",
             "refresh_tooltip": "全てのお気に入りを更新",
             "export": "エクスポート",
             "import": "インポート",
@@ -121,7 +123,7 @@
             "bulk_unfriend": "一括フレンド解除モード",
             "bulk_unfriend_selection": "フレンド解除",
             "load": "不足するエントリを読み込む",
-            "load_notice": "大量にAPIリクエストを送信する為、頻繁に使用しないでください",
+            "load_notice": "大量にAPIリクエストを送信するため、頻繁に使用しないでください",
             "load_tooltip": "読み込む",
             "favorites_only_tooltip": "お気に入りのみ",
             "search_placeholder": "検索",
@@ -208,6 +210,17 @@
                 "game_log": {
                     "header": "ゲームログ",
                     "resource_load": "Udonのリソース負荷を記録"
+                },
+                "automation": {
+                    "header": "オートメーション",
+                    "auto_state_change": "自動ステータス変更",
+                    "auto_state_change_tooltip": "自身のいるインスタンスに他のプレイヤーがいる場合、自動的にステータスを変更します。 (1人/複数人)",
+                    "auto_state_change_off": "無効",
+                    "auto_state_change_active_or_ask_me": "Active / Ask Me",
+                    "auto_state_change_active_or_busy": "Active / Busy",
+                    "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
+                    "auto_state_change_join_me_or_busy": "Join Me / Busy",
+                    "auto_state_change_ask_me_or_busy": "Ask Me / Busy"
                 },
                 "legal_notice": {
                     "header": "法律上の注意事項",
@@ -348,7 +361,7 @@
                     "header": "Discord Presence",
                     "description": "* VRChatが起動している時しか動作しません。",
                     "enable": "有効化",
-                    "enable_tooltip": "競合を防ぐ為、VRChatのconfig.jsonでDiscord Rich Presenceを無効化する事を推奨します。",
+                    "enable_tooltip": "競合を防ぐため、VRChatのconfig.jsonでDiscord Rich Presenceを無効化することを推奨します。",
                     "instance_type_player_count": "インスタンス詳細/プレイヤー数",
                     "join_button": "Joinボタン (Publicのみ)",
                     "hide_details_in_private": "Privateでは詳細を表示しない",
@@ -425,6 +438,7 @@
                         "avatar_cache": "アバターキャッシュ:",
                         "group_cache": "グループキャッシュ:",
                         "avatar_name_cache": "アバター名キャッシュ:",
+                        "instance_cache": "インスタンスキャッシュ:",
                         "clear_cache": "キャッシュを消去",
                         "auto_clear_cache": "キャッシュの自動消去",
                         "download_history": "ダウンロード履歴",
@@ -543,6 +557,10 @@
                 "launch_invite_tooltip": "起動/招待",
                 "self_invite_tooltip": "自分を招待",
                 "refresh_user_count_tooltip": "ユーザー数を更新",
+                "instance_queue": "待機列:",
+                "instance_users": "ユーザー数:",
+                "instance_game_version": "ゲームバージョン:",
+                "instance_queuing_enabled": "待機列使用可能",
                 "instance_creator": "インスタンス作成者",
                 "note": "ノート (VRChat)",
                 "note_placeholder": "クリックしてノートを追加",
@@ -602,6 +620,7 @@
             "tags": {
                 "public": "Public",
                 "private": "Private",
+                "avatar_scaling_disabled": "Avatar Scaling 使用不可",
                 "labs": "ラボ",
                 "cache": "キャッシュ"
             },
@@ -637,6 +656,8 @@
             },
             "info": {
                 "header": "情報",
+                "memo": "メモ",
+                "memo_placeholder": "クリックしてメモを追加",
                 "id": "ワールドID",
                 "id_tooltip": "クリップボードにコピー",
                 "copy_id": "IDをコピー",
@@ -777,10 +798,13 @@
                 "filters": {
                     "everyone": "全員",
                     "users_with_no_role": "ロール無しユーザー"
-                }
+                },
+                "unsubscribed_announcements": "Unsubscribed from announcements",
+                "visibility": "Visibility:",
+                "representing": "Representing"
             },
             "gallery": {
-                "header": "ギャラリー"
+                "header": "写真"
             },
             "json": {
                 "header": "JSON"
@@ -893,6 +917,7 @@
         },
         "set_world_tags": {
             "header": "ワールドのタグを設定",
+            "avatar_scaling_disabled": "Avatar Scalingを無効化",
             "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
             "seprator": "タグをコンマ区切りで入力してください",
             "cancel": "キャンセル",
@@ -1083,6 +1108,7 @@
             "description": "推奨画像サイズ: 1200x900",
             "gallery": "ギャラリー",
             "icons": "アイコン",
+            "emojis": "絵文字",
             "refresh": "更新",
             "upload": "アップロード",
             "clear": "消去"
