@@ -74,7 +74,10 @@
                 "sort_created": "Trier par date de création"
             },
             "prev_page": "Précédent",
-            "next_page": "Suivant"
+            "next_page": "Suivant",
+            "group": {
+                "header": "Groupe"
+            }
         },
         "favorite": {
             "friends": {
@@ -97,7 +100,9 @@
             "visibility_tooltip": "Changer la visibilité",
             "rename_tooltip": "Renommer",
             "clear_tooltip": "Vider",
-            "delete_tooltip": "Supprimer"
+            "delete_tooltip": "Supprimer",
+            "bulk_unfavorite_mode": "Mode groupée de suppression des favoris",
+            "bulk_unfavorite_selection": "Sélection groupée des favoris"
         },
         "friend_log": {
             "filter_placeholder": "Filtrer",
@@ -137,7 +142,7 @@
                 "logout": "Se déconnecter",
                 "export_friend_list": "Exporter la liste d'amis",
                 "export_own_avatars": "Exporter ses propres avatars",
-                "discord_names": "Noms Discord",
+                "discord_names": "Pseudonymes Discord",
                 "export_notes": "Exporter des notes"
             },
             "game_info": {
@@ -187,11 +192,11 @@
                     "support": "Soutien"
                 },
                 "vrcx_updater": {
-                    "header": "Updater de VRCX",
+                    "header": "Mise à jour de VRCX",
                     "change_build": "Changer de build",
                     "auto_update": "Mise à jour automatique",
                     "auto_update_off": "Arrêté",
-                    "auto_update_notify": "Informer",
+                    "auto_update_notify": "Me demander",
                     "auto_update_download": "Téléchargement automatique",
                     "auto_update_install": "Installation automatique",
                     "change_log": "Journal des modifications"
@@ -227,11 +232,14 @@
                     "sort_favorite_by": "Trier les favoris par",
                     "sort_favorite_by_name": "nom",
                     "sort_favorite_by_date": "date",
-                    "sort_instance_users_by": "Trier les utilisateurs dans les instanceq par",
+                    "sort_instance_users_by": "Trier les utilisateurs dans les instances par",
                     "sort_instance_users_by_time": "temps",
                     "sort_instance_users_by_alphabet": "alphabétique",
                     "table_max_size": "Taille maximale du tableau",
-                    "page_size": "Taille de page :"
+                    "page_size": "Taille de page :",
+                    "theme_mode_darkvanilla": "Vanilla Noire",
+                    "theme_mode_pink": "Rose",
+                    "theme_mode_material3": "Matériel 3"
                 },
                 "timedate": {
                     "header": "Date et heure",
@@ -244,7 +252,7 @@
                     "header": "Panneau latéral",
                     "sorting": {
                         "header": "Tri",
-                        "sort_private_to_bottom": "Trier les privé vers le bas",
+                        "sort_private_to_bottom": "Trier les privés vers le bas",
                         "sort_by_status": "Trier par statut",
                         "sort_gps_to_top": "Trier les GPS vers le haut",
                         "sort_gps_to_top_notice": "(seulement en ligne)",
@@ -315,8 +323,8 @@
                 "steamvr_wrist_overlay": {
                     "header": "Overlay SteamVR au poignet",
                     "description": "* S'exécute automatiquement lorsque VRChat est en cours d'exécution.",
-                    "grip": "Maintien : Poignée pour manettes Vive ou autres, boutons Oculus X/A",
-                    "menu": "Menu : Menu Vive, Index B, Boutons Y/B Oculus",
+                    "grip": "Maintien : Grab pour les manettes Vive ou autres et boutons X/A pour les manettes Oculus",
+                    "menu": "Menu : Menu pour les manettes Vive, boutons B  pour les manettes d'Index et boutons Y/B pour les manettes Oculus",
                     "steamvr_overlay": "Overlay SteamVR",
                     "wrist_feed_overlay": "Overlay d'actualité au poignet",
                     "hide_private_worlds": "Cacher les mondes privés",
@@ -414,13 +422,15 @@
                         "disable_gamelog_notice": "(ce qui risque de tout casser)",
                         "user_cache": "Cache utilisateur :",
                         "world_cache": "Cache de monde :",
-                        "avatar_cache": "Cache avatar :",
+                        "avatar_cache": "Cache d'avatar :",
                         "group_cache": "Cache de groupe :",
                         "avatar_name_cache": "Cache du nom de l'avatar :",
                         "clear_cache": "Vider le cache",
                         "auto_clear_cache": "Vidage automatique du cache",
                         "download_history": "Télécharger l'historique",
-                        "show_console": "Afficher la console"
+                        "show_console": "Afficher la console",
+                        "gpu_fix_notice": "(nécessite un redémarrage)",
+                        "gpu_fix_warning": "N'activez cette option que si l'Overlay SteamVR ne fonctionne pas et que vous avez 2 GPU"
                     },
                     "sqlite_table_size": {
                         "header": "Taille du tableau SQLite",
@@ -452,7 +462,7 @@
                         "message_timeout": "Délai d'attente des messages"
                     },
                     "timeout_hud": {
-                        "header": "User Timeout HUD",
+                        "header": "HUD de temporisation utilisateur",
                         "enable": "Activé",
                         "enable_tooltip": "Nécessite l'activation de l'Overlay SteamVR",
                         "filter": "Filtrer",
@@ -478,7 +488,8 @@
         "online": "EN LIGNE",
         "active": "ACTIF",
         "offline": "HORS LIGNE",
-        "pending_offline": "En attendant l'hors ligne"
+        "pending_offline": "En attendant l'hors ligne",
+        "groups": "GROUPES"
     },
     "dialog": {
         "user": {
@@ -503,7 +514,7 @@
                 "invite": "Inviter",
                 "invite_with_message": "Inviter avec un message",
                 "request_invite": "Demander une invitation",
-                "request_invite_with_message": "Demander une invitation avec un messag",
+                "request_invite_with_message": "Demander une invitation avec un message",
                 "invite_to_group": "Inviter à un groupe",
                 "manage_gallery_icon": "Gérer la galerie et les icônes",
                 "accept_friend_request": "Accepter la demande d'ami",
@@ -533,19 +544,18 @@
                 "header": "Infos",
                 "launch_invite_tooltip": "Lancer / inviter",
                 "self_invite_tooltip": "S'inviter",
-                "refresh_user_count_tooltip": "Actualiser le nombre d'utilisateurs",
                 "instance_creator": "Créateur de l'instance",
                 "note": "Note",
                 "note_placeholder": "Cliquez pour ajouter une note",
-                "memo": "Memo",
-                "memo_placeholder": "Cliquez pour ajouter un memo",
+                "memo": "Mémo",
+                "memo_placeholder": "Cliquez pour ajouter un mémo",
                 "avatar_info": "Informations de l'avatar",
                 "avatar_info_last_seen": "Informations sur l'avatar vu la dernière fois",
                 "represented_group": "Groupe représenté",
                 "bio": "Bio",
-                "last_seen": "Ensemble la dernière fois",
-                "join_count": "Nombre de fois ensemble",
-                "time_together": "Le temps passé ensemble",
+                "last_seen": "Ensemble (date)",
+                "join_count": "Ensemble (nombre)",
+                "time_together": "Ensemble (temps)",
                 "online_for": "En ligne depuis",
                 "offline_for": "Hors ligne depuis",
                 "last_activity": "Dernière activité",
@@ -558,7 +568,12 @@
                 "avatar_cloning_deny": "Refusé",
                 "home_location": "Lieu d'accueil",
                 "accuracy_notice": "Les informations provenant de la base de données locale peuvent ne pas être exactes",
-                "instance_full": "complète"
+                "instance_full": "Complète",
+                "refresh_instance_info": "Actualiser les informations sur l'instance",
+                "instance_queue": "File d'attente :",
+                "instance_users": "Utilisateurs :",
+                "instance_game_version": "Version du jeu :",
+                "instance_queuing_enabled": "File d'attente activée"
             },
             "groups": {
                 "header": "Groupes",
@@ -594,7 +609,8 @@
                 "public": "Public",
                 "private": "Privé",
                 "labs": "Labs",
-                "cache": "Cache"
+                "cache": "Cache",
+                "avatar_scaling": "Taille de l'Avatar"
             },
             "actions": {
                 "delete_cache_tooltip": "Supprimer le monde du cache",
@@ -622,9 +638,9 @@
                 "private_count": "{count} en privé",
                 "capacity_count": "Capacité : {count} ({max})",
                 "self_invite_tooltip": "S'inviter",
-                "refresh_user_count_tooltip": "Actualiser le nombre d'utilisateurs",
-                "instance_full": "complète",
-                "instance_creator": "Créateur de l'instance"
+                "instance_full": "Complète",
+                "instance_creator": "Créateur de l'instance",
+                "refresh_instance_info": "Actualiser les informations sur l'instance"
             },
             "info": {
                 "header": "Infos",
@@ -647,7 +663,9 @@
                 "last_visited": "Dernière visite",
                 "visit_count": "Nombre de visites",
                 "time_spent": "Temps passé",
-                "accuracy_notice": "Les informations provenant de la base de données locale peuvent ne pas être exactes"
+                "accuracy_notice": "Les informations provenant de la base de données locale peuvent ne pas être exactes",
+                "memo": "Mémo",
+                "memo_placeholder": "Cliquez pour ajouter un mémo"
             },
             "json": {
                 "header": "JSON"
@@ -695,7 +713,8 @@
                 "platform": "Plateforme"
             },
             "json": {
-                "header": "JSON"
+                "header": "JSON",
+                "file_analysis": "Analyse de fichier"
             }
         },
         "group": {
@@ -704,7 +723,7 @@
                 "public": "Public",
                 "private": "Privé",
                 "open": "Ouvert",
-                "request": "Demandé",
+                "request": "Rejoindre par demande",
                 "invite": "Invité",
                 "closed": "Fermé",
                 "joined": "Rejoint",
@@ -734,7 +753,7 @@
             "info": {
                 "header": "Infos",
                 "announcement": "Annonces",
-                "instance_full": "complet",
+                "instance_full": "Complet",
                 "rules": "Régles",
                 "members": "Membres",
                 "created_at": "Créé le",
@@ -749,7 +768,8 @@
                 "role_description": "Description :",
                 "role_updated_at": "Mis à jour le :",
                 "role_created_at": "Créé le :",
-                "role_permissions": "Permissions :"
+                "role_permissions": "Permissions :",
+                "instances": "Instances"
             },
             "members": {
                 "header": "Membres",
@@ -790,7 +810,7 @@
             "header": "Statut social",
             "history": "Historique",
             "status_placeholder": "Statut",
-            "update": "Mise à jour"
+            "update": "Mettre à jour"
         },
         "language": {
             "header": "Language",
@@ -803,7 +823,7 @@
             "header": "Bio",
             "bio_placeholder": "Veuillez saisir une biographie",
             "add_link": "Ajouter un lien",
-            "update": "Mise à jour"
+            "update": "Mettre à jour"
         },
         "new_instance": {
             "header": "Nouvelle instance",
@@ -830,12 +850,23 @@
             "copy_url": "Copier l'URL",
             "self_invite": "S'inviter",
             "invite": "Inviter",
-            "launch": "Lancer"
+            "launch": "Lancer",
+            "group_access_type": "Accès de groupe",
+            "group_access_type_members": "Membres",
+            "group_access_type_plus": "Plus",
+            "group_access_type_public": "Publique",
+            "group_placeholder": "Choisissez le groupe",
+            "role_placeholder": "Choisissez des rôles",
+            "create_instance": "Créer une instance",
+            "queueEnabled": "File d'attente",
+            "normal": "Normal",
+            "group": "Groupe",
+            "roles": "Rôles"
         },
         "launch_options": {
             "header": "Options de démarrage de VRChat",
             "description": "Ces options sont réservées aux utilisateurs avancés.",
-            "example": "Pour modifier le nombre d'images par seconde maximum : --fps=<N> par exemple)",
+            "example": "(Pour modifier le nombre d'images par seconde maximum : --fps=<N> par exemple)",
             "path_override": "Remplacement du chemin d'accès à VRChat",
             "vrchat_docs": "Documentation de VRChat",
             "unity_manual": "Documentation d'Unity",
@@ -874,7 +905,8 @@
             "enable_debugging": "Activer le débogage du monde pour les autres",
             "seprator": "Saisir les étiquettes en les séparant par des virgules",
             "cancel": "Annuler",
-            "save": "Sauvegarder"
+            "save": "Sauvegarder",
+            "avatar_scaling": "Taille d'avatar"
         },
         "download_history": {
             "header": "Télécharger l'historique",
@@ -884,7 +916,7 @@
             "close": "Fermer"
         },
         "vrcx_updater": {
-            "header": "VRCX Updater",
+            "header": "Mise à jour de VRCX",
             "latest_version": "VRCX est à jour.",
             "ready_for_update": "Prêt pour l'installation, redémarrer VRCX pour l'appliquer.",
             "download": "Télécharger",
@@ -903,7 +935,9 @@
             "launch": "Lancer"
         },
         "export_friends_list": {
-            "header": "Exporter la liste d'amis"
+            "header": "Exporter la liste d'amis",
+            "csv": "CSV",
+            "json": "JSON"
         },
         "export_own_avatars": {
             "header": "Exporter ses propres avatars"
@@ -1061,7 +1095,8 @@
             "icons": "Icônes",
             "refresh": "Actualiser",
             "upload": "Uploader",
-            "clear": "Vider"
+            "clear": "Vider",
+            "emojis": "Émojis"
         },
         "change_content_image": {
             "avatar": "Changer l'image de l'avatar",

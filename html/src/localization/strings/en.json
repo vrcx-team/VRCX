@@ -881,7 +881,7 @@
         "launch_options": {
             "header": "VRChat Launch Options",
             "description": "These options are for advanced users only.",
-            "example": "to change max fps: --fps=<N> e.g.)",
+            "example": "(to change max fps: --fps=<N> e.g.)",
             "path_override": "VRChat Path Override",
             "vrchat_docs": "VRChat Docs",
             "unity_manual": "Unity Manual",
