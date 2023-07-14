@@ -799,9 +799,9 @@
                     "everyone": "全員",
                     "users_with_no_role": "ロール無しユーザー"
                 },
-                "unsubscribed_announcements": "Unsubscribed from announcements",
-                "visibility": "Visibility:",
-                "representing": "Representing"
+                "unsubscribed_announcements": "お知らせ受信停止中",
+                "visibility": "可視性:",
+                "representing": "代表中"
             },
             "gallery": {
                 "header": "写真"
