@@ -208,10 +208,10 @@ html
                     div(style="display:flex")
                         el-popover(v-if="userDialog.ref.profilePicOverride" placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="userDialog.ref.profilePicOverride" style="flex:none;height:120px;width:213.33px;border-radius:4px;object-fit:cover")
-                            img.x-link(v-lazy="userDialog.ref.profilePicOverride" style="height:400px" @click="downloadAndSaveImage(userDialog.ref.profilePicOverride)")
+                            img.x-link(v-lazy="userDialog.ref.profilePicOverride" style="height:400px" @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)")
                         el-popover(v-else placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="flex:none;height:120px;width:160px;border-radius:4px;object-fit:cover")
-                            img.x-link(v-lazy="userDialog.ref.currentAvatarImageUrl" style="height:500px" @click="downloadAndSaveImage(userDialog.ref.currentAvatarImageUrl)")
+                            img.x-link(v-lazy="userDialog.ref.currentAvatarImageUrl" style="height:500px" @click="showFullscreenImageDialog(userDialog.ref.currentAvatarImageUrl)")
                         div(style="flex:1;display:flex;align-items:center;margin-left:15px")
                             div(style="flex:1")
                                 div
@@ -258,7 +258,7 @@ html
                             div(v-if="userDialog.ref.userIcon" style="flex:none;margin-right:10px")
                                 el-popover(placement="right" width="500px" trigger="click")
                                     img.x-link(slot="reference" v-lazy="userDialog.ref.userIcon" style="flex:none;width:120px;height:120px;border-radius:4px;object-fit:cover")
-                                    img.x-link(v-lazy="userDialog.ref.userIcon" style="height:500px" @click="downloadAndSaveImage(userDialog.ref.userIcon)")
+                                    img.x-link(v-lazy="userDialog.ref.userIcon" style="height:500px" @click="showFullscreenImageDialog(userDialog.ref.userIcon)")
                             div(style="flex:none")
                                 template(v-if="(API.currentUser.id !== userDialog.ref.id && userDialog.isFriend) || userDialog.isFavorite")
                                     el-tooltip(v-if="userDialog.isFavorite" placement="top" :content="$t('dialog.user.actions.unfavorite_tooltip')" :disabled="hideTooltips")
@@ -369,7 +369,7 @@ html
                                             div(style="display:inline-block;flex:none;margin-right:5px")
                                                 el-popover(placement="right" width="500px" trigger="click")
                                                     img.x-link(slot="reference" v-lazy="userDialog.representedGroup.iconUrl" style="flex:none;width:60px;height:60px;border-radius:4px;object-fit:cover")
-                                                    img.x-link(v-lazy="userDialog.representedGroup.iconUrl" style="height:500px" @click="downloadAndSaveImage(userDialog.representedGroup.iconUrl)")
+                                                    img.x-link(v-lazy="userDialog.representedGroup.iconUrl" style="height:500px" @click="showFullscreenImageDialog(userDialog.representedGroup.iconUrl)")
                                             span(style="vertical-align:top;cursor:pointer" @click="showGroupDialog(userDialog.representedGroup.groupId)")
                                                 span(v-if="userDialog.representedGroup.ownerId === userDialog.id" style="margin-right:5px") 👑
                                                 span(v-text="userDialog.representedGroup.name" style="margin-right:5px")
@@ -555,7 +555,7 @@ html
                     div(style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="worldDialog.ref.thumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                            img.x-link(v-lazy="worldDialog.ref.imageUrl" style="width:500px;height:375px" @click="downloadAndSaveImage(worldDialog.ref.imageUrl)")
+                            img.x-link(v-lazy="worldDialog.ref.imageUrl" style="width:500px;height:375px" @click="showFullscreenImageDialog(worldDialog.ref.imageUrl)")
                         div(style="flex:1;display:flex;align-items:center;margin-left:15px")
                             div(style="flex:1")
                                 div
@@ -735,7 +735,7 @@ html
                     div(style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="avatarDialog.ref.thumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
-                            img.x-link(v-lazy="avatarDialog.ref.imageUrl" style="width:500px;height:375px" @click="downloadAndSaveImage(avatarDialog.ref.imageUrl)")
+                            img.x-link(v-lazy="avatarDialog.ref.imageUrl" style="width:500px;height:375px" @click="showFullscreenImageDialog(avatarDialog.ref.imageUrl)")
                         div(style="flex:1;display:flex;align-items:center;margin-left:15px")
                             div(style="flex:1")
                                 div
@@ -828,12 +828,12 @@ html
                 .group-banner-image
                     el-popover(placement="right" width="500px" trigger="click")
                         img.x-link(slot="reference" v-lazy="groupDialog.ref.bannerUrl" style="flex:none;width:100%;aspect-ratio:6/1;object-fit:cover;border-radius:4px")
-                        img.x-link(v-lazy="groupDialog.ref.bannerUrl" style="width:854px;height:480px" @click="downloadAndSaveImage(groupDialog.ref.bannerUrl)")
+                        img.x-link(v-lazy="groupDialog.ref.bannerUrl" style="width:854px;height:480px" @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)")
                 .group-body(v-loading="groupDialog.loading")
                     div(style="display:flex")
                         el-popover(placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="groupDialog.ref.iconUrl" style="flex:none;width:120px;height:120px;border-radius:4px")
-                            img.x-link(v-lazy="groupDialog.ref.iconUrl" style="width:500px;height:500px" @click="downloadAndSaveImage(groupDialog.ref.iconUrl)")
+                            img.x-link(v-lazy="groupDialog.ref.iconUrl" style="width:500px;height:500px" @click="showFullscreenImageDialog(groupDialog.ref.iconUrl)")
                         div(style="flex:1;display:flex;align-items:center;margin-left:15px")
                             .group-header(style="flex:1")
                                 span(v-if="groupDialog.ref.ownerId === API.currentUser.id" style="margin-right:5px") 👑
@@ -909,7 +909,7 @@ html
                             .group-banner-image-info
                                 el-popover(placement="right" width="500px" trigger="click")
                                     img.x-link(slot="reference" v-lazy="groupDialog.ref.bannerUrl" style="flex:none;width:100%;aspect-ratio:6/1;object-fit:cover;border-radius:4px")
-                                    img.x-link(v-lazy="groupDialog.ref.bannerUrl" style="width:854px;height:480px" @click="downloadAndSaveImage(groupDialog.ref.bannerUrl)")
+                                    img.x-link(v-lazy="groupDialog.ref.bannerUrl" style="width:854px;height:480px" @click="showFullscreenImageDialog(groupDialog.ref.bannerUrl)")
                             .x-friend-list(style="max-height:none")
                                 span(v-if="groupDialog.instances.length" style="font-size:12px;font-weight:bold;margin:5px") {{ $t('dialog.group.info.instances') }}
                                 div(v-for="room in groupDialog.instances" :key="room.tag" style="width:100%")
@@ -938,7 +938,7 @@ html
                                         div(v-if="groupDialog.announcement.imageUrl" style="display:inline-block;margin-right:5px")
                                             el-popover(placement="right" width="500px" trigger="click")
                                                 img.x-link(slot="reference" v-lazy="groupDialog.announcement.imageUrl" style="flex:none;width:60px;height:60px;border-radius:4px;object-fit:cover")
-                                                img.x-link(v-lazy="groupDialog.announcement.imageUrl" style="height:500px" @click="downloadAndSaveImage(groupDialog.announcement.imageUrl)")
+                                                img.x-link(v-lazy="groupDialog.announcement.imageUrl" style="height:500px" @click="showFullscreenImageDialog(groupDialog.announcement.imageUrl)")
                                         pre.extra(style="display:inline-block;vertical-align:top;font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0") {{ groupDialog.announcement.text || '-' }}
                                         br
                                         .extra(v-if="groupDialog.announcement.id" style="float:right;margin-left:5px")
@@ -1065,7 +1065,7 @@ html
                                             el-carousel-item(v-for="image in groupDialog.galleries[gallery.id]" :key="image.id")
                                                 el-popover(placement="top" width="700px" trigger="click")
                                                     img.x-link(slot="reference" v-lazy="image.imageUrl" style="width:100%;height:100%;object-fit:contain")
-                                                    img.x-link(v-lazy="image.imageUrl" style="height:700px" @click="downloadAndSaveImage(image.imageUrl)")
+                                                    img.x-link(v-lazy="image.imageUrl" style="height:700px" @click="showFullscreenImageDialog(image.imageUrl)")
                         el-tab-pane(:label="$t('dialog.group.json.header')")
                             el-button(type="default" @click="refreshGroupDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
                             el-button(type="default" @click="downloadAndSaveJson(groupDialog.id, groupDialog.ref)" size="mini" icon="el-icon-download" circle style="margin-left:5px")
@@ -2080,7 +2080,7 @@ html
                     div(style="display:inline-block" v-for="image in previousImagesTable" :key="image.version" v-if="image.file")
                         el-popover.x-change-image-item(placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="image.file.url")
-                            img.x-link(v-lazy="image.file.url" style="width:500px;height:375px" @click="downloadAndSaveImage(image.file.url)")
+                            img.x-link(v-lazy="image.file.url" style="width:500px;height:375px" @click="showFullscreenImageDialog(image.file.url)")
 
             //- dialog: Gallery/VRCPlusIcons
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="galleryDialog" :visible.sync="galleryDialogVisible" :title="$t('dialog.gallery_icons.header')" width="100%")
@@ -2101,7 +2101,7 @@ html
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setProfilePicOverride(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentProfilePic(image.id) }")
                                 img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="float:right;margin-top:5px")
-                                el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
+                                el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteGalleryImage(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.icons') }}
@@ -2116,7 +2116,7 @@ html
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="setVRCPlusIcon(image.id)" :class="{ 'current-vrcplus-icon': compareCurrentVRCPlusIcon(image.id) }")
                                 img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="float:right;margin-top:5px")
-                                el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
+                                el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
@@ -2139,7 +2139,7 @@ html
                             div(style="display:inline-block;margin:5px")
                                 span {{ image.animationStyle }}
                             div(style="float:right;margin-top:5px")
-                                el-button(type="default" @click="downloadAndSaveImage(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
+                                el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteEmoji(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
 
             //- dialog Table: Previous Instances User
@@ -2266,7 +2266,7 @@ html
                         template(v-once #default="scope")
                             el-popover(placement="right" height="500px" trigger="hover")
                                 img.friends-list-avatar(slot="reference" v-lazy="scope.row.thumbnailImageUrl")
-                                img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(scope.row.imageUrl)")
+                                img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="showFullscreenImageDialog(scope.row.imageUrl)")
                     el-table-column(:label="$t('table.import.name')" prop="name")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.name" @click="showWorldDialog(scope.row.id)")
@@ -2325,7 +2325,7 @@ html
                         template(v-once #default="scope")
                             el-popover(placement="right" height="500px" trigger="hover")
                                 img.friends-list-avatar(slot="reference" v-lazy="scope.row.thumbnailImageUrl")
-                                img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(scope.row.imageUrl)")
+                                img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="showFullscreenImageDialog(scope.row.imageUrl)")
                     el-table-column(:label="$t('table.import.name')" prop="name")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.name" @click="showAvatarDialog(scope.row.id)")
@@ -2384,7 +2384,7 @@ html
                         template(v-once #default="scope")
                             el-popover(placement="right" height="500px" trigger="hover")
                                 img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row)")
-                                img.friends-list-avatar(v-lazy="userImageFull(scope.row)" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(userImageFull(scope.row))")
+                                img.friends-list-avatar(v-lazy="userImageFull(scope.row)" style="height:500px;cursor:pointer" @click="showFullscreenImageDialog(userImageFull(scope.row))")
                     el-table-column(:label="$t('table.import.name')" prop="displayName")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.displayName" @click="showUserDialog(scope.row.id)")
@@ -2416,7 +2416,7 @@ html
                         template(v-once #default="scope")
                             el-popover(placement="right" height="500px" trigger="hover")
                                 img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row.ref)")
-                                img.friends-list-avatar(v-lazy="userImageFull(scope.row.ref)" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(userImageFull(scope.row.ref))")
+                                img.friends-list-avatar(v-lazy="userImageFull(scope.row.ref)" style="height:500px;cursor:pointer" @click="showFullscreenImageDialog(userImageFull(scope.row.ref))")
                     el-table-column(:label="$t('table.import.name')" width="170" prop="name")
                         template(v-once #default="scope")
                             span.x-link(v-text="scope.row.name" @click="showUserDialog(scope.row.id)")
@@ -2572,6 +2572,12 @@ html
                     .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in galleryTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                         .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" @click="selectImageGallerySelect(image.versions[image.versions.length - 1].file.url, image.id)")
                             img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
+
+            //- dialog: full screen image
+            el-dialog.x-dialog(ref="fullscreenImageDialog" :before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="fullscreenImageDialog.visible" top="5vh" width="90vw")
+                el-button(@click="copyImageUrl(fullscreenImageDialog.imageUrl)" size="mini" icon="el-icon-s-order" circle)
+                el-button(type="default" size="mini" icon="el-icon-download" circle @click="downloadAndSaveImage(fullscreenImageDialog.imageUrl)" style="margin-left:5px")
+                img(v-lazy="fullscreenImageDialog.imageUrl" style="width:100%;height:80vh;object-fit:contain")
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" :title="$t('dialog.open_source.header')" width="650px")

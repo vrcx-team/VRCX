@@ -19200,6 +19200,14 @@ speechSynthesis.getVoices();
         this.copyToClipboard(groupUrl);
     };
 
+    $app.methods.copyImageUrl = function (imageUrl) {
+        this.$message({
+            message: 'ImageUrl copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(imageUrl);
+    };
+
     $app.methods.copyText = function (text) {
         this.$message({
             message: 'Text copied to clipboard',
@@ -27352,6 +27360,24 @@ speechSynthesis.getVoices();
     };
 
     // #endregion
+    // #region | Dialog: fullscreen image
+
+    $app.data.fullscreenImageDialog = {
+        visible: false,
+        imageUrl: ''
+    };
+
+    $app.methods.showFullscreenImageDialog = function (imageUrl) {
+        if (!imageUrl) {
+            return;
+        }
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.fullscreenImageDialog.$el)
+        );
+        var D = this.fullscreenImageDialog;
+        D.imageUrl = imageUrl;
+        D.visible = true;
+    };
 
     $app = new Vue($app);
     window.$app = $app;
