@@ -572,7 +572,7 @@ html
                                     el-tag.x-tag-platform-ios(v-if="worldDialog.isIos" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
                                     el-tag(v-if="worldDialog.avatarScalingDisabled" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
                                     el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px;margin-top:5px")
-                                    el-tag(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px" @click="openFolderGeneric(worldDialog.cachePath)")
+                                    el-tag.x-link(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px" @click="openFolderGeneric(worldDialog.cachePath)")
                                         span(v-text="worldDialog.cacheSize")
                                         |  {{ $t('dialog.world.tags.cache')}}
                                 div(style="margin-top:5px")
@@ -747,7 +747,7 @@ html
                                     el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.private') }}
                                     el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.fallback') }}
                                     el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-right:5px")
-                                    el-tag(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini")
+                                    el-tag.x-link(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini" @click="openFolderGeneric(avatarDialog.cachePath)")
                                         span(v-text="avatarDialog.cacheSize")
                                         |  {{ $t('dialog.avatar.tags.cache') }}
                                 div(style="margin-top:5px")

@@ -83,27 +83,25 @@ namespace VRCX
         /// </summary>
         /// <param name="id">The ID of the asset bundle.</param>
         /// <param name="version">The version of the asset bundle.</param>
-        /// <returns>An array containing the file size and lock status of the asset bundle.</returns>
-        public long[] CheckVRChatCache(string id, int version)
+        /// <returns>A Tuple containing the file size, lock status and path of the asset bundle.</returns>
+        public Tuple<long, bool, string> CheckVRChatCache(string id, int version)
         {
-            long FileSize = -1;
-            long IsLocked = 0;
-            var FullLocation = GetVRChatCacheFullLocation(id, version);
-            var FileLocation = Path.Combine(FullLocation, "__data");
-            if (File.Exists(FileLocation))
+            long fileSize = -1;
+            var isLocked = false;
+            var fullLocation = GetVRChatCacheFullLocation(id, version);
+            var fileLocation = Path.Combine(fullLocation, "__data");
+            var cachePath = string.Empty;
+            if (File.Exists(fileLocation))
             {
-                FileInfo data = new FileInfo(FileLocation);
-                FileSize = data.Length;
+                cachePath = fullLocation;
+                FileInfo data = new FileInfo(fileLocation);
+                fileSize = data.Length;
             }
-            if (File.Exists(Path.Combine(FullLocation, "__lock")))
+            if (File.Exists(Path.Combine(fullLocation, "__lock")))
             {
-                IsLocked = 1;
+                isLocked = true;
             }
-            return new long[]
-            {
-                FileSize,
-                IsLocked
-            };
+            return new Tuple<long, bool, string>(fileSize, isLocked, cachePath);
         }
 
         // old asset bundle cacher downloader method reused for updating, it's not pretty
