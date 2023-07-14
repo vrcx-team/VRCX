@@ -123,7 +123,7 @@
             "bulk_unfriend": "一括フレンド解除モード",
             "bulk_unfriend_selection": "フレンド解除",
             "load": "不足するエントリを読み込む",
-            "load_notice": "大量にAPIリクエストを送信する為、頻繁に使用しないでください",
+            "load_notice": "大量にAPIリクエストを送信するため、頻繁に使用しないでください",
             "load_tooltip": "読み込む",
             "favorites_only_tooltip": "お気に入りのみ",
             "search_placeholder": "検索",
@@ -212,9 +212,9 @@
                     "resource_load": "Udonのリソース負荷を記録"
                 },
                 "automation": {
-                    "header": "自動化機能",
+                    "header": "オートメーション",
                     "auto_state_change": "自動ステータス変更",
-                    "auto_state_change_tooltip": "自身のいるインスタンスに他のプレイヤーがいる場合、自動的にステータスを変更します。",
+                    "auto_state_change_tooltip": "自身のいるインスタンスに他のプレイヤーがいる場合、自動的にステータスを変更します。 (1人/複数人)",
                     "auto_state_change_off": "無効",
                     "auto_state_change_active_or_ask_me": "Active / Ask Me",
                     "auto_state_change_active_or_busy": "Active / Busy",
@@ -361,7 +361,7 @@
                     "header": "Discord Presence",
                     "description": "* VRChatが起動している時しか動作しません。",
                     "enable": "有効化",
-                    "enable_tooltip": "競合を防ぐ為、VRChatのconfig.jsonでDiscord Rich Presenceを無効化する事を推奨します。",
+                    "enable_tooltip": "競合を防ぐため、VRChatのconfig.jsonでDiscord Rich Presenceを無効化することを推奨します。",
                     "instance_type_player_count": "インスタンス詳細/プレイヤー数",
                     "join_button": "Joinボタン (Publicのみ)",
                     "hide_details_in_private": "Privateでは詳細を表示しない",
@@ -438,6 +438,7 @@
                         "avatar_cache": "アバターキャッシュ:",
                         "group_cache": "グループキャッシュ:",
                         "avatar_name_cache": "アバター名キャッシュ:",
+                        "instance_cache": "インスタンスキャッシュ:",
                         "clear_cache": "キャッシュを消去",
                         "auto_clear_cache": "キャッシュの自動消去",
                         "download_history": "ダウンロード履歴",
@@ -803,7 +804,7 @@
                 "representing": "Representing"
             },
             "gallery": {
-                "header": "ギャラリー"
+                "header": "写真"
             },
             "json": {
                 "header": "JSON"
