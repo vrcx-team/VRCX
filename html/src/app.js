@@ -13,7 +13,6 @@ import VueLazyload from 'vue-lazyload';
 import VueI18n from 'vue-i18n';
 import { DataTables } from 'vue-data-tables';
 import ElementUI from 'element-ui';
-import { v4 as uuidv4 } from 'uuid';
 import * as workerTimers from 'worker-timers';
 import VueMarkdown from 'vue-markdown';
 import 'default-passive-events';
@@ -18548,7 +18547,7 @@ speechSynthesis.getVoices();
             tags.push(`~region(jp)`);
         }
         if (D.accessType !== 'public' && D.accessType !== 'group') {
-            tags.push(`~nonce(${uuidv4()})`);
+            tags.push(`~nonce(${window.crypto.randomUUID()})`);
         }
         if (D.accessType !== 'invite' && D.accessType !== 'friends') {
             D.strict = false;
