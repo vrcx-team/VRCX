@@ -262,7 +262,7 @@ html
                             div(style="flex:none")
                                 template(v-if="(API.currentUser.id !== userDialog.ref.id && userDialog.isFriend) || userDialog.isFavorite")
                                     el-tooltip(v-if="userDialog.isFavorite" placement="top" :content="$t('dialog.user.actions.unfavorite_tooltip')" :disabled="hideTooltips")
-                                        el-button(@click="userDialogCommand('Delete Favorite')" type="warning" icon="el-icon-star-on" circle)
+                                        el-button(@click="userDialogCommand('Add Favorite')" type="warning" icon="el-icon-star-on" circle)
                                     el-tooltip(v-else placement="top" :content="$t('dialog.user.actions.favorite_tooltip')" :disabled="hideTooltips")
                                         el-button(type="default" @click="userDialogCommand('Add Favorite')" icon="el-icon-star-off" circle)
                                 el-dropdown(trigger="click" @command="userDialogCommand" size="small")
@@ -756,7 +756,7 @@ html
                                 el-tooltip(v-if="avatarDialog.inCache" placement="top" :content="$t('dialog.avatar.actions.delete_cache_tooltip')" :disabled="hideTooltips")
                                     el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(avatarDialog.ref)" :disabled="isGameRunning && avatarDialog.cacheLocked")
                                 el-tooltip(v-if="avatarDialog.isFavorite" placement="top" :content="$t('dialog.avatar.actions.unfavorite_tooltip')" :disabled="hideTooltips")
-                                    el-button(type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Delete Favorite')" style="margin-left:5px")
+                                    el-button(type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Add Favorite')" style="margin-left:5px")
                                 el-tooltip(v-else placement="top" :content="$t('dialog.avatar.actions.favorite_tooltip')" :disabled="hideTooltips")
                                     el-button(type="default" icon="el-icon-star-off" circle @click="avatarDialogCommand('Add Favorite')" style="margin-left:5px")
                                 el-dropdown(trigger="click" @command="avatarDialogCommand" size="small" style="margin-left:5px")
@@ -810,7 +810,7 @@ html
                         el-tab-pane(:label="$t('dialog.avatar.json.header')")
                             el-button(type="default" @click="refreshAvatarDialogTreeData()" size="mini" icon="el-icon-refresh" circle)
                             el-tooltip(placement="top" :content="$t('dialog.avatar.json.file_analysis')" :disabled="hideTooltips")
-                                el-button(type="default" @click="getAvatarFileAnalysis" size="mini" icon="el-icon-question" circle style="margin-left:5px")
+                                el-button(type="default" @click="getAvatarFileAnalysis" size="mini" icon="el-icon-s-data" circle style="margin-left:5px")
                             el-button(type="default" @click="downloadAndSaveJson(avatarDialog.id, avatarDialog.ref)" size="mini" icon="el-icon-download" circle style="margin-left:5px")
                             el-tree(v-if="Object.keys(avatarDialog.fileAnalysis).length > 0" :data="avatarDialog.fileAnalysis" style="margin-top:5px;font-size:12px")
                                 template(#default="scope")
@@ -1080,7 +1080,7 @@ html
                 div(v-if="favoriteDialog.visible" v-loading="favoriteDialog.loading")
                     span(style="display:block;text-align:center") {{ $t('dialog.favorite.vrchat_favorites') }}
                     template(v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key")
-                        el-button(style="display:block;width:100%;margin:10px 0" @click="deleteFavorite(favoriteDialog.objectId)") #[i.el-icon-check] {{ favoriteDialog.currentGroup.displayName }} ({{ favoriteDialog.currentGroup.count }} / {{ favoriteDialog.currentGroup.capacity }})
+                        el-button(style="display:block;width:100%;margin:10px 0" @click="deleteFavoriteNoConfirm(favoriteDialog.objectId)") #[i.el-icon-check] {{ favoriteDialog.currentGroup.displayName }} ({{ favoriteDialog.currentGroup.count }} / {{ favoriteDialog.currentGroup.capacity }})
                     template(v-else)
                         el-button(v-for="group in favoriteDialog.groups" :key="group" style="display:block;width:100%;margin:10px 0" @click="addFavorite(group)") {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
                 div(v-if="favoriteDialog.visible && favoriteDialog.type === 'world'" style="margin-top:20px")
@@ -2045,7 +2045,7 @@ html
                     el-button(type="primary" size="small" @click="saveEditAndSendInvite") {{ $t('dialog.edit_send_invite_message.send') }}
 
             //- dialog: Change avatar image
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" :title="$t('dialog.change_content_image.avatar')" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" :title="$t('dialog.change_content_image.avatar')" width="850px")
                 div(v-if="changeAvatarImageDialogVisible" v-loading="changeAvatarImageDialogLoading")
                     input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
                     span {{ $t('dialog.change_content_image.description') }}
@@ -2060,7 +2060,7 @@ html
                             img.image(v-lazy="image.file.url")
 
             //- dialog: Change world image
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" :title="$t('dialog.change_content_image.world')" width="800px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" :title="$t('dialog.change_content_image.world')" width="850px")
                 div(v-if="changeWorldImageDialogVisible" v-loading="changeWorldImageDialogLoading")
                     input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
                     span {{ $t('dialog.change_content_image.description') }}

@@ -8,6 +8,7 @@ namespace VRCX
     class ImageCache
     {
         private static readonly string cacheLocation = Path.Combine(Program.AppDataDirectory, "ImageCache");
+        private static readonly WebClient webClient = new WebClient();
 
         private const string IMAGE_HOST1 = "api.vrchat.cloud";
         private const string IMAGE_HOST2 = "files.vrchat.cloud";
@@ -31,21 +32,18 @@ namespace VRCX
             Uri uri = new Uri(url);
             if (uri.Host != IMAGE_HOST1 && uri.Host != IMAGE_HOST2 && uri.Host != IMAGE_HOST3)
                 throw new ArgumentException("Invalid image host", url);
-
-            using (var client = new WebClient())
+            
+            string cookieString = string.Empty;
+            if (WebApi.Instance != null && WebApi.Instance._cookieContainer != null)
             {
-                string cookieString = string.Empty;
-                if (WebApi.Instance != null && WebApi.Instance._cookieContainer != null)
-                {
-                    CookieCollection cookies = WebApi.Instance._cookieContainer.GetCookies(new Uri($"https://{IMAGE_HOST1}"));
-                    foreach (Cookie cookie in cookies)
-                        cookieString += $"{cookie.Name}={cookie.Value};";
-                }
-
-                client.Headers.Add(HttpRequestHeader.Cookie, cookieString);
-                client.Headers.Add("user-agent", Program.Version);
-                client.DownloadFile(url, fileLocation);
+                CookieCollection cookies = WebApi.Instance._cookieContainer.GetCookies(new Uri($"https://{IMAGE_HOST1}"));
+                foreach (Cookie cookie in cookies)
+                    cookieString += $"{cookie.Name}={cookie.Value};";
             }
+
+            webClient.Headers.Add(HttpRequestHeader.Cookie, cookieString);
+            webClient.Headers.Add("user-agent", Program.Version);
+            webClient.DownloadFile(url, fileLocation);
 
             int cacheSize = Directory.GetDirectories(cacheLocation).Length;
             if (cacheSize > 1100)

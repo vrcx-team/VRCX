@@ -108,9 +108,12 @@ speechSynthesis.getVoices();
         this.Set(key, JSON.stringify(value));
     };
 
-    workerTimers.setInterval(function () {
-        VRCXStorage.Flush();
-    }, 5 * 60 * 1000);
+    workerTimers.setInterval(
+        function () {
+            VRCXStorage.Flush();
+        },
+        5 * 60 * 1000
+    );
     // #endregion
     // #region | Init: Noty, Vue, Vue-Markdown, ElementUI, VueI18n, VueLazyLoad, Vue filters, dark stylesheet
 
@@ -380,7 +383,11 @@ speechSynthesis.getVoices();
                 }
                 this.pendingGetRequests.delete(init.url);
             }
-        } else if (init.uploadImage || init.uploadFilePUT) {
+        } else if (
+            init.uploadImage ||
+            init.uploadFilePUT ||
+            init.uploadImageLegacy
+        ) {
             // nothing
         } else {
             init.headers = {
@@ -1073,7 +1080,7 @@ speechSynthesis.getVoices();
             '<span>{{ $t("dialog.user.info.instance_game_version") }} {{ gameServerVersion }}</span></br>' +
             '<span v-if="queueEnabled">{{ $t("dialog.user.info.instance_queuing_enabled") }}</br></span>' +
             '<span v-if="userList.length">{{ $t("dialog.user.info.instance_users") }}</br></span>' +
-            '<span v-for="user in userList" style="cursor:pointer" @click="showUserDialog(user.id)" v-text="user.displayName"></span>' +
+            '<span v-for="user in userList" style="cursor:pointer" @click="showUserDialog(user.id)" v-text="user.displayName"></br></span>' +
             '</div>' +
             '<i class="el-icon-caret-bottom"></i>' +
             '</el-tooltip>' +
@@ -11936,7 +11943,7 @@ speechSynthesis.getVoices();
         var videoPos = Number(data[1]);
         var videoLength = Number(data[2]);
         var displayName = data[3];
-        var videoName = data[4];
+        var videoName = this.replaceBioSymbols(data[4]);
         var videoUrl = videoName;
         var videoId = 'LSMedia';
         if (videoUrl === this.nowPlaying.url) {
@@ -13034,6 +13041,15 @@ speechSynthesis.getVoices();
                     });
                 }
             }
+        });
+    };
+
+    $app.methods.deleteFavoriteNoConfirm = function (objectId) {
+        if (!objectId) {
+            return;
+        }
+        API.deleteFavorite({
+            objectId
         });
     };
 
@@ -18208,6 +18224,19 @@ speechSynthesis.getVoices();
             for (var group of API.favoriteWorldGroups) {
                 if (favorite.groupKey === group.key) {
                     D.currentGroup = group;
+                    return;
+                }
+            }
+            for (var group of API.favoriteAvatarGroups) {
+                if (favorite.groupKey === group.key) {
+                    D.currentGroup = group;
+                    return;
+                }
+            }
+            for (var group of API.favoriteFriendGroups) {
+                if (favorite.groupKey === group.key) {
+                    D.currentGroup = group;
+                    return;
                 }
             }
         }
@@ -22211,10 +22240,14 @@ speechSynthesis.getVoices();
             if (result || !this.isRealInstance(location)) {
                 return;
             }
+            if (this.isGameNoVR) {
+                this.restartCrashedGame(location);
+                return;
+            }
             // wait a bit for SteamVR to potentially close before deciding to relaunch
             workerTimers.setTimeout(
                 () => this.restartCrashedGame(location),
-                1000
+                3000
             );
         });
     };
@@ -27335,6 +27368,20 @@ speechSynthesis.getVoices();
     API.$on('FILE:ANALYSIS', function (args) {
         if (!$app.avatarDialog.visible) {
             return;
+        }
+        var ref = args.json;
+        if (typeof ref.fileSize !== 'undefined') {
+            ref._fileSize = `${(ref.fileSize / 1048576).toFixed(2)} MiB`;
+        }
+        if (typeof ref.uncompressedSize !== 'undefined') {
+            ref._uncompressedSize = `${(ref.uncompressedSize / 1048576).toFixed(
+                2
+            )} MiB`;
+        }
+        if (typeof ref.avatarStats?.totalTextureUsage !== 'undefined') {
+            ref._totalTextureUsage = `${(
+                ref.avatarStats.totalTextureUsage / 1048576
+            ).toFixed(2)} MiB`;
         }
         $app.avatarDialog.fileAnalysis = buildTreeData(args.json);
     });

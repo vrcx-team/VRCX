@@ -10,8 +10,6 @@ mixin friendsListTab()
                     span.name {{ $t('view.friend_list.bulk_unfriend') }}
                     el-switch(v-model="friendsListBulkUnfriendMode" style="margin-left:5px")
                 span {{ $t('view.friend_list.load') }}
-                el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.friend_list.load_notice')")
-                    i.el-icon-warning
                 template(v-if="friendsListLoading")
                     span(v-text="friendsListLoadingProgress" style="margin-left:5px")
                     el-tooltip(placement="top" :content="$t('view.friend_list.cancel_tooltip')" :disabled="hideTooltips")
@@ -40,7 +38,7 @@ mixin friendsListTab()
                     template(v-once #default="scope")
                         el-popover(placement="right" height="500px" trigger="hover")
                             img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row)")
-                            img.friends-list-avatar(v-lazy="userImageFull(scope.row)" style="height:500px;cursor:pointer" @click="downloadAndSaveImage(userImageFull(scope.row))")
+                            img.friends-list-avatar(v-lazy="userImageFull(scope.row)" style="height:500px;cursor:pointer" @click="showFullscreenImageDialog(userImageFull(scope.row))")
                 el-table-column(:label="$t('table.friendList.displayName')" min-width="140" prop="displayName" sortable :sort-method="(a, b) => sortAlphabetically(a, b, 'displayName')")
                     template(v-once #default="scope")
                         span.name(v-if="randomUserColours" v-text="scope.row.displayName" :style="{'color':scope.row.$userColour}")

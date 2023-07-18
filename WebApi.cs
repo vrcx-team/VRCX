@@ -174,6 +174,20 @@ namespace VRCX
             await requestStream.WriteAsync(endBytes, 0, endBytes.Length);
             requestStream.Close();
         }
+
+        private static async Task UploadFilePut(HttpWebRequest request, IDictionary<string, object> options)
+        {
+            request.Method = "PUT";
+            request.ContentType = options["fileMIME"] as string;
+            var fileData = options["fileData"] as string;
+            var sentData = Convert.FromBase64CharArray(fileData.ToCharArray(), 0, fileData.Length);
+            request.ContentLength = sentData.Length;
+            using (var sendStream = request.GetRequestStream())
+            {
+                await sendStream.WriteAsync(sentData, 0, sentData.Length);
+                sendStream.Close();
+            }
+        }
         
         private static async Task ImageUpload(HttpWebRequest request, IDictionary<string, object> options)
         {
@@ -274,6 +288,11 @@ namespace VRCX
                 if (options.TryGetValue("uploadImage", out _))
                 {
                     await ImageUpload(request, options);
+                }
+                
+                if (options.TryGetValue("uploadFilePUT", out _))
+                {
+                    await UploadFilePut(request, options);
                 }
 
                 if (options.TryGetValue("uploadImageLegacy", out _))

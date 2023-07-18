@@ -426,6 +426,7 @@ namespace VRCX
 
             var byteBuffer = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(msg);
             broadcastSocket.SendTo(byteBuffer, endPoint);
+            broadcastSocket.Close();
         }
 
         /// <summary>

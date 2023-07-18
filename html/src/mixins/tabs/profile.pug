@@ -19,6 +19,7 @@ mixin profileTab()
                         span.extra {{ API.currentUser.twoFactorAuthEnabled ? $t('view.profile.profile.two_factor_enabled') : $t('view.profile.profile.two_factor_disabled') }}
             div
                 el-button(size="small" icon="el-icon-switch-button" @click="logout()" style="margin-left:0;margin-right:5px;margin-top:10px") {{ $t('view.profile.profile.logout') }}
+                el-button(size="small" icon="el-icon-picture-outline" @click="showGalleryDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") {{ $t('view.profile.profile.manage_gallery_icon') }}
                 el-button(size="small" icon="el-icon-printer" @click="showExportFriendsListDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") {{ $t('view.profile.profile.export_friend_list') }}
                 el-button(size="small" icon="el-icon-user" @click="showExportAvatarsListDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") {{ $t('view.profile.profile.export_own_avatars') }}
                 el-button(size="small" icon="el-icon-chat-dot-round" @click="showDiscordNamesDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") {{ $t('view.profile.profile.discord_names') }}
