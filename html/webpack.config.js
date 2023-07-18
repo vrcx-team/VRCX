@@ -11,8 +11,7 @@ module.exports = {
             'noty',
             'vue',
             'vue-data-tables',
-            'vue-lazyload',
-            'uuid'
+            'vue-lazyload'
         ],
         app: {
             import: ['./src/app.js', './src/app.scss'],
