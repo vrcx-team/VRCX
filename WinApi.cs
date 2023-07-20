@@ -28,6 +28,8 @@ namespace VRCX
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool GetExitCodeProcess(IntPtr hProcess, out uint lpExitCode);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool CloseHandle(IntPtr hObject);
 
         /// <summary>
         /// Flag that specifies the access rights to query limited information about a process.
@@ -54,13 +56,24 @@ namespace VRCX
             }
 
             bool exited;
-            if (!WinApi.GetExitCodeProcess(hProcess, out uint exitCode))
-            {
-                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
-            }
 
-            // Fun fact, If a program uses STILL_ACTIVE (259) as an exit code, GetExitCodeProcess will return 259, since it returns... the exit code. This would break this function.
-            exited = exitCode != 259;
+            try
+            {
+                if (!WinApi.GetExitCodeProcess(hProcess, out uint exitCode))
+                {
+                    throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+                }
+
+                // Fun fact, If a program uses STILL_ACTIVE (259) as an exit code, GetExitCodeProcess will return 259, since it returns... the exit code. This would break this function.
+                exited = exitCode != 259;
+            }
+            finally 
+            {
+                // Imagine closing process handles.
+                WinApi.CloseHandle(hProcess);
+            }
+            
+            
             return exited;
         }
     }
