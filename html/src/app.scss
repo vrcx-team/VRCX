@@ -248,13 +248,13 @@ hr.x-vertical-divider {
 .el-menu-item::before {
     content: '';
     position: absolute;
-    left: -2px;
+    left: -4px;
     top: 50%;
     height: 36px;
     width: 3px;
     translate: 0 -50%;
     border-radius: 4px;
-    background-color: transparent;
+    background: #303133;
     transition:
         background-color 0.4s,
         left 0.2s;
