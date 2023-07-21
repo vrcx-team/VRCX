@@ -225,7 +225,7 @@
                 "legal_notice": {
                     "header": "法律上の注意事項",
                     "info": "VRCXはVRChatのアシスタント用アプリケーションで、フレンドに関する情報の提供や管理を行うツールです。本アプリケーションは非公式の「VRChat API SDK」を使用しています。",
-                    "disclaimer1": "VRCXはVRChatによって承認されておらず、VRChatまたはVRChatの公式に関与する者の意見や見解を反映していません。VRChat及び関連する全てのプロパティはVRChat株式会社の商標または登録商標です。 VRChat © VRChat株式会社",
+                    "disclaimer1": "VRCXはVRChatによって承認されておらず、VRChatまたはVRChatの開発もしくは管理に公式に関与する者の見解や意見が反映されたものではありません。VRChatおよび関連するすべての財産はVRChat株式会社の商標または登録商標です。",
                     "disclaimer2": "pypyとNatsumiはVRCXの使用によって発生したいかなる問題にも責任を負いません。自己責任でご使用ください！",
                     "open_source_software_notice": "オープンソースソフトウェアに関する注意事項"
                 }
@@ -799,9 +799,9 @@
                     "everyone": "全員",
                     "users_with_no_role": "ロール無しユーザー"
                 },
-                "unsubscribed_announcements": "Unsubscribed from announcements",
-                "visibility": "Visibility:",
-                "representing": "Representing"
+                "unsubscribed_announcements": "お知らせ受信停止中",
+                "visibility": "可視性:",
+                "representing": "代表中"
             },
             "gallery": {
                 "header": "写真"
@@ -1111,7 +1111,8 @@
             "emojis": "絵文字",
             "refresh": "更新",
             "upload": "アップロード",
-            "clear": "消去"
+            "clear": "消去",
+            "emoji_animation_styles": "アニメーションスタイル"
         },
         "change_content_image": {
             "avatar": "アバターの画像を変更",
