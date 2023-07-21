@@ -217,6 +217,9 @@
                     "disclaimer1": "VRCX n'est pas soutenu par VRChat et ne reflète pas les points de vue ou les opinions de VRChat ou de toute personne officiellement impliquée dans la production ou la gestion des propriétés de VRChat. VRChat et toutes les propriétés associées sont des marques commerciales ou des marques déposées de VRChat Inc. VRChat © VRChat Inc.",
                     "disclaimer2": "pypy & Natsumi ne sont pas responsables des problèmes causés par VRCX. Utilisez-le à vos risques et périls !",
                     "open_source_software_notice": "Mentions relatives aux logiciels libres"
+                },
+                "contributors": {
+                    "header": "Contributeurs"
                 }
             },
             "appearance": {

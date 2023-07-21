@@ -217,6 +217,9 @@
                     "disclaimer1": "VRCX 不受 VRChat 的认可，也不反映 VRChat &任何正式参与制作或管理 VRChat 的人员/团体的观点或意见。VRChat 是 VRChat Inc. 的商标。 VRChat © VRChat Inc.",
                     "disclaimer2": "pypy 和 Natsumi 不对使用 VRCX 引起的任何问题负责。使用时请自负风险！",
                     "open_source_software_notice": "开放源代码软件许可"
+                },
+                "contributors": {
+                    "header": "贡献者"
                 }
             },
             "appearance": {
