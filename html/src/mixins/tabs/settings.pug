@@ -97,6 +97,11 @@ mixin settingsTab()
                         { label: "Join Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_join_me_or_busy" },
                         { label: "Ask Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_ask_me_or_busy" },
                     ], "saveAutomationOptions")
+                //- General | Contributors
+                div.options-container
+                    span.header {{ $t("view.settings.general.contributors.header" )}}
+                    div.options-container-item
+                        img(src="https://contrib.rocks/image?repo=vrcx-team/VRCX", alt="Contributors" @click="openExternalLink('https://github.com/vrcx-team/VRCX/graphs/contributors')" style="cursor: pointer")
                 //- General | Legal Notice
                 div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                     span.header {{ $t("view.settings.general.legal_notice.header" )}}
