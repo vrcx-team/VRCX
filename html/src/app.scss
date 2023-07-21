@@ -245,14 +245,24 @@ hr.x-vertical-divider {
     color: #000;
 }
 
-.el-menu-item.is-active::before {
-    position: absolute;
-    top: 4px;
-    left: 1px;
-    width: 2px;
-    height: 48px;
+.el-menu-item::before {
     content: '';
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    height: 36px;
+    width: 3px;
+    translate: 0 -50%;
+    border-radius: 4px;
     background: #303133;
+    transition:
+        background-color 0.4s,
+        left 0.2s;
+}
+
+.el-menu-item.is-active::before {
+    left: 2px;
+    transition: left 0.2s cubic-bezier(0.175, 0.885, 0.32, 2.552);
 }
 
 .el-menu-item.notify::after {
