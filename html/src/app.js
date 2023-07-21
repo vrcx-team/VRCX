@@ -7282,7 +7282,7 @@ speechSynthesis.getVoices();
         // eslint-disable-next-line require-atomic-updates
         $app.loginForm.lastUserLoggedIn = '';
         configRepository.remove('lastUserLoggedIn');
-        workerTimers.setTimeout(() => location.reload(), 500);
+        // workerTimers.setTimeout(() => location.reload(), 500);
     });
 
     $app.methods.checkPrimaryPassword = function (args) {
@@ -14014,7 +14014,7 @@ speechSynthesis.getVoices();
     $app.data.avatarRemoteDatabaseProviderList = JSON.parse(
         configRepository.getString(
             'VRCX_avatarRemoteDatabaseProviderList',
-            '[]'
+            '[ "https://avtr.just-h.party/vrcx_search.php" ]'
         )
     );
     $app.data.pendingOfflineDelay = configRepository.getInt(
