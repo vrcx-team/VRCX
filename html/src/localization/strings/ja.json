@@ -571,7 +571,7 @@
                 "memo_placeholder": "クリックしてメモを追加",
                 "avatar_info": "アバター情報",
                 "avatar_info_last_seen": "最後に見たアバター情報",
-                "represented_group": "代表しているグループ",
+                "represented_group": "ネームプレートに表示中のグループ",
                 "bio": "自己紹介",
                 "last_seen": "最後に見た日時",
                 "join_count": "Joinした回数",
@@ -1108,7 +1108,7 @@
         },
         "gallery_icons": {
             "header": "ギャラリーとアイコン",
-            "description": "推奨画像サイズ: 1200x900",
+            "description": "推奨画像サイズ: 1200x900px",
             "gallery": "ギャラリー",
             "icons": "アイコン",
             "emojis": "絵文字",
