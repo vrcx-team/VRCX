@@ -11200,6 +11200,7 @@ speechSynthesis.getVoices();
         for (var id of this.photonLobbyCurrent.keys()) {
             if (!lobbyIds.includes(id)) {
                 this.photonLobbyCurrent.delete(id);
+                this.photonEvent7List.delete(id);
             }
         }
     };
@@ -23400,6 +23401,7 @@ speechSynthesis.getVoices();
                 this.photonEventPulse();
                 break;
             case 'Event7List':
+                this.photonEvent7List.clear();
                 for (var [id, dt] of Object.entries(data.Event7List)) {
                     this.photonEvent7List.set(parseInt(id, 10), dt);
                 }

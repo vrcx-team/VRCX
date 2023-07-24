@@ -1737,7 +1737,7 @@ class Database {
         if (gamelogDatabase.length > 0) {
             gamelogDatabase.sort();
             var newDate = gamelogDatabase[gamelogDatabase.length - 1];
-            if (newDate > dateOffset) {
+            if (newDate > dateOffset && newDate < date) {
                 date = newDate;
             }
         }
