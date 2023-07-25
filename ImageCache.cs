@@ -21,7 +21,7 @@ namespace VRCX
 
             if (File.Exists(fileLocation))
             {
-                Directory.SetLastWriteTime(directoryLocation, DateTime.Now);
+                Directory.SetLastWriteTimeUtc(directoryLocation, DateTime.UtcNow);
                 return fileLocation;
             }
 
