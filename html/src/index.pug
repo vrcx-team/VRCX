@@ -1647,6 +1647,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
+                        span.toggle-name External
+                        el-radio-group(v-model="sharedFeedFilters.noty.External" size="mini")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    .toggle-item
                         span.toggle-name Blocked Player Joins
                         el-radio-group(v-model="sharedFeedFilters.noty.BlockedOnPlayerJoined" size="mini")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
@@ -1861,6 +1866,11 @@ html
                     .toggle-item
                         span.toggle-name Events
                         el-radio-group(v-model="sharedFeedFilters.wrist.Event" size="mini")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    .toggle-item
+                        span.toggle-name External
+                        el-radio-group(v-model="sharedFeedFilters.wrist.External" size="mini")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item

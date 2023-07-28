@@ -66,6 +66,9 @@ class Database {
             `CREATE TABLE IF NOT EXISTS gamelog_event (id INTEGER PRIMARY KEY, created_at TEXT, data TEXT, UNIQUE(created_at, data))`
         );
         await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS gamelog_external (id INTEGER PRIMARY KEY, created_at TEXT, message TEXT, display_name TEXT, user_id TEXT, location TEXT, UNIQUE(created_at, message))`
+        );
+        await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS cache_avatar (id TEXT PRIMARY KEY, added_at TEXT, author_id TEXT, author_name TEXT, created_at TEXT, description TEXT, image_url TEXT, name TEXT, release_status TEXT, thumbnail_image_url TEXT, updated_at TEXT, version INTEGER)`
         );
         await sqliteService.executeNonQuery(
@@ -565,6 +568,18 @@ class Database {
             };
             gamelogDatabase.unshift(row);
         }, `SELECT * FROM gamelog_event WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                rowId: dbRow[0],
+                created_at: dbRow[1],
+                type: 'External',
+                message: dbRow[2],
+                displayName: dbRow[3],
+                userId: dbRow[4],
+                location: dbRow[5]
+            };
+            gamelogDatabase.unshift(row);
+        }, `SELECT * FROM gamelog_external WHERE created_at >= date('${dateOffset}') ORDER BY id DESC`);
         var compareByCreatedAt = function (a, b) {
             var A = a.created_at;
             var B = b.created_at;
@@ -697,6 +712,19 @@ class Database {
             {
                 '@created_at': entry.created_at,
                 '@data': entry.data
+            }
+        );
+    }
+
+    addGamelogExternalToDatabase(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR IGNORE INTO gamelog_external (created_at, message, display_name, user_id, location) VALUES (@created_at, @message, @display_name, @user_id, @location)`,
+            {
+                '@created_at': entry.created_at,
+                '@message': entry.message,
+                '@display_name': entry.displayName,
+                '@user_id': entry.userId,
+                '@location': entry.location
             }
         );
     }
@@ -903,6 +931,14 @@ class Database {
         await sqliteService.execute((row) => {
             size = row[0];
         }, `SELECT COUNT(*) FROM gamelog_event`);
+        return size;
+    }
+
+    async getExternalTableSize() {
+        var size = 0;
+        await sqliteService.execute((row) => {
+            size = row[0];
+        }, `SELECT COUNT(*) FROM gamelog_external`);
         return size;
     }
 
@@ -1552,6 +1588,7 @@ class Database {
         var onplayerleft = true;
         var portalspawn = true;
         var msgevent = true;
+        var external = true;
         var videoplay = true;
         var resourceload_string = true;
         var resourceload_image = true;
@@ -1561,6 +1598,7 @@ class Database {
             onplayerleft = false;
             portalspawn = false;
             msgevent = false;
+            external = false;
             videoplay = false;
             resourceload_string = false;
             resourceload_image = false;
@@ -1580,6 +1618,9 @@ class Database {
                         break;
                     case 'Event':
                         msgevent = true;
+                        break;
+                    case 'External':
+                        external = true;
                         break;
                     case 'VideoPlay':
                         videoplay = true;
@@ -1656,6 +1697,20 @@ class Database {
                 };
                 gamelogDatabase.unshift(row);
             }, `SELECT * FROM gamelog_event WHERE data LIKE '%${search}%' ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
+        }
+        if (external) {
+            await sqliteService.execute((dbRow) => {
+                var row = {
+                    rowId: dbRow[0],
+                    created_at: dbRow[1],
+                    type: 'External',
+                    message: dbRow[2],
+                    displayName: dbRow[3],
+                    userId: dbRow[4],
+                    location: dbRow[5]
+                };
+                gamelogDatabase.unshift(row);
+            }, `SELECT * FROM gamelog_external WHERE (display_name LIKE '%${search}%' OR message LIKE '%${search}%') ORDER BY id DESC LIMIT ${Database.maxTableSize}`);
         }
         if (videoplay) {
             await sqliteService.execute((dbRow) => {
@@ -1855,6 +1910,9 @@ class Database {
             case 'Event':
                 this.deleteGameLogEvent(input);
                 break;
+            case 'External':
+                this.deleteGameLogExternal(input);
+                break;
             case 'StringLoad':
             case 'ImageLoad':
                 this.deleteGameLogResourceLoad(input);
@@ -1879,6 +1937,16 @@ class Database {
             {
                 '@created_at': input.created_at,
                 '@data': input.data
+            }
+        );
+    }
+
+    deleteGameLogExternal(input) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM gamelog_external WHERE created_at = @created_at AND message = @message`,
+            {
+                '@created_at': input.created_at,
+                '@message': input.message
             }
         );
     }
