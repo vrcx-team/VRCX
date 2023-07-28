@@ -2155,7 +2155,7 @@ speechSynthesis.getVoices();
                 }
             }
             var array = Array.from(map.values());
-            $app.sortUserDialogWorlds(array);
+            $app.userDialog.worlds = array;
         }
     });
 
@@ -9022,6 +9022,7 @@ speechSynthesis.getVoices();
         $app.feedSessionTable = [];
         $app.friendLogInitStatus = false;
         await database.initUserTables(args.json.id);
+        $app.$refs.menu.activeIndex = 'feed';
         // eslint-disable-next-line require-atomic-updates
         $app.gameLogTable.data = await database.lookupGameLogDatabase(
             $app.gameLogTable.search,
@@ -12303,6 +12304,7 @@ speechSynthesis.getVoices();
             this.lastLocation$ = L;
         }
         var hidePrivate = false;
+        // (L.accessType === 'group' && !L.groupAccessType) || L.groupAccessType === 'member')
         if (
             this.discordHideInvite &&
             (L.accessType === 'invite' || L.accessType === 'invite+')
@@ -15590,6 +15592,36 @@ speechSynthesis.getVoices();
     // #endregion
     // #region | App: User Dialog
 
+    $app.data.userDialogWorldSortingOptions = {
+        updated: {
+            name: $t('dialog.user.worlds.sorting.updated'),
+            value: 'updated'
+        },
+        created: {
+            name: $t('dialog.user.worlds.sorting.created'),
+            value: 'created'
+        },
+        favorites: {
+            name: $t('dialog.user.worlds.sorting.favorites'),
+            value: 'favorites'
+        },
+        popularity: {
+            name: $t('dialog.user.worlds.sorting.popularity'),
+            value: 'popularity'
+        }
+    };
+
+    $app.data.userDialogWorldOrderOptions = {
+        descending: {
+            name: $t('dialog.user.worlds.order.descending'),
+            value: 'descending'
+        },
+        ascending: {
+            name: $t('dialog.user.worlds.order.ascending'),
+            value: 'ascending'
+        }
+    };
+
     $app.data.userDialog = {
         visible: false,
         loading: false,
@@ -15620,7 +15652,8 @@ speechSynthesis.getVoices();
         isAvatarsLoading: false,
         isGroupsLoading: false,
 
-        worldSorting: 'update',
+        worldSorting: $app.data.userDialogWorldSortingOptions.updated,
+        worldOrder: $app.data.userDialogWorldOrderOptions.descending,
         avatarSorting: 'update',
         avatarReleaseStatus: 'all',
 
@@ -15663,6 +15696,24 @@ speechSynthesis.getVoices();
         }
         var D = this.userDialog;
         this.saveMemo(D.id, D.memo);
+    };
+
+    $app.methods.setUserDialogWorldSorting = async function (sortOrder) {
+        var D = this.userDialog;
+        if (D.worldSorting === sortOrder) {
+            return;
+        }
+        D.worldSorting = sortOrder;
+        await this.refreshUserDialogWorlds();
+    };
+
+    $app.methods.setUserDialogWorldOrder = async function (order) {
+        var D = this.userDialog;
+        if (D.worldOrder === order) {
+            return;
+        }
+        D.worldOrder = order;
+        await this.refreshUserDialogWorlds();
     };
 
     $app.methods.getFaviconUrl = function (resource) {
@@ -16553,17 +16604,7 @@ speechSynthesis.getVoices();
                 worlds.push(ref);
             }
         }
-        this.sortUserDialogWorlds(worlds);
-    };
-
-    $app.methods.sortUserDialogWorlds = function (array) {
-        var D = this.userDialog;
-        if (D.worldSorting === 'update') {
-            array.sort(compareByUpdatedAt);
-        } else {
-            array.sort(compareByName);
-        }
-        D.worlds = array;
+        $app.userDialog.worlds = worlds;
     };
 
     $app.methods.setUserDialogAvatars = function (userId) {
@@ -16728,8 +16769,8 @@ speechSynthesis.getVoices();
         var params = {
             n: 50,
             offset: 0,
-            sort: 'updated',
-            order: 'descending',
+            sort: this.userDialog.worldSorting.value,
+            order: this.userDialog.worldOrder.value,
             // user: 'friends',
             userId: D.id,
             releaseStatus: 'public'
@@ -16759,7 +16800,7 @@ speechSynthesis.getVoices();
             done: () => {
                 if (D.id === params.userId) {
                     var array = Array.from(map.values());
-                    this.sortUserDialogWorlds(array);
+                    $app.userDialog.worlds = array;
                 }
                 D.isWorldsLoading = false;
             }
@@ -17043,11 +17084,6 @@ speechSynthesis.getVoices();
             return;
         }
         D.treeData = buildTreeData(D.ref);
-    };
-
-    $app.methods.changeUserDialogWorldSorting = function () {
-        var D = this.userDialog;
-        this.sortUserDialogWorlds(D.worlds);
     };
 
     $app.methods.changeUserDialogAvatarSorting = function () {

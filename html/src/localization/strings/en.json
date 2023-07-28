@@ -600,8 +600,18 @@
             "worlds": {
                 "header": "Worlds",
                 "total_count": "Total {count}",
-                "sort_by_name": "Sort by name",
-                "sort_by_update": "Sort by update"
+                "sort_by": "Sort by:",
+                "order_by": "Order by:",
+                "sorting": {
+                    "updated": "Updated",
+                    "created": "Created",
+                    "favorites": "Favorites",
+                    "popularity": "Popularity"
+                },
+                "order": {
+                    "descending": "Descending",
+                    "ascending": "Ascending"
+                }
             },
             "favorite_worlds": {
                 "header": "Favorite Worlds"
