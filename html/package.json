@@ -34,8 +34,8 @@
     "css-loader": "^6.8.1",
     "default-passive-events": "^2.0.0",
     "element-ui": "^2.15.13",
-    "eslint": "^8.45.0",
-    "eslint-config-prettier": "^8.8.0",
+    "eslint": "^8.46.0",
+    "eslint-config-prettier": "^8.9.0",
     "html-webpack-plugin": "^5.5.3",
     "mini-css-extract-plugin": "^2.7.6",
     "normalize.css": "^8.0.1",
@@ -44,7 +44,7 @@
     "pug": "^3.0.2",
     "pug-plain-loader": "^1.1.0",
     "raw-loader": "^4.0.2",
-    "sass": "^1.63.6",
+    "sass": "^1.64.1",
     "sass-loader": "^13.3.2",
     "vue": "^2.6.14",
     "vue-data-tables": "^3.4.5",
@@ -54,6 +54,6 @@
     "vue-marquee-text-component": "^1.2.0",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
-    "worker-timers": "^7.0.73"
+    "worker-timers": "^7.0.74"
   }
 }

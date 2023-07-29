@@ -183,9 +183,7 @@ div[style*='margin: 0px 0px 10px;'] {
     font-weight: var(--md-sys-typescale-label-large-weight);
     letter-spacing: var(--md-sys-typescale-label-large-tracking);
     padding: 0 24px;
-    transition:
-        background-color 0.2s ease-in-out,
-        color 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
 .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
@@ -299,9 +297,7 @@ input[type='number'],
 .el-pagination button.btn-next {
     position: relative;
     background-color: rgb(var(--md-sys-color-secondary-container));
-    transition:
-        background-color 0.1s ease-in-out,
-        color 0.1s ease-in-out;
+    transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
 }
 .el-pagination button:not(:disabled):hover.btn-prev::after,
 .el-pagination button:not(:disabled):hover.btn-next::after {
@@ -398,9 +394,7 @@ input[type='number'],
     font-size: var(--md-sys-typescale-body-small-size);
     font-weight: var(--md-sys-typescale-body-small-weight);
     letter-spacing: var(--md-sys-typescale-body-small-tracking);
-    transition:
-        height 0.1s ease-out,
-        min-height 0.1s ease-out,
+    transition: height 0.1s ease-out, min-height 0.1s ease-out,
         opacity 0.1s ease-out;
 }
 .el-message-box__errormsg[style='visibility: hidden;'] {
@@ -639,9 +633,7 @@ input[type='number'],
     border-radius: 28px;
     background-color: rgb(var(--md-sys-color-surface-variant)) !important;
     border: 2px solid rgb(var(--md-sys-color-outline)) !important;
-    transition:
-        background-color 0.1s ease-in-out,
-        border-color 0.1s ease-in-out;
+    transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out;
 }
 
 /* active track */
@@ -660,13 +652,9 @@ input[type='number'],
     margin: 4px;
     background-color: rgb(var(--md-sys-color-outline));
     border-radius: 28px;
-    transition:
-        left 200ms cubic-bezier(0, 0.5, 0.5, 1.5),
-        background-color 0.1s ease-in-out,
-        height 50ms ease-out,
-        width 50ms ease-out,
-        padding 50ms ease-out,
-        margin 50ms ease-out;
+    transition: left 200ms cubic-bezier(0, 0.5, 0.5, 1.5),
+        background-color 0.1s ease-in-out, height 50ms ease-out,
+        width 50ms ease-out, padding 50ms ease-out, margin 50ms ease-out;
 }
 
 /* active thumb */
@@ -792,9 +780,7 @@ input[type='number'],
     line-height: var(--md-sys-typescale-label-large-line-height);
     font-size: var(--md-sys-typescale-label-large-size);
     font-weight: var(--md-sys-typescale-label-large-weight);
-    transition:
-        background-color 0.1s ease-in-out,
-        color 0.1s ease-in-out;
+    transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
 }
 
 .el-radio-group > *:first-child > .el-radio-button__inner {
@@ -892,9 +878,7 @@ input[type='number'],
     font-weight: var(--md-sys-typescale-label-large-weight);
     letter-spacing: var(--md-sys-typescale-label-large-tracking);
     border: none;
-    transition:
-        background-color 0.1s ease-in-out,
-        color 0.1s ease-in-out;
+    transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
 }
 .el-button.el-button--primary:not(.el-button--text).is-disabled {
     cursor: not-allowed;
@@ -942,9 +926,7 @@ input[type='number'],
     font-weight: var(--md-sys-typescale-label-large-weight);
     letter-spacing: var(--md-sys-typescale-label-large-tracking);
     border: none;
-    transition:
-        background-color 0.1s ease-in-out,
-        color 0.1s ease-in-out;
+    transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
 }
 .el-button:not(.el-button--text, .el-button--primary, .is-disabled),
 .el-button:not(.el-button--text, .el-button--primary, .is-disabled):hover,
@@ -1015,9 +997,7 @@ input[type='number'],
     font-weight: var(--md-sys-typescale-label-large-weight);
     letter-spacing: var(--md-sys-typescale-label-large-tracking);
     border: none;
-    transition:
-        background-color 0.1s ease-in-out,
-        color 0.1s ease-in-out;
+    transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
 }
 .el-button.el-button--text:not(.el-button--primary) > i {
     font-size: 15px;
@@ -1163,9 +1143,7 @@ img.x-link.el-popover__reference {
     background: var(--md-sys-color-surface-4);
     border: none;
     border-radius: 12px;
-    box-shadow:
-        0 3px 6px rgba(0, 0, 0, 0.16),
-        0 3px 6px rgba(0, 0, 0, 0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 
 .el-popover img {
@@ -1182,9 +1160,7 @@ img.x-link.el-popover__reference {
     font-weight: var(--md-sys-typescale-label-large-weight);
     letter-spacing: var(--md-sys-typescale-label-large-tracking);
     padding: 0 24px;
-    transition:
-        background-color 0.2s ease-in-out,
-        color 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
 .el-tabs__item:not(:last-child) {
@@ -1465,9 +1441,7 @@ img.x-link.el-popover__reference {
     border-radius: 20px;
     top: -10px;
     transform: translate(-50%);
-    transition:
-        height 0.1s ease-in-out,
-        width 0.1s ease-in-out;
+    transition: height 0.1s ease-in-out, width 0.1s ease-in-out;
 }
 .el-slider__button:hover::after,
 .el-slider__button:focus::after {
@@ -1521,9 +1495,7 @@ img.x-link.el-popover__reference {
     border: none;
     border-radius: 8px;
     background: var(--md-sys-color-surface-2);
-    box-shadow:
-        0 3px 6px rgba(0, 0, 0, 0.16),
-        0 3px 6px rgba(0, 0, 0, 0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     overflow: auto;
     max-height: 90%;
 }

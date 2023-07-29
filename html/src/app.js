@@ -108,12 +108,9 @@ speechSynthesis.getVoices();
         this.Set(key, JSON.stringify(value));
     };
 
-    workerTimers.setInterval(
-        function () {
-            VRCXStorage.Flush();
-        },
-        5 * 60 * 1000
-    );
+    workerTimers.setInterval(function () {
+        VRCXStorage.Flush();
+    }, 5 * 60 * 1000);
     // #endregion
     // #region | Init: Noty, Vue, Vue-Markdown, ElementUI, VueI18n, VueLazyLoad, Vue filters, dark stylesheet
 
