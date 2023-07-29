@@ -600,7 +600,7 @@
             "worlds": {
                 "header": "ワールド",
                 "total_count": "{count} 個のワールド",
-                "sort_by": "ソート順:",
+                "sort_by": "並び替え:",
                 "order_by": "表示順:",
                 "sorting": {
                     "updated": "更新日",
@@ -801,9 +801,9 @@
                 "all_members": "全員",
                 "friends_only": "フレンドのみ",
                 "load_more": "もっと見る...",
-                "sort_by": "ソート順:",
+                "sort_by": "並び替え:",
                 "sorting": {
-                    "user_id": "ユーザーID (登順)",
+                    "user_id": "ユーザーID (昇順)",
                     "joined_at_asc": "参加順 (昇順)",
                     "joined_at_desc": "参加順 (降順)"
                 },
