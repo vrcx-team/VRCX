@@ -2155,7 +2155,7 @@ speechSynthesis.getVoices();
                 }
             }
             var array = Array.from(map.values());
-            $app.sortUserDialogWorlds(array);
+            $app.userDialog.worlds = array;
         }
     });
 
@@ -6407,6 +6407,9 @@ speechSynthesis.getVoices();
             case 'Event':
                 this.speak(noty.data);
                 break;
+            case 'External':
+                this.speak(noty.message);
+                break;
             case 'VideoPlay':
                 this.speak(`Now playing: ${noty.notyName}`);
                 break;
@@ -6641,6 +6644,9 @@ speechSynthesis.getVoices();
                 break;
             case 'Event':
                 AppApi.XSNotification('VRCX', noty.data, timeout, image);
+                break;
+            case 'External':
+                AppApi.XSNotification('VRCX', noty.message, timeout, image);
                 break;
             case 'VideoPlay':
                 AppApi.XSNotification(
@@ -6908,6 +6914,9 @@ speechSynthesis.getVoices();
                 break;
             case 'Event':
                 AppApi.DesktopNotification('Event', noty.data, image);
+                break;
+            case 'External':
+                AppApi.DesktopNotification('External', noty.message, image);
                 break;
             case 'VideoPlay':
                 AppApi.DesktopNotification('Now playing', noty.notyName, image);
@@ -9013,6 +9022,7 @@ speechSynthesis.getVoices();
         $app.feedSessionTable = [];
         $app.friendLogInitStatus = false;
         await database.initUserTables(args.json.id);
+        $app.$refs.menu.activeIndex = 'feed';
         // eslint-disable-next-line require-atomic-updates
         $app.gameLogTable.data = await database.lookupGameLogDatabase(
             $app.gameLogTable.search,
@@ -9529,6 +9539,14 @@ speechSynthesis.getVoices();
                 return false;
             case 'Event':
                 if (String(row.data).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
+            case 'External':
+                if (String(row.message).toUpperCase().includes(value)) {
+                    return true;
+                }
+                if (String(row.displayName).toUpperCase().includes(value)) {
                     return true;
                 }
                 return false;
@@ -11200,6 +11218,7 @@ speechSynthesis.getVoices();
         for (var id of this.photonLobbyCurrent.keys()) {
             if (!lobbyIds.includes(id)) {
                 this.photonLobbyCurrent.delete(id);
+                this.photonEvent7List.delete(id);
             }
         }
     };
@@ -12285,6 +12304,7 @@ speechSynthesis.getVoices();
             this.lastLocation$ = L;
         }
         var hidePrivate = false;
+        // (L.accessType === 'group' && !L.groupAccessType) || L.groupAccessType === 'member')
         if (
             this.discordHideInvite &&
             (L.accessType === 'invite' || L.accessType === 'invite+')
@@ -14444,6 +14464,7 @@ speechSynthesis.getVoices();
             'group.queueReady': 'On',
             PortalSpawn: 'Everyone',
             Event: 'On',
+            External: 'On',
             VideoPlay: 'Off',
             BlockedOnPlayerJoined: 'Off',
             BlockedOnPlayerLeft: 'Off',
@@ -14481,6 +14502,7 @@ speechSynthesis.getVoices();
             'group.queueReady': 'On',
             PortalSpawn: 'Everyone',
             Event: 'On',
+            External: 'On',
             VideoPlay: 'On',
             BlockedOnPlayerJoined: 'Off',
             BlockedOnPlayerLeft: 'Off',
@@ -14523,6 +14545,10 @@ speechSynthesis.getVoices();
     if (!$app.data.sharedFeedFilters.noty['group.queueReady']) {
         $app.data.sharedFeedFilters.noty['group.queueReady'] = 'On';
         $app.data.sharedFeedFilters.wrist['group.queueReady'] = 'On';
+    }
+    if (!$app.data.sharedFeedFilters.noty.External) {
+        $app.data.sharedFeedFilters.noty.External = 'On';
+        $app.data.sharedFeedFilters.wrist.External = 'On';
     }
 
     $app.data.trustColor = JSON.parse(
@@ -15566,6 +15592,36 @@ speechSynthesis.getVoices();
     // #endregion
     // #region | App: User Dialog
 
+    $app.data.userDialogWorldSortingOptions = {
+        updated: {
+            name: $t('dialog.user.worlds.sorting.updated'),
+            value: 'updated'
+        },
+        created: {
+            name: $t('dialog.user.worlds.sorting.created'),
+            value: 'created'
+        },
+        favorites: {
+            name: $t('dialog.user.worlds.sorting.favorites'),
+            value: 'favorites'
+        },
+        popularity: {
+            name: $t('dialog.user.worlds.sorting.popularity'),
+            value: 'popularity'
+        }
+    };
+
+    $app.data.userDialogWorldOrderOptions = {
+        descending: {
+            name: $t('dialog.user.worlds.order.descending'),
+            value: 'descending'
+        },
+        ascending: {
+            name: $t('dialog.user.worlds.order.ascending'),
+            value: 'ascending'
+        }
+    };
+
     $app.data.userDialog = {
         visible: false,
         loading: false,
@@ -15596,7 +15652,8 @@ speechSynthesis.getVoices();
         isAvatarsLoading: false,
         isGroupsLoading: false,
 
-        worldSorting: 'update',
+        worldSorting: $app.data.userDialogWorldSortingOptions.updated,
+        worldOrder: $app.data.userDialogWorldOrderOptions.descending,
         avatarSorting: 'update',
         avatarReleaseStatus: 'all',
 
@@ -15639,6 +15696,24 @@ speechSynthesis.getVoices();
         }
         var D = this.userDialog;
         this.saveMemo(D.id, D.memo);
+    };
+
+    $app.methods.setUserDialogWorldSorting = async function (sortOrder) {
+        var D = this.userDialog;
+        if (D.worldSorting === sortOrder) {
+            return;
+        }
+        D.worldSorting = sortOrder;
+        await this.refreshUserDialogWorlds();
+    };
+
+    $app.methods.setUserDialogWorldOrder = async function (order) {
+        var D = this.userDialog;
+        if (D.worldOrder === order) {
+            return;
+        }
+        D.worldOrder = order;
+        await this.refreshUserDialogWorlds();
     };
 
     $app.methods.getFaviconUrl = function (resource) {
@@ -16529,17 +16604,7 @@ speechSynthesis.getVoices();
                 worlds.push(ref);
             }
         }
-        this.sortUserDialogWorlds(worlds);
-    };
-
-    $app.methods.sortUserDialogWorlds = function (array) {
-        var D = this.userDialog;
-        if (D.worldSorting === 'update') {
-            array.sort(compareByUpdatedAt);
-        } else {
-            array.sort(compareByName);
-        }
-        D.worlds = array;
+        $app.userDialog.worlds = worlds;
     };
 
     $app.methods.setUserDialogAvatars = function (userId) {
@@ -16704,8 +16769,8 @@ speechSynthesis.getVoices();
         var params = {
             n: 50,
             offset: 0,
-            sort: 'updated',
-            order: 'descending',
+            sort: this.userDialog.worldSorting.value,
+            order: this.userDialog.worldOrder.value,
             // user: 'friends',
             userId: D.id,
             releaseStatus: 'public'
@@ -16735,7 +16800,7 @@ speechSynthesis.getVoices();
             done: () => {
                 if (D.id === params.userId) {
                     var array = Array.from(map.values());
-                    this.sortUserDialogWorlds(array);
+                    $app.userDialog.worlds = array;
                 }
                 D.isWorldsLoading = false;
             }
@@ -17019,11 +17084,6 @@ speechSynthesis.getVoices();
             return;
         }
         D.treeData = buildTreeData(D.ref);
-    };
-
-    $app.methods.changeUserDialogWorldSorting = function () {
-        var D = this.userDialog;
-        this.sortUserDialogWorlds(D.worlds);
     };
 
     $app.methods.changeUserDialogAvatarSorting = function () {
@@ -23329,7 +23389,8 @@ speechSynthesis.getVoices();
             joinLeave: await database.getJoinLeaveTableSize(),
             portalSpawn: await database.getPortalSpawnTableSize(),
             videoPlay: await database.getVideoPlayTableSize(),
-            event: await database.getEventTableSize()
+            event: await database.getEventTableSize(),
+            external: await database.getExternalTableSize()
         };
     };
 
@@ -23400,6 +23461,7 @@ speechSynthesis.getVoices();
                 this.photonEventPulse();
                 break;
             case 'Event7List':
+                this.photonEvent7List.clear();
                 for (var [id, dt] of Object.entries(data.Event7List)) {
                     this.photonEvent7List.set(parseInt(id, 10), dt);
                 }
@@ -23416,14 +23478,11 @@ speechSynthesis.getVoices();
                     this.photonLoggingEnabled = true;
                     configRepository.setBool('VRCX_photonLoggingEnabled', true);
                 }
-                if (!this.companionUpdateReminder && data.version < '1.1.3') {
-                    // check version
-                    this.promptCompanionUpdateReminder();
-                }
                 this.ipcEnabled = true;
                 this.ipcTimeout = 60; // 30secs
                 break;
             case 'MsgPing':
+                this.externalNotifierVersion = data.version;
                 break;
             case 'LaunchCommand':
                 AppApi.FocusWindow();
@@ -23437,16 +23496,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.data.companionUpdateReminder = false;
-
-    $app.methods.promptCompanionUpdateReminder = function () {
-        this.$alert(
-            'An update is required for it to function properly.',
-            'VRCX Companion mod is out of date'
-        );
-        this.companionUpdateReminder = true;
-    };
-
+    $app.data.externalNotifierVersion = 0;
     $app.data.photonEventCount = 0;
     $app.data.photonEventIcon = false;
     $app.data.customUserTags = new Map();
@@ -23491,12 +23541,33 @@ speechSynthesis.getVoices();
                 });
                 break;
             case 'Noty':
+                if (
+                    this.photonLoggingEnabled ||
+                    (this.externalNotifierVersion &&
+                        this.externalNotifierVersion > 21)
+                ) {
+                    return;
+                }
                 var entry = {
                     created_at: new Date().toJSON(),
                     type: 'Event',
                     data: data.Data
                 };
                 database.addGamelogEventToDatabase(entry);
+                this.queueGameLogNoty(entry);
+                this.addGameLog(entry);
+                break;
+            case 'External':
+                var displayName = data.DisplayName ?? '';
+                var entry = {
+                    created_at: new Date().toJSON(),
+                    type: 'External',
+                    message: data.Data,
+                    displayName,
+                    userId: data.UserId,
+                    location: this.lastLocation.location
+                };
+                database.addGamelogExternalToDatabase(entry);
                 this.queueGameLogNoty(entry);
                 this.addGameLog(entry);
                 break;

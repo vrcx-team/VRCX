@@ -27,7 +27,7 @@ namespace VRCX
         private bool m_FirstRun = true;
         private bool m_ResetLog;
         private Thread m_Thread;
-        private DateTime tillDate = DateTime.Now;
+        private DateTime tillDate = DateTime.UtcNow;
         public bool VrcClosedGracefully;
 
         // NOTE
@@ -38,7 +38,7 @@ namespace VRCX
             Instance = new LogWatcher();
         }
 
-        public LogWatcher()
+        private LogWatcher()
         {
             var logPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat";
             m_LogDirectoryInfo = new DirectoryInfo(logPath);
@@ -72,7 +72,8 @@ namespace VRCX
 
         public void SetDateTill(string date)
         {
-            tillDate = DateTime.Parse(date);
+            tillDate = DateTime.Parse(date, CultureInfo.InvariantCulture, DateTimeStyles.None);
+            tillDate = tillDate.ToUniversalTime();
         }
 
         private void ThreadLoop()
@@ -130,7 +131,7 @@ namespace VRCX
                         continue;
                     }
 
-                    if (DateTime.Compare(fileInfo.LastWriteTime, tillDate) < 0)
+                    if (DateTime.Compare(fileInfo.LastWriteTimeUtc, tillDate) < 0)
                     {
                         continue;
                     }
@@ -208,10 +209,11 @@ namespace VRCX
                                     line.Substring(0, 19),
                                     "yyyy.MM.dd HH:mm:ss",
                                     CultureInfo.InvariantCulture,
-                                    DateTimeStyles.AssumeLocal,
+                                    DateTimeStyles.None,
                                     out var lineDate
                                 ))
                             {
+                                lineDate = lineDate.ToUniversalTime();
                                 if (DateTime.Compare(lineDate, tillDate) <= 0)
                                 {
                                     continue;
@@ -291,14 +293,19 @@ namespace VRCX
                     line.Substring(0, 19),
                     "yyyy.MM.dd HH:mm:ss",
                     CultureInfo.InvariantCulture,
-                    DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeLocal,
+                    DateTimeStyles.None,
                     out var dt
-                ) == false)
+                ))
+            {
+                dt = dt.ToUniversalTime();
+            }
+            else
             {
                 dt = DateTime.UtcNow;
             }
 
-            return $"{dt:yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'}";
+            // ISO 8601
+            return dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'", CultureInfo.InvariantCulture);
         }
 
         private bool ParseLogLocation(FileInfo fileInfo, LogContext logContext, string line, int offset)

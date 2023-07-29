@@ -609,6 +609,9 @@ Vue.component('marquee-text', MarqueeText);
             case 'Event':
                 text = escapeTag(noty.data);
                 break;
+            case 'External':
+                text = escapeTag(noty.message);
+                break;
             case 'VideoPlay':
                 text = `<strong>Now playing:</strong> ${escapeTag(
                     noty.notyName
