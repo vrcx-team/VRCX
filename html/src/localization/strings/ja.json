@@ -69,9 +69,9 @@
                 "private": "Private",
                 "local": "ローカル",
                 "remote": "リモート",
-                "sort_name": "名前順で並び替え",
-                "sort_update": "更新順で並び替え",
-                "sort_created": "作成順で並び替え"
+                "sort_name": "名前順で並べ替え",
+                "sort_update": "更新順で並べ替え",
+                "sort_created": "作成順で並べ替え"
             },
             "group": {
                 "header": "グループ"
@@ -246,10 +246,10 @@
                     "theme_mode_material3": "Material 3",
                     "vrcplus_profile_icons": "VRC+ プロフィールアイコン",
                     "disable_tooltips": "ツールチップを無効化",
-                    "sort_favorite_by": "お気に入りを並び替え:",
+                    "sort_favorite_by": "お気に入りを並べ替え:",
                     "sort_favorite_by_name": "名前順",
                     "sort_favorite_by_date": "日付順",
-                    "sort_instance_users_by": "インスタンス人数を並び替え:",
+                    "sort_instance_users_by": "インスタンス人数を並べ替え:",
                     "sort_instance_users_by_time": "時間順",
                     "sort_instance_users_by_alphabet": "アルファベット順",
                     "table_max_size": "テーブルの最大数",
@@ -265,8 +265,8 @@
                 "side_panel": {
                     "header": "サイドパネル",
                     "sorting": {
-                        "header": "並び替え",
-                        "sort_private_to_bottom": "Privateを下に並び替え",
+                        "header": "並べ替え",
+                        "sort_private_to_bottom": "Privateを下に並べ替え",
                         "sort_by_status": "ステータスで並べ替え",
                         "sort_gps_to_top": "GPSで並べ替え",
                         "sort_gps_to_top_notice": "(オンラインのみ)",
@@ -600,7 +600,7 @@
             "worlds": {
                 "header": "ワールド",
                 "total_count": "{count} 個のワールド",
-                "sort_by": "並び替え:",
+                "sort_by": "並べ替え:",
                 "order_by": "表示順:",
                 "sorting": {
                     "updated": "更新日",
@@ -801,7 +801,7 @@
                 "all_members": "全員",
                 "friends_only": "フレンドのみ",
                 "load_more": "もっと見る...",
-                "sort_by": "並び替え:",
+                "sort_by": "並べ替え:",
                 "sorting": {
                     "user_id": "ユーザーID (昇順)",
                     "joined_at_asc": "参加順 (昇順)",
