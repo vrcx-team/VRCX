@@ -196,7 +196,7 @@
       <Version>114.2.120</Version>
     </PackageReference>
     <PackageReference Include="DiscordRichPresence">
-      <Version>1.1.4.20</Version>
+      <Version>1.2.1.24</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
       <Version>7.1.3</Version>
