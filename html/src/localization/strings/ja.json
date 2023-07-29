@@ -600,8 +600,18 @@
             "worlds": {
                 "header": "ワールド",
                 "total_count": "{count} 個のワールド",
-                "sort_by_name": "名前順",
-                "sort_by_update": "更新順"
+                "sort_by": "ソート順:",
+                "order_by": "表示順:",
+                "sorting": {
+                    "updated": "更新日",
+                    "created": "作成日",
+                    "favorites": "お気に入り数",
+                    "popularity": "人気順"
+                },
+                "order": {
+                    "descending": "降順",
+                    "ascending": "昇順"
+                }
             },
             "favorite_worlds": {
                 "header": "お気に入りワールド"
