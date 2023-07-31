@@ -37,7 +37,7 @@ VRCX は VRChat クライアント (デスクトップ & VR) や Web サイト�
   - **注意**: この機能を使うには、VRChat の設定で「Allow Untrusted URLs」を有効化しておく必要があります。
   - 開発者向け: [Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
 - :mag: アバター、ユーザー、ワールド、グループの検索
-- :clipboard: 無制限！ローカル保存のワールドお気に入りリスト
+- :earth_americas: 無制限！ローカル保存のワールドお気に入りリスト
 - :camera: ゲーム内で撮った写真にワールドデータを保存することで、半年前に撮影した綺麗なワールドをいつでも思い返すことができます。
 - :bell: 通知の監視 & 対応
   - VRCX から Invite やフレンドリクエストを送受信したり、受け取った Invite のインスタンス情報を確認することができます。
