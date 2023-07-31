@@ -701,7 +701,9 @@
                 "created_at": "創建時間",
                 "last_updated": "最後更新",
                 "version": "版本",
-                "platform": "平台"
+                "platform": "平台",
+                "memo": "備忘錄",
+                "memo_placeholder": "點擊新增備忘錄"
             },
             "json": {
                 "header": "原始資料",

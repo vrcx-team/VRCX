@@ -44,6 +44,9 @@ class Database {
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS world_memos (world_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
         );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS avatar_memos (avatar_id TEXT PRIMARY KEY, edited_at TEXT, memo TEXT)`
+        );
     }
 
     async initTables() {
@@ -266,6 +269,46 @@ class Database {
             `DELETE FROM world_memos WHERE world_id = @world_id`,
             {
                 '@world_id': worldId
+            }
+        );
+    }
+
+    // Avatar memos
+
+    async getAvatarMemoDB(avatarId) {
+        var row = {};
+        await sqliteService.execute(
+            (dbRow) => {
+                row = {
+                    avatarId: dbRow[0],
+                    editedAt: dbRow[1],
+                    memo: dbRow[2]
+                };
+            },
+            `SELECT * FROM avatar_memos WHERE avatar_id = @avatar_id`,
+            {
+                '@avatar_id': avatarId
+            }
+        );
+        return row;
+    }
+
+    setAvatarMemo(entry) {
+        sqliteService.executeNonQuery(
+            `INSERT OR REPLACE INTO avatar_memos (avatar_id, edited_at, memo) VALUES (@avatar_id, @edited_at, @memo)`,
+            {
+                '@avatar_id': entry.avatarId,
+                '@edited_at': entry.editedAt,
+                '@memo': entry.memo
+            }
+        );
+    }
+
+    deleteAvatarMemo(avatarId) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM avatar_memos WHERE avatar_id = @avatar_id`,
+            {
+                '@avatar_id': avatarId
             }
         );
     }

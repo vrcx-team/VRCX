@@ -735,7 +735,9 @@
                 "created_at": "Created At",
                 "last_updated": "Last Updated",
                 "version": "Version",
-                "platform": "Platform"
+                "platform": "Platform",
+                "memo": "Memo",
+                "memo_placeholder": "Click to add a memo"
             },
             "json": {
                 "header": "JSON",

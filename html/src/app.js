@@ -7826,6 +7826,32 @@ speechSynthesis.getVoices();
     };
 
     // #endregion
+    // #region | App: Avatar Memos
+
+    $app.methods.getAvatarMemo = async function (avatarId) {
+        try {
+            return await database.getAvatarMemoDB(avatarId);
+        } catch (err) {console.error(err);}
+        return {
+            avatarId: '',
+            editedAt: '',
+            memo: ''
+        };
+    };
+
+    $app.methods.saveAvatarMemo = function (avatarId, memo) {
+        if (memo) {
+            database.setAvatarMemo({
+                avatarId,
+                editedAt: new Date().toJSON(),
+                memo
+            });
+        } else {
+            database.deleteAvatarMemo(avatarId);
+        }
+    };
+
+    // #endregion
     // #region | App: Friends
 
     $app.data.friends = new Map();
@@ -17841,6 +17867,7 @@ speechSynthesis.getVoices();
         visible: false,
         loading: false,
         id: '',
+        memo: '',
         ref: {},
         isFavorite: false,
         isBlocked: false,
@@ -17852,6 +17879,20 @@ speechSynthesis.getVoices();
         cacheLocked: false,
         cachePath: '',
         fileAnalysis: {}
+    };
+
+    $app.data.ignoreAvatarMemoSave = false;
+
+    $app.watch['avatarDialog.memo'] = function (value) {
+        if (this.ignoreAvatarMemoSave) {
+            this.ignoreAvatarMemoSave = false;
+            return;
+        }
+        var D = this.avatarDialog;
+        if (D.visible === false) {
+            return;
+        }
+        this.saveAvatarMemo(D.id, value == null ? D.memo : value);
     };
 
     API.$on('LOGOUT', function () {
@@ -17891,6 +17932,8 @@ speechSynthesis.getVoices();
         D.isQuestFallback = false;
         D.isFavorite = API.cachedFavoritesByObjectId.has(avatarId);
         D.isBlocked = API.cachedAvatarModerations.has(avatarId);
+        this.ignoreAvatarMemoSave = true;
+        D.memo = '';
         var ref2 = API.cachedAvatars.get(avatarId);
         if (typeof ref2 !== 'undefined') {
             D.ref = ref2;
@@ -17966,6 +18009,12 @@ speechSynthesis.getVoices();
             .finally(() => {
                 D.loading = false;
             });
+        this.getAvatarMemo(avatarId).then((memo) => {
+            if (D.id === memo.avatarId) {
+                this.ignoreAvatarMemoSave = true;
+                D.memo = memo.memo;
+            }
+        });
     };
 
     $app.methods.avatarDialogCommand = function (command) {
