@@ -68,35 +68,35 @@ VRCX は VRChat クライアント (デスクトップ & VR) や Web サイト�
 
 <table>
   <tr>
-    <td align="center"><img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098150151471759430/image.png" alt="login"></td>
-    <td align="center"><img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098150435002527794/image.png" alt="2fa"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306004-32bf7310-222b-45a0-91cc-242a6cb26886.png" alt="login"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306165-85a08a60-a0e0-4e50-b4e0-99c5f4fb5da4.png" alt="2fa"></td>
   </tr>
 </table>
 
 <h3>フィード</h3>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098151111963181066/image.png" alt="feed">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306317-361a3fcc-a506-4b64-9ad5-d198d81f533a.png" alt="feed">
 
 <h3>ゲームログ</h3>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098151427148370010/image.png" alt="gamelog">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306386-e3ba8511-5afb-40a2-abf6-81ba31387dee.png" alt="gamelog">
 
 <h3>ユーザー情報</h3>
 
 <h4>自分</h4>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098151750277537792/image.png" alt="me">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306511-64a45c0f-96d1-4440-b135-544bc285e096.png" alt="me">
 
 <h4>フレンド</h4>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098152156294565949/image.png" alt="friend">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306624-43d7a0ae-8f03-474c-bc60-c3a9b4d6ffb9.png" alt="friend">
 
 <h3>ワールド</h3>
 
 <table>
   <tr>
-    <td align="center"><img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098153504834588782/image.png" alt="instance"></td>
-    <td align="center"><img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098153774377336883/image.png" alt="info"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306691-65eeb2d2-c640-4abb-8d68-fc4d911b9504.png" alt="instance"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306760-c7256775-7b59-419e-bc81-d27a81168d3e.png" alt="info"></td>
   </tr>
 </table>
 
@@ -104,19 +104,19 @@ VRCX は VRChat クライアント (デスクトップ & VR) や Web サイト�
 
 <h4>フレンド</h4>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098157650761490452/image.png" alt="friend">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306890-1dbe80eb-d4d3-4d5f-a908-41f6c7f225a4.png" alt="friend">
 
 <h4>ワールド</h4>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098158554944376832/image.png" alt="world">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258307011-e27b28b3-9f5b-4f5a-9311-e0d1ec8659c6.png" alt="world">
 
 <h4>アバター</h4>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098158789254983691/image.png" alt="avatar">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258307171-5b530698-771a-435c-84fa-9b3ff17bf2dc.png" alt="avatar">
 
 <h3>フレンドログ</h3>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098159999936643113/image.png" alt="friendlog">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258307210-a727a0fe-cba8-438d-9c3f-2276d96be9c2.png" alt="friendlog">
 
 <h3>Discord Rich Presence</h3>
 
