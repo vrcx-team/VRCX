@@ -10,6 +10,115 @@ namespace VRCX
     internal static class ScreenshotHelper
     {
         private static readonly byte[] pngSignatureBytes = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        private static readonly string VRChatPicturesFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+        private static readonly Dictionary<string, JObject> MetadataCache = new Dictionary<string, JObject>();
+
+        public static List<string> FindScreenshotsByIdentifier(string identifier, string identifier2, string identifierType)
+        {
+            List<string> result = new List<string>();
+
+            foreach (var file in Directory.GetFiles(VRChatPicturesFolderPath, "*.png", SearchOption.AllDirectories))
+            {
+                JObject parsedMetadata = null;
+                if (!MetadataCache.TryGetValue(file, out parsedMetadata))
+                {
+                    parsedMetadata = GetScreenshotMetadata(file);
+                    MetadataCache.Add(file, parsedMetadata);
+                }
+                if (parsedMetadata == null)
+                    continue;
+
+                if (identifierType != "WorldID" && parsedMetadata.TryGetValue("players", out var players) && players != null)
+                {
+                    foreach (var player in players)
+                    {
+                        string id = player.Value<string>("id");
+                        string displayName = player.Value<string>("displayName");
+                        switch (identifierType)
+                        {
+                            case "Username" when !string.IsNullOrEmpty(displayName) && displayName == identifier:
+                                result.Add(file);
+                                continue;
+                            case "UserID" when !string.IsNullOrEmpty(id) && id == identifier:
+                                result.Add(file);
+                                continue;
+                            case "UsernameOrUserID" when (!string.IsNullOrEmpty(displayName) && displayName == identifier) || (!string.IsNullOrEmpty(id) && id == identifier2):
+                                result.Add(file);
+                                continue;
+                        }
+                    }
+                }
+                else if (identifierType == "WorldID" && parsedMetadata.TryGetValue("world", out var world) && world != null)
+                {
+                    string worldId = world.Value<string>("id");
+                    if (!string.IsNullOrEmpty(worldId) && worldId == identifier)
+                        result.Add(file);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Retrieves metadata from a PNG screenshot file and attempts to parse it.
+        /// </summary>
+        /// <param name="path">The path to the PNG screenshot file.</param>
+        /// <returns>A JObject containing the metadata or null if no metadata was found.</returns>
+        public static JObject GetScreenshotMetadata(string path)
+        {
+            if (!IsPNGFile(path)) return null;
+            JObject metadata = null;
+            if (File.Exists(path) && path.EndsWith(".png"))
+            {
+                string metadataString = null;
+
+                try
+                {
+                    metadataString = ReadPNGDescriptionFileStream(path);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return null;
+                }
+
+                if (!string.IsNullOrEmpty(metadataString))
+                {
+                    if (metadataString.StartsWith("lfs") || metadataString.StartsWith("screenshotmanager"))
+                    {
+                        try
+                        {
+                            metadata = ScreenshotHelper.ParseLfsPicture(metadataString);
+                        }
+                        catch
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            metadata = JObject.Parse(metadataString);
+                        }
+                        catch
+                        {
+                            return null;
+                        }
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+
+            return metadata;
+        }
 
         /// <summary>
         ///     Writes a text description into a PNG file at the specified path.
@@ -64,6 +173,29 @@ namespace VRCX
             var text = existingiTXt.GetText("Description");
 
             return text;
+        }
+
+        /// <summary>
+        ///     Reads a text description from a PNG file at the specified path.
+        ///     Reads any existing iTXt PNG chunk in the target file, using the Description tag.
+        /// </summary>
+        /// <param name="path">The file path of the PNG file in which the description is to be read from.</param>
+        /// <returns>
+        ///     The text description that is read from the PNG file.
+        /// </returns>
+        public static string ReadPNGDescriptionFileStream(string path)
+        {
+            if (!File.Exists(path) || !IsPNGFile(path)) return null;
+
+            using (var stream = File.OpenRead(path))
+            {
+                var existingiTXt = FindChunk(stream, "iTXt");
+                if (existingiTXt == null) return null;
+
+                var text = existingiTXt.GetText("Description");
+
+                return text;
+            }
         }
 
         public static string ReadPNGResolution(string path)
@@ -141,6 +273,53 @@ namespace VRCX
         }
 
         /// <summary>
+        ///     Finds the index of the first byte of the specified chunk type in the specified PNG file.
+        /// </summary>
+        /// <param name="fs">FileStream of a PNG file.</param>
+        /// <param name="type">Type of PMG chunk to find</param>
+        /// <returns></returns>
+        private static int FindChunkIndex(FileStream fs, string type)
+        {
+            // The first 8 bytes of the file are the png signature, so we can skip them.
+            var index = 8;
+
+            byte[] buffer = new byte[128 * 1024];
+            fs.Position = 0;
+            fs.Read(buffer, 0, buffer.Length);
+
+            while (index + 12 < buffer.Length)
+            {
+                var chunkLength = new byte[4];
+                Array.Copy(buffer, index, chunkLength, 0, 4);
+
+                // BitConverter wants little endian(unless your system is big endian for some reason), PNG multi-byte integers are big endian. So we reverse the array.
+                if (BitConverter.IsLittleEndian) Array.Reverse(chunkLength);
+
+                var length = BitConverter.ToInt32(chunkLength, 0);
+
+                // We don't need to reverse strings since UTF-8 strings aren't affected by endianess, given that they're a sequence of bytes. 
+                var chunkName = new byte[4];
+                Array.Copy(buffer, index + 4, chunkName, 0, 4);
+                var name = Encoding.UTF8.GetString(chunkName);
+
+                if (name == type)
+                {
+                    return index;
+                }
+
+                if (name == "IEND") // Nothing should exist past IEND in a normal png file, so we should stop parsing here to avoid trying to parse junk data.
+                {
+                    return -1;
+                }
+
+                // The chunk length is 4 bytes, the chunk name is 4 bytes, the chunk data is length bytes, and the chunk CRC is 4 bytes.
+                index += length + 12;
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         ///     Finds the index of the end of the specified chunk type in the specified PNG file.
         /// </summary>
         /// <param name="png">Array of bytes representing a PNG file.</param>
@@ -177,6 +356,30 @@ namespace VRCX
 
             var chunkData = new byte[length];
             Array.Copy(png, index + 8, chunkData, 0, length);
+
+            return new PNGChunk(type, chunkData);
+        }
+
+        /// <summary>
+        ///     Finds the specified chunk type in the specified PNG file and returns it as a PNGChunk.
+        /// </summary>
+        /// <param name="fs">FileStream of a PNG file.</param>
+        /// <param name="type">Type of PMG chunk to find</param>
+        /// <returns>PNGChunk</returns>
+        private static PNGChunk FindChunk(FileStream fs, string type)
+        {
+            var index = FindChunkIndex(fs, type);
+            if (index == -1) return null;
+
+            var chunkLength = new byte[4];
+            fs.Position = index;
+            fs.Read(chunkLength, 0, 4);
+            Array.Reverse(chunkLength);
+            var length = BitConverter.ToInt32(chunkLength, 0);
+
+            var chunkData = new byte[length];
+            fs.Position = index + 8;
+            fs.Read(chunkData, 0, length);
 
             return new PNGChunk(type, chunkData);
         }
