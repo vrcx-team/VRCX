@@ -23801,6 +23801,15 @@ speechSynthesis.getVoices();
             case 'group':
                 this.showGroupDialog(commandArg);
                 break;
+            case 'local-favorite-world':
+                console.log('local-favorite-world', commandArg);
+                var [id, group] = commandArg.split(':');
+                API.getCachedWorld({ worldId: id }).then((args1) => {
+                    this.directAccessWorld(id);
+                    this.addLocalWorldFavorite(id, group);
+                    return args1;
+                });
+                break;
             case 'addavatardb':
                 this.addAvatarProvider(input.replace('addavatardb/', ''));
                 break;
