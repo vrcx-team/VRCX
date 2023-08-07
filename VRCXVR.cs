@@ -305,6 +305,8 @@ namespace VRCX
 
             var sb = new StringBuilder(256);
             var state = new VRControllerState_t();
+            var poses = new TrackedDevicePose_t[OpenVR.k_unMaxTrackedDeviceCount];
+            system.GetDeviceToAbsoluteTrackingPose(ETrackingUniverseOrigin.TrackingUniverseStanding, 0, poses);
             for (var i = 0u; i < OpenVR.k_unMaxTrackedDeviceCount; ++i)
             {
                 var devClass = system.GetTrackedDeviceClass(i);
@@ -393,7 +395,8 @@ namespace VRCX
                         isCharging
                             ? "charging"
                             : "discharging",
-                        (batteryPercentage * 100).ToString()
+                        (batteryPercentage * 100).ToString(),
+                        poses[i].eTrackingResult.ToString()
                     };
                     _deviceListLock.EnterWriteLock();
                     try

@@ -48,12 +48,12 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | ▶️ #[span.name(v-text="feed.displayName")]
+                                            | ▶️ #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")]
                                 div(v-else-if="feed.type === 'OnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | ◀️ #[span.name(v-text="feed.displayName")]
+                                            | ◀️ #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")]
                                 div(v-else-if="feed.type === 'OnPlayerJoining'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -69,7 +69,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | 🎵 #[span.name(v-if="feed.displayName" v-text="feed.displayName" style="margin-right:5px")]
+                                            | 🎵 #[span.name(v-if="feed.displayName" v-text="feed.displayName" style="margin-right:5px" :style="{'color':feed.tagColour}")]
                                             template(v-if="feed.videoName")
                                                 | #[span(v-text="feed.videoName")]
                                             template(v-else)
@@ -149,7 +149,7 @@ html
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
                                             template(v-if="feed.displayName")
-                                                | ✨ #[span.name(v-text="feed.displayName" style="margin-right:5px")]
+                                                | ✨ #[span.name(v-text="feed.displayName" style="margin-right:5px" :style="{'color':feed.tagColour}")]
                                                 | #[location(:location="feed.instanceId" :hint="feed.worldName" :grouphint="feed.groupName")]
                                             template(v-else)
                                                 | ✨ User has spawned a portal
@@ -157,7 +157,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | 🧍 #[span.name(v-text="feed.displayName" style="margin-right:5px")]
+                                            | 🧍 #[span.name(v-text="feed.displayName" style="margin-right:5px" :style="{'color':feed.tagColour}")]
                                             template(v-if="feed.releaseStatus === 'public'")
                                                 | #[i.x-user-status.online]
                                             template(v-else)
@@ -169,7 +169,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | 💬 #[span.name(v-text="feed.displayName")] #[span(v-text="feed.text")]
+                                            | 💬 #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")] #[span(v-text="feed.text")]
                                 div(v-else-if="feed.type === 'Event'" class="x-friend-item")
                                     .detail
                                         span.extra
@@ -179,7 +179,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | 🟠 #[span.name(v-text="feed.message")] #[span.name(v-text="feed.displayName")]
+                                            | 🟠 #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")] #[span.name(v-text="feed.message")]
                                 div(v-else-if="feed.type === 'BlockedOnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -204,22 +204,22 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | 🚫 #[span.name(v-text="feed.displayName")]
+                                            | 🚫 #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")]
                                 div(v-else-if="feed.type === 'Unblocked'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | ⭕ #[span.name(v-text="feed.displayName")]
+                                            | ⭕ #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")]
                                 div(v-else-if="feed.type === 'Muted'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | 🔇 #[span.name(v-text="feed.displayName")]
+                                            | 🔇 #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")]
                                 div(v-else-if="feed.type === 'Unmuted'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | 🎤 #[span.name(v-text="feed.displayName")]
+                                            | 🎤 #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")]
                         template(v-else)
                             template(v-for="feed in wristFeed")
                                 .x-friend-item(v-if="feed.type === 'GPS'" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
@@ -258,12 +258,12 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")] has joined
+                                            | #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")] has joined
                                 div(v-else-if="feed.type === 'OnPlayerLeft'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")] has left
+                                            | #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")] has left
                                 div(v-else-if="feed.type === 'OnPlayerJoining'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -278,7 +278,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")]
+                                            | #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")]
                                             span(style="margin-left:5px;margin-right:5px") changed video to
                                             template(v-if="feed.videoName")
                                                 | #[span(v-text="feed.videoName")]
@@ -359,7 +359,7 @@ html
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
                                             template(v-if="feed.displayName")
-                                                | #[span.name(v-text="feed.displayName")] has spawned a portal to
+                                                | #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")] has spawned a portal to
                                                 | #[location(:location="feed.instanceId" :hint="feed.worldName" :grouphint="feed.groupName" style="margin-left:5px")]
                                             template(v-else)
                                                 | User has spawned a portal
@@ -367,7 +367,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")]
+                                            | #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")]
                                             span(style="margin-left:5px;margin-right:5px") changed into avatar
                                             template(v-if="feed.releaseStatus === 'public'")
                                                 | #[i.x-user-status.online]
@@ -380,7 +380,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")] said #[span(v-text="feed.text")]
+                                            | #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")] said #[span(v-text="feed.text")]
                                 div(v-else-if="feed.type === 'Event'" class="x-friend-item")
                                     .detail
                                         span.extra
@@ -390,7 +390,7 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | External: #[span.name(v-text="feed.message")] #[span.name(v-text="feed.displayName")]
+                                            | External: #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")] #[span.name(v-text="feed.message")]
                                 div(v-else-if="feed.type === 'BlockedOnPlayerJoined'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -415,58 +415,58 @@ html
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")] has blocked you
+                                            | #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")] has blocked you
                                 div(v-else-if="feed.type === 'Unblocked'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")] has unblocked you
+                                            | #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")] has unblocked you
                                 div(v-else-if="feed.type === 'Muted'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")] has muted you
+                                            | #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")] has muted you
                                 div(v-else-if="feed.type === 'Unmuted'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
-                                            | #[span.name(v-text="feed.displayName")] has unmuted you
+                                            | #[span.name(v-text="feed.displayName" :style="{'color':feed.tagColour}")] has unmuted you
                 .x-containerbottom
                     div(style="display:flex;flex-direction:row;flex-wrap:wrap")
                         div(v-for="device in devices" class="tracker-container")
-                            template(v-if="device[0] === 'leftController'")
-                                img(v-if="device[1] !== 'connected'" src="images/left_controller_status_off.png" class="tracker-device")
-                                img(v-else-if="device[2] === 'charging'" src="images/left_controller_status_ready_charging.png" class="tracker-device")
-                                img(v-else-if="device[3] < 20" src="images/left_controller_status_ready_low.png" class="tracker-device")
-                                img(v-else src="images/left_controller_status_ready.png" class="tracker-device")
+                            div(v-if="device[0] === 'leftController'" class="tracker-device" :class="trackingResultToClass(device[4])")
+                                img(v-if="device[1] !== 'connected'" src="images/left_controller_status_off.png" class="tracker-device" :class="trackingResultToClass(device[4])")
+                                img(v-else-if="device[2] === 'charging'" src="images/left_controller_status_ready_charging.png")
+                                img(v-else-if="device[3] < 20" src="images/left_controller_status_ready_low.png")
+                                img(v-else src="images/left_controller_status_ready.png")
                                 span {{ device[3] }}%
-                            template(v-else-if="device[0] === 'rightController'")
-                                img(v-if="device[1] !== 'connected'" src="images/right_controller_status_off.png" class="tracker-device")
-                                img(v-else-if="device[2] === 'charging'" src="images/right_controller_status_ready_charging.png" class="tracker-device")
-                                img(v-else-if="device[3] < 20" src="images/right_controller_status_ready_low.png" class="tracker-device")
-                                img(v-else src="images/right_controller_status_ready.png" class="tracker-device")
+                            div(v-else-if="device[0] === 'rightController'" class="tracker-device" :class="trackingResultToClass(device[4])")
+                                img(v-if="device[1] !== 'connected'" src="images/right_controller_status_off.png")
+                                img(v-else-if="device[2] === 'charging'" src="images/right_controller_status_ready_charging.png")
+                                img(v-else-if="device[3] < 20" src="images/right_controller_status_ready_low.png")
+                                img(v-else src="images/right_controller_status_ready.png")
                                 span {{ device[3] }}%
-                            template(v-else-if="device[0] === 'controller'")
-                                img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png" class="tracker-device")
-                                img(v-else-if="device[2] === 'charging'" src="images/controller_status_ready_charging.png" class="tracker-device")
-                                img(v-else-if="device[3] < 20" src="images/controller_status_ready_low.png" class="tracker-device")
-                                img(v-else src="images/controller_status_ready.png" class="tracker-device")
+                            div(v-else-if="device[0] === 'controller'" class="tracker-device" :class="trackingResultToClass(device[4])")
+                                img(v-if="device[1] !== 'connected'" src="images/controller_status_off.png")
+                                img(v-else-if="device[2] === 'charging'" src="images/controller_status_ready_charging.png")
+                                img(v-else-if="device[3] < 20" src="images/controller_status_ready_low.png")
+                                img(v-else src="images/controller_status_ready.png")
                                 span {{ device[3] }}%
-                            template(v-else-if="device[0] === 'tracker'")
-                                img(v-if="device[1] !== 'connected'" src="images/tracker_status_off.png" class="tracker-device")
-                                img(v-else-if="device[2] === 'charging'" src="images/tracker_status_ready_charging.png" class="tracker-device")
-                                img(v-else-if="device[3] < 20" src="images/tracker_status_ready_low.png" class="tracker-device")
-                                img(v-else src="images/tracker_status_ready.png" class="tracker-device")
+                            div(v-else-if="device[0] === 'tracker'" class="tracker-device" :class="trackingResultToClass(device[4])")
+                                img(v-if="device[1] !== 'connected'" src="images/tracker_status_off.png")
+                                img(v-else-if="device[2] === 'charging'" src="images/tracker_status_ready_charging.png")
+                                img(v-else-if="device[3] < 20" src="images/tracker_status_ready_low.png")
+                                img(v-else src="images/tracker_status_ready.png")
                                 span {{ device[3] }}%
-                            template(v-else-if="device[0] === 'base'")
-                                img(v-if="device[1] !== 'connected'" src="images/base_status_off.png" class="tracker-device")
-                                img(v-else src="images/base_status_ready.png" class="tracker-device")
+                            div(v-else-if="device[0] === 'base'" class="tracker-device" :class="trackingResultToClass(device[4])")
+                                img(v-if="device[1] !== 'connected'" src="images/base_status_off.png")
+                                img(v-else src="images/base_status_ready.png")
                                 span(v-if="device[3] !== 100") {{ device[3] }}x
-                            template(v-else)
-                                img(v-if="device[1] !== 'connected'" src="images/other_status_off.png" class="tracker-device")
-                                img(v-else-if="device[2] === 'charging'" src="images/other_status_ready_charging.png" class="tracker-device")
-                                img(v-else-if="device[3] < 20" src="images/other_status_ready_low.png" class="tracker-device")
-                                img(v-else src="images/other_status_ready.png" class="tracker-device")
+                            div(v-else class="tracker-device" :class="trackingResultToClass(device[4])")
+                                img(v-if="device[1] !== 'connected'" src="images/other_status_off.png")
+                                img(v-else-if="device[2] === 'charging'" src="images/other_status_ready_charging.png")
+                                img(v-else-if="device[3] < 20" src="images/other_status_ready_low.png")
+                                img(v-else src="images/other_status_ready.png")
                                 span {{ device[3] }}%
                 .x-containerbottom
                     template(v-if="nowPlaying.playing")

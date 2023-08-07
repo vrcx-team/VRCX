@@ -708,7 +708,7 @@
                 "last_updated": "最后更新",
                 "version": "版本",
                 "platform": "平台",
-                "memo":"VRCX 本地备忘信息",
+                "memo": "VRCX 本地备忘信息",
                 "memo_placeholder": "点击添加备忘录"
             },
             "json": {

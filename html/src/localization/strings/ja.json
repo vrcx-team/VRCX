@@ -736,7 +736,7 @@
                 "last_updated": "最終更新日時",
                 "version": "バージョン",
                 "platform": "プラットフォーム",
-                "memo":"メモ (VRCX)",
+                "memo": "メモ (VRCX)",
                 "memo_placeholder": "クリックしてメモを追加"
             },
             "json": {

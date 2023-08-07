@@ -634,6 +634,7 @@
                 "public": "Public",
                 "private": "Private",
                 "avatar_scaling_disabled": "Avatar Scaling Disabled",
+                "future_proofing": "Future Proofing",
                 "labs": "Labs",
                 "cache": "Cache"
             },
@@ -701,6 +702,7 @@
                 "public": "Public",
                 "private": "Private",
                 "fallback": "Fallback",
+                "future_proofing": "Future Proofing",
                 "cache": "Cache"
             },
             "labels": {
@@ -915,9 +917,11 @@
             "max_cache_size": "Max Cache Size [GB] (min 20)",
             "cache_expiry_delay": "Cache Expiry [Days] (30 - 150)",
             "cache_directory": "Custom Cache Folder Location",
+            "picture_directory": "Custom Picture Folder Location",
             "fpv_steadycam_fov": "First-Person Steadycam FOV",
             "camera_resolution": "Camera Resolution",
             "screenshot_resolution": "Screenshot Resolution",
+            "picture_sort_by_date": "Sort pictures into folders by date",
             "disable_discord_presence": "Disable Discord Rich Presence",
             "vrchat_docs": "VRChat Docs",
             "cancel": "Cancel",
@@ -932,7 +936,7 @@
         },
         "set_world_tags": {
             "header": "Set World Tags",
-            "avatar_scaling_disabled": "Avatar Scaling Disabled",
+            "avatar_scaling_disabled": "Disable avatar scaling",
             "enable_debugging": "Enable world debugging for others",
             "seprator": "Enter tags comma separated",
             "cancel": "Cancel",

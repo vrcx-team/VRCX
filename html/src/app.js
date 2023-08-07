@@ -108,9 +108,12 @@ speechSynthesis.getVoices();
         this.Set(key, JSON.stringify(value));
     };
 
-    workerTimers.setInterval(function () {
-        VRCXStorage.Flush();
-    }, 5 * 60 * 1000);
+    workerTimers.setInterval(
+        () => {
+            VRCXStorage.Flush();
+        },
+        5 * 60 * 1000
+    );
     // #endregion
     // #region | Init: Noty, Vue, Vue-Markdown, ElementUI, VueI18n, VueLazyLoad, Vue filters, dark stylesheet
 
@@ -5485,10 +5488,39 @@ speechSynthesis.getVoices();
         pendingUpdate: false
     };
 
+    $app.data.updateSharedFeedTimer = null;
+    $app.data.updateSharedFeedPending = false;
+    $app.data.updateSharedFeedPendingForceUpdate = false;
     $app.methods.updateSharedFeed = function (forceUpdate) {
         if (!this.friendLogInitStatus) {
             return;
         }
+        if (this.updateSharedFeedTimer) {
+            if (forceUpdate) {
+                this.updateSharedFeedPendingForceUpdate = true;
+            }
+            this.updateSharedFeedPending = true;
+        } else {
+            this.updateSharedExecute(forceUpdate);
+            this.updateSharedFeedTimer = setTimeout(() => {
+                if (this.updateSharedFeedPending) {
+                    this.updateSharedExecute(
+                        this.updateSharedFeedPendingForceUpdate
+                    );
+                }
+                this.updateSharedFeedTimer = null;
+            }, 150);
+        }
+    };
+
+    $app.methods.updateSharedExecute = function (forceUpdate) {
+        this.updateSharedFeedDebounce(forceUpdate);
+        this.updateSharedFeedTimer = null;
+        this.updateSharedFeedPending = false;
+        this.updateSharedFeedPendingForceUpdate = false;
+    };
+
+    $app.methods.updateSharedFeedDebounce = function (forceUpdate) {
         this.updateSharedFeedGameLog(forceUpdate);
         this.updateSharedFeedFeedTable(forceUpdate);
         this.updateSharedFeedNotificationTable(forceUpdate);
@@ -5684,6 +5716,14 @@ speechSynthesis.getVoices();
                     }
                 }
             }
+            // add tag colour
+            var tagColour = '';
+            if (ctx.userId) {
+                var tagRef = this.customUserTags.get(ctx.userId);
+                if (typeof tagRef !== 'undefined') {
+                    tagColour = tagRef.colour;
+                }
+            }
             // BlockedOnPlayerJoined, BlockedOnPlayerLeft, MutedOnPlayerJoined, MutedOnPlayerLeft
             if (ctx.type === 'OnPlayerJoined' || ctx.type === 'OnPlayerLeft') {
                 for (var ref of this.playerModerationTable.data) {
@@ -5725,6 +5765,7 @@ speechSynthesis.getVoices();
             ) {
                 wristArr.push({
                     ...ctx,
+                    tagColour,
                     isFriend,
                     isFavorite
                 });
@@ -6043,6 +6084,12 @@ speechSynthesis.getVoices();
             }
             var isFriend = this.friends.has(ctx.userId);
             var isFavorite = API.cachedFavoritesByObjectId.has(ctx.userId);
+            // add tag colour
+            var tagColour = '';
+            var tagRef = this.customUserTags.get(ctx.userId);
+            if (typeof tagRef !== 'undefined') {
+                tagColour = tagRef.colour;
+            }
             if (
                 w < 20 &&
                 wristFilter[ctx.type] &&
@@ -6051,7 +6098,8 @@ speechSynthesis.getVoices();
                 wristArr.push({
                     ...ctx,
                     isFriend,
-                    isFavorite
+                    isFavorite,
+                    tagColour
                 });
                 ++w;
             }
@@ -7828,7 +7876,9 @@ speechSynthesis.getVoices();
     $app.methods.getAvatarMemo = async function (avatarId) {
         try {
             return await database.getAvatarMemoDB(avatarId);
-        } catch (err) {console.error(err);}
+        } catch (err) {
+            console.error(err);
+        }
         return {
             avatarId: '',
             editedAt: '',
@@ -10121,6 +10171,13 @@ speechSynthesis.getVoices();
                 break;
         }
         if (entry) {
+            // add tag colour
+            if (entry.userId) {
+                var tagRef = this.customUserTags.get(entry.userId);
+                if (typeof tagRef !== 'undefined') {
+                    entry.tagColour = tagRef.colour;
+                }
+            }
             this.queueGameLogNoty(entry);
             this.addGameLog(entry);
         }
@@ -10523,7 +10580,7 @@ speechSynthesis.getVoices();
         var isFavorite = API.cachedFavoritesByObjectId.has(userId);
         var colour = '';
         var tagRef = this.customUserTags.get(userId);
-        if (typeof tagRef !== 'undefined' && tagRef.colour) {
+        if (typeof tagRef !== 'undefined') {
             colour = tagRef.colour;
         }
         var feed = {
@@ -16348,7 +16405,32 @@ speechSynthesis.getVoices();
         }
     });
 
+    $app.data.updatePlayerListTimer = null;
+    $app.data.updatePlayerListPending = false;
     $app.methods.getCurrentInstanceUserList = function () {
+        if (!this.friendLogInitStatus) {
+            return;
+        }
+        if (this.updatePlayerListTimer) {
+            this.updatePlayerListPending = true;
+        } else {
+            this.updatePlayerListExecute();
+            this.updatePlayerListTimer = setTimeout(() => {
+                if (this.updatePlayerListPending) {
+                    this.updatePlayerListExecute();
+                }
+                this.updatePlayerListTimer = null;
+            }, 150);
+        }
+    };
+
+    $app.methods.updatePlayerListExecute = function () {
+        this.updatePlayerListDebounce();
+        this.updatePlayerListTimer = null;
+        this.updatePlayerListPending = false;
+    };
+
+    $app.methods.updatePlayerListDebounce = function () {
         var users = [];
         var pushUser = function (ref) {
             var photonId = '';
@@ -17880,7 +17962,7 @@ speechSynthesis.getVoices();
 
     $app.data.ignoreAvatarMemoSave = false;
 
-    $app.watch['avatarDialog.memo'] = function (value) {
+    $app.watch['avatarDialog.memo'] = function () {
         if (this.ignoreAvatarMemoSave) {
             this.ignoreAvatarMemoSave = false;
             return;
@@ -17889,7 +17971,7 @@ speechSynthesis.getVoices();
         if (D.visible === false) {
             return;
         }
-        this.saveAvatarMemo(D.id, value == null ? D.memo : value);
+        this.saveAvatarMemo(D.id, D.memo);
     };
 
     API.$on('LOGOUT', function () {
@@ -21586,19 +21668,17 @@ speechSynthesis.getVoices();
             }
             var name = ref.displayName;
             if (ref.statusDescription) {
-                var statusRegex =
-                    /(?:^|\n*)(?:(?:[^\n:])*(?::|˸|discord)[\t\v\f\r]*)?([^\n]*(#|＃)(?: )?\d{4})/gi.exec(
-                        ref.statusDescription
-                    );
+                var statusRegex = /(?:discord|dc|dis)(?: |=|:|˸|;)(.*)/gi.exec(
+                    ref.statusDescription
+                );
                 if (statusRegex) {
                     discord = statusRegex[1];
                 }
             }
             if (!discord && ref.bio) {
-                var bioRegex =
-                    /(?:^|\n*)(?:(?:[^\n:])*(?::|˸|discord)[\t\v\f\r]*)?([^\n]*(#|＃)(?: )?\d{4})/gi.exec(
-                        ref.bio
-                    );
+                var bioRegex = /(?:discord|dc|dis)(?: |=|:|˸|;)(.*)/gi.exec(
+                    ref.bio
+                );
                 if (bioRegex) {
                     discord = bioRegex[1];
                 }
@@ -21606,10 +21686,7 @@ speechSynthesis.getVoices();
             if (!discord) {
                 continue;
             }
-            discord = discord.replace('＃', '#');
-            if (discord.substring(0, 1) === '#') {
-                discord = `${_(name)}${_(discord)}`;
-            }
+            discord = discord.trim();
             lines.push(`${_(name)},${_(discord)}`);
         }
         this.discordNamesContent = lines.join('\n');
@@ -21717,6 +21794,11 @@ speechSynthesis.getVoices();
                 name: $t('dialog.config_json.cache_directory'),
                 default: '%AppData%\\..\\LocalLow\\VRChat\\vrchat'
             },
+            picture_output_folder: {
+                name: $t('dialog.config_json.picture_directory'),
+                // my pictures folder
+                default: `%UserProfile%\\Pictures\\VRChat`
+            },
             // dynamic_bone_max_affected_transform_count: {
             //     name: 'Dynamic Bones Limit Max Transforms (0 disable all transforms)',
             //     default: '32',
@@ -21747,7 +21829,12 @@ speechSynthesis.getVoices();
 
     $app.methods.saveVRChatConfigFile = function () {
         for (var item in this.VRChatConfigFile) {
-            if (this.VRChatConfigFile[item] === '') {
+            if (item === 'picture_output_split_by_date') {
+                // this one is default true, it's special
+                if (this.VRChatConfigFile[item]) {
+                    delete this.VRChatConfigFile[item];
+                }
+            } else if (this.VRChatConfigFile[item] === '') {
                 delete this.VRChatConfigFile[item];
             } else if (
                 typeof this.VRChatConfigFile[item] === 'boolean' &&
@@ -23417,6 +23504,7 @@ speechSynthesis.getVoices();
             }
         });
         API.cachedAvatarNames = new Map();
+        this.customUserTags = new Map();
         this.updateInstanceInfo = 0;
     };
 
@@ -23569,6 +23657,7 @@ speechSynthesis.getVoices();
             ref.$customTag = data.Tag;
             ref.$customTagColour = data.TagColour;
         }
+        this.updateSharedFeed(true);
     };
 
     $app.methods.eventVrcxMessage = function (data) {

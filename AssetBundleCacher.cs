@@ -179,8 +179,8 @@ namespace VRCX
                 using (var stream = File.OpenRead(DownloadTempLocation))
                 {
                     var hashBytes = sha256.ComputeHash(stream);
-                    var hashString = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-                    if (hashString != hash[0])
+                    var hashString = BitConverter.ToString(hashBytes).Replace("-", "");
+                    if (!hashString.Equals(hash[0], StringComparison.OrdinalIgnoreCase))
                     {
                         logger.Error($"Updater: Hash check failed file:{hashString} remote:{hash[0]}");
                         // can't delete file yet because it's in use
