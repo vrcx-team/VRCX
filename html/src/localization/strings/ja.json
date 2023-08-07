@@ -735,7 +735,9 @@
                 "created_at": "作成日時",
                 "last_updated": "最終更新日時",
                 "version": "バージョン",
-                "platform": "プラットフォーム"
+                "platform": "プラットフォーム",
+                "memo":"メモ (VRCX)",
+                "memo_placeholder": "クリックしてメモを追加"
             },
             "json": {
                 "header": "JSON",

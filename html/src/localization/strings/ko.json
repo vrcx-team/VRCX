@@ -724,7 +724,9 @@
                 "created_at": "최초 업로드",
                 "last_updated": "마지막 업데이트",
                 "version": "버전",
-                "platform": "플랫폼"
+                "platform": "플랫폼",
+                "memo": "VRCX 메모",
+                "memo_placeholder": "-"
             },
             "json": {
                 "header": "JSON",
