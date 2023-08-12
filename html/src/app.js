@@ -21831,7 +21831,24 @@ speechSynthesis.getVoices();
     $app.methods.displayScreenshotMetadata = function (metadata) {
         var D = this.screenshotMetadataDialog;
         var json = JSON.parse(metadata);
-        D.metadata = json;
+
+        if (json.isSearchResult)
+        {
+            let searchIndex = D.metadata.searchIndex;
+            let files = D.metadata.files;
+            D.metadata = json;
+
+            D.metadata.files = files;
+            D.metadata.searchIndex = searchIndex;
+            D.metadata.isSearch = true;
+            console.log("Search result metadata, current index is", searchIndex)
+        } else if (json.isSearch) {
+            D.metadata = json;
+            D.metadata.searchIndex = 0;
+            console.log("First search result metadata, set index to 0")
+        } else {
+            D.metadata = json;
+        }
 
         var regex = json.fileName.match(
             /VRChat_((\d{3,})x(\d{3,})_(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{1,})|(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{3})_(\d{3,})x(\d{3,}))/
@@ -21865,6 +21882,7 @@ speechSynthesis.getVoices();
 
     $app.data.screenshotMetadataDialog = {
         visible: false,
+        search: "",
         metadata: {},
         isUploading: false
     };
@@ -21885,8 +21903,76 @@ speechSynthesis.getVoices();
         this.openScreenshotMetadataDialog();
     };
 
+    let inputs = 0
+    $app.methods.screenshotMetadataSearch = function () {
+        var D = this.screenshotMetadataDialog;
+        if (D.search === "") {
+            D.metadata.search = "";
+            return;
+        }
+
+        // Don't search if user is still typing
+        inputs++
+        let current = inputs
+        setTimeout(() => {
+            if (current !== inputs) {
+                return
+            }
+
+            inputs = 0;
+            AppApi.FindScreenshotsBySearch(D.search)
+            console.log("lmao search", D.search) 
+        }, 500);
+    }
+    
+    $app.methods.screenshotMetadataCarouselChangeSearch = function (index) {
+        var D = this.screenshotMetadataDialog;
+        var searchIndex = D.metadata.searchIndex;
+        var filesArr = D.metadata.files;
+
+        if (searchIndex == null) {
+            return;
+        }
+
+        console.log("Carousel change search", index, searchIndex, filesArr.length)
+
+        //console.log("Search result metadata, current index is", searchIndex, "files length is", filesArr.length, "index is", index, "search is", D.search, "files are", filesArr)
+        if (index === 0) {
+            console.log("Carousel <<<, searchIndex is", searchIndex, "files length is", filesArr.length)
+            if (searchIndex > 0) {
+                AppApi.GetScreenshotMetadata(filesArr[searchIndex - 1], true);
+                searchIndex--;
+            } else {
+                AppApi.GetScreenshotMetadata(filesArr[searchIndex], true);
+            }
+        } else if (index === 2) {
+            console.log("Carousel >>>, searchIndex is", searchIndex, "files length is", filesArr.length)
+            if (searchIndex < filesArr.length - 1) {
+                AppApi.GetScreenshotMetadata(filesArr[searchIndex + 1], true);
+                searchIndex++;
+            } else {
+                AppApi.GetScreenshotMetadata(filesArr[searchIndex], true);
+            }
+        }
+
+        if (typeof this.$refs.screenshotMetadataCarousel !== 'undefined') {
+            this.$refs.screenshotMetadataCarousel.setActiveItem(1);
+        }
+
+        D.metadata.searchIndex = searchIndex;
+
+    }
+
     $app.methods.screenshotMetadataCarouselChange = function (index) {
         var D = this.screenshotMetadataDialog;
+        var searchIndex = D.metadata.searchIndex;
+
+        if (searchIndex != null)
+        {
+            this.screenshotMetadataCarouselChangeSearch(index)
+            return;
+        }
+
         if (index === 0) {
             if (D.metadata.previousFilePath) {
                 AppApi.GetScreenshotMetadata(D.metadata.previousFilePath);

@@ -36,7 +36,7 @@ namespace VRCX
                         string displayName = player.Value<string>("displayName");
                         switch (identifierType)
                         {
-                            case "Username" when !string.IsNullOrEmpty(displayName) && displayName == identifier:
+                            case "Username" when !string.IsNullOrEmpty(displayName) && displayName.IndexOf(identifier, StringComparison.OrdinalIgnoreCase) != -1:
                                 result.Add(file);
                                 continue;
                             case "UserID" when !string.IsNullOrEmpty(id) && id == identifier:

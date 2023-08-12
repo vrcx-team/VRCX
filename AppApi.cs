@@ -25,6 +25,7 @@ using librsync.net;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace VRCX
 {
@@ -926,7 +927,7 @@ namespace VRCX
         /// Retrieves metadata from a PNG screenshot file and send the result to displayScreenshotMetadata in app.js
         /// </summary>
         /// <param name="path">The path to the PNG screenshot file.</param>
-        public void GetScreenshotMetadata(string path)
+        public void GetScreenshotMetadata(string path, bool isSearch = false)
         {
             if (string.IsNullOrEmpty(path))
                 return;
@@ -1001,6 +1002,52 @@ namespace VRCX
             metadata.Add("creationDate", creationDate.ToString("yyyy-MM-dd HH:mm:ss"));
             metadata.Add("fileName", fileName);
             metadata.Add("filePath", path);
+            metadata.Add("isSearchResult", isSearch);
+            var fileSizeBytes = new FileInfo(path).Length;
+            metadata.Add("fileSizeBytes", fileSizeBytes.ToString());
+            metadata.Add("fileSize", $"{(fileSizeBytes / 1024f / 1024f).ToString("0.00")} MB");
+            ExecuteAppFunction("displayScreenshotMetadata", metadata.ToString(Formatting.Indented));
+        }
+
+        public void FindScreenshotsBySearch(string searchQuery)
+        {
+            var files = ScreenshotHelper.FindScreenshotsByIdentifier(searchQuery, null, "Username");
+            string path = files.FirstOrDefault();
+
+            var fileName = Path.GetFileNameWithoutExtension(path);
+            var metadata = new JObject();
+
+            if (path == null)
+                throw new Exception("No screenshots found.");
+
+            string metadataString = null;
+            var readPNGFailed = false;
+
+            try
+            {
+                metadataString = ScreenshotHelper.ReadPNGDescription(path);
+                metadata = JObject.Parse(metadataString);
+            }
+            catch (Exception ex)
+            {
+                metadata.Add("error", $"VRCX encountered an error while trying to parse this file. The file might be an invalid/corrupted PNG file.\n({ex.Message})");
+                readPNGFailed = true;
+            }
+
+            var index = files.IndexOf(path) + 1;
+            if (index < files.Count - 1)
+            {
+                metadata.Add("nextFilePath", files[index + 1]);
+            }
+
+            metadata.Add("fileResolution", ScreenshotHelper.ReadPNGResolution(path));
+            var creationDate = File.GetCreationTime(path);
+            metadata.Add("creationDate", creationDate.ToString("yyyy-MM-dd HH:mm:ss"));
+            metadata.Add("fileName", fileName);
+            metadata.Add("filePath", path);
+            metadata.Add("isSearch", true);
+            metadata.Add("files", JArray.FromObject(files));
+
             var fileSizeBytes = new FileInfo(path).Length;
             metadata.Add("fileSizeBytes", fileSizeBytes.ToString());
             metadata.Add("fileSize", $"{(fileSizeBytes / 1024f / 1024f).ToString("0.00")} MB");
