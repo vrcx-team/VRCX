@@ -21848,6 +21848,7 @@ speechSynthesis.getVoices();
             console.log("First search result metadata, set index to 0")
         } else {
             D.metadata = json;
+            D.search = "";
         }
 
         var regex = json.fileName.match(
