@@ -484,6 +484,9 @@ input[type='number'],
     transform: translate(-50%);
     color: rgb(var(--md-sys-color-on-surface-variant));
 }
+.el-menu-item::before {
+    display: none;
+}
 .el-menu-item:focus,
 .el-menu-item:hover {
     background-color: rgba(var(--md-sys-color-on-surface-variant), 0.08);
