@@ -13570,10 +13570,8 @@ speechSynthesis.getVoices();
             cancelButtonText: 'Cancel',
             type: 'info',
             callback: (action) => {
-                if (
-                    action === 'confirm' &&
-                    removeFromArray(this.friendLogTable.data, row)
-                ) {
+                if (action === 'confirm') {
+                    removeFromArray(this.friendLogTable.data, row);
                     database.deleteFriendLogHistory(row.rowId);
                 }
             }
