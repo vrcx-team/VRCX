@@ -1842,6 +1842,20 @@ class Database {
         return date;
     }
 
+    async getGameLogWorldNameByWorldId(worldId) {
+        var worldName = '';
+        await sqliteService.execute(
+            (dbRow) => {
+                worldName = dbRow[0];
+            },
+            'SELECT world_name FROM gamelog_location WHERE world_id = @worldId ORDER BY id DESC LIMIT 1',
+            {
+                '@worldId': worldId
+            }
+        );
+        return worldName;
+    }
+
     async getModeration(userId) {
         var row = {};
         await sqliteService.execute(
@@ -2165,6 +2179,33 @@ class Database {
         return data;
     }
 
+    async getCachedAvatarById(id) {
+        var data = null;
+        await sqliteService.execute(
+            (dbRow) => {
+                data = {
+                    id: dbRow[0],
+                    // added_at: dbRow[1],
+                    authorId: dbRow[2],
+                    authorName: dbRow[3],
+                    created_at: dbRow[4],
+                    description: dbRow[5],
+                    imageUrl: dbRow[6],
+                    name: dbRow[7],
+                    releaseStatus: dbRow[8],
+                    thumbnailImageUrl: dbRow[9],
+                    updated_at: dbRow[10],
+                    version: dbRow[11]
+                };
+            },
+            `SELECT * FROM cache_avatar WHERE id = @id`,
+            {
+                '@id': id
+            }
+        );
+        return data;
+    }
+
     clearAvatarHistory() {
         sqliteService.executeNonQuery(
             `DELETE FROM ${Database.userPrefix}_avatar_history`
@@ -2273,6 +2314,33 @@ class Database {
             };
             data.push(row);
         }, 'SELECT * FROM cache_world');
+        return data;
+    }
+
+    async getCachedWorldById(id) {
+        var data = null;
+        await sqliteService.execute(
+            (dbRow) => {
+                data = {
+                    id: dbRow[0],
+                    // added_at: dbRow[1],
+                    authorId: dbRow[2],
+                    authorName: dbRow[3],
+                    created_at: dbRow[4],
+                    description: dbRow[5],
+                    imageUrl: dbRow[6],
+                    name: dbRow[7],
+                    releaseStatus: dbRow[8],
+                    thumbnailImageUrl: dbRow[9],
+                    updated_at: dbRow[10],
+                    version: dbRow[11]
+                };
+            },
+            `SELECT * FROM cache_world WHERE id = @id`,
+            {
+                '@id': id
+            }
+        );
         return data;
     }
 

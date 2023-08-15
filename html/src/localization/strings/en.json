@@ -102,7 +102,9 @@
             "visibility_tooltip": "Change Visibility",
             "rename_tooltip": "Rename",
             "clear_tooltip": "Clear",
-            "delete_tooltip": "Delete"
+            "delete_tooltip": "Delete",
+            "unavailable_tooltip": "Unavailable",
+            "sort_by": "Sort By"
         },
         "friend_log": {
             "filter_placeholder": "Filter",
@@ -376,6 +378,7 @@
                     "header": "Advanced",
                     "launch_options": "Launch Options",
                     "screenshot_metadata": "Screenshot Metadata",
+                    "common_folders": "Common Folders",
                     "pending_offline": {
                         "header": "Pending Offline",
                         "description": "Delay before marking user as offline (fixes false positives)",
@@ -938,7 +941,8 @@
             "header": "Set World Tags",
             "avatar_scaling_disabled": "Disable avatar scaling",
             "enable_debugging": "Enable world debugging for others",
-            "seprator": "Enter tags comma separated",
+            "author_tags": "Author Tags (comma separated)",
+            "content_tags": "Content Tags (comma separated)",
             "cancel": "Cancel",
             "save": "Save"
         },

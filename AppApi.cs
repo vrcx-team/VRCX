@@ -143,8 +143,53 @@ namespace VRCX
                 }
             }
 
-            var cachePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat";
-            return cachePath;
+            return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat";
+        }
+        
+        public string GetVRChatPhotosLocation()
+        {
+            var json = ReadConfigFile();
+            if (!string.IsNullOrEmpty(json))
+            {
+                var obj = JsonConvert.DeserializeObject<JObject>(json);
+                if (obj["picture_output_folder"] != null)
+                {
+                    var photosDir = (string)obj["picture_output_folder"];
+                    if (!string.IsNullOrEmpty(photosDir) && Directory.Exists(photosDir))
+                    {
+                        return photosDir;
+                    }
+                }
+            }
+            
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+        }
+        
+        public string GetVRChatScreenshotsLocation()
+        {
+            // program files steam userdata screenshots
+            var steamPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Steam\userdata");
+            var screenshotPath = string.Empty;
+            var latestWriteTime = DateTime.MinValue;
+            if (!Directory.Exists(steamPath)) 
+                return screenshotPath;
+            
+            var steamUserDirs = Directory.GetDirectories(steamPath);
+            foreach (var steamUserDir in steamUserDirs)
+            {
+                var screenshotDir = Path.Combine(steamUserDir, @"760\remote\438100\screenshots");
+                if (!Directory.Exists(screenshotDir))
+                    continue;
+                    
+                var lastWriteTime = File.GetLastWriteTime(screenshotDir);
+                if (lastWriteTime <= latestWriteTime)
+                    continue;
+                        
+                latestWriteTime = lastWriteTime;
+                screenshotPath = screenshotDir;
+            }
+
+            return screenshotPath;
         }
 
         /// <summary>
@@ -896,7 +941,7 @@ namespace VRCX
                     openFileDialog.FilterIndex = 1;
                     openFileDialog.RestoreDirectory = true;
 
-                    var initialPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+                    var initialPath = GetVRChatPhotosLocation();
                     if (Directory.Exists(initialPath))
                     {
                         openFileDialog.InitialDirectory = initialPath;
@@ -1013,7 +1058,7 @@ namespace VRCX
         public void GetLastScreenshot()
         {
             // Get the last screenshot taken by VRChat
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+            var path = GetVRChatPhotosLocation();
             if (!Directory.Exists(path))
                 return;
 
@@ -1043,6 +1088,56 @@ namespace VRCX
                     Clipboard.SetImage(image);
                 }));
             }
+        }
+        
+        public bool OpenVrcxAppDataFolder()
+        {
+            var path = Program.AppDataDirectory;
+            if (!Directory.Exists(path))
+                return false;
+            
+            OpenFolderAndSelectItem(path, true);
+            return true;
+        }
+
+        public bool OpenVrcAppDataFolder()
+        {
+            var path = GetVRChatAppDataLocation();
+            if (!Directory.Exists(path))
+                return false;
+            
+            OpenFolderAndSelectItem(path, true);
+            return true;
+        }
+        
+        public bool OpenVrcPhotosFolder()
+        {
+            var path = GetVRChatPhotosLocation();
+            if (!Directory.Exists(path))
+                return false;
+            
+            OpenFolderAndSelectItem(path, true);
+            return true;
+        }
+        
+        public bool OpenVrcScreenshotsFolder()
+        {
+            var path = GetVRChatScreenshotsLocation();
+            if (!Directory.Exists(path))
+                return false;
+            
+            OpenFolderAndSelectItem(path, true);
+            return true;
+        }
+
+        public bool OpenCrashVrcCrashDumps()
+        {
+            var path = Path.Combine(Path.GetTempPath(), "VRChat", "VRChat", "Crashes");
+            if (!Directory.Exists(path))
+                return false;
+            
+            OpenFolderAndSelectItem(path, true);
+            return true;
         }
 
         /// <summary>

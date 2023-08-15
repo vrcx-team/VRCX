@@ -1407,8 +1407,11 @@ html
                 el-checkbox(v-model="setWorldTagsDialog.avatarScalingDisabled") {{ $t('dialog.set_world_tags.avatar_scaling_disabled') }}
                 el-checkbox(v-model="setWorldTagsDialog.debugAllowed") {{ $t('dialog.set_world_tags.enable_debugging') }}
                 div(style='font-size:12px;margin-top:10px')
-                    | {{ $t('dialog.set_world_tags.seprator') }} #[br]
-                el-input(type="textarea" v-model="setWorldTagsDialog.tags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+                    | {{ $t('dialog.set_world_tags.author_tags') }} #[br]
+                el-input(type="textarea" v-model="setWorldTagsDialog.authorTags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+                div(style='font-size:12px;margin-top:10px')
+                    | {{ $t('dialog.set_world_tags.content_tags') }} #[br]
+                el-input(type="textarea" v-model="setWorldTagsDialog.contentTags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
                 template(#footer)
                     div(style="display:flex")
                         el-button(size="small" @click="setWorldTagsDialog.visible = false") {{ $t('dialog.set_world_tags.cancel') }}
