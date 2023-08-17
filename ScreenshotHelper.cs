@@ -3,58 +3,84 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace VRCX
 {
     internal static class ScreenshotHelper
     {
+        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         private static readonly byte[] pngSignatureBytes = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
-        private static readonly string VRChatPicturesFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
-        private static readonly Dictionary<string, JObject> MetadataCache = new Dictionary<string, JObject>();
+        private static readonly Dictionary<string, ScreenshotMetadata> metadataCache = new Dictionary<string, ScreenshotMetadata>();
 
-        public static List<string> FindScreenshotsByIdentifier(string identifier, string identifier2, string identifierType)
+        public enum ScreenshotSearchType
         {
-            List<string> result = new List<string>();
+            Username,
+            UserID,
+            WorldName,
+            WorldID,
+        }
 
-            foreach (var file in Directory.GetFiles(VRChatPicturesFolderPath, "*.png", SearchOption.AllDirectories))
+        public class ScreenshotHelperException : Exception
+        {
+            public ScreenshotHelperException(string message) : base(message) { }
+        }
+
+        public static List<ScreenshotMetadata> FindScreenshots(string query, string directory, ScreenshotSearchType searchType)
+        {
+            var result = new List<ScreenshotMetadata>();
+
+            var files = Directory.GetFiles(directory, "*.png", SearchOption.AllDirectories);
+
+            foreach (var file in files)
             {
-                JObject parsedMetadata = null;
-                if (!MetadataCache.TryGetValue(file, out parsedMetadata))
-                {
-                    parsedMetadata = GetScreenshotMetadata(file);
-                    MetadataCache.Add(file, parsedMetadata);
-                }
-                if (parsedMetadata == null)
-                    continue;
+                ScreenshotMetadata metadata = null;
 
-                if (identifierType != "WorldID" && parsedMetadata.TryGetValue("players", out var players) && players != null)
+                if (!metadataCache.TryGetValue(file, out metadata))
                 {
-                    foreach (var player in players)
+                    try 
                     {
-                        string id = player.Value<string>("id");
-                        string displayName = player.Value<string>("displayName");
-                        switch (identifierType)
-                        {
-                            case "Username" when !string.IsNullOrEmpty(displayName) && displayName.IndexOf(identifier, StringComparison.OrdinalIgnoreCase) != -1:
-                                result.Add(file);
-                                continue;
-                            case "UserID" when !string.IsNullOrEmpty(id) && id == identifier:
-                                result.Add(file);
-                                continue;
-                            case "UsernameOrUserID" when (!string.IsNullOrEmpty(displayName) && displayName == identifier) || (!string.IsNullOrEmpty(id) && id == identifier2):
-                                result.Add(file);
-                                continue;
-                        }
+                        metadata = GetScreenshotMetadata(file);
+                        metadataCache.Add(file, metadata);
+                    }
+                    catch (ScreenshotHelperException ex)
+                    {
+                        logger.Error(ex, "Failed to get metadata for file '{0}' during search", file);
+                        continue;
                     }
                 }
-                else if (identifierType == "WorldID" && parsedMetadata.TryGetValue("world", out var world) && world != null)
+
+                if (metadata == null) continue;
+
+                switch (searchType)
                 {
-                    string worldId = world.Value<string>("id");
-                    if (!string.IsNullOrEmpty(worldId) && worldId == identifier)
-                        result.Add(file);
+                    case ScreenshotSearchType.Username:
+                        if (metadata.ContainsPlayerName(query, true, true))
+                            result.Add(metadata);
+
+                        break;
+                    case ScreenshotSearchType.UserID:
+                        if (metadata.ContainsPlayerID(query))
+                            result.Add(metadata);
+
+                        break;
+                    case ScreenshotSearchType.WorldName:
+                        if (metadata.World.Name.IndexOf(query, StringComparison.OrdinalIgnoreCase) != -1)
+                            result.Add(metadata);
+
+                        break;
+                    case ScreenshotSearchType.WorldID:
+                        if (metadata.World.Id == query)
+                            result.Add(metadata);
+
+                        break;
+                    
                 }
             }
+
+            logger.ConditionalDebug("Found {0}/{1} screenshots matching query '{2}' of type '{3}'", result.Count, files.Length, query, searchType);
 
             return result;
         }
@@ -64,60 +90,69 @@ namespace VRCX
         /// </summary>
         /// <param name="path">The path to the PNG screenshot file.</param>
         /// <returns>A JObject containing the metadata or null if no metadata was found.</returns>
-        public static JObject GetScreenshotMetadata(string path)
+        public static ScreenshotMetadata GetScreenshotMetadata(string path)
         {
-            if (!IsPNGFile(path)) return null;
-            JObject metadata = null;
-            if (File.Exists(path) && path.EndsWith(".png"))
-            {
-                string metadataString = null;
+            // Early return if file doesn't exist, or isn't a PNG(Check both extension and file header)
+            if (!File.Exists(path) || !path.EndsWith(".png") || !IsPNGFile(path))
+                return null;
 
+            if (metadataCache.TryGetValue(path, out var cachedMetadata))
+                return cachedMetadata;
+
+            string metadataString;
+
+            // Get the metadata string from the PNG file
+            try
+            {
+                metadataString = ReadPNGDescriptionFileStream(path);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to read PNG description for file '{0}'", path);
+                throw new ScreenshotHelperException("Failed to read PNG description");
+            }
+
+            // If the metadata string is empty for some reason, there's nothing to parse.
+            if (string.IsNullOrEmpty(metadataString))
+                return null;
+
+            // Check for specific metadata string start sequences
+            if (metadataString.StartsWith("lfs") || metadataString.StartsWith("screenshotmanager"))
+            {
                 try
                 {
-                    metadataString = ReadPNGDescriptionFileStream(path);
+                    var result = ScreenshotHelper.ParseLfsPicture(metadataString).ToObject<ScreenshotMetadata>();
+                    result.SourceFile = path;
+
+                    return result;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
-                    return null;
-                }
-
-                if (!string.IsNullOrEmpty(metadataString))
-                {
-                    if (metadataString.StartsWith("lfs") || metadataString.StartsWith("screenshotmanager"))
-                    {
-                        try
-                        {
-                            metadata = ScreenshotHelper.ParseLfsPicture(metadataString);
-                        }
-                        catch
-                        {
-                            return null;
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            metadata = JObject.Parse(metadataString);
-                        }
-                        catch
-                        {
-                            return null;
-                        }
-                    }
-                }
-                else
-                {
-                    return null;
-                }
+                    logger.Error(ex, "Failed to parse LFS/ScreenshotManager metadata for file '{0}'", path);
+                    throw new ScreenshotHelperException("Failed to parse LFS/ScreenshotManager metadata");
+                }   
             }
-            else
+
+            // If not JSON metadata, return early so we're not throwing/catching pointless exceptions
+            if (!metadataString.StartsWith("{"))
             {
-                return null;
+                logger.ConditionalDebug("Screenshot file '{0}' has unknown non-JSON metadata:\n{1}\n", path, metadataString);
+                throw new ScreenshotHelperException("Unknown non-JSON metadata");
             }
 
-            return metadata;
+            // Parse the metadata as VRCX JSON metadata
+            try
+            {
+                var result = JsonConvert.DeserializeObject<ScreenshotMetadata>(metadataString);
+                result.SourceFile = path;
+
+                return result;
+            }
+            catch (JsonException ex)
+            {
+                logger.Error(ex, "Failed to parse screenshot metadata JSON for file '{0}'", path);
+                throw new ScreenshotHelperException("Failed to parse screenshot metadata JSON");
+            }
         }
 
         /// <summary>
@@ -170,9 +205,7 @@ namespace VRCX
             var existingiTXt = FindChunk(png, "iTXt");
             if (existingiTXt == null) return null;
 
-            var text = existingiTXt.GetText("Description");
-
-            return text;
+            return existingiTXt.GetText("Description");
         }
 
         /// <summary>
@@ -192,9 +225,7 @@ namespace VRCX
                 var existingiTXt = FindChunk(stream, "iTXt");
                 if (existingiTXt == null) return null;
 
-                var text = existingiTXt.GetText("Description");
-
-                return text;
+                return existingiTXt.GetText("Description");
             }
         }
 
@@ -221,7 +252,7 @@ namespace VRCX
             // Read only the first 8 bytes of the file to check if it's a PNG file instead of reading the entire thing into memory just to see check a couple bytes.
             using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                if (fs.Length < 33) return false;
+                if (fs.Length < 33) return false; // I don't remember how I came up with this number, but a PNG file below this size is not going to be valid for our purposes.
 
                 var signature = new byte[8];
                 fs.Read(signature, 0, 8);
@@ -266,6 +297,7 @@ namespace VRCX
                 }
 
                 // The chunk length is 4 bytes, the chunk name is 4 bytes, the chunk data is length bytes, and the chunk CRC is 4 bytes.
+                // We add 12 to the index to get to the start of the next chunk in the file on the next loop.
                 index += length + 12;
             }
 
@@ -395,25 +427,25 @@ namespace VRCX
             // lfs|2|author:usr_032383a7-748c-4fb2-94e4-bcb928e5de6b,Natsumi-sama|world:wrld_b016712b-5ce6-4bcb-9144-c8ed089b520f,35372,pet park test|pos:-60.49379,-0.002925932,5.805772|players:usr_9d73bff9-4543-4b6f-a004-9e257869ff50,-0.85,-0.17,-0.58,Olivia.;usr_3097f91e-a816-4c7a-a625-38fbfdee9f96,12.30,13.72,0.08,Zettai Ryouiki;usr_032383a7-748c-4fb2-94e4-bcb928e5de6b,0.68,0.32,-0.28,Natsumi-sama;usr_7525f45f-517e-442b-9abc-fbcfedb29f84,0.51,0.64,0.70,Weyoun
             // lfs|2|author:usr_8c0a2f22-26d4-4dc9-8396-2ab40e3d07fc,knah|world:wrld_fb4edc80-6c48-43f2-9bd1-2fa9f1345621,35341,Luminescent Ledge|pos:8.231676,0.257298,-0.1983307|rq:2|players:usr_65b9eeeb-7c91-4ad2-8ce4-addb1c161cd6,0.74,0.59,1.57,Jakkuba;usr_6a50647f-d971-4281-90c3-3fe8caf2ba80,8.07,9.76,0.16,SopwithPup;usr_8c0a2f22-26d4-4dc9-8396-2ab40e3d07fc,0.26,1.03,-0.28,knah;usr_7f593ad1-3e9e-4449-a623-5c1c0a8d8a78,0.15,0.60,1.46,NekOwneD
             // lfs|cvr|1|author:047b30bd-089d-887c-8734-b0032df5d176,Hordini|world:2e73b387-c6d4-45e9-b998-0fd6aa122c1d,i+efec20004ef1cd8b-404003-93833f-1aee112a,Bono's Basement (Anime) (#816724)|pos:2.196716,0.01250899,-3.817466|players:5301af21-eb8d-7b36-3ef4-b623fa51c2c6,3.778407,0.01250887,-3.815876,DDAkebono;f9e5c36c-41b0-7031-1185-35b4034010c0,4.828233,0.01250893,-3.920135,Natsumi
-            var lfs = metadataString.Split('|');
-            if (lfs[1] == "cvr")
-                lfs = lfs.Skip(1).ToArray();
+            var lfsParts = metadataString.Split('|');
+            if (lfsParts[1] == "cvr")
+                lfsParts = lfsParts.Skip(1).ToArray();
 
-            var version = int.Parse(lfs[1]);
-            var application = lfs[0];
+            var version = int.Parse(lfsParts[1]);
+            var application = lfsParts[0];
             metadata.Add("application", application);
             metadata.Add("version", version);
 
             if (application == "screenshotmanager")
             {
                 // screenshotmanager|0|author:usr_290c03d6-66cc-4f0e-b782-c07f5cfa8deb,VirtualTeacup|wrld_6caf5200-70e1-46c2-b043-e3c4abe69e0f,47213,The Great Pug
-                var author = lfs[2].Split(',');
+                var author = lfsParts[2].Split(',');
                 metadata.Add("author", new JObject
                 {
                     { "id", author[0] },
                     { "displayName", author[1] }
                 });
-                var world = lfs[3].Split(',');
+                var world = lfsParts[3].Split(',');
                 metadata.Add("world", new JObject
                 {
                     { "id", world[0] },
@@ -423,103 +455,60 @@ namespace VRCX
                 return metadata;
             }
 
-            for (var i = 2; i < lfs.Length; i++)
+            for (var i = 2; i < lfsParts.Length; i++)
             {
-                var split = lfs[i].Split(':');
-                switch (split[0])
+                var split = lfsParts[i].Split(':');
+                var key = split[0];
+                var value = split[1];
+                var parts = value.Split(',');
+
+                switch (key)
                 {
                     case "author":
-                        var author = split[1].Split(',');
-                        if (application == "cvr")
-                        {
-                            metadata.Add("author", new JObject
-                            {
-                                { "id", string.Empty },
-                                { "displayName", $"{author[1]} ({author[0]})" }
-                            });
-                            break;
-                        }
-
                         metadata.Add("author", new JObject
                         {
-                            { "id", author[0] },
-                            { "displayName", author[1] }
+                            { "id", application == "cvr" ? string.Empty : parts[0] },
+                            { "displayName", application == "cvr" ? $"{parts[1]} ({parts[0]})" : parts[1] }
                         });
                         break;
-                    case "world":
-                        if (application == "cvr")
-                        {
-                            var world = split[1].Split(',');
-                            metadata.Add("world", new JObject
-                            {
-                                { "id", string.Empty },
-                                { "name", $"{world[2]} ({world[0]})" },
-                                { "instanceId", string.Empty }
-                            });
-                        }
-                        else if (version == 1)
-                        {
-                            metadata.Add("world", new JObject
-                            {
-                                { "id", string.Empty },
-                                { "name", split[1] },
-                                { "instanceId", string.Empty }
-                            });
-                        }
-                        else
-                        {
-                            var world = split[1].Split(',');
-                            metadata.Add("world", new JObject
-                            {
-                                { "id", world[0] },
-                                { "name", world[2] },
-                                { "instanceId", world[0] }
-                            });
-                        }
 
+                    case "world":
+                        metadata.Add("world", new JObject
+                        {
+                            { "id", application == "cvr" || version == 1 ? string.Empty : parts[0] },
+                            { "name", application == "cvr" ? $"{parts[2]} ({parts[0]})" : (version == 1 ? value : parts[2]) },
+                            { "instanceId", application == "cvr" || version == 1 ? string.Empty : parts[1] }
+                        });
                         break;
+
                     case "pos":
-                        var pos = split[1].Split(',');
                         metadata.Add("pos", new JObject
                         {
-                            { "x", pos[0] },
-                            { "y", pos[1] },
-                            { "z", pos[2] }
+                            { "x", parts[0] },
+                            { "y", parts[1] },
+                            { "z", parts[2] }
                         });
                         break;
+
                     case "rq":
-                        metadata.Add("rq", split[1]);
+                        metadata.Add("rq", value);
                         break;
+
                     case "players":
-                        var players = split[1].Split(';');
                         var playersArray = new JArray();
+                        var players = value.Split(';');
                         foreach (var player in players)
                         {
-                            var playerSplit = player.Split(',');
-                            if (application == "cvr")
+                            var playerParts = player.Split(',');
+                            playersArray.Add(new JObject
                             {
-                                playersArray.Add(new JObject
-                                {
-                                    { "id", string.Empty },
-                                    { "x", playerSplit[1] },
-                                    { "y", playerSplit[2] },
-                                    { "z", playerSplit[3] },
-                                    { "displayName", $"{playerSplit[4]} ({playerSplit[0]})" }
-                                });
-                            }
-                            else
-                            {
-                                playersArray.Add(new JObject
-                                {
-                                    { "id", playerSplit[0] },
-                                    { "x", playerSplit[1] },
-                                    { "y", playerSplit[2] },
-                                    { "z", playerSplit[3] },
-                                    { "displayName", playerSplit[4] }
-                                });
-                            }
+                                { "id", application == "cvr" ? string.Empty : playerParts[0] },
+                                { "x", playerParts[1] },
+                                { "y", playerParts[2] },
+                                { "z", playerParts[3] },
+                                { "displayName", application == "cvr" ? $"{playerParts[4]} ({playerParts[0]})" : playerParts[4] }
+                            });
                         }
-
                         metadata.Add("players", playersArray);
                         break;
                 }

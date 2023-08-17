@@ -2529,12 +2529,17 @@ html
                     span(style="margin-left:5px;color:#909399;font-family:monospace") {{ $t('dialog.screenshot_metadata.drag') }}
                     br
                     el-button(size="small" icon="el-icon-folder-opened" @click="AppApi.OpenScreenshotFileDialog()") {{ $t('dialog.screenshot_metadata.browse') }}
-                    el-button(size="small" icon="el-icon-picture-outline" @click="AppApi.GetLastScreenshot()") {{ $t('dialog.screenshot_metadata.last_screenshot') }}
+                    el-button(size="small" icon="el-icon-picture-outline" @click="getAndDisplayLastScreenshot()") {{ $t('dialog.screenshot_metadata.last_screenshot') }}
                     el-button(size="small" icon="el-icon-copy-document" @click="copyImageToClipboard(screenshotMetadataDialog.metadata.filePath)") {{ $t('dialog.screenshot_metadata.copy_image') }}
                     el-button(size="small" icon="el-icon-folder" @click="openImageFolder(screenshotMetadataDialog.metadata.filePath)") {{ $t('dialog.screenshot_metadata.open_folder') }}
                     el-button(v-if="API.currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath" size="small" icon="el-icon-upload2" @click="uploadScreenshotToGallery") {{ $t('dialog.screenshot_metadata.upload') }}
                     //- Search bar input
+                    template(v-if="screenshotMetadataDialog.searchIndex != null")
+                        span(style="white-space:pre-wrap;font-size:12px;padding-left:10px") {{ (screenshotMetadataDialog.searchIndex + 1) + "/" + screenshotMetadataDialog.searchResults.length }}
                     el-input(v-model="screenshotMetadataDialog.search" size="small" placeholder="Search" style="width:200px;margin-left:10px" @input="screenshotMetadataSearch")
+                    //- Search type dropdown
+                    el-select(v-model="screenshotMetadataDialog.searchType" size="small" placeholder="Search Type" style="width:150px;margin-left:10px" @change="screenshotMetadataSearch")
+                        el-option(v-for="type in screenshotMetadataDialog.searchTypes" :key="type" :label="type" :value="type")
                     br
                     br
                     span(v-text="screenshotMetadataDialog.metadata.fileName")
@@ -2553,7 +2558,7 @@ html
                                 img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.previousFilePath" style="width:100%;height:100%;object-fit:contain")
                                 img(v-lazy="screenshotMetadataDialog.metadata.previousFilePath" style="height:700px")
                         el-carousel-item
-                            el-popover(placement="top" width="700px" trigger="click")
+                            el-popover(placement="top" width="700px" trigger="click" @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)")
                                 img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.filePath" style="width:100%;height:100%;object-fit:contain")
                                 img(v-lazy="screenshotMetadataDialog.metadata.filePath" style="height:700px")
                         el-carousel-item

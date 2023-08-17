@@ -21820,36 +21820,35 @@ speechSynthesis.getVoices();
         );
     };
 
+    $app.methods.getAndDisplayScreenshot = function (path, needsCarouselFiles = true) {
+        AppApi.GetScreenshotMetadata(path).then((metadata) => this.displayScreenshotMetadata(metadata, needsCarouselFiles));
+    }
+
+    $app.methods.getAndDisplayLastScreenshot = function () {
+        AppApi.GetLastScreenshot().then((path) => this.getAndDisplayScreenshot(path));
+    }
+
     /**
-     * This function should only ever be called by .NET
      * Function receives an unmodified json string grabbed from the screenshot file
      * Error checking and and verification of data is done in .NET already; In the case that the data/file is invalid, a JSON object with the token "error" will be returned containing a description of the problem.
      * Example: {"error":"Invalid file selected. Please select a valid VRChat screenshot."}
      * See docs/screenshotMetadata.json for schema
      * @param {string} metadata - JSON string grabbed from PNG file
+     * @param {string} needsCarouselFiles - Whether or not to get the last/next files for the carousel
+     * @returns {void}
      */
-    $app.methods.displayScreenshotMetadata = function (metadata) {
+    $app.methods.displayScreenshotMetadata = async function (metadata, needsCarouselFiles = true) {
         var D = this.screenshotMetadataDialog;
         var json = JSON.parse(metadata);
 
-        if (json.isSearchResult)
-        {
-            let searchIndex = D.metadata.searchIndex;
-            let files = D.metadata.files;
-            D.metadata = json;
+        // Get extra data for display dialog like resolution, file size, etc
+        var extraData = await AppApi.GetExtraScreenshotData(json.sourceFile, needsCarouselFiles)
+        var extraDataObj = JSON.parse(extraData)
+        Object.assign(json, extraDataObj)
 
-            D.metadata.files = files;
-            D.metadata.searchIndex = searchIndex;
-            D.metadata.isSearch = true;
-            console.log("Search result metadata, current index is", searchIndex)
-        } else if (json.isSearch) {
-            D.metadata = json;
-            D.metadata.searchIndex = 0;
-            console.log("First search result metadata, set index to 0")
-        } else {
-            D.metadata = json;
-            D.search = "";
-        }
+        // console.log("Displaying screenshot metadata", json, "extra data", extraDataObj, "path", json.filePath)
+
+        D.metadata = json;
 
         var regex = json.fileName.match(
             /VRChat_((\d{3,})x(\d{3,})_(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{1,})|(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.(\d{3})_(\d{3,})x(\d{3,}))/
@@ -21884,6 +21883,13 @@ speechSynthesis.getVoices();
     $app.data.screenshotMetadataDialog = {
         visible: false,
         search: "",
+        searchType: "Player Name",
+        searchTypes: [
+            "Player Name",
+            "Player ID",
+            "World  Name",
+            "World  ID"
+        ],
         metadata: {},
         isUploading: false
     };
@@ -21899,7 +21905,7 @@ speechSynthesis.getVoices();
     $app.methods.showScreenshotMetadataDialog = function () {
         var D = this.screenshotMetadataDialog;
         if (!D.metadata.filePath) {
-            AppApi.GetLastScreenshot();
+            this.getAndDisplayLastScreenshot();
         }
         this.openScreenshotMetadataDialog();
     };
@@ -21921,15 +21927,32 @@ speechSynthesis.getVoices();
             }
 
             inputs = 0;
-            AppApi.FindScreenshotsBySearch(D.search)
-            console.log("lmao search", D.search) 
+            var searchType = D.searchTypes.indexOf(D.searchType) // Matches the search type enum in .NET
+            AppApi.FindScreenshotsBySearch(D.search, searchType).then(results => {
+                results = JSON.parse(results)
+
+                if (results.length === 0) {
+                    D.metadata = {}
+                    D.metadata.error = "No results found"
+                    
+                    D.searchIndex = null
+                    D.searchResults = null
+                    return
+                }
+
+                D.searchIndex = 0
+                D.searchResults = results;
+
+                //console.log("Search results", results)
+                this.getAndDisplayScreenshot(results[0], false)
+            })
         }, 500);
     }
     
     $app.methods.screenshotMetadataCarouselChangeSearch = function (index) {
         var D = this.screenshotMetadataDialog;
-        var searchIndex = D.metadata.searchIndex;
-        var filesArr = D.metadata.files;
+        var searchIndex = D.searchIndex;
+        var filesArr = D.searchResults;
 
         if (searchIndex == null) {
             return;
@@ -21941,18 +21964,18 @@ speechSynthesis.getVoices();
         if (index === 0) {
             console.log("Carousel <<<, searchIndex is", searchIndex, "files length is", filesArr.length)
             if (searchIndex > 0) {
-                AppApi.GetScreenshotMetadata(filesArr[searchIndex - 1], true);
+                this.getAndDisplayScreenshot(filesArr[searchIndex - 1], false);
                 searchIndex--;
             } else {
-                AppApi.GetScreenshotMetadata(filesArr[searchIndex], true);
+                this.getAndDisplayScreenshot(filesArr[searchIndex], false);
             }
         } else if (index === 2) {
             console.log("Carousel >>>, searchIndex is", searchIndex, "files length is", filesArr.length)
             if (searchIndex < filesArr.length - 1) {
-                AppApi.GetScreenshotMetadata(filesArr[searchIndex + 1], true);
+                this.getAndDisplayScreenshot(filesArr[searchIndex + 1], false);
                 searchIndex++;
             } else {
-                AppApi.GetScreenshotMetadata(filesArr[searchIndex], true);
+                this.getAndDisplayScreenshot(filesArr[searchIndex], false);
             }
         }
 
@@ -21960,13 +21983,13 @@ speechSynthesis.getVoices();
             this.$refs.screenshotMetadataCarousel.setActiveItem(1);
         }
 
-        D.metadata.searchIndex = searchIndex;
+        D.searchIndex = searchIndex;
 
     }
 
     $app.methods.screenshotMetadataCarouselChange = function (index) {
         var D = this.screenshotMetadataDialog;
-        var searchIndex = D.metadata.searchIndex;
+        var searchIndex = D.searchIndex;
 
         if (searchIndex != null)
         {
@@ -21976,16 +21999,16 @@ speechSynthesis.getVoices();
 
         if (index === 0) {
             if (D.metadata.previousFilePath) {
-                AppApi.GetScreenshotMetadata(D.metadata.previousFilePath);
+                this.getAndDisplayScreenshot(D.metadata.previousFilePath)
             } else {
-                AppApi.GetScreenshotMetadata(D.metadata.filePath);
+                this.getAndDisplayScreenshot(D.metadata.filePath)
             }
         }
         if (index === 2) {
             if (D.metadata.nextFilePath) {
-                AppApi.GetScreenshotMetadata(D.metadata.nextFilePath);
+                this.getAndDisplayScreenshot(D.metadata.nextFilePath)
             } else {
-                AppApi.GetScreenshotMetadata(D.metadata.filePath);
+                this.getAndDisplayScreenshot(D.metadata.filePath)
             }
         }
         if (typeof this.$refs.screenshotMetadataCarousel !== 'undefined') {
@@ -22040,7 +22063,8 @@ speechSynthesis.getVoices();
             return;
         }
         console.log('Dropped file into window: ', this.currentlyDroppingFile);
-        AppApi.GetScreenshotMetadata(this.currentlyDroppingFile);
+        
+        this.getAndDisplayScreenshot(this.currentlyDroppingFile)
 
         event.preventDefault();
     };
