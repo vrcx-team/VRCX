@@ -980,6 +980,7 @@ namespace VRCX
                 {
                     var obj = new JObject
                     {
+                        { "sourceFile", path },
                         { "error", "Screenshot contains no metadata." }
                     };
 
@@ -994,6 +995,7 @@ namespace VRCX
             } catch (ScreenshotHelper.ScreenshotHelperException ex) {
                 var obj = new JObject
                 {
+                    { "sourceFile", path },
                     { "error", ex.Message }
                 };
 
