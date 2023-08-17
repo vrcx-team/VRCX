@@ -972,8 +972,19 @@ namespace VRCX
             if (string.IsNullOrEmpty(path))
                 return null;
 
+
             try {
                 var metadata = ScreenshotHelper.GetScreenshotMetadata(path);
+
+                if (metadata == null)
+                {
+                    var obj = new JObject
+                    {
+                        { "error", "Screenshot contains no metadata." }
+                    };
+
+                    return obj.ToString(Formatting.Indented);
+                };
 
                 return JsonConvert.SerializeObject(metadata, Formatting.Indented, new JsonSerializerSettings{
                     ContractResolver = new DefaultContractResolver {
