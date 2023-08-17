@@ -102,7 +102,9 @@
             "visibility_tooltip": "表示設定を変更",
             "rename_tooltip": "名前を変更",
             "clear_tooltip": "削除",
-            "delete_tooltip": "削除"
+            "delete_tooltip": "削除",
+            "unavailable_tooltip": "利用不可",
+            "sort_by": "並べ替え:"
         },
         "friend_log": {
             "filter_placeholder": "フィルター",
@@ -376,6 +378,7 @@
                     "header": "詳細設定",
                     "launch_options": "起動オプション",
                     "screenshot_metadata": "スクリーンショットのメタデータ",
+                    "common_folders": "共通フォルダ",
                     "pending_offline": {
                         "header": "オフラインの保留",
                         "description": "オフラインと判定されるまでの時間 (誤検知対策)",
@@ -634,6 +637,7 @@
                 "public": "Public",
                 "private": "Private",
                 "avatar_scaling_disabled": "アバタースケーリング 使用不可",
+                "future_proofing": "Future Proofing",
                 "labs": "ラボ",
                 "cache": "キャッシュ"
             },
@@ -701,6 +705,7 @@
                 "public": "Public",
                 "private": "Private",
                 "fallback": "フォールバック",
+                "future_proofing": "Future Proofing",
                 "cache": "キャッシュ"
             },
             "labels": {
@@ -915,9 +920,11 @@
             "max_cache_size": "最大キャッシュサイズ [GB] (最小 20)",
             "cache_expiry_delay": "キャッシュの有効期限 [日] (30 - 150)",
             "cache_directory": "カスタムキャッシュフォルダー",
+            "picture_directory": "カスタム写真フォルダー",
             "fpv_steadycam_fov": "一人称Steadycamの視野角",
             "camera_resolution": "カメラ解像度",
             "screenshot_resolution": "スクリーンショット解像度",
+            "picture_sort_by_date": "写真を日付順にフォルダ分け",
             "disable_discord_presence": "Discord Rich Presenceを無効化",
             "vrchat_docs": "VRChat ドキュメント",
             "cancel": "キャンセル",
@@ -934,7 +941,8 @@
             "header": "ワールドのタグを設定",
             "avatar_scaling_disabled": "アバタースケーリングを無効化",
             "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
-            "seprator": "タグをコンマ区切りで入力してください",
+            "author_tags": "タグ (コンマ区切り)",
+            "content_tags": "コンテンツ タグ (コンマ区切り)",
             "cancel": "キャンセル",
             "save": "保存"
         },
