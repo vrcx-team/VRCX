@@ -21878,7 +21878,12 @@ speechSynthesis.getVoices();
             D.metadata.dateTime = Date.parse(json.creationDate);
         }
 
-        this.openScreenshotMetadataDialog();
+        if (this.fullscreenImageDialog?.visible) {
+            this.showFullscreenImageDialog(D.metadata.filePath);
+        }
+        else {
+            this.openScreenshotMetadataDialog();
+        }
     };
 
     $app.data.screenshotMetadataDialog = {
@@ -22028,6 +22033,11 @@ speechSynthesis.getVoices();
         }
         if (typeof this.$refs.screenshotMetadataCarousel !== 'undefined') {
             this.$refs.screenshotMetadataCarousel.setActiveItem(1);
+            
+        }
+
+        if (this.fullscreenImageDialog.visible) {
+            
         }
     };
 

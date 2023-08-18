@@ -2554,17 +2554,14 @@ html
                     br
                     el-carousel(ref="screenshotMetadataCarousel" :interval="0" initial-index="1" indicator-position="none" arrow="always" height="600px" style="margin-top:10px" @change="screenshotMetadataCarouselChange")
                         el-carousel-item
-                            el-popover(placement="top" width="700px" trigger="click")
+                            span(placement="top" width="700px" trigger="click")
                                 img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.previousFilePath" style="width:100%;height:100%;object-fit:contain")
-                                img(v-lazy="screenshotMetadataDialog.metadata.previousFilePath" style="height:700px")
                         el-carousel-item
-                            el-popover(placement="top" width="700px" trigger="click" @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)")
+                            span(placement="top" width="700px" trigger="click" @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)")
                                 img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.filePath" style="width:100%;height:100%;object-fit:contain")
-                                img(v-lazy="screenshotMetadataDialog.metadata.filePath" style="height:700px")
                         el-carousel-item
-                            el-popover(placement="top" width="700px" trigger="click")
+                            span(placement="top" width="700px" trigger="click")
                                 img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.nextFilePath" style="width:100%;height:100%;object-fit:contain")
-                                img(v-lazy="screenshotMetadataDialog.metadata.nextFilePath" style="height:700px")
                     br
                     template(v-if="screenshotMetadataDialog.metadata.error")
                         pre(v-text="screenshotMetadataDialog.metadata.error" style="white-space:pre-wrap;font-size:12px")
@@ -2602,10 +2599,10 @@ html
                             img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
 
             //- dialog: full screen image
-            el-dialog.x-dialog(ref="fullscreenImageDialog" :before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="fullscreenImageDialog.visible" top="5vh" width="90vw")
+            el-dialog.x-dialog(ref="fullscreenImageDialog" :before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="fullscreenImageDialog.visible" top="3vh" width="97vw")
                 el-button(@click="copyImageUrl(fullscreenImageDialog.imageUrl)" size="mini" icon="el-icon-s-order" circle)
                 el-button(type="default" size="mini" icon="el-icon-download" circle @click="downloadAndSaveImage(fullscreenImageDialog.imageUrl)" style="margin-left:5px")
-                img(v-lazy="fullscreenImageDialog.imageUrl" style="width:100%;height:80vh;object-fit:contain")
+                img(v-lazy="fullscreenImageDialog.imageUrl" style="width:100%;height:100vh;object-fit:contain")
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" :title="$t('dialog.open_source.header')" width="650px")
