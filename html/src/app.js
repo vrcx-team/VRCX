@@ -21913,11 +21913,7 @@ speechSynthesis.getVoices();
     let inputs = 0
     $app.methods.screenshotMetadataSearch = function () {
         var D = this.screenshotMetadataDialog;
-        if (D.search === "") {
-            D.metadata.search = "";
-            return;
-        }
-
+        
         // Don't search if user is still typing
         inputs++
         let current = inputs
@@ -21927,6 +21923,17 @@ speechSynthesis.getVoices();
             }
 
             inputs = 0;
+
+            if (D.search === "") {
+                D.searchIndex = null
+                D.searchResults = null
+
+                if (D.metadata.filePath != null) // Re-retrieve the current screenshot metadata and get previous/next files for regular carousel directory navigation
+                    this.getAndDisplayScreenshot(D.metadata.filePath, true)
+
+                return;
+            }
+
             var searchType = D.searchTypes.indexOf(D.searchType) // Matches the search type enum in .NET
             AppApi.FindScreenshotsBySearch(D.search, searchType).then(results => {
                 results = JSON.parse(results)
