@@ -40,14 +40,14 @@ namespace VRCX
 
                 if (!metadataCache.TryGetValue(file, out metadata))
                 {
-                    try 
+                    try
                     {
                         metadata = GetScreenshotMetadata(file);
                         metadataCache.Add(file, metadata);
                     }
                     catch (ScreenshotHelperException ex)
                     {
-                        logger.Error(ex, "Failed to get metadata for file '{0}' during search", file);
+                        //logger.Error(ex, "Failed to get metadata for file '{0}' during search", file);
                         continue;
                     }
                 }
@@ -76,7 +76,7 @@ namespace VRCX
                             result.Add(metadata);
 
                         break;
-                    
+
                 }
             }
 
@@ -130,7 +130,7 @@ namespace VRCX
                 {
                     logger.Error(ex, "Failed to parse LFS/ScreenshotManager metadata for file '{0}'", path);
                     throw new ScreenshotHelperException("Failed to parse LFS/ScreenshotManager metadata");
-                }   
+                }
             }
 
             // If not JSON metadata, return early so we're not throwing/catching pointless exceptions
@@ -222,13 +222,18 @@ namespace VRCX
 
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512))
             {
-                var existingiTXt = FindChunk(stream, "iTXt");
+                var existingiTXt = FindChunk(stream, "iTXt", true);
                 if (existingiTXt == null) return null;
 
                 return existingiTXt.GetText("Description");
             }
         }
 
+        /// <summary>
+        /// Reads the PNG resolution.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <returns></returns>
         public static string ReadPNGResolution(string path)
         {
             if (!File.Exists(path) || !IsPNGFile(path)) return null;
@@ -261,7 +266,7 @@ namespace VRCX
         }
 
         /// <summary>
-        ///     Finds the index of the first byte of the specified chunk type in the specified PNG file.
+        ///     Finds the index of the first of a specified chunk type in the specified PNG file.
         /// </summary>
         /// <param name="png">Array of bytes representing a PNG file.</param>
         /// <param name="type">Type of PMG chunk to find</param>
@@ -304,48 +309,70 @@ namespace VRCX
             return -1;
         }
 
-        /// <summary>
-        ///     Finds the index of the first byte of the specified chunk type in the specified PNG file.
-        /// </summary>
-        /// <param name="fs">FileStream of a PNG file.</param>
-        /// <param name="type">Type of PMG chunk to find</param>
-        /// <returns></returns>
-        private static int FindChunkIndex(FileStream fs, string type)
+        private static int FindChunkIndex(FileStream fs, string type, bool seekEnd)
         {
-            // The first 8 bytes of the file are the png signature, so we can skip them.
-            var index = 8;
+            int chunksProcessed = 0;
+            int chunkSeekLimit = 5;
 
-            byte[] buffer = new byte[128 * 1024];
-            fs.Position = 0;
-            fs.Read(buffer, 0, buffer.Length);
+            bool isLittleEndian = BitConverter.IsLittleEndian;
 
-            while (index + 12 < buffer.Length)
+            fs.Seek(8, SeekOrigin.Begin);
+
+            byte[] buffer = new byte[8];
+
+            while (fs.Position < fs.Length)
             {
-                var chunkLength = new byte[4];
-                Array.Copy(buffer, index, chunkLength, 0, 4);
+                int chunkIndex = (int)fs.Position;
+
+                fs.Read(buffer, 0, 8); // Read both chunkLength and chunkName at once into this buffer
 
                 // BitConverter wants little endian(unless your system is big endian for some reason), PNG multi-byte integers are big endian. So we reverse the array.
-                if (BitConverter.IsLittleEndian) Array.Reverse(chunkLength);
+                if (isLittleEndian) Array.Reverse(buffer, 0, 4); // Only reverse the chunkLength part
 
-                var length = BitConverter.ToInt32(chunkLength, 0);
+                int chunkLength = BitConverter.ToInt32(buffer, 0);
+                string chunkType = Encoding.UTF8.GetString(buffer, 4, 4); // We don't need to reverse strings since UTF-8 strings aren't affected by endianess, given that they're a sequence of bytes. 
 
-                // We don't need to reverse strings since UTF-8 strings aren't affected by endianess, given that they're a sequence of bytes. 
-                var chunkName = new byte[4];
-                Array.Copy(buffer, index + 4, chunkName, 0, 4);
-                var name = Encoding.UTF8.GetString(chunkName);
+                if (chunkType == type) return chunkIndex;
+                if (chunkType == "IEND") return -1; // Nothing should exist past IEND in a normal png file, so we should stop parsing here to avoid trying to parse junk data.
 
-                if (name == type)
+                // The chunk length is 4 bytes, the chunk name is 4 bytes, the chunk data is chunkLength bytes, and the chunk CRC after chunk data is 4 bytes.
+                // We've already read the length/type which is the first 8 bytes, so we'll seek the chunk length + 4(CRC) to get to the start of the next chunk in the file.
+                fs.Seek(chunkLength + 4, SeekOrigin.Current);
+                chunksProcessed++;
+
+                if (chunksProcessed > chunkSeekLimit) break;
+            }
+
+            // If we've processed more than 5 chunks and still haven't found the chunk we're looking for, we'll start searching from the end of the file.
+
+            // We start at an offset of 12 since the IEND chunk (should) always be the last chunk in the file, be 12 bytes, and we don't need to check it.
+            fs.Seek(-12, SeekOrigin.End);
+
+            // We're going to read the last 4096 bytes of the file, which (should) be enough to find any trailing iTXt chunks we're looking for.
+            // If an LFS screenshots has the metadata of like 80 players attached to it, this likely won't be enough to find the iTXt chunk.
+            // I don't have any screenshots with that much metadata to test with and will not create them manually, so I'm not going to worry about it for now.
+            var chunkNameBytes = Encoding.UTF8.GetBytes(type);
+            fs.Seek(-4096, SeekOrigin.Current);
+
+            byte[] trailingBytes = new byte[4096];
+            fs.Read(trailingBytes, 0, 4096);
+
+            // At this scale we can just brute force/naive search for the chunk name in the trailing bytes and performance will be fine.
+            for (int i = 0; i <= trailingBytes.Length - chunkNameBytes.Length; i++)
+            {
+                bool isMatch = true;
+                for (int j = 0; j < chunkNameBytes.Length; j++)
                 {
-                    return index;
+                    if (trailingBytes[i + j] != chunkNameBytes[j])
+                    {
+                        isMatch = false;
+                        break;
+                    }
                 }
-
-                if (name == "IEND") // Nothing should exist past IEND in a normal png file, so we should stop parsing here to avoid trying to parse junk data.
+                if (isMatch)
                 {
-                    return -1;
+                    return (int)fs.Position - 4096 + i - 4;
                 }
-
-                // The chunk length is 4 bytes, the chunk name is 4 bytes, the chunk data is length bytes, and the chunk CRC is 4 bytes.
-                index += length + 12;
             }
 
             return -1;
@@ -398,19 +425,23 @@ namespace VRCX
         /// <param name="fs">FileStream of a PNG file.</param>
         /// <param name="type">Type of PMG chunk to find</param>
         /// <returns>PNGChunk</returns>
-        private static PNGChunk FindChunk(FileStream fs, string type)
+        private static PNGChunk FindChunk(FileStream fs, string type, bool seekFromEnd)
         {
-            var index = FindChunkIndex(fs, type);
+            var index = FindChunkIndex(fs, type, seekFromEnd);
             if (index == -1) return null;
 
+            // Seek back to start of found chunk
+            fs.Seek(index, SeekOrigin.Begin);
+
             var chunkLength = new byte[4];
-            fs.Position = index;
             fs.Read(chunkLength, 0, 4);
             Array.Reverse(chunkLength);
             var length = BitConverter.ToInt32(chunkLength, 0);
 
+            // Skip the chunk type bytes
+            fs.Seek(4, SeekOrigin.Current);
+
             var chunkData = new byte[length];
-            fs.Position = index + 8;
             fs.Read(chunkData, 0, length);
 
             return new PNGChunk(type, chunkData);
