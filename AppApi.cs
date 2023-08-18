@@ -917,7 +917,7 @@ namespace VRCX
                     if (string.IsNullOrEmpty(path))
                         return;
 
-                    GetScreenshotMetadata(path);
+                    ExecuteAppFunction("getAndDisplayScreenshot", path);
                 }
             });
 
@@ -1007,6 +1007,9 @@ namespace VRCX
 
         public string FindScreenshotsBySearch(string searchQuery, int searchType = 0)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             var searchPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
             var screenshots = ScreenshotHelper.FindScreenshots(searchQuery, searchPath, (ScreenshotHelper.ScreenshotSearchType)searchType);
 
@@ -1016,6 +1019,10 @@ namespace VRCX
             {
                 json.Add(screenshot.SourceFile);
             }
+
+            stopwatch.Stop();
+
+            logger.Info($"FindScreenshotsBySearch took {stopwatch.ElapsedMilliseconds}ms to complete.");
 
             return json.ToString();
         }
