@@ -21825,6 +21825,7 @@ speechSynthesis.getVoices();
     }
 
     $app.methods.getAndDisplayLastScreenshot = function () {
+        this.screenshotMetadataResetSearch()
         AppApi.GetLastScreenshot().then((path) => this.getAndDisplayScreenshot(path));
     }
 
@@ -21910,6 +21911,14 @@ speechSynthesis.getVoices();
         this.openScreenshotMetadataDialog();
     };
 
+    $app.methods.screenshotMetadataResetSearch = function () {
+        var D = this.screenshotMetadataDialog;
+
+        D.search = ""
+        D.searchIndex = null
+        D.searchResults = null
+    }
+
     let inputs = 0
     $app.methods.screenshotMetadataSearch = function () {
         var D = this.screenshotMetadataDialog;
@@ -21925,8 +21934,7 @@ speechSynthesis.getVoices();
             inputs = 0;
 
             if (D.search === "") {
-                D.searchIndex = null
-                D.searchResults = null
+                this.screenshotMetadataResetSearch()
 
                 if (D.metadata.filePath != null) // Re-retrieve the current screenshot metadata and get previous/next files for regular carousel directory navigation
                     this.getAndDisplayScreenshot(D.metadata.filePath, true)
@@ -22069,8 +22077,9 @@ speechSynthesis.getVoices();
         if (this.currentlyDroppingFile === null) {
             return;
         }
-        console.log('Dropped file into window: ', this.currentlyDroppingFile);
+        console.log('Dropped file into viewer: ', this.currentlyDroppingFile);
         
+        this.screenshotMetadataResetSearch()
         this.getAndDisplayScreenshot(this.currentlyDroppingFile)
 
         event.preventDefault();

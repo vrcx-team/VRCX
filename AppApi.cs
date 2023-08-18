@@ -917,6 +917,7 @@ namespace VRCX
                     if (string.IsNullOrEmpty(path))
                         return;
 
+                    ExecuteAppFunction("screenshotMetadataResetSearch", null);
                     ExecuteAppFunction("getAndDisplayScreenshot", path);
                 }
             });
