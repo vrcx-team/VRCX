@@ -220,7 +220,7 @@ namespace VRCX
         {
             if (!File.Exists(path) || !IsPNGFile(path)) return null;
 
-            using (var stream = File.OpenRead(path))
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512))
             {
                 var existingiTXt = FindChunk(stream, "iTXt");
                 if (existingiTXt == null) return null;
@@ -460,6 +460,10 @@ namespace VRCX
                 var split = lfsParts[i].Split(':');
                 var key = split[0];
                 var value = split[1];
+
+                if (String.IsNullOrEmpty(value)) // One of my LFS files had an empty value for 'players:'. not pog
+                    continue;
+
                 var parts = value.Split(',');
 
                 switch (key)
@@ -497,6 +501,7 @@ namespace VRCX
                     case "players":
                         var playersArray = new JArray();
                         var players = value.Split(';');
+
                         foreach (var player in players)
                         {
                             var playerParts = player.Split(',');
