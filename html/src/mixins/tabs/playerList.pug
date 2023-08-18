@@ -25,7 +25,9 @@ mixin playerListTab()
                             |  {{ $t('dialog.world.tags.cache') }}
                         br
                         location-world(:locationobject="currentInstanceLocation" :currentuserid="API.currentUser.id")
-                        instance-info(:location="currentInstanceLocation.tag" :instance="currentInstanceWorld.instance" :friendcount="lastLocation.friendList.size" :updateelement="updateInstanceInfo")
+                        span(v-if="lastLocation.playerList.size > 0" style="margin-left:5px")
+                            | {{ lastLocation.playerList.size }}
+                            | #[template(v-if="lastLocation.friendList.size > 0") ({{ lastLocation.friendList.size }})]
                         | &nbsp;&horbar; #[timer(v-if="lastLocation.date" :epoch="lastLocation.date")]
                     div(style="margin-top:5px")
                         span(v-show="currentInstanceWorld.ref.name !== currentInstanceWorld.ref.description" v-text="currentInstanceWorld.ref.description" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2")

@@ -217,8 +217,12 @@ namespace VRCX
         /// <param name="path">The path.</param>
         internal void StartChildProcess(string path)
         {
-            using (var process = Process.Start(path))
-                startedProcesses.Add(path, new HashSet<int>() { process.Id });
+            try
+            {
+                using (var process = Process.Start(path))
+                    if (process != null)
+                        startedProcesses.Add(path, new HashSet<int>() { process.Id });
+            } catch { }
         }
 
         /// <summary>

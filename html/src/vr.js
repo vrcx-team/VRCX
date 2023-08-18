@@ -795,6 +795,23 @@ Vue.component('marquee-text', MarqueeText);
         }
     };
 
+    $app.methods.trackingResultToClass = function (deviceStatus) {
+        switch (deviceStatus) {
+            case 'Uninitialized':
+            case 'Calibrating_OutOfRange':
+            case 'Fallback_RotationOnly':
+                return 'tracker-error';
+
+            case 'Calibrating_InProgress':
+            case 'Running_OutOfRange':
+                return 'tracker-warning';
+
+            case 'Running_OK':
+            default:
+                return '';
+        }
+    };
+
     $app = new Vue($app);
     window.$app = $app;
 })();

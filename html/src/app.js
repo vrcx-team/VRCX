@@ -109,7 +109,7 @@ speechSynthesis.getVoices();
     };
 
     workerTimers.setInterval(
-        function () {
+        () => {
             VRCXStorage.Flush();
         },
         5 * 60 * 1000
@@ -2175,6 +2175,10 @@ speechSynthesis.getVoices();
 
     API.actuallyGetCurrentLocation = async function () {
         let gameLogLocation = $app.lastLocation.location;
+        if (gameLogLocation.startsWith('local')) {
+            console.warn('PWI: local test mode', 'test_world');
+            return 'test_world';
+        }
         if (gameLogLocation === 'traveling') {
             gameLogLocation = $app.lastLocationDestination;
         }
@@ -2913,7 +2917,7 @@ speechSynthesis.getVoices();
             if (
                 json.unityPackages?.length > 0 &&
                 unityPackages.length > 0 &&
-                !json.unityPackages.assetUrl
+                !json.unityPackages[0].assetUrl
             ) {
                 ref.unityPackages = unityPackages;
             }
@@ -5304,12 +5308,15 @@ speechSynthesis.getVoices();
 
     $app.methods.openExternalLink = function (link) {
         this.$confirm(`${link}`, 'Open External Link', {
-            confirmButtonText: 'Confirm',
-            cancelButtonText: 'Cancel',
+            distinguishCancelAndClose: true,
+            confirmButtonText: 'Open',
+            cancelButtonText: 'Copy',
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
                     AppApi.OpenLink(link);
+                } else if (action === 'cancel') {
+                    this.copyLink(link);
                 }
             }
         });
@@ -5488,10 +5495,39 @@ speechSynthesis.getVoices();
         pendingUpdate: false
     };
 
+    $app.data.updateSharedFeedTimer = null;
+    $app.data.updateSharedFeedPending = false;
+    $app.data.updateSharedFeedPendingForceUpdate = false;
     $app.methods.updateSharedFeed = function (forceUpdate) {
         if (!this.friendLogInitStatus) {
             return;
         }
+        if (this.updateSharedFeedTimer) {
+            if (forceUpdate) {
+                this.updateSharedFeedPendingForceUpdate = true;
+            }
+            this.updateSharedFeedPending = true;
+        } else {
+            this.updateSharedExecute(forceUpdate);
+            this.updateSharedFeedTimer = setTimeout(() => {
+                if (this.updateSharedFeedPending) {
+                    this.updateSharedExecute(
+                        this.updateSharedFeedPendingForceUpdate
+                    );
+                }
+                this.updateSharedFeedTimer = null;
+            }, 150);
+        }
+    };
+
+    $app.methods.updateSharedExecute = function (forceUpdate) {
+        this.updateSharedFeedDebounce(forceUpdate);
+        this.updateSharedFeedTimer = null;
+        this.updateSharedFeedPending = false;
+        this.updateSharedFeedPendingForceUpdate = false;
+    };
+
+    $app.methods.updateSharedFeedDebounce = function (forceUpdate) {
         this.updateSharedFeedGameLog(forceUpdate);
         this.updateSharedFeedFeedTable(forceUpdate);
         this.updateSharedFeedNotificationTable(forceUpdate);
@@ -5634,6 +5670,8 @@ speechSynthesis.getVoices();
             // on Location change remove OnPlayerLeft
             if (ctx.type === 'LocationDestination') {
                 currentUserLeaveTime = Date.parse(ctx.created_at);
+                var currentUserLeaveTimeOffset =
+                    currentUserLeaveTime + 5 * 1000;
                 for (var k = w - 1; k > -1; k--) {
                     var feedItem = wristArr[k];
                     if (
@@ -5641,7 +5679,7 @@ speechSynthesis.getVoices();
                         Date.parse(feedItem.created_at) >=
                             currentUserLeaveTime &&
                         Date.parse(feedItem.created_at) <=
-                            currentUserLeaveTime + 5 * 1000
+                            currentUserLeaveTimeOffset
                     ) {
                         wristArr.splice(k, 1);
                         w--;
@@ -5651,13 +5689,14 @@ speechSynthesis.getVoices();
             // on Location change remove OnPlayerJoined
             if (ctx.type === 'Location') {
                 locationJoinTime = Date.parse(ctx.created_at);
+                var locationJoinTimeOffset = locationJoinTime + 20 * 1000;
                 for (var k = w - 1; k > -1; k--) {
                     var feedItem = wristArr[k];
                     if (
                         feedItem.type === 'OnPlayerJoined' &&
                         Date.parse(feedItem.created_at) >= locationJoinTime &&
                         Date.parse(feedItem.created_at) <=
-                            locationJoinTime + 20 * 1000
+                            locationJoinTimeOffset
                     ) {
                         wristArr.splice(k, 1);
                         w--;
@@ -5685,6 +5724,14 @@ speechSynthesis.getVoices();
                         isFavorite = API.cachedFavoritesByObjectId.has(ref.id);
                         break;
                     }
+                }
+            }
+            // add tag colour
+            var tagColour = '';
+            if (ctx.userId) {
+                var tagRef = this.customUserTags.get(ctx.userId);
+                if (typeof tagRef !== 'undefined') {
+                    tagColour = tagRef.colour;
                 }
             }
             // BlockedOnPlayerJoined, BlockedOnPlayerLeft, MutedOnPlayerJoined, MutedOnPlayerLeft
@@ -5718,8 +5765,12 @@ speechSynthesis.getVoices();
                     }
                 }
             }
+            // when too many user joins happen at once when switching instances
+            // the "w" counter maxes out and wont add any more entries
+            // until the onJoins are cleared by "Location"
+            // e.g. if a "VideoPlay" occurs between "OnPlayerJoined" and "Location" it wont be added
             if (
-                w < 20 &&
+                w < 50 &&
                 wristFilter[ctx.type] &&
                 (wristFilter[ctx.type] === 'On' ||
                     wristFilter[ctx.type] === 'Everyone' ||
@@ -5728,6 +5779,7 @@ speechSynthesis.getVoices();
             ) {
                 wristArr.push({
                     ...ctx,
+                    tagColour,
                     isFriend,
                     isFavorite
                 });
@@ -6046,6 +6098,12 @@ speechSynthesis.getVoices();
             }
             var isFriend = this.friends.has(ctx.userId);
             var isFavorite = API.cachedFavoritesByObjectId.has(ctx.userId);
+            // add tag colour
+            var tagColour = '';
+            var tagRef = this.customUserTags.get(ctx.userId);
+            if (typeof tagRef !== 'undefined') {
+                tagColour = tagRef.colour;
+            }
             if (
                 w < 20 &&
                 wristFilter[ctx.type] &&
@@ -6054,7 +6112,8 @@ speechSynthesis.getVoices();
                 wristArr.push({
                     ...ctx,
                     isFriend,
-                    isFavorite
+                    isFavorite,
+                    tagColour
                 });
                 ++w;
             }
@@ -7822,6 +7881,34 @@ speechSynthesis.getVoices();
             });
         } else {
             database.deleteWorldMemo(worldId);
+        }
+    };
+
+    // #endregion
+    // #region | App: Avatar Memos
+
+    $app.methods.getAvatarMemo = async function (avatarId) {
+        try {
+            return await database.getAvatarMemoDB(avatarId);
+        } catch (err) {
+            console.error(err);
+        }
+        return {
+            avatarId: '',
+            editedAt: '',
+            memo: ''
+        };
+    };
+
+    $app.methods.saveAvatarMemo = function (avatarId, memo) {
+        if (memo) {
+            database.setAvatarMemo({
+                avatarId,
+                editedAt: new Date().toJSON(),
+                memo
+            });
+        } else {
+            database.deleteAvatarMemo(avatarId);
         }
     };
 
@@ -10098,6 +10185,13 @@ speechSynthesis.getVoices();
                 break;
         }
         if (entry) {
+            // add tag colour
+            if (entry.userId) {
+                var tagRef = this.customUserTags.get(entry.userId);
+                if (typeof tagRef !== 'undefined') {
+                    entry.tagColour = tagRef.colour;
+                }
+            }
             this.queueGameLogNoty(entry);
             this.addGameLog(entry);
         }
@@ -10500,7 +10594,7 @@ speechSynthesis.getVoices();
         var isFavorite = API.cachedFavoritesByObjectId.has(userId);
         var colour = '';
         var tagRef = this.customUserTags.get(userId);
-        if (typeof tagRef !== 'undefined' && tagRef.colour) {
+        if (typeof tagRef !== 'undefined') {
             colour = tagRef.colour;
         }
         var feed = {
@@ -10979,6 +11073,26 @@ speechSynthesis.getVoices();
                         playerCount: 0,
                         pendingLeave: 0
                     });
+                } else if (data.Parameters[245][0] === 21) {
+                    var portalId = data.Parameters[245][1];
+                    var userId = data.Parameters[245][2];
+                    var playerCount = data.Parameters[245][3];
+                    var shortName = data.Parameters[245][5];
+                    var worldName = '';
+                    this.addPhotonPortalSpawn(
+                        gameLogDate,
+                        userId,
+                        shortName,
+                        worldName
+                    );
+                    this.photonLobbyActivePortals.set(portalId, {
+                        userId,
+                        shortName,
+                        worldName,
+                        created_at: Date.parse(gameLogDate),
+                        playerCount: 0,
+                        pendingLeave: 0
+                    });
                 } else if (data.Parameters[245][0] === 22) {
                     var portalId = data.Parameters[245][1];
                     var text = 'DeletedPortal';
@@ -11164,6 +11278,10 @@ speechSynthesis.getVoices();
         if (L.groupId) {
             groupName = await this.getGroupName(L.groupId);
         }
+        if (!worldName) {
+            // eslint-disable-next-line no-param-reassign
+            worldName = await this.getWorldName(location);
+        }
         // var newShortName = instance.json.shortName;
         // var portalType = 'Secure';
         // if (shortName === newShortName) {
@@ -11248,8 +11366,6 @@ speechSynthesis.getVoices();
         }
         if (data.avatarEyeHeight < 0) {
             text = 'Photon bot has joined, invalid avatarEyeHeight';
-        } else if (data.user.last_platform === 'android' && !data.inVRMode) {
-            var text = 'User joined as Quest in desktop mode';
         } else if (
             data.user.last_platform === 'android' &&
             platforms.length > 0 &&
@@ -11702,6 +11818,9 @@ speechSynthesis.getVoices();
                 ) {
                     url = new URL(url.searchParams.get('url'));
                 }
+                if (videoUrl.startsWith('https://u2b.cx/')) {
+                    url = new URL(videoUrl.substring(15));
+                }
                 var id1 = url.pathname;
                 var id2 = url.searchParams.get('v');
                 if (id1 && id1.length === 12) {
@@ -11714,6 +11833,7 @@ speechSynthesis.getVoices();
                 }
                 if (id2 && id2.length === 11) {
                     // https://www.youtube.com/watch?v=
+                    // https://music.youtube.com/watch?v=
                     youtubeVideoId = id2;
                 }
                 if (this.youTubeApi && youtubeVideoId) {
@@ -12914,7 +13034,7 @@ speechSynthesis.getVoices();
         $app.applyFavorite('avatar', args.ref.id);
     });
 
-    $app.methods.applyFavorite = function (type, objectId, sortTop) {
+    $app.methods.applyFavorite = async function (type, objectId, sortTop) {
         var favorite = API.cachedFavoritesByObjectId.get(objectId);
         var ctx = this.favoriteObjects.get(objectId);
         if (typeof favorite !== 'undefined') {
@@ -12980,6 +13100,7 @@ speechSynthesis.getVoices();
                             this.sortFavoriteFriends = true;
                         }
                     }
+                    // else too bad
                 } else if (type === 'world') {
                     var ref = API.cachedWorlds.get(objectId);
                     if (typeof ref !== 'undefined') {
@@ -12990,6 +13111,27 @@ speechSynthesis.getVoices();
                             ctx.name = ref.name;
                             this.sortFavoriteWorlds = true;
                         }
+                    } else {
+                        // try fetch from local world favorites
+                        var world = await database.getCachedWorldById(objectId);
+                        if (world) {
+                            ctx.ref = world;
+                            ctx.name = world.name;
+                            ctx.deleted = true;
+                            this.sortFavoriteWorlds = true;
+                        }
+                        if (!world) {
+                            // try fetch from local world history
+                            var worldName =
+                                await database.getGameLogWorldNameByWorldId(
+                                    objectId
+                                );
+                            if (worldName) {
+                                ctx.name = worldName;
+                                ctx.deleted = true;
+                                this.sortFavoriteWorlds = true;
+                            }
+                        }
                     }
                 } else if (type === 'avatar') {
                     var ref = API.cachedAvatars.get(objectId);
@@ -12999,6 +13141,17 @@ speechSynthesis.getVoices();
                         }
                         if (ctx.name !== ref.name) {
                             ctx.name = ref.name;
+                            this.sortFavoriteAvatars = true;
+                        }
+                    } else {
+                        // try fetch from local avatar history
+                        var avatar = await database.getCachedAvatarById(
+                            objectId
+                        );
+                        if (avatar) {
+                            ctx.ref = avatar;
+                            ctx.name = avatar.name;
+                            ctx.deleted = true;
                             this.sortFavoriteAvatars = true;
                         }
                     }
@@ -13490,10 +13643,8 @@ speechSynthesis.getVoices();
             cancelButtonText: 'Cancel',
             type: 'info',
             callback: (action) => {
-                if (
-                    action === 'confirm' &&
-                    removeFromArray(this.friendLogTable.data, row)
-                ) {
+                if (action === 'confirm') {
+                    removeFromArray(this.friendLogTable.data, row);
                     database.deleteFriendLogHistory(row.rowId);
                 }
             }
@@ -15118,6 +15269,17 @@ speechSynthesis.getVoices();
         });
     };
 
+    $app.methods.showGroupDialogShortCode = function (shortCode) {
+        API.groupStrictsearch({ query: shortCode }).then((args) => {
+            for (var group of args.json) {
+                if (`${group.shortCode}.${group.discriminator}` === shortCode) {
+                    this.showGroupDialog(group.id);
+                }
+            }
+            return args;
+        });
+    };
+
     $app.methods.directAccessParse = function (input) {
         if (!input) {
             return false;
@@ -15141,19 +15303,12 @@ speechSynthesis.getVoices();
                 this.showGroupDialog(groupId);
                 return true;
             }
-        } else if (input.startsWith('https://vrc.group/')) {
+        } else if (
+            input.startsWith('https://vrc.group/') ||
+            /^[A-Za-z0-9]{3,6}\.[0-9]{4}$/g.test(input)
+        ) {
             var shortCode = input.substring(18);
-            API.groupStrictsearch({ query: shortCode }).then((args) => {
-                for (var group of args.json) {
-                    if (
-                        `${group.shortCode}.${group.discriminator}` ===
-                        shortCode
-                    ) {
-                        this.showGroupDialog(group.id);
-                    }
-                }
-                return args;
-            });
+            this.showGroupDialogShortCode(shortCode);
             return true;
         } else if (
             input.substring(0, 4) === 'usr_' ||
@@ -16325,7 +16480,32 @@ speechSynthesis.getVoices();
         }
     });
 
+    $app.data.updatePlayerListTimer = null;
+    $app.data.updatePlayerListPending = false;
     $app.methods.getCurrentInstanceUserList = function () {
+        if (!this.friendLogInitStatus) {
+            return;
+        }
+        if (this.updatePlayerListTimer) {
+            this.updatePlayerListPending = true;
+        } else {
+            this.updatePlayerListExecute();
+            this.updatePlayerListTimer = setTimeout(() => {
+                if (this.updatePlayerListPending) {
+                    this.updatePlayerListExecute();
+                }
+                this.updatePlayerListTimer = null;
+            }, 150);
+        }
+    };
+
+    $app.methods.updatePlayerListExecute = function () {
+        this.updatePlayerListDebounce();
+        this.updatePlayerListTimer = null;
+        this.updatePlayerListPending = false;
+    };
+
+    $app.methods.updatePlayerListDebounce = function () {
         var users = [];
         var pushUser = function (ref) {
             var photonId = '';
@@ -17841,6 +18021,7 @@ speechSynthesis.getVoices();
         visible: false,
         loading: false,
         id: '',
+        memo: '',
         ref: {},
         isFavorite: false,
         isBlocked: false,
@@ -17852,6 +18033,20 @@ speechSynthesis.getVoices();
         cacheLocked: false,
         cachePath: '',
         fileAnalysis: {}
+    };
+
+    $app.data.ignoreAvatarMemoSave = false;
+
+    $app.watch['avatarDialog.memo'] = function () {
+        if (this.ignoreAvatarMemoSave) {
+            this.ignoreAvatarMemoSave = false;
+            return;
+        }
+        var D = this.avatarDialog;
+        if (D.visible === false) {
+            return;
+        }
+        this.saveAvatarMemo(D.id, D.memo);
     };
 
     API.$on('LOGOUT', function () {
@@ -17891,6 +18086,8 @@ speechSynthesis.getVoices();
         D.isQuestFallback = false;
         D.isFavorite = API.cachedFavoritesByObjectId.has(avatarId);
         D.isBlocked = API.cachedAvatarModerations.has(avatarId);
+        this.ignoreAvatarMemoSave = true;
+        D.memo = '';
         var ref2 = API.cachedAvatars.get(avatarId);
         if (typeof ref2 !== 'undefined') {
             D.ref = ref2;
@@ -17966,6 +18163,12 @@ speechSynthesis.getVoices();
             .finally(() => {
                 D.loading = false;
             });
+        this.getAvatarMemo(avatarId).then((memo) => {
+            if (D.id === memo.avatarId) {
+                this.ignoreAvatarMemoSave = true;
+                D.memo = memo.memo;
+            }
+        });
     };
 
     $app.methods.avatarDialogCommand = function (command) {
@@ -18908,7 +19111,8 @@ speechSynthesis.getVoices();
 
     $app.data.setWorldTagsDialog = {
         visible: false,
-        tags: [],
+        authorTags: [],
+        contentTags: [],
         debugAllowed: false,
         avatarScalingDisabled: false
     };
@@ -18918,10 +19122,14 @@ speechSynthesis.getVoices();
         var D = this.setWorldTagsDialog;
         D.visible = true;
         var oldTags = this.worldDialog.ref.tags;
-        var tags = [];
+        var authorTags = [];
+        var contentTags = [];
         oldTags.forEach((tag) => {
-            if (tag.includes('author_tag_')) {
-                tags.unshift(tag.substring(11));
+            if (tag.startsWith('author_tag_')) {
+                authorTags.unshift(tag.substring(11));
+            }
+            if (tag.startsWith('content_')) {
+                contentTags.unshift(tag.substring(8));
             }
             if (tag === 'debug_allowed') {
                 D.debugAllowed = true;
@@ -18930,16 +19138,23 @@ speechSynthesis.getVoices();
                 D.avatarScalingDisabled = true;
             }
         });
-        D.tags = tags.toString();
+        D.authorTags = authorTags.toString();
+        D.contentTags = contentTags.toString();
     };
 
     $app.methods.saveSetWorldTagsDialog = function () {
         var D = this.setWorldTagsDialog;
-        var oldTags = D.tags.split(',');
+        var authorTags = D.authorTags.trim().split(',');
+        var contentTags = D.contentTags.trim().split(',');
         var tags = [];
-        oldTags.forEach((tag) => {
+        authorTags.forEach((tag) => {
             if (tag) {
                 tags.unshift(`author_tag_${tag}`);
+            }
+        });
+        contentTags.forEach((tag) => {
+            if (tag) {
+                tags.unshift(`content_${tag}`);
             }
         });
         if (D.debugAllowed) {
@@ -19303,6 +19518,14 @@ speechSynthesis.getVoices();
     $app.methods.copyText = function (text) {
         this.$message({
             message: 'Text copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(text);
+    };
+
+    $app.methods.copyLink = function (text) {
+        this.$message({
+            message: 'Link copied to clipboard',
             type: 'success'
         });
         this.copyToClipboard(text);
@@ -21540,19 +21763,17 @@ speechSynthesis.getVoices();
             }
             var name = ref.displayName;
             if (ref.statusDescription) {
-                var statusRegex =
-                    /(?:^|\n*)(?:(?:[^\n:])*(?::|˸|discord)[\t\v\f\r]*)?([^\n]*(#|＃)(?: )?\d{4})/gi.exec(
-                        ref.statusDescription
-                    );
+                var statusRegex = /(?:discord|dc|dis)(?: |=|:|˸|;)(.*)/gi.exec(
+                    ref.statusDescription
+                );
                 if (statusRegex) {
                     discord = statusRegex[1];
                 }
             }
             if (!discord && ref.bio) {
-                var bioRegex =
-                    /(?:^|\n*)(?:(?:[^\n:])*(?::|˸|discord)[\t\v\f\r]*)?([^\n]*(#|＃)(?: )?\d{4})/gi.exec(
-                        ref.bio
-                    );
+                var bioRegex = /(?:discord|dc|dis)(?: |=|:|˸|;)(.*)/gi.exec(
+                    ref.bio
+                );
                 if (bioRegex) {
                     discord = bioRegex[1];
                 }
@@ -21560,10 +21781,7 @@ speechSynthesis.getVoices();
             if (!discord) {
                 continue;
             }
-            discord = discord.replace('＃', '#');
-            if (discord.substring(0, 1) === '#') {
-                discord = `${_(name)}${_(discord)}`;
-            }
+            discord = discord.trim();
             lines.push(`${_(name)},${_(discord)}`);
         }
         this.discordNamesContent = lines.join('\n');
@@ -21671,6 +21889,11 @@ speechSynthesis.getVoices();
                 name: $t('dialog.config_json.cache_directory'),
                 default: '%AppData%\\..\\LocalLow\\VRChat\\vrchat'
             },
+            picture_output_folder: {
+                name: $t('dialog.config_json.picture_directory'),
+                // my pictures folder
+                default: `%UserProfile%\\Pictures\\VRChat`
+            },
             // dynamic_bone_max_affected_transform_count: {
             //     name: 'Dynamic Bones Limit Max Transforms (0 disable all transforms)',
             //     default: '32',
@@ -21701,7 +21924,12 @@ speechSynthesis.getVoices();
 
     $app.methods.saveVRChatConfigFile = function () {
         for (var item in this.VRChatConfigFile) {
-            if (this.VRChatConfigFile[item] === '') {
+            if (item === 'picture_output_split_by_date') {
+                // this one is default true, it's special
+                if (this.VRChatConfigFile[item]) {
+                    delete this.VRChatConfigFile[item];
+                }
+            } else if (this.VRChatConfigFile[item] === '') {
                 delete this.VRChatConfigFile[item];
             } else if (
                 typeof this.VRChatConfigFile[item] === 'boolean' &&
@@ -22228,6 +22456,9 @@ speechSynthesis.getVoices();
                 assetUrl = unityPackage.assetUrl;
                 break;
             }
+        }
+        if (!assetUrl) {
+            assetUrl = ref.assetUrl;
         }
         var id = extractFileId(assetUrl);
         var version = parseInt(extractFileVersion(assetUrl), 10);
@@ -23508,6 +23739,7 @@ speechSynthesis.getVoices();
             }
         });
         API.cachedAvatarNames = new Map();
+        this.customUserTags = new Map();
         this.updateInstanceInfo = 0;
     };
 
@@ -23660,6 +23892,7 @@ speechSynthesis.getVoices();
             ref.$customTag = data.Tag;
             ref.$customTagColour = data.TagColour;
         }
+        this.updateSharedFeed(true);
     };
 
     $app.methods.eventVrcxMessage = function (data) {
@@ -23802,6 +24035,15 @@ speechSynthesis.getVoices();
                 break;
             case 'group':
                 this.showGroupDialog(commandArg);
+                break;
+            case 'local-favorite-world':
+                console.log('local-favorite-world', commandArg);
+                var [id, group] = commandArg.split(':');
+                API.getCachedWorld({ worldId: id }).then((args1) => {
+                    this.directAccessWorld(id);
+                    this.addLocalWorldFavorite(id, group);
+                    return args1;
+                });
                 break;
             case 'addavatardb':
                 this.addAvatarProvider(input.replace('addavatardb/', ''));
@@ -24321,7 +24563,7 @@ speechSynthesis.getVoices();
             case 'offline':
             case 'private':
             case 'traveling':
-            case 'local':
+            case instanceId.startsWith('local'):
             case '':
                 return false;
         }

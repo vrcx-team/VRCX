@@ -178,8 +178,13 @@ button {
     font-family: 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC', 'Noto Sans SC',
         'Meiryo UI', 'Malgun Gothic', 'Segoe UI', sans-serif;
     line-height: normal;
-    text-shadow: #000 0px 0px 3px, #000 0px 0px 3px, #000 0px 0px 3px,
-        #000 0px 0px 3px, #000 0px 0px 3px, #000 0px 0px 3px;
+    text-shadow:
+        #000 0px 0px 3px,
+        #000 0px 0px 3px,
+        #000 0px 0px 3px,
+        #000 0px 0px 3px,
+        #000 0px 0px 3px,
+        #000 0px 0px 3px;
 }
 
 .x-app {
@@ -411,4 +416,21 @@ i.x-user-status.busy {
 .tracker-device img {
     width: 32px;
     height: 32px;
+    transition: all 0.25s linear;
+}
+
+.tracker-warning {
+    color: #fcfb00;
+}
+
+.tracker-warning img {
+    filter: saturate(250%) brightness(151%) hue-rotate(221deg);
+}
+
+.tracker-error {
+    color: #fd4444;
+}
+
+.tracker-error img {
+    filter: saturate(160%) brightness(88%) hue-rotate(161deg);
 }

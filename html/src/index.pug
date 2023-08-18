@@ -582,6 +582,7 @@ html
                                     el-tag.x-tag-platform-quest(v-if="worldDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Quest
                                     el-tag.x-tag-platform-ios(v-if="worldDialog.isIos" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
                                     el-tag(v-if="worldDialog.avatarScalingDisabled" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
+                                    el-tag(v-if="worldDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.future_proofing') }}
                                     el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px;margin-top:5px")
                                     el-tag.x-link(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px" @click="openFolderGeneric(worldDialog.cachePath)")
                                         span(v-text="worldDialog.cacheSize")
@@ -757,6 +758,7 @@ html
                                     el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.public') }}
                                     el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.private') }}
                                     el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.fallback') }}
+                                    el-tag(v-if="avatarDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.future_proofing') }}
                                     el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-right:5px")
                                     el-tag.x-link(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini" @click="openFolderGeneric(avatarDialog.cachePath)")
                                         span(v-text="avatarDialog.cacheSize")
@@ -790,6 +792,10 @@ html
                     el-tabs
                         el-tab-pane(:label="$t('dialog.avatar.info.header')")
                             .x-friend-list
+                                .x-friend-item(style="width:100%;cursor:default")
+                                    .detail 
+                                        span.name {{ $t('dialog.avatar.info.memo') }}
+                                        el-input.extra(v-model="avatarDialog.memo" size="mini" type="textarea" :rows="2" :autosize="{minRows: 1, maxRows: 20}" :placeholder="$t('dialog.avatar.info.memo_placeholder')" resize="none")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.avatar.info.id') }}
@@ -1379,6 +1385,7 @@ html
                             span #[span(v-text="getVRChatScreenshotResolution()")] #[i.el-icon-arrow-down.el-icon--right]
                         el-dropdown-menu(#default="dropdown")
                             el-dropdown-item(v-for="row in VRChatScreenshotResolutions" :key="row.index" v-text="row.name" :command="row")
+                el-checkbox(v-model="VRChatConfigFile.picture_output_split_by_date" style="margin-top:5px;display:block" :checked="true") {{ $t('dialog.config_json.picture_sort_by_date') }}
                 el-checkbox(v-model="VRChatConfigFile.disableRichPresence" style="margin-top:5px;display:block") {{ $t('dialog.config_json.disable_discord_presence') }}
                 template(#footer)
                     el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')") {{ $t('dialog.config_json.vrchat_docs') }}
@@ -1400,8 +1407,11 @@ html
                 el-checkbox(v-model="setWorldTagsDialog.avatarScalingDisabled") {{ $t('dialog.set_world_tags.avatar_scaling_disabled') }}
                 el-checkbox(v-model="setWorldTagsDialog.debugAllowed") {{ $t('dialog.set_world_tags.enable_debugging') }}
                 div(style='font-size:12px;margin-top:10px')
-                    | {{ $t('dialog.set_world_tags.seprator') }} #[br]
-                el-input(type="textarea" v-model="setWorldTagsDialog.tags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+                    | {{ $t('dialog.set_world_tags.author_tags') }} #[br]
+                el-input(type="textarea" v-model="setWorldTagsDialog.authorTags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+                div(style='font-size:12px;margin-top:10px')
+                    | {{ $t('dialog.set_world_tags.content_tags') }} #[br]
+                el-input(type="textarea" v-model="setWorldTagsDialog.contentTags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
                 template(#footer)
                     div(style="display:flex")
                         el-button(size="small" @click="setWorldTagsDialog.visible = false") {{ $t('dialog.set_world_tags.cancel') }}

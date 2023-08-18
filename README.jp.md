@@ -10,7 +10,7 @@
 
 | [English](./README.md) | **日本語** | [简体中文](./README.zh_CN.md)
 
-VRCX は VRChat のアシスタント/コンパニオンアプリケーションで、VRChat クライアント (デスクトップ & VR) や Web サイト以上に様々な情報を提供し、より便利に VRChat をプレイできるようにします。
+VRCX は VRChat クライアント (デスクトップ & VR) や Web サイト以上に様々な情報を提供し、より便利に VRChat をプレイできるようにするコンパニオンアプリケーションです。
 
 # インストール方法
 
@@ -27,6 +27,8 @@ VRCX は VRChat のアシスタント/コンパニオンアプリケーション
   - フレンドのワールド/アバターのアクティビティを見たり、オンラインステータスを確認したりできます。
   - いつフレンドになったのか、最後に会ったのはいつなのか、記録しておきましょう！
   - 一緒に過ごした時間や回数も確認できます。
+  - フレンドのユーザーネームの変更も追跡できます。
+  - メモを保存して、出会いの記録を残しましょう！
 - :electric_plug: VRChat 起動時に一緒にアプリを起動
   - VRChat の起動時に他のアプリを同時起動できるよう設定できます。
   - 例えば、VRChat を起動したら同時に OSC アプリやボイスチェンジャーを起動するようにできます。
@@ -35,17 +37,22 @@ VRCX は VRChat のアシスタント/コンパニオンアプリケーション
   - **注意**: この機能を使うには、VRChat の設定で「Allow Untrusted URLs」を有効化しておく必要があります。
   - 開発者向け: [Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
 - :mag: アバター、ユーザー、ワールド、グループの検索
-- :clipboard: 無制限！ローカル保存のワールドお気に入りリスト
-- :camera: ゲーム内で撮った写真にワールドデータを保存することで、綺麗な写真を撮ったあのワールドをいつでも思い出せます... たとえ半年前の写真であってもね！
+- :earth_americas: 無制限！ローカル保存のワールドお気に入りリスト
+- :camera: ゲーム内で撮った写真にワールドデータを保存することで、半年前に撮影した綺麗なワールドをいつでも思い返すことができます。
 - :bell: 通知の監視 & 対応
   - VRCX から Invite やフレンドリクエストを送受信したり、受け取った Invite のインスタンス情報を確認することができます。
 - :scroll: 現在のインスタンスの情報やプレイヤーリストを確認可能
 - :tv: 今いるワールドで再生されている動画やその URL、その他様々なログを確認可能
 - :bar_chart: Discord Rich Presence の強化
   - 現在のインスタンス情報などを Discord に表示することができます。
+  - PyPyDance、LS Media、Movie and Chill、VR Dancing などの人気ワールドとの連携機能
   - ワールドサムネイル、ワールド名、インスタンス ID、プレイヤー数が表示され、設定や Private インスタンスかどうかで表示内容が変わります。  
     また、Public インスタンスでは参加ボタンを追加することもできます！
 - :crystal_ball: 対応するすべてのイベント/通知のライブフィードを表示/設定可能な VR オーバーレイ
+- :outbox_tray: Unity なしでアバター/ワールド画像をアップロード可能
+- :page_facing_up: Unity なしでアップロードしたアバター/ワールドの詳細を管理可能
+- :skull: VRChat がクラッシュしたときに自動的に再起動し、最後にいたインスタンスに自動参加
+- :left_right_arrow: お気に入りグループのエクスポート/インポート
 
 ## その他
 
@@ -61,35 +68,35 @@ VRCX は VRChat のアシスタント/コンパニオンアプリケーション
 
 <table>
   <tr>
-    <td align="center"><img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098150151471759430/image.png" alt="login"></td>
-    <td align="center"><img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098150435002527794/image.png" alt="2fa"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306004-32bf7310-222b-45a0-91cc-242a6cb26886.png" alt="login"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306165-85a08a60-a0e0-4e50-b4e0-99c5f4fb5da4.png" alt="2fa"></td>
   </tr>
 </table>
 
 <h3>フィード</h3>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098151111963181066/image.png" alt="feed">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306317-361a3fcc-a506-4b64-9ad5-d198d81f533a.png" alt="feed">
 
 <h3>ゲームログ</h3>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098151427148370010/image.png" alt="gamelog">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306386-e3ba8511-5afb-40a2-abf6-81ba31387dee.png" alt="gamelog">
 
 <h3>ユーザー情報</h3>
 
 <h4>自分</h4>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098151750277537792/image.png" alt="me">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306511-64a45c0f-96d1-4440-b135-544bc285e096.png" alt="me">
 
 <h4>フレンド</h4>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098152156294565949/image.png" alt="friend">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306624-43d7a0ae-8f03-474c-bc60-c3a9b4d6ffb9.png" alt="friend">
 
 <h3>ワールド</h3>
 
 <table>
   <tr>
-    <td align="center"><img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098153504834588782/image.png" alt="instance"></td>
-    <td align="center"><img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098153774377336883/image.png" alt="info"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306691-65eeb2d2-c640-4abb-8d68-fc4d911b9504.png" alt="instance"></td>
+    <td align="center"><img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306760-c7256775-7b59-419e-bc81-d27a81168d3e.png" alt="info"></td>
   </tr>
 </table>
 
@@ -97,19 +104,19 @@ VRCX は VRChat のアシスタント/コンパニオンアプリケーション
 
 <h4>フレンド</h4>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098157650761490452/image.png" alt="friend">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258306890-1dbe80eb-d4d3-4d5f-a908-41f6c7f225a4.png" alt="friend">
 
 <h4>ワールド</h4>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098158554944376832/image.png" alt="world">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258307011-e27b28b3-9f5b-4f5a-9311-e0d1ec8659c6.png" alt="world">
 
 <h4>アバター</h4>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098158789254983691/image.png" alt="avatar">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258307171-5b530698-771a-435c-84fa-9b3ff17bf2dc.png" alt="avatar">
 
 <h3>フレンドログ</h3>
 
-<img src="https://cdn.discordapp.com/attachments/1098123459634139167/1098159999936643113/image.png" alt="friendlog">
+<img src="https://github-production-user-asset-6210df.s3.amazonaws.com/34514603/258307210-a727a0fe-cba8-438d-9c3f-2276d96be9c2.png" alt="friendlog">
 
 <h3>Discord Rich Presence</h3>
 

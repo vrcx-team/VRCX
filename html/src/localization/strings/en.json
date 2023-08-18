@@ -102,7 +102,9 @@
             "visibility_tooltip": "Change Visibility",
             "rename_tooltip": "Rename",
             "clear_tooltip": "Clear",
-            "delete_tooltip": "Delete"
+            "delete_tooltip": "Delete",
+            "unavailable_tooltip": "Unavailable",
+            "sort_by": "Sort By"
         },
         "friend_log": {
             "filter_placeholder": "Filter",
@@ -376,6 +378,7 @@
                     "header": "Advanced",
                     "launch_options": "Launch Options",
                     "screenshot_metadata": "Screenshot Metadata",
+                    "common_folders": "Common Folders",
                     "pending_offline": {
                         "header": "Pending Offline",
                         "description": "Delay before marking user as offline (fixes false positives)",
@@ -634,6 +637,7 @@
                 "public": "Public",
                 "private": "Private",
                 "avatar_scaling_disabled": "Avatar Scaling Disabled",
+                "future_proofing": "Future Proofing",
                 "labs": "Labs",
                 "cache": "Cache"
             },
@@ -701,6 +705,7 @@
                 "public": "Public",
                 "private": "Private",
                 "fallback": "Fallback",
+                "future_proofing": "Future Proofing",
                 "cache": "Cache"
             },
             "labels": {
@@ -735,7 +740,9 @@
                 "created_at": "Created At",
                 "last_updated": "Last Updated",
                 "version": "Version",
-                "platform": "Platform"
+                "platform": "Platform",
+                "memo": "Memo",
+                "memo_placeholder": "Click to add a memo"
             },
             "json": {
                 "header": "JSON",
@@ -913,9 +920,11 @@
             "max_cache_size": "Max Cache Size [GB] (min 20)",
             "cache_expiry_delay": "Cache Expiry [Days] (30 - 150)",
             "cache_directory": "Custom Cache Folder Location",
+            "picture_directory": "Custom Picture Folder Location",
             "fpv_steadycam_fov": "First-Person Steadycam FOV",
             "camera_resolution": "Camera Resolution",
             "screenshot_resolution": "Screenshot Resolution",
+            "picture_sort_by_date": "Sort pictures into folders by date",
             "disable_discord_presence": "Disable Discord Rich Presence",
             "vrchat_docs": "VRChat Docs",
             "cancel": "Cancel",
@@ -930,9 +939,10 @@
         },
         "set_world_tags": {
             "header": "Set World Tags",
-            "avatar_scaling_disabled": "Avatar Scaling Disabled",
+            "avatar_scaling_disabled": "Disable avatar scaling",
             "enable_debugging": "Enable world debugging for others",
-            "seprator": "Enter tags comma separated",
+            "author_tags": "Author Tags (comma separated)",
+            "content_tags": "Content Tags (comma separated)",
             "cancel": "Cancel",
             "save": "Save"
         },

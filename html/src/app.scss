@@ -255,9 +255,7 @@ hr.x-vertical-divider {
     translate: 0 -50%;
     border-radius: 4px;
     background: #303133;
-    transition:
-        background-color 0.4s,
-        left 0.2s;
+    transition: background-color 0.4s, left 0.2s;
 }
 
 .el-menu-item.is-active::before {
