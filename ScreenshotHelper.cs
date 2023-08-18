@@ -104,7 +104,7 @@ namespace VRCX
             // Get the metadata string from the PNG file
             try
             {
-                metadataString = ReadPNGDescriptionFileStream(path);
+                metadataString = ReadPNGDescription(path);
             }
             catch (Exception ex)
             {
@@ -201,25 +201,6 @@ namespace VRCX
         {
             if (!File.Exists(path) || !IsPNGFile(path)) return null;
 
-            var png = File.ReadAllBytes(path);
-            var existingiTXt = FindChunk(png, "iTXt");
-            if (existingiTXt == null) return null;
-
-            return existingiTXt.GetText("Description");
-        }
-
-        /// <summary>
-        ///     Reads a text description from a PNG file at the specified path.
-        ///     Reads any existing iTXt PNG chunk in the target file, using the Description tag.
-        /// </summary>
-        /// <param name="path">The file path of the PNG file in which the description is to be read from.</param>
-        /// <returns>
-        ///     The text description that is read from the PNG file.
-        /// </returns>
-        public static string ReadPNGDescriptionFileStream(string path)
-        {
-            if (!File.Exists(path) || !IsPNGFile(path)) return null;
-
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512))
             {
                 var existingiTXt = FindChunk(stream, "iTXt", true);
@@ -238,13 +219,13 @@ namespace VRCX
         {
             if (!File.Exists(path) || !IsPNGFile(path)) return null;
 
-            var png = File.ReadAllBytes(path);
-            var existingpHYs = FindChunk(png, "IHDR");
-            if (existingpHYs == null) return null;
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 512))
+            {
+                var existingiHDR = FindChunk(stream, "IHDR", false);
+                if (existingiHDR == null) return null;
 
-            var text = existingpHYs.GetResolution();
-
-            return text;
+                return existingiHDR.GetResolution();
+            }
         }
 
         /// <summary>
@@ -273,6 +254,11 @@ namespace VRCX
         /// <returns></returns>
         private static int FindChunkIndex(byte[] png, string type)
         {
+            int chunksProcessed = 0;
+            int chunkSeekLimit = 5;
+
+            bool isLittleEndian = BitConverter.IsLittleEndian;
+
             // The first 8 bytes of the file are the png signature, so we can skip them.
             var index = 8;
 
@@ -282,7 +268,7 @@ namespace VRCX
                 Array.Copy(png, index, chunkLength, 0, 4);
 
                 // BitConverter wants little endian(unless your system is big endian for some reason), PNG multi-byte integers are big endian. So we reverse the array.
-                if (BitConverter.IsLittleEndian) Array.Reverse(chunkLength);
+                if (isLittleEndian) Array.Reverse(chunkLength);
 
                 var length = BitConverter.ToInt32(chunkLength, 0);
 
@@ -304,6 +290,9 @@ namespace VRCX
                 // The chunk length is 4 bytes, the chunk name is 4 bytes, the chunk data is length bytes, and the chunk CRC is 4 bytes.
                 // We add 12 to the index to get to the start of the next chunk in the file on the next loop.
                 index += length + 12;
+                chunksProcessed++;
+
+                if (chunksProcessed > chunkSeekLimit) break;
             }
 
             return -1;
