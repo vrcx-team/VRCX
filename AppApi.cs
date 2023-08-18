@@ -1019,36 +1019,37 @@ namespace VRCX
                 return null;
 
 
-            try {
-                var metadata = ScreenshotHelper.GetScreenshotMetadata(path);
+            var metadata = ScreenshotHelper.GetScreenshotMetadata(path);
 
-                if (metadata == null)
-                {
-                    var obj = new JObject
-                    {
-                        { "sourceFile", path },
-                        { "error", "Screenshot contains no metadata." }
-                    };
-
-                    return obj.ToString(Formatting.Indented);
-                };
-
-                return JsonConvert.SerializeObject(metadata, Formatting.Indented, new JsonSerializerSettings{
-                    ContractResolver = new DefaultContractResolver {
-                        NamingStrategy = new CamelCaseNamingStrategy() // This'll serialize our .net property names to their camelCase equivalents. Ex; "FileName" -> "fileName"
-                    }
-                });
-            } catch (ScreenshotHelper.ScreenshotHelperException ex) {
+            if (metadata == null)
+            {
                 var obj = new JObject
                 {
                     { "sourceFile", path },
-                    { "error", ex.Message }
+                    { "error", "Screenshot contains no metadata." }
+                };
+
+                return obj.ToString(Formatting.Indented);
+            };
+
+            if (metadata.Error != null)
+            {
+                var obj = new JObject
+                {
+                    { "sourceFile", path },
+                    { "error", metadata.Error }
                 };
 
                 return obj.ToString(Formatting.Indented);
             }
-            
 
+            return JsonConvert.SerializeObject(metadata, Formatting.Indented, new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy() // This'll serialize our .net property names to their camelCase equivalents. Ex; "FileName" -> "fileName"
+                }
+            });
         }
 
         public string FindScreenshotsBySearch(string searchQuery, int searchType = 0)

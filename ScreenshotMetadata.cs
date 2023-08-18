@@ -38,6 +38,12 @@ namespace VRCX
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         internal string SourceFile;
 
+        /// <summary>
+        /// Any error that occurred while parsing the file. This being true implies nothing else is set.
+        /// </summary>
+        [JsonIgnore]
+        internal string Error;
+
         public ScreenshotMetadata()
         {
             Application = "VRCX";
@@ -45,6 +51,15 @@ namespace VRCX
             Author = new AuthorDetail();
             World = new WorldDetail();
             Players = new List<PlayerDetail>();
+        }
+
+        public static ScreenshotMetadata JustError(string sourceFile, string error)
+        {
+            return new ScreenshotMetadata
+            {
+                Error = error,
+                SourceFile = sourceFile
+            };
         }
 
         public bool ContainsPlayerID(string id)

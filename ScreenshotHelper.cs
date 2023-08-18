@@ -23,11 +23,6 @@ namespace VRCX
             WorldID,
         }
 
-        public class ScreenshotHelperException : Exception
-        {
-            public ScreenshotHelperException(string message) : base(message) { }
-        }
-
         public static List<ScreenshotMetadata> FindScreenshots(string query, string directory, ScreenshotSearchType searchType)
         {
             var result = new List<ScreenshotMetadata>();
@@ -40,16 +35,10 @@ namespace VRCX
 
                 if (!metadataCache.TryGetValue(file, out metadata))
                 {
-                    try
-                    {
-                        metadata = GetScreenshotMetadata(file);
-                        metadataCache.Add(file, metadata);
-                    }
-                    catch (ScreenshotHelperException ex)
-                    {
-                        //logger.Error(ex, "Failed to get metadata for file '{0}' during search", file);
-                        continue;
-                    }
+                    metadata = GetScreenshotMetadata(file);
+                    if (metadata == null || metadata.Error != null) continue;
+
+                    metadataCache.Add(file, metadata);
                 }
 
                 if (metadata == null) continue;
@@ -109,7 +98,7 @@ namespace VRCX
             catch (Exception ex)
             {
                 logger.Error(ex, "Failed to read PNG description for file '{0}'", path);
-                throw new ScreenshotHelperException("Failed to read PNG description");
+                return ScreenshotMetadata.JustError(path, "Failed to read PNG description. Check logs.");
             }
 
             // If the metadata string is empty for some reason, there's nothing to parse.
@@ -129,7 +118,7 @@ namespace VRCX
                 catch (Exception ex)
                 {
                     logger.Error(ex, "Failed to parse LFS/ScreenshotManager metadata for file '{0}'", path);
-                    throw new ScreenshotHelperException("Failed to parse LFS/ScreenshotManager metadata");
+                    return ScreenshotMetadata.JustError(path, "Failed to parse LFS/ScreenshotManager metadata.");
                 }
             }
 
@@ -137,7 +126,7 @@ namespace VRCX
             if (!metadataString.StartsWith("{"))
             {
                 logger.ConditionalDebug("Screenshot file '{0}' has unknown non-JSON metadata:\n{1}\n", path, metadataString);
-                throw new ScreenshotHelperException("Unknown non-JSON metadata");
+                return ScreenshotMetadata.JustError(path, "File has unknown non-JSON metadata.");
             }
 
             // Parse the metadata as VRCX JSON metadata
@@ -151,7 +140,7 @@ namespace VRCX
             catch (JsonException ex)
             {
                 logger.Error(ex, "Failed to parse screenshot metadata JSON for file '{0}'", path);
-                throw new ScreenshotHelperException("Failed to parse screenshot metadata JSON");
+                return ScreenshotMetadata.JustError(path, "Failed to parse screenshot metadata JSON. Check logs.");
             }
         }
 
