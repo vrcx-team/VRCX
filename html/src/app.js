@@ -22206,24 +22206,22 @@ speechSynthesis.getVoices();
             return;
         }
 
-        console.log("Carousel change search", index, searchIndex, filesArr.length)
 
-        //console.log("Search result metadata, current index is", searchIndex, "files length is", filesArr.length, "index is", index, "search is", D.search, "files are", filesArr)
         if (index === 0) {
-            console.log("Carousel <<<, searchIndex is", searchIndex, "files length is", filesArr.length)
             if (searchIndex > 0) {
                 this.getAndDisplayScreenshot(filesArr[searchIndex - 1], false);
                 searchIndex--;
             } else {
-                this.getAndDisplayScreenshot(filesArr[searchIndex], false);
+                this.getAndDisplayScreenshot(filesArr[filesArr.length - 1], false);
+                searchIndex = filesArr.length - 1
             }
         } else if (index === 2) {
-            console.log("Carousel >>>, searchIndex is", searchIndex, "files length is", filesArr.length)
             if (searchIndex < filesArr.length - 1) {
                 this.getAndDisplayScreenshot(filesArr[searchIndex + 1], false);
                 searchIndex++;
             } else {
-                this.getAndDisplayScreenshot(filesArr[searchIndex], false);
+                this.getAndDisplayScreenshot(filesArr[0], false);
+                searchIndex = 0
             }
         }
 
