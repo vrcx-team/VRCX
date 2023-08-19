@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -110,7 +111,7 @@ namespace VRCX
             {
                 try
                 {
-                    var result = ScreenshotHelper.ParseLfsPicture(metadataString).ToObject<ScreenshotMetadata>();
+                    var result = ScreenshotHelper.ParseLfsPicture(metadataString);
                     result.SourceFile = path;
 
                     return result;
@@ -430,37 +431,47 @@ namespace VRCX
         /// </summary>
         /// <param name="metadataString">The metadata string to parse.</param>
         /// <returns>A JObject containing the parsed data.</returns>
-        public static JObject ParseLfsPicture(string metadataString)
+        public static ScreenshotMetadata ParseLfsPicture(string metadataString)
         {
-            var metadata = new JObject();
+            var metadata = new ScreenshotMetadata();
+            // LFS v2 format: https://github.com/knah/VRCMods/blob/c7e84936b52b6f476db452a37ab889eabe576845/LagFreeScreenshots/API/MetadataV2.cs#L35
+            // Normal entry
             // lfs|2|author:usr_032383a7-748c-4fb2-94e4-bcb928e5de6b,Natsumi-sama|world:wrld_b016712b-5ce6-4bcb-9144-c8ed089b520f,35372,pet park test|pos:-60.49379,-0.002925932,5.805772|players:usr_9d73bff9-4543-4b6f-a004-9e257869ff50,-0.85,-0.17,-0.58,Olivia.;usr_3097f91e-a816-4c7a-a625-38fbfdee9f96,12.30,13.72,0.08,Zettai Ryouiki;usr_032383a7-748c-4fb2-94e4-bcb928e5de6b,0.68,0.32,-0.28,Natsumi-sama;usr_7525f45f-517e-442b-9abc-fbcfedb29f84,0.51,0.64,0.70,Weyoun
+            // Entry with image rotation enabled (rq:)
             // lfs|2|author:usr_8c0a2f22-26d4-4dc9-8396-2ab40e3d07fc,knah|world:wrld_fb4edc80-6c48-43f2-9bd1-2fa9f1345621,35341,Luminescent Ledge|pos:8.231676,0.257298,-0.1983307|rq:2|players:usr_65b9eeeb-7c91-4ad2-8ce4-addb1c161cd6,0.74,0.59,1.57,Jakkuba;usr_6a50647f-d971-4281-90c3-3fe8caf2ba80,8.07,9.76,0.16,SopwithPup;usr_8c0a2f22-26d4-4dc9-8396-2ab40e3d07fc,0.26,1.03,-0.28,knah;usr_7f593ad1-3e9e-4449-a623-5c1c0a8d8a78,0.15,0.60,1.46,NekOwneD
+            
+            // LFS v1 format: https://github.com/knah/VRCMods/blob/23c3311fdfc4af4b568eedfb2e366710f2a9f925/LagFreeScreenshots/LagFreeScreenshotsMod.cs 
+            // Why support this tho
+            // lfs|1|world:wrld_6caf5200-70e1-46c2-b043-e3c4abe69e0f:47213,The Great Pug|players:usr_290c03d6-66cc-4f0e-b782-c07f5cfa8deb,VirtualTeacup;usr_290c03d6-66cc-4f0e-b782-c07f5cfa8deb,VirtualTeacup
+            
+            // LFS CVR Edition v1 format: https://github.com/dakyneko/DakyModsCVR/blob/48eecd1bccd1a5b2ea844d899d59cf1186ec9912/LagFreeScreenshots/API/MetadataV2.cs#L41
             // lfs|cvr|1|author:047b30bd-089d-887c-8734-b0032df5d176,Hordini|world:2e73b387-c6d4-45e9-b998-0fd6aa122c1d,i+efec20004ef1cd8b-404003-93833f-1aee112a,Bono's Basement (Anime) (#816724)|pos:2.196716,0.01250899,-3.817466|players:5301af21-eb8d-7b36-3ef4-b623fa51c2c6,3.778407,0.01250887,-3.815876,DDAkebono;f9e5c36c-41b0-7031-1185-35b4034010c0,4.828233,0.01250893,-3.920135,Natsumi
+
             var lfsParts = metadataString.Split('|');
             if (lfsParts[1] == "cvr")
                 lfsParts = lfsParts.Skip(1).ToArray();
 
             var version = int.Parse(lfsParts[1]);
             var application = lfsParts[0];
-            metadata.Add("application", application);
-            metadata.Add("version", version);
+            metadata.Application = application;
+            metadata.Version = version;
+
+            bool isCVR = application == "cvr";
 
             if (application == "screenshotmanager")
             {
+                // ScreenshotManager format: https://github.com/DragonPlayerX/ScreenshotManager/blob/33950b98003e795d29c68ce5fe1d86e7e65c92ad/ScreenshotManager/Core/FileDataHandler.cs#L94
                 // screenshotmanager|0|author:usr_290c03d6-66cc-4f0e-b782-c07f5cfa8deb,VirtualTeacup|wrld_6caf5200-70e1-46c2-b043-e3c4abe69e0f,47213,The Great Pug
                 var author = lfsParts[2].Split(',');
-                metadata.Add("author", new JObject
-                {
-                    { "id", author[0] },
-                    { "displayName", author[1] }
-                });
+
+                metadata.Author.Id = author[0];
+                metadata.Author.DisplayName = author[1];
+
                 var world = lfsParts[3].Split(',');
-                metadata.Add("world", new JObject
-                {
-                    { "id", world[0] },
-                    { "name", world[2] },
-                    { "instanceId", world[1] }
-                });
+
+                metadata.World.Id = world[0];
+                metadata.World.Name = world[2];
+                metadata.World.InstanceId = string.Join(":", world[0], world[1]); // worldId:instanceId format, same as vrcx format, just minimal
                 return metadata;
             }
 
@@ -478,52 +489,51 @@ namespace VRCX
                 switch (key)
                 {
                     case "author":
-                        metadata.Add("author", new JObject
-                        {
-                            { "id", application == "cvr" ? string.Empty : parts[0] },
-                            { "displayName", application == "cvr" ? $"{parts[1]} ({parts[0]})" : parts[1] }
-                        });
+                        metadata.Author.Id = isCVR ? string.Empty : parts[0];
+                        metadata.Author.DisplayName = isCVR ? $"{parts[1]} ({parts[0]})" : parts[1];
                         break;
 
                     case "world":
-                        metadata.Add("world", new JObject
-                        {
-                            { "id", application == "cvr" || version == 1 ? string.Empty : parts[0] },
-                            { "name", application == "cvr" ? $"{parts[2]} ({parts[0]})" : (version == 1 ? value : parts[2]) },
-                            { "instanceId", application == "cvr" || version == 1 ? string.Empty : parts[1] }
-                        });
+                        metadata.World.Id = isCVR || version == 1 ? string.Empty : parts[0];
+                        metadata.World.InstanceId = isCVR || version == 1 ? string.Empty : string.Join(":", parts[0], parts[1]); // worldId:instanceId format, same as vrcx format, just minimal
+                        metadata.World.Name = isCVR ? $"{parts[2]} ({parts[0]})" : (version == 1 ? value : parts[2]);
                         break;
 
                     case "pos":
-                        metadata.Add("pos", new JObject
-                        {
-                            { "x", parts[0] },
-                            { "y", parts[1] },
-                            { "z", parts[2] }
-                        });
+                        float.TryParse(parts[0], out float x);
+                        float.TryParse(parts[1], out float y);
+                        float.TryParse(parts[2], out float z);
+                        
+                        metadata.Pos = new Vector3(x, y, z);
                         break;
 
-                    case "rq":
+                    // We don't use this, so don't parse it.
+                    /*case "rq":
+                        // Image rotation 
                         metadata.Add("rq", value);
-                        break;
+                        break;*/
 
                     case "players":
-                        var playersArray = new JArray();
+                        var playersArray = metadata.Players;
                         var players = value.Split(';');
 
                         foreach (var player in players)
                         {
                             var playerParts = player.Split(',');
-                            playersArray.Add(new JObject
+
+                            float.TryParse(playerParts[1], out float x2);
+                            float.TryParse(playerParts[2], out float y2);
+                            float.TryParse(playerParts[3], out float z2);
+
+                            var playerDetail = new ScreenshotMetadata.PlayerDetail
                             {
-                                { "id", application == "cvr" ? string.Empty : playerParts[0] },
-                                { "x", playerParts[1] },
-                                { "y", playerParts[2] },
-                                { "z", playerParts[3] },
-                                { "displayName", application == "cvr" ? $"{playerParts[4]} ({playerParts[0]})" : playerParts[4] }
-                            });
+                                Id = isCVR ? string.Empty : playerParts[0],
+                                DisplayName = isCVR ? $"{playerParts[4]} ({playerParts[0]})" : playerParts[4],
+                                Pos = new Vector3(x2, y2, z2)
+                            };
+
+                            playersArray.Add(playerDetail);
                         }
-                        metadata.Add("players", playersArray);
                         break;
                 }
             }

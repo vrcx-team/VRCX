@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Newtonsoft.Json;
+using Windows.Foundation.Metadata;
 
 namespace VRCX
 {
@@ -37,6 +39,12 @@ namespace VRCX
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         internal string SourceFile;
+
+        /// <summary>
+        /// The position of the player that took the picture when the shot was taken. Not written by VRCX, this is legacy support for reading LFS files.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public Vector3? Pos { get; set; }
 
         /// <summary>
         /// Any error that occurred while parsing the file. This being true implies nothing else is set.
@@ -121,6 +129,12 @@ namespace VRCX
             /// The display name of the player in the world.
             /// </summary>
             public string DisplayName { get; set; }
+
+            /// <summary>
+            /// The position of the player in the world. Not written by VRCX, this is legacy support for reading LFS files.
+            /// </summary>
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public Vector3? Pos { get; set; } = null;
         }
     }
 }
