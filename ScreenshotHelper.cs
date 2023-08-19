@@ -14,6 +14,7 @@ namespace VRCX
     {
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         private static readonly byte[] pngSignatureBytes = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        private static readonly ScreenshotMetadataDatabase cacheDatabase = new ScreenshotMetadataDatabase(Path.Combine(Program.AppDataDirectory, "metadataCache.db"));
         private static readonly Dictionary<string, ScreenshotMetadata> metadataCache = new Dictionary<string, ScreenshotMetadata>();
 
         public enum ScreenshotSearchType
@@ -24,21 +25,62 @@ namespace VRCX
             WorldID,
         }
 
+        public static ScreenshotMetadata GetCachedMetadata(string filePath)
+        {
+            if (metadataCache.TryGetValue(filePath, out var metadata))
+                return metadata;
+
+            int id = cacheDatabase.IsFileCached(filePath);
+
+            if (id != -1)
+            {
+                string metadataStr = cacheDatabase.GetMetadataById(id);
+                if (string.IsNullOrEmpty(metadataStr)) return null; // This shouldn't happen, but just in case
+
+                var metadataObj = JsonConvert.DeserializeObject<ScreenshotMetadata>(metadataStr);
+
+                metadataCache.Add(filePath, metadataObj);
+
+                return metadataObj;
+            }
+
+            return null;
+        }
+
         public static List<ScreenshotMetadata> FindScreenshots(string query, string directory, ScreenshotSearchType searchType)
         {
             var result = new List<ScreenshotMetadata>();
 
             var files = Directory.GetFiles(directory, "*.png", SearchOption.AllDirectories);
 
+            var addToCache = new List<MetadataCache>();
+
+            int amtFromCache = 0;
             foreach (var file in files)
             {
-                ScreenshotMetadata metadata = null;
+                ScreenshotMetadata metadata = GetCachedMetadata(file);
 
-                if (!metadataCache.TryGetValue(file, out metadata))
+                if (metadata != null)
                 {
-                    metadata = GetScreenshotMetadata(file);
-                    if (metadata == null || metadata.Error != null) continue;
+                    amtFromCache++;
+                }
+                else
+                {
+                    metadata = GetScreenshotMetadata(file, true);
+                    if (metadata == null || metadata.Error != null)
+                    {
+                        metadataCache.Add(file, null);
+                        continue;
+                    }
 
+                    addToCache.Add(new MetadataCache()
+                    {
+                        FilePath = file,
+                        Metadata = metadata.JSON ?? JsonConvert.SerializeObject(metadata),
+                        CachedAt = DateTimeOffset.Now
+                    });
+
+                    metadata.JSON = null;
                     metadataCache.Add(file, metadata);
                 }
 
@@ -70,7 +112,10 @@ namespace VRCX
                 }
             }
 
-            logger.ConditionalDebug("Found {0}/{1} screenshots matching query '{2}' of type '{3}'", result.Count, files.Length, query, searchType);
+            if (addToCache.Count > 0)
+                cacheDatabase.BulkAddMetadataCache(addToCache);
+
+            logger.ConditionalDebug("Found {0}/{1} screenshots matching query '{2}' of type '{3}'. {4}/{5} pulled from cache.", result.Count, files.Length, query, searchType, amtFromCache, files.Length);
 
             return result;
         }
@@ -80,14 +125,14 @@ namespace VRCX
         /// </summary>
         /// <param name="path">The path to the PNG screenshot file.</param>
         /// <returns>A JObject containing the metadata or null if no metadata was found.</returns>
-        public static ScreenshotMetadata GetScreenshotMetadata(string path)
+        public static ScreenshotMetadata GetScreenshotMetadata(string path, bool includeJSON = false)
         {
             // Early return if file doesn't exist, or isn't a PNG(Check both extension and file header)
             if (!File.Exists(path) || !path.EndsWith(".png") || !IsPNGFile(path))
                 return null;
 
-            if (metadataCache.TryGetValue(path, out var cachedMetadata))
-                return cachedMetadata;
+            ///if (metadataCache.TryGetValue(path, out var cachedMetadata))
+            //    return cachedMetadata;
 
             string metadataString;
 
@@ -135,6 +180,9 @@ namespace VRCX
             {
                 var result = JsonConvert.DeserializeObject<ScreenshotMetadata>(metadataString);
                 result.SourceFile = path;
+
+                if (includeJSON)
+                    result.JSON = metadataString;
 
                 return result;
             }
@@ -439,11 +487,11 @@ namespace VRCX
             // lfs|2|author:usr_032383a7-748c-4fb2-94e4-bcb928e5de6b,Natsumi-sama|world:wrld_b016712b-5ce6-4bcb-9144-c8ed089b520f,35372,pet park test|pos:-60.49379,-0.002925932,5.805772|players:usr_9d73bff9-4543-4b6f-a004-9e257869ff50,-0.85,-0.17,-0.58,Olivia.;usr_3097f91e-a816-4c7a-a625-38fbfdee9f96,12.30,13.72,0.08,Zettai Ryouiki;usr_032383a7-748c-4fb2-94e4-bcb928e5de6b,0.68,0.32,-0.28,Natsumi-sama;usr_7525f45f-517e-442b-9abc-fbcfedb29f84,0.51,0.64,0.70,Weyoun
             // Entry with image rotation enabled (rq:)
             // lfs|2|author:usr_8c0a2f22-26d4-4dc9-8396-2ab40e3d07fc,knah|world:wrld_fb4edc80-6c48-43f2-9bd1-2fa9f1345621,35341,Luminescent Ledge|pos:8.231676,0.257298,-0.1983307|rq:2|players:usr_65b9eeeb-7c91-4ad2-8ce4-addb1c161cd6,0.74,0.59,1.57,Jakkuba;usr_6a50647f-d971-4281-90c3-3fe8caf2ba80,8.07,9.76,0.16,SopwithPup;usr_8c0a2f22-26d4-4dc9-8396-2ab40e3d07fc,0.26,1.03,-0.28,knah;usr_7f593ad1-3e9e-4449-a623-5c1c0a8d8a78,0.15,0.60,1.46,NekOwneD
-            
+
             // LFS v1 format: https://github.com/knah/VRCMods/blob/23c3311fdfc4af4b568eedfb2e366710f2a9f925/LagFreeScreenshots/LagFreeScreenshotsMod.cs 
             // Why support this tho
             // lfs|1|world:wrld_6caf5200-70e1-46c2-b043-e3c4abe69e0f:47213,The Great Pug|players:usr_290c03d6-66cc-4f0e-b782-c07f5cfa8deb,VirtualTeacup;usr_290c03d6-66cc-4f0e-b782-c07f5cfa8deb,VirtualTeacup
-            
+
             // LFS CVR Edition v1 format: https://github.com/dakyneko/DakyModsCVR/blob/48eecd1bccd1a5b2ea844d899d59cf1186ec9912/LagFreeScreenshots/API/MetadataV2.cs#L41
             // lfs|cvr|1|author:047b30bd-089d-887c-8734-b0032df5d176,Hordini|world:2e73b387-c6d4-45e9-b998-0fd6aa122c1d,i+efec20004ef1cd8b-404003-93833f-1aee112a,Bono's Basement (Anime) (#816724)|pos:2.196716,0.01250899,-3.817466|players:5301af21-eb8d-7b36-3ef4-b623fa51c2c6,3.778407,0.01250887,-3.815876,DDAkebono;f9e5c36c-41b0-7031-1185-35b4034010c0,4.828233,0.01250893,-3.920135,Natsumi
 
@@ -503,7 +551,7 @@ namespace VRCX
                         float.TryParse(parts[0], out float x);
                         float.TryParse(parts[1], out float y);
                         float.TryParse(parts[2], out float z);
-                        
+
                         metadata.Pos = new Vector3(x, y, z);
                         break;
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Newtonsoft.Json;
-using Windows.Foundation.Metadata;
 
 namespace VRCX
 {
@@ -51,6 +50,9 @@ namespace VRCX
         /// </summary>
         [JsonIgnore]
         internal string Error;
+
+        [JsonIgnore]
+        internal string JSON;
 
         public ScreenshotMetadata()
         {
