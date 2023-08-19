@@ -1190,15 +1190,15 @@
         "totp": {
             "header": "Two-factor Authentication",
             "description": "Enter a numeric code from your authenticator app",
-            "use_otp": "Use TOTP",
+            "use_otp": "Use OTP",
             "verify": "Verify",
             "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
-        "otp": {
+        "use_totp": {
             "header": "Two-factor Authentication",
             "description": "Enter one of your saved recovery codes",
-            "use_otp": "Use OTP",
+            "use_otp": "Use TOTP",
             "verify": "Verify",
             "input_placeholder": "Code",
             "input_error": "Invalid Code"
