@@ -1175,7 +1175,7 @@
         "otp": {
             "header": "2단계 인증",
             "description": "복구 코드 중 하나를 입력하세요",
-            "use_otp": "TOTP 사용",
+            "use_totp": "TOTP 사용",
             "verify": "확인",
             "input_placeholder": "코드",
             "input_error": "잘못된 코드"
