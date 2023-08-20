@@ -1076,7 +1076,7 @@ speechSynthesis.getVoices();
             '<el-tooltip v-if="isValidInstance" placement="bottom">' +
             '<div slot="content">' +
             '<span><span style="color:#409eff">PC: </span>{{ platforms.standalonewindows }}</span></br>' +
-            '<span><span style="color:#67c23a">Quest: </span>{{ platforms.android }}</span></br>' +
+            '<span><span style="color:#67c23a">Android: </span>{{ platforms.android }}</span></br>' +
             '<span>{{ $t("dialog.user.info.instance_game_version") }} {{ gameServerVersion }}</span></br>' +
             '<span v-if="queueEnabled">{{ $t("dialog.user.info.instance_queuing_enabled") }}</br></span>' +
             '<span v-if="userList.length">{{ $t("dialog.user.info.instance_users") }}</br></span>' +
@@ -11366,12 +11366,6 @@ speechSynthesis.getVoices();
         }
         if (data.avatarEyeHeight < 0) {
             text = 'Photon bot has joined, invalid avatarEyeHeight';
-        } else if (
-            data.user.last_platform === 'android' &&
-            platforms.length > 0 &&
-            !platforms.includes('android')
-        ) {
-            var text = 'User joined as Quest in PC only world';
         }
         if (text) {
             this.addEntryPhotonEvent({
@@ -11435,15 +11429,6 @@ speechSynthesis.getVoices();
                         userId: user.id
                     });
                     ref = args.ref;
-                    if (photonUser.last_platform !== ref.last_platform) {
-                        this.addEntryPhotonEvent({
-                            photonId,
-                            text: `API/Photon platform mismatch ${ref.last_platform}/${photonUser.last_platform}`,
-                            type: 'PhotonBot',
-                            color: 'yellow',
-                            created_at: Date.parse(gameLogDate)
-                        });
-                    }
                 } catch (err) {
                     console.error(err);
                     ref = photonUser;
@@ -11530,7 +11515,7 @@ speechSynthesis.getVoices();
         avatar.description = this.replaceBioSymbols(avatar.description);
         var platform = '';
         if (user.last_platform === 'android') {
-            platform = 'Quest';
+            platform = 'Android';
         } else if (user.last_platform === 'ios') {
             platform = 'iOS';
         } else if (user.inVRMode) {
@@ -16693,7 +16678,7 @@ speechSynthesis.getVoices();
                         this.currentInstanceWorld.inCache = true;
                         this.currentInstanceWorld.cacheSize = `${(
                             cacheInfo.Item1 / 1048576
-                        ).toFixed(2)} MiB`;
+                        ).toFixed(2)} MB`;
                     }
                 });
                 this.getBundleDateSize(args.ref).then(
@@ -16720,7 +16705,7 @@ speechSynthesis.getVoices();
                         this.currentInstanceWorld.inCache = true;
                         this.currentInstanceWorld.cacheSize = `${(
                             cacheInfo.Item1 / 1048576
-                        ).toFixed(2)} MiB`;
+                        ).toFixed(2)} MB`;
                     }
                 });
             });
@@ -17391,7 +17376,7 @@ speechSynthesis.getVoices();
                         createdAt = version.created_at;
                         fileSize = `${(
                             version.file.sizeInBytes / 1048576
-                        ).toFixed(2)} MiB`;
+                        ).toFixed(2)} MB`;
                         break;
                     }
                 }
@@ -18004,7 +17989,7 @@ speechSynthesis.getVoices();
                 if (unityPackage.platform === 'standalonewindows') {
                     platform = 'PC';
                 } else if (unityPackage.platform === 'android') {
-                    platform = 'Quest';
+                    platform = 'Android';
                 } else if (unityPackage.platform) {
                     ({ platform } = unityPackage);
                 }
@@ -18145,7 +18130,7 @@ speechSynthesis.getVoices();
                                 if (version.version === fileVersion) {
                                     D.fileSize = `${(
                                         version.file.sizeInBytes / 1048576
-                                    ).toFixed(2)} MiB`;
+                                    ).toFixed(2)} MB`;
                                     break;
                                 }
                             }
@@ -18380,7 +18365,7 @@ speechSynthesis.getVoices();
                 if (unityPackage.platform === 'standalonewindows') {
                     platform = 'PC';
                 } else if (unityPackage.platform === 'android') {
-                    platform = 'Quest';
+                    platform = 'Android';
                 } else if (unityPackage.platform) {
                     ({ platform } = unityPackage);
                 }
@@ -22276,7 +22261,7 @@ speechSynthesis.getVoices();
                     D.inCache = true;
                     D.cacheSize = `${(cacheInfo.Item1 / 1048576).toFixed(
                         2
-                    )} MiB`;
+                    )} MB`;
                     D.cachePath = cacheInfo.Item3;
                 }
                 D.cacheLocked = cacheInfo.Item2;
@@ -22296,7 +22281,7 @@ speechSynthesis.getVoices();
                     D.inCache = true;
                     D.cacheSize = `${(cacheInfo.Item1 / 1048576).toFixed(
                         2
-                    )} MiB`;
+                    )} MB`;
                     D.cachePath = cacheInfo.Item3;
                 }
                 D.cacheLocked = cacheInfo.Item2;
@@ -27684,17 +27669,17 @@ speechSynthesis.getVoices();
         }
         var ref = args.json;
         if (typeof ref.fileSize !== 'undefined') {
-            ref._fileSize = `${(ref.fileSize / 1048576).toFixed(2)} MiB`;
+            ref._fileSize = `${(ref.fileSize / 1048576).toFixed(2)} MB`;
         }
         if (typeof ref.uncompressedSize !== 'undefined') {
             ref._uncompressedSize = `${(ref.uncompressedSize / 1048576).toFixed(
                 2
-            )} MiB`;
+            )} MB`;
         }
         if (typeof ref.avatarStats?.totalTextureUsage !== 'undefined') {
             ref._totalTextureUsage = `${(
                 ref.avatarStats.totalTextureUsage / 1048576
-            ).toFixed(2)} MiB`;
+            ).toFixed(2)} MB`;
         }
         $app.avatarDialog.fileAnalysis = buildTreeData(args.json);
     });
@@ -27746,6 +27731,91 @@ speechSynthesis.getVoices();
         D.imageUrl = imageUrl;
         D.visible = true;
     };
+
+    // #endregion
+    // #region | Open common folders
+
+    $app.methods.openVrcxAppDataFolder = function () {
+        AppApi.OpenVrcxAppDataFolder().then((result) => {
+            if (result) {
+                this.$message({
+                    message: 'Folder opened',
+                    type: 'success'
+                });
+            } else {
+                this.$message({
+                    message: "Folder dosn't exist",
+                    type: 'error'
+                });
+            }
+        });
+    };
+
+    $app.methods.openVrcAppDataFolder = function () {
+        AppApi.OpenVrcAppDataFolder().then((result) => {
+            if (result) {
+                this.$message({
+                    message: 'Folder opened',
+                    type: 'success'
+                });
+            } else {
+                this.$message({
+                    message: "Folder dosn't exist",
+                    type: 'error'
+                });
+            }
+        });
+    };
+
+    $app.methods.openVrcPhotosFolder = function () {
+        AppApi.OpenVrcPhotosFolder().then((result) => {
+            if (result) {
+                this.$message({
+                    message: 'Folder opened',
+                    type: 'success'
+                });
+            } else {
+                this.$message({
+                    message: "Folder dosn't exist",
+                    type: 'error'
+                });
+            }
+        });
+    };
+
+    $app.methods.openVrcScreenshotsFolder = function () {
+        AppApi.OpenVrcScreenshotsFolder().then((result) => {
+            if (result) {
+                this.$message({
+                    message: 'Folder opened',
+                    type: 'success'
+                });
+            } else {
+                this.$message({
+                    message: "Folder dosn't exist",
+                    type: 'error'
+                });
+            }
+        });
+    };
+
+    $app.methods.openCrashVrcCrashDumps = function () {
+        AppApi.OpenCrashVrcCrashDumps().then((result) => {
+            if (result) {
+                this.$message({
+                    message: 'Folder opened',
+                    type: 'success'
+                });
+            } else {
+                this.$message({
+                    message: "Folder dosn't exist",
+                    type: 'error'
+                });
+            }
+        });
+    };
+
+    // #endregion
 
     $app = new Vue($app);
     window.$app = $app;
