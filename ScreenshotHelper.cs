@@ -35,9 +35,7 @@ namespace VRCX
             if (id != -1)
             {
                 string metadataStr = cacheDatabase.GetMetadataById(id);
-                if (string.IsNullOrEmpty(metadataStr)) return false; // This shouldn't happen, but just in case
-
-                var metadataObj = JsonConvert.DeserializeObject<ScreenshotMetadata>(metadataStr);
+                var metadataObj = metadataStr == null ? null : JsonConvert.DeserializeObject<ScreenshotMetadata>(metadataStr);
 
                 metadataCache.Add(filePath, metadataObj);
 
@@ -68,19 +66,22 @@ namespace VRCX
                 else
                 {
                     metadata = GetScreenshotMetadata(file, false);
+                    var dbEntry = new MetadataCache()
+                    {
+                        FilePath = file,
+                        Metadata = null,
+                        CachedAt = DateTimeOffset.Now
+                    };
+
                     if (metadata == null || metadata.Error != null)
                     {
+                        addToCache.Add(dbEntry);
                         metadataCache.Add(file, null);
                         continue;
                     }
 
-                    addToCache.Add(new MetadataCache()
-                    {
-                        FilePath = file,
-                        Metadata = JsonConvert.SerializeObject(metadata),
-                        CachedAt = DateTimeOffset.Now
-                    });
-
+                    dbEntry.Metadata = JsonConvert.SerializeObject(metadata);
+                    addToCache.Add(dbEntry);
                     metadataCache.Add(file, metadata);
                 }
 

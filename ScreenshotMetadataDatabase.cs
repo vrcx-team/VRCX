@@ -15,7 +15,7 @@ namespace VRCX
         public int Id { get; set; }
         [Column("file_path"), NotNull, Indexed]
         public string FilePath { get; set; }
-        [Column("metadata"), NotNull]
+        [Column("metadata")]
         public string Metadata { get; set; }
         [Column("cached_at"), NotNull]
         public DateTimeOffset CachedAt { get; set; }
