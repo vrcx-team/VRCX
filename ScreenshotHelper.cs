@@ -25,26 +25,27 @@ namespace VRCX
             WorldID,
         }
 
-        public static ScreenshotMetadata GetCachedMetadata(string filePath)
+        public static bool TryGetCachedMetadata(string filePath, out ScreenshotMetadata metadata)
         {
-            if (metadataCache.TryGetValue(filePath, out var metadata))
-                return metadata;
+            if (metadataCache.TryGetValue(filePath, out metadata))
+                return true;
 
             int id = cacheDatabase.IsFileCached(filePath);
 
             if (id != -1)
             {
                 string metadataStr = cacheDatabase.GetMetadataById(id);
-                if (string.IsNullOrEmpty(metadataStr)) return null; // This shouldn't happen, but just in case
+                if (string.IsNullOrEmpty(metadataStr)) return false; // This shouldn't happen, but just in case
 
                 var metadataObj = JsonConvert.DeserializeObject<ScreenshotMetadata>(metadataStr);
 
                 metadataCache.Add(filePath, metadataObj);
 
-                return metadataObj;
+                metadata = metadataObj;
+                return true;
             }
 
-            return null;
+            return false;
         }
 
         public static List<ScreenshotMetadata> FindScreenshots(string query, string directory, ScreenshotSearchType searchType)
@@ -58,15 +59,15 @@ namespace VRCX
             int amtFromCache = 0;
             foreach (var file in files)
             {
-                ScreenshotMetadata metadata = GetCachedMetadata(file);
+                ScreenshotMetadata metadata = null;
 
-                if (metadata != null)
+                if (TryGetCachedMetadata(file, out metadata))
                 {
                     amtFromCache++;
                 }
                 else
                 {
-                    metadata = GetScreenshotMetadata(file, true);
+                    metadata = GetScreenshotMetadata(file, false);
                     if (metadata == null || metadata.Error != null)
                     {
                         metadataCache.Add(file, null);
@@ -76,11 +77,10 @@ namespace VRCX
                     addToCache.Add(new MetadataCache()
                     {
                         FilePath = file,
-                        Metadata = metadata.JSON ?? JsonConvert.SerializeObject(metadata),
+                        Metadata = JsonConvert.SerializeObject(metadata),
                         CachedAt = DateTimeOffset.Now
                     });
 
-                    metadata.JSON = null;
                     metadataCache.Add(file, metadata);
                 }
 
