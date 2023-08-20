@@ -2543,10 +2543,12 @@ html
                     el-button(size="small" icon="el-icon-copy-document" @click="copyImageToClipboard(screenshotMetadataDialog.metadata.filePath)") {{ $t('dialog.screenshot_metadata.copy_image') }}
                     el-button(size="small" icon="el-icon-folder" @click="openImageFolder(screenshotMetadataDialog.metadata.filePath)") {{ $t('dialog.screenshot_metadata.open_folder') }}
                     el-button(v-if="API.currentUser.$isVRCPlus && screenshotMetadataDialog.metadata.filePath" size="small" icon="el-icon-upload2" @click="uploadScreenshotToGallery") {{ $t('dialog.screenshot_metadata.upload') }}
+                    br
                     //- Search bar input
+                    el-input(v-model="screenshotMetadataDialog.search" size="small" placeholder="Search" clearable style="width:200px" @input="screenshotMetadataSearch")
+                    //- Search index/total label
                     template(v-if="screenshotMetadataDialog.searchIndex != null")
-                        span(style="white-space:pre-wrap;font-size:12px;padding-left:10px") {{ (screenshotMetadataDialog.searchIndex + 1) + "/" + screenshotMetadataDialog.searchResults.length }}
-                    el-input(v-model="screenshotMetadataDialog.search" size="small" placeholder="Search" style="width:200px;margin-left:10px" @input="screenshotMetadataSearch")
+                        span(style="white-space:pre-wrap;font-size:12px;margin-left:10px") {{ (screenshotMetadataDialog.searchIndex + 1) + "/" + screenshotMetadataDialog.searchResults.length }}
                     //- Search type dropdown
                     el-select(v-model="screenshotMetadataDialog.searchType" size="small" placeholder="Search Type" style="width:150px;margin-left:10px" @change="screenshotMetadataSearch")
                         el-option(v-for="type in screenshotMetadataDialog.searchTypes" :key="type" :label="type" :value="type")
@@ -2554,9 +2556,9 @@ html
                     br
                     span(v-text="screenshotMetadataDialog.metadata.fileName")
                     br
-                    span(v-if="screenshotMetadataDialog.metadata.dateTime") {{ screenshotMetadataDialog.metadata.dateTime | formatDate('long') }}
-                    span(v-if="screenshotMetadataDialog.metadata.fileResolution" v-text="screenshotMetadataDialog.metadata.fileResolution" style="margin-left:5px")
-                    el-tag(v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="mini" style="margin-left:5px" v-text="screenshotMetadataDialog.metadata.fileSize")
+                    span(v-if="screenshotMetadataDialog.metadata.dateTime" style="margin-right:5px") {{ screenshotMetadataDialog.metadata.dateTime | formatDate('long') }}
+                    span(v-if="screenshotMetadataDialog.metadata.fileResolution" v-text="screenshotMetadataDialog.metadata.fileResolution" style="margin-right:5px")
+                    el-tag(v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="mini" v-text="screenshotMetadataDialog.metadata.fileSize")
                     br
                     location(v-if="screenshotMetadataDialog.metadata.world" :location="screenshotMetadataDialog.metadata.world.instanceId" :hint="screenshotMetadataDialog.metadata.world.name")
                     br
