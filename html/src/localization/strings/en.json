@@ -1195,10 +1195,10 @@
             "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
-        "use_totp": {
+        "otp": {
             "header": "Two-factor Authentication",
             "description": "Enter one of your saved recovery codes",
-            "use_otp": "Use TOTP",
+            "use_totp": "Use TOTP",
             "verify": "Verify",
             "input_placeholder": "Code",
             "input_error": "Invalid Code"

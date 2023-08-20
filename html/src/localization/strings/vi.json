@@ -145,7 +145,7 @@
                 "export_friend_list": "Xuất dữ liệu danh sách bạn bè",
                 "export_own_avatars": "Xuất dữ liệu avatar cá nhân",
                 "discord_names": "Tên Discord",
-                "export_notes": "Xuất dữ liệu ghi chú",
+                "export_notes": "Xuất dữ liệu ghi chú"
             },
             "game_info": {
                 "header": "Thông tin trò chơi",
@@ -556,7 +556,7 @@
                 "edit_bio": "Bio",
                 "report_hacking": "Báo cáo Hack",
                 "unfriend": "Bỏ bạn",
-                "logout": "Đang xuất",
+                "logout": "Đang xuất"
             },
             "info": {
                 "header": "Thông tin",
@@ -742,7 +742,7 @@
                 "version": "Phiên bản",
                 "platform": "Nền tảng",
                 "memo": "Ghi nhớ",
-                "memo_placeholder": "Bấm để tạo ghi nhớ",
+                "memo_placeholder": "Bấm để tạo ghi nhớ"
             },
             "json": {
                 "header": "JSON",
@@ -812,7 +812,7 @@
                 "sorting": {
                     "user_id": "User ID (Tăng dần)",
                     "joined_at_asc": "Joined At (Tăng dần)",
-                    "joined_at_desc": "Joined At (Giảm dần)",
+                    "joined_at_desc": "Joined At (Giảm dần)"
                 },
                 "filter": "Lọc:",
                 "filters": {
@@ -839,7 +839,7 @@
             "header": "Mời",
             "select_placeholder": "Chọn bạn bè",
             "invite_with_message": "Mời với tin nhắn",
-            "invite": "Mời",
+            "invite": "Mời"
         },
         "social_status": {
             "header": "Social Status",
@@ -1198,7 +1198,7 @@
         "otp": {
             "header": "Xác thực hai bước (TfA)",
             "description": "Nhập mã xác thực từ mã đã phục hồi của bạn",
-            "use_otp": "Sử dụng OTP",
+            "use_totp": "Sử dụng OTP",
             "verify": "Xác thực",
             "input_placeholder": "Mã",
             "input_error": "Sai mã"

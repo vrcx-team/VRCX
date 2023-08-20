@@ -7134,7 +7134,7 @@ speechSynthesis.getVoices();
         this.twoFactorAuthDialogVisible = true;
         this.$prompt($t('prompt.otp.description'), $t('prompt.otp.header'), {
             distinguishCancelAndClose: true,
-            cancelButtonText: $t('prompt.otp.use_otp'),
+            cancelButtonText: $t('prompt.otp.use_totp'),
             confirmButtonText: $t('prompt.otp.verify'),
             inputPlaceholder: $t('prompt.otp.input_placeholder'),
             inputPattern: /^[a-z0-9]{4}-[a-z0-9]{4}$/,

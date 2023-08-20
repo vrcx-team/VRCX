@@ -1190,7 +1190,7 @@
         "otp": {
             "header": "2段階認証",
             "description": "保存したリカバリーコードのどれか一つを入力してください。",
-            "use_otp": "TOTPを使う",
+            "use_totp": "TOTPを使う",
             "verify": "認証",
             "input_placeholder": "コード",
             "input_error": "無効なコードです。"

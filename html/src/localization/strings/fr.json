@@ -1164,7 +1164,7 @@
         "otp": {
             "header": "Authentification à double facteur",
             "description": "Saisissez l'un des codes de récupération que vous avez enregistrés",
-            "use_otp": "Utiliser un mot de passe à usage unique basé sur le temps (TOTP)",
+            "use_totp": "Utiliser un mot de passe à usage unique basé sur le temps (TOTP)",
             "verify": "Vérifier",
             "input_placeholder": "Code",
             "input_error": "Code incorrect"
