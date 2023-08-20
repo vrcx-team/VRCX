@@ -1128,7 +1128,7 @@
         },
         "gallery_icons": {
             "header": "Photos, Icons and Emojis",
-            "description": "Recommended image size 1200x900px",
+            "description": "Recommended image size: 1200x900px (4:3)",
             "gallery": "Photos",
             "icons": "Icons",
             "emojis": "Emojis",
@@ -1195,7 +1195,7 @@
             "input_placeholder": "Code",
             "input_error": "Invalid Code"
         },
-        "otp": {
+        "use_totp": {
             "header": "Two-factor Authentication",
             "description": "Enter one of your saved recovery codes",
             "use_otp": "Use TOTP",
