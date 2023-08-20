@@ -1156,7 +1156,7 @@
             "header": "双重认证",
             "description": "输入你保存的其中一个备用验证码",
             "cancel": "取消",
-            "use_otp": "使用验证码",
+            "use_totp": "使用验证码",
             "verify": "验证",
             "input_placeholder": "备用验证码",
             "input_error": "无效的验证码"

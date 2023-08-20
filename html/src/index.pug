@@ -250,7 +250,7 @@ html
                                     el-tag.x-tag-vip(v-if="userDialog.ref.$isModerator" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px")  {{ $t('dialog.user.tags.vrchat_team') }}
                                     el-tag.x-tag-vrcplus(v-if="userDialog.ref.$isVRCPlus" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") VRC+
                                     el-tag.x-tag-platform-pc(v-if="userDialog.ref.last_platform === 'standalonewindows'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
-                                    el-tag.x-tag-platform-quest(v-else-if="userDialog.ref.last_platform === 'android'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Quest
+                                    el-tag.x-tag-platform-quest(v-else-if="userDialog.ref.last_platform === 'android'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Android
                                     el-tag.x-tag-platform-ios(v-else-if="userDialog.ref.last_platform === 'ios'" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
                                     el-tag.x-tag-platform-other(v-else-if="userDialog.ref.last_platform" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ userDialog.ref.last_platform }}
                                     el-tag.name(v-if="userDialog.ref.$customTag" type="info" effect="plain" size="mini" v-text="userDialog.ref.$customTag" :style="{'color':userDialog.ref.$customTagColour, 'border-color':userDialog.ref.$customTagColour}" style="margin-right:5px;margin-top:5px")
@@ -579,7 +579,7 @@ html
                                     el-tag(v-else-if="worldDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.public') }}
                                     el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.private') }}
                                     el-tag.x-tag-platform-pc(v-if="worldDialog.isPC" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
-                                    el-tag.x-tag-platform-quest(v-if="worldDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Quest
+                                    el-tag.x-tag-platform-quest(v-if="worldDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Android
                                     el-tag.x-tag-platform-ios(v-if="worldDialog.isIos" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
                                     el-tag(v-if="worldDialog.avatarScalingDisabled" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
                                     el-tag(v-if="worldDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.future_proofing') }}

@@ -384,11 +384,11 @@ mixin settingsTab()
                     span.header {{ $t('view.settings.advanced.advanced.common_folders') }}
                     div.options-container-item(style="margin-top:15px")
                         el-button-group
-                            el-button(size="small" icon="el-icon-folder" @click="AppApi.OpenVrcxAppDataFolder()") AppData (VRCX)
-                            el-button(size="small" icon="el-icon-folder" @click="AppApi.OpenVrcAppDataFolder()") AppData
-                            el-button(size="small" icon="el-icon-folder" @click="AppApi.OpenVrcPhotosFolder()") Photos
-                            el-button(size="small" icon="el-icon-folder" @click="AppApi.OpenVrcScreenshotsFolder()") Screenshots
-                            el-button(size="small" icon="el-icon-folder" @click="AppApi.OpenCrashVrcCrashDumps()") Crash Dumps
+                            el-button(size="small" icon="el-icon-folder" @click="openVrcxAppDataFolder()") AppData (VRCX)
+                            el-button(size="small" icon="el-icon-folder" @click="openVrcAppDataFolder()") AppData
+                            el-button(size="small" icon="el-icon-folder" @click="openVrcPhotosFolder()") Photos
+                            el-button(size="small" icon="el-icon-folder" @click="openVrcScreenshotsFolder()") Screenshots
+                            el-button(size="small" icon="el-icon-folder" @click="openCrashVrcCrashDumps()") Crash Dumps
                 //- Advanced | Primary Password
                 div.options-container
                     //- Advanced | Primary Password Header

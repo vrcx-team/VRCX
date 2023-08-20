@@ -1141,7 +1141,7 @@
         "otp": {
             "header": "雙重認證",
             "description": "輸入你儲存的其中一個備份驗證碼",
-            "use_otp": "使用驗證碼",
+            "use_totp": "使用驗證碼",
             "verify": "驗證",
             "input_placeholder": "備份驗證碼",
             "input_error": "無效的代碼"
