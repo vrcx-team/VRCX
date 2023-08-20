@@ -1076,7 +1076,7 @@ speechSynthesis.getVoices();
             '<el-tooltip v-if="isValidInstance" placement="bottom">' +
             '<div slot="content">' +
             '<span><span style="color:#409eff">PC: </span>{{ platforms.standalonewindows }}</span></br>' +
-            '<span><span style="color:#67c23a">Quest: </span>{{ platforms.android }}</span></br>' +
+            '<span><span style="color:#67c23a">Android: </span>{{ platforms.android }}</span></br>' +
             '<span>{{ $t("dialog.user.info.instance_game_version") }} {{ gameServerVersion }}</span></br>' +
             '<span v-if="queueEnabled">{{ $t("dialog.user.info.instance_queuing_enabled") }}</br></span>' +
             '<span v-if="userList.length">{{ $t("dialog.user.info.instance_users") }}</br></span>' +
@@ -11371,7 +11371,7 @@ speechSynthesis.getVoices();
             platforms.length > 0 &&
             !platforms.includes('android')
         ) {
-            var text = 'User joined as Quest in PC only world';
+            var text = 'User joined as Android in PC only world';
         }
         if (text) {
             this.addEntryPhotonEvent({
@@ -11530,7 +11530,7 @@ speechSynthesis.getVoices();
         avatar.description = this.replaceBioSymbols(avatar.description);
         var platform = '';
         if (user.last_platform === 'android') {
-            platform = 'Quest';
+            platform = 'Android';
         } else if (user.last_platform === 'ios') {
             platform = 'iOS';
         } else if (user.inVRMode) {
@@ -16632,7 +16632,7 @@ speechSynthesis.getVoices();
         ref: {},
         instance: {},
         isPC: false,
-        isQuest: false,
+        isAndroid: false,
         isIos: false,
         avatarScalingDisabled: false,
         inCache: false,
@@ -16652,7 +16652,7 @@ speechSynthesis.getVoices();
                 ref: {},
                 instance: {},
                 isPC: false,
-                isQuest: false,
+                isAndroid: false,
                 isIos: false,
                 avatarScalingDisabled: false,
                 inCache: false,
@@ -16666,7 +16666,7 @@ speechSynthesis.getVoices();
                 ref: {},
                 instance: {},
                 isPC: false,
-                isQuest: false,
+                isAndroid: false,
                 isIos: false,
                 avatarScalingDisabled: false,
                 inCache: false,
@@ -16680,11 +16680,11 @@ speechSynthesis.getVoices();
                 worldId: L.worldId
             }).then((args) => {
                 this.currentInstanceWorld.ref = args.ref;
-                var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
+                var { isPC, isAndroid, isIos } = this.getAvailablePlatforms(
                     args.ref.unityPackages
                 );
                 this.currentInstanceWorld.isPC = isPC;
-                this.currentInstanceWorld.isQuest = isQuest;
+                this.currentInstanceWorld.isAndroid = isAndroid;
                 this.currentInstanceWorld.isIos = isIos;
                 this.currentInstanceWorld.avatarScalingDisabled =
                     args.ref?.tags.includes('feature_avatar_scaling_disabled');
@@ -16709,11 +16709,11 @@ speechSynthesis.getVoices();
                 worldId: this.currentInstanceLocation.worldId
             }).then((args) => {
                 this.currentInstanceWorld.ref = args.ref;
-                var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
+                var { isPC, isAndroid, isIos } = this.getAvailablePlatforms(
                     args.ref.unityPackages
                 );
                 this.currentInstanceWorld.isPC = isPC;
-                this.currentInstanceWorld.isQuest = isQuest;
+                this.currentInstanceWorld.isAndroid = isAndroid;
                 this.currentInstanceWorld.isIos = isIos;
                 this.checkVRChatCache(args.ref).then((cacheInfo) => {
                     if (cacheInfo.Item1 > 0) {
@@ -16743,20 +16743,20 @@ speechSynthesis.getVoices();
 
     $app.methods.getAvailablePlatforms = function (unityPackages) {
         var isPC = false;
-        var isQuest = false;
+        var isAndroid = false;
         var isIos = false;
         if (typeof unityPackages === 'object') {
             for (var unityPackage of unityPackages) {
                 if (unityPackage.platform === 'standalonewindows') {
                     isPC = true;
                 } else if (unityPackage.platform === 'android') {
-                    isQuest = true;
+                    isAndroid = true;
                 } else if (unityPackage.platform === 'ios') {
                     isIos = true;
                 }
             }
         }
-        return { isPC, isQuest, isIos };
+        return { isPC, isAndroid, isIos };
     };
 
     $app.methods.selectCurrentInstanceRow = function (val) {
@@ -17308,7 +17308,7 @@ speechSynthesis.getVoices();
         visitCount: 0,
         timeSpent: 0,
         isPC: false,
-        isQuest: false,
+        isAndroid: false,
         isIos: false
     };
 
@@ -17442,7 +17442,7 @@ speechSynthesis.getVoices();
         D.isFavorite = false;
         D.avatarScalingDisabled = false;
         D.isPC = false;
-        D.isQuest = false;
+        D.isAndroid = false;
         D.isIos = false;
         this.ignoreWorldMemoSave = true;
         D.memo = '';
@@ -17494,14 +17494,14 @@ speechSynthesis.getVoices();
                             D.id
                         );
                     }
-                    var { isPC, isQuest, isIos } = this.getAvailablePlatforms(
+                    var { isPC, isAndroid, isIos } = this.getAvailablePlatforms(
                         args.ref.unityPackages
                     );
                     D.avatarScalingDisabled = args.ref?.tags.includes(
                         'feature_avatar_scaling_disabled'
                     );
                     D.isPC = isPC;
-                    D.isQuest = isQuest;
+                    D.isAndroid = isAndroid;
                     D.isIos = isIos;
                     this.updateVRChatWorldCache();
                     if (args.cache) {
@@ -18004,7 +18004,7 @@ speechSynthesis.getVoices();
                 if (unityPackage.platform === 'standalonewindows') {
                     platform = 'PC';
                 } else if (unityPackage.platform === 'android') {
-                    platform = 'Quest';
+                    platform = 'Android';
                 } else if (unityPackage.platform) {
                     ({ platform } = unityPackage);
                 }
@@ -18025,7 +18025,7 @@ speechSynthesis.getVoices();
         ref: {},
         isFavorite: false,
         isBlocked: false,
-        isQuestFallback: false,
+        isAndroidFallback: false,
         treeData: [],
         fileSize: '',
         inCache: false,
@@ -18083,7 +18083,7 @@ speechSynthesis.getVoices();
         D.cacheSize = 0;
         D.cacheLocked = false;
         D.cachePath = '';
-        D.isQuestFallback = false;
+        D.isAndroidFallback = false;
         D.isFavorite = API.cachedFavoritesByObjectId.has(avatarId);
         D.isBlocked = API.cachedAvatarModerations.has(avatarId);
         this.ignoreAvatarMemoSave = true;
@@ -18112,7 +18112,7 @@ speechSynthesis.getVoices();
                     D.ref.assetUrl = API.currentUser.currentAvatarAssetUrl;
                 }
                 if (/quest/.test(ref.tags)) {
-                    D.isQuestFallback = true;
+                    D.isAndroidFallback = true;
                 }
                 var assetUrl = '';
                 for (let i = ref.unityPackages.length - 1; i > -1; i--) {
@@ -18380,7 +18380,7 @@ speechSynthesis.getVoices();
                 if (unityPackage.platform === 'standalonewindows') {
                     platform = 'PC';
                 } else if (unityPackage.platform === 'android') {
-                    platform = 'Quest';
+                    platform = 'Android';
                 } else if (unityPackage.platform) {
                     ({ platform } = unityPackage);
                 }
