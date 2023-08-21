@@ -1195,7 +1195,7 @@
             "input_placeholder": "Mã",
             "input_error": "Sai mã"
         },
-        "use_totp": {
+        "otp": {
             "header": "Xác thực hai bước (TfA)",
             "description": "Nhập mã xác thực từ mã đã phục hồi của bạn",
             "use_totp": "Sử dụng TOTP",
