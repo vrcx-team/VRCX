@@ -131,9 +131,9 @@ Téléchargez et exécutez le dernier programme d'installation (`VRCX_Setup.exe`
 
 VRCX est un outil externe qui utilise l'API VRChat pour fournir les fonctionnalités qu'il propose.
 
-Il ne modifie en aucun cas le jeu, utilisant uniquement l'API de manière responsable pour offrir les fonctionnalités qu'il propose. Ce n'est pas un mod, ni une triche, ni une autre forme de modification du jeu.
+Il ne modifie en aucun cas le jeu, utilisant uniquement l'API de manière responsable pour offrir les fonctionnalités qu'il propose. Ce n'est pas un mod, ni un cheat, ni une autre forme de modification du jeu.
 
-Pour voir la position de VRChat sur l'utilisation de l'API, consultez le canal #faq dans le Discord VRChat.
+Pour voir la position de VRChat sur l'utilisation de l'API, consultez le canal #faq dans le Discord de VRChat.
 
 ---
 
