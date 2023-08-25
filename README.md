@@ -9,7 +9,7 @@
 [![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.pypy.moe/discord)
 
 
-| **English** | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md)
+| **English** | [Français](./README.fr.md) | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md)
 
 VRCX is an assistant/companion application for VRChat that provides information about and helps you accomplish various things related to VRChat in a more convenient fashion than relying on the plain VRChat client (desktop or VR), or website alone. It also includes some other neat features outlined below.
 
