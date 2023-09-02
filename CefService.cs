@@ -17,10 +17,11 @@ namespace VRCX
 
         internal void Init()
         {
+            var userDataDir = Path.Combine(Program.AppDataDirectory, "userdata");
             var cefSettings = new CefSettings
             {
-                CachePath = Path.Combine(Program.AppDataDirectory, "cache"),
-                UserDataPath = Path.Combine(Program.AppDataDirectory, "userdata"),
+                RootCachePath = userDataDir,
+                CachePath = Path.Combine(userDataDir, "cache"),
                 LogSeverity = LogSeverity.Disable,
                 WindowlessRenderingEnabled = true,
                 PersistSessionCookies = true,
