@@ -242,7 +242,8 @@ namespace VRCX
                                     ParseLogScreenshot(fileInfo, logContext, line, offset) ||
                                     ParseLogStringDownload(fileInfo, logContext, line, offset) ||
                                     ParseLogImageDownload(fileInfo, logContext, line, offset) ||
-                                    ParseVoteKick(fileInfo, logContext, line, offset))
+                                    ParseVoteKick(fileInfo, logContext, line, offset) ||
+                                    ParseFailedToJoin(fileInfo, logContext, line, offset))
                                 {
                                 }
                             }
@@ -1080,6 +1081,23 @@ namespace VRCX
                 ConvertLogTimeToISO8601(line),
                 "event",
                 line.Substring(offset + 40)
+            });
+            return true;
+        }
+        
+        private bool ParseFailedToJoin(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2023.09.01 10:42:19 Warning    -  [Behaviour] Failed to join instance 'wrld_78eb6b52-fd5a-4954-ba28-972c92c8cc77:82384~hidden(usr_a9bf892d-b447-47ce-a572-20c83dbfffd8)~region(eu)' due to 'That instance is using an outdated version of VRChat. You won't be able to join them until they update!'
+
+            if (string.Compare(line, offset, "[Behaviour] Failed to join instance ", 0, 36, StringComparison.Ordinal) != 0)
+                return false;
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "event",
+                line.Substring(offset + 36)
             });
             return true;
         }

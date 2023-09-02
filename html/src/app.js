@@ -9648,6 +9648,12 @@ speechSynthesis.getVoices();
                     return true;
                 }
                 return false;
+            case 'StringLoad':
+            case 'ImageLoad':
+                if (String(row.resourceUrl).toUpperCase().includes(value)) {
+                    return true;
+                }
+                return false;
         }
         return true;
     };
@@ -10499,8 +10505,7 @@ speechSynthesis.getVoices();
         'Moderation',
         'Camera',
         'SpawnEmoji',
-        'MasterMigrate',
-        'PhotonBot'
+        'MasterMigrate'
     ];
 
     $app.methods.photonEventTableFilterChange = function () {
@@ -10758,7 +10763,8 @@ speechSynthesis.getVoices();
                             canModerateInstance: user.canModerateInstance,
                             groupOnNameplate: user.groupOnNameplate,
                             showGroupBadgeToOthers: user.showGroupBadgeToOthers,
-                            showSocialRank: user.showSocialRank
+                            showSocialRank: user.showSocialRank,
+                            useImpostorAsFallback: user.useImpostorAsFallback
                         });
                         this.photonUserJoin(id, user, gameLogDate);
                     }
@@ -10789,13 +10795,13 @@ speechSynthesis.getVoices();
                     this.photonLobbyJointime.set(id, {
                         joinTime: Date.parse(gameLogDate),
                         hasInstantiated,
-                        inVRMode: user.user.inVRMode,
-                        avatarEyeHeight: user.user.avatarEyeHeight,
-                        canModerateInstance: user.user.canModerateInstance,
-                        groupOnNameplate: user.user.groupOnNameplate,
-                        showGroupBadgeToOthers:
-                            user.user.showGroupBadgeToOthers,
-                        showSocialRank: user.user.showSocialRank
+                        inVRMode: user.inVRMode,
+                        avatarEyeHeight: user.avatarEyeHeight,
+                        canModerateInstance: user.canModerateInstance,
+                        groupOnNameplate: user.groupOnNameplate,
+                        showGroupBadgeToOthers: user.showGroupBadgeToOthers,
+                        showSocialRank: user.showSocialRank,
+                        useImpostorAsFallback: user.useImpostorAsFallback
                     });
                     this.photonUserJoin(id, user, gameLogDate);
                 }
@@ -10828,7 +10834,8 @@ speechSynthesis.getVoices();
                     canModerateInstance: user.canModerateInstance,
                     groupOnNameplate: user.groupOnNameplate,
                     showGroupBadgeToOthers: user.showGroupBadgeToOthers,
-                    showSocialRank: user.showSocialRank
+                    showSocialRank: user.showSocialRank,
+                    useImpostorAsFallback: user.useImpostorAsFallback
                 });
                 break;
             case 255:
@@ -10876,14 +10883,11 @@ speechSynthesis.getVoices();
                     groupOnNameplate: data.Parameters[249].groupOnNameplate,
                     showGroupBadgeToOthers:
                         data.Parameters[249].showGroupBadgeToOthers,
-                    showSocialRank: data.Parameters[249].showSocialRank
+                    showSocialRank: data.Parameters[249].showSocialRank,
+                    useImpostorAsFallback:
+                        data.Parameters[249].useImpostorAsFallback
                 });
                 this.photonUserJoin(
-                    data.Parameters[254],
-                    data.Parameters[249],
-                    gameLogDate
-                );
-                this.checkPhotonBotJoin(
                     data.Parameters[254],
                     data.Parameters[249],
                     gameLogDate
@@ -11355,39 +11359,6 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.checkPhotonBotJoin = function (photonId, data, gameLogDate) {
-        var text = '';
-        var platforms = [];
-        if (typeof this.currentInstanceWorld.ref.unityPackages === 'object') {
-            for (var unityPackage of this.currentInstanceWorld.ref
-                .unityPackages) {
-                platforms.push(unityPackage.platform);
-            }
-        }
-        if (data.avatarEyeHeight < 0) {
-            text = 'Photon bot has joined, invalid avatarEyeHeight';
-        }
-        if (text) {
-            this.addEntryPhotonEvent({
-                photonId,
-                text,
-                type: 'PhotonBot',
-                color: 'yellow',
-                created_at: gameLogDate
-            });
-            var entry = {
-                created_at: new Date().toJSON(),
-                type: 'Event',
-                data: `${text} - ${this.getDisplayNameFromPhotonId(
-                    photonId
-                )} (${this.getUserIdFromPhotonId(photonId)})`
-            };
-            this.queueGameLogNoty(entry);
-            this.addGameLog(entry);
-            database.addGamelogEventToDatabase(entry);
-        }
-    };
-
     $app.methods.parsePhotonUser = async function (
         photonId,
         user,
@@ -11523,6 +11494,7 @@ speechSynthesis.getVoices();
         } else {
             platform = 'Desktop';
         }
+        this.photonUserSusieCheck(photonId, user, gameLogDate);
         this.checkVRChatCache(avatar).then((cacheInfo) => {
             var inCache = false;
             if (cacheInfo.Item1 > 0) {
@@ -11538,6 +11510,34 @@ speechSynthesis.getVoices();
                 platform
             });
         });
+    };
+
+    $app.methods.photonUserSusieCheck = function (photonId, user, gameLogDate) {
+        var text = '';
+        if (typeof user.modTag !== 'undefined') {
+            text = `Moderator has joined ${user.modTag}`;
+        } else if (user.isInvisible) {
+            text = 'User joined invisible';
+        }
+        if (text) {
+            this.addEntryPhotonEvent({
+                photonId,
+                text,
+                type: 'Event',
+                color: 'yellow',
+                created_at: gameLogDate
+            });
+            var entry = {
+                created_at: new Date().toJSON(),
+                type: 'Event',
+                data: `${text} - ${this.getDisplayNameFromPhotonId(
+                    photonId
+                )} (${this.getUserIdFromPhotonId(photonId)})`
+            };
+            this.queueGameLogNoty(entry);
+            this.addGameLog(entry);
+            database.addGamelogEventToDatabase(entry);
+        }
     };
 
     $app.methods.photonUserLeave = function (photonId, gameLogDate) {
@@ -15288,13 +15288,12 @@ speechSynthesis.getVoices();
                 this.showGroupDialog(groupId);
                 return true;
             }
-        } else if (
-            input.startsWith('https://vrc.group/') ||
-            /^[A-Za-z0-9]{3,6}\.[0-9]{4}$/g.test(input)
-        ) {
+        } else if (input.startsWith('https://vrc.group/')) {
             var shortCode = input.substring(18);
             this.showGroupDialogShortCode(shortCode);
             return true;
+        } else if (/^[A-Za-z0-9]{3,6}\.[0-9]{4}$/g.test(input)) {
+            this.showGroupDialogShortCode(input);
         } else if (
             input.substring(0, 4) === 'usr_' ||
             /^[A-Za-z0-9]{10}$/g.test(input)
@@ -16946,7 +16945,11 @@ speechSynthesis.getVoices();
         }
         var map = new Map();
         for (var ref of API.cachedWorlds.values()) {
-            if (ref.authorId === D.id) {
+            if (
+                ref.authorId === D.id &&
+                (ref.authorId === API.currentUser.id ||
+                    ref.releaseStatus === 'public')
+            ) {
                 API.cachedWorlds.delete(ref.id);
             }
         }
@@ -23993,7 +23996,8 @@ speechSynthesis.getVoices();
                             canModerateInstance: user.canModerateInstance,
                             groupOnNameplate: user.groupOnNameplate,
                             showGroupBadgeToOthers: user.showGroupBadgeToOthers,
-                            showSocialRank: user.showSocialRank
+                            showSocialRank: user.showSocialRank,
+                            useImpostorAsFallback: user.useImpostorAsFallback
                         });
                     }
                 }
@@ -27414,7 +27418,7 @@ speechSynthesis.getVoices();
         groupId: '',
         groupName: '',
         userId: '',
-        userIds: '',
+        userIds: [],
         userObject: {}
     };
 
@@ -27445,8 +27449,7 @@ speechSynthesis.getVoices();
             API.getCachedUser({ userId }).then((args) => {
                 D.userObject = args.ref;
             });
-            // D.userIds = [userId];
-            D.userIds = userId;
+            D.userIds = [userId];
         }
     };
 
@@ -27455,7 +27458,7 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.sendGroupInvite = function () {
-        this.$confirm('Continue? Invite To Group', 'Confirm', {
+        this.$confirm('Continue? Invite User(s) To Group', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
@@ -27465,25 +27468,22 @@ speechSynthesis.getVoices();
                     return;
                 }
                 D.loading = true;
-                // no fun allowed
-                // var inviteLoop = () => {
-                //     if (D.userIds.length > 0) {
-                //         var receiverUserId = D.userIds.shift();
-                //         API.sendGroupInvite({
-                //             groupId: D.groupId,
-                //             userId: receiverUserId
-                //         }).finally(inviteLoop);
-                //     } else {
-                //         D.loading = false;
-                //     }
-                // };
-                var receiverUserId = D.userIds;
-                API.sendGroupInvite({
-                    groupId: D.groupId,
-                    userId: receiverUserId
-                }).finally(() => {
-                    D.loading = false;
-                });
+                var inviteLoop = () => {
+                    if (D.userIds.length === 0) {
+                        D.loading = false;
+                        return;
+                    }
+                    var receiverUserId = D.userIds.shift();
+                    API.sendGroupInvite({
+                        groupId: D.groupId,
+                        userId: receiverUserId
+                    })
+                        .then(inviteLoop)
+                        .catch(() => {
+                            D.loading = false;
+                        });
+                };
+                inviteLoop();
             }
         });
     };
@@ -27851,6 +27851,10 @@ speechSynthesis.getVoices();
         var fileId = extractFileId(assetUrl);
         var version = parseInt(extractFileVersion(assetUrl), 10);
         if (!fileId || !version) {
+            this.$message({
+                message: 'File Analysis unavailable',
+                type: 'error'
+            });
             return;
         }
         API.getFileAnalysis({ fileId, version });

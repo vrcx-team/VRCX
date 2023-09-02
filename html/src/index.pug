@@ -672,6 +672,11 @@ html
                                         .detail
                                             span.name {{ $t('dialog.world.info.youtube_preview') }}
                                             span.extra https://www.youtube.com/watch?v={{ worldDialog.ref.previewYoutubeId }}
+                                .x-friend-item(style="width:100%;cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.world.info.author_tags') }}
+                                        span.extra(v-if="worldDialog.ref.tags?.length > 0") {{ worldDialog.ref.tags.filter(tag => tag.startsWith('author_tag')).map(tag => tag.replace('author_tag_', '')).join(', ') }}
+                                        span.extra(v-else) -
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.players') }}
@@ -2115,7 +2120,7 @@ html
 
             //- dialog: Gallery/VRCPlusIcons
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="galleryDialog" :visible.sync="galleryDialogVisible" :title="$t('dialog.gallery_icons.header')" width="100%")
-                span(style="padding-bottom:10px") {{ $t('dialog.gallery_icons.description') }} (4:3)
+                span(style="padding-bottom:10px") {{ $t('dialog.gallery_icons.description') }}
                 br
                 br
                 el-tabs(type="card")
@@ -2165,7 +2170,7 @@ html
                                         span.name(v-text="styleName" style="margin-right:100px")
                         br
                         .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
-                            .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url")
+                            .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="cursor:default")
                                 img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="display:inline-block;margin:5px")
                                 span {{ image.animationStyle }}
@@ -2489,7 +2494,7 @@ html
                                     img(v-lazy="group.iconUrl")
                                 .detail
                                     span.name(v-text="group.name")
-                    el-select(v-model="inviteGroupDialog.userIds" clearable :placeholder="$t('dialog.invite_to_group.choose_friends_placeholder')" filterable :disabled="inviteGroupDialog.loading" style="width:100%;margin-top:15px")
+                    el-select(v-model="inviteGroupDialog.userIds" multiple clearable :placeholder="$t('dialog.invite_to_group.choose_friends_placeholder')" filterable :disabled="inviteGroupDialog.loading" style="width:100%;margin-top:15px")
                         el-option-group(v-if="inviteGroupDialog.userId" :label="$t('dialog.invite_to_group.selected_users')")
                             el-option.x-friend-item(:key="inviteGroupDialog.userObject.id" :label="inviteGroupDialog.userObject.displayName" :value="inviteGroupDialog.userObject.id" style="height:auto")
                                 template(v-if="inviteGroupDialog.userObject.id")

@@ -681,6 +681,7 @@
                 "copy_url": "Copy URL",
                 "copy_name": "Copy Name",
                 "youtube_preview": "Youtube Preview",
+                "author_tags": "Author Tags",
                 "players": "Players",
                 "favorites": "Favorites",
                 "visits": "Visits",
@@ -1061,7 +1062,7 @@
         },
         "invite_to_group": {
             "header": "Invite To Group",
-            "description": "Don't spam invite users, inviting too many users to a group is known to cause a ban.",
+            "description": "Don't spam invite users, you'll get rate limited.",
             "choose_group_placeholder": "Choose Group",
             "groups": "Groups",
             "choose_friends_placeholder": "Choose Friends",

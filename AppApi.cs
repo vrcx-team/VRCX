@@ -317,7 +317,7 @@ namespace VRCX
         public bool StartGameFromPath(string path, string arguments)
         {
             if (!path.EndsWith(".exe"))
-                path = Path.Combine(path, "start_protected_game.exe");
+                path = Path.Combine(path, "launch.exe");
 
             if (!File.Exists(path))
                 return false;
