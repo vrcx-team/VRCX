@@ -22081,10 +22081,12 @@ speechSynthesis.getVoices();
         var metadata = JSON.parse(json);
 
         // Get extra data for display dialog like resolution, file size, etc
+        D.loading = true;
         var extraData = await AppApi.GetExtraScreenshotData(
             metadata.sourceFile,
             needsCarouselFiles
         );
+        D.loading = false;
         var extraDataObj = JSON.parse(extraData);
         Object.assign(metadata, extraDataObj);
 
@@ -22128,6 +22130,7 @@ speechSynthesis.getVoices();
 
     $app.data.screenshotMetadataDialog = {
         visible: false,
+        loading: false,
         search: '',
         searchType: 'Player Name',
         searchTypes: ['Player Name', 'Player ID', 'World  Name', 'World  ID'],
@@ -22182,8 +22185,9 @@ speechSynthesis.getVoices();
             }
 
             var searchType = D.searchTypes.indexOf(D.searchType); // Matches the search type enum in .NET
-            AppApi.FindScreenshotsBySearch(D.search, searchType).then(
-                (json) => {
+            D.loading = true;
+            AppApi.FindScreenshotsBySearch(D.search, searchType)
+                .then((json) => {
                     var results = JSON.parse(json);
 
                     if (results.length === 0) {
@@ -22200,8 +22204,10 @@ speechSynthesis.getVoices();
 
                     // console.log("Search results", results)
                     this.getAndDisplayScreenshot(results[0], false);
-                }
-            );
+                })
+                .finally(() => {
+                    D.loading = false;
+                });
         }, 500);
     };
 

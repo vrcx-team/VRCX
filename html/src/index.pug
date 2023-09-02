@@ -2535,7 +2535,7 @@ html
 
             //- dialog: screenshot metadata
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="screenshotMetadataDialog" :visible.sync="screenshotMetadataDialog.visible" :title="$t('dialog.screenshot_metadata.header')" width="1050px")
-                div(v-if="screenshotMetadataDialog.visible" @dragover.prevent @dragenter.prevent @drop="handleDrop" style="-webkit-app-region: drag")
+                div(v-if="screenshotMetadataDialog.visible" v-loading="screenshotMetadataDialog.loading" @dragover.prevent @dragenter.prevent @drop="handleDrop" style="-webkit-app-region: drag")
                     span(style="margin-left:5px;color:#909399;font-family:monospace") {{ $t('dialog.screenshot_metadata.drag') }}
                     br
                     el-button(size="small" icon="el-icon-folder-opened" @click="AppApi.OpenScreenshotFileDialog()") {{ $t('dialog.screenshot_metadata.browse') }}
