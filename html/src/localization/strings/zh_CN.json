@@ -24,7 +24,7 @@
                 "username": "用户名或电子邮件地址",
                 "password": "密码",
                 "saveCredentials": "保存登录数据",
-                "devEndpoint": "使用开发接口",
+                "devEndpoint": "使用测试接口",
                 "endpoint": "Endpoint",
                 "websocket": "WebSocket"
             }
