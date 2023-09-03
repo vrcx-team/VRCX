@@ -2,8 +2,10 @@
 
 # <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.ico" width="64" height="64"> </img> VRCX 
 [![GitHub release](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
-[![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml) 
-[![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white)](https://vrcx.pypy.moe/discord)
+[![Downloads](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
+[![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
+[![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx)
+[![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.pypy.moe/discord)
 
 | [English](./README.md) | [日本語](./README.jp.md) | **简体中文**
 
@@ -129,7 +131,7 @@ VRCX只是一个外部辅助工具，使用VRChat的API来提供功能。
 
 它没有以任何方式修改/破坏游戏数据，只是负责任地使用VRChat API来提供功能。它不是一个MOD模组，也不是一个作弊工具或任何其他形式的游戏修改工具。
 
-要了解VRChat对API使用的立场，请查看VRChat Discord的#faq频道（英语）
+要了解VRChat对API使用的立场，请查看[VRChat Discord](https://discord.gg/vrchat)的 #faq 频道（英语）
 
 ---
 
