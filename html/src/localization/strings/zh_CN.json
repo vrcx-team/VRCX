@@ -195,7 +195,7 @@
                     "support": "获取帮助支持"
                 },
                 "vrcx_updater": {
-                    "header": "VRCX 更新器",
+                    "header": "VRCX 更新设置",
                     "change_build": "更改版本",
                     "auto_update": "自动更新",
                     "auto_update_off": "关闭",
@@ -291,8 +291,8 @@
                 "user_dialog": {
                     "header": "玩家信息",
                     "hide_vrchat_notes": "隐藏 VRChat 备注",
-                    "hide_vrcx_memos": "隐藏 VRCX 备忘录",
-                    "export_vrcx_memos_into_vrchat_notes": "将 VRCX 备忘录导出成 VRChat 备注",
+                    "hide_vrcx_memos": "隐藏 VRCX 本地备注",
+                    "export_vrcx_memos_into_vrchat_notes": "将 VRCX 本地备注导出成 VRChat 备注",
                     "export_notes": "导出备注"
                 },
                 "user_colors": {
@@ -572,8 +572,8 @@
                 "instance_creator": "房间建立者",
                 "note": "VRChat 备注",
                 "note_placeholder": "点击添加备注",
-                "memo": "VRCX 本地备忘信息",
-                "memo_placeholder": "点击添加备忘录",
+                "memo": "VRCX 本地备注",
+                "memo_placeholder": "点击添加备注",
                 "avatar_info": "模型信息",
                 "avatar_info_last_seen": "最后已知模型信息",
                 "represented_group": "展示群组",
@@ -744,8 +744,8 @@
                 "last_updated": "最后更新",
                 "version": "版本",
                 "platform": "平台",
-                "memo": "VRCX 本地备忘信息",
-                "memo_placeholder": "点击添加备忘录"
+                "memo": "VRCX 本地备注",
+                "memo_placeholder": "点击添加备注"
             },
             "json": {
                 "header": "原始JSON信息",
@@ -766,19 +766,19 @@
                 "visible": "可见性：所有人",
                 "friends": "可见性：好友",
                 "hidden": "可见性：隐藏",
-                "subscribed": "已订阅公告"
+                "subscribed": "接收群组通知"
             },
             "actions": {
                 "represent_tooltip": "显示在个人信息上",
                 "unrepresent_tooltip": "停止显示在个人信息上",
-                "cancel_join_request_tooltip": "取消加入请求",
+                "cancel_join_request_tooltip": "取消待处理的请求",
                 "pending_request_tooltip": "待接受邀请",
                 "request_join_tooltip": "请求加入",
                 "invite_required_tooltip": "需要被邀请才能加入",
                 "join_group_tooltip": "加入群组",
                 "refresh": "刷新",
-                "unsubscribe": "取消订阅公告",
-                "subscribe": "订阅公告",
+                "unsubscribe": "忽略群组通知",
+                "subscribe": "接收群组通知",
                 "invite_to_group": "邀请到群组",
                 "visibility_everyone": "可见性：所有人",
                 "visibility_friends": "可见性：好友",
@@ -876,7 +876,7 @@
             "group_access_type_members": "仅限群组成员",
             "group_access_type_plus": "Group+",
             "group_access_type_public": "Public",
-            "region": "地区",
+            "region": "服务器位置",
             "region_usw": "美国西部",
             "region_use": "美国东部",
             "region_eu": "欧洲",
@@ -1065,7 +1065,7 @@
         },
         "invite_to_group": {
             "header": "邀请到群组",
-            "description": "请不要滥用群组邀请，邀请太多玩家加入群组会导致你的账户被停用。",
+            "description": "请不要滥用邀请功能，短时间内邀请大量玩家加入群组会导致你的账户被封禁。",
             "choose_group_placeholder": "选择群组",
             "groups": "群组",
             "choose_friends_placeholder": "选择好友",
@@ -1073,14 +1073,14 @@
         },
         "note_export": {
             "header": "备注导出",
-            "description1": "这个过程将导出你所有的 VRCX 备忘录并将它们导入到 VRChat 备注中。",
+            "description1": "这个过程将导出你所有的 VRCX 本地备注并将它们导入到 VRChat 备注中。",
             "description2": "请注意以下限制：",
             "description3": "- API 接口有速率限制，每个请求之间会有很大的延迟。",
             "description4": "- 每个备注的字数限制为 256 个字符。",
             "description5": "- 有脏话过滤器（一点乐趣都没有）。",
             "description6": "- 不能换行（换行符将会被替换成空格）。",
             "description7": "- 这将会覆盖这些玩家现有的任何 VRChat 备注。",
-            "description8": "- 在这里所做的任何编辑都不会影响 VRCX 备忘录，但会在导出后会影响 VRChat 备注。",
+            "description8": "- 在这里所做的任何编辑都不会影响 VRCX 本地备注，但会在导出后会影响 VRChat 备注。",
             "refresh": "刷新",
             "export": "导出",
             "cancel": "取消",
