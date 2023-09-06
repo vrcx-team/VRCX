@@ -4834,8 +4834,7 @@ speechSynthesis.getVoices();
 
                 this.currentUser.presence.instance = content.instance;
                 this.currentUser.presence.world = content.worldId;
-                this.currentUser.$locationTag = content.location;
-                $app.updateCurrentUserLocation();
+                $app.setCurrentUserLocation(content.location);
                 break;
 
             case 'group-joined':
@@ -5104,7 +5103,8 @@ speechSynthesis.getVoices();
         methods: {
             update() {
                 if (!this.epoch) {
-                    this.text = '';
+                    this.text = '-';
+                    return;
                 }
                 this.text = timeToText(Date.now() - this.epoch);
             }
@@ -5163,7 +5163,7 @@ speechSynthesis.getVoices();
                 if (epoch >= 0) {
                     this.text = timeToText(epoch);
                 } else {
-                    this.text = '';
+                    this.text = '-';
                 }
             }
         },
@@ -22667,14 +22667,15 @@ speechSynthesis.getVoices();
             if (result || !this.isRealInstance(location)) {
                 return;
             }
-            if (this.isGameNoVR) {
-                this.restartCrashedGame(location);
-                return;
-            }
             // wait a bit for SteamVR to potentially close before deciding to relaunch
+            var restartDelay = 4000;
+            if (this.isGameNoVR) {
+                // wait for game to close before relaunching
+                restartDelay = 2000;
+            }
             workerTimers.setTimeout(
                 () => this.restartCrashedGame(location),
-                3000
+                restartDelay
             );
         });
     };
@@ -24622,15 +24623,23 @@ speechSynthesis.getVoices();
         ref.$online_for = API.currentUser.$online_for;
         ref.$offline_for = API.currentUser.$offline_for;
         ref.$location = API.parseLocation(currentLocation);
-        ref.$location_at = this.lastLocation.date;
-        ref.$travelingToTime = this.lastLocationDestinationTime;
-        if (!this.isGameRunning) {
-            ref.$location_at = Date.now();
-            ref.$travelingToTime = Date.now();
+        if (!this.isGameRunning || this.gameLogDisabled) {
+            ref.$location_at = API.currentUser.$location_at;
+            ref.$travelingToTime = API.currentUser.$travelingToTime;
             this.applyUserDialogLocation();
             this.applyWorldDialogInstances();
             this.applyGroupDialogInstances();
+        } else {
+            ref.$location_at = this.lastLocation.date;
+            ref.$travelingToTime = this.lastLocationDestinationTime;
         }
+    };
+
+    $app.methods.setCurrentUserLocation = function (location) {
+        API.currentUser.$location_at = Date.now();
+        API.currentUser.$travelingToTime = Date.now();
+        API.currentUser.$locationTag = location;
+        this.updateCurrentUserLocation();
     };
 
     $app.data.avatarHistory = new Set();

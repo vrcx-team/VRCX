@@ -122,7 +122,7 @@ html
                                             img(v-lazy="userImage(API.currentUser)")
                                         .detail
                                             span.name(v-text="API.currentUser.displayName" :style="{'color':API.currentUser.$userColour}")
-                                            location.extra(v-if="isGameRunning" :location="lastLocation.location" :traveling="lastLocationDestination" :link="false")
+                                            location.extra(v-if="isGameRunning && !gameLogDisabled" :location="lastLocation.location" :traveling="lastLocationDestination" :link="false")
                                             location.extra(v-else-if="isRealInstance(API.currentUser.$locationTag) || isRealInstance(API.currentUser.$travelingToLocation)" :location="API.currentUser.$locationTag" :traveling="API.currentUser.$travelingToLocation" :link="false")
                                             span.extra(v-else v-text="API.currentUser.statusDescription")
                                 .x-friend-group.x-link(@click="isFriendsGroup0 = !isFriendsGroup0" v-show="friendsGroup0.length")
