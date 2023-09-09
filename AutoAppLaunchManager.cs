@@ -265,7 +265,7 @@ namespace VRCX
 
         internal void Init()
         {
-            // What are you lookin at?
+            // What are you lookin at? :eyes:
         }
 
         internal void Exit()
@@ -274,8 +274,9 @@ namespace VRCX
 
             Enabled = false;
 
-            lock (startedProcesses)
-                KillChildProcesses();
+            // people thought this behavior was a bug
+            // lock (startedProcesses)
+            //     KillChildProcesses();
         }
 
         private void ChildUpdateTimer_Elapsed(object sender, ElapsedEventArgs e)

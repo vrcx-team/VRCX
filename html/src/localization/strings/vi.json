@@ -364,7 +364,7 @@
             "discord_presence": {
                 "discord_presence": {
                     "header": "Hiển thị Discord Presence",
-                    "description": "* Chỉ hoặt động khi VRChat đang chạy.",
+                    "description": "* Chỉ hoạt động khi VRChat đang chạy.",
                     "enable": "Bật",
                     "enable_tooltip": "Khuyên nên tắt Rich Presence trong VRChat config.json để tránh bị giao động.",
                     "instance_type_player_count": "Kiểu Instance/số người chơi",
@@ -581,7 +581,7 @@
                 "time_together": "Thời gian cùng nhau",
                 "online_for": "Online trong",
                 "offline_for": "Offline trong",
-                "last_activity": "Lần cuối hoặt động",
+                "last_activity": "Lần cuối hoạt động",
                 "last_login": "Lần cuối đăng nhập",
                 "date_joined": "Ngày tham gia",
                 "friended": "Đã kết bạn",
@@ -1190,7 +1190,7 @@
         "totp": {
             "header": "Xác thực hai bước (TfA)",
             "description": "Nhập mã xác thực từ ứng dụng xác thực của bạn",
-            "use_otp": "Sở dụng TOTP",
+            "use_otp": "Sử dụng OTP",
             "verify": "Xác thực",
             "input_placeholder": "Mã",
             "input_error": "Sai mã"
@@ -1198,7 +1198,7 @@
         "otp": {
             "header": "Xác thực hai bước (TfA)",
             "description": "Nhập mã xác thực từ mã đã phục hồi của bạn",
-            "use_totp": "Sử dụng OTP",
+            "use_totp": "Sử dụng TOTP",
             "verify": "Xác thực",
             "input_placeholder": "Mã",
             "input_error": "Sai mã"

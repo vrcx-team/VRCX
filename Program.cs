@@ -43,6 +43,16 @@ namespace VRCX
                     File.Copy(Path.Combine(AppDataDirectory, "VRCX.sqlite3"), Path.Combine(AppDataDirectory, "VRCX-backup.sqlite3"));
                 }
             }
+
+            // Migrate cache to userdata for Cef 115 update
+            var oldCachePath = Path.Combine(AppDataDirectory, "cache");
+            if (Directory.Exists(oldCachePath))
+            {
+                var newCachePath = Path.Combine(AppDataDirectory, "userdata", "cache");
+                if (Directory.Exists(newCachePath))
+                    Directory.Delete(newCachePath, true);
+                Directory.Move(oldCachePath, newCachePath);
+            }
         }
 
         private static void ConfigureLogger()

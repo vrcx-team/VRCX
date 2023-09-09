@@ -237,6 +237,7 @@ mixin playerListTab()
                                 span(v-else) {{ scope.row.ref.last_platform }}
                             template(v-if="scope.row.inVRMode !== null")
                                 span(v-if="scope.row.inVRMode") VR
+                                span(v-else-if="scope.row.ref.last_platform === 'android' || scope.row.ref.last_platform === 'ios'") M
                                 span(v-else) D
                     el-table-column(:label="$t('table.playerList.displayName')" min-width="140" prop="displayName" sortable="custom")
                         template(v-once #default="scope")
