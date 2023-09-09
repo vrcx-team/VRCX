@@ -565,7 +565,7 @@
                 "self_invite_tooltip": "自我邀请",
                 "refresh_user_count_tooltip": "刷新房间人数",
                 "refresh_instance_info": "刷新房间信息",
-                "instance_queue": "队列状态:",
+                "instance_queue": "在等待队列的玩家:",
                 "instance_users": "房间用户:",
                 "instance_game_version": "游戏版本:",
                 "instance_queuing_enabled": "等待队列已开启",
