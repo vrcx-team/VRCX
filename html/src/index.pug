@@ -197,7 +197,7 @@ html
                                     .detail
                                         span.name
                                             span(v-text="ref.group.name")
-                                            span(style="font-weight:normal;margin-left:5px") ({{ ref.instance.userCount }}/{{ ref.instance.capacity }})
+                                            span(style="font-weight:normal;margin-left:5px") ({{ ref.instance.n_users }}/{{ ref.instance.capacity }})
                                         location.extra(:location="ref.instance.location" :link="false")
 
 
@@ -610,6 +610,7 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") {{ $t('dialog.world.actions.rename') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") {{ $t('dialog.world.actions.change_description') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Change Capacity") {{ $t('dialog.world.actions.change_capacity') }}
+                                            el-dropdown-item(icon="el-icon-edit" command="Change Recommended Capacity") {{ $t('dialog.world.actions.change_recommended_capacity') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Change YouTube Preview") {{ $t('dialog.world.actions.change_preview') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Change Tags") {{ $t('dialog.world.actions.change_tags') }}
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") {{ $t('dialog.world.actions.change_image') }}
@@ -622,7 +623,7 @@ html
                             div.
                                 #[i.el-icon-user] {{ $t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
                                 #[i.el-icon-user-solid(style="margin-left:10px")] {{ $t('dialog.world.instances.private_count', { count: worldDialog.ref.privateOccupants })  }}
-                                #[i.el-icon-check(style="margin-left:10px")] {{ $t('dialog.world.instances.capacity_count', { count: worldDialog.ref.capacity, max: worldDialog.ref.capacity * 2 }) }}
+                                #[i.el-icon-check(style="margin-left:10px")] {{ $t('dialog.world.instances.capacity_count', { count: worldDialog.ref.recommendedCapacity, max: worldDialog.ref.capacity }) }}
                             div(v-for="room in worldDialog.rooms" :key="room.id")
                                 div(style="margin:5px 0")
                                     location-world(:locationobject="room.$location" :currentuserid="API.currentUser.id" :worlddialogshortname="worldDialog.$location.shortName")
@@ -693,7 +694,7 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.capacity') }}
-                                        span.extra {{ worldDialog.ref.capacity | commaNumber }} ({{ worldDialog.ref.capacity * 2 | commaNumber }})
+                                        span.extra {{ worldDialog.ref.recommendedCapacity | commaNumber }} ({{ worldDialog.ref.capacity | commaNumber }})
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.heat') }}

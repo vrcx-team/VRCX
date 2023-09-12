@@ -653,6 +653,7 @@
                 "rename": "Rename",
                 "change_description": "Change Description",
                 "change_capacity": "Change Capacity",
+                "change_recommended_capacity": "Change Recommended Capacity",
                 "change_preview": "Change Youtube Preview",
                 "change_tags": "Change Tags",
                 "change_image": "Change Image",
@@ -1330,12 +1331,22 @@
         },
         "change_world_capacity": {
             "header": "Change Capacity",
-            "description": "Enter world capacity, Max: 40",
+            "description": "Enter world capacity (hard cap), Max: 80",
             "cancel": "Cancel",
             "ok": "OK",
             "input_error": "Valid number is required",
             "message": {
                 "success": "World capacity changed"
+            }
+        },
+        "change_world_recommended_capacity": {
+            "header": "Change Recommended Capacity",
+            "description": "Enter world recommended capacity (soft cap)",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid number is required",
+            "message": {
+                "success": "World recommended capacity changed"
             }
         },
         "change_world_preview": {

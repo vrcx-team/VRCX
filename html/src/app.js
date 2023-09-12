@@ -2239,6 +2239,7 @@ speechSynthesis.getVoices();
                 authorId: '',
                 authorName: '',
                 capacity: 0,
+                recommendedCapacity: 0,
                 tags: [],
                 releaseStatus: '',
                 imageUrl: '',
@@ -12355,14 +12356,14 @@ speechSynthesis.getVoices();
                 if (ref) {
                     L.worldName = ref.name;
                     L.thumbnailImageUrl = ref.thumbnailImageUrl;
-                    L.worldCapacity = ref.capacity * 2;
+                    L.worldCapacity = ref.capacity;
                 } else {
                     API.getWorld({
                         worldId: L.worldId
                     }).then((args) => {
                         L.worldName = args.ref.name;
                         L.thumbnailImageUrl = args.ref.thumbnailImageUrl;
-                        L.worldCapacity = args.ref.capacity * 2;
+                        L.worldCapacity = args.ref.capacity;
                         return args;
                     });
                 }
@@ -15548,6 +15549,42 @@ speechSynthesis.getVoices();
         );
     };
 
+    $app.methods.promptChangeWorldRecommendedCapacity = function (world) {
+        this.$prompt(
+            $t('prompt.change_world_recommended_capacity.description'),
+            $t('prompt.change_world_recommended_capacity.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.change_world_capacity.ok'),
+                cancelButtonText: $t('prompt.change_world_capacity.cancel'),
+                inputValue: world.ref.recommendedCapacity,
+                inputPattern: /\d+$/,
+                inputErrorMessage: $t(
+                    'prompt.change_world_recommended_capacity.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (
+                        action === 'confirm' &&
+                        instance.inputValue !== world.ref.recommendedCapacity
+                    ) {
+                        API.saveWorld({
+                            id: world.id,
+                            recommendedCapacity: instance.inputValue
+                        }).then((args) => {
+                            this.$message({
+                                message: $t(
+                                    'prompt.change_world_recommended_capacity.message.success'
+                                ),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                    }
+                }
+            }
+        );
+    };
+
     $app.methods.promptChangeWorldYouTubePreview = function (world) {
         this.$prompt(
             $t('prompt.change_world_preview.description'),
@@ -17890,6 +17927,9 @@ speechSynthesis.getVoices();
                 break;
             case 'Change Capacity':
                 this.promptChangeWorldCapacity(D);
+                break;
+            case 'Change Recommended Capacity':
+                this.promptChangeWorldRecommendedCapacity(D);
                 break;
             case 'Change YouTube Preview':
                 this.promptChangeWorldYouTubePreview(D);
@@ -26615,6 +26655,11 @@ speechSynthesis.getVoices();
             }).then((args1) => {
                 json.world = args1.ref;
                 return args1;
+            });
+            // get queue size etc
+            this.getInstance({
+                worldId: json.worldId,
+                instanceId: json.instanceId
             });
         }
     });
