@@ -5522,7 +5522,11 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateSharedExecute = function (forceUpdate) {
-        this.updateSharedFeedDebounce(forceUpdate);
+        try {
+            this.updateSharedFeedDebounce(forceUpdate);
+        } catch (err) {
+            console.error(err);
+        }
         this.updateSharedFeedTimer = null;
         this.updateSharedFeedPending = false;
         this.updateSharedFeedPendingForceUpdate = false;
@@ -5576,14 +5580,18 @@ speechSynthesis.getVoices();
                             // no group cache, fetch group and try again
                             API.getGroup({
                                 groupId: ref.$location.groupId
-                            }).then((args) => {
-                                workerTimers.setTimeout(() => {
-                                    // delay to allow for group cache to update
-                                    $app.sharedFeed.pendingUpdate = true;
-                                    $app.updateSharedFeed(false);
-                                }, 100);
-                                return args;
-                            });
+                            })
+                                .then((args) => {
+                                    workerTimers.setTimeout(() => {
+                                        // delay to allow for group cache to update
+                                        $app.sharedFeed.pendingUpdate = true;
+                                        $app.updateSharedFeed(false);
+                                    }, 100);
+                                    return args;
+                                })
+                                .catch((err) => {
+                                    console.error(err);
+                                });
                         }
                     }
                     if (typeof worldRef !== 'undefined') {
@@ -5606,14 +5614,18 @@ speechSynthesis.getVoices();
                         // no world cache, fetch world and try again
                         API.getWorld({
                             worldId: ref.$location.worldId
-                        }).then((args) => {
-                            workerTimers.setTimeout(() => {
-                                // delay to allow for world cache to update
-                                $app.sharedFeed.pendingUpdate = true;
-                                $app.updateSharedFeed(false);
-                            }, 100);
-                            return args;
-                        });
+                        })
+                            .then((args) => {
+                                workerTimers.setTimeout(() => {
+                                    // delay to allow for world cache to update
+                                    $app.sharedFeed.pendingUpdate = true;
+                                    $app.updateSharedFeed(false);
+                                }, 100);
+                                return args;
+                            })
+                            .catch((err) => {
+                                console.error(err);
+                            });
                     }
                 }
             }
@@ -9123,15 +9135,19 @@ speechSynthesis.getVoices();
         $app.notificationTable.data = await database.getNotifications();
         await this.refreshNotifications();
         await $app.getCurrentUserGroups();
-        if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
-            await $app.getFriendLog();
-        } else {
-            try {
+        try {
+            if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
+                await $app.getFriendLog();
+            } else {
                 await $app.initFriendLog(args.json.id);
-            } catch (err) {
-                this.logout();
-                throw err;
             }
+        } catch (err) {
+            $app.$message({
+                message: 'Failed to load freinds list, logging out',
+                type: 'error'
+            });
+            this.logout();
+            throw err;
         }
         $app.getAvatarHistory();
         $app.getAllMemos();
@@ -16521,7 +16537,11 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updatePlayerListExecute = function () {
-        this.updatePlayerListDebounce();
+        try {
+            this.updatePlayerListDebounce();
+        } catch (err) {
+            console.error(err);
+        }
         this.updatePlayerListTimer = null;
         this.updatePlayerListPending = false;
     };
@@ -18036,7 +18056,7 @@ speechSynthesis.getVoices();
                 } else if (unityPackage.platform) {
                     ({ platform } = unityPackage);
                 }
-                platforms.push(`${platform}/${unityPackage.unityVersion}`);
+                platforms.unshift(`${platform}/${unityPackage.unityVersion}`);
             }
         }
         return platforms.join(', ');
@@ -22708,7 +22728,7 @@ speechSynthesis.getVoices();
                 return;
             }
             // wait a bit for SteamVR to potentially close before deciding to relaunch
-            var restartDelay = 4000;
+            var restartDelay = 5000;
             if (this.isGameNoVR) {
                 // wait for game to close before relaunching
                 restartDelay = 2000;

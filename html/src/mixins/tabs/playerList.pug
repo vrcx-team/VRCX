@@ -35,7 +35,7 @@ mixin playerListTab()
                     .x-friend-item(style="cursor:default")
                         .detail
                             span.name {{ $t('dialog.world.info.capacity') }}
-                            span.extra {{ currentInstanceWorld.ref.capacity | commaNumber }} ({{ currentInstanceWorld.ref.capacity * 2 | commaNumber }})
+                            span.extra {{ currentInstanceWorld.ref.recommendedCapacity | commaNumber }} ({{ currentInstanceWorld.ref.capacity | commaNumber }})
                     .x-friend-item(style="cursor:default")
                         .detail
                             span.name {{ $t('dialog.world.info.last_updated') }}

@@ -691,6 +691,8 @@
                 "popularity": "Popularity",
                 "created_at": "Created At",
                 "last_updated": "Last Updated",
+                "publication_date": "Publication Date",
+                "labs_publication_date": "Labs Publication Date",
                 "version": "Version",
                 "platform": "Platform",
                 "last_visited": "Last Visited",
@@ -1331,7 +1333,7 @@
         },
         "change_world_capacity": {
             "header": "Change Capacity",
-            "description": "Enter world capacity (hard cap), Max: 80",
+            "description": "Enter world maximum capacity (hard cap), Max: 80",
             "cancel": "Cancel",
             "ok": "OK",
             "input_error": "Valid number is required",

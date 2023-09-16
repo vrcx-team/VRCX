@@ -697,25 +697,33 @@ html
                                         span.extra {{ worldDialog.ref.recommendedCapacity | commaNumber }} ({{ worldDialog.ref.capacity | commaNumber }})
                                 .x-friend-item(style="cursor:default")
                                     .detail
-                                        span.name {{ $t('dialog.world.info.heat') }}
-                                        span.extra {{ worldDialog.ref.heat | commaNumber }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
-                                .x-friend-item(style="cursor:default")
-                                    .detail
-                                        span.name {{ $t('dialog.world.info.popularity') }}
-                                        span.extra {{ worldDialog.ref.popularity | commaNumber }} {{ '💖'.repeat(worldDialog.ref.popularity) }}
-                                .x-friend-item(style="cursor:default")
-                                    .detail
                                         span.name {{ $t('dialog.world.info.created_at') }}
                                         span.extra {{ worldDialog.ref.created_at | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.last_updated') }}
                                         span.extra {{ worldDialog.fileCreatedAt | formatDate('long') }}
+                                .x-friend-item(v-if="worldDialog.ref.labsPublicationDate !== 'none'" style="cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.world.info.labs_publication_date') }}
+                                        span.extra {{ worldDialog.ref.labsPublicationDate | formatDate('long') }}
+                                .x-friend-item(v-if="worldDialog.ref.publicationDate !== 'none'" style="cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.world.info.publication_date') }}
+                                        span.extra {{ worldDialog.ref.publicationDate | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.version') }}
                                         span.extra(v-text="worldDialog.ref.version")
-                                .x-friend-item(style="width:525px;cursor:default")
+                                .x-friend-item(style="cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.world.info.heat') }}
+                                        span.extra {{ worldDialog.ref.heat | commaNumber }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
+                                .x-friend-item(style="cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.world.info.popularity') }}
+                                        span.extra {{ worldDialog.ref.popularity | commaNumber }} {{ '💖'.repeat(worldDialog.ref.popularity) }}
+                                .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.platform') }}
                                         span.extra(v-text="worldDialogPlatform")
