@@ -19,6 +19,9 @@ import elements_fr from 'element-ui/lib/locale/lang/fr';
 import vi from './strings/vi.json' assert { type: 'JSON' };
 import elements_vi from 'element-ui/lib/locale/lang/vi';
 
+import ru_RU from './strings/ru.json' assert { type: 'JSON' };
+import elements_ru from 'element-ui/lib/locale/lang/ru-RU';
+
 const localized_en = { ...en, ...elements_en };
 const localized_zh_TW = { ...zh_TW, ...elements_zh_TW };
 const localized_zh_CN = { ...zh_CN, ...elements_zh_CN };
@@ -26,6 +29,7 @@ const localized_ko = { ...ko, ...elements_ko };
 const localized_ja = { ...ja, ...elements_ja };
 const localized_fr = { ...fr, ...elements_fr };
 const localized_vi = { ...vi, ...elements_vi };
+const localized_ru = { ...ru_RU, ...elements_ru };
 
 export {
     localized_en as en,
@@ -34,5 +38,6 @@ export {
     localized_zh_CN as zh_CN,
     localized_ja as ja_JP,
     localized_fr as fr,
-    localized_vi as vi
+    localized_vi as vi,
+    localized_ru as ru_RU
 };
