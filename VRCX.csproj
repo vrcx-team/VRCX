@@ -189,13 +189,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.Common">
-      <Version>116.0.150</Version>
+      <Version>116.0.230</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.OffScreen">
-      <Version>116.0.150</Version>
+      <Version>116.0.230</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.WinForms">
-      <Version>116.0.150</Version>
+      <Version>116.0.230</Version>
     </PackageReference>
     <PackageReference Include="DiscordRichPresence">
       <Version>1.2.1.24</Version>
@@ -207,7 +207,7 @@
       <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="NLog">
-      <Version>5.2.3</Version>
+      <Version>5.2.4</Version>
     </PackageReference>
     <PackageReference Include="SharpDX.D3DCompiler">
       <Version>4.2.0</Version>

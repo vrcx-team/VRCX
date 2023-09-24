@@ -270,7 +270,6 @@ html
                                     el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") {{ $t('dialog.user.actions.refresh') }}
-                                        el-dropdown-item(icon="el-icon-s-order" command="Copy User") {{ $t('dialog.user.actions.copy_url') }}
                                         template(v-if="userDialog.ref.id === API.currentUser.id")
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Manage Gallery" divided) {{ $t('dialog.user.actions.manage_gallery_icon') }}
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author") {{ $t('dialog.user.actions.show_avatar_author') }}
@@ -366,7 +365,7 @@ html
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.user.info.represented_group') }}
-                                        .extra(v-if="userDialog.representedGroup.isRepresenting")
+                                        .extra(v-if="userDialog.representedGroup?.isRepresenting")
                                             div(style="display:inline-block;flex:none;margin-right:5px")
                                                 el-popover(placement="right" width="500px" trigger="click")
                                                     img.x-link(slot="reference" v-lazy="userDialog.representedGroup.iconUrl" style="flex:none;width:60px;height:60px;border-radius:4px;object-fit:cover")
@@ -458,6 +457,17 @@ html
                                         span.extra
                                             span(v-text="userDialog.$homeLocationName")
                                             el-button(@click.stop="resetHome()" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                                .x-friend-item(style="width:100%;cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.user.info.id') }}
+                                        span.extra {{ userDialog.id }}
+                                            el-tooltip(placement="top" :content="$t('dialog.user.info.id_tooltip')" :disabled="hideTooltips")
+                                                el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
+                                                    el-button(type="default" icon="el-icon-s-order" size="mini" circle)
+                                                    el-dropdown-menu(#default="dropdown")
+                                                        el-dropdown-item(@click.native="copyUserId(userDialog.id)") {{ $t('dialog.user.info.copy_id') }}
+                                                        el-dropdown-item(@click.native="copyUserURL(userDialog.id)") {{ $t('dialog.user.info.copy_url') }}
+                                                        el-dropdown-item(@click.native="copyUserDisplayName(userDialog.ref.displayName)") {{ $t('dialog.user.info.copy_display_name') }}
                         el-tab-pane(:label="$t('dialog.user.groups.header')")
                             el-button(type="default" :loading="userDialog.isGroupsLoading" @click="getUserGroups(userDialog.id)" size="mini" icon="el-icon-refresh" circle)
                             span(style="margin-left:5px") {{ $t('dialog.user.groups.total_count', { count: userGroups.groups.length }) }}

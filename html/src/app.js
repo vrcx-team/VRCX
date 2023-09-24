@@ -4899,6 +4899,25 @@ speechSynthesis.getVoices();
                 $app.instanceQueueReady(instanceId);
                 break;
 
+            case 'content-refresh':
+                var contentType = content.contentType;
+                if (contentType === 'icon') {
+                    if ($app.galleryDialogVisible) {
+                        $app.refreshVRCPlusIconsTable();
+                    }
+                } else if (contentType === 'gallery') {
+                    if ($app.galleryDialogVisible) {
+                        $app.refreshGalleryTable();
+                    }
+                } else if (contentType === 'emoji') {
+                    if ($app.galleryDialogVisible) {
+                        $app.refreshEmojiTable();
+                    }
+                } else {
+                    console.log('Unknown content-refresh', content);
+                }
+                break;
+
             default:
                 console.log('Unknown pipeline type', args.json);
         }
@@ -15311,6 +15330,7 @@ speechSynthesis.getVoices();
             return true;
         } else if (/^[A-Za-z0-9]{3,6}\.[0-9]{4}$/g.test(input)) {
             this.showGroupDialogShortCode(input);
+            return true;
         } else if (
             input.substring(0, 4) === 'usr_' ||
             /^[A-Za-z0-9]{10}$/g.test(input)
@@ -17268,8 +17288,6 @@ speechSynthesis.getVoices();
             this.showPreviousInstancesUserDialog(D.ref);
         } else if (command === 'Manage Gallery') {
             this.showGalleryDialog();
-        } else if (command === 'Copy User') {
-            this.copyUser(D.id);
         } else if (command === 'Invite To Group') {
             this.showInviteGroupDialog('', D.id);
         } else if (command === 'Hide Avatar') {
@@ -19531,12 +19549,28 @@ speechSynthesis.getVoices();
         this.copyToClipboard(worldName);
     };
 
-    $app.methods.copyUser = function (userId) {
+    $app.methods.copyUserId = function (userId) {
+        this.$message({
+            message: 'User ID copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(userId);
+    };
+
+    $app.methods.copyUserURL = function (userId) {
         this.$message({
             message: 'User URL copied to clipboard',
             type: 'success'
         });
         this.copyToClipboard(`https://vrchat.com/home/user/${userId}`);
+    };
+
+    $app.methods.copyUserDisplayName = function (displayName) {
+        this.$message({
+            message: 'User DisplayName copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(displayName);
     };
 
     $app.methods.copyGroupId = function (groupId) {
@@ -22728,7 +22762,7 @@ speechSynthesis.getVoices();
                 return;
             }
             // wait a bit for SteamVR to potentially close before deciding to relaunch
-            var restartDelay = 5000;
+            var restartDelay = 8000;
             if (this.isGameNoVR) {
                 // wait for game to close before relaunching
                 restartDelay = 2000;

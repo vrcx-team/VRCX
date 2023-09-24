@@ -703,9 +703,9 @@ namespace VRCX
 
         public void Stop()
         {
-            listener.Stop();
-            listener.Close();
-            worldDB.Close();
+            listener?.Stop();
+            listener?.Close();
+            worldDB?.Close();
         }
     }
 }
