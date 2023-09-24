@@ -644,7 +644,12 @@
                 "avatar_scaling_disabled": "Avatar Scaling Disabled",
                 "future_proofing": "Future Proofing",
                 "labs": "Labs",
-                "cache": "Cache"
+                "cache": "Cache",
+                "content_horror": "Horror",
+                "content_gore": "Gore",
+                "content_violence": "Violence",
+                "content_adult": "Adult",
+                "content_sex": "Sexual"
             },
             "actions": {
                 "delete_cache_tooltip": "Delete world from cache",
@@ -715,7 +720,12 @@
                 "private": "Private",
                 "fallback": "Fallback",
                 "future_proofing": "Future Proofing",
-                "cache": "Cache"
+                "cache": "Cache",
+                "content_horror": "Horror",
+                "content_gore": "Gore",
+                "content_violence": "Violence",
+                "content_adult": "Adult",
+                "content_sex": "Sexual"
             },
             "labels": {
                 "public": "(Public)",
@@ -736,6 +746,7 @@
                 "make_private": "Make Private",
                 "rename": "Rename",
                 "change_description": "Change Description",
+                "change_content_tags": "Change Content Tags",
                 "change_image": "Change Image",
                 "download_package": "Download Unity Package",
                 "delete": "Delete"
@@ -951,7 +962,25 @@
             "avatar_scaling_disabled": "Disable avatar scaling",
             "enable_debugging": "Enable world debugging for others",
             "author_tags": "Author Tags (comma separated)",
-            "content_tags": "Content Tags (comma separated)",
+            "content_tags": "Content Warning Tags",
+            "content_horror": "Horror",
+            "content_gore": "Gore",
+            "content_violence": "Violence",
+            "content_adult": "Adult",
+            "content_sex": "Sexual",
+            "cancel": "Cancel",
+            "save": "Save"
+        },
+        "set_avatar_tags": {
+            "header": "Set Avatar Tags",
+            "content_tags": "Content Warning Tags",
+            "content_horror": "Horror",
+            "content_gore": "Gore",
+            "content_violence": "Violence",
+            "content_adult": "Adult",
+            "content_sex": "Sexual",
+            "select_all": "Select All",
+            "select_none": "Select None",
             "cancel": "Cancel",
             "save": "Save"
         },

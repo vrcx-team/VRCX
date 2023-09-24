@@ -18258,6 +18258,9 @@ speechSynthesis.getVoices();
             case 'Change Description':
                 this.promptChangeAvatarDescription(D);
                 break;
+            case 'Change Content Tags':
+                this.showSetAvatarTagsDialog(D.id);
+                break;
             case 'Download Unity Package':
                 this.openExternalLink(this.avatarDialog.ref.unityPackageUrl);
                 break;
@@ -19180,13 +19183,25 @@ speechSynthesis.getVoices();
         authorTags: [],
         contentTags: [],
         debugAllowed: false,
-        avatarScalingDisabled: false
+        avatarScalingDisabled: false,
+        contentHorror: false,
+        contentGore: false,
+        contentViolence: false,
+        contentAdult: false,
+        contentSex: false
     };
 
     $app.methods.showSetWorldTagsDialog = function () {
         this.$nextTick(() => adjustDialogZ(this.$refs.setWorldTagsDialog.$el));
         var D = this.setWorldTagsDialog;
         D.visible = true;
+        D.debugAllowed = false;
+        D.avatarScalingDisabled = false;
+        D.contentHorror = false;
+        D.contentGore = false;
+        D.contentViolence = false;
+        D.contentAdult = false;
+        D.contentSex = false;
         var oldTags = this.worldDialog.ref.tags;
         var authorTags = [];
         var contentTags = [];
@@ -19197,11 +19212,29 @@ speechSynthesis.getVoices();
             if (tag.startsWith('content_')) {
                 contentTags.unshift(tag.substring(8));
             }
-            if (tag === 'debug_allowed') {
-                D.debugAllowed = true;
-            }
-            if (tag === 'feature_avatar_scaling_disabled') {
-                D.avatarScalingDisabled = true;
+            switch (tag) {
+                case 'content_horror':
+                    D.contentHorror = true;
+                    break;
+                case 'content_gore':
+                    D.contentGore = true;
+                    break;
+                case 'content_violence':
+                    D.contentViolence = true;
+                    break;
+                case 'content_adult':
+                    D.contentAdult = true;
+                    break;
+                case 'content_sex':
+                    D.contentSex = true;
+                    break;
+
+                case 'debug_allowed':
+                    D.debugAllowed = true;
+                    break;
+                case 'feature_avatar_scaling_disabled':
+                    D.avatarScalingDisabled = true;
+                    break;
             }
         });
         D.authorTags = authorTags.toString();
@@ -19218,11 +19251,36 @@ speechSynthesis.getVoices();
                 tags.unshift(`author_tag_${tag}`);
             }
         });
+        // add back custom tags
         contentTags.forEach((tag) => {
-            if (tag) {
-                tags.unshift(`content_${tag}`);
+            switch (tag) {
+                case 'horror':
+                case 'gore':
+                case 'violence':
+                case 'adult':
+                case 'sex':
+                case '':
+                    break;
+                default:
+                    tags.unshift(`content_${tag}`);
+                    break;
             }
         });
+        if (D.contentHorror) {
+            tags.unshift('content_horror');
+        }
+        if (D.contentGore) {
+            tags.unshift('content_gore');
+        }
+        if (D.contentViolence) {
+            tags.unshift('content_violence');
+        }
+        if (D.contentAdult) {
+            tags.unshift('content_adult');
+        }
+        if (D.contentSex) {
+            tags.unshift('content_sex');
+        }
         if (D.debugAllowed) {
             tags.unshift('debug_allowed');
         }
@@ -19246,6 +19304,197 @@ speechSynthesis.getVoices();
             }
             return args;
         });
+    };
+
+    // #endregion
+    // #region | App: Set Avatar Tags Dialog
+
+    $app.data.setAvatarTagsDialog = {
+        visible: false,
+        loading: false,
+        ownAvatars: [],
+        selectedCount: 0,
+        forceUpdate: 0,
+        contentHorror: false,
+        contentGore: false,
+        contentViolence: false,
+        contentAdult: false,
+        contentSex: false
+    };
+
+    $app.methods.showSetAvatarTagsDialog = function (avatarId) {
+        this.$nextTick(() => adjustDialogZ(this.$refs.setAvatarTagsDialog.$el));
+        var D = this.setAvatarTagsDialog;
+        D.visible = true;
+        D.loading = false;
+        D.ownAvatars = [];
+        D.forceUpdate = 0;
+        D.contentHorror = false;
+        D.contentGore = false;
+        D.contentViolence = false;
+        D.contentAdult = false;
+        D.contentSex = false;
+        var oldTags = this.avatarDialog.ref.tags;
+        oldTags.forEach((tag) => {
+            switch (tag) {
+                case 'content_horror':
+                    D.contentHorror = true;
+                    break;
+                case 'content_gore':
+                    D.contentGore = true;
+                    break;
+                case 'content_violence':
+                    D.contentViolence = true;
+                    break;
+                case 'content_adult':
+                    D.contentAdult = true;
+                    break;
+                case 'content_sex':
+                    D.contentSex = true;
+                    break;
+            }
+        });
+        for (var ref of API.cachedAvatars.values()) {
+            if (ref.authorId === API.currentUser.id) {
+                ref.$selected = false;
+                ref.$tagString = '';
+                if (avatarId === ref.id) {
+                    ref.$selected = true;
+                    var conentTags = [];
+                    ref.tags.forEach((tag) => {
+                        if (tag.startsWith('content_')) {
+                            conentTags.push(tag.substring(8));
+                        }
+                    });
+                    for (var i = 0; i < conentTags.length; ++i) {
+                        var tag = conentTags[i];
+                        if (i < conentTags.length - 1) {
+                            ref.$tagString += `${tag}, `;
+                        } else {
+                            ref.$tagString += tag;
+                        }
+                    }
+                }
+                D.ownAvatars.push(ref);
+            }
+        }
+        this.updateAvatarTagsSelection();
+    };
+
+    $app.data.avatarContentTags = [
+        'content_horror',
+        'content_gore',
+        'content_violence',
+        'content_adult',
+        'content_sex'
+    ];
+
+    $app.methods.saveSetAvatarTagsDialog = async function () {
+        var D = this.setAvatarTagsDialog;
+        if (D.loading) {
+            return;
+        }
+        D.loading = true;
+        try {
+            for (var i = D.ownAvatars.length - 1; i >= 0; --i) {
+                var ref = D.ownAvatars[i];
+                if (!D.visible) {
+                    break;
+                }
+                if (!ref.$selected) {
+                    continue;
+                }
+                var tags = ref.tags;
+                if (D.contentHorror) {
+                    if (!tags.includes('content_horror')) {
+                        tags.push('content_horror');
+                    }
+                } else if (tags.includes('content_horror')) {
+                    tags.splice(tags.indexOf('content_horror'), 1);
+                }
+
+                if (D.contentGore) {
+                    if (!tags.includes('content_gore')) {
+                        tags.push('content_gore');
+                    }
+                } else if (tags.includes('content_gore')) {
+                    tags.splice(tags.indexOf('content_gore'), 1);
+                }
+
+                if (D.contentViolence) {
+                    if (!tags.includes('content_violence')) {
+                        tags.push('content_violence');
+                    }
+                } else if (tags.includes('content_violence')) {
+                    tags.splice(tags.indexOf('content_violence'), 1);
+                }
+
+                if (D.contentAdult) {
+                    if (!tags.includes('content_adult')) {
+                        tags.push('content_adult');
+                    }
+                } else if (tags.includes('content_adult')) {
+                    tags.splice(tags.indexOf('content_adult'), 1);
+                }
+
+                if (D.contentSex) {
+                    if (!tags.includes('content_sex')) {
+                        tags.push('content_sex');
+                    }
+                } else if (tags.includes('content_sex')) {
+                    tags.splice(tags.indexOf('content_sex'), 1);
+                }
+
+                await API.saveAvatar({
+                    id: ref.id,
+                    tags
+                });
+                D.selectedCount--;
+            }
+        } catch (err) {
+            this.$message({
+                message: 'Error saving avatar tags',
+                type: 'error'
+            });
+        } finally {
+            D.loading = false;
+            D.visible = false;
+        }
+    };
+
+    $app.methods.updateAvatarTagsSelection = function () {
+        var D = this.setAvatarTagsDialog;
+        D.selectedCount = 0;
+        for (var ref of D.ownAvatars) {
+            if (ref.$selected) {
+                D.selectedCount++;
+            }
+            ref.$tagString = '';
+            var conentTags = [];
+            ref.tags.forEach((tag) => {
+                if (tag.startsWith('content_')) {
+                    conentTags.push(tag.substring(8));
+                }
+            });
+            for (var i = 0; i < conentTags.length; ++i) {
+                var tag = conentTags[i];
+                if (i < conentTags.length - 1) {
+                    ref.$tagString += `${tag}, `;
+                } else {
+                    ref.$tagString += tag;
+                }
+            }
+        }
+        this.setAvatarTagsDialog.forceUpdate++;
+    };
+
+    $app.methods.setAvatarTagsSelectToggle = function () {
+        var D = this.setAvatarTagsDialog;
+        var allSelected = D.ownAvatars.length === D.selectedCount;
+        for (var ref of D.ownAvatars) {
+            ref.$selected = !allSelected;
+        }
+        this.updateAvatarTagsSelection();
     };
 
     // #endregion
