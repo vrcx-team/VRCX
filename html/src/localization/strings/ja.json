@@ -104,6 +104,7 @@
             "clear_tooltip": "削除",
             "delete_tooltip": "削除",
             "unavailable_tooltip": "利用不可",
+            "private": "プライベート",
             "sort_by": "並べ替え:"
         },
         "friend_log": {
@@ -218,11 +219,11 @@
                     "auto_state_change": "自動ステータス変更",
                     "auto_state_change_tooltip": "自身のいるインスタンスに他のプレイヤーがいる場合、自動的にステータスを変更します。 (1人/複数人)",
                     "auto_state_change_off": "無効",
-                    "auto_state_change_active_or_ask_me": "Active / Ask Me",
-                    "auto_state_change_active_or_busy": "Active / Busy",
-                    "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
-                    "auto_state_change_join_me_or_busy": "Join Me / Busy",
-                    "auto_state_change_ask_me_or_busy": "Ask Me / Busy"
+                    "auto_state_change_active_or_ask_me": "アクティブ / 現在地を非表示",
+                    "auto_state_change_active_or_busy": "アクティブ / 取り込み中",
+                    "auto_state_change_join_me_or_ask_me": "参加歓迎 / 現在地を非表示",
+                    "auto_state_change_join_me_or_busy": "参加歓迎 / 取り込み中",
+                    "auto_state_change_ask_me_or_busy": "現在地を非表示 / 取り込み中"
                 },
                 "legal_notice": {
                     "header": "法律上の注意事項",
@@ -528,7 +529,6 @@
                 "favorite_tooltip": "お気に入りに追加",
                 "unfavorite_tooltip": "お気に入りから削除",
                 "refresh": "更新",
-                "copy_url": "ユーザーURLをコピー",
                 "invite": "招待を送信",
                 "invite_with_message": "メッセージ付き招待を送信",
                 "request_invite": "招待リクエストを送信",
@@ -590,6 +590,11 @@
                 "avatar_cloning_allow": "許可",
                 "avatar_cloning_deny": "拒否",
                 "home_location": "ホームワールド",
+                "id": "ユーザーID",
+                "id_tooltip": "クリップボードにコピー",
+                "copy_id": "IDをコピー",
+                "copy_url": "URLをコピー",
+                "copy_display_name": "表示名をコピー",
                 "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。",
                 "instance_full": "満員"
             },
@@ -639,7 +644,12 @@
                 "avatar_scaling_disabled": "アバタースケーリング 使用不可",
                 "future_proofing": "Future Proofing",
                 "labs": "ラボ",
-                "cache": "キャッシュ"
+                "cache": "キャッシュ",
+                "content_horror": "ホラー",
+                "content_gore": "ゴア",
+                "content_violence": "暴力",
+                "content_adult": "成人向け",
+                "content_sex": "性的要素"
             },
             "actions": {
                 "delete_cache_tooltip": "キャッシュからワールドを削除",
@@ -653,6 +663,7 @@
                 "rename": "名前を変更",
                 "change_description": "説明を変更",
                 "change_capacity": "最大人数を変更",
+                "change_recommended_capacity": "推奨人数を変更",
                 "change_preview": "YouTube プレビュー動画を変更",
                 "change_tags": "タグを変更",
                 "change_image": "画像を変更",
@@ -681,6 +692,7 @@
                 "copy_url": "URLをコピー",
                 "copy_name": "ワールド名をコピー",
                 "youtube_preview": "YouTube プレビュー動画",
+                "author_tags": "Author Tags",
                 "players": "プレイヤー数",
                 "favorites": "お気に入り数",
                 "visits": "総参加回数",
@@ -689,6 +701,8 @@
                 "popularity": "人気度",
                 "created_at": "作成日時",
                 "last_updated": "最終更新日時",
+                "publication_date": "公開日",
+                "labs_publication_date": "ラボへの公開日",
                 "version": "バージョン",
                 "platform": "プラットフォーム",
                 "last_visited": "最後に参加した日時",
@@ -706,7 +720,12 @@
                 "private": "Private",
                 "fallback": "フォールバック",
                 "future_proofing": "Future Proofing",
-                "cache": "キャッシュ"
+                "cache": "キャッシュ",
+                "content_horror": "ホラー",
+                "content_gore": "ゴア",
+                "content_violence": "暴力",
+                "content_adult": "成人向け",
+                "content_sex": "性的要素"
             },
             "labels": {
                 "public": "(Public)",
@@ -727,6 +746,7 @@
                 "make_private": "アバターを非公開化",
                 "rename": "名前を変更",
                 "change_description": "説明を変更",
+                "change_content_tags": "コンテンツタグを変更",
                 "change_image": "画像を変更",
                 "download_package": "Unity Packageをダウンロード",
                 "delete": "削除"
@@ -943,6 +963,24 @@
             "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
             "author_tags": "タグ (コンマ区切り)",
             "content_tags": "コンテンツ タグ (コンマ区切り)",
+            "content_horror": "ホラー",
+            "content_gore": "ゴア",
+            "content_violence": "暴力",
+            "content_adult": "成人向け",
+            "content_sex": "性的要素",
+            "cancel": "キャンセル",
+            "save": "保存"
+        },
+        "set_avatar_tags": {
+            "header": "アバタータグを設定",
+            "content_tags": "コンテンツ警告タグ",
+            "content_horror": "ホラー",
+            "content_gore": "ゴア",
+            "content_violence": "暴力",
+            "content_adult": "成人向け",
+            "content_sex": "性的要素",
+            "select_all": "全て選択",
+            "select_none": "選択解除",
             "cancel": "キャンセル",
             "save": "保存"
         },
@@ -1335,6 +1373,16 @@
             "input_error": "有効な数字を入力してください。",
             "message": {
                 "success": "ワールドの最大人数を変更しました。"
+                            }
+        },
+        "change_world_recommended_capacity": {
+            "header": "推奨人数を変更",
+            "description": "ワールドの推奨人数を入力してください。 (ソフトキャップ)",
+            "cancel": "キャンセル",
+            "ok": "OK",
+            "input_error": "友好な数字を入力してください。",
+            "message": {
+                "success": "ワールドの推奨人数を変更しました。"
             }
         },
         "change_world_preview": {
