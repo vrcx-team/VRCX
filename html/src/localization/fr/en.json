@@ -103,9 +103,9 @@
             "rename_tooltip": "Renommer",
             "clear_tooltip": "Vider",
             "delete_tooltip": "Supprimer",
-            "unavailable_tooltip": "Unavailable",
-            "private": "Private",
-            "sort_by": "Sort By"
+            "unavailable_tooltip": "Indisponible",
+            "private": "Privé",
+            "sort_by": "Trier par"
         },
         "friend_log": {
             "filter_placeholder": "Filtrer",
@@ -233,7 +233,7 @@
                     "open_source_software_notice": "Mentions relatives aux logiciels libres"
                 },
                 "contributors": {
-                    "header": "Contributors"
+                    "header": "Contributeurs"
                 }
             },
             "appearance": {
@@ -379,7 +379,7 @@
                     "header": "Avancés",
                     "launch_options": "Options de démarrage",
                     "screenshot_metadata": "Métadonnées d'une capture d'écran",
-                    "common_folders": "Common Folders",
+                    "common_folders": "Dossiers communs",
                     "pending_offline": {
                         "header": "En attendant l'hors ligne",
                         "description": "Délai avant de marquer l'utilisateur comme étant hors ligne (corrige les faux positifs)",
@@ -590,11 +590,11 @@
                 "avatar_cloning_allow": "Autorisé",
                 "avatar_cloning_deny": "Refusé",
                 "home_location": "Lieu d'accueil",
-                "id": "User ID",
-                "id_tooltip": "Copy to clipboard",
-                "copy_id": "Copy ID",
-                "copy_url": "Copy URL",
-                "copy_display_name": "Copy DisplayName",
+                "id": "ID de l'utilisateur",
+                "id_tooltip": "Copier dans le presse-papiers",
+                "copy_id": "Copier l'ID",
+                "copy_url": "Copier l'URL",
+                "copy_display_name": "Copier le nom d'affichage",
                 "accuracy_notice": "Les informations provenant de la base de données locale peuvent ne pas être exactes",
                 "instance_full": "Complète"
             },
@@ -608,17 +608,17 @@
             "worlds": {
                 "header": "Mondes",
                 "total_count": "{count} au total",
-                "sort_by": "Sort by:",
-                "order_by": "Order by:",
+                "sort_by": "Trier par:",
+                "order_by": "Organiser par:",
                 "sorting": {
-                    "updated": "Updated",
-                    "created": "Created",
-                    "favorites": "Favorites",
-                    "popularity": "Popularity"
+                    "updated": "Mise à jour",
+                    "created": "Date de création",
+                    "favorites": "Favoris",
+                    "popularity": "Popularité"
                 },
                 "order": {
-                    "descending": "Descending",
-                    "ascending": "Ascending"
+                    "descending": "Décroissant",
+                    "ascending": "Croissant"
                 }
             },
             "favorite_worlds": {
@@ -645,11 +645,11 @@
                 "future_proofing": "Future Proofing",
                 "labs": "Labs",
                 "cache": "Cache",
-                "content_horror": "Horror",
+                "content_horror": "Horreur",
                 "content_gore": "Gore",
                 "content_violence": "Violence",
-                "content_adult": "Adult",
-                "content_sex": "Sexual"
+                "content_adult": "Adulte",
+                "content_sex": "Sexuel"
             },
             "actions": {
                 "delete_cache_tooltip": "Supprimer le monde du cache",
@@ -663,7 +663,7 @@
                 "rename": "Renommer",
                 "change_description": "Changer la description",
                 "change_capacity": "Changer la capacité",
-                "change_recommended_capacity": "Change Recommended Capacity",
+                "change_recommended_capacity": "Changer la capacité recommandée",
                 "change_preview": "Changer l'aperçu Youtube",
                 "change_tags": "Changer les étiquettes",
                 "change_image": "Changer l'image",
@@ -692,7 +692,7 @@
                 "copy_url": "Copier l'URL",
                 "copy_name": "Copier le nom",
                 "youtube_preview": "Aperçu Youtube",
-                "author_tags": "Author Tags",
+                "author_tags": "Tags de l'auteur",
                 "players": "Joueurs",
                 "favorites": "Favoris",
                 "visits": "Visites",
@@ -701,8 +701,8 @@
                 "popularity": "Popularité",
                 "created_at": "Créé le",
                 "last_updated": "Dernière mise à jour",
-                "publication_date": "Publication Date",
-                "labs_publication_date": "Labs Publication Date",
+                "publication_date": "Date de publication",
+                "labs_publication_date": "Date de publication au Labs",
                 "version": "Version",
                 "platform": "Plateforme",
                 "last_visited": "Dernière visite",
@@ -721,11 +721,11 @@
                 "fallback": "Avatar fallback",
                 "future_proofing": "Future Proofing",
                 "cache": "Cache",
-                "content_horror": "Horror",
+                "content_horror": "Horreur",
                 "content_gore": "Gore",
                 "content_violence": "Violence",
-                "content_adult": "Adult",
-                "content_sex": "Sexual"
+                "content_adult": "Adulte",
+                "content_sex": "Sexuel"
             },
             "labels": {
                 "public": "(Publique)",
@@ -746,7 +746,7 @@
                 "make_private": "Rendre privé",
                 "rename": "Renommer",
                 "change_description": "Changer la description",
-                "change_content_tags": "Change Content Tags",
+                "change_content_tags": "Changer les Tags d'avatars",
                 "change_image": "Changer l'image",
                 "download_package": "Télécharger le package Unity",
                 "delete": "Supprimer"
@@ -761,8 +761,8 @@
                 "last_updated": "Dernière mise à jour",
                 "version": "Version",
                 "platform": "Plateforme",
-                "memo": "Memo",
-                "memo_placeholder": "Click to add a memo"
+                "memo": "Mémo",
+                "memo_placeholder": "Cliquez pour ajouter un mémo"
             },
             "json": {
                 "header": "JSON",
@@ -940,11 +940,11 @@
             "max_cache_size": "Taille maximale du cache [Go] (min 20)",
             "cache_expiry_delay": "Expiration du cache [jours] (30 - 150)",
             "cache_directory": "Emplacement du dossier de cache personnalisé",
-            "picture_directory": "Custom Picture Folder Location",
+            "picture_directory": "Emplacement du dossier de photos personnalisé",
             "fpv_steadycam_fov": "Angle de vue à la première personne",
             "camera_resolution": "Résolution de l'appareil photo",
             "screenshot_resolution": "Résolution des captures d'écran",
-            "picture_sort_by_date": "Sort pictures into folders by date",
+            "picture_sort_by_date": "Trier les images dans des dossiers par date",
             "disable_discord_presence": "Désactiver la présence Discord",
             "vrchat_docs": "Documentation de VRChat",
             "cancel": "Annuler",
@@ -959,15 +959,15 @@
         },
         "set_world_tags": {
             "header": "Définir les étiquettes du monde",
-            "avatar_scaling_disabled": "Disable avatar scaling",
+            "avatar_scaling_disabled": "Désactiver la mise à l'échelle des avatars",
             "enable_debugging": "Activer le débogage du monde pour les autres",
-            "author_tags": "Author Tags (comma separated)",
-            "content_tags": "Content Warning Tags",
-            "content_horror": "Horror",
+            "author_tags": "Tags de l'auteur (séparés par des virgules)",
+            "content_tags": "Tags d'avertissement de contenu",
+            "content_horror": "Horreur",
             "content_gore": "Gore",
             "content_violence": "Violence",
-            "content_adult": "Adult",
-            "content_sex": "Sexual",
+            "content_adult": "Adulte",
+            "content_sex": "Sexuel",
             "cancel": "Annuler",
             "save": "Sauvegarder"
         },

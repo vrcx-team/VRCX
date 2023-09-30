@@ -103,9 +103,9 @@
             "rename_tooltip": "名前を変更",
             "clear_tooltip": "クリア",
             "delete_tooltip": "削除",
-            "unavailable_tooltip": "Unavailable",
-            "private": "Private",
-            "sort_by": "Sort By"
+            "unavailable_tooltip": "利用不可",
+            "private": "プライベート",
+            "sort_by": "並べ替え:"
         },
         "friend_log": {
             "filter_placeholder": "フィルター",
@@ -142,7 +142,7 @@
                 "two_factor_enabled": "有効",
                 "two_factor_disabled": "無効",
                 "logout": "ログアウト",
-                "manage_gallery_icon": "Manage Photos/Icons/Emojis",
+                "manage_gallery_icon": "写真/アイコン/絵文字を管理",
                 "export_friend_list": "フレンドリストをエクスポート",
                 "export_own_avatars": "自分のアバターをエクスポート",
                 "discord_names": "Discordの名前",
@@ -219,11 +219,11 @@
                     "auto_state_change": "自動ステータス変更",
                     "auto_state_change_tooltip": "自身のいるインスタンスに他のプレイヤーがいる場合、自動的にステータスを変更します。 (1人/複数人)",
                     "auto_state_change_off": "無効",
-                    "auto_state_change_active_or_ask_me": "Active / Ask Me",
-                    "auto_state_change_active_or_busy": "Active / Busy",
-                    "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
-                    "auto_state_change_join_me_or_busy": "Join Me / Busy",
-                    "auto_state_change_ask_me_or_busy": "Ask Me / Busy"
+                    "auto_state_change_active_or_ask_me": "アクティブ / 現在地を非表示",
+                    "auto_state_change_active_or_busy": "アクティブ / 取り込み中",
+                    "auto_state_change_join_me_or_ask_me": "参加歓迎 / 現在地を非表示",
+                    "auto_state_change_join_me_or_busy": "参加歓迎 / 取り込み中",
+                    "auto_state_change_ask_me_or_busy": "現在地を非表示 / 取り込み中"
                 },
                 "legal_notice": {
                     "header": "法律上の注意事項",
@@ -233,7 +233,7 @@
                     "open_source_software_notice": "オープンソースソフトウェアに関する注意事項"
                 },
                 "contributors": {
-                    "header": "Contributors"
+                    "header": "貢献者"
                 }
             },
             "appearance": {
@@ -379,7 +379,7 @@
                     "header": "詳細設定",
                     "launch_options": "起動オプション",
                     "screenshot_metadata": "スクリーンショットのメタデータ",
-                    "common_folders": "Common Folders",
+                    "common_folders": "共通フォルダ",
                     "pending_offline": {
                         "header": "オフラインの保留",
                         "description": "オフラインと判定されるまでの時間 (誤検知対策)",
@@ -590,11 +590,11 @@
                 "avatar_cloning_allow": "許可",
                 "avatar_cloning_deny": "拒否",
                 "home_location": "ホームワールド",
-                "id": "User ID",
-                "id_tooltip": "Copy to clipboard",
-                "copy_id": "Copy ID",
-                "copy_url": "Copy URL",
-                "copy_display_name": "Copy DisplayName",
+                "id": "ユーザーID",
+                "id_tooltip": "クリップボードにコピー",
+                "copy_id": "IDをコピー",
+                "copy_url": "URLをコピー",
+                "copy_display_name": "表示名をコピー",
                 "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります",
                 "instance_full": "満員"
             },
@@ -608,17 +608,17 @@
             "worlds": {
                 "header": "ワールド",
                 "total_count": "{count} 個のワールド",
-                "sort_by": "Sort by:",
-                "order_by": "Order by:",
+                "sort_by": "並べ替え:",
+                "order_by": "表示順:",
                 "sorting": {
-                    "updated": "Updated",
-                    "created": "Created",
-                    "favorites": "Favorites",
-                    "popularity": "Popularity"
+                    "updated": "更新日",
+                    "created": "作成日",
+                    "favorites": "お気に入り数",
+                    "popularity": "人気順"
                 },
                 "order": {
-                    "descending": "Descending",
-                    "ascending": "Ascending"
+                    "descending": "降順",
+                    "ascending": "昇順"
                 }
             },
             "favorite_worlds": {
@@ -645,11 +645,11 @@
                 "future_proofing": "Future Proofing",
                 "labs": "ラボ",
                 "cache": "キャッシュ",
-                "content_horror": "Horror",
-                "content_gore": "Gore",
-                "content_violence": "Violence",
-                "content_adult": "Adult",
-                "content_sex": "Sexual"
+                "content_horror": "ホラー",
+                "content_gore": "ゴア",
+                "content_violence": "暴力",
+                "content_adult": "成人向け",
+                "content_sex": "性的要素"
             },
             "actions": {
                 "delete_cache_tooltip": "キャッシュからワールドを削除",
@@ -663,7 +663,7 @@
                 "rename": "名前を変更",
                 "change_description": "説明を変更",
                 "change_capacity": "最大人数を変更",
-                "change_recommended_capacity": "Change Recommended Capacity",
+                "change_recommended_capacity": "推奨人数を変更",
                 "change_preview": "YouTube プレビュー動画を変更",
                 "change_tags": "タグを変更",
                 "change_image": "画像を変更",
@@ -701,8 +701,8 @@
                 "popularity": "人気度",
                 "created_at": "作成日時",
                 "last_updated": "最終更新日時",
-                "publication_date": "Publication Date",
-                "labs_publication_date": "Labs Publication Date",
+                "publication_date": "公開日",
+                "labs_publication_date": "ラボへの公開日",
                 "version": "バージョン",
                 "platform": "プラットフォーム",
                 "last_visited": "最後に参加した日時",
@@ -721,11 +721,11 @@
                 "fallback": "フォールバック",
                 "future_proofing": "Future Proofing",
                 "cache": "キャッシュ",
-                "content_horror": "Horror",
-                "content_gore": "Gore",
-                "content_violence": "Violence",
-                "content_adult": "Adult",
-                "content_sex": "Sexual"
+                "content_horror": "ホラー",
+                "content_gore": "ゴア",
+                "content_violence": "暴力",
+                "content_adult": "成人向け",
+                "content_sex": "性的要素"
             },
             "labels": {
                 "public": "（パブリック）",
@@ -746,7 +746,7 @@
                 "make_private": "アバターを非公開化",
                 "rename": "名前を変更",
                 "change_description": "説明を変更",
-                "change_content_tags": "Change Content Tags",
+                "change_content_tags": "コンテンツタグを変更",
                 "change_image": "画像を変更",
                 "download_package": "Unity Packageをダウンロード",
                 "delete": "削除"
@@ -761,8 +761,8 @@
                 "last_updated": "最終更新日時",
                 "version": "バージョン",
                 "platform": "プラットフォーム",
-                "memo": "Memo",
-                "memo_placeholder": "Click to add a memo"
+                "memo": "メモ (VRCX)",
+                "memo_placeholder": "クリックしてメモを追加"
             },
             "json": {
                 "header": "JSON",
@@ -839,9 +839,9 @@
                     "everyone": "全員",
                     "users_with_no_role": "ロール無しユーザー"
                 },
-                "unsubscribed_announcements": "Unsubscribed from announcements",
-                "visibility": "Visibility:",
-                "representing": "Representing"
+                "unsubscribed_announcements": "お知らせ受信停止中",
+                "visibility": "表示範囲:",
+                "representing": "ネームプレート表示中"
             },
             "gallery": {
                 "header": "写真"
@@ -940,18 +940,18 @@
             "max_cache_size": "最大キャッシュサイズ [GB] (最小 20)",
             "cache_expiry_delay": "キャッシュの有効期限 [日] (30 - 150)",
             "cache_directory": "カスタムキャッシュフォルダー",
-            "picture_directory": "Custom Picture Folder Location",
+            "picture_directory": "カスタム写真フォルダー",
             "fpv_steadycam_fov": "一人称Steadycamの視野角",
             "camera_resolution": "カメラ解像度",
             "screenshot_resolution": "スクリーンショット解像度",
-            "picture_sort_by_date": "Sort pictures into folders by date",
+            "picture_sort_by_date": "写真を日付順にフォルダ分け",
             "disable_discord_presence": "Discord Rich Presenceを無効化",
             "vrchat_docs": "VRChat ドキュメント",
             "cancel": "キャンセル",
             "save": "保存"
         },
         "youtube_api": {
-            "header": "YouTube API",
+            "header": "Youtube API",
             "description": "YouTube APIキーを入力してください (任意)",
             "placeholder": "YouTube APIキー",
             "guide": "ガイド",
@@ -959,30 +959,30 @@
         },
         "set_world_tags": {
             "header": "ワールドのタグを設定",
-            "avatar_scaling_disabled": "Disable avatar scaling",
+            "avatar_scaling_disabled": "アバタースケーリングを無効化",
             "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
-            "author_tags": "Author Tags (comma separated)",
-            "content_tags": "Content Warning Tags",
-            "content_horror": "Horror",
-            "content_gore": "Gore",
-            "content_violence": "Violence",
-            "content_adult": "Adult",
-            "content_sex": "Sexual",
+            "author_tags": "タグ (コンマ区切り)",
+            "content_tags": "コンテンツ タグ (コンマ区切り)",
+            "content_horror": "ホラー",
+            "content_gore": "ゴア",
+            "content_violence": "暴力",
+            "content_adult": "成人向け",
+            "content_sex": "性的要素",
             "cancel": "キャンセル",
             "save": "保存"
         },
         "set_avatar_tags": {
-            "header": "Set Avatar Tags",
-            "content_tags": "Content Warning Tags",
-            "content_horror": "Horror",
-            "content_gore": "Gore",
-            "content_violence": "Violence",
-            "content_adult": "Adult",
-            "content_sex": "Sexual",
-            "select_all": "Select All",
-            "select_none": "Select None",
-            "cancel": "Cancel",
-            "save": "Save"
+            "header": "アバタータグを設定",
+            "content_tags": "コンテンツ警告タグ",
+            "content_horror": "ホラー",
+            "content_gore": "ゴア",
+            "content_violence": "暴力",
+            "content_adult": "成人向け",
+            "content_sex": "性的要素",
+            "select_all": "全て選択",
+            "select_none": "選択解除",
+            "cancel": "キャンセル",
+            "save": "保存"
         },
         "download_history": {
             "header": "ダウンロード履歴",
@@ -1012,7 +1012,7 @@
         },
         "export_friends_list": {
             "header": "フレンドリスト",
-            "csv": "CSV",
+            "csv": "CSVファイル",
             "json": "JSON"
         },
         "export_own_avatars": {
@@ -1099,7 +1099,7 @@
         },
         "invite_to_group": {
             "header": "グループに招待",
-            "description": "Don't spam invite users, you'll get rate limited.",
+            "description": "招待スパムをしないでください。グループに大量のユーザーを招待するとBANされる可能性があります。",
             "choose_group_placeholder": "グループを選択",
             "groups": "グループ",
             "choose_friends_placeholder": "フレンドを選択",
@@ -1166,14 +1166,14 @@
         },
         "gallery_icons": {
             "header": "ギャラリーとアイコン",
-            "description": "Recommended image size: 1200x900px (4:3)",
+            "description": "推奨画像サイズ: 1200x900px",
             "gallery": "ギャラリー",
             "icons": "アイコン",
             "emojis": "絵文字",
             "refresh": "更新",
             "upload": "アップロード",
             "clear": "消去",
-            "emoji_animation_styles": "Animation Styles"
+            "emoji_animation_styles": "アニメーションスタイル"
         },
         "change_content_image": {
             "avatar": "アバターの画像を変更",
@@ -1236,7 +1236,7 @@
         "otp": {
             "header": "2段階認証",
             "description": "保存したリカバリーコードのどれか一つを入力してください",
-            "use_totp": "Use TOTP",
+            "use_totp": "TOTPを使う",
             "verify": "認証",
             "input_placeholder": "コード",
             "input_error": "無効なコードです"
@@ -1367,7 +1367,7 @@
         },
         "change_world_capacity": {
             "header": "最大人数を変更",
-            "description": "Enter world maximum capacity (hard cap), Max: 80",
+            "description": "ワールドの最大人数を入力してください。最高値: 40",
             "cancel": "キャンセル",
             "ok": "OK",
             "input_error": "有効な数字を入力してください",
@@ -1376,13 +1376,13 @@
             }
         },
         "change_world_recommended_capacity": {
-            "header": "Change Recommended Capacity",
-            "description": "Enter world recommended capacity (soft cap)",
-            "cancel": "Cancel",
+            "header": "推奨人数を変更",
+            "description": "ワールドの推奨人数を入力してください。 (ソフトキャップ)",
+            "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "Valid number is required",
+            "input_error": "友好な数字を入力してください。",
             "message": {
-                "success": "World recommended capacity changed"
+                "success": "ワールドの推奨人数を変更しました。"
             }
         },
         "change_world_preview": {
@@ -1428,7 +1428,7 @@
             }
         },
         "local_favorite_group_rename": {
-            "header": "Rename Group",
+            "header": "グループ名を変更",
             "description": "お気に入りワールド グループ名を入力してください",
             "cancel": "キャンセル",
             "save": "保存",
@@ -1498,7 +1498,7 @@
             "action": "アクション"
         },
         "friendList": {
-            "no": "No.",
+            "no": "いいえ。",
             "avatar": "アバター",
             "displayName": "表示名",
             "rank": "ランク",
@@ -1526,7 +1526,7 @@
             }
         },
         "social_status": {
-            "no": "No.",
+            "no": "いいえ。",
             "status": "ステータス"
         },
         "download_history": {
