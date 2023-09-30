@@ -1,25 +1,25 @@
-import en from './strings/en.json' assert { type: 'JSON' };
+import en from './en/en.json' assert { type: 'JSON' };
 import elements_en from 'element-ui/lib/locale/lang/en';
 
-import ja from './strings/ja.json' assert { type: 'JSON' };
+import ja from './ja/en.json' assert { type: 'JSON' };
 import elements_ja from 'element-ui/lib/locale/lang/ja';
 
-import zh_TW from './strings/zh_TW.json' assert { type: 'JSON' };
+import zh_TW from './zh-TW/en.json' assert { type: 'JSON' };
 import elements_zh_TW from 'element-ui/lib/locale/lang/zh-TW';
 
-import ko from './strings/ko.json' assert { type: 'JSON' };
+import ko from './ko/en.json' assert { type: 'JSON' };
 import elements_ko from 'element-ui/lib/locale/lang/ko';
 
-import zh_CN from './strings/zh_CN.json' assert { type: 'JSON' };
+import zh_CN from './zh-CN/en.json' assert { type: 'JSON' };
 import elements_zh_CN from 'element-ui/lib/locale/lang/zh-CN';
 
-import fr from './strings/fr.json' assert { type: 'JSON' };
+import fr from './fr/en.json' assert { type: 'JSON' };
 import elements_fr from 'element-ui/lib/locale/lang/fr';
 
-import vi from './strings/vi.json' assert { type: 'JSON' };
+import vi from './vi/en.json' assert { type: 'JSON' };
 import elements_vi from 'element-ui/lib/locale/lang/vi';
 
-import ru_RU from './strings/ru.json' assert { type: 'JSON' };
+import ru_RU from './ru/en.json' assert { type: 'JSON' };
 import elements_ru from 'element-ui/lib/locale/lang/ru-RU';
 
 const localized_en = { ...en, ...elements_en };
