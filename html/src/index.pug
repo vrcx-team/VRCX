@@ -726,6 +726,10 @@ html
                                 .x-friend-item(v-if="worldDialog.ref.publicationDate !== 'none'" style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.publication_date') }}
+                                            el-tooltip(v-if="worldDialog.ref.publicationDate && worldDialog.ref.publicationDate !== 'none' && worldDialog.ref.labsPublicationDate && worldDialog.ref.labsPublicationDate !== 'none'" placement="top" style="margin-left:5px")
+                                                template(#content)
+                                                    span {{ $t('dialog.world.info.time_in_labs') }} {{ new Date(worldDialog.ref.publicationDate) - new Date(worldDialog.ref.labsPublicationDate) | timeToText }}
+                                                i.el-icon-arrow-down
                                         span.extra {{ worldDialog.ref.publicationDate | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail

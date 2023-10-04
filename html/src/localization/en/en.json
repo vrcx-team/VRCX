@@ -703,6 +703,7 @@
                 "last_updated": "Last Updated",
                 "publication_date": "Publication Date",
                 "labs_publication_date": "Labs Publication Date",
+                "time_in_labs": "Time In Labs:",
                 "version": "Version",
                 "platform": "Platform",
                 "last_visited": "Last Visited",
