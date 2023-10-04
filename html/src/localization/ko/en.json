@@ -102,7 +102,10 @@
             "visibility_tooltip": "공개/비공개 설정",
             "rename_tooltip": "이름 변경",
             "clear_tooltip": "비우기",
-            "delete_tooltip": "지우기"
+            "delete_tooltip": "지우기",
+            "unavailable_tooltip": "Unavailable",
+            "private": "Private",
+            "sort_by": "Sort By"
         },
         "friend_log": {
             "filter_placeholder": "필터",
@@ -123,7 +126,6 @@
             "bulk_unfriend": "친구 끊기 모드",
             "bulk_unfriend_selection": "선택한 친구 끊기",
             "load": "누락된 친구 불러오기",
-            "load_notice": "API를 많이 사용합니다. 아껴서 사용하세요",
             "load_tooltip": "불러오기",
             "favorites_only_tooltip": "친한 친구만 보기",
             "search_placeholder": "검색",
@@ -140,6 +142,7 @@
                 "two_factor_enabled": "사용",
                 "two_factor_disabled": "사용 안 함",
                 "logout": "로그아웃",
+                "manage_gallery_icon": "Manage Photos/Icons/Emojis",
                 "export_friend_list": "친구 목록 내보내기",
                 "export_own_avatars": "내 아바타 목록 내보내기",
                 "discord_names": "디스코드 아이디",
@@ -230,7 +233,7 @@
                     "open_source_software_notice": "오픈 소스 소프트웨어 공지"
                 },
                 "contributors": {
-                    "header": "기여자들"
+                    "header": "Contributors"
                 }
             },
             "appearance": {
@@ -376,6 +379,7 @@
                     "header": "고급",
                     "launch_options": "VRChat 실행 설정",
                     "screenshot_metadata": "스크린샷 메타데이터",
+                    "common_folders": "Common Folders",
                     "pending_offline": {
                         "header": "오프라인 대기",
                         "description": "유저의 오프라인 상태 전환을 유예합니다. (버그 해결)",
@@ -441,6 +445,7 @@
                         "avatar_cache": "아바타 캐시:",
                         "group_cache": "그룹 캐시:",
                         "avatar_name_cache": "아바타 이름 캐시:",
+                        "instance_cache": "Instance cache:",
                         "clear_cache": "캐시 정리",
                         "auto_clear_cache": "캐시 타이머 설정",
                         "download_history": "다운로드 기록",
@@ -524,7 +529,6 @@
                 "favorite_tooltip": "즐겨찾기 추가",
                 "unfavorite_tooltip": "즐겨찾기 해제",
                 "refresh": "새로고침",
-                "copy_url": "유저 URL 복사",
                 "invite": "초대",
                 "invite_with_message": "메시지 초대",
                 "request_invite": "초대 요청",
@@ -586,6 +590,11 @@
                 "avatar_cloning_allow": "허용",
                 "avatar_cloning_deny": "거부",
                 "home_location": "홈 월드",
+                "id": "User ID",
+                "id_tooltip": "Copy to clipboard",
+                "copy_id": "Copy ID",
+                "copy_url": "Copy URL",
+                "copy_display_name": "Copy DisplayName",
                 "accuracy_notice": "VRCX 기준이라서 정확하지 않을 수 있습니다",
                 "instance_full": "풀방"
             },
@@ -599,8 +608,18 @@
             "worlds": {
                 "header": "월드",
                 "total_count": "전체 {count}개",
-                "sort_by_name": "이름순",
-                "sort_by_update": "업데이트순"
+                "sort_by": "Sort by:",
+                "order_by": "Order by:",
+                "sorting": {
+                    "updated": "Updated",
+                    "created": "Created",
+                    "favorites": "Favorites",
+                    "popularity": "Popularity"
+                },
+                "order": {
+                    "descending": "Descending",
+                    "ascending": "Ascending"
+                }
             },
             "favorite_worlds": {
                 "header": "즐겨찾는 월드"
@@ -622,9 +641,15 @@
             "tags": {
                 "public": "공개",
                 "private": "비공개",
-                "avatar_scaling": "아바타 스케일링",
+                "avatar_scaling_disabled": "Avatar Scaling Disabled",
+                "future_proofing": "Future Proofing",
                 "labs": "커뮤니티 랩스",
-                "cache": "캐시"
+                "cache": "캐시",
+                "content_horror": "Horror",
+                "content_gore": "Gore",
+                "content_violence": "Violence",
+                "content_adult": "Adult",
+                "content_sex": "Sexual"
             },
             "actions": {
                 "delete_cache_tooltip": "캐시에서 월드 삭제",
@@ -638,6 +663,7 @@
                 "rename": "이름 변경",
                 "change_description": "설명 변경",
                 "change_capacity": "인원 제한 변경",
+                "change_recommended_capacity": "Change Recommended Capacity",
                 "change_preview": "유튜브 미리보기 변경",
                 "change_tags": "태그 변경",
                 "change_image": "이미지 변경",
@@ -666,6 +692,7 @@
                 "copy_url": "URL 복사",
                 "copy_name": "이름 복사",
                 "youtube_preview": "유튜브 미리보기",
+                "author_tags": "Author Tags",
                 "players": "유저 수",
                 "favorites": "즐겨찾기 수",
                 "visits": "방문자 수",
@@ -674,6 +701,8 @@
                 "popularity": "인기",
                 "created_at": "최초 업로드",
                 "last_updated": "마지막 업데이트",
+                "publication_date": "Publication Date",
+                "labs_publication_date": "Labs Publication Date",
                 "version": "버전",
                 "platform": "플랫폼",
                 "last_visited": "마지막 방문",
@@ -690,7 +719,13 @@
                 "public": "공개",
                 "private": "비공개",
                 "fallback": "대체",
-                "cache": "캐시"
+                "future_proofing": "Future Proofing",
+                "cache": "캐시",
+                "content_horror": "Horror",
+                "content_gore": "Gore",
+                "content_violence": "Violence",
+                "content_adult": "Adult",
+                "content_sex": "Sexual"
             },
             "labels": {
                 "public": "(공개)",
@@ -711,6 +746,7 @@
                 "make_private": "비공개 전환",
                 "rename": "이름 변경",
                 "change_description": "설명 변경",
+                "change_content_tags": "Change Content Tags",
                 "change_image": "이미지 변경",
                 "download_package": "유니티 패키지 다운로드",
                 "delete": "삭제"
@@ -725,8 +761,8 @@
                 "last_updated": "마지막 업데이트",
                 "version": "버전",
                 "platform": "플랫폼",
-                "memo": "VRCX 메모",
-                "memo_placeholder": "-"
+                "memo": "Memo",
+                "memo_placeholder": "Click to add a memo"
             },
             "json": {
                 "header": "JSON",
@@ -802,7 +838,10 @@
                 "filters": {
                     "everyone": "모두",
                     "users_with_no_role": "역할이 없는 유저만"
-                }
+                },
+                "unsubscribed_announcements": "Unsubscribed from announcements",
+                "visibility": "Visibility:",
+                "representing": "Representing"
             },
             "gallery": {
                 "header": "갤러리"
@@ -901,9 +940,11 @@
             "max_cache_size": "최대 캐시 크기 [GB] (최소 20)",
             "cache_expiry_delay": "캐시 만료 일수 [Days] (30 - 150)",
             "cache_directory": "캐시 폴더 위치",
+            "picture_directory": "Custom Picture Folder Location",
             "fpv_steadycam_fov": "1인칭 스테디캠 시야각",
             "camera_resolution": "카메라 해상도",
             "screenshot_resolution": "스크린샷 해상도",
+            "picture_sort_by_date": "Sort pictures into folders by date",
             "disable_discord_presence": "디스코드 연동 (Rich Presence) 끄기",
             "vrchat_docs": "VRChat 문서",
             "cancel": "취소",
@@ -918,11 +959,30 @@
         },
         "set_world_tags": {
             "header": "월드 태그 설정",
-            "avatar_scaling": "아바타 스케일링",
+            "avatar_scaling_disabled": "Disable avatar scaling",
             "enable_debugging": "모두에게 디버깅 허용",
-            "seprator": "태그를 콤마로 구분해서 입력하세요",
+            "author_tags": "Author Tags (comma separated)",
+            "content_tags": "Content Warning Tags",
+            "content_horror": "Horror",
+            "content_gore": "Gore",
+            "content_violence": "Violence",
+            "content_adult": "Adult",
+            "content_sex": "Sexual",
             "cancel": "취소",
             "save": "저장"
+        },
+        "set_avatar_tags": {
+            "header": "Set Avatar Tags",
+            "content_tags": "Content Warning Tags",
+            "content_horror": "Horror",
+            "content_gore": "Gore",
+            "content_violence": "Violence",
+            "content_adult": "Adult",
+            "content_sex": "Sexual",
+            "select_all": "Select All",
+            "select_none": "Select None",
+            "cancel": "Cancel",
+            "save": "Save"
         },
         "download_history": {
             "header": "다운로드 기록",
@@ -1039,7 +1099,7 @@
         },
         "invite_to_group": {
             "header": "그룹에 초대",
-            "description": "불특정 다수에게 그룹 초대를 보내지 마세요. 너무 많은 유저를 그룹에 초대하면 계정 정지 (BAN) 사유가 됩니다",
+            "description": "Don't spam invite users, you'll get rate limited.",
             "choose_group_placeholder": "그룹 선택",
             "groups": "그룹",
             "choose_friends_placeholder": "친구 선택",
@@ -1106,13 +1166,14 @@
         },
         "gallery_icons": {
             "header": "갤러리/아이콘/이모지 관리",
-            "description": "추천 이미지 크기는 1200x900px 입니다",
+            "description": "Recommended image size: 1200x900px (4:3)",
             "gallery": "갤러리",
             "icons": "아이콘",
             "emojis": "이모지",
             "refresh": "새로고침",
             "upload": "업로드",
-            "clear": "해제"
+            "clear": "해제",
+            "emoji_animation_styles": "Animation Styles"
         },
         "change_content_image": {
             "avatar": "아바타 이미지 변경",
@@ -1175,7 +1236,7 @@
         "otp": {
             "header": "2단계 인증",
             "description": "복구 코드 중 하나를 입력하세요",
-            "use_totp": "TOTP 사용",
+            "use_totp": "Use TOTP",
             "verify": "확인",
             "input_placeholder": "코드",
             "input_error": "잘못된 코드"
@@ -1306,12 +1367,22 @@
         },
         "change_world_capacity": {
             "header": "인원 제한 변경",
-            "description": "월드 인원 제한 입력 (최대: 40)",
+            "description": "Enter world maximum capacity (hard cap), Max: 80",
             "cancel": "취소",
             "ok": "확인",
             "input_error": "숫자만 입력 가능",
             "message": {
                 "success": "월드 인원 제한 변경됨"
+            }
+        },
+        "change_world_recommended_capacity": {
+            "header": "Change Recommended Capacity",
+            "description": "Enter world recommended capacity (soft cap)",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid number is required",
+            "message": {
+                "success": "World recommended capacity changed"
             }
         },
         "change_world_preview": {

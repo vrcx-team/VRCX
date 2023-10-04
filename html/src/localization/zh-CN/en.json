@@ -104,6 +104,7 @@
             "clear_tooltip": "清除",
             "delete_tooltip": "删除",
             "unavailable_tooltip": "不可用",
+            "private": "私人",
             "sort_by": "排序方式:"
         },
         "friend_log": {
@@ -125,14 +126,13 @@
             "bulk_unfriend": "批量删除模式",
             "bulk_unfriend_selection": "批量删除已选择的好友",
             "load": "读取缺失的项目",
-            "load_notice": "这会向 API 发送大量请求，所以请谨慎使用",
             "load_tooltip": "读取",
-            "cancel_tooltip": "取消",
             "favorites_only_tooltip": "仅显示星标好友",
             "search_placeholder": "搜索好友",
             "filter_placeholder": "筛选好友",
             "refresh_tooltip": "刷新",
-            "clear_tooltip": "清除结果"
+            "clear_tooltip": "清除结果",
+            "cancel_tooltip": "取消"
         },
         "profile": {
             "profile": {
@@ -529,7 +529,6 @@
                 "favorite_tooltip": "添加到我的收藏",
                 "unfavorite_tooltip": "从我的收藏中移除",
                 "refresh": "刷新",
-                "copy_url": "复制玩家链接",
                 "invite": "邀请",
                 "invite_with_message": "发送带消息的邀请",
                 "request_invite": "请求加入",
@@ -563,9 +562,8 @@
                 "header": "信息",
                 "launch_invite_tooltip": "启动 / 邀请",
                 "self_invite_tooltip": "自我邀请",
-                "refresh_user_count_tooltip": "刷新房间人数",
                 "refresh_instance_info": "刷新房间信息",
-                "instance_queue": "队列状态:",
+                "instance_queue": "在等待队列的玩家:",
                 "instance_users": "房间用户:",
                 "instance_game_version": "游戏版本:",
                 "instance_queuing_enabled": "等待队列已开启",
@@ -592,6 +590,11 @@
                 "avatar_cloning_allow": "允许",
                 "avatar_cloning_deny": "不允许",
                 "home_location": "出生点",
+                "id": "",
+                "id_tooltip": "复制到剪贴板",
+                "copy_id": "复制 ID",
+                "copy_url": "复制URL",
+                "copy_display_name": "复制显示名称",
                 "accuracy_notice": "本地数据库的数据可能不准确",
                 "instance_full": "房间已满"
             },
@@ -617,7 +620,7 @@
                     "descending": "倒序",
                     "ascending": "顺序"
                 }
-             },
+            },
             "favorite_worlds": {
                 "header": "收藏的世界"
             },
@@ -641,12 +644,16 @@
                 "avatar_scaling_disabled": "已关闭模型缩放功能",
                 "future_proofing": "Future Proofing",
                 "labs": "社区实验室",
-                "cache": "缓存"
+                "cache": "缓存",
+                "content_horror": "恐怖",
+                "content_gore": "血腥",
+                "content_violence": "暴力",
+                "content_adult": "成人内容",
+                "content_sex": "性暗示"
             },
             "actions": {
                 "delete_cache_tooltip": "从缓存中删除世界",
-                "favorite_tooltip": "添加到我的收藏",
-                "unfavorite_tooltip": "从我的收藏中移除",
+                "favorites_tooltip": "星标好友",
                 "refresh": "刷新",
                 "new_instance": "创建新房间",
                 "make_home": "设为出生点",
@@ -656,6 +663,7 @@
                 "rename": "重命名",
                 "change_description": "更改描述",
                 "change_capacity": "更改最大玩家上限",
+                "change_recommended_capacity": "更改推荐人数",
                 "change_preview": "更改 YouTube 预览",
                 "change_tags": "更改标签",
                 "change_image": "更改图片",
@@ -670,9 +678,9 @@
                 "private_count": "私人 {count}",
                 "capacity_count": "玩家上限 {count} ({max})",
                 "self_invite_tooltip": "自我邀请",
-                "refresh_user_count_tooltip": "刷新房间人数",
-                "instance_creator": "房间建立者",
-                "instance_full": "房间已满"
+                "refresh_instance_info": "刷新房间信息",
+                "instance_full": "房间已满",
+                "instance_creator": "房间建立者"
             },
             "info": {
                 "header": "信息",
@@ -684,6 +692,7 @@
                 "copy_url": "复制链接",
                 "copy_name": "复制名称",
                 "youtube_preview": "YouTube 预览链接",
+                "author_tags": "作者添加的标签",
                 "players": "地图内人数",
                 "favorites": "收藏次数",
                 "visits": "总拜访次数",
@@ -692,6 +701,8 @@
                 "popularity": "知名度",
                 "created_at": "创建时间",
                 "last_updated": "最后更新",
+                "publication_date": "发布日期",
+                "labs_publication_date": "发布到社区实验室的日期",
                 "version": "版本",
                 "platform": "平台",
                 "last_visited": "上次拜访",
@@ -709,7 +720,12 @@
                 "private": "私人",
                 "fallback": "后备",
                 "future_proofing": "Future Proofing",
-                "cache": "缓存"
+                "cache": "缓存",
+                "content_horror": "恐怖",
+                "content_gore": "血腥",
+                "content_violence": "暴力",
+                "content_adult": "成人内容",
+                "content_sex": "性暗示"
             },
             "labels": {
                 "public": "（公开）",
@@ -730,6 +746,7 @@
                 "make_private": "设为私人",
                 "rename": "重新命名",
                 "change_description": "更改描述",
+                "change_content_tags": "更改内容标签",
                 "change_image": "更改图片",
                 "download_package": "下载 Unity Package",
                 "delete": "删除"
@@ -787,8 +804,8 @@
             },
             "info": {
                 "header": "信息",
-                "announcement": "公告",
                 "instances": "房间列表",
+                "announcement": "公告",
                 "instance_full": "房间已满",
                 "rules": "规则",
                 "members": "成员",
@@ -944,9 +961,26 @@
             "header": "设置世界标签",
             "avatar_scaling_disabled": "关闭模型缩放",
             "enable_debugging": "为其他人启用世界调试菜单",
-            "seprator": "使用逗号来分隔每个标签",
             "author_tags": "作者添加的标签（以逗号分隔）",
             "content_tags": "Content Tags (以逗号分隔)",
+            "content_horror": "恐怖",
+            "content_gore": "血腥",
+            "content_violence": "暴力",
+            "content_adult": "成人内容",
+            "content_sex": "性暗示",
+            "cancel": "取消",
+            "save": "保存"
+        },
+        "set_avatar_tags": {
+            "header": "设置模型标签",
+            "content_tags": "内容警告标签",
+            "content_horror": "恐怖",
+            "content_gore": "血腥",
+            "content_violence": "暴力",
+            "content_adult": "成人内容",
+            "content_sex": "性暗示",
+            "select_all": "全选",
+            "select_none": "全不选",
             "cancel": "取消",
             "save": "保存"
         },
@@ -991,7 +1025,7 @@
         "notification_position": {
             "header": "通知位置",
             "description": "选择通知位置",
-            "ok": "OK"
+            "ok": "确定"
         },
         "shared_feed_filters": {
             "notification": "通知筛选器",
@@ -1178,7 +1212,7 @@
             "header": "设置主密码",
             "password_placeholder": "输入新密码",
             "re_input_placeholder": "确认密码",
-            "ok": "OK"
+            "ok": "确定"
         },
         "screenshot_metadata": {
             "header": "屏幕截图元数据查看器",
@@ -1202,7 +1236,6 @@
         "otp": {
             "header": "双重认证",
             "description": "输入你保存的其中一个备用验证码",
-            "cancel": "取消",
             "use_totp": "使用验证码",
             "verify": "验证",
             "input_placeholder": "备用验证码",
@@ -1235,7 +1268,7 @@
             "header": "打开玩家资料页",
             "description": "输入玩家链接或玩家 ID (UUID)",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "需要玩家链接 / 玩家 ID",
             "message": {
                 "error": "无效的链接或 ID"
@@ -1245,14 +1278,14 @@
             "header": "打开玩家资料页",
             "description": "输入玩家名称",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "需要玩家名称"
         },
         "direct_access_world_id": {
             "header": "查看世界详细信息",
             "description": "输入世界链接或世界 ID (UUID)",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "需要世界链接 / 世界 ID",
             "message": {
                 "error": "无效的链接或 ID"
@@ -1262,7 +1295,7 @@
             "header": "打开模型资料页",
             "description": "输入模型链接或模型 ID (UUID)",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "需要模型链接 / 模型 ID",
             "message": {
                 "error": "无效的链接或 ID"
@@ -1272,7 +1305,7 @@
             "header": "直接打开",
             "description": "输入玩家 / 世界 / 房间 / 模型链接 或 唯一ID",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "需要链接或 ID",
             "message": {
                 "error": "无效的链接或 ID"
@@ -1282,21 +1315,21 @@
             "header": "通知显示时间",
             "description": "输入秒数",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "请输入有效的秒数"
         },
         "overlay_message_timeout": {
             "header": "消息叠加层显示时间",
             "description": "输入秒数",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "请输入有效的秒数"
         },
         "rename_avatar": {
             "header": "重命名模型",
             "description": "输入模型名称",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "请输入有效的名称",
             "message": {
                 "success": "已重新命名模型"
@@ -1306,7 +1339,7 @@
             "header": "更改模型描述",
             "description": "输入模型描述",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "请输入有效的描述",
             "message": {
                 "success": "已更改模型描述"
@@ -1316,7 +1349,7 @@
             "header": "重命名世界",
             "description": "输入世界名称",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "请输入有效的名称",
             "message": {
                 "success": "已重新命名世界"
@@ -1326,7 +1359,7 @@
             "header": "更改世界描述",
             "description": "输入世界描述",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "请输入有效的描述",
             "message": {
                 "success": "已更改世界描述"
@@ -1336,17 +1369,27 @@
             "header": "更改世界最大人数",
             "description": "输入世界最大人数, 最大：40",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "请输入有效的人数",
             "message": {
                 "success": "已更改世界最大人数"
+            }
+        },
+        "change_world_recommended_capacity": {
+            "header": "更改推荐人数",
+            "description": "输入世界推荐的人数(软上限)",
+            "cancel": "取消",
+            "ok": "确定",
+            "input_error": "请输入有效的数字",
+            "message": {
+                "success": "推荐进入人数已改变"
             }
         },
         "change_world_preview": {
             "header": "更改 YouTube 预览",
             "description": "输入世界 YouTube 预览",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "请输入有效的 Youtube 链接",
             "message": {
                 "error": "无效的 Youtube 链接",
@@ -1364,21 +1407,21 @@
             "header": "玩家超时阀值",
             "description": "输入秒数（预设：3）",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "请输入有效的秒数"
         },
         "auto_clear_cache": {
             "header": "VRCX 缓存清除间隔",
             "description": "输入小时数，较大的数值可能会影响性能 （默认：24，关闭：0）",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "请输入有效的小时数"
         },
         "new_local_favorite_group": {
             "header": "新增收藏夹",
             "description": "输入收藏夹名称",
             "cancel": "取消",
-            "ok": "OK",
+            "ok": "确定",
             "input_error": "请输入有效的名称",
             "message": {
                 "error": "名称为 {name} 的收藏夹已存在"
@@ -1428,10 +1471,10 @@
             "rank": "信任等级",
             "language": "语言",
             "bioLink": "社交链接",
+            "date": "时间",
             "user": "玩家",
             "type": "种类",
-            "detail": "详细信息",
-            "date": "时间"
+            "detail": "详细信息"
         },
         "friendLog": {
             "date": "时间",
