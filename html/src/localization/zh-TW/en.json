@@ -103,9 +103,9 @@
             "rename_tooltip": "重新命名",
             "clear_tooltip": "清除",
             "delete_tooltip": "刪除",
-            "unavailable_tooltip": "Unavailable",
+            "unavailable_tooltip": "無法使用",
             "private": "私人",
-            "sort_by": "Sort By"
+            "sort_by": "排序方式"
         },
         "friend_log": {
             "filter_placeholder": "篩選好友紀錄",
@@ -379,7 +379,7 @@
                     "header": "進階設定",
                     "launch_options": "啟動選項",
                     "screenshot_metadata": "螢幕截圖詳細資訊",
-                    "common_folders": "Common Folders",
+                    "common_folders": "遊戲資料夾",
                     "pending_offline": {
                         "header": "待確認離線",
                         "description": "將玩家標記為離線之前延遲（防止誤判）",
@@ -445,7 +445,7 @@
                         "avatar_cache": "角色快取：",
                         "group_cache": "群組快取：",
                         "avatar_name_cache": "角色名稱快取：",
-                        "instance_cache": "房間緩存:",
+                        "instance_cache": "房間緩存：",
                         "clear_cache": "清除快取",
                         "auto_clear_cache": "自動清除快取",
                         "download_history": "下載紀錄",
@@ -564,8 +564,8 @@
                 "self_invite_tooltip": "自我邀請",
                 "refresh_instance_info": "重新整理房間資訊",
                 "instance_queue": "佇列：",
-                "instance_users": "玩家:",
-                "instance_game_version": "遊戲版本:",
+                "instance_users": "玩家：",
+                "instance_game_version": "遊戲版本：",
                 "instance_queuing_enabled": "排隊開啟",
                 "instance_creator": "房間建立者",
                 "note": "備註",
@@ -594,7 +594,7 @@
                 "id_tooltip": "複製到剪貼簿",
                 "copy_id": "複製 ID",
                 "copy_url": "複製連結",
-                "copy_display_name": "Copy DisplayName",
+                "copy_display_name": "複製顯示名稱",
                 "accuracy_notice": "本地資料庫的資料可能不精確",
                 "instance_full": "已滿"
             },
@@ -608,17 +608,17 @@
             "worlds": {
                 "header": "世界",
                 "total_count": "總共 {count}",
-                "sort_by": "Sort by:",
-                "order_by": "Order by:",
+                "sort_by": "分類依據：",
+                "order_by": "排序依據：",
                 "sorting": {
-                    "updated": "Updated",
-                    "created": "Created",
-                    "favorites": "Favorites",
-                    "popularity": "Popularity"
+                    "updated": "已更新",
+                    "created": "已建立",
+                    "favorites": "收藏",
+                    "popularity": "熱門"
                 },
                 "order": {
-                    "descending": "Descending",
-                    "ascending": "Ascending"
+                    "descending": "遞減",
+                    "ascending": "遞增"
                 }
             },
             "favorite_worlds": {
@@ -645,11 +645,11 @@
                 "future_proofing": "Future Proofing",
                 "labs": "社區實驗室",
                 "cache": "快取",
-                "content_horror": "Horror",
-                "content_gore": "Gore",
-                "content_violence": "Violence",
-                "content_adult": "Adult",
-                "content_sex": "Sexual"
+                "content_horror": "恐怖",
+                "content_gore": "血腥",
+                "content_violence": "暴力",
+                "content_adult": "成人",
+                "content_sex": "色情"
             },
             "actions": {
                 "delete_cache_tooltip": "從快取中刪除世界",
@@ -663,7 +663,7 @@
                 "rename": "重新命名",
                 "change_description": "變更敘述",
                 "change_capacity": "變更最大玩家上限",
-                "change_recommended_capacity": "Change Recommended Capacity",
+                "change_recommended_capacity": "變更建立人數",
                 "change_preview": "變更 YouTube 預覽",
                 "change_tags": "變更標籤",
                 "change_image": "變更圖片",
@@ -692,7 +692,7 @@
                 "copy_url": "複製連結",
                 "copy_name": "複製名稱",
                 "youtube_preview": "YouTube 預覽",
-                "author_tags": "Author Tags",
+                "author_tags": "作者標籤",
                 "players": "玩家人數",
                 "favorites": "收藏次數",
                 "visits": "總綁訪次數",
@@ -701,8 +701,8 @@
                 "popularity": "熱門度",
                 "created_at": "創建時間",
                 "last_updated": "最後更新",
-                "publication_date": "Publication Date",
-                "labs_publication_date": "Labs Publication Date",
+                "publication_date": "發佈日期",
+                "labs_publication_date": "實驗室發佈日期",
                 "version": "版本",
                 "platform": "平台",
                 "last_visited": "上次拜訪",
@@ -746,7 +746,7 @@
                 "make_private": "設為私人",
                 "rename": "重新命名",
                 "change_description": "變更敘述",
-                "change_content_tags": "Change Content Tags",
+                "change_content_tags": "變更世界內容標籤",
                 "change_image": "變更圖片",
                 "download_package": "下載 Unity Package",
                 "delete": "刪除"
@@ -762,7 +762,7 @@
                 "version": "版本",
                 "platform": "平台",
                 "memo": "備註",
-                "memo_placeholder": "Click to add a memo"
+                "memo_placeholder": "點擊新增備忘錄"
             },
             "json": {
                 "header": "原始資料",
@@ -940,11 +940,11 @@
             "max_cache_size": "最大快取大小 [GB] （最小 20GB）",
             "cache_expiry_delay": "快取保存時長 [日] （30 - 150）",
             "cache_directory": "覆蓋快取資料夾位置",
-            "picture_directory": "Custom Picture Folder Location",
+            "picture_directory": "覆蓋圖片資料夾位置",
             "fpv_steadycam_fov": "第一人稱平滑鏡頭視野範圍",
             "camera_resolution": "相機解析度",
             "screenshot_resolution": "螢幕截圖解析度",
-            "picture_sort_by_date": "Sort pictures into folders by date",
+            "picture_sort_by_date": "依據日期將圖片分類到資料夾中",
             "disable_discord_presence": "停用 Discord 遊戲狀態",
             "vrchat_docs": "VRChat 文件",
             "cancel": "取消",
@@ -959,10 +959,10 @@
         },
         "set_world_tags": {
             "header": "設定世界標籤",
-            "avatar_scaling_disabled": "Disable avatar scaling",
+            "avatar_scaling_disabled": "關閉角色縮放",
             "enable_debugging": "為其他人啟用世界偵錯",
-            "author_tags": "Author Tags (comma separated)",
-            "content_tags": "Content Warning Tags",
+            "author_tags": "作者標籤(使用逗號分隔每個標籤)",
+            "content_tags": "內容警告標籤",
             "content_horror": "恐怖",
             "content_gore": "血腥",
             "content_violence": "暴力",
@@ -972,8 +972,8 @@
             "save": "儲存"
         },
         "set_avatar_tags": {
-            "header": "Set Avatar Tags",
-            "content_tags": "Content Warning Tags",
+            "header": "設定角色標籤",
+            "content_tags": "內容警告標籤",
             "content_horror": "恐怖",
             "content_gore": "血腥",
             "content_violence": "暴力",
