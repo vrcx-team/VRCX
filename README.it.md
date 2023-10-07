@@ -13,13 +13,13 @@
 
 VRCX è un'applicazione di assistenza/accompagnamento per VRChat che fornisce informazioni e aiuta a compiere varie operazioni relative a VRChat in modo più conveniente rispetto all'uso del solo client VRChat (desktop o VR) o del sito web. Include anche alcune altre funzioni interessanti descritte di seguito.
 
-# Getting Started
+# Per Iniziare
 
 <div align="center">
 
 Scarica e installa l'ultimo installer (`VRCX_Setup.exe`) da [qui](https://github.com/vrcx-team/VRCX/releases/latest).
 
-# Features
+# Funzionalità
 
 <div align="left">
 
@@ -30,7 +30,7 @@ Scarica e installa l'ultimo installer (`VRCX_Setup.exe`) da [qui](https://github
   - Vedere quanto tempo avete trascorso insieme nei mondi e quante volte.
   - Tenere traccia dei cambiamenti di nome degli amici.
   - Salvate le note per ricordare come vi siete conosciuti.
-- electric_plug: Avvio automatico delle applicazioni all'avvio di VRChat
+- :electric_plug: Avvio automatico delle applicazioni all'avvio di VRChat
   - È possibile configurare VRCX per avviare altre applicazioni quando si avvia VRChat.
   - Ad esempio, si può fare in modo che VRCX lanci un'applicazione OSC o un cambiavoce all'apertura di VRChat.
 - :floppy_disk: Persistenza del mondo
@@ -100,13 +100,13 @@ Scarica e installa l'ultimo installer (`VRCX_Setup.exe`) da [qui](https://github
   </tr>
 </table>
 
-<h3>Favorite</h3>
+<h3>Preferiti</h3>
 
-<h4>Amico</h4>
+<h4>Amici</h4>
 
 <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251992424-ba406d0f-787e-4e2d-89bd-4caa0a05d31f.png" alt="amico">
 
-<h4>Mondo</h4>
+<h4>Mondi</h4>
 
 <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/82102170/251992950-8f2c6cdc-dc9a-4a60-b59f-9fa80d071359.png" alt="mondo">
 
@@ -125,7 +125,7 @@ Scarica e installa l'ultimo installer (`VRCX_Setup.exe`) da [qui](https://github
 <!-- Le altre immagini saranno simili a questa -->
 </div>
 
-## VRCX è contrario ai TOS di VRChat?
+## VRCX è contro i TOS di VRChat?
 
 **No.**
 
