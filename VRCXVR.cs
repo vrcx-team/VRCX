@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -22,6 +23,7 @@ namespace VRCX
     public class VRCXVR
     {
         public static VRCXVR Instance;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly float[] _rotation = { 0f, 0f, 0f };
         private static readonly float[] _translation = { 0f, 0f, 0f };
         private static readonly float[] _translationLeft = { -7f / 100f, -5f / 100f, 6f / 100f };
@@ -220,6 +222,7 @@ namespace VRCX
                             {
                                 overlay.DestroyOverlay(dashboardHandle);
                                 dashboardHandle = 0;
+                                logger.Error(err);
                             }
 
                             err = ProcessOverlay1(overlay, ref overlayHandle1, ref overlayVisible1, dashboardVisible, overlayIndex, nextOverlay);
@@ -228,6 +231,7 @@ namespace VRCX
                             {
                                 overlay.DestroyOverlay(overlayHandle1);
                                 overlayHandle1 = 0;
+                                logger.Error(err);
                             }
 
                             err = ProcessOverlay2(overlay, ref overlayHandle2, ref overlayVisible2, dashboardVisible);
@@ -236,6 +240,7 @@ namespace VRCX
                             {
                                 overlay.DestroyOverlay(overlayHandle2);
                                 overlayHandle2 = 0;
+                                logger.Error(err);
                             }
                         }
                     }
@@ -425,8 +430,15 @@ namespace VRCX
                         return err;
                     }
 
-                    ulong handle = 0;
-                    err = overlay.CreateDashboardOverlay("VRCX", "VRCX", ref dashboardHandle, ref handle);
+                    ulong thumbnailHandle = 0;
+                    err = overlay.CreateDashboardOverlay("VRCX", "VRCX", ref dashboardHandle, ref thumbnailHandle);
+                    if (err != EVROverlayError.None)
+                    {
+                        return err;
+                    }
+
+                    var iconPath = Path.Combine(Program.BaseDirectory, "VRCX.png");
+                    err = overlay.SetOverlayFromFile(thumbnailHandle, iconPath);
                     if (err != EVROverlayError.None)
                     {
                         return err;
