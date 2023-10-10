@@ -1241,7 +1241,6 @@ speechSynthesis.getVoices();
         template:
             '<span @click="showUserDialog" class="x-link">{{ username }}</span>',
         props: {
-            username: String,
             userid: String,
             location: String,
             key: Number
@@ -13792,7 +13791,7 @@ speechSynthesis.getVoices();
                     filter.value.some((v) => v === row.type)
             },
             {
-                prop: 'senderUsername',
+                prop: ['senderUsername', 'message'],
                 value: ''
             }
         ],
@@ -26523,14 +26522,14 @@ speechSynthesis.getVoices();
         );
         ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${displayLocation} `;
         API.queuedInstances.set(instanceId, ref);
-        workerTimers.setTimeout(this.instanceQueueTimeout, 900000); // 15mins
+        workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
     };
 
     $app.methods.instanceQueueTimeout = function () {
-        // remove instance from queue after 15mins of inactivity
+        // remove instance from queue after 1hour of inactivity
         API.queuedInstances.forEach((ref) => {
-            // 14mins
-            if (Date.now() - ref.updatedAt > 840000) {
+            // 59mins
+            if (Date.now() - ref.updatedAt > 3540000) {
                 ref.$msgBox.close();
                 API.queuedInstances.delete(ref.location);
             }
@@ -26868,17 +26867,64 @@ speechSynthesis.getVoices();
             groupId: string
         }
     */
-    API.getGroupAnnouncement = function (params) {
-        return this.call(`groups/${params.groupId}/announcement`, {
-            method: 'GET'
+    // API.getGroupAnnouncement = function (params) {
+    //     return this.call(`groups/${params.groupId}/announcement`, {
+    //         method: 'GET'
+    //     }).then((json) => {
+    //         var args = {
+    //             json,
+    //             params
+    //         };
+    //         this.$emit('GROUP:ANNOUNCEMENT', args);
+    //         return args;
+    //     });
+    // };
+
+    /*
+        params: {
+            groupId: string,
+            n: number,
+            offset: number
+        }
+    */
+    API.getGroupPosts = function (params) {
+        return this.call(`groups/${params.groupId}/posts`, {
+            method: 'GET',
+            params
         }).then((json) => {
             var args = {
                 json,
                 params
             };
-            this.$emit('GROUP:ANNOUNCEMENT', args);
+            this.$emit('GROUP:POSTS', args);
             return args;
         });
+    };
+
+    /*
+        params: {
+            groupId: string
+        }
+    */
+    API.getAllGroupPosts = async function (params) {
+        var posts = [];
+        var offset = 0;
+        var n = 100;
+        var total = 0;
+        do {
+            var args = await this.getGroupPosts({
+                groupId: params.groupId,
+                n,
+                offset
+            });
+            posts = posts.concat(args.json.posts);
+            total = args.json.total;
+            offset += n;
+        } while (offset < total);
+        return {
+            posts,
+            params
+        };
     };
 
     /*
@@ -27263,14 +27309,16 @@ speechSynthesis.getVoices();
         id: '',
         inGroup: false,
         ownerDisplayName: '',
-        announcementDisplayName: '',
         ref: {},
         announcement: {},
+        posts: [],
+        postsFiltered: [],
         members: [],
         instances: [],
         memberRoles: [],
         memberFilter: $app.data.groupDialogFilterOptions.everyone,
         memberSortOrder: $app.data.groupDialogSortingOptions.joinedAtDesc,
+        postsSearch: '',
         galleries: {}
     };
 
@@ -27285,9 +27333,10 @@ speechSynthesis.getVoices();
         D.id = groupId;
         D.inGroup = false;
         D.ownerDisplayName = '';
-        D.announcementDisplayName = '';
         D.treeData = [];
         D.announcement = {};
+        D.posts = [];
+        D.postsFiltered = [];
         D.instances = [];
         D.memberRoles = [];
         if (this.groupDialogLastGallery !== groupId) {
@@ -27348,30 +27397,23 @@ speechSynthesis.getVoices();
                         }
                     }
                     if (D.inGroup) {
-                        API.getGroupAnnouncement({
+                        API.getAllGroupPosts({
                             groupId
                         }).then((args2) => {
-                            if (groupId === args2.json.groupId) {
-                                D.announcement = args2.json;
-                                if (D.announcement.id) {
-                                    D.announcement.title =
-                                        this.replaceBioSymbols(
-                                            D.announcement.title
-                                        );
-                                    D.announcement.text =
-                                        this.replaceBioSymbols(
-                                            D.announcement.text
-                                        );
+                            if (groupId === args2.params.groupId) {
+                                for (var post of args2.posts) {
+                                    post.title = this.replaceBioSymbols(
+                                        post.title
+                                    );
+                                    post.text = this.replaceBioSymbols(
+                                        post.text
+                                    );
                                 }
-                                if (D.announcement && D.announcement.authorId) {
-                                    API.getCachedUser({
-                                        userId: D.announcement.authorId
-                                    }).then((args3) => {
-                                        D.announcementDisplayName =
-                                            args3.ref.displayName;
-                                        return args3;
-                                    });
+                                if (args2.posts.length > 0) {
+                                    D.announcement = args2.posts[0];
                                 }
+                                D.posts = args2.posts;
+                                this.updateGroupPostSearch();
                             }
                         });
                         API.getGroupInstances({
@@ -27385,19 +27427,34 @@ speechSynthesis.getVoices();
                         });
                     }
                     if (this.$refs.groupDialogTabs.currentName === '0') {
-                        this.groupDialogLastActiveTab = 'Info';
+                        this.groupDialogLastActiveTab = $t(
+                            'dialog.group.info.header'
+                        );
                     } else if (this.$refs.groupDialogTabs.currentName === '1') {
-                        this.groupDialogLastActiveTab = 'Members';
+                        this.groupDialogLastActiveTab = $t(
+                            'dialog.group.posts.header'
+                        );
+                    } else if (this.$refs.groupDialogTabs.currentName === '2') {
+                        this.groupDialogLastActiveTab = $t(
+                            'dialog.group.members.header'
+                        );
                         if (this.groupDialogLastMembers !== groupId) {
                             this.groupDialogLastMembers = groupId;
                             this.getGroupDialogGroupMembers();
                         }
-                    } else if (this.$refs.groupDialogTabs.currentName === '2') {
-                        this.groupDialogLastActiveTab = 'Gallery';
+                    } else if (this.$refs.groupDialogTabs.currentName === '3') {
+                        this.groupDialogLastActiveTab = $t(
+                            'dialog.group.gallery.header'
+                        );
                         if (this.groupDialogLastGallery !== groupId) {
                             this.groupDialogLastGallery = groupId;
                             this.getGroupGalleries();
                         }
+                    } else if (this.$refs.groupDialogTabs.currentName === '4') {
+                        this.groupDialogLastActiveTab = $t(
+                            'dialog.group.json.header'
+                        );
+                        this.refreshGroupDialogTreeData();
                     }
                 }
                 return args1;
@@ -27446,7 +27503,11 @@ speechSynthesis.getVoices();
         if (this.groupDialogLastActiveTab === obj.label) {
             return;
         }
-        if (obj.label === $t('dialog.group.members.header')) {
+        if (obj.label === $t('dialog.group.info.header')) {
+            //
+        } else if (obj.label === $t('dialog.group.posts.header')) {
+            //
+        } else if (obj.label === $t('dialog.group.members.header')) {
             if (this.groupDialogLastMembers !== groupId) {
                 this.groupDialogLastMembers = groupId;
                 this.getGroupDialogGroupMembers();
@@ -27466,7 +27527,7 @@ speechSynthesis.getVoices();
         var D = this.groupDialog;
         D.treeData = buildTreeData({
             group: D.ref,
-            announcement: D.announcement,
+            posts: D.posts,
             instances: D.instances,
             members: D.members,
             galleries: D.galleries
@@ -27587,6 +27648,26 @@ speechSynthesis.getVoices();
         }
         API.currentUserGroups.delete(groupId);
     };
+
+    // group posts
+
+    $app.methods.updateGroupPostSearch = function () {
+        var D = this.groupDialog;
+        var search = D.postsSearch.toLowerCase();
+        D.postsFiltered = D.posts.filter((post) => {
+            if (search === '') {
+                return true;
+            }
+            if (post.title.toLowerCase().includes(search)) {
+                return true;
+            }
+            if (post.text.toLowerCase().includes(search)) {
+                return true;
+            }
+            return false;
+        });
+    };
+        
 
     // group members
 

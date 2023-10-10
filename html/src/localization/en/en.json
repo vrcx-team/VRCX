@@ -824,6 +824,13 @@
                 "role_created_at": "Created At:",
                 "role_permissions": "Permissions:"
             },
+            "posts": {
+                "header": "Posts",
+                "visibility": "Visibility:",
+                "edited_by": "Edited by:",
+                "search_placeholder": "Search",
+                "posts_count": "Posts: "
+            },
             "members": {
                 "header": "Members",
                 "all_members": "All Members",

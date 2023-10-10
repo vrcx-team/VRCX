@@ -481,7 +481,14 @@ html
                                                 img(v-lazy="group.iconUrl")
                                             .detail
                                                 span.name(v-text="group.name")
-                                                span.extra ({{ group.memberCount }})
+                                                span.extra
+                                                    el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
+                                                        i.el-icon-collection-tag(style="margin-right:5px")
+                                                    el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
+                                                        template(#content)
+                                                            span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
+                                                        i.el-icon-view(style="margin-right:5px")
+                                                    span ({{ group.memberCount }})
                                 template(v-if="userGroups.mutualGroups.length > 0")
                                     span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.mutual_groups') }}
                                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.mutualGroups.length }}
@@ -491,7 +498,14 @@ html
                                                 img(v-lazy="group.iconUrl")
                                             .detail
                                                 span.name(v-text="group.name")
-                                                span.extra ({{ group.memberCount }})
+                                                span.extra
+                                                    el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
+                                                        i.el-icon-collection-tag(style="margin-right:5px")
+                                                    el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
+                                                        template(#content)
+                                                            span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
+                                                        i.el-icon-view(style="margin-right:5px")
+                                                    span ({{ group.memberCount }})
                                 template(v-if="userGroups.remainingGroups.length > 0")
                                     span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.groups') }}
                                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.remainingGroups.length }}
@@ -501,7 +515,14 @@ html
                                                 img(v-lazy="group.iconUrl")
                                             .detail
                                                 span.name(v-text="group.name")
-                                                span.extra ({{ group.memberCount }})
+                                                span.extra
+                                                    el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
+                                                        i.el-icon-collection-tag(style="margin-right:5px")
+                                                    el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
+                                                        template(#content)
+                                                            span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
+                                                        i.el-icon-view(style="margin-right:5px")
+                                                    span ({{ group.memberCount }})
                         el-tab-pane(:label="$t('dialog.user.worlds.header')")
                             el-button(type="default" :loading="userDialog.isWorldsLoading" @click="refreshUserDialogWorlds()" size="mini" icon="el-icon-refresh" circle)
                             span(style="margin-left:5px") {{ $t('dialog.user.worlds.total_count', { count: userDialog.worlds.length }) }}
@@ -1000,12 +1021,20 @@ html
                                         pre.extra(style="display:inline-block;vertical-align:top;font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0") {{ groupDialog.announcement.text || '-' }}
                                         br
                                         .extra(v-if="groupDialog.announcement.id" style="float:right;margin-left:5px")
+                                            el-tooltip(v-if="groupDialog.announcement.roleIds.length" placement="top")
+                                                template(#content)
+                                                    span {{ $t('dialog.group.posts.visibility') }}
+                                                    br
+                                                    template(v-for="roleId in groupDialog.announcement.roleIds" :key="roleId")
+                                                        span(v-for="(role, rIndex) in groupDialog.ref.roles" :key="rIndex" v-if="role.id === roleId" v-text="role.name")
+                                                        span(v-if="groupDialog.announcement.roleIds.indexOf(roleId) < groupDialog.announcement.roleIds.length - 1") ,&nbsp;
+                                                i.el-icon-view(style="margin-right:5px")
+                                            display-name(:userid="groupDialog.announcement.authorId" style="margin-right:5px")
+                                            span(v-if="groupDialog.announcement.editorId" style="margin-right:5px") ({{ $t('dialog.group.posts.edited_by') }} #[display-name(:userid="groupDialog.announcement.editorId")])
                                             el-tooltip(placement="bottom")
                                                 template(#content)
                                                     span {{ groupDialog.announcement.updatedAt | formatDate('long') }}
-                                                span(@click="showUserDialog(groupDialog.announcement.authorId)" style="cursor:pointer")
-                                                    span(v-text="groupDialog.announcementDisplayName" style="margin-right:5px")
-                                                    timer(:epoch="Date.parse(groupDialog.announcement.updatedAt)")
+                                                timer(:epoch="Date.parse(groupDialog.announcement.updatedAt)")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.group.info.rules') }}
@@ -1065,6 +1094,35 @@ html
                                                                     span {{ permission }}
                                                                     br
                                                             span {{ role.name }}{{ rIndex < groupDialog.memberRoles.length - 1 ? ', ' : '' }}
+                        el-tab-pane(:label="$t('dialog.group.posts.header')")
+                            template(v-if="groupDialog.visible")
+                                span(style="margin-right:10px") {{ $t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}
+                                el-input(v-model="groupDialog.postsSearch" @input="updateGroupPostSearch" clearable size="mini" :placeholder="$t('dialog.group.posts.search_placeholder')" style="width:89%;margin-bottom:10px")
+                                .x-friend-list
+                                    .x-friend-item(v-for="post in groupDialog.postsFiltered" :key="post.id" style="width:100%;cursor:default")
+                                        .detail
+                                            span(style="display:block" v-text="post.title")
+                                            div(v-if="post.imageUrl" style="display:inline-block;margin-right:5px")
+                                                el-popover(placement="right" width="500px" trigger="click")
+                                                    img.x-link(slot="reference" v-lazy="post.imageUrl" style="flex:none;width:60px;height:60px;border-radius:4px;object-fit:cover")
+                                                    img.x-link(v-lazy="post.imageUrl" style="height:500px" @click="showFullscreenImageDialog(post.imageUrl)")
+                                            pre.extra(style="display:inline-block;vertical-align:top;font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0") {{ post.text || '-' }}
+                                            br
+                                            .extra(v-if="post.authorId" style="float:right;margin-left:5px")
+                                                el-tooltip(v-if="post.roleIds.length" placement="top")
+                                                    template(#content)
+                                                        span {{ $t('dialog.group.posts.visibility') }}
+                                                        br
+                                                        template(v-for="roleId in post.roleIds" :key="roleId")
+                                                            span(v-for="(role, rIndex) in groupDialog.ref.roles" :key="rIndex" v-if="role.id === roleId" v-text="role.name")
+                                                            span(v-if="post.roleIds.indexOf(roleId) < post.roleIds.length - 1") ,&nbsp;
+                                                    i.el-icon-view(style="margin-right:5px")
+                                                display-name(:userid="post.authorId" style="margin-right:5px")
+                                                span(v-if="post.editorId" style="margin-right:5px") ({{ $t('dialog.group.posts.edited_by') }} #[display-name(:userid="post.editorId")])
+                                                el-tooltip(placement="bottom")
+                                                    template(#content)
+                                                        span {{ post.updatedAt | formatDate('long') }}
+                                                    timer(:epoch="Date.parse(post.updatedAt)")
                         el-tab-pane(:label="$t('dialog.group.members.header')")
                             template(v-if="groupDialog.visible")
                                 span(v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')" style="font-weight:bold;font-size:16px") {{ $t('dialog.group.members.all_members') }}
@@ -1111,7 +1169,7 @@ html
                                             span.name {{ $t('dialog.group.members.load_more') }}
                         el-tab-pane(:label="$t('dialog.group.gallery.header')")
                             el-button(type="default" size="mini" icon="el-icon-refresh" @click="getGroupGalleries" :loading="isGroupGalleryLoading" circle)
-                            el-tabs(type="card" v-loading="isGroupGalleryLoading" ref="groupDialogGallery")
+                            el-tabs(type="card" v-loading="isGroupGalleryLoading" ref="groupDialogGallery" style="margin-top:10px")
                                 template(v-for="(gallery, index) in groupDialog.ref.galleries")
                                     el-tab-pane
                                         span(slot="label")
