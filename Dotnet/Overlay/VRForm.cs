@@ -25,7 +25,7 @@ namespace VRCX
                 Path.Combine(Program.BaseDirectory, "html/vr.html?1")
             )
             {
-                DragHandler = new NoopDragHandler(),
+                DragHandler = new CefNoopDragHandler(),
                 BrowserSettings =
                 {
                     DefaultEncoding = "UTF-8",
@@ -37,7 +37,7 @@ namespace VRCX
                 Path.Combine(Program.BaseDirectory, "html/vr.html?2")
             )
             {
-                DragHandler = new NoopDragHandler(),
+                DragHandler = new CefNoopDragHandler(),
                 BrowserSettings =
                 {
                     DefaultEncoding = "UTF-8",

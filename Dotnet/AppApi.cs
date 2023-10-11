@@ -719,9 +719,11 @@ namespace VRCX
         /// </summary>
         /// <param name="key">The name of the key to set.</param>
         /// <param name="value">The value to set for the specified key.</param>
+        /// <param name="typeInt">The RegistryValueKind type.</param>
         /// <returns>True if the key was successfully set, false otherwise.</returns>
-        public bool SetVRChatRegistryKey(string key, string value)
+        public bool SetVRChatRegistryKey(string key, object value, int typeInt)
         {
+            var type = (RegistryValueKind)typeInt;
             uint hash = 5381;
             foreach (var c in key)
                 hash = (hash * 33) ^ c;
@@ -731,13 +733,12 @@ namespace VRCX
             {
                 if (regKey?.GetValue(keyName) == null)
                     return false;
-
-                var type = regKey.GetValueKind(keyName);
+                
                 object setValue = null;
                 switch (type)
                 {
                     case RegistryValueKind.Binary:
-                        setValue = Encoding.ASCII.GetBytes(value);
+                        setValue = Encoding.ASCII.GetBytes(value.ToString());
                         break;
 
                     case RegistryValueKind.DWord:

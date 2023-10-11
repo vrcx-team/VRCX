@@ -10,7 +10,7 @@ using CefSharp.Enums;
 
 namespace VRCX
 {
-    public class NoopDragHandler : IDragHandler
+    public class CefNoopDragHandler : IDragHandler
     {
         bool IDragHandler.OnDragEnter(IWebBrowser chromiumWebBrowser, IBrowser browser, IDragData dragData, DragOperationsMask mask)
         {

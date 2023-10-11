@@ -82,64 +82,65 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssetBundleCacher.cs" />
-    <Compile Include="AutoAppLaunchManager.cs" />
-    <Compile Include="CefCustomDownloadHandler.cs" />
-    <Compile Include="CefCustomDragHandler.cs" />
-    <Compile Include="CefCustomMenuHandler.cs" />
-    <Compile Include="ScreenshotMetadata.cs" />
-    <Compile Include="ScreenshotMetadataDatabase.cs" />
-    <Compile Include="WorldDatabase.cs" />
-    <Compile Include="ImageCache.cs" />
-    <Compile Include="IPCClient.cs" />
-    <Compile Include="IPCServer.cs" />
-    <Compile Include="ProcessMonitor.cs" />
-    <Compile Include="ScreenshotHelper.cs" />
-    <Compile Include="SQLite.cs" />
-    <Compile Include="StartupArgs.cs" />
-    <Compile Include="Update.cs" />
-    <Compile Include="CefService.cs" />
-    <Compile Include="Discord.cs" />
-    <Compile Include="CpuMonitor.cs" />
-    <Compile Include="OffScreenBrowser.cs" />
-    <Compile Include="NoopDragHandler.cs" />
-    <Compile Include="OpenVR\openvr_api.cs" />
-    <Compile Include="WebApi.cs" />
-    <Compile Include="SQLiteLegacy.cs" />
-    <Compile Include="SharedVariable.cs" />
-    <Compile Include="Util.cs" />
-    <Compile Include="VRForm.cs">
+    <Compile Include="Dotnet\AppApi.cs" />
+    <Compile Include="Dotnet\AssetBundleCacher.cs" />
+    <Compile Include="Dotnet\AutoAppLaunchManager.cs" />
+    <Compile Include="Dotnet\Cef\CefCustomDownloadHandler.cs" />
+    <Compile Include="Dotnet\Cef\CefCustomDragHandler.cs" />
+    <Compile Include="Dotnet\Cef\CefCustomMenuHandler.cs" />
+    <Compile Include="Dotnet\Cef\CefService.cs" />
+    <Compile Include="Dotnet\Cef\CefNoopDragHandler.cs" />
+    <Compile Include="Dotnet\CpuMonitor.cs" />
+    <Compile Include="Dotnet\Discord.cs" />
+    <Compile Include="Dotnet\ImageCache.cs" />
+    <Compile Include="Dotnet\IPC\IPCClient.cs" />
+    <Compile Include="Dotnet\IPC\IPCPacket.cs" />
+    <Compile Include="Dotnet\IPC\IPCServer.cs" />
+    <Compile Include="Dotnet\JsonSerializer.cs" />
+    <Compile Include="Dotnet\LogWatcher.cs" />
+    <Compile Include="Dotnet\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VRForm.Designer.cs">
-      <DependentUpon>VRForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="Dotnet\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="VRCXVR.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LogWatcher.cs" />
-    <Compile Include="AppApi.cs" />
-    <Compile Include="VRCXStorage.cs" />
-    <Compile Include="JsonSerializer.cs" />
-    <Compile Include="WorldDataRequestResponse.cs" />
-    <Compile Include="WorldDBManager.cs" />
-    <Compile Include="WinApi.cs" />
-    <Compile Include="WinformBase.cs">
+    <Compile Include="Dotnet\OpenVR\openvr_api.cs" />
+    <Compile Include="Dotnet\Overlay\OffScreenBrowser.cs" />
+    <Compile Include="Dotnet\Overlay\VRCXVR.cs" />
+    <Compile Include="Dotnet\Overlay\VRForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WinformThemer.cs" />
-    <EmbeddedResource Include="VRForm.resx">
+    <Compile Include="Dotnet\Overlay\VRForm.Designer.cs">
       <DependentUpon>VRForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dotnet\ProcessMonitor.cs" />
+    <Compile Include="Dotnet\Program.cs" />
+    <Compile Include="Dotnet\PWI\WorldDatabase.cs" />
+    <Compile Include="Dotnet\PWI\WorldDataRequestResponse.cs" />
+    <Compile Include="Dotnet\PWI\WorldDBManager.cs" />
+    <Compile Include="Dotnet\ScreenshotMetadata\ScreenshotHelper.cs" />
+    <Compile Include="Dotnet\ScreenshotMetadata\ScreenshotMetadata.cs" />
+    <Compile Include="Dotnet\ScreenshotMetadata\ScreenshotMetadataDatabase.cs" />
+    <Compile Include="Dotnet\SharedVariable.cs" />
+    <Compile Include="Dotnet\SQLite.cs" />
+    <Compile Include="Dotnet\SQLiteLegacy.cs" />
+    <Compile Include="Dotnet\StartupArgs.cs" />
+    <Compile Include="Dotnet\Update.cs" />
+    <Compile Include="Dotnet\Util.cs" />
+    <Compile Include="Dotnet\VRCXStorage.cs" />
+    <Compile Include="Dotnet\WebApi.cs" />
+    <Compile Include="Dotnet\WinApi.cs" />
+    <Compile Include="Dotnet\WinformBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dotnet\WinformThemer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Dotnet\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <EmbeddedResource Include="Dotnet\Overlay\VRForm.resx">
+      <DependentUpon>VRForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -170,7 +171,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IPCPacket.cs" />
+    <Content Include="openvr_api.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="sqlite3.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="VRCX.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -236,8 +242,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(ProjectDir)OpenVR\win64\openvr_api.dll"
-xcopy /y "$(ProjectDir)lib\sqlite3.dll"</PostBuildEvent>
     <ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
     <CopySQLiteInteropFiles>false</CopySQLiteInteropFiles>
     <CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>

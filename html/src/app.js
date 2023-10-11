@@ -28019,7 +28019,8 @@ speechSynthesis.getVoices();
             }
             var result = await AppApi.SetVRChatRegistryKey(
                 'LOGGING_ENABLED',
-                '1'
+                '1',
+                4
             );
             if (!result) {
                 // failed to set key
