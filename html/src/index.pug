@@ -197,7 +197,7 @@ html
                                     .detail
                                         span.name
                                             span(v-text="ref.group.name")
-                                            span(style="font-weight:normal;margin-left:5px") ({{ ref.instance.userCount }}/{{ ref.instance.capacity }})
+                                            span(style="font-weight:normal;margin-left:5px") ({{ ref.instance.n_users }}/{{ ref.instance.capacity }})
                                         location.extra(:location="ref.instance.location" :link="false")
 
 
@@ -270,7 +270,6 @@ html
                                     el-button(:type="(userDialog.incomingRequest || userDialog.outgoingRequest) ? 'success' : (userDialog.isBlock || userDialog.isMute) ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") {{ $t('dialog.user.actions.refresh') }}
-                                        el-dropdown-item(icon="el-icon-s-order" command="Copy User") {{ $t('dialog.user.actions.copy_url') }}
                                         template(v-if="userDialog.ref.id === API.currentUser.id")
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Manage Gallery" divided) {{ $t('dialog.user.actions.manage_gallery_icon') }}
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author") {{ $t('dialog.user.actions.show_avatar_author') }}
@@ -366,7 +365,7 @@ html
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.user.info.represented_group') }}
-                                        .extra(v-if="userDialog.representedGroup.isRepresenting")
+                                        .extra(v-if="userDialog.representedGroup?.isRepresenting")
                                             div(style="display:inline-block;flex:none;margin-right:5px")
                                                 el-popover(placement="right" width="500px" trigger="click")
                                                     img.x-link(slot="reference" v-lazy="userDialog.representedGroup.iconUrl" style="flex:none;width:60px;height:60px;border-radius:4px;object-fit:cover")
@@ -458,6 +457,17 @@ html
                                         span.extra
                                             span(v-text="userDialog.$homeLocationName")
                                             el-button(@click.stop="resetHome()" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                                .x-friend-item(style="width:100%;cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.user.info.id') }}
+                                        span.extra {{ userDialog.id }}
+                                            el-tooltip(placement="top" :content="$t('dialog.user.info.id_tooltip')" :disabled="hideTooltips")
+                                                el-dropdown(trigger="click" @click.native.stop size="mini" style="margin-left:5px")
+                                                    el-button(type="default" icon="el-icon-s-order" size="mini" circle)
+                                                    el-dropdown-menu(#default="dropdown")
+                                                        el-dropdown-item(@click.native="copyUserId(userDialog.id)") {{ $t('dialog.user.info.copy_id') }}
+                                                        el-dropdown-item(@click.native="copyUserURL(userDialog.id)") {{ $t('dialog.user.info.copy_url') }}
+                                                        el-dropdown-item(@click.native="copyUserDisplayName(userDialog.ref.displayName)") {{ $t('dialog.user.info.copy_display_name') }}
                         el-tab-pane(:label="$t('dialog.user.groups.header')")
                             el-button(type="default" :loading="userDialog.isGroupsLoading" @click="getUserGroups(userDialog.id)" size="mini" icon="el-icon-refresh" circle)
                             span(style="margin-left:5px") {{ $t('dialog.user.groups.total_count', { count: userGroups.groups.length }) }}
@@ -471,7 +481,14 @@ html
                                                 img(v-lazy="group.iconUrl")
                                             .detail
                                                 span.name(v-text="group.name")
-                                                span.extra ({{ group.memberCount }})
+                                                span.extra
+                                                    el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
+                                                        i.el-icon-collection-tag(style="margin-right:5px")
+                                                    el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
+                                                        template(#content)
+                                                            span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
+                                                        i.el-icon-view(style="margin-right:5px")
+                                                    span ({{ group.memberCount }})
                                 template(v-if="userGroups.mutualGroups.length > 0")
                                     span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.mutual_groups') }}
                                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.mutualGroups.length }}
@@ -481,7 +498,14 @@ html
                                                 img(v-lazy="group.iconUrl")
                                             .detail
                                                 span.name(v-text="group.name")
-                                                span.extra ({{ group.memberCount }})
+                                                span.extra
+                                                    el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
+                                                        i.el-icon-collection-tag(style="margin-right:5px")
+                                                    el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
+                                                        template(#content)
+                                                            span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
+                                                        i.el-icon-view(style="margin-right:5px")
+                                                    span ({{ group.memberCount }})
                                 template(v-if="userGroups.remainingGroups.length > 0")
                                     span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.groups') }}
                                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.remainingGroups.length }}
@@ -491,7 +515,14 @@ html
                                                 img(v-lazy="group.iconUrl")
                                             .detail
                                                 span.name(v-text="group.name")
-                                                span.extra ({{ group.memberCount }})
+                                                span.extra
+                                                    el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
+                                                        i.el-icon-collection-tag(style="margin-right:5px")
+                                                    el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
+                                                        template(#content)
+                                                            span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
+                                                        i.el-icon-view(style="margin-right:5px")
+                                                    span ({{ group.memberCount }})
                         el-tab-pane(:label="$t('dialog.user.worlds.header')")
                             el-button(type="default" :loading="userDialog.isWorldsLoading" @click="refreshUserDialogWorlds()" size="mini" icon="el-icon-refresh" circle)
                             span(style="margin-left:5px") {{ $t('dialog.user.worlds.total_count', { count: userDialog.worlds.length }) }}
@@ -587,6 +618,12 @@ html
                                     el-tag.x-link(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px" @click="openFolderGeneric(worldDialog.cachePath)")
                                         span(v-text="worldDialog.cacheSize")
                                         |  {{ $t('dialog.world.tags.cache')}}
+                                div
+                                    el-tag(v-if="worldDialog.ref.tags?.includes('content_horror')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.content_horror') }}
+                                    el-tag(v-if="worldDialog.ref.tags?.includes('content_gore')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.content_gore') }}
+                                    el-tag(v-if="worldDialog.ref.tags?.includes('content_violence')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.content_violence') }}
+                                    el-tag(v-if="worldDialog.ref.tags?.includes('content_adult')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.content_adult') }}
+                                    el-tag(v-if="worldDialog.ref.tags?.includes('content_sex')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.content_sex') }}
                                 div(style="margin-top:5px")
                                     span(v-show="worldDialog.ref.name !== worldDialog.ref.description" v-text="worldDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
@@ -610,6 +647,7 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") {{ $t('dialog.world.actions.rename') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") {{ $t('dialog.world.actions.change_description') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Change Capacity") {{ $t('dialog.world.actions.change_capacity') }}
+                                            el-dropdown-item(icon="el-icon-edit" command="Change Recommended Capacity") {{ $t('dialog.world.actions.change_recommended_capacity') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Change YouTube Preview") {{ $t('dialog.world.actions.change_preview') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Change Tags") {{ $t('dialog.world.actions.change_tags') }}
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") {{ $t('dialog.world.actions.change_image') }}
@@ -622,7 +660,7 @@ html
                             div.
                                 #[i.el-icon-user] {{ $t('dialog.world.instances.public_count', { count: worldDialog.ref.publicOccupants }) }}
                                 #[i.el-icon-user-solid(style="margin-left:10px")] {{ $t('dialog.world.instances.private_count', { count: worldDialog.ref.privateOccupants })  }}
-                                #[i.el-icon-check(style="margin-left:10px")] {{ $t('dialog.world.instances.capacity_count', { count: worldDialog.ref.capacity, max: worldDialog.ref.capacity * 2 }) }}
+                                #[i.el-icon-check(style="margin-left:10px")] {{ $t('dialog.world.instances.capacity_count', { count: worldDialog.ref.recommendedCapacity, max: worldDialog.ref.capacity }) }}
                             div(v-for="room in worldDialog.rooms" :key="room.id")
                                 div(style="margin:5px 0")
                                     location-world(:locationobject="room.$location" :currentuserid="API.currentUser.id" :worlddialogshortname="worldDialog.$location.shortName")
@@ -693,15 +731,7 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.capacity') }}
-                                        span.extra {{ worldDialog.ref.capacity | commaNumber }} ({{ worldDialog.ref.capacity * 2 | commaNumber }})
-                                .x-friend-item(style="cursor:default")
-                                    .detail
-                                        span.name {{ $t('dialog.world.info.heat') }}
-                                        span.extra {{ worldDialog.ref.heat | commaNumber }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
-                                .x-friend-item(style="cursor:default")
-                                    .detail
-                                        span.name {{ $t('dialog.world.info.popularity') }}
-                                        span.extra {{ worldDialog.ref.popularity | commaNumber }} {{ '💖'.repeat(worldDialog.ref.popularity) }}
+                                        span.extra {{ worldDialog.ref.recommendedCapacity | commaNumber }} ({{ worldDialog.ref.capacity | commaNumber }})
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.created_at') }}
@@ -710,11 +740,31 @@ html
                                     .detail
                                         span.name {{ $t('dialog.world.info.last_updated') }}
                                         span.extra {{ worldDialog.fileCreatedAt | formatDate('long') }}
+                                .x-friend-item(v-if="worldDialog.ref.labsPublicationDate !== 'none'" style="cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.world.info.labs_publication_date') }}
+                                        span.extra {{ worldDialog.ref.labsPublicationDate | formatDate('long') }}
+                                .x-friend-item(v-if="worldDialog.ref.publicationDate !== 'none'" style="cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.world.info.publication_date') }}
+                                            el-tooltip(v-if="worldDialog.ref.publicationDate && worldDialog.ref.publicationDate !== 'none' && worldDialog.ref.labsPublicationDate && worldDialog.ref.labsPublicationDate !== 'none'" placement="top" style="margin-left:5px")
+                                                template(#content)
+                                                    span {{ $t('dialog.world.info.time_in_labs') }} {{ new Date(worldDialog.ref.publicationDate) - new Date(worldDialog.ref.labsPublicationDate) | timeToText }}
+                                                i.el-icon-arrow-down
+                                        span.extra {{ worldDialog.ref.publicationDate | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.version') }}
                                         span.extra(v-text="worldDialog.ref.version")
-                                .x-friend-item(style="width:525px;cursor:default")
+                                .x-friend-item(style="cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.world.info.heat') }}
+                                        span.extra {{ worldDialog.ref.heat | commaNumber }} {{ '🔥'.repeat(worldDialog.ref.heat) }}
+                                .x-friend-item(style="cursor:default")
+                                    .detail
+                                        span.name {{ $t('dialog.world.info.popularity') }}
+                                        span.extra {{ worldDialog.ref.popularity | commaNumber }} {{ '💖'.repeat(worldDialog.ref.popularity) }}
+                                .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.platform') }}
                                         span.extra(v-text="worldDialogPlatform")
@@ -768,6 +818,12 @@ html
                                     el-tag.x-link(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini" @click="openFolderGeneric(avatarDialog.cachePath)")
                                         span(v-text="avatarDialog.cacheSize")
                                         |  {{ $t('dialog.avatar.tags.cache') }}
+                                    div
+                                        el-tag(v-if="avatarDialog.ref.tags?.includes('content_horror')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.content_horror') }}
+                                        el-tag(v-if="avatarDialog.ref.tags?.includes('content_gore')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.content_gore') }}
+                                        el-tag(v-if="avatarDialog.ref.tags?.includes('content_violence')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.content_violence') }}
+                                        el-tag(v-if="avatarDialog.ref.tags?.includes('content_adult')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.content_adult') }}
+                                        el-tag(v-if="avatarDialog.ref.tags?.includes('content_sex')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.content_sex') }}
                                 div(style="margin-top:5px")
                                     span(v-show="avatarDialog.ref.name !== avatarDialog.ref.description" v-text="avatarDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
@@ -791,6 +847,7 @@ html
                                             el-dropdown-item(v-else icon="el-icon-user" command="Make Public" divided) {{ $t('dialog.avatar.actions.make_public') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") {{ $t('dialog.avatar.actions.rename') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") {{ $t('dialog.avatar.actions.change_description') }}
+                                            el-dropdown-item(icon="el-icon-edit" command="Change Content Tags") {{ $t('dialog.avatar.actions.change_content_tags') }}
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") {{ $t('dialog.avatar.actions.change_image') }}
                                             el-dropdown-item(v-if="avatarDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") {{ $t('dialog.avatar.actions.download_package') }}
                                             el-dropdown-item(icon="el-icon-user" command="Delete" style="color:#F56C6C" divided) {{ $t('dialog.avatar.actions.delete') }}
@@ -964,12 +1021,20 @@ html
                                         pre.extra(style="display:inline-block;vertical-align:top;font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0") {{ groupDialog.announcement.text || '-' }}
                                         br
                                         .extra(v-if="groupDialog.announcement.id" style="float:right;margin-left:5px")
+                                            el-tooltip(v-if="groupDialog.announcement.roleIds.length" placement="top")
+                                                template(#content)
+                                                    span {{ $t('dialog.group.posts.visibility') }}
+                                                    br
+                                                    template(v-for="roleId in groupDialog.announcement.roleIds" :key="roleId")
+                                                        span(v-for="(role, rIndex) in groupDialog.ref.roles" :key="rIndex" v-if="role.id === roleId" v-text="role.name")
+                                                        span(v-if="groupDialog.announcement.roleIds.indexOf(roleId) < groupDialog.announcement.roleIds.length - 1") ,&nbsp;
+                                                i.el-icon-view(style="margin-right:5px")
+                                            display-name(:userid="groupDialog.announcement.authorId" style="margin-right:5px")
+                                            span(v-if="groupDialog.announcement.editorId" style="margin-right:5px") ({{ $t('dialog.group.posts.edited_by') }} #[display-name(:userid="groupDialog.announcement.editorId")])
                                             el-tooltip(placement="bottom")
                                                 template(#content)
                                                     span {{ groupDialog.announcement.updatedAt | formatDate('long') }}
-                                                span(@click="showUserDialog(groupDialog.announcement.authorId)" style="cursor:pointer")
-                                                    span(v-text="groupDialog.announcementDisplayName" style="margin-right:5px")
-                                                    timer(:epoch="Date.parse(groupDialog.announcement.updatedAt)")
+                                                timer(:epoch="Date.parse(groupDialog.announcement.updatedAt)")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.group.info.rules') }}
@@ -1029,6 +1094,35 @@ html
                                                                     span {{ permission }}
                                                                     br
                                                             span {{ role.name }}{{ rIndex < groupDialog.memberRoles.length - 1 ? ', ' : '' }}
+                        el-tab-pane(:label="$t('dialog.group.posts.header')")
+                            template(v-if="groupDialog.visible")
+                                span(style="margin-right:10px") {{ $t('dialog.group.posts.posts_count') }} {{ groupDialog.posts.length }}
+                                el-input(v-model="groupDialog.postsSearch" @input="updateGroupPostSearch" clearable size="mini" :placeholder="$t('dialog.group.posts.search_placeholder')" style="width:89%;margin-bottom:10px")
+                                .x-friend-list
+                                    .x-friend-item(v-for="post in groupDialog.postsFiltered" :key="post.id" style="width:100%;cursor:default")
+                                        .detail
+                                            span(style="display:block" v-text="post.title")
+                                            div(v-if="post.imageUrl" style="display:inline-block;margin-right:5px")
+                                                el-popover(placement="right" width="500px" trigger="click")
+                                                    img.x-link(slot="reference" v-lazy="post.imageUrl" style="flex:none;width:60px;height:60px;border-radius:4px;object-fit:cover")
+                                                    img.x-link(v-lazy="post.imageUrl" style="height:500px" @click="showFullscreenImageDialog(post.imageUrl)")
+                                            pre.extra(style="display:inline-block;vertical-align:top;font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0") {{ post.text || '-' }}
+                                            br
+                                            .extra(v-if="post.authorId" style="float:right;margin-left:5px")
+                                                el-tooltip(v-if="post.roleIds.length" placement="top")
+                                                    template(#content)
+                                                        span {{ $t('dialog.group.posts.visibility') }}
+                                                        br
+                                                        template(v-for="roleId in post.roleIds" :key="roleId")
+                                                            span(v-for="(role, rIndex) in groupDialog.ref.roles" :key="rIndex" v-if="role.id === roleId" v-text="role.name")
+                                                            span(v-if="post.roleIds.indexOf(roleId) < post.roleIds.length - 1") ,&nbsp;
+                                                    i.el-icon-view(style="margin-right:5px")
+                                                display-name(:userid="post.authorId" style="margin-right:5px")
+                                                span(v-if="post.editorId" style="margin-right:5px") ({{ $t('dialog.group.posts.edited_by') }} #[display-name(:userid="post.editorId")])
+                                                el-tooltip(placement="bottom")
+                                                    template(#content)
+                                                        span {{ post.updatedAt | formatDate('long') }}
+                                                    timer(:epoch="Date.parse(post.updatedAt)")
                         el-tab-pane(:label="$t('dialog.group.members.header')")
                             template(v-if="groupDialog.visible")
                                 span(v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')" style="font-weight:bold;font-size:16px") {{ $t('dialog.group.members.all_members') }}
@@ -1075,7 +1169,7 @@ html
                                             span.name {{ $t('dialog.group.members.load_more') }}
                         el-tab-pane(:label="$t('dialog.group.gallery.header')")
                             el-button(type="default" size="mini" icon="el-icon-refresh" @click="getGroupGalleries" :loading="isGroupGalleryLoading" circle)
-                            el-tabs(type="card" v-loading="isGroupGalleryLoading" ref="groupDialogGallery")
+                            el-tabs(type="card" v-loading="isGroupGalleryLoading" ref="groupDialogGallery" style="margin-top:10px")
                                 template(v-for="(gallery, index) in groupDialog.ref.galleries")
                                     el-tab-pane
                                         span(slot="label")
@@ -1416,11 +1510,57 @@ html
                 el-input(type="textarea" v-model="setWorldTagsDialog.authorTags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
                 div(style='font-size:12px;margin-top:10px')
                     | {{ $t('dialog.set_world_tags.content_tags') }} #[br]
-                el-input(type="textarea" v-model="setWorldTagsDialog.contentTags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+                el-checkbox(v-model="setWorldTagsDialog.contentHorror") {{ $t('dialog.set_world_tags.content_horror') }}
+                br
+                el-checkbox(v-model="setWorldTagsDialog.contentGore") {{ $t('dialog.set_world_tags.content_gore') }}
+                br
+                el-checkbox(v-model="setWorldTagsDialog.contentViolence") {{ $t('dialog.set_world_tags.content_violence') }}
+                br
+                el-checkbox(v-model="setWorldTagsDialog.contentAdult") {{ $t('dialog.set_world_tags.content_adult') }}
+                br
+                el-checkbox(v-model="setWorldTagsDialog.contentSex") {{ $t('dialog.set_world_tags.content_sex') }}
+                //- el-input(type="textarea" v-model="setWorldTagsDialog.contentTags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
                 template(#footer)
                     div(style="display:flex")
                         el-button(size="small" @click="setWorldTagsDialog.visible = false") {{ $t('dialog.set_world_tags.cancel') }}
                         el-button(type="primary" size="small" @click="saveSetWorldTagsDialog") {{ $t('dialog.set_world_tags.save') }}
+
+            //- dialog: Set Avatar Tags
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="setAvatarTagsDialog" :visible.sync="setAvatarTagsDialog.visible" :title="$t('dialog.set_avatar_tags.header')" width="770px")
+                template(v-if="setAvatarTagsDialog.visible")
+                    el-checkbox(v-model="setAvatarTagsDialog.contentHorror") {{ $t('dialog.set_avatar_tags.content_horror') }}
+                    br
+                    el-checkbox(v-model="setAvatarTagsDialog.contentGore") {{ $t('dialog.set_avatar_tags.content_gore') }}
+                    br
+                    el-checkbox(v-model="setAvatarTagsDialog.contentViolence") {{ $t('dialog.set_avatar_tags.content_violence') }}
+                    br
+                    el-checkbox(v-model="setAvatarTagsDialog.contentAdult") {{ $t('dialog.set_avatar_tags.content_adult') }}
+                    br
+                    el-checkbox(v-model="setAvatarTagsDialog.contentSex") {{ $t('dialog.set_avatar_tags.content_sex') }}
+                    br
+                    template(v-if="setAvatarTagsDialog.ownAvatars.length === setAvatarTagsDialog.selectedCount")
+                        el-button(size="small" @click="setAvatarTagsSelectToggle") {{ $t('dialog.set_avatar_tags.select_none') }}
+                    template(v-else)
+                        el-button(size="small" @click="setAvatarTagsSelectToggle") {{ $t('dialog.set_avatar_tags.select_all') }}
+                    span(style="margin-left:5px") {{ setAvatarTagsDialog.selectedCount }} / {{ setAvatarTagsDialog.ownAvatars.length }}
+                    span(v-if="setAvatarTagsDialog.loading" style="margin-left:5px")
+                        i.el-icon-loading
+                    br
+                    .x-friend-list(style="margin-top:10px;min-height:60px;max-height:280px")
+                        .x-friend-item(v-for="avatar in setAvatarTagsDialog.ownAvatars" :key="setAvatarTagsDialog.forceUpdate" @click="showAvatarDialog(avatar.id)" class="x-friend-item-border" style="width:350px")
+                            .avatar
+                                img(v-if="avatar.thumbnailImageUrl" v-lazy="avatar.thumbnailImageUrl")
+                            .detail
+                                span.name(v-text="avatar.name")
+                                span.extra(v-text="avatar.releaseStatus" v-if="avatar.releaseStatus === 'public'" style="color: #67c23a;")
+                                span.extra(v-text="avatar.releaseStatus" v-else-if="avatar.releaseStatus === 'private'" style="color: #f56c6c;")
+                                span.extra(v-text="avatar.releaseStatus" v-else)
+                                span.extra(v-text="avatar.$tagString")
+                            el-button(type="text" size="mini" @click.stop style="margin-left:5px")
+                                el-checkbox(v-model="avatar.$selected" @change="updateAvatarTagsSelection")
+                template(#footer)
+                    el-button(size="small" @click="setAvatarTagsDialog.visible = false") {{ $t('dialog.set_avatar_tags.cancel') }}
+                    el-button(type="primary" size="small" @click="saveSetAvatarTagsDialog") {{ $t('dialog.set_avatar_tags.save') }}
 
             //- dialog: Cache Download
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="downloadDialog" :visible.sync="downloadDialog.visible" :title="$t('dialog.download_history.header')" width="770px")

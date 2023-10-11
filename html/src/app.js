@@ -1241,7 +1241,6 @@ speechSynthesis.getVoices();
         template:
             '<span @click="showUserDialog" class="x-link">{{ username }}</span>',
         props: {
-            username: String,
             userid: String,
             location: String,
             key: Number
@@ -2239,6 +2238,7 @@ speechSynthesis.getVoices();
                 authorId: '',
                 authorName: '',
                 capacity: 0,
+                recommendedCapacity: 0,
                 tags: [],
                 releaseStatus: '',
                 imageUrl: '',
@@ -4898,6 +4898,25 @@ speechSynthesis.getVoices();
                 $app.instanceQueueReady(instanceId);
                 break;
 
+            case 'content-refresh':
+                var contentType = content.contentType;
+                if (contentType === 'icon') {
+                    if ($app.galleryDialogVisible) {
+                        $app.refreshVRCPlusIconsTable();
+                    }
+                } else if (contentType === 'gallery') {
+                    if ($app.galleryDialogVisible) {
+                        $app.refreshGalleryTable();
+                    }
+                } else if (contentType === 'emoji') {
+                    if ($app.galleryDialogVisible) {
+                        $app.refreshEmojiTable();
+                    }
+                } else {
+                    console.log('Unknown content-refresh', content);
+                }
+                break;
+
             default:
                 console.log('Unknown pipeline type', args.json);
         }
@@ -5452,7 +5471,7 @@ speechSynthesis.getVoices();
                 60000
             );
             this.nextDiscordUpdate = 0;
-            console.log('isGameRunning:', isGameRunning);
+            console.log(new Date(), 'isGameRunning', isGameRunning);
         }
         if (isSteamVRRunning !== this.isSteamVRRunning) {
             this.isSteamVRRunning = isSteamVRRunning;
@@ -5521,7 +5540,11 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateSharedExecute = function (forceUpdate) {
-        this.updateSharedFeedDebounce(forceUpdate);
+        try {
+            this.updateSharedFeedDebounce(forceUpdate);
+        } catch (err) {
+            console.error(err);
+        }
         this.updateSharedFeedTimer = null;
         this.updateSharedFeedPending = false;
         this.updateSharedFeedPendingForceUpdate = false;
@@ -5575,14 +5598,18 @@ speechSynthesis.getVoices();
                             // no group cache, fetch group and try again
                             API.getGroup({
                                 groupId: ref.$location.groupId
-                            }).then((args) => {
-                                workerTimers.setTimeout(() => {
-                                    // delay to allow for group cache to update
-                                    $app.sharedFeed.pendingUpdate = true;
-                                    $app.updateSharedFeed(false);
-                                }, 100);
-                                return args;
-                            });
+                            })
+                                .then((args) => {
+                                    workerTimers.setTimeout(() => {
+                                        // delay to allow for group cache to update
+                                        $app.sharedFeed.pendingUpdate = true;
+                                        $app.updateSharedFeed(false);
+                                    }, 100);
+                                    return args;
+                                })
+                                .catch((err) => {
+                                    console.error(err);
+                                });
                         }
                     }
                     if (typeof worldRef !== 'undefined') {
@@ -5605,14 +5632,18 @@ speechSynthesis.getVoices();
                         // no world cache, fetch world and try again
                         API.getWorld({
                             worldId: ref.$location.worldId
-                        }).then((args) => {
-                            workerTimers.setTimeout(() => {
-                                // delay to allow for world cache to update
-                                $app.sharedFeed.pendingUpdate = true;
-                                $app.updateSharedFeed(false);
-                            }, 100);
-                            return args;
-                        });
+                        })
+                            .then((args) => {
+                                workerTimers.setTimeout(() => {
+                                    // delay to allow for world cache to update
+                                    $app.sharedFeed.pendingUpdate = true;
+                                    $app.updateSharedFeed(false);
+                                }, 100);
+                                return args;
+                            })
+                            .catch((err) => {
+                                console.error(err);
+                            });
                     }
                 }
             }
@@ -7722,7 +7753,7 @@ speechSynthesis.getVoices();
                                                             this.loginForm
                                                                 .saveCredentials,
                                                         cipher: pwd
-                                                    }).finally(() => {
+                                                    }).then(() => {
                                                         this.loginForm.username =
                                                             '';
                                                         this.loginForm.password =
@@ -7746,11 +7777,16 @@ speechSynthesis.getVoices();
                             endpoint: this.loginForm.endpoint,
                             websocket: this.loginForm.websocket,
                             saveCredentials: this.loginForm.saveCredentials
-                        }).finally(() => {
-                            this.loginForm.username = '';
-                            this.loginForm.password = '';
-                            this.loginForm.loading = false;
-                        });
+                        })
+                            .then(() => {
+                                this.loginForm.username = '';
+                                this.loginForm.password = '';
+                                this.loginForm.endpoint = '';
+                                this.loginForm.websocket = '';
+                            })
+                            .finally(() => {
+                                this.loginForm.loading = false;
+                            });
                         return args;
                     });
             }
@@ -9122,15 +9158,19 @@ speechSynthesis.getVoices();
         $app.notificationTable.data = await database.getNotifications();
         await this.refreshNotifications();
         await $app.getCurrentUserGroups();
-        if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
-            await $app.getFriendLog();
-        } else {
-            try {
+        try {
+            if (configRepository.getBool(`friendLogInit_${args.json.id}`)) {
+                await $app.getFriendLog();
+            } else {
                 await $app.initFriendLog(args.json.id);
-            } catch (err) {
-                this.logout();
-                throw err;
             }
+        } catch (err) {
+            $app.$message({
+                message: 'Failed to load freinds list, logging out',
+                type: 'error'
+            });
+            this.logout();
+            throw err;
         }
         $app.getAvatarHistory();
         $app.getAllMemos();
@@ -10428,7 +10468,10 @@ speechSynthesis.getVoices();
         var hudTimeout = [];
         this.photonEvent7List.forEach((dt, id) => {
             var timeSinceLastEvent = dtNow - Date.parse(dt);
-            if (timeSinceLastEvent > this.photonLobbyTimeoutThreshold) {
+            if (
+                timeSinceLastEvent > this.photonLobbyTimeoutThreshold &&
+                id !== this.photonLobbyCurrentUser
+            ) {
                 if (this.photonLobbyJointime.has(id)) {
                     var { joinTime } = this.photonLobbyJointime.get(id);
                 }
@@ -11660,6 +11703,9 @@ speechSynthesis.getVoices();
         avatar,
         gameLogDate
     ) {
+        if (typeof avatar === 'undefined') {
+            return;
+        }
         if (typeof user === 'undefined') {
             console.error('PhotonAvatarChange: user is undefined', photonId);
             return;
@@ -12355,14 +12401,14 @@ speechSynthesis.getVoices();
                 if (ref) {
                     L.worldName = ref.name;
                     L.thumbnailImageUrl = ref.thumbnailImageUrl;
-                    L.worldCapacity = ref.capacity * 2;
+                    L.worldCapacity = ref.capacity;
                 } else {
                     API.getWorld({
                         worldId: L.worldId
                     }).then((args) => {
                         L.worldName = args.ref.name;
                         L.thumbnailImageUrl = args.ref.thumbnailImageUrl;
-                        L.worldCapacity = args.ref.capacity * 2;
+                        L.worldCapacity = args.ref.capacity;
                         return args;
                     });
                 }
@@ -12605,7 +12651,7 @@ speechSynthesis.getVoices();
             }
         }
         this.searchText = ref.displayName;
-        await this.searchUser();
+        await this.searchUserByDisplayName(ref.displayName);
         for (var ctx of this.searchUserResults) {
             if (ctx.displayName === ref.displayName) {
                 this.searchText = '';
@@ -12688,6 +12734,16 @@ speechSynthesis.getVoices();
                 this.searchGroup();
                 break;
         }
+    };
+
+    $app.methods.searchUserByDisplayName = async function (displayName) {
+        this.searchUserParams = {
+            n: 10,
+            offset: 0,
+            fuzzy: false,
+            search: this.replaceBioSymbols(displayName)
+        };
+        await this.moreSearchUser();
     };
 
     $app.methods.searchUser = async function () {
@@ -13735,7 +13791,7 @@ speechSynthesis.getVoices();
                     filter.value.some((v) => v === row.type)
             },
             {
-                prop: 'senderUsername',
+                prop: ['senderUsername', 'message'],
                 value: ''
             }
         ],
@@ -15294,6 +15350,7 @@ speechSynthesis.getVoices();
             return true;
         } else if (/^[A-Za-z0-9]{3,6}\.[0-9]{4}$/g.test(input)) {
             this.showGroupDialogShortCode(input);
+            return true;
         } else if (
             input.substring(0, 4) === 'usr_' ||
             /^[A-Za-z0-9]{10}$/g.test(input)
@@ -15537,6 +15594,42 @@ speechSynthesis.getVoices();
                             this.$message({
                                 message: $t(
                                     'prompt.change_world_capacity.message.success'
+                                ),
+                                type: 'success'
+                            });
+                            return args;
+                        });
+                    }
+                }
+            }
+        );
+    };
+
+    $app.methods.promptChangeWorldRecommendedCapacity = function (world) {
+        this.$prompt(
+            $t('prompt.change_world_recommended_capacity.description'),
+            $t('prompt.change_world_recommended_capacity.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.change_world_capacity.ok'),
+                cancelButtonText: $t('prompt.change_world_capacity.cancel'),
+                inputValue: world.ref.recommendedCapacity,
+                inputPattern: /\d+$/,
+                inputErrorMessage: $t(
+                    'prompt.change_world_recommended_capacity.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (
+                        action === 'confirm' &&
+                        instance.inputValue !== world.ref.recommendedCapacity
+                    ) {
+                        API.saveWorld({
+                            id: world.id,
+                            recommendedCapacity: instance.inputValue
+                        }).then((args) => {
+                            this.$message({
+                                message: $t(
+                                    'prompt.change_world_recommended_capacity.message.success'
                                 ),
                                 type: 'success'
                             });
@@ -16484,7 +16577,11 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updatePlayerListExecute = function () {
-        this.updatePlayerListDebounce();
+        try {
+            this.updatePlayerListDebounce();
+        } catch (err) {
+            console.error(err);
+        }
         this.updatePlayerListTimer = null;
         this.updatePlayerListPending = false;
     };
@@ -17211,8 +17308,6 @@ speechSynthesis.getVoices();
             this.showPreviousInstancesUserDialog(D.ref);
         } else if (command === 'Manage Gallery') {
             this.showGalleryDialog();
-        } else if (command === 'Copy User') {
-            this.copyUser(D.id);
         } else if (command === 'Invite To Group') {
             this.showInviteGroupDialog('', D.id);
         } else if (command === 'Hide Avatar') {
@@ -17891,6 +17986,9 @@ speechSynthesis.getVoices();
             case 'Change Capacity':
                 this.promptChangeWorldCapacity(D);
                 break;
+            case 'Change Recommended Capacity':
+                this.promptChangeWorldRecommendedCapacity(D);
+                break;
             case 'Change YouTube Preview':
                 this.promptChangeWorldYouTubePreview(D);
                 break;
@@ -17996,7 +18094,7 @@ speechSynthesis.getVoices();
                 } else if (unityPackage.platform) {
                     ({ platform } = unityPackage);
                 }
-                platforms.push(`${platform}/${unityPackage.unityVersion}`);
+                platforms.unshift(`${platform}/${unityPackage.unityVersion}`);
             }
         }
         return platforms.join(', ');
@@ -18179,6 +18277,9 @@ speechSynthesis.getVoices();
                 break;
             case 'Change Description':
                 this.promptChangeAvatarDescription(D);
+                break;
+            case 'Change Content Tags':
+                this.showSetAvatarTagsDialog(D.id);
                 break;
             case 'Download Unity Package':
                 this.openExternalLink(this.avatarDialog.ref.unityPackageUrl);
@@ -19102,13 +19203,25 @@ speechSynthesis.getVoices();
         authorTags: [],
         contentTags: [],
         debugAllowed: false,
-        avatarScalingDisabled: false
+        avatarScalingDisabled: false,
+        contentHorror: false,
+        contentGore: false,
+        contentViolence: false,
+        contentAdult: false,
+        contentSex: false
     };
 
     $app.methods.showSetWorldTagsDialog = function () {
         this.$nextTick(() => adjustDialogZ(this.$refs.setWorldTagsDialog.$el));
         var D = this.setWorldTagsDialog;
         D.visible = true;
+        D.debugAllowed = false;
+        D.avatarScalingDisabled = false;
+        D.contentHorror = false;
+        D.contentGore = false;
+        D.contentViolence = false;
+        D.contentAdult = false;
+        D.contentSex = false;
         var oldTags = this.worldDialog.ref.tags;
         var authorTags = [];
         var contentTags = [];
@@ -19119,11 +19232,29 @@ speechSynthesis.getVoices();
             if (tag.startsWith('content_')) {
                 contentTags.unshift(tag.substring(8));
             }
-            if (tag === 'debug_allowed') {
-                D.debugAllowed = true;
-            }
-            if (tag === 'feature_avatar_scaling_disabled') {
-                D.avatarScalingDisabled = true;
+            switch (tag) {
+                case 'content_horror':
+                    D.contentHorror = true;
+                    break;
+                case 'content_gore':
+                    D.contentGore = true;
+                    break;
+                case 'content_violence':
+                    D.contentViolence = true;
+                    break;
+                case 'content_adult':
+                    D.contentAdult = true;
+                    break;
+                case 'content_sex':
+                    D.contentSex = true;
+                    break;
+
+                case 'debug_allowed':
+                    D.debugAllowed = true;
+                    break;
+                case 'feature_avatar_scaling_disabled':
+                    D.avatarScalingDisabled = true;
+                    break;
             }
         });
         D.authorTags = authorTags.toString();
@@ -19140,11 +19271,36 @@ speechSynthesis.getVoices();
                 tags.unshift(`author_tag_${tag}`);
             }
         });
+        // add back custom tags
         contentTags.forEach((tag) => {
-            if (tag) {
-                tags.unshift(`content_${tag}`);
+            switch (tag) {
+                case 'horror':
+                case 'gore':
+                case 'violence':
+                case 'adult':
+                case 'sex':
+                case '':
+                    break;
+                default:
+                    tags.unshift(`content_${tag}`);
+                    break;
             }
         });
+        if (D.contentHorror) {
+            tags.unshift('content_horror');
+        }
+        if (D.contentGore) {
+            tags.unshift('content_gore');
+        }
+        if (D.contentViolence) {
+            tags.unshift('content_violence');
+        }
+        if (D.contentAdult) {
+            tags.unshift('content_adult');
+        }
+        if (D.contentSex) {
+            tags.unshift('content_sex');
+        }
         if (D.debugAllowed) {
             tags.unshift('debug_allowed');
         }
@@ -19168,6 +19324,197 @@ speechSynthesis.getVoices();
             }
             return args;
         });
+    };
+
+    // #endregion
+    // #region | App: Set Avatar Tags Dialog
+
+    $app.data.setAvatarTagsDialog = {
+        visible: false,
+        loading: false,
+        ownAvatars: [],
+        selectedCount: 0,
+        forceUpdate: 0,
+        contentHorror: false,
+        contentGore: false,
+        contentViolence: false,
+        contentAdult: false,
+        contentSex: false
+    };
+
+    $app.methods.showSetAvatarTagsDialog = function (avatarId) {
+        this.$nextTick(() => adjustDialogZ(this.$refs.setAvatarTagsDialog.$el));
+        var D = this.setAvatarTagsDialog;
+        D.visible = true;
+        D.loading = false;
+        D.ownAvatars = [];
+        D.forceUpdate = 0;
+        D.contentHorror = false;
+        D.contentGore = false;
+        D.contentViolence = false;
+        D.contentAdult = false;
+        D.contentSex = false;
+        var oldTags = this.avatarDialog.ref.tags;
+        oldTags.forEach((tag) => {
+            switch (tag) {
+                case 'content_horror':
+                    D.contentHorror = true;
+                    break;
+                case 'content_gore':
+                    D.contentGore = true;
+                    break;
+                case 'content_violence':
+                    D.contentViolence = true;
+                    break;
+                case 'content_adult':
+                    D.contentAdult = true;
+                    break;
+                case 'content_sex':
+                    D.contentSex = true;
+                    break;
+            }
+        });
+        for (var ref of API.cachedAvatars.values()) {
+            if (ref.authorId === API.currentUser.id) {
+                ref.$selected = false;
+                ref.$tagString = '';
+                if (avatarId === ref.id) {
+                    ref.$selected = true;
+                    var conentTags = [];
+                    ref.tags.forEach((tag) => {
+                        if (tag.startsWith('content_')) {
+                            conentTags.push(tag.substring(8));
+                        }
+                    });
+                    for (var i = 0; i < conentTags.length; ++i) {
+                        var tag = conentTags[i];
+                        if (i < conentTags.length - 1) {
+                            ref.$tagString += `${tag}, `;
+                        } else {
+                            ref.$tagString += tag;
+                        }
+                    }
+                }
+                D.ownAvatars.push(ref);
+            }
+        }
+        this.updateAvatarTagsSelection();
+    };
+
+    $app.data.avatarContentTags = [
+        'content_horror',
+        'content_gore',
+        'content_violence',
+        'content_adult',
+        'content_sex'
+    ];
+
+    $app.methods.saveSetAvatarTagsDialog = async function () {
+        var D = this.setAvatarTagsDialog;
+        if (D.loading) {
+            return;
+        }
+        D.loading = true;
+        try {
+            for (var i = D.ownAvatars.length - 1; i >= 0; --i) {
+                var ref = D.ownAvatars[i];
+                if (!D.visible) {
+                    break;
+                }
+                if (!ref.$selected) {
+                    continue;
+                }
+                var tags = ref.tags;
+                if (D.contentHorror) {
+                    if (!tags.includes('content_horror')) {
+                        tags.push('content_horror');
+                    }
+                } else if (tags.includes('content_horror')) {
+                    tags.splice(tags.indexOf('content_horror'), 1);
+                }
+
+                if (D.contentGore) {
+                    if (!tags.includes('content_gore')) {
+                        tags.push('content_gore');
+                    }
+                } else if (tags.includes('content_gore')) {
+                    tags.splice(tags.indexOf('content_gore'), 1);
+                }
+
+                if (D.contentViolence) {
+                    if (!tags.includes('content_violence')) {
+                        tags.push('content_violence');
+                    }
+                } else if (tags.includes('content_violence')) {
+                    tags.splice(tags.indexOf('content_violence'), 1);
+                }
+
+                if (D.contentAdult) {
+                    if (!tags.includes('content_adult')) {
+                        tags.push('content_adult');
+                    }
+                } else if (tags.includes('content_adult')) {
+                    tags.splice(tags.indexOf('content_adult'), 1);
+                }
+
+                if (D.contentSex) {
+                    if (!tags.includes('content_sex')) {
+                        tags.push('content_sex');
+                    }
+                } else if (tags.includes('content_sex')) {
+                    tags.splice(tags.indexOf('content_sex'), 1);
+                }
+
+                await API.saveAvatar({
+                    id: ref.id,
+                    tags
+                });
+                D.selectedCount--;
+            }
+        } catch (err) {
+            this.$message({
+                message: 'Error saving avatar tags',
+                type: 'error'
+            });
+        } finally {
+            D.loading = false;
+            D.visible = false;
+        }
+    };
+
+    $app.methods.updateAvatarTagsSelection = function () {
+        var D = this.setAvatarTagsDialog;
+        D.selectedCount = 0;
+        for (var ref of D.ownAvatars) {
+            if (ref.$selected) {
+                D.selectedCount++;
+            }
+            ref.$tagString = '';
+            var conentTags = [];
+            ref.tags.forEach((tag) => {
+                if (tag.startsWith('content_')) {
+                    conentTags.push(tag.substring(8));
+                }
+            });
+            for (var i = 0; i < conentTags.length; ++i) {
+                var tag = conentTags[i];
+                if (i < conentTags.length - 1) {
+                    ref.$tagString += `${tag}, `;
+                } else {
+                    ref.$tagString += tag;
+                }
+            }
+        }
+        this.setAvatarTagsDialog.forceUpdate++;
+    };
+
+    $app.methods.setAvatarTagsSelectToggle = function () {
+        var D = this.setAvatarTagsDialog;
+        var allSelected = D.ownAvatars.length === D.selectedCount;
+        for (var ref of D.ownAvatars) {
+            ref.$selected = !allSelected;
+        }
+        this.updateAvatarTagsSelection();
     };
 
     // #endregion
@@ -19471,12 +19818,28 @@ speechSynthesis.getVoices();
         this.copyToClipboard(worldName);
     };
 
-    $app.methods.copyUser = function (userId) {
+    $app.methods.copyUserId = function (userId) {
+        this.$message({
+            message: 'User ID copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(userId);
+    };
+
+    $app.methods.copyUserURL = function (userId) {
         this.$message({
             message: 'User URL copied to clipboard',
             type: 'success'
         });
         this.copyToClipboard(`https://vrchat.com/home/user/${userId}`);
+    };
+
+    $app.methods.copyUserDisplayName = function (displayName) {
+        this.$message({
+            message: 'User DisplayName copied to clipboard',
+            type: 'success'
+        });
+        this.copyToClipboard(displayName);
     };
 
     $app.methods.copyGroupId = function (groupId) {
@@ -22668,7 +23031,7 @@ speechSynthesis.getVoices();
                 return;
             }
             // wait a bit for SteamVR to potentially close before deciding to relaunch
-            var restartDelay = 4000;
+            var restartDelay = 8000;
             if (this.isGameNoVR) {
                 // wait for game to close before relaunching
                 restartDelay = 2000;
@@ -26130,11 +26493,13 @@ speechSynthesis.getVoices();
                 $worldName: '',
                 location: instanceId,
                 position: 0,
-                queueSize: 0
+                queueSize: 0,
+                updatedAt: 0
             };
         }
         ref.position = position;
         ref.queueSize = queueSize;
+        ref.updatedAt = Date.now();
         if (!ref.$msgBox || ref.$msgBox.closed) {
             ref.$msgBox = this.$message({
                 message: '',
@@ -26157,6 +26522,18 @@ speechSynthesis.getVoices();
         );
         ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${displayLocation} `;
         API.queuedInstances.set(instanceId, ref);
+        workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
+    };
+
+    $app.methods.instanceQueueTimeout = function () {
+        // remove instance from queue after 1hour of inactivity
+        API.queuedInstances.forEach((ref) => {
+            // 59mins
+            if (Date.now() - ref.updatedAt > 3540000) {
+                ref.$msgBox.close();
+                API.queuedInstances.delete(ref.location);
+            }
+        });
     };
 
     /*
@@ -26490,17 +26867,64 @@ speechSynthesis.getVoices();
             groupId: string
         }
     */
-    API.getGroupAnnouncement = function (params) {
-        return this.call(`groups/${params.groupId}/announcement`, {
-            method: 'GET'
+    // API.getGroupAnnouncement = function (params) {
+    //     return this.call(`groups/${params.groupId}/announcement`, {
+    //         method: 'GET'
+    //     }).then((json) => {
+    //         var args = {
+    //             json,
+    //             params
+    //         };
+    //         this.$emit('GROUP:ANNOUNCEMENT', args);
+    //         return args;
+    //     });
+    // };
+
+    /*
+        params: {
+            groupId: string,
+            n: number,
+            offset: number
+        }
+    */
+    API.getGroupPosts = function (params) {
+        return this.call(`groups/${params.groupId}/posts`, {
+            method: 'GET',
+            params
         }).then((json) => {
             var args = {
                 json,
                 params
             };
-            this.$emit('GROUP:ANNOUNCEMENT', args);
+            this.$emit('GROUP:POSTS', args);
             return args;
         });
+    };
+
+    /*
+        params: {
+            groupId: string
+        }
+    */
+    API.getAllGroupPosts = async function (params) {
+        var posts = [];
+        var offset = 0;
+        var n = 100;
+        var total = 0;
+        do {
+            var args = await this.getGroupPosts({
+                groupId: params.groupId,
+                n,
+                offset
+            });
+            posts = posts.concat(args.json.posts);
+            total = args.json.total;
+            offset += n;
+        } while (offset < total);
+        return {
+            posts,
+            params
+        };
     };
 
     /*
@@ -26615,6 +27039,11 @@ speechSynthesis.getVoices();
             }).then((args1) => {
                 json.world = args1.ref;
                 return args1;
+            });
+            // get queue size etc
+            this.getInstance({
+                worldId: json.worldId,
+                instanceId: json.instanceId
             });
         }
     });
@@ -26880,14 +27309,16 @@ speechSynthesis.getVoices();
         id: '',
         inGroup: false,
         ownerDisplayName: '',
-        announcementDisplayName: '',
         ref: {},
         announcement: {},
+        posts: [],
+        postsFiltered: [],
         members: [],
         instances: [],
         memberRoles: [],
         memberFilter: $app.data.groupDialogFilterOptions.everyone,
         memberSortOrder: $app.data.groupDialogSortingOptions.joinedAtDesc,
+        postsSearch: '',
         galleries: {}
     };
 
@@ -26902,9 +27333,10 @@ speechSynthesis.getVoices();
         D.id = groupId;
         D.inGroup = false;
         D.ownerDisplayName = '';
-        D.announcementDisplayName = '';
         D.treeData = [];
         D.announcement = {};
+        D.posts = [];
+        D.postsFiltered = [];
         D.instances = [];
         D.memberRoles = [];
         if (this.groupDialogLastGallery !== groupId) {
@@ -26965,30 +27397,23 @@ speechSynthesis.getVoices();
                         }
                     }
                     if (D.inGroup) {
-                        API.getGroupAnnouncement({
+                        API.getAllGroupPosts({
                             groupId
                         }).then((args2) => {
-                            if (groupId === args2.json.groupId) {
-                                D.announcement = args2.json;
-                                if (D.announcement.id) {
-                                    D.announcement.title =
-                                        this.replaceBioSymbols(
-                                            D.announcement.title
-                                        );
-                                    D.announcement.text =
-                                        this.replaceBioSymbols(
-                                            D.announcement.text
-                                        );
+                            if (groupId === args2.params.groupId) {
+                                for (var post of args2.posts) {
+                                    post.title = this.replaceBioSymbols(
+                                        post.title
+                                    );
+                                    post.text = this.replaceBioSymbols(
+                                        post.text
+                                    );
                                 }
-                                if (D.announcement && D.announcement.authorId) {
-                                    API.getCachedUser({
-                                        userId: D.announcement.authorId
-                                    }).then((args3) => {
-                                        D.announcementDisplayName =
-                                            args3.ref.displayName;
-                                        return args3;
-                                    });
+                                if (args2.posts.length > 0) {
+                                    D.announcement = args2.posts[0];
                                 }
+                                D.posts = args2.posts;
+                                this.updateGroupPostSearch();
                             }
                         });
                         API.getGroupInstances({
@@ -27002,19 +27427,34 @@ speechSynthesis.getVoices();
                         });
                     }
                     if (this.$refs.groupDialogTabs.currentName === '0') {
-                        this.groupDialogLastActiveTab = 'Info';
+                        this.groupDialogLastActiveTab = $t(
+                            'dialog.group.info.header'
+                        );
                     } else if (this.$refs.groupDialogTabs.currentName === '1') {
-                        this.groupDialogLastActiveTab = 'Members';
+                        this.groupDialogLastActiveTab = $t(
+                            'dialog.group.posts.header'
+                        );
+                    } else if (this.$refs.groupDialogTabs.currentName === '2') {
+                        this.groupDialogLastActiveTab = $t(
+                            'dialog.group.members.header'
+                        );
                         if (this.groupDialogLastMembers !== groupId) {
                             this.groupDialogLastMembers = groupId;
                             this.getGroupDialogGroupMembers();
                         }
-                    } else if (this.$refs.groupDialogTabs.currentName === '2') {
-                        this.groupDialogLastActiveTab = 'Gallery';
+                    } else if (this.$refs.groupDialogTabs.currentName === '3') {
+                        this.groupDialogLastActiveTab = $t(
+                            'dialog.group.gallery.header'
+                        );
                         if (this.groupDialogLastGallery !== groupId) {
                             this.groupDialogLastGallery = groupId;
                             this.getGroupGalleries();
                         }
+                    } else if (this.$refs.groupDialogTabs.currentName === '4') {
+                        this.groupDialogLastActiveTab = $t(
+                            'dialog.group.json.header'
+                        );
+                        this.refreshGroupDialogTreeData();
                     }
                 }
                 return args1;
@@ -27063,7 +27503,11 @@ speechSynthesis.getVoices();
         if (this.groupDialogLastActiveTab === obj.label) {
             return;
         }
-        if (obj.label === $t('dialog.group.members.header')) {
+        if (obj.label === $t('dialog.group.info.header')) {
+            //
+        } else if (obj.label === $t('dialog.group.posts.header')) {
+            //
+        } else if (obj.label === $t('dialog.group.members.header')) {
             if (this.groupDialogLastMembers !== groupId) {
                 this.groupDialogLastMembers = groupId;
                 this.getGroupDialogGroupMembers();
@@ -27083,7 +27527,7 @@ speechSynthesis.getVoices();
         var D = this.groupDialog;
         D.treeData = buildTreeData({
             group: D.ref,
-            announcement: D.announcement,
+            posts: D.posts,
             instances: D.instances,
             members: D.members,
             galleries: D.galleries
@@ -27204,6 +27648,26 @@ speechSynthesis.getVoices();
         }
         API.currentUserGroups.delete(groupId);
     };
+
+    // group posts
+
+    $app.methods.updateGroupPostSearch = function () {
+        var D = this.groupDialog;
+        var search = D.postsSearch.toLowerCase();
+        D.postsFiltered = D.posts.filter((post) => {
+            if (search === '') {
+                return true;
+            }
+            if (post.title.toLowerCase().includes(search)) {
+                return true;
+            }
+            if (post.text.toLowerCase().includes(search)) {
+                return true;
+            }
+            return false;
+        });
+    };
+        
 
     // group members
 

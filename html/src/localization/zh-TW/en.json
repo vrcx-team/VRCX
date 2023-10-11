@@ -25,7 +25,7 @@
                 "password": "密碼",
                 "saveCredentials": "儲存登入資料",
                 "devEndpoint": "開發介面",
-                "endpoint": "Endpoint",
+                "endpoint": "終端節點（Endpoint）",
                 "websocket": "WebSocket"
             }
         },
@@ -92,6 +92,8 @@
             "avatars": {
                 "header": "角色"
             },
+            "bulk_unfavorite_mode": "批次解除好友",
+            "bulk_unfavorite_selection": "批次解除已選擇的好友",
             "refresh_tooltip": "重新整理所有收藏",
             "export": "匯出",
             "import": "匯入",
@@ -100,7 +102,10 @@
             "visibility_tooltip": "變更可見度",
             "rename_tooltip": "重新命名",
             "clear_tooltip": "清除",
-            "delete_tooltip": "刪除"
+            "delete_tooltip": "刪除",
+            "unavailable_tooltip": "無法使用",
+            "private": "私人",
+            "sort_by": "排序方式"
         },
         "friend_log": {
             "filter_placeholder": "篩選好友紀錄",
@@ -121,14 +126,13 @@
             "bulk_unfriend": "批次解除好友",
             "bulk_unfriend_selection": "批次解除已選擇的好友",
             "load": "讀取缺失的項目",
-            "load_notice": "這會向 API 傳送大量請求，所以請謹慎使用",
             "load_tooltip": "讀取",
-            "cancel_tooltip": "取消",
             "favorites_only_tooltip": "僅篩選收藏",
             "search_placeholder": "搜尋好友",
             "filter_placeholder": "篩選好友",
             "refresh_tooltip": "重新整理",
-            "clear_tooltip": "清除結果"
+            "clear_tooltip": "清除結果",
+            "cancel_tooltip": "取消"
         },
         "profile": {
             "profile": {
@@ -138,6 +142,7 @@
                 "two_factor_enabled": "已啟用",
                 "two_factor_disabled": "已停用",
                 "logout": "登出",
+                "manage_gallery_icon": "管理相簿 / 圖示 / 表情符號",
                 "export_friend_list": "匯出好友列表",
                 "export_own_avatars": "匯出私有角色",
                 "discord_names": "Discord 名稱",
@@ -209,6 +214,17 @@
                     "header": "遊戲紀錄",
                     "resource_load": "Udon 資源載入紀錄"
                 },
+                "automation": {
+                    "header": "自動化",
+                    "auto_state_change": "自動狀態變更",
+                    "auto_state_change_tooltip": "當房間中有其他玩家時候自動更改狀態(單獨/同伴)",
+                    "auto_state_change_off": "關閉",
+                    "auto_state_change_active_or_ask_me": "上線 / 詢問我",
+                    "auto_state_change_active_or_busy": "上線 / 忙碌",
+                    "auto_state_change_join_me_or_ask_me": "加入我 / 詢問我",
+                    "auto_state_change_join_me_or_busy": "加入我 / 忙碌",
+                    "auto_state_change_ask_me_or_busy": "詢問我 / 忙碌"
+                },
                 "legal_notice": {
                     "header": "法律聲明",
                     "info": "VRCX 是一個提供好友管理的輔助應用程式。這個程式使用非官方的 VRChat API (VRCSDK)。",
@@ -228,6 +244,9 @@
                     "theme_mode_system": "系統",
                     "theme_mode_light": "淺色",
                     "theme_mode_dark": "深色",
+                    "theme_mode_darkvanilla": "Dark Vanilla",
+                    "theme_mode_pink": "Pink",
+                    "theme_mode_material3": "Material 3",
                     "vrcplus_profile_icons": "VRChat+ 個人檔案圖示",
                     "disable_tooltips": "關閉提示",
                     "sort_favorite_by": "收藏排序依據",
@@ -360,6 +379,7 @@
                     "header": "進階設定",
                     "launch_options": "啟動選項",
                     "screenshot_metadata": "螢幕截圖詳細資訊",
+                    "common_folders": "遊戲資料夾",
                     "pending_offline": {
                         "header": "待確認離線",
                         "description": "將玩家標記為離線之前延遲（防止誤判）",
@@ -425,6 +445,7 @@
                         "avatar_cache": "角色快取：",
                         "group_cache": "群組快取：",
                         "avatar_name_cache": "角色名稱快取：",
+                        "instance_cache": "房間緩存：",
                         "clear_cache": "清除快取",
                         "auto_clear_cache": "自動清除快取",
                         "download_history": "下載紀錄",
@@ -508,7 +529,6 @@
                 "favorite_tooltip": "新增到我的收藏",
                 "unfavorite_tooltip": "從我的收藏中移除",
                 "refresh": "重新整理",
-                "copy_url": "複製玩家連結",
                 "invite": "邀請",
                 "invite_with_message": "邀請（訊息）",
                 "request_invite": "請求邀請",
@@ -542,7 +562,11 @@
                 "header": "資訊",
                 "launch_invite_tooltip": "啟動 / 邀請",
                 "self_invite_tooltip": "自我邀請",
-                "refresh_user_count_tooltip": "重新整理房間人數",
+                "refresh_instance_info": "重新整理房間資訊",
+                "instance_queue": "佇列：",
+                "instance_users": "玩家：",
+                "instance_game_version": "遊戲版本：",
+                "instance_queuing_enabled": "排隊開啟",
                 "instance_creator": "房間建立者",
                 "note": "備註",
                 "note_placeholder": "點擊新增備註",
@@ -566,6 +590,11 @@
                 "avatar_cloning_allow": "允許",
                 "avatar_cloning_deny": "不允許",
                 "home_location": "家點",
+                "id": "玩家 ID",
+                "id_tooltip": "複製到剪貼簿",
+                "copy_id": "複製 ID",
+                "copy_url": "複製連結",
+                "copy_display_name": "複製顯示名稱",
                 "accuracy_notice": "本地資料庫的資料可能不精確",
                 "instance_full": "已滿"
             },
@@ -579,8 +608,18 @@
             "worlds": {
                 "header": "世界",
                 "total_count": "總共 {count}",
-                "sort_by_name": "依名稱排序",
-                "sort_by_update": "依更新排序"
+                "sort_by": "分類依據：",
+                "order_by": "排序依據：",
+                "sorting": {
+                    "updated": "已更新",
+                    "created": "已建立",
+                    "favorites": "收藏",
+                    "popularity": "熱門"
+                },
+                "order": {
+                    "descending": "遞減",
+                    "ascending": "遞增"
+                }
             },
             "favorite_worlds": {
                 "header": "收藏世界"
@@ -602,12 +641,19 @@
             "tags": {
                 "public": "公開",
                 "private": "私人",
+                "avatar_scaling_disabled": "角色縮放關閉",
+                "future_proofing": "Future Proofing",
                 "labs": "社區實驗室",
-                "cache": "快取"
+                "cache": "快取",
+                "content_horror": "恐怖",
+                "content_gore": "血腥",
+                "content_violence": "暴力",
+                "content_adult": "成人",
+                "content_sex": "色情"
             },
             "actions": {
                 "delete_cache_tooltip": "從快取中刪除世界",
-                "favorite_tooltip": "新增到我的收藏",
+                "favorites_tooltip": "最愛欄",
                 "refresh": "重新整理",
                 "new_instance": "新房間",
                 "make_home": "設為家點",
@@ -617,6 +663,7 @@
                 "rename": "重新命名",
                 "change_description": "變更敘述",
                 "change_capacity": "變更最大玩家上限",
+                "change_recommended_capacity": "變更建立人數",
                 "change_preview": "變更 YouTube 預覽",
                 "change_tags": "變更標籤",
                 "change_image": "變更圖片",
@@ -631,18 +678,21 @@
                 "private_count": "私人 {count}",
                 "capacity_count": "玩家上限 {count} ({max})",
                 "self_invite_tooltip": "自我邀請",
-                "refresh_user_count_tooltip": "重新整理房間人數",
+                "refresh_instance_info": "重新整理房間資訊",
                 "instance_full": "已滿",
                 "instance_creator": "房間建立者"
             },
             "info": {
                 "header": "資訊",
+                "memo": "備忘錄",
+                "memo_placeholder": "點擊新增備忘錄",
                 "id": "世界 ID",
                 "id_tooltip": "複製到剪貼簿",
                 "copy_id": "複製 ID",
                 "copy_url": "複製連結",
                 "copy_name": "複製名稱",
                 "youtube_preview": "YouTube 預覽",
+                "author_tags": "作者標籤",
                 "players": "玩家人數",
                 "favorites": "收藏次數",
                 "visits": "總綁訪次數",
@@ -651,6 +701,8 @@
                 "popularity": "熱門度",
                 "created_at": "創建時間",
                 "last_updated": "最後更新",
+                "publication_date": "發佈日期",
+                "labs_publication_date": "實驗室發佈日期",
                 "version": "版本",
                 "platform": "平台",
                 "last_visited": "上次拜訪",
@@ -667,7 +719,13 @@
                 "public": "公開",
                 "private": "私人",
                 "fallback": "備用",
-                "cache": "快取"
+                "future_proofing": "Future Proofing",
+                "cache": "快取",
+                "content_horror": "恐怖",
+                "content_gore": "血腥",
+                "content_violence": "暴力",
+                "content_adult": "成人",
+                "content_sex": "色情"
             },
             "labels": {
                 "public": "（公開）",
@@ -688,6 +746,7 @@
                 "make_private": "設為私人",
                 "rename": "重新命名",
                 "change_description": "變更敘述",
+                "change_content_tags": "變更世界內容標籤",
                 "change_image": "變更圖片",
                 "download_package": "下載 Unity Package",
                 "delete": "刪除"
@@ -702,7 +761,7 @@
                 "last_updated": "最後更新",
                 "version": "版本",
                 "platform": "平台",
-                "memo": "備忘錄",
+                "memo": "備註",
                 "memo_placeholder": "點擊新增備忘錄"
             },
             "json": {
@@ -745,6 +804,7 @@
             },
             "info": {
                 "header": "資訊",
+                "instances": "房間",
                 "announcement": "公告",
                 "instance_full": "已滿",
                 "rules": "規則",
@@ -778,7 +838,10 @@
                 "filters": {
                     "everyone": "所有人",
                     "users_with_no_role": "沒有身分的玩家"
-                }
+                },
+                "unsubscribed_announcements": "取消訂閱公告",
+                "visibility": "Visibility:",
+                "representing": "Representing"
             },
             "gallery": {
                 "header": "畫廊"
@@ -841,13 +904,19 @@
             "instance_creator": "房間建立者",
             "instance_creator_placeholder": "選擇玩家",
             "group_placeholder": "選擇群組",
+            "role_placeholder": "選擇身分",
             "group_id": "群組 ID",
             "location": "地點",
             "url": "連結",
             "copy_url": "複製連結",
             "self_invite": "自我邀請",
             "invite": "邀請",
-            "launch": "啟動"
+            "launch": "啟動",
+            "create_instance": "建立房間",
+            "queueEnabled": "排隊",
+            "normal": "一般",
+            "group": "群組",
+            "roles": "身分"
         },
         "launch_options": {
             "header": "啟動選項",
@@ -871,9 +940,11 @@
             "max_cache_size": "最大快取大小 [GB] （最小 20GB）",
             "cache_expiry_delay": "快取保存時長 [日] （30 - 150）",
             "cache_directory": "覆蓋快取資料夾位置",
+            "picture_directory": "覆蓋圖片資料夾位置",
             "fpv_steadycam_fov": "第一人稱平滑鏡頭視野範圍",
             "camera_resolution": "相機解析度",
             "screenshot_resolution": "螢幕截圖解析度",
+            "picture_sort_by_date": "依據日期將圖片分類到資料夾中",
             "disable_discord_presence": "停用 Discord 遊戲狀態",
             "vrchat_docs": "VRChat 文件",
             "cancel": "取消",
@@ -888,8 +959,28 @@
         },
         "set_world_tags": {
             "header": "設定世界標籤",
+            "avatar_scaling_disabled": "關閉角色縮放",
             "enable_debugging": "為其他人啟用世界偵錯",
-            "seprator": "使用逗號來分隔每個標籤",
+            "author_tags": "作者標籤(使用逗號分隔每個標籤)",
+            "content_tags": "內容警告標籤",
+            "content_horror": "恐怖",
+            "content_gore": "血腥",
+            "content_violence": "暴力",
+            "content_adult": "成人",
+            "content_sex": "色情",
+            "cancel": "取消",
+            "save": "儲存"
+        },
+        "set_avatar_tags": {
+            "header": "設定角色標籤",
+            "content_tags": "內容警告標籤",
+            "content_horror": "恐怖",
+            "content_gore": "血腥",
+            "content_violence": "暴力",
+            "content_adult": "成人",
+            "content_sex": "色情",
+            "select_all": "全選",
+            "select_none": "取消選取",
             "cancel": "取消",
             "save": "儲存"
         },
@@ -920,7 +1011,9 @@
             "launch": "啟動"
         },
         "export_friends_list": {
-            "header": "匯出好友列表"
+            "header": "匯出好友列表",
+            "csv": "CSV",
+            "json": "JSON"
         },
         "export_own_avatars": {
             "header": "匯出私有角色"
@@ -932,7 +1025,7 @@
         "notification_position": {
             "header": "通知位置",
             "description": "選擇通知位置",
-            "ok": "OK"
+            "ok": "確定"
         },
         "shared_feed_filters": {
             "notification": "通知篩選器",
@@ -1006,7 +1099,7 @@
         },
         "invite_to_group": {
             "header": "邀請到群組",
-            "description": "請不要濫用群組邀請，邀請太多玩家加入群組會導致你被停權。",
+            "description": "Don't spam invite users, you'll get rate limited.",
             "choose_group_placeholder": "選擇群組",
             "groups": "群組",
             "choose_friends_placeholder": "選擇好友",
@@ -1073,12 +1166,14 @@
         },
         "gallery_icons": {
             "header": "相簿和圖示",
-            "description": "推薦圖片尺寸：1200 像素 x 900 像素",
+            "description": "Recommended image size: 1200x900px (4:3)",
             "gallery": "相簿",
             "icons": "圖示",
+            "emojis": "表情符號",
             "refresh": "重新整理",
             "upload": "上傳",
-            "clear": "清除"
+            "clear": "清除",
+            "emoji_animation_styles": "動畫樣式"
         },
         "change_content_image": {
             "avatar": "變更角色圖片",
@@ -1117,7 +1212,7 @@
             "header": "需要設定主密碼",
             "password_placeholder": "輸入新密碼",
             "re_input_placeholder": "確認密碼",
-            "ok": "OK"
+            "ok": "確定"
         },
         "screenshot_metadata": {
             "header": "螢幕截圖詳細資料",
@@ -1141,7 +1236,7 @@
         "otp": {
             "header": "雙重認證",
             "description": "輸入你儲存的其中一個備份驗證碼",
-            "use_totp": "使用驗證碼",
+            "use_totp": "Use TOTP",
             "verify": "驗證",
             "input_placeholder": "備份驗證碼",
             "input_error": "無效的代碼"
@@ -1149,7 +1244,7 @@
         "email_otp": {
             "header": "雙重認證",
             "description": "輸入寄送到電子信箱的數字代碼",
-            "cancel": "取消",
+            "resend": "重新發送郵件",
             "verify": "驗證",
             "input_placeholder": "代碼",
             "input_error": "無效的代碼"
@@ -1272,12 +1367,22 @@
         },
         "change_world_capacity": {
             "header": "變更世界最大人數",
-            "description": "輸入世界最大人數, 最大：40",
+            "description": "Enter world maximum capacity (hard cap), Max: 80",
             "cancel": "取消",
             "ok": "OK",
             "input_error": "請輸入有效的人數",
             "message": {
                 "success": "已變更世界最大人數"
+            }
+        },
+        "change_world_recommended_capacity": {
+            "header": "Change Recommended Capacity",
+            "description": "Enter world recommended capacity (soft cap)",
+            "cancel": "取消",
+            "ok": "OK",
+            "input_error": "Valid number is required",
+            "message": {
+                "success": "World recommended capacity changed"
             }
         },
         "change_world_preview": {
@@ -1366,10 +1471,10 @@
             "rank": "階級",
             "language": "語言",
             "bioLink": "社交連結",
+            "date": "時間",
             "user": "玩家",
             "type": "種類",
-            "detail": "詳細",
-            "date": "時間"
+            "detail": "詳細"
         },
         "friendLog": {
             "date": "時間",

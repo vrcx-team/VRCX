@@ -65,7 +65,7 @@
                 "refresh_tooltip": "Rafraîchir ses propres avatars",
                 "result_count": "{count} Résultats",
                 "all": "Tout",
-                "public": "Public",
+                "public": "Publique",
                 "private": "Privé",
                 "local": "Locale",
                 "remote": "À distance",
@@ -73,11 +73,11 @@
                 "sort_update": "Trier par date de mise à jour",
                 "sort_created": "Trier par date de création"
             },
-            "prev_page": "Précédent",
-            "next_page": "Suivant",
             "group": {
                 "header": "Groupe"
-            }
+            },
+            "prev_page": "Précédent",
+            "next_page": "Suivant"
         },
         "favorite": {
             "friends": {
@@ -92,6 +92,8 @@
             "avatars": {
                 "header": "Avatars"
             },
+            "bulk_unfavorite_mode": "Mode groupée de suppression des favoris",
+            "bulk_unfavorite_selection": "Sélection groupée des favoris",
             "refresh_tooltip": "Actualiser les favoris",
             "export": "Exporter",
             "import": "Importer",
@@ -101,8 +103,9 @@
             "rename_tooltip": "Renommer",
             "clear_tooltip": "Vider",
             "delete_tooltip": "Supprimer",
-            "bulk_unfavorite_mode": "Mode groupée de suppression des favoris",
-            "bulk_unfavorite_selection": "Sélection groupée des favoris"
+            "unavailable_tooltip": "Indisponible",
+            "private": "Privé",
+            "sort_by": "Trier par"
         },
         "friend_log": {
             "filter_placeholder": "Filtrer",
@@ -123,7 +126,6 @@
             "bulk_unfriend": "Mode suppression des amis",
             "bulk_unfriend_selection": "Valider la suppression des amis",
             "load": "Charger les données manquantes",
-            "load_notice": "Cela nécessite beaucoup de requêtes API, il faut donc l'utiliser avec parcimonie",
             "load_tooltip": "Charger",
             "favorites_only_tooltip": "Filtrer uniquement les favoris",
             "search_placeholder": "Rechercher",
@@ -140,6 +142,7 @@
                 "two_factor_enabled": "Activé",
                 "two_factor_disabled": "Désactivé",
                 "logout": "Se déconnecter",
+                "manage_gallery_icon": "Gérer les Photos/Icônes/Emojis",
                 "export_friend_list": "Exporter la liste d'amis",
                 "export_own_avatars": "Exporter ses propres avatars",
                 "discord_names": "Pseudonymes Discord",
@@ -188,7 +191,7 @@
                     "version": "Version",
                     "latest_app_version": "Dernière version",
                     "latest_app_version_refresh": "Cliquez pour actualiser",
-                    "repository_url": "URL du dépôt",
+                    "repository_url": "URL du répertoire",
                     "support": "Soutien"
                 },
                 "vrcx_updater": {
@@ -211,6 +214,17 @@
                     "header": "Historique de jeu",
                     "resource_load": "Charge de ressources du journal Udon"
                 },
+                "automation": {
+                    "header": "Automatisation",
+                    "auto_state_change": "Changement de statut automatique",
+                    "auto_state_change_tooltip": "Changer automatiquement de statut quand il y a d'autres personnes dans l'instance (Seul / Compagnie)",
+                    "auto_state_change_off": "Off",
+                    "auto_state_change_active_or_ask_me": "Actif / Demandez-moi",
+                    "auto_state_change_active_or_busy": "Actif / Occupé",
+                    "auto_state_change_join_me_or_ask_me": "Rejoignez-moi / Demandez-moi",
+                    "auto_state_change_join_me_or_busy": "Rejoignez-moi / Ne pas déranger",
+                    "auto_state_change_ask_me_or_busy": "Demandez-moi / Occupé"
+                },
                 "legal_notice": {
                     "header": "Mentions légales",
                     "info": "VRCX est une application d'assistance pour VRChat qui fournit des informations sur les amitiés et les gère. Cette application utilise l'API SDK non officielle de VRChat.",
@@ -225,11 +239,14 @@
             "appearance": {
                 "appearance": {
                     "header": "Apparence",
-                    "language": "Language",
+                    "language": "Langue",
                     "theme_mode": "Thèmes des couleurs",
                     "theme_mode_system": "Système",
                     "theme_mode_light": "Clair",
                     "theme_mode_dark": "Sombre",
+                    "theme_mode_darkvanilla": "Vanilla Noire",
+                    "theme_mode_pink": "Rose",
+                    "theme_mode_material3": "Matériel 3",
                     "vrcplus_profile_icons": "Icônes des profils VRCPlus",
                     "disable_tooltips": "Désactiver les infobulles",
                     "sort_favorite_by": "Trier les favoris par",
@@ -239,10 +256,7 @@
                     "sort_instance_users_by_time": "temps",
                     "sort_instance_users_by_alphabet": "alphabétique",
                     "table_max_size": "Taille maximale du tableau",
-                    "page_size": "Taille de page :",
-                    "theme_mode_darkvanilla": "Vanilla Noire",
-                    "theme_mode_pink": "Rose",
-                    "theme_mode_material3": "Matériel 3"
+                    "page_size": "Taille de page :"
                 },
                 "timedate": {
                     "header": "Date et heure",
@@ -365,6 +379,7 @@
                     "header": "Avancés",
                     "launch_options": "Options de démarrage",
                     "screenshot_metadata": "Métadonnées d'une capture d'écran",
+                    "common_folders": "Dossiers communs",
                     "pending_offline": {
                         "header": "En attendant l'hors ligne",
                         "description": "Délai avant de marquer l'utilisateur comme étant hors ligne (corrige les faux positifs)",
@@ -421,6 +436,8 @@
                         "header": "Cache/débogage d'instance VRCX",
                         "udon_exception_logging": "Enregistrement des exceptions d'Udon",
                         "gpu_fix": "Correction du GPU de l'Overlay SteamVR",
+                        "gpu_fix_notice": "(nécessite un redémarrage)",
+                        "gpu_fix_warning": "N'activez cette option que si l'Overlay SteamVR ne fonctionne pas et que vous avez 2 GPU",
                         "disable_gamelog": "Désactiver l'historique du jeu",
                         "disable_gamelog_notice": "(ce qui risque de tout casser)",
                         "user_cache": "Cache utilisateur :",
@@ -428,12 +445,11 @@
                         "avatar_cache": "Cache d'avatar :",
                         "group_cache": "Cache de groupe :",
                         "avatar_name_cache": "Cache du nom de l'avatar :",
+                        "instance_cache": "Cache de l'instance:",
                         "clear_cache": "Vider le cache",
                         "auto_clear_cache": "Vidage automatique du cache",
                         "download_history": "Télécharger l'historique",
-                        "show_console": "Afficher la console",
-                        "gpu_fix_notice": "(nécessite un redémarrage)",
-                        "gpu_fix_warning": "N'activez cette option que si l'Overlay SteamVR ne fonctionne pas et que vous avez 2 GPU"
+                        "show_console": "Afficher la console"
                     },
                     "sqlite_table_size": {
                         "header": "Taille du tableau SQLite",
@@ -485,14 +501,14 @@
         "search_result_more": "Plus de recherche :",
         "direct_access_tooltip": "Accès direct à l'ID/URL à partir du presse-papiers",
         "refresh_tooltip": "Actualiser les amis",
+        "groups": "GROUPES",
         "friends": "AMIS",
         "me": "MOI",
         "favorite": "FAVORIS",
         "online": "EN LIGNE",
         "active": "ACTIF",
         "offline": "HORS LIGNE",
-        "pending_offline": "En attendant l'hors ligne",
-        "groups": "GROUPES"
+        "pending_offline": "En attendant l'hors ligne"
     },
     "dialog": {
         "user": {
@@ -513,7 +529,6 @@
                 "favorite_tooltip": "Ajouter aux favoris",
                 "unfavorite_tooltip": "Supprimer des favoris",
                 "refresh": "Actualiser",
-                "copy_url": "Copier l'URL de l'utilisateur",
                 "invite": "Inviter",
                 "invite_with_message": "Inviter avec un message",
                 "request_invite": "Demander une invitation",
@@ -537,7 +552,7 @@
                 "moderation_enable_avatar_interaction": "Activer l'interaction avec l'avatar",
                 "moderation_disable_avatar_interaction": "Désactiver l'interaction avec l'avatar",
                 "edit_status": "Statut social",
-                "edit_language": "Language",
+                "edit_language": "Langue",
                 "edit_bio": "Bio",
                 "report_hacking": "Signaler un piratage",
                 "unfriend": "Supprimer des amis",
@@ -547,6 +562,11 @@
                 "header": "Infos",
                 "launch_invite_tooltip": "Lancer / inviter",
                 "self_invite_tooltip": "S'inviter",
+                "refresh_instance_info": "Actualiser les informations sur l'instance",
+                "instance_queue": "File d'attente :",
+                "instance_users": "Utilisateurs :",
+                "instance_game_version": "Version du jeu :",
+                "instance_queuing_enabled": "File d'attente activée",
                 "instance_creator": "Créateur de l'instance",
                 "note": "Note",
                 "note_placeholder": "Cliquez pour ajouter une note",
@@ -570,13 +590,13 @@
                 "avatar_cloning_allow": "Autorisé",
                 "avatar_cloning_deny": "Refusé",
                 "home_location": "Lieu d'accueil",
+                "id": "ID de l'utilisateur",
+                "id_tooltip": "Copier dans le presse-papiers",
+                "copy_id": "Copier l'ID",
+                "copy_url": "Copier l'URL",
+                "copy_display_name": "Copier le nom d'affichage",
                 "accuracy_notice": "Les informations provenant de la base de données locale peuvent ne pas être exactes",
-                "instance_full": "Complète",
-                "refresh_instance_info": "Actualiser les informations sur l'instance",
-                "instance_queue": "File d'attente :",
-                "instance_users": "Utilisateurs :",
-                "instance_game_version": "Version du jeu :",
-                "instance_queuing_enabled": "File d'attente activée"
+                "instance_full": "Complète"
             },
             "groups": {
                 "header": "Groupes",
@@ -588,8 +608,18 @@
             "worlds": {
                 "header": "Mondes",
                 "total_count": "{count} au total",
-                "sort_by_name": "Trier par nom",
-                "sort_by_update": "Trier par mise à jour"
+                "sort_by": "Trier par:",
+                "order_by": "Organiser par:",
+                "sorting": {
+                    "updated": "Mise à jour",
+                    "created": "Date de création",
+                    "favorites": "Favoris",
+                    "popularity": "Popularité"
+                },
+                "order": {
+                    "descending": "Décroissant",
+                    "ascending": "Croissant"
+                }
             },
             "favorite_worlds": {
                 "header": "Mondes favoris"
@@ -600,7 +630,7 @@
                 "sort_by_name": "Trier par nom",
                 "sort_by_update": "Trier par mise à jour",
                 "all": "Tout",
-                "public": "Public",
+                "public": "Publique",
                 "private": "Privé"
             },
             "json": {
@@ -609,11 +639,17 @@
         },
         "world": {
             "tags": {
-                "public": "Public",
+                "public": "Publique",
                 "private": "Privé",
+                "avatar_scaling_disabled": "Mise à l'échelle de l'avatar désactivée",
+                "future_proofing": "Future Proofing",
                 "labs": "Labs",
                 "cache": "Cache",
-                "avatar_scaling": "Taille de l'Avatar"
+                "content_horror": "Horreur",
+                "content_gore": "Gore",
+                "content_violence": "Violence",
+                "content_adult": "Adulte",
+                "content_sex": "Sexuel"
             },
             "actions": {
                 "delete_cache_tooltip": "Supprimer le monde du cache",
@@ -627,6 +663,7 @@
                 "rename": "Renommer",
                 "change_description": "Changer la description",
                 "change_capacity": "Changer la capacité",
+                "change_recommended_capacity": "Changer la capacité recommandée",
                 "change_preview": "Changer l'aperçu Youtube",
                 "change_tags": "Changer les étiquettes",
                 "change_image": "Changer l'image",
@@ -641,18 +678,21 @@
                 "private_count": "{count} en privé",
                 "capacity_count": "Capacité : {count} ({max})",
                 "self_invite_tooltip": "S'inviter",
+                "refresh_instance_info": "Actualiser les informations sur l'instance",
                 "instance_full": "Complète",
-                "instance_creator": "Créateur de l'instance",
-                "refresh_instance_info": "Actualiser les informations sur l'instance"
+                "instance_creator": "Créateur de l'instance"
             },
             "info": {
                 "header": "Infos",
+                "memo": "Mémo",
+                "memo_placeholder": "Cliquez pour ajouter un mémo",
                 "id": "ID du monde",
                 "id_tooltip": "Copier dans le presse-papiers",
                 "copy_id": "Copier l'ID",
                 "copy_url": "Copier l'URL",
                 "copy_name": "Copier le nom",
                 "youtube_preview": "Aperçu Youtube",
+                "author_tags": "Tags de l'auteur",
                 "players": "Joueurs",
                 "favorites": "Favoris",
                 "visits": "Visites",
@@ -661,14 +701,14 @@
                 "popularity": "Popularité",
                 "created_at": "Créé le",
                 "last_updated": "Dernière mise à jour",
+                "publication_date": "Date de publication",
+                "labs_publication_date": "Date de publication au Labs",
                 "version": "Version",
                 "platform": "Plateforme",
                 "last_visited": "Dernière visite",
                 "visit_count": "Nombre de visites",
                 "time_spent": "Temps passé",
-                "accuracy_notice": "Les informations provenant de la base de données locale peuvent ne pas être exactes",
-                "memo": "Mémo",
-                "memo_placeholder": "Cliquez pour ajouter un mémo"
+                "accuracy_notice": "Les informations provenant de la base de données locale peuvent ne pas être exactes"
             },
             "json": {
                 "header": "JSON"
@@ -676,13 +716,19 @@
         },
         "avatar": {
             "tags": {
-                "public": "Public",
+                "public": "Publique",
                 "private": "Privé",
-                "fallback": "Fallback",
-                "cache": "Cache"
+                "fallback": "Avatar fallback",
+                "future_proofing": "Future Proofing",
+                "cache": "Cache",
+                "content_horror": "Horreur",
+                "content_gore": "Gore",
+                "content_violence": "Violence",
+                "content_adult": "Adulte",
+                "content_sex": "Sexuel"
             },
             "labels": {
-                "public": "(Public)",
+                "public": "(Publique)",
                 "private": "(Privé)",
                 "own": "(À moi)"
             },
@@ -700,6 +746,7 @@
                 "make_private": "Rendre privé",
                 "rename": "Renommer",
                 "change_description": "Changer la description",
+                "change_content_tags": "Changer les Tags d'avatars",
                 "change_image": "Changer l'image",
                 "download_package": "Télécharger le package Unity",
                 "delete": "Supprimer"
@@ -725,7 +772,7 @@
         "group": {
             "tags": {
                 "verified": "Vérifié",
-                "public": "Public",
+                "public": "Publique",
                 "private": "Privé",
                 "open": "Ouvert",
                 "request": "Rejoindre par demande",
@@ -757,6 +804,7 @@
             },
             "info": {
                 "header": "Infos",
+                "instances": "Instances",
                 "announcement": "Annonces",
                 "instance_full": "Complet",
                 "rules": "Régles",
@@ -773,8 +821,7 @@
                 "role_description": "Description :",
                 "role_updated_at": "Mis à jour le :",
                 "role_created_at": "Créé le :",
-                "role_permissions": "Permissions :",
-                "instances": "Instances"
+                "role_permissions": "Permissions :"
             },
             "members": {
                 "header": "Membres",
@@ -791,7 +838,10 @@
                 "filters": {
                     "everyone": "Tout le monde",
                     "users_with_no_role": "Utilisateurs sans rôle"
-                }
+                },
+                "unsubscribed_announcements": "Désabonné des annonces",
+                "visibility": "Visibilité:",
+                "representing": "Représente"
             },
             "gallery": {
                 "header": "Galerie"
@@ -818,7 +868,7 @@
             "update": "Mettre à jour"
         },
         "language": {
-            "header": "Language",
+            "header": "Langue",
             "add_language": "Ajouter une langue",
             "select_language": "Sélectionner la langue",
             "ok": "OK",
@@ -833,12 +883,16 @@
         "new_instance": {
             "header": "Nouvelle instance",
             "access_type": "Type d'accès",
-            "access_type_public": "Public",
+            "access_type_public": "Publique",
             "access_type_group": "Groupe",
             "access_type_friend_plus": "Amis+",
             "access_type_friend": "Amis",
-            "access_type_invite_plus": "Invite+",
-            "access_type_invite": "Invite",
+            "access_type_invite_plus": "Invitation+",
+            "access_type_invite": "Invitation",
+            "group_access_type": "Accès de groupe",
+            "group_access_type_members": "Membres",
+            "group_access_type_plus": "Plus",
+            "group_access_type_public": "Publique",
             "region": "Région",
             "region_usw": "Ouest des États-Unis",
             "region_use": "Est des États-Unis",
@@ -849,6 +903,8 @@
             "instance_id_placeholder": "Aléatoire",
             "instance_creator": "Créateur de l'instance",
             "instance_creator_placeholder": "Choisir un utilisateur",
+            "group_placeholder": "Choisissez le groupe",
+            "role_placeholder": "Choisissez des rôles",
             "group_id": "ID du groupe",
             "location": "Lieu",
             "url": "URL",
@@ -856,15 +912,9 @@
             "self_invite": "S'inviter",
             "invite": "Inviter",
             "launch": "Lancer",
-            "group_access_type": "Accès de groupe",
-            "group_access_type_members": "Membres",
-            "group_access_type_plus": "Plus",
-            "group_access_type_public": "Publique",
-            "group_placeholder": "Choisissez le groupe",
-            "role_placeholder": "Choisissez des rôles",
             "create_instance": "Créer une instance",
             "queueEnabled": "File d'attente",
-            "normal": "Normal",
+            "normal": "Normale",
             "group": "Groupe",
             "roles": "Rôles"
         },
@@ -890,9 +940,11 @@
             "max_cache_size": "Taille maximale du cache [Go] (min 20)",
             "cache_expiry_delay": "Expiration du cache [jours] (30 - 150)",
             "cache_directory": "Emplacement du dossier de cache personnalisé",
+            "picture_directory": "Emplacement du dossier de photos personnalisé",
             "fpv_steadycam_fov": "Angle de vue à la première personne",
             "camera_resolution": "Résolution de l'appareil photo",
             "screenshot_resolution": "Résolution des captures d'écran",
+            "picture_sort_by_date": "Trier les images dans des dossiers par date",
             "disable_discord_presence": "Désactiver la présence Discord",
             "vrchat_docs": "Documentation de VRChat",
             "cancel": "Annuler",
@@ -907,11 +959,30 @@
         },
         "set_world_tags": {
             "header": "Définir les étiquettes du monde",
+            "avatar_scaling_disabled": "Désactiver la mise à l'échelle des avatars",
             "enable_debugging": "Activer le débogage du monde pour les autres",
-            "seprator": "Saisir les étiquettes en les séparant par des virgules",
+            "author_tags": "Tags de l'auteur (séparés par des virgules)",
+            "content_tags": "Tags d'avertissement de contenu",
+            "content_horror": "Horreur",
+            "content_gore": "Gore",
+            "content_violence": "Violence",
+            "content_adult": "Adulte",
+            "content_sex": "Sexuel",
             "cancel": "Annuler",
-            "save": "Sauvegarder",
-            "avatar_scaling": "Taille d'avatar"
+            "save": "Sauvegarder"
+        },
+        "set_avatar_tags": {
+            "header": "Set Avatar Tags",
+            "content_tags": "Content Warning Tags",
+            "content_horror": "Horror",
+            "content_gore": "Gore",
+            "content_violence": "Violence",
+            "content_adult": "Adult",
+            "content_sex": "Sexual",
+            "select_all": "Select All",
+            "select_none": "Select None",
+            "cancel": "Cancel",
+            "save": "Save"
         },
         "download_history": {
             "header": "Télécharger l'historique",
@@ -1028,7 +1099,7 @@
         },
         "invite_to_group": {
             "header": "Inviter au groupe",
-            "description": "N'invitez pas de spammeurs, l'invitation d'un trop grand nombre d'utilisateurs à un groupe est connue pour entraîner un bannissement.",
+            "description": "Don't spam invite users, you'll get rate limited.",
             "choose_group_placeholder": "Choisir un groupe",
             "groups": "Groupes",
             "choose_friends_placeholder": "Choisir des amis",
@@ -1095,13 +1166,14 @@
         },
         "gallery_icons": {
             "header": "Galerie et icônes",
-            "description": "Taille d'image recommandée : 1200x900px (4:3)",
+            "description": "Recommended image size: 1200x900px (4:3)",
             "gallery": "Galerie",
             "icons": "Icônes",
+            "emojis": "Émojis",
             "refresh": "Actualiser",
             "upload": "Uploader",
             "clear": "Vider",
-            "emojis": "Émojis"
+            "emoji_animation_styles": "Styles d'animation"
         },
         "change_content_image": {
             "avatar": "Changer l'image de l'avatar",
@@ -1130,7 +1202,7 @@
             "gallery": "Galerie",
             "none": "Rien",
             "refresh": "Actualiser",
-            "upload": "Upload"
+            "upload": "Mettre en ligne"
         },
         "open_source": {
             "header": "Mentions relatives aux logiciels libres",
@@ -1149,7 +1221,7 @@
             "last_screenshot": "Dernière capture d'écran",
             "copy_image": "Copier l'image",
             "open_folder": "Ouvrir un dossier",
-            "upload": "Upload"
+            "upload": "Mettre en ligne"
         }
     },
     "prompt": {
@@ -1164,7 +1236,7 @@
         "otp": {
             "header": "Authentification à double facteur",
             "description": "Saisissez l'un des codes de récupération que vous avez enregistrés",
-            "use_totp": "Utiliser un mot de passe à usage unique basé sur le temps (TOTP)",
+            "use_totp": "Use TOTP",
             "verify": "Vérifier",
             "input_placeholder": "Code",
             "input_error": "Code incorrect"
@@ -1295,12 +1367,22 @@
         },
         "change_world_capacity": {
             "header": "Changer la capacité",
-            "description": "Saisir la capacité du monde, Maximum : 40",
+            "description": "Enter world maximum capacity (hard cap), Max: 80",
             "cancel": "Annuler",
             "ok": "OK",
             "input_error": "Un numéro valide est nécessaire",
             "message": {
                 "success": "La capacité du monde a été changée"
+            }
+        },
+        "change_world_recommended_capacity": {
+            "header": "Change Recommended Capacity",
+            "description": "Enter world recommended capacity (soft cap)",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid number is required",
+            "message": {
+                "success": "World recommended capacity changed"
             }
         },
         "change_world_preview": {
@@ -1387,7 +1469,7 @@
             "displayName": "Nom d'affichage",
             "status": "Statut",
             "rank": "Rang",
-            "language": "Language",
+            "language": "Langue",
             "bioLink": "Liens",
             "date": "Date",
             "user": "Utilisateur",
@@ -1421,7 +1503,7 @@
             "displayName": "Nom d'affichage",
             "rank": "Rang",
             "status": "Statut",
-            "language": "Language",
+            "language": "Langue",
             "bioLink": "Liens",
             "joinCount": "Fois ensemble",
             "timeTogether": "Temps ensemble",
@@ -1433,7 +1515,7 @@
         },
         "profile": {
             "invite_messages": {
-                "slot": "Slot",
+                "slot": "Emplacement",
                 "message": "Message",
                 "cool_down": "Délai d'attente",
                 "action": "Action"

@@ -68,8 +68,6 @@ namespace VRCX
             foreach (var keyValuePair in monitoredProcesses)
             {
                 var monitoredProcess = keyValuePair.Value;
-                var process = monitoredProcess.Process;
-                var name = monitoredProcess.ProcessName;
 
                 if (monitoredProcess.IsRunning)
                 {
@@ -93,11 +91,11 @@ namespace VRCX
             foreach (var monitoredProcess in processesNeedingUpdate)
             {
                 var process = processes.FirstOrDefault(p => string.Equals(p.ProcessName, monitoredProcess.ProcessName, StringComparison.OrdinalIgnoreCase));
-                if (process != null)
-                {
-                    monitoredProcess.ProcessStarted(process);
-                    ProcessStarted?.Invoke(monitoredProcess);
-                }
+                if (process == null)
+                    continue;
+                
+                monitoredProcess.ProcessStarted(process);
+                ProcessStarted?.Invoke(monitoredProcess);
             }
         }
 
@@ -110,17 +108,14 @@ namespace VRCX
         public bool IsProcessRunning(string processName, bool ensureCheck = false)
         {
             processName = processName.ToLower();
-            if (monitoredProcesses.ContainsKey(processName))
-            {
-                var process = monitoredProcesses[processName];
+            if (!monitoredProcesses.TryGetValue(processName, out var process))
+                return false;
 
-                if (ensureCheck && process.Process == null)
-                    return Process.GetProcessesByName(processName).FirstOrDefault() != null;
+            if (ensureCheck && process.Process == null)
+                return Process.GetProcessesByName(processName).FirstOrDefault() != null;
 
-                return process.IsRunning;
-            }
+            return process.IsRunning;
 
-            return false;
         }
 
         /// <summary>
@@ -129,10 +124,11 @@ namespace VRCX
         /// <param name="process"></param>
         public void AddProcess(Process process)
         {
-            if (monitoredProcesses.ContainsKey(process.ProcessName.ToLower()))
+            var processName = process.ProcessName.ToLower();
+            if (monitoredProcesses.ContainsKey(processName))
                 return;
 
-            monitoredProcesses.Add(process.ProcessName.ToLower(), new MonitoredProcess(process));
+            monitoredProcesses.Add(processName, new MonitoredProcess(process));
         }
 
         /// <summary>
@@ -141,10 +137,9 @@ namespace VRCX
         /// <param name="processName"></param>
         public void AddProcess(string processName)
         {
-            if (monitoredProcesses.ContainsKey(processName.ToLower()))
-            {
+            processName = processName.ToLower();
+            if (monitoredProcesses.ContainsKey(processName))
                 return;
-            }
 
             monitoredProcesses.Add(processName, new MonitoredProcess(processName));
         }
@@ -155,10 +150,8 @@ namespace VRCX
         /// <param name="processName"></param>
         public void RemoveProcess(string processName)
         {
-            if (monitoredProcesses.ContainsKey(processName.ToLower()))
-            {
-                monitoredProcesses.Remove(processName);
-            }
+            processName = processName.ToLower();
+            monitoredProcesses.Remove(processName);
         }
     }
 
@@ -169,7 +162,7 @@ namespace VRCX
             Process = process;
             ProcessName = process.ProcessName.ToLower();
 
-            if (process != null && !WinApi.HasProcessExited(process.Id))
+            if (!WinApi.HasProcessExited(process.Id))
                 IsRunning = true;
         }
 
@@ -182,6 +175,7 @@ namespace VRCX
         public Process Process { get; private set; }
         public string ProcessName { get; private set; }
         public bool IsRunning { get; private set; }
+        public DateTime LastExitTime { get; private set; }
 
         public bool HasName(string processName)
         {
@@ -193,10 +187,15 @@ namespace VRCX
             IsRunning = false;
             Process?.Dispose();
             Process = null;
+            LastExitTime = DateTime.Now;
         }
 
         public void ProcessStarted(Process process)
         {
+            // check last exit time to prevent status flapping
+            if (LastExitTime != DateTime.MinValue && DateTime.Now - LastExitTime < TimeSpan.FromSeconds(5))
+                return;
+            
             Process = process;
             ProcessName = process.ProcessName.ToLower();
             IsRunning = true;

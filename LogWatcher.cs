@@ -253,7 +253,8 @@ namespace VRCX
                                     ParseLogSDK2VideoPlay(fileInfo, logContext, line, offset) ||
                                     ParseApplicationQuit(fileInfo, logContext, line, offset) ||
                                     ParseOpenVRInit(fileInfo, logContext, line, offset) ||
-                                    ParseDesktopMode(fileInfo, logContext, line, offset))
+                                    ParseDesktopMode(fileInfo, logContext, line, offset) ||
+                                    ParseOscFailedToStart(fileInfo, logContext, line, offset))
                                 {
                                 }
                             }
@@ -1097,7 +1098,24 @@ namespace VRCX
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
                 "event",
-                line.Substring(offset + 36)
+                line.Substring(offset + 12)
+            });
+            return true;
+        }
+
+        private bool ParseOscFailedToStart(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2023.09.26 04:12:57 Warning    -  Could not Start OSC: Address already in use
+            
+            if (string.Compare(line, offset, "Could not Start OSC: ", 0, 21, StringComparison.Ordinal) != 0)
+                return false;
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "event",
+                line.Substring(offset)
             });
             return true;
         }

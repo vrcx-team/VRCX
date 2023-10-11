@@ -104,6 +104,7 @@
             "clear_tooltip": "Xóa hết",
             "delete_tooltip": "Xóa",
             "unavailable_tooltip": "Không có sẵn",
+            "private": "Private",
             "sort_by": "Sắp xếp theo"
         },
         "friend_log": {
@@ -528,7 +529,6 @@
                 "favorite_tooltip": "Thêm vào yêu thích",
                 "unfavorite_tooltip": "Bỏ khỏi yêu thích",
                 "refresh": "Làm mới",
-                "copy_url": "Sao chép User URL",
                 "invite": "Gửi lời mời",
                 "invite_with_message": "Gửi lời mời với tin nhắn",
                 "request_invite": "Yêu cầu lời mời",
@@ -590,6 +590,11 @@
                 "avatar_cloning_allow": "Cho phép",
                 "avatar_cloning_deny": "Từ chối",
                 "home_location": "Vị trí world nhà",
+                "id": "User ID",
+                "id_tooltip": "Copy to clipboard",
+                "copy_id": "Copy ID",
+                "copy_url": "Copy URL",
+                "copy_display_name": "Copy DisplayName",
                 "accuracy_notice": "Thông tin từ dữ liệu trong máy có thể không chính xác",
                 "instance_full": "đầu"
             },
@@ -639,7 +644,12 @@
                 "avatar_scaling_disabled": "Avatar Scaling Bật",
                 "future_proofing": "Future Proofing",
                 "labs": "Labs",
-                "cache": "Cache"
+                "cache": "Cache",
+                "content_horror": "Horror",
+                "content_gore": "Gore",
+                "content_violence": "Violence",
+                "content_adult": "Adult",
+                "content_sex": "Sexual"
             },
             "actions": {
                 "delete_cache_tooltip": "Xóa world khỏi cache",
@@ -653,6 +663,7 @@
                 "rename": "Đổi tên",
                 "change_description": "Đổi mô tả",
                 "change_capacity": "Đổi số lượng người chứa",
+                "change_recommended_capacity": "Change Recommended Capacity",
                 "change_preview": "Đổi Youtube Preview",
                 "change_tags": "Đổi Tags",
                 "change_image": "Đổi ảnh",
@@ -681,6 +692,7 @@
                 "copy_url": "Sao chép URL",
                 "copy_name": "Sao chép tên",
                 "youtube_preview": "Youtube Preview",
+                "author_tags": "Author Tags",
                 "players": "Người chơi",
                 "favorites": "Yêu thích",
                 "visits": "Lượt ghé thăm",
@@ -689,6 +701,8 @@
                 "popularity": "Độ nổi tiếng",
                 "created_at": "Tạo lúc",
                 "last_updated": "Lần cập nhật cuối",
+                "publication_date": "Publication Date",
+                "labs_publication_date": "Labs Publication Date",
                 "version": "Phiên bản",
                 "platform": "Nền tảng",
                 "last_visited": "Lần cuối ghé thăm",
@@ -706,7 +720,12 @@
                 "private": "Private",
                 "fallback": "Fallback",
                 "future_proofing": "Future Proofing",
-                "cache": "Cache"
+                "cache": "Cache",
+                "content_horror": "Horror",
+                "content_gore": "Gore",
+                "content_violence": "Violence",
+                "content_adult": "Adult",
+                "content_sex": "Sexual"
             },
             "labels": {
                 "public": "(Public)",
@@ -727,6 +746,7 @@
                 "make_private": "Làm Private",
                 "rename": "Đổi tên",
                 "change_description": "Đổi mô tả",
+                "change_content_tags": "Change Content Tags",
                 "change_image": "Đổi ảnh",
                 "download_package": "Tải về Unity Package",
                 "delete": "Xóa"
@@ -943,8 +963,26 @@
             "enable_debugging": "Bật world debugging cho mọi người",
             "author_tags": "Author Tags (Chia bằng dấu phẩy)",
             "content_tags": "Content Tags (Chia bằng dấu phẩy)",
+            "content_horror": "Horror",
+            "content_gore": "Gore",
+            "content_violence": "Violence",
+            "content_adult": "Adult",
+            "content_sex": "Sexual",
             "cancel": "Hủy",
             "save": "Lưu"
+        },
+        "set_avatar_tags": {
+            "header": "Set Avatar Tags",
+            "content_tags": "Content Warning Tags",
+            "content_horror": "Horror",
+            "content_gore": "Gore",
+            "content_violence": "Violence",
+            "content_adult": "Adult",
+            "content_sex": "Sexual",
+            "select_all": "Select All",
+            "select_none": "Select None",
+            "cancel": "Cancel",
+            "save": "Save"
         },
         "download_history": {
             "header": "Tải xuống lịch sử",
@@ -1337,6 +1375,16 @@
                 "success": "World capacity changed"
             }
         },
+        "change_world_recommended_capacity": {
+            "header": "Change Recommended Capacity",
+            "description": "Enter world recommended capacity (soft cap)",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "input_error": "Valid number is required",
+            "message": {
+                "success": "World recommended capacity changed"
+            }
+        },
         "change_world_preview": {
             "header": "Thay đổi YouTube Preview",
             "description": "Nhập đường dẫn YouTube Preview",
@@ -1353,7 +1401,7 @@
             "description": "Giới hạn số lượng thông tin trên bảng UI, bảng lớn sẽ sử dụng RAM và hiệu năng nhiều hơn (mặc định: 1000, tối đa: 10000)",
             "cancel": "Hủy",
             "save": "Lưu",
-            "input_error": ""
+            "input_error": "Valid number is required"
         },
         "photon_lobby_timeout": {
             "header": "User Timeout Threshold",
