@@ -82,7 +82,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dotnet\AppApi.cs" />
+    <Compile Include="Dotnet\AppApi\AppApi.cs" />
+    <Compile Include="Dotnet\AppApi\Folders.cs" />
+    <Compile Include="Dotnet\AppApi\GameHandler.cs" />
+    <Compile Include="Dotnet\AppApi\LocalPlayerModerations.cs" />
+    <Compile Include="Dotnet\AppApi\Screenshot.cs" />
+    <Compile Include="Dotnet\AppApi\VrcConfigFile.cs" />
+    <Compile Include="Dotnet\AppApi\XSOverlay.cs" />
     <Compile Include="Dotnet\AssetBundleCacher.cs" />
     <Compile Include="Dotnet\AutoAppLaunchManager.cs" />
     <Compile Include="Dotnet\Cef\CefCustomDownloadHandler.cs" />
