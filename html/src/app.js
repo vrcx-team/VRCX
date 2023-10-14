@@ -5267,6 +5267,7 @@ speechSynthesis.getVoices();
             this.refreshCustomCss();
             this.refreshCustomScript();
             this.checkVRChatDebugLogging();
+            this.checkAutoBackupRestoreVrcRegistry();
             this.migrateStoredUsers();
             this.$nextTick(function () {
                 this.$el.style.display = '';
@@ -14551,6 +14552,16 @@ speechSynthesis.getVoices();
         configRepository.setString(
             'VRCX_autoStateChange',
             this.autoStateChange
+        );
+    };
+    $app.data.vrcRegistryAutoBackup = configRepository.getBool(
+        'VRCX_vrcRegistryAutoBackup',
+        true
+    );
+    $app.methods.saveVrcRegistryAutoBackup = function () {
+        configRepository.setBool(
+            'VRCX_vrcRegistryAutoBackup',
+            this.vrcRegistryAutoBackup
         );
     };
     $app.data.orderFriendsGroup0 = configRepository.getBool(
@@ -23850,11 +23861,14 @@ speechSynthesis.getVoices();
         var D = this.VRCXUpdateDialog;
         var url = this.branches[this.branch].urlReleases;
         this.checkingForVRCXUpdate = true;
-        var response = await webApiService.execute({
-            url,
-            method: 'GET'
-        });
-        this.checkingForVRCXUpdate = false;
+        try {
+            var response = await webApiService.execute({
+                url,
+                method: 'GET'
+            });
+        } finally {
+            this.checkingForVRCXUpdate = false;
+        }
         var json = JSON.parse(response.data);
         if (this.debugWebRequests) {
             console.log(json, response);
@@ -23919,12 +23933,15 @@ speechSynthesis.getVoices();
         }
         var url = this.branches[this.branch].urlLatest;
         this.checkingForVRCXUpdate = true;
-        var response = await webApiService.execute({
-            url,
-            method: 'GET'
-        });
+        try {
+            var response = await webApiService.execute({
+                url,
+                method: 'GET'
+            });
+        } finally {
+            this.checkingForVRCXUpdate = false;
+        }
         this.pendingVRCXUpdate = false;
-        this.checkingForVRCXUpdate = false;
         var json = JSON.parse(response.data);
         if (this.debugWebRequests) {
             console.log(json, response);
@@ -27667,7 +27684,6 @@ speechSynthesis.getVoices();
             return false;
         });
     };
-        
 
     // group members
 
@@ -28439,6 +28455,268 @@ speechSynthesis.getVoices();
                 });
             }
         });
+    };
+
+    // #endregion
+    // #region | Dialog: registry backup dialog
+
+    $app.data.registryBackupDialog = {
+        visible: false
+    };
+
+    $app.data.registryBackupTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini',
+            defaultSort: {
+                prop: 'date',
+                order: 'descending'
+            }
+        },
+        layout: 'table'
+    };
+
+    $app.methods.showRegistryBackupDialog = function () {
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.registryBackupDialog.$el)
+        );
+        var D = this.registryBackupDialog;
+        D.visible = true;
+        this.updateRegistryBackupDialog();
+    };
+
+    $app.methods.updateRegistryBackupDialog = function () {
+        var D = this.registryBackupDialog;
+        this.registryBackupTable.data = [];
+        if (!D.visible) {
+            return;
+        }
+        var backupsJson = configRepository.getString(
+            'VRCX_VRChatRegistryBackups'
+        );
+        if (!backupsJson) {
+            backupsJson = JSON.stringify([]);
+        }
+        this.registryBackupTable.data = JSON.parse(backupsJson);
+    };
+
+    $app.methods.promptVrcRegistryBackupName = async function () {
+        var name = await this.$prompt(
+            'Enter a name for the backup',
+            'Backup Name',
+            {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                inputPattern: /\S+/,
+                inputErrorMessage: 'Name is required',
+                inputValue: 'Backup'
+            }
+        );
+        if (name.action === 'confirm') {
+            this.backupVrcRegistry(name.value);
+        }
+    };
+
+    $app.methods.backupVrcRegistry = async function (name) {
+        var regJson = await AppApi.GetVRChatRegistry();
+        var newBackup = {
+            name,
+            date: new Date().toJSON(),
+            data: regJson
+        };
+        var backupsJson = configRepository.getString(
+            'VRCX_VRChatRegistryBackups'
+        );
+        if (!backupsJson) {
+            backupsJson = JSON.stringify([]);
+        }
+        var backups = JSON.parse(backupsJson);
+        backups.push(newBackup);
+        configRepository.setString(
+            'VRCX_VRChatRegistryBackups',
+            JSON.stringify(backups)
+        );
+        this.updateRegistryBackupDialog();
+    };
+
+    $app.methods.deleteVrcRegistryBackup = function (row) {
+        var backups = this.registryBackupTable.data;
+        removeFromArray(backups, row);
+        configRepository.setString(
+            'VRCX_VRChatRegistryBackups',
+            JSON.stringify(backups)
+        );
+        this.updateRegistryBackupDialog();
+    };
+
+    $app.methods.restoreVrcRegistryBackup = function (row) {
+        this.$confirm('Continue? Restore Backup', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'warning',
+            callback: (action) => {
+                if (action !== 'confirm') {
+                    return;
+                }
+                var data = JSON.stringify(row.data);
+                AppApi.SetVRChatRegistry(data)
+                    .then(() => {
+                        this.$message({
+                            message: 'VRC registry settings restored',
+                            type: 'success'
+                        });
+                    })
+                    .catch((e) => {
+                        console.error(e);
+                        this.$message({
+                            message: `Failed to restore VRC registry settings, check console for full error: ${e}`,
+                            type: 'error'
+                        });
+                    });
+            }
+        });
+    };
+
+    $app.methods.saveVrcRegistryBackupToFile = function (row) {
+        this.downloadAndSaveJson(row.name, row.data);
+    };
+
+    $app.methods.restoreVrcRegistryFromFile = function (json) {
+        try {
+            var data = JSON.parse(json);
+            if (!data || typeof data !== 'object') {
+                throw new Error('Invalid JSON');
+            }
+            // quick check to make sure it's a valid registry backup
+            for (var key in data) {
+                var value = data[key];
+                if (
+                    typeof value !== 'object' ||
+                    typeof value.type !== 'number' ||
+                    typeof value.data === 'undefined'
+                ) {
+                    throw new Error('Invalid JSON');
+                }
+            }
+            AppApi.SetVRChatRegistry(json)
+                .then(() => {
+                    this.$message({
+                        message: 'VRC registry settings restored',
+                        type: 'success'
+                    });
+                })
+                .catch((e) => {
+                    console.error(e);
+                    this.$message({
+                        message: `Failed to restore VRC registry settings, check console for full error: ${e}`,
+                        type: 'error'
+                    });
+                });
+        } catch {
+            this.$message({
+                message: 'Invalid JSON',
+                type: 'error'
+            });
+        }
+    };
+
+    $app.methods.deleteVrcRegistry = function () {
+        this.$confirm('Continue? Delete VRC Registry Settings', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'warning',
+            callback: (action) => {
+                if (action !== 'confirm') {
+                    return;
+                }
+                AppApi.DeleteVRChatRegistryFolder().then(() => {
+                    this.$message({
+                        message: 'VRC registry settings deleted',
+                        type: 'success'
+                    });
+                });
+            }
+        });
+    };
+
+    $app.methods.clearVrcRegistryDialog = function () {
+        this.registryBackupTable.data = [];
+    };
+
+    $app.methods.checkAutoBackupRestoreVrcRegistry = async function () {
+        if (!this.vrcRegistryAutoBackup) {
+            return;
+        }
+
+        // check for auto restore
+        var hasVRChatRegistryFolder = await AppApi.HasVRChatRegistryFolder();
+        if (!hasVRChatRegistryFolder) {
+            var lastBackupDate = configRepository.getString(
+                'VRCX_VRChatRegistryLastBackupDate'
+            );
+            var lastRestoreCheck = configRepository.getString(
+                'VRCX_VRChatRegistryLastRestoreCheck'
+            );
+            if (
+                lastRestoreCheck &&
+                lastBackupDate &&
+                lastRestoreCheck === lastBackupDate
+            ) {
+                // only ask to restore once
+                return;
+            }
+            // popup message about auto restore
+            this.$alert(
+                $t('dialog.registry_backup.restore_prompt'),
+                $t('dialog.registry_backup.header')
+            );
+            this.showRegistryBackupDialog();
+            AppApi.FocusWindow();
+            configRepository.setString(
+                'VRCX_VRChatRegistryLastRestoreCheck',
+                lastBackupDate
+            );
+        } else {
+            this.autoBackupVrcRegistry();
+        }
+    };
+
+    $app.methods.autoBackupVrcRegistry = function () {
+        var date = new Date();
+        var lastBackupDate = configRepository.getString(
+            'VRCX_VRChatRegistryLastBackupDate'
+        );
+        if (lastBackupDate) {
+            var lastBackup = new Date(lastBackupDate);
+            var diff = date.getTime() - lastBackup.getTime();
+            var diffDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+            if (diffDays < 7) {
+                return;
+            }
+        }
+        var backupsJson = configRepository.getString(
+            'VRCX_VRChatRegistryBackups'
+        );
+        if (!backupsJson) {
+            backupsJson = JSON.stringify([]);
+        }
+        var backups = JSON.parse(backupsJson);
+        backups.forEach((backup) => {
+            if (backup.name === 'Auto Backup') {
+                // remove old auto backup
+                removeFromArray(backups, backup);
+            }
+        });
+        configRepository.setString(
+            'VRCX_VRChatRegistryBackups',
+            JSON.stringify(backups)
+        );
+        this.backupVrcRegistry('Auto Backup');
+        configRepository.setString(
+            'VRCX_VRChatRegistryLastBackupDate',
+            date.toJSON()
+        );
     };
 
     // #endregion

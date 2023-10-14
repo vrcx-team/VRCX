@@ -379,6 +379,7 @@
                     "header": "Advanced",
                     "launch_options": "Launch Options",
                     "screenshot_metadata": "Screenshot Metadata",
+                    "vrc_registry_backup": "VRC Registry Backup",
                     "common_folders": "Common Folders",
                     "pending_offline": {
                         "header": "Pending Offline",
@@ -1230,6 +1231,20 @@
             "copy_image": "Copy Image",
             "open_folder": "Open Folder",
             "upload": "Upload"
+        },
+        "registry_backup": {
+            "header": "VRC Registry Settings Backup",
+            "backup": "Backup",
+            "restore": "Restore",
+            "save_to_file": "Save to file",
+            "delete": "Delete",
+            "restore_from_file": "Restore from file",
+            "reset": "Reset",
+            "name": "Name",
+            "date": "Date",
+            "action": "Action",
+            "auto_backup": "Weekly Auto Backup",
+            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer dosn't have any, if you'd like to restore from backup you can do so from here."
         }
     },
     "prompt": {

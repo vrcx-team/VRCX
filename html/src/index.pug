@@ -2761,6 +2761,29 @@ html
                 el-button(type="default" size="mini" icon="el-icon-download" circle @click="downloadAndSaveImage(fullscreenImageDialog.imageUrl)" style="margin-left:5px")
                 img(v-lazy="fullscreenImageDialog.imageUrl" style="width:100%;height:100vh;object-fit:contain")
 
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @closed="clearVrcRegistryDialog" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="registryBackupDialog" :visible.sync="registryBackupDialog.visible" :title="$t('dialog.registry_backup.header')" width="600px")
+                div(v-if="registryBackupDialog.visible" style="margin-top:10px")
+                    div.options-container
+                        div.options-container-item
+                            span.name {{ $t('dialog.registry_backup.auto_backup') }}
+                            el-switch(v-model="vrcRegistryAutoBackup" @change="saveVrcRegistryAutoBackup")
+                    el-button(@click="promptVrcRegistryBackupName" size="small") {{ $t('dialog.registry_backup.backup') }}
+                    el-button(@click="AppApi.OpenVrcRegJsonFileDialog()" size="small") {{ $t('dialog.registry_backup.restore_from_file') }}
+                    el-button(@click="deleteVrcRegistry" size="small") {{ $t('dialog.registry_backup.reset') }}
+                    data-tables(v-bind="registryBackupTable" style="margin-top:10px")
+                        el-table-column(:label="$t('dialog.registry_backup.name')" prop="name")
+                        el-table-column(:label="$t('dialog.registry_backup.date')" prop="date")
+                            template(v-once #default="scope")
+                                span {{ scope.row.date | formatDate('long') }}
+                        el-table-column(:label="$t('dialog.registry_backup.action')" width="90" align="right")
+                            template(v-once #default="scope")
+                                el-tooltip(placement="top" :content="$t('dialog.registry_backup.restore')" :disabled="hideTooltips")
+                                    el-button(type="text" icon="el-icon-upload2" size="mini" @click="restoreVrcRegistryBackup(scope.row)")
+                                el-tooltip(placement="top" :content="$t('dialog.registry_backup.save_to_file')" :disabled="hideTooltips")
+                                    el-button(type="text" icon="el-icon-download" size="mini" @click="saveVrcRegistryBackupToFile(scope.row)")
+                                el-tooltip(placement="top" :content="$t('dialog.registry_backup.delete')" :disabled="hideTooltips")
+                                    el-button(type="text" icon="el-icon-delete" size="mini" @click="deleteVrcRegistryBackup(scope.row)")
+
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" :title="$t('dialog.open_source.header')" width="650px")
                 div(v-if="ossDialog" style="height:350px;overflow:hidden scroll;word-break:break-all")
