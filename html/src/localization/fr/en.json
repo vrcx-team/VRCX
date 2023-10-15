@@ -708,7 +708,8 @@
                 "last_visited": "Dernière visite",
                 "visit_count": "Nombre de visites",
                 "time_spent": "Temps passé",
-                "accuracy_notice": "Les informations provenant de la base de données locale peuvent ne pas être exactes"
+                "accuracy_notice": "Les informations provenant de la base de données locale peuvent ne pas être exactes",
+                "time_in_labs": "Temps passé en Labs :"
             },
             "json": {
                 "header": "JSON"
@@ -848,6 +849,13 @@
             },
             "json": {
                 "header": "JSON"
+            },
+            "posts": {
+                "header": "Publications",
+                "visibility": "Visibilité :",
+                "edited_by": "Édité par :",
+                "search_placeholder": "Rechercher",
+                "posts_count": "Publications :"
             }
         },
         "favorite": {
@@ -972,17 +980,17 @@
             "save": "Sauvegarder"
         },
         "set_avatar_tags": {
-            "header": "Set Avatar Tags",
-            "content_tags": "Content Warning Tags",
-            "content_horror": "Horror",
+            "header": "Modifier les tags de l'avatar",
+            "content_tags": "Avertissements sur le contenu",
+            "content_horror": "Horreur",
             "content_gore": "Gore",
             "content_violence": "Violence",
-            "content_adult": "Adult",
-            "content_sex": "Sexual",
-            "select_all": "Select All",
-            "select_none": "Select None",
-            "cancel": "Cancel",
-            "save": "Save"
+            "content_adult": "Adulte",
+            "content_sex": "Sexuel",
+            "select_all": "Tout selectionner",
+            "select_none": "Déselectionner",
+            "cancel": "Annuler",
+            "save": "Sauvegarder"
         },
         "download_history": {
             "header": "Télécharger l'historique",
