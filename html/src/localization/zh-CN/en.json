@@ -182,7 +182,7 @@
                 "appearance": "外观",
                 "notifications": "通知",
                 "wrist_overlay": "手腕叠加层",
-                "discord_presence": "Discord Rich Presence集成面板",
+                "discord_presence": "Discord 状态展示",
                 "advanced": "高级"
             },
             "general": {
@@ -217,7 +217,7 @@
                 "automation": {
                     "header": "自动化",
                     "auto_state_change": "自动化状态切换",
-                    "auto_state_change_tooltip": "当房间中有其他人时自动切换状态 (独自一人 / 和其他人在一起时) 如果你不知道这是什么，保持默认关闭即可",
+                    "auto_state_change_tooltip": "当房间中有其他人时自动切换状态 (独自一人 / 有其他人时) 如果你不知道这是什么，保持默认关闭即可",
                     "auto_state_change_off": "关闭",
                     "auto_state_change_active_or_ask_me": "Active / Ask Me",
                     "auto_state_change_active_or_busy": "Active / Busy",
@@ -332,7 +332,7 @@
                         "when_to_play_game_closed": "游戏关闭时",
                         "when_to_play_game_running": "游戏运行时",
                         "when_to_play_always": "总是",
-                        "tts_voice": "语音样式选项"
+                        "tts_voice": "TTS 语音样式"
                     }
                 }
             },
@@ -364,10 +364,10 @@
             },
             "discord_presence": {
                 "discord_presence": {
-                    "header": "Discord Rich Presence集成面板",
+                    "header": "Discord 状态展示",
                     "description": "* 仅在 VRChat 开启时有效",
                     "enable": "启用",
-                    "enable_tooltip": "建议在 VRChat 的 config.json 中停用原生 Discord 集成面板来防止冲突",
+                    "enable_tooltip": "建议在 VRChat 的 config.json 中停用原生的 Discord 状态展示来防止冲突",
                     "instance_type_player_count": "房间种类 / 玩家人数",
                     "join_button": "加入按钮（仅限公开房间）",
                     "hide_details_in_private": "在私人房间时隐藏房间信息",
@@ -386,8 +386,8 @@
                         "set_delay": "设置延迟"
                     },
                     "primary_password": {
-                        "header": "主密码",
-                        "description": "使用主密码加密VRCX数据（将停用自动登录）"
+                        "header": "独立密码",
+                        "description": "使用独立密码加密VRCX数据（将停用自动登录）"
                     },
                     "relaunch_vrchat": {
                         "header": "在崩溃后重启VRChat",
@@ -420,7 +420,7 @@
                     "screenshot_helper": {
                         "header": "截图助手",
                         "description": "在游戏拍摄的照片的元数据中添加世界ID/世界名称",
-                        "description_tooltip": "不幸的是，windows不支持本机查看PNG文本块（很多东西都不支持它），但你可以使用exiftool等命令行工具、png检查器或十六进制编辑器来查看。",
+                        "description_tooltip": "不幸的是，Windows原生不支持查看PNG元数据（很多东西都不支持查看它），但你可以使用exiftool等命令行工具、png检查器或十六进制编辑器来查看。",
                         "enable": "启用",
                         "modify_filename": "同时修改文件名",
                         "modify_filename_tooltip": "除了文件元数据外，还将把世界ID添加到截图文件名中。"
@@ -703,6 +703,7 @@
                 "last_updated": "最后更新",
                 "publication_date": "发布日期",
                 "labs_publication_date": "发布到社区实验室的日期",
+                "time_in_labs": "在实验室里的时长:",
                 "version": "版本",
                 "platform": "平台",
                 "last_visited": "上次拜访",
@@ -823,6 +824,13 @@
                 "role_created_at": "创建时间：",
                 "role_permissions": "权限："
             },
+            "posts": {
+                "header": "公告",
+                "visibility": "可见性:",
+                "edited_by": "最后编辑者：",
+                "search_placeholder": "搜索公告",
+                "posts_count": "公告总数: "
+            },
             "members": {
                 "header": "成员",
                 "all_members": "成员列表",
@@ -841,7 +849,7 @@
                 },
                 "unsubscribed_announcements": "不接收公告通知",
                 "visibility": "可见性:",
-                "representing": "展示状态"
+                "representing": "该用户在其名片上展示该群组"
             },
             "gallery": {
                 "header": "相册"
@@ -883,16 +891,16 @@
         "new_instance": {
             "header": "新房间",
             "access_type": "房间类型",
-            "access_type_public": "Public",
-            "access_type_group": "Group",
-            "access_type_friend_plus": "Friends+",
-            "access_type_friend": "Friends",
-            "access_type_invite_plus": "Invite+",
-            "access_type_invite": "Invite",
+            "access_type_public": "公开",
+            "access_type_group": "群组",
+            "access_type_friend_plus": "好友+",
+            "access_type_friend": "仅限好友",
+            "access_type_invite_plus": "邀请+",
+            "access_type_invite": "仅限邀请",
             "group_access_type": "房间类型",
             "group_access_type_members": "仅限群组成员",
             "group_access_type_plus": "Group+",
-            "group_access_type_public": "Public",
+            "group_access_type_public": "公开(以群组身份)",
             "region": "服务器位置",
             "region_usw": "美国西部",
             "region_use": "美国东部",
@@ -1209,7 +1217,7 @@
             "description": "VRCX 是基于开放源代码软件开发的。没有他们的贡献的话，这个程序是不可能开发出来的。"
         },
         "primary_password": {
-            "header": "设置主密码",
+            "header": "设置独立密码",
             "password_placeholder": "输入新密码",
             "re_input_placeholder": "确认密码",
             "ok": "确定"
@@ -1250,8 +1258,8 @@
             "input_error": "无效的验证码"
         },
         "primary_password": {
-            "header": "需要主密码",
-            "description": "请输入你的主密码"
+            "header": "需要独立密码",
+            "description": "请输入你的独立密码"
         },
         "change_favorite_group_name": {
             "header": "更改收藏夹名称",
@@ -1412,7 +1420,7 @@
         },
         "auto_clear_cache": {
             "header": "VRCX 缓存清除间隔",
-            "description": "输入小时数，较大的数值可能会影响性能 （默认：24，关闭：0）",
+            "description": "输入小时数，较大的数值可能会影响性能 （默认值：24，关闭：0）",
             "cancel": "取消",
             "ok": "确定",
             "input_error": "请输入有效的小时数"
@@ -1439,7 +1447,7 @@
         },
         "pending_offline_delay": {
             "header": "待确认离线",
-            "description": "设置将玩家标记为离线之前的延迟(秒)（预设：110）",
+            "description": "设置将玩家标记为离线之前的延迟(秒)（默认值：110）",
             "cancel": "取消",
             "save": "保存",
             "input_error": "请输入有效的秒数"
