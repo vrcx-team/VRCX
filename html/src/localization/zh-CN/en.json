@@ -938,7 +938,7 @@
             "delete_old_cache": "从缓存中删除无效数据",
             "sweep_cache": "清理缓存",
             "max_cache_size": "最大缓存大小 [GB] （最小 20GB）",
-            "cache_expiry_delay": "缓存保存时长 [日] （30 - 150）",
+            "cache_expiry_delay": "缓存保存时长 [日] （最小 30）",
             "cache_directory": "缓存文件夹位置",
             "picture_directory": "截图文件夹位置",
             "fpv_steadycam_fov": "第一人称镜头FOV度数",
