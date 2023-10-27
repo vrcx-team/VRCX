@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace VRCX
     {
         private readonly Dictionary<string, MonitoredProcess> monitoredProcesses;
         private readonly Timer monitorProcessTimer;
+        private readonly static Logger logger = LogManager.GetCurrentClassLogger();
 
         static ProcessMonitor()
         {
@@ -75,6 +77,7 @@ namespace VRCX
                     {
                         monitoredProcess.ProcessExited();
                         ProcessExited?.Invoke(monitoredProcess);
+                        logger.Info($"Monitored process {monitoredProcess.ProcessName} (PID: {(monitoredProcess.Process?.Id.ToString() ?? "null")}) exited.");
                     }
                 }
                 else
@@ -91,11 +94,14 @@ namespace VRCX
             foreach (var monitoredProcess in processesNeedingUpdate)
             {
                 var process = processes.FirstOrDefault(p => string.Equals(p.ProcessName, monitoredProcess.ProcessName, StringComparison.OrdinalIgnoreCase));
-                if (process == null)
+
+                // We are also checking to see if the process is exiting before adding it, otherwise we'll keep adding it and then removing it constantly in an endless loop.
+                if (process == null || WinApi.HasProcessExited(process.Id))
                     continue;
                 
                 monitoredProcess.ProcessStarted(process);
                 ProcessStarted?.Invoke(monitoredProcess);
+                logger.Info($"Monitored process {monitoredProcess.ProcessName} (PID: {process.Id}) started.");
             }
         }
 
@@ -129,6 +135,7 @@ namespace VRCX
                 return;
 
             monitoredProcesses.Add(processName, new MonitoredProcess(process));
+            logger.Debug($"Added process {processName} to process monitor.");
         }
 
         /// <summary>
@@ -142,6 +149,7 @@ namespace VRCX
                 return;
 
             monitoredProcesses.Add(processName, new MonitoredProcess(processName));
+            logger.Debug($"Added process {processName} to process monitor.");
         }
 
         /// <summary>
@@ -152,6 +160,7 @@ namespace VRCX
         {
             processName = processName.ToLower();
             monitoredProcesses.Remove(processName);
+            logger.Debug($"Removed process {processName} from process monitor.");
         }
     }
 
@@ -175,7 +184,6 @@ namespace VRCX
         public Process Process { get; private set; }
         public string ProcessName { get; private set; }
         public bool IsRunning { get; private set; }
-        public DateTime LastExitTime { get; private set; }
 
         public bool HasName(string processName)
         {
@@ -187,16 +195,11 @@ namespace VRCX
             IsRunning = false;
             Process?.Dispose();
             Process = null;
-            LastExitTime = DateTime.Now;
         }
 
         public void ProcessStarted(Process process)
         {
-            // check last exit time to prevent status flapping
-            if (LastExitTime != DateTime.MinValue && DateTime.Now - LastExitTime < TimeSpan.FromSeconds(5))
-                return;
-            
-            Process = process;
+             Process = process;
             ProcessName = process.ProcessName.ToLower();
             IsRunning = true;
         }

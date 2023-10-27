@@ -355,7 +355,8 @@ namespace VRCX
                     logContext.RecentWorldName
                 });
 
-                logContext.onJoinPhotonDisplayName = string.Empty;
+                // logContext.onJoinPhotonDisplayName = string.Empty;
+                // logContext.onJoinPhotonDisplayNameDate = string.Empty;
                 logContext.LastAudioDevice = string.Empty;
                 logContext.LastVideoError = string.Empty;
                 logContext.locationDestination = string.Empty;
@@ -456,8 +457,6 @@ namespace VRCX
                     "player-joined",
                     userDisplayName
                 });
-
-                logContext.onJoinPhotonDisplayName = userDisplayName;
 
                 return true;
             }
@@ -798,79 +797,103 @@ namespace VRCX
 
             return true;
         }
-
-        private bool ParseLogPhotonId(FileInfo fileInfo, LogContext logContext, string line, int offset)
-        {
-            // 2021.11.02 02:21:41 Log        -  [Behaviour] Configuring remote player VRCPlayer[Remote] 22349737 1194
-            // 2021.11.02 02:21:41 Log        -  [Behaviour] Initialized player Natsumi-sama
-
-            // 2021.11.10 08:10:28 Log        -  [Behaviour] Initialize Limb Avatar (UnityEngine.Animator) VRCPlayer[Remote] 78614426 59 (ǄǄǄǅǄǅǅǄǅǄǄǅǅǄǅǄǅǅǅǄǄǄǅǄǄǅǅǄǅǅǄǅǅǄǅǅǅǅǄǅǄǅǄǄǄǄǅ) False Loading
-            // 2021.11.10 08:57:32 Log        -  [Behaviour] Initialize Limb Avatar (UnityEngine.Animator) VRCPlayer[Local] 59136629 1 (ǄǄǄǅǄǅǅǄǅǄǄǅǅǄǅǄǅǅǅǄǄǄǅǄǄǅǅǄǅǅǄǅǅǄǅǅǅǅǄǅǄǅǄǄǄǄǅ) True Loading
-
-            // 2022.03.05 11:29:16 Log        -  [Behaviour] Initialize ThreePoint Avatar (UnityEngine.Animator) VRCPlayer[Local] 50608765 1 (ǄǅǄǄǄǅǄǅǅǄǅǄǄǅǅǄǄǄǅǄǄǄǅǄǅǄǅǅǄǄǄǄǅǅǄǄǄǄǅǅǄǄǅǄǄǅǅ) True Custom
-
-            if (line.Contains("] Initialize ") && line.Contains(" Avatar (UnityEngine.Animator) VRCPlayer["))
-            {
-                var pos = -1;
-
-                if (line.Contains(" Avatar (UnityEngine.Animator) VRCPlayer[Remote] "))
-                {
-                    pos = line.LastIndexOf(" Avatar (UnityEngine.Animator) VRCPlayer[Remote] ");
-                    pos += 49;
-                }
-
-                if (line.Contains(" Avatar (UnityEngine.Animator) VRCPlayer[Local] "))
-                {
-                    pos = line.LastIndexOf(" Avatar (UnityEngine.Animator) VRCPlayer[Local] ");
-                    pos += 48;
-                }
-
-                if (pos < 0)
-                    return false;
-
-                if (!string.IsNullOrEmpty(logContext.onJoinPhotonDisplayName))
-                {
-                    var endPos = line.LastIndexOf(" (");
-                    var photonId = line.Substring(pos + 9, endPos - (pos + 9));
-
-                    AppendLog(new[]
-                    {
-                        fileInfo.Name,
-                        ConvertLogTimeToISO8601(line),
-                        "photon-id",
-                        logContext.onJoinPhotonDisplayName,
-                        photonId
-                    });
-                    logContext.onJoinPhotonDisplayName = string.Empty;
-
-                    return true;
-                }
-            }
-
-            if (line.Contains(": 3 Point IK") || line.Contains(": Limb IK"))
-            {
-                var lineOffset = line.IndexOf("] ");
-                if (lineOffset < 0)
-                    return true;
-                lineOffset += 2;
-
-                if (line.Contains(": 3 Point IK"))
-                {
-                    var endPos = line.LastIndexOf(": 3 Point IK");
-                    logContext.onJoinPhotonDisplayName = line.Substring(lineOffset, endPos - lineOffset);
-                    return true;
-                }
-
-                if (line.Contains(": Limb IK"))
-                {
-                    var endPos = line.LastIndexOf(": Limb IK");
-                    logContext.onJoinPhotonDisplayName = line.Substring(lineOffset, endPos - lineOffset);
-                    return true;
-                }
-            }
-
-            return false;
-        }
+        //
+        // private bool ParseLogPhotonId(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        // {
+        //     // 2021.11.02 02:21:41 Log        -  [Behaviour] Configuring remote player VRCPlayer[Remote] 22349737 1194
+        //     // 2021.11.02 02:21:41 Log        -  [Behaviour] Initialized player Natsumi-sama
+        //
+        //     // 2021.11.10 08:10:28 Log        -  [Behaviour] Initialize Limb Avatar (UnityEngine.Animator) VRCPlayer[Remote] 78614426 59 (ǄǄǄǅǄǅǅǄǅǄǄǅǅǄǅǄǅǅǅǄǄǄǅǄǄǅǅǄǅǅǄǅǅǄǅǅǅǅǄǅǄǅǄǄǄǄǅ) False Loading
+        //     // 2021.11.10 08:57:32 Log        -  [Behaviour] Initialize Limb Avatar (UnityEngine.Animator) VRCPlayer[Local] 59136629 1 (ǄǄǄǅǄǅǅǄǅǄǄǅǅǄǅǄǅǅǅǄǄǄǅǄǄǅǅǄǅǅǄǅǅǄǅǅǅǅǄǅǄǅǄǄǄǄǅ) True Loading
+        //
+        //     // 2022.03.05 11:29:16 Log        -  [Behaviour] Initialize ThreePoint Avatar (UnityEngine.Animator) VRCPlayer[Local] 50608765 1 (ǄǅǄǄǄǅǄǅǅǄǅǄǄǅǅǄǄǄǅǄǄǄǅǄǅǄǅǅǄǄǄǄǅǅǄǄǄǄǅǅǄǄǅǄǄǅǅ) True Custom
+        //
+        //     if (line.Contains("] Initialize ") && line.Contains(" Avatar (UnityEngine.Animator) VRCPlayer["))
+        //     {
+        //         var pos = -1;
+        //
+        //         if (line.Contains(" Avatar (UnityEngine.Animator) VRCPlayer[Remote] "))
+        //         {
+        //             pos = line.LastIndexOf(" Avatar (UnityEngine.Animator) VRCPlayer[Remote] ");
+        //             pos += 49;
+        //         }
+        //
+        //         if (line.Contains(" Avatar (UnityEngine.Animator) VRCPlayer[Local] "))
+        //         {
+        //             pos = line.LastIndexOf(" Avatar (UnityEngine.Animator) VRCPlayer[Local] ");
+        //             pos += 48;
+        //         }
+        //
+        //         if (pos < 0)
+        //             return false;
+        //
+        //         if (!string.IsNullOrEmpty(logContext.onJoinPhotonDisplayName))
+        //         {
+        //             var endPos = line.LastIndexOf(" (");
+        //             var photonId = line.Substring(pos + 9, endPos - (pos + 9));
+        //
+        //             AppendLog(new[]
+        //             {
+        //                 fileInfo.Name,
+        //                 ConvertLogTimeToISO8601(line),
+        //                 "photon-id",
+        //                 logContext.onJoinPhotonDisplayName,
+        //                 photonId
+        //             });
+        //             logContext.onJoinPhotonDisplayName = string.Empty;
+        //
+        //             return true;
+        //         }
+        //     }
+        //
+        //     if (line.Contains("[Behaviour] Initialized player "))
+        //     {
+        //         var pos = line.LastIndexOf("[Behaviour] Initialized player ");
+        //         if (pos < 0)
+        //             return false;
+        //
+        //         pos += 31;
+        //         if (pos >= line.Length)
+        //             return false;
+        //         
+        //         var displayName = line.Substring(pos, line.Length - pos);
+        //         logContext.onJoinPhotonDisplayName = displayName;
+        //         logContext.onJoinPhotonDisplayNameDate = ConvertLogTimeToISO8601(line);
+        //
+        //         return true;
+        //     }
+        //
+        //     if (line.Contains("[Behaviour] Configuring remote player VRCPlayer[Remote] "))
+        //     {
+        //         if (string.IsNullOrEmpty(logContext.onJoinPhotonDisplayName) || 
+        //             logContext.onJoinPhotonDisplayNameDate != ConvertLogTimeToISO8601(line))
+        //             return false;
+        //
+        //         var pos = line.LastIndexOf("[Behaviour] Configuring remote player VRCPlayer[Remote] ");
+        //         if (pos < 0)
+        //             return false;
+        //
+        //         pos += 56;
+        //         var startPos = pos + 9;
+        //         var length = line.Length - startPos;
+        //         var photonId = line.Substring(startPos, length);
+        //
+        //         AppendLog(new[]
+        //         {
+        //             fileInfo.Name,
+        //             ConvertLogTimeToISO8601(line),
+        //             "photon-id",
+        //             logContext.onJoinPhotonDisplayName,
+        //             photonId
+        //         });
+        //         logContext.onJoinPhotonDisplayName = string.Empty;
+        //         logContext.onJoinPhotonDisplayNameDate = string.Empty;
+        //
+        //         return true;
+        //     }
+        //
+        //     return false;
+        // }
 
         private bool ParseLogOnAudioConfigurationChanged(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
@@ -1162,7 +1185,6 @@ namespace VRCX
             public string LastVideoError;
             public long Length;
             public string locationDestination;
-            public string onJoinPhotonDisplayName;
             public long Position;
             public string RecentWorldName;
             public bool ShaderKeywordsLimitReached;

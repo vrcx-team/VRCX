@@ -379,6 +379,7 @@
                     "header": "Advanced",
                     "launch_options": "Launch Options",
                     "screenshot_metadata": "Screenshot Metadata",
+                    "vrc_registry_backup": "VRC Registry Backup",
                     "common_folders": "Common Folders",
                     "pending_offline": {
                         "header": "Pending Offline",
@@ -801,6 +802,7 @@
                 "visibility_everyone": "Visibility Everyone",
                 "visibility_friends": "Visibility Friends",
                 "visibility_hidden": "Visibility Hidden",
+                "moderation_tools": "Moderation Tools",
                 "leave": "Leave Group"
             },
             "info": {
@@ -849,7 +851,9 @@
                 },
                 "unsubscribed_announcements": "Unsubscribed from announcements",
                 "visibility": "Visibility:",
-                "representing": "Representing"
+                "representing": "Representing",
+                "manager_notes": "Manager Notes:",
+                "search": "Search"
             },
             "gallery": {
                 "header": "Photos"
@@ -867,7 +871,8 @@
             "header": "Invite",
             "select_placeholder": "Choose Friends",
             "invite_with_message": "Invite With Message",
-            "invite": "Invite"
+            "invite": "Invite",
+            "friends_in_instance": "Friends In Instance"
         },
         "social_status": {
             "header": "Social Status",
@@ -946,7 +951,7 @@
             "delete_old_cache": "Delete old versions from cache",
             "sweep_cache": "Sweep Cache",
             "max_cache_size": "Max Cache Size [GB] (min 20)",
-            "cache_expiry_delay": "Cache Expiry [Days] (30 - 150)",
+            "cache_expiry_delay": "Cache Expiry [Days] (min 30)",
             "cache_directory": "Custom Cache Folder Location",
             "picture_directory": "Custom Picture Folder Location",
             "fpv_steadycam_fov": "First-Person Steadycam FOV",
@@ -1230,6 +1235,44 @@
             "copy_image": "Copy Image",
             "open_folder": "Open Folder",
             "upload": "Upload"
+        },
+        "registry_backup": {
+            "header": "VRC Registry Settings Backup",
+            "backup": "Backup",
+            "restore": "Restore",
+            "save_to_file": "Save to file",
+            "delete": "Delete",
+            "restore_from_file": "Restore from file",
+            "reset": "Reset",
+            "name": "Name",
+            "date": "Date",
+            "action": "Action",
+            "auto_backup": "Weekly Auto Backup",
+            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer dosn't have any, if you'd like to restore from backup you can do so from here."
+        },
+        "group_member_moderation": {
+            "header": "Group Member Moderation",
+            "notes": "Manager Note",
+            "note_placeholder": "Click to add a note",
+            "actions": "Actions",
+            "kick": "Kick",
+            "ban": "Ban",
+            "save_note": "Save Note",
+            "group_members": "Group Members",
+            "progress": "Progress:",
+            "display_name": "Display Name",
+            "visibility": "Visibility",
+            "avatar": "Avatar",
+            "joined_at": "Joined At",
+            "note": "Note",
+            "roles": "Roles",
+            "selected_users": "Selected Users",
+            "select_all": "Select All",
+            "cancel": "Cancel",
+            "choose_roles_placeholder": "Choose Roles",
+            "selected_roles": "Selected Roles",
+            "remove_roles": "Remove Roles",
+            "add_roles": "Add Roles"
         }
     },
     "prompt": {

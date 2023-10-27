@@ -379,6 +379,7 @@ mixin settingsTab()
                             el-button(size="small" icon="el-icon-s-operation" @click="showVRChatConfig()") VRChat config.json
                             el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") {{ $t('view.settings.advanced.advanced.launch_options') }}
                             el-button(size="small" icon="el-icon-picture" @click="showScreenshotMetadataDialog()") {{ $t('view.settings.advanced.advanced.screenshot_metadata') }}
+                            el-button(size="small" icon="el-icon-goods" @click="showRegistryBackupDialog()") {{ $t('view.settings.advanced.advanced.vrc_registry_backup') }}
                 //- Advanced | Common Folders
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.common_folders') }}

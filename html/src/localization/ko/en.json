@@ -938,7 +938,7 @@
             "delete_old_cache": "오래된 버전 캐시 삭제",
             "sweep_cache": "캐시 정리",
             "max_cache_size": "최대 캐시 크기 [GB] (최소 20)",
-            "cache_expiry_delay": "캐시 만료 일수 [Days] (30 - 150)",
+            "cache_expiry_delay": "캐시 만료 일수 [Days] (최소 30)",
             "cache_directory": "캐시 폴더 위치",
             "picture_directory": "Custom Picture Folder Location",
             "fpv_steadycam_fov": "1인칭 스테디캠 시야각",
