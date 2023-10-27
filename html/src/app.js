@@ -26901,10 +26901,11 @@ speechSynthesis.getVoices();
         groupId: string,
         params: {
             visibility: string,
-            isSubscribedToAnnouncements: bool
+            isSubscribedToAnnouncements: bool,
+            managerNotes: string
         }
     */
-    API.setGroupProps = function (userId, groupId, params) {
+    API.setGroupMemberProps = function (userId, groupId, params) {
         return this.call(`groups/${groupId}/members/${userId}`, {
             method: 'PUT',
             params
@@ -26915,12 +26916,15 @@ speechSynthesis.getVoices();
                 groupId,
                 params
             };
-            this.$emit('GROUP:PROPS', args);
+            this.$emit('GROUP:MEMBER:PROPS', args);
             return args;
         });
     };
 
-    API.$on('GROUP:PROPS', function (args) {
+    API.$on('GROUP:MEMBER:PROPS', function (args) {
+        if (args.userId !== this.currentUser.id) {
+            return;
+        }
         var json = args.json;
         json.$memberId = json.id;
         json.id = json.groupId;
@@ -26943,6 +26947,113 @@ speechSynthesis.getVoices();
                 userId: args.params.userId
             }
         });
+    });
+
+    API.$on('GROUP:MEMBER:PROPS', function (args) {
+        if ($app.groupDialog.id === args.json.groupId) {
+            for (var i = 0; i < $app.groupDialog.members.length; ++i) {
+                var member = $app.groupDialog.members[i];
+                if (member.userId === args.json.userId) {
+                    Object.assign(member, this.applyGroupMember(args.json));
+                    break;
+                }
+            }
+            for (
+                var i = 0;
+                i < $app.groupDialog.memberSearchResults.length;
+                ++i
+            ) {
+                var member = $app.groupDialog.memberSearchResults[i];
+                if (member.userId === args.json.userId) {
+                    Object.assign(member, this.applyGroupMember(args.json));
+                    break;
+                }
+            }
+        }
+        if (
+            $app.groupMemberModeration.visible &&
+            $app.groupMemberModeration.id === args.json.groupId
+        ) {
+            // force redraw table
+            $app.groupMembersSearch();
+        }
+    });
+
+    /*
+        params: {
+            userId: string,
+            groupId: string,
+            roleId: string
+        }
+    */
+    API.addGroupMemberRole = function (params) {
+        return this.call(
+            `groups/${params.groupId}/members/${params.userId}/roles/${params.roleId}`,
+            {
+                method: 'PUT'
+            }
+        ).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:MEMBER:ROLE:CHANGE', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            userId: string,
+            groupId: string,
+            roleId: string
+        }
+    */
+    API.removeGroupMemberRole = function (params) {
+        return this.call(
+            `groups/${params.groupId}/members/${params.userId}/roles/${params.roleId}`,
+            {
+                method: 'DELETE'
+            }
+        ).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:MEMBER:ROLE:CHANGE', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:MEMBER:ROLE:CHANGE', function (args) {
+        if ($app.groupDialog.id === args.params.groupId) {
+            for (var i = 0; i < $app.groupDialog.members.length; ++i) {
+                var member = $app.groupDialog.members[i];
+                if (member.userId === args.params.userId) {
+                    member.roleIds = args.json;
+                    break;
+                }
+            }
+            for (
+                var i = 0;
+                i < $app.groupDialog.memberSearchResults.length;
+                ++i
+            ) {
+                var member = $app.groupDialog.memberSearchResults[i];
+                if (member.userId === args.params.userId) {
+                    member.roleIds = args.json;
+                    break;
+                }
+            }
+        }
+
+        if (
+            $app.groupMemberModeration.visible &&
+            $app.groupMemberModeration.id === args.params.groupId
+        ) {
+            // force redraw table
+            $app.groupMembersSearch();
+        }
     });
 
     /*
@@ -27068,6 +27179,39 @@ speechSynthesis.getVoices();
     /*
         params: {
             groupId: string,
+            query: string,
+            n: number,
+            offset: number
+        }
+    */
+    API.getGroupMembersSearch = function (params) {
+        return this.call(`groups/${params.groupId}/members/search`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:MEMBERS:SEARCH', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:MEMBERS:SEARCH', function (args) {
+        for (var json of args.json.results) {
+            this.$emit('GROUP:MEMBER', {
+                json,
+                params: {
+                    groupId: args.params.groupId
+                }
+            });
+        }
+    });
+
+    /*
+        params: {
+            groupId: string,
             userId: string
         }
     */
@@ -27083,6 +27227,47 @@ speechSynthesis.getVoices();
                 params
             };
             this.$emit('GROUP:INVITE', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            groupId: string,
+            userId: string
+        }
+    */
+    API.kickGroupMember = function (params) {
+        return this.call(`groups/${params.groupId}/members/${params.userId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:MEMBER:KICK', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            groupId: string,
+            userId: string
+        }
+    */
+    API.banGroupMember = function (params) {
+        return this.call(`groups/${params.groupId}/bans`, {
+            method: 'POST',
+            params: {
+                userId: params.userId
+            }
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:MEMBER:BAN', args);
             return args;
         });
     };
@@ -27397,6 +27582,8 @@ speechSynthesis.getVoices();
         posts: [],
         postsFiltered: [],
         members: [],
+        memberSearch: '',
+        memberSearchResults: [],
         instances: [],
         memberRoles: [],
         memberFilter: $app.data.groupDialogFilterOptions.everyone,
@@ -27408,6 +27595,12 @@ speechSynthesis.getVoices();
     $app.methods.showGroupDialog = function (groupId) {
         if (!groupId) {
             return;
+        }
+        if (
+            this.groupMemberModeration.visible &&
+            this.groupMemberModeration.id !== groupId
+        ) {
+            this.groupMemberModeration.visible = false;
         }
         this.$nextTick(() => adjustDialogZ(this.$refs.groupDialog.$el));
         var D = this.groupDialog;
@@ -27422,6 +27615,8 @@ speechSynthesis.getVoices();
         D.postsFiltered = [];
         D.instances = [];
         D.memberRoles = [];
+        D.memberSearch = '';
+        D.memberSearchResults = [];
         if (this.groupDialogLastGallery !== groupId) {
             D.galleries = {};
         }
@@ -27553,6 +27748,9 @@ speechSynthesis.getVoices();
             case 'Refresh':
                 this.showGroupDialog(D.id);
                 break;
+            case 'Moderation Tools':
+                this.showGroupMemberModerationDialog(D.id);
+                break;
             case 'Leave Group':
                 this.leaveGroup(D.id);
                 break;
@@ -27664,7 +27862,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.setGroupVisibility = function (groupId, visibility) {
-        return API.setGroupProps(API.currentUser.id, groupId, {
+        return API.setGroupMemberProps(API.currentUser.id, groupId, {
             visibility
         }).then((args) => {
             this.$message({
@@ -27676,7 +27874,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.setGroupSubscription = function (groupId, subscribe) {
-        return API.setGroupProps(API.currentUser.id, groupId, {
+        return API.setGroupMemberProps(API.currentUser.id, groupId, {
             isSubscribedToAnnouncements: subscribe
         }).then((args) => {
             this.$message({
@@ -27710,6 +27908,13 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.onGroupJoined = function (groupId) {
+        if (
+            this.groupMemberModeration.visible &&
+            this.groupMemberModeration.id === groupId
+        ) {
+            // ignore this event if we were the one to trigger it
+            return;
+        }
         if (this.groupDialog.visible && this.groupDialog.id === groupId) {
             this.showGroupDialog(groupId);
         }
@@ -27730,6 +27935,60 @@ speechSynthesis.getVoices();
             this.showGroupDialog(groupId);
         }
         API.currentUserGroups.delete(groupId);
+    };
+
+    // group search
+
+    $app.methods.groupMembersSearchDebounce = function () {
+        var D = this.groupDialog;
+        var search = D.memberSearch;
+        D.memberSearchResults = [];
+        if (!search || search.length < 3) {
+            this.setGroupMemberModerationTable(D.members);
+            return;
+        }
+        this.isGroupMembersLoading = true;
+        API.getGroupMembersSearch({
+            groupId: D.id,
+            query: search,
+            n: 100,
+            offset: 0
+        })
+            .then((args) => {
+                if (D.id === args.params.groupId) {
+                    D.memberSearchResults = args.json.results;
+                    this.setGroupMemberModerationTable(args.json.results);
+                }
+            })
+            .finally(() => {
+                this.isGroupMembersLoading = false;
+            });
+    };
+
+    $app.data.groupMembersSearchTimer = null;
+    $app.data.groupMembersSearchPending = false;
+    $app.methods.groupMembersSearch = function () {
+        if (this.groupMembersSearchTimer) {
+            this.groupMembersSearchPending = true;
+        } else {
+            this.groupMembersSearchExecute();
+            this.groupMembersSearchTimer = setTimeout(() => {
+                if (this.groupMembersSearchPending) {
+                    this.groupMembersSearchExecute();
+                }
+                this.groupMembersSearchTimer = null;
+            }, 500);
+        }
+    };
+
+    $app.methods.groupMembersSearchExecute = function () {
+        try {
+            this.groupMembersSearchDebounce();
+        } catch (err) {
+            console.error(err);
+        }
+        this.groupMembersSearchTimer = null;
+        this.groupMembersSearchPending = false;
     };
 
     // group posts
@@ -27796,6 +28055,7 @@ speechSynthesis.getVoices();
         }
         var D = this.groupDialog;
         var params = this.loadMoreGroupMembersParams;
+        D.memberSearch = '';
         this.isGroupMembersLoading = true;
         await API.getGroupMembers(params)
             .finally(() => {
@@ -27819,6 +28079,7 @@ speechSynthesis.getVoices();
                     this.isGroupMembersDone = true;
                 }
                 D.members = [...D.members, ...args.json];
+                this.setGroupMemberModerationTable(D.members);
                 params.offset += params.n;
                 return args;
             })
@@ -28786,8 +29047,345 @@ speechSynthesis.getVoices();
     };
 
     // #endregion
+    // #region | Dialog: group member moderation
+
+    $app.data.groupMemberModeration = {
+        visible: false,
+        loading: false,
+        id: '',
+        groupRef: {},
+        note: '',
+        selectedUsers: new Map(),
+        selectedUsersArray: [],
+        selectedRoles: [],
+        progressCurrent: 0,
+        progressTotal: 0
+    };
+
+    $app.data.groupMemberModerationTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        pageSize: $app.data.tablePageSize,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 15, 25, 50, 100]
+        },
+        key: 0
+    };
+
+    $app.methods.setGroupMemberModerationTable = function (data) {
+        if (!this.groupMemberModeration.visible) {
+            return;
+        }
+        for (var i = 0; i < data.length; i++) {
+            var member = data[i];
+            member.$selected = this.groupMemberModeration.selectedUsers.has(
+                member.userId
+            );
+        }
+        this.groupMemberModerationTable.data = data;
+        // force redraw
+        this.groupMemberModerationTable.key++;
+    };
+
+    $app.methods.showGroupMemberModerationDialog = function (groupId) {
+        this.$nextTick(() =>
+            adjustDialogZ(this.$refs.groupMemberModeration.$el)
+        );
+        if (groupId !== this.groupDialog.id) {
+            return;
+        }
+        var D = this.groupMemberModeration;
+        D.id = groupId;
+        D.selectedUsers.clear();
+        D.selectedUsersArray = [];
+        D.selectedRoles = [];
+        D.groupRef = {};
+        API.getCachedGroup({ groupId }).then((args) => {
+            D.groupRef = args.ref;
+        });
+        this.groupMemberModerationTable.key = 0;
+        D.visible = true;
+        this.setGroupMemberModerationTable(this.groupDialog.members);
+    };
+
+    $app.methods.groupMemberModerationTableSelectionChange = function (row) {
+        var D = this.groupMemberModeration;
+        if (row.$selected && !D.selectedUsers.has(row.userId)) {
+            D.selectedUsers.set(row.userId, row);
+        } else if (!row.$selected && D.selectedUsers.has(row.userId)) {
+            D.selectedUsers.delete(row.userId);
+        }
+        D.selectedUsersArray = Array.from(D.selectedUsers.values());
+        // force redraw
+        this.groupMemberModerationTable.key++;
+    };
+
+    $app.methods.deleteSelectedGroupMember = function (user) {
+        var D = this.groupMemberModeration;
+        D.selectedUsers.delete(user.userId);
+        D.selectedUsersArray = Array.from(D.selectedUsers.values());
+        for (var i = 0; i < this.groupMemberModerationTable.data.length; i++) {
+            var row = this.groupMemberModerationTable.data[i];
+            if (row.userId === user.userId) {
+                row.$selected = false;
+                break;
+            }
+        }
+        // force redraw
+        this.groupMemberModerationTable.key++;
+    };
+
+    $app.methods.clearSelectedGroupMembers = function () {
+        var D = this.groupMemberModeration;
+        D.selectedUsers.clear();
+        D.selectedUsersArray = [];
+        for (var i = 0; i < this.groupMemberModerationTable.data.length; i++) {
+            var row = this.groupMemberModerationTable.data[i];
+            row.$selected = false;
+        }
+        // force redraw
+        this.groupMemberModerationTable.key++;
+    };
+
+    $app.methods.selectAllGroupMembers = function () {
+        var D = this.groupMemberModeration;
+        for (var i = 0; i < this.groupMemberModerationTable.data.length; i++) {
+            var row = this.groupMemberModerationTable.data[i];
+            row.$selected = true;
+            D.selectedUsers.set(row.userId, row);
+        }
+        D.selectedUsersArray = Array.from(D.selectedUsers.values());
+        // force redraw
+        this.groupMemberModerationTable.key++;
+    };
+
+    $app.methods.groupMembersKick = async function () {
+        var D = this.groupMemberModeration;
+        var memberCount = D.selectedUsersArray.length;
+        D.progressTotal = memberCount;
+        try {
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                await API.kickGroupMember({
+                    groupId: D.id,
+                    userId: user.userId
+                });
+                console.log(`Kicking ${user.userId} ${i + 1}/${memberCount}`);
+            }
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: `Failed to kick group member: ${err}`,
+                type: 'error'
+            });
+        } finally {
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
+        }
+    };
+
+    $app.methods.groupMembersBan = async function () {
+        var D = this.groupMemberModeration;
+        var memberCount = D.selectedUsersArray.length;
+        D.progressTotal = memberCount;
+        try {
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                await API.banGroupMember({
+                    groupId: D.id,
+                    userId: user.userId
+                });
+                console.log(`Banning ${user.userId} ${i + 1}/${memberCount}`);
+            }
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: `Failed to ban group member: ${err}`,
+                type: 'error'
+            });
+        } finally {
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
+        }
+    };
+
+    $app.methods.groupMembersSaveNote = async function () {
+        var D = this.groupMemberModeration;
+        var memberCount = D.selectedUsersArray.length;
+        D.progressTotal = memberCount;
+        try {
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.managerNotes === D.note) {
+                    continue;
+                }
+                await API.setGroupMemberProps(user.userId, D.id, {
+                    managerNotes: D.note
+                });
+                console.log(
+                    `Setting note ${D.note} ${user.userId} ${
+                        i + 1
+                    }/${memberCount}`
+                );
+            }
+            this.$message({
+                message: 'Note saved',
+                type: 'success'
+            });
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: `Failed to set group member note: ${err}`,
+                type: 'error'
+            });
+        } finally {
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
+        }
+    };
+
+    $app.methods.groupMembersAddRoles = async function () {
+        var D = this.groupMemberModeration;
+        var memberCount = D.selectedUsersArray.length;
+        D.progressTotal = memberCount;
+        try {
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                var rolesToAdd = [];
+                D.selectedRoles.forEach((roleId) => {
+                    if (!user.roleIds.includes(roleId)) {
+                        rolesToAdd.push(roleId);
+                    }
+                });
+
+                if (!rolesToAdd.length) {
+                    continue;
+                }
+                for (var j = 0; j < rolesToAdd.length; j++) {
+                    var roleId = rolesToAdd[j];
+                    console.log(
+                        `Adding role: ${roleId} ${user.userId} ${
+                            i + 1
+                        }/${memberCount}`
+                    );
+                    await API.addGroupMemberRole({
+                        groupId: D.id,
+                        userId: user.userId,
+                        roleId
+                    });
+                }
+            }
+            this.$message({
+                message: 'Added group member roles',
+                type: 'success'
+            });
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: `Failed to add group member roles: ${err}`,
+                type: 'error'
+            });
+        } finally {
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
+        }
+    };
+
+    $app.methods.groupMembersRemoveRoles = async function () {
+        var D = this.groupMemberModeration;
+        var memberCount = D.selectedUsersArray.length;
+        D.progressTotal = memberCount;
+        try {
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                var rolesToRemove = [];
+                D.selectedRoles.forEach((roleId) => {
+                    if (user.roleIds.includes(roleId)) {
+                        rolesToRemove.push(roleId);
+                    }
+                });
+                if (!rolesToRemove.length) {
+                    continue;
+                }
+                for (var j = 0; j < rolesToRemove.length; j++) {
+                    var roleId = rolesToRemove[j];
+                    console.log(
+                        `Removing role ${roleId} ${user.userId} ${
+                            i + 1
+                        }/${memberCount}`
+                    );
+                    await API.removeGroupMemberRole({
+                        groupId: D.id,
+                        userId: user.userId,
+                        roleId
+                    });
+                }
+            }
+            this.$message({
+                message: 'Roles removed',
+                type: 'success'
+            });
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: `Failed to remove group member roles: ${err}`,
+                type: 'error'
+            });
+        } finally {
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
+        }
+    };
+
+    // #endregion
 
     $app = new Vue($app);
     window.$app = $app;
 })();
 // #endregion
+
+// // #endregion
+// // #region | Dialog: templateDialog
+
+// $app.data.templateDialog = {
+//     visible: false,
+// };
+
+// $app.methods.showTemplateDialog = function () {
+//     this.$nextTick(() => adjustDialogZ(this.$refs.templateDialog.$el));
+//     var D = this.templateDialog;
+//     D.visible = true;
+// };
+
+// // #endregion

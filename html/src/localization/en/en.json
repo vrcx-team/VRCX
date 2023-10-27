@@ -802,6 +802,7 @@
                 "visibility_everyone": "Visibility Everyone",
                 "visibility_friends": "Visibility Friends",
                 "visibility_hidden": "Visibility Hidden",
+                "moderation_tools": "Moderation Tools",
                 "leave": "Leave Group"
             },
             "info": {
@@ -850,7 +851,9 @@
                 },
                 "unsubscribed_announcements": "Unsubscribed from announcements",
                 "visibility": "Visibility:",
-                "representing": "Representing"
+                "representing": "Representing",
+                "manager_notes": "Manager Notes:",
+                "search": "Search"
             },
             "gallery": {
                 "header": "Photos"
@@ -1246,6 +1249,30 @@
             "action": "Action",
             "auto_backup": "Weekly Auto Backup",
             "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer dosn't have any, if you'd like to restore from backup you can do so from here."
+        },
+        "group_member_moderation": {
+            "header": "Group Member Moderation",
+            "notes": "Manager Note",
+            "note_placeholder": "Click to add a note",
+            "actions": "Actions",
+            "kick": "Kick",
+            "ban": "Ban",
+            "save_note": "Save Note",
+            "group_members": "Group Members",
+            "progress": "Progress:",
+            "display_name": "Display Name",
+            "visibility": "Visibility",
+            "avatar": "Avatar",
+            "joined_at": "Joined At",
+            "note": "Note",
+            "roles": "Roles",
+            "selected_users": "Selected Users",
+            "select_all": "Select All",
+            "cancel": "Cancel",
+            "choose_roles_placeholder": "Choose Roles",
+            "selected_roles": "Selected Roles",
+            "remove_roles": "Remove Roles",
+            "add_roles": "Add Roles"
         }
     },
     "prompt": {

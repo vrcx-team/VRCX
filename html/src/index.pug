@@ -441,11 +441,11 @@ html
                                         .detail
                                             span.name(v-if="userDialog.unFriended") {{ $t('dialog.user.info.unfriended') }}
                                                 el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" :content="$t('dialog.user.info.accuracy_notice')")
-                                                i.el-icon-warning
-                                        span.name(v-else) {{ $t('dialog.user.info.friended') }}
-                                            el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" :content="$t('dialog.user.info.accuracy_notice')")
-                                                i.el-icon-warning
-                                        span.extra {{ userDialog.dateFriended | formatDate('long') }}
+                                                    i.el-icon-warning
+                                            span.name(v-else) {{ $t('dialog.user.info.friended') }}
+                                                el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" :content="$t('dialog.user.info.accuracy_notice')")
+                                                    i.el-icon-warning
+                                            span.extra {{ userDialog.dateFriended | formatDate('long') }}
                                 template(v-if="API.currentUser.id === userDialog.id")
                                     .x-friend-item(@click="toggleAvatarCopying")
                                         .detail
@@ -985,6 +985,8 @@ html
                                                 el-dropdown-item(v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" icon="el-icon-close" command="Unsubscribe To Announcements" divided) {{ $t('dialog.group.actions.unsubscribe') }}
                                                 el-dropdown-item(v-else icon="el-icon-check" command="Subscribe To Announcements" divided) {{ $t('dialog.group.actions.subscribe') }}
                                                 el-dropdown-item(v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')" icon="el-icon-message" command="Invite To Group") {{ $t('dialog.group.actions.invite_to_group') }}
+                                            template(v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')")
+                                                el-dropdown-item(icon="el-icon-s-operation" command="Moderation Tools") {{ $t('dialog.group.actions.moderation_tools') }}
                                             template(v-if="groupDialog.ref.myMember && groupDialog.ref.privacy === 'default'")
                                                 el-dropdown-item(icon="el-icon-view" command="Visibility Everyone" divided) #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'visible'")] {{ $t('dialog.group.actions.visibility_everyone') }}
                                                 el-dropdown-item(icon="el-icon-view" command="Visibility Friends") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'friends'")] {{ $t('dialog.group.actions.visibility_friends') }}
@@ -1134,25 +1136,52 @@ html
                             template(v-if="groupDialog.visible")
                                 span(v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')" style="font-weight:bold;font-size:16px") {{ $t('dialog.group.members.all_members') }}
                                 span(v-else style="font-weight:bold;font-size:16px") {{ $t('dialog.group.members.friends_only') }}
-                                br
-                                el-button(type="default" @click="loadAllGroupMembers" size="mini" icon="el-icon-refresh" :loading="isGroupMembersLoading" circle)
-                                el-button(type="default" @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)" size="mini" icon="el-icon-download" circle style="margin-left:5px")
-                                span(style="font-size:14px;margin-left:5px;margin-right:5px") {{ groupDialog.members.length }}/{{ groupDialog.ref.memberCount }}
-                                div(v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')" style="float:right")
-                                    span(style="margin-right:5px") {{ $t('dialog.group.members.sort_by') }}
-                                    el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="isGroupMembersLoading")
-                                        el-button(size="mini")
-                                            span {{ groupDialog.memberSortOrder.name }} #[i.el-icon-arrow-down.el-icon--right]
-                                        el-dropdown-menu(#default="dropdown")
-                                            el-dropdown-item(v-for="(item) in groupDialogSortingOptions" v-text="item.name" @click.native="setGroupMemberSortOrder(item)")
-                                    span(style="margin-right:5px") {{ $t('dialog.group.members.filter') }}
-                                    el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="isGroupMembersLoading")
-                                        el-button(size="mini")
-                                            span {{ groupDialog.memberFilter.name }} #[i.el-icon-arrow-down.el-icon--right]
-                                        el-dropdown-menu(#default="dropdown")
-                                            el-dropdown-item(v-for="(item) in groupDialogFilterOptions" v-text="item.name" @click.native="setGroupMemberFilter(item)")
-                                            el-dropdown-item(v-for="(item) in groupDialog.memberRoles" v-text="item.name" @click.native="setGroupMemberFilter(item)")
-                                ul.infinite-list.x-friend-list(v-if="groupDialog.members.length > 0" v-infinite-scroll="loadMoreGroupMembers" style="margin-top:10px;overflow:auto;max-height:250px;min-width:130px")
+                                div(style="margin-top:10px")
+                                    el-button(type="default" @click="loadAllGroupMembers" size="mini" icon="el-icon-refresh" :loading="isGroupMembersLoading" circle)
+                                    el-button(type="default" @click="downloadAndSaveJson(`${groupDialog.id}_members`, groupDialog.members)" size="mini" icon="el-icon-download" circle style="margin-left:5px")
+                                    span(v-if="groupDialog.memberSearch.length" style="font-size:14px;margin-left:5px;margin-right:5px") {{ groupDialog.memberSearchResults.length }}/{{ groupDialog.ref.memberCount }}
+                                    span(v-else style="font-size:14px;margin-left:5px;margin-right:5px") {{ groupDialog.members.length }}/{{ groupDialog.ref.memberCount }}
+                                    div(v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')" style="float:right")
+                                        span(style="margin-right:5px") {{ $t('dialog.group.members.sort_by') }}
+                                        el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="isGroupMembersLoading || groupDialog.memberSearch.length")
+                                            el-button(size="mini")
+                                                span {{ groupDialog.memberSortOrder.name }} #[i.el-icon-arrow-down.el-icon--right]
+                                            el-dropdown-menu(#default="dropdown")
+                                                el-dropdown-item(v-for="(item) in groupDialogSortingOptions" v-text="item.name" @click.native="setGroupMemberSortOrder(item)")
+                                        span(style="margin-right:5px") {{ $t('dialog.group.members.filter') }}
+                                        el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="isGroupMembersLoading || groupDialog.memberSearch.length")
+                                            el-button(size="mini")
+                                                span {{ groupDialog.memberFilter.name }} #[i.el-icon-arrow-down.el-icon--right]
+                                            el-dropdown-menu(#default="dropdown")
+                                                el-dropdown-item(v-for="(item) in groupDialogFilterOptions" v-text="item.name" @click.native="setGroupMemberFilter(item)")
+                                                el-dropdown-item(v-for="(item) in groupDialog.ref.roles" v-text="item.name" @click.native="setGroupMemberFilter(item)")
+                                    el-input(v-model="groupDialog.memberSearch" @input="groupMembersSearch" clearable size="mini" :placeholder="$t('dialog.group.members.search')" style="margin-top:10px;margin-bottom:10px")
+                                .x-friend-list(v-if="groupDialog.memberSearch.length" v-loading="isGroupMembersLoading" style="margin-top:10px;overflow:auto;max-height:250px;min-width:130px")
+                                    .x-friend-item(v-for="user in groupDialog.memberSearchResults" :key="user.id" @click="showUserDialog(user.userId)" class="x-friend-item-border")
+                                        .avatar
+                                            img(v-lazy="userImage(user.user)")
+                                        .detail
+                                            span.name(v-text="user.user.displayName" :style="{'color':user.user.$userColour}")
+                                            span.extra
+                                                template(v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')")
+                                                    el-tooltip(v-if="user.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
+                                                        i.el-icon-collection-tag(style="margin-right:5px")
+                                                    el-tooltip(v-if="user.visibility !== 'visible'" placement="top")
+                                                        template(#content)
+                                                            span {{ $t('dialog.group.members.visibility') }} {{ user.visibility }}
+                                                        i.el-icon-view(style="margin-right:5px")
+                                                    el-tooltip(v-if="!user.isSubscribedToAnnouncements" placement="top" :content="$t('dialog.group.members.unsubscribed_announcements')")
+                                                        i.el-icon-chat-line-square(style="margin-right:5px")
+                                                    el-tooltip(v-if="user.managerNotes" placement="top")
+                                                        template(#content)
+                                                            span {{ $t('dialog.group.members.manager_notes') }}
+                                                            br
+                                                            span {{ user.managerNotes }}
+                                                        i.el-icon-edit-outline(style="margin-right:5px")
+                                                template(v-for="roleId in user.roleIds" :key="roleId")
+                                                    span(v-for="(role, rIndex) in groupDialog.ref.roles" :key="rIndex" v-if="role.id === roleId" v-text="role.name")
+                                                    span(v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1") ,&nbsp;
+                                ul.infinite-list.x-friend-list(v-else-if="groupDialog.members.length > 0" v-infinite-scroll="loadMoreGroupMembers" style="margin-top:10px;overflow:auto;max-height:250px;min-width:130px")
                                     li.infinite-list-item.x-friend-item(v-for="user in groupDialog.members" :key="user.id" @click="showUserDialog(user.userId)" class="x-friend-item-border")
                                         .avatar
                                             img(v-lazy="userImage(user.user)")
@@ -1168,6 +1197,12 @@ html
                                                         i.el-icon-view(style="margin-right:5px")
                                                     el-tooltip(v-if="!user.isSubscribedToAnnouncements" placement="top" :content="$t('dialog.group.members.unsubscribed_announcements')")
                                                         i.el-icon-chat-line-square(style="margin-right:5px")
+                                                    el-tooltip(v-if="user.managerNotes" placement="top")
+                                                        template(#content)
+                                                            span {{ $t('dialog.group.members.manager_notes') }}
+                                                            br
+                                                            span {{ user.managerNotes }}
+                                                        i.el-icon-edit-outline(style="margin-right:5px")
                                                 template(v-for="roleId in user.roleIds" :key="roleId")
                                                     span(v-for="(role, rIndex) in groupDialog.ref.roles" :key="rIndex" v-if="role.id === roleId" v-text="role.name")
                                                     span(v-if="user.roleIds.indexOf(roleId) < user.roleIds.length - 1") ,&nbsp;
@@ -2798,6 +2833,91 @@ html
                                     el-button(type="text" icon="el-icon-download" size="mini" @click="saveVrcRegistryBackupToFile(scope.row)")
                                 el-tooltip(placement="top" :content="$t('dialog.registry_backup.delete')" :disabled="hideTooltips")
                                     el-button(type="text" icon="el-icon-delete" size="mini" @click="deleteVrcRegistryBackup(scope.row)")
+
+            //- dialog: group moderation
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="groupMemberModeration" :visible.sync="groupMemberModeration.visible" :title="$t('dialog.group_member_moderation.header')" width="90vw")
+                div(v-if="groupMemberModeration.visible")
+                    h3(v-text="groupMemberModeration.groupRef.name")
+                    div(style="margin-top:10px")
+                        el-button(type="default" @click="loadAllGroupMembers" size="mini" icon="el-icon-refresh" :loading="isGroupMembersLoading" circle)
+                        span(style="font-size:14px;margin-left:5px;margin-right:5px") {{ groupMemberModerationTable.data.length }}/{{ groupMemberModeration.groupRef.memberCount }}
+                        div(style="float:right;margin-top:5px")
+                            span(style="margin-right:5px") {{ $t('dialog.group.members.sort_by') }}
+                            el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="isGroupMembersLoading || groupDialog.memberSearch.length")
+                                el-button(size="mini")
+                                    span {{ groupDialog.memberSortOrder.name }} #[i.el-icon-arrow-down.el-icon--right]
+                                el-dropdown-menu(#default="dropdown")
+                                    el-dropdown-item(v-for="(item) in groupDialogSortingOptions" v-text="item.name" @click.native="setGroupMemberSortOrder(item)")
+                            span(style="margin-right:5px") {{ $t('dialog.group.members.filter') }}
+                            el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="isGroupMembersLoading || groupDialog.memberSearch.length")
+                                el-button(size="mini")
+                                    span {{ groupDialog.memberFilter.name }} #[i.el-icon-arrow-down.el-icon--right]
+                                el-dropdown-menu(#default="dropdown")
+                                    el-dropdown-item(v-for="(item) in groupDialogFilterOptions" v-text="item.name" @click.native="setGroupMemberFilter(item)")
+                                    el-dropdown-item(v-for="(item) in groupDialog.ref.roles" v-text="item.name" @click.native="setGroupMemberFilter(item)")
+                    el-input(v-model="groupDialog.memberSearch" @input="groupMembersSearch" clearable size="mini" :placeholder="$t('dialog.group.members.search')" style="margin-top:10px;margin-bottom:10px")
+                    br
+                    el-button(size="small" @click="selectAllGroupMembers") {{ $t('dialog.group_member_moderation.select_all') }}
+                    data-tables(v-bind="groupMemberModerationTable" style="margin-top:10px")
+                        el-table-column(width="55" prop="$selected" :key="groupMemberModerationTable.key")
+                            template(v-once #default="scope")
+                                el-button(type="text" size="mini" @click.stop)
+                                    el-checkbox(v-model="scope.row.$selected" @change="groupMemberModerationTableSelectionChange(scope.row)")
+                        el-table-column(:label="$t('dialog.group_member_moderation.avatar')" width="70" prop="photo")
+                            template(v-once #default="scope")
+                                el-popover(placement="right" height="500px" trigger="hover")
+                                    img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row.user)")
+                                    img.friends-list-avatar(v-lazy="userImageFull(scope.row.user)" style="height:500px;cursor:pointer" @click="showFullscreenImageDialog(userImageFull(scope.row.user))")
+                        el-table-column(:label="$t('dialog.group_member_moderation.display_name')" width="160" prop="displayName" sortable :sort-method="(a, b) => sortAlphabetically(a.user, b.user, 'displayName')")
+                            template(v-once #default="scope")
+                                span(style="cursor:pointer" @click="showUserDialog(scope.row.userId)")
+                                    span(v-if="randomUserColours" v-text="scope.row.user.displayName" :style="{'color':scope.row.user.$userColour}")
+                                    span(v-else v-text="scope.row.user.displayName")
+                        el-table-column(:label="$t('dialog.group_member_moderation.roles')" prop="roleIds" sortable)
+                            template(v-once #default="scope")
+                                template(v-for="roleId in scope.row.roleIds" :key="roleId")
+                                    span(v-for="(role, rIndex) in groupMemberModeration.groupRef.roles" :key="rIndex" v-if="role.id === roleId" v-text="role.name")
+                                    span(v-if="scope.row.roleIds.indexOf(roleId) < scope.row.roleIds.length - 1") ,&nbsp;
+                        el-table-column(:label="$t('dialog.group_member_moderation.notes')" prop="managerNotes" sortable)
+                            template(v-once #default="scope")
+                                span(v-text="scope.row.managerNotes" @click.stop)
+                        el-table-column(:label="$t('dialog.group_member_moderation.joined_at')" width="170" prop="joinedAt" sortable)
+                            template(v-once #default="scope")
+                                span {{ scope.row.joinedAt | formatDate('long') }}
+                        el-table-column(:label="$t('dialog.group_member_moderation.visibility')" width="120" prop="visibility" sortable)
+                            template(v-once #default="scope")
+                                span(v-text="scope.row.visibility")
+                    br
+                    span.name {{ $t('dialog.group_member_moderation.selected_users') }}
+                    el-button(type="default" @click="clearSelectedGroupMembers" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                    br
+                    el-tag(v-for="user in groupMemberModeration.selectedUsersArray" type="info" disable-transitions="true" :key="user.id" style="margin-right:5px;margin-top:5px" closable @close="deleteSelectedGroupMember(user)")
+                        span {{ user.user.displayName }}
+                    br
+                    br
+                    span.name {{ $t('dialog.group_member_moderation.notes') }}
+                    el-input.extra(v-model="groupMemberModeration.note" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" :placeholder="$t('dialog.group_member_moderation.note_placeholder')" size="mini" resize="none")
+                    br
+                    span.name {{ $t('dialog.group_member_moderation.selected_roles') }}
+                    br
+                    el-select(v-model="groupMemberModeration.selectedRoles" clearable multiple :placeholder="$t('dialog.group_member_moderation.choose_roles_placeholder')" filterable style="margin-top:5px")
+                        el-option-group(:label="$t('dialog.group_member_moderation.roles')")
+                            el-option.x-friend-item(v-for="role in groupMemberModeration.groupRef.roles" :key="role.id" :label="role.name" :value="role.id" style="height:auto")
+                                .detail
+                                    span.name(v-text="role.name")
+                    br
+                    span.name {{ $t('dialog.group_member_moderation.actions') }}
+                    br
+                    el-button(@click="groupMembersAddRoles" :disabled="!groupMemberModeration.selectedRoles.length") {{ $t('dialog.group_member_moderation.add_roles') }}
+                    el-button(@click="groupMembersRemoveRoles" :disabled="!groupMemberModeration.selectedRoles.length") {{ $t('dialog.group_member_moderation.remove_roles') }}
+                    el-button(@click="groupMembersSaveNote" :disabled="groupMemberModeration.progressCurrent") {{ $t('dialog.group_member_moderation.save_note') }}
+                    el-button(@click="groupMembersKick" :disabled="groupMemberModeration.progressCurrent") {{ $t('dialog.group_member_moderation.kick') }}
+                    el-button(@click="groupMembersBan" :disabled="groupMemberModeration.progressCurrent") {{ $t('dialog.group_member_moderation.ban') }}
+                    span(v-if="groupMemberModeration.progressCurrent" style="margin-top:10px") #[i.el-icon-loading(style="margin-left:5px;margin-right:5px")] {{ $t('dialog.group_member_moderation.progress') }} {{ groupMemberModeration.progressCurrent }}/{{ groupMemberModeration.progressTotal }}
+                    el-button(v-if="groupMemberModeration.progressCurrent" @click="groupMemberModeration.progressTotal = 0" style="margin-left:5px") {{ $t('dialog.group_member_moderation.cancel') }}
+
+
+            //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")
 
             //- dialog: open source software notice
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="ossDialog" :title="$t('dialog.open_source.header')" width="650px")
