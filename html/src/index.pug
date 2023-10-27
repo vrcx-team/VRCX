@@ -431,9 +431,16 @@ html
                                         span.name {{ $t('dialog.user.info.date_joined') }}
                                         span.extra(v-text="userDialog.ref.date_joined")
                                 .x-friend-item(v-if="API.currentUser.id !== userDialog.id" style="cursor:default")
-                                    .detail
-                                        span.name(v-if="userDialog.unFriended") {{ $t('dialog.user.info.unfriended') }}
-                                            el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" :content="$t('dialog.user.info.accuracy_notice')")
+                                    el-tooltip(placement="top")
+                                        template(#content v-if="userDialog.dateFriendedInfo.length")
+                                            template(v-for="ref in userDialog.dateFriendedInfo")
+                                                span {{ ref.type }}: {{ ref.created_at | formatDate('long') }}
+                                                br
+                                        template(#content v-else)
+                                            span -
+                                        .detail
+                                            span.name(v-if="userDialog.unFriended") {{ $t('dialog.user.info.unfriended') }}
+                                                el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" :content="$t('dialog.user.info.accuracy_notice')")
                                                 i.el-icon-warning
                                         span.name(v-else) {{ $t('dialog.user.info.friended') }}
                                             el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" :content="$t('dialog.user.info.accuracy_notice')")
@@ -1216,6 +1223,14 @@ html
                                     img(v-lazy="userImage(API.currentUser)")
                                 .detail
                                     span.name(v-text="API.currentUser.displayName")
+                        el-option-group(v-if="inviteDialog.friendsInInstance.length" :label="$t('dialog.invite.friends_in_instance')")
+                            el-option.x-friend-item(v-for="friend in inviteDialog.friendsInInstance" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar(:class="userStatusClass(friend.ref)")
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
                         el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
                             el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")

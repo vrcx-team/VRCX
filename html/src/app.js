@@ -9599,6 +9599,7 @@ speechSynthesis.getVoices();
             };
             database.updateGamelogLocationTimeToDatabase(update);
         }
+        this.gameLogApiLoggingEnabled = false;
         this.lastLocationDestination = '';
         this.lastLocationDestinationTime = 0;
         this.lastLocation = {
@@ -9871,6 +9872,7 @@ speechSynthesis.getVoices();
     $app.data.lastLocationDestinationTime = 0;
     $app.data.lastVideoUrl = '';
     $app.data.lastResourceloadUrl = '';
+    $app.data.gameLogApiLoggingEnabled = false;
 
     $app.methods.addGameLogEntry = function (gameLog, location) {
         if (this.gameLogDisabled) {
@@ -9976,8 +9978,18 @@ speechSynthesis.getVoices();
                     database
                         .getUserIdFromDisplayName(gameLog.displayName)
                         .then((oldUserId) => {
-                            if (oldUserId && this.isGameRunning) {
-                                API.getUser({ userId: oldUserId });
+                            if (this.isGameRunning) {
+                                if (oldUserId) {
+                                    API.getUser({ userId: oldUserId });
+                                } else if (Date.now() - joinTime < 5 * 1000) {
+                                    workerTimers.setTimeout(
+                                        () =>
+                                            this.silentSeachUser(
+                                                gameLog.displayName
+                                            ),
+                                        10 * 1000
+                                    );
+                                }
                             }
                         });
                 }
@@ -10130,8 +10142,11 @@ speechSynthesis.getVoices();
                 } catch (err) {
                     console.error(err);
                 }
-                if (userId && !API.cachedUsers.has(userId)) {
-                    API.getUser({ userId });
+                if (userId) {
+                    this.gameLogApiLoggingEnabled = true;
+                    if (!API.cachedUsers.has(userId)) {
+                        API.getUser({ userId });
+                    }
                 }
                 break;
             case 'vrcx':
@@ -10242,6 +10257,39 @@ speechSynthesis.getVoices();
             this.queueGameLogNoty(entry);
             this.addGameLog(entry);
         }
+    };
+
+    $app.methods.silentSeachUser = function (displayName) {
+        var playerListRef = this.lastLocation.playerList.get(displayName);
+        if (!this.gameLogApiLoggingEnabled || playerListRef.userId) {
+            return;
+        }
+        if (this.debugGameLog) {
+            console.log('Fetching userId for', displayName);
+        }
+        var params = {
+            n: 5,
+            offset: 0,
+            fuzzy: false,
+            search: displayName
+        };
+        API.getUsers(params).then((args) => {
+            var map = new Map();
+            var nameFound = false;
+            for (var json of args.json) {
+                var ref = API.cachedUsers.get(json.id);
+                if (typeof ref !== 'undefined') {
+                    map.set(ref.id, ref);
+                }
+                if (json.displayName === displayName) {
+                    nameFound = true;
+                }
+            }
+            if (!nameFound) {
+                console.error('userId not found for', displayName);
+            }
+            return args;
+        });
     };
 
     $app.methods.addGamelogLocationToDatabase = async function (input) {
@@ -12742,7 +12790,7 @@ speechSynthesis.getVoices();
             n: 10,
             offset: 0,
             fuzzy: false,
-            search: this.replaceBioSymbols(displayName)
+            search: displayName
         };
         await this.moreSearchUser();
     };
@@ -12751,7 +12799,7 @@ speechSynthesis.getVoices();
         this.searchUserParams = {
             n: 10,
             offset: 0,
-            search: this.replaceBioSymbols(this.searchText)
+            search: this.searchText
         };
         await this.moreSearchUser();
     };
@@ -15927,7 +15975,8 @@ speechSynthesis.getVoices();
         avatarModeration: 0,
         previousDisplayNames: [],
         dateFriended: '',
-        unFriended: false
+        unFriended: false,
+        dateFriendedInfo: []
     };
 
     $app.data.ignoreUserMemoSave = false;
@@ -16208,6 +16257,7 @@ speechSynthesis.getVoices();
         D.previousDisplayNames = [];
         D.dateFriended = '';
         D.unFriended = false;
+        D.dateFriendedInfo = [];
         if (userId === API.currentUser.id) {
             this.getWorldName(API.currentUser.homeLocation).then(
                 (worldName) => {
@@ -16348,6 +16398,12 @@ speechSynthesis.getVoices();
                                                 D.dateFriended =
                                                     ref2.created_at;
                                             }
+                                        }
+                                        if (
+                                            ref2.type === 'Friend' ||
+                                            ref2.type === 'Unfriend'
+                                        ) {
+                                            D.dateFriendedInfo.push(ref2);
                                         }
                                     }
                                 });
@@ -18621,7 +18677,8 @@ speechSynthesis.getVoices();
         loading: false,
         worldId: '',
         worldName: '',
-        userIds: []
+        userIds: [],
+        friendsInInstance: []
     };
 
     API.$on('LOGOUT', function () {
@@ -18697,6 +18754,15 @@ speechSynthesis.getVoices();
             D.userIds = [];
             D.worldId = L.tag;
             D.worldName = args.ref.name;
+            D.friendsInInstance = [];
+            for (var ctx of this.friends.values()) {
+                if (typeof ctx.ref === 'undefined') {
+                    continue;
+                }
+                if (ctx.ref.location === this.lastLocation.location) {
+                    D.friendsInInstance.push(ctx);
+                }
+            }
             D.visible = true;
         });
     };
