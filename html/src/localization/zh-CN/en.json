@@ -286,7 +286,7 @@
                         "sort_offline_by_alphabet": "字母顺序",
                         "sort_offline_by_offline_time": "离线时长"
                     },
-                    "width": "宽度"
+                    "width": "侧边栏宽度"
                 },
                 "user_dialog": {
                     "header": "玩家信息",
