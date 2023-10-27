@@ -22310,8 +22310,7 @@ speechSynthesis.getVoices();
                 name: $t('dialog.config_json.cache_expiry_delay'),
                 default: '30',
                 type: 'number',
-                min: 30,
-                max: 150
+                min: 30
             },
             cache_directory: {
                 name: $t('dialog.config_json.cache_directory'),
