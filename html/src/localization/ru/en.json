@@ -823,6 +823,13 @@
                 "role_created_at": "Создана:",
                 "role_permissions": "Права доступа:"
             },
+            "posts": {
+                "header": "Объявления",
+                "visibility": "Видемость:",
+                "edited_by": "Отредактированно:",
+                "search_placeholder": "Поиск",
+                "posts_count": "Объявлений: "
+            },
             "members": {
                 "header": "Участники",
                 "all_members": "Все участники",
