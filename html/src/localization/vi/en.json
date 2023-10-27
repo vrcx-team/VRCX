@@ -938,7 +938,7 @@
             "delete_old_cache": "Xóa Cache cũ",
             "sweep_cache": "Lưu Cache đè",
             "max_cache_size": "Max Cache Size [GB] (min 20)",
-            "cache_expiry_delay": "Cache Expiry [Days] (30 - 150)",
+            "cache_expiry_delay": "Cache Expiry [Days] (min 30)",
             "cache_directory": "Đặt thư mục lưu cache",
             "picture_directory": "Đặt thư mục lưu ảnh",
             "fpv_steadycam_fov": "First-Person Steadycam FOV",

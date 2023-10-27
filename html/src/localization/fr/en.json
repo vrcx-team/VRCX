@@ -938,7 +938,7 @@
             "delete_old_cache": "Supprimer les anciennes versions du cache",
             "sweep_cache": "Balayer le cache",
             "max_cache_size": "Taille maximale du cache [Go] (min 20)",
-            "cache_expiry_delay": "Expiration du cache [jours] (30 - 150)",
+            "cache_expiry_delay": "Expiration du cache [jours] (min 30)",
             "cache_directory": "Emplacement du dossier de cache personnalisé",
             "picture_directory": "Emplacement du dossier de photos personnalisé",
             "fpv_steadycam_fov": "Angle de vue à la première personne",

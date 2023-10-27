@@ -951,7 +951,7 @@
             "delete_old_cache": "Delete old versions from cache",
             "sweep_cache": "Sweep Cache",
             "max_cache_size": "Max Cache Size [GB] (min 20)",
-            "cache_expiry_delay": "Cache Expiry [Days] (30 - 150)",
+            "cache_expiry_delay": "Cache Expiry [Days] (min 30)",
             "cache_directory": "Custom Cache Folder Location",
             "picture_directory": "Custom Picture Folder Location",
             "fpv_steadycam_fov": "First-Person Steadycam FOV",
