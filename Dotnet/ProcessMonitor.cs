@@ -199,7 +199,7 @@ namespace VRCX
 
         public void ProcessStarted(Process process)
         {
-             Process = process;
+            Process = process;
             ProcessName = process.ProcessName.ToLower();
             IsRunning = true;
         }

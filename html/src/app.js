@@ -1976,6 +1976,9 @@ speechSynthesis.getVoices();
             }
         }
         if (ref.id === this.currentUser.id) {
+            if (ref.status) {
+                this.currentUser.status = ref.status;
+            }
             $app.updateCurrentUserLocation();
         }
         this.$emit('USER:APPLY', ref);
@@ -29072,9 +29075,10 @@ speechSynthesis.getVoices();
             small: true,
             layout: 'sizes,prev,pager,next,total',
             pageSizes: [10, 15, 25, 50, 100]
-        },
-        key: 0
+        }
     };
+
+    $app.data.groupMemberModerationTableForceUpdate = 0;
 
     $app.methods.setGroupMemberModerationTable = function (data) {
         if (!this.groupMemberModeration.visible) {
@@ -29088,7 +29092,7 @@ speechSynthesis.getVoices();
         }
         this.groupMemberModerationTable.data = data;
         // force redraw
-        this.groupMemberModerationTable.key++;
+        this.groupMemberModerationTableForceUpdate++;
     };
 
     $app.methods.showGroupMemberModerationDialog = function (groupId) {
@@ -29107,7 +29111,7 @@ speechSynthesis.getVoices();
         API.getCachedGroup({ groupId }).then((args) => {
             D.groupRef = args.ref;
         });
-        this.groupMemberModerationTable.key = 0;
+        this.groupMemberModerationTableForceUpdate = 0;
         D.visible = true;
         this.setGroupMemberModerationTable(this.groupDialog.members);
     };
@@ -29121,7 +29125,7 @@ speechSynthesis.getVoices();
         }
         D.selectedUsersArray = Array.from(D.selectedUsers.values());
         // force redraw
-        this.groupMemberModerationTable.key++;
+        this.groupMemberModerationTableForceUpdate++;
     };
 
     $app.methods.deleteSelectedGroupMember = function (user) {
@@ -29136,7 +29140,7 @@ speechSynthesis.getVoices();
             }
         }
         // force redraw
-        this.groupMemberModerationTable.key++;
+        this.groupMemberModerationTableForceUpdate++;
     };
 
     $app.methods.clearSelectedGroupMembers = function () {
@@ -29148,7 +29152,7 @@ speechSynthesis.getVoices();
             row.$selected = false;
         }
         // force redraw
-        this.groupMemberModerationTable.key++;
+        this.groupMemberModerationTableForceUpdate++;
     };
 
     $app.methods.selectAllGroupMembers = function () {
@@ -29160,7 +29164,7 @@ speechSynthesis.getVoices();
         }
         D.selectedUsersArray = Array.from(D.selectedUsers.values());
         // force redraw
-        this.groupMemberModerationTable.key++;
+        this.groupMemberModerationTableForceUpdate++;
     };
 
     $app.methods.groupMembersKick = async function () {
