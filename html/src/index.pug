@@ -2859,7 +2859,7 @@ html
                     br
                     el-button(size="small" @click="selectAllGroupMembers") {{ $t('dialog.group_member_moderation.select_all') }}
                     data-tables(v-bind="groupMemberModerationTable" style="margin-top:10px")
-                        el-table-column(width="55" prop="$selected" :key="groupMemberModerationTable.key")
+                        el-table-column(width="55" prop="$selected" :key="groupMemberModerationTableForceUpdate")
                             template(v-once #default="scope")
                                 el-button(type="text" size="mini" @click.stop)
                                     el-checkbox(v-model="scope.row.$selected" @change="groupMemberModerationTableSelectionChange(scope.row)")
