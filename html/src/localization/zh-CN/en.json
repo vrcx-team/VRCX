@@ -852,7 +852,7 @@
                 "unsubscribed_announcements": "不接收公告通知",
                 "visibility": "可见性:",
                 "representing": "该用户在其名片上展示该群组",
-                "manager_notes": "管理备注:",
+                "manager_notes": "群组内备注:",
                 "search": "搜索"
             },
             "gallery": {
