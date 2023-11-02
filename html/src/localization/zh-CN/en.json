@@ -85,7 +85,7 @@
             },
             "worlds": {
                 "header": "世界",
-                "vrchat_favorites": "VRChat 收藏",
+                "vrchat_favorites": "VRChat 上的收藏",
                 "local_favorites": "本地收藏",
                 "new_group": "创建新的收藏夹"
             },
@@ -864,7 +864,7 @@
         },
         "favorite": {
             "header": "选择收藏夹",
-            "vrchat_favorites": "VRChat 收藏",
+            "vrchat_favorites": "VRChat 上的收藏",
             "local_favorites": "本地收藏"
         },
         "invite": {
@@ -904,7 +904,7 @@
             "access_type_invite": "仅限邀请",
             "group_access_type": "房间类型",
             "group_access_type_members": "仅限群组成员",
-            "group_access_type_plus": "Group+",
+            "group_access_type_plus": "群组+",
             "group_access_type_public": "公开(以群组身份)",
             "region": "服务器位置",
             "region_usw": "美国西部",
@@ -1055,12 +1055,12 @@
             "header": "导出世界收藏夹"
         },
         "world_import": {
-            "header": "世界收藏导入",
-            "description": "输入世界 ID 列表",
+            "header": "导入世界",
+            "description": "在下方输入世界 ID",
             "process_list": "读取列表",
             "process_progress": "进度：",
-            "select_vrchat_group_placeholder": "选择 VRChat 群组",
-            "select_local_group_placeholder": "选择本地群组",
+            "select_vrchat_group_placeholder": "选择 VRChat 收藏夹",
+            "select_local_group_placeholder": "选择本地收藏夹",
             "import": "导入世界",
             "cancel": "取消",
             "import_progress": "导入进度：",
@@ -1089,10 +1089,10 @@
         },
         "friend_import": {
             "header": "导入好友",
-            "description": "输入玩家 ID 列表",
+            "description": "在下方输入玩家 ID",
             "process_list": "读取列表",
             "process_progress": "进度：",
-            "select_group_placeholder": "选择目标收藏夹",
+            "select_group_placeholder": "选择目标分组",
             "import": "导入",
             "cancel": "取消",
             "import_progress": "导入进度：",
@@ -1444,12 +1444,12 @@
             "input_error": "请输入有效的 Youtube 链接",
             "message": {
                 "error": "无效的 Youtube 链接",
-                "success": "世界的 YouTube 预览已更改"
+                "success": "已更改世界的 YouTube 预览"
             }
         },
         "change_table_size": {
             "header": "最大显示记录",
-            "description": "限制从数据库读取记录到接口的数量，较大的数据表大小可能会影响内存用量和程序性能 (默认值：1000)",
+            "description": "限制从数据库读取记录到界面接口的数量，较大的数据表大小可能会影响内存用量和程序性能 (默认值：1000)",
             "cancel": "取消",
             "save": "保存",
             "input_error": "请输入有效的行数"
@@ -1568,7 +1568,7 @@
             "invite_messages": {
                 "slot": "字段",
                 "message": "消息",
-                "cool_down": "距离下一次可编辑",
+                "cool_down": "编辑冷却",
                 "action": "动作"
             },
             "previous_display_name": {
