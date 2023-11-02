@@ -310,7 +310,7 @@
                         "overlay_notifications": "叠加层通知",
                         "notification_position": "通知位置",
                         "xsoverlay_notifications": "XSOverlay 通知",
-                        "user_images": "显示玩家照片(较慢)",
+                        "user_images": "显示玩家头像(较慢)",
                         "notification_timeout": "通知时长"
                     },
                     "desktop_notifications": {
