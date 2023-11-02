@@ -233,7 +233,7 @@
                     "open_source_software_notice": "开放源代码软件许可"
                 },
                 "contributors": {
-                    "header": "贡献者"
+                    "header": "贡献者们"
                 }
             },
             "appearance": {
@@ -339,7 +339,7 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "SteamVR 手腕叠加层",
-                    "description": "* 当 VRChat 开启时它会自动开启",
+                    "description": "* 当 VRChat 运行时它会自动开启",
                     "grip": "握持：Vive 或其它控制器的握持键、Oculus X/A 按键",
                     "menu": "菜单：Vive 菜单键、Index B、Oculus Y/B 按键",
                     "steamvr_overlay": "SteamVR 叠加层",
@@ -365,7 +365,7 @@
             "discord_presence": {
                 "discord_presence": {
                     "header": "Discord 状态面板",
-                    "description": "* 仅在 VRChat 开启时有效",
+                    "description": "* 仅在 VRChat 运行时有效",
                     "enable": "启用",
                     "enable_tooltip": "建议在 VRChat 的 config.json 中停用原生的 Discord 状态面板来防止冲突",
                     "instance_type_player_count": "显示房间种类和玩家人数",
@@ -388,7 +388,7 @@
                     },
                     "primary_password": {
                         "header": "独立密码",
-                        "description": "使用独立密码加密VRCX数据(将停用自动登录)"
+                        "description": "使用独立密码加密 VRCX 数据(将停用自动登录)"
                     },
                     "relaunch_vrchat": {
                         "header": "崩溃后重启",
@@ -399,8 +399,8 @@
                         "description": "在VRChat退出时强制停止 VRChat 进程"
                     },
                     "auto_cache_management": {
-                        "header": "关闭 VRChat 时自动清理旧缓存",
-                        "description": "自动从VRChat缓存中删除旧版本数据"
+                        "header": "缓存自动清理",
+                        "description": "退出游戏时自动从缓存中删除过期数据"
                     },
                     "remote_database": {
                         "header": "模型数据库",
@@ -435,10 +435,10 @@
                     },
                     "cache_debug": {
                         "header": "VRCX 缓存/调试",
-                        "udon_exception_logging": "显示Udon 错误日志",
+                        "udon_exception_logging": "显示 Udon 错误日志",
                         "gpu_fix": "修复SteamVR叠加层显示问题",
                         "gpu_fix_notice": "(需要重启)",
-                        "gpu_fix_warning": "只有在SteamVR叠加层不工作并且你有2张显卡的情况下才需要启用这个选项。",
+                        "gpu_fix_warning": "只有在SteamVR叠加层异常并且你有2张显卡的情况下才需要启用这个选项。",
                         "disable_gamelog": "关闭游戏日志",
                         "disable_gamelog_notice": "(可能会弄坏很多东西！)",
                         "user_cache": "玩家缓存：",
@@ -461,11 +461,11 @@
                         "avatar": "模型：",
                         "online_offline": "上线 / 离线：",
                         "friend_log_history": "好友历史记录：",
-                        "notification": "通知：",
-                        "location": "位置：",
+                        "notification": "通知数量：",
+                        "location": "位置信息数量：",
                         "join_leave": "加入 / 离开：",
                         "portal_spawn": "放置的传送门数量：",
-                        "video_play": "视频播放：",
+                        "video_play": "视频播放事件：",
                         "event": "事件："
                     }
                 },
@@ -695,15 +695,15 @@
                 "youtube_preview": "YouTube 预览链接",
                 "author_tags": "作者添加的标签",
                 "players": "地图内人数",
-                "favorites": "收藏次数",
+                "favorites": "收藏人数",
                 "visits": "总游玩次数(所有玩家)",
-                "capacity": "最大人数上限",
+                "capacity": "推荐人数",
                 "heat": "热度",
                 "popularity": "知名度",
                 "created_at": "创建时间",
                 "last_updated": "最后更新",
-                "publication_date": "发布日期",
-                "labs_publication_date": "发布到社区实验室的日期",
+                "publication_date": "正式公开于",
+                "labs_publication_date": "进入实验室的日期",
                 "time_in_labs": "在实验室里的时长:",
                 "version": "版本",
                 "platform": "平台",
