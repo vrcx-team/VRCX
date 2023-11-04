@@ -421,7 +421,7 @@
                     "screenshot_helper": {
                         "header": "スクリーンショット ヘルパー",
                         "description": "ゲーム内で撮影した写真のメタデータに「ワールドID」「ワールド名」「インスタンス内のプレイヤー」を保存します",
-                        "description_tooltip": "残念ながら、Windowsは (ごく一部を除いた) PNGテキストチャンクの表示をサポートしていません。表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用して表示することができます",
+                        "description_tooltip": "残念ながら、Windowsは (ごく一部を除いた) PNGテキストチャンクの表示をサポートしていません。表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用してください。",
                         "enable": "有効化",
                         "modify_filename": "ファイル名を変更",
                         "modify_filename_tooltip": "スクリーンショットのファイル名にワールドIDを追加"
