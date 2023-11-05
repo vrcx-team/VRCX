@@ -820,6 +820,7 @@ html
                                     el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.public') }}
                                     el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.private') }}
                                     el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.fallback') }}
+                                    el-tag(v-if="avatarDialog.hasImposter" type="info" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.impostor') }}
                                     el-tag(v-if="avatarDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.future_proofing') }}
                                     el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-right:5px")
                                     el-tag.x-link(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini" @click="openFolderGeneric(avatarDialog.cachePath)")
