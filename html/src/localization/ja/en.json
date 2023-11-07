@@ -721,6 +721,7 @@
                 "public": "パブリック",
                 "private": "プライベート",
                 "fallback": "フォールバック",
+                "impostor": "インポスター",
                 "future_proofing": "Future Proofing",
                 "cache": "キャッシュ",
                 "content_horror": "ホラー",
