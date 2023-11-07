@@ -721,6 +721,7 @@
                 "public": "Public",
                 "private": "Private",
                 "fallback": "Fallback",
+                "impostor": "Impostor",
                 "future_proofing": "Future Proofing",
                 "cache": "Cache",
                 "content_horror": "Horror",
