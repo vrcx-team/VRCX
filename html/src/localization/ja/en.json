@@ -44,7 +44,7 @@
                 "previous": "前",
                 "search_placeholder": "検索",
                 "filter_placeholder": "フィルター",
-                "chatbox_blacklist": "チャットボックス ブラックリスト",
+                "chatbox_blacklist": "チャットボックスのブラックリスト",
                 "status_tooltip": "VRCX コンパニオンの状態"
             }
         },
@@ -309,7 +309,7 @@
                         "steamvr_overlay": "SteamVR オーバーレイ",
                         "overlay_notifications": "通知オーバーレイ",
                         "notification_position": "通知の位置",
-                        "xsoverlay_notifications": "XSOverlay通知",
+                        "xsoverlay_notifications": "XSOverlayで通知する",
                         "user_images": "ユーザー画像を使用 (遅い)",
                         "notification_timeout": "通知のタイムアウト時間"
                     },
@@ -322,7 +322,7 @@
                         "when_to_display_outside_vr": "VR以外",
                         "when_to_display_game_closed": "ゲーム終了時",
                         "when_to_display_game_running": "ゲーム実行時",
-                        "when_to_display_always": "常に表示"
+                        "when_to_display_always": "常に表示する"
                     },
                     "text_to_speech": {
                         "header": "音声読み上げ設定",
@@ -331,7 +331,7 @@
                         "when_to_play_inside_vr": "VR中",
                         "when_to_play_game_closed": "ゲーム終了時",
                         "when_to_play_game_running": "ゲーム実行時",
-                        "when_to_play_always": "常に読み上げ",
+                        "when_to_play_always": "常に読み上げる",
                         "tts_voice": "読み上げボイス"
                     }
                 }
@@ -369,7 +369,7 @@
                     "enable": "有効化",
                     "enable_tooltip": "競合を防ぐため、VRChatのconfig.jsonでDiscord Rich Presenceを無効化することを推奨します。",
                     "instance_type_player_count": "インスタンス詳細/プレイヤー数",
-                    "join_button": "Joinボタン (Publicのみ)",
+                    "join_button": "Joinボタンを表示 (Publicのみ)",
                     "hide_details_in_private": "Privateでは詳細を表示しない",
                     "hide_images": "ワールドの画像を表示しない"
                 }
@@ -415,12 +415,12 @@
                     "video_progress_pie": {
                         "header": "動画のプログレスをオーバーレイ表示",
                         "enable": "有効化",
-                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です",
+                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です。",
                         "dance_world_only": "ダンスワールドのみ"
                     },
                     "screenshot_helper": {
                         "header": "スクリーンショット ヘルパー",
-                        "description": "ゲーム内で撮影した写真のメタデータに「ワールドID」「ワールド名」「インスタンス内のプレイヤー」を保存します",
+                        "description": "ゲーム内で撮影した写真のメタデータに「ワールドID」「ワールド名」「インスタンス内のプレイヤー」を保存します。",
                         "description_tooltip": "残念ながら、Windowsは (ごく一部を除いた) PNGテキストチャンクの表示をサポートしていません。表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用してください。",
                         "enable": "有効化",
                         "modify_filename": "ファイル名を変更",
@@ -429,7 +429,7 @@
                     "app_launcher": {
                         "header": "アプリケーションの自動起動",
                         "folder": "フォルダー",
-                        "folder_tooltip": "VRChatと一緒に起動させたいアプリケーションのショートカットを配置してください",
+                        "folder_tooltip": "VRChatと一緒に起動させたいアプリケーションのショートカットを配置してください。",
                         "enable": "有効化",
                         "auto_close": "VRChat終了時に自動終了"
                     },
@@ -438,7 +438,7 @@
                         "udon_exception_logging": "Udonの例外エラーを記録",
                         "gpu_fix": "GPU Fixを有効化",
                         "gpu_fix_notice": "(再起動が必要です)",
-                        "gpu_fix_warning": "SteamVR オーバーレイが機能せず、2つ以上のGPUを使用している時のみこのオプションを有効化してください",
+                        "gpu_fix_warning": "SteamVR オーバーレイが機能せず、2つ以上のGPUを使用している時のみこのオプションを有効化してください。",
                         "disable_gamelog": "ゲームログを無効化",
                         "disable_gamelog_notice": "(何かが壊れる可能性があります)",
                         "user_cache": "ユーザーキャッシュ:",
@@ -474,7 +474,7 @@
                     "event_hud": {
                         "header": "Photon イベント HUD",
                         "enable": "有効化",
-                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です",
+                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です。",
                         "filter": "フィルター",
                         "filter_favorites": "お気に入り",
                         "filter_friends": "フレンド",
@@ -484,7 +484,7 @@
                     "timeout_hud": {
                         "header": "ユーザータイムアウト HUD",
                         "enable": "有効化",
-                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です",
+                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です。",
                         "filter": "フィルター",
                         "filter_favorites": "お気に入り",
                         "filter_friends": "フレンド",
@@ -596,7 +596,7 @@
                 "copy_id": "IDをコピー",
                 "copy_url": "URLをコピー",
                 "copy_display_name": "表示名をコピー",
-                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります",
+                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。",
                 "instance_full": "満員"
             },
             "groups": {
@@ -710,7 +710,7 @@
                 "last_visited": "最後に参加した日時",
                 "visit_count": "参加回数",
                 "time_spent": "過ごした時間",
-                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります"
+                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。"
             },
             "json": {
                 "header": "JSON"
@@ -731,8 +731,8 @@
                 "content_sex": "性的要素"
             },
             "labels": {
-                "public": "（パブリック）",
-                "private": "（プライベート）",
+                "public": "(パブリック)",
+                "private": "(プライベート)",
                 "own": "(自分)"
             },
             "actions": {
