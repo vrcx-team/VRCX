@@ -890,7 +890,7 @@
         },
         "bio": {
             "header": "自己紹介",
-            "bio_placeholder": "自己紹介を入力してください",
+            "bio_placeholder": "自己紹介を入力してください。",
             "add_link": "リンクを追加",
             "update": "更新"
         },
