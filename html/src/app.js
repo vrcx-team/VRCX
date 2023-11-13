@@ -5231,6 +5231,7 @@ speechSynthesis.getVoices();
             isGameRunning: false,
             isGameNoVR: configRepository.getBool('isGameNoVR'),
             isSteamVRRunning: false,
+            isHmdAfk: false,
             appVersion: '',
             latestAppVersion: '',
             ossDialog: false
@@ -5455,7 +5456,8 @@ speechSynthesis.getVoices();
 
     $app.methods.updateIsGameRunning = function (
         isGameRunning,
-        isSteamVRRunning
+        isSteamVRRunning,
+        isHmdAfk
     ) {
         if (isGameRunning !== this.isGameRunning) {
             this.isGameRunning = isGameRunning;
@@ -5484,6 +5486,10 @@ speechSynthesis.getVoices();
         if (isSteamVRRunning !== this.isSteamVRRunning) {
             this.isSteamVRRunning = isSteamVRRunning;
             console.log('isSteamVRRunning:', isSteamVRRunning);
+        }
+        if (isHmdAfk !== this.isHmdAfk) {
+            this.isHmdAfk = isHmdAfk;
+            console.log('isHmdAfk:', isHmdAfk);
         }
         this.updateOpenVR();
     };
@@ -6227,8 +6233,13 @@ speechSynthesis.getVoices();
             (this.desktopToast === 'Game Running' && this.isGameRunning) ||
             (this.desktopToast === 'Desktop Mode' &&
                 this.isGameNoVR &&
-                this.isGameRunning)
+                this.isGameRunning) ||
+            (this.afkDesktopToast &&
+                this.isHmdAfk &&
+                this.isGameRunning &&
+                !this.isGameNoVR)
         ) {
+            // this if statement looks like it has seen better days
             playDesktopToast = true;
         }
         var playXSNotification = this.xsNotifications;
@@ -14212,6 +14223,10 @@ speechSynthesis.getVoices();
         'VRCX_desktopToast',
         'Never'
     );
+    $app.data.afkDesktopToast = configRepository.getBool(
+        'VRCX_afkDesktopToast',
+        false
+    );
     $app.data.minimalFeed = configRepository.getBool('VRCX_minimalFeed', false);
     $app.data.displayVRCPlusIconsAsAvatar = configRepository.getBool(
         'displayVRCPlusIconsAsAvatar',
@@ -14366,6 +14381,7 @@ speechSynthesis.getVoices();
             this.imageNotifications
         );
         configRepository.setString('VRCX_desktopToast', this.desktopToast);
+        configRepository.setBool('VRCX_afkDesktopToast', this.afkDesktopToast);
         configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
         configRepository.setBool(
             'displayVRCPlusIconsAsAvatar',

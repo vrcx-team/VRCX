@@ -273,6 +273,9 @@ mixin settingsTab()
                             el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_game_closed') }}
                             el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_game_running') }}
                             el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_always') }}
+                    div.options-container-item
+                        span.name(style="min-width:225px") {{ $t('view.settings.notifications.notifications.desktop_notifications.desktop_notification_while_afk') }}
+                        el-switch(v-model="afkDesktopToast" @change="saveOpenVROption")
                 //- Notifications | Notifications | Text-to-Speech Options
                 div.options-container
                     span.sub-header {{ $t('view.settings.notifications.notifications.text_to_speech.header') }}
