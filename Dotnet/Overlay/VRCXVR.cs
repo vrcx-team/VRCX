@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading;
 using CefSharp;
 using SharpDX;
-using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using Valve.VR;
@@ -82,30 +81,13 @@ namespace VRCX
             MainForm.Instance.Browser.ExecuteScriptAsync("console.log('VRCXVR Restarted');");
         }
 
-        private void ThreadLoop()
+        private void SetupTextures()
         {
-            var active = false;
-            var e = new VREvent_t();
-            var nextInit = DateTime.MinValue;
-            var nextDeviceUpdate = DateTime.MinValue;
-            var nextOverlay = DateTime.MinValue;
-            var overlayIndex = OpenVR.k_unTrackedDeviceIndexInvalid;
-            var overlayVisible1 = false;
-            var overlayVisible2 = false;
-            var dashboardHandle = 0UL;
-            var overlayHandle1 = 0UL;
-            var overlayHandle2 = 0UL;
-
-            // REMOVE THIS
-            // nextOverlay = DateTime.MaxValue;
-            // https://stackoverflow.com/questions/38312597/how-to-choose-a-specific-graphics-device-in-sharpdx-directx-11/38596725#38596725
             Factory f = new Factory1();
-            var a = f.GetAdapter(1);
+            _device = new Device(f.GetAdapter(OpenVR.System.GetD3D9AdapterIndex()),
+                DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport);
 
-            var flags = DeviceCreationFlags.BgraSupport;
-
-            _device = Program.GPUFix ? new Device(a, flags) : new Device(DriverType.Hardware, DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport);
-
+            _texture1?.Dispose();
             _texture1 = new Texture2D(
                 _device,
                 new Texture2DDescription
@@ -121,7 +103,8 @@ namespace VRCX
                     CpuAccessFlags = CpuAccessFlags.Write
                 }
             );
-
+            
+            _texture2?.Dispose();
             _texture2 = new Texture2D(
                 _device,
                 new Texture2DDescription
@@ -137,7 +120,22 @@ namespace VRCX
                     CpuAccessFlags = CpuAccessFlags.Write
                 }
             );
+        }
 
+        private void ThreadLoop()
+        {
+            var active = false;
+            var e = new VREvent_t();
+            var nextInit = DateTime.MinValue;
+            var nextDeviceUpdate = DateTime.MinValue;
+            var nextOverlay = DateTime.MinValue;
+            var overlayIndex = OpenVR.k_unTrackedDeviceIndexInvalid;
+            var overlayVisible1 = false;
+            var overlayVisible2 = false;
+            var dashboardHandle = 0UL;
+            var overlayHandle1 = 0UL;
+            var overlayHandle2 = 0UL;
+            
             _browser1 = new OffScreenBrowser(
                 "file://vrcx/vr.html?1",
                 512,
@@ -183,6 +181,7 @@ namespace VRCX
                         }
 
                         active = true;
+                        SetupTextures();
                     }
 
                     while (system.PollNextEvent(ref e, (uint)Marshal.SizeOf(e)))
