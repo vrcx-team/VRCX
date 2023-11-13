@@ -56,7 +56,6 @@ textarea {
 }
 .el-tree-node:focus > .el-tree-node__content,
 .el-tree-node__content:hover {
-    border-radius: 10px;
     background-color: var(--light-bg);
 }
 .el-button:not(.el-button--text, .el-button--primary, .is-disabled),
@@ -86,7 +85,6 @@ textarea {
 .x-change-image-item:hover,
 .x-friend-item:hover {
     background-color: var(--lighter-lighter-bg);
-    border-radius: 10px;
     color: #fff;
 }
 .el-button--primary {
@@ -105,7 +103,6 @@ textarea {
 .el-dialog,
 .el-dropdown-menu,
 .el-tooltip__popper.is-dark {
-    border-radius: 10px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 .el-dropdown-menu__item,
