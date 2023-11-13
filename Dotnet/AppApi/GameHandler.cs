@@ -34,9 +34,11 @@ namespace VRCX
                 isSteamVRRunning = true;
             }
 
+            var isHmdAfk = VRCXVR.Instance.IsHmdAfk;
+
             // TODO: fix this throwing an exception for being called before the browser is ready. somehow it gets past the checks
             if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                MainForm.Instance.Browser.ExecuteScriptAsync("$app.updateIsGameRunning", isGameRunning, isSteamVRRunning);
+                MainForm.Instance.Browser.ExecuteScriptAsync("$app.updateIsGameRunning", isGameRunning, isSteamVRRunning, isHmdAfk);
         }
         
         /// <summary>
