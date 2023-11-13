@@ -20,7 +20,6 @@ namespace VRCX
         public static string ConfigLocation;
         public static string Version { get; private set; }
         public static bool LaunchDebug;
-        public static bool GPUFix;
         private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
         static Program()
         {
@@ -143,7 +142,6 @@ namespace VRCX
             ProcessMonitor.Instance.Init();
             SQLiteLegacy.Instance.Init();
             VRCXStorage.Load();
-            LoadFromConfig();
             CpuMonitor.Instance.Init();
             Discord.Instance.Init();
             WebApi.Instance.Init();
@@ -169,15 +167,6 @@ namespace VRCX
             VRCXStorage.Save();
             SQLiteLegacy.Instance.Exit();
             ProcessMonitor.Instance.Exit();
-        }
-
-        /// <summary>
-        /// Sets GPUFix to true if it is not already set and the VRCX_GPUFix key in the database is true.
-        /// </summary>
-        private static void LoadFromConfig()
-        {
-            if (!GPUFix)
-                GPUFix = VRCXStorage.Instance.Get("VRCX_GPUFix") == "true";
         }
     }
 }

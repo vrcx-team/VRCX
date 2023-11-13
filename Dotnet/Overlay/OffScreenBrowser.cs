@@ -62,6 +62,10 @@ namespace VRCX
 
         public void RenderToTexture(Texture2D texture)
         {
+            // Safeguard against uninitialized texture
+            if (texture == null)
+                return;
+            
             _paintBufferLock.EnterReadLock();
             try
             {
