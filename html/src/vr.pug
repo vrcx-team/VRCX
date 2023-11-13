@@ -159,10 +159,10 @@ html
                                             span.time {{ feed.created_at | formatDate }}
                                             | 🧍 #[span.name(v-text="feed.displayName" style="margin-right:5px" :style="{'color':feed.tagColour}")]
                                             template(v-if="feed.releaseStatus === 'public'")
-                                                | #[i.x-user-status.online]
-                                            template(v-else)
-                                                | #[i.x-user-status.askme]
-                                            |  {{ feed.name }}
+                                                | #[i.x-user-status.online]&nbsp;
+                                            template(v-else-if="feed.releaseStatus === 'private'")
+                                                | #[i.x-user-status.askme]&nbsp;
+                                            | {{ feed.name }}
                                             template(v-if="feed.description && feed.description !== feed.name")
                                                 |  - {{ feed.description }}
                                 div(v-else-if="feed.type === 'ChatBoxMessage'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")

@@ -229,6 +229,7 @@ namespace VRCX
                                     ParseLogPortalSpawn(fileInfo, logContext, line, offset) ||
                                     ParseLogNotification(fileInfo, logContext, line, offset) ||
                                     ParseLogAPIRequest(fileInfo, logContext, line, offset) ||
+                                    ParseLogAvatarChange(fileInfo, logContext, line, offset) ||
                                     ParseLogJoinBlocked(fileInfo, logContext, line, offset) ||
                                     ParseLogAvatarPedestalChange(fileInfo, logContext, line, offset) ||
                                     ParseLogVideoError(fileInfo, logContext, line, offset) ||
@@ -797,7 +798,33 @@ namespace VRCX
 
             return true;
         }
-        //
+
+        private bool ParseLogAvatarChange(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2023.11.05 14:45:57 Log        -  [Behaviour] Switching K․MOG to avatar MoeSera
+            
+            if (string.Compare(line, offset, "[Behaviour] Switching ", 0, 22, StringComparison.Ordinal) != 0)
+                return false;
+            
+            var pos = line.LastIndexOf(" to avatar ");
+            if (pos < 0)
+                return false;
+            
+            var displayName = line.Substring(offset + 22, pos - (offset + 22));
+            var avatarName = line.Substring(pos + 11);
+            
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "avatar-change",
+                displayName,
+                avatarName
+            });
+            
+            return true;
+        }
+
         // private bool ParseLogPhotonId(FileInfo fileInfo, LogContext logContext, string line, int offset)
         // {
         //     // 2021.11.02 02:21:41 Log        -  [Behaviour] Configuring remote player VRCPlayer[Remote] 22349737 1194

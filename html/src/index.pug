@@ -1896,17 +1896,17 @@ html
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                             el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
+                    .toggle-item
+                        span.toggle-name Lobby Avatar Change
+                        el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     template(v-if="photonLoggingEnabled")
                         br
                         .toggle-item
                             span.toggle-name Photon Event Logging
-                        .toggle-item
-                            span.toggle-name Lobby Avatar Change
-                            el-radio-group(v-model="sharedFeedFilters.noty.AvatarChange" size="mini")
-                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
-                                el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
-                                el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
-                                el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                         .toggle-item
                             span.toggle-name Lobby ChatBox Message
                             el-radio-group(v-model="sharedFeedFilters.noty.ChatBoxMessage" size="mini")
@@ -2118,17 +2118,17 @@ html
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                             el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
+                    .toggle-item
+                        span.toggle-name Lobby Avatar Change
+                        el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                     template(v-if="photonLoggingEnabled")
                         br
                         .toggle-item
                             span.toggle-name Photon Event Logging
-                        .toggle-item
-                            span.toggle-name Lobby Avatar Change
-                            el-radio-group(v-model="sharedFeedFilters.wrist.AvatarChange" size="mini")
-                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
-                                el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
-                                el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
-                                el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                         .toggle-item
                             span.toggle-name Lobby ChatBox Message
                             el-radio-group(v-model="sharedFeedFilters.wrist.ChatBoxMessage" size="mini")
