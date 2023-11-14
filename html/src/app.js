@@ -28,6 +28,7 @@ import * as localizedStrings from './localization/localizedStrings.js';
 
 // #endregion
 
+
 speechSynthesis.getVoices();
 
 // #region | Hey look it's most of VRCX!
@@ -7452,7 +7453,7 @@ speechSynthesis.getVoices();
                     inputPattern: /[\s\S]{1,32}/
                 }
             )
-                .then(async ({ value }) => {
+                .then(({ value }) => {
                     for (let userId in this.loginForm.savedCredentials) {
                         security
                             .decrypt(
@@ -14062,6 +14063,7 @@ speechSynthesis.getVoices();
             JSON.stringify(this.notificationTable.filters[0].value)
         );
     };
+    
     $app.data.feedTable.filter = JSON.parse(
         await configRepository.getString('VRCX_feedTableFilters', '[]')
     );

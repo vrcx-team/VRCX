@@ -138,6 +138,4 @@
   <Target Name="CefSharpAfterBuildDebug" AfterTargets="AfterBuild">
     <CallTarget Targets="CefSharpAfterBuildDiagnostic" />
   </Target>
-
-  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk.WindowsDesktop" />
 </Project>
