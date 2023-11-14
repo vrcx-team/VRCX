@@ -14,7 +14,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using Windows.UI.Notifications;
 using CefSharp;
 using librsync.net;
 using Microsoft.Win32;
@@ -180,7 +179,7 @@ namespace VRCX
         /// <param name="BoldText">The bold text to display in the notification.</param>
         /// <param name="Text">The optional text to display in the notification.</param>
         /// <param name="Image">The optional image to display in the notification.</param>
-        public void DesktopNotification(string BoldText, string Text = "", string Image = "")
+        /*public void DesktopNotification(string BoldText, string Text = "", string Image = "")
         {
             var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
             var stringElements = toastXml.GetElementsByTagName("text");
@@ -196,7 +195,7 @@ namespace VRCX
             imageElements[0].Attributes.GetNamedItem("src").NodeValue = imagePath;
             var toast = new ToastNotification(toastXml);
             ToastNotificationManager.CreateToastNotifier("VRCX").Show(toast);
-        }
+        }*/
 
         /// <summary>
         /// Restarts the VRCX application for an update by launching a new process with the "/Upgrade" argument and exiting the current process.

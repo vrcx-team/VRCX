@@ -13,7 +13,7 @@ async function syncLoop() {
             await sqliteService.executeNonQuery('BEGIN');
             try {
                 for (var key of dirtyKeySet) {
-                    var value = sharedRepository.getString(key);
+                    var value = await sharedRepository.getString(key);
                     if (value === null) {
                         await sqliteService.executeNonQuery(
                             'DELETE FROM configs WHERE `key` = @key',
@@ -54,21 +54,21 @@ class ConfigRepository extends SharedRepository {
         syncLoop();
     }
 
-    remove(key) {
+    async remove(key) {
         var _key = transformKey(key);
-        sharedRepository.remove(_key);
+        await sharedRepository.remove(_key);
         dirtyKeySet.add(_key);
     }
 
-    getString(key, defaultValue = null) {
+    async getString(key, defaultValue = null) {
         var _key = transformKey(key);
-        return sharedRepository.getString(_key, defaultValue);
+        return await sharedRepository.getString(_key, defaultValue);
     }
 
-    setString(key, value) {
+    async setString(key, value) {
         var _key = transformKey(key);
         var _value = String(value);
-        sharedRepository.setString(_key, _value);
+        await sharedRepository.setString(_key, _value);
         dirtyKeySet.add(_key);
     }
 }
