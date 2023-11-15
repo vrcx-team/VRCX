@@ -47,6 +47,12 @@
     !define MUI_ABORTWARNING
 
 ;--------------------------------
+;Icons
+
+    !define MUI_ICON "../VRCX.ico"
+    !define MUI_UNICON "../VRCX.ico"
+
+;--------------------------------
 ;Pages
 
     !insertmacro MUI_PAGE_LICENSE "..\LICENSE"
@@ -112,6 +118,20 @@ Function .onInit
     done:
 FunctionEnd
 
+Function CheckAndInstallDotNet
+   nsExec::ExecToStack /OEM 'cmd /c dir "%windir%\system32" | dotnet --list-runtimes | find /c /i "Microsoft.NETCore.App 8"'
+   Pop $0
+   Pop $1
+   StrCpy $2 $1 1
+   StrCmp $2 "1" 0 version_not_found
+      goto version_found
+   version_not_found:
+      inetc::get "https://aka.ms/dotnet/8.0/windowsdesktop-runtime-win-x64.exe" $TEMP\dotnet-runtime-win-x64.exe
+      ExecWait "$TEMP\dotnet-runtime-win-x64.exe /install /quiet /norestart"
+      Delete "$TEMP\dotnet-runtime-win-x64.exe"
+   version_found:
+FunctionEnd
+
 Function createDesktopShortcut
     CreateShortcut "$DESKTOP\VRCX.lnk" "$INSTDIR\VRCX.exe"
 FunctionEnd
@@ -142,8 +162,9 @@ Section "Install" SecInstall
     inetc::get "https://aka.ms/vs/17/release/vc_redist.x64.exe" $TEMP\vcredist_x64.exe
     ExecWait "$TEMP\vcredist_x64.exe /install /quiet /norestart"
     Delete "$TEMP\vcredist_x64.exe"
-
     VSRedistInstalled:
+
+    Call CheckAndInstallDotNet
 
     SetOutPath "$INSTDIR"
 
