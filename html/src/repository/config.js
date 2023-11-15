@@ -60,9 +60,9 @@ class ConfigRepository extends SharedRepository {
         dirtyKeySet.add(_key);
     }
 
-    async getString(key, defaultValue = null) {
+    getString(key, defaultValue = null) {
         var _key = transformKey(key);
-        return await sharedRepository.getString(_key, defaultValue);
+        return sharedRepository.getString(_key, defaultValue);
     }
 
     async setString(key, value) {

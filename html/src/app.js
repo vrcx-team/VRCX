@@ -28,7 +28,6 @@ import * as localizedStrings from './localization/localizedStrings.js';
 
 // #endregion
 
-
 speechSynthesis.getVoices();
 
 // #region | Hey look it's most of VRCX!
@@ -5229,7 +5228,7 @@ speechSynthesis.getVoices();
             nextAutoStateChange: 0,
             isDiscordActive: false,
             isGameRunning: false,
-            isGameNoVR: await configRepository.getBool('isGameNoVR'),
+            isGameNoVR: true,
             isSteamVRRunning: false,
             isHmdAfk: false,
             appVersion: '',
@@ -5243,17 +5242,16 @@ speechSynthesis.getVoices();
         el: '#x-app',
         async mounted() {
             await this.changeThemeMode();
-            AppApi.SetUserAgent();
-            AppApi.GetVersion().then(async (version) => {
-                this.appVersion = version;
-                await this.comapreAppVersion();
-                await this.setBranch();
-                if (this.autoUpdateVRCX !== 'Off') {
-                    this.checkForVRCXUpdate();
-                }
-            });
-            AppApi.CheckGameRunning();
-            AppApi.SetAppLauncherSettings(
+            await AppApi.SetUserAgent();
+            this.appVersion = await AppApi.GetVersion();
+            await this.compareAppVersion();
+            await this.setBranch();
+            if (this.autoUpdateVRCX !== 'Off') {
+                this.checkForVRCXUpdate();
+            }
+            await AppApi.CheckGameRunning();
+            this.isGameNoVR = await configRepository.getBool('isGameNoVR');
+            await AppApi.SetAppLauncherSettings(
                 this.enableAppLauncher,
                 this.enableAppLauncherAutoClose
             );
@@ -5281,7 +5279,8 @@ speechSynthesis.getVoices();
                 this.$el.style.display = '';
                 if (
                     !this.enablePrimaryPassword &&
-                    await configRepository.getString('lastUserLoggedIn') !== null
+                    (await configRepository.getString('lastUserLoggedIn')) !==
+                        null
                 ) {
                     // login at startup
                     this.loginForm.loading = true;
@@ -5350,7 +5349,7 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.methods.comapreAppVersion = async function () {
+    $app.methods.compareAppVersion = async function () {
         if (!this.appVersion) {
             return;
         }
@@ -5359,12 +5358,20 @@ speechSynthesis.getVoices();
             ''
         );
         if (!lastVersion) {
-            await configRepository.setString('VRCX_lastVRCXVersion', this.appVersion);
+            await configRepository.setString(
+                'VRCX_lastVRCXVersion',
+                this.appVersion
+            );
             return;
         }
         if (lastVersion !== this.appVersion) {
-            await configRepository.setString('VRCX_lastVRCXVersion', this.appVersion);
-            if (await configRepository.getString('VRCX_branch') === 'Stable') {
+            await configRepository.setString(
+                'VRCX_lastVRCXVersion',
+                this.appVersion
+            );
+            if (
+                (await configRepository.getString('VRCX_branch')) === 'Stable'
+            ) {
                 this.showChangeLogDialog();
             }
         }
@@ -7487,7 +7494,10 @@ speechSynthesis.getVoices();
                 })
                 .catch(async () => {
                     this.enablePrimaryPassword = true;
-                    await configRepository.setBool('enablePrimaryPassword', true);
+                    await configRepository.setBool(
+                        'enablePrimaryPassword',
+                        true
+                    );
                 });
         }
     };
@@ -7523,7 +7533,7 @@ speechSynthesis.getVoices();
 
     $app.methods.updateStoredUser = async function (currentUser) {
         var savedCredentials = {};
-        if (await configRepository.getString('savedCredentials') !== null) {
+        if ((await configRepository.getString('savedCredentials')) !== null) {
             savedCredentials = JSON.parse(
                 await configRepository.getString('savedCredentials')
             );
@@ -7542,14 +7552,17 @@ speechSynthesis.getVoices();
         }
         this.loginForm.savedCredentials = savedCredentials;
         var jsonCredentialsArray = JSON.stringify(savedCredentials);
-        await configRepository.setString('savedCredentials', jsonCredentialsArray);
+        await configRepository.setString(
+            'savedCredentials',
+            jsonCredentialsArray
+        );
         this.loginForm.lastUserLoggedIn = currentUser.id;
         await configRepository.setString('lastUserLoggedIn', currentUser.id);
     };
 
     $app.methods.migrateStoredUsers = async function () {
         var savedCredentials = {};
-        if (await configRepository.getString('savedCredentials') !== null) {
+        if ((await configRepository.getString('savedCredentials')) !== null) {
             savedCredentials = JSON.parse(
                 await configRepository.getString('savedCredentials')
             );
@@ -7686,8 +7699,10 @@ speechSynthesis.getVoices();
         websocket: '',
         saveCredentials: false,
         savedCredentials:
-            await configRepository.getString('savedCredentials') !== null
-                ? JSON.parse(await configRepository.getString('savedCredentials'))
+            (await configRepository.getString('savedCredentials')) !== null
+                ? JSON.parse(
+                      await configRepository.getString('savedCredentials')
+                  )
                 : {},
         lastUserLoggedIn: await configRepository.getString('lastUserLoggedIn'),
         rules: {
@@ -9103,7 +9118,10 @@ speechSynthesis.getVoices();
         return true;
     };
 
-    $app.data.tablePageSize = await configRepository.getInt('VRCX_tablePageSize', 15);
+    $app.data.tablePageSize = await configRepository.getInt(
+        'VRCX_tablePageSize',
+        15
+    );
 
     $app.data.feedTable = {
         data: [],
@@ -9134,7 +9152,10 @@ speechSynthesis.getVoices();
             'VRCX_feedTableFilters',
             JSON.stringify(this.feedTable.filter)
         );
-        await configRepository.setBool('VRCX_feedTableVIPFilter', this.feedTable.vip);
+        await configRepository.setBool(
+            'VRCX_feedTableVIPFilter',
+            this.feedTable.vip
+        );
         this.feedTable.loading = true;
         var vipList = [];
         if (this.feedTable.vip) {
@@ -9178,7 +9199,9 @@ speechSynthesis.getVoices();
         await this.refreshNotifications();
         await $app.getCurrentUserGroups();
         try {
-            if (await configRepository.getBool(`friendLogInit_${args.json.id}`)) {
+            if (
+                await configRepository.getBool(`friendLogInit_${args.json.id}`)
+            ) {
                 await $app.getFriendLog();
             } else {
                 await $app.initFriendLog(args.json.id);
@@ -9823,7 +9846,7 @@ speechSynthesis.getVoices();
             if (gameLog.type === 'location') {
                 location = gameLog.location;
             }
-            await this.addGameLogEntry(gameLog, location);
+            this.addGameLogEntry(gameLog, location);
         }
         this.getGameLogTable();
     };
@@ -9846,11 +9869,11 @@ speechSynthesis.getVoices();
             if (gameLog.type === 'location') {
                 location = gameLog.location;
             }
-            await this.addGameLogEntry(gameLog, location);
+            this.addGameLogEntry(gameLog, location);
         }
     };
 
-    $app.methods.addGameLogEvent = async function (json) {
+    $app.methods.addGameLogEvent = function (json) {
         var rawLogs = JSON.parse(json);
         var gameLog = gameLogService.parseRawGameLog(
             rawLogs[1],
@@ -9865,7 +9888,7 @@ speechSynthesis.getVoices();
         ) {
             console.log('gameLog:', gameLog);
         }
-        await this.addGameLogEntry(gameLog, this.lastLocation.location);
+        this.addGameLogEntry(gameLog, this.lastLocation.location);
     };
 
     $app.methods.deleteGameLogEntry = function (row) {
@@ -9893,7 +9916,7 @@ speechSynthesis.getVoices();
     $app.data.lastResourceloadUrl = '';
     $app.data.gameLogApiLoggingEnabled = false;
 
-    $app.methods.addGameLogEntry = async function (gameLog, location) {
+    $app.methods.addGameLogEntry = function (gameLog, location) {
         if (this.gameLogDisabled) {
             return;
         }
@@ -10240,7 +10263,7 @@ speechSynthesis.getVoices();
                     type: 'Event',
                     data: gameLog.event
                 };
-                await database.addGamelogEventToDatabase(entry);
+                database.addGamelogEventToDatabase(entry);
                 break;
             case 'vrc-quit':
                 if (!this.vrcQuitFix || !this.isGameRunning) {
@@ -10267,12 +10290,12 @@ speechSynthesis.getVoices();
                 break;
             case 'openvr-init':
                 this.isGameNoVR = false;
-                await configRepository.setBool('isGameNoVR', this.isGameNoVR);
+                configRepository.setBool('isGameNoVR', this.isGameNoVR);
                 this.updateOpenVR();
                 break;
             case 'desktop-mode':
                 this.isGameNoVR = true;
-                await configRepository.setBool('isGameNoVR', this.isGameNoVR);
+                configRepository.setBool('isGameNoVR', this.isGameNoVR);
                 this.updateOpenVR();
                 break;
             case 'udon-exception':
@@ -11297,7 +11320,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.parseVRCEvent = async function (json) {
+    $app.methods.parseVRCEvent = function (json) {
         // VRC Event
         var datetime = json.dt;
         var eventData = json.VRCEventData;
@@ -11315,7 +11338,7 @@ speechSynthesis.getVoices();
                     senderId
                 )} called non existent RPC ${eventData.EventType}`
             };
-            await this.addPhotonEventToGameLog(entry);
+            this.addPhotonEventToGameLog(entry);
             return;
         }
         if (eventData.EventType === 14) {
@@ -11395,7 +11418,7 @@ speechSynthesis.getVoices();
             worldName,
             created_at
         });
-        await this.addPhotonEventToGameLog({
+        this.addPhotonEventToGameLog({
             created_at,
             type: 'PortalSpawn',
             displayName: ref.displayName,
@@ -11443,7 +11466,7 @@ speechSynthesis.getVoices();
             groupName,
             created_at: gameLogDate
         });
-        await this.addPhotonEventToGameLog({
+        this.addPhotonEventToGameLog({
             created_at: gameLogDate,
             type: 'PortalSpawn',
             displayName: this.getDisplayName(userId),
@@ -11455,13 +11478,13 @@ speechSynthesis.getVoices();
         });
     };
 
-    $app.methods.addPhotonEventToGameLog = async function (entry) {
+    $app.methods.addPhotonEventToGameLog = function (entry) {
         this.queueGameLogNoty(entry);
         this.addGameLog(entry);
         if (entry.type === 'PortalSpawn') {
             database.addGamelogPortalSpawnToDatabase(entry);
         } else if (entry.type === 'Event') {
-            await database.addGamelogEventToDatabase(entry);
+            database.addGamelogEventToDatabase(entry);
         }
     };
 
@@ -13286,9 +13309,8 @@ speechSynthesis.getVoices();
                         }
                     } else {
                         // try fetch from local avatar history
-                        var avatar = await database.getCachedAvatarById(
-                            objectId
-                        );
+                        var avatar =
+                            await database.getCachedAvatarById(objectId);
                         if (avatar) {
                             ctx.ref = avatar;
                             ctx.name = avatar.name;
@@ -14063,7 +14085,7 @@ speechSynthesis.getVoices();
             JSON.stringify(this.notificationTable.filters[0].value)
         );
     };
-    
+
     $app.data.feedTable.filter = JSON.parse(
         await configRepository.getString('VRCX_feedTableFilters', '[]')
     );
@@ -14078,7 +14100,10 @@ speechSynthesis.getVoices();
         await configRepository.getString('VRCX_friendLogTableFilters', '[]')
     );
     $app.data.playerModerationTable.filters[0].value = JSON.parse(
-        await configRepository.getString('VRCX_playerModerationTableFilters', '[]')
+        await configRepository.getString(
+            'VRCX_playerModerationTableFilters',
+            '[]'
+        )
     );
     $app.data.notificationTable.filters[0].value = JSON.parse(
         await configRepository.getString('VRCX_notificationTableFilters', '[]')
@@ -14091,7 +14116,10 @@ speechSynthesis.getVoices();
     $app.data.photonEventTablePrevious.filters[1].value =
         $app.data.photonEventTableTypeFilter;
     $app.data.photonEventTableTypeOverlayFilter = JSON.parse(
-        await configRepository.getString('VRCX_photonEventTypeOverlayFilter', '[]')
+        await configRepository.getString(
+            'VRCX_photonEventTypeOverlayFilter',
+            '[]'
+        )
     );
 
     // #endregion
@@ -14211,12 +14239,18 @@ speechSynthesis.getVoices();
     };
     $app.data.visits = 0;
     $app.data.openVR = await configRepository.getBool('openVR', false);
-    $app.data.openVRAlways = await configRepository.getBool('openVRAlways', false);
+    $app.data.openVRAlways = await configRepository.getBool(
+        'openVRAlways',
+        false
+    );
     $app.data.overlaybutton = await configRepository.getBool(
         'VRCX_overlaybutton',
         false
     );
-    $app.data.overlayHand = await configRepository.getInt('VRCX_overlayHand', 0);
+    $app.data.overlayHand = await configRepository.getInt(
+        'VRCX_overlayHand',
+        0
+    );
     $app.data.hidePrivateFromFeed = await configRepository.getBool(
         'VRCX_hidePrivateFromFeed',
         false
@@ -14261,7 +14295,10 @@ speechSynthesis.getVoices();
         'VRCX_afkDesktopToast',
         false
     );
-    $app.data.minimalFeed = await configRepository.getBool('VRCX_minimalFeed', false);
+    $app.data.minimalFeed = await configRepository.getBool(
+        'VRCX_minimalFeed',
+        false
+    );
     $app.data.displayVRCPlusIconsAsAvatar = await configRepository.getBool(
         'displayVRCPlusIconsAsAvatar',
         true
@@ -14290,27 +14327,42 @@ speechSynthesis.getVoices();
         'VRCX_relaunchVRChatAfterCrash',
         false
     );
-    $app.data.vrcQuitFix = await configRepository.getBool('VRCX_vrcQuitFix', true);
+    $app.data.vrcQuitFix = await configRepository.getBool(
+        'VRCX_vrcQuitFix',
+        true
+    );
     $app.data.vrBackgroundEnabled = await configRepository.getBool(
         'VRCX_vrBackgroundEnabled',
         false
     );
-    $app.data.asideWidth = await configRepository.getInt('VRCX_sidePanelWidth', 300);
+    $app.data.asideWidth = await configRepository.getInt(
+        'VRCX_sidePanelWidth',
+        300
+    );
     if (await configRepository.getInt('VRCX_asidewidth')) {
         // migrate to new defaults
         $app.data.asideWidth = await configRepository.getInt('VRCX_asidewidth');
         if ($app.data.asideWidth < 300) {
             $app.data.asideWidth = 300;
         }
-        await configRepository.setInt('VRCX_sidePanelWidth', $app.data.asideWidth);
+        await configRepository.setInt(
+            'VRCX_sidePanelWidth',
+            $app.data.asideWidth
+        );
         await configRepository.remove('VRCX_asidewidth');
     }
     $app.data.autoUpdateVRCX = await configRepository.getString(
         'VRCX_autoUpdateVRCX',
         'Auto Download'
     );
-    $app.data.branch = await configRepository.getString('VRCX_branch', 'Stable');
-    $app.data.maxTableSize = await configRepository.getInt('VRCX_maxTableSize', 1000);
+    $app.data.branch = await configRepository.getString(
+        'VRCX_branch',
+        'Stable'
+    );
+    $app.data.maxTableSize = await configRepository.getInt(
+        'VRCX_maxTableSize',
+        1000
+    );
     if ($app.data.maxTableSize > 10000) {
         $app.data.maxTableSize = 1000;
     }
@@ -14381,7 +14433,10 @@ speechSynthesis.getVoices();
     $app.methods.saveOpenVROption = async function () {
         await configRepository.setBool('openVR', this.openVR);
         await configRepository.setBool('openVRAlways', this.openVRAlways);
-        await configRepository.setBool('VRCX_overlaybutton', this.overlaybutton);
+        await configRepository.setBool(
+            'VRCX_overlaybutton',
+            this.overlaybutton
+        );
         this.overlayHand = parseInt(this.overlayHand, 10);
         if (isNaN(this.overlayHand)) {
             this.overlayHand = 0;
@@ -14403,19 +14458,31 @@ speechSynthesis.getVoices();
             'VRCX_hideUptimeFromFeed',
             this.hideUptimeFromFeed
         );
-        await configRepository.setBool('VRCX_pcUptimeOnFeed', this.pcUptimeOnFeed);
+        await configRepository.setBool(
+            'VRCX_pcUptimeOnFeed',
+            this.pcUptimeOnFeed
+        );
         await configRepository.setBool(
             'VRCX_overlayNotifications',
             this.overlayNotifications
         );
         await configRepository.setBool('VRCX_overlayWrist', this.overlayWrist);
-        await configRepository.setBool('VRCX_xsNotifications', this.xsNotifications);
+        await configRepository.setBool(
+            'VRCX_xsNotifications',
+            this.xsNotifications
+        );
         await configRepository.setBool(
             'VRCX_imageNotifications',
             this.imageNotifications
         );
-        await configRepository.setString('VRCX_desktopToast', this.desktopToast);
-        await configRepository.setBool('VRCX_afkDesktopToast', this.afkDesktopToast);
+        await configRepository.setString(
+            'VRCX_desktopToast',
+            this.desktopToast
+        );
+        await configRepository.setBool(
+            'VRCX_afkDesktopToast',
+            this.afkDesktopToast
+        );
         await configRepository.setBool('VRCX_minimalFeed', this.minimalFeed);
         await configRepository.setBool(
             'displayVRCPlusIconsAsAvatar',
@@ -14459,17 +14526,27 @@ speechSynthesis.getVoices();
     };
     $app.methods.saveSortFavoritesOption = async function () {
         this.getLocalWorldFavorites();
-        await configRepository.setBool('VRCX_sortFavorites', this.sortFavorites);
+        await configRepository.setBool(
+            'VRCX_sortFavorites',
+            this.sortFavorites
+        );
     };
     $app.methods.saveUserDialogOption = async function () {
-        await configRepository.setBool('VRCX_hideUserNotes', this.hideUserNotes);
-        await configRepository.setBool('VRCX_hideUserMemos', this.hideUserMemos);
+        await configRepository.setBool(
+            'VRCX_hideUserNotes',
+            this.hideUserNotes
+        );
+        await configRepository.setBool(
+            'VRCX_hideUserMemos',
+            this.hideUserMemos
+        );
     };
     $app.data.TTSvoices = speechSynthesis.getVoices();
     $app.methods.saveNotificationTTS = async function () {
         speechSynthesis.cancel();
         if (
-            await configRepository.getString('VRCX_notificationTTS') === 'Never' &&
+            (await configRepository.getString('VRCX_notificationTTS')) ===
+                'Never' &&
             this.notificationTTS !== 'Never'
         ) {
             this.speak('Notification text-to-speech enabled');
@@ -14566,7 +14643,8 @@ speechSynthesis.getVoices();
     });
     if (await configRepository.getBool('VRCX_CloseToTray')) {
         // move back to JSON
-        $app.data.isCloseToTray = await configRepository.getBool('VRCX_CloseToTray');
+        $app.data.isCloseToTray =
+            await configRepository.getBool('VRCX_CloseToTray');
         VRCXStorage.Set('VRCX_CloseToTray', $app.data.isCloseToTray.toString());
         await configRepository.remove('VRCX_CloseToTray');
     }
@@ -14599,7 +14677,10 @@ speechSynthesis.getVoices();
         'Everyone'
     );
     $app.data.photonOverlayMessageTimeout = Number(
-        await configRepository.getString('VRCX_photonOverlayMessageTimeout', 6000)
+        await configRepository.getString(
+            'VRCX_photonOverlayMessageTimeout',
+            6000
+        )
     );
     $app.data.photonLoggingEnabled = false;
     $app.data.gameLogDisabled = await configRepository.getBool(
@@ -14642,7 +14723,10 @@ speechSynthesis.getVoices();
         false
     );
     $app.methods.saveGameLogOptions = async function () {
-        await configRepository.setBool('VRCX_logResourceLoad', this.logResourceLoad);
+        await configRepository.setBool(
+            'VRCX_logResourceLoad',
+            this.logResourceLoad
+        );
     };
     $app.data.autoStateChange = await configRepository.getString(
         'VRCX_autoStateChange',
@@ -14693,10 +14777,22 @@ speechSynthesis.getVoices();
         true
     );
     $app.methods.saveOrderFriendGroup = async function () {
-        await configRepository.setBool('orderFriendGroup0', this.orderFriendsGroup0);
-        await configRepository.setBool('orderFriendGroup1', this.orderFriendsGroup1);
-        await configRepository.setBool('orderFriendGroup2', this.orderFriendsGroup2);
-        await configRepository.setBool('orderFriendGroup3', this.orderFriendsGroup3);
+        await configRepository.setBool(
+            'orderFriendGroup0',
+            this.orderFriendsGroup0
+        );
+        await configRepository.setBool(
+            'orderFriendGroup1',
+            this.orderFriendsGroup1
+        );
+        await configRepository.setBool(
+            'orderFriendGroup2',
+            this.orderFriendsGroup2
+        );
+        await configRepository.setBool(
+            'orderFriendGroup3',
+            this.orderFriendsGroup3
+        );
         await configRepository.setBool(
             'orderFriendGroupPrivate',
             this.orderFriendsGroupPrivate
@@ -14712,7 +14808,10 @@ speechSynthesis.getVoices();
         this.sortFriendsGroup0 = true;
         this.sortFriendsGroup1 = true;
     };
-    $app.data.discordActive = await configRepository.getBool('discordActive', false);
+    $app.data.discordActive = await configRepository.getBool(
+        'discordActive',
+        false
+    );
     $app.data.discordInstance = await configRepository.getBool(
         'discordInstance',
         true
@@ -14732,9 +14831,18 @@ speechSynthesis.getVoices();
     $app.methods.saveDiscordOption = async function () {
         await configRepository.setBool('discordActive', this.discordActive);
         await configRepository.setBool('discordInstance', this.discordInstance);
-        await configRepository.setBool('discordJoinButton', this.discordJoinButton);
-        await configRepository.setBool('discordHideInvite', this.discordHideInvite);
-        await configRepository.setBool('discordHideImage', this.discordHideImage);
+        await configRepository.setBool(
+            'discordJoinButton',
+            this.discordJoinButton
+        );
+        await configRepository.setBool(
+            'discordHideInvite',
+            this.discordHideInvite
+        );
+        await configRepository.setBool(
+            'discordHideImage',
+            this.discordHideImage
+        );
         this.lastLocation$.tag = '';
         this.nextDiscordUpdate = 7;
         this.updateDiscord();
@@ -14955,13 +15063,19 @@ speechSynthesis.getVoices();
         this.updateVRConfigVars();
     };
 
-    $app.data.youTubeApi = await configRepository.getBool('VRCX_youtubeAPI', false);
+    $app.data.youTubeApi = await configRepository.getBool(
+        'VRCX_youtubeAPI',
+        false
+    );
     $app.data.youTubeApiKey = await configRepository.getString(
         'VRCX_youtubeAPIKey',
         ''
     );
 
-    $app.data.progressPie = await configRepository.getBool('VRCX_progressPie', false);
+    $app.data.progressPie = await configRepository.getBool(
+        'VRCX_progressPie',
+        false
+    );
     $app.data.progressPieFilter = await configRepository.getBool(
         'VRCX_progressPieFilter',
         true
@@ -18081,7 +18195,7 @@ speechSynthesis.getVoices();
         this.updateTimers();
     };
 
-    $app.methods.worldDialogCommand = async function (command) {
+    $app.methods.worldDialogCommand = function (command) {
         var D = this.worldDialog;
         if (D.visible === false) {
             return;
@@ -18091,7 +18205,7 @@ speechSynthesis.getVoices();
                 this.showWorldDialog(D.id);
                 break;
             case 'New Instance':
-                await this.showNewInstanceDialog(D.$location.tag);
+                this.showNewInstanceDialog(D.$location.tag);
                 break;
             case 'Add Favorite':
                 this.showFavoriteDialog('world', D.id);
@@ -19036,7 +19150,7 @@ speechSynthesis.getVoices();
         $app.newInstanceDialog.visible = false;
     });
 
-    $app.methods.buildInstance = async function () {
+    $app.methods.buildInstance = function () {
         var D = this.newInstanceDialog;
         D.instanceCreated = false;
         D.shortName = '';
@@ -19104,7 +19218,7 @@ speechSynthesis.getVoices();
         }
         D.instanceId = tags.join('');
         this.updateNewInstanceDialog(false);
-        await this.saveNewInstanceDialog();
+        this.saveNewInstanceDialog();
     };
 
     $app.methods.createGroupInstance = function () {
@@ -19241,13 +19355,19 @@ speechSynthesis.getVoices();
             'instanceDialogAccessType',
             'public'
         );
-        D.region = await configRepository.getString('instanceRegion', 'US West');
+        D.region = await configRepository.getString(
+            'instanceRegion',
+            'US West'
+        );
         D.instanceName = await configRepository.getString(
             'instanceDialogInstanceName',
             ''
         );
         D.userId = await configRepository.getString('instanceDialogUserId', '');
-        D.groupId = await configRepository.getString('instanceDialogGroupId', '');
+        D.groupId = await configRepository.getString(
+            'instanceDialogGroupId',
+            ''
+        );
         D.groupAccessType = await configRepository.getString(
             'instanceDialogGroupAccessType',
             'plus'
@@ -19263,8 +19383,8 @@ speechSynthesis.getVoices();
         D.strict = false;
         D.shortName = '';
         D.secureOrShortName = '';
-        await this.buildInstance();
-        await this.updateNewInstanceDialog();
+        this.buildInstance();
+        this.updateNewInstanceDialog();
         D.visible = true;
     };
 
@@ -19721,8 +19841,11 @@ speechSynthesis.getVoices();
         secureOrShortName: ''
     };
 
-    $app.watch['launchDialog.desktop'] = async function () {
-        await configRepository.setBool('launchAsDesktop', this.launchDialog.desktop);
+    $app.methods.saveLaunchDialog = async function () {
+        await configRepository.setBool(
+            'launchAsDesktop',
+            this.launchDialog.desktop
+        );
     };
 
     API.$on('LOGOUT', function () {
@@ -22525,8 +22648,7 @@ speechSynthesis.getVoices();
             'VRCX_enableAppLauncherAutoClose',
             this.enableAppLauncherAutoClose
         );
-
-        AppApi.SetAppLauncherSettings(
+        await AppApi.SetAppLauncherSettings(
             this.enableAppLauncher,
             this.enableAppLauncherAutoClose
         );
@@ -24053,7 +24175,7 @@ speechSynthesis.getVoices();
             // update already downloaded and latest version
             this.VRCXUpdateDialog.updatePendingIsLatest = true;
         }
-        if (await configRepository.getString('VRCX_branch') !== this.branch) {
+        if ((await configRepository.getString('VRCX_branch')) !== this.branch) {
             await configRepository.setString('VRCX_branch', this.branch);
         }
     };
@@ -24062,7 +24184,10 @@ speechSynthesis.getVoices();
         if (this.autoUpdateVRCX === 'Off') {
             this.pendingVRCXUpdate = false;
         }
-        await configRepository.setString('VRCX_autoUpdateVRCX', this.autoUpdateVRCX);
+        await configRepository.setString(
+            'VRCX_autoUpdateVRCX',
+            this.autoUpdateVRCX
+        );
     };
 
     $app.methods.checkForVRCXUpdate = async function () {
@@ -24295,7 +24420,7 @@ speechSynthesis.getVoices();
     };
 
     $app.data.ipcEnabled = false;
-    $app.methods.ipcEvent = async function (json) {
+    $app.methods.ipcEvent = function (json) {
         if (!this.friendLogInitStatus) {
             return;
         }
@@ -24357,7 +24482,7 @@ speechSynthesis.getVoices();
                     console.log('Game closed, skipped event', data);
                     return;
                 }
-                await this.parseVRCEvent(data);
+                this.parseVRCEvent(data);
                 this.photonEventPulse();
                 break;
             case 'Event7List':
@@ -24376,7 +24501,7 @@ speechSynthesis.getVoices();
             case 'Ping':
                 if (!this.photonLoggingEnabled) {
                     this.photonLoggingEnabled = true;
-                    await configRepository.setBool('VRCX_photonLoggingEnabled', true);
+                    configRepository.setBool('VRCX_photonLoggingEnabled', true);
                 }
                 this.ipcEnabled = true;
                 this.ipcTimeout = 60; // 30secs
@@ -24386,7 +24511,7 @@ speechSynthesis.getVoices();
                 break;
             case 'LaunchCommand':
                 AppApi.FocusWindow();
-                await this.eventLaunchCommand(data.command);
+                this.eventLaunchCommand(data.command);
                 break;
             case 'VRCXLaunch':
                 console.log('VRCXLaunch:', data);
@@ -24544,11 +24669,11 @@ speechSynthesis.getVoices();
     API.$on('LOGIN', async function () {
         var command = await AppApi.GetLaunchCommand();
         if (command) {
-            await $app.eventLaunchCommand(command);
+            $app.eventLaunchCommand(command);
         }
     });
 
-    $app.methods.eventLaunchCommand = async function (input) {
+    $app.methods.eventLaunchCommand = function (input) {
         if (!API.isLoggedIn) {
             return;
         }
@@ -24578,7 +24703,7 @@ speechSynthesis.getVoices();
                 });
                 break;
             case 'addavatardb':
-                await this.addAvatarProvider(input.replace('addavatardb/', ''));
+                this.addAvatarProvider(input.replace('addavatardb/', ''));
                 break;
             case 'import':
                 var type = args[1];
@@ -24851,7 +24976,10 @@ speechSynthesis.getVoices();
     };
 
     $app.data.dtHour12 = await configRepository.getBool('VRCX_dtHour12', false);
-    $app.data.dtIsoFormat = await configRepository.getBool('VRCX_dtIsoFormat', false);
+    $app.data.dtIsoFormat = await configRepository.getBool(
+        'VRCX_dtIsoFormat',
+        false
+    );
     $app.methods.setDatetimeFormat = async function () {
         var currentCulture = await AppApi.CurrentCulture();
         var hour12 = await configRepository.getBool('VRCX_dtHour12');
@@ -24865,7 +24993,10 @@ speechSynthesis.getVoices();
         }
         if (typeof this.dtIsoFormat !== 'undefined') {
             if (isoFormat !== this.dtIsoFormat) {
-                await configRepository.setBool('VRCX_dtIsoFormat', this.dtIsoFormat);
+                await configRepository.setBool(
+                    'VRCX_dtIsoFormat',
+                    this.dtIsoFormat
+                );
             }
             var isoFormat = this.dtIsoFormat;
         }
@@ -26066,7 +26197,7 @@ speechSynthesis.getVoices();
         D.visible = true;
     };
 
-    $app.methods.addAvatarProvider = async function (url) {
+    $app.methods.addAvatarProvider = function (url) {
         if (!url) {
             return;
         }
@@ -26074,17 +26205,17 @@ speechSynthesis.getVoices();
         if (!this.avatarRemoteDatabaseProviderList.includes(url)) {
             this.avatarRemoteDatabaseProviderList.push(url);
         }
-        await this.saveAvatarProviderList();
+        this.saveAvatarProviderList();
     };
 
-    $app.methods.removeAvatarProvider = async function (url) {
+    $app.methods.removeAvatarProvider = function (url) {
         var length = this.avatarRemoteDatabaseProviderList.length;
         for (var i = 0; i < length; ++i) {
             if (this.avatarRemoteDatabaseProviderList[i] === url) {
                 this.avatarRemoteDatabaseProviderList.splice(i, 1);
             }
         }
-        await this.saveAvatarProviderList();
+        this.saveAvatarProviderList();
     };
 
     $app.methods.saveAvatarProviderList = async function () {
@@ -26565,7 +26696,9 @@ speechSynthesis.getVoices();
         $app.data.chatboxUserBlacklist = new Map(
             Object.entries(
                 JSON.parse(
-                    await configRepository.getString('VRCX_chatboxUserBlacklist')
+                    await configRepository.getString(
+                        'VRCX_chatboxUserBlacklist'
+                    )
                 )
             )
         );
@@ -28434,9 +28567,8 @@ speechSynthesis.getVoices();
             return;
         }
         try {
-            var loggingEnabled = await AppApi.GetVRChatRegistryKey(
-                'LOGGING_ENABLED'
-            );
+            var loggingEnabled =
+                await AppApi.GetVRChatRegistryKey('LOGGING_ENABLED');
             if (loggingEnabled === null) {
                 // key not found
                 return;
@@ -28562,11 +28694,13 @@ speechSynthesis.getVoices();
     // #region | App: Language
 
     $app.data.appLanguage = 'en';
-    if (await configRepository.getString('VRCX_appLanguage')) {
-        $app.data.appLanguage = await configRepository.getString('VRCX_appLanguage');
-        i18n.locale = $app.data.appLanguage;
-    } else {
-        AppApi.CurrentLanguage().then(async (result) => {
+    var initLanguage = async () => {
+        if (await configRepository.getString('VRCX_appLanguage')) {
+            $app.data.appLanguage =
+                await configRepository.getString('VRCX_appLanguage');
+            i18n.locale = $app.data.appLanguage;
+        } else {
+            var result = await AppApi.CurrentLanguage();
             if (!result) {
                 console.error('Failed to get current language');
                 await $app.changeAppLanguage('en');
@@ -28579,8 +28713,9 @@ speechSynthesis.getVoices();
                     await $app.changeAppLanguage(ref);
                 }
             });
-        });
-    }
+        }
+    };
+    await initLanguage();
 
     $app.methods.changeAppLanguage = async function (language) {
         console.log('Language changed:', language);
@@ -28892,13 +29027,13 @@ speechSynthesis.getVoices();
         layout: 'table'
     };
 
-    $app.methods.showRegistryBackupDialog = async function () {
+    $app.methods.showRegistryBackupDialog = function () {
         this.$nextTick(() =>
             adjustDialogZ(this.$refs.registryBackupDialog.$el)
         );
         var D = this.registryBackupDialog;
         D.visible = true;
-        await this.updateRegistryBackupDialog();
+        this.updateRegistryBackupDialog();
     };
 
     $app.methods.updateRegistryBackupDialog = async function () {
@@ -29086,8 +29221,8 @@ speechSynthesis.getVoices();
                 $t('dialog.registry_backup.restore_prompt'),
                 $t('dialog.registry_backup.header')
             );
-            await this.showRegistryBackupDialog();
-            AppApi.FocusWindow();
+            this.showRegistryBackupDialog();
+            await AppApi.FocusWindow();
             await configRepository.setString(
                 'VRCX_VRChatRegistryLastRestoreCheck',
                 lastBackupDate

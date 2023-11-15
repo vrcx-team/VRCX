@@ -5,9 +5,9 @@ function transformKey(key) {
 }
 
 class SharedRepository {
-    async remove(key) {
+    remove(key) {
         var _key = transformKey(key);
-        return await SharedVariable.Remove(_key);
+        return SharedVariable.Remove(_key);
     }
 
     async getString(key, defaultValue = null) {

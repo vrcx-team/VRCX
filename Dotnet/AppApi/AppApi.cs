@@ -188,7 +188,7 @@ namespace VRCX
                 builder.AddAppLogoOverride(uri);
 
             if (!string.IsNullOrEmpty(BoldText))
-                builder.AddText(Image);
+                builder.AddText(BoldText);
             
             if (!string.IsNullOrEmpty(Text))
                 builder.AddText(Text);

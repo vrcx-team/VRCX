@@ -1677,7 +1677,7 @@ html
                         el-tooltip(placement="right" :content="$t('dialog.launch.copy_tooltip')" :disabled="hideTooltips")
                             el-button(@click="copyInstanceMessage(launchDialog.location)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
                 template(#footer)
-                    el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") {{ $t('dialog.launch.start_as_desktop') }}
+                    el-checkbox(v-model="launchDialog.desktop" @change="saveLaunchDialog" style="float:left;margin-top:5px") {{ $t('dialog.launch.start_as_desktop') }}
                     el-button(size="small" @click="showPreviousInstanceInfoDialog(launchDialog.location)") {{ $t('dialog.launch.info') }}
                     el-button(size="small" @click="showInviteDialog(launchDialog.location)" :disabled="!checkCanInvite(launchDialog.location)") {{ $t('dialog.launch.invite') }}
                     el-button(type="primary" size="small" @click="launchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)" :disabled="!launchDialog.secureOrShortName") {{ $t('dialog.launch.launch') }}

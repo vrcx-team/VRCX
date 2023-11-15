@@ -801,7 +801,7 @@
                 "invite_to_group": "邀请好友加入群组",
                 "visibility_everyone": "可见性：所有人",
                 "visibility_friends": "可见性：好友",
-                "visibility_hidden": "可见性：隐藏",          
+                "visibility_hidden": "可见性：隐藏",
                 "moderation_tools": "成员管理",
                 "leave": "离开群组"
             },
