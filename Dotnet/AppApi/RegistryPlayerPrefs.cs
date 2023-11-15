@@ -180,7 +180,10 @@ namespace VRCX
                                 break;
                             }
 
+                            // I do not want to touch this code as it scares me, but it works.
+#pragma warning disable CA2014 // Do not use stackalloc in loops
                             Span<long> spanLong = stackalloc long[] { (long)data };
+#pragma warning restore CA2014 // Do not use stackalloc in loops
                             var doubleValue = MemoryMarshal.Cast<long, double>(spanLong)[0];
                             var floatDict = new Dictionary<string, object>
                             {
