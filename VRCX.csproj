@@ -44,18 +44,12 @@
     <CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Blake2Sharp">
-      <HintPath>librsync.net\Blake2Sharp.dll</HintPath>
-    </Reference>
-    <Reference Include="librsync.net">
-      <HintPath>librsync.net\librsync.net.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
+	  <Reference Include="Blake2Sharp">
+		  <HintPath>librsync.net\Blake2Sharp.dll</HintPath>
+	  </Reference>
+	  <Reference Include="librsync.net">
+		  <HintPath>librsync.net\librsync.net.dll</HintPath>
+	  </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Dotnet\MainForm.cs">
