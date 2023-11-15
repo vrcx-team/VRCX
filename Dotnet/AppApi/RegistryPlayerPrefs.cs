@@ -145,6 +145,10 @@ namespace VRCX
                     throw new Exception("Nothing to backup.");
 
                 var keys = regKey.GetValueNames();
+
+                Span<long> spanLong = stackalloc long[1];
+                Span<double> doubleSpan = MemoryMarshal.Cast<long, double>(spanLong);
+
                 foreach (var key in keys)
                 {
                     var data = regKey.GetValue(key);
@@ -180,11 +184,8 @@ namespace VRCX
                                 break;
                             }
 
-                            // I do not want to touch this code as it scares me, but it works.
-#pragma warning disable CA2014 // Do not use stackalloc in loops
-                            Span<long> spanLong = stackalloc long[] { (long)data };
-#pragma warning restore CA2014 // Do not use stackalloc in loops
-                            var doubleValue = MemoryMarshal.Cast<long, double>(spanLong)[0];
+                            spanLong[0] = (long)data;
+                            var doubleValue = doubleSpan[0];
                             var floatDict = new Dictionary<string, object>
                             {
                                 { "data", doubleValue },
