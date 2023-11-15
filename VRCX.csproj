@@ -9,10 +9,13 @@
     <AssemblyTitle>VRCX</AssemblyTitle>
     <Product>VRCX</Product>
     <Copyright>vrcx-team, pypy, natsumi</Copyright>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <Title>VRCX</Title>
+    <Description>VRCX</Description>
+    <PackageIcon>VRCX.png</PackageIcon>
+    <RepositoryUrl>https://github.com/vrcx-team/VRCX</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
