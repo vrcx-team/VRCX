@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Timers;
+using NLog;
 
 namespace VRCX
 {
@@ -14,6 +15,7 @@ namespace VRCX
     public class AutoAppLaunchManager
     {
         public static AutoAppLaunchManager Instance { get; private set; }
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public static readonly string VRChatProcessName = "VRChat";
 
         public bool Enabled = false;
@@ -215,14 +217,23 @@ namespace VRCX
         /// Starts a new child process.
         /// </summary>
         /// <param name="path">The path.</param>
-        internal void StartChildProcess(string path)
+        private void StartChildProcess(string path)
         {
             try
             {
-                using (var process = Process.Start(path))
-                    if (process != null)
-                        startedProcesses.Add(path, new HashSet<int>() { process.Id });
-            } catch { }
+                var process = new Process();
+                process.StartInfo = new ProcessStartInfo(path)
+                {
+                    UseShellExecute = true
+                };
+                process.Start();
+                if (process.Id != 0)
+                    startedProcesses.Add(path, new HashSet<int>() { process.Id });
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+            }
         }
 
         /// <summary>

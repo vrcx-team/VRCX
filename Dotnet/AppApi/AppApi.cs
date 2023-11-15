@@ -227,7 +227,8 @@ namespace VRCX
         {
             IPCServer.Send(new IPCPacket
             {
-                Type = "VRCXLaunch"
+                Type = "VRCXLaunch",
+                MsgType = "VRCXLaunch"
             });
         }
 

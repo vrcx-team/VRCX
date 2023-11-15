@@ -15260,14 +15260,14 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.getTTSVoiceName = async function () {
+    $app.methods.getTTSVoiceName = function () {
         var voices = speechSynthesis.getVoices();
         if (voices.length === 0) {
             return '';
         }
         if (this.notificationTTSVoice >= voices.length) {
             this.notificationTTSVoice = 0;
-            await configRepository.setString(
+            configRepository.setString(
                 'VRCX_notificationTTSVoice',
                 this.notificationTTSVoice
             );
