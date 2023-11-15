@@ -16,6 +16,7 @@ using System.Threading;
 using System.Windows.Forms;
 using CefSharp;
 using librsync.net;
+using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.Win32;
 using NLog;
 
@@ -179,23 +180,21 @@ namespace VRCX
         /// <param name="BoldText">The bold text to display in the notification.</param>
         /// <param name="Text">The optional text to display in the notification.</param>
         /// <param name="Image">The optional image to display in the notification.</param>
-        /*public void DesktopNotification(string BoldText, string Text = "", string Image = "")
+        public void DesktopNotification(string BoldText, string Text = "", string Image = "")
         {
-            var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastImageAndText02);
-            var stringElements = toastXml.GetElementsByTagName("text");
-            var imagePath = Path.Combine(Program.BaseDirectory, "VRCX.ico");
-            if (!string.IsNullOrEmpty(Image))
-            {
-                imagePath = Image;
-            }
+            ToastContentBuilder builder = new ToastContentBuilder();
+            
+            if (Uri.TryCreate(Image, UriKind.Absolute, out Uri uri))
+                builder.AddAppLogoOverride(uri);
 
-            stringElements[0].AppendChild(toastXml.CreateTextNode(BoldText));
-            stringElements[1].AppendChild(toastXml.CreateTextNode(Text));
-            var imageElements = toastXml.GetElementsByTagName("image");
-            imageElements[0].Attributes.GetNamedItem("src").NodeValue = imagePath;
-            var toast = new ToastNotification(toastXml);
-            ToastNotificationManager.CreateToastNotifier("VRCX").Show(toast);
-        }*/
+            if (!string.IsNullOrEmpty(BoldText))
+                builder.AddText(Image);
+            
+            if (!string.IsNullOrEmpty(Text))
+                builder.AddText(Text);
+
+            builder.Show();
+        }
 
         /// <summary>
         /// Restarts the VRCX application for an update by launching a new process with the "/Upgrade" argument and exiting the current process.
