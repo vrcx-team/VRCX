@@ -322,7 +322,8 @@
                         "when_to_display_outside_vr": "VR以外",
                         "when_to_display_game_closed": "ゲーム終了時",
                         "when_to_display_game_running": "ゲーム実行時",
-                        "when_to_display_always": "常に表示する"
+                        "when_to_display_always": "常に表示する",
+                        "desktop_notification_while_afk": "AFK中でもデスクトップに通知"
                     },
                     "text_to_speech": {
                         "header": "音声読み上げ設定",
