@@ -106,7 +106,10 @@ namespace VRCX
             if (url.StartsWith("http://") ||
                 url.StartsWith("https://"))
             {
-                Process.Start(url).Close();
+                Process.Start(new ProcessStartInfo(url)
+                {
+                    UseShellExecute = true
+                });
             }
         }
 
