@@ -720,7 +720,7 @@ html
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.author_tags') }}
-                                        span.extra(v-if="worldDialog.ref.tags?.length > 0") {{ worldDialog.ref.tags.filter(tag => tag.startsWith('author_tag')).map(tag => tag.replace('author_tag_', '')).join(', ') }}
+                                        span.extra(v-if="worldDialog.ref.tags?.filter(tag => tag.startsWith('author_tag')).length > 0") {{ worldDialog.ref.tags.filter(tag => tag.startsWith('author_tag')).map(tag => tag.replace('author_tag_', '')).join(', ') }}
                                         span.extra(v-else) -
                                 .x-friend-item(style="cursor:default")
                                     .detail
@@ -816,14 +816,14 @@ html
                                     span.dialog-title(v-text="avatarDialog.ref.name")
                                 div(style="margin-top:5px")
                                     span.x-link(v-text="avatarDialog.ref.authorName" @click="showUserDialog(avatarDialog.ref.authorId)" style="color:#909399;font-family:monospace")
-                                div(style="margin-top:5px")
-                                    el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.public') }}
-                                    el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.private') }}
-                                    el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.fallback') }}
-                                    el-tag(v-if="avatarDialog.hasImposter" type="info" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.impostor') }}
-                                    el-tag(v-if="avatarDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.avatar.tags.future_proofing') }}
-                                    el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-right:5px")
-                                    el-tag.x-link(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini" @click="openFolderGeneric(avatarDialog.cachePath)")
+                                div
+                                    el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.public') }}
+                                    el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.private') }}
+                                    el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.fallback') }}
+                                    el-tag(v-if="avatarDialog.hasImposter" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.impostor') }}
+                                    el-tag(v-if="avatarDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.future_proofing') }}
+                                    el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-right:5px;margin-top:5px")
+                                    el-tag.x-link(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini" @click="openFolderGeneric(avatarDialog.cachePath)" style="margin-right:5px;margin-top:5px")
                                         span(v-text="avatarDialog.cacheSize")
                                         |  {{ $t('dialog.avatar.tags.cache') }}
                                     div
@@ -858,7 +858,9 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Change Content Tags") {{ $t('dialog.avatar.actions.change_content_tags') }}
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") {{ $t('dialog.avatar.actions.change_image') }}
                                             el-dropdown-item(v-if="avatarDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") {{ $t('dialog.avatar.actions.download_package') }}
-                                            el-dropdown-item(icon="el-icon-user" command="Delete" style="color:#F56C6C" divided) {{ $t('dialog.avatar.actions.delete') }}
+                                            el-dropdown-item(v-if="avatarDialog.hasImposter" icon="el-icon-delete" command="Delete Imposter" style="color:#F56C6C") {{ $t('dialog.avatar.actions.delete_impostor') }}
+                                            el-dropdown-item(v-else icon="el-icon-user" command="Create Imposter") {{ $t('dialog.avatar.actions.create_impostor') }}
+                                            el-dropdown-item(icon="el-icon-delete" command="Delete" style="color:#F56C6C" divided) {{ $t('dialog.avatar.actions.delete') }}
                     el-tabs
                         el-tab-pane(:label="$t('dialog.avatar.info.header')")
                             .x-friend-list
@@ -1677,7 +1679,7 @@ html
                         el-tooltip(placement="right" :content="$t('dialog.launch.copy_tooltip')" :disabled="hideTooltips")
                             el-button(@click="copyInstanceMessage(launchDialog.location)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
                 template(#footer)
-                    el-checkbox(v-model="launchDialog.desktop" style="float:left;margin-top:5px") {{ $t('dialog.launch.start_as_desktop') }}
+                    el-checkbox(v-model="launchDialog.desktop" @change="saveLaunchDialog" style="float:left;margin-top:5px") {{ $t('dialog.launch.start_as_desktop') }}
                     el-button(size="small" @click="showPreviousInstanceInfoDialog(launchDialog.location)") {{ $t('dialog.launch.info') }}
                     el-button(size="small" @click="showInviteDialog(launchDialog.location)" :disabled="!checkCanInvite(launchDialog.location)") {{ $t('dialog.launch.invite') }}
                     el-button(type="primary" size="small" @click="launchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)" :disabled="!launchDialog.secureOrShortName") {{ $t('dialog.launch.launch') }}

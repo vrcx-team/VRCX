@@ -32,7 +32,7 @@ namespace VRCX
                 Install();
         }
 
-        public static void Install()
+        private static void Install()
         {
             try
             {
@@ -42,7 +42,9 @@ namespace VRCX
                     StartInfo = new ProcessStartInfo
                     {
                         FileName = VRCX_Setup_Executable,
-                        Arguments = "/S"
+                        Arguments = "/S",
+                        UseShellExecute = true,
+                        WorkingDirectory = Program.AppDataDirectory
                     }
                 };
                 VRCXProcess.Start();

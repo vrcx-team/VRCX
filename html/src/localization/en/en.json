@@ -425,7 +425,8 @@
                         "description_tooltip": "Unfortunately, windows doesn't support viewing PNG text chunks(few things do) natively, but you can view it using a command-line tool like exiftool, a png chunk inspector, or a hex editor.",
                         "enable": "Enable",
                         "modify_filename": "Modify Filename",
-                        "modify_filename_tooltip": "Will add the World ID to screenshot filename, in addition to file metadata."
+                        "modify_filename_tooltip": "Will add the World ID to screenshot filename, in addition to file metadata.",
+                        "copy_to_clipboard": "Copy to Clipboard"
                     },
                     "app_launcher": {
                         "header": "App Launcher",
@@ -753,7 +754,9 @@
                 "change_content_tags": "Change Content Tags",
                 "change_image": "Change Image",
                 "download_package": "Download Unity Package",
-                "delete": "Delete"
+                "delete": "Delete",
+                "delete_impostor": "Delete Impostor",
+                "create_impostor": "Create Impostor"
             },
             "info": {
                 "header": "Info",
@@ -1250,7 +1253,7 @@
             "date": "Date",
             "action": "Action",
             "auto_backup": "Weekly Auto Backup",
-            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer dosn't have any, if you'd like to restore from backup you can do so from here."
+            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
         },
         "group_member_moderation": {
             "header": "Group Member Moderation",

@@ -263,11 +263,11 @@ namespace VRCX
                 }
             }
 
-            _browser2.Dispose();
-            _browser1.Dispose();
-            _texture2.Dispose();
-            _texture1.Dispose();
-            _device.Dispose();
+            _browser2?.Dispose();
+            _browser1?.Dispose();
+            _texture2?.Dispose();
+            _texture1?.Dispose();
+            _device?.Dispose();
         }
 
         public void SetActive(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)

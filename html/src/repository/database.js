@@ -2474,8 +2474,8 @@ class Database {
         });
     }
 
-    fixBrokenNotifications() {
-        sqliteService.executeNonQuery(
+    async fixBrokenNotifications() {
+        await sqliteService.executeNonQuery(
             `DELETE FROM ${Database.userPrefix}_notifications WHERE (created_at is null or created_at = '')`
         );
     }
@@ -2512,6 +2512,14 @@ class Database {
                 throw e;
             }
         }
+    }
+
+    async vacuum() {
+        await sqliteService.executeNonQuery('VACUUM');
+    }
+
+    async setWal() {
+        await sqliteService.executeNonQuery('PRAGMA journal_mode=WAL');
     }
 }
 

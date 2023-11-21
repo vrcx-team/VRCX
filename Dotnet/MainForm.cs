@@ -110,7 +110,7 @@ namespace VRCX
                 if ("true".Equals(VRCXStorage.Instance.Get("VRCX_StartAsMinimizedState")) &&
                     "true".Equals(VRCXStorage.Instance.Get("VRCX_CloseToTray")))
                 {
-                    BeginInvoke(new MethodInvoker(Hide));
+                    BeginInvoke(Hide);
                 }
                 else
                 {
