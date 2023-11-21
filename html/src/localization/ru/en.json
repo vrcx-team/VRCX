@@ -1271,6 +1271,7 @@
             "remove_roles": "Удалить роли",
             "add_roles": "Добавить роли"
         }
+ 
     },
     "prompt": {
         "totp": {
