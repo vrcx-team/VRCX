@@ -1253,7 +1253,7 @@
             "date": "Date",
             "action": "Action",
             "auto_backup": "Weekly Auto Backup",
-            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer dosn't have any, if you'd like to restore from backup you can do so from here."
+            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
         },
         "group_member_moderation": {
             "header": "Group Member Moderation",

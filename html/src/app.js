@@ -2232,7 +2232,7 @@ speechSynthesis.getVoices();
             gameLogLocation,
             userLocation
         );
-        return null;
+        return 'test_world';
     };
 
     API.applyWorld = function (json) {
@@ -2704,9 +2704,23 @@ speechSynthesis.getVoices();
                 // API offset limit is 5000
                 break;
             }
-            var args = await this.getFriends(params);
-            friends = friends.concat(args.json);
-            params.offset += 50;
+            for (var j = 0; j < 10; j++) {
+                // handle 429 ratelimit error, retry 10 times
+                try {
+                    var args = await this.getFriends(params);
+                    friends = friends.concat(args.json);
+                    params.offset += 50;
+                    break;
+                } catch (err) {
+                    console.error(err);
+                    if (j === 9) {
+                        throw err;
+                    }
+                    await new Promise((resolve) => {
+                        workerTimers.setTimeout(resolve, 5000);
+                    });
+                }
+            }
         }
         return friends;
     };
@@ -2728,9 +2742,23 @@ speechSynthesis.getVoices();
                 // API offset limit is 5000
                 break;
             }
-            var args = await this.getFriends(params);
-            friends = friends.concat(args.json);
-            params.offset += 50;
+            for (var j = 0; j < 10; j++) {
+                // handle 429 ratelimit error, retry 10 times
+                try {
+                    var args = await this.getFriends(params);
+                    friends = friends.concat(args.json);
+                    params.offset += 50;
+                    break;
+                } catch (err) {
+                    console.error(err);
+                    if (j === 9) {
+                        throw err;
+                    }
+                    await new Promise((resolve) => {
+                        workerTimers.setTimeout(resolve, 5000);
+                    });
+                }
+            }
         }
         return friends;
     };
@@ -12643,7 +12671,8 @@ speechSynthesis.getVoices();
             // custom world rpc
             if (
                 L.worldId === 'wrld_f20326da-f1ac-45fc-a062-609723b097b1' ||
-                L.worldId === 'wrld_10e5e467-fc65-42ed-8957-f02cace1398c'
+                L.worldId === 'wrld_10e5e467-fc65-42ed-8957-f02cace1398c' ||
+                L.worldId === 'wrld_04899f23-e182-4a8d-b2c7-2c74c7c15534'
             ) {
                 appId = '784094509008551956';
                 bigIcon = 'pypy';
@@ -15147,6 +15176,7 @@ speechSynthesis.getVoices();
             'wrld_2d40da63-8f1f-4011-8a9e-414eb8530acd',
             'wrld_1b68f7a8-8aea-4900-b7a2-3fc4139ac817',
             'wrld_10e5e467-fc65-42ed-8957-f02cace1398c',
+            'wrld_04899f23-e182-4a8d-b2c7-2c74c7c15534',
             'wrld_791ebf58-54ce-4d3a-a0a0-39f10e1b20b2',
             'wrld_86a09fce-a34e-4deb-81be-53c843f97e98',
             'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e',
@@ -19486,7 +19516,7 @@ speechSynthesis.getVoices();
             D.vrcLaunchPathOverride
         );
         this.$message({
-            message: 'updated',
+            message: 'Updated launch options',
             type: 'success'
         });
     };
@@ -25438,12 +25468,12 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 6;
+        var databaseVersion = 7;
         if (this.databaseVersion < databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({
                     message:
-                        'DO NOT CLOSE VRCX, database upgrade in process...',
+                        'DO NOT CLOSE VRCX, database upgrade in progress...',
                     type: 'warning',
                     duration: 0
                 });
@@ -25458,7 +25488,9 @@ speechSynthesis.getVoices();
                 await database.fixBrokenLeaveEntries(); // fix user instance timer being higher than current user location timer
                 await database.fixBrokenGroupInvites(); // fix notification v2 in wrong table
                 await database.updateTableForGroupNames(); // alter tables to include group name
-                database.fixBrokenNotifications(); // fix notifications being null
+                await database.fixBrokenNotifications(); // fix notifications being null
+                await database.vacuum(); // succ
+                await database.setWal(); // https://www.sqlite.org/wal.html
                 await configRepository.setInt(
                     'VRCX_databaseVersion',
                     databaseVersion
@@ -29284,11 +29316,12 @@ speechSynthesis.getVoices();
                 'VRCX_VRChatRegistryLastRestoreCheck'
             );
             if (
-                lastRestoreCheck &&
-                lastBackupDate &&
-                lastRestoreCheck === lastBackupDate
+                !lastBackupDate ||
+                (lastRestoreCheck &&
+                    lastBackupDate &&
+                    lastRestoreCheck === lastBackupDate)
             ) {
-                // only ask to restore once
+                // only ask to restore once and when backup is present
                 return;
             }
             // popup message about auto restore

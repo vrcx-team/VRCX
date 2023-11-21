@@ -720,7 +720,7 @@ html
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.author_tags') }}
-                                        span.extra(v-if="worldDialog.ref.tags?.length > 0") {{ worldDialog.ref.tags.filter(tag => tag.startsWith('author_tag')).map(tag => tag.replace('author_tag_', '')).join(', ') }}
+                                        span.extra(v-if="worldDialog.ref.tags?.filter(tag => tag.startsWith('author_tag')).length > 0") {{ worldDialog.ref.tags.filter(tag => tag.startsWith('author_tag')).map(tag => tag.replace('author_tag_', '')).join(', ') }}
                                         span.extra(v-else) -
                                 .x-friend-item(style="cursor:default")
                                     .detail
