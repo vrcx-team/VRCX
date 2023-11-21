@@ -56,7 +56,7 @@ namespace VRCX
                 cefSettings.CefCommandLineArgs["remote-allow-origins"] = "*";
             }
 
-            CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
+            //CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
             CefSharpSettings.ShutdownOnExit = false;
 
             if (Cef.Initialize(cefSettings) == false)

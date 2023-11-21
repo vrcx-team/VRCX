@@ -823,7 +823,7 @@
                 "role_updated_at": "更新日:",
                 "role_created_at": "作成日:",
                 "role_permissions": "権限:"
-                },
+            },
             "posts": {
                 "header": "アナウンス",
                 "visibility": "表示範囲:",

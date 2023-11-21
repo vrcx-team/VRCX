@@ -8,14 +8,14 @@ namespace VRCX
         public static void ApplyJavascriptBindings(IJavascriptObjectRepository repository)
         {
             repository.NameConverter = null;
-            repository.Register("AppApi", AppApi.Instance, true);
-            repository.Register("SharedVariable", SharedVariable.Instance, false);
-            repository.Register("WebApi", WebApi.Instance, true);
-            repository.Register("VRCXStorage", VRCXStorage.Instance, true);
-            repository.Register("SQLite", SQLiteLegacy.Instance, true);
-            repository.Register("LogWatcher", LogWatcher.Instance, true);
-            repository.Register("Discord", Discord.Instance, true);
-            repository.Register("AssetBundleCacher", AssetBundleCacher.Instance, true);
+            repository.Register("AppApi", AppApi.Instance);
+            repository.Register("SharedVariable", SharedVariable.Instance);
+            repository.Register("WebApi", WebApi.Instance);
+            repository.Register("VRCXStorage", VRCXStorage.Instance);
+            repository.Register("SQLite", SQLiteLegacy.Instance);
+            repository.Register("LogWatcher", LogWatcher.Instance);
+            repository.Register("Discord", Discord.Instance);
+            repository.Register("AssetBundleCacher", AssetBundleCacher.Instance);
         }
     }
 }

@@ -14,27 +14,25 @@ namespace VRCX
     public partial class AppApi
     {
         [DllImport("advapi32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
-        public static extern int RegSetValueExA(
-            IntPtr hKey,
-            string lpValueName,
-            int reserved,
+        public static extern uint RegSetValueEx(
+            UIntPtr hKey,
+            [MarshalAs(UnmanagedType.LPStr)] string lpValueName,
+            int Reserved,
             RegistryValueKind dwType,
             byte[] lpData,
-            int cbData
-        );
-        
+            int cbData);
+
         [DllImport("advapi32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
-        public static extern int RegOpenKeyExA(
-            IntPtr hKey,
-            string lpSubKey,
+        public static extern int RegOpenKeyEx(
+            UIntPtr hKey,
+            string subKey,
             int ulOptions,
             int samDesired,
-            out IntPtr phkResult
-        );
-        
+            out UIntPtr hkResult);
+
         [DllImport("advapi32.dll")]
-        public static extern int RegCloseKey(IntPtr hKey);
-        
+        public static extern int RegCloseKey(UIntPtr hKey);
+
         public string AddHashToKeyName(string key)
         {
             // https://discussions.unity.com/t/playerprefs-changing-the-name-of-keys/30332/4
@@ -44,7 +42,7 @@ namespace VRCX
                 hash = (hash * 33) ^ c;
             return key + "_h" + hash;
         }
-        
+
         /// <summary>
         /// Retrieves the value of the specified key from the VRChat group in the windows registry.
         /// </summary>
@@ -94,7 +92,7 @@ namespace VRCX
             {
                 if (regKey == null)
                     return false;
-                
+
                 object setValue = null;
                 switch (type)
                 {
@@ -109,13 +107,13 @@ namespace VRCX
 
                 if (setValue == null)
                     return false;
-                
+
                 regKey.SetValue(keyName, setValue, type);
             }
 
             return true;
         }
-        
+
         /// <summary>
         /// Sets the value of the specified key in the VRChat group in the windows registry.
         /// </summary>
@@ -124,20 +122,20 @@ namespace VRCX
         public void SetVRChatRegistryKey(string key, byte[] value)
         {
             var keyName = AddHashToKeyName(key);
-            var hKey = (IntPtr)0x80000001; // HKEY_LOCAL_MACHINE
+            var hKey = (UIntPtr)0x80000001; // HKEY_LOCAL_MACHINE
             const int keyWrite = 0x20006;
             const string keyFolder = @"SOFTWARE\VRChat\VRChat";
-            var openKeyResult = RegOpenKeyExA(hKey, keyFolder, 0, keyWrite, out var folderPointer);
+            var openKeyResult = RegOpenKeyEx(hKey, keyFolder, 0, keyWrite, out var folderPointer);
             if (openKeyResult != 0)
                 throw new Exception("Error opening registry key. Error code: " + openKeyResult);
-                    
-            var setKeyResult = RegSetValueExA(folderPointer, keyName, 0, RegistryValueKind.DWord, value, value.Length);
+
+            var setKeyResult = RegSetValueEx(folderPointer, keyName, 0, RegistryValueKind.DWord, value, value.Length);
             if (setKeyResult != 0)
                 throw new Exception("Error setting registry value. Error code: " + setKeyResult);
 
             RegCloseKey(hKey);
         }
-        
+
         public Dictionary<string, Dictionary<string, object>> GetVRChatRegistry()
         {
             var output = new Dictionary<string, Dictionary<string, object>>();
@@ -147,13 +145,17 @@ namespace VRCX
                     throw new Exception("Nothing to backup.");
 
                 var keys = regKey.GetValueNames();
+
+                Span<long> spanLong = stackalloc long[1];
+                Span<double> doubleSpan = MemoryMarshal.Cast<long, double>(spanLong);
+
                 foreach (var key in keys)
                 {
                     var data = regKey.GetValue(key);
                     var index = key.LastIndexOf("_h", StringComparison.Ordinal);
                     if (index <= 0)
                         continue;
-                    
+
                     var keyName = key.Substring(0, index);
                     if (data == null)
                         continue;
@@ -181,9 +183,9 @@ namespace VRCX
                                 output.Add(keyName, dwordDict);
                                 break;
                             }
-                            
-                            Span<long> spanLong = stackalloc long[] { (long)data };
-                            var doubleValue = MemoryMarshal.Cast<long, double>(spanLong)[0];
+
+                            spanLong[0] = (long)data;
+                            var doubleValue = doubleSpan[0];
                             var floatDict = new Dictionary<string, object>
                             {
                                 { "data", doubleValue },
@@ -191,7 +193,7 @@ namespace VRCX
                             };
                             output.Add(keyName, floatDict);
                             break;
-                        
+
                         default:
                             Debug.WriteLine($"Unknown registry value kind: {type}");
                             break;
@@ -225,20 +227,20 @@ namespace VRCX
                         SetVRChatRegistryKey(item.Key, dataBytes);
                         continue;
                     }
-                    
+
                     if (int.TryParse(data.ToString(), out var intValue))
                     {
                         SetVRChatRegistryKey(item.Key, intValue, type);
                         continue;
                     }
-                    
+
                     throw new Exception("Unknown number type: " + item.Key);
                 }
-                
+
                 SetVRChatRegistryKey(item.Key, data, type);
             }
         }
-        
+
         public bool HasVRChatRegistryFolder()
         {
             using (var regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\VRChat\VRChat"))
@@ -258,7 +260,7 @@ namespace VRCX
                     throw new Exception("Error creating registry key.");
             }
         }
-        
+
         public void DeleteVRChatRegistryFolder()
         {
             using (var regKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\VRChat\VRChat"))
@@ -269,7 +271,7 @@ namespace VRCX
                 Registry.CurrentUser.DeleteSubKeyTree(@"SOFTWARE\VRChat\VRChat");
             }
         }
-        
+
         /// <summary>
         /// Opens a file dialog to select a VRChat registry backup JSON file.
         /// </summary>
@@ -298,7 +300,7 @@ namespace VRCX
                     var path = openFileDialog.FileName;
                     if (string.IsNullOrEmpty(path))
                         return;
-                    
+
                     // return file contents
                     var json = File.ReadAllText(path);
                     ExecuteAppFunction("restoreVrcRegistryFromFile", json);
