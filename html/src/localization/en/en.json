@@ -753,7 +753,9 @@
                 "change_content_tags": "Change Content Tags",
                 "change_image": "Change Image",
                 "download_package": "Download Unity Package",
-                "delete": "Delete"
+                "delete": "Delete",
+                "delete_impostor": "Delete Impostor",
+                "create_impostor": "Create Impostor"
             },
             "info": {
                 "header": "Info",

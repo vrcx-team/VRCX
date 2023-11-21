@@ -3054,6 +3054,42 @@ speechSynthesis.getVoices();
         });
     };
 
+    /*
+        params: {
+            avatarId: string
+        }
+    */
+    API.createImposter = function (params) {
+        return this.call(`avatars/${params.avatarId}/impostor/enqueue`, {
+            method: 'POST'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('AVATAR:IMPOSTER:CREATE', args);
+            return args;
+        });
+    };
+
+    /*
+        params: {
+            avatarId: string
+        }
+    */
+    API.deleteImposter = function (params) {
+        return this.call(`avatars/${params.avatarId}/impostor`, {
+            method: 'DELETE'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('AVATAR:IMPOSTER:DELETE', args);
+            return args;
+        });
+    };
+
     // #endregion
     // #region | API: Notification
 
@@ -18623,6 +18659,28 @@ speechSynthesis.getVoices();
                                         type: 'success'
                                     });
                                     D.visible = false;
+                                    return args;
+                                });
+                                break;
+                            case 'Delete Imposter':
+                                API.deleteImposter({
+                                    avatarId: D.id
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'Imposter deleted',
+                                        type: 'success'
+                                    });
+                                    return args;
+                                });
+                                break;
+                            case 'Create Imposter':
+                                API.createImposter({
+                                    avatarId: D.id
+                                }).then((args) => {
+                                    this.$message({
+                                        message: 'Imposter queued for creation',
+                                        type: 'success'
+                                    });
                                     return args;
                                 });
                                 break;

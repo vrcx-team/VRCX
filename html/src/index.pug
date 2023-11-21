@@ -858,7 +858,9 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Change Content Tags") {{ $t('dialog.avatar.actions.change_content_tags') }}
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") {{ $t('dialog.avatar.actions.change_image') }}
                                             el-dropdown-item(v-if="avatarDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") {{ $t('dialog.avatar.actions.download_package') }}
-                                            el-dropdown-item(icon="el-icon-user" command="Delete" style="color:#F56C6C" divided) {{ $t('dialog.avatar.actions.delete') }}
+                                            el-dropdown-item(v-if="avatarDialog.hasImposter" icon="el-icon-user" command="Delete Imposter" style="color:#F56C6C") {{ $t('dialog.avatar.actions.delete_impostor') }}
+                                            el-dropdown-item(v-else icon="el-icon-delete" command="Create Imposter") {{ $t('dialog.avatar.actions.create_impostor') }}
+                                            el-dropdown-item(icon="el-icon-delete" command="Delete" style="color:#F56C6C" divided) {{ $t('dialog.avatar.actions.delete') }}
                     el-tabs
                         el-tab-pane(:label="$t('dialog.avatar.info.header')")
                             .x-friend-list
