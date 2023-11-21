@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -453,7 +454,11 @@ namespace VRCX
                 MainForm.Instance.BeginInvoke(new MethodInvoker(() =>
                 {
                     var image = Image.FromFile(path);
-                    Clipboard.SetImage(image);
+                    // Clipboard.SetImage(image);
+                    var data = new DataObject();
+                    data.SetData(DataFormats.Bitmap, image);
+                    data.SetFileDropList(new StringCollection { path });
+                    Clipboard.SetDataObject(data, true);
                 }));
             }
         }

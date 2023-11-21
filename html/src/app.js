@@ -10155,9 +10155,6 @@ speechSynthesis.getVoices();
                 database.addGamelogResourceLoadToDatabase(entry);
                 break;
             case 'screenshot':
-                if (!this.screenshotHelper) {
-                    break;
-                }
                 // var entry = {
                 //     created_at: gameLog.dt,
                 //     type: 'Event',
@@ -10167,33 +10164,8 @@ speechSynthesis.getVoices();
                 //     )}`
                 // };
                 // database.addGamelogEventToDatabase(entry);
-                var location = API.parseLocation(this.lastLocation.location);
-                var metadata = {
-                    application: 'VRCX',
-                    version: 1,
-                    author: {
-                        id: API.currentUser.id,
-                        displayName: API.currentUser.displayName
-                    },
-                    world: {
-                        name: this.lastLocation.name,
-                        id: location.worldId,
-                        instanceId: this.lastLocation.location
-                    },
-                    players: []
-                };
-                for (var user of this.lastLocation.playerList.values()) {
-                    metadata.players.push({
-                        id: user.userId,
-                        displayName: user.displayName
-                    });
-                }
-                AppApi.AddScreenshotMetadata(
-                    gameLog.screenshotPath,
-                    JSON.stringify(metadata),
-                    location.worldId,
-                    this.screenshotHelperModifyFilename
-                );
+
+                this.processScreenshot(gameLog.screenshotPath);
                 break;
             case 'api-request':
                 var bias = Date.parse(gameLog.dt) + 60 * 1000;
@@ -15124,6 +15096,11 @@ speechSynthesis.getVoices();
 
     $app.data.screenshotHelperModifyFilename = await configRepository.getBool(
         'VRCX_screenshotHelperModifyFilename',
+        false
+    );
+
+    $app.data.screenshotHelperCopyToClipboard = await configRepository.getBool(
+        'VRCX_screenshotHelperCopyToClipboard',
         false
     );
 
@@ -22723,6 +22700,46 @@ speechSynthesis.getVoices();
             'VRCX_screenshotHelperModifyFilename',
             this.screenshotHelperModifyFilename
         );
+        await configRepository.setBool(
+            'VRCX_screenshotHelperCopyToClipboard',
+            this.screenshotHelperCopyToClipboard
+        );
+    };
+
+    $app.methods.processScreenshot = async function (path) {
+        var newPath = path;
+        if (this.screenshotHelper) {
+            var location = API.parseLocation(this.lastLocation.location);
+            var metadata = {
+                application: 'VRCX',
+                version: 1,
+                author: {
+                    id: API.currentUser.id,
+                    displayName: API.currentUser.displayName
+                },
+                world: {
+                    name: this.lastLocation.name,
+                    id: location.worldId,
+                    instanceId: this.lastLocation.location
+                },
+                players: []
+            };
+            for (var user of this.lastLocation.playerList.values()) {
+                metadata.players.push({
+                    id: user.userId,
+                    displayName: user.displayName
+                });
+            }
+            newPath = await AppApi.AddScreenshotMetadata(
+                path,
+                JSON.stringify(metadata),
+                location.worldId,
+                this.screenshotHelperModifyFilename
+            );
+        }
+        if (this.screenshotHelperCopyToClipboard) {
+            await AppApi.CopyImageToClipboard(newPath);
+        }
     };
 
     $app.methods.getAndDisplayScreenshot = function (

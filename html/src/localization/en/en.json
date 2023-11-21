@@ -425,7 +425,8 @@
                         "description_tooltip": "Unfortunately, windows doesn't support viewing PNG text chunks(few things do) natively, but you can view it using a command-line tool like exiftool, a png chunk inspector, or a hex editor.",
                         "enable": "Enable",
                         "modify_filename": "Modify Filename",
-                        "modify_filename_tooltip": "Will add the World ID to screenshot filename, in addition to file metadata."
+                        "modify_filename_tooltip": "Will add the World ID to screenshot filename, in addition to file metadata.",
+                        "copy_to_clipboard": "Copy to Clipboard"
                     },
                     "app_launcher": {
                         "header": "App Launcher",
