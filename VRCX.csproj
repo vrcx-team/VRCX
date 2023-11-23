@@ -31,6 +31,7 @@
   
   <PropertyGroup>
     <StartupObject />
+    <CefSharpExcludeSubProcessExe>true</CefSharpExcludeSubProcessExe>
   </PropertyGroup>
   <PropertyGroup Condition="'$(PlatformTarget)' == 'x64'">
     <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
