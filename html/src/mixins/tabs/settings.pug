@@ -445,7 +445,10 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.modify_filename') }}
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')")
                                 i.el-icon-info
-                        el-switch(v-model="screenshotHelperModifyFilename" @change="saveScreenshotHelper")
+                        el-switch(v-model="screenshotHelperModifyFilename" @change="saveScreenshotHelper" :disabled="!screenshotHelper")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard') }}
+                        el-switch(v-model="screenshotHelperCopyToClipboard" @change="saveScreenshotHelper")
                 //- Advanced | YouTube API
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.youtube_api.header') }}

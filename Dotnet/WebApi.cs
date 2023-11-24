@@ -70,7 +70,9 @@ namespace VRCX
                 {
                     using (var stream = new MemoryStream(Convert.FromBase64String((string)values[0])))
                     {
-                        _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
+                        _cookieContainer = new CookieContainer();
+                        _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
+                        //_cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
                     }
                 }
                 catch
@@ -94,7 +96,8 @@ namespace VRCX
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    new BinaryFormatter().Serialize(memoryStream, _cookieContainer);
+                    System.Text.Json.JsonSerializer.Serialize(memoryStream, _cookieContainer.GetAllCookies());
+                    //new BinaryFormatter().Serialize(memoryStream, _cookieContainer);
                     SQLiteLegacy.Instance.ExecuteNonQuery(
                         "INSERT OR REPLACE INTO `cookies` (`key`, `value`) VALUES (@key, @value)",
                         new Dictionary<string, object>() {
@@ -116,7 +119,8 @@ namespace VRCX
 
             using (var memoryStream = new MemoryStream())
             {
-                new BinaryFormatter().Serialize(memoryStream, _cookieContainer);
+                System.Text.Json.JsonSerializer.Serialize(memoryStream, _cookieContainer.GetAllCookies());
+                //new BinaryFormatter().Serialize(memoryStream, _cookieContainer);
                 return Convert.ToBase64String(memoryStream.ToArray());
             }
         }
@@ -125,7 +129,9 @@ namespace VRCX
         {
             using (var stream = new MemoryStream(Convert.FromBase64String(cookies)))
             {
-                _cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
+                //_cookieContainer = (CookieContainer)new BinaryFormatter().Deserialize(stream);
+                _cookieContainer = new CookieContainer();
+                _cookieContainer.Add(System.Text.Json.JsonSerializer.Deserialize<CookieCollection>(stream));
             }
 
             _cookieDirty = true; // force cookies to be saved for lastUserLoggedIn

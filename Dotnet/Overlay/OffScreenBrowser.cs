@@ -12,6 +12,7 @@ using SharpDX.Direct3D11;
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Range = CefSharp.Structs.Range;
 
 namespace VRCX
 {
@@ -87,7 +88,7 @@ namespace VRCX
                         var rowPitch = dataBox.RowPitch;
                         if (pitch == rowPitch)
                         {
-                            WinApi.CopyMemory(
+                            WinApi.RtlCopyMemory(
                                 destinationPtr,
                                 sourcePtr,
                                 (uint)(_width * _height * 4)
@@ -97,7 +98,7 @@ namespace VRCX
                         {
                             for (var y = _height; y > 0; --y)
                             {
-                                WinApi.CopyMemory(
+                                WinApi.RtlCopyMemory(
                                     destinationPtr,
                                     sourcePtr,
                                     (uint)pitch
@@ -168,7 +169,7 @@ namespace VRCX
                         );
                     }
 
-                    WinApi.CopyMemory(
+                    WinApi.RtlCopyMemory(
                         _paintBuffer.AddrOfPinnedObject(),
                         buffer,
                         (uint)(width * height * 4)

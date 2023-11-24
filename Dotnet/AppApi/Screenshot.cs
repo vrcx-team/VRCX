@@ -19,11 +19,11 @@ namespace VRCX
         /// <param name="metadataString">The metadata to add to the screenshot file.</param>
         /// <param name="worldId">The ID of the world to associate with the screenshot.</param>
         /// <param name="changeFilename">Whether or not to rename the screenshot file to include the world ID.</param>
-        public void AddScreenshotMetadata(string path, string metadataString, string worldId, bool changeFilename = false)
+        public string AddScreenshotMetadata(string path, string metadataString, string worldId, bool changeFilename = false)
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
             if (!File.Exists(path) || !path.EndsWith(".png") || !fileName.StartsWith("VRChat_"))
-                return;
+                return string.Empty;
 
             if (changeFilename)
             {
@@ -34,6 +34,7 @@ namespace VRCX
             }
 
             ScreenshotHelper.WritePNGDescription(path, metadataString);
+            return path;
         }
 
         /// <summary>
