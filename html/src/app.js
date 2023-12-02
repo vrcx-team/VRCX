@@ -1424,12 +1424,10 @@ speechSynthesis.getVoices();
         // });
     };
 
-    /*
-        params: {
-            username: string,
-            password: string
-        }
-    */
+    /**
+     * @param {{ username: string, password: string }} params credential to login
+     * @returns {Promise<{origin: boolean, json: any, params}>}
+     */
     API.login = function (params) {
         var { username, password, saveCredentials, cipher } = params;
         username = encodeURIComponent(username);
@@ -1468,11 +1466,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            code: string
-        }
-    */
+    /**
+     * @param {{ code: string }} params One-time password
+     * @returns {Promise<{json: any, params}>}
+     */
     API.verifyOTP = function (params) {
         return this.call('auth/twofactorauth/otp/verify', {
             method: 'POST',
@@ -1487,11 +1484,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            code: string
-        }
-    */
+    /**
+     * @param {{ code: string }} params One-time token
+     * @returns {Promise<{json: any, params}>}
+     */
     API.verifyTOTP = function (params) {
         return this.call('auth/twofactorauth/totp/verify', {
             method: 'POST',
@@ -1506,11 +1502,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            code: string
-        }
-    */
+    /**
+     * @param {{ code: string }} params One-time token
+     * @returns {Promise<{json: any, params}>}
+     */
     API.verifyEmailOTP = function (params) {
         return this.call('auth/twofactorauth/emailotp/verify', {
             method: 'POST',
