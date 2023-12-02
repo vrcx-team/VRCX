@@ -6,7 +6,6 @@
 
 using System;
 using System.Drawing;
-using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using CefSharp;
@@ -19,6 +18,7 @@ namespace VRCX
         public static MainForm Instance;
         private static NLog.Logger jslogger = NLog.LogManager.GetLogger("Javascript");
         public ChromiumWebBrowser Browser;
+        private readonly Timer _saveTimer;
         private int LastLocationX;
         private int LastLocationY;
         private int LastSizeWidth;
@@ -29,6 +29,11 @@ namespace VRCX
             Instance = this;
             InitializeComponent();
 
+            
+            // adding a 5s delay here to avoid excessive writes to disk
+            _saveTimer = new Timer();
+            _saveTimer.Interval = 5000;
+            _saveTimer.Tick += SaveTimer_Tick;
             try
             {
                 var location = Assembly.GetExecutingAssembly().Location;
@@ -133,8 +138,15 @@ namespace VRCX
             }
             LastSizeWidth = Size.Width;
             LastSizeHeight = Size.Height;
+            
+            _saveTimer.Start();
         }
-
+        
+        private void SaveTimer_Tick(object sender, EventArgs e)
+        {
+            SaveWindowState();
+            _saveTimer.Stop();
+        }
         private void MainForm_Move(object sender, System.EventArgs e)
         {
             if (WindowState != FormWindowState.Normal)
@@ -143,6 +155,8 @@ namespace VRCX
             }
             LastLocationX = Location.X;
             LastLocationY = Location.Y;
+            
+            _saveTimer.Start();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -154,14 +168,21 @@ namespace VRCX
                 Hide();
             }
         }
-
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        
+        
+        private void SaveWindowState()
         {
             VRCXStorage.Instance.Set("VRCX_LocationX", LastLocationX.ToString());
             VRCXStorage.Instance.Set("VRCX_LocationY", LastLocationY.ToString());
             VRCXStorage.Instance.Set("VRCX_SizeWidth", LastSizeWidth.ToString());
             VRCXStorage.Instance.Set("VRCX_SizeHeight", LastSizeHeight.ToString());
             VRCXStorage.Instance.Set("VRCX_WindowState", ((int)WindowState).ToString());
+            VRCXStorage.Instance.Flush();
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            SaveWindowState();
         }
 
         private void TrayIcon_MouseClick(object sender, MouseEventArgs e)
@@ -195,6 +216,7 @@ namespace VRCX
 
         private void TrayMenu_Quit_Click(object sender, System.EventArgs e)
         {
+            SaveWindowState();
             Application.Exit();
         }
     }
