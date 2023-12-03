@@ -3042,9 +3042,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ avatarId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ avatarId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.selectFallbackAvatar = function (params) {
         return this.call(`avatars/${params.avatarId}/selectfallback`, {
             method: 'PUT',
@@ -3060,9 +3060,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ avatarId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ avatarId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.deleteAvatar = function (params) {
         return this.call(`avatars/${params.avatarId}`, {
             method: 'DELETE'
@@ -3340,9 +3340,9 @@ speechSynthesis.getVoices();
      *      //  (ISO8601 or 'five_minutes_ago')
      *      after: 'five_minutes_ago' | (string & {})
      }} NotificationFetchParameter */
-    
+
     /**
-     * 
+     *
      * @param {NotificationFetchParameter} params
      * @returns {Promise<{json: any, params}>}
      */
@@ -3586,9 +3586,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ notificationId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ notificationId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.acceptNotification = function (params) {
         return this.call(
             `auth/user/notifications/${params.notificationId}/accept`,
@@ -3606,9 +3606,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ notificationId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ notificationId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.hideNotification = function (params) {
         return this.call(
             `auth/user/notifications/${params.notificationId}/hide`,
@@ -3771,9 +3771,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ moderated: string, type: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ moderated: string, type: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     // old-way: POST auth/user/blocks {blocked:userId}
     API.sendPlayerModeration = function (params) {
         return this.call('auth/user/playermoderations', {
@@ -3790,9 +3790,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ moderated: string, type: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ moderated: string, type: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     // old-way: PUT auth/user/unblocks {blocked:userId}
     API.deletePlayerModeration = function (params) {
         return this.call('auth/user/unplayermoderate', {
@@ -3826,9 +3826,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ avatarModerationType: string, targetAvatarId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ avatarModerationType: string, targetAvatarId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.sendAvatarModeration = function (params) {
         return this.call('auth/user/avatarmoderations', {
             method: 'POST',
@@ -3844,9 +3844,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ avatarModerationType: string, targetAvatarId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ avatarModerationType: string, targetAvatarId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.deleteAvatarModeration = function (params) {
         return this.call(
             `auth/user/avatarmoderations?targetAvatarId=${encodeURIComponent(
@@ -4470,14 +4470,14 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{
-    * n: number,
-    * offset: number,
-    * type: string,
-    * tag: string
-    * }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{
+     * n: number,
+     * offset: number,
+     * type: string,
+     * tag: string
+     * }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getFavorites = function (params) {
         return this.call('favorites', {
             method: 'GET',
@@ -4493,13 +4493,13 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{
-    *    type: string,
-    *    favoriteId: string (objectId),
-    *    tags: string
-    * }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{
+     *    type: string,
+     *    favoriteId: string (objectId),
+     *    tags: string
+     * }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.addFavorite = function (params) {
         return this.call('favorites', {
             method: 'POST',
@@ -4515,9 +4515,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ objectId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ objectId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.deleteFavorite = function (params) {
         return this.call(`favorites/${params.objectId}`, {
             method: 'DELETE'
@@ -4532,9 +4532,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ n: number, offset: number, type: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ n: number, offset: number, type: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getFavoriteGroups = function (params) {
         return this.call('favorite/groups', {
             method: 'GET',
@@ -4550,10 +4550,10 @@ speechSynthesis.getVoices();
     };
 
     /**
-    *
-    * @param {{ type: string, group: string, displayName: string, visibility: string }} params group is a name
-    * @return { Promise<{json: any, params}> }
-    */
+     *
+     * @param {{ type: string, group: string, displayName: string, visibility: string }} params group is a name
+     * @return { Promise<{json: any, params}> }
+     */
     API.saveFavoriteGroup = function (params) {
         return this.call(
             `favorite/group/${params.type}/${params.group}/${this.currentUser.id}`,
@@ -4572,12 +4572,12 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{
-    *    type: string,
-    *    group: string (name)
-    * }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{
+     *    type: string,
+     *    group: string (name)
+     * }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.clearFavoriteGroup = function (params) {
         return this.call(
             `favorite/group/${params.type}/${params.group}/${this.currentUser.id}`,
@@ -26937,8 +26937,8 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ groupId: string }} params
-    */
+     * @param {{ groupId: string }} params
+     */
     API.getGroup = function (params) {
         return this.call(`groups/${params.groupId}`, {
             method: 'GET',
@@ -26974,9 +26974,9 @@ speechSynthesis.getVoices();
     });
 
     /**
-    * @param {{ userId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ userId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getRepresentedGroup = function (params) {
         return this.call(`users/${params.userId}/groups/represented`, {
             method: 'GET'
@@ -27008,9 +27008,9 @@ speechSynthesis.getVoices();
     });
 
     /**
-    * @param {{ userId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ userId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getGroups = function (params) {
         return this.call(`users/${params.userId}/groups`, {
             method: 'GET'
@@ -27039,9 +27039,9 @@ speechSynthesis.getVoices();
     });
 
     /**
-    * @param {{ groupId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.joinGroup = function (params) {
         return this.call(`groups/${params.groupId}/join`, {
             method: 'POST'
@@ -27087,9 +27087,9 @@ speechSynthesis.getVoices();
     });
 
     /**
-    * @param {{ groupId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.leaveGroup = function (params) {
         return this.call(`groups/${params.groupId}/leave`, {
             method: 'POST'
@@ -27120,9 +27120,9 @@ speechSynthesis.getVoices();
     });
 
     /**
-    * @param {{ groupId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.cancelGroupRequest = function (params) {
         return this.call(`groups/${params.groupId}/requests`, {
             method: 'DELETE'
@@ -27177,9 +27177,9 @@ speechSynthesis.getVoices();
     });
 
     /**
-    * @param {{ query: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ query: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.groupStrictsearch = function (params) {
         return this.call(`groups/strictsearch`, {
             method: 'GET',
@@ -27407,9 +27407,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ groupId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getAllGroupPosts = async function (params) {
         var posts = [];
         var offset = 0;
@@ -27566,9 +27566,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ groupId: string, userId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ groupId: string, userId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.banGroupMember = function (params) {
         return this.call(`groups/${params.groupId}/bans`, {
             method: 'POST',
@@ -27586,9 +27586,9 @@ speechSynthesis.getVoices();
     };
 
     /**
-    * @param {{ groupId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
 
     API.getGroupInstances = function (params) {
         return this.call(
@@ -27629,9 +27629,9 @@ speechSynthesis.getVoices();
     });
 
     /**
-    * @param {{ groupId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
 
     API.getGroupRoles = function (params) {
         return this.call(`groups/${params.groupId}/roles`, {
@@ -27734,9 +27734,9 @@ speechSynthesis.getVoices();
     });
 
     /**
-    * @param {{ groupId: string }} params
-    * @return { Promise<{json: any, params}> }
-    */
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getCachedGroup = function (params) {
         return new Promise((resolve, reject) => {
             var ref = this.cachedGroups.get(params.groupId);
