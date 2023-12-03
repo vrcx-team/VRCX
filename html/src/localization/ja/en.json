@@ -380,7 +380,7 @@
                     "header": "詳細設定",
                     "launch_options": "起動オプション",
                     "screenshot_metadata": "スクリーンショットのメタデータ",
-                    "vrc_registry_backup": "VRCのレジストリをバックアップ",
+                    "vrc_registry_backup": "VRChatのレジストリをバックアップ",
                     "common_folders": "共通フォルダ",
                     "pending_offline": {
                         "header": "オフラインの保留",
@@ -425,7 +425,8 @@
                         "description_tooltip": "残念ながら、Windowsは (ごく一部を除いた) PNGテキストチャンクの表示をサポートしていません。表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用してください。",
                         "enable": "有効化",
                         "modify_filename": "ファイル名を変更",
-                        "modify_filename_tooltip": "スクリーンショットのファイル名にワールドIDを追加"
+                        "modify_filename_tooltip": "スクリーンショットのファイル名にワールドIDを追加",
+                        "copy_to_clipboard": "クリップボードにコピー"
                     },
                     "app_launcher": {
                         "header": "アプリケーションの自動起動",
@@ -694,7 +695,7 @@
                 "copy_url": "URLをコピー",
                 "copy_name": "ワールド名をコピー",
                 "youtube_preview": "YouTube プレビュー動画",
-                "author_tags": "Author Tags",
+                "author_tags": "タグ",
                 "players": "プレイヤー数",
                 "favorites": "お気に入り数",
                 "visits": "総参加回数",
@@ -753,7 +754,9 @@
                 "change_content_tags": "コンテンツタグを変更",
                 "change_image": "画像を変更",
                 "download_package": "Unity Packageをダウンロード",
-                "delete": "削除"
+                "delete": "削除",
+                "delete_impostor": "Impostorを削除",
+                "create_impostor": "Impostorを作成"
             },
             "info": {
                 "header": "情報",
@@ -1239,7 +1242,7 @@
             "upload": "アップロード"
         },
         "registry_backup": {
-            "header": "VRCのレジストリ設定のバックアップ",
+            "header": "VRChatのレジストリ設定をバックアップ",
             "backup": "バックアップ",
             "restore": "復元",
             "save_to_file": "ファイルに保存",
@@ -1250,7 +1253,7 @@
             "date": "日付",
             "action": "アクション",
             "auto_backup": "毎週ごとの自動バックアップ",
-            "restore_prompt": "VRCのレジストリ設定の自動バックアップが有効なようですが、このコンピューターからバックアップファイルを見つけられませんでした。バックアップから復元したい場合はこちらから復元できます。"
+            "restore_prompt": "VRChatのレジストリ設定の自動バックアップが有効なようですが、このコンピューターからバックアップファイルを見つけられませんでした。バックアップから復元したい場合はこちらから復元できます。"
         },
         "group_member_moderation": {
             "header": "グループメンバーを管理",
