@@ -34,7 +34,7 @@ jobs:
       run: cd ${{ github.workspace }}/html && npm run production && cd ${{ github.workspace }}
 
     - name: Build .NET Application
-      run: dotnet build -p:Configuration=Release -p:Platform=x64 -p:EnableWindowsTargeting=true
+      run: dotnet build -p:Configuration=Release -p:Platform=x64 -p:EnableWindowsTargeting=true --self-contained
 
     - name: Copy Web UI
       run: cp -r ${{ github.workspace }}/html/dist ${{ github.workspace }}/bin/x64/Release/html
