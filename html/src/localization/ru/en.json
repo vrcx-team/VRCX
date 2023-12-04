@@ -322,7 +322,8 @@
                         "when_to_display_outside_vr": "Вне VR",
                         "when_to_display_game_closed": "Игра закрыта",
                         "when_to_display_game_running": "Игра запущена",
-                        "when_to_display_always": "Всегда"
+                        "when_to_display_always": "Всегда",
+                        "desktop_notification_while_afk": "Уведомления на рабочем столе во время AFK"
                     },
                     "text_to_speech": {
                         "header": "Параметры преобразования текста в речь",
