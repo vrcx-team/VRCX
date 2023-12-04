@@ -126,6 +126,7 @@ namespace VRCX
 
         private static void Run()
         {
+            BrowserSubprocess.Start();
             Update.Check();
             StartupArgs.ArgsCheck();
             GetVersion();
