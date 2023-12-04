@@ -167,12 +167,12 @@ a {
 }
 
 .el-checkbox__input.is-checked + .el-checkbox__label {
-    color: var(--theme-text) !important;
+    color: var(--theme-text-muted) !important;
 }
 .el-checkbox__input.is-checked .el-checkbox__inner,
 .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-    border-color: var(--theme-text) !important;
-    background: var(--theme-text) !important;
+    border-color: var(--theme-text-muted) !important;
+    background: var(--theme-text-muted) !important;
 }
 
 .el-icon-star-on {

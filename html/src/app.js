@@ -1637,6 +1637,7 @@ speechSynthesis.getVoices();
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
             this.applyPresenceLocation(ref);
+            this.applyQueuedInstance(ref.queuedInstance);
             // update group list
             if (json.presence?.groups) {
                 for (var groupId of json.presence.groups) {
@@ -1663,6 +1664,7 @@ speechSynthesis.getVoices();
                 currentAvatar: '',
                 currentAvatarAssetUrl: '',
                 currentAvatarImageUrl: '',
+                currentAvatarTags: [],
                 currentAvatarThumbnailImageUrl: '',
                 date_joined: '',
                 developerType: '',
@@ -1672,10 +1674,12 @@ speechSynthesis.getVoices();
                 friendGroupNames: [],
                 friendKey: '',
                 friends: [],
+                googleId: '',
                 hasBirthday: false,
                 hasEmail: false,
                 hasLoggedInFromClient: false,
                 hasPendingEmail: false,
+                hideContentFilterSettings: false,
                 homeLocation: '',
                 id: '',
                 isFriend: false,
@@ -1688,8 +1692,10 @@ speechSynthesis.getVoices();
                 offlineFriends: [],
                 onlineFriends: [],
                 pastDisplayNames: [],
+                picoId: '',
                 presence: {
                     avatarThumbnail: '',
+                    currentAvatarTags: '',
                     displayName: '',
                     groups: [],
                     id: '',
@@ -1700,10 +1706,12 @@ speechSynthesis.getVoices();
                     status: '',
                     travelingToInstance: '',
                     travelingToWorld: '',
+                    userIcon: '',
                     world: '',
                     ...json.presence
                 },
                 profilePicOverride: '',
+                queuedInstance: '',
                 state: '',
                 status: '',
                 statusDescription: '',
@@ -1717,7 +1725,10 @@ speechSynthesis.getVoices();
                 unsubscribe: false,
                 updated_at: '',
                 userIcon: '',
+                userLanguage: '',
+                userLanguageCode: '',
                 username: '',
+                viveId: '',
                 // VRCX
                 $online_for: Date.now(),
                 $offline_for: '',
@@ -26834,6 +26845,10 @@ speechSynthesis.getVoices();
 
     $app.methods.removeAllQueuedInstances = function () {
         API.queuedInstances.forEach((ref) => {
+            this.$message({
+                message: `Removed instance ${ref.$worldName} from queue`,
+                type: 'info'
+            });
             ref.$msgBox?.close();
         });
         API.queuedInstances.clear();
@@ -26844,6 +26859,40 @@ speechSynthesis.getVoices();
         if (typeof ref !== 'undefined') {
             ref.$msgBox.close();
             API.queuedInstances.delete(instanceId);
+        }
+    };
+
+    API.applyQueuedInstance = function (instanceId) {
+        API.queuedInstances.forEach((ref) => {
+            if (ref.location !== instanceId) {
+                $app.$message({
+                    message: `Removed instance ${ref.$worldName} from queue`,
+                    type: 'info'
+                });
+                ref.$msgBox?.close();
+                API.queuedInstances.delete(ref.location);
+            }
+        });
+        if (!instanceId) {
+            return;
+        }
+        if (!API.queuedInstances.has(instanceId)) {
+            var L = API.parseLocation(instanceId);
+            if (L.worldId && L.instanceId) {
+                API.getInstance({
+                    worldId: L.worldId,
+                    instanceId: L.instanceId
+                }).then((args) => {
+                    if (args.json?.queueSize) {
+                        $app.instanceQueueUpdate(
+                            instanceId,
+                            args.json?.queueSize,
+                            args.json?.queueSize
+                        );
+                    }
+                });
+            }
+            $app.instanceQueueUpdate(instanceId, 0, 0);
         }
     };
 
@@ -26922,19 +26971,19 @@ speechSynthesis.getVoices();
         );
         ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${displayLocation} `;
         API.queuedInstances.set(instanceId, ref);
-        workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
+        // workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
     };
 
-    $app.methods.instanceQueueTimeout = function () {
-        // remove instance from queue after 1hour of inactivity
-        API.queuedInstances.forEach((ref) => {
-            // 59mins
-            if (Date.now() - ref.updatedAt > 3540000) {
-                ref.$msgBox.close();
-                API.queuedInstances.delete(ref.location);
-            }
-        });
-    };
+    // $app.methods.instanceQueueTimeout = function () {
+    //     // remove instance from queue after 1hour of inactivity
+    //     API.queuedInstances.forEach((ref) => {
+    //         // 59mins
+    //         if (Date.now() - ref.updatedAt > 3540000) {
+    //             ref.$msgBox.close();
+    //             API.queuedInstances.delete(ref.location);
+    //         }
+    //     });
+    // };
 
     /**
      * @param {{ groupId: string }} params
