@@ -1424,12 +1424,10 @@ speechSynthesis.getVoices();
         // });
     };
 
-    /*
-        params: {
-            username: string,
-            password: string
-        }
-    */
+    /**
+     * @param {{ username: string, password: string }} params credential to login
+     * @returns {Promise<{origin: boolean, json: any, params}>}
+     */
     API.login = function (params) {
         var { username, password, saveCredentials, cipher } = params;
         username = encodeURIComponent(username);
@@ -1468,11 +1466,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            code: string
-        }
-    */
+    /**
+     * @param {{ code: string }} params One-time password
+     * @returns {Promise<{json: any, params}>}
+     */
     API.verifyOTP = function (params) {
         return this.call('auth/twofactorauth/otp/verify', {
             method: 'POST',
@@ -1487,11 +1484,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            code: string
-        }
-    */
+    /**
+     * @param {{ code: string }} params One-time token
+     * @returns {Promise<{json: any, params}>}
+     */
     API.verifyTOTP = function (params) {
         return this.call('auth/twofactorauth/totp/verify', {
             method: 'POST',
@@ -1506,11 +1502,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            code: string
-        }
-    */
+    /**
+     * @param {{ code: string }} params One-time token
+     * @returns {Promise<{json: any, params}>}
+     */
     API.verifyEmailOTP = function (params) {
         return this.call('auth/twofactorauth/emailotp/verify', {
             method: 'POST',
@@ -1642,6 +1637,7 @@ speechSynthesis.getVoices();
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
             this.applyPresenceLocation(ref);
+            this.applyQueuedInstance(ref.queuedInstance);
             // update group list
             if (json.presence?.groups) {
                 for (var groupId of json.presence.groups) {
@@ -1668,6 +1664,7 @@ speechSynthesis.getVoices();
                 currentAvatar: '',
                 currentAvatarAssetUrl: '',
                 currentAvatarImageUrl: '',
+                currentAvatarTags: [],
                 currentAvatarThumbnailImageUrl: '',
                 date_joined: '',
                 developerType: '',
@@ -1677,10 +1674,12 @@ speechSynthesis.getVoices();
                 friendGroupNames: [],
                 friendKey: '',
                 friends: [],
+                googleId: '',
                 hasBirthday: false,
                 hasEmail: false,
                 hasLoggedInFromClient: false,
                 hasPendingEmail: false,
+                hideContentFilterSettings: false,
                 homeLocation: '',
                 id: '',
                 isFriend: false,
@@ -1693,8 +1692,10 @@ speechSynthesis.getVoices();
                 offlineFriends: [],
                 onlineFriends: [],
                 pastDisplayNames: [],
+                picoId: '',
                 presence: {
                     avatarThumbnail: '',
+                    currentAvatarTags: '',
                     displayName: '',
                     groups: [],
                     id: '',
@@ -1705,10 +1706,12 @@ speechSynthesis.getVoices();
                     status: '',
                     travelingToInstance: '',
                     travelingToWorld: '',
+                    userIcon: '',
                     world: '',
                     ...json.presence
                 },
                 profilePicOverride: '',
+                queuedInstance: '',
                 state: '',
                 status: '',
                 statusDescription: '',
@@ -1722,7 +1725,10 @@ speechSynthesis.getVoices();
                 unsubscribe: false,
                 updated_at: '',
                 userIcon: '',
+                userLanguage: '',
+                userLanguageCode: '',
                 username: '',
+                viveId: '',
                 // VRCX
                 $online_for: Date.now(),
                 $offline_for: '',
@@ -1989,11 +1995,11 @@ speechSynthesis.getVoices();
         return ref;
     };
 
-    /*
-        params: {
-            userId: string
-        }
-    */
+    /**
+     * Fetch user from API.
+     * @param {{ userId: string }} params identifier of registered user
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getUser = function (params) {
         return this.call(`users/${params.userId}`, {
             method: 'GET'
@@ -2007,11 +2013,11 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            userId: string
-        }
-    */
+    /**
+     * Fetch user from cache if they're in it. Otherwise, calls API.
+     * @param {{ userId: string }} params identifier of registered user
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getCachedUser = function (params) {
         return new Promise((resolve, reject) => {
             var ref = this.cachedUsers.get(params.userId);
@@ -2028,15 +2034,18 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            n: number,
-            offset: number,
-            search: string,
-            sort: string ('nuisanceFactor', 'created', '_created_at', 'last_login'),
-            order: string ('ascending', 'descending')
-        }
-    */
+    /** @typedef {{
+     * n: number,
+     * offset: number,
+     * search: string,
+     * sort: 'nuisanceFactor' | 'created' | '_created_at' | 'last_login',
+     * order: 'ascending', 'descending'
+     }} GetUsersParameters */
+    /**
+     * Fetch multiple users from API.
+     * @param params {GetUsersParameters} filtering and sorting parameters
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getUsers = function (params) {
         return this.call('users', {
             method: 'GET',
@@ -2051,12 +2060,18 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            status: string ('active', 'offline', 'busy', 'ask me', 'join me'),
-            statusDescription: string
-        }
-    */
+    /**
+     * @typedef {{
+     *     status: 'active' | 'offline' | 'busy' | 'ask me' | 'join me',
+     *     statusDescription: string
+     * }} SaveCurrentUserParameters
+     */
+
+    /**
+     * Updates current user's status.
+     * @param params {SaveCurrentUserParameters} new status to be set
+     * @returns {Promise<{json: any, params}>}
+     */
     API.saveCurrentUser = function (params) {
         return this.call(`users/${this.currentUser.id}`, {
             method: 'PUT',
@@ -2071,11 +2086,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            tags: array[string]
-        }
-    */
+    /**
+     * @param params {string[]}
+     * @returns {Promise<{json: any, params}>}
+     */
     API.addUserTags = function (params) {
         return this.call(`users/${this.currentUser.id}/addTags`, {
             method: 'POST',
@@ -2090,11 +2104,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            tags: array[string]
-        }
-    */
+    /**
+     * @param params {string[]}
+     * @returns {Promise<{json: any, params}>}
+     */
     API.removeUserTags = function (params) {
         return this.call(`users/${this.currentUser.id}/removeTags`, {
             method: 'POST',
@@ -2109,11 +2122,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            userId: string
-        }
-    */
+    /**
+     * @param params {{ userId: string }}
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getUserFeedback = function (params) {
         return this.call(`users/${params.userId}/feedback`, {
             method: 'GET',
@@ -2288,11 +2300,11 @@ speechSynthesis.getVoices();
         return ref;
     };
 
-    /*
-        params: {
-            worldId: string
-        }
-    */
+    /**
+     *
+     * @param {{worldId: string}} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getWorld = function (params) {
         return this.call(`worlds/${params.worldId}`, {
             method: 'GET'
@@ -2306,11 +2318,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            worldId: string
-        }
-    */
+    /**
+     * @param {{worldId: string}} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getCachedWorld = function (params) {
         return new Promise((resolve, reject) => {
             var ref = this.cachedWorlds.get(params.worldId);
@@ -2327,20 +2338,25 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            n: number,
-            offset: number,
-            search: string,
-            userId: string,
-            user: string ('me','friend')
-            sort: string ('popularity','heat','trust','shuffle','favorites','reportScore','reportCount','publicationDate','labsPublicationDate','created','_created_at','updated','_updated_at','order'),
-            order: string ('ascending','descending'),
-            releaseStatus: string ('public','private','hidden','all'),
-            featured: boolean
-        },
-        option: string
-    */
+    /**
+     * @typedef {{
+          n: number,
+          offset: number,
+          search: string,
+          userId: string,
+          user: 'me' | 'friend',
+          sort: 'popularity' | 'heat' | 'trust' | 'shuffle' | 'favorites' | 'reportScore' | 'reportCount' | 'publicationDate' | 'labsPublicationDate' | 'created' | '_created_at' | 'updated' | '_updated_at' | 'order',
+          order: 'ascending' | 'descending',
+          releaseStatus: 'public' | 'private' | 'hidden' | 'all',
+          featured: boolean
+     }} WorldSearchParameter
+     */
+    /**
+     *
+     * @param {WorldSearchParameter} params
+     * @param {string?} option sub-path of calling endpoint
+     * @returns {Promise<{json: any, params, option}>}
+     */
     API.getWorlds = function (params, option) {
         var endpoint = 'worlds';
         if (typeof option !== 'undefined') {
@@ -2360,11 +2376,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            worldId: string
-        }
-    */
+    /**
+     * @param {{worldId: string}} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.deleteWorld = function (params) {
         return this.call(`worlds/${params.worldId}`, {
             method: 'DELETE'
@@ -2378,11 +2393,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            id: string
-        }
-    */
+    /**
+     * @param {{id: string}} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.saveWorld = function (params) {
         return this.call(`worlds/${params.id}`, {
             method: 'PUT',
@@ -2397,11 +2411,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            worldId: string
-        }
-    */
+    /**
+     * @param {{worldId: string}} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.publishWorld = function (params) {
         return this.call(`worlds/${params.worldId}/publish`, {
             method: 'PUT',
@@ -2416,11 +2429,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            worldId: string
-        }
-    */
+    /**
+     * @param {{worldId: string}} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.unpublishWorld = function (params) {
         return this.call(`worlds/${params.worldId}/publish`, {
             method: 'DELETE',
@@ -2440,12 +2452,10 @@ speechSynthesis.getVoices();
 
     API.cachedInstances = new Map();
 
-    /*
-        params: {
-            worldId: string,
-            instanceId: string
-        }
-    */
+    /**
+     * @param {{worldId: string, instanceId: string}} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getInstance = function (params) {
         return this.call(`instances/${params.worldId}:${params.instanceId}`, {
             method: 'GET'
@@ -2459,17 +2469,22 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            worldId: string,
-            type: string,
-            region: string,
-            ownerId: string,
-            roleIds: string[],
-            groupAccessType: string,
-            queueEnabled: boolean
-        }
-    */
+    /**
+     * @typedef {{
+     *     worldId: string,
+     *     type: string,
+     *     region: string,
+     *     ownerId: string,
+     *     roleIds: string[],
+     *     groupAccessType: string,
+     *     queueEnabled: boolean
+     * }} CreateInstanceParameter
+     */
+
+    /**
+     * @param {CreateInstanceParameter} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.createInstance = function (params) {
         return this.call('instances', {
             method: 'POST',
@@ -2484,13 +2499,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            worldId: string,
-            instanceId: string,
-            shortName: string
-        }
-    */
+    /**
+     * @param {{ worldId: string, instanceId: string, shortName: string }} instance
+     * @returns {Promise<{instance, json: T, params: {}}>}
+     */
     API.getInstanceShortName = function (instance) {
         var params = {};
         if (instance.shortName) {
@@ -2513,11 +2525,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            shortName: string
-        }
-    */
+    /**
+     * @param {{ shortName: string }} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getInstanceFromShortName = function (params) {
         return this.call(`instances/s/${params.shortName}`, {
             method: 'GET'
@@ -2531,14 +2542,15 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            worldId: string,
-            instanceId: string,
-            shortName: string
-        }
-    */
+    /**
+     * Send invite to current user.
+     * @param {{ worldId: string, instanceId: string, shortName: string }} instance
+     * @returns {Promise<{instance, json: any, params}>}
+     */
     API.selfInvite = function (instance) {
+        /**
+         * @type {{ shortName?: string }}
+         */
         var params = {};
         if (instance.shortName) {
             params.shortName = instance.shortName;
@@ -2763,13 +2775,11 @@ speechSynthesis.getVoices();
         return friends;
     };
 
-    /*
-        params: {
-            n: number,
-            offset: number,
-            offline: boolean
-        }
-    */
+    /**
+     * Fetch friends of current user.
+     * @param {{ n: number, offset: number, offline: boolean }} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getFriends = function (params) {
         return this.call('auth/user/friends', {
             method: 'GET',
@@ -2784,11 +2794,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            userId: string
-        }
-    */
+    /**
+     * @param {{ userId: string }} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.deleteFriend = function (params) {
         return this.call(`auth/user/friends/${params.userId}`, {
             method: 'DELETE'
@@ -2802,11 +2811,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            userId: string
-        }
-    */
+    /**
+     * @param {{ userId: string }} params
+     * @returns {Promise<{json: T, params}>}
+     */
     API.sendFriendRequest = function (params) {
         return this.call(`user/${params.userId}/friendRequest`, {
             method: 'POST'
@@ -2820,11 +2828,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            userId: string
-        }
-    */
+    /**
+     * @param {{ userId: string }} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.cancelFriendRequest = function (params) {
         return this.call(`user/${params.userId}/friendRequest`, {
             method: 'DELETE'
@@ -2853,11 +2860,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            userId: string
-        }
-    */
+    /**
+     * @param {{ userId: string }} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getFriendStatus = function (params) {
         return this.call(`user/${params.userId}/friendStatus`, {
             method: 'GET'
@@ -2961,11 +2967,10 @@ speechSynthesis.getVoices();
         return ref;
     };
 
-    /*
-        params: {
-            avatarId: string
-        }
-    */
+    /**
+     * @param {{ avatarId: string }} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getAvatar = function (params) {
         return this.call(`avatars/${params.avatarId}`, {
             method: 'GET'
@@ -2979,19 +2984,24 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            n: number,
-            offset: number,
-            search: string,
-            userId: string,
-            user: string ('me','friends')
-            sort: string ('created','updated','order','_created_at','_updated_at'),
-            order: string ('ascending','descending'),
-            releaseStatus: string ('public','private','hidden','all'),
-            featured: boolean
-        }
-    */
+    /**
+     * @typedef {{
+     *     n: number,
+     *     offset: number,
+     *     search: string,
+     *     userId: string,
+     *     user: 'me' | 'friends'
+     *     sort: 'created' | 'updated' | 'order' | '_created_at' | '_updated_at',
+     *     order: 'ascending' | 'descending',
+     *     releaseStatus: 'public' | 'private' | 'hidden' | 'all',
+     *     featured: boolean
+     * }} GetAvatarsParameter
+     */
+    /**
+     *
+     * @param {GetAvatarsParameter} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getAvatars = function (params) {
         return this.call('avatars', {
             method: 'GET',
@@ -3006,12 +3016,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            id: string
-            releaseStatus: string ('public','private'),
-        }
-    */
+    /**
+     * @param {{ id: string, releaseStatus: 'public' | 'private' }} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.saveAvatar = function (params) {
         return this.call(`avatars/${params.id}`, {
             method: 'PUT',
@@ -3026,11 +3034,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            avatarId: string
-        }
-    */
+    /**
+     * @param {{avatarId: string }} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.selectAvatar = function (params) {
         return this.call(`avatars/${params.avatarId}/select`, {
             method: 'PUT',
@@ -3045,11 +3052,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            avatarId: string
-        }
-    */
+    /**
+     * @param {{ avatarId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.selectFallbackAvatar = function (params) {
         return this.call(`avatars/${params.avatarId}/selectfallback`, {
             method: 'PUT',
@@ -3064,11 +3070,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            avatarId: string
-        }
-    */
+    /**
+     * @param {{ avatarId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.deleteAvatar = function (params) {
         return this.call(`avatars/${params.avatarId}`, {
             method: 'DELETE'
@@ -3082,11 +3087,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            avatarId: string
-        }
-    */
+    /**
+     * @param {{ avatarId: string }} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.createImposter = function (params) {
         return this.call(`avatars/${params.avatarId}/impostor/enqueue`, {
             method: 'POST'
@@ -3100,11 +3104,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            avatarId: string
-        }
-    */
+    /**
+     * @param {{ avatarId: string }} params
+     * @returns {Promise<{json: T, params}>}
+     */
     API.deleteImposter = function (params) {
         return this.call(`avatars/${params.avatarId}/impostor`, {
             method: 'DELETE'
@@ -3340,15 +3343,20 @@ speechSynthesis.getVoices();
         this.isNotificationsLoading = false;
     };
 
-    /*
-        params: {
-            n: number,
-            offset: number,
-            sent: boolean,
-            type: string,
-            after: string (ISO8601 or 'five_minutes_ago')
-        }
-    */
+    /** @typedef {{
+     *      n: number,
+     *      offset: number,
+     *      sent: boolean,
+     *      type: string,
+     *      //  (ISO8601 or 'five_minutes_ago')
+     *      after: 'five_minutes_ago' | (string & {})
+     }} NotificationFetchParameter */
+
+    /**
+     *
+     * @param {NotificationFetchParameter} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.getNotifications = function (params) {
         return this.call('auth/user/notifications', {
             method: 'GET',
@@ -3447,12 +3455,13 @@ speechSynthesis.getVoices();
         }
     });
 
-    /*
-        params: {
+    /**
+    * @param {{
             notificationId: string,
             responseType: string,
             responseData: string
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.sendNotificationResponse = function (params) {
         return this.call(`notifications/${params.notificationId}/respond`, {
@@ -3477,14 +3486,20 @@ speechSynthesis.getVoices();
         console.log('NOTIFICATION:RESPONSE', args);
     });
 
-    /*
-        params: {
+    /**
+     * string that represents valid serialized JSON of T's value
+     * @template T=any
+     * @typedef {string} JsonString
+     */
+    /**
+    * @param {{
             receiverUserId: string,
             type: string,
             message: string,
             seen: boolean,
-            details: json-string
-        }
+            details: JsonString<any>
+     }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.sendInvite = function (params, receiverUserId) {
         return this.call(`invite/${receiverUserId}`, {
@@ -3581,11 +3596,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            notificationId: string
-        }
-    */
+    /**
+     * @param {{ notificationId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.acceptNotification = function (params) {
         return this.call(
             `auth/user/notifications/${params.notificationId}/accept`,
@@ -3602,11 +3616,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            notificationId: string
-        }
-    */
+    /**
+     * @param {{ notificationId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.hideNotification = function (params) {
         return this.call(
             `auth/user/notifications/${params.notificationId}/hide`,
@@ -3768,12 +3781,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            moderated: string,
-            type: string
-        }
-    */
+    /**
+     * @param {{ moderated: string, type: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     // old-way: POST auth/user/blocks {blocked:userId}
     API.sendPlayerModeration = function (params) {
         return this.call('auth/user/playermoderations', {
@@ -3789,12 +3800,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            moderated: string,
-            type: string
-        }
-    */
+    /**
+     * @param {{ moderated: string, type: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     // old-way: PUT auth/user/unblocks {blocked:userId}
     API.deletePlayerModeration = function (params) {
         return this.call('auth/user/unplayermoderate', {
@@ -3827,12 +3836,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            avatarModerationType: string,
-            targetAvatarId: string
-        }
-    */
+    /**
+     * @param {{ avatarModerationType: string, targetAvatarId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.sendAvatarModeration = function (params) {
         return this.call('auth/user/avatarmoderations', {
             method: 'POST',
@@ -3847,12 +3854,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            avatarModerationType: string,
-            targetAvatarId: string
-        }
-    */
+    /**
+     * @param {{ avatarModerationType: string, targetAvatarId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.deleteAvatarModeration = function (params) {
         return this.call(
             `auth/user/avatarmoderations?targetAvatarId=${encodeURIComponent(
@@ -4475,14 +4480,15 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            n: number,
-            offset: number,
-            type: string,
-            tag: string
-        }
-    */
+    /**
+     * @param {{
+     * n: number,
+     * offset: number,
+     * type: string,
+     * tag: string
+     * }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getFavorites = function (params) {
         return this.call('favorites', {
             method: 'GET',
@@ -4497,13 +4503,14 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            type: string,
-            favoriteId: string (objectId),
-            tags: string
-        }
-    */
+    /**
+     * @param {{
+     *    type: string,
+     *    favoriteId: string (objectId),
+     *    tags: string
+     * }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.addFavorite = function (params) {
         return this.call('favorites', {
             method: 'POST',
@@ -4518,11 +4525,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            objectId: string
-        }
-    */
+    /**
+     * @param {{ objectId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.deleteFavorite = function (params) {
         return this.call(`favorites/${params.objectId}`, {
             method: 'DELETE'
@@ -4536,13 +4542,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            n: number,
-            offset: number,
-            type: string
-        }
-    */
+    /**
+     * @param {{ n: number, offset: number, type: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getFavoriteGroups = function (params) {
         return this.call('favorite/groups', {
             method: 'GET',
@@ -4557,14 +4560,11 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            type: string,
-            group: string (name),
-            displayName: string,
-            visibility: string
-        }
-    */
+    /**
+     *
+     * @param {{ type: string, group: string, displayName: string, visibility: string }} params group is a name
+     * @return { Promise<{json: any, params}> }
+     */
     API.saveFavoriteGroup = function (params) {
         return this.call(
             `favorite/group/${params.type}/${params.group}/${this.currentUser.id}`,
@@ -4582,12 +4582,13 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            type: string,
-            group: string (name)
-        }
-    */
+    /**
+     * @param {{
+     *    type: string,
+     *    group: string (name)
+     * }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.clearFavoriteGroup = function (params) {
         return this.call(
             `favorite/group/${params.type}/${params.group}/${this.currentUser.id}`,
@@ -4605,11 +4606,12 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            n: number,
-            offset: number
-        }
+    /**
+    * @param {{
+        n: number,
+        offset: number
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.getFavoriteWorlds = function (params) {
         return this.call('worlds/favorites', {
@@ -4625,11 +4627,12 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
+    /**
+    * @param {{
             n: number,
             offset: number
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.getFavoriteAvatars = function (params) {
         return this.call('avatars/favorites', {
@@ -26842,6 +26845,10 @@ speechSynthesis.getVoices();
 
     $app.methods.removeAllQueuedInstances = function () {
         API.queuedInstances.forEach((ref) => {
+            this.$message({
+                message: `Removed instance ${ref.$worldName} from queue`,
+                type: 'info'
+            });
             ref.$msgBox?.close();
         });
         API.queuedInstances.clear();
@@ -26852,6 +26859,40 @@ speechSynthesis.getVoices();
         if (typeof ref !== 'undefined') {
             ref.$msgBox.close();
             API.queuedInstances.delete(instanceId);
+        }
+    };
+
+    API.applyQueuedInstance = function (instanceId) {
+        API.queuedInstances.forEach((ref) => {
+            if (ref.location !== instanceId) {
+                $app.$message({
+                    message: `Removed instance ${ref.$worldName} from queue`,
+                    type: 'info'
+                });
+                ref.$msgBox?.close();
+                API.queuedInstances.delete(ref.location);
+            }
+        });
+        if (!instanceId) {
+            return;
+        }
+        if (!API.queuedInstances.has(instanceId)) {
+            var L = API.parseLocation(instanceId);
+            if (L.worldId && L.instanceId) {
+                API.getInstance({
+                    worldId: L.worldId,
+                    instanceId: L.instanceId
+                }).then((args) => {
+                    if (args.json?.queueSize) {
+                        $app.instanceQueueUpdate(
+                            instanceId,
+                            args.json?.queueSize,
+                            args.json?.queueSize
+                        );
+                    }
+                });
+            }
+            $app.instanceQueueUpdate(instanceId, 0, 0);
         }
     };
 
@@ -26930,25 +26971,23 @@ speechSynthesis.getVoices();
         );
         ref.$msgBox.message = `You are in position ${ref.position} of ${ref.queueSize} in the queue for ${displayLocation} `;
         API.queuedInstances.set(instanceId, ref);
-        workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
+        // workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
     };
 
-    $app.methods.instanceQueueTimeout = function () {
-        // remove instance from queue after 1hour of inactivity
-        API.queuedInstances.forEach((ref) => {
-            // 59mins
-            if (Date.now() - ref.updatedAt > 3540000) {
-                ref.$msgBox.close();
-                API.queuedInstances.delete(ref.location);
-            }
-        });
-    };
+    // $app.methods.instanceQueueTimeout = function () {
+    //     // remove instance from queue after 1hour of inactivity
+    //     API.queuedInstances.forEach((ref) => {
+    //         // 59mins
+    //         if (Date.now() - ref.updatedAt > 3540000) {
+    //             ref.$msgBox.close();
+    //             API.queuedInstances.delete(ref.location);
+    //         }
+    //     });
+    // };
 
-    /*
-        params: {
-            groupId: string
-        }
-    */
+    /**
+     * @param {{ groupId: string }} params
+     */
     API.getGroup = function (params) {
         return this.call(`groups/${params.groupId}`, {
             method: 'GET',
@@ -26983,11 +27022,10 @@ speechSynthesis.getVoices();
         D.ref = ref;
     });
 
-    /*
-        params: {
-            userId: string
-        }
-    */
+    /**
+     * @param {{ userId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getRepresentedGroup = function (params) {
         return this.call(`users/${params.userId}/groups/represented`, {
             method: 'GET'
@@ -27018,11 +27056,10 @@ speechSynthesis.getVoices();
         });
     });
 
-    /*
-        params: {
-            userId: string
-        }
-    */
+    /**
+     * @param {{ userId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getGroups = function (params) {
         return this.call(`users/${params.userId}/groups`, {
             method: 'GET'
@@ -27050,11 +27087,10 @@ speechSynthesis.getVoices();
         }
     });
 
-    /*
-        params: {
-            groupId: string
-        }
-    */
+    /**
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.joinGroup = function (params) {
         return this.call(`groups/${params.groupId}/join`, {
             method: 'POST'
@@ -27099,11 +27135,10 @@ speechSynthesis.getVoices();
         this.currentUserGroups.set(groupId, json);
     });
 
-    /*
-        params: {
-            groupId: string
-        }
-    */
+    /**
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.leaveGroup = function (params) {
         return this.call(`groups/${params.groupId}/leave`, {
             method: 'POST'
@@ -27133,11 +27168,10 @@ speechSynthesis.getVoices();
         this.currentUserGroups.delete(groupId);
     });
 
-    /*
-        params: {
-            groupId: string
-        }
-    */
+    /**
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.cancelGroupRequest = function (params) {
         return this.call(`groups/${params.groupId}/requests`, {
             method: 'DELETE'
@@ -27191,11 +27225,10 @@ speechSynthesis.getVoices();
         }
     });
 
-    /*
-        params: {
-            query: string
-        }
-    */
+    /**
+     * @param {{ query: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.groupStrictsearch = function (params) {
         return this.call(`groups/strictsearch`, {
             method: 'GET',
@@ -27304,12 +27337,13 @@ speechSynthesis.getVoices();
         }
     });
 
-    /*
-        params: {
+    /**
+    * @param {{
             userId: string,
             groupId: string,
             roleId: string
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.addGroupMemberRole = function (params) {
         return this.call(
@@ -27327,12 +27361,13 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
+    /**
+    * @param {{
             userId: string,
             groupId: string,
             roleId: string
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.removeGroupMemberRole = function (params) {
         return this.call(
@@ -27381,11 +27416,10 @@ speechSynthesis.getVoices();
         }
     });
 
-    /*
-        params: {
-            groupId: string
-        }
-    */
+    //**
+    // * @param {{ groupId: string }} params
+    // * @return { Promise<{json: any, params}> }
+    // */
     // API.getGroupAnnouncement = function (params) {
     //     return this.call(`groups/${params.groupId}/announcement`, {
     //         method: 'GET'
@@ -27399,12 +27433,13 @@ speechSynthesis.getVoices();
     //     });
     // };
 
-    /*
-        params: {
+    /**
+    * @param {{
             groupId: string,
             n: number,
             offset: number
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.getGroupPosts = function (params) {
         return this.call(`groups/${params.groupId}/posts`, {
@@ -27420,11 +27455,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            groupId: string
-        }
-    */
+    /**
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getAllGroupPosts = async function (params) {
         var posts = [];
         var offset = 0;
@@ -27446,11 +27480,12 @@ speechSynthesis.getVoices();
         };
     };
 
-    /*
-        params: {
+    /**
+    * @param {{
             groupId: string,
             userId: string
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.getGroupMember = function (params) {
         return this.call(`groups/${params.groupId}/members/${params.userId}`, {
@@ -27465,12 +27500,13 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
+    /**
+    * @param {{
             groupId: string,
             n: number,
             offset: number
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.getGroupMembers = function (params) {
         return this.call(`groups/${params.groupId}/members`, {
@@ -27501,13 +27537,14 @@ speechSynthesis.getVoices();
         args.ref = this.applyGroupMember(args.json);
     });
 
-    /*
-        params: {
+    /**
+    * @param {{
             groupId: string,
             query: string,
             n: number,
             offset: number
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.getGroupMembersSearch = function (params) {
         return this.call(`groups/${params.groupId}/members/search`, {
@@ -27534,11 +27571,12 @@ speechSynthesis.getVoices();
         }
     });
 
-    /*
-        params: {
+    /**
+    * @param {{
             groupId: string,
             userId: string
-        }
+    * }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.sendGroupInvite = function (params) {
         return this.call(`groups/${params.groupId}/invites`, {
@@ -27556,11 +27594,12 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
+    /**
+    * @param {{
             groupId: string,
             userId: string
-        }
+     }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.kickGroupMember = function (params) {
         return this.call(`groups/${params.groupId}/members/${params.userId}`, {
@@ -27575,12 +27614,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            groupId: string,
-            userId: string
-        }
-    */
+    /**
+     * @param {{ groupId: string, userId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.banGroupMember = function (params) {
         return this.call(`groups/${params.groupId}/bans`, {
             method: 'POST',
@@ -27597,11 +27634,10 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
-            groupId: string
-        }
-    */
+    /**
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
 
     API.getGroupInstances = function (params) {
         return this.call(
@@ -27641,11 +27677,10 @@ speechSynthesis.getVoices();
         }
     });
 
-    /*
-        params: {
-            groupId: string
-        }
-    */
+    /**
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
 
     API.getGroupRoles = function (params) {
         return this.call(`groups/${params.groupId}/roles`, {
@@ -27712,14 +27747,15 @@ speechSynthesis.getVoices();
         }
     });
 
-    /*
-        params: {
+    /**
+    * @param {{
             query: string,
             n: number,
             offset: number,
             order: string,
             sortBy: string
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.groupSearch = function (params) {
         return this.call(`groups`, {
@@ -27746,11 +27782,10 @@ speechSynthesis.getVoices();
         }
     });
 
-    /*
-        params: {
-            groupId: string
-        }
-    */
+    /**
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getCachedGroup = function (params) {
         return new Promise((resolve, reject) => {
             var ref = this.cachedGroups.get(params.groupId);
@@ -28468,13 +28503,14 @@ speechSynthesis.getVoices();
 
     $app.data.isGroupGalleryLoading = false;
 
-    /*
-        params: {
+    /**
+    * @param {{
             groupId: string,
             galleryId: string,
             n: number,
             offset: number
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.getGroupGallery = function (params) {
         return this.call(
@@ -28906,13 +28942,14 @@ speechSynthesis.getVoices();
         });
     };
 
-    /*
-        params: {
+    /**
+    * @param {{
             userId: string,
             contentType: string,
             reason: string,
             type: string
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
     */
     API.reportUser = function (params) {
         return this.call(`feedback/${params.userId}/user`, {
@@ -28936,11 +28973,13 @@ speechSynthesis.getVoices();
         return text.replace(/([^!])\[[^\]]+\]\([^)]+\)/g, '$1');
     };
 
-    /*
-        params: {
+    /**
+    * @param {{
             fileId: string,
             version: number
-        }
+    }} params
+    * @return { Promise<{json: any, params}> }
+
     */
     API.getFileAnalysis = function (params) {
         return this.call(`analysis/${params.fileId}/${params.version}`, {

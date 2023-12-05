@@ -424,7 +424,8 @@
                         "description_tooltip": "不幸的是，Windows原生不支持查看PNG元数据(很多东西都不支持查看它)，但你可以使用exiftool等命令行工具、png检查器或十六进制编辑器来查看。",
                         "enable": "启用",
                         "modify_filename": "同时修改文件名",
-                        "modify_filename_tooltip": "除了文件元数据外，还将把世界ID添加到截图文件名中。"
+                        "modify_filename_tooltip": "除了文件元数据外，还将把世界ID添加到截图文件名中。",
+                        "copy_to_clipboard": "复制到剪贴板"
                     },
                     "app_launcher": {
                         "header": "应用启动器",
@@ -721,6 +722,7 @@
                 "public": "公开",
                 "private": "私人",
                 "fallback": "备用",
+                "impostor": "模型替身",
                 "future_proofing": "Future Proofing",
                 "cache": "缓存",
                 "content_horror": "恐怖",
@@ -751,7 +753,9 @@
                 "change_content_tags": "更改内容标签",
                 "change_image": "更改图片",
                 "download_package": "下载 Unity Package",
-                "delete": "删除"
+                "delete": "删除",
+                "delete_impostor": "删除模型替身",
+                "create_impostor": "创建模型替身"
             },
             "info": {
                 "header": "信息",

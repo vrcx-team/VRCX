@@ -323,7 +323,7 @@
                         "when_to_display_game_closed": "Game Closed",
                         "when_to_display_game_running": "Game Running",
                         "when_to_display_always": "Always",
-                        "desktop_notification_while_afk": "Desktop Notification While AFK"
+                        "desktop_notification_while_afk": "Desktop Notifications While AFK"
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech Options",
