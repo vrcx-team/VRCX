@@ -139,13 +139,13 @@ namespace VRCX
             LastSizeWidth = Size.Width;
             LastSizeHeight = Size.Height;
             
-            _saveTimer.Start();
+            _saveTimer?.Start();
         }
         
         private void SaveTimer_Tick(object sender, EventArgs e)
         {
             SaveWindowState();
-            _saveTimer.Stop();
+            _saveTimer?.Stop();
         }
         private void MainForm_Move(object sender, System.EventArgs e)
         {
@@ -156,7 +156,7 @@ namespace VRCX
             LastLocationX = Location.X;
             LastLocationY = Location.Y;
             
-            _saveTimer.Start();
+            _saveTimer?.Start();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
