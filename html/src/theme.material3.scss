@@ -523,6 +523,7 @@ input[type='number'],
     border-radius: 24px;
     overflow-x: auto;
     white-space: normal;
+    user-select: text;
 }
 .el-table .el-table__body-wrapper table {
     width: 100%;
@@ -1123,7 +1124,7 @@ input[type='number'],
 }
 
 .el-tabs__header {
-    padding: 12px 0;
+    padding: 5px;
     border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant));
 }
 
