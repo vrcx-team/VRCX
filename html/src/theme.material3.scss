@@ -1318,18 +1318,19 @@ img.x-link.el-popover__reference {
 *:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
     > .el-dialog {
     width: auto !important;
+    max-width: 1125px !important;
 }
 *:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
     > .el-dialog
     > .el-dialog__body {
     overflow-y: auto;
+    max-height: 825px;
 }
 .el-dialog {
     border-radius: 28px;
     padding: 24px;
     background: var(--md-sys-color-surface-3);
     margin: auto !important;
-    max-width: 1700px !important;
 }
 .el-dialog__body {
     padding: 0 !important;
@@ -1380,7 +1381,7 @@ img.x-link.el-popover__reference {
     font-weight: var(--md-sys-typescale-body-medium-weight);
     letter-spacing: var(--md-sys-typescale-body-medium-tracking);
     margin-bottom: 24px;
-    max-height: 825px;
+    max-height: 500px;
     scroll-margin-left: 8px;
 }
 .el-message-box__content > *,
@@ -1903,10 +1904,6 @@ i.x-user-status {
     font-size: var(--md-sys-typescale-label-large-size);
     font-weight: var(--md-sys-typescale-label-large-weight);
     letter-spacing: var(--md-sys-typescale-label-large-tracking);
-}
-
-.x-friend-item[style*='width: 350px;'] {
-    width: 200px !important;
 }
 .x-friend-list > .x-friend-group:first-child {
     color: rgb(var(--md-sys-color-on-surface));
