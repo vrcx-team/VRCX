@@ -1329,6 +1329,7 @@ img.x-link.el-popover__reference {
     padding: 24px;
     background: var(--md-sys-color-surface-3);
     margin: auto !important;
+    max-width: 1700px !important;
 }
 .el-dialog__body {
     padding: 0 !important;
@@ -1338,6 +1339,8 @@ img.x-link.el-popover__reference {
     border: none;
     border-radius: 28px;
     padding: 24px;
+    width: 500px;
+    word-break: break-all;
 }
 .el-message-box > *,
 .el-dialog > * {
@@ -1377,7 +1380,7 @@ img.x-link.el-popover__reference {
     font-weight: var(--md-sys-typescale-body-medium-weight);
     letter-spacing: var(--md-sys-typescale-body-medium-tracking);
     margin-bottom: 24px;
-    max-height: 500px;
+    max-height: 825px;
     scroll-margin-left: 8px;
 }
 .el-message-box__content > *,
@@ -1903,7 +1906,7 @@ i.x-user-status {
 }
 
 .x-friend-item[style*='width: 350px;'] {
-    width: auto !important;
+    width: 200px !important;
 }
 .x-friend-list > .x-friend-group:first-child {
     color: rgb(var(--md-sys-color-on-surface));
