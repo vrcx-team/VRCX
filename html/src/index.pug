@@ -819,6 +819,9 @@ html
                                 div
                                     el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.public') }}
                                     el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.private') }}
+                                    el-tag.x-tag-platform-pc(v-if="avatarDialog.isPC" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
+                                    el-tag.x-tag-platform-quest(v-if="avatarDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Android
+                                    el-tag.x-tag-platform-ios(v-if="avatarDialog.isIos" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
                                     el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.fallback') }}
                                     el-tag(v-if="avatarDialog.hasImposter" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.impostor') }}
                                     el-tag(v-if="avatarDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.future_proofing') }}
