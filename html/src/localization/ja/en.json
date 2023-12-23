@@ -44,7 +44,7 @@
                 "previous": "前",
                 "search_placeholder": "検索",
                 "filter_placeholder": "フィルター",
-                "chatbox_blacklist": "チャットボックス ブラックリスト",
+                "chatbox_blacklist": "チャットボックスのブラックリスト",
                 "status_tooltip": "VRCX コンパニオンの状態"
             }
         },
@@ -309,7 +309,7 @@
                         "steamvr_overlay": "SteamVR オーバーレイ",
                         "overlay_notifications": "通知オーバーレイ",
                         "notification_position": "通知の位置",
-                        "xsoverlay_notifications": "XSOverlay通知",
+                        "xsoverlay_notifications": "XSOverlayで通知する",
                         "user_images": "ユーザー画像を使用 (遅い)",
                         "notification_timeout": "通知のタイムアウト時間"
                     },
@@ -322,7 +322,8 @@
                         "when_to_display_outside_vr": "VR以外",
                         "when_to_display_game_closed": "ゲーム終了時",
                         "when_to_display_game_running": "ゲーム実行時",
-                        "when_to_display_always": "常に表示"
+                        "when_to_display_always": "常に表示する",
+                        "desktop_notification_while_afk": "AFK中でもデスクトップに通知"
                     },
                     "text_to_speech": {
                         "header": "音声読み上げ設定",
@@ -331,7 +332,7 @@
                         "when_to_play_inside_vr": "VR中",
                         "when_to_play_game_closed": "ゲーム終了時",
                         "when_to_play_game_running": "ゲーム実行時",
-                        "when_to_play_always": "常に読み上げ",
+                        "when_to_play_always": "常に読み上げる",
                         "tts_voice": "読み上げボイス"
                     }
                 }
@@ -369,7 +370,7 @@
                     "enable": "有効化",
                     "enable_tooltip": "競合を防ぐため、VRChatのconfig.jsonでDiscord Rich Presenceを無効化することを推奨します。",
                     "instance_type_player_count": "インスタンス詳細/プレイヤー数",
-                    "join_button": "Joinボタン (Publicのみ)",
+                    "join_button": "Joinボタンを表示 (Publicのみ)",
                     "hide_details_in_private": "Privateでは詳細を表示しない",
                     "hide_images": "ワールドの画像を表示しない"
                 }
@@ -379,6 +380,7 @@
                     "header": "詳細設定",
                     "launch_options": "起動オプション",
                     "screenshot_metadata": "スクリーンショットのメタデータ",
+                    "vrc_registry_backup": "VRChatのレジストリをバックアップ",
                     "common_folders": "共通フォルダ",
                     "pending_offline": {
                         "header": "オフラインの保留",
@@ -414,21 +416,22 @@
                     "video_progress_pie": {
                         "header": "動画のプログレスをオーバーレイ表示",
                         "enable": "有効化",
-                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です",
+                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です。",
                         "dance_world_only": "ダンスワールドのみ"
                     },
                     "screenshot_helper": {
                         "header": "スクリーンショット ヘルパー",
-                        "description": "ゲーム内で撮影した写真のメタデータに「ワールドID」「ワールド名」「インスタンス内のプレイヤー」を保存します",
-                        "description_tooltip": "残念ながら、Windowsは (ごく一部を除いた) PNGテキストチャンクの表示をサポートしていません。表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用して表示することができます",
+                        "description": "ゲーム内で撮影した写真のメタデータに「ワールドID」「ワールド名」「インスタンス内のプレイヤー」を保存します。",
+                        "description_tooltip": "残念ながら、Windowsは (ごく一部を除いた) PNGテキストチャンクの表示をサポートしていません。表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用してください。",
                         "enable": "有効化",
                         "modify_filename": "ファイル名を変更",
-                        "modify_filename_tooltip": "スクリーンショットのファイル名にワールドIDを追加"
+                        "modify_filename_tooltip": "スクリーンショットのファイル名にワールドIDを追加",
+                        "copy_to_clipboard": "クリップボードにコピー"
                     },
                     "app_launcher": {
                         "header": "アプリケーションの自動起動",
                         "folder": "フォルダー",
-                        "folder_tooltip": "VRChatと一緒に起動させたいアプリケーションのショートカットを配置してください",
+                        "folder_tooltip": "VRChatと一緒に起動させたいアプリケーションのショートカットを配置してください。",
                         "enable": "有効化",
                         "auto_close": "VRChat終了時に自動終了"
                     },
@@ -437,7 +440,7 @@
                         "udon_exception_logging": "Udonの例外エラーを記録",
                         "gpu_fix": "GPU Fixを有効化",
                         "gpu_fix_notice": "(再起動が必要です)",
-                        "gpu_fix_warning": "SteamVR オーバーレイが機能せず、2つ以上のGPUを使用している時のみこのオプションを有効化してください",
+                        "gpu_fix_warning": "SteamVR オーバーレイが機能せず、2つ以上のGPUを使用している時のみこのオプションを有効化してください。",
                         "disable_gamelog": "ゲームログを無効化",
                         "disable_gamelog_notice": "(何かが壊れる可能性があります)",
                         "user_cache": "ユーザーキャッシュ:",
@@ -473,7 +476,7 @@
                     "event_hud": {
                         "header": "Photon イベント HUD",
                         "enable": "有効化",
-                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です",
+                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です。",
                         "filter": "フィルター",
                         "filter_favorites": "お気に入り",
                         "filter_friends": "フレンド",
@@ -483,7 +486,7 @@
                     "timeout_hud": {
                         "header": "ユーザータイムアウト HUD",
                         "enable": "有効化",
-                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です",
+                        "enable_tooltip": "使用するにはSteamVR オーバーレイが必要です。",
                         "filter": "フィルター",
                         "filter_favorites": "お気に入り",
                         "filter_friends": "フレンド",
@@ -595,7 +598,7 @@
                 "copy_id": "IDをコピー",
                 "copy_url": "URLをコピー",
                 "copy_display_name": "表示名をコピー",
-                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります",
+                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。",
                 "instance_full": "満員"
             },
             "groups": {
@@ -678,7 +681,7 @@
                 "private_count": "プライベート {count}",
                 "capacity_count": "最大人数 {count} ({max})",
                 "self_invite_tooltip": "自分を招待",
-                "refresh_instance_info": "Refresh Instance Info",
+                "refresh_instance_info": "インスタンス情報を更新",
                 "instance_full": "満員",
                 "instance_creator": "インスタンス作成者"
             },
@@ -692,7 +695,7 @@
                 "copy_url": "URLをコピー",
                 "copy_name": "ワールド名をコピー",
                 "youtube_preview": "YouTube プレビュー動画",
-                "author_tags": "Author Tags",
+                "author_tags": "タグ",
                 "players": "プレイヤー数",
                 "favorites": "お気に入り数",
                 "visits": "総参加回数",
@@ -709,7 +712,7 @@
                 "last_visited": "最後に参加した日時",
                 "visit_count": "参加回数",
                 "time_spent": "過ごした時間",
-                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります"
+                "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。"
             },
             "json": {
                 "header": "JSON"
@@ -720,6 +723,7 @@
                 "public": "パブリック",
                 "private": "プライベート",
                 "fallback": "フォールバック",
+                "impostor": "インポスター",
                 "future_proofing": "Future Proofing",
                 "cache": "キャッシュ",
                 "content_horror": "ホラー",
@@ -729,8 +733,8 @@
                 "content_sex": "性的要素"
             },
             "labels": {
-                "public": "（パブリック）",
-                "private": "（プライベート）",
+                "public": "(パブリック)",
+                "private": "(プライベート)",
                 "own": "(自分)"
             },
             "actions": {
@@ -750,7 +754,9 @@
                 "change_content_tags": "コンテンツタグを変更",
                 "change_image": "画像を変更",
                 "download_package": "Unity Packageをダウンロード",
-                "delete": "削除"
+                "delete": "削除",
+                "delete_impostor": "Impostorを削除",
+                "create_impostor": "Impostorを作成"
             },
             "info": {
                 "header": "情報",
@@ -801,6 +807,7 @@
                 "visibility_everyone": "表示範囲: 全員",
                 "visibility_friends": "表示範囲: フレンドのみ",
                 "visibility_hidden": "表示範囲: 自分のみ",
+                "moderation_tools": "管理用ツール",
                 "leave": "グループから抜ける"
             },
             "info": {
@@ -817,8 +824,8 @@
                 "id": "グループID",
                 "id_tooltip": "IDをコピー",
                 "joined_at": "参加日時",
-                "roles": "役職",
-                "role": "役職:",
+                "roles": "ロール",
+                "role": "ロール:",
                 "role_description": "説明:",
                 "role_updated_at": "更新日:",
                 "role_created_at": "作成日:",
@@ -849,7 +856,9 @@
                 },
                 "unsubscribed_announcements": "お知らせ受信停止中",
                 "visibility": "表示範囲:",
-                "representing": "ネームプレート表示中"
+                "representing": "ネームプレート表示中",
+                "manager_notes": "管理用メモ:",
+                "search": "検索"
             },
             "gallery": {
                 "header": "写真"
@@ -867,7 +876,8 @@
             "header": "招待",
             "select_placeholder": "フレンドを選択",
             "invite_with_message": "メッセージ付きで招待を送信",
-            "invite": "招待を送信"
+            "invite": "招待を送信",
+            "friends_in_instance": "インスタンス内のフレンド"
         },
         "social_status": {
             "header": "ソーシャルステータス",
@@ -884,7 +894,7 @@
         },
         "bio": {
             "header": "自己紹介",
-            "bio_placeholder": "自己紹介を入力してください",
+            "bio_placeholder": "自己紹介を入力してください。",
             "add_link": "リンクを追加",
             "update": "更新"
         },
@@ -900,7 +910,7 @@
             "group_access_type": "グループアクセス",
             "group_access_type_members": "メンバー",
             "group_access_type_plus": "プラス",
-            "group_access_type_public": "パブリック",
+            "group_access_type_public": "Public",
             "region": "地域",
             "region_usw": "アメリカ西",
             "region_use": "アメリカ東",
@@ -972,7 +982,7 @@
             "author_tags": "タグ (コンマ区切り)",
             "content_tags": "コンテンツ タグ (コンマ区切り)",
             "content_horror": "ホラー",
-            "content_gore": "ゴア",
+            "content_gore": "グロ表現",
             "content_violence": "暴力",
             "content_adult": "成人向け",
             "content_sex": "性的要素",
@@ -983,7 +993,7 @@
             "header": "アバタータグを設定",
             "content_tags": "コンテンツ警告タグ",
             "content_horror": "ホラー",
-            "content_gore": "ゴア",
+            "content_gore": "グロ表現",
             "content_violence": "暴力",
             "content_adult": "成人向け",
             "content_sex": "性的要素",
@@ -1010,7 +1020,7 @@
             "header": "起動",
             "url": "URL",
             "short_url": "短縮URL",
-            "short_url_notice": "短縮URLは一定時間後に失効します",
+            "short_url_notice": "短縮URLは一定時間後に失効します。",
             "location": "場所",
             "copy_tooltip": "クリップボードにコピー",
             "start_as_desktop": "デスクトップモードで起動 (VR無し)",
@@ -1028,7 +1038,7 @@
         },
         "discord_names": {
             "header": "Discordの名前",
-            "description": "フレンドリストタブの「不足するエントリを読み込む」をクリックすると、フレンドリスト全体を検索することができます"
+            "description": "フレンドリストタブの「不足するエントリを読み込む」をクリックすると、フレンドリスト全体を検索することができます。"
         },
         "notification_position": {
             "header": "通知の位置",
@@ -1051,7 +1061,7 @@
         },
         "world_import": {
             "header": "お気に入りワールドをインポート",
-            "description": "ワールドIDのリストを入力してください",
+            "description": "ワールドIDのリストを入力してください。",
             "process_list": "処理リスト",
             "process_progress": "進捗:",
             "select_vrchat_group_placeholder": "グループを選択",
@@ -1068,7 +1078,7 @@
         },
         "avatar_import": {
             "header": "お気に入りアバターをインポート",
-            "description": "アバターIDのリストを入力してください",
+            "description": "アバターIDのリストを入力してください。",
             "process_list": "処理リスト",
             "process_progress": "進捗:",
             "select_group_placeholder": "グループを選択",
@@ -1084,7 +1094,7 @@
         },
         "friend_import": {
             "header": "お気に入りフレンドをインポート",
-            "description": "ユーザーIDのリストを入力してください",
+            "description": "ユーザーIDのリストを入力してください。",
             "process_list": "処理リスト",
             "process_progress": "進捗:",
             "select_group_placeholder": "グループを選択",
@@ -1230,32 +1240,70 @@
             "copy_image": "画像をコピー",
             "open_folder": "フォルダーを開く",
             "upload": "アップロード"
+        },
+        "registry_backup": {
+            "header": "VRChatのレジストリ設定をバックアップ",
+            "backup": "バックアップ",
+            "restore": "復元",
+            "save_to_file": "ファイルに保存",
+            "delete": "削除",
+            "restore_from_file": "ファイルから復元",
+            "reset": "リセット",
+            "name": "名前",
+            "date": "日付",
+            "action": "アクション",
+            "auto_backup": "毎週ごとの自動バックアップ",
+            "restore_prompt": "VRChatのレジストリ設定の自動バックアップが有効なようですが、このコンピューターからバックアップファイルを見つけられませんでした。バックアップから復元したい場合はこちらから復元できます。"
+        },
+        "group_member_moderation": {
+            "header": "グループメンバーを管理",
+            "notes": "管理用ノート",
+            "note_placeholder": "クリックしてノートを追加",
+            "actions": "アクション",
+            "kick": "キック",
+            "ban": "BAN",
+            "save_note": "ノートを保存",
+            "group_members": "グループメンバー:",
+            "progress": "進捗:",
+            "display_name": "表示名",
+            "visibility": "表示範囲",
+            "avatar": "アバター",
+            "joined_at": "参加日時",
+            "note": "ノート",
+            "roles": "ロール",
+            "selected_users": "選択したユーザー",
+            "select_all": "全て選択",
+            "cancel": "キャンセル",
+            "choose_roles_placeholder": "ロールを選択",
+            "selected_roles": "選択したロール",
+            "remove_roles": "ロールを削除",
+            "add_roles": "ロールを追加"
         }
     },
     "prompt": {
         "totp": {
             "header": "2段階認証",
-            "description": "認証アプリの数字を入力してください",
+            "description": "認証アプリの数字を入力してください。",
             "use_otp": "OTPを使う",
             "verify": "認証",
             "input_placeholder": "コード",
-            "input_error": "無効なコードです"
+            "input_error": "無効なコードです。"
         },
         "otp": {
             "header": "2段階認証",
-            "description": "保存したリカバリーコードのどれか一つを入力してください",
+            "description": "保存したリカバリーコードのどれか一つを入力してください。",
             "use_totp": "TOTPを使う",
             "verify": "認証",
             "input_placeholder": "コード",
-            "input_error": "無効なコードです"
+            "input_error": "無効なコードです。"
         },
         "email_otp": {
             "header": "2段階認証",
-            "description": "メールに送られてきた数字を入力してください",
+            "description": "メールに送られてきた数字を入力してください。",
             "resend": "メールを再送信",
             "verify": "認証",
             "input_placeholder": "コード",
-            "input_error": "無効なコードです"
+            "input_error": "無効なコードです。"
         },
         "primary_password": {
             "header": "プライマリーパスワードが必要です",
@@ -1263,124 +1311,124 @@
         },
         "change_favorite_group_name": {
             "header": "グループ名を変更",
-            "description": "新しい名前を入力してください",
+            "description": "新しい名前を入力してください。",
             "cancel": "キャンセル",
             "change": "変更",
             "input_placeholder": "名前",
-            "input_error": "名前が必要です",
+            "input_error": "名前が必要です。",
             "message": {
-                "success": "グループの名前を変更しました"
+                "success": "グループの名前を変更しました。"
             }
         },
         "direct_access_user_id": {
             "header": "ダイレクトアクセス",
-            "description": "ユーザーURL/IDを入力してください",
+            "description": "ユーザーURL/IDを入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "ユーザーURL/IDが必要です",
+            "input_error": "ユーザーURL/IDが必要です。",
             "message": {
-                "error": "無効なURL/IDです"
+                "error": "無効なURL/IDです。"
             }
         },
         "direct_access_username": {
             "header": "ダイレクトアクセス",
-            "description": "ユーザーネームを入力してください",
+            "description": "ユーザーネームを入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "ユーザーネームが必要です"
+            "input_error": "ユーザーネームが必要です。"
         },
         "direct_access_world_id": {
             "header": "ダイレクトアクセス",
-            "description": "ワールドURL/IDを入力してください",
+            "description": "ワールドURL/IDを入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "ワールドURL/IDが必要です",
+            "input_error": "ワールドURL/IDが必要です。",
             "message": {
-                "error": "無効なURL/IDです"
+                "error": "無効なURL/IDです。"
             }
         },
         "direct_access_avatar_id": {
             "header": "ダイレクトアクセス",
-            "description": "アバターURL/IDを入力してください",
+            "description": "アバターURL/IDを入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "アバターURL/IDが必要です",
+            "input_error": "アバターURL/IDが必要です。",
             "message": {
-                "error": "無効なURL/IDです"
+                "error": "無効なURL/IDです。"
             }
         },
         "direct_access_omni": {
             "header": "ダイレクトアクセス",
-            "description": "ユーザー/ワールド/インスタンス/アバター/グループURL/IDを入力してください",
+            "description": "ユーザー/ワールド/インスタンス/アバター/グループURL/IDを入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "URL/IDが必要です",
+            "input_error": "URL/IDが必要です。",
             "message": {
-                "error": "無効なURL/IDです"
+                "error": "無効なURL/IDです。"
             }
         },
         "notification_timeout": {
             "header": "通知のタイムアウト時間",
-            "description": "秒数を入力してください",
+            "description": "秒数を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な数字を入力してください"
+            "input_error": "有効な数字を入力してください。"
         },
         "overlay_message_timeout": {
             "header": "オーバーレイメッセージのタイムアウト時間",
-            "description": "秒数を入力してください",
+            "description": "秒数を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な数字を入力してください"
+            "input_error": "有効な数字を入力してください。"
         },
         "rename_avatar": {
             "header": "アバター名を変更",
-            "description": "アバター名を入力してください",
+            "description": "アバター名を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な名前を入力してください",
+            "input_error": "有効な名前を入力してください。",
             "message": {
-                "success": "アバター名を変更しました"
+                "success": "アバター名を変更しました。"
             }
         },
         "change_avatar_description": {
             "header": "アバターの説明を変更",
-            "description": "アバターの説明を入力してください",
+            "description": "アバターの説明を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な説明文を入力してください",
+            "input_error": "有効な説明文を入力してください。",
             "message": {
-                "success": "アバターの説明を変更しました"
+                "success": "アバターの説明を変更しました。"
             }
         },
         "rename_world": {
             "header": "ワールド名を変更",
-            "description": "ワールド名を入力してください",
+            "description": "ワールド名を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な名前を入力してください",
+            "input_error": "有効な名前を入力してください。",
             "message": {
-                "success": "ワールド名を変更しました"
+                "success": "ワールド名を変更しました。"
             }
         },
         "change_world_description": {
             "header": "ワールドの説明を変更",
-            "description": "ワールドの説明を入力してください",
+            "description": "ワールドの説明を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な説明文を入力してください",
+            "input_error": "有効な説明文を入力してください。",
             "message": {
-                "success": "ワールドの説明を変更しました"
+                "success": "ワールドの説明を変更しました。"
             }
         },
         "change_world_capacity": {
             "header": "最大人数を変更",
-            "description": "ワールドの最大人数を入力してください。最高値: 40",
+            "description": "ワールドの最大人数を入力してください。 (最高値: 40)",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な数字を入力してください",
+            "input_error": "有効な数字を入力してください。",
             "message": {
-                "success": "ワールドの最大人数を変更しました"
+                "success": "ワールドの最大人数を変更しました。"
             }
         },
         "change_world_recommended_capacity": {
@@ -1395,13 +1443,13 @@
         },
         "change_world_preview": {
             "header": "YouTube プレビュー動画を変更",
-            "description": "ワールドのYouTube 動画リンクを入力してください",
+            "description": "ワールドのYouTube 動画リンクを入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効なYouTube URLを入力してください",
+            "input_error": "有効なYouTube URLを入力してください。",
             "message": {
-                "error": "無効なYouTube URLです",
-                "success": "ワールドのYouTube プレビュー動画を変更しました"
+                "error": "無効なYouTube URLです。",
+                "success": "ワールドのYouTube プレビュー動画を変更しました。"
             }
         },
         "change_table_size": {
@@ -1409,48 +1457,48 @@
             "description": "データベースからUIページに読み込まれるエントリの量を制限します。テーブル数が多いとRAM使用量とパフォーマンスに影響を及ぼす可能性があります。 (デフォルト:1000, 最高値: 10000)",
             "cancel": "キャンセル",
             "save": "保存",
-            "input_error": "有効な数字を入力してください"
+            "input_error": "有効な数字を入力してください。"
         },
         "photon_lobby_timeout": {
             "header": "ユーザータイムアウト しきい値",
-            "description": "タイムアウトまでの秒数を入力してください (デフォルト: 3)",
+            "description": "タイムアウトまでの秒数を入力してください。 (デフォルト: 3)",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な数字を入力してください"
+            "input_error": "有効な数字を入力してください。"
         },
         "auto_clear_cache": {
             "header": "VRCX キャッシュの自動消去タイマー",
             "description": "消去までの時間を入力してください。長い時間を指定するとRAM使用量とパフォーマンスに影響を及ぼす可能性があります。 (デフォルト: 24, 無効化: 0)",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "有効な数字を入力してください"
+            "input_error": "有効な数字を入力してください。"
         },
         "new_local_favorite_group": {
             "header": "新しいグループ",
-            "description": "お気に入りワールド グループ名を入力してください",
+            "description": "お気に入りワールド グループ名を入力してください。",
             "cancel": "キャンセル",
             "ok": "OK",
-            "input_error": "名前を入力してください",
+            "input_error": "名前を入力してください。",
             "message": {
                 "error": "このグループ名は既に {name} として存在しています。"
             }
         },
         "local_favorite_group_rename": {
             "header": "グループ名を変更",
-            "description": "お気に入りワールド グループ名を入力してください",
+            "description": "お気に入りワールド グループ名を入力してください。",
             "cancel": "キャンセル",
             "save": "保存",
-            "input_error": "名前を入力してください",
+            "input_error": "名前を入力してください。",
             "message": {
                 "error": "このグループ名は既に {name} として存在しています。"
             }
         },
         "pending_offline_delay": {
             "header": "オフラインの保留時間",
-            "description": "オフライン保留の待機秒数を指定してください (デフォルト: 110)",
+            "description": "オフライン保留の待機秒数を指定してください。 (デフォルト: 110)",
             "cancel": "キャンセル",
             "save": "保存",
-            "input_error": "有効な数字を入力してください"
+            "input_error": "有効な数字を入力してください。"
         }
     },
     "table": {
