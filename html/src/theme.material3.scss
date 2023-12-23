@@ -18,7 +18,7 @@ body {
     --md-sys-color-surface: 28, 27, 31;
     --md-sys-color-on-surface: 230, 225, 229;
     --md-sys-color-surface-variant: 73, 69, 79;
-    --md-sys-color-on-surface-variant: 202, 196, 208;
+    --md-sys-color-on-surface-variant: 220, 213, 227;
     --md-sys-color-background: 28, 27, 31;
     --md-sys-color-on-background: 230, 225, 229;
     --md-sys-color-outline: 147, 143, 153;
@@ -1318,7 +1318,6 @@ img.x-link.el-popover__reference {
 }
 *:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
     > .el-dialog {
-    width: auto !important;
     max-width: 1125px !important;
 }
 *:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
@@ -1387,7 +1386,7 @@ img.x-link.el-popover__reference {
 }
 .el-message-box__content > *,
 .el-dialog__body > * {
-    padding-right: 8px;
+    height: 0% !important;
 }
 
 .el-message-box__btns .el-button,
