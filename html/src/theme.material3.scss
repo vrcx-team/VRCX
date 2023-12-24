@@ -523,6 +523,7 @@ input[type='number'],
     border-radius: 24px;
     overflow-x: auto;
     white-space: normal;
+    user-select: text;
 }
 .el-table .el-table__body-wrapper table {
     width: 100%;
@@ -1123,7 +1124,7 @@ input[type='number'],
 }
 
 .el-tabs__header {
-    padding: 12px 0;
+    padding: 5px;
     border-bottom: 1px solid rgb(var(--md-sys-color-outline-variant));
 }
 
@@ -1318,11 +1319,13 @@ img.x-link.el-popover__reference {
 *:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
     > .el-dialog {
     width: auto !important;
+    max-width: 1125px !important;
 }
 *:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
     > .el-dialog
     > .el-dialog__body {
     overflow-y: auto;
+    max-height: 825px;
 }
 .el-dialog {
     border-radius: 28px;
@@ -1338,6 +1341,8 @@ img.x-link.el-popover__reference {
     border: none;
     border-radius: 28px;
     padding: 24px;
+    width: 500px;
+    word-break: break-all;
 }
 .el-message-box > *,
 .el-dialog > * {
@@ -1900,10 +1905,6 @@ i.x-user-status {
     font-size: var(--md-sys-typescale-label-large-size);
     font-weight: var(--md-sys-typescale-label-large-weight);
     letter-spacing: var(--md-sys-typescale-label-large-tracking);
-}
-
-.x-friend-item[style*='width: 350px;'] {
-    width: auto !important;
 }
 .x-friend-list > .x-friend-group:first-child {
     color: rgb(var(--md-sys-color-on-surface));
