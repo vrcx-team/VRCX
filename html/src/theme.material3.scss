@@ -402,6 +402,15 @@ input[type='number'],
     min-height: 0;
     opacity: 0;
 }
+.vrc-instance-queue-message {
+    padding: 10px !important;
+    background: #f0f9eb !important;
+}
+
+.el-message.is-closable .el-message__content {
+    padding-right: 16px;
+}
+
 
 /* Typography */
 
