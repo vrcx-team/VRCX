@@ -13,6 +13,8 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "8.0.x"
+      - name: Build .NET Application
+        run: dotnet build -p:Configuration=Release -p:Platform=x64 -p:EnableWindowsTargeting=true --self-contained
       - uses: actions/upload-artifact@v3
         with:
           name: vrcx
