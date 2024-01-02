@@ -1,61 +1,45 @@
 name: VRCX
 
 on:
-  - push
-  - pull_request
+  - workflow_dispatch
 
 jobs:
-  build_vrcx_win:
-    runs-on: ubuntu-latest
+  build_dotnet:
+    runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.0.x"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: vrcx
+          path: bin/x64/Release
 
-    - name: Setup .NET 8
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
+  build_node:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: html
 
-    - name: Setup NodeJS 18
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18
-
-    - name: Setup NSIS
-      run: sudo apt update && sudo apt install -y nsis nsis-pluginapi
-
-    - name: Restore Node Dependencies
-      run: cd ${{ github.workspace }}/html && npm ci && cd ${{ github.workspace }}
-
-    #- name: JS Lint
-    #  run: cd html && npm run lint && cd ..
-
-    - name: Build Web UI
-      run: cd ${{ github.workspace }}/html && npm run production && cd ${{ github.workspace }}
-
-    - name: Build .NET Application
-      run: dotnet build -p:Configuration=Release -p:Platform=x64 -p:EnableWindowsTargeting=true --self-contained
-
-    - name: Copy Web UI
-      run: cp -r ${{ github.workspace }}/html/dist ${{ github.workspace }}/bin/x64/Release/html
-
-    - name: Fix NSIS Permissions
-      run: sudo chown -R $(whoami) /usr/share/nsis/Plugins/
-
-    - name: Build Installer
-      uses: joncloud/makensis-action@v4
-      with:
-        script-file: ${{ github.workspace }}/Installer/installer.nsi
-        additional-plugin-paths: ${{ github.workspace }}/Installer/Plugins
-
-    - name: Upload Zip
-      uses: actions/upload-artifact@v3
-      with:
-        name: "VRCX"
-        path: ${{ github.workspace }}/bin/x64/Release/*
-
-    - name: Upload Installer
-      uses: actions/upload-artifact@v3
-      with:
-        name: "VRCX_Setup"
-        path: ${{ github.workspace }}/Installer/VRCX_Setup.exe
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Restore dependencies
+        run: npm ci
+      - name: Build
+        run: npm run production
+      - name: Fix folder structure
+        id: fix-folders
+        run: |
+          mkdir upload
+          mv dist upload/html
+      - uses: actions/upload-artifact@v3
+        with:
+          name: vrcx
+          path: html/upload
