@@ -280,14 +280,15 @@ input[type='number'],
 .el-pagination--small span:not([class*='suffix']),
 .el-pagination .el-select .el-input .el-input__inner,
 .el-input--mini .el-input__icon,
+.el-input--small,
 .el-pagination--small .btn-next,
 .el-pagination--small .btn-prev,
 .el-pagination--small .el-pager li,
 .el-pagination--small .el-pager li.btn-quicknext,
 .el-pagination--small .el-pager li.btn-quickprev,
 .el-pagination--small .el-pager li:last-child {
-    height: 32px;
-    line-height: 32px;
+    height: 45px;
+    line-height: 45px;
 }
 .el-pagination .el-select .el-input .el-input__inner,
 .el-input--mini .el-input__icon {
@@ -1094,7 +1095,7 @@ input[type='number'],
 }
 
 .x-friend-item .detail {
-    margin: 0 4px;
+    margin: 0 -2px;
 }
 
 .x-friend-item > .detail > .name {
@@ -1340,6 +1341,7 @@ img.x-link.el-popover__reference {
     padding: 24px;
     background: var(--md-sys-color-surface-3);
     margin: auto !important;
+    width: 780px !important
 }
 .el-dialog__body {
     padding: 0 !important;
