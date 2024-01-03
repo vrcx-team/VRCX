@@ -228,6 +228,12 @@ div[style*='margin: 0px 0px 10px;'] {
 
 /* Input filter */
 
+.el-input--small,
+.el-input__inner{
+    height: 45px !important;
+    line-height: 45px !important;
+}
+
 .el-input__inner {
     height: 48px;
 }
@@ -280,15 +286,14 @@ input[type='number'],
 .el-pagination--small span:not([class*='suffix']),
 .el-pagination .el-select .el-input .el-input__inner,
 .el-input--mini .el-input__icon,
-.el-input--small,
 .el-pagination--small .btn-next,
 .el-pagination--small .btn-prev,
 .el-pagination--small .el-pager li,
 .el-pagination--small .el-pager li.btn-quicknext,
 .el-pagination--small .el-pager li.btn-quickprev,
 .el-pagination--small .el-pager li:last-child {
-    height: 45px;
-    line-height: 45px;
+    height: 32px !important;
+    line-height: 32px !important;
 }
 .el-pagination .el-select .el-input .el-input__inner,
 .el-input--mini .el-input__icon {
