@@ -1331,9 +1331,14 @@ img.x-link.el-popover__reference {
 .el-dialog__wrapper {
     display: grid;
 }
-*:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
-    > .el-dialog {
+
+/* Notification position box (for some reason?!) */
+
+// this is awful never do this
+*:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog) 
+    > .el-dialog:not([aria-label*="Notification Position"]) {
     max-width: 1125px !important;
+    width: 1125px !important;
 }
 *:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
     > .el-dialog
@@ -1346,7 +1351,6 @@ img.x-link.el-popover__reference {
     padding: 24px;
     background: var(--md-sys-color-surface-3);
     margin: auto !important;
-    width: 780px !important
 }
 .el-dialog__body {
     padding: 0 !important;
