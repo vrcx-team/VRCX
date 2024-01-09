@@ -643,8 +643,8 @@ speechSynthesis.getVoices();
             options.N > 0
                 ? options.N > options.params.offset
                 : options.N < 0
-                ? args.json.length
-                : options.params.n === args.json.length)
+                  ? args.json.length
+                  : options.params.n === args.json.length)
         ) {
             this.bulk(options);
         } else if ('done' in options) {
@@ -4684,7 +4684,7 @@ speechSynthesis.getVoices();
             }
             this.errorNoty = new Noty({
                 type: 'error',
-                text: `WebSocket Error: ${err}`
+                text: escapeTag(`WebSocket Error: ${err}`)
             }).show();
             return;
         }
@@ -14687,14 +14687,10 @@ speechSynthesis.getVoices();
         'VRCX_StartAtWindowsStartup',
         false
     );
-    $app.data.isStartAsMinimizedState = false;
-    $app.data.isCloseToTray = false;
-    VRCXStorage.Get('VRCX_StartAsMinimizedState').then((result) => {
-        $app.isStartAsMinimizedState = result === 'true';
-    });
-    VRCXStorage.Get('VRCX_CloseToTray').then((result) => {
-        $app.isCloseToTray = result === 'true';
-    });
+    $app.data.isStartAsMinimizedState =
+        (await VRCXStorage.Get('VRCX_StartAsMinimizedState')) === 'true';
+    $app.data.isCloseToTray =
+        (await VRCXStorage.Get('VRCX_CloseToTray')) === 'true';
     if (await configRepository.getBool('VRCX_CloseToTray')) {
         // move back to JSON
         $app.data.isCloseToTray =
@@ -14702,6 +14698,8 @@ speechSynthesis.getVoices();
         VRCXStorage.Set('VRCX_CloseToTray', $app.data.isCloseToTray.toString());
         await configRepository.remove('VRCX_CloseToTray');
     }
+    $app.data.disableWorldDatabase =
+        (await VRCXStorage.Get('VRCX_DisableWorldDatabase')) === 'true';
     $app.methods.saveVRCXWindowOption = async function () {
         await configRepository.setBool(
             'VRCX_StartAtWindowsStartup',
@@ -14712,6 +14710,10 @@ speechSynthesis.getVoices();
             this.isStartAsMinimizedState.toString()
         );
         VRCXStorage.Set('VRCX_CloseToTray', this.isCloseToTray.toString());
+        VRCXStorage.Set(
+            'VRCX_DisableWorldDatabase',
+            this.disableWorldDatabase.toString()
+        );
         AppApi.SetStartup(this.isStartAtWindowsStartup);
     };
     $app.data.photonEventOverlay = await configRepository.getBool(
@@ -16662,6 +16664,16 @@ speechSynthesis.getVoices();
                                 D.isShowAvatar = true;
                             }
                         });
+                    } else {
+                        database
+                            .getUserStats(D.ref, inCurrentWorld)
+                            .then((ref1) => {
+                                if (ref1.userId === D.id) {
+                                    D.lastSeen = ref1.created_at;
+                                    D.joinCount = ref1.joinCount;
+                                    D.timeSpent = ref1.timeSpent;
+                                }
+                            });
                     }
                     API.getRepresentedGroup({ userId }).then((args1) => {
                         D.representedGroup = args1.json;
@@ -19541,14 +19553,25 @@ speechSynthesis.getVoices();
         $app.launchOptionsDialog.visible = false;
     });
 
-    $app.methods.updateLaunchOptions = async function () {
+    $app.methods.updateLaunchOptions = function () {
         var D = this.launchOptionsDialog;
-        D.visible = false;
         D.launchArguments = String(D.launchArguments)
             .replace(/\s+/g, ' ')
             .trim();
-        await configRepository.setString('launchArguments', D.launchArguments);
-        await configRepository.setString(
+        configRepository.setString('launchArguments', D.launchArguments);
+        if (
+            D.vrcLaunchPathOverride &&
+            D.vrcLaunchPathOverride.endsWith('.exe') &&
+            !D.vrcLaunchPathOverride.endsWith('launch.exe')
+        ) {
+            this.$message({
+                message:
+                    'Invalid path, you must enter VRChat folder or launch.exe',
+                type: 'error'
+            });
+            return;
+        }
+        configRepository.setString(
             'vrcLaunchPathOverride',
             D.vrcLaunchPathOverride
         );
@@ -19556,6 +19579,7 @@ speechSynthesis.getVoices();
             message: 'Updated launch options',
             type: 'success'
         });
+        D.visible = false;
     };
 
     $app.methods.showLaunchOptions = function () {
@@ -20101,10 +20125,19 @@ speechSynthesis.getVoices();
                 }
             });
         } else {
-            AppApi.StartGame(args.join(' '));
-            this.$message({
-                message: 'VRChat launched',
-                type: 'success'
+            AppApi.StartGame(args.join(' ')).then((result) => {
+                if (!result) {
+                    this.$message({
+                        message:
+                            'Failed to find VRChat, set a custom path in launch options',
+                        type: 'error'
+                    });
+                } else {
+                    this.$message({
+                        message: 'VRChat launched',
+                        type: 'success'
+                    });
+                }
             });
         }
         console.log('Launch Game', args.join(' '), desktopMode);

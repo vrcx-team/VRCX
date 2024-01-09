@@ -407,6 +407,14 @@ html
                                                     i.el-icon-warning
                                             span.extra(v-if="userDialog.timeSpent === 0") -
                                             span.extra(v-else) {{ userDialog.timeSpent | timeToText }}
+                                template(v-else)
+                                    .x-friend-item(@click="showPreviousInstancesUserDialog(userDialog.ref)")
+                                        .detail
+                                            span.name {{ $t('dialog.user.info.play_time') }}
+                                                el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" :content="$t('dialog.user.info.accuracy_notice')")
+                                                    i.el-icon-warning
+                                            span.extra(v-if="userDialog.timeSpent === 0") -
+                                            span.extra(v-else) {{ userDialog.timeSpent | timeToText }}
                                 .x-friend-item(style="cursor:default")
                                     el-tooltip(placement="top")
                                         template(#content)
@@ -1486,7 +1494,7 @@ html
                         el-button(type="primary" size="small" @click="createGroupInstance()" :disabled="!newInstanceDialog.groupId") {{ $t('dialog.new_instance.create_instance') }}
 
             //- dialog: launch options
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchOptionsDialog" :visible.sync="launchOptionsDialog.visible" :title="$t('dialog.launch_options.header')" width="500px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchOptionsDialog" :visible.sync="launchOptionsDialog.visible" :title="$t('dialog.launch_options.header')" width="600px")
                 div(style="font-size:12px")
                     | {{ $t('dialog.launch_options.description') }} #[br]
                     | {{ $t('dialog.launch_options.example') }} #[el-tag(size="mini") --fps=144]

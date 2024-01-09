@@ -148,25 +148,6 @@ namespace VRCX
         }
 
         /// <summary>
-        /// Returns an array of arrays containing information about the connected VR devices.
-        /// Each sub-array contains the type of device and its current state
-        /// </summary>
-        /// <returns>An array of arrays containing information about the connected VR devices.</returns>
-        public string[][] GetVRDevices()
-        {
-            return VRCXVR.Instance.GetDevices();
-        }
-
-        /// <summary>
-        /// Returns the current CPU usage as a percentage.
-        /// </summary>
-        /// <returns>The current CPU usage as a percentage.</returns>
-        public float CpuUsage()
-        {
-            return CpuMonitor.Instance.CpuUsage;
-        }
-
-        /// <summary>
         /// Retrieves an image from the VRChat API and caches it for future use. The function will return the cached image if it already exists.
         /// </summary>
         /// <param name="url">The URL of the image to retrieve.</param>
@@ -350,19 +331,6 @@ namespace VRCX
         public void DoFunny()
         {
             WinformThemer.DoFunny();
-        }
-
-        /// <summary>
-        /// Returns the number of milliseconds that the system has been running.
-        /// </summary>
-        /// <returns>The number of milliseconds that the system has been running.</returns>
-        public double GetUptime()
-        {
-            using (var uptime = new PerformanceCounter("System", "System Up Time"))
-            {
-                uptime.NextValue();
-                return TimeSpan.FromSeconds(uptime.NextValue()).TotalMilliseconds;
-            }
         }
 
         /// <summary>

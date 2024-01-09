@@ -135,16 +135,14 @@ namespace VRCX
             Application.SetCompatibleTextRenderingDefault(false);
 
             logger.Info("{0} Starting...", Version);
-
-            // I'll re-do this whole function eventually I swear
-            var worldDBServer = new WorldDBManager("http://127.0.0.1:22500/");
-            Task.Run(worldDBServer.Start);
+            
 
             ProcessMonitor.Instance.Init();
             SQLiteLegacy.Instance.Init();
             VRCXStorage.Load();
             CpuMonitor.Instance.Init();
             Discord.Instance.Init();
+            WorldDBManager.Instance.Init();
             WebApi.Instance.Init();
             LogWatcher.Instance.Init();
             AutoAppLaunchManager.Instance.Init();
@@ -161,7 +159,7 @@ namespace VRCX
             AutoAppLaunchManager.Instance.Exit();
             LogWatcher.Instance.Exit();
             WebApi.Instance.Exit();
-            worldDBServer.Stop();
+            WorldDBManager.Instance.Stop();
 
             Discord.Instance.Exit();
             CpuMonitor.Instance.Exit();
