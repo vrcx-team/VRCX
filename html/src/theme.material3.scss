@@ -229,7 +229,7 @@ div[style*='margin: 0px 0px 10px;'] {
 /* Input filter */
 
 .el-input--small,
-.el-input__inner{
+.el-input__inner {
     height: 45px !important;
     line-height: 45px !important;
 }
@@ -416,7 +416,6 @@ input[type='number'],
 .el-message.is-closable .el-message__content {
     padding-right: 16px;
 }
-
 
 /* Typography */
 
@@ -1335,8 +1334,8 @@ img.x-link.el-popover__reference {
 /* Notification position box (for some reason?!) */
 
 // this is awful never do this
-*:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog) 
-    > .el-dialog:not([aria-label*="Notification Position"]) {
+*:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
+    > .el-dialog:not([aria-label*='Notification Position']) {
     max-width: 1125px !important;
     width: 1125px !important;
 }
