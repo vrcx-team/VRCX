@@ -403,6 +403,10 @@
                         "header": "Автоматически управлять кэшем при закрытии VRChat",
                         "description": "Автоматически удалять старые версии из кэша"
                     },
+                    "disable_local_world_persistence": {
+                        "header": "Отключить Local World Persistence",
+                        "description": "Отключить локальный веб-сервер (требуется перезапуск)"
+                    },
                     "remote_database": {
                         "header": "Удаленная база данных аватаров",
                         "enable": "Включить",
