@@ -219,11 +219,11 @@
                     "auto_state_change": "Автосмена статуса",
                     "auto_state_change_tooltip": "Автоматически изменяет статус, когда в инстансе есть другие игроки (Один/Компания)",
                     "auto_state_change_off": "Выкл",
-                    "auto_state_change_active_or_ask_me": "Active / Ask Me",
-                    "auto_state_change_active_or_busy": "Active / Busy",
-                    "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
-                    "auto_state_change_join_me_or_busy": "Join Me / Busy",
-                    "auto_state_change_ask_me_or_busy": "Ask Me / Busy"
+                    "auto_state_change_active_or_ask_me": "Спроси меня",
+                    "auto_state_change_active_or_busy": "Занят",
+                    "auto_state_change_join_me_or_ask_me": "Присоединяйтесь к мне / Спросить меня",
+                    "auto_state_change_join_me_or_busy": "Присоединиться к мне / Занят",
+                    "auto_state_change_ask_me_or_busy": "Спросить меня / Занят"
                 },
                 "legal_notice": {
                     "header": "Правовая информация",
@@ -322,7 +322,8 @@
                         "when_to_display_outside_vr": "Вне VR",
                         "when_to_display_game_closed": "Игра закрыта",
                         "when_to_display_game_running": "Игра запущена",
-                        "when_to_display_always": "Всегда"
+                        "when_to_display_always": "Всегда",
+                        "desktop_notification_while_afk": "Уведомления на рабочем столе при AFK"
                     },
                     "text_to_speech": {
                         "header": "Параметры преобразования текста в речь",
@@ -379,6 +380,7 @@
                     "header": "Расширенные",
                     "launch_options": "Параметры запуска",
                     "screenshot_metadata": "Метаданные скриншота",
+                    "vrc_registry_backup": "Резервное копирование реестра VRC",
                     "common_folders": "Общие папки",
                     "pending_offline": {
                         "header": "Ожидание отключения",
@@ -517,14 +519,14 @@
                 "active": "Активный",
                 "offline": "Офлайн",
                 "online": "Online",
-                "join_me": "Join Me",
-                "ask_me": "Ask Me",
-                "busy": "Do Not Disturb"
+                "join_me": "Присоединиться ко мне",
+                "ask_me": "Спросить меня",
+                "busy": "Не беспокоить"
             },
             "previous_display_names": "Предыдущие отображаемые имена:",
             "tags": {
                 "friend_no": "Друг №{number}",
-                "vrchat_team": "VRChat Team"
+                "vrchat_team": "Команда VRChat"
             },
             "actions": {
                 "favorite_tooltip": "Добавить в Избранное",
@@ -704,6 +706,7 @@
                 "last_updated": "Последнее обновление",
                 "publication_date": "Дата публикации",
                 "labs_publication_date": "Дата публикации в Labs",
+                "time_in_labs": "Время в Labs:",
                 "version": "Версия",
                 "platform": "Платформа",
                 "last_visited": "Последний визит",
@@ -719,7 +722,8 @@
             "tags": {
                 "public": "Публичный",
                 "private": "Приватный",
-                "fallback": "Fallback",
+                "fallback": "Резервный",
+                "impostor": "Импортер",
                 "future_proofing": "Перспективные решения",
                 "cache": "Кэш",
                 "content_horror": "Ужасы",
@@ -779,7 +783,7 @@
                 "private": "Приватная",
                 "open": "Открытая",
                 "request": "По запросу",
-                "invite": "Invite",
+                "invite": "Инвайт",
                 "closed": "Закрытая",
                 "joined": "В группе",
                 "banned": "Заблокирован",
@@ -803,6 +807,7 @@
                 "visibility_everyone": "Видимость: все",
                 "visibility_friends": "Видимость: Только друзья",
                 "visibility_hidden": "Видимость: Только я",
+                "moderation_tools": "Инструменты модерации",
                 "leave": "Покинуть группу"
             },
             "info": {
@@ -851,7 +856,9 @@
                 },
                 "unsubscribed_announcements": "Отписаться от объявлений",
                 "visibility": "Видимость:",
-                "representing": "Установить как репрезентативную группу"
+                "representing": "Установить как репрезентативную группу",
+                "manager_notes": "Заметки руководителя:",
+                "search": "Поиск"
             },
             "gallery": {
                 "header": "Фото"
@@ -869,7 +876,8 @@
             "header": "Пригласить",
             "select_placeholder": "Выбрать друзей",
             "invite_with_message": "Пригласить с сообщением",
-            "invite": "Пригласить"
+            "invite": "Пригласить",
+            "friends_in_instance": "Друзья в инстансе"
         },
         "social_status": {
             "header": "Статус",
