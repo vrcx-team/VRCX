@@ -18,7 +18,7 @@ body {
     --md-sys-color-surface: 28, 27, 31;
     --md-sys-color-on-surface: 230, 225, 229;
     --md-sys-color-surface-variant: 73, 69, 79;
-    --md-sys-color-on-surface-variant: 202, 196, 208;
+    --md-sys-color-on-surface-variant: 220, 213, 227;
     --md-sys-color-background: 28, 27, 31;
     --md-sys-color-on-background: 230, 225, 229;
     --md-sys-color-outline: 147, 143, 153;
@@ -228,6 +228,12 @@ div[style*='margin: 0px 0px 10px;'] {
 
 /* Input filter */
 
+.el-input--small,
+.el-input__inner{
+    height: 45px !important;
+    line-height: 45px !important;
+}
+
 .el-input__inner {
     height: 48px;
 }
@@ -286,8 +292,8 @@ input[type='number'],
 .el-pagination--small .el-pager li.btn-quicknext,
 .el-pagination--small .el-pager li.btn-quickprev,
 .el-pagination--small .el-pager li:last-child {
-    height: 32px;
-    line-height: 32px;
+    height: 32px !important;
+    line-height: 32px !important;
 }
 .el-pagination .el-select .el-input .el-input__inner,
 .el-input--mini .el-input__icon {
@@ -402,6 +408,15 @@ input[type='number'],
     min-height: 0;
     opacity: 0;
 }
+.vrc-instance-queue-message {
+    padding: 10px !important;
+    background: #f0f9eb !important;
+}
+
+.el-message.is-closable .el-message__content {
+    padding-right: 16px;
+}
+
 
 /* Typography */
 
@@ -1085,7 +1100,7 @@ input[type='number'],
 }
 
 .x-friend-item .detail {
-    margin: 0 4px;
+    margin: 0 -2px;
 }
 
 .x-friend-item > .detail > .name {
@@ -1316,10 +1331,14 @@ img.x-link.el-popover__reference {
 .el-dialog__wrapper {
     display: grid;
 }
-*:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
-    > .el-dialog {
-    width: auto !important;
+
+/* Notification position box (for some reason?!) */
+
+// this is awful never do this
+*:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog) 
+    > .el-dialog:not([aria-label*="Notification Position"]) {
     max-width: 1125px !important;
+    width: 1125px !important;
 }
 *:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
     > .el-dialog
@@ -1384,10 +1403,11 @@ img.x-link.el-popover__reference {
     margin-bottom: 24px;
     max-height: 500px;
     scroll-margin-left: 8px;
+    word-break: break-word;
 }
 .el-message-box__content > *,
 .el-dialog__body > * {
-    padding-right: 8px;
+    height: 0% !important;
 }
 
 .el-message-box__btns .el-button,
