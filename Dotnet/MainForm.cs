@@ -63,7 +63,7 @@ namespace VRCX
                     Browser.ShowDevTools();
             };
 
-            Util.ApplyJavascriptBindings(Browser.JavascriptObjectRepository);
+            JavascriptBindings.ApplyAppJavascriptBindings(Browser.JavascriptObjectRepository);
             Browser.ConsoleMessage += (_, args) =>
             {
                 jslogger.Debug(args.Message + " (" + args.Source + ":" + args.Line + ")");

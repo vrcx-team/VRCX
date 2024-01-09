@@ -29,6 +29,7 @@
         "LogWatcher": "readonly",
         "Discord": "readonly",
         "AppApi": "readonly",
+        "AppApiVr": "readonly",
         "SharedVariable": "readonly",
         "WebApi": "readonly",
         "AssetBundleCacher": "readonly"
