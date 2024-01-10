@@ -47,9 +47,9 @@ VRCX是一个用于VRChat的辅助应用，提供有关VRChat的一些信息并�
 - :bar_chart: 改进的Discord Rich Presence集成面板
   - 您可以选择在Discord中显示有关当前房间的更多信息。
   - 针对像PyPyDance、LSMedia、Movies&Chill和VRDancing热门世界的功能集成。
-  - 这包括世界缩略图、名称、房间ID和玩家统计，具体取决于你的设置以及房间是否为私人。你还可以为公共房间添加加入按钮！
+  - 这包括世界缩略图、名称、房间ID和玩家统计，具体取决于你的设置以及房间是否为私人。你还可以在 Discord 状态面板上为公共房间添加加入按钮！
 - :crystal_ball: VR手柄叠加层，可显示所有支持的事件/通知的实时反馈
-- :outbox_tray: 无需Unity上传模型/世界图片
+- :outbox_tray: 无需Unity即可上传模型/世界封面
 - :page_facing_up: 在没有Unity的情况下管理上传的模型/世界的信息
 - :skull: VRChat崩溃时自动重启它并重新加入上一个房间
 - :left_right_arrow: 导出/导入收藏夹
@@ -126,7 +126,7 @@ VRCX是一个用于VRChat的辅助应用，提供有关VRChat的一些信息并�
 
 ## VRCX是否违反了VRChat的TOS？
 
-**简而言之：没有违反**
+**简而言之：没有**
 
 VRCX只是一个外部辅助工具，使用VRChat的API来提供功能。
 
