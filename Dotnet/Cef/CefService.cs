@@ -26,7 +26,8 @@ namespace VRCX
                 WindowlessRenderingEnabled = true,
                 PersistSessionCookies = true,
                 PersistUserPreferences = true,
-                UserAgent = Program.Version
+                UserAgent = Program.Version,
+                BrowserSubprocessPath = Environment.ProcessPath
             };
 
             cefSettings.RegisterScheme(new CefCustomScheme
@@ -59,7 +60,7 @@ namespace VRCX
             //CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
             CefSharpSettings.ShutdownOnExit = false;
 
-            if (Cef.Initialize(cefSettings) == false)
+            if (Cef.Initialize(cefSettings, false) == false)
             {
                 throw new Exception("Cef.Initialize()");
             }

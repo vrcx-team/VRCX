@@ -323,7 +323,7 @@
                         "when_to_display_game_closed": "Game Closed",
                         "when_to_display_game_running": "Game Running",
                         "when_to_display_always": "Always",
-                        "desktop_notification_while_afk": "Desktop Notification While AFK"
+                        "desktop_notification_while_afk": "Desktop Notifications While AFK"
                     },
                     "text_to_speech": {
                         "header": "Text-To-Speech Options",
@@ -402,6 +402,10 @@
                     "auto_cache_management": {
                         "header": "Automatically Manage Cache When Closing VRChat",
                         "description": "Auto delete old versions from cache"
+                    },
+                    "disable_local_world_persistence": {
+                        "header": "Disable Local World Persistence",
+                        "description": "Disable localhost webserver (requires restart)"
                     },
                     "remote_database": {
                         "header": "Remote Avatar Database",
@@ -582,6 +586,7 @@
                 "last_seen": "Last Seen",
                 "join_count": "Join Count",
                 "time_together": "Time Together",
+                "play_time": "Play Time",
                 "online_for": "Online For",
                 "offline_for": "Offline For",
                 "last_activity": "Last Activity",
@@ -592,7 +597,7 @@
                 "avatar_cloning": "Avatar Cloning",
                 "avatar_cloning_allow": "Allowed",
                 "avatar_cloning_deny": "Deny",
-                "home_location": "Home Location",
+                "home_location": "Home World",
                 "id": "User ID",
                 "id_tooltip": "Copy to clipboard",
                 "copy_id": "Copy ID",
