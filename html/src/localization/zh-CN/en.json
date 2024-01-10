@@ -397,11 +397,15 @@
                     },
                     "vrchat_quit_fix": {
                         "header": "修复 VRChat 关闭问题",
-                        "description": "在VRChat退出时强制停止 VRChat 进程"
+                        "description": "在 VRChat 退出时强制停止 VRChat 进程"
                     },
                     "auto_cache_management": {
                         "header": "缓存自动清理",
                         "description": "退出游戏时自动从缓存中删除过期数据"
+                    },
+                    "disable_local_world_persistence": {
+                        "header": "世界数据持久化",
+                        "description": "禁用世界数据在本地的持久化存储功能(需要重启)"
                     },
                     "remote_database": {
                         "header": "模型数据库",
@@ -422,7 +426,7 @@
                     "screenshot_helper": {
                         "header": "截图助手",
                         "description": "在游戏拍摄的照片的元数据中添加世界ID/世界名称",
-                        "description_tooltip": "不幸的是，Windows原生不支持查看PNG元数据(很多东西都不支持查看它)，但你可以使用exiftool等命令行工具、png检查器或十六进制编辑器来查看。",
+                        "description_tooltip": "不幸的是，Windows并不支持直接查看PNG元数据(很多东西都不支持查看这玩意)，但你可以使用exiftool等命令行工具、png检查器或十六进制编辑器来查看。",
                         "enable": "启用",
                         "modify_filename": "同时修改文件名",
                         "modify_filename_tooltip": "除了文件元数据外，还将把世界ID添加到截图文件名中。",
@@ -438,9 +442,9 @@
                     "cache_debug": {
                         "header": "VRCX 缓存/调试",
                         "udon_exception_logging": "显示 Udon 错误日志",
-                        "gpu_fix": "修复SteamVR叠加层显示问题",
+                        "gpu_fix": "修复 SteamVR 叠加层显示问题",
                         "gpu_fix_notice": "(需要重启)",
-                        "gpu_fix_warning": "只有在SteamVR叠加层异常并且你有2张显卡的情况下才需要启用这个选项。",
+                        "gpu_fix_warning": "只有在 SteamVR 叠加层异常并且你有2张显卡的情况下才需要启用这个选项。",
                         "disable_gamelog": "关闭游戏日志",
                         "disable_gamelog_notice": "(可能会弄坏很多东西！)",
                         "user_cache": "玩家缓存：",
@@ -582,6 +586,7 @@
                 "last_seen": "最后见面",
                 "join_count": "见面的次数",
                 "time_together": "一起游玩的时长",
+                "play_time": "Play Time",
                 "online_for": "在线时长",
                 "offline_for": "离线时长",
                 "last_activity": "最后活动",
