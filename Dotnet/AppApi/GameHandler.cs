@@ -58,51 +58,52 @@ namespace VRCX
         /// Starts the VRChat game process with the specified command-line arguments.
         /// </summary>
         /// <param name="arguments">The command-line arguments to pass to the VRChat game.</param>
-        public void StartGame(string arguments)
+        public bool StartGame(string arguments)
         {
             // try stream first
             try
             {
-                using (var key = Registry.ClassesRoot.OpenSubKey(@"steam\shell\open\command"))
+                using var key = Registry.ClassesRoot.OpenSubKey(@"steam\shell\open\command");
+                // "C:\Program Files (x86)\Steam\steam.exe" -- "%1"
+                var match = Regex.Match(key.GetValue(string.Empty) as string, "^\"(.+?)\\\\steam.exe\"");
+                if (match.Success)
                 {
-                    // "C:\Program Files (x86)\Steam\steam.exe" -- "%1"
-                    var match = Regex.Match(key.GetValue(string.Empty) as string, "^\"(.+?)\\\\steam.exe\"");
-                    if (match.Success)
-                    {
-                        var path = match.Groups[1].Value;
-                        // var _arguments = Uri.EscapeDataString(arguments);
-                        Process.Start(new ProcessStartInfo
+                    var path = match.Groups[1].Value;
+                    // var _arguments = Uri.EscapeDataString(arguments);
+                    Process.Start(new ProcessStartInfo
                         {
                             WorkingDirectory = path,
                             FileName = $"{path}\\steam.exe",
                             UseShellExecute = false,
                             Arguments = $"-applaunch 438100 {arguments}"
-                        }).Close();
-                        return;
-                    }
+                        })
+                        ?.Close();
+                    return true;
                 }
             }
             catch
             {
+                logger.Warn("Failed to start VRChat from Steam");
             }
 
             // fallback
             try
             {
-                using (var key = Registry.ClassesRoot.OpenSubKey(@"VRChat\shell\open\command"))
+                using var key = Registry.ClassesRoot.OpenSubKey(@"VRChat\shell\open\command");
+                // "C:\Program Files (x86)\Steam\steamapps\common\VRChat\launch.exe" "%1" %*
+                var match = Regex.Match(key.GetValue(string.Empty) as string, "(?!\")(.+?\\\\VRChat.*)(!?\\\\launch.exe\")");
+                if (match.Success)
                 {
-                    // "C:\Program Files (x86)\Steam\steamapps\common\VRChat\launch.exe" "%1" %*
-                    var match = Regex.Match(key.GetValue(string.Empty) as string, "(?!\")(.+?\\\\VRChat.*)(!?\\\\launch.exe\")");
-                    if (match.Success)
-                    {
-                        var path = match.Groups[1].Value;
-                        StartGameFromPath(path, arguments);
-                    }
+                    var path = match.Groups[1].Value;
+                    return StartGameFromPath(path, arguments);
                 }
             }
             catch
             {
+                logger.Warn("Failed to start VRChat from registry");
             }
+
+            return false;
         }
 
         /// <summary>
@@ -116,7 +117,7 @@ namespace VRCX
             if (!path.EndsWith(".exe"))
                 path = Path.Combine(path, "launch.exe");
 
-            if (!File.Exists(path))
+            if (!path.EndsWith("launch.exe") || !File.Exists(path))
                 return false;
 
             Process.Start(new ProcessStartInfo

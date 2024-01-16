@@ -415,6 +415,11 @@ mixin settingsTab()
                     div.options-container-item
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.auto_cache_management.description') }}
                         el-switch(v-model="autoSweepVRChatCache" @change="saveOpenVROption")
+                    //- Advanced | Disable local world database
+                    span.sub-header {{ $t('view.settings.advanced.advanced.disable_local_world_persistence.header') }}
+                    div.options-container-item
+                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.disable_local_world_persistence.description') }}
+                        el-switch(v-model="disableWorldDatabase" @change="saveVRCXWindowOption")
                 //- Advanced | Remote Avatar Database
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.remote_database.header') }}

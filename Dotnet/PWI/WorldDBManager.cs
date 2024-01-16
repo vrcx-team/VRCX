@@ -13,26 +13,41 @@ namespace VRCX
 {
     public class WorldDBManager
     {
-        public static WorldDBManager Instance;
+        public static readonly WorldDBManager Instance;
         private readonly HttpListener listener;
         private readonly WorldDatabase worldDB;
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private const string WorldDBServerUrl = "http://127.0.0.1:22500/";
 
         private string lastError = null;
         private bool debugWorld = false;
 
-        public WorldDBManager(string url)
+        static WorldDBManager()
         {
-            Instance = this;
+            Instance = new WorldDBManager();
+        }
+        
+        public WorldDBManager()
+        {
             // http://localhost:22500
             listener = new HttpListener();
-            listener.Prefixes.Add(url);
+            listener.Prefixes.Add(WorldDBServerUrl);
 
             worldDB = new WorldDatabase(Path.Combine(Program.AppDataDirectory, "VRCX-WorldData.db"));
-
         }
 
-        public async Task Start()
+        public void Init()
+        {
+            if (VRCXStorage.Instance.Get("VRCX_DisableWorldDatabase") == "true")
+            {
+                logger.Info("World database is disabled. Not starting.");
+                return;
+            }
+            
+            Task.Run(Start);
+        }
+
+        private async Task Start()
         {
             // typing this in vr gonna kms
             try
@@ -223,9 +238,13 @@ namespace VRCX
             }
 
             var worldOverride = request.QueryString["world"];
+            if (worldOverride == "global")
+            {
+                TryInitializeWorld(worldOverride, out connectionKey);
+            }
             if (worldOverride != null && worldId != worldOverride)
             {
-                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride);
+                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride) || worldOverride == "global";
                 if (!allowed)
                 {
                     return ConstructSuccessResponse(null, connectionKey);
@@ -262,9 +281,13 @@ namespace VRCX
             }
 
             var worldOverride = request.QueryString["world"];
+            if (worldOverride == "global")
+            {
+                TryInitializeWorld(worldOverride, out connectionKey);
+            }
             if (worldOverride != null && worldId != worldOverride)
             {
-                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride);
+                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride) || worldOverride == "global";
                 if (!allowed)
                 {
                     return ConstructSuccessResponse(null, connectionKey);
@@ -319,9 +342,13 @@ namespace VRCX
             }
 
             var worldOverride = request.QueryString["world"];
+            if (worldOverride == "global")
+            {
+                TryInitializeWorld(worldOverride, out connectionKey);
+            }
             if (worldOverride != null && worldId != worldOverride)
             {
-                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride);
+                var allowed = worldDB.GetWorldAllowExternalRead(worldOverride) || worldOverride == "global";
                 if (!allowed)
                 {
                     return ConstructSuccessResponse(null, connectionKey);
@@ -526,8 +553,6 @@ namespace VRCX
                 return;
             }
 
-
-
             // Make sure the connection key is a valid GUID. No point in doing anything else if it's not.
             if (!debugWorld && !Guid.TryParse(request.ConnectionKey, out Guid _))
             {
@@ -539,6 +564,12 @@ namespace VRCX
 
             // Get the world ID from the connection key
             string worldId = worldDB.GetWorldByConnectionKey(request.ConnectionKey);
+            
+            // Global override
+            if (request.ConnectionKey == "global")
+            {
+                worldId = "global";
+            }
 
             // World ID is null, which means the connection key is invalid (or someone just deleted a world from the DB while VRCX was running lol).
             if (worldId == null)

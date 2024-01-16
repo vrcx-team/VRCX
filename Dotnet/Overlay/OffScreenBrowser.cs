@@ -37,7 +37,7 @@ namespace VRCX
             Size = new System.Drawing.Size(width, height);
             RenderHandler = this;
 
-            Util.ApplyJavascriptBindings(JavascriptObjectRepository);
+            JavascriptBindings.ApplyVrJavascriptBindings(JavascriptObjectRepository);
         }
 
         public new void Dispose()

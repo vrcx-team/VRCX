@@ -117,12 +117,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="120.1.80" />
-    <PackageReference Include="CefSharp.WinForms.NETCore" Version="120.1.80" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="120.1.110" />
+    <PackageReference Include="CefSharp.WinForms.NETCore" Version="120.1.110" />
     <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="5.2.6" />
+    <PackageReference Include="NLog" Version="5.2.8" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />

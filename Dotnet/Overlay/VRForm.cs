@@ -45,8 +45,8 @@ namespace VRCX
                 Dock = DockStyle.Fill
             };
 
-            Util.ApplyJavascriptBindings(_browser1.JavascriptObjectRepository);
-            Util.ApplyJavascriptBindings(_browser2.JavascriptObjectRepository);
+            JavascriptBindings.ApplyVrJavascriptBindings(_browser1.JavascriptObjectRepository);
+            JavascriptBindings.ApplyVrJavascriptBindings(_browser2.JavascriptObjectRepository);
 
             panel1.Controls.Add(_browser1);
             panel2.Controls.Add(_browser2);
