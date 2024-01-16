@@ -141,6 +141,8 @@
                 "two_factor": "Two-Factor Auth (2FA)",
                 "two_factor_enabled": "Enabled",
                 "two_factor_disabled": "Disabled",
+                "v_bucks": "V-Bucks",
+                "refresh": "Click to refresh",
                 "logout": "Logout",
                 "manage_gallery_icon": "Manage Photos/Icons/Emojis",
                 "export_friend_list": "Export Friends List",
@@ -206,7 +208,7 @@
                 },
                 "application": {
                     "header": "Application",
-                    "startup": "Start as Windows startup",
+                    "startup": "Start at Windows startup",
                     "minimized": "Start as minimized state",
                     "tray": "Close to tray"
                 },
@@ -1058,8 +1060,8 @@
             "favorite": "Favorites",
             "friends": "Friends",
             "everyone": "Everyone",
-            "cancel": "Cancel",
-            "save": "Save"
+            "reset": "Reset",
+            "close": "Close"
         },
         "world_export": {
             "header": "World Favorites Export"
