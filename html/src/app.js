@@ -22496,6 +22496,7 @@ speechSynthesis.getVoices();
 
     $app.data.discordNamesDialogVisible = false;
     $app.data.discordNamesContent = '';
+    $app.data.discordNamesExtraFiltering = true;
 
     $app.methods.showDiscordNamesDialog = function () {
         var { friends } = API.currentUser;
@@ -22536,7 +22537,12 @@ speechSynthesis.getVoices();
                 continue;
             }
             discord = discord.trim();
-            lines.push(`${_(name)},${_(discord)}`);
+            if (this.discordNamesExtraFiltering) {
+                var discordNameSelection = /[a-z0-9#._-]{3,32}/gi.exec(discord);
+                if (discordNameSelection.length > 0) lines.push(`${_(name)},${_(discordNameSelection[0])}`);
+            } else {
+                lines.push(`${_(name)},${_(discord)}`);
+            }
         }
         this.discordNamesContent = lines.join('\n');
         this.discordNamesDialogVisible = true;

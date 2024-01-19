@@ -1707,10 +1707,12 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportAvatarsListDialog" :title="$t('dialog.export_own_avatars.header')" width="650px")
                 el-input(type="textarea" v-if="exportAvatarsListDialog" v-model="exportAvatarsListCsv" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
-            //- dialog: Discord username list
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="discordNamesDialogVisible" :title="$t('dialog.discord_names.header')" width="650px")
                 div(style='font-size:12px;')
                     | {{ $t('dialog.discord_names.description') }}
+                div.options-container-item
+                    span.name {{ $t('dialog.discord_names.extra_filtering') }}
+                    el-switch(v-model="discordNamesExtraFiltering", @change="showDiscordNamesDialog")
                 el-input(type="textarea" v-if="discordNamesDialogVisible" v-model="discordNamesContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px")
 
             //- dialog: Notification position

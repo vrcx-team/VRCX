@@ -1045,7 +1045,8 @@
         },
         "discord_names": {
             "header": "Discord Names",
-            "description": "Click load missing entries in the Friends List tab to search entire friends list"
+            "description": "Click load missing entries in the Friends List tab to search entire friends list",
+            "extra_filtering": "Extra Name Filtering"
         },
         "notification_position": {
             "header": "Notification Position",
