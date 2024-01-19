@@ -1335,7 +1335,9 @@ img.x-link.el-popover__reference {
 
 // this is awful never do this
 *:not(.x-user-dialog, .x-world-dialog, .x-avatar-dialog, .x-group-dialog)
-    > .el-dialog:not([aria-label*='Notification Position']) {
+    > .el-dialog:not([aria-label*='Notification Position']):not(
+        [aria-label*='Launch']
+    ):not([aria-label*='VRCX Updater']) {
     max-width: 1125px !important;
     width: 1125px !important;
 }

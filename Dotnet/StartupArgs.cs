@@ -37,13 +37,10 @@ namespace VRCX
                     Program.LaunchDebug = true;
             }
 
-            if (processList.Length > 1 && string.IsNullOrEmpty(LaunchCommand))
-            {
-                var result = MessageBox.Show("VRCX is already running, start another instance?", "VRCX", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result == DialogResult.Yes)
-                    return;
-            }
+            if (processList.Length > 1 && !string.IsNullOrEmpty(LaunchCommand))
+                return; // if we're launching with a parameter, allow it
 
+            // if we're launching a second instance, focus the first instance then exit
             if (processList.Length > 1)
             {
                 IPCToMain();

@@ -643,8 +643,8 @@ speechSynthesis.getVoices();
             options.N > 0
                 ? options.N > options.params.offset
                 : options.N < 0
-                  ? args.json.length
-                  : options.params.n === args.json.length)
+                ? args.json.length
+                : options.params.n === args.json.length)
         ) {
             this.bulk(options);
         } else if ('done' in options) {
@@ -7444,10 +7444,12 @@ speechSynthesis.getVoices();
     };
 
     API.$on('USER:2FA', function () {
+        AppApi.FocusWindow();
         $app.promptTOTP();
     });
 
     API.$on('USER:EMAILOTP', function () {
+        AppApi.FocusWindow();
         $app.promptEmailOTP();
     });
 
@@ -15092,19 +15094,15 @@ speechSynthesis.getVoices();
     };
     await $app.methods.updatetrustColorClasses();
 
-    $app.methods.saveSharedFeedFilters = async function () {
-        this.notyFeedFiltersDialog.visible = false;
-        this.wristFeedFiltersDialog.visible = false;
-        await configRepository.setString(
+    $app.methods.saveSharedFeedFilters = function () {
+        configRepository.setString(
             'sharedFeedFilters',
             JSON.stringify(this.sharedFeedFilters)
         );
         this.updateSharedFeed(true);
     };
 
-    $app.methods.cancelSharedFeedFilters = async function () {
-        this.notyFeedFiltersDialog.visible = false;
-        this.wristFeedFiltersDialog.visible = false;
+    $app.methods.resetSharedFeedFilters = async function () {
         if (await configRepository.getString('sharedFeedFilters')) {
             this.sharedFeedFilters = JSON.parse(
                 await configRepository.getString(
@@ -29805,6 +29803,30 @@ speechSynthesis.getVoices();
             D.progressCurrent = 0;
             D.progressTotal = 0;
         }
+    };
+
+    // #endregion
+
+    // #region | V-Bucks
+
+    API.$on('VBUCKS', function (args) {
+        this.currentUser.$vbucks = args.json?.balance;
+    });
+
+    API.getVbucks = function () {
+        return this.call(`user/${this.currentUser.id}/balance`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json
+            };
+            this.$emit('VBUCKS', args);
+            return args;
+        });
+    };
+
+    $app.methods.getVbucks = function () {
+        API.getVbucks();
     };
 
     // #endregion

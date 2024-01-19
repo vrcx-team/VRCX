@@ -17,6 +17,10 @@ mixin profileTab()
                     .detail
                         span.name {{ $t('view.profile.profile.two_factor') }}
                         span.extra {{ API.currentUser.twoFactorAuthEnabled ? $t('view.profile.profile.two_factor_enabled') : $t('view.profile.profile.two_factor_disabled') }}
+                .x-friend-item(@click="getVbucks()")
+                    .detail
+                        span.name {{ $t('view.profile.profile.v_bucks') }}
+                        span.extra {{ API.currentUser.$vbucks ?? $t('view.profile.profile.refresh') }}
             div
                 el-button(size="small" icon="el-icon-switch-button" @click="logout()" style="margin-left:0;margin-right:5px;margin-top:10px") {{ $t('view.profile.profile.logout') }}
                 el-button(size="small" icon="el-icon-picture-outline" @click="showGalleryDialog()" style="margin-left:0;margin-right:5px;margin-top:10px") {{ $t('view.profile.profile.manage_gallery_icon') }}
