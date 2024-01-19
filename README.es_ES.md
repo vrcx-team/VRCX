@@ -30,13 +30,13 @@ Descargue y ejecute el último instalador (`VRCX_Setup.exe`) desde [aquí](https
   - Puedes configurar VRCX para que lance otras aplicaciones cuando inicies VRChat.
   - Por ejemplo, puedes hacer que VRCX lance una aplicación OSC o un modulador de voz cuando se abra VRChat.
 - :floppy_disk: World Persistence
-  - ¡Para mundos que soporten la característica, VRCX puede guardar ajustes del mundo, guardar estados, inventarios y otros datos!
+  - ¡Para mundos que soportan la característica, VRCX puede guardar ajustes del mundo, guardar estados, inventarios y otros datos!
   - **Nota**: Para utilizar esta función, debe tener habilitado "Allow Untrusted URLs" en sus ajustes de VRChat.
   - Para Desarrolladores: [Wiki Page - World Persistence (PWI)](https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI))
 - :mag: Busca avatares, usuarios, mundos y grupos
 - :earth_americas: Construye una lista de favoritos en local y sin restricciones
 - :camera: Almacena los datos del mundo en las fotos que hagas en el juego, así podrás recordar ese mundo en el que hiciste esas fotos tan chulas como... ¡hace 6 meses!
-- :bell: Supervisa/reaponde a las notificaciones
+- :bell: Supervisa/responde a las notificaciones
   - Puedes enviar/recibir invitaciones y solicitudes de amistad desde VRCX así como ver la información de las instancias de las invitaciones que recibas.
 - :scroll: Ver estadísticas/jugadores de tu instancia actual
 - :tv: Consulta los enlaces a los vídeos que se están reproduciendo en el mundo en el que te encuentras, así como otros datos registrados.
