@@ -600,10 +600,10 @@ namespace VRCX
                             return;
                         }
 
-                        if (String.IsNullOrEmpty(request.Value))
+                        if (request.Value == null)
                         {
-                            logger.Warn("World {0} tried to store data under key {1} with no value provided", worldId, request.Key);
-                            this.lastError = "`value` is missing or null";
+                            logger.Warn("World {0} tried to store data under key {1} with null value", worldId, request.Key);
+                            this.lastError = "`value` is null";
                             return;
                         }
 
