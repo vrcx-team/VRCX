@@ -643,8 +643,8 @@ speechSynthesis.getVoices();
             options.N > 0
                 ? options.N > options.params.offset
                 : options.N < 0
-                ? args.json.length
-                : options.params.n === args.json.length)
+                  ? args.json.length
+                  : options.params.n === args.json.length)
         ) {
             this.bulk(options);
         } else if ('done' in options) {
@@ -938,7 +938,9 @@ speechSynthesis.getVoices();
                 } else if (L.groupId) {
                     this.groupName = L.groupId;
                     $app.getGroupName(instanceId).then((groupName) => {
-                        this.groupName = groupName;
+                        if (L.tag === instanceId) {
+                            this.groupName = groupName;
+                        }
                     });
                 }
                 this.region = '';
@@ -1745,6 +1747,7 @@ speechSynthesis.getVoices();
                 $languages: [],
                 $locationTag: '',
                 $travelingToLocation: '',
+                $vbucks: null,
                 ...json
             };
             ref.$homeLocation = this.parseLocation(ref.homeLocation);
@@ -7333,18 +7336,19 @@ speechSynthesis.getVoices();
         );
     };
 
-    $app.methods.resendEmail2fa = function () {
+    $app.methods.resendEmail2fa = async function () {
         if (this.loginForm.lastUserLoggedIn) {
             var user =
                 this.loginForm.savedCredentials[
                     this.loginForm.lastUserLoggedIn
                 ];
             if (typeof user !== 'undefined') {
-                webApiService.clearCookies();
+                await webApiService.clearCookies();
+                delete user.cookies;
                 this.relogin(user).then(() => {
                     new Noty({
                         type: 'success',
-                        text: 'Successfully relogged in.'
+                        text: 'Email 2FA resent.'
                     }).show();
                 });
                 return;
@@ -7654,11 +7658,12 @@ speechSynthesis.getVoices();
         );
     };
 
-    $app.methods.relogin = function (user) {
+    $app.methods.relogin = async function (user) {
         var { loginParmas } = user;
         if (user.cookies) {
-            webApiService.setCookies(user.cookies);
+            await webApiService.setCookies(user.cookies);
         }
+        this.loginForm.lastUserLoggedIn = user.user.id; // for resend email 2fa
         if (loginParmas.endpoint) {
             API.endpointDomain = loginParmas.endpoint;
             API.websocketDomain = loginParmas.websocket;
@@ -7686,7 +7691,7 @@ speechSynthesis.getVoices();
                                 })
                                     .catch((err2) => {
                                         this.loginForm.loading = false;
-                                        API.logout();
+                                        // API.logout();
                                         reject(err2);
                                     })
                                     .then(() => {
@@ -22871,6 +22876,12 @@ speechSynthesis.getVoices();
     ) {
         var D = this.screenshotMetadataDialog;
         var metadata = JSON.parse(json);
+        if (typeof metadata === 'undefined' || !metadata.sourceFile) {
+            D.metadata = {};
+            D.metadata.error =
+                'Invalid file selected. Please select a valid VRChat screenshot.';
+            return;
+        }
 
         // Get extra data for display dialog like resolution, file size, etc
         D.loading = true;
@@ -28521,6 +28532,11 @@ speechSynthesis.getVoices();
         }
         await this.getGroupDialogGroupMembers();
         while (this.groupDialog.visible && !this.isGroupMembersDone) {
+            this.isGroupMembersLoading = true;
+            await new Promise((resolve) => {
+                workerTimers.setTimeout(resolve, 1000);
+            });
+            this.isGroupMembersLoading = false;
             await this.loadMoreGroupMembers();
         }
     };
@@ -28902,35 +28918,33 @@ speechSynthesis.getVoices();
     // #endregion
     // #region | App: Language
 
-    $app.data.appLanguage = 'en';
+    $app.data.appLanguage =
+        (await configRepository.getString('VRCX_appLanguage')) ?? 'en';
+    i18n.locale = $app.data.appLanguage;
     var initLanguage = async () => {
-        if (await configRepository.getString('VRCX_appLanguage')) {
-            $app.data.appLanguage =
-                await configRepository.getString('VRCX_appLanguage');
-            i18n.locale = $app.data.appLanguage;
-        } else {
+        if (!(await configRepository.getString('VRCX_appLanguage'))) {
             var result = await AppApi.CurrentLanguage();
             if (!result) {
                 console.error('Failed to get current language');
-                await $app.changeAppLanguage('en');
+                $app.changeAppLanguage('en');
                 return;
             }
             var lang = result.split('-')[0];
-            i18n.availableLocales.forEach(async (ref) => {
+            i18n.availableLocales.forEach((ref) => {
                 var refLang = ref.split('_')[0];
                 if (refLang === lang) {
-                    await $app.changeAppLanguage(ref);
+                    $app.changeAppLanguage(ref);
                 }
             });
         }
     };
-    await initLanguage();
+    initLanguage();
 
-    $app.methods.changeAppLanguage = async function (language) {
+    $app.methods.changeAppLanguage = function (language) {
         console.log('Language changed:', language);
         this.appLanguage = language;
         i18n.locale = language;
-        await configRepository.setString('VRCX_appLanguage', language);
+        configRepository.setString('VRCX_appLanguage', language);
         this.updateVRConfigVars();
     };
 

@@ -189,8 +189,7 @@ a {
 .x-login-form-container {
     display: grid;
     gap: 8px;
-    justify-items: center;
-    height: fit-content;
+    height: 375px;
 }
 
 .x-login-form-container:has(> div:nth-child(3)) {
@@ -198,9 +197,9 @@ a {
 }
 
 .x-login-form-container > div {
-    position: relative;
-    height: fit-content;
-    max-width: 280px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     padding: 16px;
 }
 

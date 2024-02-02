@@ -141,6 +141,8 @@
                 "two_factor": "Двухфакторная аутентификация (2FA)",
                 "two_factor_enabled": "Включена",
                 "two_factor_disabled": "Выключено",
+                "v_bucks": "V-Баксы",
+                "refresh": "Нажмите, чтобы обновить",
                 "logout": "Выйти",
                 "manage_gallery_icon": "Управление Фото/Иконки/Эмодзи",
                 "export_friend_list": "Экспорт списка друзей",
@@ -402,6 +404,10 @@
                     "auto_cache_management": {
                         "header": "Автоматически управлять кэшем при закрытии VRChat",
                         "description": "Автоматически удалять старые версии из кэша"
+                    },
+                    "disable_local_world_persistence": {
+                        "header": "Отключить Local World Persistence",
+                        "description": "Отключить локальный веб-сервер (требуется перезапуск)"
                     },
                     "remote_database": {
                         "header": "Удаленная база данных аватаров",
@@ -1053,8 +1059,8 @@
             "favorite": "Избранное",
             "friends": "Друзья",
             "everyone": "Все",
-            "cancel": "Отмена",
-            "save": "Сохранить"
+            "reset": "Сбросить",
+            "close": "Закрыть"
         },
         "world_export": {
             "header": "Экспорт избранных миров"

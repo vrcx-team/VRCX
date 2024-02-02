@@ -322,7 +322,8 @@
                         "when_to_display_outside_vr": "在 VR 外时",
                         "when_to_display_game_closed": "游戏关闭时",
                         "when_to_display_game_running": "游戏运行时",
-                        "when_to_display_always": "总是"
+                        "when_to_display_always": "总是",
+                        "desktop_notification_while_afk": "当处于 AFK 状态时显示桌面通知"
                     },
                     "text_to_speech": {
                         "header": "文字转语音选项",
@@ -378,8 +379,8 @@
                 "advanced": {
                     "header": "高级设置",
                     "launch_options": "启动选项",
-                    "screenshot_metadata": "屏幕截图元数据查看器",
-                    "vrc_registry_backup": "VRC 设置选项备份工具",
+                    "screenshot_metadata": "截图元数据查看器",
+                    "vrc_registry_backup": "VRC 设置数据备份工具",
                     "common_folders": "常用文件夹",
                     "pending_offline": {
                         "header": "待确认离线",
@@ -395,12 +396,16 @@
                         "description": "重新加入崩溃前的房间"
                     },
                     "vrchat_quit_fix": {
-                        "header": "修复VRChat 关闭问题",
-                        "description": "在VRChat退出时强制停止 VRChat 进程"
+                        "header": "修复 VRChat 关闭问题",
+                        "description": "在 VRChat 退出时强制停止 VRChat 进程"
                     },
                     "auto_cache_management": {
                         "header": "缓存自动清理",
                         "description": "退出游戏时自动从缓存中删除过期数据"
+                    },
+                    "disable_local_world_persistence": {
+                        "header": "世界数据持久化",
+                        "description": "禁用世界数据在本地的持久化存储功能(需要重启)"
                     },
                     "remote_database": {
                         "header": "模型数据库",
@@ -421,7 +426,7 @@
                     "screenshot_helper": {
                         "header": "截图助手",
                         "description": "在游戏拍摄的照片的元数据中添加世界ID/世界名称",
-                        "description_tooltip": "不幸的是，Windows原生不支持查看PNG元数据(很多东西都不支持查看它)，但你可以使用exiftool等命令行工具、png检查器或十六进制编辑器来查看。",
+                        "description_tooltip": "不幸的是，Windows并不支持直接查看PNG元数据(很多东西都不支持查看这玩意)，但你可以使用exiftool等命令行工具、png检查器或十六进制编辑器来查看。",
                         "enable": "启用",
                         "modify_filename": "同时修改文件名",
                         "modify_filename_tooltip": "除了文件元数据外，还将把世界ID添加到截图文件名中。",
@@ -437,9 +442,9 @@
                     "cache_debug": {
                         "header": "VRCX 缓存/调试",
                         "udon_exception_logging": "显示 Udon 错误日志",
-                        "gpu_fix": "修复SteamVR叠加层显示问题",
+                        "gpu_fix": "修复 SteamVR 叠加层显示问题",
                         "gpu_fix_notice": "(需要重启)",
-                        "gpu_fix_warning": "只有在SteamVR叠加层异常并且你有2张显卡的情况下才需要启用这个选项。",
+                        "gpu_fix_warning": "只有在 SteamVR 叠加层异常并且你有2张显卡的情况下才需要启用这个选项。",
                         "disable_gamelog": "关闭游戏日志",
                         "disable_gamelog_notice": "(可能会弄坏很多东西！)",
                         "user_cache": "玩家缓存：",
@@ -581,6 +586,7 @@
                 "last_seen": "最后见面",
                 "join_count": "见面的次数",
                 "time_together": "一起游玩的时长",
+                "play_time": "Play Time",
                 "online_for": "在线时长",
                 "offline_for": "离线时长",
                 "last_activity": "最后活动",
@@ -772,7 +778,7 @@
             },
             "json": {
                 "header": "原始JSON信息",
-                "file_analysis": "缓存文件分析"
+                "file_analysis": "分析缓存文件"
             }
         },
         "group": {
@@ -917,7 +923,7 @@
             "region_jp": "日本",
             "world_id": "世界 ID",
             "instance_id": "房间 ID",
-            "instance_id_placeholder": "随机数",
+            "instance_id_placeholder": "通常是随机数",
             "instance_creator": "房间建立者",
             "instance_creator_placeholder": "选择玩家",
             "group_placeholder": "选择一个群组",
@@ -1223,7 +1229,7 @@
         },
         "open_source": {
             "header": "开放源代码许可条款",
-            "description": "VRCX 是基于开放源代码软件开发的。没有他们的贡献的话，这个程序是不可能开发出来的。"
+            "description": "VRCX 是基于开放源代码软件开发的。没有他们的贡献的话，这个程序不可能开发出来。"
         },
         "primary_password": {
             "header": "设置独立密码",
@@ -1241,7 +1247,7 @@
             "upload": "上传"
         },
         "registry_backup": {
-            "header": "VRC 设置选项备份工具",
+            "header": "VRC 设置数据备份工具",
             "backup": "备份",
             "restore": "还原",
             "save_to_file": "保存到文件",
@@ -1251,8 +1257,8 @@
             "name": "名称",
             "date": "日期",
             "action": "操作",
-            "auto_backup": "只要VRCX在运行，就会每周自动备份一次VRC的设置项，你也可以在这里手动备份和恢复你的VRC设置项",
-            "restore_prompt": "注意到你已启用 VRC 设置选项的自动备份，但这台计算机上没有发现任何备份。如果你想从备份中恢复，可以从此处进行恢复。"
+            "auto_backup": "只要VRCX在运行，就会每周自动备份一次VRC的设置数据，你也可以在这里手动备份和恢复你的VRC设置数据",
+            "restore_prompt": "注意到你已启用 VRC 设置数据的自动备份，但这台计算机上没有发现任何备份。如果你想从备份中恢复，可以从此处进行恢复。"
         },
         "group_member_moderation": {
             "header": "群组成员管理",
@@ -1285,7 +1291,7 @@
             "description": "输入你的身份验证器应用程序中的验证代码",
             "use_otp": "使用电子邮件一次性密码或备用验证码",
             "verify": "验证",
-            "input_placeholder": "验证码",
+            "input_placeholder": "输入验证码",
             "input_error": "无效的验证码"
         },
         "otp": {
@@ -1397,7 +1403,7 @@
             "ok": "确定",
             "input_error": "请输入有效的描述",
             "message": {
-                "success": "已更改模型描述"
+                "success": "已更改模型的描述"
             }
         },
         "rename_world": {
@@ -1417,17 +1423,17 @@
             "ok": "确定",
             "input_error": "请输入有效的描述",
             "message": {
-                "success": "已更改世界描述"
+                "success": "已更改世界的描述"
             }
         },
         "change_world_capacity": {
             "header": "更改世界最大人数",
-            "description": "输入世界可容纳的人数, 最大值：40",
+            "description": "输入世界可容纳的人数, 最大值：80",
             "cancel": "取消",
             "ok": "确定",
             "input_error": "请输入有效的人数",
             "message": {
-                "success": "已更改世界最大人数"
+                "success": "已更改世界的最大人数"
             }
         },
         "change_world_recommended_capacity": {
@@ -1437,7 +1443,7 @@
             "ok": "确定",
             "input_error": "请输入有效的数字",
             "message": {
-                "success": "已更改推荐进入人数"
+                "success": "已更改推荐进入的人数"
             }
         },
         "change_world_preview": {
