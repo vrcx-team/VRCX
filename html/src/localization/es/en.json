@@ -44,7 +44,7 @@
                 "previous": "Anterior",
                 "search_placeholder": "Buscar",
                 "filter_placeholder": "Filtro",
-                "chatbox_blacklist": "Chatbox Blacklist",
+                "chatbox_blacklist": "Lista negra del chatbox",
                 "status_tooltip": "Estado de VRCX Companion"
             }
         },
@@ -93,7 +93,7 @@
                 "header": "Avatares"
             },
             "bulk_unfavorite_mode": "Eliminar amigos en masa",
-            "bulk_unfavorite_selection": "Bulk Unfavorite Selection",
+            "bulk_unfavorite_selection": "Quitar favoritos en masa",
             "refresh_tooltip": "Actualizar todos los favoritos",
             "export": "Exportar",
             "import": "Importar",
@@ -171,7 +171,7 @@
             "past_display_names": "Nombres Anteriores",
             "config_json": "JSON de Configuración",
             "current_user_json": "JSON del Usuario Actual",
-            "feedback": "Feedback",
+            "feedback": "Reportes",
             "refresh_tooltip": "Refrescar",
             "clear_results_tooltip": "Limpiar resultados"
         },
@@ -414,7 +414,7 @@
                         "youtube_api_key": "Clave de la API de YouTube"
                     },
                     "video_progress_pie": {
-                        "header": "Progress pie overlay for videos",
+                        "header": "Overlay de barra de progreso circular para videos",
                         "enable": "Habilitar",
                         "enable_tooltip": "Requiere que el overlay de SteamVR esté habilitado",
                         "dance_world_only": "Solo mundos soportados"
@@ -438,9 +438,9 @@
                     "cache_debug": {
                         "header": "Caché/Depuracion de Instancia de VRCX",
                         "udon_exception_logging": "Registrar excepciones de Udon",
-                        "gpu_fix": "SteamVR Overlay GPU Fix",
+                        "gpu_fix": "Solución de la GPU al overlay de SteamVR",
                         "gpu_fix_notice": "(requiere reiniciar)",
-                        "gpu_fix_warning": "Only enable this option if the SteamVR overlay isn't working and you have 2 GPUs",
+                        "gpu_fix_warning": "Activa esta opción sólo si el overlay de SteamVR no funciona y tienes 2 GPUs",
                         "disable_gamelog": "Deshabilitar el Registro del Juego",
                         "disable_gamelog_notice": "(probablemente romperá cosas)",
                         "user_cache": "Caché del usuario:",
@@ -466,32 +466,32 @@
                         "notification": "Notificaciones:",
                         "location": "Ubicación:",
                         "join_leave": "Uniones/Salidas:",
-                        "portal_spawn": "Portal Spawn:",
+                        "portal_spawn": "Portales:",
                         "video_play": "Reproducciones de vídeo:",
                         "event": "Eventos:"
                     }
                 },
                 "photon": {
-                    "header": "Photon Logging Overlay",
+                    "header": "Overlay de registros de Photon",
                     "event_hud": {
-                        "header": "Photon Event HUD",
+                        "header": "HUD de eventos de Photon",
                         "enable": "Habilitar",
                         "enable_tooltip": "Requiere que el overlay de SteamVR esté habilitado",
                         "filter": "Filtro",
                         "filter_favorites": "Favoritos",
                         "filter_friends": "Amigos",
                         "filter_everyone": "Todo el mundo",
-                        "message_timeout": "Message Timeout"
+                        "message_timeout": "Duración de los mensajes"
                     },
                     "timeout_hud": {
-                        "header": "User Timeout HUD",
+                        "header": "Tiempo de espera del HUD de usuario",
                         "enable": "Habilitar",
                         "enable_tooltip": "Requiere que el overlay de SteamVR esté habilitado",
                         "filter": "Filtro",
                         "filter_favorites": "Favoritos",
                         "filter_friends": "Amigos",
                         "filter_everyone": "Todo el mundo",
-                        "timeout_threshold": "Timeout Threshold"
+                        "timeout_threshold": "Umbral de tiempo de espera"
                     }
                 }
             }
@@ -523,7 +523,7 @@
                 "ask_me": "Pregúntame",
                 "busy": "No molestar"
             },
-            "previous_display_names": "Previous Display Names:",
+            "previous_display_names": "Nombres de pantalla anteriores:",
             "tags": {
                 "friend_no": "Amigo N.º{number}",
                 "vrchat_team": "VRChat Team"
@@ -543,16 +543,16 @@
                 "cancel_friend_request": "Cancelar solicitud de amistad",
                 "send_friend_request": "Enviar Solicitud de Amistad",
                 "show_avatar_author": "Mostrar Autor del Avatar",
-                "show_fallback_avatar": "Show Fallback Avatar Details",
+                "show_fallback_avatar": "Mostrar detalles del avatar de fallback",
                 "show_previous_instances": "Mostrar Instancias Anteriores",
                 "show_previous_images": "Mostrar Imágenes Anteriores",
                 "moderation_block": "Bloquear",
                 "moderation_unblock": "Desbloquear",
                 "moderation_mute": "Silenciar",
-                "moderation_unmute": "Unmute",
+                "moderation_unmute": "Desmutear",
                 "moderation_hide_avatar": "Ocultar Avatar",
                 "moderation_show_avatar": "Mostrar Avatar",
-                "moderation_enable_avatar_interaction": "Enable Avatar Interaction",
+                "moderation_enable_avatar_interaction": "Habilitar interacciones de avatar",
                 "moderation_disable_avatar_interaction": "Deshabilita las Interacciones con el Avatar",
                 "edit_status": "Estatus social",
                 "edit_language": "Idioma",
@@ -576,11 +576,11 @@
                 "memo": "Nota de VRCX",
                 "memo_placeholder": "Haga clic aquí para añadir una nota",
                 "avatar_info": "Información del avatar",
-                "avatar_info_last_seen": "Avatar Info Last Seen",
+                "avatar_info_last_seen": "Última información de avatar el",
                 "represented_group": "Grupo representado",
                 "bio": "Biografía",
                 "last_seen": "Visto por última vez",
-                "join_count": "Join Count",
+                "join_count": "Número de entradas",
                 "time_together": "Tiempo juntos",
                 "online_for": "En línea desde",
                 "offline_for": "Desconectado desde",
@@ -597,7 +597,7 @@
                 "id_tooltip": "Copiar al portapapeles",
                 "copy_id": "Copiar ID",
                 "copy_url": "Copiar URL",
-                "copy_display_name": "Copy DisplayName",
+                "copy_display_name": "Copiar nombre de pantalla",
                 "accuracy_notice": "La información de la base de datos local puede no ser precisa",
                 "instance_full": "lleno"
             },
@@ -700,7 +700,7 @@
                 "favorites": "Favoritos",
                 "visits": "Visitas",
                 "capacity": "Capacidad",
-                "heat": "Heat",
+                "heat": "Popularidad",
                 "popularity": "Popularidad",
                 "created_at": "Creado el",
                 "last_updated": "Última actualización",
@@ -857,7 +857,7 @@
                 "unsubscribed_announcements": "Darse de baja de los anuncios",
                 "visibility": "Visibilidad:",
                 "representing": "Representando",
-                "manager_notes": "Manager Notes:",
+                "manager_notes": "Nota del administrador:",
                 "search": "Buscar"
             },
             "gallery": {
@@ -907,7 +907,7 @@
             "access_type_friend": "Friends",
             "access_type_invite_plus": "Invite+",
             "access_type_invite": "Invite",
-            "group_access_type": "Group Access",
+            "group_access_type": "Acceso del grupo",
             "group_access_type_members": "Miembros",
             "group_access_type_plus": "Plus",
             "group_access_type_public": "Público",
@@ -959,7 +959,7 @@
             "cache_expiry_delay": "Expiración del Cache [dias] (min 30)",
             "cache_directory": "Ubicación de la carpeta de caché",
             "picture_directory": "Ubicación de la carpeta de imagenes",
-            "fpv_steadycam_fov": "First-Person Steadycam FOV",
+            "fpv_steadycam_fov": "FOV de la Camara de Primera Persona",
             "camera_resolution": "Resolución de la cámara",
             "screenshot_resolution": "Resolución de las capturas de pantalla",
             "picture_sort_by_date": "Ordenar imágenes en carpetas por fecha",
@@ -1299,7 +1299,7 @@
         },
         "email_otp": {
             "header": "Autenticación de dos factores",
-            "description": "Enter a numeric code that was sent to your email",
+            "description": "Introduzca un código numérico que fue enviado a su correo electrónico",
             "resend": "Reenviar email",
             "verify": "Verificar",
             "input_placeholder": "Código",
@@ -1368,14 +1368,14 @@
             }
         },
         "notification_timeout": {
-            "header": "Notification Timeout",
+            "header": "Tiempo de espera de las notificaciones",
             "description": "Introduzca una cantidad de segundos",
             "cancel": "Cancelar",
             "ok": "Aceptar",
             "input_error": "Se requiere un número válido"
         },
         "overlay_message_timeout": {
-            "header": "Overlay Message Timeout",
+            "header": "Tiempo de espera del overlay del mensaje",
             "description": "Introduzca la cantidad de segundos",
             "cancel": "Cancelar",
             "ok": "Aceptar",
@@ -1460,7 +1460,7 @@
             "input_error": "Se requiere un número válido"
         },
         "photon_lobby_timeout": {
-            "header": "User Timeout Threshold",
+            "header": "Umbral de tiempo de espera del usuario",
             "description": "Introduzca una cantidad de segundos (por defecto: 3)",
             "cancel": "Cancelar",
             "ok": "Aceptar",
@@ -1475,7 +1475,7 @@
         },
         "new_local_favorite_group": {
             "header": "Nuevo Grupo",
-            "description": "Enter a world favorite group name",
+            "description": "Introduzca un nombre de grupo favorito para el mundo",
             "cancel": "Cancelar",
             "ok": "Aceptar",
             "input_error": "El nombre es requerido",
@@ -1485,7 +1485,7 @@
         },
         "local_favorite_group_rename": {
             "header": "Renombrar Grupo",
-            "description": "Enter a world favorite group name",
+            "description": "Introduzca un nombre de grupo favorito para el mundo",
             "cancel": "Cancelar",
             "save": "Guardar",
             "input_error": "El nombre es requerido",
