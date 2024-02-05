@@ -413,7 +413,7 @@ speechSynthesis.getVoices();
                         console.log(init, response.data);
                     }
                     return response;
-                } catch (e) {}
+                } catch (e) { }
                 if (response.status === 200) {
                     this.$throw(0, 'Invalid JSON response');
                 }
@@ -639,12 +639,12 @@ speechSynthesis.getVoices();
         if (
             args.json.length > 0 &&
             ((options.params.offset += args.json.length),
-            // eslint-disable-next-line no-nested-ternary
-            options.N > 0
-                ? options.N > options.params.offset
-                : options.N < 0
-                  ? args.json.length
-                  : options.params.n === args.json.length)
+                // eslint-disable-next-line no-nested-ternary
+                options.N > 0
+                    ? options.N > options.params.offset
+                    : options.N < 0
+                        ? args.json.length
+                        : options.params.n === args.json.length)
         ) {
             this.bulk(options);
         } else if ('done' in options) {
@@ -1029,7 +1029,7 @@ speechSynthesis.getVoices();
                     (this.worlddialogshortname &&
                         this.locationobject.shortName &&
                         this.worlddialogshortname ===
-                            this.locationobject.shortName) ||
+                        this.locationobject.shortName) ||
                     this.currentuserid === this.locationobject.userId
                 ) {
                     this.isUnlocked = true;
@@ -1206,7 +1206,7 @@ speechSynthesis.getVoices();
                         );
                         this.avatarName = avatarInfo.avatarName;
                         this.ownerId = avatarInfo.ownerId;
-                    } catch (err) {}
+                    } catch (err) { }
                 }
                 if (typeof this.userid === 'undefined' || !this.ownerId) {
                     this.color = '';
@@ -3261,7 +3261,7 @@ speechSynthesis.getVoices();
                     if (object === Object(object)) {
                         details = object;
                     }
-                } catch (err) {}
+                } catch (err) { }
             }
             ref.details = details;
         }
@@ -5029,7 +5029,7 @@ speechSynthesis.getVoices();
                 }
                 try {
                     socket.close();
-                } catch (err) {}
+                } catch (err) { }
                 if ($app.debugWebSocket) {
                     console.log('WebSocket closed');
                 }
@@ -5054,7 +5054,7 @@ speechSynthesis.getVoices();
                     var json = JSON.parse(data);
                     try {
                         json.content = JSON.parse(json.content);
-                    } catch (err) {}
+                    } catch (err) { }
                     this.$emit('PIPELINE', {
                         json
                     });
@@ -5087,7 +5087,7 @@ speechSynthesis.getVoices();
         this.webSocket = null;
         try {
             socket.close();
-        } catch (err) {}
+        } catch (err) { }
     };
 
     // #endregion
@@ -5355,7 +5355,7 @@ speechSynthesis.getVoices();
                 if (
                     !this.enablePrimaryPassword &&
                     (await configRepository.getString('lastUserLoggedIn')) !==
-                        null
+                    null
                 ) {
                     // login at startup
                     this.loginForm.loading = true;
@@ -5771,7 +5771,7 @@ speechSynthesis.getVoices();
         if (i > 0) {
             if (
                 data[i - 1].created_at ===
-                    this.sharedFeed.gameLog.lastEntryDate &&
+                this.sharedFeed.gameLog.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
@@ -5804,9 +5804,9 @@ speechSynthesis.getVoices();
                     if (
                         feedItem.type === 'OnPlayerLeft' &&
                         Date.parse(feedItem.created_at) >=
-                            currentUserLeaveTime &&
+                        currentUserLeaveTime &&
                         Date.parse(feedItem.created_at) <=
-                            currentUserLeaveTimeOffset
+                        currentUserLeaveTimeOffset
                     ) {
                         wristArr.splice(k, 1);
                         w--;
@@ -5823,7 +5823,7 @@ speechSynthesis.getVoices();
                         feedItem.type === 'OnPlayerJoined' &&
                         Date.parse(feedItem.created_at) >= locationJoinTime &&
                         Date.parse(feedItem.created_at) <=
-                            locationJoinTimeOffset
+                        locationJoinTimeOffset
                     ) {
                         wristArr.splice(k, 1);
                         w--;
@@ -5989,7 +5989,7 @@ speechSynthesis.getVoices();
         if (i > 0) {
             if (
                 data[i - 1].created_at ===
-                    this.sharedFeed.feedTable.lastEntryDate &&
+                this.sharedFeed.feedTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
@@ -6069,7 +6069,7 @@ speechSynthesis.getVoices();
         if (i > 0) {
             if (
                 data[i - 1].created_at ===
-                    this.sharedFeed.notificationTable.lastEntryDate &&
+                this.sharedFeed.notificationTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
@@ -6135,7 +6135,7 @@ speechSynthesis.getVoices();
         if (i > 0) {
             if (
                 data[i - 1].created_at ===
-                    this.sharedFeed.friendLogTable.lastEntryDate &&
+                this.sharedFeed.friendLogTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
@@ -6204,7 +6204,7 @@ speechSynthesis.getVoices();
         if (i > 0) {
             if (
                 data[i - 1].created_at ===
-                    this.sharedFeed.moderationAgainstTable.lastEntryDate &&
+                this.sharedFeed.moderationAgainstTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
@@ -6512,8 +6512,7 @@ speechSynthesis.getVoices();
                 break;
             case 'invite':
                 this.speak(
-                    `${
-                        noty.senderUsername
+                    `${noty.senderUsername
                     } has invited you to ${this.displayLocation(
                         noty.details.worldId,
                         noty.details.worldName,
@@ -6575,8 +6574,7 @@ speechSynthesis.getVoices();
             case 'PortalSpawn':
                 if (noty.displayName) {
                     this.speak(
-                        `${
-                            noty.displayName
+                        `${noty.displayName
                         } has spawned a portal to ${this.displayLocation(
                             noty.instanceId,
                             noty.worldName,
@@ -6705,8 +6703,7 @@ speechSynthesis.getVoices();
             case 'invite':
                 AppApi.XSNotification(
                     'VRCX',
-                    `${
-                        noty.senderUsername
+                    `${noty.senderUsername
                     } has invited you to ${this.displayLocation(
                         noty.details.worldId,
                         noty.details.worldName
@@ -6798,8 +6795,7 @@ speechSynthesis.getVoices();
                 if (noty.displayName) {
                     AppApi.XSNotification(
                         'VRCX',
-                        `${
-                            noty.displayName
+                        `${noty.displayName
                         } has spawned a portal to ${this.displayLocation(
                             noty.instanceId,
                             noty.worldName,
@@ -7340,7 +7336,7 @@ speechSynthesis.getVoices();
         if (this.loginForm.lastUserLoggedIn) {
             var user =
                 this.loginForm.savedCredentials[
-                    this.loginForm.lastUserLoggedIn
+                this.loginForm.lastUserLoggedIn
                 ];
             if (typeof user !== 'undefined') {
                 await webApiService.clearCookies();
@@ -7790,8 +7786,8 @@ speechSynthesis.getVoices();
         savedCredentials:
             (await configRepository.getString('savedCredentials')) !== null
                 ? JSON.parse(
-                      await configRepository.getString('savedCredentials')
-                  )
+                    await configRepository.getString('savedCredentials')
+                )
                 : {},
         lastUserLoggedIn: await configRepository.getString('lastUserLoggedIn'),
         rules: {
@@ -7843,9 +7839,9 @@ speechSynthesis.getVoices();
                                 .then(({ value }) => {
                                     let saveCredential =
                                         this.loginForm.savedCredentials[
-                                            Object.keys(
-                                                this.loginForm.savedCredentials
-                                            )[0]
+                                        Object.keys(
+                                            this.loginForm.savedCredentials
+                                        )[0]
                                         ];
                                     security
                                         .decrypt(
@@ -7972,7 +7968,7 @@ speechSynthesis.getVoices();
     $app.methods.getMemo = async function (userId) {
         try {
             return await database.getMemo(userId);
-        } catch (err) {}
+        } catch (err) { }
         return {
             userId: '',
             editedAt: '',
@@ -8023,7 +8019,7 @@ speechSynthesis.getVoices();
     $app.methods.getWorldMemo = async function (worldId) {
         try {
             return await database.getWorldMemo(worldId);
-        } catch (err) {}
+        } catch (err) { }
         return {
             worldId: '',
             editedAt: '',
@@ -8638,7 +8634,7 @@ speechSynthesis.getVoices();
                     });
                     worldName = args.ref.name;
                 }
-            } catch (err) {}
+            } catch (err) { }
         }
         return worldName;
     };
@@ -8661,7 +8657,7 @@ speechSynthesis.getVoices();
                 groupId
             });
             groupName = args.ref.name;
-        } catch (err) {}
+        } catch (err) { }
         return groupName;
     };
 
@@ -9501,7 +9497,7 @@ speechSynthesis.getVoices();
             };
             try {
                 avatarInfo = await $app.getAvatarName(currentAvatarImageUrl);
-            } catch (err) {}
+            } catch (err) { }
             var feed = {
                 created_at: new Date().toJSON(),
                 type: 'Avatar',
@@ -10096,7 +10092,7 @@ speechSynthesis.getVoices();
                         if (
                             ref.location !== this.lastLocation.location &&
                             ref.travelingToLocation !==
-                                this.lastLocation.location
+                            this.lastLocation.location
                         ) {
                             // fix $location_at with private
                             ref.$location_at = joinTime;
@@ -11450,9 +11446,8 @@ speechSynthesis.getVoices();
             }
             if (this.debugPhotonLogging) {
                 var displayName = this.getDisplayNameFromPhotonId(senderId);
-                var feed = `RPC ${displayName} ${
-                    this.photonEventType[eventData.EventType]
-                }${eventName}`;
+                var feed = `RPC ${displayName} ${this.photonEventType[eventData.EventType]
+                    }${eventName}`;
                 console.log('VrcRpc:', feed);
             }
         }
@@ -12507,8 +12502,8 @@ speechSynthesis.getVoices();
 
     $app.methods.formatSeconds = function (duration) {
         var pad = function (num, size) {
-                return `000${num}`.slice(size * -1);
-            },
+            return `000${num}`.slice(size * -1);
+        },
             time = parseFloat(duration).toFixed(3),
             hours = Math.floor(time / 60 / 60),
             minutes = Math.floor(time / 60) % 60,
@@ -12735,7 +12730,7 @@ speechSynthesis.getVoices();
                     (this.nowPlaying.startTime -
                         this.nowPlaying.offset +
                         this.nowPlaying.length) *
-                        1000
+                    1000
                 );
             }
         } else if (!this.discordHideImage && L.thumbnailImageUrl) {
@@ -13693,7 +13688,7 @@ speechSynthesis.getVoices();
                 API.getUser({
                     userId: id
                 });
-            } catch {}
+            } catch { }
             return;
         }
         API.getFriendStatus({
@@ -14607,7 +14602,7 @@ speechSynthesis.getVoices();
         speechSynthesis.cancel();
         if (
             (await configRepository.getString('VRCX_notificationTTS')) ===
-                'Never' &&
+            'Never' &&
             this.notificationTTS !== 'Never'
         ) {
             this.speak('Notification text-to-speech enabled');
@@ -17229,9 +17224,8 @@ speechSynthesis.getVoices();
         if (type === 'search') {
             try {
                 var response = await webApiService.execute({
-                    url: `${
-                        this.avatarRemoteDatabaseProvider
-                    }?${type}=${encodeURIComponent(search)}&n=5000`,
+                    url: `${this.avatarRemoteDatabaseProvider
+                        }?${type}=${encodeURIComponent(search)}&n=5000`,
                     method: 'GET',
                     headers: {
                         Referer: 'https://vrcx.pypy.moe'
@@ -23668,7 +23662,7 @@ speechSynthesis.getVoices();
             try {
                 var args = await API.getFavoriteWorlds(params);
                 worldLists.push([list.displayName, list.visibility, args.json]);
-            } catch (err) {}
+            } catch (err) { }
         }
         this.userFavoriteWorlds = worldLists;
         this.userDialog.isFavoriteWorldsLoading = false;
@@ -28937,6 +28931,41 @@ speechSynthesis.getVoices();
                 }
             });
         }
+
+        // reload translations - temporary solution
+
+        $app.userDialogWorldSortingOptions = {
+            updated: {
+                name: $t('dialog.user.worlds.sorting.updated'),
+                value: 'updated'
+            },
+            created: {
+                name: $t('dialog.user.worlds.sorting.created'),
+                value: 'created'
+            },
+            favorites: {
+                name: $t('dialog.user.worlds.sorting.favorites'),
+                value: 'favorites'
+            },
+            popularity: {
+                name: $t('dialog.user.worlds.sorting.popularity'),
+                value: 'popularity'
+            }
+        };
+
+        $app.userDialogWorldOrderOptions = {
+            descending: {
+                name: $t('dialog.user.worlds.order.descending'),
+                value: 'descending'
+            },
+            ascending: {
+                name: $t('dialog.user.worlds.order.ascending'),
+                value: 'ascending'
+            }
+        };
+
+        $app.userDialog.worldSorting = $app.userDialogWorldSortingOptions.updated;
+        $app.userDialog.worldOrder = $app.userDialogWorldOrderOptions.descending;
     };
     initLanguage();
 
@@ -29697,8 +29726,7 @@ speechSynthesis.getVoices();
                     managerNotes: D.note
                 });
                 console.log(
-                    `Setting note ${D.note} ${user.userId} ${
-                        i + 1
+                    `Setting note ${D.note} ${user.userId} ${i + 1
                     }/${memberCount}`
                 );
             }
@@ -29742,8 +29770,7 @@ speechSynthesis.getVoices();
                 for (var j = 0; j < rolesToAdd.length; j++) {
                     var roleId = rolesToAdd[j];
                     console.log(
-                        `Adding role: ${roleId} ${user.userId} ${
-                            i + 1
+                        `Adding role: ${roleId} ${user.userId} ${i + 1
                         }/${memberCount}`
                     );
                     await API.addGroupMemberRole({
@@ -29792,8 +29819,7 @@ speechSynthesis.getVoices();
                 for (var j = 0; j < rolesToRemove.length; j++) {
                     var roleId = rolesToRemove[j];
                     console.log(
-                        `Removing role ${roleId} ${user.userId} ${
-                            i + 1
+                        `Removing role ${roleId} ${user.userId} ${i + 1
                         }/${memberCount}`
                     );
                     await API.removeGroupMemberRole({
