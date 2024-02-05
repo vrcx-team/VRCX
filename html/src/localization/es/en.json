@@ -255,7 +255,7 @@
                     "sort_instance_users_by": "Ordenar usuarios de la Instancia por",
                     "sort_instance_users_by_time": "tiempo",
                     "sort_instance_users_by_alphabet": "alfabético",
-                    "table_max_size": "Tamaño máximo de la tabla",
+                    "table_max_size": "Tamaño máximo de las tablas",
                     "page_size": "Tamaño de página:"
                 },
                 "timedate": {
@@ -289,7 +289,7 @@
                     "width": "Anchura"
                 },
                 "user_dialog": {
-                    "header": "User Dialog",
+                    "header": "Diálogo del usuario",
                     "hide_vrchat_notes": "Ocultar notas de VRChat",
                     "hide_vrcx_memos": "Ocultar notas de VRCX",
                     "export_vrcx_memos_into_vrchat_notes": "Exportar las notas de VRCX a las notas de VRChat",
@@ -1110,7 +1110,7 @@
             "add_provider": "Añadir proveedor"
         },
         "chatbox_blacklist": {
-            "header": "Chatbox Blacklist",
+            "header": "Lista negra del chatbox",
             "keyword_blacklist": "Lista negra de palabras clave",
             "user_blacklist": "Lista negra de usuarios",
             "add_item": "Añadir artículo"
