@@ -1106,6 +1106,7 @@ html
                                                         el-tooltip(placement="top")
                                                             template(#content)
                                                                 span {{ $t('dialog.group.info.role') }} {{ role.name }}
+                                                                br
                                                                 span {{ $t('dialog.group.info.role_description') }} {{ role.description }}
                                                                 br
                                                                 span(v-if="role.updatedAt") {{ $t('dialog.group.info.role_updated_at') }} {{ role.updatedAt | formatDate('long') }}
@@ -1451,7 +1452,7 @@ html
                                     el-radio-button(label="plus") {{ $t('dialog.new_instance.group_access_type_plus') }}
                                     el-radio-button(label="public") {{ $t('dialog.new_instance.group_access_type_public') }}
                             el-form-item(:label="$t('dialog.new_instance.region')")
-                                el-radio-group(v-model="newInstanceDialog.region" size="mini" @change="buildInstance")
+                                el-radio-group(v-model="newInstanceDialog.groupRegion" size="mini" @change="buildInstance")
                                     el-radio-button(label="US West") {{ $t('dialog.new_instance.region_usw') }}
                                     el-radio-button(label="US East") {{ $t('dialog.new_instance.region_use') }}
                                     el-radio-button(label="Europe") {{ $t('dialog.new_instance.region_eu') }}
