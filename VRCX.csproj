@@ -117,8 +117,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="120.2.70" />
-    <PackageReference Include="CefSharp.WinForms.NETCore" Version="120.2.70" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="121.3.70" />
+    <PackageReference Include="CefSharp.WinForms.NETCore" Version="121.3.70" />
     <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
