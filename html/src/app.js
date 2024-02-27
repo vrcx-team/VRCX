@@ -639,12 +639,12 @@ speechSynthesis.getVoices();
         if (
             args.json.length > 0 &&
             ((options.params.offset += args.json.length),
-            // eslint-disable-next-line no-nested-ternary
-            options.N > 0
-                ? options.N > options.params.offset
-                : options.N < 0
-                  ? args.json.length
-                  : options.params.n === args.json.length)
+                // eslint-disable-next-line no-nested-ternary
+                options.N > 0
+                    ? options.N > options.params.offset
+                    : options.N < 0
+                        ? args.json.length
+                        : options.params.n === args.json.length)
         ) {
             this.bulk(options);
         } else if ('done' in options) {
@@ -1029,7 +1029,7 @@ speechSynthesis.getVoices();
                     (this.worlddialogshortname &&
                         this.locationobject.shortName &&
                         this.worlddialogshortname ===
-                            this.locationobject.shortName) ||
+                        this.locationobject.shortName) ||
                     this.currentuserid === this.locationobject.userId
                 ) {
                     this.isUnlocked = true;
@@ -5355,7 +5355,7 @@ speechSynthesis.getVoices();
                 if (
                     !this.enablePrimaryPassword &&
                     (await configRepository.getString('lastUserLoggedIn')) !==
-                        null
+                    null
                 ) {
                     // login at startup
                     this.loginForm.loading = true;
@@ -5771,7 +5771,7 @@ speechSynthesis.getVoices();
         if (i > 0) {
             if (
                 data[i - 1].created_at ===
-                    this.sharedFeed.gameLog.lastEntryDate &&
+                this.sharedFeed.gameLog.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
@@ -5804,9 +5804,9 @@ speechSynthesis.getVoices();
                     if (
                         feedItem.type === 'OnPlayerLeft' &&
                         Date.parse(feedItem.created_at) >=
-                            currentUserLeaveTime &&
+                        currentUserLeaveTime &&
                         Date.parse(feedItem.created_at) <=
-                            currentUserLeaveTimeOffset
+                        currentUserLeaveTimeOffset
                     ) {
                         wristArr.splice(k, 1);
                         w--;
@@ -5823,7 +5823,7 @@ speechSynthesis.getVoices();
                         feedItem.type === 'OnPlayerJoined' &&
                         Date.parse(feedItem.created_at) >= locationJoinTime &&
                         Date.parse(feedItem.created_at) <=
-                            locationJoinTimeOffset
+                        locationJoinTimeOffset
                     ) {
                         wristArr.splice(k, 1);
                         w--;
@@ -5989,7 +5989,7 @@ speechSynthesis.getVoices();
         if (i > 0) {
             if (
                 data[i - 1].created_at ===
-                    this.sharedFeed.feedTable.lastEntryDate &&
+                this.sharedFeed.feedTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
@@ -6069,7 +6069,7 @@ speechSynthesis.getVoices();
         if (i > 0) {
             if (
                 data[i - 1].created_at ===
-                    this.sharedFeed.notificationTable.lastEntryDate &&
+                this.sharedFeed.notificationTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
@@ -6135,7 +6135,7 @@ speechSynthesis.getVoices();
         if (i > 0) {
             if (
                 data[i - 1].created_at ===
-                    this.sharedFeed.friendLogTable.lastEntryDate &&
+                this.sharedFeed.friendLogTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
@@ -6204,7 +6204,7 @@ speechSynthesis.getVoices();
         if (i > 0) {
             if (
                 data[i - 1].created_at ===
-                    this.sharedFeed.moderationAgainstTable.lastEntryDate &&
+                this.sharedFeed.moderationAgainstTable.lastEntryDate &&
                 forceUpdate === false
             ) {
                 return;
@@ -7340,7 +7340,7 @@ speechSynthesis.getVoices();
         if (this.loginForm.lastUserLoggedIn) {
             var user =
                 this.loginForm.savedCredentials[
-                    this.loginForm.lastUserLoggedIn
+                this.loginForm.lastUserLoggedIn
                 ];
             if (typeof user !== 'undefined') {
                 await webApiService.clearCookies();
@@ -7790,8 +7790,8 @@ speechSynthesis.getVoices();
         savedCredentials:
             (await configRepository.getString('savedCredentials')) !== null
                 ? JSON.parse(
-                      await configRepository.getString('savedCredentials')
-                  )
+                    await configRepository.getString('savedCredentials')
+                )
                 : {},
         lastUserLoggedIn: await configRepository.getString('lastUserLoggedIn'),
         rules: {
@@ -7843,9 +7843,9 @@ speechSynthesis.getVoices();
                                 .then(({ value }) => {
                                     let saveCredential =
                                         this.loginForm.savedCredentials[
-                                            Object.keys(
-                                                this.loginForm.savedCredentials
-                                            )[0]
+                                        Object.keys(
+                                            this.loginForm.savedCredentials
+                                        )[0]
                                         ];
                                     security
                                         .decrypt(
@@ -10096,7 +10096,7 @@ speechSynthesis.getVoices();
                         if (
                             ref.location !== this.lastLocation.location &&
                             ref.travelingToLocation !==
-                                this.lastLocation.location
+                            this.lastLocation.location
                         ) {
                             // fix $location_at with private
                             ref.$location_at = joinTime;
@@ -11452,7 +11452,7 @@ speechSynthesis.getVoices();
                 var displayName = this.getDisplayNameFromPhotonId(senderId);
                 var feed = `RPC ${displayName} ${
                     this.photonEventType[eventData.EventType]
-                }${eventName}`;
+                    }${eventName}`;
                 console.log('VrcRpc:', feed);
             }
         }
@@ -12507,8 +12507,8 @@ speechSynthesis.getVoices();
 
     $app.methods.formatSeconds = function (duration) {
         var pad = function (num, size) {
-                return `000${num}`.slice(size * -1);
-            },
+            return `000${num}`.slice(size * -1);
+        },
             time = parseFloat(duration).toFixed(3),
             hours = Math.floor(time / 60 / 60),
             minutes = Math.floor(time / 60) % 60,
@@ -12735,7 +12735,7 @@ speechSynthesis.getVoices();
                     (this.nowPlaying.startTime -
                         this.nowPlaying.offset +
                         this.nowPlaying.length) *
-                        1000
+                    1000
                 );
             }
         } else if (!this.discordHideImage && L.thumbnailImageUrl) {
@@ -14607,7 +14607,7 @@ speechSynthesis.getVoices();
         speechSynthesis.cancel();
         if (
             (await configRepository.getString('VRCX_notificationTTS')) ===
-                'Never' &&
+            'Never' &&
             this.notificationTTS !== 'Never'
         ) {
             this.speak('Notification text-to-speech enabled');
@@ -17231,7 +17231,7 @@ speechSynthesis.getVoices();
                 var response = await webApiService.execute({
                     url: `${
                         this.avatarRemoteDatabaseProvider
-                    }?${type}=${encodeURIComponent(search)}&n=5000`,
+                        }?${type}=${encodeURIComponent(search)}&n=5000`,
                     method: 'GET',
                     headers: {
                         Referer: 'https://vrcx.pypy.moe'
@@ -28946,6 +28946,41 @@ speechSynthesis.getVoices();
                 }
             });
         }
+
+        // reload translations - temporary solution
+
+        $app.userDialogWorldSortingOptions = {
+            updated: {
+                name: $t('dialog.user.worlds.sorting.updated'),
+                value: 'updated'
+            },
+            created: {
+                name: $t('dialog.user.worlds.sorting.created'),
+                value: 'created'
+            },
+            favorites: {
+                name: $t('dialog.user.worlds.sorting.favorites'),
+                value: 'favorites'
+            },
+            popularity: {
+                name: $t('dialog.user.worlds.sorting.popularity'),
+                value: 'popularity'
+            }
+        };
+
+        $app.userDialogWorldOrderOptions = {
+            descending: {
+                name: $t('dialog.user.worlds.order.descending'),
+                value: 'descending'
+            },
+            ascending: {
+                name: $t('dialog.user.worlds.order.ascending'),
+                value: 'ascending'
+            }
+        };
+
+        $app.userDialog.worldSorting = $app.userDialogWorldSortingOptions.updated;
+        $app.userDialog.worldOrder = $app.userDialogWorldOrderOptions.descending;
     };
     initLanguage();
 
