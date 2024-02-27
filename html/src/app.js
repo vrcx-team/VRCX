@@ -12716,7 +12716,8 @@ speechSynthesis.getVoices();
             } else if (
                 L.worldId === 'wrld_74970324-58e8-4239-a17b-2c59dfdf00db' ||
                 L.worldId === 'wrld_db9d878f-6e76-4776-8bf2-15bcdd7fc445' ||
-                L.worldId === 'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e'
+                L.worldId === 'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e' ||
+                L.worldId === 'wrld_f767d1c8-b249-4ecc-a56f-614e433682c8'
             ) {
                 appId = '968292722391785512';
                 bigIcon = 'ls_media';
@@ -15210,6 +15211,7 @@ speechSynthesis.getVoices();
             'wrld_04899f23-e182-4a8d-b2c7-2c74c7c15534',
             'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e',
             'wrld_db9d878f-6e76-4776-8bf2-15bcdd7fc445',
+            'wrld_f767d1c8-b249-4ecc-a56f-614e433682c8',
             'wrld_74970324-58e8-4239-a17b-2c59dfdf00db',
             'wrld_266523e8-9161-40da-acd0-6bd82e075833'
         ];
