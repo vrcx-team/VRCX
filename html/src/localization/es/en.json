@@ -152,7 +152,7 @@
                 "header": "Información del Juego",
                 "online_users": "Usuarios en línea",
                 "user_online": "{count} usuarios en línea.",
-                "refresh": "Haga clic para actualizar"
+                "refresh": "Clic para actualizar"
             },
             "vrc_sdk_downloads": {
                 "header": "Descargas SDK de VRC"
@@ -190,7 +190,7 @@
                     "header": "General",
                     "version": "Versión",
                     "latest_app_version": "Última versión",
-                    "latest_app_version_refresh": "Haga clic para actualizar",
+                    "latest_app_version_refresh": "Clic para actualizar",
                     "repository_url": "URL del repositorio",
                     "support": "Soporte técnico"
                 },
@@ -700,7 +700,7 @@
                 "favorites": "Favoritos",
                 "visits": "Visitas",
                 "capacity": "Capacidad",
-                "heat": "Popularidad",
+                "heat": "Racha",
                 "popularity": "Popularidad",
                 "created_at": "Creado el",
                 "last_updated": "Última actualización",
