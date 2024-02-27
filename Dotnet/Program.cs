@@ -8,7 +8,6 @@ using NLog;
 using NLog.Targets;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace VRCX
@@ -16,15 +15,19 @@ namespace VRCX
     public static class Program
     {
         public static string BaseDirectory { get; private set; }
-        public static readonly string AppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX");
-        public static string ConfigLocation;
+        public static string AppDataDirectory;
+        public static string ConfigLocation { get; private set; }
         public static string Version { get; private set; }
         public static bool LaunchDebug;
         private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
-        static Program()
+        
+        private static void SetProgramDirectories()
         {
+            if (string.IsNullOrEmpty(AppDataDirectory))
+                AppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX");
+            
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            ConfigLocation = Path.Combine(Program.AppDataDirectory, "VRCX.sqlite3");
+            ConfigLocation = Path.Combine(AppDataDirectory, "VRCX.sqlite3");
 
             if (!Directory.Exists(AppDataDirectory))
             {
@@ -97,8 +100,6 @@ namespace VRCX
         [STAThread]
         private static void Main()
         {
-            ConfigureLogger();
-
             try
             {
                 Run();
@@ -127,8 +128,10 @@ namespace VRCX
         private static void Run()
         {
             BrowserSubprocess.Start();
-            Update.Check();
             StartupArgs.ArgsCheck();
+            SetProgramDirectories();
+            ConfigureLogger();
+            Update.Check();
             GetVersion();
 
             Application.EnableVisualStyles();

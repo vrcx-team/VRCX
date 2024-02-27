@@ -413,7 +413,7 @@ speechSynthesis.getVoices();
                         console.log(init, response.data);
                     }
                     return response;
-                } catch (e) { }
+                } catch (e) {}
                 if (response.status === 200) {
                     this.$throw(0, 'Invalid JSON response');
                 }
@@ -1206,7 +1206,7 @@ speechSynthesis.getVoices();
                         );
                         this.avatarName = avatarInfo.avatarName;
                         this.ownerId = avatarInfo.ownerId;
-                    } catch (err) { }
+                    } catch (err) {}
                 }
                 if (typeof this.userid === 'undefined' || !this.ownerId) {
                     this.color = '';
@@ -3261,7 +3261,7 @@ speechSynthesis.getVoices();
                     if (object === Object(object)) {
                         details = object;
                     }
-                } catch (err) { }
+                } catch (err) {}
             }
             ref.details = details;
         }
@@ -5029,7 +5029,7 @@ speechSynthesis.getVoices();
                 }
                 try {
                     socket.close();
-                } catch (err) { }
+                } catch (err) {}
                 if ($app.debugWebSocket) {
                     console.log('WebSocket closed');
                 }
@@ -5054,7 +5054,7 @@ speechSynthesis.getVoices();
                     var json = JSON.parse(data);
                     try {
                         json.content = JSON.parse(json.content);
-                    } catch (err) { }
+                    } catch (err) {}
                     this.$emit('PIPELINE', {
                         json
                     });
@@ -5087,7 +5087,7 @@ speechSynthesis.getVoices();
         this.webSocket = null;
         try {
             socket.close();
-        } catch (err) { }
+        } catch (err) {}
     };
 
     // #endregion
@@ -6512,7 +6512,8 @@ speechSynthesis.getVoices();
                 break;
             case 'invite':
                 this.speak(
-                    `${noty.senderUsername
+                    `${
+                        noty.senderUsername
                     } has invited you to ${this.displayLocation(
                         noty.details.worldId,
                         noty.details.worldName,
@@ -6574,7 +6575,8 @@ speechSynthesis.getVoices();
             case 'PortalSpawn':
                 if (noty.displayName) {
                     this.speak(
-                        `${noty.displayName
+                        `${
+                            noty.displayName
                         } has spawned a portal to ${this.displayLocation(
                             noty.instanceId,
                             noty.worldName,
@@ -6703,7 +6705,8 @@ speechSynthesis.getVoices();
             case 'invite':
                 AppApi.XSNotification(
                     'VRCX',
-                    `${noty.senderUsername
+                    `${
+                        noty.senderUsername
                     } has invited you to ${this.displayLocation(
                         noty.details.worldId,
                         noty.details.worldName
@@ -6795,7 +6798,8 @@ speechSynthesis.getVoices();
                 if (noty.displayName) {
                     AppApi.XSNotification(
                         'VRCX',
-                        `${noty.displayName
+                        `${
+                            noty.displayName
                         } has spawned a portal to ${this.displayLocation(
                             noty.instanceId,
                             noty.worldName,
@@ -7968,7 +7972,7 @@ speechSynthesis.getVoices();
     $app.methods.getMemo = async function (userId) {
         try {
             return await database.getMemo(userId);
-        } catch (err) { }
+        } catch (err) {}
         return {
             userId: '',
             editedAt: '',
@@ -8019,7 +8023,7 @@ speechSynthesis.getVoices();
     $app.methods.getWorldMemo = async function (worldId) {
         try {
             return await database.getWorldMemo(worldId);
-        } catch (err) { }
+        } catch (err) {}
         return {
             worldId: '',
             editedAt: '',
@@ -8634,7 +8638,7 @@ speechSynthesis.getVoices();
                     });
                     worldName = args.ref.name;
                 }
-            } catch (err) { }
+            } catch (err) {}
         }
         return worldName;
     };
@@ -8657,7 +8661,7 @@ speechSynthesis.getVoices();
                 groupId
             });
             groupName = args.ref.name;
-        } catch (err) { }
+        } catch (err) {}
         return groupName;
     };
 
@@ -9497,7 +9501,7 @@ speechSynthesis.getVoices();
             };
             try {
                 avatarInfo = await $app.getAvatarName(currentAvatarImageUrl);
-            } catch (err) { }
+            } catch (err) {}
             var feed = {
                 created_at: new Date().toJSON(),
                 type: 'Avatar',
@@ -11446,7 +11450,8 @@ speechSynthesis.getVoices();
             }
             if (this.debugPhotonLogging) {
                 var displayName = this.getDisplayNameFromPhotonId(senderId);
-                var feed = `RPC ${displayName} ${this.photonEventType[eventData.EventType]
+                var feed = `RPC ${displayName} ${
+                    this.photonEventType[eventData.EventType]
                     }${eventName}`;
                 console.log('VrcRpc:', feed);
             }
@@ -13688,7 +13693,7 @@ speechSynthesis.getVoices();
                 API.getUser({
                     userId: id
                 });
-            } catch { }
+            } catch {}
             return;
         }
         API.getFriendStatus({
@@ -17224,7 +17229,8 @@ speechSynthesis.getVoices();
         if (type === 'search') {
             try {
                 var response = await webApiService.execute({
-                    url: `${this.avatarRemoteDatabaseProvider
+                    url: `${
+                        this.avatarRemoteDatabaseProvider
                         }?${type}=${encodeURIComponent(search)}&n=5000`,
                     method: 'GET',
                     headers: {
@@ -19245,6 +19251,7 @@ speechSynthesis.getVoices();
         userId: '',
         accessType: '',
         region: '',
+        groupRegion: '',
         groupId: '',
         groupAccessType: '',
         strict: false,
@@ -19425,6 +19432,10 @@ speechSynthesis.getVoices();
             this.newInstanceDialog.region
         );
         await configRepository.setString(
+            'groupInstanceRegion',
+            this.newInstanceDialog.groupRegion
+        );
+        await configRepository.setString(
             'instanceDialogInstanceName',
             this.newInstanceDialog.instanceName
         );
@@ -19468,6 +19479,10 @@ speechSynthesis.getVoices();
         );
         D.region = await configRepository.getString(
             'instanceRegion',
+            'US West'
+        );
+        D.groupRegion = await configRepository.getString(
+            'groupInstanceRegion',
             'US West'
         );
         D.instanceName = await configRepository.getString(
@@ -23662,7 +23677,7 @@ speechSynthesis.getVoices();
             try {
                 var args = await API.getFavoriteWorlds(params);
                 worldLists.push([list.displayName, list.visibility, args.json]);
-            } catch (err) { }
+            } catch (err) {}
         }
         this.userFavoriteWorlds = worldLists;
         this.userDialog.isFavoriteWorldsLoading = false;
@@ -29726,7 +29741,8 @@ speechSynthesis.getVoices();
                     managerNotes: D.note
                 });
                 console.log(
-                    `Setting note ${D.note} ${user.userId} ${i + 1
+                    `Setting note ${D.note} ${user.userId} ${
+                        i + 1
                     }/${memberCount}`
                 );
             }
@@ -29770,7 +29786,8 @@ speechSynthesis.getVoices();
                 for (var j = 0; j < rolesToAdd.length; j++) {
                     var roleId = rolesToAdd[j];
                     console.log(
-                        `Adding role: ${roleId} ${user.userId} ${i + 1
+                        `Adding role: ${roleId} ${user.userId} ${
+                            i + 1
                         }/${memberCount}`
                     );
                     await API.addGroupMemberRole({
@@ -29819,7 +29836,8 @@ speechSynthesis.getVoices();
                 for (var j = 0; j < rolesToRemove.length; j++) {
                     var roleId = rolesToRemove[j];
                     console.log(
-                        `Removing role ${roleId} ${user.userId} ${i + 1
+                        `Removing role ${roleId} ${user.userId} ${
+                            i + 1
                         }/${memberCount}`
                     );
                     await API.removeGroupMemberRole({

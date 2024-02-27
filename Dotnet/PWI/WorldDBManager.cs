@@ -734,9 +734,16 @@ namespace VRCX
 
         public void Stop()
         {
-            listener?.Stop();
-            listener?.Close();
-            worldDB?.Close();
+            try
+            {
+                worldDB?.Close();
+                listener?.Stop();
+                listener?.Close();
+            }
+            catch (ObjectDisposedException ex)
+            {
+                // ignore
+            }
         }
     }
 }
