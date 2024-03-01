@@ -446,22 +446,19 @@ Vue.component('marquee-text', MarqueeText);
                         if (device[0] === 'base' && device[1] === 'connected') {
                             baseStations++;
                         } else {
-                            deviceList.unshift(device);
+                            deviceList.push(device);
                         }
                     });
                     this.deviceCount = deviceList.length;
-                    deviceList.sort((a, b) => {
-                        if (a[0] === b[0]) {
-                            return 0;
-                        }
-                        if (a[0] === 'tracker' || a[0] === 'base') {
-                            return 1;
-                        }
-                        if (a[0].toLowerCase().includes('controller')) {
-                            return -1;
-                        }
-                        return 0;
-                    });
+                    const deviceValue = (dev) => {
+                        if (dev[0] === 'headset') return 0;
+                        if (dev[0] === 'leftController') return 1;
+                        if (dev[0] === 'rightController') return 2;
+                        if (dev[0].toLowerCase().includes('controller')) return 3;
+                        if (dev[0] === 'tracker' || dev[0] === 'base') return 4;
+                        return 5;
+                    }
+                    deviceList.sort((a, b) => deviceValue(a) - deviceValue(b));
                     deviceList.sort((a, b) => {
                         if (a[1] === b[1]) {
                             return 0;
