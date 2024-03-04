@@ -251,6 +251,7 @@
                     "theme_mode_material3": "Material 3",
                     "vrcplus_profile_icons": "VRCPlus Profile Icons",
                     "disable_tooltips": "Disable Tooltips",
+                    "disable_nicknames": "Disable Memo Nicknames",
                     "sort_favorite_by": "Sort Favorites by",
                     "sort_favorite_by_name": "name",
                     "sort_favorite_by_date": "date",

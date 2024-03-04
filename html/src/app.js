@@ -8097,6 +8097,56 @@ speechSynthesis.getVoices();
     $app.data.sortFriendsGroup2 = false;
     $app.data.sortFriendsGroup3 = false;
 
+    $app.methods.saveFriendsGroupStates = async function () {
+        await configRepository.setBool(
+            'VRCX_isFriendsGroupMe',
+            this.isFriendsGroupMe
+        );
+        await configRepository.setBool(
+            'VRCX_isFriendsGroupFavorites',
+            this.isFriendsGroup0
+        );
+        await configRepository.setBool(
+            'VRCX_isFriendsGroupOnline',
+            this.isFriendsGroup1
+        );
+        await configRepository.setBool(
+            'VRCX_isFriendsGroupActive',
+            this.isFriendsGroup2
+        );
+        await configRepository.setBool(
+            'VRCX_isFriendsGroupOffline',
+            this.isFriendsGroup3
+        );
+    };
+
+    $app.methods.loadFriendsGroupStates = async function () {
+        this.isFriendsGroupMe = await configRepository.getBool(
+            'VRCX_isFriendsGroupMe',
+            true
+        );
+        this.isFriendsGroup0 = await configRepository.getBool(
+            'VRCX_isFriendsGroupFavorites',
+            true
+        );
+        this.isFriendsGroup1 = await configRepository.getBool(
+            'VRCX_isFriendsGroupOnline',
+            true
+        );
+        this.isFriendsGroup2 = await configRepository.getBool(
+            'VRCX_isFriendsGroupActive',
+            true
+        );
+        this.isFriendsGroup3 = await configRepository.getBool(
+            'VRCX_isFriendsGroupOffline',
+            false
+        );
+    };
+
+    API.$on('LOGIN', function () {
+        $app.loadFriendsGroupStates();
+    });
+
     $app.methods.fetchActiveFriend = function (userId) {
         this.pendingActiveFriends.add(userId);
         // FIXME: handle error
@@ -14369,6 +14419,10 @@ speechSynthesis.getVoices();
         'VRCX_hideTooltips',
         false
     );
+    $app.data.hideNicknames = await configRepository.getBool(
+        'VRCX_hideNicknames',
+        false
+    );
     $app.data.notificationTTS = await configRepository.getString(
         'VRCX_notificationTTS',
         'Never'
@@ -14551,6 +14605,10 @@ speechSynthesis.getVoices();
             this.displayVRCPlusIconsAsAvatar
         );
         await configRepository.setBool('VRCX_hideTooltips', this.hideTooltips);
+        await configRepository.setBool(
+            'VRCX_hideNicknames',
+            this.hideNicknames
+        );
         await configRepository.setBool(
             'VRCX_autoSweepVRChatCache',
             this.autoSweepVRChatCache

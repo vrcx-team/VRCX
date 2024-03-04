@@ -137,6 +137,9 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.appearance.appearance.vrcplus_profile_icons') }}
                         el-switch(v-model="displayVRCPlusIconsAsAvatar" @change="saveOpenVROption")
                     div.options-container-item
+                        span.name {{ $t('view.settings.appearance.appearance.disable_nicknames') }}
+                        el-switch(v-model="hideNicknames" @change="saveOpenVROption")
+                    div.options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.disable_tooltips') }}
                         el-switch(v-model="hideTooltips" @change="saveOpenVROption")
                     div.options-container-item
