@@ -331,6 +331,36 @@ namespace VRCX
                             IsHmdAfk = isHmdAfk;
                             AppApi.Instance.CheckGameRunning();
                         }
+
+                        var headsetErr = ETrackedPropertyError.TrackedProp_Success;
+                        var headsetBatteryPercentage = system.GetFloatTrackedDeviceProperty(i, ETrackedDeviceProperty.Prop_DeviceBatteryPercentage_Float, ref headsetErr);
+                        if (headsetErr != ETrackedPropertyError.TrackedProp_Success)
+                        {
+                            // Headset has no battery, skip displaying it
+                            break;
+                        }
+
+                        var headset = new[]
+                        {
+                            "headset",
+                            system.IsTrackedDeviceConnected(i)
+                                ? "connected"
+                                : "disconnected",
+                            // Currently neither VD or SteamLink report charging state
+                            "discharging",
+                            (headsetBatteryPercentage * 100).ToString(),
+                            poses[i].eTrackingResult.ToString()
+                        };
+                        _deviceListLock.EnterWriteLock();
+                        try
+                        {
+                            _deviceList.Add(headset);
+                        }
+                        finally
+                        {
+                            _deviceListLock.ExitWriteLock();
+                        }
+
                         break;
                     case ETrackedDeviceClass.Controller:
                     case ETrackedDeviceClass.GenericTracker:
