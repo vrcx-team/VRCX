@@ -434,6 +434,12 @@ html
                 .x-containerbottom
                     div(style="display:flex;flex-direction:row;flex-wrap:wrap")
                         div(v-for="device in devices" class="tracker-container")
+                            div(v-if="device[0] === 'headset'" class="tracker-device" :class="trackingResultToClass(device[4])")
+                                img(v-if="device[1] !== 'connected'" src="images/headset_quest_status_off.png" class="tracker-device" :class="trackingResultToClass(device[4])")
+                                img(v-else-if="device[2] === 'charging'" src="images/headset_quest_status_ready_charging.png")
+                                img(v-else-if="device[3] < 20" src="images/headset_quest_status_ready_low.png")
+                                img(v-else src="images/headset_quest_status_ready.png")
+                                span {{ device[3] }}%
                             div(v-if="device[0] === 'leftController'" class="tracker-device" :class="trackingResultToClass(device[4])")
                                 img(v-if="device[1] !== 'connected'" src="images/left_controller_status_off.png" class="tracker-device" :class="trackingResultToClass(device[4])")
                                 img(v-else-if="device[2] === 'charging'" src="images/left_controller_status_ready_charging.png")
