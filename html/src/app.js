@@ -938,7 +938,9 @@ speechSynthesis.getVoices();
                 } else if (L.groupId) {
                     this.groupName = L.groupId;
                     $app.getGroupName(instanceId).then((groupName) => {
-                        this.groupName = groupName;
+                        if (L.tag === instanceId) {
+                            this.groupName = groupName;
+                        }
                     });
                 }
                 this.region = '';
@@ -1745,6 +1747,7 @@ speechSynthesis.getVoices();
                 $languages: [],
                 $locationTag: '',
                 $travelingToLocation: '',
+                $vbucks: null,
                 ...json
             };
             ref.$homeLocation = this.parseLocation(ref.homeLocation);
@@ -7333,18 +7336,19 @@ speechSynthesis.getVoices();
         );
     };
 
-    $app.methods.resendEmail2fa = function () {
+    $app.methods.resendEmail2fa = async function () {
         if (this.loginForm.lastUserLoggedIn) {
             var user =
                 this.loginForm.savedCredentials[
                     this.loginForm.lastUserLoggedIn
                 ];
             if (typeof user !== 'undefined') {
-                webApiService.clearCookies();
+                await webApiService.clearCookies();
+                delete user.cookies;
                 this.relogin(user).then(() => {
                     new Noty({
                         type: 'success',
-                        text: 'Successfully relogged in.'
+                        text: 'Email 2FA resent.'
                     }).show();
                 });
                 return;
@@ -7444,10 +7448,12 @@ speechSynthesis.getVoices();
     };
 
     API.$on('USER:2FA', function () {
+        AppApi.FocusWindow();
         $app.promptTOTP();
     });
 
     API.$on('USER:EMAILOTP', function () {
+        AppApi.FocusWindow();
         $app.promptEmailOTP();
     });
 
@@ -7652,11 +7658,12 @@ speechSynthesis.getVoices();
         );
     };
 
-    $app.methods.relogin = function (user) {
+    $app.methods.relogin = async function (user) {
         var { loginParmas } = user;
         if (user.cookies) {
-            webApiService.setCookies(user.cookies);
+            await webApiService.setCookies(user.cookies);
         }
+        this.loginForm.lastUserLoggedIn = user.user.id; // for resend email 2fa
         if (loginParmas.endpoint) {
             API.endpointDomain = loginParmas.endpoint;
             API.websocketDomain = loginParmas.websocket;
@@ -7684,7 +7691,7 @@ speechSynthesis.getVoices();
                                 })
                                     .catch((err2) => {
                                         this.loginForm.loading = false;
-                                        API.logout();
+                                        // API.logout();
                                         reject(err2);
                                     })
                                     .then(() => {
@@ -8089,6 +8096,56 @@ speechSynthesis.getVoices();
     $app.data.sortFriendsGroup1 = false;
     $app.data.sortFriendsGroup2 = false;
     $app.data.sortFriendsGroup3 = false;
+
+    $app.methods.saveFriendsGroupStates = async function () {
+        await configRepository.setBool(
+            'VRCX_isFriendsGroupMe',
+            this.isFriendsGroupMe
+        );
+        await configRepository.setBool(
+            'VRCX_isFriendsGroupFavorites',
+            this.isFriendsGroup0
+        );
+        await configRepository.setBool(
+            'VRCX_isFriendsGroupOnline',
+            this.isFriendsGroup1
+        );
+        await configRepository.setBool(
+            'VRCX_isFriendsGroupActive',
+            this.isFriendsGroup2
+        );
+        await configRepository.setBool(
+            'VRCX_isFriendsGroupOffline',
+            this.isFriendsGroup3
+        );
+    };
+
+    $app.methods.loadFriendsGroupStates = async function () {
+        this.isFriendsGroupMe = await configRepository.getBool(
+            'VRCX_isFriendsGroupMe',
+            true
+        );
+        this.isFriendsGroup0 = await configRepository.getBool(
+            'VRCX_isFriendsGroupFavorites',
+            true
+        );
+        this.isFriendsGroup1 = await configRepository.getBool(
+            'VRCX_isFriendsGroupOnline',
+            true
+        );
+        this.isFriendsGroup2 = await configRepository.getBool(
+            'VRCX_isFriendsGroupActive',
+            true
+        );
+        this.isFriendsGroup3 = await configRepository.getBool(
+            'VRCX_isFriendsGroupOffline',
+            false
+        );
+    };
+
+    API.$on('LOGIN', function () {
+        $app.loadFriendsGroupStates();
+    });
 
     $app.methods.fetchActiveFriend = function (userId) {
         this.pendingActiveFriends.add(userId);
@@ -12709,7 +12766,8 @@ speechSynthesis.getVoices();
             } else if (
                 L.worldId === 'wrld_74970324-58e8-4239-a17b-2c59dfdf00db' ||
                 L.worldId === 'wrld_db9d878f-6e76-4776-8bf2-15bcdd7fc445' ||
-                L.worldId === 'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e'
+                L.worldId === 'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e' ||
+                L.worldId === 'wrld_f767d1c8-b249-4ecc-a56f-614e433682c8'
             ) {
                 appId = '968292722391785512';
                 bigIcon = 'ls_media';
@@ -14361,6 +14419,10 @@ speechSynthesis.getVoices();
         'VRCX_hideTooltips',
         false
     );
+    $app.data.hideNicknames = await configRepository.getBool(
+        'VRCX_hideNicknames',
+        false
+    );
     $app.data.notificationTTS = await configRepository.getString(
         'VRCX_notificationTTS',
         'Never'
@@ -14543,6 +14605,10 @@ speechSynthesis.getVoices();
             this.displayVRCPlusIconsAsAvatar
         );
         await configRepository.setBool('VRCX_hideTooltips', this.hideTooltips);
+        await configRepository.setBool(
+            'VRCX_hideNicknames',
+            this.hideNicknames
+        );
         await configRepository.setBool(
             'VRCX_autoSweepVRChatCache',
             this.autoSweepVRChatCache
@@ -15092,19 +15158,15 @@ speechSynthesis.getVoices();
     };
     await $app.methods.updatetrustColorClasses();
 
-    $app.methods.saveSharedFeedFilters = async function () {
-        this.notyFeedFiltersDialog.visible = false;
-        this.wristFeedFiltersDialog.visible = false;
-        await configRepository.setString(
+    $app.methods.saveSharedFeedFilters = function () {
+        configRepository.setString(
             'sharedFeedFilters',
             JSON.stringify(this.sharedFeedFilters)
         );
         this.updateSharedFeed(true);
     };
 
-    $app.methods.cancelSharedFeedFilters = async function () {
-        this.notyFeedFiltersDialog.visible = false;
-        this.wristFeedFiltersDialog.visible = false;
+    $app.methods.resetSharedFeedFilters = async function () {
         if (await configRepository.getString('sharedFeedFilters')) {
             this.sharedFeedFilters = JSON.parse(
                 await configRepository.getString(
@@ -15207,6 +15269,7 @@ speechSynthesis.getVoices();
             'wrld_04899f23-e182-4a8d-b2c7-2c74c7c15534',
             'wrld_435bbf25-f34f-4b8b-82c6-cd809057eb8e',
             'wrld_db9d878f-6e76-4776-8bf2-15bcdd7fc445',
+            'wrld_f767d1c8-b249-4ecc-a56f-614e433682c8',
             'wrld_74970324-58e8-4239-a17b-2c59dfdf00db',
             'wrld_266523e8-9161-40da-acd0-6bd82e075833'
         ];
@@ -16120,36 +16183,6 @@ speechSynthesis.getVoices();
     // #endregion
     // #region | App: User Dialog
 
-    $app.data.userDialogWorldSortingOptions = {
-        updated: {
-            name: $t('dialog.user.worlds.sorting.updated'),
-            value: 'updated'
-        },
-        created: {
-            name: $t('dialog.user.worlds.sorting.created'),
-            value: 'created'
-        },
-        favorites: {
-            name: $t('dialog.user.worlds.sorting.favorites'),
-            value: 'favorites'
-        },
-        popularity: {
-            name: $t('dialog.user.worlds.sorting.popularity'),
-            value: 'popularity'
-        }
-    };
-
-    $app.data.userDialogWorldOrderOptions = {
-        descending: {
-            name: $t('dialog.user.worlds.order.descending'),
-            value: 'descending'
-        },
-        ascending: {
-            name: $t('dialog.user.worlds.order.ascending'),
-            value: 'ascending'
-        }
-    };
-
     $app.data.userDialog = {
         visible: false,
         loading: false,
@@ -16180,8 +16213,14 @@ speechSynthesis.getVoices();
         isAvatarsLoading: false,
         isGroupsLoading: false,
 
-        worldSorting: $app.data.userDialogWorldSortingOptions.updated,
-        worldOrder: $app.data.userDialogWorldOrderOptions.descending,
+        worldSorting: {
+            name: $t('dialog.user.worlds.sorting.updated'),
+            value: 'updated'
+        },
+        worldOrder: {
+            name: $t('dialog.user.worlds.order.descending'),
+            value: 'descending'
+        },
         avatarSorting: 'update',
         avatarReleaseStatus: 'all',
 
@@ -19248,6 +19287,7 @@ speechSynthesis.getVoices();
         userId: '',
         accessType: '',
         region: '',
+        groupRegion: '',
         groupId: '',
         groupAccessType: '',
         strict: false,
@@ -19428,6 +19468,10 @@ speechSynthesis.getVoices();
             this.newInstanceDialog.region
         );
         await configRepository.setString(
+            'groupInstanceRegion',
+            this.newInstanceDialog.groupRegion
+        );
+        await configRepository.setString(
             'instanceDialogInstanceName',
             this.newInstanceDialog.instanceName
         );
@@ -19471,6 +19515,10 @@ speechSynthesis.getVoices();
         );
         D.region = await configRepository.getString(
             'instanceRegion',
+            'US West'
+        );
+        D.groupRegion = await configRepository.getString(
+            'groupInstanceRegion',
             'US West'
         );
         D.instanceName = await configRepository.getString(
@@ -22873,6 +22921,12 @@ speechSynthesis.getVoices();
     ) {
         var D = this.screenshotMetadataDialog;
         var metadata = JSON.parse(json);
+        if (typeof metadata === 'undefined' || !metadata.sourceFile) {
+            D.metadata = {};
+            D.metadata.error =
+                'Invalid file selected. Please select a valid VRChat screenshot.';
+            return;
+        }
 
         // Get extra data for display dialog like resolution, file size, etc
         D.loading = true;
@@ -27972,32 +28026,6 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.data.groupDialogSortingOptions = {
-        joinedAtDesc: {
-            name: $t('dialog.group.members.sorting.joined_at_desc'),
-            value: 'joinedAt:desc'
-        },
-        joinedAtAsc: {
-            name: $t('dialog.group.members.sorting.joined_at_asc'),
-            value: 'joinedAt:asc'
-        },
-        userId: {
-            name: $t('dialog.group.members.sorting.user_id'),
-            value: ''
-        }
-    };
-
-    $app.data.groupDialogFilterOptions = {
-        everyone: {
-            name: $t('dialog.group.members.filters.everyone'),
-            id: null
-        },
-        usersWithNoRole: {
-            name: $t('dialog.group.members.filters.users_with_no_role'),
-            id: ''
-        }
-    };
-
     $app.data.groupDialog = {
         visible: false,
         loading: false,
@@ -28014,8 +28042,14 @@ speechSynthesis.getVoices();
         memberSearchResults: [],
         instances: [],
         memberRoles: [],
-        memberFilter: $app.data.groupDialogFilterOptions.everyone,
-        memberSortOrder: $app.data.groupDialogSortingOptions.joinedAtDesc,
+        memberFilter: {
+            name: $t('dialog.group.members.filters.everyone'),
+            id: null
+        },
+        memberSortOrder: {
+            name: $t('dialog.group.members.sorting.joined_at_desc'),
+            value: 'joinedAt:desc'
+        },
         postsSearch: '',
         galleries: {}
     };
@@ -28523,6 +28557,11 @@ speechSynthesis.getVoices();
         }
         await this.getGroupDialogGroupMembers();
         while (this.groupDialog.visible && !this.isGroupMembersDone) {
+            this.isGroupMembersLoading = true;
+            await new Promise((resolve) => {
+                workerTimers.setTimeout(resolve, 1000);
+            });
+            this.isGroupMembersLoading = false;
             await this.loadMoreGroupMembers();
         }
     };
@@ -28904,35 +28943,110 @@ speechSynthesis.getVoices();
     // #endregion
     // #region | App: Language
 
-    $app.data.appLanguage = 'en';
+    $app.methods.applyUserDialogSortingStrings = function () {
+        this.userDialogWorldSortingOptions = {
+            updated: {
+                name: $t('dialog.user.worlds.sorting.updated'),
+                value: 'updated'
+            },
+            created: {
+                name: $t('dialog.user.worlds.sorting.created'),
+                value: 'created'
+            },
+            favorites: {
+                name: $t('dialog.user.worlds.sorting.favorites'),
+                value: 'favorites'
+            },
+            popularity: {
+                name: $t('dialog.user.worlds.sorting.popularity'),
+                value: 'popularity'
+            }
+        };
+
+        this.userDialogWorldOrderOptions = {
+            descending: {
+                name: $t('dialog.user.worlds.order.descending'),
+                value: 'descending'
+            },
+            ascending: {
+                name: $t('dialog.user.worlds.order.ascending'),
+                value: 'ascending'
+            }
+        };
+    };
+
+    $app.methods.applyGroupDialogSortingStrings = function () {
+        this.groupDialogSortingOptions = {
+            joinedAtDesc: {
+                name: $t('dialog.group.members.sorting.joined_at_desc'),
+                value: 'joinedAt:desc'
+            },
+            joinedAtAsc: {
+                name: $t('dialog.group.members.sorting.joined_at_asc'),
+                value: 'joinedAt:asc'
+            },
+            userId: {
+                name: $t('dialog.group.members.sorting.user_id'),
+                value: ''
+            }
+        };
+
+        this.groupDialogFilterOptions = {
+            everyone: {
+                name: $t('dialog.group.members.filters.everyone'),
+                id: null
+            },
+            usersWithNoRole: {
+                name: $t('dialog.group.members.filters.users_with_no_role'),
+                id: ''
+            }
+        };
+    };
+
+    $app.methods.applyLanguageStrings = function () {
+        // repply sorting strings
+        this.applyUserDialogSortingStrings();
+        this.applyGroupDialogSortingStrings();
+        this.userDialog.worldSorting =
+            this.userDialogWorldSortingOptions.updated;
+        this.userDialog.worldOrder =
+            this.userDialogWorldOrderOptions.descending;
+        this.groupDialog.memberFilter = this.groupDialogFilterOptions.everyone;
+        this.groupDialog.memberSortOrder =
+            this.groupDialogSortingOptions.joinedAtDesc;
+    };
+    // $app.methods.applyLanguageStrings();
+
+    $app.data.appLanguage =
+        (await configRepository.getString('VRCX_appLanguage')) ?? 'en';
+    i18n.locale = $app.data.appLanguage;
     var initLanguage = async () => {
-        if (await configRepository.getString('VRCX_appLanguage')) {
-            $app.data.appLanguage =
-                await configRepository.getString('VRCX_appLanguage');
-            i18n.locale = $app.data.appLanguage;
-        } else {
+        if (!(await configRepository.getString('VRCX_appLanguage'))) {
             var result = await AppApi.CurrentLanguage();
             if (!result) {
                 console.error('Failed to get current language');
-                await $app.changeAppLanguage('en');
+                $app.changeAppLanguage('en');
                 return;
             }
             var lang = result.split('-')[0];
-            i18n.availableLocales.forEach(async (ref) => {
+            i18n.availableLocales.forEach((ref) => {
                 var refLang = ref.split('_')[0];
                 if (refLang === lang) {
-                    await $app.changeAppLanguage(ref);
+                    $app.changeAppLanguage(ref);
                 }
             });
         }
-    };
-    await initLanguage();
 
-    $app.methods.changeAppLanguage = async function (language) {
+        $app.applyLanguageStrings();
+    };
+    initLanguage();
+
+    $app.methods.changeAppLanguage = function (language) {
         console.log('Language changed:', language);
         this.appLanguage = language;
         i18n.locale = language;
-        await configRepository.setString('VRCX_appLanguage', language);
+        configRepository.setString('VRCX_appLanguage', language);
+        this.applyLanguageStrings();
         this.updateVRConfigVars();
     };
 
@@ -29805,6 +29919,30 @@ speechSynthesis.getVoices();
             D.progressCurrent = 0;
             D.progressTotal = 0;
         }
+    };
+
+    // #endregion
+
+    // #region | V-Bucks
+
+    API.$on('VBUCKS', function (args) {
+        this.currentUser.$vbucks = args.json?.balance;
+    });
+
+    API.getVbucks = function () {
+        return this.call(`user/${this.currentUser.id}/balance`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json
+            };
+            this.$emit('VBUCKS', args);
+            return args;
+        });
+    };
+
+    $app.methods.getVbucks = function () {
+        API.getVbucks();
     };
 
     // #endregion

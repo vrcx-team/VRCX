@@ -41,8 +41,8 @@ namespace VRCX
                     cookieString += $"{cookie.Name}={cookie.Value};";
             }
 
-            webClient.Headers.Add(HttpRequestHeader.Cookie, cookieString);
-            webClient.Headers.Add("user-agent", Program.Version);
+            webClient.Headers[HttpRequestHeader.Cookie] = cookieString;
+            webClient.Headers[HttpRequestHeader.UserAgent] = Program.Version;
             webClient.DownloadFile(url, fileLocation);
 
             int cacheSize = Directory.GetDirectories(cacheLocation).Length;
