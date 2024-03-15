@@ -58,6 +58,23 @@ mixin favoritesTab()
                     div(style="display:inline-block;float:right;font-size:13px;margin-right:10px")
                         span.name(style="margin-right:5px") {{ $t('view.favorite.sort_by') }}
                         el-switch(v-model="sortFavorites" :inactive-text="$t('view.settings.appearance.appearance.sort_favorite_by_name')" :active-text="$t('view.settings.appearance.appearance.sort_favorite_by_date')" @change="saveSortFavoritesOption")
+                    span(style="display:block;margin-top:20px") {{ $t('view.favorite.worlds.search') }}
+                    el-input(v-model="worldFavoriteSearch" @input="searchWorldFavorites" clearable size="mini" :placeholder="$t('view.favorite.worlds.search')" style="width:300px;margin-top:10px")
+                    .x-friend-list(style="margin-top:10px")
+                        div(style="display:inline-block;width:300px;margin-right:15px" v-for="favorite in worldFavoriteSearchResults" :key="favorite.id" @click="showWorldDialog(favorite.id)")
+                            .x-friend-item
+                                template(v-if="favorite.name")
+                                    .avatar
+                                        img(v-lazy="favorite.thumbnailImageUrl")
+                                    .detail
+                                        span.name(v-text="favorite.name")
+                                        span.extra(v-if="favorite.occupants") {{ favorite.authorName }} ({{ favorite.occupants }})
+                                        span.extra(v-else v-text="favorite.authorName")
+                                template(v-else)
+                                    .avatar
+                                    .detail
+                                        span(v-text="favorite.id")
+
                     span(style="display:block;margin-top:20px") {{ $t('view.favorite.worlds.vrchat_favorites') }}
                     el-collapse-item(v-for="group in API.favoriteWorldGroups" :key="group.name")
                         template(slot="title")

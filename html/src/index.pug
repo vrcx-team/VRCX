@@ -1033,7 +1033,7 @@ html
                                                     timer(:epoch="user.$travelingToTime")
                                                 span.extra(v-else)
                                                     timer(:epoch="user.$location_at")
-                                .x-friend-item(v-if="groupDialog.ref.membershipStatus === 'member'" style="width:100%;cursor:default")
+                                .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.group.info.announcement') }}
                                         span(style="display:block" v-text="groupDialog.announcement.title")
@@ -2361,7 +2361,7 @@ html
                                 el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
-                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/5
+                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/9
                         input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
                         el-button-group(style="margin-right:10px")
                             el-button(type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}

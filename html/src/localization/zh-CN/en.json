@@ -426,7 +426,7 @@
                     "screenshot_helper": {
                         "header": "截图助手",
                         "description": "在游戏拍摄的照片的元数据中添加世界ID/世界名称",
-                        "description_tooltip": "不幸的是，Windows并不支持直接查看PNG元数据(很多东西都不支持查看这玩意)，但你可以使用exiftool等命令行工具、png检查器或十六进制编辑器来查看。",
+                        "description_tooltip": "不幸的是，Windows并不支持直接查看PNG元数据(很多东西都不支持查看这玩意)，但你可以使用exiftool等命令行工具、png查看器或十六进制编辑器来查看它们。",
                         "enable": "启用",
                         "modify_filename": "同时修改文件名",
                         "modify_filename_tooltip": "除了文件元数据外，还将把世界ID添加到截图文件名中。",
@@ -435,12 +435,12 @@
                     "app_launcher": {
                         "header": "应用启动器",
                         "folder": "打开启动文件夹",
-                        "folder_tooltip": "如果要在VRChat启动时一并启动一些APP，请将快捷方式放在这个文件夹中.",
+                        "folder_tooltip": "如果要在VRChat启动时一并启动一些APP，请将其快捷方式放在这个文件夹中.",
                         "enable": "启用",
                         "auto_close": "在VRC关闭后自动关闭这些APP"
                     },
                     "cache_debug": {
-                        "header": "VRCX 缓存/调试",
+                        "header": "VRCX 缓存/调试选项",
                         "udon_exception_logging": "显示 Udon 错误日志",
                         "gpu_fix": "修复 SteamVR 叠加层显示问题",
                         "gpu_fix_notice": "(需要重启)",
@@ -530,7 +530,7 @@
             "previous_display_names": "曾使用的显示名称：",
             "tags": {
                 "friend_no": "第 {number} 位好友",
-                "vrchat_team": "VRChat 工作人员"
+                "vrchat_team": "VRChat Team"
             },
             "actions": {
                 "favorite_tooltip": "添加到我的收藏",
@@ -661,7 +661,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "从缓存中删除世界",
-                "favorites_tooltip": "星标好友",
+                "favorites_tooltip": "收藏此世界",
                 "refresh": "刷新",
                 "new_instance": "创建新房间",
                 "make_home": "设为出生点",
@@ -701,9 +701,9 @@
                 "copy_name": "复制名称",
                 "youtube_preview": "YouTube 预览链接",
                 "author_tags": "作者添加的标签",
-                "players": "地图内人数",
+                "players": "地图内在线人数",
                 "favorites": "收藏人数",
-                "visits": "总游玩次数(所有玩家)",
+                "visits": "总游玩人次",
                 "capacity": "推荐人数",
                 "heat": "热度",
                 "popularity": "知名度",
@@ -1017,7 +1017,7 @@
         "vrcx_updater": {
             "header": "VRCX 更新",
             "latest_version": "VRCX 已是最新版本。",
-            "ready_for_update": "已准备好安装更新，重新启动 VRCX 来应用更新。",
+            "ready_for_update": "已准备好安装更新，重启 VRCX 以应用更新。",
             "download": "下载",
             "install": "安装"
         },
@@ -1043,7 +1043,7 @@
         },
         "discord_names": {
             "header": "Discord 名称",
-            "description": "点击好友列表中的「读取缺失的项目」来搜索整个好友列表"
+            "description": "点击好友列表中的「读取缺失的项目」按钮以搜索整个好友列表，而不仅仅是现有缓存"
         },
         "notification_position": {
             "header": "通知位置",
@@ -1258,7 +1258,7 @@
             "date": "日期",
             "action": "操作",
             "auto_backup": "只要VRCX在运行，就会每周自动备份一次VRC的设置数据，你也可以在这里手动备份和恢复你的VRC设置数据",
-            "restore_prompt": "注意到你已启用 VRC 设置数据的自动备份，但这台计算机上没有发现任何备份。如果你想从备份中恢复，可以从此处进行恢复。"
+            "restore_prompt": "注意到你已启用 VRC 设置数据的自动备份，但这台计算机上没有发现任何备份。如果你想从备份中恢复数据，可以在此处进行恢复。"
         },
         "group_member_moderation": {
             "header": "群组成员管理",
@@ -1330,7 +1330,7 @@
             "description": "输入玩家链接或玩家 ID (UUID)",
             "cancel": "取消",
             "ok": "确定",
-            "input_error": "需要玩家链接 / 玩家 ID",
+            "input_error": "请输入玩家链接 / 玩家 ID",
             "message": {
                 "error": "无效的链接或 ID"
             }
@@ -1340,14 +1340,14 @@
             "description": "输入玩家名称",
             "cancel": "取消",
             "ok": "确定",
-            "input_error": "需要玩家名称"
+            "input_error": "请输入玩家名称"
         },
         "direct_access_world_id": {
             "header": "查看世界详细信息",
             "description": "输入世界链接或世界 ID (UUID)",
             "cancel": "取消",
             "ok": "确定",
-            "input_error": "需要世界链接 / 世界 ID",
+            "input_error": "请输入世界链接 / 世界 ID",
             "message": {
                 "error": "无效的链接或 ID"
             }
@@ -1364,10 +1364,10 @@
         },
         "direct_access_omni": {
             "header": "直接打开",
-            "description": "输入玩家 / 世界 / 房间 / 模型链接 或他们的唯一ID",
+            "description": "输入玩家 / 世界 / 房间 / 模型链接 或他们的UUID",
             "cancel": "取消",
             "ok": "确定",
-            "input_error": "需要链接或 ID",
+            "input_error": "请输入链接或 ID",
             "message": {
                 "error": "无效的链接或 ID"
             }
@@ -1554,7 +1554,7 @@
             "date": "时间",
             "type": "类型",
             "user": "玩家",
-            "photo": "照片",
+            "photo": "封面",
             "message": "消息",
             "action": "操作"
         },
