@@ -9,6 +9,8 @@ namespace VRCX
     {
         public static readonly AppApiVr Instance;
 
+        private readonly PerformanceCounter _uptime = new PerformanceCounter("System", "System Up Time");
+
         static AppApiVr()
         {
             Instance = new AppApiVr();
@@ -45,9 +47,8 @@ namespace VRCX
         /// <returns>The number of milliseconds that the system has been running.</returns>
         public double GetUptime()
         {
-            using var uptime = new PerformanceCounter("System", "System Up Time");
-            uptime.NextValue();
-            return TimeSpan.FromSeconds(uptime.NextValue()).TotalMilliseconds;
+            _uptime.NextValue();
+            return TimeSpan.FromSeconds(_uptime.NextValue()).TotalMilliseconds;
         }
         
         /// <summary>

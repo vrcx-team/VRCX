@@ -85,6 +85,7 @@
             },
             "worlds": {
                 "header": "Worlds",
+                "search": "Search",
                 "vrchat_favorites": "VRChat Favorites",
                 "local_favorites": "Local Favorites",
                 "new_group": "New Group"

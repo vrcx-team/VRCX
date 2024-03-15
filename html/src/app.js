@@ -8135,7 +8135,7 @@ speechSynthesis.getVoices();
         );
         this.isFriendsGroup2 = await configRepository.getBool(
             'VRCX_isFriendsGroupActive',
-            true
+            false
         );
         this.isFriendsGroup3 = await configRepository.getBool(
             'VRCX_isFriendsGroupOffline',
@@ -26837,7 +26837,51 @@ speechSynthesis.getVoices();
         $app.getLocalWorldFavorites();
     });
 
-    // pending offline timer
+    $app.data.worldFavoriteSearch = '';
+    $app.data.worldFavoriteSearchResults = [];
+
+    $app.methods.searchWorldFavorites = function () {
+        var search = this.worldFavoriteSearch.toLowerCase();
+        if (search.length < 3) {
+            this.worldFavoriteSearchResults = [];
+            return;
+        }
+
+        var results = [];
+        for (var i = 0; i < this.localWorldFavoriteGroups.length; ++i) {
+            var group = this.localWorldFavoriteGroups[i];
+            if (!this.localWorldFavorites[group]) {
+                continue;
+            }
+            for (var j = 0; j < this.localWorldFavorites[group].length; ++j) {
+                var ref = this.localWorldFavorites[group][j];
+                if (
+                    ref.name.toLowerCase().includes(search) ||
+                    ref.authorName.toLowerCase().includes(search)
+                ) {
+                    results.push(ref);
+                }
+            }
+        }
+
+        for (var i = 0; i < this.favoriteWorlds.length; ++i) {
+            var ref = this.favoriteWorlds[i].ref;
+            if (!ref) {
+                continue;
+            }
+            if (
+                ref.name.toLowerCase().includes(search) ||
+                ref.authorName.toLowerCase().includes(search)
+            ) {
+                results.push(ref);
+            }
+        }
+
+        this.worldFavoriteSearchResults = results;
+    };
+
+    // #endregion
+    // #region | App: pending offline timer
 
     $app.methods.promptSetPendingOffline = function () {
         this.$prompt(
@@ -28136,26 +28180,22 @@ speechSynthesis.getVoices();
                             D.memberRoles.push(role);
                         }
                     }
-                    if (D.inGroup) {
-                        API.getAllGroupPosts({
-                            groupId
-                        }).then((args2) => {
-                            if (groupId === args2.params.groupId) {
-                                for (var post of args2.posts) {
-                                    post.title = this.replaceBioSymbols(
-                                        post.title
-                                    );
-                                    post.text = this.replaceBioSymbols(
-                                        post.text
-                                    );
-                                }
-                                if (args2.posts.length > 0) {
-                                    D.announcement = args2.posts[0];
-                                }
-                                D.posts = args2.posts;
-                                this.updateGroupPostSearch();
+                    API.getAllGroupPosts({
+                        groupId
+                    }).then((args2) => {
+                        if (groupId === args2.params.groupId) {
+                            for (var post of args2.posts) {
+                                post.title = this.replaceBioSymbols(post.title);
+                                post.text = this.replaceBioSymbols(post.text);
                             }
-                        });
+                            if (args2.posts.length > 0) {
+                                D.announcement = args2.posts[0];
+                            }
+                            D.posts = args2.posts;
+                            this.updateGroupPostSearch();
+                        }
+                    });
+                    if (D.inGroup) {
                         API.getGroupInstances({
                             groupId
                         }).then((args3) => {
