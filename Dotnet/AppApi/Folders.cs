@@ -157,6 +157,7 @@ namespace VRCX
         /// <param name="isFolder">Whether the specified path is a folder or not. Defaults to false.</param>
         public void OpenFolderAndSelectItem(string path, bool isFolder = false)
         {
+            path = Path.GetFullPath(path);
             // I don't think it's quite meant for it, but SHOpenFolderAndSelectItems can open folders by passing the folder path as the item to select, as a child to itself, somehow. So we'll check to see if 'path' is a folder as well.
             if (!File.Exists(path) && !Directory.Exists(path))
                 return;

@@ -84,8 +84,8 @@ namespace VRCX
                     {
                         if (string.IsNullOrEmpty(packet))
                             continue;
-
-                        MainForm.Instance.Browser.ExecuteScriptAsync("$app.ipcEvent", packet);
+                        if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
+                            MainForm.Instance.Browser.ExecuteScriptAsync("$app.ipcEvent", packet);
                     }
 
                     _currentPacket = string.Empty;

@@ -1086,7 +1086,7 @@ speechSynthesis.getVoices();
             '<span>{{ $t("dialog.user.info.instance_game_version") }} {{ gameServerVersion }}</span></br>' +
             '<span v-if="queueEnabled">{{ $t("dialog.user.info.instance_queuing_enabled") }}</br></span>' +
             '<span v-if="userList.length">{{ $t("dialog.user.info.instance_users") }}</br></span>' +
-            '<span v-for="user in userList" style="cursor:pointer" @click="showUserDialog(user.id)" v-text="user.displayName"></br></span>' +
+            '<template v-for="user in userList"><span style="cursor:pointer;margin-right:5px" @click="showUserDialog(user.id)" v-text="user.displayName"></span></template>' +
             '</div>' +
             '<i class="el-icon-caret-bottom"></i>' +
             '</el-tooltip>' +
@@ -22690,7 +22690,7 @@ speechSynthesis.getVoices();
             },
             cache_directory: {
                 name: $t('dialog.config_json.cache_directory'),
-                default: '%AppData%\\..\\LocalLow\\VRChat\\vrchat'
+                default: '%AppData%\\..\\LocalLow\\VRChat\\VRChat'
             },
             picture_output_folder: {
                 name: $t('dialog.config_json.picture_directory'),
