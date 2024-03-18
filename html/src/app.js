@@ -1169,7 +1169,7 @@ speechSynthesis.getVoices();
                 if (this.instance.ownerId === API.currentUser.id) {
                     this.canCloseInstance = true;
                 }
-                if (this.instance.ownerId.startsWith('grp_')) {
+                if (this.instance?.ownerId?.startsWith('grp_')) {
                     // check group perms
                     var groupId = this.instance.ownerId;
                     var group = API.cachedGroups.get(groupId);
