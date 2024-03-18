@@ -454,10 +454,11 @@ Vue.component('marquee-text', MarqueeText);
                         if (dev[0] === 'headset') return 0;
                         if (dev[0] === 'leftController') return 1;
                         if (dev[0] === 'rightController') return 2;
-                        if (dev[0].toLowerCase().includes('controller')) return 3;
+                        if (dev[0].toLowerCase().includes('controller'))
+                            return 3;
                         if (dev[0] === 'tracker' || dev[0] === 'base') return 4;
                         return 5;
-                    }
+                    };
                     deviceList.sort((a, b) => deviceValue(a) - deviceValue(b));
                     deviceList.sort((a, b) => {
                         if (a[1] === b[1]) {
@@ -487,7 +488,9 @@ Vue.component('marquee-text', MarqueeText);
             }
             if (this.config.pcUptimeOnFeed) {
                 AppApiVr.GetUptime().then((uptime) => {
-                    this.pcUptime = timeToText(uptime);
+                    if (uptime) {
+                        this.pcUptime = timeToText(uptime);
+                    }
                 });
             } else {
                 this.pcUptime = '';
@@ -592,6 +595,9 @@ Vue.component('marquee-text', MarqueeText);
                 text = noty.message;
                 break;
             case 'group.queueReady':
+                text = noty.message;
+                break;
+            case 'instance.closed':
                 text = noty.message;
                 break;
             case 'PortalSpawn':

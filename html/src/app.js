@@ -1081,6 +1081,7 @@ speechSynthesis.getVoices();
             '<div style="display:inline-block;margin-left:5px">' +
             '<el-tooltip v-if="isValidInstance" placement="bottom">' +
             '<div slot="content">' +
+            '<el-button :disabled="!canCloseInstance || isClosed || isHardClosed" size="mini" type="primary" @click="$app.closeInstance(location)">{{ $t("dialog.user.info.close_instance") }}</el-button></br></br>' +
             '<span><span style="color:#409eff">PC: </span>{{ platforms.standalonewindows }}</span></br>' +
             '<span><span style="color:#67c23a">Android: </span>{{ platforms.android }}</span></br>' +
             '<span>{{ $t("dialog.user.info.instance_game_version") }} {{ gameServerVersion }}</span></br>' +
@@ -1093,6 +1094,8 @@ speechSynthesis.getVoices();
             '<span v-if="occupants" style="margin-left:5px">{{ occupants }}/{{ capacity }}</span>' +
             '<span v-if="friendcount" style="margin-left:5px">({{ friendcount }})</span>' +
             '<span v-if="isFull" style="margin-left:5px;color:lightcoral">{{ $t("dialog.user.info.instance_full") }}</span>' +
+            '<span v-if="isClosed" style="margin-left:5px;color:lightcoral">{{ $t("dialog.user.info.instance_closed") }}</span>' +
+            '<span v-if="isHardClosed" style="margin-left:5px;color:lightcoral">{{ $t("dialog.user.info.instance_hard_closed") }}</span>' +
             '<span v-if="queueSize" style="margin-left:5px">{{ $t("dialog.user.info.instance_queue") }} {{ queueSize }}</span>' +
             '</div>',
         props: {
@@ -1105,19 +1108,24 @@ speechSynthesis.getVoices();
             return {
                 isValidInstance: this.isValidInstance,
                 isFull: this.isFull,
+                isClosed: this.isClosed,
+                isHardClosed: this.isHardClosed,
                 occupants: this.occupants,
                 capacity: this.capacity,
                 queueSize: this.queueSize,
                 queueEnabled: this.queueEnabled,
                 platforms: this.platforms,
                 userList: this.userList,
-                gameServerVersion: this.gameServerVersion
+                gameServerVersion: this.gameServerVersion,
+                canCloseInstance: this.canCloseInstance
             };
         },
         methods: {
             parse() {
                 this.isValidInstance = false;
                 this.isFull = false;
+                this.isClosed = false;
+                this.isHardClosed = false;
                 this.occupants = 0;
                 this.capacity = 0;
                 this.queueSize = 0;
@@ -1125,6 +1133,7 @@ speechSynthesis.getVoices();
                 this.platforms = [];
                 this.userList = [];
                 this.gameServerVersion = '';
+                this.canCloseInstance = false;
                 if (
                     !this.location ||
                     !this.instance ||
@@ -1136,6 +1145,13 @@ speechSynthesis.getVoices();
                 this.isFull =
                     typeof this.instance.hasCapacityForYou !== 'undefined' &&
                     !this.instance.hasCapacityForYou;
+                if (this.instance.closedAt) {
+                    if (this.instance.hardClose) {
+                        this.isHardClosed = true;
+                    } else {
+                        this.isClosed = true;
+                    }
+                }
                 this.occupants = this.instance.n_users;
                 if (this.location === $app.lastLocation.location) {
                     // use gameLog for occupants when in same location
@@ -1149,6 +1165,18 @@ speechSynthesis.getVoices();
                 }
                 if (this.instance.users) {
                     this.userList = this.instance.users;
+                }
+                if (this.instance.ownerId === API.currentUser.id) {
+                    this.canCloseInstance = true;
+                }
+                if (this.instance.ownerId.startsWith('grp_')) {
+                    // check group perms
+                    var groupId = this.instance.ownerId;
+                    var group = API.cachedGroups.get(groupId);
+                    this.canCloseInstance = $app.hasGroupPermission(
+                        group,
+                        'group-instance-moderate'
+                    );
                 }
             },
             showUserDialog(userId) {
@@ -2604,6 +2632,8 @@ speechSynthesis.getVoices();
                 queueSize: 0, // only present when queuing is enabled
                 platforms: [],
                 gameServerVersion: 0,
+                hardClose: null, // boolean or null
+                closedAt: null, // string or null
                 secureName: '',
                 shortName: '',
                 world: {},
@@ -4998,6 +5028,20 @@ speechSynthesis.getVoices();
                 }
                 break;
 
+            case 'instance-closed':
+                // TODO: get worldName, groupName, hardClose
+                var noty = {
+                    type: 'instance.closed',
+                    location: content.instanceLocation,
+                    message: 'Instance Closed',
+                    created_at: new Date().toJSON()
+                };
+                $app.notifyMenu('notification');
+                $app.queueNotificationNoty(noty);
+                $app.notificationTable.data.push(noty);
+                $app.updateSharedFeed(true);
+                break;
+
             default:
                 console.log('Unknown pipeline type', args.json);
         }
@@ -6572,6 +6616,9 @@ speechSynthesis.getVoices();
             case 'group.queueReady':
                 this.speak(noty.message);
                 break;
+            case 'instance.closed':
+                this.speak(noty.message);
+                break;
             case 'PortalSpawn':
                 if (noty.displayName) {
                     this.speak(
@@ -6792,6 +6839,9 @@ speechSynthesis.getVoices();
                 AppApi.XSNotification('VRCX', noty.message, timeout, image);
                 break;
             case 'group.queueReady':
+                AppApi.XSNotification('VRCX', noty.message, timeout, image);
+                break;
+            case 'instance.closed':
                 AppApi.XSNotification('VRCX', noty.message, timeout, image);
                 break;
             case 'PortalSpawn':
@@ -7066,6 +7116,13 @@ speechSynthesis.getVoices();
             case 'group.queueReady':
                 AppApi.DesktopNotification(
                     'Instance Queue Ready',
+                    noty.message,
+                    image
+                );
+                break;
+            case 'instance.closed':
+                AppApi.DesktopNotification(
+                    'Instance Closed',
                     noty.message,
                     image
                 );
@@ -14995,6 +15052,7 @@ speechSynthesis.getVoices();
             'group.invite': 'On',
             'group.joinRequest': 'Off',
             'group.queueReady': 'On',
+            'instance.closed': 'On',
             PortalSpawn: 'Everyone',
             Event: 'On',
             External: 'On',
@@ -15033,6 +15091,7 @@ speechSynthesis.getVoices();
             'group.invite': 'On',
             'group.joinRequest': 'On',
             'group.queueReady': 'On',
+            'instance.closed': 'On',
             PortalSpawn: 'Everyone',
             Event: 'On',
             External: 'On',
@@ -15081,6 +15140,10 @@ speechSynthesis.getVoices();
     if (!$app.data.sharedFeedFilters.noty['group.queueReady']) {
         $app.data.sharedFeedFilters.noty['group.queueReady'] = 'On';
         $app.data.sharedFeedFilters.wrist['group.queueReady'] = 'On';
+    }
+    if (!$app.data.sharedFeedFilters.noty['instance.closed']) {
+        $app.data.sharedFeedFilters.noty['instance.closed'] = 'On';
+        $app.data.sharedFeedFilters.wrist['instance.closed'] = 'On';
     }
     if (!$app.data.sharedFeedFilters.noty.External) {
         $app.data.sharedFeedFilters.noty.External = 'On';
@@ -27090,6 +27153,7 @@ speechSynthesis.getVoices();
             groupName,
             worldName
         };
+        this.notifyMenu('notification');
         this.queueNotificationNoty(noty);
         this.notificationTable.data.push(noty);
         this.updateSharedFeed(true);
@@ -29962,7 +30026,6 @@ speechSynthesis.getVoices();
     };
 
     // #endregion
-
     // #region | V-Bucks
 
     API.$on('VBUCKS', function (args) {
@@ -29984,6 +30047,63 @@ speechSynthesis.getVoices();
     $app.methods.getVbucks = function () {
         API.getVbucks();
     };
+
+    // #endregion
+    // #region | Close instance
+
+    $app.methods.closeInstance = function (location) {
+        this.$confirm(
+            'Continue? Close Instance, nobody will be able to join',
+            'Confirm',
+            {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                type: 'warning',
+                callback: (action) => {
+                    if (action !== 'confirm') {
+                        return;
+                    }
+                    API.closeInstance({ location, hardClose: false });
+                }
+            }
+        );
+    };
+
+    /**
+    * @param {{
+            location: string,
+            hardClose: boolean
+    }} params
+     * @returns {Promise<{json: any, params}>}
+     */
+    API.closeInstance = function (params) {
+        return this.call(`instances/${params.location}`, {
+            method: 'DELETE',
+            params: {
+                hardClose: params.hardClose ?? false
+            }
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('INSTANCE:CLOSE', args);
+            return args;
+        });
+    };
+
+    API.$on('INSTANCE:CLOSE', function (args) {
+        if (args.json) {
+            $app.$message({
+                message: 'Instance closed',
+                type: 'success'
+            });
+
+            this.$emit('INSTANCE', {
+                json: args.json
+            });
+        }
+    });
 
     // #endregion
 

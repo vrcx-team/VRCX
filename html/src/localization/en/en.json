@@ -608,7 +608,10 @@
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
                 "accuracy_notice": "Info from local database may not be accurate",
-                "instance_full": "full"
+                "instance_full": "full",
+                "instance_closed": "closed",
+                "instance_hard_closed": "hard closed",
+                "close_instance": "Close Instance"
             },
             "groups": {
                 "header": "Groups",
@@ -1570,7 +1573,7 @@
             "status": "Status",
             "language": "Language",
             "bioLink": "Bio Links",
-            "joinCount": "Join Counts",
+            "joinCount": "Join Count",
             "timeTogether": "Time Together",
             "lastSeen": "Last Seen",
             "lastActivity": "Last Activity",
