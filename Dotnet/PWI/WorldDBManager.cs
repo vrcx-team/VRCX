@@ -740,7 +740,7 @@ namespace VRCX
                 listener?.Stop();
                 listener?.Close();
             }
-            catch (ObjectDisposedException ex)
+            catch (ObjectDisposedException)
             {
                 // ignore
             }

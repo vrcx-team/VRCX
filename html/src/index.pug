@@ -1859,6 +1859,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
+                        span.toggle-name Instance Closed
+                        el-radio-group(v-model="sharedFeedFilters.noty['instance.closed']" size="mini" @change="saveSharedFeedFilters")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    .toggle-item
                         span.toggle-name Portal Spawn
                         el-radio-group(v-model="sharedFeedFilters.noty.PortalSpawn" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
@@ -2078,6 +2083,11 @@ html
                     .toggle-item
                         span.toggle-name Instance Queue Ready
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.queueReady']" size="mini" @change="saveSharedFeedFilters")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    .toggle-item
+                        span.toggle-name Instance Closed
+                        el-radio-group(v-model="sharedFeedFilters.wrist['instance.closed']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
