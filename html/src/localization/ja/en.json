@@ -85,6 +85,7 @@
             },
             "worlds": {
                 "header": "ワールド",
+                "search": "検索",
                 "vrchat_favorites": "VRChatのお気に入り",
                 "local_favorites": "ローカルのお気に入り",
                 "new_group": "グループを作成"
@@ -141,6 +142,8 @@
                 "two_factor": "2段階認証 (2FA)",
                 "two_factor_enabled": "有効",
                 "two_factor_disabled": "無効",
+                "v_bucks": "V-Bucks",
+                "refresh": "クリックして更新",
                 "logout": "ログアウト",
                 "manage_gallery_icon": "写真/アイコン/絵文字を管理",
                 "export_friend_list": "フレンドリストをエクスポート",
@@ -249,6 +252,7 @@
                     "theme_mode_material3": "Material 3",
                     "vrcplus_profile_icons": "VRC+ プロフィールアイコン",
                     "disable_tooltips": "ツールチップを無効化",
+                    "disable_nicknames": "メモニックネームを無効化",
                     "sort_favorite_by": "お気に入りを並び替え:",
                     "sort_favorite_by_name": "名前順",
                     "sort_favorite_by_date": "日付順",
@@ -402,6 +406,10 @@
                     "auto_cache_management": {
                         "header": "VRChat終了時にキャッシュを自動で管理する",
                         "description": "旧バージョンのキャッシュを自動削除"
+                    },
+                    "disable_local_world_persistence": {
+                        "header": "ローカルでのワールド永続化を無効化",
+                        "description": "localhostのWebサーバーを無効化する (再起動が必要)"
                     },
                     "remote_database": {
                         "header": "リモートアバターデータベース",
@@ -582,6 +590,7 @@
                 "last_seen": "最後に見た日時",
                 "join_count": "Joinした回数",
                 "time_together": "一緒に居た時間",
+                "play_time": "プレイ時間",
                 "online_for": "オンライン時間",
                 "offline_for": "オフライン時間",
                 "last_activity": "最終活動時間",
@@ -599,7 +608,10 @@
                 "copy_url": "URLをコピー",
                 "copy_display_name": "表示名をコピー",
                 "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。",
-                "instance_full": "満員"
+                "instance_full": "満員",
+                "instance_closed": "閉鎖済み",
+                "instance_hard_closed": "hard closed",
+                "close_instance": "インスタンスを閉じる"
             },
             "groups": {
                 "header": "グループ",
@@ -908,7 +920,7 @@
             "access_type_invite_plus": "Invite+",
             "access_type_invite": "Invite",
             "group_access_type": "グループアクセス",
-            "group_access_type_members": "メンバー",
+            "group_access_type_members": "メンバーのみ",
             "group_access_type_plus": "プラス",
             "group_access_type_public": "Public",
             "region": "地域",
@@ -1184,7 +1196,7 @@
         },
         "gallery_icons": {
             "header": "ギャラリーとアイコン",
-            "description": "推奨画像サイズ: 1200x900px",
+            "description": "推奨画像サイズ: 1200x900px (4:3)",
             "gallery": "ギャラリー",
             "icons": "アイコン",
             "emojis": "絵文字",
