@@ -6402,11 +6402,12 @@ speechSynthesis.getVoices();
             this.playNotyTTS(noty, message);
         }
         if (playDesktopToast || playXSNotification || playOvrtHudNotifications || playOvrtWristNotifications || playOverlayNotification) {
-            // Remove this when OVRT supports images
+            // Currently images are not supported on OVRT, I have future-proofed the code for when they are.
+            // Remove this when OVRT supports images and uncomment the two if statements below.
             if (playOvrtHudNotifications || playOvrtWristNotifications) {
                 this.displayOvrtNotification(playOvrtHudNotifications, playOvrtWristNotifications, noty, message, '');
             }
-            // Currently images are not supported on OVRT, I have future-proofed the code for when they are.
+
             if (this.imageNotifications) {
                 this.notySaveImage(noty).then((image) => {
                     if (playXSNotification) {
