@@ -489,7 +489,7 @@ html
                             div(v-loading="userDialog.isGroupsLoading" style="margin-top:10px")
                                 template(v-if="userGroups.ownGroups.length > 0")
                                     span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.own_groups') }}
-                                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.ownGroups.length }}
+                                    span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.ownGroups.length }}/{{ API.cachedConfig?.constants?.GROUPS?.MAX_OWNED }}
                                     .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
                                         .x-friend-item(v-for="group in userGroups.ownGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border")
                                             .avatar
@@ -524,6 +524,12 @@ html
                                 template(v-if="userGroups.remainingGroups.length > 0")
                                     span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.groups') }}
                                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.remainingGroups.length }}
+                                        template(v-if="API.currentUser.id === userDialog.id")
+                                            |/
+                                            template(v-if="API.currentUser.$isVRCPlus")
+                                                | {{ API.cachedConfig?.constants?.GROUPS?.MAX_JOINED_PLUS }}
+                                            template(v-else)
+                                                | {{ API.cachedConfig?.constants?.GROUPS?.MAX_JOINED }}
                                     .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
                                         .x-friend-item(v-for="group in userGroups.remainingGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border")
                                             .avatar
