@@ -314,6 +314,8 @@
                         "overlay_notifications": "Overlay Notifications",
                         "notification_position": "Notification Position",
                         "xsoverlay_notifications": "XSOverlay Notifications",
+                        "ovrtoolkit_hud_notifications": "OVR Toolkit HUD Notifications",
+                        "ovrtoolkit_wrist_notifications": "OVR Toolkit Wrist Notifications",
                         "user_images": "User Images (slower)",
                         "notification_timeout": "Notification Timeout"
                     },
