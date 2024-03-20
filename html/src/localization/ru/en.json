@@ -609,7 +609,7 @@
                 "accuracy_notice": "Информация из локальной базы данных может быть неточной",
                 "instance_full": "заполнен",
                 "instance_closed": "закрытый",
-                "instance_hard_closed": "жестко закрыт",
+                "instance_hard_closed": "жёстко закрыт",
                 "close_instance": "Закрыть Инстанс"
             },
             "groups": {
