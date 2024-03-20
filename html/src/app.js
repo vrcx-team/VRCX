@@ -6369,6 +6369,8 @@ speechSynthesis.getVoices();
             playDesktopToast = true;
         }
         var playXSNotification = this.xsNotifications;
+        var playOvrtHudNotifications = this.ovrtHudNotifications;
+        var playOvrtWristNotifications = this.ovrtWristNotifications;
         var playOverlayNotification = false;
         if (
             this.overlayNotifications &&
@@ -6399,7 +6401,13 @@ speechSynthesis.getVoices();
         if (playNotificationTTS) {
             this.playNotyTTS(noty, message);
         }
-        if (playDesktopToast || playXSNotification || playOverlayNotification) {
+        if (playDesktopToast || playXSNotification || playOvrtHudNotifications || playOvrtWristNotifications || playOverlayNotification) {
+            // Currently images are not supported on OVRT, I have future-proofed the code for when they are.
+            // Remove this when OVRT supports images and uncomment the two if statements below.
+            if (playOvrtHudNotifications || playOvrtWristNotifications) {
+                this.displayOvrtNotification(playOvrtHudNotifications, playOvrtWristNotifications, noty, message, '');
+            }
+
             if (this.imageNotifications) {
                 this.notySaveImage(noty).then((image) => {
                     if (playXSNotification) {
@@ -6411,6 +6419,9 @@ speechSynthesis.getVoices();
                     if (playOverlayNotification) {
                         this.displayOverlayNotification(noty, message, image);
                     }
+                    //if (playOvrtHudNotifications || playOvrtWristNotifications) {
+                    //    this.displayOvrtNotification(playOvrtHudNotifications, playOvrtWristNotifications, noty, message, image);
+                    //}
                 });
             } else {
                 if (playXSNotification) {
@@ -6422,6 +6433,9 @@ speechSynthesis.getVoices();
                 if (playOverlayNotification) {
                     this.displayOverlayNotification(noty, message, '');
                 }
+                //if (playOvrtHudNotifications || playOvrtWristNotifications) {
+                //    this.displayOvrtNotification(playOvrtHudNotifications, playOvrtWristNotifications, noty, message, '');
+                //}
             }
         }
     };
@@ -6955,6 +6969,319 @@ speechSynthesis.getVoices();
                 break;
             case 'Unmuted':
                 AppApi.XSNotification(
+                    'VRCX',
+                    `${noty.displayName} has unmuted you`,
+                    timeout,
+                    image
+                );
+                break;
+        }
+    };
+
+    $app.methods.displayOvrtNotification = function (playOvrtHudNotifications, playOvrtWristNotifications, noty, message, image) {
+        var timeout = Math.floor(parseInt(this.notificationTimeout, 10) / 1000);
+        switch (noty.type) {
+            case 'OnPlayerJoined':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} has joined`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'OnPlayerLeft':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} has left`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'OnPlayerJoining':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} is joining`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'GPS':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} is in ${this.displayLocation(
+                        noty.location,
+                        noty.worldName,
+                        noty.groupName
+                    )}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'Online':
+                var locationName = '';
+                if (noty.worldName) {
+                    locationName = ` to ${this.displayLocation(
+                        noty.location,
+                        noty.worldName,
+                        noty.groupName
+                    )}`;
+                }
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} has logged in${locationName}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'Offline':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} has logged out`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'Status':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} status is now ${noty.status} ${noty.statusDescription}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'invite':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.senderUsername
+                    } has invited you to ${this.displayLocation(
+                        noty.details.worldId,
+                        noty.details.worldName
+                    )}${message}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'requestInvite':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.senderUsername} has requested an invite${message}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'inviteResponse':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.senderUsername} has responded to your invite${message}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'requestInviteResponse':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.senderUsername} has responded to your invite request${message}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'friendRequest':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.senderUsername} has sent you a friend request`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'Friend':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} is now your friend`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'Unfriend':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} is no longer your friend`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'TrustLevel':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} trust level is now ${noty.trustLevel}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'DisplayName':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.previousDisplayName} changed their name to ${noty.displayName}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'group.announcement':
+                AppApi.OVRTNotification(playOvrtHudNotifications, playOvrtWristNotifications, 'VRCX', noty.message, timeout, image);
+                break;
+            case 'group.informative':
+                AppApi.OVRTNotification(playOvrtHudNotifications, playOvrtWristNotifications, 'VRCX', noty.message, timeout, image);
+                break;
+            case 'group.invite':
+                AppApi.OVRTNotification(playOvrtHudNotifications, playOvrtWristNotifications, 'VRCX', noty.message, timeout, image);
+                break;
+            case 'group.joinRequest':
+                AppApi.OVRTNotification(playOvrtHudNotifications, playOvrtWristNotifications, 'VRCX', noty.message, timeout, image);
+                break;
+            case 'group.queueReady':
+                AppApi.OVRTNotification(playOvrtHudNotifications, playOvrtWristNotifications, 'VRCX', noty.message, timeout, image);
+                break;
+            case 'instance.closed':
+                AppApi.OVRTNotification(playOvrtHudNotifications, playOvrtWristNotifications, 'VRCX', noty.message, timeout, image);
+                break;
+            case 'PortalSpawn':
+                if (noty.displayName) {
+                    AppApi.OVRTNotification(
+                        playOvrtHudNotifications, playOvrtWristNotifications,
+                        'VRCX',
+                        `${noty.displayName
+                        } has spawned a portal to ${this.displayLocation(
+                            noty.instanceId,
+                            noty.worldName,
+                            noty.groupName
+                        )}`,
+                        timeout,
+                        image
+                    );
+                } else {
+                    AppApi.OVRTNotification(
+                        playOvrtHudNotifications, playOvrtWristNotifications,
+                        'VRCX',
+                        'User has spawned a portal',
+                        timeout,
+                        image
+                    );
+                }
+                break;
+            case 'AvatarChange':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} changed into avatar ${noty.name}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'ChatBoxMessage':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} said ${noty.text}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'Event':
+                AppApi.OVRTNotification(playOvrtHudNotifications, playOvrtWristNotifications, 'VRCX', noty.data, timeout, image);
+                break;
+            case 'External':
+                AppApi.OVRTNotification(playOvrtHudNotifications, playOvrtWristNotifications, 'VRCX', noty.message, timeout, image);
+                break;
+            case 'VideoPlay':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `Now playing: ${noty.notyName}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'BlockedOnPlayerJoined':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `Blocked user ${noty.displayName} has joined`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'BlockedOnPlayerLeft':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `Blocked user ${noty.displayName} has left`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'MutedOnPlayerJoined':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `Muted user ${noty.displayName} has joined`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'MutedOnPlayerLeft':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `Muted user ${noty.displayName} has left`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'Blocked':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} has blocked you`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'Unblocked':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} has unblocked you`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'Muted':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.displayName} has muted you`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'Unmuted':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications, playOvrtWristNotifications,
                     'VRCX',
                     `${noty.displayName} has unmuted you`,
                     timeout,
@@ -14452,6 +14779,14 @@ speechSynthesis.getVoices();
         'VRCX_xsNotifications',
         true
     );
+    $app.data.ovrtHudNotifications = await configRepository.getBool(
+        'VRCX_ovrtHudNotifications',
+        true
+    );
+    $app.data.ovrtWristNotifications = await configRepository.getBool(
+        'VRCX_ovrtWristNotifications',
+        false
+    );
     $app.data.imageNotifications = await configRepository.getBool(
         'VRCX_imageNotifications',
         true
@@ -14643,6 +14978,14 @@ speechSynthesis.getVoices();
         await configRepository.setBool(
             'VRCX_xsNotifications',
             this.xsNotifications
+        );
+        await configRepository.setBool(
+            'VRCX_ovrtHudNotifications',
+            this.ovrtHudNotifications
+        );
+        await configRepository.setBool(
+            'VRCX_ovrtWristNotifications',
+            this.ovrtWristNotifications
         );
         await configRepository.setBool(
             'VRCX_imageNotifications',
