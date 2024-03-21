@@ -79,7 +79,6 @@ namespace VRCX
         {
             List<OvrtMessage> messages = [];
 
-            // Uncomment when Image notification is implemented
             byte[] imageBytes;
             if(!string.IsNullOrWhiteSpace(image) && File.Exists(image))
             {
