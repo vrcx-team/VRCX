@@ -79,7 +79,8 @@ namespace VRCX
 
         /// <summary>
         /// Displays an OVRToolkit notification with the specified title and body.
-        /// HUD ntoficcation - Visible in the lower part of the HMD view and moves with the head.
+        /// HUD notification - Visible in the lower part of the HMD view and moves with the head.
+        /// Wrist notification - Visible above the wristwatch until cleared by the user via the 'X' icon.
         /// </summary>
         /// <param name="hudNotification">Whether or not to display a HUD notification.</param>
         /// <param name="wristNotification">Whether or not to display a Wrist notification.</param>
