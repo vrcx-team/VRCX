@@ -100,3 +100,9 @@ span[class='flags'] {
 .flags.tw {
     background-position: calc(var(--offx) * -3) calc(var(--offy) * -4);
 }
+.flags.blank {
+    background-position: calc(var(--offx) * -4) calc(var(--offy) * -4);
+}
+.flags.unknown {
+    background-position: calc(var(--offx) * -5) calc(var(--offy) * -4);
+}

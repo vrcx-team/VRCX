@@ -282,7 +282,7 @@ namespace VRCX
 
             var thread = new Thread(() =>
             {
-                using (var openFileDialog = new OpenFileDialog())
+                using (var openFileDialog = new System.Windows.Forms.OpenFileDialog())
                 {
                     openFileDialog.DefaultExt = ".json";
                     openFileDialog.Filter = "JSON Files (*.json)|*.json";
