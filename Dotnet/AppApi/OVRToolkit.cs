@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.WebSockets;
 using Websocket.Client;
 
@@ -59,10 +60,21 @@ namespace VRCX
             }
         }
 
-        private void CheckAndInitialize()
+        private void SendMessages(IEnumerable<OvrtMessage> ovrtMessages)
         {
-            if (_ovrtWebsocketClient == null)
-                Initialize();
+            if(ovrtMessages != null && ovrtMessages.Any())
+            {
+                if (_ovrtWebsocketClient == null)
+                    Initialize();
+
+                if (_ovrtWebsocketClient.IsRunning)
+                {
+                    foreach (var message in ovrtMessages)
+                    {
+                        _ovrtWebsocketClient.Send(System.Text.Json.JsonSerializer.Serialize(message));
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -115,19 +127,7 @@ namespace VRCX
                 });
             }
 
-            if (messages.Count > 0)
-            {
-                CheckAndInitialize();
-
-                if (_ovrtWebsocketClient.IsRunning)
-                {
-                    foreach (var message in messages)
-                    {
-                        _ovrtWebsocketClient.Send(System.Text.Json.JsonSerializer.Serialize(message));
-                    }
-                }
-            }
-
+            SendMessages(messages);
         }
         private struct OvrtMessage
         {
