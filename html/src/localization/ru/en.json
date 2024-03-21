@@ -314,6 +314,8 @@
                         "overlay_notifications": "Оверлей уведомлений",
                         "notification_position": "Положение уведомлений",
                         "xsoverlay_notifications": "Уведомления XSOverlay",
+                        "ovrtoolkit_hud_notifications": "OVR Toolkit Уведомления в HUD",
+                        "ovrtoolkit_wrist_notifications": "OVR Toolkit Уведомления на запястье",
                         "user_images": "Иконка пользователя (медленнее)",
                         "notification_timeout": "Время показа уведомлений"
                     },
