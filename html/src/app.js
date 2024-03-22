@@ -6378,16 +6378,13 @@ speechSynthesis.getVoices();
             this.playNotyTTS(noty, message);
         }
         if (playDesktopToast || playXSNotification || playOvrtHudNotifications || playOvrtWristNotifications || playOverlayNotification) {
-            // Currently images are not supported on OVRT, I have future-proofed the code for when they are.
-            // Remove this when OVRT supports images and uncomment the two if statements below.
-            if (playOvrtHudNotifications || playOvrtWristNotifications) {
-                this.displayOvrtNotification(playOvrtHudNotifications, playOvrtWristNotifications, noty, message, '');
-            }
-
             if (this.imageNotifications) {
                 this.notySaveImage(noty).then((image) => {
                     if (playXSNotification) {
                         this.displayXSNotification(noty, message, image);
+                    }
+                    if (playOvrtHudNotifications || playOvrtWristNotifications) {
+                        this.displayOvrtNotification(playOvrtHudNotifications, playOvrtWristNotifications, noty, message, image);
                     }
                     if (playDesktopToast) {
                         this.displayDesktopToast(noty, message, image);
@@ -6395,13 +6392,13 @@ speechSynthesis.getVoices();
                     if (playOverlayNotification) {
                         this.displayOverlayNotification(noty, message, image);
                     }
-                    //if (playOvrtHudNotifications || playOvrtWristNotifications) {
-                    //    this.displayOvrtNotification(playOvrtHudNotifications, playOvrtWristNotifications, noty, message, image);
-                    //}
                 });
             } else {
                 if (playXSNotification) {
                     this.displayXSNotification(noty, message, '');
+                }
+                if (playOvrtHudNotifications || playOvrtWristNotifications) {
+                    this.displayOvrtNotification(playOvrtHudNotifications, playOvrtWristNotifications, noty, message, '');
                 }
                 if (playDesktopToast) {
                     this.displayDesktopToast(noty, message, '');
@@ -6409,9 +6406,6 @@ speechSynthesis.getVoices();
                 if (playOverlayNotification) {
                     this.displayOverlayNotification(noty, message, '');
                 }
-                //if (playOvrtHudNotifications || playOvrtWristNotifications) {
-                //    this.displayOvrtNotification(playOvrtHudNotifications, playOvrtWristNotifications, noty, message, '');
-                //}
             }
         }
     };
