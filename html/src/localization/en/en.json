@@ -628,6 +628,7 @@
                 "sort_by": "Sort by:",
                 "order_by": "Order by:",
                 "sorting": {
+                    "name": "Name",
                     "updated": "Updated",
                     "created": "Created",
                     "favorites": "Favorites",

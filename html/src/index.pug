@@ -1326,10 +1326,10 @@ html
                                 el-table-column(:label="$t('table.social_status.no')" prop="no" width="50")
                                 el-table-column(:label="$t('table.social_status.status')" prop="status")
                     el-select(v-model="socialStatusDialog.status" style="display:block;margin-top:10px")
-                        el-option(:label="$t('dialog.user.status.online')" value="active").
-                            #[i.x-user-status.online] {{ $t('dialog.user.status.online') }}
                         el-option(:label="$t('dialog.user.status.join_me')" value="join me").
                             #[i.x-user-status.joinme] {{ $t('dialog.user.status.join_me') }}
+                        el-option(:label="$t('dialog.user.status.online')" value="active").
+                            #[i.x-user-status.online] {{ $t('dialog.user.status.online') }}
                         el-option(:label="$t('dialog.user.status.ask_me')" value="ask me").
                             #[i.x-user-status.askme] {{ $t('dialog.user.status.ask_me') }}
                         el-option(:label="$t('dialog.user.status.busy')" value="busy").
