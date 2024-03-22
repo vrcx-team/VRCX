@@ -168,7 +168,7 @@ namespace VRCX
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            var searchPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
+            var searchPath = GetVRChatPhotosLocation();
             var screenshots = ScreenshotHelper.FindScreenshots(searchQuery, searchPath, (ScreenshotHelper.ScreenshotSearchType)searchType);
 
             JArray json = new JArray();
