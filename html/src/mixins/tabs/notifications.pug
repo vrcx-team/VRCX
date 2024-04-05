@@ -43,7 +43,11 @@ mixin notificationsTab()
                             img.x-link(v-lazy="scope.row.imageUrl" style="width:500px" @click="showFullscreenImageDialog(scope.row.imageUrl)")
             el-table-column(:label="$t('table.notification.message')" prop="message")
                 template(v-once #default="scope")
-                    span(v-if="scope.row.title") {{ scope.row.title }}, {{ scope.row.message }}
+                    span.x-link(v-if="scope.row.type === 'invite'" @click="showWorldDialog(scope.row.details.worldId)")
+                        location(v-if="scope.row.details" :location="scope.row.details.worldId" :hint="scope.row.details.worldName" :grouphint="scope.row.details.groupName" :link="false")
+                        br
+                    span(v-if="scope.row.message" v-text="scope.row.message")
+                    span(v-else-if="scope.row.title") {{ scope.row.title }}, {{ scope.row.message }}
                     span(v-else-if="scope.row.message" v-text="scope.row.message")
                     span(v-else-if='scope.row.details && scope.row.details.inviteMessage' v-text="scope.row.details.inviteMessage")
                     span(v-else-if='scope.row.details && scope.row.details.requestMessage' v-text="scope.row.details.requestMessage")
