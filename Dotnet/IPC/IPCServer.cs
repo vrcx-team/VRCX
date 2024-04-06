@@ -30,7 +30,7 @@ namespace VRCX
         {
             foreach (var client in Clients)
             {
-                client.Send(ipcPacket);
+                client?.Send(ipcPacket);
             }
         }
 
