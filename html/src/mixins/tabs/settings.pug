@@ -258,6 +258,12 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications') }}
                         el-switch(v-model="xsNotifications" @change="saveOpenVROption")
                     div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications') }}
+                        el-switch(v-model="ovrtHudNotifications" @change="saveOpenVROption")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications') }}
+                        el-switch(v-model="ovrtWristNotifications" @change="saveOpenVROption")
+                    div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.user_images') }}
                         el-switch(v-model="imageNotifications" @change="saveOpenVROption")
                     div.options-container-item

@@ -85,6 +85,7 @@
             },
             "worlds": {
                 "header": "Миры",
+                "search": "Поиск",
                 "vrchat_favorites": "Избранное VRChat",
                 "local_favorites": "Локальное избранное",
                 "new_group": "Новая Группа"
@@ -251,6 +252,7 @@
                     "theme_mode_material3": "Material 3",
                     "vrcplus_profile_icons": "Иконки профиля VRCPlus",
                     "disable_tooltips": "Отключить подсказки",
+                    "disable_nicknames": "Отключить ники в заметках",
                     "sort_favorite_by": "Сортировать избранное по",
                     "sort_favorite_by_name": "имени",
                     "sort_favorite_by_date": "дате",
@@ -312,6 +314,8 @@
                         "overlay_notifications": "Оверлей уведомлений",
                         "notification_position": "Положение уведомлений",
                         "xsoverlay_notifications": "Уведомления XSOverlay",
+                        "ovrtoolkit_hud_notifications": "OVR Toolkit Уведомления в HUD",
+                        "ovrtoolkit_wrist_notifications": "OVR Toolkit Уведомления на запястье",
                         "user_images": "Иконка пользователя (медленнее)",
                         "notification_timeout": "Время показа уведомлений"
                     },
@@ -524,7 +528,7 @@
             "status": {
                 "active": "Активный",
                 "offline": "Офлайн",
-                "online": "Online",
+                "online": "Онлайн",
                 "join_me": "Присоединиться ко мне",
                 "ask_me": "Спросить меня",
                 "busy": "Не беспокоить"
@@ -605,7 +609,10 @@
                 "copy_url": "Скопировать URL",
                 "copy_display_name": "Скопировать имя",
                 "accuracy_notice": "Информация из локальной базы данных может быть неточной",
-                "instance_full": "заполнен"
+                "instance_full": "заполнен",
+                "instance_closed": "закрытый",
+                "instance_hard_closed": "жёстко закрыт",
+                "close_instance": "Закрыть Инстанс"
             },
             "groups": {
                 "header": "Группы",
@@ -932,7 +939,7 @@
             "group_id": "Группа",
             "location": "Местоположение",
             "url": "URL",
-            "copy_url": "﻿Копировать ссылку",
+            "copy_url": "Копировать ссылку",
             "self_invite": "Пригласить себя",
             "invite": "Пригласить",
             "launch": "Открыть",
@@ -975,7 +982,7 @@
             "save": "Сохранить"
         },
         "youtube_api": {
-            "header": "Youtube API",
+            "header": "YouTube API",
             "description": "Введите ваш YouTube API ключ (необязательно)",
             "placeholder": "API ключ YouTube",
             "guide": "Руководство",
