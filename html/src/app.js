@@ -1356,6 +1356,7 @@ speechSynthesis.getVoices();
             isFriend: json.isFriend,
             last_activity: json.last_activity,
             last_login: json.last_login,
+            last_mobile: json.last_mobile,
             last_platform: json.last_platform,
             // location - missing from currentUser
             // note - missing from currentUser
@@ -1681,6 +1682,7 @@ speechSynthesis.getVoices();
                 isFriend: false,
                 last_activity: '',
                 last_login: '',
+                last_mobile: null,
                 last_platform: '',
                 obfuscatedEmail: '',
                 obfuscatedPendingEmail: '',
@@ -1834,6 +1836,7 @@ speechSynthesis.getVoices();
                 isFriend: false,
                 last_activity: '',
                 last_login: '',
+                last_mobile: null,
                 last_platform: '',
                 location: '',
                 note: '',
@@ -4859,8 +4862,6 @@ speechSynthesis.getVoices();
                 break;
 
             case 'friend-update':
-                // is this used anymore?
-                console.error('friend-update', content);
                 this.$emit('USER', {
                     json: content.user,
                     params: {
@@ -5883,18 +5884,25 @@ speechSynthesis.getVoices();
             }
             // BlockedOnPlayerJoined, BlockedOnPlayerLeft, MutedOnPlayerJoined, MutedOnPlayerLeft
             if (ctx.type === 'OnPlayerJoined' || ctx.type === 'OnPlayerLeft') {
-                for (var ref of this.playerModerationTable.data) {
-                    if (ref.targetDisplayName === ctx.displayName) {
-                        if (ref.type === 'block') {
-                            var type = `Blocked${ctx.type}`;
-                        } else if (ref.type === 'mute') {
-                            var type = `Muted${ctx.type}`;
-                        } else {
-                            continue;
-                        }
-                        var entry = {
-                            created_at: ctx.created_at,
-                            type,
+                for (var ref of API.cachedPlayerModerations.values()) {
+                    if (
+                        ref.targetDisplayName !== ctx.displayName &&
+                        ref.sourceUserId !== ctx.userId
+                    ) {
+                        continue;
+                    }
+
+                    if (ref.type === 'block') {
+                        var type = `Blocked${ctx.type}`;
+                    } else if (ref.type === 'mute') {
+                        var type = `Muted${ctx.type}`;
+                    } else {
+                        continue;
+                    }
+
+                    var entry = {
+                        created_at: ctx.created_at,
+                        type,
                             displayName: ref.targetDisplayName,
                             userId: ref.targetUserId,
                             isFriend,
@@ -5908,8 +5916,7 @@ speechSynthesis.getVoices();
                         ) {
                             wristArr.unshift(entry);
                         }
-                        this.queueFeedNoty(entry);
-                    }
+                    this.queueFeedNoty(entry);
                 }
             }
             // when too many user joins happen at once when switching instances
@@ -6075,7 +6082,8 @@ speechSynthesis.getVoices();
         var notyFilter = this.sharedFeedFilters.noty;
         if (
             notyFilter[noty.type] &&
-            (notyFilter[noty.type] === 'Friends' ||
+            (notyFilter[noty.type] === 'Everyone' ||
+                (notyFilter[noty.type] === 'Friends' && noty.isFriend) ||
                 (notyFilter[noty.type] === 'VIP' && noty.isFavorite))
         ) {
             this.playNoty(noty);
@@ -6298,13 +6306,14 @@ speechSynthesis.getVoices();
         }
         if (displayName) {
             // don't play noty twice
+            var notyId = `${noty.type},${displayName}`;
             if (
-                this.notyMap[displayName] &&
-                this.notyMap[displayName] >= noty.created_at
+                this.notyMap[notyId] &&
+                this.notyMap[notyId] >= noty.created_at
             ) {
                 return;
             }
-            this.notyMap[displayName] = noty.created_at;
+            this.notyMap[notyId] = noty.created_at;
         }
         var bias = new Date(Date.now() - 60000).toJSON();
         if (noty.created_at < bias) {
