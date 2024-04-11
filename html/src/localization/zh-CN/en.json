@@ -85,6 +85,7 @@
             },
             "worlds": {
                 "header": "世界",
+                "search": "搜索",
                 "vrchat_favorites": "VRChat 上的收藏",
                 "local_favorites": "本地收藏",
                 "new_group": "创建新的收藏夹"
@@ -141,6 +142,8 @@
                 "two_factor": "双重认证 (2FA)",
                 "two_factor_enabled": "已启用",
                 "two_factor_disabled": "已停用",
+                "v_bucks": "V-Bucks",
+                "refresh": "点击以刷新",
                 "logout": "退出登录",
                 "manage_gallery_icon": "管理上传的图片/图标/表情",
                 "export_friend_list": "导出好友列表",
@@ -249,6 +252,7 @@
                     "theme_mode_material3": "Material 3",
                     "vrcplus_profile_icons": "VRC+ 个人信息图标",
                     "disable_tooltips": "关闭提示",
+                    "disable_nicknames": "不显示本地好友备注",
                     "sort_favorite_by": "收藏排序依据",
                     "sort_favorite_by_name": "名称",
                     "sort_favorite_by_date": "时间",
@@ -310,6 +314,8 @@
                         "overlay_notifications": "叠加层通知",
                         "notification_position": "通知位置",
                         "xsoverlay_notifications": "XSOverlay 通知",
+                        "ovrtoolkit_hud_notifications": "OVR Toolkit HUD 通知",
+                        "ovrtoolkit_wrist_notifications": "OVR Toolkit 手腕通知",
                         "user_images": "显示玩家头像(较慢)",
                         "notification_timeout": "通知时长"
                     },
@@ -604,7 +610,10 @@
                 "copy_url": "复制URL",
                 "copy_display_name": "复制显示名称",
                 "accuracy_notice": "本地数据库的数据可能不准确",
-                "instance_full": "房间已满"
+                "instance_full": "房间已满",
+                "instance_closed": "房间已关闭",
+                "instance_hard_closed": "房间已关闭",
+                "close_instance": "关闭该房间"
             },
             "groups": {
                 "header": "加入的群组",
@@ -619,6 +628,7 @@
                 "sort_by": "排序方式:",
                 "order_by": "顺序:",
                 "sorting": {
+                    "name": "世界名称",
                     "updated": "更新时间",
                     "created": "创建时间",
                     "favorites": "收藏次数",
@@ -915,7 +925,7 @@
             "group_access_type": "房间类型",
             "group_access_type_members": "仅限群组成员",
             "group_access_type_plus": "群组+",
-            "group_access_type_public": "公开(以群组身份)",
+            "group_access_type_public": "公开(受群组管理)",
             "region": "服务器位置",
             "region_usw": "美国西部",
             "region_use": "美国东部",

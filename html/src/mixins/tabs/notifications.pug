@@ -46,9 +46,8 @@ mixin notificationsTab()
                     span.x-link(v-if="scope.row.type === 'invite'" @click="showWorldDialog(scope.row.details.worldId)")
                         location(v-if="scope.row.details" :location="scope.row.details.worldId" :hint="scope.row.details.worldName" :grouphint="scope.row.details.groupName" :link="false")
                         br
-                    span(v-if="scope.row.message" v-text="scope.row.message")
+                    span(v-if="scope.row.message && scope.row.message !== `This is a generated invite to ${scope.row.details?.worldName}`" v-text="scope.row.message")
                     span(v-else-if="scope.row.title") {{ scope.row.title }}, {{ scope.row.message }}
-                    span(v-else-if="scope.row.message" v-text="scope.row.message")
                     span(v-else-if='scope.row.details && scope.row.details.inviteMessage' v-text="scope.row.details.inviteMessage")
                     span(v-else-if='scope.row.details && scope.row.details.requestMessage' v-text="scope.row.details.requestMessage")
                     span(v-else-if='scope.row.details && scope.row.details.responseMessage' v-text="scope.row.details.responseMessage")

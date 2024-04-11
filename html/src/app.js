@@ -1356,6 +1356,7 @@ speechSynthesis.getVoices();
             isFriend: json.isFriend,
             last_activity: json.last_activity,
             last_login: json.last_login,
+            last_mobile: json.last_mobile,
             last_platform: json.last_platform,
             // location - missing from currentUser
             // note - missing from currentUser
@@ -1681,6 +1682,7 @@ speechSynthesis.getVoices();
                 isFriend: false,
                 last_activity: '',
                 last_login: '',
+                last_mobile: null,
                 last_platform: '',
                 obfuscatedEmail: '',
                 obfuscatedPendingEmail: '',
@@ -1834,6 +1836,7 @@ speechSynthesis.getVoices();
                 isFriend: false,
                 last_activity: '',
                 last_login: '',
+                last_mobile: null,
                 last_platform: '',
                 location: '',
                 note: '',
@@ -3974,6 +3977,7 @@ speechSynthesis.getVoices();
     };
 
     API.$on('LOGIN', function () {
+        $app.localFavoriteFriends.clear();
         this.cachedFavorites.clear();
         this.cachedFavoritesByObjectId.clear();
         this.cachedFavoriteGroups.clear();
@@ -4041,6 +4045,8 @@ speechSynthesis.getVoices();
         }
         // 애초에 $isDeleted인데 여기로 올 수 가 있나..?
         this.cachedFavoritesByObjectId.delete(args.params.objectId);
+        $app.localFavoriteFriends.delete(args.params.objectId);
+        $app.updateSidebarFriendsList();
         if (ref.$isDeleted) {
             return;
         }
@@ -4093,6 +4099,8 @@ speechSynthesis.getVoices();
                 continue;
             }
             this.cachedFavoritesByObjectId.delete(ref.favoriteId);
+            $app.localFavoriteFriends.delete(ref.favoriteId);
+            $app.updateSidebarFriendsList();
             ref.$isDeleted = true;
             API.$emit('FAVORITE:@DELETE', {
                 ref,
@@ -4153,6 +4161,14 @@ speechSynthesis.getVoices();
             };
             this.cachedFavorites.set(ref.id, ref);
             this.cachedFavoritesByObjectId.set(ref.favoriteId, ref);
+            if (
+                ref.type === 'friend' &&
+                ($app.localFavoriteFriendsGroups.length === 0 ||
+                    $app.localFavoriteFriendsGroups.includes(ref.groupKey))
+            ) {
+                $app.localFavoriteFriends.add(ref.favoriteId);
+                $app.updateSidebarFriendsList();
+            }
         } else {
             Object.assign(ref, json);
             ref.$isExpired = false;
@@ -4169,6 +4185,7 @@ speechSynthesis.getVoices();
     };
 
     API.expireFavorites = function () {
+        $app.localFavoriteFriends.clear();
         this.cachedFavorites.clear();
         this.cachedFavoritesByObjectId.clear();
         $app.favoriteObjects.clear();
@@ -4859,8 +4876,6 @@ speechSynthesis.getVoices();
                 break;
 
             case 'friend-update':
-                // is this used anymore?
-                console.error('friend-update', content);
                 this.$emit('USER', {
                     json: content.user,
                     params: {
@@ -5686,7 +5701,7 @@ speechSynthesis.getVoices();
         );
         // OnPlayerJoining/Traveling
         API.currentTravelers.forEach((ref) => {
-            var isFavorite = API.cachedFavoritesByObjectId.has(ref.id);
+            var isFavorite = this.localFavoriteFriends.has(ref.id);
             if (
                 (this.sharedFeedFilters.wrist.OnPlayerJoining === 'Friends' ||
                     (this.sharedFeedFilters.wrist.OnPlayerJoining === 'VIP' &&
@@ -5863,12 +5878,12 @@ speechSynthesis.getVoices();
             var isFavorite = false;
             if (ctx.userId) {
                 isFriend = this.friends.has(ctx.userId);
-                isFavorite = API.cachedFavoritesByObjectId.has(ctx.userId);
+                isFavorite = this.localFavoriteFriends.has(ctx.userId);
             } else if (ctx.displayName) {
                 for (var ref of API.cachedUsers.values()) {
                     if (ref.displayName === ctx.displayName) {
                         isFriend = this.friends.has(ref.id);
-                        isFavorite = API.cachedFavoritesByObjectId.has(ref.id);
+                        isFavorite = this.localFavoriteFriends.has(ref.id);
                         break;
                     }
                 }
@@ -5883,33 +5898,39 @@ speechSynthesis.getVoices();
             }
             // BlockedOnPlayerJoined, BlockedOnPlayerLeft, MutedOnPlayerJoined, MutedOnPlayerLeft
             if (ctx.type === 'OnPlayerJoined' || ctx.type === 'OnPlayerLeft') {
-                for (var ref of this.playerModerationTable.data) {
-                    if (ref.targetDisplayName === ctx.displayName) {
-                        if (ref.type === 'block') {
-                            var type = `Blocked${ctx.type}`;
-                        } else if (ref.type === 'mute') {
-                            var type = `Muted${ctx.type}`;
-                        } else {
-                            continue;
-                        }
-                        var entry = {
-                            created_at: ctx.created_at,
-                            type,
-                            displayName: ref.targetDisplayName,
-                            userId: ref.targetUserId,
-                            isFriend,
-                            isFavorite
-                        };
-                        if (
-                            wristFilter[type] &&
-                            (wristFilter[type] === 'Everyone' ||
-                                (wristFilter[type] === 'Friends' && isFriend) ||
-                                (wristFilter[type] === 'VIP' && isFavorite))
-                        ) {
-                            wristArr.unshift(entry);
-                        }
-                        this.queueFeedNoty(entry);
+                for (var ref of API.cachedPlayerModerations.values()) {
+                    if (
+                        ref.targetDisplayName !== ctx.displayName &&
+                        ref.sourceUserId !== ctx.userId
+                    ) {
+                        continue;
                     }
+
+                    if (ref.type === 'block') {
+                        var type = `Blocked${ctx.type}`;
+                    } else if (ref.type === 'mute') {
+                        var type = `Muted${ctx.type}`;
+                    } else {
+                        continue;
+                    }
+
+                    var entry = {
+                        created_at: ctx.created_at,
+                        type,
+                        displayName: ref.targetDisplayName,
+                        userId: ref.targetUserId,
+                        isFriend,
+                        isFavorite
+                    };
+                    if (
+                        wristFilter[type] &&
+                        (wristFilter[type] === 'Everyone' ||
+                            (wristFilter[type] === 'Friends' && isFriend) ||
+                            (wristFilter[type] === 'VIP' && isFavorite))
+                    ) {
+                        wristArr.unshift(entry);
+                    }
+                    this.queueFeedNoty(entry);
                 }
             }
             // when too many user joins happen at once when switching instances
@@ -5980,12 +6001,12 @@ speechSynthesis.getVoices();
         noty.isFavorite = false;
         if (noty.userId) {
             noty.isFriend = this.friends.has(noty.userId);
-            noty.isFavorite = API.cachedFavoritesByObjectId.has(noty.userId);
+            noty.isFavorite = this.localFavoriteFriends.has(noty.userId);
         } else if (noty.displayName) {
             for (var ref of API.cachedUsers.values()) {
                 if (ref.displayName === noty.displayName) {
                     noty.isFriend = this.friends.has(ref.id);
-                    noty.isFavorite = API.cachedFavoritesByObjectId.has(ref.id);
+                    noty.isFavorite = this.localFavoriteFriends.has(ref.id);
                     break;
                 }
             }
@@ -6039,7 +6060,7 @@ speechSynthesis.getVoices();
                 continue;
             }
             var isFriend = this.friends.has(ctx.userId);
-            var isFavorite = API.cachedFavoritesByObjectId.has(ctx.userId);
+            var isFavorite = this.localFavoriteFriends.has(ctx.userId);
             if (
                 w < 20 &&
                 wristFilter[ctx.type] &&
@@ -6071,11 +6092,12 @@ speechSynthesis.getVoices();
             return;
         }
         noty.isFriend = this.friends.has(noty.userId);
-        noty.isFavorite = API.cachedFavoritesByObjectId.has(noty.userId);
+        noty.isFavorite = this.localFavoriteFriends.has(noty.userId);
         var notyFilter = this.sharedFeedFilters.noty;
         if (
             notyFilter[noty.type] &&
-            (notyFilter[noty.type] === 'Friends' ||
+            (notyFilter[noty.type] === 'Everyone' ||
+                (notyFilter[noty.type] === 'Friends' && noty.isFriend) ||
                 (notyFilter[noty.type] === 'VIP' && noty.isFavorite))
         ) {
             this.playNoty(noty);
@@ -6112,9 +6134,7 @@ speechSynthesis.getVoices();
                 continue;
             }
             var isFriend = this.friends.has(ctx.senderUserId);
-            var isFavorite = API.cachedFavoritesByObjectId.has(
-                ctx.senderUserId
-            );
+            var isFavorite = this.localFavoriteFriends.has(ctx.senderUserId);
             if (
                 w < 20 &&
                 wristFilter[ctx.type] &&
@@ -6136,7 +6156,7 @@ speechSynthesis.getVoices();
 
     $app.methods.queueNotificationNoty = function (noty) {
         noty.isFriend = this.friends.has(noty.senderUserId);
-        noty.isFavorite = API.cachedFavoritesByObjectId.has(noty.senderUserId);
+        noty.isFavorite = this.localFavoriteFriends.has(noty.senderUserId);
         var notyFilter = this.sharedFeedFilters.noty;
         if (
             notyFilter[noty.type] &&
@@ -6178,7 +6198,7 @@ speechSynthesis.getVoices();
                 continue;
             }
             var isFriend = this.friends.has(ctx.userId);
-            var isFavorite = API.cachedFavoritesByObjectId.has(ctx.userId);
+            var isFavorite = this.localFavoriteFriends.has(ctx.userId);
             if (
                 w < 20 &&
                 wristFilter[ctx.type] &&
@@ -6203,7 +6223,7 @@ speechSynthesis.getVoices();
             return;
         }
         noty.isFriend = this.friends.has(noty.userId);
-        noty.isFavorite = API.cachedFavoritesByObjectId.has(noty.userId);
+        noty.isFavorite = this.localFavoriteFriends.has(noty.userId);
         var notyFilter = this.sharedFeedFilters.noty;
         if (
             notyFilter[noty.type] &&
@@ -6244,7 +6264,7 @@ speechSynthesis.getVoices();
                 break;
             }
             var isFriend = this.friends.has(ctx.userId);
-            var isFavorite = API.cachedFavoritesByObjectId.has(ctx.userId);
+            var isFavorite = this.localFavoriteFriends.has(ctx.userId);
             // add tag colour
             var tagColour = '';
             var tagRef = this.customUserTags.get(ctx.userId);
@@ -6274,7 +6294,7 @@ speechSynthesis.getVoices();
         noty.isFavorite = false;
         if (noty.userId) {
             noty.isFriend = this.friends.has(noty.userId);
-            noty.isFavorite = API.cachedFavoritesByObjectId.has(noty.userId);
+            noty.isFavorite = this.localFavoriteFriends.has(noty.userId);
         }
         var notyFilter = this.sharedFeedFilters.noty;
         if (notyFilter[noty.type] && notyFilter[noty.type] === 'On') {
@@ -6298,13 +6318,14 @@ speechSynthesis.getVoices();
         }
         if (displayName) {
             // don't play noty twice
+            var notyId = `${noty.type},${displayName}`;
             if (
-                this.notyMap[displayName] &&
-                this.notyMap[displayName] >= noty.created_at
+                this.notyMap[notyId] &&
+                this.notyMap[notyId] >= noty.created_at
             ) {
                 return;
             }
-            this.notyMap[displayName] = noty.created_at;
+            this.notyMap[notyId] = noty.created_at;
         }
         var bias = new Date(Date.now() - 60000).toJSON();
         if (noty.created_at < bias) {
@@ -8749,7 +8770,7 @@ speechSynthesis.getVoices();
             return;
         }
         var ref = API.cachedUsers.get(id);
-        var isVIP = API.cachedFavoritesByObjectId.has(id);
+        var isVIP = this.localFavoriteFriends.has(id);
         var ctx = {
             id,
             state: state || 'offline',
@@ -8880,7 +8901,7 @@ speechSynthesis.getVoices();
             ctx.pendingOffline = false;
         }
         var ref = API.cachedUsers.get(id);
-        var isVIP = API.cachedFavoritesByObjectId.has(id);
+        var isVIP = this.localFavoriteFriends.has(id);
         var location = '';
         var $location_at = '';
         if (typeof ref !== 'undefined') {
@@ -10107,10 +10128,7 @@ speechSynthesis.getVoices();
         ) {
             return;
         }
-        if (
-            this.feedTable.vip &&
-            !API.cachedFavoritesByObjectId.has(feed.userId)
-        ) {
+        if (this.feedTable.vip && !this.localFavoriteFriends.has(feed.userId)) {
             return;
         }
         if (!this.feedSearch(feed)) {
@@ -11335,7 +11353,7 @@ speechSynthesis.getVoices();
             userId = photonUserRef.id;
             isFriend = photonUserRef.isFriend;
         }
-        var isFavorite = API.cachedFavoritesByObjectId.has(userId);
+        var isFavorite = this.localFavoriteFriends.has(userId);
         var colour = '';
         var tagRef = this.customUserTags.get(userId);
         if (typeof tagRef !== 'undefined') {
@@ -27391,6 +27409,63 @@ speechSynthesis.getVoices();
     };
 
     // #endregion
+    // #region | Local Favorite Friends
+
+    $app.data.localFavoriteFriends = new Set();
+    $app.data.localFavoriteFriendsGroups = JSON.parse(
+        await configRepository.getString(
+            'VRCX_localFavoriteFriendsGroups',
+            '[]'
+        )
+    );
+
+    $app.methods.updateLocalFavoriteFriends = function () {
+        this.localFavoriteFriends.clear();
+        for (var ref of API.cachedFavorites.values()) {
+            if (
+                ref.$isDeleted === false &&
+                ref.type === 'friend' &&
+                (this.localFavoriteFriendsGroups.length === 0 ||
+                    this.localFavoriteFriendsGroups.includes(ref.$groupKey))
+            ) {
+                this.localFavoriteFriends.add(ref.favoriteId);
+            }
+        }
+        this.updateSidebarFriendsList();
+
+        configRepository.setString(
+            'VRCX_localFavoriteFriendsGroups',
+            JSON.stringify(this.localFavoriteFriendsGroups)
+        );
+    };
+
+    $app.methods.updateSidebarFriendsList = function () {
+        for (var ctx of this.friends.values()) {
+            var isVIP = this.localFavoriteFriends.has(ctx.id);
+            if (ctx.isVIP === isVIP) {
+                continue;
+            }
+            ctx.isVIP = isVIP;
+            if (ctx.state !== 'online') {
+                continue;
+            }
+            if (ctx.isVIP) {
+                removeFromArray(this.friendsGroup1_, ctx);
+                removeFromArray(this.friendsGroupB_, ctx);
+                this.sortFriendsGroup0 = true;
+                this.friendsGroup0_.push(ctx);
+                this.friendsGroupA_.unshift(ctx);
+            } else {
+                removeFromArray(this.friendsGroup0_, ctx);
+                removeFromArray(this.friendsGroupA_, ctx);
+                this.sortFriendsGroup1 = true;
+                this.friendsGroup1_.push(ctx);
+                this.friendsGroupB_.unshift(ctx);
+            }
+        }
+    };
+
+    // #endregion
     // #region | App: pending offline timer
 
     $app.methods.promptSetPendingOffline = function () {
@@ -29632,10 +29707,10 @@ speechSynthesis.getVoices();
         if (typeof row.isFavorite !== 'undefined') {
             return row.isFavorite;
         }
-        if (!row.userId || API.cachedFavoritesByObjectId.size === 0) {
+        if (!row.userId) {
             return false;
         }
-        row.isFavorite = API.cachedFavoritesByObjectId.has(row.userId);
+        row.isFavorite = this.localFavoriteFriends.has(row.userId);
         return row.isFavorite;
     };
 
