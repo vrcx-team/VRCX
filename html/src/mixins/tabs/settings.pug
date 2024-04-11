@@ -84,6 +84,14 @@ mixin settingsTab()
                     +simpleSwitch("view.settings.general.application.startup", "isStartAtWindowsStartup", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.minimized", "isStartAsMinimizedState", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.tray", "isCloseToTray", "saveVRCXWindowOption")
+                //- General | Favorite
+                +simpleSettingsCategory("view.settings.general.favorites.header")
+                    br
+                    el-select(v-model="localFavoriteFriendsGroups" multiple clearable :placeholder="$t('view.settings.general.favorites.group_placeholder')" @change="updateLocalFavoriteFriends")
+                        el-option-group(:label="$t('view.settings.general.favorites.group_placeholder')")
+                            el-option.x-friend-item(v-for="group in API.favoriteFriendGroups" :key="group.key" :label="group.displayName ? group.displayName : group.name" :value="group.key")
+                                .detail
+                                    span.name(v-text="group.displayName ? group.displayName : group.name")
                 //- General | Game Log
                 +simpleSettingsCategory("view.settings.general.game_log.header")
                     +simpleSwitch("view.settings.general.game_log.resource_load", "logResourceLoad", "saveGameLogOptions")

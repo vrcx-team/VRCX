@@ -213,9 +213,13 @@
                     "minimized": "Start as minimized state",
                     "tray": "Close to tray"
                 },
+                "favorites": {
+                    "header": "Favorite Friends",
+                    "group_placeholder": "Choose Groups"
+                },
                 "game_log": {
                     "header": "Game Log",
-                    "resource_load": "Log Udon resource load"
+                    "resource_load": "Log Udon string/image load"
                 },
                 "automation": {
                     "header": "Automation",
