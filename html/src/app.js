@@ -287,8 +287,8 @@ speechSynthesis.getVoices();
         tel: 'hi',
         mri: 'nz',
         wuu: 'cn',
-        yue: '??', // Unsure which flag should be used as it may upset some people
-        tws: '??', // Unsure which flag should be used as it may upset some people
+        yue: 'cn',
+        tws: 'cn',
         asf: 'au',
         nzs: 'nz',
         gsg: 'de',
