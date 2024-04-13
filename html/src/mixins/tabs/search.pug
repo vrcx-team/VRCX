@@ -6,7 +6,7 @@ mixin searchTab()
                 el-button(type="default" @click="clearSearch()" icon="el-icon-delete" circle style="flex:none;margin-left:10px")
         el-tabs(ref="searchTab" type="card" style="margin-top:15px")
             el-tab-pane(:label="$t('view.search.user.header')" v-loading="isSearchUserLoading" style="min-height:60px")
-                .x-friend-list
+                .x-friend-list(style="min-height:500px")
                     .x-friend-item(v-for="user in searchUserResults" :key="user.id" @click="showUserDialog(user.id)")
                         template(v-once)
                             .avatar
@@ -16,15 +16,15 @@ mixin searchTab()
                                 span.extra(v-if="randomUserColours" v-text="user.$trustLevel" :class="user.$trustClass")
                                 span.extra(v-else v-text="user.$trustLevel" :style="{'color':user.$userColour}")
                 el-button-group(style="margin-top:15px")
-                    el-button(v-if="searchUserParams.offset" @click="moreSearchUser(-1)" icon="el-icon-back" size="small") {{ $t('view.search.prev_page') }}
-                    el-button(v-if="searchUserResults.length" @click="moreSearchUser(1)" icon="el-icon-right" size="small") {{ $t('view.search.next_page') }}
+                    el-button(:disabled="!searchUserParams.offset" @click="moreSearchUser(-1)" icon="el-icon-back" size="small") {{ $t('view.search.prev_page') }}
+                    el-button(:disabled="searchUserResults.length < 10" @click="moreSearchUser(1)" icon="el-icon-right" size="small") {{ $t('view.search.next_page') }}
             el-tab-pane(:label="$t('view.search.world.header')" v-loading="isSearchWorldLoading" style="min-height:60px")
                 el-dropdown(@command="(row) => searchWorld(row)" size="small" trigger="click" style="margin-bottom:15px")
                     el-button(size="small") {{ $t('view.search.world.category') }} #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default="dropdown")
                         el-dropdown-item(v-for="row in API.cachedConfig.dynamicWorldRows" :key="row.index" v-text="row.name" :command="row")
                 el-checkbox(v-model="searchWorldLabs" style="margin-left:10px") {{ $t('view.search.world.community_lab') }}
-                .x-friend-list
+                .x-friend-list(style="min-height:500px")
                     .x-friend-item(v-for="world in searchWorldResults" :key="world.id" @click="showWorldDialog(world.id)")
                         template(v-once)
                             .avatar
@@ -34,8 +34,8 @@ mixin searchTab()
                                 span.extra(v-if="world.occupants") {{ world.authorName }} ({{ world.occupants }})
                                 span.extra(v-else v-text="world.authorName")
                 el-button-group(style="margin-top:15px")
-                    el-button(v-if="searchWorldParams.offset" @click="moreSearchWorld(-1)" icon="el-icon-back" size="small") {{ $t('view.search.prev_page') }}
-                    el-button(v-if="searchWorldResults.length >= 10" @click="moreSearchWorld(1)" icon="el-icon-right" size="small") {{ $t('view.search.next_page') }}
+                    el-button(:disabled="!searchWorldParams.offset" @click="moreSearchWorld(-1)" icon="el-icon-back" size="small") {{ $t('view.search.prev_page') }}
+                    el-button(:disabled="searchWorldResults.length < 10" @click="moreSearchWorld(1)" icon="el-icon-right" size="small") {{ $t('view.search.next_page') }}
             el-tab-pane(:label="$t('view.search.avatar.header')" v-loading="isSearchAvatarLoading" style="min-height:60px")
                 el-dropdown(v-if="avatarRemoteDatabaseProviderList.length > 1" trigger="click" @click.native.stop size="mini" style="margin-right:5px")
                     el-button(size="small") {{ $t('view.search.avatar.search_provider') }} #[i.el-icon-arrow-down.el-icon--right]
@@ -56,7 +56,7 @@ mixin searchTab()
                     el-radio(label="name") {{ $t('view.search.avatar.sort_name') }}
                     el-radio(label="update") {{ $t('view.search.avatar.sort_update') }}
                     el-radio(label="created") {{ $t('view.search.avatar.sort_created') }}
-                .x-friend-list(style="margin-top:20px")
+                .x-friend-list(style="margin-top:20px;min-height:500px")
                     .x-friend-item(v-for="avatar in searchAvatarPage" :key="avatar.id" @click="showAvatarDialog(avatar.id)")
                         template(v-once)
                             .avatar
@@ -69,10 +69,10 @@ mixin searchTab()
                                 span.extra(v-text="avatar.releaseStatus" v-else)
                                 span.extra(v-text="avatar.authorName")
                 el-button-group(style="margin-top:15px")
-                    el-button(v-if="searchAvatarPageNum" @click="moreSearchAvatar(-1)" icon="el-icon-back" size="small") {{ $t('view.search.prev_page') }}
-                    el-button(v-if="searchAvatarResults.length > 10 && (searchAvatarPageNum + 1) * 10 < searchAvatarResults.length" @click="moreSearchAvatar(1)" icon="el-icon-right" size="small") {{ $t('view.search.next_page') }}
+                    el-button(:disabled="!searchAvatarPageNum" @click="moreSearchAvatar(-1)" icon="el-icon-back" size="small") {{ $t('view.search.prev_page') }}
+                    el-button(:disabled="searchAvatarResults.length < 10 || (searchAvatarPageNum + 1) * 10 >= searchAvatarResults.length" @click="moreSearchAvatar(1)" icon="el-icon-right" size="small") {{ $t('view.search.next_page') }}
             el-tab-pane(:label="$t('view.search.group.header')" v-loading="isSearchGroupLoading" style="min-height:60px")
-                .x-friend-list
+                .x-friend-list(style="min-height:500px")
                     .x-friend-item(v-for="group in searchGroupResults" :key="group.id" @click="showGroupDialog(group.id)")
                         template(v-once)
                             .avatar
@@ -84,5 +84,5 @@ mixin searchTab()
                                     span(style="margin-left:5px;color:#909399;font-weight:normal;font-family:monospace;font-size:12px") {{ group.shortCode }}.{{ group.discriminator }}
                                 span.extra(v-text="group.description")
                 el-button-group(style="margin-top:15px")
-                    el-button(v-if="searchGroupParams.offset" @click="moreSearchGroup(-1)" icon="el-icon-back" size="small") {{ $t('view.search.prev_page') }}
-                    el-button(v-if="searchGroupResults.length" @click="moreSearchGroup(1)" icon="el-icon-right" size="small") {{ $t('view.search.next_page') }}
+                    el-button(:disabled="!searchGroupParams.offset" @click="moreSearchGroup(-1)" icon="el-icon-back" size="small") {{ $t('view.search.prev_page') }}
+                    el-button(:disabled="searchGroupResults.length < 10" @click="moreSearchGroup(1)" icon="el-icon-right" size="small") {{ $t('view.search.next_page') }}

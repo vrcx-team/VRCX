@@ -19866,7 +19866,7 @@ speechSynthesis.getVoices();
         D.secureOrShortName = '';
         var tags = [];
         if (D.instanceName) {
-            D.instanceName = D.instanceName.replace(/[^A-Za-z0-9-_]/g, '');
+            D.instanceName = D.instanceName.replace(/[^A-Za-z0-9]/g, '');
             tags.push(D.instanceName);
         } else {
             var randValue = (99999 * Math.random() + 1).toFixed(0);
@@ -24631,10 +24631,14 @@ speechSynthesis.getVoices();
         var r = new FileReader();
         r.onload = function () {
             var params = {
-                tag: 'emoji',
+                tag: $app.emojiAnimType ? 'emojianimated' : 'emoji',
                 animationStyle: $app.emojiAnimationStyle.toLowerCase(),
                 maskTag: 'square'
             };
+            if ($app.emojiAnimType) {
+                params.frames = $app.emojiAnimFrameCount;
+                params.framesOverTime = $app.emojiAnimFps;
+            }
             var base64Body = btoa(r.result);
             API.uploadEmoji(base64Body, params).then((args) => {
                 $app.$message({
@@ -24673,7 +24677,10 @@ speechSynthesis.getVoices();
         }
     });
 
-    $app.data.emojiAnimationStyle = 'Aura';
+    $app.data.emojiAnimFps = 5;
+    $app.data.emojiAnimFrameCount = 4;
+    $app.data.emojiAnimType = false;
+    $app.data.emojiAnimationStyle = 'Stop';
     $app.data.emojiAnimationStyleUrl =
         'https://assets.vrchat.com/www/images/emoji-previews/';
     $app.data.emojiAnimationStyleList = {
