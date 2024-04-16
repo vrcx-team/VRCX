@@ -2389,12 +2389,23 @@ html
                                         img(v-lazy="`${emojiAnimationStyleUrl}${fileName}`")
                                     .detail
                                         span.name(v-text="styleName" style="margin-right:100px")
+                        el-checkbox(v-model="emojiAnimType" style="margin-left:10px;margin-right:10px")
+                            span {{ $t('dialog.gallery_icons.emoji_animation_type') }}
+                        template(v-if="emojiAnimType")
+                            span(style="margin-right:10px") {{ $t('dialog.gallery_icons.emoji_animation_fps') }}
+                            el-input(v-model="emojiAnimFps" :min="1" :max="64" size="small" style="width:48px;margin-right:10px")
+                            span(style="margin-right:10px") {{ $t('dialog.gallery_icons.emoji_animation_frame_count') }}
+                            el-input(v-model="emojiAnimFrameCount" :min="1" :max="64" size="small" style="width:48px;margin-right:10px")
+                            br
+                            span {{ $t('dialog.gallery_icons.flipbook_info') }}
                         br
                         .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="cursor:default")
                                 img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="display:inline-block;margin:5px")
-                                span {{ image.animationStyle }}
+                                span(style="margin-right:5px") {{ image.animationStyle }}
+                                span(v-if="image.framesOverTime" style="margin-right:5px") {{ image.framesOverTime }}fps
+                                span(v-if="image.frames" style="margin-right:5px") {{ image.frames }}frames
                             div(style="float:right;margin-top:5px")
                                 el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteEmoji(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")

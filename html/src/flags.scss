@@ -100,6 +100,84 @@ span[class='flags'] {
 .flags.tw {
     background-position: calc(var(--offx) * -3) calc(var(--offy) * -4);
 }
+.flags.mt {
+    background-position: 0 calc(var(--offy) * -5);
+}
+.flags.id {
+    background-position: calc(var(--offx) * -1) calc(var(--offy) * -5);
+}
+.flags.hr {
+    background-position: calc(var(--offx) * -2) calc(var(--offy) * -5);
+}
+.flags.he {
+    background-position: calc(var(--offx) * -3) calc(var(--offy) * -5);
+}
+.flags.af {
+    background-position: calc(var(--offx) * -4) calc(var(--offy) * -5);
+}
+.flags.be {
+    background-position: calc(var(--offx) * -5) calc(var(--offy) * -5);
+}
+.flags.bg {
+    background-position: 0 calc(var(--offy) * -6);
+}
+.flags.cy {
+    background-position: calc(var(--offx) * -1) calc(var(--offy) * -6);
+}
+.flags.el {
+    background-position: calc(var(--offx) * -2) calc(var(--offy) * -6);
+}
+.flags.et {
+    background-position: calc(var(--offx) * -3) calc(var(--offy) * -6);
+}
+.flags.ph {
+    background-position: calc(var(--offx) * -4) calc(var(--offy) * -6);
+}
+.flags.gd {
+    background-position: calc(var(--offx) * -5) calc(var(--offy) * -6);
+}
+.flags.ga {
+    background-position: 0 calc(var(--offy) * -7);
+}
+.flags.hi {
+    background-position: calc(var(--offx) * -1) calc(var(--offy) * -7);
+}
+.flags.hy {
+    background-position: calc(var(--offx) * -2) calc(var(--offy) * -7);
+}
+.flags.is {
+    background-position: calc(var(--offx) * -3) calc(var(--offy) * -7);
+}
+.flags.lv {
+    background-position: calc(var(--offx) * -4) calc(var(--offy) * -7);
+}
+.flags.lt {
+    background-position: calc(var(--offx) * -5) calc(var(--offy) * -7);
+}
+.flags.lb {
+    background-position: 0 calc(var(--offy) * -8);
+}
+.flags.mk {
+    background-position: calc(var(--offx) * -1) calc(var(--offy) * -8);
+}
+.flags.sk {
+    background-position: calc(var(--offx) * -2) calc(var(--offy) * -8);
+}
+.flags.sl {
+    background-position: calc(var(--offx) * -3) calc(var(--offy) * -8);
+}
+.flags.nz {
+    background-position: calc(var(--offx) * -4) calc(var(--offy) * -8);
+}
+.flags.au {
+    background-position: calc(var(--offx) * -5) calc(var(--offy) * -8);
+}
+.flags.eo {
+    background-position: 0 calc(var(--offy) * -9);
+}
+.flags.tok {
+    background-position: calc(var(--offx) * -1) calc(var(--offy) * -9);
+}
 .flags.blank {
     background-position: calc(var(--offx) * -4) calc(var(--offy) * -4);
 }

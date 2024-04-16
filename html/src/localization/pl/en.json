@@ -284,7 +284,7 @@
                         "sort_active_by_online_time": "czas online",
                         "sort_offline_by": "Sortuj online wg",
                         "sort_offline_by_alphabet": "alfabetycznie",
-                        "sort_offline_by_offline_time": "offline od"
+                        "sort_offline_by_offline_time": "czas offline"
                     },
                     "width": "Szerokość"
                 },
@@ -509,7 +509,7 @@
         "me": "JA",
         "favorite": "ULUBIONE",
         "online": "ONLINE",
-        "active": "AKTYWNE",
+        "active": "AKTYWNI",
         "offline": "OFFLINE",
         "pending_offline": "Oczekujące offline"
     },

@@ -1210,7 +1210,11 @@
             "refresh": "Refresh",
             "upload": "Upload",
             "clear": "Clear",
-            "emoji_animation_styles": "Animation Styles"
+            "emoji_animation_styles": "Animation Styles",
+            "emoji_animation_type": "Animated Emoji",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "Frame Count:",
+            "flipbook_info": "Select a flipbook texture PNG to use as an animated emoji"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",
