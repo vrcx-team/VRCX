@@ -14,6 +14,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp;
 using librsync.net;
@@ -154,9 +155,9 @@ namespace VRCX
         /// <param name="fileId">The ID of the file associated with the image.</param>
         /// <param name="version">The version of the file associated with the image.</param>
         /// <returns>A string representing the file location of the cached image.</returns>
-        public string GetImage(string url, string fileId, string version)
+        public async Task<string> GetImage(string url, string fileId, string version)
         {
-            return ImageCache.GetImage(url, fileId, version);
+            return await ImageCache.GetImage(url, fileId, version);
         }
 
         /// <summary>
