@@ -862,7 +862,7 @@ html
                                     el-button(:type="avatarDialog.isBlocked ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") {{ $t('dialog.avatar.actions.refresh') }}
-                                        el-dropdown-item(icon="el-icon-check" command="Select Avatar") {{ $t('dialog.avatar.actions.select') }}
+                                        el-dropdown-item(icon="el-icon-check" :disabled="API.currentUser.currentAvatar === avatarDialog.id" command="Select Avatar") {{ $t('dialog.avatar.actions.select') }}
                                         el-dropdown-item(v-if="/quest/.test(avatarDialog.ref.tags)" icon="el-icon-check" command="Select Fallback Avatar") {{ $t('dialog.avatar.actions.select_fallback') }}
                                         el-dropdown-item(v-if="avatarDialog.isBlocked" icon="el-icon-circle-check" command="Unblock Avatar" style="color:#F56C6C") {{ $t('dialog.avatar.actions.unblock') }}
                                         el-dropdown-item(v-else icon="el-icon-circle-close" command="Block Avatar") {{ $t('dialog.avatar.actions.block') }}
@@ -1840,6 +1840,11 @@ html
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
+                        span.toggle-name Group Change
+                        el-radio-group(v-model="sharedFeedFilters.noty.groupChange" size="mini" @change="saveSharedFeedFilters")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    .toggle-item
                         span.toggle-name Group Announcement
                         el-radio-group(v-model="sharedFeedFilters.noty['group.announcement']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
@@ -2067,6 +2072,11 @@ html
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
+                        span.toggle-name Group Change
+                        el-radio-group(v-model="sharedFeedFilters.wrist.groupChange" size="mini" @change="saveSharedFeedFilters")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    .toggle-item
                         span.toggle-name Group Announcement
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.announcement']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
@@ -2253,6 +2263,14 @@ html
             //- dialog Table: Send Invite Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteDialog" :visible.sync="sendInviteDialogVisible" :title="$t('dialog.invite_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
+                    //- template(v-if="gallerySelectDialog.selectedFileId")
+                    //-     div(style="display:inline-block;flex:none;margin-right:5px")
+                    //-         el-popover(placement="right" width="500px" trigger="click")
+                    //-             img.x-link(slot="reference" v-lazy="gallerySelectDialog.selectedImageUrl" style="flex:none;width:60px;height:60px;border-radius:4px;object-fit:cover")
+                    //-             img.x-link(v-lazy="gallerySelectDialog.selectedImageUrl" style="height:500px" @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)")
+                    //-     el-button(size="mini" @click="clearImageGallerySelect" style="vertical-align:top") {{ $t('dialog.invite_message.clear_selected_image') }}
+                    //- template(v-else)
+                    //-     el-button(size="mini" @click="showGallerySelectDialog" style="margin-right:5px") {{ $t('dialog.invite_message.select_image') }}
                     input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteDialogVisible" v-bind="inviteMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
@@ -2394,8 +2412,11 @@ html
                         template(v-if="emojiAnimType")
                             span(style="margin-right:10px") {{ $t('dialog.gallery_icons.emoji_animation_fps') }}
                             el-input(v-model="emojiAnimFps" :min="1" :max="64" size="small" style="width:48px;margin-right:10px")
-                            span(style="margin-right:10px") {{ $t('dialog.gallery_icons.emoji_animation_frame_count') }}
-                            el-input(v-model="emojiAnimFrameCount" :min="1" :max="64" size="small" style="width:48px;margin-right:10px")
+                            el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px")
+                                el-button(size="mini")
+                                    span {{ $t('dialog.gallery_icons.emoji_animation_frame_count') }} {{ emojiAnimFrameCount }} #[i.el-icon-arrow-down.el-icon--right]
+                                el-dropdown-menu(#default="dropdown")
+                                    el-dropdown-item(v-for="(item) in emojiFrameCountOptions" v-text="item" @click.native="emojiAnimFrameCount = item")
                             br
                             span {{ $t('dialog.gallery_icons.flipbook_info') }}
                         br

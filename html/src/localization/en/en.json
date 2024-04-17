@@ -1168,6 +1168,8 @@
         "invite_message": {
             "header": "Send Invite Message",
             "confirmation": "Are you sure you want to send?",
+            "select_image": "Select Image",
+            "clear_selected_image": "Clear Selected Image",
             "cancel": "Cancel",
             "refresh": "Refresh",
             "confirm": "Confirm"
@@ -1214,7 +1216,7 @@
             "emoji_animation_type": "Animated Emoji",
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Frame Count:",
-            "flipbook_info": "Select a flipbook texture PNG to use as an animated emoji"
+            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji (max FPS 64)"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",
@@ -1571,7 +1573,7 @@
         "notification": {
             "date": "Date",
             "type": "Type",
-            "user": "User",
+            "user_group": "User/Group",
             "photo": "Photo",
             "message": "Message",
             "action": "Action"

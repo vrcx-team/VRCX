@@ -1650,6 +1650,26 @@ speechSynthesis.getVoices();
         $app.updateCurrentUserLocation();
     };
 
+    API.applyPresenceGroups = function (ref) {
+        var groups = ref.presence?.groups;
+        if (!groups) {
+            console.error('API.applyPresenceGroups: invalid groups', ref);
+            return;
+        }
+
+        // update group list
+        for (var groupId of groups) {
+            if (!this.currentUserGroups.has(groupId)) {
+                $app.onGroupJoined(groupId);
+            }
+        }
+        for (var groupId of this.currentUserGroups.keys()) {
+            if (!groups.includes(groupId)) {
+                $app.onGroupLeft(groupId);
+            }
+        }
+    };
+
     API.applyCurrentUser = function (json) {
         var ref = this.currentUser;
         if (this.isLoggedIn) {
@@ -1673,19 +1693,7 @@ speechSynthesis.getVoices();
             this.applyUserLanguage(ref);
             this.applyPresenceLocation(ref);
             this.applyQueuedInstance(ref.queuedInstance);
-            // update group list
-            if (json.presence?.groups) {
-                for (var groupId of json.presence.groups) {
-                    if (!this.currentUserGroups.has(groupId)) {
-                        $app.onGroupJoined(groupId);
-                    }
-                }
-                for (var groupId of this.currentUserGroups.keys()) {
-                    if (!json.presence.groups.includes(groupId)) {
-                        $app.onGroupLeft(groupId);
-                    }
-                }
-            }
+            this.applyPresenceGroups(ref);
         } else {
             ref = {
                 acceptedPrivacyVersion: 0,
@@ -1790,6 +1798,7 @@ speechSynthesis.getVoices();
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
             this.applyPresenceLocation(ref);
+            this.applyPresenceGroups(ref);
             this.currentUser = ref;
             this.isLoggedIn = true;
             this.$emit('LOGIN', {
@@ -3478,6 +3487,11 @@ speechSynthesis.getVoices();
     API.$on('NOTIFICATION:V2', function (args) {
         var json = args.json;
         json.created_at = json.createdAt;
+        if (json.title && json.message) {
+            json.message = `${json.title}, ${json.message}`;
+        } else if (json.title) {
+            json.message = json.title;
+        }
         this.$emit('NOTIFICATION', {
             json,
             params: {
@@ -3581,6 +3595,21 @@ speechSynthesis.getVoices();
                 receiverUserId
             };
             this.$emit('NOTIFICATION:INVITE:PHOTO:SEND', args);
+            return args;
+        });
+    };
+
+    API.sendInviteGalleryPhoto = function (params, receiverUserId) {
+        return this.call(`invite/${receiverUserId}/photo`, {
+            method: 'POST',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params,
+                receiverUserId
+            };
+            this.$emit('NOTIFICATION:INVITE:GALLERYPHOTO:SEND', args);
             return args;
         });
     };
@@ -4987,6 +5016,7 @@ speechSynthesis.getVoices();
 
             case 'group-role-updated':
                 var groupId = content.role.groupId;
+                API.getGroup({ groupId, includeRoles: true });
                 console.log('group-role-updated', content);
 
                 // content {
@@ -5006,6 +5036,7 @@ speechSynthesis.getVoices();
 
             case 'group-member-updated':
                 var groupId = content.member.groupId;
+                API.getGroup({ groupId, includeRoles: true });
                 $app.onGroupJoined(groupId);
                 console.log('group-member-updated', content);
 
@@ -6665,6 +6696,9 @@ speechSynthesis.getVoices();
                     `${noty.previousDisplayName} changed their name to ${noty.displayName}`
                 );
                 break;
+            case 'groupChange':
+                this.speak(`${noty.senderUsername} ${noty.message}`);
+                break;
             case 'group.announcement':
                 this.speak(noty.message);
                 break;
@@ -6886,6 +6920,14 @@ speechSynthesis.getVoices();
                 AppApi.XSNotification(
                     'VRCX',
                     `${noty.previousDisplayName} changed their name to ${noty.displayName}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'groupChange':
+                AppApi.XSNotification(
+                    'VRCX',
+                    `${noty.senderUsername}: ${noty.message}`,
                     timeout,
                     image
                 );
@@ -7210,6 +7252,16 @@ speechSynthesis.getVoices();
                     playOvrtWristNotifications,
                     'VRCX',
                     `${noty.previousDisplayName} changed their name to ${noty.displayName}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'groupChange':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications,
+                    playOvrtWristNotifications,
+                    'VRCX',
+                    `${noty.senderUsername}: ${noty.message}`,
                     timeout,
                     image
                 );
@@ -7556,6 +7608,13 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification(
                     noty.previousDisplayName,
                     `changed their name to ${noty.displayName}`,
+                    image
+                );
+                break;
+            case 'groupChange':
+                AppApi.DesktopNotification(
+                    noty.senderUsername,
+                    noty.message,
                     image
                 );
                 break;
@@ -9863,6 +9922,7 @@ speechSynthesis.getVoices();
         // eslint-disable-next-line require-atomic-updates
         $app.notificationTable.data = await database.getNotifications();
         await this.refreshNotifications();
+        await $app.loadCurrentUserGroups();
         await $app.getCurrentUserGroups();
         try {
             if (
@@ -15530,6 +15590,7 @@ speechSynthesis.getVoices();
             Unfriend: 'On',
             DisplayName: 'VIP',
             TrustLevel: 'VIP',
+            groupChange: 'On',
             'group.announcement': 'On',
             'group.informative': 'On',
             'group.invite': 'On',
@@ -15569,6 +15630,7 @@ speechSynthesis.getVoices();
             Unfriend: 'On',
             DisplayName: 'Friends',
             TrustLevel: 'Friends',
+            groupChange: 'On',
             'group.announcement': 'On',
             'group.informative': 'On',
             'group.invite': 'On',
@@ -15631,6 +15693,10 @@ speechSynthesis.getVoices();
     if (!$app.data.sharedFeedFilters.noty.External) {
         $app.data.sharedFeedFilters.noty.External = 'On';
         $app.data.sharedFeedFilters.wrist.External = 'On';
+    }
+    if (!$app.data.sharedFeedFilters.noty.groupChange) {
+        $app.data.sharedFeedFilters.noty.groupChange = 'On';
+        $app.data.sharedFeedFilters.wrist.groupChange = 'On';
     }
 
     $app.data.trustColor = JSON.parse(
@@ -21069,7 +21135,7 @@ speechSynthesis.getVoices();
 
     API.$on('VRCPLUSICON:ADD', function (args) {
         if (Object.keys($app.VRCPlusIconsTable).length !== 0) {
-            $app.VRCPlusIconsTable.push(args.json);
+            $app.VRCPlusIconsTable.unshift(args.json);
         }
     });
 
@@ -21105,6 +21171,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.clearInviteImageUpload = function () {
+        this.clearImageGallerySelect();
         var buttonList = document.querySelectorAll('.inviteImageUploadButton');
         buttonList.forEach((button) => (button.value = ''));
         this.uploadImage = '';
@@ -24330,18 +24397,15 @@ speechSynthesis.getVoices();
             mutualGroups: [],
             remainingGroups: []
         };
-        var params = {
-            n: 100,
-            offset: 0,
-            userId
-        };
-        var args = await API.getGroups(params);
+        var args = await API.getGroups({ userId });
         if (userId === API.currentUser.id) {
             // update current user groups
             API.currentUserGroups.clear();
             args.json.forEach((group) => {
-                API.currentUserGroups.set(group.id, group);
+                var ref = API.applyGroup(group);
+                API.currentUserGroups.set(group.id, ref);
             });
+            this.saveCurrentUserGroups();
         }
         this.userGroups.groups = args.json;
         for (var i = 0; i < args.json.length; ++i) {
@@ -24370,11 +24434,13 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.getCurrentUserGroups = async function () {
-        var args = await API.getGroups({ n: 100, userId: API.currentUser.id });
+        var args = await API.getGroups({ userId: API.currentUser.id });
         API.currentUserGroups.clear();
         args.json.forEach((group) => {
-            API.currentUserGroups.set(group.id, group);
+            var ref = API.applyGroup(group);
+            API.currentUserGroups.set(group.id, ref);
         });
+        this.saveCurrentUserGroups();
     };
 
     $app.methods.sortCurrentUserGroups = function () {
@@ -24556,7 +24622,7 @@ speechSynthesis.getVoices();
 
     API.$on('GALLERYIMAGE:ADD', function (args) {
         if (Object.keys($app.galleryTable).length !== 0) {
-            $app.galleryTable.push(args.json);
+            $app.galleryTable.unshift(args.json);
         }
     });
 
@@ -24673,11 +24739,12 @@ speechSynthesis.getVoices();
 
     API.$on('EMOJI:ADD', function (args) {
         if (Object.keys($app.emojiTable).length !== 0) {
-            $app.emojiTable.push(args.json);
+            $app.emojiTable.unshift(args.json);
         }
     });
 
-    $app.data.emojiAnimFps = 5;
+    $app.data.emojiFrameCountOptions = [4, 16, 64];
+    $app.data.emojiAnimFps = 15;
     $app.data.emojiAnimFrameCount = 4;
     $app.data.emojiAnimType = false;
     $app.data.emojiAnimationStyle = 'Stop';
@@ -28661,6 +28728,39 @@ speechSynthesis.getVoices();
             };
             this.cachedGroups.set(ref.id, ref);
         } else {
+            if (this.currentUserGroups.has(ref.id)) {
+                // compare group props
+                if (ref.ownerId && ref.ownerId !== json.ownerId) {
+                    // owner changed
+                    $app.groupOwnerChange(json, ref.ownerId, json.ownerId);
+                }
+                if (ref.name && ref.name !== json.name) {
+                    // name changed
+                    $app.groupChange(
+                        json,
+                        `Name changed from ${ref.name} to ${json.name}`
+                    );
+                }
+                if (ref.myMember?.roleIds && json.myMember?.roleIds) {
+                    var oldRoleIds = ref.myMember.roleIds;
+                    var newRoleIds = json.myMember.roleIds;
+                    if (
+                        oldRoleIds.length !== newRoleIds.length ||
+                        !oldRoleIds.every(
+                            (value, index) => value === newRoleIds[index]
+                        )
+                    ) {
+                        // roleIds changed
+                        $app.groupRoleChange(
+                            json,
+                            ref.roles,
+                            json.roles,
+                            oldRoleIds,
+                            newRoleIds
+                        );
+                    }
+                }
+            }
             Object.assign(ref, json);
         }
         ref.rules = $app.replaceBioSymbols(ref.rules);
@@ -28669,6 +28769,130 @@ speechSynthesis.getVoices();
         ref.$url = `https://vrc.group/${ref.shortCode}.${ref.discriminator}`;
         this.applyGroupLanguage(ref);
         return ref;
+    };
+
+    $app.methods.groupOwnerChange = async function (ref, oldUserId, newUserId) {
+        var oldUser = await API.getCachedUser({
+            userId: oldUserId
+        });
+        var newUser = await API.getCachedUser({
+            userId: newUserId
+        });
+        var oldDisplayName = oldUser?.ref?.displayName;
+        var newDisplayName = newUser?.ref?.displayName;
+
+        this.groupChange(
+            ref,
+            `Owner changed from ${oldDisplayName} to ${newDisplayName}`
+        );
+    };
+
+    $app.methods.groupRoleChange = function (
+        ref,
+        oldRoles,
+        newRoles,
+        oldRoleIds,
+        newRoleIds
+    ) {
+        // check for removed/added roleIds
+        for (var roleId of oldRoleIds) {
+            if (!newRoleIds.includes(roleId)) {
+                var roleName = '';
+                var role = oldRoles.find((fineRole) => fineRole.id === roleId);
+                if (role) {
+                    roleName = role.name;
+                }
+                this.groupChange(ref, `Role ${roleName} removed`);
+            }
+        }
+        for (var roleId of newRoleIds) {
+            if (!oldRoleIds.includes(roleId)) {
+                var roleName = '';
+                var role = newRoles.find((fineRole) => fineRole.id === roleId);
+                if (role) {
+                    roleName = role.name;
+                }
+                this.groupChange(ref, `Role ${roleName} added`);
+            }
+        }
+    };
+
+    $app.methods.groupChange = function (ref, message) {
+        // oh the level of cursed for compibility
+        var json = {
+            id: Math.random().toString(36),
+            type: 'groupChange',
+            senderUserId: ref.id,
+            senderUsername: ref.name,
+            message,
+            created_at: new Date().toJSON()
+        };
+        API.$emit('NOTIFICATION', {
+            json,
+            params: {
+                notificationId: json.id
+            }
+        });
+
+        // delay to wait for json to be assigned to ref
+        workerTimers.setTimeout(this.saveCurrentUserGroups, 100);
+    };
+
+    $app.methods.saveCurrentUserGroups = function () {
+        var groups = [];
+        for (var ref of API.currentUserGroups.values()) {
+            groups.push({
+                id: ref.id,
+                name: ref.name,
+                ownerId: ref.ownerId,
+                roles: ref.roles,
+                roleIds: ref.myMember?.roleIds
+            });
+        }
+        configRepository.setString(
+            `VRCX_currentUserGroups_${API.currentUser.id}`,
+            JSON.stringify(groups)
+        );
+    };
+
+    $app.methods.loadCurrentUserGroups = async function () {
+        if (
+            !(await configRepository.getString(
+                `VRCX_currentUserGroups_${API.currentUser.id}`
+            ))
+        ) {
+            // fetch every group with roles for storing and comparing later
+            for (var group of API.currentUserGroups.values()) {
+                await API.getGroup({
+                    groupId: group.id,
+                    includeRoles: true
+                });
+            }
+            this.saveCurrentUserGroups();
+            return;
+        }
+        var groups = JSON.parse(
+            await configRepository.getString(
+                `VRCX_currentUserGroups_${API.currentUser.id}`,
+                '[]'
+            )
+        );
+        API.cachedGroups.clear();
+        API.currentUserGroups.clear();
+        for (var group of groups) {
+            var ref = {
+                id: group.id,
+                name: group.name,
+                iconUrl: '',
+                ownerId: group.ownerId,
+                roles: group.roles,
+                myMember: {
+                    roleIds: group.roleIds
+                }
+            };
+            API.cachedGroups.set(group.id, ref);
+            API.currentUserGroups.set(group.id, ref);
+        }
     };
 
     API.applyGroupMember = function (json) {
@@ -29058,7 +29282,12 @@ speechSynthesis.getVoices();
                 iconUrl: ''
             });
             if (this.friendLogInitStatus) {
-                API.getGroup({ groupId });
+                API.getGroup({ groupId, includeRoles: true }).then((args) => {
+                    var ref = API.applyGroup(args.json);
+                    API.currentUserGroups.set(groupId, ref);
+                    this.saveCurrentUserGroups();
+                    return args;
+                });
             }
         }
     };
@@ -29068,6 +29297,9 @@ speechSynthesis.getVoices();
             this.showGroupDialog(groupId);
         }
         API.currentUserGroups.delete(groupId);
+        API.getCachedGroup({ groupId }).then((args) => {
+            this.groupChange(args.ref, 'Left group');
+        });
     };
 
     // group search
@@ -29473,6 +29705,9 @@ speechSynthesis.getVoices();
             return;
         }
         var data = link.split(':');
+        if (!data.length) {
+            return;
+        }
         switch (data[0]) {
             case 'group':
                 this.showGroupDialog(data[1]);
@@ -29773,21 +30008,29 @@ speechSynthesis.getVoices();
 
     $app.data.gallerySelectDialog = {
         visible: false,
-        destenationFeild: ''
+        selectedFileId: '',
+        selectedImageUrl: ''
     };
 
-    $app.methods.showGallerySelectDialog = function (destenationFeild) {
+    $app.methods.showGallerySelectDialog = function () {
         this.$nextTick(() => adjustDialogZ(this.$refs.gallerySelectDialog.$el));
         var D = this.gallerySelectDialog;
-        D.destenationFeild = destenationFeild;
         D.visible = true;
         this.refreshGalleryTable();
     };
 
     $app.methods.selectImageGallerySelect = function (imageUrl, fileId) {
         var D = this.gallerySelectDialog;
+        D.selectedFileId = fileId;
+        D.selectedImageUrl = imageUrl;
         D.visible = false;
         console.log(imageUrl, fileId);
+    };
+
+    $app.methods.clearImageGallerySelect = function () {
+        var D = this.gallerySelectDialog;
+        D.selectedFileId = '';
+        D.selectedImageUrl = '';
     };
 
     $app.methods.reportUserForHacking = function (userId) {

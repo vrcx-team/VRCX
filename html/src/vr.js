@@ -582,6 +582,9 @@ Vue.component('marquee-text', MarqueeText);
             case 'DisplayName':
                 text = `<strong>${noty.previousDisplayName}</strong> changed their name to ${noty.displayName}`;
                 break;
+            case 'groupChange':
+                text = `<strong>${noty.senderUsername}</strong> ${noty.message}`;
+                break;
             case 'group.announcement':
                 text = noty.message;
                 break;
