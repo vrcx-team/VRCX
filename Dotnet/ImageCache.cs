@@ -1,20 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace VRCX
 {
     class ImageCache
     {
         private static readonly string cacheLocation = Path.Combine(Program.AppDataDirectory, "ImageCache");
-        private static readonly WebClient webClient = new WebClient();
+        private static readonly HttpClient httpClient = new HttpClient();
+        private static readonly List<string> _imageHosts =
+        [
+            "api.vrchat.cloud",
+            "files.vrchat.cloud",
+            "d348imysud55la.cloudfront.net",
+            "assets.vrchat.com"
+        ];
 
-        private const string IMAGE_HOST1 = "api.vrchat.cloud";
-        private const string IMAGE_HOST2 = "files.vrchat.cloud";
-        private const string IMAGE_HOST3 = "d348imysud55la.cloudfront.net";
-
-        public static string GetImage(string url, string fileId, string version)
+        public static async Task<string> GetImage(string url, string fileId, string version)
         {
             var directoryLocation = Path.Combine(cacheLocation, fileId);
             var fileLocation = Path.Combine(directoryLocation, $"{version}.png");
@@ -29,23 +35,30 @@ namespace VRCX
                 Directory.Delete(directoryLocation, true);
             Directory.CreateDirectory(directoryLocation);
 
-            Uri uri = new Uri(url);
-            if (uri.Host != IMAGE_HOST1 && uri.Host != IMAGE_HOST2 && uri.Host != IMAGE_HOST3)
+            var uri = new Uri(url);
+            if (!_imageHosts.Contains(uri.Host))
                 throw new ArgumentException("Invalid image host", url);
             
-            string cookieString = string.Empty;
+            var cookieString = string.Empty;
             if (WebApi.Instance != null && WebApi.Instance._cookieContainer != null)
             {
-                CookieCollection cookies = WebApi.Instance._cookieContainer.GetCookies(new Uri($"https://{IMAGE_HOST1}"));
+                CookieCollection cookies = WebApi.Instance._cookieContainer.GetCookies(new Uri("https://api.vrchat.cloud"));
                 foreach (Cookie cookie in cookies)
                     cookieString += $"{cookie.Name}={cookie.Value};";
             }
 
-            webClient.Headers[HttpRequestHeader.Cookie] = cookieString;
-            webClient.Headers[HttpRequestHeader.UserAgent] = Program.Version;
-            webClient.DownloadFile(url, fileLocation);
+            httpClient.DefaultRequestHeaders.Add("Cookie", cookieString);
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Program.Version);
+            using (var response = await httpClient.GetAsync(url))
+            {
+                response.EnsureSuccessStatusCode();
+                await using (var fileStream = new FileStream(fileLocation, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    await response.Content.CopyToAsync(fileStream);
+                }
+            }
 
-            int cacheSize = Directory.GetDirectories(cacheLocation).Length;
+            var cacheSize = Directory.GetDirectories(cacheLocation).Length;
             if (cacheSize > 1100)
                 CleanImageCache();
 
