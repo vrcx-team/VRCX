@@ -1204,7 +1204,11 @@
             "refresh": "Обновить",
             "upload": "Загрузить",
             "clear": "Очистить",
-            "emoji_animation_styles": "Стиль анимации"
+            "emoji_animation_styles": "Стиль анимации",
+            "emoji_animation_type": "Анимированные Emoji",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "Количество кадров:",
+            "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи (максимальный FPS 64)."
         },
         "change_content_image": {
             "avatar": "Изменить изображение аватара",
