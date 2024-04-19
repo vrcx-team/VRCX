@@ -144,6 +144,11 @@ html
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
                                             | 🏷️ #[span.name(v-text="feed.message")]
+                                div(v-else-if="feed.type === 'group.transfer'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                    .detail
+                                        span.extra
+                                            span.time {{ feed.created_at | formatDate }}
+                                            | 🏷️ #[span.name(v-text="feed.message")]
                                 div(v-else-if="feed.type === 'group.queueReady'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
@@ -360,6 +365,11 @@ html
                                             span.time {{ feed.created_at | formatDate }}
                                             | #[span.name(v-text="feed.message")]
                                 div(v-else-if="feed.type === 'group.joinRequest'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
+                                    .detail
+                                        span.extra
+                                            span.time {{ feed.created_at | formatDate }}
+                                            | #[span.name(v-text="feed.message")]
+                                div(v-else-if="feed.type === 'group.transfer'" class="x-friend-item" :class="{ friend: feed.isFriend, favorite: feed.isFavorite }")
                                     .detail
                                         span.extra
                                             span.time {{ feed.created_at | formatDate }}
