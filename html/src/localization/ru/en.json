@@ -820,6 +820,7 @@
                 "visibility_everyone": "Видимость: все",
                 "visibility_friends": "Видимость: Только друзья",
                 "visibility_hidden": "Видимость: Только я",
+                "create_post": "Создать объявление",
                 "moderation_tools": "Инструменты модерации",
                 "leave": "Покинуть группу"
             },
@@ -847,6 +848,10 @@
             "posts": {
                 "header": "Объявления",
                 "visibility": "Видемость:",
+                "edited_at": "Отредактированно в:",
+                "created_at": "Создано в:",
+                "edit_tooltip": "Редактировать объявления",
+                "delete_tooltip": "Удалить объявления",
                 "edited_by": "Отредактированно:",
                 "search_placeholder": "Поиск",
                 "posts_count": "Объявлений: "
@@ -1208,6 +1213,7 @@
             "emoji_animation_type": "Анимированные Emoji",
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Количество кадров:",
+            "emoji_loop_pingpong": "Зацикленный PingPong",
             "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи (максимальный FPS 64)."
         },
         "change_content_image": {
@@ -1295,7 +1301,21 @@
             "selected_roles": "Выбранные роли",
             "remove_roles": "Удалить роли",
             "add_roles": "Добавить роли"
+        },
+        "group_post_edit": {
+            "header": "Создать/Редактировать обьявление",
+            "title": "Заголовок",
+            "message": "Сообщение",
+            "send_notification": "Отправить уведомление",
+            "post_visibility": "Пидемость обьявления",
+            "visibility_public": "Публично",
+            "visibility_group": "Группа",
+            "image": "Изображение",
+            "cancel": "Отменить",
+            "create_post": "Создать обьявление",
+            "edit_post": "Редактировать обьявление"
         }
+        
     },
     "prompt": {
         "totp": {
