@@ -826,6 +826,7 @@
                 "visibility_everyone": "Visibility Everyone",
                 "visibility_friends": "Visibility Friends",
                 "visibility_hidden": "Visibility Hidden",
+                "create_post": "Create Post",
                 "moderation_tools": "Moderation Tools",
                 "leave": "Leave Group"
             },
@@ -853,6 +854,10 @@
             "posts": {
                 "header": "Posts",
                 "visibility": "Visibility:",
+                "edited_at": "Edited At:",
+                "created_at": "Created At:",
+                "edit_tooltip": "Edit Post",
+                "delete_tooltip": "Delete Post",
                 "edited_by": "Edited by:",
                 "search_placeholder": "Search",
                 "posts_count": "Posts: "
@@ -1216,6 +1221,7 @@
             "emoji_animation_type": "Animated Emoji",
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Frame Count:",
+            "emoji_loop_pingpong": "Loop PingPong",
             "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji (max FPS 64)"
         },
         "change_content_image": {
@@ -1303,6 +1309,19 @@
             "selected_roles": "Selected Roles",
             "remove_roles": "Remove Roles",
             "add_roles": "Add Roles"
+        },
+        "group_post_edit": {
+            "header": "Create/Edit Post",
+            "title": "Title",
+            "message": "Message",
+            "send_notification": "Send Notification",
+            "post_visibility": "Post Visibility",
+            "visibility_public": "Public",
+            "visibility_group": "Group",
+            "image": "Image",
+            "cancel": "Cancel",
+            "create_post": "Create Post",
+            "edit_post": "Edit Post"
         }
     },
     "prompt": {

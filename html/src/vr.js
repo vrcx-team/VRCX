@@ -597,6 +597,9 @@ Vue.component('marquee-text', MarqueeText);
             case 'group.joinRequest':
                 text = noty.message;
                 break;
+            case 'group.transfer':
+                text = noty.message;
+                break;
             case 'group.queueReady':
                 text = noty.message;
                 break;

@@ -2480,6 +2480,12 @@ class Database {
         );
     }
 
+    async fixBrokenGroupChange() {
+        await sqliteService.executeNonQuery(
+            `DELETE FROM ${Database.userPrefix}_notifications WHERE type = 'groupChange'`
+        );
+    }
+
     async updateTableForGroupNames() {
         var tables = [];
         await sqliteService.execute((dbRow) => {

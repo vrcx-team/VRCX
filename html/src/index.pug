@@ -1005,6 +1005,8 @@ html
                                                 el-dropdown-item(v-if="groupDialog.ref.myMember.isSubscribedToAnnouncements" icon="el-icon-close" command="Unsubscribe To Announcements" divided) {{ $t('dialog.group.actions.unsubscribe') }}
                                                 el-dropdown-item(v-else icon="el-icon-check" command="Subscribe To Announcements" divided) {{ $t('dialog.group.actions.subscribe') }}
                                                 el-dropdown-item(v-if="hasGroupPermission(groupDialog.ref, 'group-invites-manage')" icon="el-icon-message" command="Invite To Group") {{ $t('dialog.group.actions.invite_to_group') }}
+                                            template(v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')")
+                                                el-dropdown-item(icon="el-icon-tickets" command="Create Post") {{ $t('dialog.group.actions.create_post') }}
                                             template(v-if="hasGroupPermission(groupDialog.ref, 'group-members-manage')")
                                                 el-dropdown-item(icon="el-icon-s-operation" command="Moderation Tools") {{ $t('dialog.group.actions.moderation_tools') }}
                                             template(v-if="groupDialog.ref.myMember && groupDialog.ref.privacy === 'default'")
@@ -1062,8 +1064,16 @@ html
                                             span(v-if="groupDialog.announcement.editorId" style="margin-right:5px") ({{ $t('dialog.group.posts.edited_by') }} #[display-name(:userid="groupDialog.announcement.editorId")])
                                             el-tooltip(placement="bottom")
                                                 template(#content)
-                                                    span {{ groupDialog.announcement.updatedAt | formatDate('long') }}
+                                                    span {{ $t('dialog.group.posts.created_at') }} {{ groupDialog.announcement.createdAt | formatDate('long') }}
+                                                    template(v-if="groupDialog.announcement.updatedAt !== groupDialog.announcement.createdAt")
+                                                        br
+                                                        span {{ $t('dialog.group.posts.edited_at') }} {{ groupDialog.announcement.updatedAt | formatDate('long') }}
                                                 timer(:epoch="Date.parse(groupDialog.announcement.updatedAt)")
+                                            template(v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')")
+                                                el-tooltip(placement="top" :content="$t('dialog.group.posts.edit_tooltip')" :disabled="hideTooltips")
+                                                    el-button(type="text" icon="el-icon-edit" size="mini" style="margin-left:5px" @click="showGroupPostEditDialog(groupDialog.id, groupDialog.announcement)")
+                                                el-tooltip(placement="top" :content="$t('dialog.group.posts.delete_tooltip')" :disabled="hideTooltips")
+                                                    el-button(type="text" icon="el-icon-delete" size="mini" style="margin-left:5px" @click="confirmDeleteGroupPost(groupDialog.announcement)")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.group.info.rules') }}
@@ -1151,8 +1161,16 @@ html
                                                 span(v-if="post.editorId" style="margin-right:5px") ({{ $t('dialog.group.posts.edited_by') }} #[display-name(:userid="post.editorId")])
                                                 el-tooltip(placement="bottom")
                                                     template(#content)
-                                                        span {{ post.updatedAt | formatDate('long') }}
+                                                        span {{ $t('dialog.group.posts.created_at') }} {{ post.createdAt | formatDate('long') }}
+                                                        template(v-if="post.updatedAt !== post.createdAt")
+                                                            br
+                                                            span {{ $t('dialog.group.posts.edited_at') }} {{ post.updatedAt | formatDate('long') }}
                                                     timer(:epoch="Date.parse(post.updatedAt)")
+                                                template(v-if="hasGroupPermission(groupDialog.ref, 'group-announcement-manage')")
+                                                    el-tooltip(placement="top" :content="$t('dialog.group.posts.edit_tooltip')" :disabled="hideTooltips")
+                                                        el-button(type="text" icon="el-icon-edit" size="mini" style="margin-left:5px" @click="showGroupPostEditDialog(groupDialog.id, post)")
+                                                    el-tooltip(placement="top" :content="$t('dialog.group.posts.delete_tooltip')" :disabled="hideTooltips")
+                                                        el-button(type="text" icon="el-icon-delete" size="mini" style="margin-left:5px" @click="confirmDeleteGroupPost(post)")
                         el-tab-pane(:label="$t('dialog.group.members.header')")
                             template(v-if="groupDialog.visible")
                                 span(v-if="hasGroupPermission(groupDialog.ref, 'group-members-viewall')" style="font-weight:bold;font-size:16px") {{ $t('dialog.group.members.all_members') }}
@@ -1828,13 +1846,13 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
-                        span.toggle-name Display Name
+                        span.toggle-name Display Name Change
                         el-radio-group(v-model="sharedFeedFilters.noty.DisplayName" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
-                        span.toggle-name Trust Level
+                        span.toggle-name Trust Level Change
                         el-radio-group(v-model="sharedFeedFilters.noty.TrustLevel" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
@@ -1850,7 +1868,7 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
-                        span.toggle-name Group Join/Leave
+                        span.toggle-name Group Join
                         el-radio-group(v-model="sharedFeedFilters.noty['group.informative']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
@@ -1865,6 +1883,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
+                        span.toggle-name Group Transfer Request
+                        el-radio-group(v-model="sharedFeedFilters.noty['group.transfer']" size="mini" @change="saveSharedFeedFilters")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    .toggle-item
                         span.toggle-name Instance Queue Ready
                         el-radio-group(v-model="sharedFeedFilters.noty['group.queueReady']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
@@ -1875,13 +1898,6 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
-                        span.toggle-name Portal Spawn
-                        el-radio-group(v-model="sharedFeedFilters.noty.PortalSpawn" size="mini" @change="saveSharedFeedFilters")
-                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
-                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
-                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
-                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
-                    .toggle-item
                         span.toggle-name Video Play
                             el-tooltip(placement="top" style="margin-left:5px" content="Requires VRCX YouTube API option enabled")
                                 i.el-icon-warning
@@ -1889,12 +1905,12 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
-                        span.toggle-name Events
+                        span.toggle-name Miscellaneous Events
                         el-radio-group(v-model="sharedFeedFilters.noty.Event" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
-                        span.toggle-name External
+                        span.toggle-name External App
                         el-radio-group(v-model="sharedFeedFilters.noty.External" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
@@ -1937,6 +1953,13 @@ html
                         br
                         .toggle-item
                             span.toggle-name Photon Event Logging
+                        .toggle-item
+                            span.toggle-name Portal Spawn
+                            el-radio-group(v-model="sharedFeedFilters.noty.PortalSpawn" size="mini" @change="saveSharedFeedFilters")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                                el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                                el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                         .toggle-item
                             span.toggle-name Lobby ChatBox Message
                             el-radio-group(v-model="sharedFeedFilters.noty.ChatBoxMessage" size="mini" @change="saveSharedFeedFilters")
@@ -2060,13 +2083,13 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
-                        span.toggle-name Display Name
+                        span.toggle-name Display Name Change
                         el-radio-group(v-model="sharedFeedFilters.wrist.DisplayName" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
-                        span.toggle-name Trust Level
+                        span.toggle-name Trust Level Change
                         el-radio-group(v-model="sharedFeedFilters.wrist.TrustLevel" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
@@ -2082,7 +2105,7 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
-                        span.toggle-name Group Join/Leave
+                        span.toggle-name Group Join
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.informative']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
@@ -2097,6 +2120,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
+                        span.toggle-name Group Transfer Request
+                        el-radio-group(v-model="sharedFeedFilters.wrist['group.transfer']" size="mini" @change="saveSharedFeedFilters")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    .toggle-item
                         span.toggle-name Instance Queue Ready
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.queueReady']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
@@ -2107,13 +2135,6 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
-                        span.toggle-name Portal Spawn
-                        el-radio-group(v-model="sharedFeedFilters.wrist.PortalSpawn" size="mini" @change="saveSharedFeedFilters")
-                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
-                            el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
-                            el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
-                            el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
-                    .toggle-item
                         span.toggle-name Video Play
                             el-tooltip(placement="top" style="margin-left:5px" content="Requires VRCX YouTube API option enabled")
                                 i.el-icon-warning
@@ -2121,12 +2142,12 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
-                        span.toggle-name Events
+                        span.toggle-name Miscellaneous Events
                         el-radio-group(v-model="sharedFeedFilters.wrist.Event" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
-                        span.toggle-name External
+                        span.toggle-name External App
                         el-radio-group(v-model="sharedFeedFilters.wrist.External" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
@@ -2169,6 +2190,13 @@ html
                         br
                         .toggle-item
                             span.toggle-name Photon Event Logging
+                        .toggle-item
+                            span.toggle-name Portal Spawn
+                            el-radio-group(v-model="sharedFeedFilters.wrist.PortalSpawn" size="mini" @change="saveSharedFeedFilters")
+                                el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                                el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
+                                el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                                el-radio-button(label="Everyone") {{ $t('dialog.shared_feed_filters.everyone') }}
                         .toggle-item
                             span.toggle-name Lobby ChatBox Message
                             el-radio-group(v-model="sharedFeedFilters.wrist.ChatBoxMessage" size="mini" @change="saveSharedFeedFilters")
@@ -2417,6 +2445,8 @@ html
                                     span {{ $t('dialog.gallery_icons.emoji_animation_frame_count') }} {{ emojiAnimFrameCount }} #[i.el-icon-arrow-down.el-icon--right]
                                 el-dropdown-menu(#default="dropdown")
                                     el-dropdown-item(v-for="(item) in emojiFrameCountOptions" v-text="item" @click.native="emojiAnimFrameCount = item")
+                            el-checkbox(v-model="emojiAnimLoopPingPong" style="margin-left:10px;margin-right:10px")
+                                span {{ $t('dialog.gallery_icons.emoji_loop_pingpong') }}
                             br
                             span {{ $t('dialog.gallery_icons.flipbook_info') }}
                         br
@@ -2424,9 +2454,11 @@ html
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="cursor:default")
                                 img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="display:inline-block;margin:5px")
+                                span(v-if="image.loopStyle === 'pingpong'") #[i.el-icon-refresh.el-icon--left]
                                 span(style="margin-right:5px") {{ image.animationStyle }}
                                 span(v-if="image.framesOverTime" style="margin-right:5px") {{ image.framesOverTime }}fps
                                 span(v-if="image.frames" style="margin-right:5px") {{ image.frames }}frames
+                            br
                             div(style="float:right;margin-top:5px")
                                 el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteEmoji(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
@@ -2980,6 +3012,42 @@ html
                     el-button(@click="groupMembersBan" :disabled="groupMemberModeration.progressCurrent") {{ $t('dialog.group_member_moderation.ban') }}
                     span(v-if="groupMemberModeration.progressCurrent" style="margin-top:10px") #[i.el-icon-loading(style="margin-left:5px;margin-right:5px")] {{ $t('dialog.group_member_moderation.progress') }} {{ groupMemberModeration.progressCurrent }}/{{ groupMemberModeration.progressTotal }}
                     el-button(v-if="groupMemberModeration.progressCurrent" @click="groupMemberModeration.progressTotal = 0" style="margin-left:5px") {{ $t('dialog.group_member_moderation.cancel') }}
+
+            //- dialog: group posts
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="groupPostEditDialog" :visible.sync="groupPostEditDialog.visible" :title="$t('dialog.group_post_edit.header')" width="650px")
+                div(v-if="groupPostEditDialog.visible")
+                    h3(v-text="groupPostEditDialog.groupRef.name")
+                    el-form(:model="groupPostEditDialog" label-width="150px")
+                        el-form-item(:label="$t('dialog.group_post_edit.title')")
+                            el-input(v-model="groupPostEditDialog.title" size="mini")
+                        el-form-item(:label="$t('dialog.group_post_edit.message')")
+                            el-input(v-model="groupPostEditDialog.text" type="textarea" :rows="4" :autosize="{ minRows: 4, maxRows: 20 }" style="margin-top:10px" resize="none")
+                        el-form-item
+                            el-checkbox(v-if="!groupPostEditDialog.postId" v-model="groupPostEditDialog.sendNotification" size="small") {{ $t('dialog.group_post_edit.send_notification') }}
+                        el-form-item(:label="$t('dialog.group_post_edit.post_visibility')")
+                            el-radio-group(v-model="groupPostEditDialog.visibility" size="small")
+                                el-radio(label="public") {{ $t('dialog.group_post_edit.visibility_public') }}
+                                el-radio(label="group") {{ $t('dialog.group_post_edit.visibility_group') }}
+                        el-form-item(v-if="groupPostEditDialog.visibility === 'group'" :label="$t('dialog.new_instance.roles')")
+                            el-select(v-model="groupPostEditDialog.roleIds" multiple clearable :placeholder="$t('dialog.new_instance.role_placeholder')" style="width:100%")
+                                el-option-group(:label="$t('dialog.new_instance.role_placeholder')")
+                                    el-option.x-friend-item(v-for="role in groupPostEditDialog.groupRef?.roles" :key="role.id" :label="role.name" :value="role.id" style="height:auto;width:478px")
+                                        .detail
+                                            span.name(v-text="role.name")
+                        el-form-item(:label="$t('dialog.group_post_edit.image')")
+                            template(v-if="gallerySelectDialog.selectedFileId")
+                                div(style="display:inline-block;flex:none;margin-right:5px")
+                                    el-popover(placement="right" width="500px" trigger="click")
+                                        img.x-link(slot="reference" v-lazy="gallerySelectDialog.selectedImageUrl" style="flex:none;width:60px;height:60px;border-radius:4px;object-fit:cover")
+                                        img.x-link(v-lazy="gallerySelectDialog.selectedImageUrl" style="height:500px" @click="showFullscreenImageDialog(gallerySelectDialog.selectedImageUrl)")
+                                el-button(size="mini" @click="clearImageGallerySelect" style="vertical-align:top") {{ $t('dialog.invite_message.clear_selected_image') }}
+                            template(v-else)
+                                el-button(size="mini" @click="showGallerySelectDialog" style="margin-right:5px") {{ $t('dialog.invite_message.select_image') }}
+
+                template(#footer)
+                    el-button(size="small" @click="groupPostEditDialog.visible = false") {{ $t('dialog.group_post_edit.cancel') }}
+                    el-button(v-if="groupPostEditDialog.postId" size="small" @click="editGroupPost") {{ $t('dialog.group_post_edit.edit_post') }}
+                    el-button(v-else size="small" @click="createGroupPost") {{ $t('dialog.group_post_edit.create_post') }}
 
 
             //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")
