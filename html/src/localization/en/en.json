@@ -826,6 +826,7 @@
                 "visibility_everyone": "Visibility Everyone",
                 "visibility_friends": "Visibility Friends",
                 "visibility_hidden": "Visibility Hidden",
+                "create_post": "Create Post",
                 "moderation_tools": "Moderation Tools",
                 "leave": "Leave Group"
             },
@@ -853,6 +854,10 @@
             "posts": {
                 "header": "Posts",
                 "visibility": "Visibility:",
+                "edited_at": "Edited At:",
+                "created_at": "Created At:",
+                "edit_tooltip": "Edit Post",
+                "delete_tooltip": "Delete Post",
                 "edited_by": "Edited by:",
                 "search_placeholder": "Search",
                 "posts_count": "Posts: "
@@ -1168,6 +1173,8 @@
         "invite_message": {
             "header": "Send Invite Message",
             "confirmation": "Are you sure you want to send?",
+            "select_image": "Select Image",
+            "clear_selected_image": "Clear Selected Image",
             "cancel": "Cancel",
             "refresh": "Refresh",
             "confirm": "Confirm"
@@ -1214,7 +1221,8 @@
             "emoji_animation_type": "Animated Emoji",
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Frame Count:",
-            "flipbook_info": "Select a flipbook texture PNG to use as an animated emoji"
+            "emoji_loop_pingpong": "Loop PingPong",
+            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji (max FPS 64)"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",
@@ -1280,20 +1288,41 @@
         },
         "group_member_moderation": {
             "header": "Group Member Moderation",
+            "members": "Members",
+            "bans": "Bans",
+            "invites": "Invites",
+            "logs": "Logs",
+            "sent_invites": "Sent Invites",
+            "join_requests": "Join Requests",
+            "blocked_requests": "Blocked Requests",
             "notes": "Manager Note",
             "note_placeholder": "Click to add a note",
             "actions": "Actions",
             "kick": "Kick",
             "ban": "Ban",
+            "unban": "Unban",
             "save_note": "Save Note",
+            "delete_sent_invite": "Delete Sent Invite",
+            "delete_blocked_requests": "Delete Blocked Requests",
+            "accept_join_requests": "Accept Join Requests",
+            "reject_join_requests": "Reject Join Requests",
+            "block_join_requests": "Block Join Requests",
             "group_members": "Group Members",
             "progress": "Progress:",
             "display_name": "Display Name",
             "visibility": "Visibility",
             "avatar": "Avatar",
             "joined_at": "Joined At",
+            "banned_at": "Banned At",
+            "created_at": "Created At",
+            "type": "Type",
+            "description": "Description",
+            "data": "Data",
             "note": "Note",
             "roles": "Roles",
+            "user_id": "User ID",
+            "user_id_placeholder": "Enter User ID(s)",
+            "select_user": "Select User",
             "selected_users": "Selected Users",
             "select_all": "Select All",
             "cancel": "Cancel",
@@ -1301,6 +1330,19 @@
             "selected_roles": "Selected Roles",
             "remove_roles": "Remove Roles",
             "add_roles": "Add Roles"
+        },
+        "group_post_edit": {
+            "header": "Create/Edit Post",
+            "title": "Title",
+            "message": "Message",
+            "send_notification": "Send Notification",
+            "post_visibility": "Post Visibility",
+            "visibility_public": "Public",
+            "visibility_group": "Group",
+            "image": "Image",
+            "cancel": "Cancel",
+            "create_post": "Create Post",
+            "edit_post": "Edit Post"
         }
     },
     "prompt": {
@@ -1571,7 +1613,7 @@
         "notification": {
             "date": "Date",
             "type": "Type",
-            "user": "User",
+            "user_group": "User/Group",
             "photo": "Photo",
             "message": "Message",
             "action": "Action"

@@ -59,6 +59,7 @@ namespace VRCX
 
             //CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
             CefSharpSettings.ShutdownOnExit = false;
+            CefSharpSettings.ConcurrentTaskExecution = true;
 
             if (Cef.Initialize(cefSettings, false) == false)
             {
