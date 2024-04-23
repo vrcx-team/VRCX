@@ -1656,6 +1656,10 @@ speechSynthesis.getVoices();
             console.error('API.applyPresenceGroups: invalid groups', ref);
             return;
         }
+        if (groups.length === 0) {
+            // as it turns out, this is not the most trust worthly source of info
+            return;
+        }
 
         // update group list
         for (var groupId of groups) {
@@ -5041,7 +5045,7 @@ speechSynthesis.getVoices();
                     $app.groupDialog.visible &&
                     $app.groupDialog.id === groupId
                 ) {
-                    API.getGroup({ groupId, includeRoles: true });
+                    $app.getGroupDialogGroup(groupId);
                 }
                 $app.onGroupJoined(groupId);
                 this.$emit('GROUP:MEMBER', {
@@ -5918,7 +5922,9 @@ speechSynthesis.getVoices();
                 for (var k = w - 1; k > -1; k--) {
                     var feedItem = wristArr[k];
                     if (
-                        feedItem.type === 'OnPlayerLeft' &&
+                        (feedItem.type === 'OnPlayerLeft' ||
+                            feedItem.type === 'BlockedOnPlayerLeft' ||
+                            feedItem.type === 'MutedOnPlayerLeft') &&
                         Date.parse(feedItem.created_at) >=
                             currentUserLeaveTime &&
                         Date.parse(feedItem.created_at) <=
@@ -5936,7 +5942,9 @@ speechSynthesis.getVoices();
                 for (var k = w - 1; k > -1; k--) {
                     var feedItem = wristArr[k];
                     if (
-                        feedItem.type === 'OnPlayerJoined' &&
+                        (feedItem.type === 'OnPlayerJoined' ||
+                            feedItem.type === 'BlockedOnPlayerJoined' ||
+                            feedItem.type === 'MutedOnPlayerJoined') &&
                         Date.parse(feedItem.created_at) >= locationJoinTime &&
                         Date.parse(feedItem.created_at) <=
                             locationJoinTimeOffset
@@ -6011,7 +6019,7 @@ speechSynthesis.getVoices();
                     ) {
                         wristArr.unshift(entry);
                     }
-                    this.queueFeedNoty(entry);
+                    this.queueGameLogNoty(entry);
                 }
             }
             // when too many user joins happen at once when switching instances
@@ -6041,13 +6049,21 @@ speechSynthesis.getVoices();
 
     $app.methods.queueGameLogNoty = function (noty) {
         // remove join/leave notifications when switching worlds
-        if (noty.type === 'OnPlayerJoined') {
+        if (
+            noty.type === 'OnPlayerJoined' ||
+            noty.type === 'BlockedOnPlayerJoined' ||
+            noty.type === 'MutedOnPlayerJoined'
+        ) {
             var bias = this.lastLocation.date + 30 * 1000; // 30 secs
             if (Date.parse(noty.created_at) <= bias) {
                 return;
             }
         }
-        if (noty.type === 'OnPlayerLeft') {
+        if (
+            noty.type === 'OnPlayerLeft' ||
+            noty.type === 'BlockedOnPlayerLeft' ||
+            noty.type === 'MutedOnPlayerLeft'
+        ) {
             var bias = this.lastLocationDestinationTime + 5 * 1000; // 5 secs
             if (Date.parse(noty.created_at) <= bias) {
                 return;
@@ -9961,9 +9977,6 @@ speechSynthesis.getVoices();
             );
         }
         await $app.getCurrentUserGroups();
-        // eslint-disable-next-line require-atomic-updates
-        $app.notificationTable.data = await database.getNotifications();
-        await this.refreshNotifications();
         try {
             if (
                 await configRepository.getBool(`friendLogInit_${args.json.id}`)
@@ -9980,6 +9993,9 @@ speechSynthesis.getVoices();
             this.logout();
             throw err;
         }
+        // eslint-disable-next-line require-atomic-updates
+        $app.notificationTable.data = await database.getNotifications();
+        await this.refreshNotifications();
         $app.getAvatarHistory();
         $app.getAllMemos();
         if ($app.randomUserColours) {
@@ -26280,7 +26296,7 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 7;
+        var databaseVersion = 8;
         if (this.databaseVersion < databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({
@@ -26301,6 +26317,7 @@ speechSynthesis.getVoices();
                 await database.fixBrokenGroupInvites(); // fix notification v2 in wrong table
                 await database.updateTableForGroupNames(); // alter tables to include group name
                 await database.fixBrokenNotifications(); // fix notifications being null
+                await database.fixBrokenGroupChange(); // fix spam group left & name change
                 await database.vacuum(); // succ
                 await database.setWal(); // https://www.sqlite.org/wal.html
                 await configRepository.setInt(
@@ -28046,7 +28063,9 @@ speechSynthesis.getVoices();
             $app.groupDialog.inGroup = json.membershipStatus === 'member';
             $app.getGroupDialogGroup(groupId);
         }
-        this.currentUserGroups.set(groupId, json);
+        if (json.membershipStatus === 'member') {
+            $app.onGroupJoined(groupId);
+        }
     });
 
     /**
@@ -28079,7 +28098,7 @@ speechSynthesis.getVoices();
         ) {
             $app.getCurrentUserRepresentedGroup();
         }
-        this.currentUserGroups.delete(groupId);
+        $app.onGroupLeft(groupId);
     });
 
     /**
@@ -28102,7 +28121,7 @@ speechSynthesis.getVoices();
     API.$on('GROUP:CANCELJOINREQUEST', function (args) {
         var groupId = args.params.groupId;
         if ($app.groupDialog.visible && $app.groupDialog.id === groupId) {
-            $app.groupDialog.ref.membershipStatus = 'inactive';
+            $app.getGroupDialogGroup(groupId);
         }
     });
 
@@ -28679,10 +28698,377 @@ speechSynthesis.getVoices();
     };
 
     /**
+     * @param {{ groupId: string, userId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
+    API.unbanGroupMember = function (params) {
+        return this.call(`groups/${params.groupId}/bans/${params.userId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:MEMBER:UNBAN', args);
+            return args;
+        });
+    };
+
+    API.deleteSentGroupInvite = function (params) {
+        return this.call(`groups/${params.groupId}/invites/${params.userId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:INVITE:DELETE', args);
+            return args;
+        });
+    };
+
+    API.deleteBlockedGroupRequest = function (params) {
+        return this.call(`groups/${params.groupId}/members/${params.userId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:BLOCKED:DELETE', args);
+            return args;
+        });
+    };
+
+    API.acceptGroupInviteRequest = function (params) {
+        return this.call(`groups/${params.groupId}/requests/${params.userId}`, {
+            method: 'PUT',
+            params: {
+                action: 'accept'
+            }
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:INVITE:ACCEPT', args);
+            return args;
+        });
+    };
+
+    API.rejectGroupInviteRequest = function (params) {
+        return this.call(`groups/${params.groupId}/requests/${params.userId}`, {
+            method: 'PUT',
+            params: {
+                action: 'reject'
+            }
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:INVITE:REJECT', args);
+            return args;
+        });
+    };
+
+    API.blockGroupInviteRequest = function (params) {
+        return this.call(`groups/${params.groupId}/requests/${params.userId}`, {
+            method: 'PUT',
+            params: {
+                action: 'reject',
+                block: true
+            }
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:INVITE:BLOCK', args);
+            return args;
+        });
+    };
+
+    API.getGroupBans = function (params) {
+        return this.call(`groups/${params.groupId}/bans`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:BANS', args);
+            return args;
+        });
+    };
+
+    $app.methods.getAllGroupBans = async function (groupId) {
+        this.groupBansModerationTable.data = [];
+        var params = {
+            groupId,
+            n: 100,
+            offset: 0
+        };
+        var count = 50; // 5000 max
+        this.isGroupMembersLoading = true;
+        try {
+            for (var i = 0; i < count; i++) {
+                var args = await API.getGroupBans(params);
+                params.offset += params.n;
+                if (args.json.length < params.n) {
+                    break;
+                }
+                if (!this.groupMemberModeration.visible) {
+                    break;
+                }
+            }
+        } catch (err) {
+            this.$message({
+                message: 'Failed to get group bans',
+                type: 'error'
+            });
+        } finally {
+            this.isGroupMembersLoading = false;
+        }
+    };
+
+    API.$on('GROUP:BANS', function (args) {
+        if ($app.groupMemberModeration.id !== args.params.groupId) {
+            return;
+        }
+
+        for (var json of args.json) {
+            var ref = this.applyGroupMember(json);
+            $app.groupBansModerationTable.data.push(ref);
+        }
+        // $app.groupBansModerationTable.data =
+        //     $app.groupBansModerationTable.data.concat(args.json);
+    });
+
+    $app.methods.getAllGroupLogs = async function (groupId) {
+        this.groupLogsModerationTable.data = [];
+        var params = {
+            groupId,
+            n: 100,
+            offset: 0
+        };
+        var count = 50; // 5000 max
+        this.isGroupMembersLoading = true;
+        try {
+            for (var i = 0; i < count; i++) {
+                var args = await API.getGroupLogs(params);
+                params.offset += params.n;
+                if (!args.json.hasNext) {
+                    break;
+                }
+                if (!this.groupMemberModeration.visible) {
+                    break;
+                }
+            }
+        } catch (err) {
+            this.$message({
+                message: 'Failed to get group logs',
+                type: 'error'
+            });
+        } finally {
+            this.isGroupMembersLoading = false;
+        }
+    };
+
+    /**
      * @param {{ groupId: string }} params
      * @return { Promise<{json: any, params}> }
      */
+    API.getGroupLogs = function (params) {
+        return this.call(`groups/${params.groupId}/auditLogs`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:LOGS', args);
+            return args;
+        });
+    };
 
+    API.$on('GROUP:LOGS', function (args) {
+        if ($app.groupMemberModeration.id !== args.params.groupId) {
+            return;
+        }
+
+        for (var json of args.json.results) {
+            $app.groupLogsModerationTable.data.push(json);
+        }
+    });
+
+    $app.methods.getAllGroupInvitesAndJoinRequests = async function (groupId) {
+        await this.getAllGroupInvites(groupId);
+        await this.getAllGroupJoinRequests(groupId);
+        await this.getAllGroupBlockedRequests(groupId);
+    };
+
+    $app.methods.getAllGroupInvites = async function (groupId) {
+        this.groupInvitesModerationTable.data = [];
+        var params = {
+            groupId,
+            n: 100,
+            offset: 0
+        };
+        var count = 50; // 5000 max
+        this.isGroupMembersLoading = true;
+        try {
+            for (var i = 0; i < count; i++) {
+                var args = await API.getGroupInvites(params);
+                params.offset += params.n;
+                if (args.json.length < params.n) {
+                    break;
+                }
+                if (!this.groupMemberModeration.visible) {
+                    break;
+                }
+            }
+        } catch (err) {
+            this.$message({
+                message: 'Failed to get group invites',
+                type: 'error'
+            });
+        } finally {
+            this.isGroupMembersLoading = false;
+        }
+    };
+
+    /**
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
+    API.getGroupInvites = function (params) {
+        return this.call(`groups/${params.groupId}/invites`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:INVITES', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:INVITES', function (args) {
+        if ($app.groupMemberModeration.id !== args.params.groupId) {
+            return;
+        }
+
+        for (var json of args.json) {
+            var ref = this.applyGroupMember(json);
+            $app.groupInvitesModerationTable.data.push(ref);
+        }
+    });
+
+    $app.methods.getAllGroupJoinRequests = async function (groupId) {
+        this.groupJoinRequestsModerationTable.data = [];
+        var params = {
+            groupId,
+            n: 100,
+            offset: 0
+        };
+        var count = 50; // 5000 max
+        this.isGroupMembersLoading = true;
+        try {
+            for (var i = 0; i < count; i++) {
+                var args = await API.getGroupJoinRequests(params);
+                params.offset += params.n;
+                if (args.json.length < params.n) {
+                    break;
+                }
+                if (!this.groupMemberModeration.visible) {
+                    break;
+                }
+            }
+        } catch (err) {
+            this.$message({
+                message: 'Failed to get group join requests',
+                type: 'error'
+            });
+        } finally {
+            this.isGroupMembersLoading = false;
+        }
+    };
+
+    $app.methods.getAllGroupBlockedRequests = async function (groupId) {
+        this.groupBlockedModerationTable.data = [];
+        var params = {
+            groupId,
+            n: 100,
+            offset: 0,
+            blocked: true
+        };
+        var count = 50; // 5000 max
+        this.isGroupMembersLoading = true;
+        try {
+            for (var i = 0; i < count; i++) {
+                var args = await API.getGroupJoinRequests(params);
+                params.offset += params.n;
+                if (args.json.length < params.n) {
+                    break;
+                }
+                if (!this.groupMemberModeration.visible) {
+                    break;
+                }
+            }
+        } catch (err) {
+            this.$message({
+                message: 'Failed to get group join requests',
+                type: 'error'
+            });
+        } finally {
+            this.isGroupMembersLoading = false;
+        }
+    };
+
+    /**
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
+    API.getGroupJoinRequests = function (params) {
+        return this.call(`groups/${params.groupId}/requests`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:JOINREQUESTS', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:JOINREQUESTS', function (args) {
+        if ($app.groupMemberModeration.id !== args.params.groupId) {
+            return;
+        }
+
+        if (!args.params.blocked) {
+            for (var json of args.json) {
+                var ref = this.applyGroupMember(json);
+                $app.groupJoinRequestsModerationTable.data.push(ref);
+            }
+        } else {
+            for (var json of args.json) {
+                var ref = this.applyGroupMember(json);
+                $app.groupBlockedModerationTable.data.push(ref);
+            }
+        }
+    });
+
+    /**
+     * @param {{ groupId: string }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getGroupInstances = function (params) {
         return this.call(
             `users/${this.currentUser.id}/instances/groups/${params.groupId}`,
@@ -28854,6 +29240,9 @@ speechSynthesis.getVoices();
 
     API.applyGroup = function (json) {
         var ref = this.cachedGroups.get(json.id);
+        json.rules = $app.replaceBioSymbols(json.rules);
+        json.name = $app.replaceBioSymbols(json.name);
+        json.description = $app.replaceBioSymbols(json.description);
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
@@ -28953,9 +29342,6 @@ speechSynthesis.getVoices();
             }
             Object.assign(ref, json);
         }
-        ref.rules = $app.replaceBioSymbols(ref.rules);
-        ref.name = $app.replaceBioSymbols(ref.name);
-        ref.description = $app.replaceBioSymbols(ref.description);
         ref.$url = `https://vrc.group/${ref.shortCode}.${ref.discriminator}`;
         this.applyGroupLanguage(ref);
         return ref;
@@ -29064,9 +29450,6 @@ speechSynthesis.getVoices();
                 `VRCX_currentUserGroupsInit_${userId}`
             ))
         ) {
-            // REMOVE ME: clean up 18/04/2024 mess
-            await database.fixBrokenGroupChange();
-
             // fetch every group with roles for storing and comparing later
             for (var i = 0; i < groups.length; i++) {
                 var groupId = groups[i];
@@ -29115,13 +29498,17 @@ speechSynthesis.getVoices();
     };
 
     API.applyGroupMember = function (json) {
-        if (typeof json.user !== 'undefined') {
-            var ref = this.cachedUsers.get(json.user.id);
-            if (typeof ref !== 'undefined') {
-                json.user = ref;
+        if (typeof json?.user !== 'undefined') {
+            if (json.userId === this.currentUser.id) {
+                json.user = this.currentUser;
+                json.$displayName = this.currentUser.displayName;
+            } else {
+                var ref = this.cachedUsers.get(json.user.id);
+                if (typeof ref !== 'undefined') {
+                    json.user = ref;
+                    json.$displayName = ref.displayName;
+                }
             }
-        } else if (json.userId === this.currentUser.id) {
-            json.user = this.currentUser;
         }
         return json;
     };
@@ -30733,10 +31120,87 @@ speechSynthesis.getVoices();
         selectedUsersArray: [],
         selectedRoles: [],
         progressCurrent: 0,
-        progressTotal: 0
+        progressTotal: 0,
+        selectUserId: ''
     };
 
     $app.data.groupMemberModerationTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        pageSize: $app.data.tablePageSize,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 15, 25, 50, 100]
+        }
+    };
+
+    $app.data.groupBansModerationTable = {
+        data: [],
+        filters: [
+            {
+                prop: ['$displayName'],
+                value: ''
+            }
+        ],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        pageSize: $app.data.tablePageSize,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 15, 25, 50, 100]
+        }
+    };
+
+    $app.data.groupLogsModerationTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        pageSize: $app.data.tablePageSize,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 15, 25, 50, 100]
+        }
+    };
+
+    $app.data.groupInvitesModerationTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        pageSize: $app.data.tablePageSize,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 15, 25, 50, 100]
+        }
+    };
+
+    $app.data.groupJoinRequestsModerationTable = {
+        data: [],
+        tableProps: {
+            stripe: true,
+            size: 'mini'
+        },
+        pageSize: $app.data.tablePageSize,
+        paginationProps: {
+            small: true,
+            layout: 'sizes,prev,pager,next,total',
+            pageSizes: [10, 15, 25, 50, 100]
+        }
+    };
+
+    $app.data.groupBlockedModerationTable = {
         data: [],
         tableProps: {
             stripe: true,
@@ -30811,6 +31275,39 @@ speechSynthesis.getVoices();
                 break;
             }
         }
+        for (var i = 0; i < this.groupBansModerationTable.data.length; i++) {
+            var row = this.groupBansModerationTable.data[i];
+            if (row.userId === user.userId) {
+                row.$selected = false;
+                break;
+            }
+        }
+        for (var i = 0; i < this.groupInvitesModerationTable.data.length; i++) {
+            var row = this.groupInvitesModerationTable.data[i];
+            if (row.userId === user.userId) {
+                row.$selected = false;
+                break;
+            }
+        }
+        for (
+            var i = 0;
+            i < this.groupJoinRequestsModerationTable.data.length;
+            i++
+        ) {
+            var row = this.groupJoinRequestsModerationTable.data[i];
+            if (row.userId === user.userId) {
+                row.$selected = false;
+                break;
+            }
+        }
+        for (var i = 0; i < this.groupBlockedModerationTable.data.length; i++) {
+            var row = this.groupBlockedModerationTable.data[i];
+            if (row.userId === user.userId) {
+                row.$selected = false;
+                break;
+            }
+        }
+
         // force redraw
         this.groupMemberModerationTableForceUpdate++;
     };
@@ -30823,6 +31320,26 @@ speechSynthesis.getVoices();
             var row = this.groupMemberModerationTable.data[i];
             row.$selected = false;
         }
+        for (var i = 0; i < this.groupBansModerationTable.data.length; i++) {
+            var row = this.groupBansModerationTable.data[i];
+            row.$selected = false;
+        }
+        for (var i = 0; i < this.groupInvitesModerationTable.data.length; i++) {
+            var row = this.groupInvitesModerationTable.data[i];
+            row.$selected = false;
+        }
+        for (
+            var i = 0;
+            i < this.groupJoinRequestsModerationTable.data.length;
+            i++
+        ) {
+            var row = this.groupJoinRequestsModerationTable.data[i];
+            row.$selected = false;
+        }
+        for (var i = 0; i < this.groupBlockedModerationTable.data.length; i++) {
+            var row = this.groupBlockedModerationTable.data[i];
+            row.$selected = false;
+        }
         // force redraw
         this.groupMemberModerationTableForceUpdate++;
     };
@@ -30831,6 +31348,58 @@ speechSynthesis.getVoices();
         var D = this.groupMemberModeration;
         for (var i = 0; i < this.groupMemberModerationTable.data.length; i++) {
             var row = this.groupMemberModerationTable.data[i];
+            row.$selected = true;
+            D.selectedUsers.set(row.userId, row);
+        }
+        D.selectedUsersArray = Array.from(D.selectedUsers.values());
+        // force redraw
+        this.groupMemberModerationTableForceUpdate++;
+    };
+
+    $app.methods.selectAllGroupBans = function () {
+        var D = this.groupMemberModeration;
+        for (var i = 0; i < this.groupBansModerationTable.data.length; i++) {
+            var row = this.groupBansModerationTable.data[i];
+            row.$selected = true;
+            D.selectedUsers.set(row.userId, row);
+        }
+        D.selectedUsersArray = Array.from(D.selectedUsers.values());
+        // force redraw
+        this.groupMemberModerationTableForceUpdate++;
+    };
+
+    $app.methods.selectAllGroupInvites = function () {
+        var D = this.groupMemberModeration;
+        for (var i = 0; i < this.groupInvitesModerationTable.data.length; i++) {
+            var row = this.groupInvitesModerationTable.data[i];
+            row.$selected = true;
+            D.selectedUsers.set(row.userId, row);
+        }
+        D.selectedUsersArray = Array.from(D.selectedUsers.values());
+        // force redraw
+        this.groupMemberModerationTableForceUpdate++;
+    };
+
+    $app.methods.selectAllGroupJoinRequests = function () {
+        var D = this.groupMemberModeration;
+        for (
+            var i = 0;
+            i < this.groupJoinRequestsModerationTable.data.length;
+            i++
+        ) {
+            var row = this.groupJoinRequestsModerationTable.data[i];
+            row.$selected = true;
+            D.selectedUsers.set(row.userId, row);
+        }
+        D.selectedUsersArray = Array.from(D.selectedUsers.values());
+        // force redraw
+        this.groupMemberModerationTableForceUpdate++;
+    };
+
+    $app.methods.selectAllGroupBlocked = function () {
+        var D = this.groupMemberModeration;
+        for (var i = 0; i < this.groupBlockedModerationTable.data.length; i++) {
+            var row = this.groupBlockedModerationTable.data[i];
             row.$selected = true;
             D.selectedUsers.set(row.userId, row);
         }
@@ -30859,6 +31428,10 @@ speechSynthesis.getVoices();
                 });
                 console.log(`Kicking ${user.userId} ${i + 1}/${memberCount}`);
             }
+            this.$message({
+                message: `Kicked ${memberCount} group members`,
+                type: 'success'
+            });
         } catch (err) {
             console.error(err);
             this.$message({
@@ -30891,10 +31464,240 @@ speechSynthesis.getVoices();
                 });
                 console.log(`Banning ${user.userId} ${i + 1}/${memberCount}`);
             }
+            this.$message({
+                message: `Banned ${memberCount} group members`,
+                type: 'success'
+            });
         } catch (err) {
             console.error(err);
             this.$message({
                 message: `Failed to ban group member: ${err}`,
+                type: 'error'
+            });
+        } finally {
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
+        }
+    };
+
+    $app.methods.groupMembersUnban = async function () {
+        var D = this.groupMemberModeration;
+        var memberCount = D.selectedUsersArray.length;
+        D.progressTotal = memberCount;
+        try {
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                await API.unbanGroupMember({
+                    groupId: D.id,
+                    userId: user.userId
+                });
+                console.log(`Unbanning ${user.userId} ${i + 1}/${memberCount}`);
+            }
+            this.$message({
+                message: `Unbanned ${memberCount} group members`,
+                type: 'success'
+            });
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: `Failed to unban group member: ${err}`,
+                type: 'error'
+            });
+        } finally {
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
+        }
+    };
+
+    $app.methods.groupMembersDeleteSentInvite = async function () {
+        var D = this.groupMemberModeration;
+        var memberCount = D.selectedUsersArray.length;
+        D.progressTotal = memberCount;
+        try {
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                await API.deleteSentGroupInvite({
+                    groupId: D.id,
+                    userId: user.userId
+                });
+                console.log(
+                    `Deleting group invite ${user.userId} ${i + 1}/${memberCount}`
+                );
+            }
+            this.$message({
+                message: `Deleted ${memberCount} group invites`,
+                type: 'success'
+            });
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: `Failed to delete group invites: ${err}`,
+                type: 'error'
+            });
+        } finally {
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
+        }
+    };
+
+    $app.methods.groupMembersDeleteBlockedRequest = async function () {
+        var D = this.groupMemberModeration;
+        var memberCount = D.selectedUsersArray.length;
+        D.progressTotal = memberCount;
+        try {
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                await API.deleteBlockedGroupRequest({
+                    groupId: D.id,
+                    userId: user.userId
+                });
+                console.log(
+                    `Deleting blocked group request ${user.userId} ${i + 1}/${memberCount}`
+                );
+            }
+            this.$message({
+                message: `Deleted ${memberCount} blocked group requests`,
+                type: 'success'
+            });
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: `Failed to delete blocked group requests: ${err}`,
+                type: 'error'
+            });
+        } finally {
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
+        }
+    };
+
+    $app.methods.groupMembersAcceptInviteRequest = async function () {
+        var D = this.groupMemberModeration;
+        var memberCount = D.selectedUsersArray.length;
+        D.progressTotal = memberCount;
+        try {
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                await API.acceptGroupInviteRequest({
+                    groupId: D.id,
+                    userId: user.userId
+                });
+                console.log(
+                    `Accepting group join request ${user.userId} ${i + 1}/${memberCount}`
+                );
+            }
+            this.$message({
+                message: `Accepted ${memberCount} group join requests`,
+                type: 'success'
+            });
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: `Failed to accept group join requests: ${err}`,
+                type: 'error'
+            });
+        } finally {
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
+        }
+    };
+
+    $app.methods.groupMembersRejectInviteRequest = async function () {
+        var D = this.groupMemberModeration;
+        var memberCount = D.selectedUsersArray.length;
+        D.progressTotal = memberCount;
+        try {
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                await API.rejectGroupInviteRequest({
+                    groupId: D.id,
+                    userId: user.userId
+                });
+                console.log(
+                    `Rejecting group join request ${user.userId} ${i + 1}/${memberCount}`
+                );
+            }
+            this.$message({
+                message: `Rejected ${memberCount} group join requests`,
+                type: 'success'
+            });
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: `Failed to reject group join requests: ${err}`,
+                type: 'error'
+            });
+        } finally {
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
+        }
+    };
+
+    $app.methods.groupMembersBlockJoinRequest = async function () {
+        var D = this.groupMemberModeration;
+        var memberCount = D.selectedUsersArray.length;
+        D.progressTotal = memberCount;
+        try {
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                await API.blockGroupInviteRequest({
+                    groupId: D.id,
+                    userId: user.userId
+                });
+                console.log(
+                    `Blocking group join request ${user.userId} ${i + 1}/${memberCount}`
+                );
+            }
+            this.$message({
+                message: `Blocked ${memberCount} group join requests`,
+                type: 'success'
+            });
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: `Failed to block group join requests: ${err}`,
                 type: 'error'
             });
         } finally {
@@ -30927,7 +31730,7 @@ speechSynthesis.getVoices();
                 );
             }
             this.$message({
-                message: 'Note saved',
+                message: `Saved notes for ${memberCount} group members`,
                 type: 'success'
             });
         } catch (err) {
@@ -31041,6 +31844,67 @@ speechSynthesis.getVoices();
             D.progressCurrent = 0;
             D.progressTotal = 0;
         }
+    };
+
+    $app.methods.selectGroupMemberUserId = async function () {
+        var D = this.groupMemberModeration;
+        if (!D.selectUserId) {
+            return;
+        }
+
+        var regexUserId =
+            /usr_[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}/g;
+        var match = [];
+        var userIdList = new Set();
+        while ((match = regexUserId.exec(D.selectUserId)) !== null) {
+            userIdList.add(match[0]);
+        }
+        if (userIdList.size === 0) {
+            // for those users missing the usr_ prefix
+            userIdList.add(D.selectUserId);
+        }
+        for (var userId of userIdList) {
+            try {
+                await this.addGroupMemberToSelection(userId);
+            } catch {
+                console.error(`Failed to add user ${userId}`);
+            }
+        }
+
+        D.selectUserId = '';
+    };
+
+    $app.methods.addGroupMemberToSelection = async function (userId) {
+        var D = this.groupMemberModeration;
+
+        // fetch memeber if there is one
+        // banned members don't have a user object
+
+        var memeber = {};
+        var memeberArgs = await API.getGroupMember({
+            groupId: D.id,
+            userId
+        });
+        if (memeberArgs.json) {
+            memeber = API.applyGroupMember(memeberArgs.json);
+        }
+        if (memeber.user) {
+            D.selectedUsers.set(memeber.userId, memeber);
+            D.selectedUsersArray = Array.from(D.selectedUsers.values());
+            this.groupMemberModerationTableForceUpdate++;
+            return;
+        }
+
+        var userArgs = await API.getCachedUser({
+            userId
+        });
+        memeber.userId = userArgs.json.id;
+        memeber.user = userArgs.json;
+        memeber.displayName = userArgs.json.displayName;
+
+        D.selectedUsers.set(memeber.userId, memeber);
+        D.selectedUsersArray = Array.from(D.selectedUsers.values());
+        this.groupMemberModerationTableForceUpdate++;
     };
 
     $app.data.groupPostEditDialog = {

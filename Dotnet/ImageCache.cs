@@ -46,10 +46,17 @@ namespace VRCX
                 foreach (Cookie cookie in cookies)
                     cookieString += $"{cookie.Name}={cookie.Value};";
             }
-
-            httpClient.DefaultRequestHeaders.Add("Cookie", cookieString);
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(Program.Version);
-            using (var response = await httpClient.GetAsync(url))
+            
+            var request = new HttpRequestMessage(HttpMethod.Get, url)
+            {
+                Headers =
+                {
+                    { "Cookie", cookieString },
+                    { "User-Agent", Program.Version }
+                },
+                
+            };
+            using (var response = await httpClient.SendAsync(request))
             {
                 response.EnsureSuccessStatusCode();
                 await using (var fileStream = new FileStream(fileLocation, FileMode.Create, FileAccess.Write, FileShare.None))
