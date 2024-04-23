@@ -2482,7 +2482,7 @@ class Database {
 
     async fixBrokenGroupChange() {
         await sqliteService.executeNonQuery(
-            `DELETE FROM ${Database.userPrefix}_notifications WHERE type = 'groupChange'`
+            `DELETE FROM ${Database.userPrefix}_notifications WHERE type = 'groupChange' AND created_at < '2024-04-23T03:00:00.000Z'`
         );
     }
 
