@@ -213,6 +213,10 @@
                     "minimized": "最小化した状態で起動",
                     "tray": "トレイに格納した状態で起動"
                 },
+                "favorites": {
+                    "header": "お気に入りのフレンド",
+                    "group_placeholder": "グループを選択"
+                },
                 "game_log": {
                     "header": "ゲームログ",
                     "resource_load": "Udonのリソース負荷を記録"
@@ -314,6 +318,8 @@
                         "overlay_notifications": "通知オーバーレイ",
                         "notification_position": "通知の位置",
                         "xsoverlay_notifications": "XSOverlayで通知する",
+                        "ovrtoolkit_hud_notifications": "OVR Toolkit HUD上での通知",
+                        "ovrtoolkit_wrist_notifications": "OVR Toolkit 手首上での通知",
                         "user_images": "ユーザー画像を使用 (遅い)",
                         "notification_timeout": "通知のタイムアウト時間"
                     },
@@ -626,6 +632,7 @@
                 "sort_by": "並べ替え:",
                 "order_by": "表示順:",
                 "sorting": {
+                    "name": "名前",
                     "updated": "更新日",
                     "created": "作成日",
                     "favorites": "お気に入り数",
@@ -819,6 +826,7 @@
                 "visibility_everyone": "表示範囲: 全員",
                 "visibility_friends": "表示範囲: フレンドのみ",
                 "visibility_hidden": "表示範囲: 自分のみ",
+                "create_post": "投稿を作成",
                 "moderation_tools": "管理用ツール",
                 "leave": "グループから抜ける"
             },
@@ -844,8 +852,12 @@
                 "role_permissions": "権限:"
             },
             "posts": {
-                "header": "アナウンス",
+                "header": "投稿",
                 "visibility": "表示範囲:",
+                "edited_at": "編集日時:",
+                "created_at": "作成日時:",
+                "edit_tooltip": "投稿を編集",
+                "delete_tooltip": "投稿を削除",
                 "edited_by": "編集者:",
                 "search_placeholder": "検索",
                 "posts_count": "投稿数: "
@@ -1161,6 +1173,8 @@
         "invite_message": {
             "header": "メッセージ付き招待を送信",
             "confirmation": "本当に送信しますか？",
+            "select_image": "画像を選択",
+            "clear_selected_image": "選択した画像をクリア",
             "cancel": "キャンセル",
             "refresh": "更新",
             "confirm": "確定"
@@ -1203,7 +1217,12 @@
             "refresh": "更新",
             "upload": "アップロード",
             "clear": "消去",
-            "emoji_animation_styles": "アニメーションスタイル"
+            "emoji_animation_styles": "アニメーションスタイル",
+            "emoji_animation_type": "アニメーション絵文字",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "フレーム数:",
+            "emoji_loop_pingpong": "Loop PingPong",
+            "flipbook_info": "アニメーション絵文字として使用する1024x1024のPNGスプライトシート画像を選択 (最大 64FPS)"
         },
         "change_content_image": {
             "avatar": "アバターの画像を変更",
@@ -1269,20 +1288,41 @@
         },
         "group_member_moderation": {
             "header": "グループメンバーを管理",
+            "members": "メンバー",
+            "bans": "BAN",
+            "invites": "招待",
+            "logs": "ログ",
+            "sent_invites": "送信した招待",
+            "join_requests": "参加リクエスト",
+            "blocked_requests": "ブロックしたリクエスト",
             "notes": "管理用ノート",
             "note_placeholder": "クリックしてノートを追加",
             "actions": "アクション",
             "kick": "キック",
             "ban": "BAN",
+            "unban": "BAN解除",
             "save_note": "ノートを保存",
+            "delete_sent_invite": "送信した招待を削除",
+            "delete_blocked_requests": "ブロックしたリクエストを削除",
+            "accept_join_requests": "参加リクエストを許可",
+            "reject_join_requests": "参加リクエストを拒否",
+            "block_join_requests": "参加リクエストをブロック",
             "group_members": "グループメンバー:",
             "progress": "進捗:",
             "display_name": "表示名",
             "visibility": "表示範囲",
             "avatar": "アバター",
             "joined_at": "参加日時",
+            "banned_at": "BANした日",
+            "created_at": "作成日時",
+            "type": "種類",
+            "description": "説明",
+            "data": "データ",
             "note": "ノート",
             "roles": "ロール",
+            "user_id": "ユーザーID",
+            "user_id_placeholder": "ユーザーIDを入力",
+            "select_user": "ユーザーを選択",
             "selected_users": "選択したユーザー",
             "select_all": "全て選択",
             "cancel": "キャンセル",
@@ -1290,6 +1330,19 @@
             "selected_roles": "選択したロール",
             "remove_roles": "ロールを削除",
             "add_roles": "ロールを追加"
+        },
+            "group_post_edit": {
+                "header": "投稿を作成/編集",
+                "title": "タイトル",
+                "message": "メッセージ",
+                "send_notification": "通知を送信",
+                "post_visibility": "投稿の表示範囲",
+                "visibility_public": "全員",
+                "visibility_group": "グループ",
+                "image": "画像",
+                "cancel": "キャンセル",
+                "create_post": "投稿を作成",
+                "edit_post": "投稿を編集"
         }
     },
     "prompt": {
