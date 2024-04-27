@@ -123,6 +123,7 @@ namespace VRCX
             {
                 Version = $"{buildName} Build";
             }
+            Version = Version.Replace("\r", "").Replace("\n", "");
         }
 
         private static void Run()

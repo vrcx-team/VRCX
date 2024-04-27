@@ -2622,9 +2622,9 @@ speechSynthesis.getVoices();
                 return args;
             })
             .catch((err) => {
-                if (err && err.includes('Instance is closed.')) {
+                if (err?.error?.message) {
                     $app.$message({
-                        message: 'Instance is closed.',
+                        message: err.error.message,
                         type: 'error'
                     });
                     throw err;
@@ -9970,6 +9970,9 @@ speechSynthesis.getVoices();
         // eslint-disable-next-line require-atomic-updates
         $app.feedSessionTable = await database.getFeedDatabase();
         $app.feedTableLookup();
+        // eslint-disable-next-line require-atomic-updates
+        $app.notificationTable.data = await database.getNotifications();
+        await this.refreshNotifications();
         if (typeof args.json.presence?.groups !== 'undefined') {
             await $app.loadCurrentUserGroups(
                 args.json.id,
@@ -9993,9 +9996,6 @@ speechSynthesis.getVoices();
             this.logout();
             throw err;
         }
-        // eslint-disable-next-line require-atomic-updates
-        $app.notificationTable.data = await database.getNotifications();
-        await this.refreshNotifications();
         $app.getAvatarHistory();
         $app.getAllMemos();
         if ($app.randomUserColours) {
@@ -19715,10 +19715,9 @@ speechSynthesis.getVoices();
                 ) {
                     this.$message({
                         message:
-                            "You can't invite yourself in 'Do Not Disturb' mode",
+                            "You may not receive this invite in 'Do Not Disturb' mode",
                         type: 'error'
                     });
-                    return;
                 }
                 D.loading = true;
                 var inviteLoop = () => {
@@ -29887,10 +29886,12 @@ speechSynthesis.getVoices();
         if (this.groupDialog.visible && this.groupDialog.id === groupId) {
             this.showGroupDialog(groupId);
         }
-        API.currentUserGroups.delete(groupId);
-        API.getCachedGroup({ groupId }).then((args) => {
-            this.groupChange(args.ref, 'Left group');
-        });
+        if (API.currentUserGroups.has(groupId)) {
+            API.currentUserGroups.delete(groupId);
+            API.getCachedGroup({ groupId }).then((args) => {
+                this.groupChange(args.ref, 'Left group');
+            });
+        }
     };
 
     // group search
