@@ -2519,9 +2519,20 @@ html
                                 template(#content)
                                     span {{ scope.row.created_at | formatDate('long') }}
                                 span {{ scope.row.created_at | formatDate('short') }}
+                    el-table-column(:label="$t('table.gameLog.icon')" prop="isFriend" width="70")
+                        template(v-once #default="scope")
+                            template(v-if="gameLogIsFriend(scope.row)")
+                                el-tooltip(v-if="gameLogIsFavorite(scope.row)" placement="top" content="Favorite")
+                                    span ⭐
+                                el-tooltip(v-else placement="top" content="Friend")
+                                    span 💚
                     el-table-column(:label="$t('table.previous_instances.display_name')" prop="displayName" sortable)
                         template(v-once #default="scope")
-                            span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)")
+                            span.x-link(
+                                v-text="scope.row.displayName"
+                                @click="lookupUser(scope.row)"
+                                :class="{ 'x-tag-friend': gameLogIsFriend(scope.row) }"
+                            )
                     el-table-column(:label="$t('table.previous_instances.time')" prop="time" width="90" sortable)
                         template(v-once #default="scope")
                             span(v-text="scope.row.timer")
