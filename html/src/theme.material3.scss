@@ -330,9 +330,6 @@ input[type='number'],
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
 }
-.el-pagination button.btn-next .el-icon-arrow-right {
-    rotate: -90deg;
-}
 .el-pagination button.btn-next {
     border-top-right-radius: 16px;
     border-bottom-right-radius: 16px;
@@ -573,6 +570,12 @@ input[type='number'],
     font-weight: var(--md-sys-typescale-body-small-weight);
     letter-spacing: var(--md-sys-typescale-body-small-tracking);
 }
+
+// unset table word break, breaks words such as the "note export" menus last cell.
+.el-table .cell {
+    word-break: unset;
+}
+
 .el-table .el-table__body-wrapper table tr:first-child th,
 .el-table table tr:first-child td {
     border-top: none;
@@ -1661,16 +1664,7 @@ i.x-user-status {
     font-variation-settings: 'FILL' 1;
 }
 
-/* table expend */
-.el-icon-arrow-right::before {
-    content: 'expand_more';
-    font-family: 'Material Symbols Rounded';
-    font-size: 16px;
-    line-height: 12px;
-    vertical-align: bottom;
-    font-variation-settings: 'FILL' 1;
-    color: rgb(var(--md-sys-color-outline));
-}
+
 
 /* right arrow */
 .el-icon-right::before {
