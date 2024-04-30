@@ -213,6 +213,10 @@
                     "minimized": "Запускать в свернутом режиме",
                     "tray": "Сворачивать в трей"
                 },
+                "favorites": {
+                    "header": "Избранные друзья",
+                    "group_placeholder": "Выбор групп"
+                },
                 "game_log": {
                     "header": "Журнал игры",
                     "resource_load": "Запись загрузки ресурсов Udon"
@@ -592,6 +596,7 @@
                 "last_seen": "Последний раз замечен",
                 "join_count": "Счетчик присоединений",
                 "time_together": "Время вместе",
+                "play_time": "Время игры",
                 "online_for": "В сети",
                 "offline_for": "Не в сети",
                 "last_activity": "Последняя активность",
@@ -627,6 +632,7 @@
                 "sort_by": "Сортировать по:",
                 "order_by": "Упорядочить по:",
                 "sorting": {
+                    "name": "Имя",
                     "updated": "Обновлению",
                     "created": "Дате создания",
                     "favorites": "Избранное",
@@ -820,6 +826,7 @@
                 "visibility_everyone": "Видимость: все",
                 "visibility_friends": "Видимость: Только друзья",
                 "visibility_hidden": "Видимость: Только я",
+                "create_post": "Создать объявление",
                 "moderation_tools": "Инструменты модерации",
                 "leave": "Покинуть группу"
             },
@@ -847,6 +854,10 @@
             "posts": {
                 "header": "Объявления",
                 "visibility": "Видемость:",
+                "edited_at": "Отредактированно в:",
+                "created_at": "Создано в:",
+                "edit_tooltip": "Редактировать объявления",
+                "delete_tooltip": "Удалить объявления",
                 "edited_by": "Отредактированно:",
                 "search_placeholder": "Поиск",
                 "posts_count": "Объявлений: "
@@ -1161,7 +1172,9 @@
         },
         "invite_message": {
             "header": "Отправить пригласительное сообщение",
-            "confirmation": "Подтвердить отправку?",
+            "confirmation": "Вы уверены, что хотите отправить?",
+            "select_image": "Выбрать изображение",
+            "clear_selected_image": "Очистить выбранное изображение",
             "cancel": "Отмена",
             "refresh": "Обновить",
             "confirm": "Подтвердить"
@@ -1204,7 +1217,12 @@
             "refresh": "Обновить",
             "upload": "Загрузить",
             "clear": "Очистить",
-            "emoji_animation_styles": "Стиль анимации"
+            "emoji_animation_styles": "Стиль анимации",
+            "emoji_animation_type": "Анимированные Emoji",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "Количество кадров:",
+            "emoji_loop_pingpong": "Зацикленный PingPong",
+            "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи (максимальный FPS 64)."
         },
         "change_content_image": {
             "avatar": "Изменить изображение аватара",
@@ -1270,20 +1288,41 @@
         },
         "group_member_moderation": {
             "header": "Модерация участников группы",
+            "members": "Участник",
+            "bans": "Баны",
+            "invites": "Приглашения",
+            "logs": "Логи",
+            "sent_invites": "Отправленные приглашения",
+            "join_requests": "Заявки на присоединение",
+            "blocked_requests": "Заблокированные запросы",
             "notes": "Земетки руководителя",
             "note_placeholder": "Нажмите для добавления заметки",
             "actions": "Действия",
             "kick": "Кик",
             "ban": "Бан",
+            "unban": "Разбан",
             "save_note": "Сохранить заметку",
+            "delete_sent_invite": "Удалить отправленное приглашение",
+            "delete_blocked_requests": "Удаление заблокированных запросов",
+            "accept_join_requests": "Принять запрос на присоединениеs",
+            "reject_join_requests": "Отклонять запросы на присоединение",
+            "block_join_requests": "Блокировать запросы на присоединение",
             "group_members": "Члены группы",
             "progress": "Прогресс:",
             "display_name": "Отображаемое имя",
             "visibility": "Видемость:",
             "avatar": "Аватар",
             "joined_at": "Присоединился",
+            "banned_at": "Забанен в",
+            "created_at": "Создано в",
+            "type": "Тип",
+            "description": "Описание",
+            "data": "Данные",
             "note": "Заметка",
             "roles": "Роли",
+            "user_id": "ID пользователя",
+            "user_id_placeholder": "Введите ID пользователя(ей)",
+            "select_user": "Выберите пользователя",
             "selected_users": "Выбранные пользователи",
             "select_all": "Выбрать все",
             "cancel": "Отмена",
@@ -1291,6 +1330,19 @@
             "selected_roles": "Выбранные роли",
             "remove_roles": "Удалить роли",
             "add_roles": "Добавить роли"
+        },
+        "group_post_edit": {
+            "header": "Создать/Редактировать обьявление",
+            "title": "Заголовок",
+            "message": "Сообщение",
+            "send_notification": "Отправить уведомление",
+            "post_visibility": "Пидемость обьявления",
+            "visibility_public": "Публично",
+            "visibility_group": "Группа",
+            "image": "Изображение",
+            "cancel": "Отменить",
+            "create_post": "Создать обьявление",
+            "edit_post": "Редактировать обьявление"
         }
     },
     "prompt": {
@@ -1561,7 +1613,7 @@
         "notification": {
             "date": "Дата",
             "type": "Тип",
-            "user": "Пользователь",
+            "user_group": "Пользователь/Группа",
             "photo": "Фото",
             "message": "Сообщение",
             "action": "Действие"
