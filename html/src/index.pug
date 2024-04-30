@@ -1290,6 +1290,8 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" :title="$t('dialog.invite.header')" width="450px")
                 div(v-if="inviteDialog.visible" v-loading="inviteDialog.loading")
                     location(:location="inviteDialog.worldId" :link="false")
+                    el-button(size="mini" v-text="$t('dialog.invite.add_friends_in_instance')" @click="addFriendsInInstanceToInvite" style="margin-top:10px")
+                    el-button(size="mini" v-text="$t('dialog.invite.add_favorite_friends')" @click="addFavoriteFriendsToInvite" style="margin-top:10px")
                     el-select(v-model="inviteDialog.userIds" multiple clearable :placeholder="$t('dialog.invite.select_placeholder')" filterable :disabled="inviteDialog.loading" style="width:100%;margin-top:15px")
                         el-option-group(v-if="API.currentUser" :label="$t('side_panel.me')")
                             el-option.x-friend-item(:label="API.currentUser.displayName" :value="API.currentUser.id" style="height:auto")
@@ -2528,11 +2530,7 @@ html
                                     span 💚
                     el-table-column(:label="$t('table.previous_instances.display_name')" prop="displayName" sortable)
                         template(v-once #default="scope")
-                            span.x-link(
-                                v-text="scope.row.displayName"
-                                @click="lookupUser(scope.row)"
-                                :class="{ 'x-tag-friend': gameLogIsFriend(scope.row) }"
-                            )
+                            span.x-link(v-text="scope.row.displayName" @click="lookupUser(scope.row)")
                     el-table-column(:label="$t('table.previous_instances.time')" prop="time" width="90" sortable)
                         template(v-once #default="scope")
                             span(v-text="scope.row.timer")

@@ -899,6 +899,8 @@
         "invite": {
             "header": "Invite",
             "select_placeholder": "Choose Friends",
+            "add_friends_in_instance": "Add Friends In Instance",
+            "add_favorite_friends": "Add Favorite Friends",
             "invite_with_message": "Invite With Message",
             "invite": "Invite",
             "friends_in_instance": "Friends In Instance"

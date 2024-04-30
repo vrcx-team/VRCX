@@ -5010,13 +5010,13 @@ speechSynthesis.getVoices();
                 break;
 
             case 'group-joined':
-                var groupId = content.groupId;
-                $app.onGroupJoined(groupId);
+                // var groupId = content.groupId;
+                // $app.onGroupJoined(groupId);
                 break;
 
             case 'group-left':
-                var groupId = content.groupId;
-                $app.onGroupLeft(groupId);
+                // var groupId = content.groupId;
+                // $app.onGroupLeft(groupId);
                 break;
 
             case 'group-role-updated':
@@ -5047,7 +5047,6 @@ speechSynthesis.getVoices();
                 ) {
                     $app.getGroupDialogGroup(groupId);
                 }
-                $app.onGroupJoined(groupId);
                 this.$emit('GROUP:MEMBER', {
                     json: content.member,
                     params: {
@@ -5110,7 +5109,12 @@ speechSynthesis.getVoices();
                     message: 'Instance Closed',
                     created_at: new Date().toJSON()
                 };
-                $app.notifyMenu('notification');
+                if (
+                    $app.notificationTable.filters[0].value.length === 0 ||
+                    $app.notificationTable.filters[0].value.includes(noty.type)
+                ) {
+                    $app.notifyMenu('notification');
+                }
                 $app.queueNotificationNoty(noty);
                 $app.notificationTable.data.push(noty);
                 $app.updateSharedFeed(true);
@@ -9973,12 +9977,10 @@ speechSynthesis.getVoices();
         // eslint-disable-next-line require-atomic-updates
         $app.notificationTable.data = await database.getNotifications();
         await this.refreshNotifications();
-        if (typeof args.json.presence?.groups !== 'undefined') {
-            await $app.loadCurrentUserGroups(
-                args.json.id,
-                args.json.presence.groups
-            );
-        }
+        await $app.loadCurrentUserGroups(
+            args.json.id,
+            args.json?.presence?.groups
+        );
         await $app.getCurrentUserGroups();
         try {
             if (
@@ -14710,7 +14712,12 @@ speechSynthesis.getVoices();
                 database.addNotificationToDatabase(ref);
             }
             if ($app.friendLogInitStatus) {
-                $app.notifyMenu('notification');
+                if (
+                    $app.notificationTable.filters[0].value.length === 0 ||
+                    $app.notificationTable.filters[0].value.includes(ref.type)
+                ) {
+                    $app.notifyMenu('notification');
+                }
                 $app.unseenNotifications.push(ref.id);
                 $app.queueNotificationNoty(ref);
             }
@@ -19698,6 +19705,24 @@ speechSynthesis.getVoices();
     API.$on('LOGOUT', function () {
         $app.inviteDialog.visible = false;
     });
+
+    $app.methods.addFriendsInInstanceToInvite = function () {
+        var D = this.inviteDialog;
+        for (var friend of D.friendsInInstance) {
+            if (!D.userIds.includes(friend.id)) {
+                D.userIds.push(friend.id);
+            }
+        }
+    };
+
+    $app.methods.addFavoriteFriendsToInvite = function () {
+        var D = this.inviteDialog;
+        for (var friend of this.friendsGroup0) {
+            if (!D.userIds.includes(friend.id)) {
+                D.userIds.push(friend.id);
+            }
+        }
+    };
 
     $app.methods.sendInvite = function () {
         this.$confirm('Continue? Invite', 'Confirm', {
@@ -27853,7 +27878,12 @@ speechSynthesis.getVoices();
             groupName,
             worldName
         };
-        this.notifyMenu('notification');
+        if (
+            this.notificationTable.filters[0].value.length === 0 ||
+            this.notificationTable.filters[0].value.includes(noty.type)
+        ) {
+            this.notifyMenu('notification');
+        }
         this.queueNotificationNoty(noty);
         this.notificationTable.data.push(noty);
         this.updateSharedFeed(true);
@@ -28062,9 +28092,6 @@ speechSynthesis.getVoices();
             $app.groupDialog.inGroup = json.membershipStatus === 'member';
             $app.getGroupDialogGroup(groupId);
         }
-        if (json.membershipStatus === 'member') {
-            $app.onGroupJoined(groupId);
-        }
     });
 
     /**
@@ -28097,7 +28124,6 @@ speechSynthesis.getVoices();
         ) {
             $app.getCurrentUserRepresentedGroup();
         }
-        $app.onGroupLeft(groupId);
     });
 
     /**
@@ -29444,34 +29470,7 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.loadCurrentUserGroups = async function (userId, groups) {
-        if (
-            !(await configRepository.getBool(
-                `VRCX_currentUserGroupsInit_${userId}`
-            ))
-        ) {
-            // fetch every group with roles for storing and comparing later
-            for (var i = 0; i < groups.length; i++) {
-                var groupId = groups[i];
-                try {
-                    var args = await API.getGroup({
-                        groupId,
-                        includeRoles: true
-                    });
-                    var ref = API.applyGroup(args.json);
-                    API.currentUserGroups.set(groupId, ref);
-                } catch (err) {
-                    console.error(err);
-                }
-            }
-            this.saveCurrentUserGroups();
-            this.currentUserGroupsInit = true;
-            configRepository.setBool(
-                `VRCX_currentUserGroupsInit_${userId}`,
-                true
-            );
-            return;
-        }
-        var groups = JSON.parse(
+        var savedGroups = JSON.parse(
             await configRepository.getString(
                 `VRCX_currentUserGroups_${userId}`,
                 '[]'
@@ -29479,7 +29478,7 @@ speechSynthesis.getVoices();
         );
         API.cachedGroups.clear();
         API.currentUserGroups.clear();
-        for (var group of groups) {
+        for (var group of savedGroups) {
             var ref = {
                 id: group.id,
                 name: group.name,
@@ -29493,7 +29492,38 @@ speechSynthesis.getVoices();
             API.cachedGroups.set(group.id, ref);
             API.currentUserGroups.set(group.id, ref);
         }
+
+        var fetchedRoles = false;
+        if (groups) {
+            for (var i = 0; i < groups.length; i++) {
+                var groupId = groups[i];
+                var groupRef = API.cachedGroups.get(groupId);
+                if (
+                    typeof groupRef !== 'undefined' &&
+                    groupRef.myMember?.roleIds?.length > 0
+                ) {
+                    continue;
+                }
+
+                try {
+                    var args = await API.getGroup({
+                        groupId,
+                        includeRoles: true
+                    });
+                    var ref = API.applyGroup(args.json);
+                    API.currentUserGroups.set(groupId, ref);
+                    fetchedRoles = true;
+                    console.log(`Fetched group ${ref.name}`);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        }
+
         this.currentUserGroupsInit = true;
+        if (fetchedRoles) {
+            this.saveCurrentUserGroups();
+        }
     };
 
     API.applyGroupMember = function (json) {
