@@ -899,6 +899,8 @@
         "invite": {
             "header": "Пригласить",
             "select_placeholder": "Выбрать друзей",
+            "add_friends_in_instance": "Добавить друзей в инстанс",
+            "add_favorite_friends": "Добавить любимых друзей",
             "invite_with_message": "Пригласить с сообщением",
             "invite": "Пригласить",
             "friends_in_instance": "Друзья в инстансе"
