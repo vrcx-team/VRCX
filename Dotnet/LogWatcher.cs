@@ -116,7 +116,7 @@ namespace VRCX
             var deletedNameSet = new HashSet<string>(m_LogContextMap.Keys);
             m_LogDirectoryInfo.Refresh();
 
-            if (m_LogDirectoryInfo.Exists)
+            if ((m_LogDirectoryInfo.LinkTarget == null & m_LogDirectoryInfo.Exists) | Directory.Exists(m_LogDirectoryInfo.LinkTarget))
             {
                 var fileInfos = m_LogDirectoryInfo.GetFiles("output_log_*.txt", SearchOption.TopDirectoryOnly);
 
