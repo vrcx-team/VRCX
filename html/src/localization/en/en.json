@@ -960,6 +960,7 @@
             "queueEnabled": "Queue",
             "normal": "Normal",
             "group": "Group",
+            "legacy": "Legacy",
             "roles": "Roles"
         },
         "launch_options": {
