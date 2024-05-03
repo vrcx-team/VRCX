@@ -960,6 +960,7 @@
             "queueEnabled": "开启等待队列",
             "normal": "普通",
             "group": "群组",
+            "legacy": "传统",
             "roles": "身份组"
         },
         "launch_options": {
