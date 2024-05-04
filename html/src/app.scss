@@ -94,6 +94,10 @@
     -webkit-line-clamp: 1;
 }
 
+.notification-table .el-table .cell {
+    -webkit-line-clamp: 2;
+}
+
 .el-table__row:hover .el-table__cell .cell {
     -webkit-line-clamp: unset;
 }
