@@ -899,6 +899,8 @@
         "invite": {
             "header": "招待",
             "select_placeholder": "フレンドを選択",
+            "add_friends_in_instance": "インスタンス内のフレンドを追加",
+            "add_favorite_friends": "お気に入りのフレンドを追加",
             "invite_with_message": "メッセージ付きで招待を送信",
             "invite": "招待を送信",
             "friends_in_instance": "インスタンス内のフレンド"
@@ -1331,18 +1333,18 @@
             "remove_roles": "ロールを削除",
             "add_roles": "ロールを追加"
         },
-            "group_post_edit": {
-                "header": "投稿を作成/編集",
-                "title": "タイトル",
-                "message": "メッセージ",
-                "send_notification": "通知を送信",
-                "post_visibility": "投稿の表示範囲",
-                "visibility_public": "全員",
-                "visibility_group": "グループ",
-                "image": "画像",
-                "cancel": "キャンセル",
-                "create_post": "投稿を作成",
-                "edit_post": "投稿を編集"
+        "group_post_edit": {
+            "header": "投稿を作成/編集",
+            "title": "タイトル",
+            "message": "メッセージ",
+            "send_notification": "通知を送信",
+            "post_visibility": "投稿の表示範囲",
+            "visibility_public": "全員",
+            "visibility_group": "グループ",
+            "image": "画像",
+            "cancel": "キャンセル",
+            "create_post": "投稿を作成",
+            "edit_post": "投稿を編集"
         }
     },
     "prompt": {
