@@ -1399,6 +1399,7 @@ speechSynthesis.getVoices();
             // location - missing from currentUser
             // note - missing from currentUser
             profilePicOverride: json.profilePicOverride,
+            pronouns: json.pronouns,
             state: json.state,
             status: json.status,
             statusDescription: json.statusDescription,
@@ -1759,6 +1760,7 @@ speechSynthesis.getVoices();
                     ...json.presence
                 },
                 profilePicOverride: '',
+                pronouns: '',
                 queuedInstance: '',
                 state: '',
                 status: '',
@@ -1892,6 +1894,7 @@ speechSynthesis.getVoices();
                 location: '',
                 note: '',
                 profilePicOverride: '',
+                pronouns: '',
                 state: '',
                 status: '',
                 statusDescription: '',
@@ -18274,6 +18277,8 @@ speechSynthesis.getVoices();
             this.showLanguageDialog();
         } else if (command === 'Edit Bio') {
             this.showBioDialog();
+        } else if (command === 'Edit Pronouns') {
+            this.showPronounsDialog();
         } else if (command === 'Logout') {
             this.logout();
         } else if (command === 'Request Invite') {
@@ -19728,6 +19733,13 @@ speechSynthesis.getVoices();
         }
     };
 
+    $app.methods.addSelfToInvite = function () {
+        var D = this.inviteDialog;
+        if (!D.userIds.includes(API.currentUser.id)) {
+            D.userIds.push(API.currentUser.id);
+        }
+    };
+
     $app.methods.sendInvite = function () {
         this.$confirm('Continue? Invite', 'Confirm', {
             confirmButtonText: 'Confirm',
@@ -19984,6 +19996,48 @@ speechSynthesis.getVoices();
     };
 
     // #endregion
+    // #region | App: Pronouns Dialog
+
+    $app.data.pronounsDialog = {
+        visible: false,
+        loading: false,
+        pronouns: ''
+    };
+
+    API.$on('LOGOUT', function () {
+        $app.pronounsDialog.visible = false;
+    });
+
+    $app.methods.savePronouns = function () {
+        var D = this.pronounsDialog;
+        if (D.loading) {
+            return;
+        }
+        D.loading = true;
+        API.saveCurrentUser({
+            pronouns: D.pronouns
+        })
+            .finally(() => {
+                D.loading = false;
+            })
+            .then((args) => {
+                D.visible = false;
+                this.$message({
+                    message: 'Pronouns updated',
+                    type: 'success'
+                });
+                return args;
+            });
+    };
+
+    $app.methods.showPronounsDialog = function () {
+        this.$nextTick(() => adjustDialogZ(this.$refs.pronounsDialog.$el));
+        var D = this.pronounsDialog;
+        D.pronouns = API.currentUser.pronouns;
+        D.visible = true;
+    };
+
+    // #endregion
     // #region | App: New Instance Dialog
 
     $app.data.newInstanceDialog = {
@@ -20160,7 +20214,7 @@ speechSynthesis.getVoices();
             type,
             canRequestInvite,
             worldId: D.worldId,
-            ownerId: D.userId,
+            ownerId: API.currentUser.id,
             region
         };
         if (type === 'group') {
@@ -24899,7 +24953,6 @@ speechSynthesis.getVoices();
         }
     });
 
-    $app.data.emojiFrameCountOptions = [4, 16, 64];
     $app.data.emojiAnimFps = 15;
     $app.data.emojiAnimFrameCount = 4;
     $app.data.emojiAnimType = false;
@@ -25007,7 +25060,7 @@ speechSynthesis.getVoices();
         ) {
             return true;
         }
-        if (L.accessType === 'invite') {
+        if (L.accessType === 'invite' || L.accessType === 'friends') {
             return false;
         }
         if (this.lastLocation.location === location) {

@@ -820,3 +820,7 @@ i.x-user-status.busy {
     left: 8px;
     top: 2px;
 }
+
+.max-height-el-select .el-select-dropdown__wrap {
+    max-height: 83vh;
+}

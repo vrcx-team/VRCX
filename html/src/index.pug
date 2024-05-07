@@ -234,14 +234,16 @@ html
                                                     span(v-text="displayName")
                                             i.el-icon-caret-bottom
                                     span.dialog-title(v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px")
-                                    template(v-if="userDialog.ref.id === API.currentUser.id")
-                                        el-popover(placement="top" trigger="click")
-                                            span(slot="reference" v-text="API.currentUser.username" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer")
-                                            span(style="display:block;text-align:center;font-family:monospace") {{ API.currentUser.username | textToHex }}
+                                    span(v-if="userDialog.ref.pronouns" v-text="userDialog.ref.pronouns" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px")
                                     el-tooltip(v-for="item in userDialog.ref.$languages" :key="item.key" placement="top")
                                         template(#content)
                                             span {{ item.value }} ({{ item.key }})
                                         span.flags(:class="languageClass(item.key)" style="display:inline-block;margin-right:5px")
+                                    template(v-if="userDialog.ref.id === API.currentUser.id")
+                                        br
+                                        el-popover(placement="top" trigger="click")
+                                            span(slot="reference" v-text="API.currentUser.username" style="margin-right:10px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer")
+                                            span(style="display:block;text-align:center;font-family:monospace") {{ API.currentUser.username | textToHex }}
                                 div
                                     el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px;margin-top:5px")
                                     el-tag.x-tag-friend(v-if="userDialog.isFriend && userDialog.friend" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.user.tags.friend_no', { number: userDialog.friend.no }) }}
@@ -277,6 +279,7 @@ html
                                             el-dropdown-item(icon="el-icon-edit" command="Edit Social Status" divided) {{ $t('dialog.user.actions.edit_status') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Edit Language") {{ $t('dialog.user.actions.edit_language') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Edit Bio") {{ $t('dialog.user.actions.edit_bio') }}
+                                            el-dropdown-item(icon="el-icon-edit" command="Edit Pronouns") {{ $t('dialog.user.actions.edit_pronouns') }}
                                             el-dropdown-item(icon="el-icon-switch-button" command="Logout" divided) {{ $t('dialog.user.actions.logout') }}
                                         template(v-else)
                                             template(v-if="userDialog.isFriend")
@@ -1287,10 +1290,11 @@ html
                         el-button(v-else style="display:block;width:100%;margin:10px 0" @click="addLocalWorldFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
 
             //- dialog: invite
-            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" :title="$t('dialog.invite.header')" width="450px")
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" :title="$t('dialog.invite.header')" width="500px")
                 div(v-if="inviteDialog.visible" v-loading="inviteDialog.loading")
                     location(:location="inviteDialog.worldId" :link="false")
                     br
+                    el-button(size="mini" v-text="$t('dialog.invite.add_self')" @click="addSelfToInvite" style="margin-top:10px")
                     el-button(size="mini" v-text="$t('dialog.invite.add_friends_in_instance')" @click="addFriendsInInstanceToInvite" :disabled="inviteDialog.friendsInInstance.length === 0" style="margin-top:10px")
                     el-button(size="mini" v-text="$t('dialog.invite.add_favorite_friends')" @click="addFavoriteFriendsToInvite" :disabled="friendsGroup0.length === 0" style="margin-top:10px")
                     el-select(v-model="inviteDialog.userIds" multiple clearable :placeholder="$t('dialog.invite.select_placeholder')" filterable :disabled="inviteDialog.loading" style="width:100%;margin-top:15px")
@@ -1389,6 +1393,13 @@ html
                 template(#footer)
                     el-button(type="primary" size="small" :disabled="bioDialog.loading" @click="saveBio") {{ $t('dialog.bio.update') }}
 
+            //- dialog: pronouns
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="pronounsDialog" :visible.sync="pronounsDialog.visible" :title="$t('dialog.pronouns.header')" width="600px")
+                div(v-loading="pronounsDialog.loading")
+                    el-input(type="textarea" v-model="pronounsDialog.pronouns" size="mini" maxlength="32" show-word-limit :autosize="{ minRows:2, maxRows:5 }" :placeholder="$t('dialog.pronouns.pronouns_placeholder')")
+                template(#footer)
+                    el-button(type="primary" size="small" :disabled="pronounsDialog.loading" @click="savePronouns") {{ $t('dialog.pronouns.update') }}
+
             //- dialog: new instance
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="newInstanceDialog" :visible.sync="newInstanceDialog.visible" :title="$t('dialog.new_instance.header')" width="650px")
                 el-tabs(type="card" v-model="newInstanceDialog.selectedTab")
@@ -1417,46 +1428,6 @@ html
                                 el-checkbox(v-model="newInstanceDialog.queueEnabled" @change="buildInstance")
                             el-form-item(:label="$t('dialog.new_instance.world_id')")
                                 el-input(v-model="newInstanceDialog.worldId" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" @change="buildInstance")
-                            el-form-item(:label="$t('dialog.new_instance.instance_creator')" v-if="newInstanceDialog.accessType !== 'public' && newInstanceDialog.accessType !== 'group'")
-                                el-select(v-model="newInstanceDialog.userId" clearable :placeholder="$t('dialog.new_instance.instance_creator_placeholder')" filterable style="width:100%" @change="buildInstance")
-                                    el-option-group(v-if="API.currentUser" :label="$t('side_panel.me')")
-                                        el-option.x-friend-item(:label="API.currentUser.displayName" :value="API.currentUser.id" style="height:auto")
-                                            .avatar(:class="userStatusClass(API.currentUser)")
-                                                img(v-lazy="userImage(API.currentUser)")
-                                            .detail
-                                                span.name(v-text="API.currentUser.displayName")
-                                    el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
-                                        el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
-                                            template(v-if="friend.ref")
-                                                .avatar(:class="userStatusClass(friend.ref)")
-                                                    img(v-lazy="userImage(friend.ref)")
-                                                .detail
-                                                    span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                            span(v-else v-text="friend.id")
-                                    el-option-group(v-if="friendsGroup1.length" :label="$t('side_panel.online')")
-                                        el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
-                                            template(v-if="friend.ref")
-                                                .avatar(:class="userStatusClass(friend.ref)")
-                                                    img(v-lazy="userImage(friend.ref)")
-                                                .detail
-                                                    span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                            span(v-else v-text="friend.id")
-                                    el-option-group(v-if="friendsGroup2.length" :label="$t('side_panel.active')")
-                                        el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
-                                            template(v-if="friend.ref")
-                                                .avatar
-                                                    img(v-lazy="userImage(friend.ref)")
-                                                .detail
-                                                    span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                            span(v-else v-text="friend.id")
-                                    el-option-group(v-if="friendsGroup3.length" :label="$t('side_panel.offline')")
-                                        el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
-                                            template(v-if="friend.ref")
-                                                .avatar
-                                                    img(v-lazy="userImage(friend.ref)")
-                                                .detail
-                                                    span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
-                                            span(v-else v-text="friend.id")
                             el-form-item(:label="$t('dialog.new_instance.group_id')" v-if="newInstanceDialog.accessType === 'group'")
                                 el-select(v-model="newInstanceDialog.groupId" clearable :placeholder="$t('dialog.new_instance.group_placeholder')" filterable style="width:100%" @change="buildInstance")
                                     el-option-group(:label="$t('dialog.new_instance.group_placeholder')")
@@ -2479,7 +2450,7 @@ html
                         el-button-group(style="margin-right:10px")
                             el-button(type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayEmojiUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
-                        el-select(v-model="emojiAnimationStyle")
+                        el-select(v-model="emojiAnimationStyle" popper-class="max-height-el-select")
                             el-option-group {{ $t('dialog.gallery_icons.emoji_animation_styles') }}
                                 el-option.x-friend-item(v-for="(fileName, styleName) in emojiAnimationStyleList" :key="fileName" :label="styleName" :value="styleName" style="height:auto")
                                     .avatar(style="width:200px;height:200px")
@@ -2491,11 +2462,8 @@ html
                         template(v-if="emojiAnimType")
                             span(style="margin-right:10px") {{ $t('dialog.gallery_icons.emoji_animation_fps') }}
                             el-input(v-model="emojiAnimFps" :min="1" :max="64" size="small" style="width:48px;margin-right:10px")
-                            el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px")
-                                el-button(size="mini")
-                                    span {{ $t('dialog.gallery_icons.emoji_animation_frame_count') }} {{ emojiAnimFrameCount }} #[i.el-icon-arrow-down.el-icon--right]
-                                el-dropdown-menu(#default="dropdown")
-                                    el-dropdown-item(v-for="(item) in emojiFrameCountOptions" v-text="item" @click.native="emojiAnimFrameCount = item")
+                            span(style="margin-right:10px") {{ $t('dialog.gallery_icons.emoji_animation_frame_count') }}
+                            el-input(v-model="emojiAnimFrameCount" :min="1" :max="64" size="small" style="width:48px;margin-right:10px")
                             el-checkbox(v-model="emojiAnimLoopPingPong" style="margin-left:10px;margin-right:10px")
                                 span {{ $t('dialog.gallery_icons.emoji_loop_pingpong') }}
                             br
