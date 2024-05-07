@@ -142,7 +142,7 @@
                 "two_factor": "双重认证 (2FA)",
                 "two_factor_enabled": "已启用",
                 "two_factor_disabled": "已停用",
-                "v_bucks": "V-Bucks",
+                "v_bucks": "您爆的V币",
                 "refresh": "点击以刷新",
                 "logout": "退出登录",
                 "manage_gallery_icon": "管理上传的图片/图标/表情",
@@ -212,6 +212,10 @@
                     "startup": "在 Windows 启动时自动启动",
                     "minimized": "以最小化的形式启动",
                     "tray": "最小化到系统托盘"
+                },
+                "favorites": {
+                    "header": "星标好友筛选",
+                    "group_placeholder": "选择分组"
                 },
                 "game_log": {
                     "header": "游戏日志",
@@ -592,8 +596,8 @@
                 "last_seen": "最后见面",
                 "join_count": "见面的次数",
                 "time_together": "一起游玩的时长",
-                "play_time": "Play Time",
-                "online_for": "在线时长",
+                "play_time": "总在线时长",
+                "online_for": "本次在线时长",
                 "offline_for": "离线时长",
                 "last_activity": "最后活动",
                 "last_login": "最后登录",
@@ -822,6 +826,7 @@
                 "visibility_everyone": "可见性：所有人",
                 "visibility_friends": "可见性：好友",
                 "visibility_hidden": "可见性：隐藏",
+                "create_post": "创建群组帖子",
                 "moderation_tools": "成员管理",
                 "leave": "离开群组"
             },
@@ -847,11 +852,15 @@
                 "role_permissions": "权限："
             },
             "posts": {
-                "header": "公告",
+                "header": "帖子",
                 "visibility": "可见性:",
+                "edited_at": "最后编辑于：",
+                "created_at": "创建于：",
+                "edit_tooltip": "编辑帖子",
+                "delete_tooltip": "删除帖子",
                 "edited_by": "最后编辑者：",
-                "search_placeholder": "搜索公告",
-                "posts_count": "公告总数: "
+                "search_placeholder": "搜索帖子",
+                "posts_count": "帖子总数: "
             },
             "members": {
                 "header": "成员",
@@ -890,6 +899,8 @@
         "invite": {
             "header": "邀请玩家",
             "select_placeholder": "选择好友",
+            "add_friends_in_instance": "在房间中添加好友",
+            "add_favorite_friends": "添加星标",
             "invite_with_message": "邀请消息",
             "invite": "邀请",
             "friends_in_instance": "在房间里的好友"
@@ -949,6 +960,7 @@
             "queueEnabled": "开启等待队列",
             "normal": "普通",
             "group": "群组",
+            "legacy": "传统",
             "roles": "身份组"
         },
         "launch_options": {
@@ -1164,6 +1176,8 @@
         "invite_message": {
             "header": "发送留言",
             "confirmation": "你确定要进行这个操作吗？",
+            "select_image": "选择图片",
+            "clear_selected_image": "清除选择",
             "cancel": "取消",
             "refresh": "刷新",
             "confirm": "确定"
@@ -1206,8 +1220,13 @@
             "refresh": "刷新",
             "upload": "上传",
             "clear": "清除",
-            "emoji_animation_styles": "动画样式"
-        },
+            "emoji_animation_styles": "动画样式",
+            "emoji_animation_type": "动画表情",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "帧数:",
+            "emoji_loop_pingpong": "Loop PingPong",
+            "flipbook_info": "选择一个1024x1024的PNG精灵表作为动画表情（最大FPS 64）"
+            },
         "change_content_image": {
             "avatar": "更改模型封面",
             "world": "更改世界封面",
@@ -1272,20 +1291,41 @@
         },
         "group_member_moderation": {
             "header": "群组成员管理",
+            "members": "成员",
+            "bans": "封禁列表",
+            "invites": "邀请列表",
+            "logs": "审核日志",
+            "sent_invites": "已发送的邀请",
+            "join_requests": "加入申请",
+            "blocked_requests": "已屏蔽的申请",
             "notes": "备注",
             "note_placeholder": "点击这里添加备注",
             "actions": "操作",
             "kick": "踢出",
             "ban": "封禁",
+            "unban": "解除封禁",
             "save_note": "保存备注",
+            "delete_sent_invite": "删除已发送的邀请",
+            "delete_blocked_requests": "删除已被屏蔽的申请",
+            "accept_join_requests": "接受加入请求",
+            "reject_join_requests": "拒绝加入请求",
+            "block_join_requests": "屏蔽加入请求",
             "group_members": "群组成员",
             "progress": "操作进度:",
             "display_name": "显示名称",
             "visibility": "可见性",
             "avatar": "模型",
             "joined_at": "加入于",
+            "banned_at": "封禁于",
+            "created_at": "创建于",
+            "type": "类型",
+            "description": "描述",
+            "data": "数据",
             "note": "备注",
             "roles": "身份组",
+            "user_id": "用户 ID",
+            "user_id_placeholder": "输入用户名",
+            "select_user": "选择用户",
             "selected_users": "已选择的用户",
             "select_all": "全选",
             "cancel": "取消",
@@ -1293,6 +1333,19 @@
             "selected_roles": "已选择的身份组",
             "remove_roles": "移除身份组",
             "add_roles": "添加身份组"
+        },
+        "group_post_edit": {
+            "header": "创建/编辑帖子",
+            "title": "标题",
+            "message": "消息",
+            "send_notification": "发送通知",
+            "post_visibility": "帖子可见性",
+            "visibility_public": "公开",
+            "visibility_group": "仅群组",
+            "image": "图片",
+            "cancel": "取消",
+            "create_post": "创建帖子",
+            "edit_post": "编辑帖子"
         }
     },
     "prompt": {
