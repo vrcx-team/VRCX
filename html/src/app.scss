@@ -94,6 +94,10 @@
     -webkit-line-clamp: 1;
 }
 
+.notification-table .el-table .cell {
+    -webkit-line-clamp: 2;
+}
+
 .el-table__row:hover .el-table__cell .cell {
     -webkit-line-clamp: unset;
 }
@@ -815,4 +819,8 @@ i.x-user-status.busy {
     height: 14px;
     left: 8px;
     top: 2px;
+}
+
+.max-height-el-select .el-select-dropdown__wrap {
+    max-height: 83vh;
 }
