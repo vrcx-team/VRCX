@@ -134,7 +134,7 @@ namespace VRCX
             return new Rect(0, 0, Size.Width, Size.Height);
         }
 
-        void IRenderHandler.OnAcceleratedPaint(PaintElementType type, Rect dirtyRect, IntPtr sharedHandle)
+        void IRenderHandler.OnAcceleratedPaint(PaintElementType type, Rect dirtyRect, AcceleratedPaintInfo paintInfo)
         {
             // NOT USED
         }
