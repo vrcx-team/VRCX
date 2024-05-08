@@ -19750,16 +19750,6 @@ speechSynthesis.getVoices();
                 if (action !== 'confirm' || D.loading === true) {
                     return;
                 }
-                if (
-                    API.currentUser.status === 'busy' &&
-                    D.userIds.includes(API.currentUser.id)
-                ) {
-                    this.$message({
-                        message:
-                            "You may not receive this invite in 'Do Not Disturb' mode",
-                        type: 'error'
-                    });
-                }
                 D.loading = true;
                 var inviteLoop = () => {
                     if (D.userIds.length > 0) {
@@ -20242,15 +20232,7 @@ speechSynthesis.getVoices();
 
     $app.methods.selfInvite = function (location, shortName) {
         var L = API.parseLocation(location);
-        if (L.isOffline || L.isTraveling || L.worldId === '') {
-            return;
-        }
-        if (API.currentUser.status === 'busy') {
-            this.$message({
-                message:
-                    "You cannot invite yourself in 'Do Not Disturb' status",
-                type: 'error'
-            });
+        if (L.isOffline || L.isTraveling || !L.worldId) {
             return;
         }
         API.selfInvite({
@@ -21804,17 +21786,6 @@ speechSynthesis.getVoices();
         var I = this.sendInviteDialog;
         var J = this.inviteDialog;
         if (J.visible) {
-            if (
-                API.currentUser.status === 'busy' &&
-                J.userIds.includes(API.currentUser.id)
-            ) {
-                this.$message({
-                    message:
-                        "You can't invite yourself in 'Do Not Disturb' mode",
-                    type: 'error'
-                });
-                return;
-            }
             var inviteLoop = () => {
                 if (J.userIds.length > 0) {
                     var receiverUserId = J.userIds.shift();
@@ -21974,17 +21945,6 @@ speechSynthesis.getVoices();
         var D = this.sendInviteDialog;
         var J = this.inviteDialog;
         if (J.visible) {
-            if (
-                API.currentUser.status === 'busy' &&
-                J.userIds.includes(API.currentUser.id)
-            ) {
-                this.$message({
-                    message:
-                        "You can't invite yourself in 'Do Not Disturb' mode",
-                    type: 'error'
-                });
-                return;
-            }
             var inviteLoop = () => {
                 if (J.userIds.length > 0) {
                     var receiverUserId = J.userIds.shift();
