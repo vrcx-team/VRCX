@@ -571,6 +571,7 @@
                 "edit_status": "Статус",
                 "edit_language": "Язык",
                 "edit_bio": "Био",
+                "edit_pronouns": "Местоимение",
                 "report_hacking": "Зарепортить",
                 "unfriend": "Удалить из друзей",
                 "logout": "Выйти"
@@ -899,6 +900,9 @@
         "invite": {
             "header": "Пригласить",
             "select_placeholder": "Выбрать друзей",
+            "add_self": "Добавить Себя",
+            "add_friends_in_instance": "Добавить друзей в инстанс",
+            "add_favorite_friends": "Добавить любимых друзей",
             "invite_with_message": "Пригласить с сообщением",
             "invite": "Пригласить",
             "friends_in_instance": "Друзья в инстансе"
@@ -920,6 +924,11 @@
             "header": "Био",
             "bio_placeholder": "Пожалуйста, заполните био",
             "add_link": "Добавить ссылку",
+            "update": "Обновить"
+        },
+        "pronouns": {
+            "header": "Местоимения",
+            "pronouns_placeholder": "Пожалуйста, введите свои местоимения",
             "update": "Обновить"
         },
         "new_instance": {
@@ -958,6 +967,7 @@
             "queueEnabled": "Очередь",
             "normal": "Обычный",
             "group": "Группа",
+            "legacy": "Легаси",
             "roles": "Роли"
         },
         "launch_options": {
@@ -1222,7 +1232,7 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Количество кадров:",
             "emoji_loop_pingpong": "Зацикленный PingPong",
-            "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи (максимальный FPS 64)."
+            "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи, доступные размеры сетки кадров: 4, 16 или 64 (максимальный FPS 64, максимальное количество кадров 64)"
         },
         "change_content_image": {
             "avatar": "Изменить изображение аватара",
