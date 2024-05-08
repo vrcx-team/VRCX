@@ -571,6 +571,7 @@
                 "edit_status": "Social Status",
                 "edit_language": "Language",
                 "edit_bio": "Bio",
+                "edit_pronouns": "Pronouns",
                 "report_hacking": "Report For Hacking",
                 "unfriend": "Unfriend",
                 "logout": "Logout"
@@ -899,6 +900,7 @@
         "invite": {
             "header": "Invite",
             "select_placeholder": "Choose Friends",
+            "add_self": "Add Self",
             "add_friends_in_instance": "Add Friends In Instance",
             "add_favorite_friends": "Add Favorite Friends",
             "invite_with_message": "Invite With Message",
@@ -922,6 +924,11 @@
             "header": "Bio",
             "bio_placeholder": "Please input a bio",
             "add_link": "Add Link",
+            "update": "Update"
+        },
+        "pronouns": {
+            "header": "Pronouns",
+            "pronouns_placeholder": "Please input your pronouns",
             "update": "Update"
         },
         "new_instance": {
@@ -1225,7 +1232,7 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Frame Count:",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji (max FPS 64)"
+            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",
