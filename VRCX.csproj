@@ -16,6 +16,8 @@
     <Description>VRCX</Description>
     <PackageIcon>VRCX.png</PackageIcon>
     <RepositoryUrl>https://github.com/vrcx-team/VRCX</RepositoryUrl>
+    <ResourceLanguages>en</ResourceLanguages>
+    <SatelliteResourceLanguages>en-US;en</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
