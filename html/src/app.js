@@ -156,6 +156,19 @@ speechSynthesis.getVoices();
         return false;
     };
 
+    var arraysMatch = function (a, b) {
+        if (!Array.isArray(a) || !Array.isArray(b)) {
+            return false;
+        }
+        return (
+            a.length === b.length &&
+            a.every(
+                (element, index) =>
+                    JSON.stringify(element) === JSON.stringify(b[index])
+            )
+        );
+    };
+
     var escapeTag = function (tag) {
         var s = String(tag);
         return s.replace(/["&'<>]/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -1206,17 +1219,23 @@ speechSynthesis.getVoices();
 
     Vue.component('avatar-info', {
         template:
-            '<div @click="confirm" class="avatar-info"><span style="margin-right:5px">{{ avatarName }}</span><span :class="color">{{ avatarType }}</span></div>',
+            '<div @click="confirm" class="avatar-info">' +
+            '<span style="margin-right:5px">{{ avatarName }}</span>' +
+            '<span style="margin-right:5px" :class="color">{{ avatarType }}</span>' +
+            '<span style="color:#909399;font-family:monospace;font-size:12px;">{{ avatarTags }}</span>' +
+            '</div>',
         props: {
             imageurl: String,
             userid: String,
             hintownerid: String,
-            hintavatarname: String
+            hintavatarname: String,
+            avatartags: Array
         },
         data() {
             return {
                 avatarName: this.avatarName,
                 avatarType: this.avatarType,
+                avatarTags: this.avatarTags,
                 color: this.color
             };
         },
@@ -1226,9 +1245,9 @@ speechSynthesis.getVoices();
                 this.avatarName = '';
                 this.avatarType = '';
                 this.color = '';
+                this.avatarTags = '';
                 if (!this.imageurl) {
                     this.avatarName = '-';
-                    return;
                 } else if (this.hintownerid) {
                     this.avatarName = this.hintavatarname;
                     this.ownerId = this.hintownerid;
@@ -1251,6 +1270,20 @@ speechSynthesis.getVoices();
                     this.color = 'avatar-info-public';
                     this.avatarType = '(public)';
                 }
+                if (typeof this.avatartags === 'object') {
+                    var tagString = '';
+                    for (var i = 0; i < this.avatartags.length; i++) {
+                        var tagName = this.avatartags[i].replace(
+                            'content_',
+                            ''
+                        );
+                        tagString += tagName;
+                        if (i < this.avatartags.length - 1) {
+                            tagString += ', ';
+                        }
+                    }
+                    this.avatarTags = tagString;
+                }
             },
             confirm() {
                 if (!this.imageurl) {
@@ -1268,6 +1301,9 @@ speechSynthesis.getVoices();
                 this.parse();
             },
             userid() {
+                this.parse();
+            },
+            avatartags() {
                 this.parse();
             }
         },
@@ -1380,9 +1416,11 @@ speechSynthesis.getVoices();
 
         this.applyUser({
             allowAvatarCopying: json.allowAvatarCopying,
+            badges: json.badges,
             bio: json.bio,
             bioLinks: json.bioLinks,
             currentAvatarImageUrl: json.currentAvatarImageUrl,
+            currentAvatarTags: json.currentAvatarTags,
             currentAvatarThumbnailImageUrl: json.currentAvatarThumbnailImageUrl,
             date_joined: json.date_joined,
             developerType: json.developerType,
@@ -1707,6 +1745,7 @@ speechSynthesis.getVoices();
                 accountDeletionLog: null,
                 activeFriends: [],
                 allowAvatarCopying: false,
+                badges: [],
                 bio: '',
                 bioLinks: [],
                 currentAvatar: '',
@@ -1875,9 +1914,11 @@ speechSynthesis.getVoices();
         if (typeof ref === 'undefined') {
             ref = {
                 allowAvatarCopying: false,
+                badges: [],
                 bio: '',
                 bioLinks: [],
                 currentAvatarImageUrl: '',
+                currentAvatarTags: [],
                 currentAvatarThumbnailImageUrl: '',
                 date_joined: '',
                 developerType: '',
@@ -1939,7 +1980,10 @@ speechSynthesis.getVoices();
             }
             if (ref.location === 'traveling') {
                 ref.$location = this.parseLocation(ref.travelingToLocation);
-                if (!this.currentTravelers.has(ref.id)) {
+                if (
+                    !this.currentTravelers.has(ref.id) &&
+                    ref.travelingToLocation
+                ) {
                     var travelRef = {
                         created_at: new Date().toJSON(),
                         ...ref
@@ -2003,7 +2047,11 @@ speechSynthesis.getVoices();
                 }
             }
             for (var prop in ref) {
-                if (ref[prop] !== Object(ref[prop])) {
+                if (Array.isArray(ref[prop])) {
+                    if (!arraysMatch(ref[prop], $ref[prop])) {
+                        props[prop] = true;
+                    }
+                } else if (ref[prop] !== Object(ref[prop])) {
                     props[prop] = true;
                 }
             }
@@ -10171,14 +10219,17 @@ speechSynthesis.getVoices();
             $app.updateFriendGPS(ref.id);
         }
         if (
-            (props.currentAvatarImageUrl ||
+            ((props.currentAvatarImageUrl ||
                 props.currentAvatarThumbnailImageUrl) &&
-            !ref.profilePicOverride
+                !ref.profilePicOverride) ||
+            props.currentAvatarTags
         ) {
             var currentAvatarImageUrl = '';
             var previousCurrentAvatarImageUrl = '';
             var currentAvatarThumbnailImageUrl = '';
             var previousCurrentAvatarThumbnailImageUrl = '';
+            var currentAvatarTags = '';
+            var previousCurrentAvatarTags = '';
             if (props.currentAvatarImageUrl) {
                 currentAvatarImageUrl = props.currentAvatarImageUrl[0];
                 previousCurrentAvatarImageUrl = props.currentAvatarImageUrl[1];
@@ -10197,6 +10248,21 @@ speechSynthesis.getVoices();
                 previousCurrentAvatarThumbnailImageUrl =
                     ref.currentAvatarThumbnailImageUrl;
             }
+            if (props.currentAvatarTags) {
+                currentAvatarTags = props.currentAvatarTags[0];
+                previousCurrentAvatarTags = props.currentAvatarTags[1];
+                if (
+                    ref.profilePicOverride &&
+                    !props.currentAvatarThumbnailImageUrl
+                ) {
+                    // forget last seen avatar
+                    ref.currentAvatarImageUrl = '';
+                    ref.currentAvatarThumbnailImageUrl = '';
+                }
+            } else {
+                currentAvatarTags = ref.currentAvatarTags;
+                previousCurrentAvatarTags = ref.currentAvatarTags;
+            }
             var avatarInfo = {
                 ownerId: '',
                 avatarName: ''
@@ -10214,7 +10280,9 @@ speechSynthesis.getVoices();
                 currentAvatarImageUrl,
                 currentAvatarThumbnailImageUrl,
                 previousCurrentAvatarImageUrl,
-                previousCurrentAvatarThumbnailImageUrl
+                previousCurrentAvatarThumbnailImageUrl,
+                currentAvatarTags,
+                previousCurrentAvatarTags
             };
             $app.addFeed(feed);
             database.addAvatarToDatabase(feed);
@@ -11909,6 +11977,11 @@ speechSynthesis.getVoices();
                     }
                 } else if (data.Parameters[245]['0'] === 13) {
                     var msg = data.Parameters[245]['2'];
+                    if (typeof msg === 'string') {
+                        var displayName =
+                            data.Parameters[254]['14']?.targetDisplayName;
+                        msg = msg.replace('{{targetDisplayName}}', displayName);
+                    }
                     this.addEntryPhotonEvent({
                         photonId,
                         text: msg,
@@ -20231,10 +20304,10 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.selfInvite = function (location, shortName) {
-        var L = API.parseLocation(location);
-        if (L.isOffline || L.isTraveling || !L.worldId) {
+        if (!this.isRealInstance(location)) {
             return;
         }
+        var L = API.parseLocation(location);
         API.selfInvite({
             instanceId: L.instanceId,
             worldId: L.worldId,

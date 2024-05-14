@@ -364,7 +364,7 @@ html
                                         span.name(v-if="userDialog.id !== API.currentUser.id && userDialog.ref.profilePicOverride && userDialog.ref.currentAvatarImageUrl") {{ $t('dialog.user.info.avatar_info_last_seen') }}
                                         span.name(v-else) {{ $t('dialog.user.info.avatar_info') }}
                                         .extra
-                                            avatar-info(:imageurl="userDialog.ref.currentAvatarImageUrl" :userid="userDialog.id")
+                                            avatar-info(:imageurl="userDialog.ref.currentAvatarImageUrl" :userid="userDialog.id" :avatartags="userDialog.ref.currentAvatarTags")
                                 .x-friend-item(style="width:100%;cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.user.info.represented_group') }}
