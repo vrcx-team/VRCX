@@ -85,6 +85,7 @@
             },
             "worlds": {
                 "header": "Mundos",
+                "search": "Buscar",
                 "vrchat_favorites": "Favoritos de VRChat",
                 "local_favorites": "Favoritos locales",
                 "new_group": "Nuevo Grupo"
@@ -141,6 +142,8 @@
                 "two_factor": "Autenticación de doble factor (2FA)",
                 "two_factor_enabled": "Habilitado",
                 "two_factor_disabled": "Deshabilitado",
+                "v_bucks": "V-Bucks",
+                "refresh": "Clic para actualizar",
                 "logout": "Cerrar sesión",
                 "manage_gallery_icon": "Administrar Fotos/Iconos/Emojis",
                 "export_friend_list": "Exportar lista de amigos",
@@ -210,6 +213,10 @@
                     "minimized": "Iniciar minimizado",
                     "tray": "Cerrar en la bandeja"
                 },
+                "favorites": {
+                    "header": "Amigos Favoritos",
+                    "group_placeholder": "Seleccionar grupos"
+                },
                 "game_log": {
                     "header": "Registro del Juego",
                     "resource_load": "Registrar la carga de recursos de Udon"
@@ -249,6 +256,7 @@
                     "theme_mode_material3": "Material 3",
                     "vrcplus_profile_icons": "Iconos de perfil VRCPlus",
                     "disable_tooltips": "Deshabilitar las descripciones emergentes",
+                    "disable_nicknames": "Desactivar apodos",
                     "sort_favorite_by": "Ordenar Favoritos por",
                     "sort_favorite_by_name": "nombre",
                     "sort_favorite_by_date": "fecha",
@@ -310,6 +318,8 @@
                         "overlay_notifications": "Overlay de Notificaciones",
                         "notification_position": "Posición de las notificaciones",
                         "xsoverlay_notifications": "Notificaciones XSOverlay",
+                        "ovrtoolkit_hud_notifications": "OVR Toolkit HUD Notifications",
+                        "ovrtoolkit_wrist_notifications": "OVR Toolkit Wrist Notifications",
                         "user_images": "Imágenes de usuarios (más lento)",
                         "notification_timeout": "Tiempo de espera de las notificaciones"
                     },
@@ -402,6 +412,10 @@
                     "auto_cache_management": {
                         "header": "Gestionar Caché Automáticamente al Cerrar VRChat",
                         "description": "Eliminar automáticamente versiones antiguas de la caché"
+                    },
+                    "disable_local_world_persistence": {
+                        "header": "Disable Local World Persistence",
+                        "description": "Disable localhost webserver (requires restart)"
                     },
                     "remote_database": {
                         "header": "Base de Datos de Avatares Remotos",
@@ -557,6 +571,7 @@
                 "edit_status": "Estatus social",
                 "edit_language": "Idioma",
                 "edit_bio": "Biografía",
+                "edit_pronouns": "Pronombres",
                 "report_hacking": "Reportar por Hacking",
                 "unfriend": "Eliminar amigo",
                 "logout": "Cerrar sesión"
@@ -582,6 +597,7 @@
                 "last_seen": "Visto por última vez",
                 "join_count": "Número de entradas",
                 "time_together": "Tiempo juntos",
+                "play_time": "Tiempo de juego",
                 "online_for": "En línea desde",
                 "offline_for": "Desconectado desde",
                 "last_activity": "Última Actividad",
@@ -599,7 +615,10 @@
                 "copy_url": "Copiar URL",
                 "copy_display_name": "Copiar nombre de pantalla",
                 "accuracy_notice": "La información de la base de datos local puede no ser precisa",
-                "instance_full": "lleno"
+                "instance_full": "lleno",
+                "instance_closed": "cerrado",
+                "instance_hard_closed": "hard closed",
+                "close_instance": "Cerrar instancia"
             },
             "groups": {
                 "header": "Grupos",
@@ -614,6 +633,7 @@
                 "sort_by": "Clasificar por:",
                 "order_by": "Ordenar por:",
                 "sorting": {
+                    "name": "Nombre",
                     "updated": "Actualizado",
                     "created": "Creado",
                     "favorites": "Favoritos",
@@ -807,6 +827,7 @@
                 "visibility_everyone": "Visibilidad para todo el mundo",
                 "visibility_friends": "Visible para amigos",
                 "visibility_hidden": "Visibilidad oculta",
+                "create_post": "Crear publicación",
                 "moderation_tools": "Herramientas de moderación",
                 "leave": "Abandonar el grupo"
             },
@@ -832,11 +853,15 @@
                 "role_permissions": "Permisos:"
             },
             "posts": {
-                "header": "Publicaciones",
+                "header": "Publicaciónes",
                 "visibility": "Visibilidad:",
+                "edited_at": "Editado en:",
+                "created_at": "Creado en:",
+                "edit_tooltip": "Editar publicación",
+                "delete_tooltip": "Eliminar publicación",
                 "edited_by": "Editado por:",
                 "search_placeholder": "Buscar",
-                "posts_count": "Publicaciones: "
+                "posts_count": "Publicaciónes: "
             },
             "members": {
                 "header": "Miembros",
@@ -875,6 +900,9 @@
         "invite": {
             "header": "Invitar",
             "select_placeholder": "Elegir amigos",
+            "add_self": "Add Self",
+            "add_friends_in_instance": "Añadir amigos en la instancia",
+            "add_favorite_friends": "Add Favorite Friends",
             "invite_with_message": "Invitar con un mensaje",
             "invite": "Invitar",
             "friends_in_instance": "Amigos en la instancia"
@@ -896,6 +924,11 @@
             "header": "Biografía",
             "bio_placeholder": "Por favor, introduzca una biografía",
             "add_link": "Agregar enlace",
+            "update": "Actualizar"
+        },
+        "pronouns": {
+            "header": "Pronombres",
+            "pronouns_placeholder": "Por favor, introduzca sus pronombres",
             "update": "Actualizar"
         },
         "new_instance": {
@@ -934,6 +967,7 @@
             "queueEnabled": "Cola",
             "normal": "Normal",
             "group": "Grupo",
+            "legacy": "Legacy",
             "roles": "Roles"
         },
         "launch_options": {
@@ -1149,6 +1183,8 @@
         "invite_message": {
             "header": "Enviar Mensaje de Invitación",
             "confirmation": "¿Estás seguro de que lo quieres enviar?",
+            "select_image": "Seleccionar imagen",
+            "clear_selected_image": "Quitar imagen seleccionada",
             "cancel": "Cancelar",
             "refresh": "Refrescar",
             "confirm": "Confirmar"
@@ -1191,7 +1227,12 @@
             "refresh": "Refrescar",
             "upload": "Subir",
             "clear": "Limpiar",
-            "emoji_animation_styles": "Estilos de animación"
+            "emoji_animation_styles": "Estilos de animación",
+            "emoji_animation_type": "Animated Emoji",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "Frame Count:",
+            "emoji_loop_pingpong": "Loop PingPong",
+            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)"
         },
         "change_content_image": {
             "avatar": "Cambiar imagen del avatar",
@@ -1257,27 +1298,61 @@
         },
         "group_member_moderation": {
             "header": "Moderación de Miembros del Grupo",
+            "members": "Members",
+            "bans": "Bans",
+            "invites": "Invites",
+            "logs": "Logs",
+            "sent_invites": "Sent Invites",
+            "join_requests": "Join Requests",
+            "blocked_requests": "Blocked Requests",
             "notes": "Nota del administrador",
             "note_placeholder": "Haga clic para añadir una nota",
             "actions": "Acciones",
             "kick": "Expulsar",
             "ban": "Bloquear",
+            "unban": "Unban",
             "save_note": "Guardar nota",
+            "delete_sent_invite": "Delete Sent Invite",
+            "delete_blocked_requests": "Delete Blocked Requests",
+            "accept_join_requests": "Accept Join Requests",
+            "reject_join_requests": "Reject Join Requests",
+            "block_join_requests": "Block Join Requests",
             "group_members": "Miembros del grupo",
             "progress": "Progreso:",
             "display_name": "Nombre a mostrar",
             "visibility": "Visibilidad",
             "avatar": "Avatar",
             "joined_at": "Se unió el",
+            "banned_at": "Banned At",
+            "created_at": "Created At",
+            "type": "Type",
+            "description": "Description",
+            "data": "Data",
             "note": "Nota",
             "roles": "Roles",
-            "selected_users": "Usuarios seleccionados",
-            "select_all": "Seleccionar todos",
-            "cancel": "Cancelar",
-            "choose_roles_placeholder": "Seleccionar roles",
-            "selected_roles": "Roles seleccionados",
-            "remove_roles": "Quitar roles",
-            "add_roles": "Añadir roles"
+            "user_id": "User ID",
+            "user_id_placeholder": "Enter User ID(s)",
+            "select_user": "Select User",
+            "selected_users": "Selected Users",
+            "select_all": "Select All",
+            "cancel": "Cancel",
+            "choose_roles_placeholder": "Choose Roles",
+            "selected_roles": "Selected Roles",
+            "remove_roles": "Remove Roles",
+            "add_roles": "Add Roles"
+        },
+        "group_post_edit": {
+            "header": "Create/Edit Post",
+            "title": "Title",
+            "message": "Message",
+            "send_notification": "Send Notification",
+            "post_visibility": "Post Visibility",
+            "visibility_public": "Public",
+            "visibility_group": "Group",
+            "image": "Image",
+            "cancel": "Cancel",
+            "create_post": "Create Post",
+            "edit_post": "Edit Post"
         }
     },
     "prompt": {
@@ -1548,7 +1623,7 @@
         "notification": {
             "date": "Fecha",
             "type": "Tipo",
-            "user": "Usuario",
+            "user_group": "Usuario/Grupo",
             "photo": "Foto",
             "message": "Mensaje",
             "action": "Acción"
