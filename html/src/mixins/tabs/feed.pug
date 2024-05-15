@@ -111,6 +111,6 @@ mixin feedTab()
                             span  ‎
                             span(v-text="scope.row.statusDescription")
                     template(v-else-if="scope.row.type === 'Avatar'")
-                        avatar-info(:imageurl="scope.row.currentAvatarImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.ownerId" :hintavatarname="scope.row.avatarName")
+                        avatar-info(:imageurl="scope.row.currentAvatarImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.ownerId" :hintavatarname="scope.row.avatarName" :avatartags="scope.row.currentAvatarTags")
                     template(v-else-if="scope.row.type === 'Bio'")
                         span(v-text="scope.row.bio")
