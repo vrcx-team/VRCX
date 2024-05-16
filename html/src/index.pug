@@ -642,12 +642,15 @@ html
                                     el-tag.x-link(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px" @click="openFolderGeneric(worldDialog.cachePath)")
                                         span(v-text="worldDialog.cacheSize")
                                         |  {{ $t('dialog.world.tags.cache')}}
-                                div
-                                    el-tag(v-if="worldDialog.ref.tags?.includes('content_horror')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.content_horror') }}
-                                    el-tag(v-if="worldDialog.ref.tags?.includes('content_gore')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.content_gore') }}
-                                    el-tag(v-if="worldDialog.ref.tags?.includes('content_violence')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.content_violence') }}
-                                    el-tag(v-if="worldDialog.ref.tags?.includes('content_adult')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.content_adult') }}
-                                    el-tag(v-if="worldDialog.ref.tags?.includes('content_sex')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.content_sex') }}
+                                    div
+                                        template(v-for="tag in worldDialog.ref.tags")
+                                            el-tag(v-if="tag.startsWith('content_')" :key="tag" effect="plain" size="mini" style="margin-right:5px;margin-top:5px")
+                                                template(v-if="tag === 'content_horror'") {{ $t('dialog.world.tags.content_horror') }}
+                                                template(v-else-if="tag === 'content_gore'") {{ $t('dialog.world.tags.content_gore') }}
+                                                template(v-else-if="tag === 'content_violence'") {{ $t('dialog.world.tags.content_violence') }}
+                                                template(v-else-if="tag === 'content_adult'") {{ $t('dialog.world.tags.content_adult') }}
+                                                template(v-else-if="tag === 'content_sex'") {{ $t('dialog.world.tags.content_sex') }}
+                                                template(v-else) {{ tag.replace('content_', '') }}
                                 div(style="margin-top:5px")
                                     span(v-show="worldDialog.ref.name !== worldDialog.ref.description" v-text="worldDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
@@ -847,11 +850,14 @@ html
                                         span(v-text="avatarDialog.cacheSize")
                                         |  {{ $t('dialog.avatar.tags.cache') }}
                                     div
-                                        el-tag(v-if="avatarDialog.ref.tags?.includes('content_horror')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.content_horror') }}
-                                        el-tag(v-if="avatarDialog.ref.tags?.includes('content_gore')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.content_gore') }}
-                                        el-tag(v-if="avatarDialog.ref.tags?.includes('content_violence')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.content_violence') }}
-                                        el-tag(v-if="avatarDialog.ref.tags?.includes('content_adult')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.content_adult') }}
-                                        el-tag(v-if="avatarDialog.ref.tags?.includes('content_sex')" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.content_sex') }}
+                                        template(v-for="tag in avatarDialog.ref.tags")
+                                            el-tag(v-if="tag.startsWith('content_')" :key="tag" effect="plain" size="mini" style="margin-right:5px;margin-top:5px")
+                                                template(v-if="tag === 'content_horror'") {{ $t('dialog.avatar.tags.content_horror') }}
+                                                template(v-else-if="tag === 'content_gore'") {{ $t('dialog.avatar.tags.content_gore') }}
+                                                template(v-else-if="tag === 'content_violence'") {{ $t('dialog.avatar.tags.content_violence') }}
+                                                template(v-else-if="tag === 'content_adult'") {{ $t('dialog.avatar.tags.content_adult') }}
+                                                template(v-else-if="tag === 'content_sex'") {{ $t('dialog.avatar.tags.content_sex') }}
+                                                template(v-else) {{ tag.replace('content_', '') }}
                                 div(style="margin-top:5px")
                                     span(v-show="avatarDialog.ref.name !== avatarDialog.ref.description" v-text="avatarDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
@@ -1639,16 +1645,17 @@ html
             //- dialog: Set Avatar Tags
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="setAvatarTagsDialog" :visible.sync="setAvatarTagsDialog.visible" :title="$t('dialog.set_avatar_tags.header')" width="770px")
                 template(v-if="setAvatarTagsDialog.visible")
-                    el-checkbox(v-model="setAvatarTagsDialog.contentHorror") {{ $t('dialog.set_avatar_tags.content_horror') }}
+                    el-checkbox(v-model="setAvatarTagsDialog.contentHorror" @change="updateSelectedAvatarTags") {{ $t('dialog.set_avatar_tags.content_horror') }}
                     br
-                    el-checkbox(v-model="setAvatarTagsDialog.contentGore") {{ $t('dialog.set_avatar_tags.content_gore') }}
+                    el-checkbox(v-model="setAvatarTagsDialog.contentGore" @change="updateSelectedAvatarTags") {{ $t('dialog.set_avatar_tags.content_gore') }}
                     br
-                    el-checkbox(v-model="setAvatarTagsDialog.contentViolence") {{ $t('dialog.set_avatar_tags.content_violence') }}
+                    el-checkbox(v-model="setAvatarTagsDialog.contentViolence" @change="updateSelectedAvatarTags") {{ $t('dialog.set_avatar_tags.content_violence') }}
                     br
-                    el-checkbox(v-model="setAvatarTagsDialog.contentAdult") {{ $t('dialog.set_avatar_tags.content_adult') }}
+                    el-checkbox(v-model="setAvatarTagsDialog.contentAdult" @change="updateSelectedAvatarTags") {{ $t('dialog.set_avatar_tags.content_adult') }}
                     br
-                    el-checkbox(v-model="setAvatarTagsDialog.contentSex") {{ $t('dialog.set_avatar_tags.content_sex') }}
+                    el-checkbox(v-model="setAvatarTagsDialog.contentSex" @change="updateSelectedAvatarTags") {{ $t('dialog.set_avatar_tags.content_sex') }}
                     br
+                    el-input(v-model="setAvatarTagsDialog.selectedTagsCsv" @input="updateInputAvatarTags" size="mini" :autosize="{ minRows:2, maxRows:5 }" :placeholder="$t('dialog.set_avatar_tags.custom_tags_placeholder')" style="margin-top:10px")
                     template(v-if="setAvatarTagsDialog.ownAvatars.length === setAvatarTagsDialog.selectedCount")
                         el-button(size="small" @click="setAvatarTagsSelectToggle") {{ $t('dialog.set_avatar_tags.select_none') }}
                     template(v-else)
@@ -1881,6 +1888,8 @@ html
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Group Change
+                            el-tooltip(placement="top" style="margin-left:5px" content="When you've left or been kicked from a group, group name changed, group owner changed, role added/removed")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.noty.groupChange" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
@@ -1891,16 +1900,22 @@ html
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Join
+                            el-tooltip(placement="top" style="margin-left:5px" content="When your request to join a group has been approved")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.noty['group.informative']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Invite
+                            el-tooltip(placement="top" style="margin-left:5px" content="When someone invites you to join a group")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.noty['group.invite']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Join Request
+                            el-tooltip(placement="top" style="margin-left:5px" content="When someone requests to join a group you're a moderator for")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.noty['group.joinRequest']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
@@ -1916,6 +1931,8 @@ html
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Instance Closed
+                            el-tooltip(placement="top" style="margin-left:5px" content="When the instance you're in has been closed preventing anyone from joining")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.noty['instance.closed']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
@@ -1928,6 +1945,8 @@ html
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Miscellaneous Events
+                            el-tooltip(placement="top" style="margin-left:5px" content="Misc event from VRC game log: VRC crash auto rejoin, shader keyword limit, joining instance blocked by master, error loading video, audio device changed, error joining instance, kicked from instance, VRChat failing to start OSC server, etc...")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.noty.Event" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
@@ -2118,6 +2137,8 @@ html
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
                         span.toggle-name Group Change
+                            el-tooltip(placement="top" style="margin-left:5px" content="When you've left or been kicked from a group, group name changed, group owner changed, role added/removed")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.wrist.groupChange" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
@@ -2128,16 +2149,22 @@ html
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Join
+                            el-tooltip(placement="top" style="margin-left:5px" content="When your request to join a group has been approved")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.informative']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Invite
+                            el-tooltip(placement="top" style="margin-left:5px" content="When someone invites you to join a group")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.invite']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Join Request
+                            el-tooltip(placement="top" style="margin-left:5px" content="When someone requests to join a group you're a moderator for")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.wrist['group.joinRequest']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
@@ -2153,6 +2180,8 @@ html
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Instance Closed
+                            el-tooltip(placement="top" style="margin-left:5px" content="When the instance you're in has been closed preventing anyone from joining")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.wrist['instance.closed']" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
@@ -2165,6 +2194,8 @@ html
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Miscellaneous Events
+                            el-tooltip(placement="top" style="margin-left:5px" content="Misc event from VRC game log: VRC crash auto rejoin, shader keyword limit, joining instance blocked by master, error loading video, audio device changed, error joining instance, kicked from instance, VRChat failing to start OSC server, etc...")
+                                i.el-icon-info
                         el-radio-group(v-model="sharedFeedFilters.wrist.Event" size="mini" @change="saveSharedFeedFilters")
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
