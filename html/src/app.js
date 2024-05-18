@@ -1700,6 +1700,14 @@ speechSynthesis.getVoices();
             return;
         }
 
+        if (groups.length !== this.currentUserGroups.size) {
+            console.log(
+                `applyPresenceGroups: size old: ${this.currentUserGroups.size} new: ${groups.length}`,
+                this.currentUserGroups,
+                groups
+            );
+        }
+
         // update group list
         for (var groupId of groups) {
             if (!this.currentUserGroups.has(groupId)) {
@@ -2047,7 +2055,7 @@ speechSynthesis.getVoices();
                 }
             }
             for (var prop in ref) {
-                if (Array.isArray(ref[prop])) {
+                if (Array.isArray(ref[prop]) && Array.isArray($ref[prop])) {
                     if (!arraysMatch(ref[prop], $ref[prop])) {
                         props[prop] = true;
                     }
@@ -10263,29 +10271,44 @@ speechSynthesis.getVoices();
                 currentAvatarTags = ref.currentAvatarTags;
                 previousCurrentAvatarTags = ref.currentAvatarTags;
             }
-            var avatarInfo = {
-                ownerId: '',
-                avatarName: ''
-            };
-            try {
-                avatarInfo = await $app.getAvatarName(currentAvatarImageUrl);
-            } catch (err) {}
-            var feed = {
-                created_at: new Date().toJSON(),
-                type: 'Avatar',
-                userId: ref.id,
-                displayName: ref.displayName,
-                ownerId: avatarInfo.ownerId,
-                avatarName: avatarInfo.avatarName,
-                currentAvatarImageUrl,
-                currentAvatarThumbnailImageUrl,
-                previousCurrentAvatarImageUrl,
-                previousCurrentAvatarThumbnailImageUrl,
-                currentAvatarTags,
-                previousCurrentAvatarTags
-            };
-            $app.addFeed(feed);
-            database.addAvatarToDatabase(feed);
+            if (this.logEmptyAvatars || ref.currentAvatarImageUrl) {
+                var avatarInfo = {
+                    ownerId: '',
+                    avatarName: ''
+                };
+                try {
+                    avatarInfo = await $app.getAvatarName(
+                        currentAvatarImageUrl
+                    );
+                } catch (err) {}
+                var previousAvatarInfo = {
+                    ownerId: '',
+                    avatarName: ''
+                };
+                try {
+                    previousAvatarInfo = await $app.getAvatarName(
+                        previousCurrentAvatarImageUrl
+                    );
+                } catch (err) {}
+                var feed = {
+                    created_at: new Date().toJSON(),
+                    type: 'Avatar',
+                    userId: ref.id,
+                    displayName: ref.displayName,
+                    ownerId: avatarInfo.ownerId,
+                    previousOwnerId: previousAvatarInfo.ownerId,
+                    avatarName: avatarInfo.avatarName,
+                    previousAvatarName: previousAvatarInfo.avatarName,
+                    currentAvatarImageUrl,
+                    currentAvatarThumbnailImageUrl,
+                    previousCurrentAvatarImageUrl,
+                    previousCurrentAvatarThumbnailImageUrl,
+                    currentAvatarTags,
+                    previousCurrentAvatarTags
+                };
+                $app.addFeed(feed);
+                database.addAvatarToDatabase(feed);
+            }
         }
         if (props.status || props.statusDescription) {
             var status = '';
@@ -11979,7 +12002,7 @@ speechSynthesis.getVoices();
                     var msg = data.Parameters[245]['2'];
                     if (typeof msg === 'string') {
                         var displayName =
-                            data.Parameters[254]['14']?.targetDisplayName;
+                            data.Parameters[245]['14']?.targetDisplayName;
                         msg = msg.replace('{{targetDisplayName}}', displayName);
                     }
                     this.addEntryPhotonEvent({
@@ -15587,10 +15610,18 @@ speechSynthesis.getVoices();
         'VRCX_logResourceLoad',
         false
     );
-    $app.methods.saveGameLogOptions = async function () {
+    $app.data.logEmptyAvatars = await configRepository.getBool(
+        'VRCX_logEmptyAvatars',
+        false
+    );
+    $app.methods.saveLoggingOptions = async function () {
         await configRepository.setBool(
             'VRCX_logResourceLoad',
             this.logResourceLoad
+        );
+        await configRepository.setBool(
+            'VRCX_logEmptyAvatars',
+            this.logEmptyAvatars
         );
     };
     $app.data.autoStateChange = await configRepository.getString(
@@ -18083,6 +18114,20 @@ speechSynthesis.getVoices();
         return avatars;
     };
 
+    $app.methods.lookupAvatarByImageFileId = async function (authorId, fileId) {
+        var length = this.avatarRemoteDatabaseProviderList.length;
+        for (var i = 0; i < length; ++i) {
+            var url = this.avatarRemoteDatabaseProviderList[i];
+            var avatarArray = await this.lookupAvatarsByAuthor(url, authorId);
+            for (var avatar of avatarArray) {
+                if (extractFileId(avatar.imageUrl) === fileId) {
+                    return avatar.id;
+                }
+            }
+        }
+        return null;
+    };
+
     $app.methods.lookupAvatarsByAuthor = async function (url, authorId) {
         var avatars = [];
         if (!url) {
@@ -18577,7 +18622,7 @@ speechSynthesis.getVoices();
             }
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                this.compareUnityVersion(unityPackage.unityVersion)
+                this.compareUnityVersion(unityPackage.unitySortNumber)
             ) {
                 assetUrl = unityPackage.assetUrl;
                 break;
@@ -19345,7 +19390,7 @@ speechSynthesis.getVoices();
                         !assetUrl &&
                         unityPackage.platform === 'standalonewindows' &&
                         unityPackage.variant === 'standard' &&
-                        this.compareUnityVersion(unityPackage.unityVersion)
+                        this.compareUnityVersion(unityPackage.unitySortNumber)
                     ) {
                         assetUrl = unityPackage.assetUrl;
                     }
@@ -19560,18 +19605,14 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.checkAvatarCacheRemote = async function (fileId, ownerUserId) {
-        var avatarId = '';
         if (this.avatarRemoteDatabase) {
-            var data = await this.lookupAvatars('authorId', ownerUserId);
-            if (data && typeof data === 'object') {
-                data.forEach((avatar) => {
-                    if (extractFileId(avatar.imageUrl) === fileId) {
-                        avatarId = avatar.id;
-                    }
-                });
-            }
+            var avatarId = await this.lookupAvatarByImageFileId(
+                ownerUserId,
+                fileId
+            );
+            return avatarId;
         }
-        return avatarId;
+        return null;
     };
 
     $app.methods.showAvatarAuthorDialog = async function (
@@ -20658,6 +20699,8 @@ speechSynthesis.getVoices();
         ownAvatars: [],
         selectedCount: 0,
         forceUpdate: 0,
+        selectedTags: [],
+        selectedTagsCsv: '',
         contentHorror: false,
         contentGore: false,
         contentViolence: false,
@@ -20672,6 +20715,8 @@ speechSynthesis.getVoices();
         D.loading = false;
         D.ownAvatars = [];
         D.forceUpdate = 0;
+        D.selectedTags = [];
+        D.selectedTagsCsv = '';
         D.contentHorror = false;
         D.contentGore = false;
         D.contentViolence = false;
@@ -20694,6 +20739,11 @@ speechSynthesis.getVoices();
                     break;
                 case 'content_sex':
                     D.contentSex = true;
+                    break;
+                default:
+                    if (tag.startsWith('content_')) {
+                        D.selectedTags.push(tag.substring(8));
+                    }
                     break;
             }
         });
@@ -20722,6 +20772,84 @@ speechSynthesis.getVoices();
             }
         }
         this.updateAvatarTagsSelection();
+        this.updateSelectedAvatarTags();
+    };
+
+    $app.methods.updateSelectedAvatarTags = function () {
+        var D = this.setAvatarTagsDialog;
+        if (D.contentHorror) {
+            if (!D.selectedTags.includes('content_horror')) {
+                D.selectedTags.push('content_horror');
+            }
+        } else if (D.selectedTags.includes('content_horror')) {
+            D.selectedTags.splice(D.selectedTags.indexOf('content_horror'), 1);
+        }
+        if (D.contentGore) {
+            if (!D.selectedTags.includes('content_gore')) {
+                D.selectedTags.push('content_gore');
+            }
+        } else if (D.selectedTags.includes('content_gore')) {
+            D.selectedTags.splice(D.selectedTags.indexOf('content_gore'), 1);
+        }
+        if (D.contentViolence) {
+            if (!D.selectedTags.includes('content_violence')) {
+                D.selectedTags.push('content_violence');
+            }
+        } else if (D.selectedTags.includes('content_violence')) {
+            D.selectedTags.splice(
+                D.selectedTags.indexOf('content_violence'),
+                1
+            );
+        }
+        if (D.contentAdult) {
+            if (!D.selectedTags.includes('content_adult')) {
+                D.selectedTags.push('content_adult');
+            }
+        } else if (D.selectedTags.includes('content_adult')) {
+            D.selectedTags.splice(D.selectedTags.indexOf('content_adult'), 1);
+        }
+        if (D.contentSex) {
+            if (!D.selectedTags.includes('content_sex')) {
+                D.selectedTags.push('content_sex');
+            }
+        } else if (D.selectedTags.includes('content_sex')) {
+            D.selectedTags.splice(D.selectedTags.indexOf('content_sex'), 1);
+        }
+
+        D.selectedTagsCsv = D.selectedTags.join(',').replace(/content_/g, '');
+    };
+
+    $app.methods.updateInputAvatarTags = function () {
+        var D = this.setAvatarTagsDialog;
+        D.contentHorror = false;
+        D.contentGore = false;
+        D.contentViolence = false;
+        D.contentAdult = false;
+        D.contentSex = false;
+        var tags = D.selectedTagsCsv.split(',');
+        D.selectedTags = [];
+        for (var tag of tags) {
+            switch (tag) {
+                case 'horror':
+                    D.contentHorror = true;
+                    break;
+                case 'gore':
+                    D.contentGore = true;
+                    break;
+                case 'violence':
+                    D.contentViolence = true;
+                    break;
+                case 'adult':
+                    D.contentAdult = true;
+                    break;
+                case 'sex':
+                    D.contentSex = true;
+                    break;
+            }
+            if (!D.selectedTags.includes(`content_${tag}`)) {
+                D.selectedTags.push(`content_${tag}`);
+            }
+        }
     };
 
     $app.data.avatarContentTags = [
@@ -20747,47 +20875,12 @@ speechSynthesis.getVoices();
                 if (!ref.$selected) {
                     continue;
                 }
-                var tags = ref.tags;
-                if (D.contentHorror) {
-                    if (!tags.includes('content_horror')) {
-                        tags.push('content_horror');
+                var tags = [...D.selectedTags];
+                for (var tag of ref.tags) {
+                    if (!tag.startsWith('content_')) {
+                        tags.push(tag);
                     }
-                } else if (tags.includes('content_horror')) {
-                    tags.splice(tags.indexOf('content_horror'), 1);
                 }
-
-                if (D.contentGore) {
-                    if (!tags.includes('content_gore')) {
-                        tags.push('content_gore');
-                    }
-                } else if (tags.includes('content_gore')) {
-                    tags.splice(tags.indexOf('content_gore'), 1);
-                }
-
-                if (D.contentViolence) {
-                    if (!tags.includes('content_violence')) {
-                        tags.push('content_violence');
-                    }
-                } else if (tags.includes('content_violence')) {
-                    tags.splice(tags.indexOf('content_violence'), 1);
-                }
-
-                if (D.contentAdult) {
-                    if (!tags.includes('content_adult')) {
-                        tags.push('content_adult');
-                    }
-                } else if (tags.includes('content_adult')) {
-                    tags.splice(tags.indexOf('content_adult'), 1);
-                }
-
-                if (D.contentSex) {
-                    if (!tags.includes('content_sex')) {
-                        tags.push('content_sex');
-                    }
-                } else if (tags.includes('content_sex')) {
-                    tags.splice(tags.indexOf('content_sex'), 1);
-                }
-
                 await API.saveAvatar({
                     id: ref.id,
                     tags
@@ -24174,7 +24267,7 @@ speechSynthesis.getVoices();
             }
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                this.compareUnityVersion(unityPackage.unityVersion)
+                this.compareUnityVersion(unityPackage.unitySortNumber)
             ) {
                 assetUrl = unityPackage.assetUrl;
                 break;
@@ -24340,7 +24433,7 @@ speechSynthesis.getVoices();
             }
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                this.compareUnityVersion(unityPackage.unityVersion)
+                this.compareUnityVersion(unityPackage.unitySortNumber)
             ) {
                 assetUrl = unityPackage.assetUrl;
                 break;
@@ -24464,7 +24557,7 @@ speechSynthesis.getVoices();
                 }
                 if (
                     unityPackage.platform === 'standalonewindows' &&
-                    this.compareUnityVersion(unityPackage.unityVersion)
+                    this.compareUnityVersion(unityPackage.unitySortNumber)
                 ) {
                     assetUrl = unityPackage.assetUrl;
                     break;
@@ -24484,7 +24577,7 @@ speechSynthesis.getVoices();
                 var unityPackage = unityPackages[i];
                 if (
                     unityPackage.platform === 'standalonewindows' &&
-                    this.compareUnityVersion(unityPackage.unityVersion)
+                    this.compareUnityVersion(unityPackage.unitySortNumber)
                 ) {
                     assetUrl = unityPackage.assetUrl;
                     break;
@@ -25398,21 +25491,47 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.compareUnityVersion = function (version) {
+    $app.methods.compareUnityVersion = function (unitySortNumber) {
         if (!API.cachedConfig.sdkUnityVersion) {
             console.error('No cachedConfig.sdkUnityVersion');
             return false;
         }
-        var currentUnityVersion = API.cachedConfig.sdkUnityVersion.replace(
-            /\D/g,
-            ''
-        );
-        // limit to 8 characters because 2019.4.31f1c1 is a thing
-        // limit to 7 characters because 2022361 is a thing
-        currentUnityVersion = currentUnityVersion.slice(0, 7);
-        var assetVersion = version.replace(/\D/g, '');
-        assetVersion = assetVersion.slice(0, 7);
-        if (parseInt(assetVersion, 10) <= parseInt(currentUnityVersion, 10)) {
+
+        // 2022.3.6f1  2022 03 06 000
+        // 2019.4.31f1 2019 04 31 000
+        // 5.3.4p1     5    03 04 010
+        // 2019.4.31f1c1 is a thing
+        var array = API.cachedConfig.sdkUnityVersion.split('.');
+        if (array.length < 3) {
+            console.error('Invalid cachedConfig.sdkUnityVersion');
+            return false;
+        }
+        var currentUnityVersion = array[0];
+        currentUnityVersion += array[1].padStart(2, '0');
+        var indexFirstLetter = array[2].search(/[a-zA-Z]/);
+        if (indexFirstLetter > -1) {
+            currentUnityVersion += array[2]
+                .substr(0, indexFirstLetter)
+                .padStart(2, '0');
+            currentUnityVersion += '0';
+            var letter = array[2].substr(indexFirstLetter, 1);
+            if (letter === 'p') {
+                currentUnityVersion += '1';
+            } else {
+                // f
+                currentUnityVersion += '0';
+            }
+            currentUnityVersion += '0';
+        } else {
+            // just in case
+            currentUnityVersion += '000';
+        }
+        // just in case
+        currentUnityVersion = currentUnityVersion.replace(/\D/g, '');
+
+        if (
+            parseInt(unitySortNumber, 10) <= parseInt(currentUnityVersion, 10)
+        ) {
             return true;
         }
         return false;
@@ -30927,7 +31046,7 @@ speechSynthesis.getVoices();
             }
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                this.compareUnityVersion(unityPackage.unityVersion)
+                this.compareUnityVersion(unityPackage.unitySortNumber)
             ) {
                 assetUrl = unityPackage.assetUrl;
                 break;
