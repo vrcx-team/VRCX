@@ -217,9 +217,10 @@
                     "header": "Amigos Favoritos",
                     "group_placeholder": "Seleccionar grupos"
                 },
-                "game_log": {
-                    "header": "Registro del Juego",
-                    "resource_load": "Registrar la carga de recursos de Udon"
+                "logging": {
+                    "header": "Logging",
+                    "resource_load": "Log Udon string/image load",
+                    "empty_avatar": "Log avatars in feed without names"
                 },
                 "automation": {
                     "header": "Automatización",
@@ -1031,6 +1032,7 @@
             "content_violence": "Violencia",
             "content_adult": "Adultos",
             "content_sex": "Sexual",
+            "custom_tags_placeholder": "Etiquetas personalizadas",
             "select_all": "Seleccionar Todo",
             "select_none": "Seleccionar Ninguno",
             "cancel": "Cancelar",
