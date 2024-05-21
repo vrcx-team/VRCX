@@ -111,6 +111,11 @@ mixin settingsTab()
                         { label: "Join Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_join_me_or_busy" },
                         { label: "Ask Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_ask_me_or_busy" },
                     ], "saveAutomationOptions")
+                    +simpleRadioGroupWithTooltip("view.settings.general.automation.auto_invite_request_accept", "$t('view.settings.general.automation.auto_invite_request_accept_tooltip')", "autoAcceptInviteRequests", [
+                        { label: "Off", translationKey: "view.settings.general.automation.auto_invite_request_accept_off" },
+                        { label: "All Favorites", translationKey: "view.settings.general.automation.auto_invite_request_accept_favs" },
+                        { label: "Selected Favorites", translationKey: "view.settings.general.automation.auto_invite_request_accept_selected_favs" },
+                    ], "saveAutomationOptions")
                 //- General | Contributors
                 div.options-container
                     span.header {{ $t("view.settings.general.contributors.header" )}}
