@@ -219,7 +219,8 @@
                 },
                 "logging": {
                     "header": "Журнал игры",
-                    "resource_load": "Запись загрузки ресурсов Udon"
+                    "resource_load": "Запись загрузки ресурсов Udon",
+                    "empty_avatar": "Запись аватаров в ленту без имен"
                 },
                 "automation": {
                     "header": "Автоматизация",
