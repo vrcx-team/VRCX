@@ -983,17 +983,17 @@ html
                                 .group-description(style="margin-top:5px")
                                     span(v-show="groupDialog.ref.name !== groupDialog.ref.description" v-text="groupDialog.ref.description" style="font-size:12px")
                             div(style="flex:none;margin-left:10px")
-                                template(v-if="groupDialog.inGroup")
-                                    el-tooltip(v-if="groupDialog.ref.isRepresenting" placement="top" :content="$t('dialog.group.actions.unrepresent_tooltip')" :disabled="hideTooltips")
+                                template(v-if="groupDialog.inGroup && groupDialog.ref?.myMember")
+                                    el-tooltip(v-if="groupDialog.ref.myMember?.isRepresenting" placement="top" :content="$t('dialog.group.actions.unrepresent_tooltip')" :disabled="hideTooltips")
                                         el-button(type="warning" icon="el-icon-star-on" circle @click="clearGroupRepresentation(groupDialog.id)" style="margin-left:5px")
                                     el-tooltip(v-else placement="top" :content="$t('dialog.group.actions.represent_tooltip')" :disabled="hideTooltips")
                                         span
                                             el-button(type="default" icon="el-icon-star-off" circle @click="setGroupRepresentation(groupDialog.id)" style="margin-left:5px" :disabled="groupDialog.ref.privacy === 'private'")
-                                template(v-else-if="groupDialog.ref.membershipStatus === 'requested'")
+                                template(v-else-if="groupDialog.ref.myMember?.membershipStatus === 'requested'")
                                     el-tooltip(placement="top" :content="$t('dialog.group.actions.cancel_join_request_tooltip')" :disabled="hideTooltips")
                                         span
                                             el-button(type="default" icon="el-icon-close" circle @click="cancelGroupRequest(groupDialog.id)" style="margin-left:5px")
-                                template(v-else-if="groupDialog.ref.membershipStatus === 'invited'")
+                                template(v-else-if="groupDialog.ref.myMember?.membershipStatus === 'invited'")
                                     el-tooltip(placement="top" :content="$t('dialog.group.actions.pending_request_tooltip')" :disabled="hideTooltips")
                                         span
                                             el-button(type="default" icon="el-icon-check" circle @click="joinGroup(groupDialog.id)" style="margin-left:5px")
@@ -1395,7 +1395,7 @@ html
                     el-input(v-for="(link, index) in bioDialog.bioLinks" :key="index" :value="link" v-model="bioDialog.bioLinks[index]" size="small" style="margin-top:5px")
                         img(slot="prepend" :src="getFaviconUrl(link)" style="width:16px;height:16px")
                         el-button(slot="append" icon="el-icon-delete" @click="bioDialog.bioLinks.splice(index, 1)")
-                    el-button(@click="bioDialog.bioLinks.push('')" size="mini" style="margin-top:5px") {{ $t('dialog.bio.add_link') }}
+                    el-button(@click="bioDialog.bioLinks.push('')" :disabled="bioDialog.bioLinks.length >= 3" size="mini" style="margin-top:5px") {{ $t('dialog.bio.add_link') }}
                 template(#footer)
                     el-button(type="primary" size="small" :disabled="bioDialog.loading" @click="saveBio") {{ $t('dialog.bio.update') }}
 
