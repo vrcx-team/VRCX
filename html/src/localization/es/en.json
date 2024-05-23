@@ -227,11 +227,11 @@
                     "auto_state_change": "Cambio de estado automático",
                     "auto_state_change_tooltip": "Cambia automáticamente el estado cuando hay otras personas en la instancia (Solo/Compañía)",
                     "auto_state_change_off": "Desactivado",
-                    "auto_state_change_active_or_ask_me": "Active / Ask Me",
-                    "auto_state_change_active_or_busy": "Active / Busy",
-                    "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
-                    "auto_state_change_join_me_or_busy": "Join Me / Busy",
-                    "auto_state_change_ask_me_or_busy": "Ask Me / Busy"
+                    "auto_state_change_active_or_ask_me": "Activo / Pregúntame",
+                    "auto_state_change_active_or_busy": "Activo / No molestar",
+                    "auto_state_change_join_me_or_ask_me": "Join Me / Pregúntame",
+                    "auto_state_change_join_me_or_busy": "Join Me / No molestar",
+                    "auto_state_change_ask_me_or_busy": "Pregúntame / No molestar"
                 },
                 "legal_notice": {
                     "header": "Aviso Legal",
@@ -247,7 +247,7 @@
             "appearance": {
                 "appearance": {
                     "header": "Apariencia",
-                    "language": "Idioma",
+                    "language": "Idiomas",
                     "theme_mode": "Temas",
                     "theme_mode_system": "Sistema",
                     "theme_mode_light": "Claro",
@@ -570,7 +570,7 @@
                 "moderation_enable_avatar_interaction": "Habilitar interacciones de avatar",
                 "moderation_disable_avatar_interaction": "Deshabilita las Interacciones con el Avatar",
                 "edit_status": "Estatus social",
-                "edit_language": "Idioma",
+                "edit_language": "Idiomas",
                 "edit_bio": "Biografía",
                 "edit_pronouns": "Pronombres",
                 "report_hacking": "Reportar por Hacking",
@@ -596,7 +596,7 @@
                 "represented_group": "Grupo representado",
                 "bio": "Biografía",
                 "last_seen": "Visto por última vez",
-                "join_count": "Número de entradas",
+                "join_count": "Número de uniones",
                 "time_together": "Tiempo juntos",
                 "play_time": "Tiempo de juego",
                 "online_for": "En línea desde",
@@ -915,7 +915,7 @@
             "update": "Actualizar"
         },
         "language": {
-            "header": "Idioma",
+            "header": "Idiomas",
             "add_language": "Añadir Idioma",
             "select_language": "Seleccionar idioma",
             "ok": "Aceptar",
@@ -1602,7 +1602,7 @@
             "displayName": "Mostrar nombre",
             "status": "Estado",
             "rank": "Rango",
-            "language": "Idioma",
+            "language": "Idiomas",
             "bioLink": "Enlaces",
             "date": "Fecha",
             "user": "Usuario",
@@ -1636,14 +1636,14 @@
             "displayName": "Mostrar nombre",
             "rank": "Rango",
             "status": "Estado",
-            "language": "Idioma",
+            "language": "Idiomas",
             "bioLink": "Enlaces",
-            "joinCount": "Número de entradas",
-            "timeTogether": "Tiempo Juntos",
-            "lastSeen": "Última Vez Visto",
-            "lastActivity": "Última Actividad",
-            "lastLogin": "Último Inicio De Sesión",
-            "dateJoined": "Fecha De Registro",
+            "joinCount": "N.º de uniones",
+            "timeTogether": "Tiempo juntos",
+            "lastSeen": "Última vez visto",
+            "lastActivity": "Última actividad",
+            "lastLogin": "Último inicio de sesión",
+            "dateJoined": "Fecha de registro",
             "unfriend": "Eliminar amigo"
         },
         "profile": {
