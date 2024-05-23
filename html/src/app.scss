@@ -258,7 +258,9 @@ hr.x-vertical-divider {
     translate: 0 -50%;
     border-radius: 4px;
     background: #303133;
-    transition: background-color 0.4s, left 0.2s;
+    transition:
+        background-color 0.4s,
+        left 0.2s;
 }
 
 .el-menu-item.is-active::before {
@@ -405,6 +407,15 @@ img.friends-list-avatar {
     filter: none;
 }
 
+.x-friend-item > .avatar.active > img,
+.x-friend-item > .avatar.online > img,
+.x-friend-item > .avatar.joinme > img,
+.x-friend-item > .avatar.askme > img,
+.x-friend-item > .avatar.busy > img,
+.x-friend-item > .avatar.offline > img {
+    mask-image: url(masks/usercutout.svg);
+}
+
 .x-friend-item > .avatar.active::after,
 .x-friend-item > .avatar.online::after,
 .x-friend-item > .avatar.joinme::after,
@@ -412,13 +423,12 @@ img.friends-list-avatar {
 .x-friend-item > .avatar.busy::after,
 .x-friend-item > .avatar.offline::after {
     position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 8px;
-    height: 8px;
+    right: 1px;
+    bottom: 1px;
+    width: 9px;
+    height: 9px;
     content: '';
     background: #909399;
-    border: 2px solid #fff;
     border-radius: 50%;
 }
 
@@ -432,14 +442,17 @@ img.friends-list-avatar {
 
 .x-friend-item > .avatar.joinme::after {
     background: #409eff;
+    mask-image: url(masks/joinme.svg);
 }
 
 .x-friend-item > .avatar.askme::after {
     background: #ff9500;
+    mask-image: url(masks/askme.svg);
 }
 
 .x-friend-item > .avatar.busy::after {
     background: #ff2c2c;
+    mask-image: url(masks/busy.svg);
 }
 
 .x-friend-item > .avatar.offline::after {
@@ -559,14 +572,17 @@ i.x-user-status.online {
 
 i.x-user-status.joinme {
     background: #409eff;
+    mask-image: url(masks/joinme.svg);
 }
 
 i.x-user-status.askme {
     background: #ff9500;
+    mask-image: url(masks/askme.svg);
 }
 
 i.x-user-status.busy {
     background: #ff2c2c;
+    mask-image: url(masks/busy.svg);
 }
 
 .x-tag-friend {
@@ -748,7 +764,7 @@ i.x-user-status.busy {
 
 .el-dialog,
 .el-message-box {
-    border-radius: 10px;
+    border-radius: 28px;
 }
 
 .el-tabs__nav-wrap::after {
