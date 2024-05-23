@@ -217,9 +217,10 @@
                     "header": "Избранные друзья",
                     "group_placeholder": "Выбор групп"
                 },
-                "game_log": {
+                "logging": {
                     "header": "Журнал игры",
-                    "resource_load": "Запись загрузки ресурсов Udon"
+                    "resource_load": "Запись загрузки ресурсов Udon",
+                    "empty_avatar": "аватаров в ленту без имен"
                 },
                 "automation": {
                     "header": "Автоматизация",
@@ -1031,6 +1032,7 @@
             "content_violence": "Насилие",
             "content_adult": "Для взрослых",
             "content_sex": "Сексуальные",
+            "custom_tags_placeholder": "Пользовательские теги",
             "select_all": "Выбрать все",
             "select_none": "Очистить",
             "cancel": "Отмена",
