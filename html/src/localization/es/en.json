@@ -93,8 +93,8 @@
             "avatars": {
                 "header": "Avatares"
             },
-            "bulk_unfavorite_mode": "Eliminar amigos en masa",
-            "bulk_unfavorite_selection": "Quitar favoritos en masa",
+            "bulk_unfavorite_mode": "Eliminar favoritos en masa",
+            "bulk_unfavorite_selection": "Eliminar favoritos seleccionados",
             "refresh_tooltip": "Actualizar todos los favoritos",
             "export": "Exportar",
             "import": "Importar",
@@ -124,7 +124,7 @@
         },
         "friend_list": {
             "header": "Lista de Amigos",
-            "bulk_unfriend": "Modo eliminar amigos en masa",
+            "bulk_unfriend": "Eliminar amigos en masa",
             "bulk_unfriend_selection": "Eliminar amigos seleccionados",
             "load": "Cargar entradas faltantes",
             "load_tooltip": "Cargar",
