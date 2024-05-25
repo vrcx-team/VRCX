@@ -23376,7 +23376,7 @@ speechSynthesis.getVoices();
         var fileId = args.params.fileId;
         var avatarName = '';
         var imageName = args.json.name;
-        var avatarNameRegex = /Avatar - (.*) - Image -/g.exec(imageName);
+        var avatarNameRegex = /(?:A|a)vatar - (.*) - (?:I|i)mage -/g.exec(imageName);
         if (avatarNameRegex) {
             avatarName = this.replaceBioSymbols(avatarNameRegex[1]);
         }
