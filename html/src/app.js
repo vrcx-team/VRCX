@@ -156,6 +156,19 @@ speechSynthesis.getVoices();
         return false;
     };
 
+    var arraysMatch = function (a, b) {
+        if (!Array.isArray(a) || !Array.isArray(b)) {
+            return false;
+        }
+        return (
+            a.length === b.length &&
+            a.every(
+                (element, index) =>
+                    JSON.stringify(element) === JSON.stringify(b[index])
+            )
+        );
+    };
+
     var escapeTag = function (tag) {
         var s = String(tag);
         return s.replace(/["&'<>]/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -1206,17 +1219,23 @@ speechSynthesis.getVoices();
 
     Vue.component('avatar-info', {
         template:
-            '<div @click="confirm" class="avatar-info"><span style="margin-right:5px">{{ avatarName }}</span><span :class="color">{{ avatarType }}</span></div>',
+            '<div @click="confirm" class="avatar-info">' +
+            '<span style="margin-right:5px">{{ avatarName }}</span>' +
+            '<span style="margin-right:5px" :class="color">{{ avatarType }}</span>' +
+            '<span style="color:#909399;font-family:monospace;font-size:12px;">{{ avatarTags }}</span>' +
+            '</div>',
         props: {
             imageurl: String,
             userid: String,
             hintownerid: String,
-            hintavatarname: String
+            hintavatarname: String,
+            avatartags: Array
         },
         data() {
             return {
                 avatarName: this.avatarName,
                 avatarType: this.avatarType,
+                avatarTags: this.avatarTags,
                 color: this.color
             };
         },
@@ -1226,9 +1245,9 @@ speechSynthesis.getVoices();
                 this.avatarName = '';
                 this.avatarType = '';
                 this.color = '';
+                this.avatarTags = '';
                 if (!this.imageurl) {
                     this.avatarName = '-';
-                    return;
                 } else if (this.hintownerid) {
                     this.avatarName = this.hintavatarname;
                     this.ownerId = this.hintownerid;
@@ -1251,6 +1270,20 @@ speechSynthesis.getVoices();
                     this.color = 'avatar-info-public';
                     this.avatarType = '(public)';
                 }
+                if (typeof this.avatartags === 'object') {
+                    var tagString = '';
+                    for (var i = 0; i < this.avatartags.length; i++) {
+                        var tagName = this.avatartags[i].replace(
+                            'content_',
+                            ''
+                        );
+                        tagString += tagName;
+                        if (i < this.avatartags.length - 1) {
+                            tagString += ', ';
+                        }
+                    }
+                    this.avatarTags = tagString;
+                }
             },
             confirm() {
                 if (!this.imageurl) {
@@ -1268,6 +1301,9 @@ speechSynthesis.getVoices();
                 this.parse();
             },
             userid() {
+                this.parse();
+            },
+            avatartags() {
                 this.parse();
             }
         },
@@ -1380,9 +1416,11 @@ speechSynthesis.getVoices();
 
         this.applyUser({
             allowAvatarCopying: json.allowAvatarCopying,
+            badges: json.badges,
             bio: json.bio,
             bioLinks: json.bioLinks,
             currentAvatarImageUrl: json.currentAvatarImageUrl,
+            currentAvatarTags: json.currentAvatarTags,
             currentAvatarThumbnailImageUrl: json.currentAvatarThumbnailImageUrl,
             date_joined: json.date_joined,
             developerType: json.developerType,
@@ -1652,6 +1690,10 @@ speechSynthesis.getVoices();
     };
 
     API.applyPresenceGroups = function (ref) {
+        if (!this.currentUserGroupsInit) {
+            // wait for init before diffing
+            return;
+        }
         var groups = ref.presence?.groups;
         if (!groups) {
             console.error('API.applyPresenceGroups: invalid groups', ref);
@@ -1707,6 +1749,7 @@ speechSynthesis.getVoices();
                 accountDeletionLog: null,
                 activeFriends: [],
                 allowAvatarCopying: false,
+                badges: [],
                 bio: '',
                 bioLinks: [],
                 currentAvatar: '',
@@ -1875,9 +1918,11 @@ speechSynthesis.getVoices();
         if (typeof ref === 'undefined') {
             ref = {
                 allowAvatarCopying: false,
+                badges: [],
                 bio: '',
                 bioLinks: [],
                 currentAvatarImageUrl: '',
+                currentAvatarTags: [],
                 currentAvatarThumbnailImageUrl: '',
                 date_joined: '',
                 developerType: '',
@@ -1939,7 +1984,10 @@ speechSynthesis.getVoices();
             }
             if (ref.location === 'traveling') {
                 ref.$location = this.parseLocation(ref.travelingToLocation);
-                if (!this.currentTravelers.has(ref.id)) {
+                if (
+                    !this.currentTravelers.has(ref.id) &&
+                    ref.travelingToLocation
+                ) {
                     var travelRef = {
                         created_at: new Date().toJSON(),
                         ...ref
@@ -2003,7 +2051,11 @@ speechSynthesis.getVoices();
                 }
             }
             for (var prop in ref) {
-                if (ref[prop] !== Object(ref[prop])) {
+                if (Array.isArray(ref[prop]) && Array.isArray($ref[prop])) {
+                    if (!arraysMatch(ref[prop], $ref[prop])) {
+                        props[prop] = true;
+                    }
+                } else if (ref[prop] !== Object(ref[prop])) {
                     props[prop] = true;
                 }
             }
@@ -4371,6 +4423,7 @@ speechSynthesis.getVoices();
                 }
                 this.refreshFavoriteItems();
                 this.refreshFavoriteGroups();
+                $app.updateLocalFavoriteFriends();
                 this.isFavoriteLoading = false;
             }
         });
@@ -10171,14 +10224,17 @@ speechSynthesis.getVoices();
             $app.updateFriendGPS(ref.id);
         }
         if (
-            (props.currentAvatarImageUrl ||
+            ((props.currentAvatarImageUrl ||
                 props.currentAvatarThumbnailImageUrl) &&
-            !ref.profilePicOverride
+                !ref.profilePicOverride) ||
+            props.currentAvatarTags
         ) {
             var currentAvatarImageUrl = '';
             var previousCurrentAvatarImageUrl = '';
             var currentAvatarThumbnailImageUrl = '';
             var previousCurrentAvatarThumbnailImageUrl = '';
+            var currentAvatarTags = '';
+            var previousCurrentAvatarTags = '';
             if (props.currentAvatarImageUrl) {
                 currentAvatarImageUrl = props.currentAvatarImageUrl[0];
                 previousCurrentAvatarImageUrl = props.currentAvatarImageUrl[1];
@@ -10197,27 +10253,59 @@ speechSynthesis.getVoices();
                 previousCurrentAvatarThumbnailImageUrl =
                     ref.currentAvatarThumbnailImageUrl;
             }
-            var avatarInfo = {
-                ownerId: '',
-                avatarName: ''
-            };
-            try {
-                avatarInfo = await $app.getAvatarName(currentAvatarImageUrl);
-            } catch (err) {}
-            var feed = {
-                created_at: new Date().toJSON(),
-                type: 'Avatar',
-                userId: ref.id,
-                displayName: ref.displayName,
-                ownerId: avatarInfo.ownerId,
-                avatarName: avatarInfo.avatarName,
-                currentAvatarImageUrl,
-                currentAvatarThumbnailImageUrl,
-                previousCurrentAvatarImageUrl,
-                previousCurrentAvatarThumbnailImageUrl
-            };
-            $app.addFeed(feed);
-            database.addAvatarToDatabase(feed);
+            if (props.currentAvatarTags) {
+                currentAvatarTags = props.currentAvatarTags[0];
+                previousCurrentAvatarTags = props.currentAvatarTags[1];
+                if (
+                    ref.profilePicOverride &&
+                    !props.currentAvatarThumbnailImageUrl
+                ) {
+                    // forget last seen avatar
+                    ref.currentAvatarImageUrl = '';
+                    ref.currentAvatarThumbnailImageUrl = '';
+                }
+            } else {
+                currentAvatarTags = ref.currentAvatarTags;
+                previousCurrentAvatarTags = ref.currentAvatarTags;
+            }
+            if (this.logEmptyAvatars || ref.currentAvatarImageUrl) {
+                var avatarInfo = {
+                    ownerId: '',
+                    avatarName: ''
+                };
+                try {
+                    avatarInfo = await $app.getAvatarName(
+                        currentAvatarImageUrl
+                    );
+                } catch (err) {}
+                var previousAvatarInfo = {
+                    ownerId: '',
+                    avatarName: ''
+                };
+                try {
+                    previousAvatarInfo = await $app.getAvatarName(
+                        previousCurrentAvatarImageUrl
+                    );
+                } catch (err) {}
+                var feed = {
+                    created_at: new Date().toJSON(),
+                    type: 'Avatar',
+                    userId: ref.id,
+                    displayName: ref.displayName,
+                    ownerId: avatarInfo.ownerId,
+                    previousOwnerId: previousAvatarInfo.ownerId,
+                    avatarName: avatarInfo.avatarName,
+                    previousAvatarName: previousAvatarInfo.avatarName,
+                    currentAvatarImageUrl,
+                    currentAvatarThumbnailImageUrl,
+                    previousCurrentAvatarImageUrl,
+                    previousCurrentAvatarThumbnailImageUrl,
+                    currentAvatarTags,
+                    previousCurrentAvatarTags
+                };
+                $app.addFeed(feed);
+                database.addAvatarToDatabase(feed);
+            }
         }
         if (props.status || props.statusDescription) {
             var status = '';
@@ -11909,6 +11997,11 @@ speechSynthesis.getVoices();
                     }
                 } else if (data.Parameters[245]['0'] === 13) {
                     var msg = data.Parameters[245]['2'];
+                    if (typeof msg === 'string') {
+                        var displayName =
+                            data.Parameters[245]['14']?.targetDisplayName;
+                        msg = msg.replace('{{targetDisplayName}}', displayName);
+                    }
                     this.addEntryPhotonEvent({
                         photonId,
                         text: msg,
@@ -15514,10 +15607,18 @@ speechSynthesis.getVoices();
         'VRCX_logResourceLoad',
         false
     );
-    $app.methods.saveGameLogOptions = async function () {
+    $app.data.logEmptyAvatars = await configRepository.getBool(
+        'VRCX_logEmptyAvatars',
+        false
+    );
+    $app.methods.saveLoggingOptions = async function () {
         await configRepository.setBool(
             'VRCX_logResourceLoad',
             this.logResourceLoad
+        );
+        await configRepository.setBool(
+            'VRCX_logEmptyAvatars',
+            this.logEmptyAvatars
         );
     };
     $app.data.autoStateChange = await configRepository.getString(
@@ -18010,6 +18111,20 @@ speechSynthesis.getVoices();
         return avatars;
     };
 
+    $app.methods.lookupAvatarByImageFileId = async function (authorId, fileId) {
+        var length = this.avatarRemoteDatabaseProviderList.length;
+        for (var i = 0; i < length; ++i) {
+            var url = this.avatarRemoteDatabaseProviderList[i];
+            var avatarArray = await this.lookupAvatarsByAuthor(url, authorId);
+            for (var avatar of avatarArray) {
+                if (extractFileId(avatar.imageUrl) === fileId) {
+                    return avatar.id;
+                }
+            }
+        }
+        return null;
+    };
+
     $app.methods.lookupAvatarsByAuthor = async function (url, authorId) {
         var avatars = [];
         if (!url) {
@@ -18504,7 +18619,7 @@ speechSynthesis.getVoices();
             }
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                this.compareUnityVersion(unityPackage.unityVersion)
+                this.compareUnityVersion(unityPackage.unitySortNumber)
             ) {
                 assetUrl = unityPackage.assetUrl;
                 break;
@@ -19272,7 +19387,7 @@ speechSynthesis.getVoices();
                         !assetUrl &&
                         unityPackage.platform === 'standalonewindows' &&
                         unityPackage.variant === 'standard' &&
-                        this.compareUnityVersion(unityPackage.unityVersion)
+                        this.compareUnityVersion(unityPackage.unitySortNumber)
                     ) {
                         assetUrl = unityPackage.assetUrl;
                     }
@@ -19487,18 +19602,14 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.checkAvatarCacheRemote = async function (fileId, ownerUserId) {
-        var avatarId = '';
         if (this.avatarRemoteDatabase) {
-            var data = await this.lookupAvatars('authorId', ownerUserId);
-            if (data && typeof data === 'object') {
-                data.forEach((avatar) => {
-                    if (extractFileId(avatar.imageUrl) === fileId) {
-                        avatarId = avatar.id;
-                    }
-                });
-            }
+            var avatarId = await this.lookupAvatarByImageFileId(
+                ownerUserId,
+                fileId
+            );
+            return avatarId;
         }
-        return avatarId;
+        return null;
     };
 
     $app.methods.showAvatarAuthorDialog = async function (
@@ -19749,16 +19860,6 @@ speechSynthesis.getVoices();
                 var D = this.inviteDialog;
                 if (action !== 'confirm' || D.loading === true) {
                     return;
-                }
-                if (
-                    API.currentUser.status === 'busy' &&
-                    D.userIds.includes(API.currentUser.id)
-                ) {
-                    this.$message({
-                        message:
-                            "You may not receive this invite in 'Do Not Disturb' mode",
-                        type: 'error'
-                    });
                 }
                 D.loading = true;
                 var inviteLoop = () => {
@@ -20241,18 +20342,10 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.selfInvite = function (location, shortName) {
+        if (!this.isRealInstance(location)) {
+            return;
+        }
         var L = API.parseLocation(location);
-        if (L.isOffline || L.isTraveling || L.worldId === '') {
-            return;
-        }
-        if (API.currentUser.status === 'busy') {
-            this.$message({
-                message:
-                    "You cannot invite yourself in 'Do Not Disturb' status",
-                type: 'error'
-            });
-            return;
-        }
         API.selfInvite({
             instanceId: L.instanceId,
             worldId: L.worldId,
@@ -20603,6 +20696,8 @@ speechSynthesis.getVoices();
         ownAvatars: [],
         selectedCount: 0,
         forceUpdate: 0,
+        selectedTags: [],
+        selectedTagsCsv: '',
         contentHorror: false,
         contentGore: false,
         contentViolence: false,
@@ -20617,6 +20712,8 @@ speechSynthesis.getVoices();
         D.loading = false;
         D.ownAvatars = [];
         D.forceUpdate = 0;
+        D.selectedTags = [];
+        D.selectedTagsCsv = '';
         D.contentHorror = false;
         D.contentGore = false;
         D.contentViolence = false;
@@ -20639,6 +20736,11 @@ speechSynthesis.getVoices();
                     break;
                 case 'content_sex':
                     D.contentSex = true;
+                    break;
+                default:
+                    if (tag.startsWith('content_')) {
+                        D.selectedTags.push(tag.substring(8));
+                    }
                     break;
             }
         });
@@ -20667,6 +20769,84 @@ speechSynthesis.getVoices();
             }
         }
         this.updateAvatarTagsSelection();
+        this.updateSelectedAvatarTags();
+    };
+
+    $app.methods.updateSelectedAvatarTags = function () {
+        var D = this.setAvatarTagsDialog;
+        if (D.contentHorror) {
+            if (!D.selectedTags.includes('content_horror')) {
+                D.selectedTags.push('content_horror');
+            }
+        } else if (D.selectedTags.includes('content_horror')) {
+            D.selectedTags.splice(D.selectedTags.indexOf('content_horror'), 1);
+        }
+        if (D.contentGore) {
+            if (!D.selectedTags.includes('content_gore')) {
+                D.selectedTags.push('content_gore');
+            }
+        } else if (D.selectedTags.includes('content_gore')) {
+            D.selectedTags.splice(D.selectedTags.indexOf('content_gore'), 1);
+        }
+        if (D.contentViolence) {
+            if (!D.selectedTags.includes('content_violence')) {
+                D.selectedTags.push('content_violence');
+            }
+        } else if (D.selectedTags.includes('content_violence')) {
+            D.selectedTags.splice(
+                D.selectedTags.indexOf('content_violence'),
+                1
+            );
+        }
+        if (D.contentAdult) {
+            if (!D.selectedTags.includes('content_adult')) {
+                D.selectedTags.push('content_adult');
+            }
+        } else if (D.selectedTags.includes('content_adult')) {
+            D.selectedTags.splice(D.selectedTags.indexOf('content_adult'), 1);
+        }
+        if (D.contentSex) {
+            if (!D.selectedTags.includes('content_sex')) {
+                D.selectedTags.push('content_sex');
+            }
+        } else if (D.selectedTags.includes('content_sex')) {
+            D.selectedTags.splice(D.selectedTags.indexOf('content_sex'), 1);
+        }
+
+        D.selectedTagsCsv = D.selectedTags.join(',').replace(/content_/g, '');
+    };
+
+    $app.methods.updateInputAvatarTags = function () {
+        var D = this.setAvatarTagsDialog;
+        D.contentHorror = false;
+        D.contentGore = false;
+        D.contentViolence = false;
+        D.contentAdult = false;
+        D.contentSex = false;
+        var tags = D.selectedTagsCsv.split(',');
+        D.selectedTags = [];
+        for (var tag of tags) {
+            switch (tag) {
+                case 'horror':
+                    D.contentHorror = true;
+                    break;
+                case 'gore':
+                    D.contentGore = true;
+                    break;
+                case 'violence':
+                    D.contentViolence = true;
+                    break;
+                case 'adult':
+                    D.contentAdult = true;
+                    break;
+                case 'sex':
+                    D.contentSex = true;
+                    break;
+            }
+            if (!D.selectedTags.includes(`content_${tag}`)) {
+                D.selectedTags.push(`content_${tag}`);
+            }
+        }
     };
 
     $app.data.avatarContentTags = [
@@ -20692,47 +20872,12 @@ speechSynthesis.getVoices();
                 if (!ref.$selected) {
                     continue;
                 }
-                var tags = ref.tags;
-                if (D.contentHorror) {
-                    if (!tags.includes('content_horror')) {
-                        tags.push('content_horror');
+                var tags = [...D.selectedTags];
+                for (var tag of ref.tags) {
+                    if (!tag.startsWith('content_')) {
+                        tags.push(tag);
                     }
-                } else if (tags.includes('content_horror')) {
-                    tags.splice(tags.indexOf('content_horror'), 1);
                 }
-
-                if (D.contentGore) {
-                    if (!tags.includes('content_gore')) {
-                        tags.push('content_gore');
-                    }
-                } else if (tags.includes('content_gore')) {
-                    tags.splice(tags.indexOf('content_gore'), 1);
-                }
-
-                if (D.contentViolence) {
-                    if (!tags.includes('content_violence')) {
-                        tags.push('content_violence');
-                    }
-                } else if (tags.includes('content_violence')) {
-                    tags.splice(tags.indexOf('content_violence'), 1);
-                }
-
-                if (D.contentAdult) {
-                    if (!tags.includes('content_adult')) {
-                        tags.push('content_adult');
-                    }
-                } else if (tags.includes('content_adult')) {
-                    tags.splice(tags.indexOf('content_adult'), 1);
-                }
-
-                if (D.contentSex) {
-                    if (!tags.includes('content_sex')) {
-                        tags.push('content_sex');
-                    }
-                } else if (tags.includes('content_sex')) {
-                    tags.splice(tags.indexOf('content_sex'), 1);
-                }
-
                 await API.saveAvatar({
                     id: ref.id,
                     tags
@@ -21804,17 +21949,6 @@ speechSynthesis.getVoices();
         var I = this.sendInviteDialog;
         var J = this.inviteDialog;
         if (J.visible) {
-            if (
-                API.currentUser.status === 'busy' &&
-                J.userIds.includes(API.currentUser.id)
-            ) {
-                this.$message({
-                    message:
-                        "You can't invite yourself in 'Do Not Disturb' mode",
-                    type: 'error'
-                });
-                return;
-            }
             var inviteLoop = () => {
                 if (J.userIds.length > 0) {
                     var receiverUserId = J.userIds.shift();
@@ -21974,17 +22108,6 @@ speechSynthesis.getVoices();
         var D = this.sendInviteDialog;
         var J = this.inviteDialog;
         if (J.visible) {
-            if (
-                API.currentUser.status === 'busy' &&
-                J.userIds.includes(API.currentUser.id)
-            ) {
-                this.$message({
-                    message:
-                        "You can't invite yourself in 'Do Not Disturb' mode",
-                    type: 'error'
-                });
-                return;
-            }
             var inviteLoop = () => {
                 if (J.userIds.length > 0) {
                     var receiverUserId = J.userIds.shift();
@@ -24141,7 +24264,7 @@ speechSynthesis.getVoices();
             }
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                this.compareUnityVersion(unityPackage.unityVersion)
+                this.compareUnityVersion(unityPackage.unitySortNumber)
             ) {
                 assetUrl = unityPackage.assetUrl;
                 break;
@@ -24307,7 +24430,7 @@ speechSynthesis.getVoices();
             }
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                this.compareUnityVersion(unityPackage.unityVersion)
+                this.compareUnityVersion(unityPackage.unitySortNumber)
             ) {
                 assetUrl = unityPackage.assetUrl;
                 break;
@@ -24431,7 +24554,7 @@ speechSynthesis.getVoices();
                 }
                 if (
                     unityPackage.platform === 'standalonewindows' &&
-                    this.compareUnityVersion(unityPackage.unityVersion)
+                    this.compareUnityVersion(unityPackage.unitySortNumber)
                 ) {
                     assetUrl = unityPackage.assetUrl;
                     break;
@@ -24451,7 +24574,7 @@ speechSynthesis.getVoices();
                 var unityPackage = unityPackages[i];
                 if (
                     unityPackage.platform === 'standalonewindows' &&
-                    this.compareUnityVersion(unityPackage.unityVersion)
+                    this.compareUnityVersion(unityPackage.unitySortNumber)
                 ) {
                     assetUrl = unityPackage.assetUrl;
                     break;
@@ -24642,10 +24765,10 @@ speechSynthesis.getVoices();
     $app.methods.getCurrentUserGroups = async function () {
         var args = await API.getGroups({ userId: API.currentUser.id });
         API.currentUserGroups.clear();
-        args.json.forEach((group) => {
+        for (var group of args.json) {
             var ref = API.applyGroup(group);
             API.currentUserGroups.set(group.id, ref);
-        });
+        }
         await API.getGroupPermissions({ userId: API.currentUser.id });
         this.saveCurrentUserGroups();
     };
@@ -25365,21 +25488,47 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.compareUnityVersion = function (version) {
+    $app.methods.compareUnityVersion = function (unitySortNumber) {
         if (!API.cachedConfig.sdkUnityVersion) {
             console.error('No cachedConfig.sdkUnityVersion');
             return false;
         }
-        var currentUnityVersion = API.cachedConfig.sdkUnityVersion.replace(
-            /\D/g,
-            ''
-        );
-        // limit to 8 characters because 2019.4.31f1c1 is a thing
-        // limit to 7 characters because 2022361 is a thing
-        currentUnityVersion = currentUnityVersion.slice(0, 7);
-        var assetVersion = version.replace(/\D/g, '');
-        assetVersion = assetVersion.slice(0, 7);
-        if (parseInt(assetVersion, 10) <= parseInt(currentUnityVersion, 10)) {
+
+        // 2022.3.6f1  2022 03 06 000
+        // 2019.4.31f1 2019 04 31 000
+        // 5.3.4p1     5    03 04 010
+        // 2019.4.31f1c1 is a thing
+        var array = API.cachedConfig.sdkUnityVersion.split('.');
+        if (array.length < 3) {
+            console.error('Invalid cachedConfig.sdkUnityVersion');
+            return false;
+        }
+        var currentUnityVersion = array[0];
+        currentUnityVersion += array[1].padStart(2, '0');
+        var indexFirstLetter = array[2].search(/[a-zA-Z]/);
+        if (indexFirstLetter > -1) {
+            currentUnityVersion += array[2]
+                .substr(0, indexFirstLetter)
+                .padStart(2, '0');
+            currentUnityVersion += '0';
+            var letter = array[2].substr(indexFirstLetter, 1);
+            if (letter === 'p') {
+                currentUnityVersion += '1';
+            } else {
+                // f
+                currentUnityVersion += '0';
+            }
+            currentUnityVersion += '0';
+        } else {
+            // just in case
+            currentUnityVersion += '000';
+        }
+        // just in case
+        currentUnityVersion = currentUnityVersion.replace(/\D/g, '');
+
+        if (
+            parseInt(unitySortNumber, 10) <= parseInt(currentUnityVersion, 10)
+        ) {
             return true;
         }
         return false;
@@ -26299,12 +26448,14 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.isRealInstance = function (instanceId) {
+        if (!instanceId) {
+            return false;
+        }
         switch (instanceId) {
             case 'offline':
             case 'private':
             case 'traveling':
             case instanceId.startsWith('local'):
-            case '':
                 return false;
         }
         return true;
@@ -27746,7 +27897,7 @@ speechSynthesis.getVoices();
         this.localFavoriteFriends.clear();
         for (var ref of API.cachedFavorites.values()) {
             if (
-                ref.$isDeleted === false &&
+                !ref.$isDeleted &&
                 ref.type === 'friend' &&
                 (this.localFavoriteFriendsGroups.length === 0 ||
                     this.localFavoriteFriendsGroups.includes(ref.$groupKey))
@@ -29638,7 +29789,6 @@ speechSynthesis.getVoices();
             API.currentUserGroups.set(group.id, ref);
         }
 
-        var fetchedRoles = false;
         if (groups) {
             for (var i = 0; i < groups.length; i++) {
                 var groupId = groups[i];
@@ -29657,7 +29807,6 @@ speechSynthesis.getVoices();
                     });
                     var ref = API.applyGroup(args.json);
                     API.currentUserGroups.set(groupId, ref);
-                    fetchedRoles = true;
                     console.log(`Fetched group ${ref.name}`);
                 } catch (err) {
                     console.error(err);
@@ -29666,9 +29815,6 @@ speechSynthesis.getVoices();
         }
 
         this.currentUserGroupsInit = true;
-        if (fetchedRoles) {
-            this.saveCurrentUserGroups();
-        }
     };
 
     API.applyGroupMember = function (json) {
@@ -30037,23 +30183,18 @@ speechSynthesis.getVoices();
             // ignore this event if we were the one to trigger it
             return;
         }
-        // if (this.groupDialog.visible && this.groupDialog.id === groupId) {
-        //     this.showGroupDialog(groupId);
-        // }
         if (!API.currentUserGroups.has(groupId)) {
             API.currentUserGroups.set(groupId, {
                 id: groupId,
                 name: '',
                 iconUrl: ''
             });
-            if (this.friendLogInitStatus) {
-                API.getGroup({ groupId, includeRoles: true }).then((args) => {
-                    var ref = API.applyGroup(args.json);
-                    API.currentUserGroups.set(groupId, ref);
-                    this.saveCurrentUserGroups();
-                    return args;
-                });
-            }
+            API.getGroup({ groupId, includeRoles: true }).then((args) => {
+                var ref = API.applyGroup(args.json);
+                API.currentUserGroups.set(groupId, ref);
+                this.saveCurrentUserGroups();
+                return args;
+            });
         }
     };
 
@@ -30894,7 +31035,7 @@ speechSynthesis.getVoices();
             }
             if (
                 unityPackage.platform === 'standalonewindows' &&
-                this.compareUnityVersion(unityPackage.unityVersion)
+                this.compareUnityVersion(unityPackage.unitySortNumber)
             ) {
                 assetUrl = unityPackage.assetUrl;
                 break;

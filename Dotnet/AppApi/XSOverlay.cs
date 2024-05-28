@@ -25,15 +25,12 @@ namespace VRCX
             }
             
             var height = 110f;
-            if (content.Length > 100) {
-                height += 90f;
-            }
-            if (content.Length > 200) {
-                height += 75f;
-            }
-            if (content.Length > 300) {
-                height += 155f;
-            }
+            if (content.Length > 300)
+                height = 250f;
+            else if (content.Length > 200)
+                height = 200f;
+            else if (content.Length > 100)
+                height = 150f;
             
             var msg = new XSOMessage
             {

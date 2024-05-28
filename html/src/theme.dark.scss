@@ -321,6 +321,12 @@ button {
     border-left: 1px solid rgba(0, 0, 0, 0);
 }
 
+.el-radio-button.is-disabled .el-radio-button__inner {
+    background-color: unset;
+    border-color: unset;
+    border: 1px solid #666666;
+}
+
 .el-button {
     color: #fff;
 }
@@ -360,15 +366,6 @@ button {
 .x-friend-item:hover,
 .x-change-image-item:hover {
     background: #3e3e3e;
-}
-
-.x-friend-item > .avatar.active::after,
-.x-friend-item > .avatar.online::after,
-.x-friend-item > .avatar.joinme::after,
-.x-friend-item > .avatar.askme::after,
-.x-friend-item > .avatar.busy::after,
-.x-friend-item > .avatar.offline::after {
-    border: 2px solid #000;
 }
 
 .x-friend-item > .detail > .name {

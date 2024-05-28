@@ -1157,7 +1157,7 @@ namespace VRCX
         {
             // 2023.09.26 04:12:57 Warning    -  Could not Start OSC: Address already in use
             
-            if (string.Compare(line, offset, "VRChat could not start OSC server: ", 0, 21, StringComparison.Ordinal) != 0)
+            if (string.Compare(line, offset, "Could not Start OSC: ", 0, 21, StringComparison.Ordinal) != 0)
                 return false;
 
             AppendLog(new[]
@@ -1165,7 +1165,7 @@ namespace VRCX
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
                 "event",
-                line.Substring(offset)
+                $"VRChat could not start OSC server, You may be affected by (https://vrchat.canny.io/bug-reports/p/installexe-breaks-osc-port-binding) \"{line.Substring(offset)}\""
             });
             return true;
         }
