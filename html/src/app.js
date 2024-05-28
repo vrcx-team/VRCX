@@ -25173,6 +25173,31 @@ speechSynthesis.getVoices();
         ZZZ: 'Preview_B2-ZZZ.gif'
     };
 
+    $app.methods.generateEmojiStyle = function (
+        url,
+        fps,
+        frameCount,
+        animationStyle
+    ) {
+        let framesPerLine = 2;
+        if (frameCount > 4) framesPerLine = 4;
+        if (frameCount > 16) framesPerLine = 8;
+        const animationDurationMs = (1000 / fps) * frameCount;
+        const frameSize = 1024 / framesPerLine;
+        const scale = 100 / (frameSize / 200);
+        const animStyle =
+            animationStyle === 'pingpong' ? 'alternate' : 'infinite';
+        const style = `
+            transform: scale(${scale / 100});
+            transform-origin: top left;
+            width: ${frameSize}px;
+            height: ${frameSize}px;
+            background: url('${url}') 0 0;
+            animation: ${animationDurationMs}ms steps(1) 0s ${animStyle} normal none running animated-emoji-${frameCount};
+        `;
+        return style;
+    };
+
     // #endregion
     // #region Misc
 
