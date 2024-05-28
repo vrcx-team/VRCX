@@ -429,9 +429,10 @@
                         "avatar_database_provider": "Avatar Database Provider"
                     },
                     "youtube_api": {
-                        "header": "Youtube API",
+                        "header": "YouTube API",
                         "enable": "Enable",
-                        "youtube_api_key": "Youtube API Key"
+                        "youtube_api_key": "YouTube API Key",
+                        "enable_tooltip": "Fetches video titles for use with gameLog and duration for overlay progress bar"
                     },
                     "video_progress_pie": {
                         "header": "Progress pie overlay for videos",

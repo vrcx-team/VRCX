@@ -476,7 +476,7 @@ speechSynthesis.getVoices();
                     status === 401 &&
                     data.error.message === '"Missing Credentials"'
                 ) {
-                    if (endpoint.substring(0, 9) === 'auth/user') {
+                    if (endpoint === 'auth/user') {
                         this.$emit('AUTOLOGIN');
                     }
                     throw new Error('401: Missing Credentials');
@@ -10006,7 +10006,7 @@ speechSynthesis.getVoices();
         this.feedTable.loading = true;
         var vipList = [];
         if (this.feedTable.vip) {
-            vipList = this.getUserVipList();
+            vipList = Array.from(this.localFavoriteFriends.values());
         }
         this.feedTable.data = await database.lookupFeedDatabase(
             this.feedTable.search,
@@ -10014,16 +10014,6 @@ speechSynthesis.getVoices();
             vipList
         );
         this.feedTable.loading = false;
-    };
-
-    $app.methods.getUserVipList = function () {
-        var vipList = [];
-        API.cachedFavorites.forEach((favorite) => {
-            if (favorite.type === 'friend') {
-                vipList.push(favorite.favoriteId);
-            }
-        });
-        return vipList;
     };
 
     API.$on('LOGIN', async function (args) {

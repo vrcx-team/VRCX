@@ -487,6 +487,8 @@ mixin settingsTab()
                     span.header {{ $t('view.settings.advanced.advanced.youtube_api.header') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.youtube_api.enable') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.youtube_api.enable_tooltip')")
+                                i.el-icon-info
                         el-switch(v-model="youTubeApi" @change="changeYouTubeApi")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog") {{ $t('view.settings.advanced.advanced.youtube_api.youtube_api_key') }}
