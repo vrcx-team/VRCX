@@ -368,15 +368,6 @@ button {
     background: #3e3e3e;
 }
 
-.x-friend-item > .avatar.active::after,
-.x-friend-item > .avatar.online::after,
-.x-friend-item > .avatar.joinme::after,
-.x-friend-item > .avatar.askme::after,
-.x-friend-item > .avatar.busy::after,
-.x-friend-item > .avatar.offline::after {
-    border: 2px solid #000;
-}
-
 .x-friend-item > .detail > .name {
     color: #fff;
 }
