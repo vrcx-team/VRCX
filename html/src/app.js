@@ -5489,7 +5489,6 @@ speechSynthesis.getVoices();
             nextClearVRCXCacheCheck: 0,
             nextDiscordUpdate: 0,
             nextAutoStateChange: 0,
-            autoAcceptInviteRequests: 'Off',
             isDiscordActive: false,
             isGameRunning: false,
             isGameNoVR: true,
@@ -14790,57 +14789,45 @@ speechSynthesis.getVoices();
 
     API.$on('PIPELINE:NOTIFICATION', function (args) {
         var ref = args.json;
-        if (ref.type !== 'requestInvite' || $app.autoAcceptInviteRequests === 'Off')
+        if (
+            ref.type !== 'requestInvite' ||
+            $app.autoAcceptInviteRequests === 'Off'
+        )
             return;
         var currentLocation = $app.lastLocation.location;
         if ($app.lastLocation.location === 'traveling') {
             currentLocation = $app.lastLocationDestination;
         }
-        if (!currentLocation)
-            return;
+        if (!currentLocation) return;
         var L = this.parseLocation(currentLocation);
-        switch ($app.autoAcceptInviteRequests) {
-            case 'All Favorites':
-                if (!$app.favoriteFriends.some(x => x.id === ref.senderUserId)) 
-                    break;
-                this.getCachedWorld({
-                    worldId: L.worldId
-                }).then((args) => {
-                    this.sendInvite(
-                        {
-                            instanceId: L.tag,
-                            worldId: L.tag,
-                            worldName: args.ref.name,
-                            rsvp: true
-                        },
-                        ref.senderUserId
-                    ).then((_args) => {
-                        $app.$message('Auto Invite sent to ' + ref.senderUsername);
-                        return _args;
-                    });
-                });
-                break;
-            case 'Selected Favorites':
-                if (!$app.localFavoriteFriends.has(ref.senderUserId))
-                    break;
-                this.getCachedWorld({
-                    worldId: L.worldId
-                }).then((args) => {
-                    this.sendInvite(
-                        {
-                            instanceId: L.tag,
-                            worldId: L.tag,
-                            worldName: args.ref.name,
-                            rsvp: true
-                        },
-                        ref.senderUserId
-                    ).then((_args) => {
-                        $app.$message('Auto Invite sent to ' + ref.senderUsername);
-                        return _args;
-                    });
-                });
-                break;
-        }
+        if (
+            $app.autoAcceptInviteRequests === 'All Favorites' &&
+            !$app.favoriteFriends.some((x) => x.id === ref.senderUserId)
+        )
+            return;
+
+        if (
+            $app.autoAcceptInviteRequests === 'Selected Favorites' &&
+            !$app.localFavoriteFriends.has(ref.senderUserId)
+        )
+            return;
+
+        this.getCachedWorld({
+            worldId: L.worldId
+        }).then((args1) => {
+            this.sendInvite(
+                {
+                    instanceId: L.tag,
+                    worldId: L.tag,
+                    worldName: args1.ref.name,
+                    rsvp: true
+                },
+                ref.senderUserId
+            ).then((_args) => {
+                $app.$message(`Auto invite sent to ${ref.senderUsername}`);
+                return _args;
+            });
+        });
     });
 
     $app.data.unseenNotifications = [];
@@ -15578,6 +15565,9 @@ speechSynthesis.getVoices();
             await configRepository.getBool('VRCX_CloseToTray');
         VRCXStorage.Set('VRCX_CloseToTray', $app.data.isCloseToTray.toString());
         await configRepository.remove('VRCX_CloseToTray');
+    }
+    if (!(await VRCXStorage.Get('VRCX_DatabaseLocation'))) {
+        await VRCXStorage.Set('VRCX_DatabaseLocation', '');
     }
     $app.data.disableWorldDatabase =
         (await VRCXStorage.Get('VRCX_DisableWorldDatabase')) === 'true';
