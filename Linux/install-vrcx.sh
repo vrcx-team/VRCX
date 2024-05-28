@@ -3,7 +3,7 @@
 
 # change me
 steamapps=$HOME/.local/share/Steam/steamapps/compatdata
-download_url=https://github.com/vrcx-team/VRCX/releases/download/v2024.03.23/VRCX_20240323.zip
+download_url=https://github.com/vrcx-team/VRCX/releases/download/v2024.05.09/VRCX_20240509.zip
 
 export WINEPREFIX=$HOME/.local/share/vrcx
 
