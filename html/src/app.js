@@ -4856,6 +4856,12 @@ speechSynthesis.getVoices();
                         notificationId: content.id
                     }
                 });
+                this.$emit('PIPELINE:NOTIFICATION', {
+                    json: content,
+                    params: {
+                        notificationId: content.id
+                    }
+                });
                 break;
 
             case 'notification-v2':
@@ -5483,6 +5489,7 @@ speechSynthesis.getVoices();
             nextClearVRCXCacheCheck: 0,
             nextDiscordUpdate: 0,
             nextAutoStateChange: 0,
+            autoAcceptInviteRequests: 'Off',
             isDiscordActive: false,
             isGameRunning: false,
             isGameNoVR: true,
@@ -14791,6 +14798,61 @@ speechSynthesis.getVoices();
         $app.notificationTable.data = [];
     });
 
+    API.$on('PIPELINE:NOTIFICATION', function (args) {
+        var ref = args.json;
+        if (ref.type !== 'requestInvite' || $app.autoAcceptInviteRequests === 'Off')
+            return;
+        var currentLocation = $app.lastLocation.location;
+        if ($app.lastLocation.location === 'traveling') {
+            currentLocation = $app.lastLocationDestination;
+        }
+        if (!currentLocation)
+            return;
+        var L = this.parseLocation(currentLocation);
+        switch ($app.autoAcceptInviteRequests) {
+            case 'All Favorites':
+                if (!$app.favoriteFriends.some(x => x.id === ref.senderUserId)) 
+                    break;
+                this.getCachedWorld({
+                    worldId: L.worldId
+                }).then((args) => {
+                    this.sendInvite(
+                        {
+                            instanceId: L.tag,
+                            worldId: L.tag,
+                            worldName: args.ref.name,
+                            rsvp: true
+                        },
+                        ref.senderUserId
+                    ).then((_args) => {
+                        $app.$message('Auto Invite sent to ' + ref.senderUsername);
+                        return _args;
+                    });
+                });
+                break;
+            case 'Selected Favorites':
+                if (!$app.localFavoriteFriends.has(ref.senderUserId))
+                    break;
+                this.getCachedWorld({
+                    worldId: L.worldId
+                }).then((args) => {
+                    this.sendInvite(
+                        {
+                            instanceId: L.tag,
+                            worldId: L.tag,
+                            worldName: args.ref.name,
+                            rsvp: true
+                        },
+                        ref.senderUserId
+                    ).then((_args) => {
+                        $app.$message('Auto Invite sent to ' + ref.senderUsername);
+                        return _args;
+                    });
+                });
+                break;
+        }
+    });
+
     $app.data.unseenNotifications = [];
 
     API.$on('NOTIFICATION', function (args) {
@@ -15625,10 +15687,18 @@ speechSynthesis.getVoices();
         'VRCX_autoStateChange',
         'Off'
     );
+    $app.data.autoAcceptInviteRequests = await configRepository.getString(
+        'VRCX_autoAcceptInviteRequests',
+        'Off'
+    );
     $app.methods.saveAutomationOptions = async function () {
         await configRepository.setString(
             'VRCX_autoStateChange',
             this.autoStateChange
+        );
+        await configRepository.setString(
+            'VRCX_autoAcceptInviteRequests',
+            this.autoAcceptInviteRequests
         );
     };
     $app.data.vrcRegistryAutoBackup = await configRepository.getBool(
