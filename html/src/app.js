@@ -75,6 +75,13 @@ speechSynthesis.getVoices();
             $app.screenshotMetadataCarouselChange(carouselNavigation);
         }
     });
+
+    addEventListener('wheel', (event) => {
+        if (event.ctrlKey) {
+            $app.getZoomLevel();
+        }
+    });
+
     // #endregion
     // #region | Init: Define VRCX database helper functions, flush timer
 
@@ -1435,8 +1442,10 @@ speechSynthesis.getVoices();
             last_mobile: json.last_mobile,
             last_platform: json.last_platform,
             // location - missing from currentUser
+            // platform - missing from currentUser
             // note - missing from currentUser
             profilePicOverride: json.profilePicOverride,
+            // profilePicOverrideThumbnail - missing from currentUser
             pronouns: json.pronouns,
             state: json.state,
             status: json.status,
@@ -1937,8 +1946,10 @@ speechSynthesis.getVoices();
                 last_mobile: null,
                 last_platform: '',
                 location: '',
+                platform: '',
                 note: '',
                 profilePicOverride: '',
+                profilePicOverrideThumbnail: '',
                 pronouns: '',
                 state: '',
                 status: '',
@@ -5504,6 +5515,7 @@ speechSynthesis.getVoices();
         watch: {},
         el: '#x-app',
         async mounted() {
+            await this.initLanguage();
             await this.changeThemeMode();
             await AppApi.SetUserAgent();
             this.appVersion = await AppApi.GetVersion();
@@ -9688,56 +9700,60 @@ speechSynthesis.getVoices();
 
     $app.methods.userStatusClass = function (user, pendingOffline) {
         var style = {};
-        if (typeof user !== 'undefined') {
-            var id = '';
-            if (user.id) {
-                id = user.id;
-            } else if (user.userId) {
-                id = user.userId;
-            }
-            if (id === API.currentUser.id) {
-                return this.statusClass(user.status);
-            }
-            if (!user.isFriend) {
-                return style;
-            }
-            if (pendingOffline) {
-                // Pending offline
-                style.offline = true;
-            } else if (
-                user.status !== 'active' &&
-                user.location === 'private' &&
-                user.state === '' &&
-                id &&
-                !API.currentUser.onlineFriends.includes(id)
-            ) {
-                // temp fix
-                if (API.currentUser.activeFriends.includes(id)) {
-                    // Active
-                    style.active = true;
-                } else {
-                    // Offline
-                    style.offline = true;
-                }
-            } else if (user.state === 'active') {
+        if (typeof user === 'undefined') {
+            return style;
+        }
+        var id = '';
+        if (user.id) {
+            id = user.id;
+        } else if (user.userId) {
+            id = user.userId;
+        }
+        if (id === API.currentUser.id) {
+            return this.statusClass(user.status);
+        }
+        if (!user.isFriend) {
+            return style;
+        }
+        if (pendingOffline) {
+            // Pending offline
+            style.offline = true;
+        } else if (
+            user.status !== 'active' &&
+            user.location === 'private' &&
+            user.state === '' &&
+            id &&
+            !API.currentUser.onlineFriends.includes(id)
+        ) {
+            // temp fix
+            if (API.currentUser.activeFriends.includes(id)) {
                 // Active
                 style.active = true;
-            } else if (user.location === 'offline') {
+            } else {
                 // Offline
                 style.offline = true;
-            } else if (user.status === 'active') {
-                // Online
-                style.online = true;
-            } else if (user.status === 'join me') {
-                // Join Me
-                style.joinme = true;
-            } else if (user.status === 'ask me') {
-                // Ask Me
-                style.askme = true;
-            } else if (user.status === 'busy') {
-                // Do Not Disturb
-                style.busy = true;
             }
+        } else if (user.state === 'active') {
+            // Active
+            style.active = true;
+        } else if (user.location === 'offline') {
+            // Offline
+            style.offline = true;
+        } else if (user.status === 'active') {
+            // Online
+            style.online = true;
+        } else if (user.status === 'join me') {
+            // Join Me
+            style.joinme = true;
+        } else if (user.status === 'ask me') {
+            // Ask Me
+            style.askme = true;
+        } else if (user.status === 'busy') {
+            // Do Not Disturb
+            style.busy = true;
+        }
+        if (user.last_platform && user.last_platform !== 'standalonewindows') {
+            style.mobile = true;
         }
         return style;
     };
@@ -25616,6 +25632,9 @@ speechSynthesis.getVoices();
         if (this.displayVRCPlusIconsAsAvatar && user.userIcon) {
             return user.userIcon;
         }
+        if (user.profilePicOverrideThumbnail) {
+            return user.profilePicOverrideThumbnail;
+        }
         if (user.profilePicOverride) {
             return user.profilePicOverride;
         }
@@ -30915,26 +30934,25 @@ speechSynthesis.getVoices();
     $app.data.appLanguage =
         (await configRepository.getString('VRCX_appLanguage')) ?? 'en';
     i18n.locale = $app.data.appLanguage;
-    var initLanguage = async () => {
+    $app.methods.initLanguage = async function () {
         if (!(await configRepository.getString('VRCX_appLanguage'))) {
             var result = await AppApi.CurrentLanguage();
             if (!result) {
                 console.error('Failed to get current language');
-                $app.changeAppLanguage('en');
+                this.changeAppLanguage('en');
                 return;
             }
             var lang = result.split('-')[0];
             i18n.availableLocales.forEach((ref) => {
                 var refLang = ref.split('_')[0];
                 if (refLang === lang) {
-                    $app.changeAppLanguage(ref);
+                    this.changeAppLanguage(ref);
                 }
             });
         }
 
         $app.applyLanguageStrings();
     };
-    initLanguage();
 
     $app.methods.changeAppLanguage = function (language) {
         console.log('Language changed:', language);
@@ -32472,6 +32490,16 @@ speechSynthesis.getVoices();
     });
 
     // #endregion
+
+    $app.data.zoomLevel = ((await AppApi.GetZoom()) + 10) * 10;
+
+    $app.methods.getZoomLevel = async function () {
+        this.zoomLevel = ((await AppApi.GetZoom()) + 10) * 10;
+    };
+
+    $app.methods.setZoomLevel = function () {
+        AppApi.SetZoom(this.zoomLevel / 10 - 10);
+    };
 
     $app = new Vue($app);
     window.$app = $app;

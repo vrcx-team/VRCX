@@ -674,20 +674,21 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.statusClass = function (status) {
         var style = {};
-        if (typeof status !== 'undefined') {
-            if (status === 'active') {
-                // Online
-                style.online = true;
-            } else if (status === 'join me') {
-                // Join Me
-                style.joinme = true;
-            } else if (status === 'ask me') {
-                // Ask Me
-                style.askme = true;
-            } else if (status === 'busy') {
-                // Do Not Disturb
-                style.busy = true;
-            }
+        if (typeof status === 'undefined') {
+            return style;
+        }
+        if (status === 'active') {
+            // Online
+            style.online = true;
+        } else if (status === 'join me') {
+            // Join Me
+            style.joinme = true;
+        } else if (status === 'ask me') {
+            // Ask Me
+            style.askme = true;
+        } else if (status === 'busy') {
+            // Do Not Disturb
+            style.busy = true;
         }
         return style;
     };
@@ -708,7 +709,7 @@ Vue.component('marquee-text', MarqueeText);
                 text = `${worldName} ${L.accessTypeName}`;
             }
         }
-        return text;
+        return escapeTag(text);
     };
 
     $app.methods.notyClear = function () {

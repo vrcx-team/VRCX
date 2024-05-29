@@ -153,6 +153,9 @@ mixin settingsTab()
                             el-radio-button(label="pink") {{ $t('view.settings.appearance.appearance.theme_mode_pink') }}
                             el-radio-button(label="material3") {{ $t('view.settings.appearance.appearance.theme_mode_material3') }}
                     div.options-container-item
+                        span.name {{ $t('view.settings.appearance.appearance.zoom') }}
+                        el-input-number(size="small" v-model="zoomLevel" @change="setZoomLevel" :precision="0" style="width:128px")
+                    div.options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.vrcplus_profile_icons') }}
                         el-switch(v-model="displayVRCPlusIconsAsAvatar" @change="saveOpenVROption")
                     div.options-container-item
