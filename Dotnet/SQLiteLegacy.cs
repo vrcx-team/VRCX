@@ -11,7 +11,7 @@ namespace VRCX
     {
         public static readonly SQLiteLegacy Instance;
         private readonly ReaderWriterLockSlim m_ConnectionLock;
-        private readonly SQLiteConnection m_Connection;
+        private SQLiteConnection m_Connection;
 
         static SQLiteLegacy()
         {
@@ -21,13 +21,17 @@ namespace VRCX
         public SQLiteLegacy()
         {
             m_ConnectionLock = new ReaderWriterLockSlim();
-
-            var dataSource = Program.ConfigLocation;
-            m_Connection = new SQLiteConnection($"Data Source=\"{dataSource}\";Version=3;PRAGMA locking_mode=NORMAL;PRAGMA busy_timeout=5000", true);
         }
 
         internal void Init()
         {
+            var dataSource = Program.ConfigLocation;
+            var jsonDataSource = VRCXStorage.Instance.Get("VRCX_DatabaseLocation");
+            if (!string.IsNullOrEmpty(jsonDataSource))
+                dataSource = jsonDataSource;
+
+            m_Connection = new SQLiteConnection($"Data Source=\"{dataSource}\";Version=3;PRAGMA locking_mode=NORMAL;PRAGMA busy_timeout=5000", true);
+
             m_Connection.Open();
         }
 

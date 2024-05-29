@@ -142,8 +142,8 @@ namespace VRCX
             
 
             ProcessMonitor.Instance.Init();
-            SQLiteLegacy.Instance.Init();
             VRCXStorage.Load();
+            SQLiteLegacy.Instance.Init();
             CpuMonitor.Instance.Init();
             Discord.Instance.Init();
             WorldDBManager.Instance.Init();
