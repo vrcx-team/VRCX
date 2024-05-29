@@ -10,8 +10,8 @@ import elements_zh_TW from 'element-ui/lib/locale/lang/zh-TW';
 import ko from './ko/en.json' assert { type: 'JSON' };
 import elements_ko from 'element-ui/lib/locale/lang/ko';
 
-import zh_CN from './zh-CN/en.json' assert { type: 'JSON' };
-import elements_zh_CN from 'element-ui/lib/locale/lang/zh-CN';
+import zh_cn from './zh-CN/en.json' assert { type: 'JSON' };
+import elements_zh_cn from 'element-ui/lib/locale/lang/zh-cn';
 
 import fr from './fr/en.json' assert { type: 'JSON' };
 import elements_fr from 'element-ui/lib/locale/lang/fr';
@@ -30,7 +30,7 @@ import elements_pl from 'element-ui/lib/locale/lang/pl';
 
 const localized_en = { ...en, ...elements_en };
 const localized_zh_TW = { ...zh_TW, ...elements_zh_TW };
-const localized_zh_CN = { ...zh_CN, ...elements_zh_CN };
+const localized_zh_cn = { ...zh_cn, ...elements_zh_cn };
 const localized_ko = { ...ko, ...elements_ko };
 const localized_ja = { ...ja, ...elements_ja };
 const localized_fr = { ...fr, ...elements_fr };
@@ -43,7 +43,7 @@ export {
     localized_en as en,
     localized_zh_TW as zh_TW,
     localized_ko as ko,
-    localized_zh_CN as zh_CN,
+    localized_zh_cn as zh_cn,
     localized_ja as ja_JP,
     localized_fr as fr,
     localized_vi as vi,
