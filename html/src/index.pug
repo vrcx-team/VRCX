@@ -10,6 +10,7 @@ html
         link(rel="preconnect" href="https://d348imysud55la.cloudfront.net")
         link(rel="stylesheet" href="app.css")
         link(rel="stylesheet" href="flags.css")
+        link(rel="stylesheet" href="animated-emoji.css")
     body
         .x-app#x-app(style="display:none" @dragenter.prevent @dragover.prevent @drop.prevent)
             //- login
@@ -2501,8 +2502,11 @@ html
                             span {{ $t('dialog.gallery_icons.flipbook_info') }}
                         br
                         .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
-                            .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="cursor:default")
-                                img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
+                            .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)") 
+                                template(v-if="image.frames")
+                                    .avatar(:style="generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.animationStyle)")
+                                template(v-else)
+                                    img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="display:inline-block;margin:5px")
                                 span(v-if="image.loopStyle === 'pingpong'") #[i.el-icon-refresh.el-icon--left]
                                 span(style="margin-right:5px") {{ image.animationStyle }}

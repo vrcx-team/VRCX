@@ -476,7 +476,7 @@ speechSynthesis.getVoices();
                     status === 401 &&
                     data.error.message === '"Missing Credentials"'
                 ) {
-                    if (endpoint.substring(0, 9) === 'auth/user') {
+                    if (endpoint === 'auth/user') {
                         this.$emit('AUTOLOGIN');
                     }
                     throw new Error('401: Missing Credentials');
@@ -4851,6 +4851,12 @@ speechSynthesis.getVoices();
         switch (type) {
             case 'notification':
                 this.$emit('NOTIFICATION', {
+                    json: content,
+                    params: {
+                        notificationId: content.id
+                    }
+                });
+                this.$emit('PIPELINE:NOTIFICATION', {
                     json: content,
                     params: {
                         notificationId: content.id
@@ -9999,7 +10005,7 @@ speechSynthesis.getVoices();
         this.feedTable.loading = true;
         var vipList = [];
         if (this.feedTable.vip) {
-            vipList = this.getUserVipList();
+            vipList = Array.from(this.localFavoriteFriends.values());
         }
         this.feedTable.data = await database.lookupFeedDatabase(
             this.feedTable.search,
@@ -10007,16 +10013,6 @@ speechSynthesis.getVoices();
             vipList
         );
         this.feedTable.loading = false;
-    };
-
-    $app.methods.getUserVipList = function () {
-        var vipList = [];
-        API.cachedFavorites.forEach((favorite) => {
-            if (favorite.type === 'friend') {
-                vipList.push(favorite.favoriteId);
-            }
-        });
-        return vipList;
     };
 
     API.$on('LOGIN', async function (args) {
@@ -14791,6 +14787,49 @@ speechSynthesis.getVoices();
         $app.notificationTable.data = [];
     });
 
+    API.$on('PIPELINE:NOTIFICATION', function (args) {
+        var ref = args.json;
+        if (
+            ref.type !== 'requestInvite' ||
+            $app.autoAcceptInviteRequests === 'Off'
+        )
+            return;
+        var currentLocation = $app.lastLocation.location;
+        if ($app.lastLocation.location === 'traveling') {
+            currentLocation = $app.lastLocationDestination;
+        }
+        if (!currentLocation) return;
+        var L = this.parseLocation(currentLocation);
+        if (
+            $app.autoAcceptInviteRequests === 'All Favorites' &&
+            !$app.favoriteFriends.some((x) => x.id === ref.senderUserId)
+        )
+            return;
+
+        if (
+            $app.autoAcceptInviteRequests === 'Selected Favorites' &&
+            !$app.localFavoriteFriends.has(ref.senderUserId)
+        )
+            return;
+
+        this.getCachedWorld({
+            worldId: L.worldId
+        }).then((args1) => {
+            this.sendInvite(
+                {
+                    instanceId: L.tag,
+                    worldId: L.tag,
+                    worldName: args1.ref.name,
+                    rsvp: true
+                },
+                ref.senderUserId
+            ).then((_args) => {
+                $app.$message(`Auto invite sent to ${ref.senderUsername}`);
+                return _args;
+            });
+        });
+    });
+
     $app.data.unseenNotifications = [];
 
     API.$on('NOTIFICATION', function (args) {
@@ -15527,6 +15566,9 @@ speechSynthesis.getVoices();
         VRCXStorage.Set('VRCX_CloseToTray', $app.data.isCloseToTray.toString());
         await configRepository.remove('VRCX_CloseToTray');
     }
+    if (!(await VRCXStorage.Get('VRCX_DatabaseLocation'))) {
+        await VRCXStorage.Set('VRCX_DatabaseLocation', '');
+    }
     $app.data.disableWorldDatabase =
         (await VRCXStorage.Get('VRCX_DisableWorldDatabase')) === 'true';
     $app.methods.saveVRCXWindowOption = async function () {
@@ -15625,10 +15667,18 @@ speechSynthesis.getVoices();
         'VRCX_autoStateChange',
         'Off'
     );
+    $app.data.autoAcceptInviteRequests = await configRepository.getString(
+        'VRCX_autoAcceptInviteRequests',
+        'Off'
+    );
     $app.methods.saveAutomationOptions = async function () {
         await configRepository.setString(
             'VRCX_autoStateChange',
             this.autoStateChange
+        );
+        await configRepository.setString(
+            'VRCX_autoAcceptInviteRequests',
+            this.autoAcceptInviteRequests
         );
     };
     $app.data.vrcRegistryAutoBackup = await configRepository.getBool(
@@ -23376,7 +23426,7 @@ speechSynthesis.getVoices();
         var fileId = args.params.fileId;
         var avatarName = '';
         var imageName = args.json.name;
-        var avatarNameRegex = /Avatar - (.*) - Image -/g.exec(imageName);
+        var avatarNameRegex = /Avatar - (.*) - Image -/gi.exec(imageName);
         if (avatarNameRegex) {
             avatarName = this.replaceBioSymbols(avatarNameRegex[1]);
         }
@@ -25111,6 +25161,31 @@ speechSynthesis.getVoices();
         Splash: 'Preview_B2-SummerSplash.gif',
         Stop: 'Preview_B2-Stop.gif',
         ZZZ: 'Preview_B2-ZZZ.gif'
+    };
+
+    $app.methods.generateEmojiStyle = function (
+        url,
+        fps,
+        frameCount,
+        animationStyle
+    ) {
+        let framesPerLine = 2;
+        if (frameCount > 4) framesPerLine = 4;
+        if (frameCount > 16) framesPerLine = 8;
+        const animationDurationMs = (1000 / fps) * frameCount;
+        const frameSize = 1024 / framesPerLine;
+        const scale = 100 / (frameSize / 200);
+        const animStyle =
+            animationStyle === 'pingpong' ? 'alternate' : 'infinite';
+        const style = `
+            transform: scale(${scale / 100});
+            transform-origin: top left;
+            width: ${frameSize}px;
+            height: ${frameSize}px;
+            background: url('${url}') 0 0;
+            animation: ${animationDurationMs}ms steps(1) 0s ${animStyle} normal none running animated-emoji-${frameCount};
+        `;
+        return style;
     };
 
     // #endregion
