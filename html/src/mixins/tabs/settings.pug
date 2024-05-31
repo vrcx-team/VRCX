@@ -64,10 +64,10 @@ mixin settingsTab()
                                 span.name {{ $t("view.settings.general.general.repository_url") }}
                                 span.extra https://github.com/vrcx-team/VRCX
                         //- General | General | Support
-                        .x-friend-item(@click="openExternalLink('https://vrcx.pypy.moe/discord')")
+                        .x-friend-item(@click="openExternalLink('https://vrcx.app/discord')")
                             .detail
                                 span.name {{ $t("view.settings.general.general.support") }}
-                                span.extra https://vrcx.pypy.moe/discord
+                                span.extra https://vrcx.app/discord
                 //- General | VRCX Updater
                 +simpleSettingsCategory("view.settings.general.vrcx_updater.header")
                     div.options-container-item

@@ -2,18 +2,15 @@
 
 # <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.ico" width="64" height="64"> </img> VRCX
 
-[![GitHub релизы](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest) 
+[![GitHub релизы](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![Загрузки](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
-[![Статус GitHub Workflow](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml) 
-[![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx) 
-[![VRCX приглашение в Discord](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.pypy.moe/discord)
-
+[![Статус GitHub Workflow](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
+[![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx)
+[![VRCX приглашение в Discord](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
 | [English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | **Русский** | [Español](./README.es.md) | [Polski](./README.pl.md)
 
 VRCX является ассистентом/компаньоном приложением для VRChat, который предоставляет информацию о VRChat и помогает вам быстрее выполнять различные действия, связанные с VRChat в удобной форме, чем полагаться на простой VRChat клиент (настольный компьютер или VR), или только веб-сайт. Кроме того, в нем реализованы и другие удобные функции, о которых пойдет речь ниже.
-
-
 
 # Начало работы
 
@@ -21,35 +18,33 @@ VRCX является ассистентом/компаньоном прилож
 
 Скачать и запустить последнюю версию программы установки (`VRCX_Setup.exe`) можно [здесь](https://github.com/vrcx-team/VRCX/releases/latest).
 
-
-
 # Особенности
 
 <div align="left">
 
-- :family: Управление списками друзей и аватаров 
-    - Управляйте списками ваших друзей, миры/группы/аватары вне VRChat.
+- :family: Управление списками друзей и аватаров
+  - Управляйте списками ваших друзей, миры/группы/аватары вне VRChat.
   - Следите за активностью ваших друзей в мире/аватаре и проверьте их статус онлайн.
   - Следите за тем, когда вы добавляли их, и когда вы видели их в последний раз.
   - Посмотрите, сколько времени вы провели вместе в мирах и сколько раз.
   - Следите за изменениями в имени друга.
   - Сохраните заметки, чтобы вспомнить, как вы встретились.
-- :electric_plug: Автоматически запускает приложения при запуске VRChat 
-    - Вы можете настроить VRCX на запуск других приложений при запуске VRChat.
+- :electric_plug: Автоматически запускает приложения при запуске VRChat
+  - Вы можете настроить VRCX на запуск других приложений при запуске VRChat.
   - Например, при открытии VRChat вы можете запустить приложение OSC или программу для изменения голоса.
-- :floppy_disk: Сохранение мира 
-    - В мирах, поддерживающих эту функцию, VRCX может сохранять настройки мира, сохранять состояния, инвентарь и другие данные!
+- :floppy_disk: Сохранение мира
+  - В мирах, поддерживающих эту функцию, VRCX может сохранять настройки мира, сохранять состояния, инвентарь и другие данные!
   - **Примечание**: Для использования этой функции в настройках VRChat должна быть включена опция "Разрешить недоверенные URL'ы" ("Allow Untrusted URLs").
-  - Для разработчиков: [Вики страница - Сохранение мира (PWI)](https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI))
+  - Для разработчиков: [Вики страница - Сохранение мира (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
 - :mag: Поиск аватаров, пользователей, миров и групп
 - :earth_americas: Создает локальный, неограниченный список избранных миров
 - :camera: Храните данные о мире в фотографиях, которые вы делаете в игре, чтобы вы могли вспомнить тот мир, в котором вы сделали те классные фотографии, например... 6 месяцев назад!
-- :bell: Мониторинг/ответ на уведомления 
-    - Вы можете отправить/получать приглашения и запросы друзей от VRCX, а также посмотреть информацию об инстансе приглашений, которые вы получили.
+- :bell: Мониторинг/ответ на уведомления
+  - Вы можете отправить/получать приглашения и запросы друзей от VRCX, а также посмотреть информацию об инстансе приглашений, которые вы получили.
 - :scroll: Просмотр статистики/игроков для вашего текущего инстанса
 - :tv: Просмотрите ссылки на видеоролики, которые воспроизводятся в мире, в котором вы находитесь, а также различные другие записанные данные.
-- :bar_chart: Улучшенный Discord Rich Presence 
-    - Вы можете отобразить дополнительную информацию о вашем текущем инстансе в Discord.
+- :bar_chart: Улучшенный Discord Rich Presence
+  - Вы можете отобразить дополнительную информацию о вашем текущем инстансе в Discord.
   - Интеграция в мир для таких популярных миров, как PyPyDance, LSMedia, Movies&Chill и VRDancing.
   - Это включает в себя эскиз мира, имя, идентификатор инстанса и количество игроков, в зависимости от ваших настроек и приватность лобби. Вы также можете добавить кнопку присоединиться для публичных лобби!
 - :crystal_ball: VR-оверлей с настраиваемой прямой трансляцией всех поддерживаемых событий/уведомлений
@@ -58,15 +53,11 @@ VRCX является ассистентом/компаньоном прилож
 - :skull: Автоматический перезапуск и присоединение к последнему инстансу при сбое VRC
 - :left_right_arrow: Экспорт/импорт избранных групп
 
-
-
 ## Прочее
 
 - Хотите новый взгляд на VRCX? Посмотрите [Темы](https://github.com/vrcx-team/VRCX/wiki/Themes)
 - См. [инструкции по сборке](https://github.com/vrcx-team/VRCX/wiki/Building-from-source) VRCX из исходного кода.
 - Руководство по запуску VRCX на Linux можно найти [здесь](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux)
-
-
 
 # Скриншоты
 
@@ -142,8 +133,6 @@ VRCX - это внешний инструмент, использующий API 
 Она никак не модифицирует игру, а лишь ответственно использует API для предоставления тех возможностей, которые она предоставляет. Это не мод, не чит и не любая другая модификация игры.
 
 Ознакомиться с позицией VRChat по использованию API можно в канале #faq в VRChat Discord.
-
-
 
 ---
 

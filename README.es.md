@@ -2,8 +2,7 @@
 
 # <img src="https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.ico" width="64" height="64"> </img> VRCX
 
-[![Versión de GitHub](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest) [![Descargas](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest) [![Estado del Workflow de GitHub](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml) [![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx) [![Invitación al Discord de VRCX](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.pypy.moe/discord)
-
+[![Versión de GitHub](https://img.shields.io/github/release/vrcx-team/VRCX.svg)](https://github.com/vrcx-team/VRCX/releases/latest) [![Descargas](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest) [![Estado del Workflow de GitHub](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml) [![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx) [![Invitación al Discord de VRCX](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
 | [English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md) | [Italiano](./README.it.md) | [Русский](./README.ru_RU.md) | **Español** | [Polski](./README.pl.md)
 
@@ -32,7 +31,7 @@ Descargue y ejecute el último instalador (`VRCX_Setup.exe`) desde [aquí](https
 - :floppy_disk: World Persistence
   - ¡Para mundos que soportan la característica, VRCX puede guardar ajustes del mundo, guardar estados, inventarios y otros datos!
   - **Nota**: Para utilizar esta función, debe tener habilitado "Allow Untrusted URLs" en sus ajustes de VRChat.
-  - Para Desarrolladores: [Wiki Page - World Persistence (PWI)](https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI))
+  - Para Desarrolladores: [Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
 - :mag: Busca avatares, usuarios, mundos y grupos
 - :earth_americas: Construye una lista de favoritos en local y sin restricciones
 - :camera: Almacena los datos del mundo en las fotos que hagas en el juego, así podrás recordar ese mundo en el que hiciste esas fotos tan chulas como... ¡hace 6 meses!

@@ -13186,7 +13186,7 @@ speechSynthesis.getVoices();
                 )}&part=snippet,contentDetails&key=${apiKey}`,
                 method: 'GET',
                 headers: {
-                    Referer: 'https://vrcx.pypy.moe'
+                    Referer: 'https://vrcx.app'
                 }
             });
             var json = JSON.parse(response.data);
@@ -18109,7 +18109,7 @@ speechSynthesis.getVoices();
                     }?${type}=${encodeURIComponent(search)}&n=5000`,
                     method: 'GET',
                     headers: {
-                        Referer: 'https://vrcx.pypy.moe'
+                        Referer: 'https://vrcx.app'
                     }
                 });
                 var json = JSON.parse(response.data);
@@ -18185,7 +18185,7 @@ speechSynthesis.getVoices();
                 url: `${url}?authorId=${encodeURIComponent(authorId)}`,
                 method: 'GET',
                 headers: {
-                    Referer: 'https://vrcx.pypy.moe'
+                    Referer: 'https://vrcx.app'
                 }
             });
             var json = JSON.parse(response.data);
@@ -25305,13 +25305,13 @@ speechSynthesis.getVoices();
     $app.data.branches = {
         Stable: {
             name: 'Stable',
-            urlReleases: 'https://vrcx.pypy.moe/releases/vrcx-team.json',
-            urlLatest: 'https://vrcx.pypy.moe/releases/latest/vrcx-team.json'
+            urlReleases: 'https://api0.vrcx.app/releases/stable',
+            urlLatest: 'https://api0.vrcx.app/releases/stable/latest'
         },
         Nightly: {
             name: 'Nightly',
-            urlReleases: 'https://vrcx.pypy.moe/releases/natsumi-sama.json',
-            urlLatest: 'https://vrcx.pypy.moe/releases/latest/natsumi-sama.json'
+            urlReleases: 'https://api0.vrcx.app/releases/nightly',
+            urlLatest: 'https://api0.vrcx.app/releases/nightly/latest'
         }
     };
 
