@@ -75,6 +75,13 @@ speechSynthesis.getVoices();
             $app.screenshotMetadataCarouselChange(carouselNavigation);
         }
     });
+
+    addEventListener('wheel', (event) => {
+        if (event.ctrlKey) {
+            $app.getZoomLevel();
+        }
+    });
+
     // #endregion
     // #region | Init: Define VRCX database helper functions, flush timer
 
@@ -476,7 +483,7 @@ speechSynthesis.getVoices();
                     status === 401 &&
                     data.error.message === '"Missing Credentials"'
                 ) {
-                    if (endpoint.substring(0, 9) === 'auth/user') {
+                    if (endpoint === 'auth/user') {
                         this.$emit('AUTOLOGIN');
                     }
                     throw new Error('401: Missing Credentials');
@@ -1435,8 +1442,10 @@ speechSynthesis.getVoices();
             last_mobile: json.last_mobile,
             last_platform: json.last_platform,
             // location - missing from currentUser
+            // platform - missing from currentUser
             // note - missing from currentUser
             profilePicOverride: json.profilePicOverride,
+            // profilePicOverrideThumbnail - missing from currentUser
             pronouns: json.pronouns,
             state: json.state,
             status: json.status,
@@ -1937,8 +1946,10 @@ speechSynthesis.getVoices();
                 last_mobile: null,
                 last_platform: '',
                 location: '',
+                platform: '',
                 note: '',
                 profilePicOverride: '',
+                profilePicOverrideThumbnail: '',
                 pronouns: '',
                 state: '',
                 status: '',
@@ -4856,6 +4867,12 @@ speechSynthesis.getVoices();
                         notificationId: content.id
                     }
                 });
+                this.$emit('PIPELINE:NOTIFICATION', {
+                    json: content,
+                    params: {
+                        notificationId: content.id
+                    }
+                });
                 break;
 
             case 'notification-v2':
@@ -5498,6 +5515,7 @@ speechSynthesis.getVoices();
         watch: {},
         el: '#x-app',
         async mounted() {
+            await this.initLanguage();
             await this.changeThemeMode();
             await AppApi.SetUserAgent();
             this.appVersion = await AppApi.GetVersion();
@@ -9682,56 +9700,60 @@ speechSynthesis.getVoices();
 
     $app.methods.userStatusClass = function (user, pendingOffline) {
         var style = {};
-        if (typeof user !== 'undefined') {
-            var id = '';
-            if (user.id) {
-                id = user.id;
-            } else if (user.userId) {
-                id = user.userId;
-            }
-            if (id === API.currentUser.id) {
-                return this.statusClass(user.status);
-            }
-            if (!user.isFriend) {
-                return style;
-            }
-            if (pendingOffline) {
-                // Pending offline
-                style.offline = true;
-            } else if (
-                user.status !== 'active' &&
-                user.location === 'private' &&
-                user.state === '' &&
-                id &&
-                !API.currentUser.onlineFriends.includes(id)
-            ) {
-                // temp fix
-                if (API.currentUser.activeFriends.includes(id)) {
-                    // Active
-                    style.active = true;
-                } else {
-                    // Offline
-                    style.offline = true;
-                }
-            } else if (user.state === 'active') {
+        if (typeof user === 'undefined') {
+            return style;
+        }
+        var id = '';
+        if (user.id) {
+            id = user.id;
+        } else if (user.userId) {
+            id = user.userId;
+        }
+        if (id === API.currentUser.id) {
+            return this.statusClass(user.status);
+        }
+        if (!user.isFriend) {
+            return style;
+        }
+        if (pendingOffline) {
+            // Pending offline
+            style.offline = true;
+        } else if (
+            user.status !== 'active' &&
+            user.location === 'private' &&
+            user.state === '' &&
+            id &&
+            !API.currentUser.onlineFriends.includes(id)
+        ) {
+            // temp fix
+            if (API.currentUser.activeFriends.includes(id)) {
                 // Active
                 style.active = true;
-            } else if (user.location === 'offline') {
+            } else {
                 // Offline
                 style.offline = true;
-            } else if (user.status === 'active') {
-                // Online
-                style.online = true;
-            } else if (user.status === 'join me') {
-                // Join Me
-                style.joinme = true;
-            } else if (user.status === 'ask me') {
-                // Ask Me
-                style.askme = true;
-            } else if (user.status === 'busy') {
-                // Do Not Disturb
-                style.busy = true;
             }
+        } else if (user.state === 'active') {
+            // Active
+            style.active = true;
+        } else if (user.location === 'offline') {
+            // Offline
+            style.offline = true;
+        } else if (user.status === 'active') {
+            // Online
+            style.online = true;
+        } else if (user.status === 'join me') {
+            // Join Me
+            style.joinme = true;
+        } else if (user.status === 'ask me') {
+            // Ask Me
+            style.askme = true;
+        } else if (user.status === 'busy') {
+            // Do Not Disturb
+            style.busy = true;
+        }
+        if (user.last_platform && user.last_platform !== 'standalonewindows') {
+            style.mobile = true;
         }
         return style;
     };
@@ -9999,7 +10021,7 @@ speechSynthesis.getVoices();
         this.feedTable.loading = true;
         var vipList = [];
         if (this.feedTable.vip) {
-            vipList = this.getUserVipList();
+            vipList = Array.from(this.localFavoriteFriends.values());
         }
         this.feedTable.data = await database.lookupFeedDatabase(
             this.feedTable.search,
@@ -10007,16 +10029,6 @@ speechSynthesis.getVoices();
             vipList
         );
         this.feedTable.loading = false;
-    };
-
-    $app.methods.getUserVipList = function () {
-        var vipList = [];
-        API.cachedFavorites.forEach((favorite) => {
-            if (favorite.type === 'friend') {
-                vipList.push(favorite.favoriteId);
-            }
-        });
-        return vipList;
     };
 
     API.$on('LOGIN', async function (args) {
@@ -13190,7 +13202,7 @@ speechSynthesis.getVoices();
                 )}&part=snippet,contentDetails&key=${apiKey}`,
                 method: 'GET',
                 headers: {
-                    Referer: 'https://vrcx.pypy.moe'
+                    Referer: 'https://vrcx.app'
                 }
             });
             var json = JSON.parse(response.data);
@@ -14791,6 +14803,49 @@ speechSynthesis.getVoices();
         $app.notificationTable.data = [];
     });
 
+    API.$on('PIPELINE:NOTIFICATION', function (args) {
+        var ref = args.json;
+        if (
+            ref.type !== 'requestInvite' ||
+            $app.autoAcceptInviteRequests === 'Off'
+        )
+            return;
+        var currentLocation = $app.lastLocation.location;
+        if ($app.lastLocation.location === 'traveling') {
+            currentLocation = $app.lastLocationDestination;
+        }
+        if (!currentLocation) return;
+        var L = this.parseLocation(currentLocation);
+        if (
+            $app.autoAcceptInviteRequests === 'All Favorites' &&
+            !$app.favoriteFriends.some((x) => x.id === ref.senderUserId)
+        )
+            return;
+
+        if (
+            $app.autoAcceptInviteRequests === 'Selected Favorites' &&
+            !$app.localFavoriteFriends.has(ref.senderUserId)
+        )
+            return;
+
+        this.getCachedWorld({
+            worldId: L.worldId
+        }).then((args1) => {
+            this.sendInvite(
+                {
+                    instanceId: L.tag,
+                    worldId: L.tag,
+                    worldName: args1.ref.name,
+                    rsvp: true
+                },
+                ref.senderUserId
+            ).then((_args) => {
+                $app.$message(`Auto invite sent to ${ref.senderUsername}`);
+                return _args;
+            });
+        });
+    });
+
     $app.data.unseenNotifications = [];
 
     API.$on('NOTIFICATION', function (args) {
@@ -15527,6 +15582,9 @@ speechSynthesis.getVoices();
         VRCXStorage.Set('VRCX_CloseToTray', $app.data.isCloseToTray.toString());
         await configRepository.remove('VRCX_CloseToTray');
     }
+    if (!(await VRCXStorage.Get('VRCX_DatabaseLocation'))) {
+        await VRCXStorage.Set('VRCX_DatabaseLocation', '');
+    }
     $app.data.disableWorldDatabase =
         (await VRCXStorage.Get('VRCX_DisableWorldDatabase')) === 'true';
     $app.methods.saveVRCXWindowOption = async function () {
@@ -15625,10 +15683,18 @@ speechSynthesis.getVoices();
         'VRCX_autoStateChange',
         'Off'
     );
+    $app.data.autoAcceptInviteRequests = await configRepository.getString(
+        'VRCX_autoAcceptInviteRequests',
+        'Off'
+    );
     $app.methods.saveAutomationOptions = async function () {
         await configRepository.setString(
             'VRCX_autoStateChange',
             this.autoStateChange
+        );
+        await configRepository.setString(
+            'VRCX_autoAcceptInviteRequests',
+            this.autoAcceptInviteRequests
         );
     };
     $app.data.vrcRegistryAutoBackup = await configRepository.getBool(
@@ -18059,7 +18125,7 @@ speechSynthesis.getVoices();
                     }?${type}=${encodeURIComponent(search)}&n=5000`,
                     method: 'GET',
                     headers: {
-                        Referer: 'https://vrcx.pypy.moe'
+                        Referer: 'https://vrcx.app'
                     }
                 });
                 var json = JSON.parse(response.data);
@@ -18135,7 +18201,7 @@ speechSynthesis.getVoices();
                 url: `${url}?authorId=${encodeURIComponent(authorId)}`,
                 method: 'GET',
                 headers: {
-                    Referer: 'https://vrcx.pypy.moe'
+                    Referer: 'https://vrcx.app'
                 }
             });
             var json = JSON.parse(response.data);
@@ -23376,7 +23442,7 @@ speechSynthesis.getVoices();
         var fileId = args.params.fileId;
         var avatarName = '';
         var imageName = args.json.name;
-        var avatarNameRegex = /Avatar - (.*) - Image -/g.exec(imageName);
+        var avatarNameRegex = /Avatar - (.*) - Image -/gi.exec(imageName);
         if (avatarNameRegex) {
             avatarName = this.replaceBioSymbols(avatarNameRegex[1]);
         }
@@ -25113,6 +25179,31 @@ speechSynthesis.getVoices();
         ZZZ: 'Preview_B2-ZZZ.gif'
     };
 
+    $app.methods.generateEmojiStyle = function (
+        url,
+        fps,
+        frameCount,
+        animationStyle
+    ) {
+        let framesPerLine = 2;
+        if (frameCount > 4) framesPerLine = 4;
+        if (frameCount > 16) framesPerLine = 8;
+        const animationDurationMs = (1000 / fps) * frameCount;
+        const frameSize = 1024 / framesPerLine;
+        const scale = 100 / (frameSize / 200);
+        const animStyle =
+            animationStyle === 'pingpong' ? 'alternate' : 'infinite';
+        const style = `
+            transform: scale(${scale / 100});
+            transform-origin: top left;
+            width: ${frameSize}px;
+            height: ${frameSize}px;
+            background: url('${url}') 0 0;
+            animation: ${animationDurationMs}ms steps(1) 0s ${animStyle} normal none running animated-emoji-${frameCount};
+        `;
+        return style;
+    };
+
     // #endregion
     // #region Misc
 
@@ -25230,13 +25321,13 @@ speechSynthesis.getVoices();
     $app.data.branches = {
         Stable: {
             name: 'Stable',
-            urlReleases: 'https://vrcx.pypy.moe/releases/vrcx-team.json',
-            urlLatest: 'https://vrcx.pypy.moe/releases/latest/vrcx-team.json'
+            urlReleases: 'https://api0.vrcx.app/releases/stable',
+            urlLatest: 'https://api0.vrcx.app/releases/stable/latest'
         },
         Nightly: {
             name: 'Nightly',
-            urlReleases: 'https://vrcx.pypy.moe/releases/natsumi-sama.json',
-            urlLatest: 'https://vrcx.pypy.moe/releases/latest/natsumi-sama.json'
+            urlReleases: 'https://api0.vrcx.app/releases/nightly',
+            urlLatest: 'https://api0.vrcx.app/releases/nightly/latest'
         }
     };
 
@@ -25540,6 +25631,9 @@ speechSynthesis.getVoices();
         }
         if (this.displayVRCPlusIconsAsAvatar && user.userIcon) {
             return user.userIcon;
+        }
+        if (user.profilePicOverrideThumbnail) {
+            return user.profilePicOverrideThumbnail;
         }
         if (user.profilePicOverride) {
             return user.profilePicOverride;
@@ -30840,26 +30934,25 @@ speechSynthesis.getVoices();
     $app.data.appLanguage =
         (await configRepository.getString('VRCX_appLanguage')) ?? 'en';
     i18n.locale = $app.data.appLanguage;
-    var initLanguage = async () => {
+    $app.methods.initLanguage = async function () {
         if (!(await configRepository.getString('VRCX_appLanguage'))) {
             var result = await AppApi.CurrentLanguage();
             if (!result) {
                 console.error('Failed to get current language');
-                $app.changeAppLanguage('en');
+                this.changeAppLanguage('en');
                 return;
             }
             var lang = result.split('-')[0];
             i18n.availableLocales.forEach((ref) => {
                 var refLang = ref.split('_')[0];
                 if (refLang === lang) {
-                    $app.changeAppLanguage(ref);
+                    this.changeAppLanguage(ref);
                 }
             });
         }
 
         $app.applyLanguageStrings();
     };
-    initLanguage();
 
     $app.methods.changeAppLanguage = function (language) {
         console.log('Language changed:', language);
@@ -32397,6 +32490,16 @@ speechSynthesis.getVoices();
     });
 
     // #endregion
+
+    $app.data.zoomLevel = ((await AppApi.GetZoom()) + 10) * 10;
+
+    $app.methods.getZoomLevel = async function () {
+        this.zoomLevel = ((await AppApi.GetZoom()) + 10) * 10;
+    };
+
+    $app.methods.setZoomLevel = function () {
+        AppApi.SetZoom(this.zoomLevel / 10 - 10);
+    };
 
     $app = new Vue($app);
     window.$app = $app;

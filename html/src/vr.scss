@@ -318,8 +318,8 @@ button {
 
 i.x-user-status {
     display: inline-block;
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
     background: #808080;
     border-radius: 50%;
 }
@@ -334,14 +334,17 @@ i.x-user-status.online {
 
 i.x-user-status.joinme {
     background: #409eff;
+    mask-image: url(masks/joinme.svg);
 }
 
 i.x-user-status.askme {
     background: #ff9500;
+    mask-image: url(masks/askme.svg);
 }
 
 i.x-user-status.busy {
     background: #ff2c2c;
+    mask-image: url(masks/busy.svg);
 }
 
 .spin {

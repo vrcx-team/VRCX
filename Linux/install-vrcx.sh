@@ -2,8 +2,8 @@
 # Made by galister
 
 # change me
-steamapps=$HOME/.local/share/Steam/steamapps
-download_url=https://github.com/vrcx-team/VRCX/releases/download/v2024.03.23/VRCX_20240323.zip
+steamapps=$HOME/.local/share/Steam/steamapps/compatdata
+download_url=https://github.com/vrcx-team/VRCX/releases/download/v2024.05.09/VRCX_20240509.zip
 
 export WINEPREFIX=$HOME/.local/share/vrcx
 
@@ -34,18 +34,18 @@ if [[ ! -d $WINEPREFIX ]]; then
 	fi
 fi
 
-if [[ ! -d $steamapps ]] && [[ -d $HOME/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps ]]; then
+if [[ ! -d $steamapps ]] && [[ -d $HOME/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/compatdata ]]; then
 	echo "Flatpak Steam detected."
-	steamapps=$HOME/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps
+	steamapps=$HOME/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/compatdata
 fi
 
 vrc_appdata=$steamapps/438100/pfx/drive_c/users/steamuser/AppData/LocalLow/VRChat/VRChat
 vrc_dst=$WINEPREFIX/drive_c/users/$USER/AppData/LocalLow/VRChat/VRChat
 
-if [[ -d $vrc_appdata ]]; then
+if [[ ! -d $vrc_appdata ]]; then
 	echo "No VRC installation detected."
 	echo "If you want to use VRC on this computer, please install it now and start it once."
-	echo "Otherwise, you will lose out on some features, like "
+	echo "Otherwise, you will lose out on some features, like Game Log"
 	read -p "Press enter to continue"
 fi
 
@@ -74,7 +74,7 @@ wine64 $WINEPREFIX/drive_c/vrcx/VRCX.exe -no-cef-sandbox' >~/.local/share/vrcx/d
 chmod +x ~/.local/share/vrcx/drive_c/vrcx/vrcx
 
 if [[ -d ~/.local/bin ]]; then
-	echo "Install vrcx to ~/.local/bin"
+	echo "Install VRCX to ~/.local/bin"
 	ln -s ~/.local/share/vrcx/drive_c/vrcx/vrcx ~/.local/bin/vrcx || true
 fi
 

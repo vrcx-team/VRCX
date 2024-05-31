@@ -55,6 +55,20 @@ button {
     border: #555;
 }
 
+.el-input-number__decrease,
+.el-input-number__increase {
+    background: unset;
+    color: #fff;
+}
+
+.el-input-number__decrease {
+    border-right: 1px solid #dcdfe633;
+}
+
+.el-input-number__increase {
+    border-left: 1px solid #dcdfe633;
+}
+
 .el-table tr,
 .el-table td.el-table__cell,
 .el-table th.el-table__cell {

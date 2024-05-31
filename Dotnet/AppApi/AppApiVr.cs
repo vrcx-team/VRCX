@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using CefSharp;
 
 namespace VRCX
@@ -69,6 +70,19 @@ namespace VRCX
         public string CurrentCulture()
         {
             return CultureInfo.CurrentCulture.ToString();
+        }
+        
+        /// <summary>
+        /// Returns the file path of the custom user js file, if it exists.
+        /// </summary>
+        /// <returns>The file path of the custom user js file, or an empty string if it doesn't exist.</returns>
+        public string CustomVrScriptPath()
+        {
+            var output = string.Empty;
+            var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX\\customvr.js");
+            if (File.Exists(filePath))
+                output = filePath;
+            return output;
         }
     }
 }

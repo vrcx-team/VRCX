@@ -148,9 +148,14 @@ namespace VRCX
             VRCXVR.Instance.Restart();
         }
 
-        public void SetZoom(int zoomLevel)
+        public void SetZoom(double zoomLevel)
         {
             MainForm.Instance.Browser.SetZoomLevel(zoomLevel);
+        }
+        
+        public async Task<double> GetZoom()
+        {
+            return await MainForm.Instance.Browser.GetZoomLevelAsync();
         }
 
         /// <summary>
