@@ -197,6 +197,7 @@ Vue.component('marquee-text', MarqueeText);
             currentTime: new Date().toJSON(),
             cpuUsage: 0,
             pcUptime: '',
+            customInfo: '',
             config: {},
             onlineFriendCount: 0,
             nowPlaying: {
@@ -230,6 +231,7 @@ Vue.component('marquee-text', MarqueeText);
         mounted() {
             workerTimers.setTimeout(() => AppApiVr.VrInit(), 1000);
             if (this.appType === '1') {
+                this.refreshCustomScript();
                 this.updateStatsLoop();
             }
         }
@@ -401,6 +403,21 @@ Vue.component('marquee-text', MarqueeText);
         if (length < this.wristFeed.length) {
             this.wristFeed.length = length;
         }
+    };
+
+    $app.methods.refreshCustomScript = function () {
+        if (document.contains(document.getElementById('vr-custom-script'))) {
+            document.getElementById('vr-custom-script').remove();
+        }
+        AppApiVr.CustomVrScriptPath().then((customScript) => {
+            var head = document.head;
+            if (customScript) {
+                var $vrCustomScript = document.createElement('script');
+                $vrCustomScript.setAttribute('id', 'vr-custom-script');
+                $vrCustomScript.src = `file://${customScript}?_=${Date.now()}`;
+                head.appendChild($vrCustomScript);
+            }
+        });
     };
 
     $app.methods.updateStatsLoop = async function () {
