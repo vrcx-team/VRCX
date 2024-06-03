@@ -236,8 +236,11 @@ html
                                                 div(v-for="displayName in userDialog.previousDisplayNames" placement="top")
                                                     span(v-text="displayName")
                                             i.el-icon-caret-bottom
-                                    span.dialog-title(v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px")
-                                    span(v-if="userDialog.ref.pronouns" v-text="userDialog.ref.pronouns" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px")
+                                    el-popover(placement="top" trigger="click")
+                                        span.dialog-title(slot="reference" v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px;cursor:pointer")
+                                        span(style="display:block;text-align:center;font-family:monospace") {{ API.currentUser.username | textToHex }}
+                                    el-tooltip(v-if="userDialog.ref.pronouns" placement="top" :content="$t('dialog.user.pronouns')" :disabled="hideTooltips")
+                                        span(v-text="userDialog.ref.pronouns" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px")
                                     el-tooltip(v-for="item in userDialog.ref.$languages" :key="item.key" placement="top")
                                         template(#content)
                                             span {{ item.value }} ({{ item.key }})
@@ -1009,7 +1012,7 @@ html
                                     el-tooltip(v-if="groupDialog.ref.joinState === 'open'" placement="top" :content="$t('dialog.group.actions.join_group_tooltip')" :disabled="hideTooltips")
                                         el-button(type="default" icon="el-icon-check" circle @click="joinGroup(groupDialog.id)" style="margin-left:5px")
                                 el-dropdown(trigger="click" @command="groupDialogCommand" size="small" style="margin-left:5px")
-                                    el-button(type="default" icon="el-icon-more" circle)
+                                    el-button(:type="groupDialog.ref.membershipStatus === 'userblocked' ? 'danger' : 'default'" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") {{ $t('dialog.group.actions.refresh') }}
                                         template(v-if="groupDialog.inGroup")
@@ -1026,6 +1029,9 @@ html
                                                 el-dropdown-item(icon="el-icon-view" command="Visibility Friends") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'friends'")] {{ $t('dialog.group.actions.visibility_friends') }}
                                                 el-dropdown-item(icon="el-icon-view" command="Visibility Hidden") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'hidden'")] {{ $t('dialog.group.actions.visibility_hidden') }}
                                             el-dropdown-item(icon="el-icon-delete" command="Leave Group" style="color:#F56C6C" divided) {{ $t('dialog.group.actions.leave') }}
+                                        template(v-else)
+                                            el-dropdown-item(v-if="groupDialog.ref.membershipStatus === 'userblocked'" icon="el-icon-circle-check" command="Unblock Group" style="color:#F56C6C" divided) {{ $t('dialog.group.actions.unblock') }}
+                                            el-dropdown-item(v-else icon="el-icon-circle-close" command="Block Group" divided) {{ $t('dialog.group.actions.block') }}
                     el-tabs(ref="groupDialogTabs" @tab-click="groupDialogTabClick")
                         el-tab-pane(:label="$t('dialog.group.info.header')")
                             .group-banner-image-info

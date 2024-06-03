@@ -29051,6 +29051,98 @@ speechSynthesis.getVoices();
         }
     });
 
+    $app.methods.blockGroup = function (groupId) {
+        this.$confirm('Are you sure you want to block this group?', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    API.blockGroup({
+                        groupId
+                    });
+                }
+            }
+        });
+    };
+
+    $app.methods.unblockGroup = function (groupId) {
+        this.$confirm(
+            'Are you sure you want to unblock this group?',
+            'Confirm',
+            {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                type: 'info',
+                callback: (action) => {
+                    if (action === 'confirm') {
+                        API.unblockGroup({
+                            groupId,
+                            userId: API.currentUser.id
+                        });
+                    }
+                }
+            }
+        );
+    };
+
+    /**
+    * @param {{
+            groupId: string
+    * }} params
+    * @return { Promise<{json: any, params}> }
+    */
+    API.blockGroup = function (params) {
+        return this.call(`groups/${params.groupId}/block`, {
+            method: 'POST'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:BLOCK', args);
+            return args;
+        });
+    };
+
+    /**
+    * @param {{
+            groupId: string,
+            userId: string
+    * }} params
+    * @return { Promise<{json: any, params}> }
+    */
+    API.unblockGroup = function (params) {
+        return this.call(`groups/${params.groupId}/members/${params.userId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:UNBLOCK', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:BLOCK', function (args) {
+        if (
+            $app.groupDialog.visible &&
+            $app.groupDialog.id === args.params.groupId
+        ) {
+            $app.showGroupDialog(args.params.groupId);
+        }
+    });
+
+    API.$on('GROUP:UNBLOCK', function (args) {
+        if (
+            $app.groupDialog.visible &&
+            $app.groupDialog.id === args.params.groupId
+        ) {
+            $app.showGroupDialog(args.params.groupId);
+        }
+    });
+
     /**
     * @param {{
             groupId: string,
@@ -30115,6 +30207,12 @@ speechSynthesis.getVoices();
                 break;
             case 'Leave Group':
                 this.leaveGroup(D.id);
+                break;
+            case 'Block Group':
+                this.blockGroup(D.id);
+                break;
+            case 'Unblock Group':
+                this.unblockGroup(D.id);
                 break;
             case 'Visibility Everyone':
                 this.setGroupVisibility(D.id, 'visible');

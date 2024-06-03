@@ -543,9 +543,10 @@
                 "online": "Online",
                 "join_me": "Join Me",
                 "ask_me": "Ask Me",
-                "busy": "Do Not Disturb"
+                "busy": "Busy"
             },
             "previous_display_names": "Previous Display Names:",
+            "pronouns": "Pronouns",
             "tags": {
                 "friend_no": "Friend No.{number}",
                 "vrchat_team": "VRChat Team"
@@ -837,7 +838,9 @@
                 "visibility_hidden": "Visibility Hidden",
                 "create_post": "Create Post",
                 "moderation_tools": "Moderation Tools",
-                "leave": "Leave Group"
+                "leave": "Leave Group",
+                "block": "Block Group",
+                "unblock": "Unblock Group"
             },
             "info": {
                 "header": "Info",
