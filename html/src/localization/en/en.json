@@ -560,6 +560,7 @@
                 "request_invite": "Request Invite",
                 "request_invite_with_message": "Request Invite With Message",
                 "invite_to_group": "Invite To Group",
+                "send_boop": "Send Boop",
                 "manage_gallery_icon": "Manage Photos/Icons/Emojis",
                 "accept_friend_request": "Accept Friend Request",
                 "decline_friend_request": "Decline Friend Request",
@@ -1365,6 +1366,15 @@
             "cancel": "Cancel",
             "create_post": "Create Post",
             "edit_post": "Edit Post"
+        },
+        "boop_dialog": {
+            "header": "Boop",
+            "emoji_manager": "Emoji Manager",
+            "select_emoji": "Select Emoji",
+            "my_emojis": "My Emojis",
+            "default_emojis": "Default Emojis",
+            "cancel": "Cancel",
+            "send": "Send"
         }
     },
     "prompt": {

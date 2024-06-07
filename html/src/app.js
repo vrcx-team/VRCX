@@ -3562,6 +3562,18 @@ speechSynthesis.getVoices();
         } else if (json.title) {
             json.message = json.title;
         }
+        if (json.type === 'boop') {
+            if (!json.imageUrl && json.details?.emojiId?.startsWith('file_')) {
+                // JANK: create image url from fileId
+                json.imageUrl = `https://api.vrchat.cloud/api/1/file/${json.details.emojiId}/${json.details.emojiVersion}`;
+            }
+            if (!json.details?.emojiId?.startsWith('file_')) {
+                // JANK: get emoji name from emojiId
+                json.message = `${json.senderUsername} Booped you! with ${$app.getEmojiName(json.details.emojiId)}`;
+            } else {
+                json.message = `${json.senderUsername} Booped you! with custom emoji`;
+            }
+        }
         this.$emit('NOTIFICATION', {
             json,
             params: {
@@ -3604,14 +3616,20 @@ speechSynthesis.getVoices();
         return this.call(`notifications/${params.notificationId}/respond`, {
             method: 'POST',
             params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('NOTIFICATION:RESPONSE', args);
-            return args;
-        });
+        })
+            .then((json) => {
+                var args = {
+                    json,
+                    params
+                };
+                this.$emit('NOTIFICATION:RESPONSE', args);
+                return args;
+            })
+            .catch((err) => {
+                // something went wrong, lets assume it's already expired
+                this.$emit('NOTIFICATION:HIDE', { params });
+                throw err;
+            });
     };
 
     API.$on('NOTIFICATION:RESPONSE', function (args) {
@@ -6806,6 +6824,9 @@ speechSynthesis.getVoices();
                     `${noty.previousDisplayName} changed their name to ${noty.displayName}`
                 );
                 break;
+            case 'boop':
+                this.speak(noty.message);
+                break;
             case 'groupChange':
                 this.speak(`${noty.senderUsername} ${noty.message}`);
                 break;
@@ -7036,6 +7057,9 @@ speechSynthesis.getVoices();
                     timeout,
                     image
                 );
+                break;
+            case 'boop':
+                AppApi.XSNotification('VRCX', noty.message, timeout, image);
                 break;
             case 'groupChange':
                 AppApi.XSNotification(
@@ -7368,6 +7392,16 @@ speechSynthesis.getVoices();
                     playOvrtWristNotifications,
                     'VRCX',
                     `${noty.previousDisplayName} changed their name to ${noty.displayName}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'boop':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications,
+                    playOvrtWristNotifications,
+                    'VRCX',
+                    noty.message,
                     timeout,
                     image
                 );
@@ -7734,6 +7768,13 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification(
                     noty.previousDisplayName,
                     `changed their name to ${noty.displayName}`,
+                    image
+                );
+                break;
+            case 'boop':
+                AppApi.DesktopNotification(
+                    noty.senderUsername,
+                    noty.message,
                     image
                 );
                 break;
@@ -15827,6 +15868,7 @@ speechSynthesis.getVoices();
             Unfriend: 'On',
             DisplayName: 'VIP',
             TrustLevel: 'VIP',
+            boop: 'Off',
             groupChange: 'On',
             'group.announcement': 'On',
             'group.informative': 'On',
@@ -15868,6 +15910,7 @@ speechSynthesis.getVoices();
             Unfriend: 'On',
             DisplayName: 'Friends',
             TrustLevel: 'Friends',
+            boop: 'On',
             groupChange: 'On',
             'group.announcement': 'On',
             'group.informative': 'On',
@@ -15940,6 +15983,10 @@ speechSynthesis.getVoices();
     if (!$app.data.sharedFeedFilters.noty['group.transfer']) {
         $app.data.sharedFeedFilters.noty['group.transfer'] = 'On';
         $app.data.sharedFeedFilters.wrist['group.transfer'] = 'On';
+    }
+    if (!$app.data.sharedFeedFilters.noty.boop) {
+        $app.data.sharedFeedFilters.noty.boop = 'Off';
+        $app.data.sharedFeedFilters.wrist.boop = 'On';
     }
 
     $app.data.trustColor = JSON.parse(
@@ -18539,6 +18586,8 @@ speechSynthesis.getVoices();
             this.showGalleryDialog();
         } else if (command === 'Invite To Group') {
             this.showInviteGroupDialog('', D.id);
+        } else if (command === 'Send Boop') {
+            this.showSendBoopDialog(D.id);
         } else if (command === 'Hide Avatar') {
             if (D.isHideAvatar) {
                 this.setPlayerModeration(D.id, 0);
@@ -20527,11 +20576,8 @@ speechSynthesis.getVoices();
         D.shortName = '';
         D.secureOrShortName = '';
         API.getGroupPermissions({ userId: API.currentUser.id });
-        if (D.selectedTab === '0') {
-            this.buildInstance();
-        } else {
-            this.buildLegacyInstance();
-        }
+        this.buildInstance();
+        this.buildLegacyInstance();
         this.updateNewInstanceDialog();
         D.visible = true;
     };
@@ -24219,8 +24265,6 @@ speechSynthesis.getVoices();
 
     // YouTube API
 
-    $app.data.youTubeApiKey = '';
-
     $app.data.youTubeApiDialog = {
         visible: false
     };
@@ -24875,11 +24919,22 @@ speechSynthesis.getVoices();
         $app.galleryTable = [];
     });
 
-    $app.methods.showGalleryDialog = function () {
+    $app.methods.showGalleryDialog = function (pageNum) {
+        this.$nextTick(() => adjustDialogZ(this.$refs.galleryDialog.$el));
         this.galleryDialogVisible = true;
         this.refreshGalleryTable();
         this.refreshVRCPlusIconsTable();
         this.refreshEmojiTable();
+        workerTimers.setTimeout(() => this.setGalleryTab(pageNum), 100);
+    };
+
+    $app.methods.setGalleryTab = function (pageNum) {
+        if (
+            typeof pageNum !== 'undefined' &&
+            typeof this.$refs.galleryTabs !== 'undefined'
+        ) {
+            this.$refs.galleryTabs.setCurrentName(`${pageNum}`);
+        }
     };
 
     $app.methods.refreshGalleryTable = function () {
@@ -32588,6 +32643,7 @@ speechSynthesis.getVoices();
     });
 
     // #endregion
+    // #region | Settings: Zoom
 
     $app.data.zoomLevel = ((await AppApi.GetZoom()) + 10) * 10;
 
@@ -32598,6 +32654,80 @@ speechSynthesis.getVoices();
     $app.methods.setZoomLevel = function () {
         AppApi.SetZoom(this.zoomLevel / 10 - 10);
     };
+
+    // #endregion
+    // #region | Boops
+
+    API.sendBoop = function (params) {
+        return this.call(`users/${params.userId}/boop`, {
+            method: 'POST',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('BOOP:SEND', args);
+            return args;
+        });
+    };
+
+    $app.methods.sendBoop = function () {
+        var D = this.sendBoopDialog;
+        this.dismissBoop(D.userId);
+        API.sendBoop({ userId: D.userId, emojiId: D.fileId });
+        D.visible = false;
+    };
+
+    $app.methods.dismissBoop = function (userId) {
+        // JANK: This is a hack to remove boop notifications when responding
+        var array = this.notificationTable.data;
+        for (var i = array.length - 1; i >= 0; i--) {
+            var ref = array[i];
+            if (
+                ref.type !== 'boop' ||
+                ref.$isExpired ||
+                ref.senderUserId !== userId
+            ) {
+                continue;
+            }
+            API.sendNotificationResponse({
+                notificationId: ref.id,
+                responseType: 'delete',
+                responseData: ''
+            });
+        }
+    };
+
+    $app.data.sendBoopDialog = {
+        visible: false,
+        userId: '',
+        fileId: ''
+    };
+
+    $app.methods.showSendBoopDialog = function (userId) {
+        this.$nextTick(() => adjustDialogZ(this.$refs.sendBoopDialog.$el));
+        var D = this.sendBoopDialog;
+        D.userId = userId;
+        D.visible = true;
+        if (this.emojiTable.length === 0 && API.currentUser.$isVRCPlus) {
+            this.refreshEmojiTable();
+        }
+    };
+
+    $app.methods.getEmojiValue = function (emojiName) {
+        return `vrchat_${emojiName.replace(/ /g, '_').toLowerCase()}`;
+    };
+
+    $app.methods.getEmojiName = function (emojiValue) {
+        // uppercase first letter of each word
+        return emojiValue
+            .replace('vrchat_', '')
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, (l) => l.toUpperCase());
+    };
+
+    // #endregion
 
     $app = new Vue($app);
     window.$app = $app;

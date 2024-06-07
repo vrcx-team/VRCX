@@ -300,6 +300,7 @@ html
                                             el-dropdown-item(v-else-if="userDialog.outgoingRequest" icon="el-icon-close" command="Cancel Friend Request") {{ $t('dialog.user.actions.cancel_friend_request') }}
                                             el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") {{ $t('dialog.user.actions.send_friend_request') }}
                                             el-dropdown-item(icon="el-icon-message" command="Invite To Group") {{ $t('dialog.user.actions.invite_to_group') }}
+                                            el-dropdown-item(icon="el-icon-thumb" command="Send Boop") {{ $t('dialog.user.actions.send_boop') }}
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) {{ $t('dialog.user.actions.show_avatar_author') }}
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") {{ $t('dialog.user.actions.show_fallback_avatar') }}
                                             el-dropdown-item(icon="el-icon-tickets" command="Previous Instances") {{ $t('dialog.user.actions.show_previous_instances') }}
@@ -1896,6 +1897,11 @@ html
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
                     .toggle-item
+                        span.toggle-name Boop
+                        el-radio-group(v-model="sharedFeedFilters.noty.boop" size="mini" @change="saveSharedFeedFilters")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    .toggle-item
                         span.toggle-name Group Change
                             el-tooltip(placement="top" style="margin-left:5px" content="When you've left or been kicked from a group, group name changed, group owner changed, role added/removed")
                                 i.el-icon-info
@@ -2144,6 +2150,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                    .toggle-item
+                        span.toggle-name Boop
+                        el-radio-group(v-model="sharedFeedFilters.wrist.boop" size="mini" @change="saveSharedFeedFilters")
+                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Change
                             el-tooltip(placement="top" style="margin-left:5px" content="When you've left or been kicked from a group, group name changed, group owner changed, role added/removed")
@@ -2452,7 +2463,7 @@ html
                 span(style="padding-bottom:10px") {{ $t('dialog.gallery_icons.description') }}
                 br
                 br
-                el-tabs(type="card")
+                el-tabs(type="card" ref="galleryTabs")
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogGalleryLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.gallery') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
@@ -3267,6 +3278,61 @@ html
                     el-button(v-if="groupPostEditDialog.postId" size="small" @click="editGroupPost") {{ $t('dialog.group_post_edit.edit_post') }}
                     el-button(v-else size="small" @click="createGroupPost") {{ $t('dialog.group_post_edit.create_post') }}
 
+            //- dialog: send boop
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendBoopDialog" :visible.sync="sendBoopDialog.visible" :title="$t('dialog.boop_dialog.header')" width="450px")
+                div(v-if="sendBoopDialog.visible")
+                    el-button(size="small" @click="showGalleryDialog(2)") {{ $t('dialog.boop_dialog.emoji_manager') }}
+                    br
+                    br
+                    el-select(v-model="sendBoopDialog.userId" :placeholder="$t('dialog.new_instance.instance_creator_placeholder')" filterable style="width:100%")
+                        el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
+                            el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar(:class="userStatusClass(friend.ref)")
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                        el-option-group(v-if="friendsGroup1.length" :label="$t('side_panel.online')")
+                            el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar(:class="userStatusClass(friend.ref)")
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                        el-option-group(v-if="friendsGroup2.length" :label="$t('side_panel.active')")
+                            el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                        el-option-group(v-if="friendsGroup3.length" :label="$t('side_panel.offline')")
+                            el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                    br
+                    br
+                    el-select(v-model="sendBoopDialog.fileId" clearable :placeholder="$t('dialog.boop_dialog.select_emoji')" size="small" style="width:100%" popper-class="max-height-el-select")
+                        el-option-group(:label="$t('dialog.boop_dialog.my_emojis')")
+                            el-option(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" :value="image.id" style="width:100%;height:100%")
+                                .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden;width:200px;height:200px;padding:10px") 
+                                    template(v-if="image.frames")
+                                        .avatar(:style="generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.animationStyle)")
+                                    template(v-else)
+                                        img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url" style="width:200px;height:200px")
+                        el-option-group(:label="$t('dialog.boop_dialog.default_emojis')")
+                            el-option(v-for="emojiName in photonEmojis" :key="emojiName" :value="getEmojiValue(emojiName)" style="width:100%;height:100%")
+                                span(v-text="emojiName")
+                template(#footer)
+                    el-button(size="small" @click="sendBoopDialog.visible = false") {{ $t('dialog.boop_dialog.cancel') }}
+                    el-button(size="small" @click="sendBoop" :disabled="!sendBoopDialog.userId || !sendBoopDialog.fileId") {{ $t('dialog.boop_dialog.send') }}
 
             //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")
 
