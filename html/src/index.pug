@@ -208,8 +208,10 @@ html
             el-dialog.x-dialog.x-user-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="userDialog" :visible.sync="userDialog.visible" :show-close="false" width="770px")
                 div(v-loading="userDialog.loading")
                     div(style="display:flex")
-                        el-popover(v-if="userDialog.ref.profilePicOverride" placement="right" width="500px" trigger="click")
-                            img.x-link(slot="reference" v-lazy="userDialog.ref.profilePicOverride" style="flex:none;height:120px;width:213.33px;border-radius:12px;object-fit:cover")
+                        el-popover(v-if="userDialog.ref.profilePicOverrideThumbnail || userDialog.ref.profilePicOverride" placement="right" width="500px" trigger="click")
+                            template(slot="reference")
+                                img.x-link(v-if="userDialog.ref.profilePicOverrideThumbnail" v-lazy="userDialog.ref.profilePicOverrideThumbnail" style="flex:none;height:120px;width:213.33px;border-radius:12px;object-fit:cover")
+                                img.x-link(v-else v-lazy="userDialog.ref.profilePicOverride" style="flex:none;height:120px;width:213.33px;border-radius:12px;object-fit:cover")
                             img.x-link(v-lazy="userDialog.ref.profilePicOverride" style="height:400px" @click="showFullscreenImageDialog(userDialog.ref.profilePicOverride)")
                         el-popover(v-else placement="right" width="500px" trigger="click")
                             img.x-link(slot="reference" v-lazy="userDialog.ref.currentAvatarThumbnailImageUrl" style="flex:none;height:120px;width:160px;border-radius:12px;object-fit:cover")
@@ -2031,7 +2033,7 @@ html
                                 el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                 template(#footer)
                     el-button(type="small" @click="resetSharedFeedFilters") {{ $t('dialog.shared_feed_filters.reset') }}
-                    el-button(type="primary" size="small" style="margin-left:10px" @click="notyFeedFiltersDialog.visible = false") {{ $t('dialog.shared_feed_filters.close') }}
+                    el-button(size="small" style="margin-left:10px" @click="notyFeedFiltersDialog.visible = false") {{ $t('dialog.shared_feed_filters.close') }}
 
             //- dialog: wrist feed filters
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="wristFeedFiltersDialog" :visible.sync="wristFeedFiltersDialog.visible" :title="$t('dialog.shared_feed_filters.wrist')" width="550px")
@@ -2280,7 +2282,7 @@ html
                                 el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                 template(#footer)
                     el-button(type="small" @click="resetSharedFeedFilters") {{ $t('dialog.shared_feed_filters.reset') }}
-                    el-button(type="primary" size="small" @click="wristFeedFiltersDialog.visible = false") {{ $t('dialog.shared_feed_filters.close') }}
+                    el-button(size="small" @click="wristFeedFiltersDialog.visible = false") {{ $t('dialog.shared_feed_filters.close') }}
 
             //- dialog: Edit Invite Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="editInviteMessageDialog" :visible.sync="editInviteMessageDialog.visible" :title="$t('dialog.edit_invite_message.header')" width="400px")
@@ -2493,9 +2495,9 @@ html
                             span {{ $t('dialog.gallery_icons.emoji_animation_type') }}
                         template(v-if="emojiAnimType")
                             span(style="margin-right:10px") {{ $t('dialog.gallery_icons.emoji_animation_fps') }}
-                            el-input(v-model="emojiAnimFps" :min="1" :max="64" size="small" style="width:48px;margin-right:10px")
+                            el-input-number(size="small" v-model="emojiAnimFps" :min="1" :max="64" style="margin-right:10px;width:112px")
                             span(style="margin-right:10px") {{ $t('dialog.gallery_icons.emoji_animation_frame_count') }}
-                            el-input(v-model="emojiAnimFrameCount" :min="1" :max="64" size="small" style="width:48px;margin-right:10px")
+                            el-input-number(size="small" v-model="emojiAnimFrameCount" :min="2" :max="64" style="margin-right:10px;width:112px")
                             el-checkbox(v-model="emojiAnimLoopPingPong" style="margin-left:10px;margin-right:10px")
                                 span {{ $t('dialog.gallery_icons.emoji_loop_pingpong') }}
                             br

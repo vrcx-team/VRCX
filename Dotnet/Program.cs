@@ -20,12 +20,12 @@ namespace VRCX
         public static string Version { get; private set; }
         public static bool LaunchDebug;
         private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
-        
+
         private static void SetProgramDirectories()
         {
             if (string.IsNullOrEmpty(AppDataDirectory))
                 AppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VRCX");
-            
+
             BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             ConfigLocation = Path.Combine(AppDataDirectory, "VRCX.sqlite3");
 
@@ -107,7 +107,7 @@ namespace VRCX
             catch (Exception e)
             {
                 logger.Fatal(e, "Unhandled Exception, program dying");
-                MessageBox.Show(e.ToString(), "PLEASE REPORT IN https://vrcx.pypy.moe/discord", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(e.ToString(), "PLEASE REPORT IN https://vrcx.app/discord", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(0);
             }
         }
@@ -139,7 +139,7 @@ namespace VRCX
             Application.SetCompatibleTextRenderingDefault(false);
 
             logger.Info("{0} Starting...", Version);
-            
+
 
             ProcessMonitor.Instance.Init();
             VRCXStorage.Load();

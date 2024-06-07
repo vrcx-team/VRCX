@@ -197,6 +197,7 @@ Vue.component('marquee-text', MarqueeText);
             currentTime: new Date().toJSON(),
             cpuUsage: 0,
             pcUptime: '',
+            customInfo: '',
             config: {},
             onlineFriendCount: 0,
             nowPlaying: {
@@ -230,6 +231,7 @@ Vue.component('marquee-text', MarqueeText);
         mounted() {
             workerTimers.setTimeout(() => AppApiVr.VrInit(), 1000);
             if (this.appType === '1') {
+                this.refreshCustomScript();
                 this.updateStatsLoop();
             }
         }
@@ -401,6 +403,21 @@ Vue.component('marquee-text', MarqueeText);
         if (length < this.wristFeed.length) {
             this.wristFeed.length = length;
         }
+    };
+
+    $app.methods.refreshCustomScript = function () {
+        if (document.contains(document.getElementById('vr-custom-script'))) {
+            document.getElementById('vr-custom-script').remove();
+        }
+        AppApiVr.CustomVrScriptPath().then((customScript) => {
+            var head = document.head;
+            if (customScript) {
+                var $vrCustomScript = document.createElement('script');
+                $vrCustomScript.setAttribute('id', 'vr-custom-script');
+                $vrCustomScript.src = `file://${customScript}?_=${Date.now()}`;
+                head.appendChild($vrCustomScript);
+            }
+        });
     };
 
     $app.methods.updateStatsLoop = async function () {
@@ -674,20 +691,21 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.statusClass = function (status) {
         var style = {};
-        if (typeof status !== 'undefined') {
-            if (status === 'active') {
-                // Online
-                style.online = true;
-            } else if (status === 'join me') {
-                // Join Me
-                style.joinme = true;
-            } else if (status === 'ask me') {
-                // Ask Me
-                style.askme = true;
-            } else if (status === 'busy') {
-                // Do Not Disturb
-                style.busy = true;
-            }
+        if (typeof status === 'undefined') {
+            return style;
+        }
+        if (status === 'active') {
+            // Online
+            style.online = true;
+        } else if (status === 'join me') {
+            // Join Me
+            style.joinme = true;
+        } else if (status === 'ask me') {
+            // Ask Me
+            style.askme = true;
+        } else if (status === 'busy') {
+            // Do Not Disturb
+            style.busy = true;
         }
         return style;
     };
@@ -708,7 +726,7 @@ Vue.component('marquee-text', MarqueeText);
                 text = `${worldName} ${L.accessTypeName}`;
             }
         }
-        return text;
+        return escapeTag(text);
     };
 
     $app.methods.notyClear = function () {

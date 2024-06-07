@@ -523,7 +523,7 @@ html
                     br
                     span(style="float:right") {{ currentTime }}
                     span(v-if="config && !config.hideCpuUsageFromFeed" style="display:inline-block;margin-right:5px") {{ $t('vr.status.cpu') }} {{ cpuUsage }}%
-                    span(style="display:inline-block") {{ $t('vr.status.online') }} {{ onlineFriendCount }}
+                    span(style="display:inline-block") {{ $t('vr.status.online') }} {{ onlineFriendCount }} ‎{{ customInfo }}
             template(v-else)
                 svg(class="np-progress-circle")
                     circle(class="np-progress-circle-stroke" cx="60" cy="60" stroke="white" r="30" fill="transparent" stroke-width="60")
