@@ -10,35 +10,35 @@ class SharedRepository {
         return SharedVariable.Remove(_key);
     }
 
-    getString(key, defaultValue = null) {
+    async getString(key, defaultValue = null) {
         var _key = transformKey(key);
-        var value = SharedVariable.Get(_key);
+        var value = await SharedVariable.Get(_key);
         if (value === null) {
             return defaultValue;
         }
         return value;
     }
 
-    setString(key, value) {
+    async setString(key, value) {
         var _key = transformKey(key);
         var _value = String(value);
-        SharedVariable.Set(_key, _value);
+        await SharedVariable.Set(_key, _value);
     }
 
-    getBool(key, defaultValue = null) {
-        var value = this.getString(key, null);
+    async getBool(key, defaultValue = null) {
+        var value = await this.getString(key, null);
         if (value === null) {
             return defaultValue;
         }
         return value === 'true';
     }
 
-    setBool(key, value) {
-        this.setString(key, value ? 'true' : 'false');
+    async setBool(key, value) {
+        await this.setString(key, value ? 'true' : 'false');
     }
 
-    getInt(key, defaultValue = null) {
-        var value = this.getString(key, null);
+    async getInt(key, defaultValue = null) {
+        var value = await this.getString(key, null);
         if (value === null) {
             return defaultValue;
         }
@@ -49,12 +49,12 @@ class SharedRepository {
         return value;
     }
 
-    setInt(key, value) {
-        this.setString(key, value);
+    async setInt(key, value) {
+        await this.setString(key, value);
     }
 
-    getFloat(key, defaultValue = null) {
-        var value = this.getString(key, null);
+    async getFloat(key, defaultValue = null) {
+        var value = await this.getString(key, null);
         if (value === null) {
             return defaultValue;
         }
@@ -65,12 +65,12 @@ class SharedRepository {
         return value;
     }
 
-    setFloat(key, value) {
-        this.setString(key, value);
+    async setFloat(key, value) {
+        await this.setString(key, value);
     }
 
-    getObject(key, defaultValue = null) {
-        var value = this.getString(key, null);
+    async getObject(key, defaultValue = null) {
+        var value = await this.getString(key, null);
         if (value === null) {
             return defaultValue;
         }
@@ -83,20 +83,20 @@ class SharedRepository {
         return value;
     }
 
-    setObject(key, value) {
-        this.setString(key, JSON.stringify(value));
+    async setObject(key, value) {
+        await this.setString(key, JSON.stringify(value));
     }
 
-    getArray(key, defaultValue = null) {
-        var value = this.getObject(key, null);
+    async getArray(key, defaultValue = null) {
+        var value = await this.getObject(key, null);
         if (Array.isArray(value) === false) {
             return defaultValue;
         }
         return value;
     }
 
-    setArray(key, value) {
-        this.setObject(key, value);
+    async setArray(key, value) {
+        await this.setObject(key, value);
     }
 }
 

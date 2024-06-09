@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# SYSLIB0014: Type or member is obsolete
+dotnet_diagnostic.SYSLIB0014.severity = suggestion

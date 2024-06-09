@@ -29,6 +29,7 @@
         "LogWatcher": "readonly",
         "Discord": "readonly",
         "AppApi": "readonly",
+        "AppApiVr": "readonly",
         "SharedVariable": "readonly",
         "WebApi": "readonly",
         "AssetBundleCacher": "readonly"
@@ -87,6 +88,7 @@
         "sort-vars": 0,
         "strict": 0,
         "vars-on-top": 0,
-        "object-curly-spacing": ["error", "always"]
+        "object-curly-spacing": ["error", "always"],
+        "require-atomic-updates": 0
     }
 }

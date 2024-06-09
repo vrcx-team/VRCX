@@ -6,6 +6,8 @@
 
 import '@fontsource/noto-sans-kr';
 import '@fontsource/noto-sans-jp';
+import '@fontsource/noto-sans-sc';
+import '@fontsource/noto-sans-tc';
 import Noty from 'noty';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
@@ -18,7 +20,7 @@ Vue.component('marquee-text', MarqueeText);
 (async function () {
     var $app = null;
 
-    await CefSharp.BindObjectAsync('AppApi');
+    await CefSharp.BindObjectAsync('AppApiVr');
 
     Noty.overrideDefaults({
         animation: {
@@ -47,6 +49,18 @@ Vue.component('marquee-text', MarqueeText);
     var escapeTag = (s) =>
         String(s).replace(/["&'<>]/gu, (c) => `&#${c.charCodeAt(0)};`);
     Vue.filter('escapeTag', escapeTag);
+
+    var escapeTagRecursive = (obj) => {
+        if (typeof obj === 'string') {
+            return escapeTag(obj);
+        }
+        if (typeof obj === 'object') {
+            for (var key in obj) {
+                obj[key] = escapeTagRecursive(obj[key]);
+            }
+        }
+        return obj;
+    };
 
     var commaNumber = (n) =>
         String(Number(n) || 0).replace(/(\d)(?=(\d{3})+(?!\d))/gu, '$1,');
@@ -183,6 +197,7 @@ Vue.component('marquee-text', MarqueeText);
             currentTime: new Date().toJSON(),
             cpuUsage: 0,
             pcUptime: '',
+            customInfo: '',
             config: {},
             onlineFriendCount: 0,
             nowPlaying: {
@@ -214,11 +229,9 @@ Vue.component('marquee-text', MarqueeText);
         watch: {},
         el: '#x-app',
         mounted() {
-            workerTimers.setTimeout(
-                () => AppApi.ExecuteAppFunction('vrInit', ''),
-                1000
-            );
+            workerTimers.setTimeout(() => AppApiVr.VrInit(), 1000);
             if (this.appType === '1') {
+                this.refreshCustomScript();
                 this.updateStatsLoop();
             }
         }
@@ -392,6 +405,21 @@ Vue.component('marquee-text', MarqueeText);
         }
     };
 
+    $app.methods.refreshCustomScript = function () {
+        if (document.contains(document.getElementById('vr-custom-script'))) {
+            document.getElementById('vr-custom-script').remove();
+        }
+        AppApiVr.CustomVrScriptPath().then((customScript) => {
+            var head = document.head;
+            if (customScript) {
+                var $vrCustomScript = document.createElement('script');
+                $vrCustomScript.setAttribute('id', 'vr-custom-script');
+                $vrCustomScript.src = `file://${customScript}?_=${Date.now()}`;
+                head.appendChild($vrCustomScript);
+            }
+        });
+    };
+
     $app.methods.updateStatsLoop = async function () {
         try {
             this.currentTime = new Date()
@@ -408,7 +436,7 @@ Vue.component('marquee-text', MarqueeText);
                 .replace(',', '');
 
             if (!this.config.hideCpuUsageFromFeed) {
-                var cpuUsage = await AppApi.CpuUsage();
+                var cpuUsage = await AppApiVr.CpuUsage();
                 this.cpuUsage = cpuUsage.toFixed(0);
             }
             if (this.lastLocation.date !== 0) {
@@ -427,7 +455,7 @@ Vue.component('marquee-text', MarqueeText);
             }
 
             if (!this.config.hideDevicesFromFeed) {
-                AppApi.GetVRDevices().then((devices) => {
+                AppApiVr.GetVRDevices().then((devices) => {
                     var deviceList = [];
                     var baseStations = 0;
                     devices.forEach((device) => {
@@ -435,22 +463,20 @@ Vue.component('marquee-text', MarqueeText);
                         if (device[0] === 'base' && device[1] === 'connected') {
                             baseStations++;
                         } else {
-                            deviceList.unshift(device);
+                            deviceList.push(device);
                         }
                     });
                     this.deviceCount = deviceList.length;
-                    deviceList.sort((a, b) => {
-                        if (a[0] === b[0]) {
-                            return 0;
-                        }
-                        if (a[0] === 'tracker' || a[0] === 'base') {
-                            return 1;
-                        }
-                        if (a[0].toLowerCase().includes('controller')) {
-                            return -1;
-                        }
-                        return 0;
-                    });
+                    const deviceValue = (dev) => {
+                        if (dev[0] === 'headset') return 0;
+                        if (dev[0] === 'leftController') return 1;
+                        if (dev[0] === 'rightController') return 2;
+                        if (dev[0].toLowerCase().includes('controller'))
+                            return 3;
+                        if (dev[0] === 'tracker' || dev[0] === 'base') return 4;
+                        return 5;
+                    };
+                    deviceList.sort((a, b) => deviceValue(a) - deviceValue(b));
                     deviceList.sort((a, b) => {
                         if (a[1] === b[1]) {
                             return 0;
@@ -478,8 +504,10 @@ Vue.component('marquee-text', MarqueeText);
                 this.devices = [];
             }
             if (this.config.pcUptimeOnFeed) {
-                AppApi.GetUptime().then((uptime) => {
-                    this.pcUptime = timeToText(uptime);
+                AppApiVr.GetUptime().then((uptime) => {
+                    if (uptime) {
+                        this.pcUptime = timeToText(uptime);
+                    }
                 });
             } else {
                 this.pcUptime = '';
@@ -492,7 +520,12 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.playNoty = function (json) {
         var { noty, message, image } = JSON.parse(json);
-        var message = escapeTag(message);
+        if (typeof noty === 'undefined') {
+            console.error('noty is undefined');
+            return;
+        }
+        var noty = escapeTagRecursive(noty);
+        var message = escapeTag(message) || '';
         var text = '';
         var img = '';
         if (image) {
@@ -513,8 +546,8 @@ Vue.component('marquee-text', MarqueeText);
                     noty.displayName
                 }</strong> is in ${this.displayLocation(
                     noty.location,
-                    escapeTag(noty.worldName),
-                    escapeTag(noty.groupName)
+                    noty.worldName,
+                    noty.groupName
                 )}`;
                 break;
             case 'Online':
@@ -522,8 +555,8 @@ Vue.component('marquee-text', MarqueeText);
                 if (noty.worldName) {
                     locationName = ` to ${this.displayLocation(
                         noty.location,
-                        escapeTag(noty.worldName),
-                        escapeTag(noty.groupName)
+                        noty.worldName,
+                        noty.groupName
                     )}`;
                 }
                 text = `<strong>${noty.displayName}</strong> has logged in${locationName}`;
@@ -532,16 +565,14 @@ Vue.component('marquee-text', MarqueeText);
                 text = `<strong>${noty.displayName}</strong> has logged out`;
                 break;
             case 'Status':
-                text = `<strong>${noty.displayName}</strong> status is now <i>${
-                    noty.status
-                }</i> ${escapeTag(noty.statusDescription)}`;
+                text = `<strong>${noty.displayName}</strong> status is now <i>${noty.status}</i> ${noty.statusDescription}`;
                 break;
             case 'invite':
                 text = `<strong>${
                     noty.senderUsername
                 }</strong> has invited you to ${this.displayLocation(
                     noty.details.worldId,
-                    escapeTag(noty.details.worldName)
+                    noty.details.worldName
                 )}${message}`;
                 break;
             case 'requestInvite':
@@ -568,20 +599,32 @@ Vue.component('marquee-text', MarqueeText);
             case 'DisplayName':
                 text = `<strong>${noty.previousDisplayName}</strong> changed their name to ${noty.displayName}`;
                 break;
+            case 'boop':
+                text = noty.message;
+                break;
+            case 'groupChange':
+                text = `<strong>${noty.senderUsername}</strong> ${noty.message}`;
+                break;
             case 'group.announcement':
-                text = escapeTag(noty.message);
+                text = noty.message;
                 break;
             case 'group.informative':
-                text = escapeTag(noty.message);
+                text = noty.message;
                 break;
             case 'group.invite':
-                text = escapeTag(noty.message);
+                text = noty.message;
                 break;
             case 'group.joinRequest':
-                text = escapeTag(noty.message);
+                text = noty.message;
+                break;
+            case 'group.transfer':
+                text = noty.message;
                 break;
             case 'group.queueReady':
-                text = escapeTag(noty.message);
+                text = noty.message;
+                break;
+            case 'instance.closed':
+                text = noty.message;
                 break;
             case 'PortalSpawn':
                 if (noty.displayName) {
@@ -589,33 +632,27 @@ Vue.component('marquee-text', MarqueeText);
                         noty.displayName
                     }</strong> has spawned a portal to ${this.displayLocation(
                         noty.instanceId,
-                        escapeTag(noty.worldName),
-                        escapeTag(noty.groupName)
+                        noty.worldName,
+                        noty.groupName
                     )}`;
                 } else {
                     text = 'User has spawned a portal';
                 }
                 break;
             case 'AvatarChange':
-                text = `<strong>${
-                    noty.displayName
-                }</strong> changed into avatar ${escapeTag(noty.name)}`;
+                text = `<strong>${noty.displayName}</strong> changed into avatar ${noty.name}`;
                 break;
             case 'ChatBoxMessage':
-                text = `<strong>${noty.displayName}</strong> said ${escapeTag(
-                    noty.text
-                )}`;
+                text = `<strong>${noty.displayName}</strong> said ${noty.text}`;
                 break;
             case 'Event':
-                text = escapeTag(noty.data);
+                text = noty.data;
                 break;
             case 'External':
-                text = escapeTag(noty.message);
+                text = noty.message;
                 break;
             case 'VideoPlay':
-                text = `<strong>Now playing:</strong> ${escapeTag(
-                    noty.notyName
-                )}`;
+                text = `<strong>Now playing:</strong> ${noty.notyName}`;
                 break;
             case 'BlockedOnPlayerJoined':
                 text = `Blocked user <strong>${noty.displayName}</strong> has joined`;
@@ -657,20 +694,21 @@ Vue.component('marquee-text', MarqueeText);
 
     $app.methods.statusClass = function (status) {
         var style = {};
-        if (typeof status !== 'undefined') {
-            if (status === 'active') {
-                // Online
-                style.online = true;
-            } else if (status === 'join me') {
-                // Join Me
-                style.joinme = true;
-            } else if (status === 'ask me') {
-                // Ask Me
-                style.askme = true;
-            } else if (status === 'busy') {
-                // Do Not Disturb
-                style.busy = true;
-            }
+        if (typeof status === 'undefined') {
+            return style;
+        }
+        if (status === 'active') {
+            // Online
+            style.online = true;
+        } else if (status === 'join me') {
+            // Join Me
+            style.joinme = true;
+        } else if (status === 'ask me') {
+            // Ask Me
+            style.askme = true;
+        } else if (status === 'busy') {
+            // Do Not Disturb
+            style.busy = true;
         }
         return style;
     };
@@ -691,7 +729,7 @@ Vue.component('marquee-text', MarqueeText);
                 text = `${worldName} ${L.accessTypeName}`;
             }
         }
-        return text;
+        return escapeTag(text);
     };
 
     $app.methods.notyClear = function () {
@@ -764,10 +802,10 @@ Vue.component('marquee-text', MarqueeText);
         this.hudTimeout = JSON.parse(json);
     };
 
-    $app.data.currentCulture = await AppApi.CurrentCulture();
+    $app.data.currentCulture = await AppApiVr.CurrentCulture();
 
     $app.methods.setDatetimeFormat = async function () {
-        this.currentCulture = await AppApi.CurrentCulture();
+        this.currentCulture = await AppApiVr.CurrentCulture();
         var formatDate = function (date) {
             if (!date) {
                 return '';

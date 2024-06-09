@@ -47,6 +47,12 @@
     !define MUI_ABORTWARNING
 
 ;--------------------------------
+;Icons
+
+    !define MUI_ICON "../VRCX.ico"
+    !define MUI_UNICON "../VRCX.ico"
+
+;--------------------------------
 ;Pages
 
     !insertmacro MUI_PAGE_LICENSE "..\LICENSE"
@@ -142,7 +148,6 @@ Section "Install" SecInstall
     inetc::get "https://aka.ms/vs/17/release/vc_redist.x64.exe" $TEMP\vcredist_x64.exe
     ExecWait "$TEMP\vcredist_x64.exe /install /quiet /norestart"
     Delete "$TEMP\vcredist_x64.exe"
-
     VSRedistInstalled:
 
     SetOutPath "$INSTDIR"

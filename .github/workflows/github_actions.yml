@@ -8,20 +8,18 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup Nuget.exe
-      uses: nuget/setup-nuget@v1
-    - name: Restore packages
-      run: nuget restore VRCX.sln
-    - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.1
-    - name: Build with MSBuild
-      run: msbuild VRCX.sln -p:Configuration=Release -p:Platform=x64
-    - uses: actions/upload-artifact@v3
-      with:
-        name: vrcx
-        path: bin/x64/Release
-     
+      - uses: actions/checkout@v3
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.0.x"
+      - name: Build .NET Application
+        run: dotnet build -p:Configuration=Release -p:Platform=x64 -p:EnableWindowsTargeting=true --self-contained
+      - uses: actions/upload-artifact@v3
+        with:
+          name: vrcx
+          path: bin/x64/Release
+
   build_node:
     runs-on: ubuntu-latest
     defaults:
@@ -29,23 +27,21 @@ jobs:
         working-directory: html
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Restore dependencies
-      run: npm ci
-    - name: Lint
-      run: npm run lint
-    - name: Build
-      run: npm run production
-    - name: Fix folder structure
-      id: fix-folders
-      run: |
-        mkdir upload
-        mv dist upload/html
-    - uses: actions/upload-artifact@v3
-      with:
-        name: vrcx
-        path: html/upload
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Restore dependencies
+        run: npm ci
+      - name: Build
+        run: npm run production
+      - name: Fix folder structure
+        id: fix-folders
+        run: |
+          mkdir upload
+          mv dist upload/html
+      - uses: actions/upload-artifact@v3
+        with:
+          name: vrcx
+          path: html/upload

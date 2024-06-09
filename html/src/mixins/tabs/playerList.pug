@@ -45,7 +45,7 @@ mixin playerListTab()
                             span.name {{ $t('dialog.world.info.created_at') }}
                             span.extra {{ currentInstanceWorld.ref.created_at | formatDate('long') }}
             div.photon-event-table(v-if="photonLoggingEnabled")
-                div(style="position:absolute;width:600px;margin-left:195px;z-index:1")
+                div(style="position:absolute;width:600px;margin-left:215px;z-index:1")
                     el-select(v-model="photonEventTableTypeFilter" @change="photonEventTableFilterChange" multiple clearable collapse-tags style="flex:1;width:220px" :placeholder="$t('view.player_list.photon.filter_placeholder')")
                         el-option(v-once v-for="type in photonEventTableTypeFilterList" :key="type" :label="type" :value="type")
                     el-input(v-model="photonEventTableFilter" @input="photonEventTableFilterChange" :placeholder="$t('view.player_list.photon.search_placeholder')" clearable style="width:150px;margin-left:10px")

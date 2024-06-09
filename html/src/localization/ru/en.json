@@ -85,6 +85,7 @@
             },
             "worlds": {
                 "header": "Миры",
+                "search": "Поиск",
                 "vrchat_favorites": "Избранное VRChat",
                 "local_favorites": "Локальное избранное",
                 "new_group": "Новая Группа"
@@ -141,6 +142,8 @@
                 "two_factor": "Двухфакторная аутентификация (2FA)",
                 "two_factor_enabled": "Включена",
                 "two_factor_disabled": "Выключено",
+                "v_bucks": "V-Баксы",
+                "refresh": "Нажмите, чтобы обновить",
                 "logout": "Выйти",
                 "manage_gallery_icon": "Управление Фото/Иконки/Эмодзи",
                 "export_friend_list": "Экспорт списка друзей",
@@ -210,6 +213,10 @@
                     "minimized": "Запускать в свернутом режиме",
                     "tray": "Сворачивать в трей"
                 },
+                "favorites": {
+                    "header": "Избранные друзья",
+                    "group_placeholder": "Выбор групп"
+                },
                 "game_log": {
                     "header": "Журнал игры",
                     "resource_load": "Запись загрузки ресурсов Udon"
@@ -219,11 +226,11 @@
                     "auto_state_change": "Автосмена статуса",
                     "auto_state_change_tooltip": "Автоматически изменяет статус, когда в инстансе есть другие игроки (Один/Компания)",
                     "auto_state_change_off": "Выкл",
-                    "auto_state_change_active_or_ask_me": "Active / Ask Me",
-                    "auto_state_change_active_or_busy": "Active / Busy",
-                    "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
-                    "auto_state_change_join_me_or_busy": "Join Me / Busy",
-                    "auto_state_change_ask_me_or_busy": "Ask Me / Busy"
+                    "auto_state_change_active_or_ask_me": "Спроси меня",
+                    "auto_state_change_active_or_busy": "Занят",
+                    "auto_state_change_join_me_or_ask_me": "Присоединяйтесь к мне / Спросить меня",
+                    "auto_state_change_join_me_or_busy": "Присоединиться к мне / Занят",
+                    "auto_state_change_ask_me_or_busy": "Спросить меня / Занят"
                 },
                 "legal_notice": {
                     "header": "Правовая информация",
@@ -249,6 +256,7 @@
                     "theme_mode_material3": "Material 3",
                     "vrcplus_profile_icons": "Иконки профиля VRCPlus",
                     "disable_tooltips": "Отключить подсказки",
+                    "disable_nicknames": "Отключить ники в заметках",
                     "sort_favorite_by": "Сортировать избранное по",
                     "sort_favorite_by_name": "имени",
                     "sort_favorite_by_date": "дате",
@@ -310,6 +318,8 @@
                         "overlay_notifications": "Оверлей уведомлений",
                         "notification_position": "Положение уведомлений",
                         "xsoverlay_notifications": "Уведомления XSOverlay",
+                        "ovrtoolkit_hud_notifications": "OVR Toolkit Уведомления в HUD",
+                        "ovrtoolkit_wrist_notifications": "OVR Toolkit Уведомления на запястье",
                         "user_images": "Иконка пользователя (медленнее)",
                         "notification_timeout": "Время показа уведомлений"
                     },
@@ -322,7 +332,8 @@
                         "when_to_display_outside_vr": "Вне VR",
                         "when_to_display_game_closed": "Игра закрыта",
                         "when_to_display_game_running": "Игра запущена",
-                        "when_to_display_always": "Всегда"
+                        "when_to_display_always": "Всегда",
+                        "desktop_notification_while_afk": "Уведомления на рабочем столе при AFK"
                     },
                     "text_to_speech": {
                         "header": "Параметры преобразования текста в речь",
@@ -379,6 +390,7 @@
                     "header": "Расширенные",
                     "launch_options": "Параметры запуска",
                     "screenshot_metadata": "Метаданные скриншота",
+                    "vrc_registry_backup": "Резервное копирование реестра VRC",
                     "common_folders": "Общие папки",
                     "pending_offline": {
                         "header": "Ожидание отключения",
@@ -400,6 +412,10 @@
                     "auto_cache_management": {
                         "header": "Автоматически управлять кэшем при закрытии VRChat",
                         "description": "Автоматически удалять старые версии из кэша"
+                    },
+                    "disable_local_world_persistence": {
+                        "header": "Отключить Local World Persistence",
+                        "description": "Отключить локальный веб-сервер (требуется перезапуск)"
                     },
                     "remote_database": {
                         "header": "Удаленная база данных аватаров",
@@ -423,7 +439,8 @@
                         "description_tooltip": "К сожалению, Windows (за некоторыми исключениями) не поддерживает просмотр EXIF информации PNG, поэтому вы можете посмотреть ее с помощью инструмента командной строки, такого как EXIFTool, инспектора PNG или HEX-редактора.",
                         "enable": "Включить",
                         "modify_filename": "Изменить имя файла",
-                        "modify_filename_tooltip": "Добавит World ID к имени файла скриншота в дополнение к метаданным файла."
+                        "modify_filename_tooltip": "Добавит World ID к имени файла скриншота в дополнение к метаданным файла.",
+                        "copy_to_clipboard": "Скопировать в буфер обмена"
                     },
                     "app_launcher": {
                         "header": "Панель запуска приложений",
@@ -515,15 +532,15 @@
             "status": {
                 "active": "Активный",
                 "offline": "Офлайн",
-                "online": "Online",
-                "join_me": "Join Me",
-                "ask_me": "Ask Me",
-                "busy": "Do Not Disturb"
+                "online": "Онлайн",
+                "join_me": "Присоединиться ко мне",
+                "ask_me": "Спросить меня",
+                "busy": "Не беспокоить"
             },
             "previous_display_names": "Предыдущие отображаемые имена:",
             "tags": {
                 "friend_no": "Друг №{number}",
-                "vrchat_team": "VRChat Team"
+                "vrchat_team": "Команда VRChat"
             },
             "actions": {
                 "favorite_tooltip": "Добавить в Избранное",
@@ -554,6 +571,7 @@
                 "edit_status": "Статус",
                 "edit_language": "Язык",
                 "edit_bio": "Био",
+                "edit_pronouns": "Местоимение",
                 "report_hacking": "Зарепортить",
                 "unfriend": "Удалить из друзей",
                 "logout": "Выйти"
@@ -579,6 +597,7 @@
                 "last_seen": "Последний раз замечен",
                 "join_count": "Счетчик присоединений",
                 "time_together": "Время вместе",
+                "play_time": "Время игры",
                 "online_for": "В сети",
                 "offline_for": "Не в сети",
                 "last_activity": "Последняя активность",
@@ -596,7 +615,10 @@
                 "copy_url": "Скопировать URL",
                 "copy_display_name": "Скопировать имя",
                 "accuracy_notice": "Информация из локальной базы данных может быть неточной",
-                "instance_full": "заполнен"
+                "instance_full": "заполнен",
+                "instance_closed": "закрытый",
+                "instance_hard_closed": "жёстко закрыт",
+                "close_instance": "Закрыть Инстанс"
             },
             "groups": {
                 "header": "Группы",
@@ -611,6 +633,7 @@
                 "sort_by": "Сортировать по:",
                 "order_by": "Упорядочить по:",
                 "sorting": {
+                    "name": "Имя",
                     "updated": "Обновлению",
                     "created": "Дате создания",
                     "favorites": "Избранное",
@@ -703,6 +726,7 @@
                 "last_updated": "Последнее обновление",
                 "publication_date": "Дата публикации",
                 "labs_publication_date": "Дата публикации в Labs",
+                "time_in_labs": "Время в Labs:",
                 "version": "Версия",
                 "platform": "Платформа",
                 "last_visited": "Последний визит",
@@ -718,7 +742,8 @@
             "tags": {
                 "public": "Публичный",
                 "private": "Приватный",
-                "fallback": "Fallback",
+                "fallback": "Резервный",
+                "impostor": "Импортер",
                 "future_proofing": "Перспективные решения",
                 "cache": "Кэш",
                 "content_horror": "Ужасы",
@@ -749,7 +774,9 @@
                 "change_content_tags": "Изменить теги содержимого",
                 "change_image": "Изменить изображение",
                 "download_package": "Скачать пакет Unity",
-                "delete": "Удалить"
+                "delete": "Удалить",
+                "delete_impostor": "Удалить Импостера",
+                "create_impostor": "Создать Импостера"
             },
             "info": {
                 "header": "Информация",
@@ -776,7 +803,7 @@
                 "private": "Приватная",
                 "open": "Открытая",
                 "request": "По запросу",
-                "invite": "Invite",
+                "invite": "Инвайт",
                 "closed": "Закрытая",
                 "joined": "В группе",
                 "banned": "Заблокирован",
@@ -800,6 +827,8 @@
                 "visibility_everyone": "Видимость: все",
                 "visibility_friends": "Видимость: Только друзья",
                 "visibility_hidden": "Видимость: Только я",
+                "create_post": "Создать объявление",
+                "moderation_tools": "Инструменты модерации",
                 "leave": "Покинуть группу"
             },
             "info": {
@@ -823,6 +852,17 @@
                 "role_created_at": "Создана:",
                 "role_permissions": "Права доступа:"
             },
+            "posts": {
+                "header": "Объявления",
+                "visibility": "Видемость:",
+                "edited_at": "Отредактированно в:",
+                "created_at": "Создано в:",
+                "edit_tooltip": "Редактировать объявления",
+                "delete_tooltip": "Удалить объявления",
+                "edited_by": "Отредактированно:",
+                "search_placeholder": "Поиск",
+                "posts_count": "Объявлений: "
+            },
             "members": {
                 "header": "Участники",
                 "all_members": "Все участники",
@@ -841,7 +881,9 @@
                 },
                 "unsubscribed_announcements": "Отписаться от объявлений",
                 "visibility": "Видимость:",
-                "representing": "Установить как репрезентативную группу"
+                "representing": "Установить как репрезентативную группу",
+                "manager_notes": "Заметки руководителя:",
+                "search": "Поиск"
             },
             "gallery": {
                 "header": "Фото"
@@ -858,8 +900,12 @@
         "invite": {
             "header": "Пригласить",
             "select_placeholder": "Выбрать друзей",
+            "add_self": "Добавить Себя",
+            "add_friends_in_instance": "Добавить друзей в инстанс",
+            "add_favorite_friends": "Добавить любимых друзей",
             "invite_with_message": "Пригласить с сообщением",
-            "invite": "Пригласить"
+            "invite": "Пригласить",
+            "friends_in_instance": "Друзья в инстансе"
         },
         "social_status": {
             "header": "Статус",
@@ -878,6 +924,11 @@
             "header": "Био",
             "bio_placeholder": "Пожалуйста, заполните био",
             "add_link": "Добавить ссылку",
+            "update": "Обновить"
+        },
+        "pronouns": {
+            "header": "Местоимения",
+            "pronouns_placeholder": "Пожалуйста, введите свои местоимения",
             "update": "Обновить"
         },
         "new_instance": {
@@ -908,7 +959,7 @@
             "group_id": "Группа",
             "location": "Местоположение",
             "url": "URL",
-            "copy_url": "﻿Копировать ссылку",
+            "copy_url": "Копировать ссылку",
             "self_invite": "Пригласить себя",
             "invite": "Пригласить",
             "launch": "Открыть",
@@ -916,6 +967,7 @@
             "queueEnabled": "Очередь",
             "normal": "Обычный",
             "group": "Группа",
+            "legacy": "Легаси",
             "roles": "Роли"
         },
         "launch_options": {
@@ -951,7 +1003,7 @@
             "save": "Сохранить"
         },
         "youtube_api": {
-            "header": "Youtube API",
+            "header": "YouTube API",
             "description": "Введите ваш YouTube API ключ (необязательно)",
             "placeholder": "API ключ YouTube",
             "guide": "Руководство",
@@ -1035,8 +1087,8 @@
             "favorite": "Избранное",
             "friends": "Друзья",
             "everyone": "Все",
-            "cancel": "Отмена",
-            "save": "Сохранить"
+            "reset": "Сбросить",
+            "close": "Закрыть"
         },
         "world_export": {
             "header": "Экспорт избранных миров"
@@ -1130,7 +1182,9 @@
         },
         "invite_message": {
             "header": "Отправить пригласительное сообщение",
-            "confirmation": "Подтвердить отправку?",
+            "confirmation": "Вы уверены, что хотите отправить?",
+            "select_image": "Выбрать изображение",
+            "clear_selected_image": "Очистить выбранное изображение",
             "cancel": "Отмена",
             "refresh": "Обновить",
             "confirm": "Подтвердить"
@@ -1173,7 +1227,12 @@
             "refresh": "Обновить",
             "upload": "Загрузить",
             "clear": "Очистить",
-            "emoji_animation_styles": "Стиль анимации"
+            "emoji_animation_styles": "Стиль анимации",
+            "emoji_animation_type": "Анимированные Emoji",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "Количество кадров:",
+            "emoji_loop_pingpong": "Зацикленный PingPong",
+            "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи, доступные размеры сетки кадров: 4, 16 или 64 (максимальный FPS 64, максимальное количество кадров 64)"
         },
         "change_content_image": {
             "avatar": "Изменить изображение аватара",
@@ -1222,6 +1281,78 @@
             "copy_image": "Скопировать изображение",
             "open_folder": "Открыть папку",
             "upload": "Загрузить"
+        },
+        "registry_backup": {
+            "header": "Резервное копирование настроек реестра VRC",
+            "backup": "Резервное копирование",
+            "restore": "Восстановить",
+            "save_to_file": "Сохранить в файл",
+            "delete": "Удалить",
+            "restore_from_file": "Востановить из файла",
+            "reset": "Сброс",
+            "name": "Имя",
+            "date": "Дата",
+            "action": "Действие",
+            "auto_backup": "Еженедельное автоматическое резервное копирование",
+            "restore_prompt": "VRCX заметил, что автоматическое резервное копирование настроек реестра VRC включено, но на данном компьютере его нет, если вы хотите восстановить из резервной копии, вы можете сделать это отсюда."
+        },
+        "group_member_moderation": {
+            "header": "Модерация участников группы",
+            "members": "Участник",
+            "bans": "Баны",
+            "invites": "Приглашения",
+            "logs": "Логи",
+            "sent_invites": "Отправленные приглашения",
+            "join_requests": "Заявки на присоединение",
+            "blocked_requests": "Заблокированные запросы",
+            "notes": "Земетки руководителя",
+            "note_placeholder": "Нажмите для добавления заметки",
+            "actions": "Действия",
+            "kick": "Кик",
+            "ban": "Бан",
+            "unban": "Разбан",
+            "save_note": "Сохранить заметку",
+            "delete_sent_invite": "Удалить отправленное приглашение",
+            "delete_blocked_requests": "Удаление заблокированных запросов",
+            "accept_join_requests": "Принять запрос на присоединениеs",
+            "reject_join_requests": "Отклонять запросы на присоединение",
+            "block_join_requests": "Блокировать запросы на присоединение",
+            "group_members": "Члены группы",
+            "progress": "Прогресс:",
+            "display_name": "Отображаемое имя",
+            "visibility": "Видемость:",
+            "avatar": "Аватар",
+            "joined_at": "Присоединился",
+            "banned_at": "Забанен в",
+            "created_at": "Создано в",
+            "type": "Тип",
+            "description": "Описание",
+            "data": "Данные",
+            "note": "Заметка",
+            "roles": "Роли",
+            "user_id": "ID пользователя",
+            "user_id_placeholder": "Введите ID пользователя(ей)",
+            "select_user": "Выберите пользователя",
+            "selected_users": "Выбранные пользователи",
+            "select_all": "Выбрать все",
+            "cancel": "Отмена",
+            "choose_roles_placeholder": "Выбор ролей",
+            "selected_roles": "Выбранные роли",
+            "remove_roles": "Удалить роли",
+            "add_roles": "Добавить роли"
+        },
+        "group_post_edit": {
+            "header": "Создать/Редактировать обьявление",
+            "title": "Заголовок",
+            "message": "Сообщение",
+            "send_notification": "Отправить уведомление",
+            "post_visibility": "Пидемость обьявления",
+            "visibility_public": "Публично",
+            "visibility_group": "Группа",
+            "image": "Изображение",
+            "cancel": "Отменить",
+            "create_post": "Создать обьявление",
+            "edit_post": "Редактировать обьявление"
         }
     },
     "prompt": {
@@ -1492,7 +1623,7 @@
         "notification": {
             "date": "Дата",
             "type": "Тип",
-            "user": "Пользователь",
+            "user_group": "Пользователь/Группа",
             "photo": "Фото",
             "message": "Сообщение",
             "action": "Действие"

@@ -64,10 +64,10 @@ mixin settingsTab()
                                 span.name {{ $t("view.settings.general.general.repository_url") }}
                                 span.extra https://github.com/vrcx-team/VRCX
                         //- General | General | Support
-                        .x-friend-item(@click="openExternalLink('https://vrcx.pypy.moe/discord')")
+                        .x-friend-item(@click="openExternalLink('https://vrcx.app/discord')")
                             .detail
                                 span.name {{ $t("view.settings.general.general.support") }}
-                                span.extra https://vrcx.pypy.moe/discord
+                                span.extra https://vrcx.app/discord
                 //- General | VRCX Updater
                 +simpleSettingsCategory("view.settings.general.vrcx_updater.header")
                     div.options-container-item
@@ -84,9 +84,23 @@ mixin settingsTab()
                     +simpleSwitch("view.settings.general.application.startup", "isStartAtWindowsStartup", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.minimized", "isStartAsMinimizedState", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.tray", "isCloseToTray", "saveVRCXWindowOption")
+                //- General | Favorite
+                +simpleSettingsCategory("view.settings.general.favorites.header")
+                    br
+                    el-select(v-model="localFavoriteFriendsGroups" multiple clearable :placeholder="$t('view.settings.general.favorites.group_placeholder')" @change="updateLocalFavoriteFriends")
+                        el-option-group(:label="$t('view.settings.general.favorites.group_placeholder')")
+                            el-option.x-friend-item(v-for="group in API.favoriteFriendGroups" :key="group.key" :label="group.displayName ? group.displayName : group.name" :value="group.key")
+                                .detail
+                                    span.name(v-text="group.displayName ? group.displayName : group.name")
                 //- General | Game Log
-                +simpleSettingsCategory("view.settings.general.game_log.header")
-                    +simpleSwitch("view.settings.general.game_log.resource_load", "logResourceLoad", "saveGameLogOptions")
+                div.options-container
+                    span.header {{ $t('view.settings.general.logging.header') }}
+                    div.options-container-item
+                        span.name(style="min-width:225px") {{ $t('view.settings.general.logging.resource_load') }}
+                        el-switch(v-model="logResourceLoad" @change="saveLoggingOptions")
+                    div.options-container-item
+                        span.name(style="min-width:225px") {{ $t('view.settings.general.logging.empty_avatar') }}
+                        el-switch(v-model="logEmptyAvatars" @change="saveLoggingOptions")
                 //- General | Automation
                 +simpleSettingsCategory("view.settings.general.automation.header")
                     +simpleRadioGroupWithTooltip("view.settings.general.automation.auto_state_change", "$t('view.settings.general.automation.auto_state_change_tooltip')", "autoStateChange", [
@@ -97,6 +111,11 @@ mixin settingsTab()
                         { label: "Join Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_join_me_or_busy" },
                         { label: "Ask Me or Busy", translationKey: "view.settings.general.automation.auto_state_change_ask_me_or_busy" },
                     ], "saveAutomationOptions")
+                    +simpleRadioGroupWithTooltip("view.settings.general.automation.auto_invite_request_accept", "$t('view.settings.general.automation.auto_invite_request_accept_tooltip')", "autoAcceptInviteRequests", [
+                        { label: "Off", translationKey: "view.settings.general.automation.auto_invite_request_accept_off" },
+                        { label: "All Favorites", translationKey: "view.settings.general.automation.auto_invite_request_accept_favs" },
+                        { label: "Selected Favorites", translationKey: "view.settings.general.automation.auto_invite_request_accept_selected_favs" },
+                    ], "saveAutomationOptions")
                 //- General | Contributors
                 div.options-container
                     span.header {{ $t("view.settings.general.contributors.header" )}}
@@ -106,7 +125,7 @@ mixin settingsTab()
                 div.options-container(style="margin-top:45px;border-top:1px solid #eee;padding-top:30px")
                     span.header {{ $t("view.settings.general.legal_notice.header" )}}
                     div.options-container-item
-                        p &copy; 2019-2023 #[a.x-link(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] &amp; #[a.x-link(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
+                        p &copy; 2019-2024 #[a.x-link(@click="openExternalLink('https://github.com/pypy-vrc')") pypy] &amp; #[a.x-link(@click="openExternalLink('https://github.com/Natsumi-sama')") Natsumi]
                         p {{ $t("view.settings.general.legal_notice.info" )}}
                         p {{ $t("view.settings.general.legal_notice.disclaimer1" )}}
                         p {{ $t("view.settings.general.legal_notice.disclaimer2" )}}
@@ -134,8 +153,14 @@ mixin settingsTab()
                             el-radio-button(label="pink") {{ $t('view.settings.appearance.appearance.theme_mode_pink') }}
                             el-radio-button(label="material3") {{ $t('view.settings.appearance.appearance.theme_mode_material3') }}
                     div.options-container-item
+                        span.name {{ $t('view.settings.appearance.appearance.zoom') }}
+                        el-input-number(size="small" v-model="zoomLevel" @change="setZoomLevel" :precision="0" style="width:128px")
+                    div.options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.vrcplus_profile_icons') }}
                         el-switch(v-model="displayVRCPlusIconsAsAvatar" @change="saveOpenVROption")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.appearance.appearance.disable_nicknames') }}
+                        el-switch(v-model="hideNicknames" @change="saveOpenVROption")
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.disable_tooltips') }}
                         el-switch(v-model="hideTooltips" @change="saveOpenVROption")
@@ -255,6 +280,12 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.xsoverlay_notifications') }}
                         el-switch(v-model="xsNotifications" @change="saveOpenVROption")
                     div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_hud_notifications') }}
+                        el-switch(v-model="ovrtHudNotifications" @change="saveOpenVROption")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.ovrtoolkit_wrist_notifications') }}
+                        el-switch(v-model="ovrtWristNotifications" @change="saveOpenVROption")
+                    div.options-container-item
                         span.name {{ $t('view.settings.notifications.notifications.steamvr_notifications.user_images') }}
                         el-switch(v-model="imageNotifications" @change="saveOpenVROption")
                     div.options-container-item
@@ -273,6 +304,9 @@ mixin settingsTab()
                             el-radio-button(label="Game Closed") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_game_closed') }}
                             el-radio-button(label="Game Running") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_game_running') }}
                             el-radio-button(label="Always") {{ $t('view.settings.notifications.notifications.desktop_notifications.when_to_display_always') }}
+                    div.options-container-item
+                        span.name(style="min-width:225px") {{ $t('view.settings.notifications.notifications.desktop_notifications.desktop_notification_while_afk') }}
+                        el-switch(v-model="afkDesktopToast" @change="saveOpenVROption")
                 //- Notifications | Notifications | Text-to-Speech Options
                 div.options-container
                     span.sub-header {{ $t('view.settings.notifications.notifications.text_to_speech.header') }}
@@ -297,6 +331,8 @@ mixin settingsTab()
                 //- Wrist Overlay | SteamVR Wrist Overlay
                 div.options-container(style="margin-top:0")
                     span.header {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.header') }}
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog" :disabled="!openVR || !overlayWrist") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_filters') }}
                     div.options-container-item
                         span {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.description') }}
                         br
@@ -344,8 +380,6 @@ mixin settingsTab()
                     div.options-container-item
                         span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_pc_uptime') }}
                         el-switch(v-model="pcUptimeOnFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
-                    div.options-container-item
-                        el-button(size="small" icon="el-icon-notebook-2" @click="showWristFeedFiltersDialog" :disabled="!openVR || !overlayWrist") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.wrist_feed_filters') }}
             //- Discord Presence Tab
             el-tab-pane(:label="$t('view.settings.category.discord_presence')")
                 div.options-container(style="margin-top:0")
@@ -379,6 +413,7 @@ mixin settingsTab()
                             el-button(size="small" icon="el-icon-s-operation" @click="showVRChatConfig()") VRChat config.json
                             el-button(size="small" icon="el-icon-s-operation" @click="showLaunchOptions()") {{ $t('view.settings.advanced.advanced.launch_options') }}
                             el-button(size="small" icon="el-icon-picture" @click="showScreenshotMetadataDialog()") {{ $t('view.settings.advanced.advanced.screenshot_metadata') }}
+                            el-button(size="small" icon="el-icon-goods" @click="showRegistryBackupDialog()") {{ $t('view.settings.advanced.advanced.vrc_registry_backup') }}
                 //- Advanced | Common Folders
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.common_folders') }}
@@ -411,6 +446,11 @@ mixin settingsTab()
                     div.options-container-item
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.auto_cache_management.description') }}
                         el-switch(v-model="autoSweepVRChatCache" @change="saveOpenVROption")
+                    //- Advanced | Disable local world database
+                    span.sub-header {{ $t('view.settings.advanced.advanced.disable_local_world_persistence.header') }}
+                    div.options-container-item
+                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.disable_local_world_persistence.description') }}
+                        el-switch(v-model="disableWorldDatabase" @change="saveVRCXWindowOption")
                 //- Advanced | Remote Avatar Database
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.remote_database.header') }}
@@ -441,12 +481,17 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.modify_filename') }}
                             el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.screenshot_helper.modify_filename_tooltip')")
                                 i.el-icon-info
-                        el-switch(v-model="screenshotHelperModifyFilename" @change="saveScreenshotHelper")
+                        el-switch(v-model="screenshotHelperModifyFilename" @change="saveScreenshotHelper" :disabled="!screenshotHelper")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.advanced.advanced.screenshot_helper.copy_to_clipboard') }}
+                        el-switch(v-model="screenshotHelperCopyToClipboard" @change="saveScreenshotHelper")
                 //- Advanced | YouTube API
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.youtube_api.header') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.youtube_api.enable') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.youtube_api.enable_tooltip')")
+                                i.el-icon-info
                         el-switch(v-model="youTubeApi" @change="changeYouTubeApi")
                     div.options-container-item
                         el-button(size="small" icon="el-icon-caret-right" @click="showYouTubeApiDialog") {{ $t('view.settings.advanced.advanced.youtube_api.youtube_api_key') }}
@@ -507,12 +552,6 @@ mixin settingsTab()
                         el-button-group(style="display:block")
                             el-button(size="small" icon="el-icon-s-operation" @click="promptSetPendingOffline") {{ $t('view.settings.advanced.advanced.pending_offline.set_delay') }}
                     +simpleSwitch("view.settings.advanced.advanced.cache_debug.udon_exception_logging", "udonExceptionLogging", "saveOpenVROption")
-                    div.options-container-item
-                        span.name {{ $t('view.settings.advanced.advanced.cache_debug.gpu_fix') }}
-                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.advanced.advanced.cache_debug.gpu_fix_warning')")
-                                i.el-icon-warning
-                        el-switch(v-model="gpuFix" @change="saveVRCXWindowOption")
-                        span.name(style="margin-left:15px") {{ $t('view.settings.advanced.advanced.cache_debug.gpu_fix_notice') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.cache_debug.disable_gamelog') }}
                         el-switch(v-model="gameLogDisabled" @change="disableGameLogDialog")

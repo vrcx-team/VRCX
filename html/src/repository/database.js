@@ -821,6 +821,9 @@ class Database {
                 ...row.details
             }
         };
+        if (entry.imageUrl && !entry.details.imageUrl) {
+            entry.details.imageUrl = entry.imageUrl;
+        }
         var expired = 0;
         if (row.$isExpired) {
             expired = 1;
@@ -2158,7 +2161,7 @@ class Database {
         );
     }
 
-    async getAvatarHistory(currentUserId) {
+    async getAvatarHistory(currentUserId, limit = 100) {
         var data = [];
         await sqliteService.execute((dbRow) => {
             var row = {
@@ -2175,7 +2178,7 @@ class Database {
                 version: dbRow[13]
             };
             data.push(row);
-        }, `SELECT * FROM ${Database.userPrefix}_avatar_history INNER JOIN cache_avatar ON cache_avatar.id = ${Database.userPrefix}_avatar_history.avatar_id WHERE author_id != "${currentUserId}" ORDER BY ${Database.userPrefix}_avatar_history.created_at DESC LIMIT 100`);
+        }, `SELECT * FROM ${Database.userPrefix}_avatar_history INNER JOIN cache_avatar ON cache_avatar.id = ${Database.userPrefix}_avatar_history.avatar_id WHERE author_id != "${currentUserId}" ORDER BY ${Database.userPrefix}_avatar_history.created_at DESC LIMIT ${limit}`);
         return data;
     }
 
@@ -2474,9 +2477,15 @@ class Database {
         });
     }
 
-    fixBrokenNotifications() {
-        sqliteService.executeNonQuery(
+    async fixBrokenNotifications() {
+        await sqliteService.executeNonQuery(
             `DELETE FROM ${Database.userPrefix}_notifications WHERE (created_at is null or created_at = '')`
+        );
+    }
+
+    async fixBrokenGroupChange() {
+        await sqliteService.executeNonQuery(
+            `DELETE FROM ${Database.userPrefix}_notifications WHERE type = 'groupChange' AND created_at < '2024-04-23T03:00:00.000Z'`
         );
     }
 
@@ -2512,6 +2521,14 @@ class Database {
                 throw e;
             }
         }
+    }
+
+    async vacuum() {
+        await sqliteService.executeNonQuery('VACUUM');
+    }
+
+    async setWal() {
+        await sqliteService.executeNonQuery('PRAGMA journal_mode=WAL');
     }
 }
 
