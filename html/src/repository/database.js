@@ -821,6 +821,9 @@ class Database {
                 ...row.details
             }
         };
+        if (entry.imageUrl && !entry.details.imageUrl) {
+            entry.details.imageUrl = entry.imageUrl;
+        }
         var expired = 0;
         if (row.$isExpired) {
             expired = 1;
