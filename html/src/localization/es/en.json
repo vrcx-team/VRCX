@@ -228,10 +228,10 @@
                     "auto_state_change_tooltip": "Cambia automáticamente el estado cuando hay otras personas en la instancia (Solo/Compañía)",
                     "auto_state_change_off": "Desactivado",
                     "auto_state_change_active_or_ask_me": "Activo / Pregúntame",
-                    "auto_state_change_active_or_busy": "Activo / No molestar",
+                    "auto_state_change_active_or_busy": "Activo / Ocupado",
                     "auto_state_change_join_me_or_ask_me": "Join Me / Pregúntame",
                     "auto_state_change_join_me_or_busy": "Join Me / No molestar",
-                    "auto_state_change_ask_me_or_busy": "Pregúntame / No molestar",
+                    "auto_state_change_ask_me_or_busy": "Pregúntame / Ocupado",
                     "auto_invite_request_accept": "Auto Accept Invite Requests",
                     "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
                     "auto_invite_request_accept_off": "Off",
@@ -260,6 +260,7 @@
                     "theme_mode_darkvanilla": "Dark Vanilla",
                     "theme_mode_pink": "Rosa",
                     "theme_mode_material3": "Material 3",
+                    "zoom": "Zoom",
                     "vrcplus_profile_icons": "Iconos de perfil VRCPlus",
                     "disable_tooltips": "Deshabilitar las descripciones emergentes",
                     "disable_nicknames": "Desactivar apodos",
@@ -542,9 +543,10 @@
                 "online": "En línea",
                 "join_me": "Únete a mí",
                 "ask_me": "Pregúntame",
-                "busy": "No molestar"
+                "busy": "Ocupado"
             },
             "previous_display_names": "Nombres de pantalla anteriores:",
+            "pronouns": "Pronombres",
             "tags": {
                 "friend_no": "Amigo N.º{number}",
                 "vrchat_team": "VRChat Team"
@@ -558,6 +560,7 @@
                 "request_invite": "Solicitar invitación",
                 "request_invite_with_message": "Solicitar invitación con un mensaje",
                 "invite_to_group": "Invitar al grupo",
+                "send_boop": "Enviar Boop",
                 "manage_gallery_icon": "Administrar Fotos/Iconos/Emojis",
                 "accept_friend_request": "Aceptar Solicitud de Amistad",
                 "decline_friend_request": "Rechazar Solicitud de Amistad",
@@ -613,6 +616,7 @@
                 "friended": "Amigos desde",
                 "unfriended": "Amigo eliminado",
                 "avatar_cloning": "Clonación del avatar",
+                "booping": "Booping",
                 "avatar_cloning_allow": "Permitido",
                 "avatar_cloning_deny": "Denegar",
                 "home_location": "Ubicación de Casa",
@@ -836,7 +840,9 @@
                 "visibility_hidden": "Visibilidad oculta",
                 "create_post": "Crear publicación",
                 "moderation_tools": "Herramientas de moderación",
-                "leave": "Abandonar el grupo"
+                "leave": "Abandonar el grupo",
+                "block": "Bloquear el grupo",
+                "unblock": "Desbloquear grupo"
             },
             "info": {
                 "header": "Información",
@@ -1361,6 +1367,15 @@
             "cancel": "Cancel",
             "create_post": "Create Post",
             "edit_post": "Edit Post"
+        },
+        "boop_dialog": {
+            "header": "Boop",
+            "emoji_manager": "Gestor de Emojis",
+            "select_emoji": "Seleccionar Emoji",
+            "my_emojis": "Mis Emojis",
+            "default_emojis": "Emojis por defecto",
+            "cancel": "Cancelar",
+            "send": "Enviar"
         }
     },
     "prompt": {
