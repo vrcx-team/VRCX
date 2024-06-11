@@ -1241,7 +1241,7 @@
             "emoji_animation_frame_count": "帧数:",
             "emoji_loop_pingpong": "Loop PingPong",
             "flipbook_info": "选择一个1024x1024的PNG精灵表作为动画表情（最大FPS 64）"
-            },
+        },
         "change_content_image": {
             "avatar": "更改模型封面",
             "world": "更改世界封面",
