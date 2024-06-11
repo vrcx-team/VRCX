@@ -3570,7 +3570,7 @@ speechSynthesis.getVoices();
             }
 
             if (!json.details?.emojiId) {
-                json.message = `${json.senderUsername} Booped you! with nothing`;
+                json.message = `${json.senderUsername} Booped you! without an emoji`;
             } else if (!json.details.emojiId.startsWith('file_')) {
                 // JANK: get emoji name from emojiId
                 json.message = `${json.senderUsername} Booped you! with ${$app.getEmojiName(json.details.emojiId)}`;
@@ -12052,12 +12052,19 @@ speechSynthesis.getVoices();
                             }
                         });
                     }
-                } else if (data.Parameters[245]['0'] === 13) {
+                } else if (
+                    data.Parameters[245]['0'] === 13 ||
+                    data.Parameters[245]['0'] === 25
+                ) {
                     var msg = data.Parameters[245]['2'];
-                    if (typeof msg === 'string') {
-                        var displayName =
-                            data.Parameters[245]['14']?.targetDisplayName;
-                        msg = msg.replace('{{targetDisplayName}}', displayName);
+                    if (
+                        typeof msg === 'string' &&
+                        typeof data.Parameters[245]['14'] === 'object'
+                    ) {
+                        for (var prop in data.Parameters[245]['14']) {
+                            var value = data.Parameters[245]['14'][prop];
+                            msg = msg.replace(`{{${prop}}}`, value);
+                        }
                     }
                     this.addEntryPhotonEvent({
                         photonId,
@@ -25242,7 +25249,7 @@ speechSynthesis.getVoices();
         url,
         fps,
         frameCount,
-        animationStyle
+        loopStyle
     ) {
         let framesPerLine = 2;
         if (frameCount > 4) framesPerLine = 4;
@@ -25250,15 +25257,14 @@ speechSynthesis.getVoices();
         const animationDurationMs = (1000 / fps) * frameCount;
         const frameSize = 1024 / framesPerLine;
         const scale = 100 / (frameSize / 200);
-        const animStyle =
-            animationStyle === 'pingpong' ? 'alternate' : 'infinite';
+        const animStyle = loopStyle === 'pingpong' ? 'alternate' : 'none';
         const style = `
             transform: scale(${scale / 100});
             transform-origin: top left;
             width: ${frameSize}px;
             height: ${frameSize}px;
             background: url('${url}') 0 0;
-            animation: ${animationDurationMs}ms steps(1) 0s ${animStyle} normal none running animated-emoji-${frameCount};
+            animation: ${animationDurationMs}ms steps(1) 0s infinite ${animStyle} running animated-emoji-${frameCount};
         `;
         return style;
     };
@@ -32670,6 +32676,13 @@ speechSynthesis.getVoices();
     // #endregion
     // #region | Boops
 
+    /**
+    * @param {{
+            userId: string,
+            emojiId: string
+    }} params
+     * @returns {Promise<{json: any, params}>}
+     */
     API.sendBoop = function (params) {
         return this.call(`users/${params.userId}/boop`, {
             method: 'POST',
@@ -32687,7 +32700,13 @@ speechSynthesis.getVoices();
     $app.methods.sendBoop = function () {
         var D = this.sendBoopDialog;
         this.dismissBoop(D.userId);
-        API.sendBoop({ userId: D.userId, emojiId: D.fileId });
+        var params = {
+            userId: D.userId
+        };
+        if (D.fileId) {
+            params.emojiId = D.fileId;
+        }
+        API.sendBoop(params);
         D.visible = false;
     };
 

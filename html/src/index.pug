@@ -238,7 +238,7 @@ html
                                             i.el-icon-caret-bottom
                                     el-popover(placement="top" trigger="click")
                                         span.dialog-title(slot="reference" v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px;cursor:pointer")
-                                        span(style="display:block;text-align:center;font-family:monospace") {{ API.currentUser.username | textToHex }}
+                                        span(style="display:block;text-align:center;font-family:monospace") {{ userDialog.ref.displayName | textToHex }}
                                     el-tooltip(v-if="userDialog.ref.pronouns" placement="top" :content="$t('dialog.user.pronouns')" :disabled="hideTooltips")
                                         span(v-text="userDialog.ref.pronouns" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px")
                                     el-tooltip(v-for="item in userDialog.ref.$languages" :key="item.key" placement="top")
@@ -300,7 +300,7 @@ html
                                             el-dropdown-item(v-else-if="userDialog.outgoingRequest" icon="el-icon-close" command="Cancel Friend Request") {{ $t('dialog.user.actions.cancel_friend_request') }}
                                             el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") {{ $t('dialog.user.actions.send_friend_request') }}
                                             el-dropdown-item(icon="el-icon-message" command="Invite To Group") {{ $t('dialog.user.actions.invite_to_group') }}
-                                            el-dropdown-item(icon="el-icon-thumb" command="Send Boop") {{ $t('dialog.user.actions.send_boop') }}
+                                            el-dropdown-item(icon="el-icon-thumb" command="Send Boop" :disabled="!API.currentUser.isBoopingEnabled") {{ $t('dialog.user.actions.send_boop') }}
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) {{ $t('dialog.user.actions.show_avatar_author') }}
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") {{ $t('dialog.user.actions.show_fallback_avatar') }}
                                             el-dropdown-item(icon="el-icon-tickets" command="Previous Instances") {{ $t('dialog.user.actions.show_previous_instances') }}
@@ -2528,7 +2528,7 @@ html
                         .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)") 
                                 template(v-if="image.frames")
-                                    .avatar(:style="generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.animationStyle)")
+                                    .avatar(:style="generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.loopStyle)")
                                 template(v-else)
                                     img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="display:inline-block;margin:5px")
@@ -3286,9 +3286,6 @@ html
             //- dialog: send boop
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendBoopDialog" :visible.sync="sendBoopDialog.visible" :title="$t('dialog.boop_dialog.header')" width="450px")
                 div(v-if="sendBoopDialog.visible")
-                    el-button(size="small" @click="showGalleryDialog(2)") {{ $t('dialog.boop_dialog.emoji_manager') }}
-                    br
-                    br
                     el-select(v-model="sendBoopDialog.userId" :placeholder="$t('dialog.new_instance.instance_creator_placeholder')" filterable style="width:100%")
                         el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
                             el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
@@ -3329,13 +3326,14 @@ html
                             el-option(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" :value="image.id" style="width:100%;height:100%")
                                 .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden;width:200px;height:200px;padding:10px") 
                                     template(v-if="image.frames")
-                                        .avatar(:style="generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.animationStyle)")
+                                        .avatar(:style="generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.loopStyle)")
                                     template(v-else)
                                         img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url" style="width:200px;height:200px")
                         el-option-group(:label="$t('dialog.boop_dialog.default_emojis')")
                             el-option(v-for="emojiName in photonEmojis" :key="emojiName" :value="getEmojiValue(emojiName)" style="width:100%;height:100%")
                                 span(v-text="emojiName")
                 template(#footer)
+                    el-button(size="small" @click="showGalleryDialog(2)") {{ $t('dialog.boop_dialog.emoji_manager') }}
                     el-button(size="small" @click="sendBoopDialog.visible = false") {{ $t('dialog.boop_dialog.cancel') }}
                     el-button(size="small" @click="sendBoop" :disabled="!sendBoopDialog.userId") {{ $t('dialog.boop_dialog.send') }}
 

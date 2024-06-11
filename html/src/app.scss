@@ -193,7 +193,7 @@ a {
 .x-login-form-container {
     display: grid;
     gap: 8px;
-    height: 375px;
+    height: 380px;
 }
 
 .x-login-form-container:has(> div:nth-child(3)) {
@@ -205,6 +205,7 @@ a {
     flex-direction: column;
     min-height: 0;
     padding: 16px;
+    overflow-y: auto;
 }
 
 .x-scroll-wrapper {
