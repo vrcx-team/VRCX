@@ -20,6 +20,7 @@ namespace VRCX
     public class LogWatcher
     {
         public static readonly LogWatcher Instance;
+        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
         private readonly Dictionary<string, LogContext> m_LogContextMap; // <FileName, LogContext>
         private readonly DirectoryInfo m_LogDirectoryInfo;
         private readonly List<string[]> m_LogList;
@@ -72,8 +73,8 @@ namespace VRCX
 
         public void SetDateTill(string date)
         {
-            tillDate = DateTime.Parse(date, CultureInfo.InvariantCulture, DateTimeStyles.None);
-            tillDate = tillDate.ToUniversalTime();
+            tillDate = DateTime.Parse(date, CultureInfo.InvariantCulture, DateTimeStyles.None).ToUniversalTime();
+            logger.Info("SetDateTill: {0}", tillDate.ToLocalTime());
         }
 
         private void ThreadLoop()
@@ -214,10 +215,22 @@ namespace VRCX
                                 ))
                             {
                                 lineDate = lineDate.ToUniversalTime();
+                                // check if date is older than last database entry
                                 if (DateTime.Compare(lineDate, tillDate) <= 0)
                                 {
                                     continue;
                                 }
+                                // check if datetime is over an hour into the future (compensate for gamelog not handling daylight savings time correctly)
+                                if (DateTime.UtcNow.AddMinutes(61) < lineDate)
+                                {
+                                    logger.Warn("Invalid log time, too new: {0}", line);
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                logger.Warn("Failed to parse log date: {0}", line);
+                                continue;
                             }
 
                             var offset = 34;
@@ -1165,7 +1178,7 @@ namespace VRCX
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
                 "event",
-                $"VRChat could not start OSC server, You may be affected by (https://vrchat.canny.io/bug-reports/p/installexe-breaks-osc-port-binding) \"{line.Substring(offset)}\""
+                $"VRChat couldn't start OSC server, you may be affected by (https://vrchat.canny.io/bug-reports/p/installexe-breaks-osc-port-binding) \"{line.Substring(offset)}\""
             });
             return true;
         }
