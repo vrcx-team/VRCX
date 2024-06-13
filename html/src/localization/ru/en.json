@@ -1371,9 +1371,9 @@
         "boop_dialog": {
             "header": "Буп",
             "emoji_manager": "Менеджер эмодзи",
-            "select_emoji": "Выберите Emoji",
-            "my_emojis": "Мои Emojis",
-            "default_emojis": "Стандартные Emojis",
+            "select_emoji": "Выберите Эмодзи",
+            "my_emojis": "Мои эмодзи",
+            "default_emojis": "Стандартные Эмодзи",
             "cancel": "Отмена",
             "send": "Отправить"
         }
