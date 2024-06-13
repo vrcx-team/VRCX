@@ -75,6 +75,13 @@ speechSynthesis.getVoices();
             $app.screenshotMetadataCarouselChange(carouselNavigation);
         }
     });
+
+    addEventListener('wheel', (event) => {
+        if (event.ctrlKey) {
+            $app.getZoomLevel();
+        }
+    });
+
     // #endregion
     // #region | Init: Define VRCX database helper functions, flush timer
 
@@ -422,7 +429,7 @@ speechSynthesis.getVoices();
         var req = webApiService
             .execute(init)
             .catch((err) => {
-                this.$throw(0, err);
+                this.$throw(0, err, endpoint);
             })
             .then((response) => {
                 try {
@@ -433,7 +440,7 @@ speechSynthesis.getVoices();
                     return response;
                 } catch (e) {}
                 if (response.status === 200) {
-                    this.$throw(0, 'Invalid JSON response');
+                    this.$throw(0, 'Invalid JSON response', endpoint);
                 }
                 if (
                     response.status === 429 &&
@@ -533,7 +540,7 @@ speechSynthesis.getVoices();
                         endpoint
                     );
                 }
-                this.$throw(status, data);
+                this.$throw(status, data, endpoint);
                 return data;
             });
         if (init.method === 'GET') {
@@ -621,7 +628,7 @@ speechSynthesis.getVoices();
     };
 
     // FIXME : extra를 없애줘
-    API.$throw = function (code, error, extra) {
+    API.$throw = function (code, error, endpoint) {
         var text = [];
         if (code > 0) {
             var status = this.statusCodes[code];
@@ -634,8 +641,8 @@ speechSynthesis.getVoices();
         if (typeof error !== 'undefined') {
             text.push(JSON.stringify(error));
         }
-        if (typeof extra !== 'undefined') {
-            text.push(JSON.stringify(extra));
+        if (typeof endpoint !== 'undefined') {
+            text.push(JSON.stringify(endpoint));
         }
         text = text.map((s) => escapeTag(s)).join('<br>');
         if (text.length) {
@@ -1435,8 +1442,10 @@ speechSynthesis.getVoices();
             last_mobile: json.last_mobile,
             last_platform: json.last_platform,
             // location - missing from currentUser
+            // platform - missing from currentUser
             // note - missing from currentUser
             profilePicOverride: json.profilePicOverride,
+            // profilePicOverrideThumbnail - missing from currentUser
             pronouns: json.pronouns,
             state: json.state,
             status: json.status,
@@ -1773,6 +1782,7 @@ speechSynthesis.getVoices();
                 hideContentFilterSettings: false,
                 homeLocation: '',
                 id: '',
+                isBoopingEnabled: false,
                 isFriend: false,
                 last_activity: '',
                 last_login: '',
@@ -1937,8 +1947,10 @@ speechSynthesis.getVoices();
                 last_mobile: null,
                 last_platform: '',
                 location: '',
+                platform: '',
                 note: '',
                 profilePicOverride: '',
+                profilePicOverrideThumbnail: '',
                 pronouns: '',
                 state: '',
                 status: '',
@@ -3551,6 +3563,21 @@ speechSynthesis.getVoices();
         } else if (json.title) {
             json.message = json.title;
         }
+        if (json.type === 'boop') {
+            if (!json.imageUrl && json.details?.emojiId?.startsWith('file_')) {
+                // JANK: create image url from fileId
+                json.imageUrl = `https://api.vrchat.cloud/api/1/file/${json.details.emojiId}/${json.details.emojiVersion}`;
+            }
+
+            if (!json.details?.emojiId) {
+                json.message = `${json.senderUsername} Booped you! without an emoji`;
+            } else if (!json.details.emojiId.startsWith('file_')) {
+                // JANK: get emoji name from emojiId
+                json.message = `${json.senderUsername} Booped you! with ${$app.getEmojiName(json.details.emojiId)}`;
+            } else {
+                json.message = `${json.senderUsername} Booped you! with custom emoji`;
+            }
+        }
         this.$emit('NOTIFICATION', {
             json,
             params: {
@@ -3593,14 +3620,20 @@ speechSynthesis.getVoices();
         return this.call(`notifications/${params.notificationId}/respond`, {
             method: 'POST',
             params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('NOTIFICATION:RESPONSE', args);
-            return args;
-        });
+        })
+            .then((json) => {
+                var args = {
+                    json,
+                    params
+                };
+                this.$emit('NOTIFICATION:RESPONSE', args);
+                return args;
+            })
+            .catch((err) => {
+                // something went wrong, lets assume it's already expired
+                this.$emit('NOTIFICATION:HIDE', { params });
+                throw err;
+            });
     };
 
     API.$on('NOTIFICATION:RESPONSE', function (args) {
@@ -5504,6 +5537,7 @@ speechSynthesis.getVoices();
         watch: {},
         el: '#x-app',
         async mounted() {
+            await this.initLanguage();
             await this.changeThemeMode();
             await AppApi.SetUserAgent();
             this.appVersion = await AppApi.GetVersion();
@@ -6794,6 +6828,9 @@ speechSynthesis.getVoices();
                     `${noty.previousDisplayName} changed their name to ${noty.displayName}`
                 );
                 break;
+            case 'boop':
+                this.speak(noty.message);
+                break;
             case 'groupChange':
                 this.speak(`${noty.senderUsername} ${noty.message}`);
                 break;
@@ -7024,6 +7061,9 @@ speechSynthesis.getVoices();
                     timeout,
                     image
                 );
+                break;
+            case 'boop':
+                AppApi.XSNotification('VRCX', noty.message, timeout, image);
                 break;
             case 'groupChange':
                 AppApi.XSNotification(
@@ -7356,6 +7396,16 @@ speechSynthesis.getVoices();
                     playOvrtWristNotifications,
                     'VRCX',
                     `${noty.previousDisplayName} changed their name to ${noty.displayName}`,
+                    timeout,
+                    image
+                );
+                break;
+            case 'boop':
+                AppApi.OVRTNotification(
+                    playOvrtHudNotifications,
+                    playOvrtWristNotifications,
+                    'VRCX',
+                    noty.message,
                     timeout,
                     image
                 );
@@ -7722,6 +7772,13 @@ speechSynthesis.getVoices();
                 AppApi.DesktopNotification(
                     noty.previousDisplayName,
                     `changed their name to ${noty.displayName}`,
+                    image
+                );
+                break;
+            case 'boop':
+                AppApi.DesktopNotification(
+                    noty.senderUsername,
+                    noty.message,
                     image
                 );
                 break;
@@ -9688,56 +9745,60 @@ speechSynthesis.getVoices();
 
     $app.methods.userStatusClass = function (user, pendingOffline) {
         var style = {};
-        if (typeof user !== 'undefined') {
-            var id = '';
-            if (user.id) {
-                id = user.id;
-            } else if (user.userId) {
-                id = user.userId;
-            }
-            if (id === API.currentUser.id) {
-                return this.statusClass(user.status);
-            }
-            if (!user.isFriend) {
-                return style;
-            }
-            if (pendingOffline) {
-                // Pending offline
-                style.offline = true;
-            } else if (
-                user.status !== 'active' &&
-                user.location === 'private' &&
-                user.state === '' &&
-                id &&
-                !API.currentUser.onlineFriends.includes(id)
-            ) {
-                // temp fix
-                if (API.currentUser.activeFriends.includes(id)) {
-                    // Active
-                    style.active = true;
-                } else {
-                    // Offline
-                    style.offline = true;
-                }
-            } else if (user.state === 'active') {
+        if (typeof user === 'undefined') {
+            return style;
+        }
+        var id = '';
+        if (user.id) {
+            id = user.id;
+        } else if (user.userId) {
+            id = user.userId;
+        }
+        if (id === API.currentUser.id) {
+            return this.statusClass(user.status);
+        }
+        if (!user.isFriend) {
+            return style;
+        }
+        if (pendingOffline) {
+            // Pending offline
+            style.offline = true;
+        } else if (
+            user.status !== 'active' &&
+            user.location === 'private' &&
+            user.state === '' &&
+            id &&
+            !API.currentUser.onlineFriends.includes(id)
+        ) {
+            // temp fix
+            if (API.currentUser.activeFriends.includes(id)) {
                 // Active
                 style.active = true;
-            } else if (user.location === 'offline') {
+            } else {
                 // Offline
                 style.offline = true;
-            } else if (user.status === 'active') {
-                // Online
-                style.online = true;
-            } else if (user.status === 'join me') {
-                // Join Me
-                style.joinme = true;
-            } else if (user.status === 'ask me') {
-                // Ask Me
-                style.askme = true;
-            } else if (user.status === 'busy') {
-                // Do Not Disturb
-                style.busy = true;
             }
+        } else if (user.state === 'active') {
+            // Active
+            style.active = true;
+        } else if (user.location === 'offline') {
+            // Offline
+            style.offline = true;
+        } else if (user.status === 'active') {
+            // Online
+            style.online = true;
+        } else if (user.status === 'join me') {
+            // Join Me
+            style.joinme = true;
+        } else if (user.status === 'ask me') {
+            // Ask Me
+            style.askme = true;
+        } else if (user.status === 'busy') {
+            // Do Not Disturb
+            style.busy = true;
+        }
+        if (user.last_platform && user.last_platform !== 'standalonewindows') {
+            style.mobile = true;
         }
         return style;
     };
@@ -11991,12 +12052,19 @@ speechSynthesis.getVoices();
                             }
                         });
                     }
-                } else if (data.Parameters[245]['0'] === 13) {
+                } else if (
+                    data.Parameters[245]['0'] === 13 ||
+                    data.Parameters[245]['0'] === 25
+                ) {
                     var msg = data.Parameters[245]['2'];
-                    if (typeof msg === 'string') {
-                        var displayName =
-                            data.Parameters[245]['14']?.targetDisplayName;
-                        msg = msg.replace('{{targetDisplayName}}', displayName);
+                    if (
+                        typeof msg === 'string' &&
+                        typeof data.Parameters[245]['14'] === 'object'
+                    ) {
+                        for (var prop in data.Parameters[245]['14']) {
+                            var value = data.Parameters[245]['14'][prop];
+                            msg = msg.replace(`{{${prop}}}`, value);
+                        }
                     }
                     this.addEntryPhotonEvent({
                         photonId,
@@ -13186,7 +13254,7 @@ speechSynthesis.getVoices();
                 )}&part=snippet,contentDetails&key=${apiKey}`,
                 method: 'GET',
                 headers: {
-                    Referer: 'https://vrcx.pypy.moe'
+                    Referer: 'https://vrcx.app'
                 }
             });
             var json = JSON.parse(response.data);
@@ -15811,6 +15879,7 @@ speechSynthesis.getVoices();
             Unfriend: 'On',
             DisplayName: 'VIP',
             TrustLevel: 'VIP',
+            boop: 'Off',
             groupChange: 'On',
             'group.announcement': 'On',
             'group.informative': 'On',
@@ -15852,6 +15921,7 @@ speechSynthesis.getVoices();
             Unfriend: 'On',
             DisplayName: 'Friends',
             TrustLevel: 'Friends',
+            boop: 'On',
             groupChange: 'On',
             'group.announcement': 'On',
             'group.informative': 'On',
@@ -15924,6 +15994,10 @@ speechSynthesis.getVoices();
     if (!$app.data.sharedFeedFilters.noty['group.transfer']) {
         $app.data.sharedFeedFilters.noty['group.transfer'] = 'On';
         $app.data.sharedFeedFilters.wrist['group.transfer'] = 'On';
+    }
+    if (!$app.data.sharedFeedFilters.noty.boop) {
+        $app.data.sharedFeedFilters.noty.boop = 'Off';
+        $app.data.sharedFeedFilters.wrist.boop = 'On';
     }
 
     $app.data.trustColor = JSON.parse(
@@ -18109,7 +18183,7 @@ speechSynthesis.getVoices();
                     }?${type}=${encodeURIComponent(search)}&n=5000`,
                     method: 'GET',
                     headers: {
-                        Referer: 'https://vrcx.pypy.moe'
+                        Referer: 'https://vrcx.app'
                     }
                 });
                 var json = JSON.parse(response.data);
@@ -18185,7 +18259,7 @@ speechSynthesis.getVoices();
                 url: `${url}?authorId=${encodeURIComponent(authorId)}`,
                 method: 'GET',
                 headers: {
-                    Referer: 'https://vrcx.pypy.moe'
+                    Referer: 'https://vrcx.app'
                 }
             });
             var json = JSON.parse(response.data);
@@ -18523,6 +18597,8 @@ speechSynthesis.getVoices();
             this.showGalleryDialog();
         } else if (command === 'Invite To Group') {
             this.showInviteGroupDialog('', D.id);
+        } else if (command === 'Send Boop') {
+            this.showSendBoopDialog(D.id);
         } else if (command === 'Hide Avatar') {
             if (D.isHideAvatar) {
                 this.setPlayerModeration(D.id, 0);
@@ -20511,11 +20587,8 @@ speechSynthesis.getVoices();
         D.shortName = '';
         D.secureOrShortName = '';
         API.getGroupPermissions({ userId: API.currentUser.id });
-        if (D.selectedTab === '0') {
-            this.buildInstance();
-        } else {
-            this.buildLegacyInstance();
-        }
+        this.buildInstance();
+        this.buildLegacyInstance();
         this.updateNewInstanceDialog();
         D.visible = true;
     };
@@ -22745,7 +22818,7 @@ speechSynthesis.getVoices();
                 if (json.status !== 200) {
                     $app.avatarDialog.loading = false;
                     $app.changeAvatarImageDialogLoading = false;
-                    this.$throw('Avatar image upload failed', json);
+                    this.$throw('Avatar image upload failed', json, params.url);
                 }
                 var args = {
                     json,
@@ -22842,7 +22915,7 @@ speechSynthesis.getVoices();
                 if (json.status !== 200) {
                     $app.avatarDialog.loading = false;
                     $app.changeAvatarImageDialogLoading = false;
-                    this.$throw('Avatar image upload failed', json);
+                    this.$throw('Avatar image upload failed', json, params.url);
                 }
                 var args = {
                     json,
@@ -23080,7 +23153,7 @@ speechSynthesis.getVoices();
                 if (json.status !== 200) {
                     $app.worldDialog.loading = false;
                     $app.changeWorldImageDialogLoading = false;
-                    this.$throw('World image upload failed', json);
+                    this.$throw('World image upload failed', json, params.url);
                 }
                 var args = {
                     json,
@@ -23177,7 +23250,7 @@ speechSynthesis.getVoices();
                 if (json.status !== 200) {
                     $app.worldDialog.loading = false;
                     $app.changeWorldImageDialogLoading = false;
-                    this.$throw('World image upload failed', json);
+                    this.$throw('World image upload failed', json, params.url);
                 }
                 var args = {
                     json,
@@ -23251,7 +23324,7 @@ speechSynthesis.getVoices();
             });
             $app.displayPreviousImages('Avatar', 'Change');
         } else {
-            this.$throw(0, 'Avatar image change failed');
+            this.$throw(0, 'Avatar image change failed', args.params.imageUrl);
         }
     });
 
@@ -23280,7 +23353,7 @@ speechSynthesis.getVoices();
             });
             $app.displayPreviousImages('World', 'Change');
         } else {
-            this.$throw(0, 'World image change failed');
+            this.$throw(0, 'World image change failed', args.params.imageUrl);
         }
     });
 
@@ -24203,8 +24276,6 @@ speechSynthesis.getVoices();
 
     // YouTube API
 
-    $app.data.youTubeApiKey = '';
-
     $app.data.youTubeApiDialog = {
         visible: false
     };
@@ -24859,11 +24930,22 @@ speechSynthesis.getVoices();
         $app.galleryTable = [];
     });
 
-    $app.methods.showGalleryDialog = function () {
+    $app.methods.showGalleryDialog = function (pageNum) {
+        this.$nextTick(() => adjustDialogZ(this.$refs.galleryDialog.$el));
         this.galleryDialogVisible = true;
         this.refreshGalleryTable();
         this.refreshVRCPlusIconsTable();
         this.refreshEmojiTable();
+        workerTimers.setTimeout(() => this.setGalleryTab(pageNum), 100);
+    };
+
+    $app.methods.setGalleryTab = function (pageNum) {
+        if (
+            typeof pageNum !== 'undefined' &&
+            typeof this.$refs.galleryTabs !== 'undefined'
+        ) {
+            this.$refs.galleryTabs.setCurrentName(`${pageNum}`);
+        }
     };
 
     $app.methods.refreshGalleryTable = function () {
@@ -25167,7 +25249,7 @@ speechSynthesis.getVoices();
         url,
         fps,
         frameCount,
-        animationStyle
+        loopStyle
     ) {
         let framesPerLine = 2;
         if (frameCount > 4) framesPerLine = 4;
@@ -25175,15 +25257,14 @@ speechSynthesis.getVoices();
         const animationDurationMs = (1000 / fps) * frameCount;
         const frameSize = 1024 / framesPerLine;
         const scale = 100 / (frameSize / 200);
-        const animStyle =
-            animationStyle === 'pingpong' ? 'alternate' : 'infinite';
+        const animStyle = loopStyle === 'pingpong' ? 'alternate' : 'none';
         const style = `
             transform: scale(${scale / 100});
             transform-origin: top left;
             width: ${frameSize}px;
             height: ${frameSize}px;
             background: url('${url}') 0 0;
-            animation: ${animationDurationMs}ms steps(1) 0s ${animStyle} normal none running animated-emoji-${frameCount};
+            animation: ${animationDurationMs}ms steps(1) 0s infinite ${animStyle} running animated-emoji-${frameCount};
         `;
         return style;
     };
@@ -25305,13 +25386,13 @@ speechSynthesis.getVoices();
     $app.data.branches = {
         Stable: {
             name: 'Stable',
-            urlReleases: 'https://vrcx.pypy.moe/releases/vrcx-team.json',
-            urlLatest: 'https://vrcx.pypy.moe/releases/latest/vrcx-team.json'
+            urlReleases: 'https://api0.vrcx.app/releases/stable',
+            urlLatest: 'https://api0.vrcx.app/releases/stable/latest'
         },
         Nightly: {
             name: 'Nightly',
-            urlReleases: 'https://vrcx.pypy.moe/releases/natsumi-sama.json',
-            urlLatest: 'https://vrcx.pypy.moe/releases/latest/natsumi-sama.json'
+            urlReleases: 'https://api0.vrcx.app/releases/nightly',
+            urlLatest: 'https://api0.vrcx.app/releases/nightly/latest'
         }
     };
 
@@ -25615,6 +25696,9 @@ speechSynthesis.getVoices();
         }
         if (this.displayVRCPlusIconsAsAvatar && user.userIcon) {
             return user.userIcon;
+        }
+        if (user.profilePicOverrideThumbnail) {
+            return user.profilePicOverrideThumbnail;
         }
         if (user.profilePicOverride) {
             return user.profilePicOverride;
@@ -26027,6 +26111,14 @@ speechSynthesis.getVoices();
     $app.methods.toggleAvatarCopying = function () {
         API.saveCurrentUser({
             allowAvatarCopying: !API.currentUser.allowAvatarCopying
+        }).then((args) => {
+            return args;
+        });
+    };
+
+    $app.methods.toggleAllowBooping = function () {
+        API.saveCurrentUser({
+            isBoopingEnabled: !API.currentUser.isBoopingEnabled
         }).then((args) => {
             return args;
         });
@@ -29032,6 +29124,98 @@ speechSynthesis.getVoices();
         }
     });
 
+    $app.methods.blockGroup = function (groupId) {
+        this.$confirm('Are you sure you want to block this group?', 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    API.blockGroup({
+                        groupId
+                    });
+                }
+            }
+        });
+    };
+
+    $app.methods.unblockGroup = function (groupId) {
+        this.$confirm(
+            'Are you sure you want to unblock this group?',
+            'Confirm',
+            {
+                confirmButtonText: 'Confirm',
+                cancelButtonText: 'Cancel',
+                type: 'info',
+                callback: (action) => {
+                    if (action === 'confirm') {
+                        API.unblockGroup({
+                            groupId,
+                            userId: API.currentUser.id
+                        });
+                    }
+                }
+            }
+        );
+    };
+
+    /**
+    * @param {{
+            groupId: string
+    * }} params
+    * @return { Promise<{json: any, params}> }
+    */
+    API.blockGroup = function (params) {
+        return this.call(`groups/${params.groupId}/block`, {
+            method: 'POST'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:BLOCK', args);
+            return args;
+        });
+    };
+
+    /**
+    * @param {{
+            groupId: string,
+            userId: string
+    * }} params
+    * @return { Promise<{json: any, params}> }
+    */
+    API.unblockGroup = function (params) {
+        return this.call(`groups/${params.groupId}/members/${params.userId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:UNBLOCK', args);
+            return args;
+        });
+    };
+
+    API.$on('GROUP:BLOCK', function (args) {
+        if (
+            $app.groupDialog.visible &&
+            $app.groupDialog.id === args.params.groupId
+        ) {
+            $app.showGroupDialog(args.params.groupId);
+        }
+    });
+
+    API.$on('GROUP:UNBLOCK', function (args) {
+        if (
+            $app.groupDialog.visible &&
+            $app.groupDialog.id === args.params.groupId
+        ) {
+            $app.showGroupDialog(args.params.groupId);
+        }
+    });
+
     /**
     * @param {{
             groupId: string,
@@ -30097,6 +30281,12 @@ speechSynthesis.getVoices();
             case 'Leave Group':
                 this.leaveGroup(D.id);
                 break;
+            case 'Block Group':
+                this.blockGroup(D.id);
+                break;
+            case 'Unblock Group':
+                this.unblockGroup(D.id);
+                break;
             case 'Visibility Everyone':
                 this.setGroupVisibility(D.id, 'visible');
                 break;
@@ -30915,26 +31105,25 @@ speechSynthesis.getVoices();
     $app.data.appLanguage =
         (await configRepository.getString('VRCX_appLanguage')) ?? 'en';
     i18n.locale = $app.data.appLanguage;
-    var initLanguage = async () => {
+    $app.methods.initLanguage = async function () {
         if (!(await configRepository.getString('VRCX_appLanguage'))) {
             var result = await AppApi.CurrentLanguage();
             if (!result) {
                 console.error('Failed to get current language');
-                $app.changeAppLanguage('en');
+                this.changeAppLanguage('en');
                 return;
             }
             var lang = result.split('-')[0];
             i18n.availableLocales.forEach((ref) => {
                 var refLang = ref.split('_')[0];
                 if (refLang === lang) {
-                    $app.changeAppLanguage(ref);
+                    this.changeAppLanguage(ref);
                 }
             });
         }
 
         $app.applyLanguageStrings();
     };
-    initLanguage();
 
     $app.methods.changeAppLanguage = function (language) {
         console.log('Language changed:', language);
@@ -32470,6 +32659,110 @@ speechSynthesis.getVoices();
             });
         }
     });
+
+    // #endregion
+    // #region | Settings: Zoom
+
+    $app.data.zoomLevel = ((await AppApi.GetZoom()) + 10) * 10;
+
+    $app.methods.getZoomLevel = async function () {
+        this.zoomLevel = ((await AppApi.GetZoom()) + 10) * 10;
+    };
+
+    $app.methods.setZoomLevel = function () {
+        AppApi.SetZoom(this.zoomLevel / 10 - 10);
+    };
+
+    // #endregion
+    // #region | Boops
+
+    /**
+    * @param {{
+            userId: string,
+            emojiId: string
+    }} params
+     * @returns {Promise<{json: any, params}>}
+     */
+    API.sendBoop = function (params) {
+        return this.call(`users/${params.userId}/boop`, {
+            method: 'POST',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('BOOP:SEND', args);
+            return args;
+        });
+    };
+
+    $app.methods.sendBoop = function () {
+        var D = this.sendBoopDialog;
+        this.dismissBoop(D.userId);
+        var params = {
+            userId: D.userId
+        };
+        if (D.fileId) {
+            params.emojiId = D.fileId;
+        }
+        API.sendBoop(params);
+        D.visible = false;
+    };
+
+    $app.methods.dismissBoop = function (userId) {
+        // JANK: This is a hack to remove boop notifications when responding
+        var array = this.notificationTable.data;
+        for (var i = array.length - 1; i >= 0; i--) {
+            var ref = array[i];
+            if (
+                ref.type !== 'boop' ||
+                ref.$isExpired ||
+                ref.senderUserId !== userId
+            ) {
+                continue;
+            }
+            API.sendNotificationResponse({
+                notificationId: ref.id,
+                responseType: 'delete',
+                responseData: ''
+            });
+        }
+    };
+
+    $app.data.sendBoopDialog = {
+        visible: false,
+        userId: '',
+        fileId: ''
+    };
+
+    $app.methods.showSendBoopDialog = function (userId) {
+        this.$nextTick(() => adjustDialogZ(this.$refs.sendBoopDialog.$el));
+        var D = this.sendBoopDialog;
+        D.userId = userId;
+        D.visible = true;
+        if (this.emojiTable.length === 0 && API.currentUser.$isVRCPlus) {
+            this.refreshEmojiTable();
+        }
+    };
+
+    $app.methods.getEmojiValue = function (emojiName) {
+        if (!emojiName) {
+            return '';
+        }
+        return `vrchat_${emojiName.replace(/ /g, '_').toLowerCase()}`;
+    };
+
+    $app.methods.getEmojiName = function (emojiValue) {
+        // uppercase first letter of each word
+        if (!emojiValue) {
+            return '';
+        }
+        return emojiValue
+            .replace('vrchat_', '')
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, (l) => l.toUpperCase());
+    };
 
     // #endregion
 

@@ -103,11 +103,15 @@ textarea {
 .el-dialog,
 .el-dropdown-menu,
 .el-tooltip__popper.is-dark {
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    box-shadow:
+        0 3px 6px rgba(0, 0, 0, 0.16),
+        0 3px 6px rgba(0, 0, 0, 0.23);
 }
 .el-dropdown-menu__item,
 .x-friend-item {
-    transition: background-color ease-in-out 0.1s, color ease-in-out 0.1s;
+    transition:
+        background-color ease-in-out 0.1s,
+        color ease-in-out 0.1s;
 }
 .el-dropdown-menu__item:focus,
 .el-dropdown-menu__item:not(.is-disabled):hover {
@@ -143,6 +147,17 @@ textarea {
 .el-textarea .el-input__count,
 .el-textarea__inner {
     border: var(--lighter-border);
+}
+.el-input-number {
+    background-color: var(--lighter-bg);
+    border: 1px solid #404040;
+    border-radius: 5px;
+}
+.el-input-number__decrease {
+    border-right: 1px solid #404040;
+}
+.el-input-number__increase {
+    border-left: 1px solid #404040;
 }
 .el-dropdown-menu__item--divided {
     border-top: 2px solid var(--lighter-lighter-lighter-lighter-bg);

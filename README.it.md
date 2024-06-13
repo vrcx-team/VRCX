@@ -6,8 +6,7 @@
 [![Downloads](https://img.shields.io/github/downloads/vrcx-team/VRCX/total?color=6451f1)](https://github.com/vrcx-team/VRCX/releases/latest)
 [![GitHub Workflow Status](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml/badge.svg)](https://github.com/vrcx-team/VRCX/actions/workflows/github_actions.yml)
 [![Crowdin](https://badges.crowdin.net/vrcx/localized.svg)](https://crowdin.com/project/vrcx)
-[![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.pypy.moe/discord)
-
+[![VRCX Discord Invite](https://img.shields.io/discord/854071236363550763?color=%237289DA&logo=discord&logoColor=white&label=discord)](https://vrcx.app/discord)
 
 | [English](./README.md) | [Français](./README.fr.md) | [日本語](./README.jp.md) | [简体中文](./README.zh_CN.md) | **Italiano** | [Русский](./README.ru_RU.md) | [Español](./README.es.md) | [Polski](./README.pl.md)
 
@@ -57,7 +56,7 @@ Scarica e installa l'ultimo installer (`VRCX_Setup.exe`) da [qui](https://github
 ## Varie
 
 - Volete un nuovo look per VRCX? [Temi](https://github.com/vrcx-team/VRCX/wiki/Themes)
-- Guarda [Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source) per le istruzioni su come buildare  VRCX dai sorgenti.
+- Guarda [Building from source](https://github.com/vrcx-team/VRCX/wiki/Building-from-source) per le istruzioni su come buildare VRCX dai sorgenti.
 - Per una guida su come far funzionare VRCX su Linux, vedere [qui](https://github.com/vrcx-team/VRCX/wiki/Running-VRCX-on-Linux)
 
 # Screenshots
