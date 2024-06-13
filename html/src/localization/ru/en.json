@@ -260,6 +260,7 @@
                     "theme_mode_darkvanilla": "Dark Vanilla",
                     "theme_mode_pink": "Pink",
                     "theme_mode_material3": "Material 3",
+                    "zoom": "Зум",
                     "vrcplus_profile_icons": "Иконки профиля VRCPlus",
                     "disable_tooltips": "Отключить подсказки",
                     "disable_nicknames": "Отключить ники в заметках",
@@ -542,9 +543,10 @@
                 "online": "Онлайн",
                 "join_me": "Присоединиться ко мне",
                 "ask_me": "Спросить меня",
-                "busy": "Не беспокоить"
+                "busy": "Занят"
             },
             "previous_display_names": "Предыдущие отображаемые имена:",
+            "pronouns": "Местоимение",
             "tags": {
                 "friend_no": "Друг №{number}",
                 "vrchat_team": "Команда VRChat"
@@ -558,6 +560,7 @@
                 "request_invite": "Запросить приглашение",
                 "request_invite_with_message": "Запросить приглашение с сообщением",
                 "invite_to_group": "Пригласить в группу",
+                "send_boop": "Отрпвить Буп",
                 "manage_gallery_icon": "Настроить Фото/Иконки/Эмодзи",
                 "accept_friend_request": "Принять запрос в друзья",
                 "decline_friend_request": "Отклонить предложение дружбы",
@@ -613,6 +616,7 @@
                 "friended": "Подружились",
                 "unfriended": "Удален из друзей",
                 "avatar_cloning": "Клонирование аватара",
+                "booping": "Буппинг",
                 "avatar_cloning_allow": "Разрешено",
                 "avatar_cloning_deny": "Запрещено",
                 "home_location": "Домашний мир",
@@ -836,7 +840,9 @@
                 "visibility_hidden": "Видимость: Только я",
                 "create_post": "Создать объявление",
                 "moderation_tools": "Инструменты модерации",
-                "leave": "Покинуть группу"
+                "leave": "Покинуть Группу",
+                "block": "Заблокировать Группу",
+                "unblock": "Разблокирвоать Группу"
             },
             "info": {
                 "header": "Информация",
@@ -934,8 +940,8 @@
             "update": "Обновить"
         },
         "pronouns": {
-            "header": "Местоимения",
-            "pronouns_placeholder": "Пожалуйста, введите свои местоимения",
+            "header": "Местоимении",
+            "pronouns_placeholder": "Пожалуйста, введите своё местоимение",
             "update": "Обновить"
         },
         "new_instance": {
@@ -1361,6 +1367,15 @@
             "cancel": "Отменить",
             "create_post": "Создать обьявление",
             "edit_post": "Редактировать обьявление"
+        },
+        "boop_dialog": {
+            "header": "Буп",
+            "emoji_manager": "Менеджер эмодзи",
+            "select_emoji": "Выберите Emoji",
+            "my_emojis": "Мои Emojis",
+            "default_emojis": "Стандартные Emojis",
+            "cancel": "Отмена",
+            "send": "Отправить"
         }
     },
     "prompt": {
