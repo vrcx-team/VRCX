@@ -40,6 +40,11 @@ namespace VRCX
             ProcessMonitor.Instance.ProcessExited += Instance.OnProcessStateChanged;
         }
         
+        public void Init()
+        {
+            // Create Instance before Cef tries to bind it
+        }
+        
         /// <summary>
         /// Computes the MD5 hash of the file represented by the specified base64-encoded string.
         /// </summary>

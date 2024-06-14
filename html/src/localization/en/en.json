@@ -374,7 +374,7 @@
                     "background_color": "Background Color",
                     "minimal_feed_icons": "Minimal Feed Icons",
                     "hide_vr_devices": "Hide VR Devices",
-                    "hide_cpu_usage": "Hide CPU Usage",
+                    "show_cpu_usage": "Show CPU Usage",
                     "hide_game_uptime": "Hide Game Uptime",
                     "show_pc_uptime": "Show PC Uptime",
                     "wrist_feed_filters": "Wrist Feed Filters"

@@ -532,7 +532,7 @@ html
                             span(style="display:inline-block;font-weight:bold") {{ lastLocation.friendList.length !== 0 ? `‎‎‎‎‎‎‎‎‏‏‎ ‎(${lastLocation.friendList.length})` : ''}}
                     br
                     span(style="float:right") {{ currentTime }}
-                    span(v-if="config && !config.hideCpuUsageFromFeed" style="display:inline-block;margin-right:5px") {{ $t('vr.status.cpu') }} {{ cpuUsage }}%
+                    span(v-if="config && cpuUsageEnabled" style="display:inline-block;margin-right:5px") {{ $t('vr.status.cpu') }} {{ cpuUsage }}%
                     span(style="display:inline-block") {{ $t('vr.status.online') }} {{ onlineFriendCount }} ‎{{ customInfo }}
             template(v-else)
                 svg(class="np-progress-circle")

@@ -144,7 +144,8 @@ namespace VRCX
             ProcessMonitor.Instance.Init();
             VRCXStorage.Load();
             SQLiteLegacy.Instance.Init();
-            CpuMonitor.Instance.Init();
+            AppApi.Instance.Init();
+            AppApiVr.Instance.Init();
             Discord.Instance.Init();
             WorldDBManager.Instance.Init();
             WebApi.Instance.Init();
@@ -166,7 +167,7 @@ namespace VRCX
             WorldDBManager.Instance.Stop();
 
             Discord.Instance.Exit();
-            CpuMonitor.Instance.Exit();
+            SystemMonitor.Instance.Exit();
             VRCXStorage.Save();
             SQLiteLegacy.Instance.Exit();
             ProcessMonitor.Instance.Exit();

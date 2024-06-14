@@ -65,7 +65,7 @@ namespace VRCX
             if (m_Client == null && m_Active)
             {
                 m_Client = new DiscordRpcClient(DiscordAppId);
-                if (m_Client.Initialize() == false)
+                if (!m_Client.Initialize())
                 {
                     m_Client.Dispose();
                     m_Client = null;
@@ -117,18 +117,18 @@ namespace VRCX
 
         public void SetText(string details, string state)
         {
-            if (m_Client != null && !m_Lock.IsReadLockHeld)
+            if (m_Client == null || m_Lock.IsReadLockHeld)
+                return;
+            
+            m_Lock.EnterWriteLock();
+            try
             {
-                m_Lock.EnterWriteLock();
-                try
-                {
-                    m_Presence.Details = LimitByteLength(details, 127);
-                    m_Presence.State = LimitByteLength(state, 127);
-                }
-                finally
-                {
-                    m_Lock.ExitWriteLock();
-                }
+                m_Presence.Details = LimitByteLength(details, 127);
+                m_Presence.State = LimitByteLength(state, 127);
+            }
+            finally
+            {
+                m_Lock.ExitWriteLock();
             }
         }
 
@@ -137,17 +137,15 @@ namespace VRCX
             m_Lock.EnterWriteLock();
             try
             {
-                if (string.IsNullOrEmpty(largeKey) == true &&
-                    string.IsNullOrEmpty(smallKey) == true)
+                if (string.IsNullOrEmpty(largeKey) &&
+                    string.IsNullOrEmpty(smallKey))
                 {
                     m_Presence.Assets = null;
                 }
                 else
                 {
-                    if (m_Presence.Assets == null)
-                        m_Presence.Assets = new Assets();
-                    if (m_Presence.Party == null)
-                        m_Presence.Party = new Party();
+                    m_Presence.Assets ??= new Assets();
+                    m_Presence.Party ??= new Party();
                     m_Presence.Assets.LargeImageKey = largeKey;
                     m_Presence.Assets.LargeImageText = largeText;
                     m_Presence.Assets.SmallImageKey = smallKey;
@@ -155,15 +153,15 @@ namespace VRCX
                     m_Presence.Party.ID = partyId;
                     m_Presence.Party.Size = partySize;
                     m_Presence.Party.Max = partyMax;
-                    Button[] Buttons = { };
+                    Button[] buttons = [];
                     if (!string.IsNullOrEmpty(buttonUrl))
                     {
-                        Buttons = new Button[]
-                        {
-                            new Button() { Label = buttonText, Url = buttonUrl }
-                        };
+                        buttons =
+                        [
+                            new Button { Label = buttonText, Url = buttonUrl }
+                        ];
                     }
-                    m_Presence.Buttons = Buttons;
+                    m_Presence.Buttons = buttons;
                     if (DiscordAppId != appId)
                     {
                         DiscordAppId = appId;
@@ -181,7 +179,7 @@ namespace VRCX
                 m_Lock.ExitWriteLock();
             }
         }
-
+        
         public void SetTimestamps(double startUnixMilliseconds, double endUnixMilliseconds)
         {
             var _startUnixMilliseconds = (ulong)startUnixMilliseconds;
@@ -196,11 +194,7 @@ namespace VRCX
                 }
                 else
                 {
-                    if (m_Presence.Timestamps == null)
-                    {
-                        m_Presence.Timestamps = new Timestamps();
-                    }
-
+                    m_Presence.Timestamps ??= new Timestamps();
                     m_Presence.Timestamps.StartUnixMilliseconds = _startUnixMilliseconds;
 
                     if (_endUnixMilliseconds == 0)
