@@ -9,20 +9,15 @@ namespace VRCX
     public class AppApiVr
     {
         public static readonly AppApiVr Instance;
-        private static readonly PerformanceCounter Uptime;
 
         static AppApiVr()
         {
             Instance = new AppApiVr();
+        }
 
-            try
-            {
-                Uptime = new PerformanceCounter("System", "System Up Time");
-            }
-            catch
-            {
-                Uptime = null;
-            }
+        public void Init()
+        {
+            // Create Instance before Cef tries to bind it
         }
         
         public void VrInit()
@@ -31,13 +26,18 @@ namespace VRCX
                 MainForm.Instance.Browser.ExecuteScriptAsync("$app.vrInit", "");
         }
         
+        public void ToggleSystemMonitor(bool enabled)
+        {
+            SystemMonitor.Instance.Start(enabled);
+        }
+        
         /// <summary>
         /// Returns the current CPU usage as a percentage.
         /// </summary>
         /// <returns>The current CPU usage as a percentage.</returns>
         public float CpuUsage()
         {
-            return CpuMonitor.Instance.CpuUsage;
+            return SystemMonitor.Instance.CpuUsage;
         }
         
         /// <summary>
@@ -56,11 +56,7 @@ namespace VRCX
         /// <returns>The number of milliseconds that the system has been running.</returns>
         public double GetUptime()
         {
-            if (Uptime == null)
-                return 0;
-
-            Uptime.NextValue();
-            return TimeSpan.FromSeconds(Uptime.NextValue()).TotalMilliseconds;
+            return SystemMonitor.Instance.UpTime;
         }
         
         /// <summary>

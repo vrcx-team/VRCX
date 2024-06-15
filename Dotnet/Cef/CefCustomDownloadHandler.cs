@@ -15,10 +15,10 @@ namespace VRCX
             return true;
         }
 
-        public void OnBeforeDownload(IWebBrowser chromiumWebBrowser, IBrowser browser, DownloadItem downloadItem, IBeforeDownloadCallback callback)
+        public bool OnBeforeDownload(IWebBrowser chromiumWebBrowser, IBrowser browser, DownloadItem downloadItem, IBeforeDownloadCallback callback)
         {
             if (callback.IsDisposed)
-                return;
+                return true;
 
             using (callback)
             {
@@ -27,6 +27,8 @@ namespace VRCX
                     showDialog: true
                 );
             }
+
+            return true;
         }
 
         public void OnDownloadUpdated(IWebBrowser chromiumWebBrowser, IBrowser browser, DownloadItem downloadItem, IDownloadItemCallback callback)

@@ -372,8 +372,8 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_vr_devices') }}
                         el-switch(v-model="hideDevicesFromFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
-                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_cpu_usage') }}
-                        el-switch(v-model="hideCpuUsageFromFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
+                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_cpu_usage') }}
+                        el-switch(v-model="vrOverlayCpuUsage" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
                         span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_game_uptime') }}
                         el-switch(v-model="hideUptimeFromFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
