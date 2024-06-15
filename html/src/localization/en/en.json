@@ -1312,6 +1312,9 @@
         },
         "group_member_moderation": {
             "header": "Group Member Moderation",
+            "filter_type": "Filter Type",
+            "select_type": "Select Type",
+            "search_placeholder": "Search",
             "members": "Members",
             "bans": "Bans",
             "invites": "Invites",

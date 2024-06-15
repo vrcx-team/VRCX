@@ -3195,6 +3195,13 @@ html
                                 el-button(type="default" @click="getAllGroupLogs(groupMemberModeration.id)" size="mini" icon="el-icon-refresh" :loading="isGroupMembersLoading" circle)
                                 span(style="font-size:14px;margin-left:5px;margin-right:5px") {{ groupLogsModerationTable.data.length }}
                             br
+                            el-select(v-model="groupMemberModeration.selectedAuditLogTypes" multiple collapse-tags :placeholder="$t('dialog.group_member_moderation.filter_type')")
+                                el-option-group(:label="$t('dialog.group_member_moderation.select_type')")
+                                    el-option.x-friend-item(v-for="type in groupMemberModeration.auditLogTypes" :key="type" :label="getAuditLogTypeName(type)" :value="type")
+                                        .detail
+                                            span.name(v-text="getAuditLogTypeName(type)")
+                            el-input(v-model="groupLogsModerationTable.filters[0].value" :placeholder="$t('dialog.group_member_moderation.search_placeholder')" style="display:inline-block;width:150px;margin:10px")
+                            br
                             data-tables(v-bind="groupLogsModerationTable" style="margin-top:10px")
                                 el-table-column(:label="$t('dialog.group_member_moderation.created_at')" width="170" prop="created_at" sortable)
                                     template(v-once #default="scope")
@@ -3213,10 +3220,12 @@ html
                                     template(v-once #default="scope")
                                         span(v-if="Object.keys(scope.row.data).length" v-text="JSON.stringify(scope.row.data)")
                     br
+                    br
                     span.name {{ $t('dialog.group_member_moderation.user_id') }}
                     br
                     el-input(v-model="groupMemberModeration.selectUserId" size="mini" style="margin-top:5px;width:340px" :placeholder="$t('dialog.group_member_moderation.user_id_placeholder')" clearable)
                     el-button(size="small" @click="selectGroupMemberUserId" :disabled="!groupMemberModeration.selectUserId") {{ $t('dialog.group_member_moderation.select_user') }}
+                    br
                     br
                     span.name {{ $t('dialog.group_member_moderation.selected_users') }}
                     el-button(type="default" @click="clearSelectedGroupMembers" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
@@ -3226,7 +3235,8 @@ html
                     br
                     br
                     span.name {{ $t('dialog.group_member_moderation.notes') }}
-                    el-input.extra(v-model="groupMemberModeration.note" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" :placeholder="$t('dialog.group_member_moderation.note_placeholder')" size="mini" resize="none")
+                    el-input.extra(v-model="groupMemberModeration.note" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" :placeholder="$t('dialog.group_member_moderation.note_placeholder')" size="mini" resize="none" style="margin-top:5px")
+                    br
                     br
                     span.name {{ $t('dialog.group_member_moderation.selected_roles') }}
                     br
@@ -3235,6 +3245,7 @@ html
                             el-option.x-friend-item(v-for="role in groupMemberModeration.groupRef.roles" :key="role.id" :label="role.name" :value="role.id" style="height:auto")
                                 .detail
                                     span.name(v-text="role.name")
+                    br
                     br
                     span.name {{ $t('dialog.group_member_moderation.actions') }}
                     br
