@@ -374,7 +374,7 @@
                     "background_color": "Color de fondo",
                     "minimal_feed_icons": "Iconos de Actividad minimalistas",
                     "hide_vr_devices": "Ocultar dispositivos VR",
-                    "hide_cpu_usage": "Ocultar uso de CPU",
+                    "show_cpu_usage": "Mostrar uso de CPU",
                     "hide_game_uptime": "Ocultar tiempo de juego",
                     "show_pc_uptime": "Mostrar tiempo de actividad del PC",
                     "wrist_feed_filters": "Filtros de Actividad en la muñeca"
@@ -1312,6 +1312,9 @@
         },
         "group_member_moderation": {
             "header": "Moderación de Miembros del Grupo",
+            "filter_type": "Tipo de filtro",
+            "select_type": "Seleccionar tipo",
+            "search_placeholder": "Buscar",
             "members": "Members",
             "bans": "Bans",
             "invites": "Invites",
