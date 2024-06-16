@@ -14870,7 +14870,6 @@ speechSynthesis.getVoices();
             currentLocation = $app.lastLocationDestination;
         }
         if (!currentLocation) return;
-        var L = this.parseLocation(currentLocation);
         if (
             $app.autoAcceptInviteRequests === 'All Favorites' &&
             !$app.favoriteFriends.some((x) => x.id === ref.senderUserId)
@@ -14882,6 +14881,11 @@ speechSynthesis.getVoices();
             !$app.localFavoriteFriends.has(ref.senderUserId)
         )
             return;
+
+        if (!this.checkCanInvite(currentLocation))
+            return;
+
+        var L = this.parseLocation(currentLocation);
 
         this.getCachedWorld({
             worldId: L.worldId
