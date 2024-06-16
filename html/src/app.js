@@ -14887,22 +14887,26 @@ speechSynthesis.getVoices();
 
         var L = this.parseLocation(currentLocation);
 
-        this.getCachedWorld({
-            worldId: L.worldId
-        }).then((args1) => {
-            this.sendInvite(
-                {
-                    instanceId: L.tag,
-                    worldId: L.tag,
-                    worldName: args1.ref.name,
-                    rsvp: true
-                },
-                ref.senderUserId
-            ).then((_args) => {
-                $app.$message(`Auto invite sent to ${ref.senderUsername}`);
-                return _args;
+        try {
+            this.getCachedWorld({
+                worldId: L.worldId
+            }).then((args1) => {
+                this.sendInvite(
+                    {
+                        instanceId: L.tag,
+                        worldId: L.tag,
+                        worldName: args1.ref.name,
+                        rsvp: true
+                    },
+                    ref.senderUserId
+                ).then((_args) => {
+                    $app.$message(`Auto invite sent to ${ref.senderUsername}`);
+                    return _args;
+                });
             });
-        });
+        } catch (err) {
+            console.error(err);
+        }
     });
 
     $app.data.unseenNotifications = [];
