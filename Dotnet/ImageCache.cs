@@ -11,7 +11,8 @@ namespace VRCX
     class ImageCache
     {
         private static readonly string cacheLocation = Path.Combine(Program.AppDataDirectory, "ImageCache");
-        private static readonly HttpClient httpClient = new HttpClient();
+        private static readonly HttpClientHandler httpClientHandler = new HttpClientHandler(){ Proxy = StartupArgs.Proxy };
+        private static readonly HttpClient httpClient = new HttpClient(httpClientHandler);
         private static readonly List<string> _imageHosts =
         [
             "api.vrchat.cloud",
@@ -53,8 +54,7 @@ namespace VRCX
                 {
                     { "Cookie", cookieString },
                     { "User-Agent", Program.Version }
-                },
-                
+                }
             };
             using (var response = await httpClient.SendAsync(request))
             {

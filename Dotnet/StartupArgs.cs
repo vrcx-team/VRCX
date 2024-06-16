@@ -4,10 +4,12 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+using CefSharp;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+using System.Net;
 using System.Text;
 using System.Windows.Forms;
 
@@ -15,6 +17,7 @@ namespace VRCX
 {
     internal class StartupArgs
     {
+        public static IWebProxy? Proxy = WebRequest.DefaultWebProxy;
         public static string LaunchCommand;
         public static Process[] processList;
 
@@ -47,6 +50,12 @@ namespace VRCX
 
                 if (arg.Length >= 7 && arg.Substring(0, 7) == "--debug")
                     Program.LaunchDebug = true;
+
+                if (arg.Length >= 16 && arg.Substring(0, 14) == "--proxy-server")
+                {
+                    string proxyUrl = arg.Substring(15).Replace("'", string.Empty).Replace("\"", string.Empty);
+                    Proxy = new WebProxy(proxyUrl);
+                }
             }
 
             if (!string.IsNullOrEmpty(Program.AppDataDirectory))
