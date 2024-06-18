@@ -9049,10 +9049,12 @@ speechSynthesis.getVoices();
         }
         var ref = API.cachedUsers.get(id);
         var isVIP = this.localFavoriteFriends.has(id);
+        var isFavorite = API.cachedFavoritesByObjectId.has(id);
         var ctx = {
             id,
             state: state || 'offline',
             isVIP,
+            isFavorite,
             ref,
             name: '',
             no: ++this.friendsNo,
@@ -9082,7 +9084,7 @@ speechSynthesis.getVoices();
         }
         this.friends.set(id, ctx);
         if (ctx.state === 'online') {
-            if (ctx.isVIP) {
+            if ((this.sidebarAllFavorites && ctx.isFavorite) || ctx.isVIP) {
                 this.sortFriendsGroup0 = true;
                 this.friendsGroup0_.push(ctx);
                 this.friendsGroupA_.unshift(ctx);
@@ -9109,7 +9111,7 @@ speechSynthesis.getVoices();
         }
         this.friends.delete(id);
         if (ctx.state === 'online') {
-            if (ctx.isVIP) {
+            if ((this.sidebarAllFavorites && ctx.isFavorite) || ctx.isVIP) {
                 removeFromArray(this.friendsGroup0_, ctx);
                 removeFromArray(this.friendsGroupA_, ctx);
             } else {
@@ -9180,6 +9182,7 @@ speechSynthesis.getVoices();
         }
         var ref = API.cachedUsers.get(id);
         var isVIP = this.localFavoriteFriends.has(id);
+        var isFavorite = API.cachedFavoritesByObjectId.has(id);
         var location = '';
         var $location_at = '';
         if (typeof ref !== 'undefined') {
@@ -9198,7 +9201,10 @@ speechSynthesis.getVoices();
                             userId: id
                         });
                     }
-                    if (ctx.isVIP) {
+                    if (
+                        (this.sidebarAllFavorites && ctx.isFavorite) ||
+                        ctx.isVIP
+                    ) {
                         removeFromArray(this.friendsGroupA_, ctx);
                         this.sortFriendsGroup0 = true;
                         this.friendsGroupA_.unshift(ctx);
@@ -9215,10 +9221,14 @@ speechSynthesis.getVoices();
                     this.friendsGroupD_.push(ctx);
                 }
             }
-            if (ctx.isVIP !== isVIP) {
+            if (ctx.isVIP !== isVIP || ctx.isFavorite !== isFavorite) {
                 ctx.isVIP = isVIP;
+                ctx.isFavorite = isFavorite;
                 if (ctx.state === 'online') {
-                    if (ctx.isVIP) {
+                    if (
+                        (this.sidebarAllFavorites && ctx.isFavorite) ||
+                        ctx.isVIP
+                    ) {
                         removeFromArray(this.friendsGroup1_, ctx);
                         removeFromArray(this.friendsGroupB_, ctx);
                         this.sortFriendsGroup0 = true;
@@ -9236,7 +9246,10 @@ speechSynthesis.getVoices();
             if (typeof ref !== 'undefined' && ctx.name !== ref.displayName) {
                 ctx.name = ref.displayName;
                 if (ctx.state === 'online') {
-                    if (ctx.isVIP) {
+                    if (
+                        (this.sidebarAllFavorites && ctx.isFavorite) ||
+                        ctx.isVIP
+                    ) {
                         this.sortFriendsGroup0 = true;
                     } else {
                         this.sortFriendsGroup1 = true;
@@ -9264,6 +9277,7 @@ speechSynthesis.getVoices();
         ) {
             ctx.ref = ref;
             ctx.isVIP = isVIP;
+            ctx.isFavorite = isFavorite;
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
             }
@@ -9291,7 +9305,6 @@ speechSynthesis.getVoices();
                     id,
                     ctx,
                     stateInput,
-                    isVIP,
                     location,
                     $location_at
                 );
@@ -9299,6 +9312,7 @@ speechSynthesis.getVoices();
         } else {
             ctx.ref = ref;
             ctx.isVIP = isVIP;
+            ctx.isFavorite = isFavorite;
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
             }
@@ -9306,7 +9320,6 @@ speechSynthesis.getVoices();
                 id,
                 ctx,
                 stateInput,
-                isVIP,
                 location,
                 $location_at
             );
@@ -9317,11 +9330,12 @@ speechSynthesis.getVoices();
         id,
         ctx,
         stateInput,
-        isVIP,
         location,
         $location_at
     ) {
         var date = this.APILastOnline.get(id);
+        var isVIP = this.localFavoriteFriends.has(id);
+        var isFavorite = API.cachedFavoritesByObjectId.has(id);
         if (
             ctx.state === 'online' &&
             (stateInput === 'active' || stateInput === 'offline') &&
@@ -9403,7 +9417,7 @@ speechSynthesis.getVoices();
             }
         }
         if (ctx.state === 'online') {
-            if (ctx.isVIP) {
+            if ((this.sidebarAllFavorites && ctx.isFavorite) || ctx.isVIP) {
                 removeFromArray(this.friendsGroup0_, ctx);
                 removeFromArray(this.friendsGroupA_, ctx);
             } else {
@@ -9418,7 +9432,7 @@ speechSynthesis.getVoices();
             removeFromArray(this.friendsGroupD_, ctx);
         }
         if (newState === 'online') {
-            if (isVIP) {
+            if ((this.sidebarAllFavorites && isFavorite) || isVIP) {
                 this.sortFriendsGroup0 = true;
                 this.friendsGroup0_.push(ctx);
                 this.friendsGroupA_.unshift(ctx);
@@ -9442,6 +9456,7 @@ speechSynthesis.getVoices();
         ctx.state = newState;
         ctx.name = newRef.displayName;
         ctx.isVIP = isVIP;
+        ctx.isFavorite = isFavorite;
     };
 
     $app.methods.getWorldName = async function (location) {
@@ -9492,7 +9507,7 @@ speechSynthesis.getVoices();
         }
         var ctx = this.friends.get(userId);
         if (typeof ctx.ref !== 'undefined' && ctx.state === 'online') {
-            if (ctx.isVIP) {
+            if ((this.sidebarAllFavorites && ctx.isFavorite) || ctx.isVIP) {
                 removeFromArray(this.friendsGroupA_, ctx);
                 this.sortFriendsGroup1 = true;
                 this.friendsGroupA_.unshift(ctx);
@@ -28055,6 +28070,11 @@ speechSynthesis.getVoices();
     // #endregion
     // #region | Local Favorite Friends
 
+    $app.data.sidebarAllFavorites = await configRepository.getBool(
+        'VRCX_sidebarAllFavorites',
+        false
+    );
+
     $app.data.localFavoriteFriends = new Set();
     $app.data.localFavoriteFriendsGroups = JSON.parse(
         await configRepository.getString(
@@ -28081,28 +28101,37 @@ speechSynthesis.getVoices();
             'VRCX_localFavoriteFriendsGroups',
             JSON.stringify(this.localFavoriteFriendsGroups)
         );
+        configRepository.setBool(
+            'VRCX_sidebarAllFavorites',
+            this.sidebarAllFavorites
+        );
     };
 
     $app.methods.updateSidebarFriendsList = function () {
         for (var ctx of this.friends.values()) {
             var isVIP = this.localFavoriteFriends.has(ctx.id);
-            if (ctx.isVIP === isVIP) {
-                continue;
-            }
+            var isFavorite = API.cachedFavoritesByObjectId.has(ctx.id);
             ctx.isVIP = isVIP;
+            ctx.isFavorite = isFavorite;
             if (ctx.state !== 'online') {
                 continue;
             }
-            if (ctx.isVIP) {
+            if ((this.sidebarAllFavorites && ctx.isFavorite) || ctx.isVIP) {
                 removeFromArray(this.friendsGroup1_, ctx);
                 removeFromArray(this.friendsGroupB_, ctx);
                 this.sortFriendsGroup0 = true;
+                if (this.friendsGroup0_.includes(ctx)) {
+                    continue;
+                }
                 this.friendsGroup0_.push(ctx);
                 this.friendsGroupA_.unshift(ctx);
             } else {
                 removeFromArray(this.friendsGroup0_, ctx);
                 removeFromArray(this.friendsGroupA_, ctx);
                 this.sortFriendsGroup1 = true;
+                if (this.friendsGroup1_.includes(ctx)) {
+                    continue;
+                }
                 this.friendsGroup1_.push(ctx);
                 this.friendsGroupB_.unshift(ctx);
             }
