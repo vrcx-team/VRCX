@@ -202,11 +202,17 @@ namespace VRCX
         /// </summary>
         public void RestartApplication()
         {
-            var VRCXProcess = new Process();
-            VRCXProcess.StartInfo.FileName = Path.Combine(Program.BaseDirectory, "VRCX.exe");
-            VRCXProcess.StartInfo.UseShellExecute = false;
-            VRCXProcess.StartInfo.Arguments = "/Upgrade";
-            VRCXProcess.Start();
+            var vrcxProcess = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = Path.Combine(Program.BaseDirectory, "VRCX.exe"),
+                    Arguments = "/Upgrade",
+                    UseShellExecute = true,
+                    WorkingDirectory = Program.BaseDirectory
+                }
+            };
+            vrcxProcess.Start();
             Environment.Exit(0);
         }
 

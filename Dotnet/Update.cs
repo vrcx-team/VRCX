@@ -37,7 +37,7 @@ namespace VRCX
             try
             {
                 File.Move(Update_Executable, VRCX_Setup_Executable);
-                var VRCXProcess = new Process
+                var vrcxProcess = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
@@ -47,7 +47,7 @@ namespace VRCX
                         WorkingDirectory = Program.AppDataDirectory
                     }
                 };
-                VRCXProcess.Start();
+                vrcxProcess.Start();
                 Environment.Exit(0);
             }
             catch (Exception e)
