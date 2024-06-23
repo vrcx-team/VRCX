@@ -60,6 +60,65 @@ namespace VRCX
             }
         }
 
+        public string ResizeImageToFitLimits(string base64data)
+        {
+            return Convert.ToBase64String(ResizeImageToFitLimits(Convert.FromBase64String(base64data)));
+        }
+
+        public byte[] ResizeImageToFitLimits(byte[] imageData, int maxWidth = 2000, int maxHeight = 2000, long maxSize = 10_000_000)
+        {
+            using var fileMemoryStream = new MemoryStream(imageData);
+            System.Drawing.Bitmap image = new System.Drawing.Bitmap(fileMemoryStream);
+            if (image.Width > maxWidth)
+            {
+                var sizingFactor = image.Width / (double)maxWidth;
+                int newHeight = (int)Math.Round(image.Height / sizingFactor);
+                image = new System.Drawing.Bitmap(image, maxWidth, newHeight);
+            }
+            if (image.Height > maxHeight)
+            {
+                var sizingFactor = image.Height / (double)maxHeight;
+                int newWidth = (int)Math.Round(image.Width / sizingFactor);
+                image = new System.Drawing.Bitmap(image, newWidth, maxHeight);
+            }
+
+            void saveToFileToUpload()
+            {
+                using var imageSaveMemoryStream = new MemoryStream();
+                image.Save(imageSaveMemoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                imageData = imageSaveMemoryStream.ToArray();
+            }
+
+            saveToFileToUpload();
+
+            for (int i = 0; i < 250 && imageData.Length > maxSize; i++)
+            {
+                saveToFileToUpload();
+                if (imageData.Length < maxSize)
+                    break;
+                int newWidth = image.Width;
+                int newHeight = image.Height;
+                if (image.Width > image.Height)
+                {
+                    newWidth = image.Width - 25;
+                    newHeight = (int)Math.Round(image.Height / (image.Width / (double)newWidth));
+                }
+                else
+                {
+                    newHeight = image.Height - 25;
+                    newWidth = (int)Math.Round(image.Width / (image.Height / (double)newHeight));
+                }
+                image = new System.Drawing.Bitmap(image, newWidth, newHeight);
+            }
+
+            if (imageData.Length > maxSize)
+            {
+                throw new Exception("Failed to get image into target filesize.");
+            }
+
+            return imageData;
+        }
+
         /// <summary>
         /// Computes the signature of the file represented by the specified base64-encoded string using the librsync library.
         /// </summary>
