@@ -22430,6 +22430,11 @@ speechSynthesis.getVoices();
     $app.data.friendsListSelectAllCheckbox = false;
     $app.data.friendsListBulkUnfriendMode = false;
 
+    $app.watch.friendsListBulkUnfriendMode = (newV) => {
+        if (!newV) {
+            $app.friendsListTable.data.forEach(i => delete i.$selected);
+        }
+    }
     $app.methods.showBulkUnfriendSelectionConfirm = function () {
         var elementsTicked = 0;
         for (var ctx of this.friendsListTable.data) {
