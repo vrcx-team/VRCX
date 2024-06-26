@@ -8,6 +8,7 @@ using NLog;
 using NLog.Targets;
 using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace VRCX
@@ -104,10 +105,37 @@ namespace VRCX
             {
                 Run();
             }
+            #region Handle CEF Explosion
+            catch (FileNotFoundException e)
+            {
+                logger.Error(e, "Handled Exception, Missing file found in Handle Cef Explosion.");
+
+                var result = MessageBox.Show("VRCX Has encountered an error with the CefSharp backend, \nthis is typically caused by missing files or dependencies\nWould you like to try an autofix and automatically install vc_redist?.", "VRCX CefSharp not found.", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                
+                switch (result)
+                {
+                    case DialogResult.Yes:
+                        logger.Fatal("Handled Exception, User selected auto install of vc_redist.");
+                        Update.DownloadInstallRedist();
+                        MessageBox.Show(
+                            "vc_redist has finished installing, if the issue continues upon next restart, please reinstall reinstall VRCX From GitHub,\nVRCX Will now restart.", "vc_redist installation complete", MessageBoxButtons.OK);
+                        Thread.Sleep(5000);
+                        AppApi.Instance.RestartApplication();
+                        break;
+
+                    case DialogResult.No:
+                        logger.Fatal("Handled Exception, User choose manual.");
+                        MessageBox.Show("VRCX will now close, try reinstalling VRCX from Github setup exe as a possible fix.", "VRCX CefSharp not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Thread.Sleep(5000);
+                        Environment.Exit(0);
+                        break;
+                }
+            }
+            #endregion
             catch (Exception e)
             {
                 logger.Fatal(e, "Unhandled Exception, program dying");
-                MessageBox.Show(e.ToString(), "PLEASE REPORT IN https://vrcx.app/discord", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(e.ToString(), "PLEASE REPORT IN https://vrcx.pypy.moe/discord", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(0);
             }
         }

@@ -2428,7 +2428,7 @@ html
             //- dialog: Change avatar image
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" :title="$t('dialog.change_content_image.avatar')" width="850px")
                 div(v-if="changeAvatarImageDialogVisible" v-loading="changeAvatarImageDialogLoading")
-                    input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
+                    input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
                     span {{ $t('dialog.change_content_image.description') }}
                     br
                     el-button-group(style="padding-bottom:10px;padding-top:10px")
@@ -2443,7 +2443,7 @@ html
             //- dialog: Change world image
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" :title="$t('dialog.change_content_image.world')" width="850px")
                 div(v-if="changeWorldImageDialogVisible" v-loading="changeWorldImageDialogLoading")
-                    input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
+                    input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
                     span {{ $t('dialog.change_content_image.description') }}
                     br
                     el-button-group(style="padding-bottom:10px;padding-top:10px")
@@ -2472,7 +2472,7 @@ html
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogGalleryLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.gallery') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
-                        input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                        input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
                         el-button-group
                             el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -2487,7 +2487,7 @@ html
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.icons') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ VRCPlusIconsTable.length }}/64
-                        input(type="file" accept="image/*" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
+                        input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
                         el-button-group
                             el-button(type="default" size="small" @click="refreshVRCPlusIconsTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayVRCPlusIconUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -2502,7 +2502,7 @@ html
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/9
-                        input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
+                        input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
                         el-button-group(style="margin-right:10px")
                             el-button(type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayEmojiUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -2977,7 +2977,7 @@ html
                     span(slot="label") {{ $t('dialog.gallery_select.gallery') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
                     br
-                    input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                    input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
                     el-button-group
                         el-button(type="default" size="small" @click="selectImageGallerySelect('', '')" icon="el-icon-close") {{ $t('dialog.gallery_select.none') }}
                         el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_select.refresh') }}
