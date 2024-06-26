@@ -22436,12 +22436,11 @@ speechSynthesis.getVoices();
         }
     }
     $app.methods.showBulkUnfriendSelectionConfirm = function () {
-        var elementsTicked = 0;
-        for (var ctx of this.friendsListTable.data) {
-            if (ctx.$selected) {
-                elementsTicked++;
-            }
-        }
+        var pendingUnfriendList = this.friendsListTable.data.reduce(
+            (acc, ctx, i) => (ctx.$selected && acc.push(ctx.displayName), acc),
+            []
+        );
+        var elementsTicked = pendingUnfriendList.length;
         if (elementsTicked === 0) {
             return;
         }
@@ -22454,6 +22453,9 @@ speechSynthesis.getVoices();
                 confirmButtonText: 'Confirm',
                 cancelButtonText: 'Cancel',
                 type: 'info',
+                showInput: true,
+                inputType: 'textarea',
+                inputValue: pendingUnfriendList.join('\r\n'),
                 callback: (action) => {
                     if (action === 'confirm') {
                         this.bulkUnfriendSelection();
