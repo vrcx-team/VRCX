@@ -300,7 +300,7 @@ speechSynthesis.getVoices();
         ltz: 'lb',
         mar: 'hi',
         mkd: 'mk',
-        msa: 'id',
+        msa: 'my',
         sco: 'gd',
         slk: 'sk',
         slv: 'sl',
