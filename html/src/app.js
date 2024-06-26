@@ -11847,7 +11847,8 @@ speechSynthesis.getVoices();
                             groupOnNameplate: user.groupOnNameplate,
                             showGroupBadgeToOthers: user.showGroupBadgeToOthers,
                             showSocialRank: user.showSocialRank,
-                            useImpostorAsFallback: user.useImpostorAsFallback
+                            useImpostorAsFallback: user.useImpostorAsFallback,
+                            platform: user.platform
                         });
                         this.photonUserJoin(id, user, gameLogDate);
                     }
@@ -11884,7 +11885,8 @@ speechSynthesis.getVoices();
                         groupOnNameplate: user.groupOnNameplate,
                         showGroupBadgeToOthers: user.showGroupBadgeToOthers,
                         showSocialRank: user.showSocialRank,
-                        useImpostorAsFallback: user.useImpostorAsFallback
+                        useImpostorAsFallback: user.useImpostorAsFallback,
+                        platform: user.platform
                     });
                     this.photonUserJoin(id, user, gameLogDate);
                 }
@@ -11918,7 +11920,8 @@ speechSynthesis.getVoices();
                     groupOnNameplate: user.groupOnNameplate,
                     showGroupBadgeToOthers: user.showGroupBadgeToOthers,
                     showSocialRank: user.showSocialRank,
-                    useImpostorAsFallback: user.useImpostorAsFallback
+                    useImpostorAsFallback: user.useImpostorAsFallback,
+                    platform: user.platform
                 });
                 break;
             case 255:
@@ -11968,7 +11971,8 @@ speechSynthesis.getVoices();
                         data.Parameters[249].showGroupBadgeToOthers,
                     showSocialRank: data.Parameters[249].showSocialRank,
                     useImpostorAsFallback:
-                        data.Parameters[249].useImpostorAsFallback
+                        data.Parameters[249].useImpostorAsFallback,
+                    platform: data.Parameters[249].platform
                 });
                 this.photonUserJoin(
                     data.Parameters[254],
@@ -18130,6 +18134,13 @@ speechSynthesis.getVoices();
         return { isPC, isQuest, isIos };
     };
 
+    $app.methods.replaceVrcPackageUrl = function (url) {
+        if (!url) {
+            return '';
+        }
+        return url.replace('https://api.vrchat.cloud/', 'https://vrchat.com/');
+    };
+
     $app.methods.selectCurrentInstanceRow = function (val) {
         if (val === null) {
             return;
@@ -19306,7 +19317,11 @@ speechSynthesis.getVoices();
                 this.showSetWorldTagsDialog();
                 break;
             case 'Download Unity Package':
-                this.openExternalLink(this.worldDialog.ref.unityPackageUrl);
+                this.openExternalLink(
+                    this.replaceVrcPackageUrl(
+                        this.worldDialog.ref.unityPackageUrl
+                    )
+                );
                 break;
             default:
                 this.$confirm(`Continue? ${command}`, 'Confirm', {
@@ -19610,7 +19625,11 @@ speechSynthesis.getVoices();
                 this.showSetAvatarTagsDialog(D.id);
                 break;
             case 'Download Unity Package':
-                this.openExternalLink(this.avatarDialog.ref.unityPackageUrl);
+                this.openExternalLink(
+                    this.replaceVrcPackageUrl(
+                        this.avatarDialog.ref.unityPackageUrl
+                    )
+                );
                 break;
             case 'Add Favorite':
                 this.showFavoriteDialog('avatar', D.id);
@@ -26057,7 +26076,8 @@ speechSynthesis.getVoices();
                             groupOnNameplate: user.groupOnNameplate,
                             showGroupBadgeToOthers: user.showGroupBadgeToOthers,
                             showSocialRank: user.showSocialRank,
-                            useImpostorAsFallback: user.useImpostorAsFallback
+                            useImpostorAsFallback: user.useImpostorAsFallback,
+                            platform: user.platform
                         });
                     }
                 }
@@ -26114,7 +26134,7 @@ speechSynthesis.getVoices();
                 var data = input.replace(`import/${type}/`, '');
                 if (type === 'avatar') {
                     this.showAvatarImportDialog();
-                    this.worldImportDialog.input = data;
+                    this.avatarImportDialog.input = data;
                 } else if (type === 'world') {
                     this.showWorldImportDialog();
                     this.worldImportDialog.input = data;

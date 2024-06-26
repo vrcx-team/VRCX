@@ -42,6 +42,7 @@ namespace VRCX
         private Texture2D _texture2;
         private Thread _thread;
         private bool _wristOverlayActive;
+        private DateTime _nextOverlayUpdate;
         public bool IsHmdAfk { get; private set; }
 
         static VRCXVR()
@@ -129,7 +130,7 @@ namespace VRCX
             var e = new VREvent_t();
             var nextInit = DateTime.MinValue;
             var nextDeviceUpdate = DateTime.MinValue;
-            var nextOverlay = DateTime.MinValue;
+            _nextOverlayUpdate = DateTime.MinValue;
             var overlayIndex = OpenVR.k_unTrackedDeviceIndexInvalid;
             var overlayVisible1 = false;
             var overlayVisible2 = false;
@@ -207,7 +208,7 @@ namespace VRCX
                             UpdateDevices(system, ref overlayIndex);
                             if (overlayIndex != OpenVR.k_unTrackedDeviceIndexInvalid)
                             {
-                                nextOverlay = DateTime.UtcNow.AddSeconds(10);
+                                _nextOverlayUpdate = DateTime.UtcNow.AddSeconds(10);
                             }
 
                             nextDeviceUpdate = DateTime.UtcNow.AddSeconds(0.1);
@@ -226,7 +227,7 @@ namespace VRCX
                                 logger.Error(err);
                             }
 
-                            err = ProcessOverlay1(overlay, ref overlayHandle1, ref overlayVisible1, dashboardVisible, overlayIndex, nextOverlay);
+                            err = ProcessOverlay1(overlay, ref overlayHandle1, ref overlayVisible1, dashboardVisible, overlayIndex);
                             if (err != EVROverlayError.None &&
                                 overlayHandle1 != 0)
                             {
@@ -397,6 +398,7 @@ namespace VRCX
                                 if (system.GetControllerState(i, ref state, (uint)Marshal.SizeOf(state)) &&
                                     (state.ulButtonPressed & (_menuButton ? 2u : isOculus ? 128u : 4u)) != 0)
                                 {
+                                    _nextOverlayUpdate = DateTime.MinValue;
                                     if (role == ETrackedControllerRole.LeftHand)
                                     {
                                         Array.Copy(_translationLeft, _translation, 3);
@@ -549,7 +551,7 @@ namespace VRCX
             return err;
         }
 
-        internal EVROverlayError ProcessOverlay1(CVROverlay overlay, ref ulong overlayHandle, ref bool overlayVisible, bool dashboardVisible, uint overlayIndex, DateTime nextOverlay)
+        internal EVROverlayError ProcessOverlay1(CVROverlay overlay, ref ulong overlayHandle, ref bool overlayVisible, bool dashboardVisible, uint overlayIndex)
         {
             var err = EVROverlayError.None;
 
@@ -622,7 +624,7 @@ namespace VRCX
             }
 
             if (!dashboardVisible &&
-                DateTime.UtcNow.CompareTo(nextOverlay) <= 0)
+                DateTime.UtcNow.CompareTo(_nextOverlayUpdate) <= 0)
             {
                 var texture = new Texture_t
                 {
