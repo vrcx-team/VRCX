@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Net.Http;
 
 namespace VRCX
 {
@@ -54,6 +55,90 @@ namespace VRCX
             {
                 MessageBox.Show(e.ToString(), "Update failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+        public static void DownloadInstallRedist()
+        {
+            try
+            {
+                var filePath = DownloadFile("https://aka.ms/vs/17/release/vc_redist.x64.exe");
+                var installRedist = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = filePath,
+                        Arguments = "/install /quiet /norestart"
+                    }
+                };
+                installRedist.Start();
+                installRedist.WaitForExit();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString(), "Update failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private static string DownloadFile(string fileUrl)
+        {
+            HttpClient client = new HttpClient();
+
+            try
+            {
+                HttpResponseMessage response = client.GetAsync(fileUrl).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string fileName = GetFileNameFromContentDisposition(response);
+
+                    string tempPath = Path.Combine(Path.GetTempPath(), "VRCX");
+                    Directory.CreateDirectory(tempPath);
+                    
+                    string filePath = Path.Combine(tempPath, fileName);
+                    
+                    using (FileStream fileStream = File.Create(filePath))
+                    {
+                        response.Content.CopyToAsync(fileStream).Wait();
+                    }
+
+                    return filePath;
+                }
+                else
+                {
+                    throw new Exception($"Failed to download the file. Status code: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error downloading the file: {ex.Message}");
+            }
+            finally
+            {
+                client.Dispose();
+            }
+        }
+
+        private static string GetFileNameFromContentDisposition(HttpResponseMessage response)
+        {
+            string contentDisposition = response.Content.Headers.ContentDisposition?.ToString();
+            if (contentDisposition != null)
+            {
+                int startIndex = contentDisposition.IndexOf("filename=", StringComparison.OrdinalIgnoreCase);
+                if (startIndex >= 0)
+                {
+                    startIndex += "filename=".Length;
+                    int endIndex = contentDisposition.IndexOf(";", startIndex);
+                    if (endIndex == -1)
+                    {
+                        endIndex = contentDisposition.Length;
+                    }
+
+                    string fileName = contentDisposition.Substring(startIndex, endIndex - startIndex).Trim(' ', '"');
+                    return fileName;
+                }
+            }
+
+            throw new Exception("Unable to extract file name from content-disposition header.");
         }
     }
 }
