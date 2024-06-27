@@ -2327,7 +2327,7 @@ html
             //- dialog Table: Send Invite Response Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" :title="$t('dialog.invite_response_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteResponseDialogVisible" v-bind="inviteResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -2344,7 +2344,7 @@ html
             //- dialog Table: Send Invite Request Response Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" :title="$t('dialog.invite_request_response_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteRequestResponseDialogVisible" v-bind="inviteRequestResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -2377,7 +2377,7 @@ html
                     //-     el-button(size="mini" @click="clearImageGallerySelect" style="vertical-align:top") {{ $t('dialog.invite_message.clear_selected_image') }}
                     //- template(v-else)
                     //-     el-button(size="mini" @click="showGallerySelectDialog" style="margin-right:5px") {{ $t('dialog.invite_message.select_image') }}
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteDialogVisible" v-bind="inviteMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -2394,7 +2394,7 @@ html
             //- dialog Table: Send Invite Request Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" :title="$t('dialog.invite_request_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteRequestDialogVisible" v-bind="inviteRequestMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")

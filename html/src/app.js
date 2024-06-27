@@ -22427,10 +22427,13 @@ speechSynthesis.getVoices();
     $app.data.friendsListSearchFilters = [];
     $app.data.friendsListSelectAllCheckbox = false;
     $app.data.friendsListBulkUnfriendMode = false;
+    $app.data.friendsListBulkUnfriendForceUpdate = 0;
 
-    $app.watch.friendsListBulkUnfriendMode = (newV) => {
-        if (!newV) {
-            $app.friendsListTable.data.forEach((i) => delete i.$selected);
+    $app.methods.toggleFriendsListBulkUnfriendMode = function () {
+        if (!this.friendsListBulkUnfriendMode) {
+            this.friendsListTable.data.forEach((ref) => {
+                ref.$selected = false;
+            });
         }
     };
 
@@ -22520,8 +22523,8 @@ speechSynthesis.getVoices();
             if (typeof ctx.ref === 'undefined') {
                 continue;
             }
-            if (typeof ctx.$selected === 'undefined') {
-                ctx.$selected = false;
+            if (typeof ctx.ref.$selected === 'undefined') {
+                ctx.ref.$selected = false;
             }
             if (this.friendsListSearchFilterVIP && !ctx.isVIP) {
                 continue;
