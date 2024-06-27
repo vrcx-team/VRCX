@@ -214,7 +214,7 @@
                     "tray": "Cerrar en la bandeja"
                 },
                 "favorites": {
-                    "header": "Amigos Favoritos",
+                    "header": "Amigos favoritos de VRCX",
                     "group_placeholder": "Seleccionar grupos"
                 },
                 "logging": {
@@ -236,7 +236,7 @@
                     "auto_invite_request_accept_tooltip": "Acepta automáticamente las solicitudes de invitación de tus amigos favoritos",
                     "auto_invite_request_accept_off": "Desactivado",
                     "auto_invite_request_accept_favs": "Todos los favoritos",
-                    "auto_invite_request_accept_selected_favs": "Favoritos seleccionados"
+                    "auto_invite_request_accept_selected_favs": "Favoritos de VRCX"
                 },
                 "legal_notice": {
                     "header": "Aviso Legal",
@@ -282,6 +282,9 @@
                 },
                 "side_panel": {
                     "header": "Panel Lateral",
+                    "favorites": "Favoritos",
+                    "vrcx": "VRCX",
+                    "all": "Todos",
                     "sorting": {
                         "header": "Clasificación",
                         "sort_private_to_bottom": "Ordenar privados abajo",
