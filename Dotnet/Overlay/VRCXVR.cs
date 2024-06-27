@@ -71,8 +71,8 @@ namespace VRCX
         {
             var thread = _thread;
             _thread = null;
-            thread.Interrupt();
-            thread.Join();
+            thread?.Interrupt();
+            thread?.Join();
         }
 
         public void Restart()
