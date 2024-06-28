@@ -10298,11 +10298,22 @@ speechSynthesis.getVoices();
             ref.$travelingToTime = Date.now();
             $app.updateFriendGPS(ref.id);
         }
+        var imageMatches = false;
         if (
-            ((props.currentAvatarImageUrl ||
+            props.currentAvatarThumbnailImageUrl &&
+            props.currentAvatarThumbnailImageUrl[0] &&
+            props.currentAvatarThumbnailImageUrl[1] &&
+            props.currentAvatarThumbnailImageUrl[0] ===
+                props.currentAvatarThumbnailImageUrl[1]
+        ) {
+            imageMatches = true;
+        }
+        if (
+            (((props.currentAvatarImageUrl ||
                 props.currentAvatarThumbnailImageUrl) &&
                 !ref.profilePicOverride) ||
-            props.currentAvatarTags
+                props.currentAvatarTags) &&
+            !imageMatches
         ) {
             var currentAvatarImageUrl = '';
             var previousCurrentAvatarImageUrl = '';
