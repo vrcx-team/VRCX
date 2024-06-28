@@ -22,12 +22,15 @@ namespace VRCX
         {
             var args = Environment.GetCommandLineArgs();
             processList = Process.GetProcessesByName("VRCX");
+            
+            Debug.Assert(Program.LaunchDebug = true);
 
-            var isDebug = false;
-            Debug.Assert(isDebug = true);
-
+            var disableClosing = false;
             foreach (var arg in args)
             {
+                if (arg == "/Upgrade")
+                    disableClosing = true;
+                
                 if (arg.Length > 12 && arg.Substring(0, 12) == "/uri=vrcx://")
                     LaunchCommand = arg.Substring(12);
 
@@ -42,15 +45,15 @@ namespace VRCX
                     Program.AppDataDirectory = filePath;
                 }
 
-                if ((arg.Length >= 7 && arg.Substring(0, 7) == "--debug") || isDebug)
+                if (arg.Length >= 7 && arg.Substring(0, 7) == "--debug")
                     Program.LaunchDebug = true;
             }
 
             if (!string.IsNullOrEmpty(Program.AppDataDirectory))
-                return; // we're launching with a custom config path, allow it
+                disableClosing = true; // we're launching with a custom config path, allow it
 
             // if we're launching a second instance, focus the first instance then exit
-            if (processList.Length > 1)
+            if (!disableClosing && processList.Length > 1)
             {
                 IPCToMain();
                 Environment.Exit(0);

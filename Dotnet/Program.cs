@@ -8,6 +8,7 @@ using NLog;
 using NLog.Targets;
 using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace VRCX
@@ -104,6 +105,32 @@ namespace VRCX
             {
                 Run();
             }
+            #region Handle CEF Explosion
+            catch (FileNotFoundException e)
+            {
+                logger.Error(e, "Handled Exception, Missing file found in Handle Cef Explosion.");
+
+                var result = MessageBox.Show("VRCX has encountered an error with the CefSharp backend,\nthis is typically caused by missing files or dependencies.\nWould you like to try autofix by automatically installing vc_redist?.", "VRCX CefSharp not found.", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                switch (result)
+                {
+                    case DialogResult.Yes:
+                        logger.Fatal("Handled Exception, user selected auto install of vc_redist.");
+                        Update.DownloadInstallRedist();
+                        MessageBox.Show(
+                            "vc_redist has finished installing, if the issue persists upon next restart, please reinstall VRCX From GitHub,\nVRCX Will now restart.", "vc_redist installation complete", MessageBoxButtons.OK);
+                        Thread.Sleep(5000);
+                        AppApi.Instance.RestartApplication();
+                        break;
+
+                    case DialogResult.No:
+                        logger.Fatal("Handled Exception, user chose manual.");
+                        MessageBox.Show("VRCX will now close, try reinstalling VRCX using the setup from Github as a potential fix.", "VRCX CefSharp not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Thread.Sleep(5000);
+                        Environment.Exit(0);
+                        break;
+                }
+            }
+            #endregion
             catch (Exception e)
             {
                 logger.Fatal(e, "Unhandled Exception, program dying");
@@ -144,7 +171,8 @@ namespace VRCX
             ProcessMonitor.Instance.Init();
             VRCXStorage.Load();
             SQLiteLegacy.Instance.Init();
-            CpuMonitor.Instance.Init();
+            AppApi.Instance.Init();
+            AppApiVr.Instance.Init();
             Discord.Instance.Init();
             WorldDBManager.Instance.Init();
             WebApi.Instance.Init();
@@ -166,7 +194,7 @@ namespace VRCX
             WorldDBManager.Instance.Stop();
 
             Discord.Instance.Exit();
-            CpuMonitor.Instance.Exit();
+            SystemMonitor.Instance.Exit();
             VRCXStorage.Save();
             SQLiteLegacy.Instance.Exit();
             ProcessMonitor.Instance.Exit();

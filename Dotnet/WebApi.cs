@@ -217,7 +217,8 @@ namespace VRCX
                 }
             }
             var imageData = options["imageData"] as string;
-            byte[] fileToUpload = Convert.FromBase64CharArray(imageData.ToCharArray(), 0, imageData.Length);
+            byte[] fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData));
+
             string fileFormKey = "file";
             string fileName = "blob";
             string fileMimeType = "image/png";

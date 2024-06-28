@@ -194,8 +194,11 @@ Vue.component('marquee-text', MarqueeText);
             // 2 = 항상 화면에 보이는 거
             appType: location.href.substr(-1),
             appLanguage: 'en',
+            currentCulture: 'en-nz',
             currentTime: new Date().toJSON(),
+            cpuUsageEnabled: false,
             cpuUsage: 0,
+            pcUptimeEnabled: false,
             pcUptime: '',
             customInfo: '',
             config: {},
@@ -351,6 +354,16 @@ Vue.component('marquee-text', MarqueeText);
         this.setDatetimeFormat();
         this.setAppLanguage(this.config.appLanguage);
         this.updateFeedLength();
+        if (
+            this.config.vrOverlayCpuUsage !== this.cpuUsageEnabled ||
+            this.config.pcUptimeOnFeed !== this.pcUptimeEnabled
+        ) {
+            this.cpuUsageEnabled = this.config.vrOverlayCpuUsage;
+            this.pcUptimeEnabled = this.config.pcUptimeOnFeed;
+            AppApiVr.ToggleSystemMonitor(
+                this.cpuUsageEnabled || this.pcUptimeEnabled
+            );
+        }
     };
 
     $app.methods.updateOnlineFriendCount = function (count) {
@@ -435,7 +448,7 @@ Vue.component('marquee-text', MarqueeText);
                 .replace(' PM', ' pm')
                 .replace(',', '');
 
-            if (!this.config.hideCpuUsageFromFeed) {
+            if (this.cpuUsageEnabled) {
                 var cpuUsage = await AppApiVr.CpuUsage();
                 this.cpuUsage = cpuUsage.toFixed(0);
             }
@@ -801,8 +814,6 @@ Vue.component('marquee-text', MarqueeText);
     $app.methods.updateHudTimeout = function (json) {
         this.hudTimeout = JSON.parse(json);
     };
-
-    $app.data.currentCulture = await AppApiVr.CurrentCulture();
 
     $app.methods.setDatetimeFormat = async function () {
         this.currentCulture = await AppApiVr.CurrentCulture();

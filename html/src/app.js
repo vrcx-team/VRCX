@@ -300,7 +300,7 @@ speechSynthesis.getVoices();
         ltz: 'lb',
         mar: 'hi',
         mkd: 'mk',
-        msa: 'id',
+        msa: 'my',
         sco: 'gd',
         slk: 'sk',
         slv: 'sl',
@@ -5726,7 +5726,7 @@ speechSynthesis.getVoices();
                     if (this.branch === 'Stable') {
                         this.nextAppUpdateCheck = 14400; // 2hours
                     } else {
-                        this.nextAppUpdateCheck = 1800; // 15mins
+                        this.nextAppUpdateCheck = 7200; // 1hour
                     }
                     if (this.autoUpdateVRCX !== 'Off') {
                         this.checkForVRCXUpdate();
@@ -6685,6 +6685,9 @@ speechSynthesis.getVoices();
                     return '';
                 })
                 .then((args) => {
+                    if (!args.json) {
+                        return '';
+                    }
                     if (
                         this.displayVRCPlusIconsAsAvatar &&
                         args.json.userIcon
@@ -9046,10 +9049,12 @@ speechSynthesis.getVoices();
         }
         var ref = API.cachedUsers.get(id);
         var isVIP = this.localFavoriteFriends.has(id);
+        var isFavorite = API.cachedFavoritesByObjectId.has(id);
         var ctx = {
             id,
             state: state || 'offline',
             isVIP,
+            isFavorite,
             ref,
             name: '',
             no: ++this.friendsNo,
@@ -9079,7 +9084,7 @@ speechSynthesis.getVoices();
         }
         this.friends.set(id, ctx);
         if (ctx.state === 'online') {
-            if (ctx.isVIP) {
+            if ((this.sidebarAllFavorites && ctx.isFavorite) || ctx.isVIP) {
                 this.sortFriendsGroup0 = true;
                 this.friendsGroup0_.push(ctx);
                 this.friendsGroupA_.unshift(ctx);
@@ -9106,7 +9111,7 @@ speechSynthesis.getVoices();
         }
         this.friends.delete(id);
         if (ctx.state === 'online') {
-            if (ctx.isVIP) {
+            if ((this.sidebarAllFavorites && ctx.isFavorite) || ctx.isVIP) {
                 removeFromArray(this.friendsGroup0_, ctx);
                 removeFromArray(this.friendsGroupA_, ctx);
             } else {
@@ -9177,6 +9182,7 @@ speechSynthesis.getVoices();
         }
         var ref = API.cachedUsers.get(id);
         var isVIP = this.localFavoriteFriends.has(id);
+        var isFavorite = API.cachedFavoritesByObjectId.has(id);
         var location = '';
         var $location_at = '';
         if (typeof ref !== 'undefined') {
@@ -9195,7 +9201,10 @@ speechSynthesis.getVoices();
                             userId: id
                         });
                     }
-                    if (ctx.isVIP) {
+                    if (
+                        (this.sidebarAllFavorites && ctx.isFavorite) ||
+                        ctx.isVIP
+                    ) {
                         removeFromArray(this.friendsGroupA_, ctx);
                         this.sortFriendsGroup0 = true;
                         this.friendsGroupA_.unshift(ctx);
@@ -9212,10 +9221,14 @@ speechSynthesis.getVoices();
                     this.friendsGroupD_.push(ctx);
                 }
             }
-            if (ctx.isVIP !== isVIP) {
+            if (ctx.isVIP !== isVIP || ctx.isFavorite !== isFavorite) {
                 ctx.isVIP = isVIP;
+                ctx.isFavorite = isFavorite;
                 if (ctx.state === 'online') {
-                    if (ctx.isVIP) {
+                    if (
+                        (this.sidebarAllFavorites && ctx.isFavorite) ||
+                        ctx.isVIP
+                    ) {
                         removeFromArray(this.friendsGroup1_, ctx);
                         removeFromArray(this.friendsGroupB_, ctx);
                         this.sortFriendsGroup0 = true;
@@ -9233,7 +9246,10 @@ speechSynthesis.getVoices();
             if (typeof ref !== 'undefined' && ctx.name !== ref.displayName) {
                 ctx.name = ref.displayName;
                 if (ctx.state === 'online') {
-                    if (ctx.isVIP) {
+                    if (
+                        (this.sidebarAllFavorites && ctx.isFavorite) ||
+                        ctx.isVIP
+                    ) {
                         this.sortFriendsGroup0 = true;
                     } else {
                         this.sortFriendsGroup1 = true;
@@ -9261,6 +9277,7 @@ speechSynthesis.getVoices();
         ) {
             ctx.ref = ref;
             ctx.isVIP = isVIP;
+            ctx.isFavorite = isFavorite;
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
             }
@@ -9288,7 +9305,6 @@ speechSynthesis.getVoices();
                     id,
                     ctx,
                     stateInput,
-                    isVIP,
                     location,
                     $location_at
                 );
@@ -9296,6 +9312,7 @@ speechSynthesis.getVoices();
         } else {
             ctx.ref = ref;
             ctx.isVIP = isVIP;
+            ctx.isFavorite = isFavorite;
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
             }
@@ -9303,7 +9320,6 @@ speechSynthesis.getVoices();
                 id,
                 ctx,
                 stateInput,
-                isVIP,
                 location,
                 $location_at
             );
@@ -9314,11 +9330,12 @@ speechSynthesis.getVoices();
         id,
         ctx,
         stateInput,
-        isVIP,
         location,
         $location_at
     ) {
         var date = this.APILastOnline.get(id);
+        var isVIP = this.localFavoriteFriends.has(id);
+        var isFavorite = API.cachedFavoritesByObjectId.has(id);
         if (
             ctx.state === 'online' &&
             (stateInput === 'active' || stateInput === 'offline') &&
@@ -9400,7 +9417,7 @@ speechSynthesis.getVoices();
             }
         }
         if (ctx.state === 'online') {
-            if (ctx.isVIP) {
+            if ((this.sidebarAllFavorites && ctx.isFavorite) || ctx.isVIP) {
                 removeFromArray(this.friendsGroup0_, ctx);
                 removeFromArray(this.friendsGroupA_, ctx);
             } else {
@@ -9415,7 +9432,7 @@ speechSynthesis.getVoices();
             removeFromArray(this.friendsGroupD_, ctx);
         }
         if (newState === 'online') {
-            if (isVIP) {
+            if ((this.sidebarAllFavorites && isFavorite) || isVIP) {
                 this.sortFriendsGroup0 = true;
                 this.friendsGroup0_.push(ctx);
                 this.friendsGroupA_.unshift(ctx);
@@ -9439,6 +9456,7 @@ speechSynthesis.getVoices();
         ctx.state = newState;
         ctx.name = newRef.displayName;
         ctx.isVIP = isVIP;
+        ctx.isFavorite = isFavorite;
     };
 
     $app.methods.getWorldName = async function (location) {
@@ -9489,7 +9507,7 @@ speechSynthesis.getVoices();
         }
         var ctx = this.friends.get(userId);
         if (typeof ctx.ref !== 'undefined' && ctx.state === 'online') {
-            if (ctx.isVIP) {
+            if ((this.sidebarAllFavorites && ctx.isFavorite) || ctx.isVIP) {
                 removeFromArray(this.friendsGroupA_, ctx);
                 this.sortFriendsGroup1 = true;
                 this.friendsGroupA_.unshift(ctx);
@@ -11829,7 +11847,8 @@ speechSynthesis.getVoices();
                             groupOnNameplate: user.groupOnNameplate,
                             showGroupBadgeToOthers: user.showGroupBadgeToOthers,
                             showSocialRank: user.showSocialRank,
-                            useImpostorAsFallback: user.useImpostorAsFallback
+                            useImpostorAsFallback: user.useImpostorAsFallback,
+                            platform: user.platform
                         });
                         this.photonUserJoin(id, user, gameLogDate);
                     }
@@ -11866,7 +11885,8 @@ speechSynthesis.getVoices();
                         groupOnNameplate: user.groupOnNameplate,
                         showGroupBadgeToOthers: user.showGroupBadgeToOthers,
                         showSocialRank: user.showSocialRank,
-                        useImpostorAsFallback: user.useImpostorAsFallback
+                        useImpostorAsFallback: user.useImpostorAsFallback,
+                        platform: user.platform
                     });
                     this.photonUserJoin(id, user, gameLogDate);
                 }
@@ -11900,7 +11920,8 @@ speechSynthesis.getVoices();
                     groupOnNameplate: user.groupOnNameplate,
                     showGroupBadgeToOthers: user.showGroupBadgeToOthers,
                     showSocialRank: user.showSocialRank,
-                    useImpostorAsFallback: user.useImpostorAsFallback
+                    useImpostorAsFallback: user.useImpostorAsFallback,
+                    platform: user.platform
                 });
                 break;
             case 255:
@@ -11950,7 +11971,8 @@ speechSynthesis.getVoices();
                         data.Parameters[249].showGroupBadgeToOthers,
                     showSocialRank: data.Parameters[249].showSocialRank,
                     useImpostorAsFallback:
-                        data.Parameters[249].useImpostorAsFallback
+                        data.Parameters[249].useImpostorAsFallback,
+                    platform: data.Parameters[249].platform
                 });
                 this.photonUserJoin(
                     data.Parameters[254],
@@ -14867,7 +14889,6 @@ speechSynthesis.getVoices();
             currentLocation = $app.lastLocationDestination;
         }
         if (!currentLocation) return;
-        var L = this.parseLocation(currentLocation);
         if (
             $app.autoAcceptInviteRequests === 'All Favorites' &&
             !$app.favoriteFriends.some((x) => x.id === ref.senderUserId)
@@ -14880,6 +14901,9 @@ speechSynthesis.getVoices();
         )
             return;
 
+        if (!this.checkCanInvite(currentLocation)) return;
+
+        var L = this.parseLocation(currentLocation);
         this.getCachedWorld({
             worldId: L.worldId
         }).then((args1) => {
@@ -14891,10 +14915,14 @@ speechSynthesis.getVoices();
                     rsvp: true
                 },
                 ref.senderUserId
-            ).then((_args) => {
-                $app.$message(`Auto invite sent to ${ref.senderUsername}`);
-                return _args;
-            });
+            )
+                .then((_args) => {
+                    $app.$message(`Auto invite sent to ${ref.senderUsername}`);
+                    return _args;
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
         });
     });
 
@@ -15225,8 +15253,8 @@ speechSynthesis.getVoices();
         'VRCX_hideDevicesFromFeed',
         false
     );
-    $app.data.hideCpuUsageFromFeed = await configRepository.getBool(
-        'VRCX_hideCpuUsageFromFeed',
+    $app.data.vrOverlayCpuUsage = await configRepository.getBool(
+        'VRCX_vrOverlayCpuUsage',
         false
     );
     $app.data.hideUptimeFromFeed = await configRepository.getBool(
@@ -15429,8 +15457,8 @@ speechSynthesis.getVoices();
             this.hideDevicesFromFeed
         );
         await configRepository.setBool(
-            'VRCX_hideCpuUsageFromFeed',
-            this.hideCpuUsageFromFeed
+            'VRCX_vrOverlayCpuUsage',
+            this.vrOverlayCpuUsage
         );
         await configRepository.setBool(
             'VRCX_hideUptimeFromFeed',
@@ -16155,7 +16183,7 @@ speechSynthesis.getVoices();
         var VRConfigVars = {
             overlayNotifications: this.overlayNotifications,
             hideDevicesFromFeed: this.hideDevicesFromFeed,
-            hideCpuUsageFromFeed: this.hideCpuUsageFromFeed,
+            vrOverlayCpuUsage: this.vrOverlayCpuUsage,
             minimalFeed: this.minimalFeed,
             notificationPosition: this.notificationPosition,
             notificationTimeout: this.notificationTimeout,
@@ -18112,6 +18140,13 @@ speechSynthesis.getVoices();
         return { isPC, isQuest, isIos };
     };
 
+    $app.methods.replaceVrcPackageUrl = function (url) {
+        if (!url) {
+            return '';
+        }
+        return url.replace('https://api.vrchat.cloud/', 'https://vrchat.com/');
+    };
+
     $app.methods.selectCurrentInstanceRow = function (val) {
         if (val === null) {
             return;
@@ -19288,7 +19323,11 @@ speechSynthesis.getVoices();
                 this.showSetWorldTagsDialog();
                 break;
             case 'Download Unity Package':
-                this.openExternalLink(this.worldDialog.ref.unityPackageUrl);
+                this.openExternalLink(
+                    this.replaceVrcPackageUrl(
+                        this.worldDialog.ref.unityPackageUrl
+                    )
+                );
                 break;
             default:
                 this.$confirm(`Continue? ${command}`, 'Confirm', {
@@ -19592,7 +19631,11 @@ speechSynthesis.getVoices();
                 this.showSetAvatarTagsDialog(D.id);
                 break;
             case 'Download Unity Package':
-                this.openExternalLink(this.avatarDialog.ref.unityPackageUrl);
+                this.openExternalLink(
+                    this.replaceVrcPackageUrl(
+                        this.avatarDialog.ref.unityPackageUrl
+                    )
+                );
                 break;
             case 'Add Favorite':
                 this.showFavoriteDialog('avatar', D.id);
@@ -21553,8 +21596,8 @@ speechSynthesis.getVoices();
         if (!files.length) {
             return;
         }
-        if (files[0].size >= 10000000) {
-            // 10MB
+        if (files[0].size >= 100000000) {
+            // 100MB
             $app.$message({
                 message: 'File size too large',
                 type: 'error'
@@ -21620,8 +21663,8 @@ speechSynthesis.getVoices();
         if (!files.length) {
             return;
         }
-        if (files[0].size >= 10000000) {
-            // 10MB
+        if (files[0].size >= 100000000) {
+            // 100MB
             $app.$message({
                 message: 'File size too large',
                 type: 'error'
@@ -21629,7 +21672,7 @@ speechSynthesis.getVoices();
             this.clearInviteImageUpload();
             return;
         }
-        if (!files[0].type.match(/image.png/)) {
+        if (!files[0].type.match(/image.*/)) {
             $app.$message({
                 message: "File isn't a png",
                 type: 'error'
@@ -22384,14 +22427,27 @@ speechSynthesis.getVoices();
     $app.data.friendsListSearchFilters = [];
     $app.data.friendsListSelectAllCheckbox = false;
     $app.data.friendsListBulkUnfriendMode = false;
+    $app.data.friendsListBulkUnfriendForceUpdate = 0;
+
+    $app.methods.toggleFriendsListBulkUnfriendMode = function () {
+        if (!this.friendsListBulkUnfriendMode) {
+            this.friendsListTable.data.forEach((ref) => {
+                ref.$selected = false;
+            });
+        }
+    };
 
     $app.methods.showBulkUnfriendSelectionConfirm = function () {
-        var elementsTicked = 0;
-        for (var ctx of this.friendsListTable.data) {
-            if (ctx.$selected) {
-                elementsTicked++;
-            }
-        }
+        var pendingUnfriendList = this.friendsListTable.data.reduce(
+            (acc, ctx) => {
+                if (ctx.$selected) {
+                    acc.push(ctx.displayName);
+                }
+                return acc;
+            },
+            []
+        );
+        var elementsTicked = pendingUnfriendList.length;
         if (elementsTicked === 0) {
             return;
         }
@@ -22404,6 +22460,9 @@ speechSynthesis.getVoices();
                 confirmButtonText: 'Confirm',
                 cancelButtonText: 'Cancel',
                 type: 'info',
+                showInput: true,
+                inputType: 'textarea',
+                inputValue: pendingUnfriendList.join('\r\n'),
                 callback: (action) => {
                     if (action === 'confirm') {
                         this.bulkUnfriendSelection();
@@ -22464,8 +22523,8 @@ speechSynthesis.getVoices();
             if (typeof ctx.ref === 'undefined') {
                 continue;
             }
-            if (typeof ctx.$selected === 'undefined') {
-                ctx.$selected = false;
+            if (typeof ctx.ref.$selected === 'undefined') {
+                ctx.ref.$selected = false;
             }
             if (this.friendsListSearchFilterVIP && !ctx.isVIP) {
                 continue;
@@ -22634,6 +22693,11 @@ speechSynthesis.getVoices();
         return response;
     };
 
+    $app.methods.resizeImageToFitLimits = async function (file) {
+        var response = await AppApi.ResizeImageToFitLimits(file);
+        return response;
+    };
+
     $app.methods.genSig = async function (file) {
         var response = await AppApi.SignFile(file);
         return response;
@@ -22661,8 +22725,8 @@ speechSynthesis.getVoices();
             clearFile();
             return;
         }
-        if (files[0].size >= 10000000) {
-            // 10MB
+        if (files[0].size >= 100000000) {
+            // 100MB
             $app.$message({
                 message: 'File size too large',
                 type: 'error'
@@ -22670,7 +22734,7 @@ speechSynthesis.getVoices();
             clearFile();
             return;
         }
-        if (!files[0].type.match(/image.png/)) {
+        if (!files[0].type.match(/image.*/)) {
             $app.$message({
                 message: "File isn't a png",
                 type: 'error'
@@ -22682,7 +22746,8 @@ speechSynthesis.getVoices();
         this.changeAvatarImageDialogLoading = true;
         var r = new FileReader();
         r.onload = async function (file) {
-            var base64File = btoa(r.result);
+            var base64File = await $app.resizeImageToFitLimits(btoa(r.result));
+            // 10MB
             var fileMd5 = await $app.genMd5(base64File);
             var fileSizeInBytes = parseInt(file.total, 10);
             var base64SignatureFile = await $app.genSig(base64File);
@@ -22996,8 +23061,8 @@ speechSynthesis.getVoices();
             clearFile();
             return;
         }
-        if (files[0].size >= 10000000) {
-            // 10MB
+        if (files[0].size >= 100000000) {
+            // 100MB
             $app.$message({
                 message: 'File size too large',
                 type: 'error'
@@ -23005,7 +23070,7 @@ speechSynthesis.getVoices();
             clearFile();
             return;
         }
-        if (!files[0].type.match(/image.png/)) {
+        if (!files[0].type.match(/image.*/)) {
             $app.$message({
                 message: "File isn't a png",
                 type: 'error'
@@ -23017,7 +23082,8 @@ speechSynthesis.getVoices();
         this.changeWorldImageDialogLoading = true;
         var r = new FileReader();
         r.onload = async function (file) {
-            var base64File = btoa(r.result);
+            var base64File = await $app.resizeImageToFitLimits(btoa(r.result));
+            // 10MB
             var fileMd5 = await $app.genMd5(base64File);
             var fileSizeInBytes = parseInt(file.total, 10);
             var base64SignatureFile = await $app.genSig(base64File);
@@ -25028,8 +25094,8 @@ speechSynthesis.getVoices();
         if (!files.length) {
             return;
         }
-        if (files[0].size >= 10000000) {
-            // 10MB
+        if (files[0].size >= 100000000) {
+            // 100MB
             $app.$message({
                 message: 'File size too large',
                 type: 'error'
@@ -25139,8 +25205,8 @@ speechSynthesis.getVoices();
         if (!files.length) {
             return;
         }
-        if (files[0].size >= 10000000) {
-            // 10MB
+        if (files[0].size >= 100000000) {
+            // 100MB
             $app.$message({
                 message: 'File size too large',
                 type: 'error'
@@ -26039,7 +26105,8 @@ speechSynthesis.getVoices();
                             groupOnNameplate: user.groupOnNameplate,
                             showGroupBadgeToOthers: user.showGroupBadgeToOthers,
                             showSocialRank: user.showSocialRank,
-                            useImpostorAsFallback: user.useImpostorAsFallback
+                            useImpostorAsFallback: user.useImpostorAsFallback,
+                            platform: user.platform
                         });
                     }
                 }
@@ -26096,7 +26163,7 @@ speechSynthesis.getVoices();
                 var data = input.replace(`import/${type}/`, '');
                 if (type === 'avatar') {
                     this.showAvatarImportDialog();
-                    this.worldImportDialog.input = data;
+                    this.avatarImportDialog.input = data;
                 } else if (type === 'world') {
                     this.showWorldImportDialog();
                     this.worldImportDialog.input = data;
@@ -28052,6 +28119,11 @@ speechSynthesis.getVoices();
     // #endregion
     // #region | Local Favorite Friends
 
+    $app.data.sidebarAllFavorites = await configRepository.getBool(
+        'VRCX_sidebarAllFavorites',
+        false
+    );
+
     $app.data.localFavoriteFriends = new Set();
     $app.data.localFavoriteFriendsGroups = JSON.parse(
         await configRepository.getString(
@@ -28078,28 +28150,37 @@ speechSynthesis.getVoices();
             'VRCX_localFavoriteFriendsGroups',
             JSON.stringify(this.localFavoriteFriendsGroups)
         );
+        configRepository.setBool(
+            'VRCX_sidebarAllFavorites',
+            this.sidebarAllFavorites
+        );
     };
 
     $app.methods.updateSidebarFriendsList = function () {
         for (var ctx of this.friends.values()) {
             var isVIP = this.localFavoriteFriends.has(ctx.id);
-            if (ctx.isVIP === isVIP) {
-                continue;
-            }
+            var isFavorite = API.cachedFavoritesByObjectId.has(ctx.id);
             ctx.isVIP = isVIP;
+            ctx.isFavorite = isFavorite;
             if (ctx.state !== 'online') {
                 continue;
             }
-            if (ctx.isVIP) {
+            if ((this.sidebarAllFavorites && ctx.isFavorite) || ctx.isVIP) {
                 removeFromArray(this.friendsGroup1_, ctx);
                 removeFromArray(this.friendsGroupB_, ctx);
                 this.sortFriendsGroup0 = true;
+                if (this.friendsGroup0_.includes(ctx)) {
+                    continue;
+                }
                 this.friendsGroup0_.push(ctx);
                 this.friendsGroupA_.unshift(ctx);
             } else {
                 removeFromArray(this.friendsGroup0_, ctx);
                 removeFromArray(this.friendsGroupA_, ctx);
                 this.sortFriendsGroup1 = true;
+                if (this.friendsGroup1_.includes(ctx)) {
+                    continue;
+                }
                 this.friendsGroup1_.push(ctx);
                 this.friendsGroupB_.unshift(ctx);
             }
@@ -29433,6 +29514,10 @@ speechSynthesis.getVoices();
             n: 100,
             offset: 0
         };
+        if (this.groupMemberModeration.selectedAuditLogTypes.length) {
+            params.eventTypes =
+                this.groupMemberModeration.selectedAuditLogTypes;
+        }
         var count = 50; // 5000 max
         this.isGroupMembersLoading = true;
         try {
@@ -29460,9 +29545,44 @@ speechSynthesis.getVoices();
      * @param {{ groupId: string }} params
      * @return { Promise<{json: any, params}> }
      */
+    API.getGroupAuditLogTypes = function (params) {
+        return this.call(`groups/${params.groupId}/auditLogTypes`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('GROUP:AUDITLOGTYPES', args);
+            return args;
+        });
+    };
+    API.$on('GROUP:AUDITLOGTYPES', function (args) {
+        if ($app.groupMemberModeration.id !== args.params.groupId) {
+            return;
+        }
+
+        $app.groupMemberModeration.auditLogTypes = args.json;
+    });
+
+    $app.methods.getAuditLogTypeName = function (auditLogType) {
+        if (!auditLogType) {
+            return '';
+        }
+        return auditLogType
+            .replace('group.', '')
+            .replace(/\./g, ' ')
+            .replace(/\b\w/g, (l) => l.toUpperCase());
+    };
+
+    /**
+     * @param {{ groupId: string, eventTypes: array }} params
+     * @return { Promise<{json: any, params}> }
+     */
     API.getGroupLogs = function (params) {
         return this.call(`groups/${params.groupId}/auditLogs`, {
-            method: 'GET'
+            method: 'GET',
+            params
         }).then((json) => {
             var args = {
                 json,
@@ -29479,7 +29599,12 @@ speechSynthesis.getVoices();
         }
 
         for (var json of args.json.results) {
-            $app.groupLogsModerationTable.data.push(json);
+            const existsInData = $app.groupLogsModerationTable.data.some(
+                (dataItem) => dataItem.id === json.id
+            );
+            if (!existsInData) {
+                $app.groupLogsModerationTable.data.push(json);
+            }
         }
     });
 
@@ -31698,6 +31823,8 @@ speechSynthesis.getVoices();
         loading: false,
         id: '',
         groupRef: {},
+        auditLogTypes: [],
+        selectedAuditLogTypes: [],
         note: '',
         selectedUsers: new Map(),
         selectedUsersArray: [],
@@ -31743,6 +31870,12 @@ speechSynthesis.getVoices();
 
     $app.data.groupLogsModerationTable = {
         data: [],
+        filters: [
+            {
+                prop: ['description'],
+                value: ''
+            }
+        ],
         tableProps: {
             stripe: true,
             size: 'mini'
@@ -31827,9 +31960,12 @@ speechSynthesis.getVoices();
         D.selectedUsersArray = [];
         D.selectedRoles = [];
         D.groupRef = {};
+        D.auditLogTypes = [];
+        D.selectedAuditLogTypes = [];
         API.getCachedGroup({ groupId }).then((args) => {
             D.groupRef = args.ref;
         });
+        API.getGroupAuditLogTypes({ groupId });
         this.groupMemberModerationTableForceUpdate = 0;
         D.visible = true;
         this.setGroupMemberModerationTable(this.groupDialog.members);

@@ -2327,7 +2327,7 @@ html
             //- dialog Table: Send Invite Response Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" :title="$t('dialog.invite_response_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteResponseDialogVisible" v-bind="inviteResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -2344,7 +2344,7 @@ html
             //- dialog Table: Send Invite Request Response Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" :title="$t('dialog.invite_request_response_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteRequestResponseDialogVisible" v-bind="inviteRequestResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -2377,7 +2377,7 @@ html
                     //-     el-button(size="mini" @click="clearImageGallerySelect" style="vertical-align:top") {{ $t('dialog.invite_message.clear_selected_image') }}
                     //- template(v-else)
                     //-     el-button(size="mini" @click="showGallerySelectDialog" style="margin-right:5px") {{ $t('dialog.invite_message.select_image') }}
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteDialogVisible" v-bind="inviteMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -2394,7 +2394,7 @@ html
             //- dialog Table: Send Invite Request Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" :title="$t('dialog.invite_request_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteRequestDialogVisible" v-bind="inviteRequestMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -2428,7 +2428,7 @@ html
             //- dialog: Change avatar image
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" :title="$t('dialog.change_content_image.avatar')" width="850px")
                 div(v-if="changeAvatarImageDialogVisible" v-loading="changeAvatarImageDialogLoading")
-                    input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
+                    input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
                     span {{ $t('dialog.change_content_image.description') }}
                     br
                     el-button-group(style="padding-bottom:10px;padding-top:10px")
@@ -2443,7 +2443,7 @@ html
             //- dialog: Change world image
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" :title="$t('dialog.change_content_image.world')" width="850px")
                 div(v-if="changeWorldImageDialogVisible" v-loading="changeWorldImageDialogLoading")
-                    input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
+                    input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
                     span {{ $t('dialog.change_content_image.description') }}
                     br
                     el-button-group(style="padding-bottom:10px;padding-top:10px")
@@ -2472,7 +2472,7 @@ html
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogGalleryLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.gallery') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
-                        input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                        input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
                         el-button-group
                             el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -2487,7 +2487,7 @@ html
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.icons') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ VRCPlusIconsTable.length }}/64
-                        input(type="file" accept="image/*" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
+                        input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
                         el-button-group
                             el-button(type="default" size="small" @click="refreshVRCPlusIconsTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayVRCPlusIconUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -2502,7 +2502,7 @@ html
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/9
-                        input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
+                        input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
                         el-button-group(style="margin-right:10px")
                             el-button(type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayEmojiUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -2977,7 +2977,7 @@ html
                     span(slot="label") {{ $t('dialog.gallery_select.gallery') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
                     br
-                    input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                    input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
                     el-button-group
                         el-button(type="default" size="small" @click="selectImageGallerySelect('', '')" icon="el-icon-close") {{ $t('dialog.gallery_select.none') }}
                         el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_select.refresh') }}
@@ -3195,6 +3195,13 @@ html
                                 el-button(type="default" @click="getAllGroupLogs(groupMemberModeration.id)" size="mini" icon="el-icon-refresh" :loading="isGroupMembersLoading" circle)
                                 span(style="font-size:14px;margin-left:5px;margin-right:5px") {{ groupLogsModerationTable.data.length }}
                             br
+                            el-select(v-model="groupMemberModeration.selectedAuditLogTypes" multiple collapse-tags :placeholder="$t('dialog.group_member_moderation.filter_type')")
+                                el-option-group(:label="$t('dialog.group_member_moderation.select_type')")
+                                    el-option.x-friend-item(v-for="type in groupMemberModeration.auditLogTypes" :key="type" :label="getAuditLogTypeName(type)" :value="type")
+                                        .detail
+                                            span.name(v-text="getAuditLogTypeName(type)")
+                            el-input(v-model="groupLogsModerationTable.filters[0].value" :placeholder="$t('dialog.group_member_moderation.search_placeholder')" style="display:inline-block;width:150px;margin:10px")
+                            br
                             data-tables(v-bind="groupLogsModerationTable" style="margin-top:10px")
                                 el-table-column(:label="$t('dialog.group_member_moderation.created_at')" width="170" prop="created_at" sortable)
                                     template(v-once #default="scope")
@@ -3213,10 +3220,12 @@ html
                                     template(v-once #default="scope")
                                         span(v-if="Object.keys(scope.row.data).length" v-text="JSON.stringify(scope.row.data)")
                     br
+                    br
                     span.name {{ $t('dialog.group_member_moderation.user_id') }}
                     br
                     el-input(v-model="groupMemberModeration.selectUserId" size="mini" style="margin-top:5px;width:340px" :placeholder="$t('dialog.group_member_moderation.user_id_placeholder')" clearable)
                     el-button(size="small" @click="selectGroupMemberUserId" :disabled="!groupMemberModeration.selectUserId") {{ $t('dialog.group_member_moderation.select_user') }}
+                    br
                     br
                     span.name {{ $t('dialog.group_member_moderation.selected_users') }}
                     el-button(type="default" @click="clearSelectedGroupMembers" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
@@ -3226,7 +3235,8 @@ html
                     br
                     br
                     span.name {{ $t('dialog.group_member_moderation.notes') }}
-                    el-input.extra(v-model="groupMemberModeration.note" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" :placeholder="$t('dialog.group_member_moderation.note_placeholder')" size="mini" resize="none")
+                    el-input.extra(v-model="groupMemberModeration.note" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" :placeholder="$t('dialog.group_member_moderation.note_placeholder')" size="mini" resize="none" style="margin-top:5px")
+                    br
                     br
                     span.name {{ $t('dialog.group_member_moderation.selected_roles') }}
                     br
@@ -3235,6 +3245,7 @@ html
                             el-option.x-friend-item(v-for="role in groupMemberModeration.groupRef.roles" :key="role.id" :label="role.name" :value="role.id" style="height:auto")
                                 .detail
                                     span.name(v-text="role.name")
+                    br
                     br
                     span.name {{ $t('dialog.group_member_moderation.actions') }}
                     br
