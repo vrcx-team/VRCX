@@ -282,9 +282,6 @@
                 },
                 "side_panel": {
                     "header": "Side Panel",
-                    "favorites": "Favorites",
-                    "vrcx": "VRCX",
-                    "all": "All",
                     "sorting": {
                         "header": "Sorting",
                         "sort_private_to_bottom": "Sort Private to bottom",
