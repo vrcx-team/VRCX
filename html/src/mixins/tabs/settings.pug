@@ -191,10 +191,6 @@ mixin settingsTab()
                 div.options-container
                     span.header {{ $t('view.settings.appearance.side_panel.header') }}
                     br
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.side_panel.favorites') }}
-                        el-switch(v-model="sidebarAllFavorites" :inactive-text="$t('view.settings.appearance.side_panel.vrcx')" :active-text="$t('view.settings.appearance.side_panel.all')" @change="updateLocalFavoriteFriends")
-                    br
                     span.sub-header {{ $t('view.settings.appearance.side_panel.sorting.header') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_private_to_bottom') }}
