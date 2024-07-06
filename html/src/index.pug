@@ -300,7 +300,7 @@ html
                                             el-dropdown-item(v-else-if="userDialog.outgoingRequest" icon="el-icon-close" command="Cancel Friend Request") {{ $t('dialog.user.actions.cancel_friend_request') }}
                                             el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") {{ $t('dialog.user.actions.send_friend_request') }}
                                             el-dropdown-item(icon="el-icon-message" command="Invite To Group") {{ $t('dialog.user.actions.invite_to_group') }}
-                                            el-dropdown-item(icon="el-icon-thumb" command="Send Boop" :disabled="!API.currentUser.isBoopingEnabled") {{ $t('dialog.user.actions.send_boop') }}
+                                            //- el-dropdown-item(icon="el-icon-thumb" command="Send Boop" :disabled="!API.currentUser.isBoopingEnabled") {{ $t('dialog.user.actions.send_boop') }}
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) {{ $t('dialog.user.actions.show_avatar_author') }}
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") {{ $t('dialog.user.actions.show_fallback_avatar') }}
                                             el-dropdown-item(icon="el-icon-tickets" command="Previous Instances") {{ $t('dialog.user.actions.show_previous_instances') }}
@@ -470,11 +470,11 @@ html
                                             span.name {{ $t('dialog.user.info.avatar_cloning') }}
                                             span.extra(v-if="API.currentUser.allowAvatarCopying" style="color:#67C23A") {{ $t('dialog.user.info.avatar_cloning_allow') }}
                                             span.extra(v-else style="color:#F56C6C") {{ $t('dialog.user.info.avatar_cloning_deny') }}
-                                    .x-friend-item(@click="toggleAllowBooping")
-                                        .detail
-                                            span.name {{ $t('dialog.user.info.booping') }}
-                                            span.extra(v-if="API.currentUser.isBoopingEnabled" style="color:#67C23A") {{ $t('dialog.user.info.avatar_cloning_allow') }}
-                                            span.extra(v-else style="color:#F56C6C") {{ $t('dialog.user.info.avatar_cloning_deny') }}
+                                    //- .x-friend-item(@click="toggleAllowBooping")
+                                    //-     .detail
+                                    //-         span.name {{ $t('dialog.user.info.booping') }}
+                                    //-         span.extra(v-if="API.currentUser.isBoopingEnabled" style="color:#67C23A") {{ $t('dialog.user.info.avatar_cloning_allow') }}
+                                    //-         span.extra(v-else style="color:#F56C6C") {{ $t('dialog.user.info.avatar_cloning_deny') }}
                                 template(v-else)
                                     .x-friend-item(style="cursor:default")
                                         .detail
