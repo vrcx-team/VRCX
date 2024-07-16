@@ -20,6 +20,8 @@
             "login": "Login",
             "register": "Register",
             "forgotPassword": "Forgot Password?",
+            "updater": "Updater",
+            "proxy_settings": "Proxy settings",
             "field": {
                 "username": "Username or Email",
                 "password": "Password",
@@ -211,7 +213,8 @@
                     "header": "Application",
                     "startup": "Start at Windows startup",
                     "minimized": "Start as minimized state",
-                    "tray": "Close to tray"
+                    "tray": "Close to tray",
+                    "proxy": "Proxy settings"
                 },
                 "favorites": {
                     "header": "VRCX Favorite Friends",
@@ -1600,6 +1603,13 @@
             "cancel": "Cancel",
             "save": "Save",
             "input_error": "Valid number is required"
+        },
+        "proxy_settings": {
+            "header": "Proxy Settings",
+            "description": "Enter proxy server address and port",
+            "placeholder": "127.0.0.1:8080",
+            "close": "Close",
+            "restart": "Restart"
         }
     },
     "table": {

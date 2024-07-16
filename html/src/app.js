@@ -15659,6 +15659,10 @@ speechSynthesis.getVoices();
     if (!(await VRCXStorage.Get('VRCX_DatabaseLocation'))) {
         await VRCXStorage.Set('VRCX_DatabaseLocation', '');
     }
+    if (!(await VRCXStorage.Get('VRCX_ProxyServer'))) {
+        await VRCXStorage.Set('VRCX_ProxyServer', '');
+    }
+    $app.data.proxyServer = await VRCXStorage.Get('VRCX_ProxyServer');
     $app.data.disableWorldDatabase =
         (await VRCXStorage.Get('VRCX_DisableWorldDatabase')) === 'true';
     $app.methods.saveVRCXWindowOption = async function () {
@@ -32882,6 +32886,35 @@ speechSynthesis.getVoices();
             .replace('vrchat_', '')
             .replace(/_/g, ' ')
             .replace(/\b\w/g, (l) => l.toUpperCase());
+    };
+
+    // #endregion
+
+    // #region proxy settings
+
+    $app.methods.promptProxySettings = function () {
+        this.$prompt(
+            $t('prompt.proxy_settings.description'),
+            $t('prompt.proxy_settings.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.proxy_settings.restart'),
+                cancelButtonText: $t('prompt.proxy_settings.close'),
+                inputValue: this.proxyServer,
+                inputPlaceholder: $t('prompt.proxy_settings.placeholder'),
+                callback: async (action, instance) => {
+                    this.proxyServer = instance.inputValue;
+                    await VRCXStorage.Set('VRCX_ProxyServer', this.proxyServer);
+                    await VRCXStorage.Flush();
+                    await new Promise((resolve) => {
+                        workerTimers.setTimeout(resolve, 100);
+                    });
+                    if (action === 'confirm') {
+                        AppApi.RestartApplication();
+                    }
+                }
+            }
+        );
     };
 
     // #endregion

@@ -19,6 +19,7 @@ namespace VRCX
     internal class StartupArgs
     {
         public static string LaunchCommand;
+        public static string ProxyUrl;
         public static Process[] processList;
 
         public static void ArgsCheck()
@@ -52,10 +53,7 @@ namespace VRCX
                     Program.LaunchDebug = true;
 
                 if (arg.Length >= 16 && arg.Substring(0, 14) == "--proxy-server")
-                {
-                    string proxyUrl = arg.Substring(15).Replace("'", string.Empty).Replace("\"", string.Empty);
-                    WebApi.Proxy = new WebProxy(proxyUrl);
-                }
+                    ProxyUrl = arg.Substring(15).Replace("'", string.Empty).Replace("\"", string.Empty);
             }
 
             var type = CommandLineArgsParser.GetArgumentValue(args, CefSharpArguments.SubProcessTypeArgument);

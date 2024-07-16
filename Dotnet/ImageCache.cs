@@ -8,11 +8,10 @@ using System.Threading.Tasks;
 
 namespace VRCX
 {
-    class ImageCache
+    internal static class ImageCache
     {
-        private static readonly string cacheLocation = Path.Combine(Program.AppDataDirectory, "ImageCache");
-        private static readonly HttpClientHandler httpClientHandler = new HttpClientHandler(){ Proxy = WebApi.Proxy };
-        private static readonly HttpClient httpClient = new HttpClient(httpClientHandler);
+        private static readonly string cacheLocation;
+        private static readonly HttpClient httpClient;
         private static readonly List<string> _imageHosts =
         [
             "api.vrchat.cloud",
@@ -20,6 +19,16 @@ namespace VRCX
             "d348imysud55la.cloudfront.net",
             "assets.vrchat.com"
         ];
+
+        static ImageCache()
+        {
+            cacheLocation = Path.Combine(Program.AppDataDirectory, "ImageCache");
+            var httpClientHandler = new HttpClientHandler();
+            if (WebApi.ProxySet)
+                httpClientHandler.Proxy = WebApi.Proxy;
+            
+            httpClient = new HttpClient(httpClientHandler);
+        }
 
         public static async Task<string> GetImage(string url, string fileId, string version)
         {
@@ -74,9 +83,9 @@ namespace VRCX
 
         private static void CleanImageCache()
         {
-            DirectoryInfo dirInfo = new DirectoryInfo(cacheLocation);
+            var dirInfo = new DirectoryInfo(cacheLocation);
             var folders = dirInfo.GetDirectories().OrderByDescending(p => p.LastWriteTime).Skip(1000);
-            foreach (DirectoryInfo folder in folders)
+            foreach (var folder in folders)
             {
                 folder.Delete(true);
             }

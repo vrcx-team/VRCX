@@ -58,12 +58,6 @@ namespace VRCX
                 Dock = DockStyle.Fill
             };
 
-            string? proxyUrl = VRCXStorage.Instance.Get("VRCX_ProxyServer");
-            if (!string.IsNullOrEmpty(proxyUrl))
-            {
-                WebApi.Proxy = new WebProxy(proxyUrl);
-            }
-
             Browser.IsBrowserInitializedChanged += (A, B) =>
             {
                 if (Program.LaunchDebug)

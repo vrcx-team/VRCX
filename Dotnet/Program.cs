@@ -167,8 +167,7 @@ namespace VRCX
             Application.SetCompatibleTextRenderingDefault(false);
 
             logger.Info("{0} Starting...", Version);
-
-
+            
             ProcessMonitor.Instance.Init();
             SQLiteLegacy.Instance.Init();
             AppApi.Instance.Init();

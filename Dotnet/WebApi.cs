@@ -16,10 +16,14 @@ namespace VRCX
     public class WebApi
     {
         public static readonly WebApi Instance;
+        
+        public static bool ProxySet;
+        public static string ProxyUrl = "";
+        public static IWebProxy Proxy = WebRequest.DefaultWebProxy;
+        
         public CookieContainer _cookieContainer;
         private bool _cookieDirty;
         private Timer _timer;
-        public static IWebProxy? Proxy = WebRequest.DefaultWebProxy;
 
         static WebApi()
         {
@@ -47,8 +51,28 @@ namespace VRCX
 
         internal void Init()
         {
+            SetProxy();
             LoadCookies();
             _timer.Change(1000, 1000);
+        }
+
+        private void SetProxy()
+        {
+            if (!string.IsNullOrEmpty(StartupArgs.ProxyUrl))
+                ProxyUrl = StartupArgs.ProxyUrl;
+
+            if (string.IsNullOrEmpty(ProxyUrl))
+            {
+                var proxyUrl = VRCXStorage.Instance.Get("VRCX_ProxyServer");
+                if (!string.IsNullOrEmpty(proxyUrl))
+                    ProxyUrl = proxyUrl;
+            }
+
+            if (string.IsNullOrEmpty(ProxyUrl))
+                return;
+            
+            ProxySet = true;
+            Proxy = new WebProxy(ProxyUrl);
         }
 
         internal void Exit()
@@ -145,7 +169,9 @@ namespace VRCX
 
         private static async Task LegacyImageUpload(HttpWebRequest request, IDictionary<string, object> options)
         {
-            request.Proxy = Proxy;
+            if (ProxySet)
+                request.Proxy = Proxy;
+            
             request.Method = "POST";
             string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             request.ContentType = "multipart/form-data; boundary=" + boundary;
@@ -190,7 +216,9 @@ namespace VRCX
 
         private static async Task UploadFilePut(HttpWebRequest request, IDictionary<string, object> options)
         {
-            request.Proxy = Proxy;
+            if (ProxySet)
+                request.Proxy = Proxy;
+            
             request.Method = "PUT";
             request.ContentType = options["fileMIME"] as string;
             var fileData = options["fileData"] as string;
@@ -205,7 +233,9 @@ namespace VRCX
         
         private static async Task ImageUpload(HttpWebRequest request, IDictionary<string, object> options)
         {
-            request.Proxy = Proxy;
+            if (ProxySet)
+                request.Proxy = Proxy;
+            
             request.Method = "POST";
             string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             request.ContentType = "multipart/form-data; boundary=" + boundary;
@@ -259,7 +289,9 @@ namespace VRCX
             try
             {
                 var request = WebRequest.CreateHttp((string)options["url"]);
-                request.Proxy = Proxy;
+                if (ProxySet)
+                    request.Proxy = Proxy;
+                
                 request.CookieContainer = _cookieContainer;
                 request.KeepAlive = true;
                 request.UserAgent = Program.Version;
