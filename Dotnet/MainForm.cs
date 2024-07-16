@@ -6,6 +6,7 @@
 
 using System;
 using System.Drawing;
+using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using CefSharp;
@@ -56,6 +57,12 @@ namespace VRCX
                 },
                 Dock = DockStyle.Fill
             };
+
+            string? proxyUrl = VRCXStorage.Instance.Get("VRCX_ProxyServer");
+            if (!string.IsNullOrEmpty(proxyUrl))
+            {
+                WebApi.Proxy = new WebProxy(proxyUrl);
+            }
 
             Browser.IsBrowserInitializedChanged += (A, B) =>
             {

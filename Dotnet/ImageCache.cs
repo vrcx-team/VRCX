@@ -11,7 +11,7 @@ namespace VRCX
     class ImageCache
     {
         private static readonly string cacheLocation = Path.Combine(Program.AppDataDirectory, "ImageCache");
-        private static readonly HttpClientHandler httpClientHandler = new HttpClientHandler(){ Proxy = StartupArgs.Proxy };
+        private static readonly HttpClientHandler httpClientHandler = new HttpClientHandler(){ Proxy = WebApi.Proxy };
         private static readonly HttpClient httpClient = new HttpClient(httpClientHandler);
         private static readonly List<string> _imageHosts =
         [
