@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Cookie = System.Net.Cookie;
 
 namespace VRCX
 {
@@ -91,6 +92,10 @@ namespace VRCX
             if (_cookieDirty == false)
             {
                 return;
+            }
+            foreach (Cookie cookie in _cookieContainer.GetAllCookies())
+            {
+                cookie.Expires = DateTime.MaxValue;
             }
             try
             {
