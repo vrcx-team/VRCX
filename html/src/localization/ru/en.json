@@ -595,6 +595,7 @@
                 "instance_users": "Пользователи:",
                 "instance_game_version": "Версия игры:",
                 "instance_queuing_enabled": "Очередь включена",
+                "last_join": "Последний заход:",
                 "instance_creator": "Создатель инстанса",
                 "note": "Заметка VRC",
                 "note_placeholder": "Нажмите, чтобы добавить заметку",
@@ -1597,6 +1598,13 @@
             "cancel": "Отмена",
             "save": "Сохранить",
             "input_error": "Требуется корректное число"
+        },
+        "proxy_settings": {
+            "header": "Настройки прокси-сервера",
+            "description": "Введите адрес и порт прокси-сервераt",
+            "placeholder": "127.0.0.1:8080",
+            "close": "Закрыть",
+            "restart": "Перезапустить"
         }
     },
     "table": {
