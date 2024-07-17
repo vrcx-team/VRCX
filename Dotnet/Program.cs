@@ -155,9 +155,10 @@ namespace VRCX
 
         private static void Run()
         {
-            BrowserSubprocess.Start();
             StartupArgs.ArgsCheck();
             SetProgramDirectories();
+            VRCXStorage.Load();
+            BrowserSubprocess.Start();
             ConfigureLogger();
             Update.Check();
             GetVersion();
@@ -166,10 +167,8 @@ namespace VRCX
             Application.SetCompatibleTextRenderingDefault(false);
 
             logger.Info("{0} Starting...", Version);
-
-
+            
             ProcessMonitor.Instance.Init();
-            VRCXStorage.Load();
             SQLiteLegacy.Instance.Init();
             AppApi.Instance.Init();
             AppApiVr.Instance.Init();

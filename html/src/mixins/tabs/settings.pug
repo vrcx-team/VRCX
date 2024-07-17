@@ -84,6 +84,8 @@ mixin settingsTab()
                     +simpleSwitch("view.settings.general.application.startup", "isStartAtWindowsStartup", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.minimized", "isStartAsMinimizedState", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.tray", "isCloseToTray", "saveVRCXWindowOption")
+                    div.options-container-item
+                        el-button(size="small" icon="el-icon-connection" @click="promptProxySettings()") {{ $t("view.settings.general.application.proxy") }}
                 //- General | Favorite
                 +simpleSettingsCategory("view.settings.general.favorites.header")
                     br

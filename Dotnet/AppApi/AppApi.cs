@@ -242,18 +242,29 @@ namespace VRCX
         /// <param name="Image">The optional image to display in the notification.</param>
         public void DesktopNotification(string BoldText, string Text = "", string Image = "")
         {
-            ToastContentBuilder builder = new ToastContentBuilder();
-            
-            if (Uri.TryCreate(Image, UriKind.Absolute, out Uri uri))
-                builder.AddAppLogoOverride(uri);
+            try
+            {
+                ToastContentBuilder builder = new ToastContentBuilder();
 
-            if (!string.IsNullOrEmpty(BoldText))
-                builder.AddText(BoldText);
-            
-            if (!string.IsNullOrEmpty(Text))
-                builder.AddText(Text);
+                if (Uri.TryCreate(Image, UriKind.Absolute, out Uri uri))
+                    builder.AddAppLogoOverride(uri);
 
-            builder.Show();
+                if (!string.IsNullOrEmpty(BoldText))
+                    builder.AddText(BoldText);
+
+                if (!string.IsNullOrEmpty(Text))
+                    builder.AddText(Text);
+
+                builder.Show();
+            }
+            catch (System.AccessViolationException ex)
+            {
+                logger.Warn(ex, "Unable to send desktop notification");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Unknown error when sending desktop notification");
+            }
         }
 
         /// <summary>

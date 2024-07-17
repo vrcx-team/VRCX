@@ -4,10 +4,13 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+using CefSharp;
+using CefSharp.Internals;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+using System.Net;
 using System.Text;
 using System.Windows.Forms;
 
@@ -16,6 +19,7 @@ namespace VRCX
     internal class StartupArgs
     {
         public static string LaunchCommand;
+        public static string ProxyUrl;
         public static Process[] processList;
 
         public static void ArgsCheck()
@@ -47,7 +51,14 @@ namespace VRCX
 
                 if (arg.Length >= 7 && arg.Substring(0, 7) == "--debug")
                     Program.LaunchDebug = true;
+
+                if (arg.Length >= 16 && arg.Substring(0, 14) == "--proxy-server")
+                    ProxyUrl = arg.Substring(15).Replace("'", string.Empty).Replace("\"", string.Empty);
             }
+
+            var type = CommandLineArgsParser.GetArgumentValue(args, CefSharpArguments.SubProcessTypeArgument);
+            if (!string.IsNullOrEmpty(type))
+                disableClosing = true; // we're launching a subprocess, allow it
 
             if (!string.IsNullOrEmpty(Program.AppDataDirectory))
                 disableClosing = true; // we're launching with a custom config path, allow it
