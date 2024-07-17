@@ -1101,6 +1101,39 @@ speechSynthesis.getVoices();
         }
     });
 
+    Vue.component('last-join', {
+        template:
+            '<span>' +
+            '<el-tooltip placement="top" style="margin-left:5px" v-if="lastJoin">' +
+            '<div slot="content">' +
+            '<span>{{ $t("dialog.user.info.last_join") }} <timer :epoch="lastJoin"></timer></span>' +
+            '</div>' +
+            '<i v-if="lastJoin" class="el-icon el-icon-location-outline" style="display:inline-block"></i>' +
+            '</el-tooltip>' +
+            '</span>',
+        props: {
+            location: String
+        },
+        data() {
+            return {
+                lastJoin: this.lastJoin
+            };
+        },
+        methods: {
+            parse() {
+                this.lastJoin = $app.instanceJoinHistory.get(this.location);
+            }
+        },
+        watch: {
+            locationobject() {
+                this.parse();
+            }
+        },
+        created() {
+            this.parse();
+        }
+    });
+
     Vue.component('instance-info', {
         template:
             '<div style="display:inline-block;margin-left:5px">' +
@@ -10897,6 +10930,7 @@ speechSynthesis.getVoices();
                 }
                 break;
             case 'location':
+                this.addInstanceJoinHistory(this.lastLocation, gameLog.dt);
                 var worldName = this.replaceBioSymbols(gameLog.worldName);
                 if (this.isGameRunning) {
                     this.lastLocationReset(gameLog.dt);
@@ -10916,6 +10950,7 @@ speechSynthesis.getVoices();
                     this.applyWorldDialogInstances();
                     this.applyGroupDialogInstances();
                 }
+                this.addInstanceJoinHistory(gameLog.location, gameLog.dt);
                 var L = API.parseLocation(gameLog.location);
                 var entry = {
                     created_at: gameLog.dt,
@@ -15659,6 +15694,10 @@ speechSynthesis.getVoices();
     if (!(await VRCXStorage.Get('VRCX_DatabaseLocation'))) {
         await VRCXStorage.Set('VRCX_DatabaseLocation', '');
     }
+    if (!(await VRCXStorage.Get('VRCX_ProxyServer'))) {
+        await VRCXStorage.Set('VRCX_ProxyServer', '');
+    }
+    $app.data.proxyServer = await VRCXStorage.Get('VRCX_ProxyServer');
     $app.data.disableWorldDatabase =
         (await VRCXStorage.Get('VRCX_DisableWorldDatabase')) === 'true';
     $app.methods.saveVRCXWindowOption = async function () {
@@ -32882,6 +32921,63 @@ speechSynthesis.getVoices();
             .replace('vrchat_', '')
             .replace(/_/g, ' ')
             .replace(/\b\w/g, (l) => l.toUpperCase());
+    };
+
+    // #endregion
+
+    // #region proxy settings
+
+    $app.methods.promptProxySettings = function () {
+        this.$prompt(
+            $t('prompt.proxy_settings.description'),
+            $t('prompt.proxy_settings.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.proxy_settings.restart'),
+                cancelButtonText: $t('prompt.proxy_settings.close'),
+                inputValue: this.proxyServer,
+                inputPlaceholder: $t('prompt.proxy_settings.placeholder'),
+                callback: async (action, instance) => {
+                    this.proxyServer = instance.inputValue;
+                    await VRCXStorage.Set('VRCX_ProxyServer', this.proxyServer);
+                    await VRCXStorage.Flush();
+                    await new Promise((resolve) => {
+                        workerTimers.setTimeout(resolve, 100);
+                    });
+                    if (action === 'confirm') {
+                        AppApi.RestartApplication();
+                    }
+                }
+            }
+        );
+    };
+
+    // #endregion
+
+    // #region instance join history
+
+    $app.data.instanceJoinHistory = new Map();
+
+    API.$on('LOGIN', function () {
+        $app.instanceJoinHistory = new Map();
+        $app.getInstanceJoinHistory();
+    });
+
+    $app.methods.getInstanceJoinHistory = async function () {
+        this.instanceJoinHistory = await database.getInstanceJoinHistory();
+    };
+
+    $app.methods.addInstanceJoinHistory = function (location, dateTime) {
+        if (!location || !dateTime) {
+            return;
+        }
+
+        if (this.instanceJoinHistory.has(location)) {
+            this.instanceJoinHistory.delete(location);
+        }
+
+        var epoch = new Date(dateTime).getTime();
+        this.instanceJoinHistory.set(location, epoch);
     };
 
     // #endregion

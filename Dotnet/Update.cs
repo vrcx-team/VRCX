@@ -56,6 +56,7 @@ namespace VRCX
                 MessageBox.Show(e.ToString(), "Update failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        
         public static void DownloadInstallRedist()
         {
             try
@@ -77,7 +78,6 @@ namespace VRCX
                 MessageBox.Show(e.ToString(), "Update failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
 
         private static string DownloadFile(string fileUrl)
         {

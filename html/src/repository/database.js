@@ -2530,6 +2530,25 @@ class Database {
     async setWal() {
         await sqliteService.executeNonQuery('PRAGMA journal_mode=WAL');
     }
+
+    async getInstanceJoinHistory() {
+        var oneWeekAgo = new Date(Date.now() - 604800000).toJSON();
+        var instances = new Map();
+        await sqliteService.execute(
+            (row) => {
+                if (!instances.has(row[1])) {
+                    var epoch = new Date(row[0]).getTime();
+                    instances.set(row[1], epoch);
+                }
+            },
+            `SELECT created_at, location FROM gamelog_join_leave WHERE user_id = @userId AND created_at > @created_at ORDER BY created_at DESC`,
+            {
+                '@userId': Database.userId,
+                '@created_at': oneWeekAgo
+            }
+        );
+        return instances;
+    }
 }
 
 var self = new Database();
