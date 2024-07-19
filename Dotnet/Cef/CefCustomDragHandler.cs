@@ -16,9 +16,9 @@ namespace VRCX
     {
         public bool OnDragEnter(IWebBrowser chromiumWebBrowser, IBrowser browser, IDragData dragData, DragOperationsMask mask)
         {
-            if (dragData.IsFile && dragData.FileNames != null && dragData.FileNames.Count > 0)
+            if (dragData.IsFile && dragData.FilePaths != null && dragData.FilePaths.Count > 0)
             {
-                string file = dragData.FileNames[0];
+                string file = dragData.FilePaths[0];
                 if (!file.EndsWith(".png") && !file.EndsWith(".jpg") && !file.EndsWith(".jpeg"))
                 {
                     dragData.Dispose();
@@ -26,7 +26,7 @@ namespace VRCX
                 }
 
                 // forgive me father for i have sinned once again
-                AppApi.Instance.ExecuteAppFunction("dragEnterCef", dragData.FileNames[0]);
+                AppApi.Instance.ExecuteAppFunction("dragEnterCef", file);
                 dragData.Dispose();
                 return false;
             }
