@@ -93,7 +93,9 @@
                 "new_group": "New Group"
             },
             "avatars": {
-                "header": "Avatars"
+                "header": "Avatars",
+                "local_favorites": "Local Favorites",
+                "new_group": "New Group"
             },
             "bulk_unfavorite_mode": "Bulk Unfavorite Mode",
             "bulk_unfavorite_selection": "Bulk Unfavorite Selection",
@@ -774,7 +776,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "Delete avatar from cache",
-                "favorite_tooltip": "Add to favorites",
+                "favorite_tooltip": "Favorites",
                 "unfavorite_tooltip": "Remove from favorites",
                 "refresh": "Refresh",
                 "select": "Select Avatar",
