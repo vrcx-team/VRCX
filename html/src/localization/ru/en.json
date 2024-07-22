@@ -770,7 +770,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "Удалить аватар из кэша",
-                "favorite_tooltip": "Добавить в избранное",
+                "favorite_tooltip": "Избранное",
                 "unfavorite_tooltip": "Убрать из Избранного",
                 "refresh": "Обновить",
                 "select": "Выбрать аватар",

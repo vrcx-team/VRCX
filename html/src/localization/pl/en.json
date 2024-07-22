@@ -739,7 +739,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "Usuń świat z pamięci",
-                "favorite_tooltip": "Dodaj do ulubionych",
+                "favorite_tooltip": "Ulubione",
                 "unfavorite_tooltip": "Usuń z ulubionych",
                 "refresh": "Odśwież",
                 "select": "Wybierz awatar",

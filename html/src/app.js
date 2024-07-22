@@ -19542,7 +19542,7 @@ speechSynthesis.getVoices();
         D.isQuest = false;
         D.isIos = false;
         D.hasImposter = false;
-        D.isFavorite = API.cachedFavoritesByObjectId.has(avatarId);
+        D.isFavorite = API.cachedFavoritesByObjectId.has(avatarId) || (this.isLocalUserVrcplusSupporter() && this.localAvatarFavoritesList.includes(avatarId));
         D.isBlocked = API.cachedAvatarModerations.has(avatarId);
         this.ignoreAvatarMemoSave = true;
         D.memo = '';
@@ -19638,6 +19638,28 @@ speechSynthesis.getVoices();
             }
         });
     };
+
+    $app.methods.selectAvatarWithConfirmation = function (id) {
+        this.$confirm(`Continue? Select Avatar`, 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action !== 'confirm') {
+                    return;
+                }
+                API.selectAvatar({
+                    avatarId: id
+                }).then((args) => {
+                    this.$message({
+                        message: 'Avatar changed',
+                        type: 'success'
+                    });
+                    return args;
+                });
+            }
+        });
+    }
 
     $app.methods.avatarDialogCommand = function (command) {
         var D = this.avatarDialog;
@@ -28151,6 +28173,316 @@ speechSynthesis.getVoices();
         }
 
         this.worldFavoriteSearchResults = results;
+    };
+
+    // #endregion
+    // #region | App: Local Avatar Favorites
+
+    $app.methods.isLocalUserVrcplusSupporter = function () {
+        return API.currentUser.$isVRCPlus;
+    }
+
+    $app.data.localAvatarFavoriteGroups = [];
+    $app.data.localAvatarFavoritesList = [];
+    $app.data.localAvatarFavorites = {};
+
+    $app.methods.addLocalAvatarFavorite = function (avatarId, group) {
+        if (this.hasLocalAvatarFavorite(avatarId, group)) {
+            return;
+        }
+        var ref = API.cachedAvatars.get(avatarId);
+        if (typeof ref === 'undefined') {
+            return;
+        }
+        if (!this.localAvatarFavoritesList.includes(avatarId)) {
+            this.localAvatarFavoritesList.push(avatarId);
+        }
+        if (!this.localAvatarFavorites[group]) {
+            this.localAvatarFavorites[group] = [];
+        }
+        if (!this.localAvatarFavoriteGroups.includes(group)) {
+            this.localAvatarFavoriteGroups.push(group);
+        }
+        this.localAvatarFavorites[group].unshift(ref);
+        database.addAvatarToCache(ref);
+        database.addAvatarToFavorites(avatarId, group);
+        if (
+            this.favoriteDialog.visible &&
+            this.favoriteDialog.objectId === avatarId
+        ) {
+            this.updateFavoriteDialog(avatarId);
+        }
+        if (this.avatarDialog.visible && this.avatarDialog.id === avatarId) {
+            this.avatarDialog.isFavorite = true;
+        }
+    };
+
+    $app.methods.removeLocalAvatarFavorite = function (avatarId, group) {
+        var favoriteGroup = this.localAvatarFavorites[group];
+        for (var i = 0; i < favoriteGroup.length; ++i) {
+            if (favoriteGroup[i].id === avatarId) {
+                favoriteGroup.splice(i, 1);
+            }
+        }
+
+        // remove from cache if no longer in favorites
+        var avatarInFavorites = false;
+        for (var i = 0; i < this.localAvatarFavoriteGroups.length; ++i) {
+            var groupName = this.localAvatarFavoriteGroups[i];
+            if (!this.localAvatarFavorites[groupName] || group === groupName) {
+                continue;
+            }
+            for (
+                var j = 0;
+                j < this.localAvatarFavorites[groupName].length;
+                ++j
+            ) {
+                var id = this.localAvatarFavorites[groupName][j].id;
+                if (id === avatarId) {
+                    avatarInFavorites = true;
+                    break;
+                }
+            }
+        }
+        if (!avatarInFavorites) {
+            removeFromArray(this.localAvatarFavoritesList, avatarId);
+            database.removeAvatarFromCache(avatarId);
+        }
+        database.removeAvatarFromFavorites(avatarId, group);
+        if (
+            this.favoriteDialog.visible &&
+            this.favoriteDialog.objectId === avatarId
+        ) {
+            this.updateFavoriteDialog(avatarId);
+        }
+        if (this.avatarDialog.visible && this.avatarDialog.id === avatarId) {
+            this.avatarDialog.isFavorite =
+                API.cachedFavoritesByObjectId.has(avatarId);
+        }
+
+        // update UI
+        this.sortLocalAvatarFavorites();
+    };
+
+    API.$on('AVATAR', function (args) {
+        if ($app.localAvatarFavoritesList.includes(args.ref.id)) {
+            // update db cache
+            database.addAvatarToCache(args.ref);
+        }
+    });
+
+    API.$on('LOGIN', function () {
+        $app.getLocalAvatarFavorites();
+    });
+
+    $app.methods.getLocalAvatarFavorites = async function () {
+        this.localAvatarFavoriteGroups = [];
+        this.localAvatarFavoritesList = [];
+        this.localAvatarFavorites = {};
+        var avatarCache = await database.getAvatarCache();
+        for (var i = 0; i < avatarCache.length; ++i) {
+            var ref = avatarCache[i];
+            if (!API.cachedAvatars.has(ref.id)) {
+                API.applyAvatar(ref);
+            }
+        }
+        var favorites = await database.getAvatarFavorites();
+        for (var i = 0; i < favorites.length; ++i) {
+            var favorite = favorites[i];
+            if (!this.localAvatarFavoritesList.includes(favorite.avatarId)) {
+                this.localAvatarFavoritesList.push(favorite.avatarId);
+            }
+            if (!this.localAvatarFavorites[favorite.groupName]) {
+                this.localAvatarFavorites[favorite.groupName] = [];
+            }
+            if (!this.localAvatarFavoriteGroups.includes(favorite.groupName)) {
+                this.localAvatarFavoriteGroups.push(favorite.groupName);
+            }
+            var ref = API.cachedAvatars.get(favorite.avatarId);
+            if (typeof ref === 'undefined') {
+                ref = {
+                    id: favorite.avatarId
+                };
+            }
+            this.localAvatarFavorites[favorite.groupName].unshift(ref);
+        }
+        if (this.localAvatarFavoriteGroups.length === 0) {
+            // default group
+            this.localAvatarFavorites.Favorites = [];
+            this.localAvatarFavoriteGroups.push('Favorites');
+        }
+        this.sortLocalAvatarFavorites();
+    };
+
+    $app.methods.hasLocalAvatarFavorite = function (avatarId, group) {
+        var favoriteGroup = this.localAvatarFavorites[group];
+        if (!favoriteGroup) {
+            return false;
+        }
+        for (var i = 0; i < favoriteGroup.length; ++i) {
+            if (favoriteGroup[i].id === avatarId) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    $app.methods.getLocalAvatarFavoriteGroupLength = function (group) {
+        var favoriteGroup = this.localAvatarFavorites[group];
+        if (!favoriteGroup) {
+            return 0;
+        }
+        return favoriteGroup.length;
+    };
+
+    $app.methods.promptNewLocalAvatarFavoriteGroup = function () {
+        this.$prompt(
+            $t('prompt.new_local_favorite_group.description'),
+            $t('prompt.new_local_favorite_group.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t('prompt.new_local_favorite_group.ok'),
+                cancelButtonText: $t('prompt.new_local_favorite_group.cancel'),
+                inputPattern: /\S+/,
+                inputErrorMessage: $t(
+                    'prompt.new_local_favorite_group.input_error'
+                ),
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        this.newLocalAvatarFavoriteGroup(instance.inputValue);
+                    }
+                }
+            }
+        );
+    };
+
+    $app.methods.newLocalAvatarFavoriteGroup = function (group) {
+        if (this.localAvatarFavoriteGroups.includes(group)) {
+            $app.$message({
+                message: $t('prompt.new_local_favorite_group.message.error', {
+                    name: group
+                }),
+                type: 'error'
+            });
+            return;
+        }
+        if (!this.localAvatarFavorites[group]) {
+            this.localAvatarFavorites[group] = [];
+        }
+        if (!this.localAvatarFavoriteGroups.includes(group)) {
+            this.localAvatarFavoriteGroups.push(group);
+        }
+        this.sortLocalAvatarFavorites();
+    };
+
+    $app.methods.promptLocalAvatarFavoriteGroupRename = function (group) {
+        this.$prompt(
+            $t('prompt.local_favorite_group_rename.description'),
+            $t('prompt.local_favorite_group_rename.header'),
+            {
+                distinguishCancelAndClose: true,
+                confirmButtonText: $t(
+                    'prompt.local_favorite_group_rename.save'
+                ),
+                cancelButtonText: $t(
+                    'prompt.local_favorite_group_rename.cancel'
+                ),
+                inputPattern: /\S+/,
+                inputErrorMessage: $t(
+                    'prompt.local_favorite_group_rename.input_error'
+                ),
+                inputValue: group,
+                callback: (action, instance) => {
+                    if (action === 'confirm' && instance.inputValue) {
+                        this.renameLocalAvatarFavoriteGroup(
+                            instance.inputValue,
+                            group
+                        );
+                    }
+                }
+            }
+        );
+    };
+
+    $app.methods.renameLocalAvatarFavoriteGroup = function (newName, group) {
+        if (this.localAvatarFavoriteGroups.includes(newName)) {
+            $app.$message({
+                message: $t(
+                    'prompt.local_favorite_group_rename.message.error',
+                    { name: newName }
+                ),
+                type: 'error'
+            });
+            return;
+        }
+        this.localAvatarFavoriteGroups.push(newName);
+        this.localAvatarFavorites[newName] = this.localAvatarFavorites[group];
+
+        removeFromArray(this.localAvatarFavoriteGroups, group);
+        delete this.localAvatarFavorites[group];
+        database.renameAvatarFavoriteGroup(newName, group);
+        this.sortLocalAvatarFavorites();
+    };
+
+    $app.methods.promptLocalAvatarFavoriteGroupDelete = function (group) {
+        this.$confirm(`Delete Group? ${group}`, 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action === 'confirm') {
+                    this.deleteLocalAvatarFavoriteGroup(group);
+                }
+            }
+        });
+    };
+
+    $app.methods.sortLocalAvatarFavorites = function () {
+        this.localAvatarFavoriteGroups.sort();
+        if (!this.sortFavorites) {
+            for (var i = 0; i < this.localAvatarFavoriteGroups.length; ++i) {
+                var group = this.localAvatarFavoriteGroups[i];
+                if (this.localAvatarFavorites[group]) {
+                    this.localAvatarFavorites[group].sort(compareByName);
+                }
+            }
+        }
+    };
+
+    $app.methods.deleteLocalAvatarFavoriteGroup = function (group) {
+        // remove from cache if no longer in favorites
+        var avatarIdRemoveList = new Set();
+        var favoriteGroup = this.localAvatarFavorites[group];
+        for (var i = 0; i < favoriteGroup.length; ++i) {
+            avatarIdRemoveList.add(favoriteGroup[i].id);
+        }
+
+        removeFromArray(this.localAvatarFavoriteGroups, group);
+        delete this.localAvatarFavorites[group];
+        database.deleteAvatarFavoriteGroup(group);
+
+        for (var i = 0; i < this.localAvatarFavoriteGroups.length; ++i) {
+            var groupName = this.localAvatarFavoriteGroups[i];
+            if (!this.localAvatarFavorites[groupName]) {
+                continue;
+            }
+            for (
+                var j = 0;
+                j < this.localAvatarFavorites[groupName].length;
+                ++j
+            ) {
+                var avatarId = this.localAvatarFavorites[groupName][j].id;
+                if (avatarIdRemoveList.has(avatarId)) {
+                    avatarIdRemoveList.delete(avatarId);
+                    break;
+                }
+            }
+        }
+
+        avatarIdRemoveList.forEach((id) => {
+            removeFromArray(this.localAvatarFavoritesList, id);
+            database.removeAvatarFromCache(id);
+        });
     };
 
     // #endregion
