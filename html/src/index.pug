@@ -332,7 +332,7 @@ html
                                                 invite-yourself(:location="userDialog.$location.tag" :shortname="userDialog.$location.shortName" style="margin-left:5px")
                                             el-tooltip(placement="top" :content="$t('dialog.user.info.refresh_instance_info')" :disabled="hideTooltips")
                                                 el-button(@click="refreshInstancePlayerCount(userDialog.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
-                                            last-join(:location="userDialog.$location.tag")
+                                            last-join(:location="userDialog.$location.tag" :currentlocation="lastLocation.location")
                                             instance-info(:location="userDialog.$location.tag" :instance="userDialog.instance.ref" :friendcount="userDialog.instance.friendCount" :updateelement="updateInstanceInfo")
                                         location(:location="userDialog.ref.location" :traveling="userDialog.ref.travelingToLocation" style="display:block;margin-top:5px")
                                     .x-friend-list(style="flex:1;margin-top:10px;max-height:150px")
@@ -708,7 +708,7 @@ html
                                         invite-yourself(:location="room.$location.tag" :shortname="room.$location.shortName" style="margin-left:5px")
                                     el-tooltip(placement="top" :content="$t('dialog.world.instances.refresh_instance_info')" :disabled="hideTooltips")
                                         el-button(@click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
-                                    last-join(:location="room.$location.tag")
+                                    last-join(:location="room.$location.tag" :currentlocation="lastLocation.location")
                                     instance-info(:location="room.tag" :instance="room.ref" :friendcount="room.friendCount" :updateelement="updateInstanceInfo")
                                 .x-friend-list(style="margin:10px 0;max-height:unset" v-if="room.$location.userId || room.users.length")
                                     .x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)" class="x-friend-item-border")
@@ -1055,7 +1055,7 @@ html
                                             invite-yourself(:location="room.tag" style="margin-left:5px")
                                         el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
                                             el-button(@click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
-                                        last-join(:location="room.tag")
+                                        last-join(:location="room.tag" :currentlocation="lastLocation.location")
                                         instance-info(:location="room.tag" :instance="room.ref" :friendcount="room.friendCount" :updateelement="updateInstanceInfo")
                                     .x-friend-list(style="margin:10px 0;padding:0;max-height:unset" v-if="room.users.length")
                                         .x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
@@ -1909,11 +1909,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
-                    .toggle-item
-                        span.toggle-name Boop
-                        el-radio-group(v-model="sharedFeedFilters.noty.boop" size="mini" @change="saveSharedFeedFilters")
-                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
-                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    //- .toggle-item
+                    //-     span.toggle-name Boop
+                    //-     el-radio-group(v-model="sharedFeedFilters.noty.boop" size="mini" @change="saveSharedFeedFilters")
+                    //-         el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                    //-         el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Change
                             el-tooltip(placement="top" style="margin-left:5px" content="When you've left or been kicked from a group, group name changed, group owner changed, role added/removed")
@@ -2163,11 +2163,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
-                    .toggle-item
-                        span.toggle-name Boop
-                        el-radio-group(v-model="sharedFeedFilters.wrist.boop" size="mini" @change="saveSharedFeedFilters")
-                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
-                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    //- .toggle-item
+                    //-     span.toggle-name Boop
+                    //-     el-radio-group(v-model="sharedFeedFilters.wrist.boop" size="mini" @change="saveSharedFeedFilters")
+                    //-         el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                    //-         el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Change
                             el-tooltip(placement="top" style="margin-left:5px" content="When you've left or been kicked from a group, group name changed, group owner changed, role added/removed")

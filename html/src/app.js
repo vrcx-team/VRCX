@@ -1112,7 +1112,8 @@ speechSynthesis.getVoices();
             '</el-tooltip>' +
             '</span>',
         props: {
-            location: String
+            location: String,
+            currentlocation: String
         },
         data() {
             return {
@@ -1125,7 +1126,10 @@ speechSynthesis.getVoices();
             }
         },
         watch: {
-            locationobject() {
+            location() {
+                this.parse();
+            },
+            currentlocation() {
                 this.parse();
             }
         },
@@ -10930,7 +10934,10 @@ speechSynthesis.getVoices();
                 }
                 break;
             case 'location':
-                this.addInstanceJoinHistory(this.lastLocation, gameLog.dt);
+                this.addInstanceJoinHistory(
+                    this.lastLocation.location,
+                    gameLog.dt
+                );
                 var worldName = this.replaceBioSymbols(gameLog.worldName);
                 if (this.isGameRunning) {
                     this.lastLocationReset(gameLog.dt);
@@ -19542,7 +19549,10 @@ speechSynthesis.getVoices();
         D.isQuest = false;
         D.isIos = false;
         D.hasImposter = false;
-        D.isFavorite = API.cachedFavoritesByObjectId.has(avatarId) || (this.isLocalUserVrcplusSupporter() && this.localAvatarFavoritesList.includes(avatarId));
+        D.isFavorite =
+            API.cachedFavoritesByObjectId.has(avatarId) ||
+            (this.isLocalUserVrcplusSupporter() &&
+                this.localAvatarFavoritesList.includes(avatarId));
         D.isBlocked = API.cachedAvatarModerations.has(avatarId);
         this.ignoreAvatarMemoSave = true;
         D.memo = '';
