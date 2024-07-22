@@ -110,7 +110,8 @@
             "delete_tooltip": "Delete",
             "unavailable_tooltip": "Unavailable",
             "private": "Private",
-            "sort_by": "Sort By"
+            "sort_by": "Sort By",
+            "select_avatar_tooltip": "Select Avatar"
         },
         "friend_log": {
             "filter_placeholder": "Filter",

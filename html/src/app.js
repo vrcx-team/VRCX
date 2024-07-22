@@ -19639,6 +19639,28 @@ speechSynthesis.getVoices();
         });
     };
 
+    $app.methods.selectAvatarWithConfirmation = function (id) {
+        this.$confirm(`Continue? Select Avatar`, 'Confirm', {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'info',
+            callback: (action) => {
+                if (action !== 'confirm') {
+                    return;
+                }
+                API.selectAvatar({
+                    avatarId: id
+                }).then((args) => {
+                    this.$message({
+                        message: 'Avatar changed',
+                        type: 'success'
+                    });
+                    return args;
+                });
+            }
+        });
+    }
+
     $app.methods.avatarDialogCommand = function (command) {
         var D = this.avatarDialog;
         if (D.visible === false) {
