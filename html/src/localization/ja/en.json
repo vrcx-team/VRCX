@@ -739,7 +739,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "キャッシュからアバターを削除",
-                "favorite_tooltip": "お気に入りに追加",
+                "favorite_tooltip": "お気に入り",
                 "unfavorite_tooltip": "お気に入りから削除",
                 "refresh": "更新",
                 "select": "アバターを使用",
