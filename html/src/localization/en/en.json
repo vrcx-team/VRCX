@@ -94,7 +94,9 @@
             },
             "avatars": {
                 "header": "Avatars",
-                "local_favorites": "Local Favorites (VRC+ exclusive)",
+                "search": "Search",
+                "vrchat_favorites": "VRChat Favorites",
+                "local_favorites": "Local Favorites (Requires VRC+)",
                 "new_group": "New Group"
             },
             "bulk_unfavorite_mode": "Bulk Unfavorite Mode",
@@ -916,7 +918,7 @@
             "header": "Choose Group",
             "vrchat_favorites": "VRChat Favorites",
             "local_favorites": "Local Favorites",
-            "local_avatar_favorites": "Local Favorites (VRC+ exclusive)"
+            "local_avatar_favorites": "Local Favorites (Requires VRC+)"
         },
         "invite": {
             "header": "Invite",

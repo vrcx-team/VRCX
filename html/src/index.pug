@@ -1316,7 +1316,7 @@ html
                     span(style="display:block;text-align:center") {{ $t('dialog.favorite.local_avatar_favorites') }}
                     template(v-for="group in localAvatarFavoriteGroups" :key="group")
                         el-button(v-if="hasLocalAvatarFavorite(favoriteDialog.objectId, group)" style="display:block;width:100%;margin:10px 0" @click="removeLocalAvatarFavorite(favoriteDialog.objectId, group)") #[i.el-icon-check] {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
-                        el-button(v-else-if="isLocalUserVrcplusSupporter()" style="display:block;width:100%;margin:10px 0" @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                        el-button(v-else style="display:block;width:100%;margin:10px 0" :disabled="!isLocalUserVrcplusSupporter()" @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
 
             //- dialog: invite
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" :title="$t('dialog.invite.header')" width="500px")
@@ -2627,7 +2627,7 @@ html
                 el-dropdown(@click.native.stop trigger="click" size="small")
                     el-button(size="mini")
                         span(v-if="worldExportFavoriteGroup") {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{ worldExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
-                        span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) All Favorites #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default="dropdown")
                         el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldExportGroup(null)") None
                         template(v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
@@ -2706,6 +2706,14 @@ html
                         el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportGroup(null)") All Favorites
                         template(v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportGroup(groupAPI)") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                el-dropdown(@click.native.stop trigger="click" size="small" style="margin-left:10px")
+                    el-button(size="mini")
+                        span(v-if="avatarExportLocalFavoriteGroup") {{ avatarExportLocalFavoriteGroup }} ({{ getLocalAvatarFavoriteGroupLength(avatarExportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+                    el-dropdown-menu(#default="dropdown")
+                        el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportLocalGroup(null)") None
+                        template(v-for="group in localAvatarFavoriteGroups" :key="group")
+                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportLocalGroup(group)" ) {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
                 br
                 el-input(type="textarea" v-if="avatarExportDialogVisible" v-model="avatarExportContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
@@ -2724,7 +2732,14 @@ html
                     el-dropdown-menu(#default="dropdown")
                         template(v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                el-button(size="small" @click="importAvatarImportTable" style="margin:5px" :disabled="avatarImportTable.data.length === 0 || !avatarImportDialog.avatarImportFavoriteGroup") {{ $t('dialog.avatar_import.import') }}
+                el-dropdown(@click.native.stop trigger="click" size="small" style="margin:5px")
+                    el-button(size="mini")
+                        span(v-if="avatarImportDialog.avatarImportLocalFavoriteGroup") {{ avatarImportDialog.avatarImportLocalFavoriteGroup }} ({{ getLocalAvatarFavoriteGroupLength(avatarImportDialog.avatarImportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) {{ $t('dialog.avatar_import.select_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
+                    el-dropdown-menu(#default="dropdown")
+                        template(v-for="group in localAvatarFavoriteGroups" :key="group")
+                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarImportLocalGroup(group)" ) {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                el-button(size="small" @click="importAvatarImportTable" style="margin:5px" :disabled="avatarImportTable.data.length === 0 || (!avatarImportDialog.avatarImportFavoriteGroup && !avatarImportDialog.avatarImportLocalFavoriteGroup)") {{ $t('dialog.avatar_import.import') }}
                 el-button(v-if="avatarImportDialog.loading" size="small" @click="cancelAvatarImport" style="margin-top:10px") {{ $t('dialog.avatar_import.cancel') }}
                 span(v-if="avatarImportDialog.avatarImportFavoriteGroup") {{ avatarImportTable.data.length }} / {{ avatarImportDialog.avatarImportFavoriteGroup.capacity - avatarImportDialog.avatarImportFavoriteGroup.count }}
                 span(v-if="avatarImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.avatar_import.import_progress') }} {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
