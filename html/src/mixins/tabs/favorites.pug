@@ -215,9 +215,9 @@ mixin favoritesTab()
                                     template(v-else)
                                         el-tooltip(placement="left" content="Favorite" :disabled="hideTooltips")
                                             el-button(@click.stop="showFavoriteDialog('avatar', favorite.id)" type="default" icon="el-icon-star-off" size="mini" circle)
-                    span(v-if="isLocalUserVrcplusSupporter()" style="display:block;margin-top:20px") {{ $t('view.favorite.avatars.local_favorites') }}
-                    el-button(v-if="isLocalUserVrcplusSupporter()" size="small" @click="promptNewLocalAvatarFavoriteGroup" style="display:block;margin-top:10px") {{ $t('view.favorite.avatars.new_group') }}
-                    el-collapse-item(v-for="group in localAvatarFavoriteGroups" v-if="isLocalUserVrcplusSupporter() && localAvatarFavorites[group]" :key="group")
+                    span(style="display:block;margin-top:20px") {{ $t('view.favorite.avatars.local_favorites') }}
+                    el-button(size="small" :disabled="!isLocalUserVrcplusSupporter()" @click="promptNewLocalAvatarFavoriteGroup" style="display:block;margin-top:10px") {{ $t('view.favorite.avatars.new_group') }}
+                    el-collapse-item(v-for="group in localAvatarFavoriteGroups" v-if="localAvatarFavorites[group]" :key="group")
                         template(slot="title")
                             span(v-text="group" style="font-weight:bold;font-size:14px;margin-left:10px")
                             span(style="color:#909399;font-size:12px;margin-left:10px") {{ getLocalAvatarFavoriteGroupLength(group) }}

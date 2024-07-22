@@ -1312,11 +1312,11 @@ html
                     template(v-for="group in localWorldFavoriteGroups" :key="group")
                         el-button(v-if="hasLocalWorldFavorite(favoriteDialog.objectId, group)" style="display:block;width:100%;margin:10px 0" @click="removeLocalWorldFavorite(favoriteDialog.objectId, group)") #[i.el-icon-check] {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
                         el-button(v-else style="display:block;width:100%;margin:10px 0" @click="addLocalWorldFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
-                div(v-if="favoriteDialog.visible && favoriteDialog.type === 'avatar' && isLocalUserVrcplusSupporter()" style="margin-top:20px")
-                    span(style="display:block;text-align:center") {{ $t('dialog.favorite.local_favorites') }}
+                div(v-if="favoriteDialog.visible && favoriteDialog.type === 'avatar'" style="margin-top:20px")
+                    span(style="display:block;text-align:center") {{ $t('dialog.favorite.local_avatar_favorites') }}
                     template(v-for="group in localAvatarFavoriteGroups" :key="group")
                         el-button(v-if="hasLocalAvatarFavorite(favoriteDialog.objectId, group)" style="display:block;width:100%;margin:10px 0" @click="removeLocalAvatarFavorite(favoriteDialog.objectId, group)") #[i.el-icon-check] {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
-                        el-button(v-else style="display:block;width:100%;margin:10px 0" @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                        el-button(v-else-if="isLocalUserVrcplusSupporter()" style="display:block;width:100%;margin:10px 0" @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
 
             //- dialog: invite
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" :title="$t('dialog.invite.header')" width="500px")
