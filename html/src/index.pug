@@ -332,7 +332,7 @@ html
                                                 invite-yourself(:location="userDialog.$location.tag" :shortname="userDialog.$location.shortName" style="margin-left:5px")
                                             el-tooltip(placement="top" :content="$t('dialog.user.info.refresh_instance_info')" :disabled="hideTooltips")
                                                 el-button(@click="refreshInstancePlayerCount(userDialog.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
-                                            last-join(:location="userDialog.$location.tag")
+                                            last-join(:location="userDialog.$location.tag" :currentlocation="lastLocation.location")
                                             instance-info(:location="userDialog.$location.tag" :instance="userDialog.instance.ref" :friendcount="userDialog.instance.friendCount" :updateelement="updateInstanceInfo")
                                         location(:location="userDialog.ref.location" :traveling="userDialog.ref.travelingToLocation" style="display:block;margin-top:5px")
                                     .x-friend-list(style="flex:1;margin-top:10px;max-height:150px")
@@ -708,7 +708,7 @@ html
                                         invite-yourself(:location="room.$location.tag" :shortname="room.$location.shortName" style="margin-left:5px")
                                     el-tooltip(placement="top" :content="$t('dialog.world.instances.refresh_instance_info')" :disabled="hideTooltips")
                                         el-button(@click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
-                                    last-join(:location="room.$location.tag")
+                                    last-join(:location="room.$location.tag" :currentlocation="lastLocation.location")
                                     instance-info(:location="room.tag" :instance="room.ref" :friendcount="room.friendCount" :updateelement="updateInstanceInfo")
                                 .x-friend-list(style="margin:10px 0;max-height:unset" v-if="room.$location.userId || room.users.length")
                                     .x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)" class="x-friend-item-border")
@@ -877,7 +877,7 @@ html
                             div(style="flex:none;margin-left:10px")
                                 el-tooltip(v-if="avatarDialog.inCache" placement="top" :content="$t('dialog.avatar.actions.delete_cache_tooltip')" :disabled="hideTooltips")
                                     el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(avatarDialog.ref)" :disabled="isGameRunning && avatarDialog.cacheLocked")
-                                el-tooltip(v-if="avatarDialog.isFavorite" placement="top" :content="$t('dialog.avatar.actions.unfavorite_tooltip')" :disabled="hideTooltips")
+                                el-tooltip(v-if="avatarDialog.isFavorite" placement="top" :content="$t('dialog.avatar.actions.favorite_tooltip')" :disabled="hideTooltips")
                                     el-button(type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Add Favorite')" style="margin-left:5px")
                                 el-tooltip(v-else placement="top" :content="$t('dialog.avatar.actions.favorite_tooltip')" :disabled="hideTooltips")
                                     el-button(type="default" icon="el-icon-star-off" circle @click="avatarDialogCommand('Add Favorite')" style="margin-left:5px")
@@ -1055,7 +1055,7 @@ html
                                             invite-yourself(:location="room.tag" style="margin-left:5px")
                                         el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
                                             el-button(@click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
-                                        last-join(:location="room.tag")
+                                        last-join(:location="room.tag" :currentlocation="lastLocation.location")
                                         instance-info(:location="room.tag" :instance="room.ref" :friendcount="room.friendCount" :updateelement="updateInstanceInfo")
                                     .x-friend-list(style="margin:10px 0;padding:0;max-height:unset" v-if="room.users.length")
                                         .x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
@@ -1312,6 +1312,11 @@ html
                     template(v-for="group in localWorldFavoriteGroups" :key="group")
                         el-button(v-if="hasLocalWorldFavorite(favoriteDialog.objectId, group)" style="display:block;width:100%;margin:10px 0" @click="removeLocalWorldFavorite(favoriteDialog.objectId, group)") #[i.el-icon-check] {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
                         el-button(v-else style="display:block;width:100%;margin:10px 0" @click="addLocalWorldFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+                div(v-if="favoriteDialog.visible && favoriteDialog.type === 'avatar'" style="margin-top:20px")
+                    span(style="display:block;text-align:center") {{ $t('dialog.favorite.local_avatar_favorites') }}
+                    template(v-for="group in localAvatarFavoriteGroups" :key="group")
+                        el-button(v-if="hasLocalAvatarFavorite(favoriteDialog.objectId, group)" style="display:block;width:100%;margin:10px 0" @click="removeLocalAvatarFavorite(favoriteDialog.objectId, group)") #[i.el-icon-check] {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                        el-button(v-else style="display:block;width:100%;margin:10px 0" :disabled="!isLocalUserVrcplusSupporter()" @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
 
             //- dialog: invite
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" :title="$t('dialog.invite.header')" width="500px")
@@ -1904,11 +1909,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
-                    .toggle-item
-                        span.toggle-name Boop
-                        el-radio-group(v-model="sharedFeedFilters.noty.boop" size="mini" @change="saveSharedFeedFilters")
-                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
-                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    //- .toggle-item
+                    //-     span.toggle-name Boop
+                    //-     el-radio-group(v-model="sharedFeedFilters.noty.boop" size="mini" @change="saveSharedFeedFilters")
+                    //-         el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                    //-         el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Change
                             el-tooltip(placement="top" style="margin-left:5px" content="When you've left or been kicked from a group, group name changed, group owner changed, role added/removed")
@@ -2158,11 +2163,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
-                    .toggle-item
-                        span.toggle-name Boop
-                        el-radio-group(v-model="sharedFeedFilters.wrist.boop" size="mini" @change="saveSharedFeedFilters")
-                            el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
-                            el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
+                    //- .toggle-item
+                    //-     span.toggle-name Boop
+                    //-     el-radio-group(v-model="sharedFeedFilters.wrist.boop" size="mini" @change="saveSharedFeedFilters")
+                    //-         el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                    //-         el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Change
                             el-tooltip(placement="top" style="margin-left:5px" content="When you've left or been kicked from a group, group name changed, group owner changed, role added/removed")
@@ -2622,7 +2627,7 @@ html
                 el-dropdown(@click.native.stop trigger="click" size="small")
                     el-button(size="mini")
                         span(v-if="worldExportFavoriteGroup") {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{ worldExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
-                        span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) All Favorites #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default="dropdown")
                         el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldExportGroup(null)") None
                         template(v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
@@ -2701,6 +2706,14 @@ html
                         el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportGroup(null)") All Favorites
                         template(v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportGroup(groupAPI)") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                el-dropdown(@click.native.stop trigger="click" size="small" style="margin-left:10px")
+                    el-button(size="mini")
+                        span(v-if="avatarExportLocalFavoriteGroup") {{ avatarExportLocalFavoriteGroup }} ({{ getLocalAvatarFavoriteGroupLength(avatarExportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+                    el-dropdown-menu(#default="dropdown")
+                        el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportLocalGroup(null)") None
+                        template(v-for="group in localAvatarFavoriteGroups" :key="group")
+                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportLocalGroup(group)" ) {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
                 br
                 el-input(type="textarea" v-if="avatarExportDialogVisible" v-model="avatarExportContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
@@ -2719,7 +2732,14 @@ html
                     el-dropdown-menu(#default="dropdown")
                         template(v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                el-button(size="small" @click="importAvatarImportTable" style="margin:5px" :disabled="avatarImportTable.data.length === 0 || !avatarImportDialog.avatarImportFavoriteGroup") {{ $t('dialog.avatar_import.import') }}
+                el-dropdown(@click.native.stop trigger="click" size="small" style="margin:5px")
+                    el-button(size="mini")
+                        span(v-if="avatarImportDialog.avatarImportLocalFavoriteGroup") {{ avatarImportDialog.avatarImportLocalFavoriteGroup }} ({{ getLocalAvatarFavoriteGroupLength(avatarImportDialog.avatarImportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) {{ $t('dialog.avatar_import.select_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
+                    el-dropdown-menu(#default="dropdown")
+                        template(v-for="group in localAvatarFavoriteGroups" :key="group")
+                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarImportLocalGroup(group)" ) {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                el-button(size="small" @click="importAvatarImportTable" style="margin:5px" :disabled="avatarImportTable.data.length === 0 || (!avatarImportDialog.avatarImportFavoriteGroup && !avatarImportDialog.avatarImportLocalFavoriteGroup)") {{ $t('dialog.avatar_import.import') }}
                 el-button(v-if="avatarImportDialog.loading" size="small" @click="cancelAvatarImport" style="margin-top:10px") {{ $t('dialog.avatar_import.cancel') }}
                 span(v-if="avatarImportDialog.avatarImportFavoriteGroup") {{ avatarImportTable.data.length }} / {{ avatarImportDialog.avatarImportFavoriteGroup.capacity - avatarImportDialog.avatarImportFavoriteGroup.count }}
                 span(v-if="avatarImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.avatar_import.import_progress') }} {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
