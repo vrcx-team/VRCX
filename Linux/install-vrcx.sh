@@ -3,7 +3,9 @@
 
 # change me
 steamapps=$HOME/.local/share/Steam/steamapps/compatdata
-download_url=https://github.com/vrcx-team/VRCX/releases/download/v2024.06.12/VRCX_20240612.zip
+stable=$(curl -s https://api.github.com/repos/vrcx-team/VRCX/releases/latest | grep -o "https.*releases/download.*zip")
+nightly=$(curl -s https://api.github.com/repos/Natsumi-sama/VRCX/releases/latest | grep -o "https.*releases/download.*zip")
+download_url=$stable
 
 export WINEPREFIX=$HOME/.local/share/vrcx
 

@@ -112,7 +112,8 @@ html
                     el-tabs.zero-margin-tabs(stretch="true" style="height:calc(100% - 60px;margin-top:5px")
                         el-tab-pane
                             template(#label)
-                                span {{ $t('side_panel.friends') }} ({{ onlineFriendCount }}/{{ friends.size }})
+                                span {{ $t('side_panel.friends') }}
+                                span(style="color:#909399;font-size:12px;margin-left:10px") ({{ onlineFriendCount }}/{{ friends.size }})
                             .x-friend-list(style="padding:10px 5px")
                                 .x-friend-group.x-link(@click="isFriendsGroupMe = !isFriendsGroupMe; saveFriendsGroupStates()" style="padding:0px 0px 5px")
                                     i.el-icon-arrow-right(:class="{ rotate: isFriendsGroupMe }")
@@ -190,7 +191,8 @@ html
                                             el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
                         el-tab-pane
                             template(#label)
-                                span {{ $t('side_panel.groups') }} ({{ groupInstances.length }})
+                                span {{ $t('side_panel.groups') }}
+                                span(style="color:#909399;font-size:12px;margin-left:10px") ({{ groupInstances.length }})
                             .x-friend-list(style="padding:10px 5px")
                                 .x-friend-item(v-for="ref in groupInstances" :key="ref.instance.id" @click="showGroupDialog(ref.instance.ownerId)")
                                     .avatar

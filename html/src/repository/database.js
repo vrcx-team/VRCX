@@ -2281,26 +2281,6 @@ class Database {
         );
     }
 
-    addAvatarToCache(entry) {
-        sqliteService.executeNonQuery(
-            `INSERT OR REPLACE INTO cache_avatar (id, added_at, author_id, author_name, created_at, description, image_url, name, release_status, thumbnail_image_url, updated_at, version) VALUES (@id, @added_at, @author_id, @author_name, @created_at, @description, @image_url, @name, @release_status, @thumbnail_image_url, @updated_at, @version)`,
-            {
-                '@id': entry.id,
-                '@added_at': new Date().toJSON(),
-                '@author_id': entry.authorId,
-                '@author_name': entry.authorName,
-                '@created_at': entry.created_at,
-                '@description': entry.description,
-                '@image_url': entry.imageUrl,
-                '@name': entry.name,
-                '@release_status': entry.releaseStatus,
-                '@thumbnail_image_url': entry.thumbnailImageUrl,
-                '@updated_at': entry.updated_at,
-                '@version': entry.version
-            }
-        );
-    }
-
     async getAvatarCache() {
         var data = [];
         await sqliteService.execute((dbRow) => {
