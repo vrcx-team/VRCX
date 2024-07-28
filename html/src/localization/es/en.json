@@ -770,7 +770,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "Eliminar avatar de la caché",
-                "favorite_tooltip": "Añadir a favoritos",
+                "favorite_tooltip": "Favoritos",
                 "unfavorite_tooltip": "Quitar de favoritos",
                 "refresh": "Refrescar",
                 "select": "Seleccionar avatar",

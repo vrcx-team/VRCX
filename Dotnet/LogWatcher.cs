@@ -202,7 +202,6 @@ namespace VRCX
                             if (line.Length <= 36 ||
                                 line[31] != '-')
                             {
-                                ParseDesktopModeOld(fileInfo, line);
                                 continue;
                             }
 
@@ -1028,9 +1027,11 @@ namespace VRCX
 
             // 2023.04.22 16:52:28 Log        -  Initializing VRSDK.
             // 2023.04.22 16:52:29 Log        -  StartVRSDK: Open VR Loader
+            
+            // 2024.07.26 01:48:56 Log        -  STEAMVR HMD Model: Index
 
-            if (string.Compare(line, offset, "OpenVR initialized!", 0, 19, StringComparison.Ordinal) != 0 &&
-                string.Compare(line, offset, "Initializing VRSDK.", 0, 19, StringComparison.Ordinal) != 0)
+            if (string.Compare(line, offset, "Initializing VRSDK.", 0, 19, StringComparison.Ordinal) != 0 &&
+                string.Compare(line, offset, "STEAMVR HMD Model: ", 0, 20, StringComparison.Ordinal) != 0)
                 return false;
 
             AppendLog(new[]
@@ -1048,23 +1049,6 @@ namespace VRCX
             // 2023.04.22 16:54:18 Log        -  VR Disabled
 
             if (string.Compare(line, offset, "VR Disabled", 0, 11, StringComparison.Ordinal) != 0)
-                return false;
-
-            AppendLog(new[]
-            {
-                fileInfo.Name,
-                ConvertLogTimeToISO8601(line),
-                "desktop-mode"
-            });
-
-            return true;
-        }
-
-        private bool ParseDesktopModeOld(FileInfo fileInfo, string line)
-        {
-            //    XR Device: None
-
-            if (string.Compare(line, 0, "    XR Device: None", 0, 19, StringComparison.Ordinal) != 0)
                 return false;
 
             AppendLog(new[]

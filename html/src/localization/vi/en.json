@@ -734,7 +734,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "Xóa avatar trong cache",
-                "favorite_tooltip": "Thêm vào yêu thích",
+                "favorite_tooltip": "Yêu thích",
                 "unfavorite_tooltip": "Bỏ khỏi yêu thích",
                 "refresh": "Làm mới",
                 "select": "Chọn Avatar",

@@ -766,7 +766,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "从缓存中删除模型",
-                "favorite_tooltip": "添加到我的收藏",
+                "favorite_tooltip": "收藏此世界",
                 "unfavorite_tooltip": "从我的收藏中移除",
                 "refresh": "刷新",
                 "select": "选择模型",
