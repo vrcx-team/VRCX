@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 using CefSharp;
 using CefSharp.SchemeHandler;
 using CefSharp.WinForms;
@@ -9,6 +10,7 @@ namespace VRCX
     public class CefService
     {
         public static readonly CefService Instance;
+        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("VRCX");
 
         static CefService()
         {
@@ -51,8 +53,14 @@ namespace VRCX
             cefSettings.CefCommandLineArgs.Add("disable-web-security");
             cefSettings.SetOffScreenRenderingBestPerformanceArgs(); // causes white screen sometimes?
 
+            if (WebApi.ProxySet)
+            {
+                cefSettings.CefCommandLineArgs["proxy-server"] = WebApi.ProxyUrl;
+            }
+
             if (Program.LaunchDebug)
             {
+                logger.Info("Debug mode enabled");
                 cefSettings.RemoteDebuggingPort = 8088;
                 cefSettings.CefCommandLineArgs["remote-allow-origins"] = "*";
             }

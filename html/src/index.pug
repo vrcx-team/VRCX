@@ -112,7 +112,8 @@ html
                     el-tabs.zero-margin-tabs(stretch="true" style="height:calc(100% - 60px;margin-top:5px")
                         el-tab-pane
                             template(#label)
-                                span {{ $t('side_panel.friends') }} ({{ onlineFriendCount }}/{{ friends.size }})
+                                span {{ $t('side_panel.friends') }}
+                                span(style="color:#909399;font-size:12px;margin-left:10px") ({{ onlineFriendCount }}/{{ friends.size }})
                             .x-friend-list(style="padding:10px 5px")
                                 .x-friend-group.x-link(@click="isFriendsGroupMe = !isFriendsGroupMe; saveFriendsGroupStates()" style="padding:0px 0px 5px")
                                     i.el-icon-arrow-right(:class="{ rotate: isFriendsGroupMe }")
@@ -190,7 +191,8 @@ html
                                             el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
                         el-tab-pane
                             template(#label)
-                                span {{ $t('side_panel.groups') }} ({{ groupInstances.length }})
+                                span {{ $t('side_panel.groups') }}
+                                span(style="color:#909399;font-size:12px;margin-left:10px") ({{ groupInstances.length }})
                             .x-friend-list(style="padding:10px 5px")
                                 .x-friend-item(v-for="ref in groupInstances" :key="ref.instance.id" @click="showGroupDialog(ref.instance.ownerId)")
                                     .avatar
@@ -236,8 +238,11 @@ html
                                                 div(v-for="displayName in userDialog.previousDisplayNames" placement="top")
                                                     span(v-text="displayName")
                                             i.el-icon-caret-bottom
-                                    span.dialog-title(v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px")
-                                    span(v-if="userDialog.ref.pronouns" v-text="userDialog.ref.pronouns" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px")
+                                    el-popover(placement="top" trigger="click")
+                                        span.dialog-title(slot="reference" v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px;cursor:pointer")
+                                        span(style="display:block;text-align:center;font-family:monospace") {{ userDialog.ref.displayName | textToHex }}
+                                    el-tooltip(v-if="userDialog.ref.pronouns" placement="top" :content="$t('dialog.user.pronouns')" :disabled="hideTooltips")
+                                        span(v-text="userDialog.ref.pronouns" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px")
                                     el-tooltip(v-for="item in userDialog.ref.$languages" :key="item.key" placement="top")
                                         template(#content)
                                             span {{ item.value }} ({{ item.key }})
@@ -297,6 +302,7 @@ html
                                             el-dropdown-item(v-else-if="userDialog.outgoingRequest" icon="el-icon-close" command="Cancel Friend Request") {{ $t('dialog.user.actions.cancel_friend_request') }}
                                             el-dropdown-item(v-else icon="el-icon-plus" command="Send Friend Request") {{ $t('dialog.user.actions.send_friend_request') }}
                                             el-dropdown-item(icon="el-icon-message" command="Invite To Group") {{ $t('dialog.user.actions.invite_to_group') }}
+                                            //- el-dropdown-item(icon="el-icon-thumb" command="Send Boop" :disabled="!API.currentUser.isBoopingEnabled") {{ $t('dialog.user.actions.send_boop') }}
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Avatar Author" divided) {{ $t('dialog.user.actions.show_avatar_author') }}
                                             el-dropdown-item(icon="el-icon-s-custom" command="Show Fallback Avatar Details") {{ $t('dialog.user.actions.show_fallback_avatar') }}
                                             el-dropdown-item(icon="el-icon-tickets" command="Previous Instances") {{ $t('dialog.user.actions.show_previous_instances') }}
@@ -328,6 +334,7 @@ html
                                                 invite-yourself(:location="userDialog.$location.tag" :shortname="userDialog.$location.shortName" style="margin-left:5px")
                                             el-tooltip(placement="top" :content="$t('dialog.user.info.refresh_instance_info')" :disabled="hideTooltips")
                                                 el-button(@click="refreshInstancePlayerCount(userDialog.$location.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
+                                            last-join(:location="userDialog.$location.tag" :currentlocation="lastLocation.location")
                                             instance-info(:location="userDialog.$location.tag" :instance="userDialog.instance.ref" :friendcount="userDialog.instance.friendCount" :updateelement="updateInstanceInfo")
                                         location(:location="userDialog.ref.location" :traveling="userDialog.ref.travelingToLocation" style="display:block;margin-top:5px")
                                     .x-friend-list(style="flex:1;margin-top:10px;max-height:150px")
@@ -464,8 +471,13 @@ html
                                     .x-friend-item(@click="toggleAvatarCopying")
                                         .detail
                                             span.name {{ $t('dialog.user.info.avatar_cloning') }}
-                                            span.extra(v-if="userDialog.ref.allowAvatarCopying" style="color:#67C23A") {{ $t('dialog.user.info.avatar_cloning_allow') }}
+                                            span.extra(v-if="API.currentUser.allowAvatarCopying" style="color:#67C23A") {{ $t('dialog.user.info.avatar_cloning_allow') }}
                                             span.extra(v-else style="color:#F56C6C") {{ $t('dialog.user.info.avatar_cloning_deny') }}
+                                    //- .x-friend-item(@click="toggleAllowBooping")
+                                    //-     .detail
+                                    //-         span.name {{ $t('dialog.user.info.booping') }}
+                                    //-         span.extra(v-if="API.currentUser.isBoopingEnabled" style="color:#67C23A") {{ $t('dialog.user.info.avatar_cloning_allow') }}
+                                    //-         span.extra(v-else style="color:#F56C6C") {{ $t('dialog.user.info.avatar_cloning_deny') }}
                                 template(v-else)
                                     .x-friend-item(style="cursor:default")
                                         .detail
@@ -698,6 +710,7 @@ html
                                         invite-yourself(:location="room.$location.tag" :shortname="room.$location.shortName" style="margin-left:5px")
                                     el-tooltip(placement="top" :content="$t('dialog.world.instances.refresh_instance_info')" :disabled="hideTooltips")
                                         el-button(@click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
+                                    last-join(:location="room.$location.tag" :currentlocation="lastLocation.location")
                                     instance-info(:location="room.tag" :instance="room.ref" :friendcount="room.friendCount" :updateelement="updateInstanceInfo")
                                 .x-friend-list(style="margin:10px 0;max-height:unset" v-if="room.$location.userId || room.users.length")
                                     .x-friend-item(v-if="room.$location.userId" @click="showUserDialog(room.$location.userId)" class="x-friend-item-border")
@@ -866,7 +879,7 @@ html
                             div(style="flex:none;margin-left:10px")
                                 el-tooltip(v-if="avatarDialog.inCache" placement="top" :content="$t('dialog.avatar.actions.delete_cache_tooltip')" :disabled="hideTooltips")
                                     el-button(icon="el-icon-delete" circle @click="deleteVRChatCache(avatarDialog.ref)" :disabled="isGameRunning && avatarDialog.cacheLocked")
-                                el-tooltip(v-if="avatarDialog.isFavorite" placement="top" :content="$t('dialog.avatar.actions.unfavorite_tooltip')" :disabled="hideTooltips")
+                                el-tooltip(v-if="avatarDialog.isFavorite" placement="top" :content="$t('dialog.avatar.actions.favorite_tooltip')" :disabled="hideTooltips")
                                     el-button(type="warning" icon="el-icon-star-on" circle @click="avatarDialogCommand('Add Favorite')" style="margin-left:5px")
                                 el-tooltip(v-else placement="top" :content="$t('dialog.avatar.actions.favorite_tooltip')" :disabled="hideTooltips")
                                     el-button(type="default" icon="el-icon-star-off" circle @click="avatarDialogCommand('Add Favorite')" style="margin-left:5px")
@@ -1009,7 +1022,7 @@ html
                                     el-tooltip(v-if="groupDialog.ref.joinState === 'open'" placement="top" :content="$t('dialog.group.actions.join_group_tooltip')" :disabled="hideTooltips")
                                         el-button(type="default" icon="el-icon-check" circle @click="joinGroup(groupDialog.id)" style="margin-left:5px")
                                 el-dropdown(trigger="click" @command="groupDialogCommand" size="small" style="margin-left:5px")
-                                    el-button(type="default" icon="el-icon-more" circle)
+                                    el-button(:type="groupDialog.ref.membershipStatus === 'userblocked' ? 'danger' : 'default'" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") {{ $t('dialog.group.actions.refresh') }}
                                         template(v-if="groupDialog.inGroup")
@@ -1026,6 +1039,9 @@ html
                                                 el-dropdown-item(icon="el-icon-view" command="Visibility Friends") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'friends'")] {{ $t('dialog.group.actions.visibility_friends') }}
                                                 el-dropdown-item(icon="el-icon-view" command="Visibility Hidden") #[i.el-icon-check(v-if="groupDialog.ref.myMember.visibility === 'hidden'")] {{ $t('dialog.group.actions.visibility_hidden') }}
                                             el-dropdown-item(icon="el-icon-delete" command="Leave Group" style="color:#F56C6C" divided) {{ $t('dialog.group.actions.leave') }}
+                                        template(v-else)
+                                            el-dropdown-item(v-if="groupDialog.ref.membershipStatus === 'userblocked'" icon="el-icon-circle-check" command="Unblock Group" style="color:#F56C6C" divided) {{ $t('dialog.group.actions.unblock') }}
+                                            el-dropdown-item(v-else icon="el-icon-circle-close" command="Block Group" divided) {{ $t('dialog.group.actions.block') }}
                     el-tabs(ref="groupDialogTabs" @tab-click="groupDialogTabClick")
                         el-tab-pane(:label="$t('dialog.group.info.header')")
                             .group-banner-image-info
@@ -1041,6 +1057,7 @@ html
                                             invite-yourself(:location="room.tag" style="margin-left:5px")
                                         el-tooltip(placement="top" content="Refresh player count" :disabled="hideTooltips")
                                             el-button(@click="refreshInstancePlayerCount(room.tag)" size="mini" icon="el-icon-refresh" style="margin-left:5px" circle)
+                                        last-join(:location="room.tag" :currentlocation="lastLocation.location")
                                         instance-info(:location="room.tag" :instance="room.ref" :friendcount="room.friendCount" :updateelement="updateInstanceInfo")
                                     .x-friend-list(style="margin:10px 0;padding:0;max-height:unset" v-if="room.users.length")
                                         .x-friend-item(v-for="user in room.users" :key="user.id" @click="showUserDialog(user.id)" class="x-friend-item-border")
@@ -1297,6 +1314,11 @@ html
                     template(v-for="group in localWorldFavoriteGroups" :key="group")
                         el-button(v-if="hasLocalWorldFavorite(favoriteDialog.objectId, group)" style="display:block;width:100%;margin:10px 0" @click="removeLocalWorldFavorite(favoriteDialog.objectId, group)") #[i.el-icon-check] {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
                         el-button(v-else style="display:block;width:100%;margin:10px 0" @click="addLocalWorldFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+                div(v-if="favoriteDialog.visible && favoriteDialog.type === 'avatar'" style="margin-top:20px")
+                    span(style="display:block;text-align:center") {{ $t('dialog.favorite.local_avatar_favorites') }}
+                    template(v-for="group in localAvatarFavoriteGroups" :key="group")
+                        el-button(v-if="hasLocalAvatarFavorite(favoriteDialog.objectId, group)" style="display:block;width:100%;margin:10px 0" @click="removeLocalAvatarFavorite(favoriteDialog.objectId, group)") #[i.el-icon-check] {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                        el-button(v-else style="display:block;width:100%;margin:10px 0" :disabled="!isLocalUserVrcplusSupporter()" @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
 
             //- dialog: invite
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="inviteDialog" :visible.sync="inviteDialog.visible" :title="$t('dialog.invite.header')" width="500px")
@@ -1889,6 +1911,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                    //- .toggle-item
+                    //-     span.toggle-name Boop
+                    //-     el-radio-group(v-model="sharedFeedFilters.noty.boop" size="mini" @change="saveSharedFeedFilters")
+                    //-         el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                    //-         el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Change
                             el-tooltip(placement="top" style="margin-left:5px" content="When you've left or been kicked from a group, group name changed, group owner changed, role added/removed")
@@ -2138,6 +2165,11 @@ html
                             el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
                             el-radio-button(label="VIP") {{ $t('dialog.shared_feed_filters.favorite') }}
                             el-radio-button(label="Friends") {{ $t('dialog.shared_feed_filters.friends') }}
+                    //- .toggle-item
+                    //-     span.toggle-name Boop
+                    //-     el-radio-group(v-model="sharedFeedFilters.wrist.boop" size="mini" @change="saveSharedFeedFilters")
+                    //-         el-radio-button(label="Off") {{ $t('dialog.shared_feed_filters.off') }}
+                    //-         el-radio-button(label="On") {{ $t('dialog.shared_feed_filters.on') }}
                     .toggle-item
                         span.toggle-name Group Change
                             el-tooltip(placement="top" style="margin-left:5px" content="When you've left or been kicked from a group, group name changed, group owner changed, role added/removed")
@@ -2305,7 +2337,7 @@ html
             //- dialog Table: Send Invite Response Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteResponseDialog" :visible.sync="sendInviteResponseDialogVisible" :title="$t('dialog.invite_response_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteResponseDialogVisible" v-bind="inviteResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -2322,7 +2354,7 @@ html
             //- dialog Table: Send Invite Request Response Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestResponseDialog" :visible.sync="sendInviteRequestResponseDialogVisible" :title="$t('dialog.invite_request_response_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteRequestResponseDialogVisible" v-bind="inviteRequestResponseMessageTable" @row-click="showSendInviteResponseConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -2355,7 +2387,7 @@ html
                     //-     el-button(size="mini" @click="clearImageGallerySelect" style="vertical-align:top") {{ $t('dialog.invite_message.clear_selected_image') }}
                     //- template(v-else)
                     //-     el-button(size="mini" @click="showGallerySelectDialog" style="margin-right:5px") {{ $t('dialog.invite_message.select_image') }}
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteDialogVisible" v-bind="inviteMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -2372,7 +2404,7 @@ html
             //- dialog Table: Send Invite Request Message
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendInviteRequestDialog" :visible.sync="sendInviteRequestDialogVisible" :title="$t('dialog.invite_request_message.header')" width="800px")
                 template(v-if="API.currentUser.$isVRCPlus")
-                    input.inviteImageUploadButton(type="file" accept="image/png" @change="inviteImageUpload")
+                    input.inviteImageUploadButton(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="inviteImageUpload")
                 data-tables(v-if="sendInviteRequestDialogVisible" v-bind="inviteRequestMessageTable" @row-click="showSendInviteConfirmDialog" style="margin-top:10px;cursor:pointer")
                     el-table-column(:label="$t('table.profile.invite_messages.slot')" prop="slot" sortable="custom" width="70")
                     el-table-column(:label="$t('table.profile.invite_messages.message')" prop="message")
@@ -2406,7 +2438,7 @@ html
             //- dialog: Change avatar image
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeAvatarImageDialog" :visible.sync="changeAvatarImageDialogVisible" :title="$t('dialog.change_content_image.avatar')" width="850px")
                 div(v-if="changeAvatarImageDialogVisible" v-loading="changeAvatarImageDialogLoading")
-                    input(type="file" accept="image/*" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
+                    input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeAvatarImage" id="AvatarImageUploadButton" style="display:none")
                     span {{ $t('dialog.change_content_image.description') }}
                     br
                     el-button-group(style="padding-bottom:10px;padding-top:10px")
@@ -2421,7 +2453,7 @@ html
             //- dialog: Change world image
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeWorldImageDialog" :visible.sync="changeWorldImageDialogVisible" :title="$t('dialog.change_content_image.world')" width="850px")
                 div(v-if="changeWorldImageDialogVisible" v-loading="changeWorldImageDialogLoading")
-                    input(type="file" accept="image/*" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
+                    input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeWorldImage" id="WorldImageUploadButton" style="display:none")
                     span {{ $t('dialog.change_content_image.description') }}
                     br
                     el-button-group(style="padding-bottom:10px;padding-top:10px")
@@ -2446,11 +2478,11 @@ html
                 span(style="padding-bottom:10px") {{ $t('dialog.gallery_icons.description') }}
                 br
                 br
-                el-tabs(type="card")
+                el-tabs(type="card" ref="galleryTabs")
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogGalleryLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.gallery') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
-                        input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                        input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
                         el-button-group
                             el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -2465,7 +2497,7 @@ html
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.icons') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ VRCPlusIconsTable.length }}/64
-                        input(type="file" accept="image/*" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
+                        input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
                         el-button-group
                             el-button(type="default" size="small" @click="refreshVRCPlusIconsTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayVRCPlusIconUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -2480,7 +2512,7 @@ html
                     el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/9
-                        input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
+                        input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
                         el-button-group(style="margin-right:10px")
                             el-button(type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                             el-button(type="default" size="small" @click="displayEmojiUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -2506,7 +2538,7 @@ html
                         .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                             .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)") 
                                 template(v-if="image.frames")
-                                    .avatar(:style="generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.animationStyle)")
+                                    .avatar(:style="generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.loopStyle)")
                                 template(v-else)
                                     img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
                             div(style="display:inline-block;margin:5px")
@@ -2597,7 +2629,7 @@ html
                 el-dropdown(@click.native.stop trigger="click" size="small")
                     el-button(size="mini")
                         span(v-if="worldExportFavoriteGroup") {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{ worldExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
-                        span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) All Favorites #[i.el-icon-arrow-down.el-icon--right]
                     el-dropdown-menu(#default="dropdown")
                         el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldExportGroup(null)") None
                         template(v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
@@ -2676,6 +2708,14 @@ html
                         el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportGroup(null)") All Favorites
                         template(v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportGroup(groupAPI)") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+                el-dropdown(@click.native.stop trigger="click" size="small" style="margin-left:10px")
+                    el-button(size="mini")
+                        span(v-if="avatarExportLocalFavoriteGroup") {{ avatarExportLocalFavoriteGroup }} ({{ getLocalAvatarFavoriteGroupLength(avatarExportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+                    el-dropdown-menu(#default="dropdown")
+                        el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportLocalGroup(null)") None
+                        template(v-for="group in localAvatarFavoriteGroups" :key="group")
+                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportLocalGroup(group)" ) {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
                 br
                 el-input(type="textarea" v-if="avatarExportDialogVisible" v-model="avatarExportContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
 
@@ -2694,7 +2734,14 @@ html
                     el-dropdown-menu(#default="dropdown")
                         template(v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
                             el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
-                el-button(size="small" @click="importAvatarImportTable" style="margin:5px" :disabled="avatarImportTable.data.length === 0 || !avatarImportDialog.avatarImportFavoriteGroup") {{ $t('dialog.avatar_import.import') }}
+                el-dropdown(@click.native.stop trigger="click" size="small" style="margin:5px")
+                    el-button(size="mini")
+                        span(v-if="avatarImportDialog.avatarImportLocalFavoriteGroup") {{ avatarImportDialog.avatarImportLocalFavoriteGroup }} ({{ getLocalAvatarFavoriteGroupLength(avatarImportDialog.avatarImportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
+                        span(v-else) {{ $t('dialog.avatar_import.select_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
+                    el-dropdown-menu(#default="dropdown")
+                        template(v-for="group in localAvatarFavoriteGroups" :key="group")
+                            el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarImportLocalGroup(group)" ) {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                el-button(size="small" @click="importAvatarImportTable" style="margin:5px" :disabled="avatarImportTable.data.length === 0 || (!avatarImportDialog.avatarImportFavoriteGroup && !avatarImportDialog.avatarImportLocalFavoriteGroup)") {{ $t('dialog.avatar_import.import') }}
                 el-button(v-if="avatarImportDialog.loading" size="small" @click="cancelAvatarImport" style="margin-top:10px") {{ $t('dialog.avatar_import.cancel') }}
                 span(v-if="avatarImportDialog.avatarImportFavoriteGroup") {{ avatarImportTable.data.length }} / {{ avatarImportDialog.avatarImportFavoriteGroup.capacity - avatarImportDialog.avatarImportFavoriteGroup.count }}
                 span(v-if="avatarImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.avatar_import.import_progress') }} {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
@@ -2955,7 +3002,7 @@ html
                     span(slot="label") {{ $t('dialog.gallery_select.gallery') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
                     br
-                    input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                    input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
                     el-button-group
                         el-button(type="default" size="small" @click="selectImageGallerySelect('', '')" icon="el-icon-close") {{ $t('dialog.gallery_select.none') }}
                         el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_select.refresh') }}
@@ -3173,6 +3220,13 @@ html
                                 el-button(type="default" @click="getAllGroupLogs(groupMemberModeration.id)" size="mini" icon="el-icon-refresh" :loading="isGroupMembersLoading" circle)
                                 span(style="font-size:14px;margin-left:5px;margin-right:5px") {{ groupLogsModerationTable.data.length }}
                             br
+                            el-select(v-model="groupMemberModeration.selectedAuditLogTypes" multiple collapse-tags :placeholder="$t('dialog.group_member_moderation.filter_type')")
+                                el-option-group(:label="$t('dialog.group_member_moderation.select_type')")
+                                    el-option.x-friend-item(v-for="type in groupMemberModeration.auditLogTypes" :key="type" :label="getAuditLogTypeName(type)" :value="type")
+                                        .detail
+                                            span.name(v-text="getAuditLogTypeName(type)")
+                            el-input(v-model="groupLogsModerationTable.filters[0].value" :placeholder="$t('dialog.group_member_moderation.search_placeholder')" style="display:inline-block;width:150px;margin:10px")
+                            br
                             data-tables(v-bind="groupLogsModerationTable" style="margin-top:10px")
                                 el-table-column(:label="$t('dialog.group_member_moderation.created_at')" width="170" prop="created_at" sortable)
                                     template(v-once #default="scope")
@@ -3191,10 +3245,12 @@ html
                                     template(v-once #default="scope")
                                         span(v-if="Object.keys(scope.row.data).length" v-text="JSON.stringify(scope.row.data)")
                     br
+                    br
                     span.name {{ $t('dialog.group_member_moderation.user_id') }}
                     br
                     el-input(v-model="groupMemberModeration.selectUserId" size="mini" style="margin-top:5px;width:340px" :placeholder="$t('dialog.group_member_moderation.user_id_placeholder')" clearable)
                     el-button(size="small" @click="selectGroupMemberUserId" :disabled="!groupMemberModeration.selectUserId") {{ $t('dialog.group_member_moderation.select_user') }}
+                    br
                     br
                     span.name {{ $t('dialog.group_member_moderation.selected_users') }}
                     el-button(type="default" @click="clearSelectedGroupMembers" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
@@ -3204,7 +3260,8 @@ html
                     br
                     br
                     span.name {{ $t('dialog.group_member_moderation.notes') }}
-                    el-input.extra(v-model="groupMemberModeration.note" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" :placeholder="$t('dialog.group_member_moderation.note_placeholder')" size="mini" resize="none")
+                    el-input.extra(v-model="groupMemberModeration.note" type="textarea" :rows="2" :autosize="{ minRows: 1, maxRows: 20 }" :placeholder="$t('dialog.group_member_moderation.note_placeholder')" size="mini" resize="none" style="margin-top:5px")
+                    br
                     br
                     span.name {{ $t('dialog.group_member_moderation.selected_roles') }}
                     br
@@ -3213,6 +3270,7 @@ html
                             el-option.x-friend-item(v-for="role in groupMemberModeration.groupRef.roles" :key="role.id" :label="role.name" :value="role.id" style="height:auto")
                                 .detail
                                     span.name(v-text="role.name")
+                    br
                     br
                     span.name {{ $t('dialog.group_member_moderation.actions') }}
                     br
@@ -3261,6 +3319,59 @@ html
                     el-button(v-if="groupPostEditDialog.postId" size="small" @click="editGroupPost") {{ $t('dialog.group_post_edit.edit_post') }}
                     el-button(v-else size="small" @click="createGroupPost") {{ $t('dialog.group_post_edit.create_post') }}
 
+            //- dialog: send boop
+            el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendBoopDialog" :visible.sync="sendBoopDialog.visible" :title="$t('dialog.boop_dialog.header')" width="450px")
+                div(v-if="sendBoopDialog.visible")
+                    el-select(v-model="sendBoopDialog.userId" :placeholder="$t('dialog.new_instance.instance_creator_placeholder')" filterable style="width:100%")
+                        el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
+                            el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar(:class="userStatusClass(friend.ref)")
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                        el-option-group(v-if="friendsGroup1.length" :label="$t('side_panel.online')")
+                            el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar(:class="userStatusClass(friend.ref)")
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                        el-option-group(v-if="friendsGroup2.length" :label="$t('side_panel.active')")
+                            el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                        el-option-group(v-if="friendsGroup3.length" :label="$t('side_panel.offline')")
+                            el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                template(v-if="friend.ref")
+                                    .avatar
+                                        img(v-lazy="userImage(friend.ref)")
+                                    .detail
+                                        span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
+                                span(v-else v-text="friend.id")
+                    br
+                    br
+                    el-select(v-model="sendBoopDialog.fileId" clearable :placeholder="$t('dialog.boop_dialog.select_emoji')" size="small" style="width:100%" popper-class="max-height-el-select")
+                        el-option-group(:label="$t('dialog.boop_dialog.my_emojis')")
+                            el-option(v-if="image.versions && image.versions.length > 0" v-for="image in emojiTable" :key="image.id" :value="image.id" style="width:100%;height:100%")
+                                .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden;width:200px;height:200px;padding:10px") 
+                                    template(v-if="image.frames")
+                                        .avatar(:style="generateEmojiStyle(image.versions[image.versions.length - 1].file.url, image.framesOverTime, image.frames, image.loopStyle)")
+                                    template(v-else)
+                                        img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url" style="width:200px;height:200px")
+                        el-option-group(:label="$t('dialog.boop_dialog.default_emojis')")
+                            el-option(v-for="emojiName in photonEmojis" :key="emojiName" :value="getEmojiValue(emojiName)" style="width:100%;height:100%")
+                                span(v-text="emojiName")
+                template(#footer)
+                    el-button(size="small" @click="showGalleryDialog(2)") {{ $t('dialog.boop_dialog.emoji_manager') }}
+                    el-button(size="small" @click="sendBoopDialog.visible = false") {{ $t('dialog.boop_dialog.cancel') }}
+                    el-button(size="small" @click="sendBoop" :disabled="!sendBoopDialog.userId") {{ $t('dialog.boop_dialog.send') }}
 
             //- el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="templateDialog" :visible.sync="templateDialog.visible" :title="$t('dialog.template_dialog.header')" width="450px")
 

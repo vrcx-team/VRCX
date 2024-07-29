@@ -140,15 +140,11 @@ Section "Install" SecInstall
 
     noupgrade:
 
-    afterupgrade:
-
-    ReadRegStr $R0 HKLM "SOFTWARE\Classes\Installer\Dependencies\Microsoft.VS.VC_RuntimeMinimumVSU_amd64,v14" "Version"
-    IfErrors 0 VSRedistInstalled
-
     inetc::get "https://aka.ms/vs/17/release/vc_redist.x64.exe" $TEMP\vcredist_x64.exe
     ExecWait "$TEMP\vcredist_x64.exe /install /quiet /norestart"
     Delete "$TEMP\vcredist_x64.exe"
-    VSRedistInstalled:
+
+    afterupgrade:
 
     SetOutPath "$INSTDIR"
 

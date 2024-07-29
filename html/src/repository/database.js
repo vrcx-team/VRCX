@@ -80,6 +80,9 @@ class Database {
         await sqliteService.executeNonQuery(
             `CREATE TABLE IF NOT EXISTS favorite_world (id INTEGER PRIMARY KEY, created_at TEXT, world_id TEXT, group_name TEXT)`
         );
+        await sqliteService.executeNonQuery(
+            `CREATE TABLE IF NOT EXISTS favorite_avatar (id INTEGER PRIMARY KEY, created_at TEXT, avatar_id TEXT, group_name TEXT)`
+        );
     }
 
     async getFeedDatabase() {
@@ -821,6 +824,9 @@ class Database {
                 ...row.details
             }
         };
+        if (entry.imageUrl && !entry.details.imageUrl) {
+            entry.details.imageUrl = entry.imageUrl;
+        }
         var expired = 0;
         if (row.$isExpired) {
             expired = 1;
@@ -2213,6 +2219,90 @@ class Database {
         sqliteService.executeNonQuery('DELETE FROM cache_avatar');
     }
 
+    addAvatarToFavorites(avatarId, groupName) {
+        sqliteService.executeNonQuery(
+            'INSERT OR REPLACE INTO favorite_avatar (avatar_id, group_name, created_at) VALUES (@avatar_id, @group_name, @created_at)',
+            {
+                '@avatar_id': avatarId,
+                '@group_name': groupName,
+                '@created_at': new Date().toJSON()
+            }
+        );
+    }
+
+    renameAvatarFavoriteGroup(newGroupName, groupName) {
+        sqliteService.executeNonQuery(
+            `UPDATE favorite_avatar SET group_name = @new_group_name WHERE group_name = @group_name`,
+            {
+                '@new_group_name': newGroupName,
+                '@group_name': groupName
+            }
+        );
+    }
+
+    deleteAvatarFavoriteGroup(groupName) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM favorite_avatar WHERE group_name = @group_name`,
+            {
+                '@group_name': groupName
+            }
+        );
+    }
+
+    removeAvatarFromFavorites(avatarId, groupName) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM favorite_avatar WHERE avatar_id = @avatar_id AND group_name = @group_name`,
+            {
+                '@avatar_id': avatarId,
+                '@group_name': groupName
+            }
+        );
+    }
+
+    async getAvatarFavorites() {
+        var data = [];
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                created_at: dbRow[1],
+                avatarId: dbRow[2],
+                groupName: dbRow[3]
+            };
+            data.push(row);
+        }, 'SELECT * FROM favorite_avatar');
+        return data;
+    }
+
+    removeAvatarFromCache(avatarId) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM cache_avatar WHERE id = @avatar_id`,
+            {
+                '@avatar_id': avatarId
+            }
+        );
+    }
+
+    async getAvatarCache() {
+        var data = [];
+        await sqliteService.execute((dbRow) => {
+            var row = {
+                id: dbRow[0],
+                // added_at: dbRow[1],
+                authorId: dbRow[2],
+                authorName: dbRow[3],
+                created_at: dbRow[4],
+                description: dbRow[5],
+                imageUrl: dbRow[6],
+                name: dbRow[7],
+                releaseStatus: dbRow[8],
+                thumbnailImageUrl: dbRow[9],
+                updated_at: dbRow[10],
+                version: dbRow[11]
+            };
+            data.push(row);
+        }, 'SELECT * FROM cache_avatar');
+        return data;
+    }
+
     addWorldToCache(entry) {
         sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO cache_world (id, added_at, author_id, author_name, created_at, description, image_url, name, release_status, thumbnail_image_url, updated_at, version) VALUES (@id, @added_at, @author_id, @author_name, @created_at, @description, @image_url, @name, @release_status, @thumbnail_image_url, @updated_at, @version)`,
@@ -2273,15 +2363,6 @@ class Database {
         );
     }
 
-    removeWorldFromCache(worldId) {
-        sqliteService.executeNonQuery(
-            `DELETE FROM cache_world WHERE id = @world_id`,
-            {
-                '@world_id': worldId
-            }
-        );
-    }
-
     async getWorldFavorites() {
         var data = [];
         await sqliteService.execute((dbRow) => {
@@ -2293,6 +2374,15 @@ class Database {
             data.push(row);
         }, 'SELECT * FROM favorite_world');
         return data;
+    }
+
+    removeWorldFromCache(worldId) {
+        sqliteService.executeNonQuery(
+            `DELETE FROM cache_world WHERE id = @world_id`,
+            {
+                '@world_id': worldId
+            }
+        );
     }
 
     async getWorldCache() {
@@ -2526,6 +2616,25 @@ class Database {
 
     async setWal() {
         await sqliteService.executeNonQuery('PRAGMA journal_mode=WAL');
+    }
+
+    async getInstanceJoinHistory() {
+        var oneWeekAgo = new Date(Date.now() - 604800000).toJSON();
+        var instances = new Map();
+        await sqliteService.execute(
+            (row) => {
+                if (!instances.has(row[1])) {
+                    var epoch = new Date(row[0]).getTime();
+                    instances.set(row[1], epoch);
+                }
+            },
+            `SELECT created_at, location FROM gamelog_join_leave WHERE user_id = @userId AND created_at > @created_at ORDER BY created_at DESC`,
+            {
+                '@userId': Database.userId,
+                '@created_at': oneWeekAgo
+            }
+        );
+        return instances;
     }
 }
 

@@ -6,6 +6,7 @@
 
 using System;
 using System.Drawing;
+using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 using CefSharp;

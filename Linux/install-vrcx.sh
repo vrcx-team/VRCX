@@ -3,7 +3,9 @@
 
 # change me
 steamapps=$HOME/.local/share/Steam/steamapps/compatdata
-download_url=https://github.com/vrcx-team/VRCX/releases/download/v2024.05.09/VRCX_20240509.zip
+stable=$(curl -s https://api.github.com/repos/vrcx-team/VRCX/releases/latest | grep -o "https.*releases/download.*zip")
+nightly=$(curl -s https://api.github.com/repos/Natsumi-sama/VRCX/releases/latest | grep -o "https.*releases/download.*zip")
+download_url=$stable
 
 export WINEPREFIX=$HOME/.local/share/vrcx
 
@@ -64,7 +66,7 @@ if [[ ! -d $WINEPREFIX/drive_c/vrcx ]]; then
 fi
 
 cd $WINEPREFIX/drive_c/vrcx
-wget -q --show-progress $download_url -O vrcx.zip
+curl -L $download_url -o vrcx.zip
 unzip -uq vrcx.zip
 rm vrcx.zip
 
@@ -82,7 +84,7 @@ if [[ -d $HOME/.local/share/applications ]]; then
 	if [[ ! -f $HOME/.local/share/icons/VRCX.png ]]; then
 		echo "Install VRCX.png to ~/.local/share/icons"
 		cd ~/.local/share/icons/
-		wget -q --show-progress https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png
+		curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png -o VRCX.png
 	fi
 
 	echo "Install vrcx.desktop to ~/.local/share/applications"

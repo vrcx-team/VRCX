@@ -178,6 +178,9 @@ span[class='flags'] {
 .flags.tok {
     background-position: calc(var(--offx) * -1) calc(var(--offy) * -9);
 }
+.flags.my {
+    background-position: calc(var(--offx) * -2) calc(var(--offy) * -9);
+}
 .flags.blank {
     background-position: calc(var(--offx) * -4) calc(var(--offy) * -4);
 }

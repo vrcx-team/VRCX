@@ -40,6 +40,11 @@ namespace VRCX
             ProcessMonitor.Instance.ProcessExited += Instance.OnProcessStateChanged;
         }
         
+        public void Init()
+        {
+            // Create Instance before Cef tries to bind it
+        }
+        
         /// <summary>
         /// Computes the MD5 hash of the file represented by the specified base64-encoded string.
         /// </summary>
@@ -53,6 +58,65 @@ namespace VRCX
                 var md5Hash = md5.ComputeHash(fileData);
                 return Convert.ToBase64String(md5Hash);
             }
+        }
+
+        public string ResizeImageToFitLimits(string base64data)
+        {
+            return Convert.ToBase64String(ResizeImageToFitLimits(Convert.FromBase64String(base64data)));
+        }
+
+        public byte[] ResizeImageToFitLimits(byte[] imageData, int maxWidth = 2000, int maxHeight = 2000, long maxSize = 10_000_000)
+        {
+            using var fileMemoryStream = new MemoryStream(imageData);
+            System.Drawing.Bitmap image = new System.Drawing.Bitmap(fileMemoryStream);
+            if (image.Width > maxWidth)
+            {
+                var sizingFactor = image.Width / (double)maxWidth;
+                int newHeight = (int)Math.Round(image.Height / sizingFactor);
+                image = new System.Drawing.Bitmap(image, maxWidth, newHeight);
+            }
+            if (image.Height > maxHeight)
+            {
+                var sizingFactor = image.Height / (double)maxHeight;
+                int newWidth = (int)Math.Round(image.Width / sizingFactor);
+                image = new System.Drawing.Bitmap(image, newWidth, maxHeight);
+            }
+
+            void saveToFileToUpload()
+            {
+                using var imageSaveMemoryStream = new MemoryStream();
+                image.Save(imageSaveMemoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                imageData = imageSaveMemoryStream.ToArray();
+            }
+
+            saveToFileToUpload();
+
+            for (int i = 0; i < 250 && imageData.Length > maxSize; i++)
+            {
+                saveToFileToUpload();
+                if (imageData.Length < maxSize)
+                    break;
+                int newWidth = image.Width;
+                int newHeight = image.Height;
+                if (image.Width > image.Height)
+                {
+                    newWidth = image.Width - 25;
+                    newHeight = (int)Math.Round(image.Height / (image.Width / (double)newWidth));
+                }
+                else
+                {
+                    newHeight = image.Height - 25;
+                    newWidth = (int)Math.Round(image.Width / (image.Height / (double)newHeight));
+                }
+                image = new System.Drawing.Bitmap(image, newWidth, newHeight);
+            }
+
+            if (imageData.Length > maxSize)
+            {
+                throw new Exception("Failed to get image into target filesize.");
+            }
+
+            return imageData;
         }
 
         /// <summary>
@@ -178,18 +242,29 @@ namespace VRCX
         /// <param name="Image">The optional image to display in the notification.</param>
         public void DesktopNotification(string BoldText, string Text = "", string Image = "")
         {
-            ToastContentBuilder builder = new ToastContentBuilder();
-            
-            if (Uri.TryCreate(Image, UriKind.Absolute, out Uri uri))
-                builder.AddAppLogoOverride(uri);
+            try
+            {
+                ToastContentBuilder builder = new ToastContentBuilder();
 
-            if (!string.IsNullOrEmpty(BoldText))
-                builder.AddText(BoldText);
-            
-            if (!string.IsNullOrEmpty(Text))
-                builder.AddText(Text);
+                if (Uri.TryCreate(Image, UriKind.Absolute, out Uri uri))
+                    builder.AddAppLogoOverride(uri);
 
-            builder.Show();
+                if (!string.IsNullOrEmpty(BoldText))
+                    builder.AddText(BoldText);
+
+                if (!string.IsNullOrEmpty(Text))
+                    builder.AddText(Text);
+
+                builder.Show();
+            }
+            catch (System.AccessViolationException ex)
+            {
+                logger.Warn(ex, "Unable to send desktop notification");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Unknown error when sending desktop notification");
+            }
         }
 
         /// <summary>
@@ -197,11 +272,17 @@ namespace VRCX
         /// </summary>
         public void RestartApplication()
         {
-            var VRCXProcess = new Process();
-            VRCXProcess.StartInfo.FileName = Path.Combine(Program.BaseDirectory, "VRCX.exe");
-            VRCXProcess.StartInfo.UseShellExecute = false;
-            VRCXProcess.StartInfo.Arguments = "/Upgrade";
-            VRCXProcess.Start();
+            var vrcxProcess = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = Path.Combine(Program.BaseDirectory, "VRCX.exe"),
+                    Arguments = "/Upgrade",
+                    UseShellExecute = true,
+                    WorkingDirectory = Program.BaseDirectory
+                }
+            };
+            vrcxProcess.Start();
             Environment.Exit(0);
         }
 
