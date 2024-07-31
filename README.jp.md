@@ -34,7 +34,7 @@ VRCX は VRChat クライアント (デスクトップ & VR) や Web サイト�
   - 例えば、VRChat を起動したら同時に OSC アプリやボイスチェンジャーを起動するようにできます。
 - :floppy_disk: ワールドの永続化
   - 対応ワールドでは、設定やセーブデータ、インベントリなどのデータを保存することができます。
-  - **注意**: この機能を使うには、VRChat の設定で「Allow Untrusted URLs」を有効化しておく必要があります。
+  - **注意**: この機能を使うには、VRChat の設定で「信頼されていない URL を許可」を有効化しておく必要があります。
   - 開発者向け: [Wiki Page - World Persistence (PWI)](<https://github.com/vrcx-team/VRCX/wiki/World-Persistence-(PWI)>)
 - :mag: アバター、ユーザー、ワールド、グループの検索
 - :earth_americas: 無制限！ローカル保存のワールドお気に入りリスト
