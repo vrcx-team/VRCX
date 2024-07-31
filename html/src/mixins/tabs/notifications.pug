@@ -1,6 +1,6 @@
 mixin notificationsTab()
     .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'notification'" v-if="$refs.menu && $refs.menu.activeIndex === 'notification'" v-loading="API.isNotificationsLoading")
-        data-tables(v-bind="notificationTable" class="notification-table")
+        data-tables(v-bind="notificationTable" ref="notificationTableRef" class="notification-table")
             template(#tool)
                 div(style="margin:0 0 10px;display:flex;align-items:center")
                     el-select(v-model="notificationTable.filters[0].value" @change="saveTableFilters" multiple clearable collapse-tags style="flex:1" :placeholder="$t('view.notification.filter_placeholder')")
