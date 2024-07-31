@@ -225,9 +225,9 @@
                     "header": "お気に入りのフレンド",
                     "group_placeholder": "グループを選択"
                 },
-                "game_log": {
-                    "header": "ゲームログ",
-                    "resource_load": "Udonのリソース負荷を記録",
+                "logging": {
+                    "header": "ロギング",
+                    "resource_load": "Udonでの文字列/画像読み込みを記録",
                     "empty_avatar": "フィードにアバターを名前なしで記録"
                 },
                 "automation": {
@@ -292,7 +292,7 @@
                     "header": "サイドパネル",
                     "sorting": {
                         "header": "並び替え",
-                        "sort_private_to_bottom": "Privateを下に並び替え",
+                        "sort_private_to_bottom": "プライベートを下に並び替え",
                         "sort_by_status": "ステータスで並べ替え",
                         "sort_gps_to_top": "GPSで並べ替え",
                         "sort_gps_to_top_notice": "(オンラインのみ)",
@@ -370,7 +370,7 @@
                     "menu": "メニュー: Viveコントローラーでの「メニューボタン」、Indexコントローラーでの「Bボタン」、Oculusコントローラーでの「Y/Bボタン」",
                     "steamvr_overlay": "SteamVR オーバーレイ",
                     "wrist_feed_overlay": "手首のフィードオーバーレイ",
-                    "hide_private_worlds": "Private ワールドを表示しない",
+                    "hide_private_worlds": "プライベートワールドを表示しない",
                     "start_overlay_with": "オーバーレイの起動タイミング",
                     "overlay_button": "オーバーレイボタン",
                     "overlay_button_grip": "グリップ",
@@ -382,7 +382,7 @@
                     "background_color": "背景に色を付ける",
                     "minimal_feed_icons": "小さいフィードアイコン",
                     "hide_vr_devices": "VRデバイスを表示しない",
-                    "hide_cpu_usage": "CPU使用率を表示しない",
+                    "show_cpu_usage": "CPU使用率を表示する",
                     "hide_game_uptime": "ゲームの起動時間を表示しない",
                     "show_pc_uptime": "PCの起動時間を表示する",
                     "wrist_feed_filters": "手首フィードフィルター"
@@ -395,8 +395,8 @@
                     "enable": "有効化",
                     "enable_tooltip": "競合を防ぐため、VRChatのconfig.jsonでDiscord Rich Presenceを無効化することを推奨します。",
                     "instance_type_player_count": "インスタンス詳細/プレイヤー数",
-                    "join_button": "Joinボタンを表示 (Publicのみ)",
-                    "hide_details_in_private": "Privateでは詳細を表示しない",
+                    "join_button": "Joinボタンを表示 (パブリックのみ)",
+                    "hide_details_in_private": "プライベートでは詳細を表示しない",
                     "hide_images": "ワールドの画像を表示しない"
                 }
             },
@@ -452,7 +452,7 @@
                     "screenshot_helper": {
                         "header": "スクリーンショット ヘルパー",
                         "description": "ゲーム内で撮影した写真のメタデータに「ワールドID」「ワールド名」「インスタンス内のプレイヤー」を保存します。",
-                        "description_tooltip": "残念ながら、Windowsは (ごく一部を除いた) PNGテキストチャンクの表示をサポートしていません。表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用してください。",
+                        "description_tooltip": "残念ながら、Windowsは (ごく一部を除いて) PNGテキストチャンクの表示をサポートしていません。表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用してください。",
                         "enable": "有効化",
                         "modify_filename": "ファイル名を変更",
                         "modify_filename_tooltip": "スクリーンショットのファイル名にワールドIDを追加",
@@ -470,7 +470,7 @@
                         "udon_exception_logging": "Udonの例外エラーを記録",
                         "gpu_fix": "GPU Fixを有効化",
                         "gpu_fix_notice": "(再起動が必要です)",
-                        "gpu_fix_warning": "SteamVR オーバーレイが機能せず、2つ以上のGPUを使用している時のみこのオプションを有効化してください。",
+                        "gpu_fix_warning": "SteamVR オーバーレイが機能せず、なおかつ2つ以上のGPUを使用している時のみこのオプションを有効化してください。",
                         "disable_gamelog": "ゲームログを無効化",
                         "disable_gamelog_notice": "(何かが壊れる可能性があります)",
                         "user_cache": "ユーザーキャッシュ:",
