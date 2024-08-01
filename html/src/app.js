@@ -14958,7 +14958,7 @@ speechSynthesis.getVoices();
         )
             return;
 
-        if (!this.checkCanInvite(currentLocation)) return;
+        if (!$app.checkCanInvite(currentLocation)) return;
 
         var L = this.parseLocation(currentLocation);
         this.getCachedWorld({
