@@ -242,7 +242,7 @@ html
                                         span.dialog-title(slot="reference" v-text="userDialog.ref.displayName" style="margin-left:5px;margin-right:5px;cursor:pointer")
                                         span(style="display:block;text-align:center;font-family:monospace") {{ userDialog.ref.displayName | textToHex }}
                                     el-tooltip(v-if="userDialog.ref.pronouns" placement="top" :content="$t('dialog.user.pronouns')" :disabled="hideTooltips")
-                                        span(v-text="userDialog.ref.pronouns" style="margin-right:5px;color:#909399;font-family:monospace;font-size:12px")
+                                        span.x-grey(v-text="userDialog.ref.pronouns" style="margin-right:5px;font-family:monospace;font-size:12px")
                                     el-tooltip(v-for="item in userDialog.ref.$languages" :key="item.key" placement="top")
                                         template(#content)
                                             span {{ item.value }} ({{ item.key }})
@@ -250,7 +250,7 @@ html
                                     template(v-if="userDialog.ref.id === API.currentUser.id")
                                         br
                                         el-popover(placement="top" trigger="click")
-                                            span(slot="reference" v-text="API.currentUser.username" style="margin-right:10px;color:#909399;font-family:monospace;font-size:12px;cursor:pointer")
+                                            span.x-grey(slot="reference" v-text="API.currentUser.username" style="margin-right:10px;font-family:monospace;font-size:12px;cursor:pointer")
                                             span(style="display:block;text-align:center;font-family:monospace") {{ API.currentUser.username | textToHex }}
                                 div
                                     el-tag.name(type="info" effect="plain" size="mini" :class="userDialog.ref.$trustClass" v-text="userDialog.ref.$trustLevel" style="margin-right:5px;margin-top:5px")
@@ -643,17 +643,19 @@ html
                                     i.el-icon-s-home(v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === worldDialog.id" style="margin-right:5px")
                                     span.dialog-title(v-text="worldDialog.ref.name")
                                 div(style="margin-top:5px")
-                                    span.x-link(v-text="worldDialog.ref.authorName" @click="showUserDialog(worldDialog.ref.authorId)" style="color:#909399;font-family:monospace")
+                                    span.x-link.x-grey(v-text="worldDialog.ref.authorName" @click="showUserDialog(worldDialog.ref.authorId)" style="font-family:monospace")
                                 div
                                     el-tag(v-if="worldDialog.ref.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.labs') }}
                                     el-tag(v-else-if="worldDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.public') }}
                                     el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.private') }}
                                     el-tag.x-tag-platform-pc(v-if="worldDialog.isPC" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
+                                        span.x-grey(v-if="worldDialog.bundleSizes['standalonewindows']" style=";margin-left:5px;border-left:inherit;padding-left:5px") {{ worldDialog.bundleSizes['standalonewindows'].fileSize }}
                                     el-tag.x-tag-platform-quest(v-if="worldDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Android
+                                        span.x-grey(v-if="worldDialog.bundleSizes['android']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ worldDialog.bundleSizes['android'].fileSize }}
                                     el-tag.x-tag-platform-ios(v-if="worldDialog.isIos" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
+                                        span.x-grey(v-if="worldDialog.bundleSizes['ios']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ worldDialog.bundleSizes['ios'].fileSize }}
                                     el-tag(v-if="worldDialog.avatarScalingDisabled" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
                                     el-tag(v-if="worldDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.future_proofing') }}
-                                    el-tag(type="info" effect="plain" size="mini" v-text="worldDialog.fileSize" style="margin-right:5px;margin-top:5px")
                                     el-tag.x-link(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px" @click="openFolderGeneric(worldDialog.cachePath)")
                                         span(v-text="worldDialog.cacheSize")
                                         |  {{ $t('dialog.world.tags.cache')}}
@@ -782,7 +784,7 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.last_updated') }}
-                                        span.extra {{ worldDialog.fileCreatedAt | formatDate('long') }}
+                                        span.extra {{ worldDialog.lastUpdated | formatDate('long') }}
                                 .x-friend-item(v-if="worldDialog.ref.labsPublicationDate !== 'none'" style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.labs_publication_date') }}
@@ -851,7 +853,7 @@ html
                                 div
                                     span.dialog-title(v-text="avatarDialog.ref.name")
                                 div(style="margin-top:5px")
-                                    span.x-link(v-text="avatarDialog.ref.authorName" @click="showUserDialog(avatarDialog.ref.authorId)" style="color:#909399;font-family:monospace")
+                                    span.x-link.x-grey(v-text="avatarDialog.ref.authorName" @click="showUserDialog(avatarDialog.ref.authorId)" style="font-family:monospace")
                                 div
                                     el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.public') }}
                                     el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.private') }}
@@ -884,7 +886,7 @@ html
                                 el-tooltip(v-else placement="top" :content="$t('dialog.avatar.actions.favorite_tooltip')" :disabled="hideTooltips")
                                     el-button(type="default" icon="el-icon-star-off" circle @click="avatarDialogCommand('Add Favorite')" style="margin-left:5px")
                                 el-dropdown(trigger="click" @command="avatarDialogCommand" size="small" style="margin-left:5px")
-                                    el-button(:type="avatarDialog.isBlocked ? 'danger' : 'default'" icon="el-icon-more" circle style="margin-left:5px")
+                                    el-button(:type="avatarDialog.isBlocked ? 'danger' : 'default'" icon="el-icon-more" circle)
                                     el-dropdown-menu(#default="dropdown")
                                         el-dropdown-item(icon="el-icon-refresh" command="Refresh") {{ $t('dialog.avatar.actions.refresh') }}
                                         el-dropdown-item(icon="el-icon-check" :disabled="API.currentUser.currentAvatar === avatarDialog.id" command="Select Avatar") {{ $t('dialog.avatar.actions.select') }}
