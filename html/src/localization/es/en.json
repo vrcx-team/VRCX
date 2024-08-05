@@ -20,6 +20,8 @@
             "login": "Inicio de sesión",
             "register": "Registrarse",
             "forgotPassword": "¿Ha olvidado su contraseña?",
+            "updater": "Actualizador",
+            "proxy_settings": "Ajustes de proxy",
             "field": {
                 "username": "Usuario o Email",
                 "password": "Contraseña",
@@ -91,7 +93,11 @@
                 "new_group": "Nuevo Grupo"
             },
             "avatars": {
-                "header": "Avatares"
+                "header": "Avatares",
+                "search": "Buscar",
+                "vrchat_favorites": "Favoritos de VRChat",
+                "local_favorites": "Favoritos locales (Requiere VRC+)",
+                "new_group": "Nuevo Grupo"
             },
             "bulk_unfavorite_mode": "Eliminar favoritos en masa",
             "bulk_unfavorite_selection": "Eliminar favoritos seleccionados",
@@ -106,7 +112,8 @@
             "delete_tooltip": "Eliminar",
             "unavailable_tooltip": "No disponible",
             "private": "Privado",
-            "sort_by": "Ordenar por"
+            "sort_by": "Ordenar por",
+            "select_avatar_tooltip": "Seleccionar avatar"
         },
         "friend_log": {
             "filter_placeholder": "Filtro",
@@ -211,10 +218,11 @@
                     "header": "Aplicación",
                     "startup": "Iniciar al ejecutar Windows",
                     "minimized": "Iniciar minimizado",
-                    "tray": "Cerrar en la bandeja"
+                    "tray": "Cerrar en la bandeja",
+                    "proxy": "Ajustes de proxy"
                 },
                 "favorites": {
-                    "header": "Amigos Favoritos",
+                    "header": "Amigos favoritos de VRCX",
                     "group_placeholder": "Seleccionar grupos"
                 },
                 "logging": {
@@ -236,7 +244,7 @@
                     "auto_invite_request_accept_tooltip": "Acepta automáticamente las solicitudes de invitación de tus amigos favoritos",
                     "auto_invite_request_accept_off": "Desactivado",
                     "auto_invite_request_accept_favs": "Todos los favoritos",
-                    "auto_invite_request_accept_selected_favs": "Favoritos seleccionados"
+                    "auto_invite_request_accept_selected_favs": "Favoritos de VRCX"
                 },
                 "legal_notice": {
                     "header": "Aviso Legal",
@@ -594,6 +602,7 @@
                 "instance_queue": "Cola:",
                 "instance_users": "Usuarios:",
                 "instance_game_version": "Versión del Juego:",
+                "last_join": "Última unión:",
                 "instance_queuing_enabled": "Cola habilitada",
                 "instance_creator": "Creador de la instancia",
                 "note": "Nota",
@@ -908,7 +917,8 @@
         "favorite": {
             "header": "Elegir Grupo",
             "vrchat_favorites": "Favoritos de VRChat",
-            "local_favorites": "Favoritos locales"
+            "local_favorites": "Favoritos locales",
+            "local_avatar_favorites": "Favoritos locales (Requiere VRC+)"
         },
         "invite": {
             "header": "Invitar",
@@ -1600,6 +1610,13 @@
             "cancel": "Cancelar",
             "save": "Guardar",
             "input_error": "Se requiere un número válido"
+        },
+        "proxy_settings": {
+            "header": "Ajustes de proxy",
+            "description": "Introduzca la dirección y el puerto del servidor proxy",
+            "placeholder": "127.0.0.1:8080",
+            "close": "Cerrar",
+            "restart": "Reiniciar"
         }
     },
     "table": {

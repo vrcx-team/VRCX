@@ -587,13 +587,15 @@ namespace VRCX
         {
             // 2021.04.08 06:37:45 Error -  [Video Playback] ERROR: Video unavailable
             // 2021.04.08 06:40:07 Error -  [Video Playback] ERROR: Private video
+            
+            // 2024.07.31 22:28:47 Error      -  [AVProVideo] Error: Loading failed.  File not found, codec not supported, video resolution too high or insufficient system resources.
+            // 2024.07.31 23:04:15 Error      -  [AVProVideo] Error: Loading failed.  File not found, codec not supported, video resolution too high or insufficient system resources.
 
-            if (string.Compare(line, offset, "[Video Playback] ERROR: ", 0, 24, StringComparison.Ordinal) != 0)
-                return false;
-
-            var data = line.Substring(offset + 24);
-            if (data == logContext.LastVideoError)
-                return true;
+            if (line.Contains("[Video Playback] ERROR: "))
+            {
+                var data = line.Substring(offset + 24);
+                if (data == logContext.LastVideoError)
+                    return true;
             logContext.LastVideoError = data;
 
             AppendLog(new[]
@@ -604,7 +606,28 @@ namespace VRCX
                 "VideoError: " + data
             });
 
-            return true;
+                return true;
+            }
+            
+            if (line.Contains("[AVProVideo] Error: "))
+            {
+                var data = line.Substring(offset + 20);
+                if (data == logContext.LastVideoError)
+                    return true;
+                logContext.LastVideoError = data;
+
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "event",
+                    "VideoError: " + data
+                });
+
+                return true;
+            }
+
+            return false;
         }
 
         private bool ParseLogWorldVRCX(FileInfo fileInfo, LogContext logContext, string line, int offset)

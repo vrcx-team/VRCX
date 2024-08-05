@@ -10,14 +10,17 @@ mixin playerListTab()
                         span.x-link(@click="showWorldDialog(currentInstanceWorld.ref.id)" style="font-weight:bold;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1")
                             | #[i.el-icon-s-home(v-show="API.currentUser.$homeLocation && API.currentUser.$homeLocation.worldId === currentInstanceWorld.ref.id" style="margin-right:5px")] {{ currentInstanceWorld.ref.name }}
                     div
-                        span.x-link(v-text="currentInstanceWorld.ref.authorName" @click="showUserDialog(currentInstanceWorld.ref.authorId)" style="color:#909399;font-family:monospace")
+                        span.x-link.x-grey(v-text="currentInstanceWorld.ref.authorName" @click="showUserDialog(currentInstanceWorld.ref.authorId)" style="font-family:monospace")
                     div(style="margin-top:5px")
                         el-tag(v-if="currentInstanceWorld.ref.$isLabs" type="primary" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.world.tags.labs') }}
                         el-tag(v-else-if="currentInstanceWorld.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.world.tags.public') }}
                         el-tag(v-else-if="currentInstanceWorld.ref.releaseStatus === 'private'" type="danger" effect="plain" size="mini" style="margin-right:5px") {{ $t('dialog.world.tags.private') }}
                         el-tag.x-tag-platform-pc(v-if="currentInstanceWorld.isPC" type="info" effect="plain" size="mini" style="margin-right:5px") PC
+                            span.x-grey(v-if="currentInstanceWorld.bundleSizes['standalonewindows']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ currentInstanceWorld.bundleSizes['standalonewindows'].fileSize }}
                         el-tag.x-tag-platform-quest(v-if="currentInstanceWorld.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px") Android
+                            span.x-grey(v-if="currentInstanceWorld.bundleSizes['android']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ currentInstanceWorld.bundleSizes['android'].fileSize }}
                         el-tag.x-tag-platform-ios(v-if="currentInstanceWorld.isIOS" type="info" effect="plain" size="mini" style="margin-right:5px") iOS
+                            span.x-grey(v-if="currentInstanceWorld.bundleSizes['ios']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ currentInstanceWorld.bundleSizes['ios'].fileSize }}
                         el-tag(v-if="currentInstanceWorld.avatarScalingDisabled" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
                         el-tag(type="info" effect="plain" size="mini" v-text="currentInstanceWorld.fileSize" style="margin-right:5px")
                         el-tag(v-if="currentInstanceWorld.inCache" type="info" effect="plain" size="mini" style="margin-right:5px")
@@ -39,7 +42,7 @@ mixin playerListTab()
                     .x-friend-item(style="cursor:default")
                         .detail
                             span.name {{ $t('dialog.world.info.last_updated') }}
-                            span.extra {{ currentInstanceWorld.fileCreatedAt | formatDate('long') }}
+                            span.extra {{ currentInstanceWorld.lastUpdated | formatDate('long') }}
                     .x-friend-item(style="cursor:default")
                         .detail
                             span.name {{ $t('dialog.world.info.created_at') }}

@@ -20,6 +20,8 @@
             "login": "ログイン",
             "register": "新規登録",
             "forgotPassword": "パスワードを忘れた場合",
+            "updater": "アップデーター",
+            "proxy_settings": "プロキシ設定",
             "field": {
                 "username": "ユーザーネームまたはメールアドレス",
                 "password": "パスワード",
@@ -85,12 +87,17 @@
             },
             "worlds": {
                 "header": "ワールド",
+                "search": "検索",
                 "vrchat_favorites": "VRChatのお気に入り",
                 "local_favorites": "ローカルのお気に入り",
                 "new_group": "グループを作成"
             },
             "avatars": {
-                "header": "アバター"
+                "header": "アバター",
+                "search": "検索",
+                "vrchat_favorites": "VRChatのお気に入り",
+                "local_favorites": "ローカルのお気に入り (VRC+が必要)",
+                "new_group": "新しいグループ"
             },
             "bulk_unfavorite_mode": "一括お気に入り解除モード",
             "bulk_unfavorite_selection": "お気に入り解除する",
@@ -105,7 +112,8 @@
             "delete_tooltip": "削除",
             "unavailable_tooltip": "利用不可",
             "private": "プライベート",
-            "sort_by": "並べ替え:"
+            "sort_by": "並べ替え:",
+            "select_avatar_tooltip": "アバターを選択"
         },
         "friend_log": {
             "filter_placeholder": "フィルター",
@@ -141,6 +149,8 @@
                 "two_factor": "2段階認証 (2FA)",
                 "two_factor_enabled": "有効",
                 "two_factor_disabled": "無効",
+                "v_bucks": "V-Bucks",
+                "refresh": "クリックして更新",
                 "logout": "ログアウト",
                 "manage_gallery_icon": "写真/アイコン/絵文字を管理",
                 "export_friend_list": "フレンドリストをエクスポート",
@@ -208,27 +218,38 @@
                     "header": "アプリケーション",
                     "startup": "Windowsと一緒に起動",
                     "minimized": "最小化した状態で起動",
-                    "tray": "トレイに格納した状態で起動"
+                    "tray": "トレイに格納した状態で起動",
+                    "proxy": "プロキシ設定"
                 },
-                "game_log": {
-                    "header": "ゲームログ",
-                    "resource_load": "Udonのリソース負荷を記録"
+                "favorites": {
+                    "header": "お気に入りのフレンド",
+                    "group_placeholder": "グループを選択"
+                },
+                "logging": {
+                    "header": "ロギング",
+                    "resource_load": "Udonでの文字列/画像読み込みを記録",
+                    "empty_avatar": "フィードにアバターを名前なしで記録"
                 },
                 "automation": {
                     "header": "オートメーション",
                     "auto_state_change": "自動ステータス変更",
                     "auto_state_change_tooltip": "自身のいるインスタンスに他のプレイヤーがいる場合、自動的にステータスを変更します。 (1人/複数人)",
                     "auto_state_change_off": "無効",
-                    "auto_state_change_active_or_ask_me": "Active / Ask Me",
-                    "auto_state_change_active_or_busy": "Active / Busy",
-                    "auto_state_change_join_me_or_ask_me": "Join Me / Ask Me",
-                    "auto_state_change_join_me_or_busy": "Join Me / Busy",
-                    "auto_state_change_ask_me_or_busy": "Ask Me / Busy"
+                    "auto_state_change_active_or_ask_me": "オンライン / 居場所を隠す",
+                    "auto_state_change_active_or_busy": "オンライン / 取り込み中",
+                    "auto_state_change_join_me_or_ask_me": "参加歓迎 / 居場所を隠す",
+                    "auto_state_change_join_me_or_busy": "参加歓迎 / 取り込み中",
+                    "auto_state_change_ask_me_or_busy": "居場所を隠す / 取り込み中",
+                    "auto_invite_request_accept": "招待リクエストを自動許可",
+                    "auto_invite_request_accept_tooltip": "お気に入りに入れているフレンドからの招待リクエストを自動的に許可する",
+                    "auto_invite_request_accept_off": "オフ",
+                    "auto_invite_request_accept_favs": "全てのお気に入り",
+                    "auto_invite_request_accept_selected_favs": "お気に入りを選択"
                 },
                 "legal_notice": {
                     "header": "法律上の注意事項",
                     "info": "VRCXはVRChatのアシスタント用アプリケーションで、フレンドに関する情報の提供や管理を行うツールです。本アプリケーションは非公式の「VRChat API SDK」を使用しています。",
-                    "disclaimer1": "VRCXはVRChatによって承認されておらず、VRChatまたはVRChatの公式に関与する者の意見や見解を反映していません。VRChat及び関連する全てのプロパティはVRChat株式会社の商標または登録商標です。 VRChat © VRChat株式会社",
+                    "disclaimer1": "VRCXはVRChatによって承認されておらず、VRChatまたはVRChatの開発もしくは管理に公式に関与する者の見解や意見が反映されたものではありません。VRChatおよび関連するすべての財産はVRChat株式会社の商標または登録商標です。",
                     "disclaimer2": "pypyとNatsumiはVRCXの使用によって発生したいかなる問題にも責任を負いません。自己責任でご使用ください！",
                     "open_source_software_notice": "オープンソースソフトウェアに関する注意事項"
                 },
@@ -248,7 +269,9 @@
                     "theme_mode_pink": "ピンク",
                     "theme_mode_material3": "Material 3",
                     "vrcplus_profile_icons": "VRC+ プロフィールアイコン",
+                    "zoom": "ズーム",
                     "disable_tooltips": "ツールチップを無効化",
+                    "disable_nicknames": "メモニックネームを無効化",
                     "sort_favorite_by": "お気に入りを並び替え:",
                     "sort_favorite_by_name": "名前順",
                     "sort_favorite_by_date": "日付順",
@@ -269,7 +292,7 @@
                     "header": "サイドパネル",
                     "sorting": {
                         "header": "並び替え",
-                        "sort_private_to_bottom": "Privateを下に並び替え",
+                        "sort_private_to_bottom": "プライベートを下に並び替え",
                         "sort_by_status": "ステータスで並べ替え",
                         "sort_gps_to_top": "GPSで並べ替え",
                         "sort_gps_to_top_notice": "(オンラインのみ)",
@@ -310,6 +333,8 @@
                         "overlay_notifications": "通知オーバーレイ",
                         "notification_position": "通知の位置",
                         "xsoverlay_notifications": "XSOverlayで通知する",
+                        "ovrtoolkit_hud_notifications": "OVR Toolkit HUD上での通知",
+                        "ovrtoolkit_wrist_notifications": "OVR Toolkit 手首上での通知",
                         "user_images": "ユーザー画像を使用 (遅い)",
                         "notification_timeout": "通知のタイムアウト時間"
                     },
@@ -345,7 +370,7 @@
                     "menu": "メニュー: Viveコントローラーでの「メニューボタン」、Indexコントローラーでの「Bボタン」、Oculusコントローラーでの「Y/Bボタン」",
                     "steamvr_overlay": "SteamVR オーバーレイ",
                     "wrist_feed_overlay": "手首のフィードオーバーレイ",
-                    "hide_private_worlds": "Private ワールドを表示しない",
+                    "hide_private_worlds": "プライベートワールドを表示しない",
                     "start_overlay_with": "オーバーレイの起動タイミング",
                     "overlay_button": "オーバーレイボタン",
                     "overlay_button_grip": "グリップ",
@@ -357,7 +382,7 @@
                     "background_color": "背景に色を付ける",
                     "minimal_feed_icons": "小さいフィードアイコン",
                     "hide_vr_devices": "VRデバイスを表示しない",
-                    "hide_cpu_usage": "CPU使用率を表示しない",
+                    "show_cpu_usage": "CPU使用率を表示する",
                     "hide_game_uptime": "ゲームの起動時間を表示しない",
                     "show_pc_uptime": "PCの起動時間を表示する",
                     "wrist_feed_filters": "手首フィードフィルター"
@@ -370,8 +395,8 @@
                     "enable": "有効化",
                     "enable_tooltip": "競合を防ぐため、VRChatのconfig.jsonでDiscord Rich Presenceを無効化することを推奨します。",
                     "instance_type_player_count": "インスタンス詳細/プレイヤー数",
-                    "join_button": "Joinボタンを表示 (Publicのみ)",
-                    "hide_details_in_private": "Privateでは詳細を表示しない",
+                    "join_button": "Joinボタンを表示 (パブリックのみ)",
+                    "hide_details_in_private": "プライベートでは詳細を表示しない",
                     "hide_images": "ワールドの画像を表示しない"
                 }
             },
@@ -403,6 +428,10 @@
                         "header": "VRChat終了時にキャッシュを自動で管理する",
                         "description": "旧バージョンのキャッシュを自動削除"
                     },
+                    "disable_local_world_persistence": {
+                        "header": "ローカルでのワールド永続化を無効化",
+                        "description": "localhostのWebサーバーを無効化する (再起動が必要)"
+                    },
                     "remote_database": {
                         "header": "リモートアバターデータベース",
                         "enable": "有効化",
@@ -411,7 +440,8 @@
                     "youtube_api": {
                         "header": "Youtube API",
                         "enable": "有効化",
-                        "youtube_api_key": "Youtube APIキー"
+                        "youtube_api_key": "Youtube APIキー",
+                        "enable_tooltip": "ゲームログ用に動画のタイトルと、オーバーレイ用に動画の長さを取得する"
                     },
                     "video_progress_pie": {
                         "header": "動画のプログレスをオーバーレイ表示",
@@ -422,7 +452,7 @@
                     "screenshot_helper": {
                         "header": "スクリーンショット ヘルパー",
                         "description": "ゲーム内で撮影した写真のメタデータに「ワールドID」「ワールド名」「インスタンス内のプレイヤー」を保存します。",
-                        "description_tooltip": "残念ながら、Windowsは (ごく一部を除いた) PNGテキストチャンクの表示をサポートしていません。表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用してください。",
+                        "description_tooltip": "残念ながら、Windowsは (ごく一部を除いて) PNGテキストチャンクの表示をサポートしていません。表示するにはEXIFToolのようなコマンドラインツールや、PNGチャンクインスペクター、またはHEX エディタを使用してください。",
                         "enable": "有効化",
                         "modify_filename": "ファイル名を変更",
                         "modify_filename_tooltip": "スクリーンショットのファイル名にワールドIDを追加",
@@ -440,7 +470,7 @@
                         "udon_exception_logging": "Udonの例外エラーを記録",
                         "gpu_fix": "GPU Fixを有効化",
                         "gpu_fix_notice": "(再起動が必要です)",
-                        "gpu_fix_warning": "SteamVR オーバーレイが機能せず、2つ以上のGPUを使用している時のみこのオプションを有効化してください。",
+                        "gpu_fix_warning": "SteamVR オーバーレイが機能せず、なおかつ2つ以上のGPUを使用している時のみこのオプションを有効化してください。",
                         "disable_gamelog": "ゲームログを無効化",
                         "disable_gamelog_notice": "(何かが壊れる可能性があります)",
                         "user_cache": "ユーザーキャッシュ:",
@@ -516,14 +546,15 @@
     "dialog": {
         "user": {
             "status": {
-                "active": "Active",
-                "offline": "Offline",
-                "online": "Online",
-                "join_me": "Join Me",
-                "ask_me": "Ask Me",
-                "busy": "Do Not Disturb"
+                "active": "アクティブ",
+                "offline": "オフライン",
+                "online": "オンライン",
+                "join_me": "参加歓迎",
+                "ask_me": "居場所を隠す",
+                "busy": "取り込み中"
             },
             "previous_display_names": "以前の表示名:",
+            "pronouns": "代名詞",
             "tags": {
                 "friend_no": "フレンド No.{number}",
                 "vrchat_team": "VRChatのチーム"
@@ -537,6 +568,7 @@
                 "request_invite": "招待リクエストを送信",
                 "request_invite_with_message": "メッセージ付き招待リクエストを送信",
                 "invite_to_group": "グループに招待",
+                "send_boop": "Boopを送信",
                 "manage_gallery_icon": "ギャラリー/アイコンを管理",
                 "accept_friend_request": "フレンドリクエストを許可",
                 "decline_friend_request": "フレンドリクエストを拒否",
@@ -557,6 +589,7 @@
                 "edit_status": "ソーシャルステータスを変更",
                 "edit_language": "言語を変更",
                 "edit_bio": "自己紹介を変更",
+                "edit_pronouns": "代名詞を変更",
                 "report_hacking": "ハッキングを通報",
                 "unfriend": "フレンド解除",
                 "logout": "ログアウト"
@@ -569,6 +602,7 @@
                 "instance_queue": "待機列:",
                 "instance_users": "ユーザー数:",
                 "instance_game_version": "ゲームバージョン:",
+                "last_join": "最後のJoin:",
                 "instance_queuing_enabled": "待機列使用可能",
                 "instance_creator": "インスタンス作成者",
                 "note": "ノート (VRChat)",
@@ -582,6 +616,7 @@
                 "last_seen": "最後に見た日時",
                 "join_count": "Joinした回数",
                 "time_together": "一緒に居た時間",
+                "play_time": "プレイ時間",
                 "online_for": "オンライン時間",
                 "offline_for": "オフライン時間",
                 "last_activity": "最終活動時間",
@@ -590,6 +625,7 @@
                 "friended": "フレンドになった日",
                 "unfriended": "フレンド解除した日",
                 "avatar_cloning": "アバタークローン",
+                "booping": "Booping",
                 "avatar_cloning_allow": "許可",
                 "avatar_cloning_deny": "拒否",
                 "home_location": "ホームワールド",
@@ -599,7 +635,10 @@
                 "copy_url": "URLをコピー",
                 "copy_display_name": "表示名をコピー",
                 "accuracy_notice": "ローカルデータベースからの情報であり、正確ではない可能性があります。",
-                "instance_full": "満員"
+                "instance_full": "満員",
+                "instance_closed": "閉鎖済み",
+                "instance_hard_closed": "hard closed",
+                "close_instance": "インスタンスを閉じる"
             },
             "groups": {
                 "header": "グループ",
@@ -614,6 +653,7 @@
                 "sort_by": "並べ替え:",
                 "order_by": "表示順:",
                 "sorting": {
+                    "name": "名前",
                     "updated": "更新日",
                     "created": "作成日",
                     "favorites": "お気に入り数",
@@ -644,7 +684,7 @@
             "tags": {
                 "public": "パブリック",
                 "private": "プライベート",
-                "avatar_scaling_disabled": "Avatar Scaling 使用不可",
+                "avatar_scaling_disabled": "アバタースケーリング 使用不可",
                 "future_proofing": "Future Proofing",
                 "labs": "ラボ",
                 "cache": "キャッシュ",
@@ -807,8 +847,11 @@
                 "visibility_everyone": "表示範囲: 全員",
                 "visibility_friends": "表示範囲: フレンドのみ",
                 "visibility_hidden": "表示範囲: 自分のみ",
+                "create_post": "投稿を作成",
                 "moderation_tools": "管理用ツール",
-                "leave": "グループから抜ける"
+                "leave": "グループから抜ける",
+                "block": "グループをブロック",
+                "unblock": "グループをブロック解除"
             },
             "info": {
                 "header": "情報",
@@ -832,8 +875,12 @@
                 "role_permissions": "権限:"
             },
             "posts": {
-                "header": "アナウンス",
+                "header": "投稿",
                 "visibility": "表示範囲:",
+                "edited_at": "編集日時:",
+                "created_at": "作成日時:",
+                "edit_tooltip": "投稿を編集",
+                "delete_tooltip": "投稿を削除",
                 "edited_by": "編集者:",
                 "search_placeholder": "検索",
                 "posts_count": "投稿数: "
@@ -870,11 +917,15 @@
         "favorite": {
             "header": "グループを選択",
             "vrchat_favorites": "VRChatのお気に入り",
-            "local_favorites": "ローカルのお気に入り"
+            "local_favorites": "ローカルのお気に入り",
+            "local_avatar_favorites": "ローカルのお気に入り (VRC+が必要)"
         },
         "invite": {
             "header": "招待",
             "select_placeholder": "フレンドを選択",
+            "add_self": "自分を追加",
+            "add_friends_in_instance": "インスタンス内のフレンドを追加",
+            "add_favorite_friends": "お気に入りのフレンドを追加",
             "invite_with_message": "メッセージ付きで招待を送信",
             "invite": "招待を送信",
             "friends_in_instance": "インスタンス内のフレンド"
@@ -898,19 +949,24 @@
             "add_link": "リンクを追加",
             "update": "更新"
         },
+        "pronouns": {
+            "header": "代名詞",
+            "pronouns_placeholder": "代名詞を入力してください。",
+            "update": "更新"
+        },
         "new_instance": {
             "header": "新しいインスタンス",
             "access_type": "アクセスタイプ",
-            "access_type_public": "Public",
+            "access_type_public": "パブリック",
             "access_type_group": "グループ",
-            "access_type_friend_plus": "Friends+",
-            "access_type_friend": "Friend",
-            "access_type_invite_plus": "Invite+",
-            "access_type_invite": "Invite",
+            "access_type_friend_plus": "フレンド+",
+            "access_type_friend": "フレンド",
+            "access_type_invite_plus": "インバイト+",
+            "access_type_invite": "インバイト",
             "group_access_type": "グループアクセス",
-            "group_access_type_members": "メンバー",
+            "group_access_type_members": "メンバーのみ",
             "group_access_type_plus": "プラス",
-            "group_access_type_public": "Public",
+            "group_access_type_public": "パブリック",
             "region": "地域",
             "region_usw": "アメリカ西",
             "region_use": "アメリカ東",
@@ -934,6 +990,7 @@
             "queueEnabled": "キュー",
             "normal": "通常",
             "group": "グループ",
+            "legacy": "レガシー",
             "roles": "ロール"
         },
         "launch_options": {
@@ -997,6 +1054,7 @@
             "content_violence": "暴力",
             "content_adult": "成人向け",
             "content_sex": "性的要素",
+            "custom_tags_placeholder": "カスタムタグ",
             "select_all": "全て選択",
             "select_none": "選択解除",
             "cancel": "キャンセル",
@@ -1149,6 +1207,8 @@
         "invite_message": {
             "header": "メッセージ付き招待を送信",
             "confirmation": "本当に送信しますか？",
+            "select_image": "画像を選択",
+            "clear_selected_image": "選択した画像をクリア",
             "cancel": "キャンセル",
             "refresh": "更新",
             "confirm": "確定"
@@ -1184,14 +1244,19 @@
         },
         "gallery_icons": {
             "header": "ギャラリーとアイコン",
-            "description": "推奨画像サイズ: 1200x900px",
+            "description": "推奨画像サイズ: 1200x900px (4:3)",
             "gallery": "ギャラリー",
             "icons": "アイコン",
             "emojis": "絵文字",
             "refresh": "更新",
             "upload": "アップロード",
             "clear": "消去",
-            "emoji_animation_styles": "アニメーションスタイル"
+            "emoji_animation_styles": "アニメーションスタイル",
+            "emoji_animation_type": "アニメーション絵文字",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "フレーム数:",
+            "emoji_loop_pingpong": "Loop PingPong",
+            "flipbook_info": "アニメーション絵文字として使用する1024x1024のPNGスプライトシート画像を選択 (最大 64FPS)"
         },
         "change_content_image": {
             "avatar": "アバターの画像を変更",
@@ -1257,20 +1322,44 @@
         },
         "group_member_moderation": {
             "header": "グループメンバーを管理",
+            "filter_type": "種類でフィルタリング",
+            "select_type": "種類を選択",
+            "search_placeholder": "検索",
+            "members": "メンバー",
+            "bans": "BAN",
+            "invites": "招待",
+            "logs": "ログ",
+            "sent_invites": "送信した招待",
+            "join_requests": "参加リクエスト",
+            "blocked_requests": "ブロックしたリクエスト",
             "notes": "管理用ノート",
             "note_placeholder": "クリックしてノートを追加",
             "actions": "アクション",
             "kick": "キック",
             "ban": "BAN",
+            "unban": "BAN解除",
             "save_note": "ノートを保存",
+            "delete_sent_invite": "送信した招待を削除",
+            "delete_blocked_requests": "ブロックしたリクエストを削除",
+            "accept_join_requests": "参加リクエストを許可",
+            "reject_join_requests": "参加リクエストを拒否",
+            "block_join_requests": "参加リクエストをブロック",
             "group_members": "グループメンバー:",
             "progress": "進捗:",
             "display_name": "表示名",
             "visibility": "表示範囲",
             "avatar": "アバター",
             "joined_at": "参加日時",
+            "banned_at": "BANした日",
+            "created_at": "作成日時",
+            "type": "種類",
+            "description": "説明",
+            "data": "データ",
             "note": "ノート",
             "roles": "ロール",
+            "user_id": "ユーザーID",
+            "user_id_placeholder": "ユーザーIDを入力",
+            "select_user": "ユーザーを選択",
             "selected_users": "選択したユーザー",
             "select_all": "全て選択",
             "cancel": "キャンセル",
@@ -1278,6 +1367,28 @@
             "selected_roles": "選択したロール",
             "remove_roles": "ロールを削除",
             "add_roles": "ロールを追加"
+        },
+        "group_post_edit": {
+            "header": "投稿を作成/編集",
+            "title": "タイトル",
+            "message": "メッセージ",
+            "send_notification": "通知を送信",
+            "post_visibility": "投稿の表示範囲",
+            "visibility_public": "全員",
+            "visibility_group": "グループ",
+            "image": "画像",
+            "cancel": "キャンセル",
+            "create_post": "投稿を作成",
+            "edit_post": "投稿を編集"
+        },
+        "boop_dialog": {
+            "header": "Boop",
+            "emoji_manager": "絵文字を管理",
+            "select_emoji": "絵文字を選択",
+            "my_emojis": "自分の絵文字",
+            "default_emojis": "デフォルトの絵文字",
+            "cancel": "キャンセル",
+            "send": "送信"
         }
     },
     "prompt": {
@@ -1499,6 +1610,13 @@
             "cancel": "キャンセル",
             "save": "保存",
             "input_error": "有効な数字を入力してください。"
+        },
+        "proxy_settings": {
+            "header": "プロキシ設定",
+            "description": "プロキシサーバーのアドレスとポートを入力してください。",
+            "placeholder": "127.0.0.1:8080",
+            "close": "閉じる",
+            "restart": "再起動"
         }
     },
     "table": {

@@ -1,6 +1,6 @@
 mixin moderationTab()
     .x-container(v-show="$refs.menu && $refs.menu.activeIndex === 'moderation'" v-if="$refs.menu && $refs.menu.activeIndex === 'moderation'")
-        data-tables(v-bind="playerModerationTable" v-loading="API.isPlayerModerationsLoading")
+        data-tables(v-bind="playerModerationTable" ref="playerModerationTableRef" v-loading="API.isPlayerModerationsLoading")
             template(#tool)
                 div(style="margin:0 0 10px;display:flex;align-items:center")
                     el-select(v-model="playerModerationTable.filters[0].value" @change="saveTableFilters" multiple clearable collapse-tags style="flex:1" :placeholder="$t('view.moderation.filter_placeholder')")
