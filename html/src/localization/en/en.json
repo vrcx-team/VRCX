@@ -424,7 +424,7 @@
                         "header": "VRChat Quit Fix",
                         "description": "Kill VRChat after exiting game"
                     },
-                    "vrchat_quit_fix": {
+                    "vrchat_osc_fix": {
                         "header": "VRChat OSC Fix",
                         "description": "Kill install process after exiting game"
                     },
