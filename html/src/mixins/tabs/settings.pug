@@ -444,6 +444,7 @@ mixin settingsTab()
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.vrchat_quit_fix.description') }}
                         el-switch(v-model="vrcQuitFix" @change="saveOpenVROption")
                     //- Advanced | VRChat OSC Fix
+                    span.sub-header {{ $t('view.settings.advanced.advanced.vrchat_osc_fix.header') }}
                     div.options-container-item
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.vrchat_osc_fix.description') }}
                         el-switch(v-model="vrcOSCFix" @change="saveOpenVROption")
