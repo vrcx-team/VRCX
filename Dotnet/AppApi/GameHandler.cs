@@ -65,7 +65,7 @@ namespace VRCX
             foreach (var p in processes)
             {
                 // "E:\SteamLibrary\steamapps\common\VRChat\install.exe"
-                var match = Regex.Match(p.MainModule.FileName, "(.+?\\VRChat.*)(!?\\install.exe)");
+                var match = Regex.Match(p.MainModule.FileName, "(.+?\\\\VRChat.*)(!?\\\\install.exe)");
                 if (match.Success)
                 {
                     p.Kill();
