@@ -15,7 +15,7 @@ namespace VRCX
 
             CheckGameRunning();
         }
-        
+
         /// <summary>
         /// Checks if the VRChat game and SteamVR are currently running and updates the browser's JavaScript function $app.updateIsGameRunning with the results.
         /// </summary>
@@ -40,7 +40,7 @@ namespace VRCX
             if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
                 MainForm.Instance.Browser.ExecuteScriptAsync("$app.updateIsGameRunning", isGameRunning, isSteamVRRunning, isHmdAfk);
         }
-        
+
         /// <summary>
         /// Kills the VRChat process if it is currently running.
         /// </summary>
@@ -48,6 +48,19 @@ namespace VRCX
         public int QuitGame()
         {
             var processes = Process.GetProcessesByName("vrchat");
+            if (processes.Length == 1)
+                processes[0].Kill();
+
+            return processes.Length;
+        }
+
+        /// <summary>
+        /// Kills the install.exe process after exiting game.
+        /// </summary>
+        /// <returns>The number of processes that were killed (0 or 1).</returns>
+        public int KillInstall()
+        {
+            var processes = Process.GetProcessesByName("install");
             if (processes.Length == 1)
                 processes[0].Kill();
 
@@ -71,13 +84,13 @@ namespace VRCX
                     var path = match.Groups[1].Value;
                     // var _arguments = Uri.EscapeDataString(arguments);
                     Process.Start(new ProcessStartInfo
-                        {
-                            WorkingDirectory = path,
-                            FileName = $"{path}\\steam.exe",
-                            UseShellExecute = false,
-                            Arguments = $"-applaunch 438100 {arguments}"
-                        })
-                        ?.Close();
+                    {
+                        WorkingDirectory = path,
+                        FileName = $"{path}\\steam.exe",
+                        UseShellExecute = false,
+                        Arguments = $"-applaunch 438100 {arguments}"
+                    })
+                    ?.Close();
                     return true;
                 }
             }
