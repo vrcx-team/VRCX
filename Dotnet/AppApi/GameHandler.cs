@@ -57,14 +57,24 @@ namespace VRCX
         /// <summary>
         /// Kills the install.exe process after exiting game.
         /// </summary>
-        /// <returns>The number of processes that were killed (0 or 1).</returns>
-        public int KillInstall()
+        /// <returns>Whether the process is killed (true or false).</returns>
+        public bool KillInstall()
         {
+            bool isSuccess = false;
             var processes = Process.GetProcessesByName("install");
-            if (processes.Length == 1)
-                processes[0].Kill();
+            foreach (var p in processes)
+            {
+                // "E:\SteamLibrary\steamapps\common\VRChat\install.exe"
+                var match = Regex.Match(p.MainModule.FileName, "(.+?\\VRChat.*)(!?\\install.exe)");
+                if (match.Success)
+                {
+                    p.Kill();
+                    isSuccess = true;
+                    break;
+                }
+            }
 
-            return processes.Length;
+            return isSuccess;
         }
 
         /// <summary>

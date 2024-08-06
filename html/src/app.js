@@ -11271,13 +11271,11 @@ speechSynthesis.getVoices();
                 }
                 if (this.vrcOSCFix) {
                     setTimeout(() => {
-                        AppApi.KillInstall().then((processCount) => {
-                            if (processCount > 1) {
+                        AppApi.KillInstall().then((processKilled) => {
+                            if (processKilled) {
                                 console.log(
-                                    'OSCFix: More than 1 process running, not killing Install.exe'
+                                    'OSCFix: Killed Install.exe'
                                 );
-                            } else if (processCount === 1) {
-                                console.log('OSCFix: Killed Install.exe');
                             } else {
                                 console.log(
                                     'OSCFix: Nothing to kill, no Install.exe process running'
