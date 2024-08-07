@@ -11246,27 +11246,44 @@ speechSynthesis.getVoices();
                 database.addGamelogEventToDatabase(entry);
                 break;
             case 'vrc-quit':
-                if (!this.vrcQuitFix || !this.isGameRunning) {
+                if (!this.isGameRunning) {
                     break;
                 }
-                var bias = Date.parse(gameLog.dt) + 3000;
-                if (bias < Date.now()) {
-                    console.log('QuitFix: Bias too low, not killing VRC');
-                    break;
-                }
-                AppApi.QuitGame().then((processCount) => {
-                    if (processCount > 1) {
-                        console.log(
-                            'QuitFix: More than 1 process running, not killing VRC'
-                        );
-                    } else if (processCount === 1) {
-                        console.log('QuitFix: Killed VRC');
-                    } else {
-                        console.log(
-                            'QuitFix: Nothing to kill, no VRC process running'
-                        );
+                if (this.vrcQuitFix) {
+                    var bias = Date.parse(gameLog.dt) + 3000;
+                    if (bias < Date.now()) {
+                        console.log('QuitFix: Bias too low, not killing VRC');
+                        break;
                     }
-                });
+                    AppApi.QuitGame().then((processCount) => {
+                        if (processCount > 1) {
+                            console.log(
+                                'QuitFix: More than 1 process running, not killing VRC'
+                            );
+                        } else if (processCount === 1) {
+                            console.log('QuitFix: Killed VRC');
+                        } else {
+                            console.log(
+                                'QuitFix: Nothing to kill, no VRC process running'
+                            );
+                        }
+                    });
+                }
+                if (this.vrcOSCFix) {
+                    setTimeout(() => {
+                        AppApi.KillInstall().then((processKilled) => {
+                            if (processKilled) {
+                                console.log(
+                                    'OSCFix: Killed Install.exe'
+                                );
+                            } else {
+                                console.log(
+                                    'OSCFix: Nothing to kill, no Install.exe process running'
+                                );
+                            }
+                        });
+                    }, 2000);
+                }
                 break;
             case 'openvr-init':
                 this.isGameNoVR = false;
@@ -15394,6 +15411,10 @@ speechSynthesis.getVoices();
         'VRCX_vrcQuitFix',
         true
     );
+    $app.data.vrcOSCFix = await configRepository.getBool(
+        'VRCX_vrcOSCFix',
+        true
+    );
     $app.data.vrBackgroundEnabled = await configRepository.getBool(
         'VRCX_vrBackgroundEnabled',
         false
@@ -15573,6 +15594,7 @@ speechSynthesis.getVoices();
             this.relaunchVRChatAfterCrash
         );
         await configRepository.setBool('VRCX_vrcQuitFix', this.vrcQuitFix);
+        await configRepository.setBool('VRCX_vrcOSCFix', this.vrcOSCFix);
         await configRepository.setBool(
             'VRCX_vrBackgroundEnabled',
             this.vrBackgroundEnabled
