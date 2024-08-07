@@ -11270,12 +11270,10 @@ speechSynthesis.getVoices();
                     });
                 }
                 if (this.vrcOSCFix) {
-                    setTimeout(() => {
+                    workerTimers.setTimeout(() => {
                         AppApi.KillInstall().then((processKilled) => {
                             if (processKilled) {
-                                console.log(
-                                    'OSCFix: Killed Install.exe'
-                                );
+                                console.log('OSCFix: Killed Install.exe');
                             } else {
                                 console.log(
                                     'OSCFix: Nothing to kill, no Install.exe process running'
