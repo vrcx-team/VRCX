@@ -3864,10 +3864,12 @@ speechSynthesis.getVoices();
     // #region | API: PlayerModeration
 
     API.cachedPlayerModerations = new Map();
+    API.cachedPlayerModerationsUserIds = new Set();
     API.isPlayerModerationsLoading = false;
 
     API.$on('LOGIN', function () {
         this.cachedPlayerModerations.clear();
+        this.cachedPlayerModerationsUserIds.clear();
         this.isPlayerModerationsLoading = false;
         this.refreshPlayerModerations();
     });
@@ -3917,6 +3919,7 @@ speechSynthesis.getVoices();
                 });
             }
         }
+        this.cachedPlayerModerationsUserIds.delete(moderated);
     });
 
     API.applyPlayerModeration = function (json) {
@@ -3941,10 +3944,14 @@ speechSynthesis.getVoices();
             Object.assign(ref, json);
             ref.$isExpired = false;
         }
+        if (json.targetUserId) {
+            this.cachedPlayerModerationsUserIds.add(json.targetUserId);
+        }
         return ref;
     };
 
     API.expirePlayerModerations = function () {
+        this.cachedPlayerModerationsUserIds.clear();
         for (var ref of this.cachedPlayerModerations.values()) {
             ref.$isExpired = true;
         }
@@ -11162,12 +11169,20 @@ speechSynthesis.getVoices();
                 } catch (err) {
                     console.error(err);
                 }
-                if (userId) {
-                    this.gameLogApiLoggingEnabled = true;
-                    if (!API.cachedUsers.has(userId)) {
-                        API.getUser({ userId });
-                    }
+                if (!userId) {
+                    break;
                 }
+                this.gameLogApiLoggingEnabled = true;
+                if (
+                    API.cachedUsers.has(userId) ||
+                    API.cachedPlayerModerationsUserIds.has(userId)
+                ) {
+                    break;
+                }
+                if (this.debugGameLog || this.debugWebRequests) {
+                    console.log('Fetching user from gameLog:', userId);
+                }
+                API.getUser({ userId });
                 break;
             case 'avatar-change':
                 var ref = this.lastLocation.playerList.get(gameLog.displayName);
@@ -11328,7 +11343,7 @@ speechSynthesis.getVoices();
             return;
         }
         if (this.debugGameLog) {
-            console.log('Fetching userId for', displayName);
+            console.log('Searching for userId for:', displayName);
         }
         var params = {
             n: 5,
