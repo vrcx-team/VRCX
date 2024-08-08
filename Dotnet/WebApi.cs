@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Cookie = System.Net.Cookie;
+using System.Windows;
 
 namespace VRCX
 {
@@ -70,9 +71,18 @@ namespace VRCX
 
             if (string.IsNullOrEmpty(ProxyUrl))
                 return;
-            
-            ProxySet = true;
-            Proxy = new WebProxy(ProxyUrl);
+
+            try
+            {
+                ProxySet = true;
+                Proxy = new WebProxy(ProxyUrl);
+            }
+            catch (UriFormatException)
+            {
+                VRCXStorage.Instance.Set("VRCX_ProxyServer", string.Empty);
+                MessageBox.Show("The proxy server URI you used is invalid.\nVRCX will close, please correct the proxy URI.", "Invalid Proxy URI", MessageBoxButton.OK);
+                Environment.Exit(0);
+            }
         }
 
         internal void Exit()

@@ -22,7 +22,6 @@ mixin playerListTab()
                         el-tag.x-tag-platform-ios(v-if="currentInstanceWorld.isIOS" type="info" effect="plain" size="mini" style="margin-right:5px") iOS
                             span.x-grey(v-if="currentInstanceWorld.bundleSizes['ios']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ currentInstanceWorld.bundleSizes['ios'].fileSize }}
                         el-tag(v-if="currentInstanceWorld.avatarScalingDisabled" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
-                        el-tag(type="info" effect="plain" size="mini" v-text="currentInstanceWorld.fileSize" style="margin-right:5px")
                         el-tag(v-if="currentInstanceWorld.inCache" type="info" effect="plain" size="mini" style="margin-right:5px")
                             span(v-text="currentInstanceWorld.cacheSize")
                             |  {{ $t('dialog.world.tags.cache') }}

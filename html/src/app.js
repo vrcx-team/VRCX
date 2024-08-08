@@ -3864,10 +3864,12 @@ speechSynthesis.getVoices();
     // #region | API: PlayerModeration
 
     API.cachedPlayerModerations = new Map();
+    API.cachedPlayerModerationsUserIds = new Set();
     API.isPlayerModerationsLoading = false;
 
     API.$on('LOGIN', function () {
         this.cachedPlayerModerations.clear();
+        this.cachedPlayerModerationsUserIds.clear();
         this.isPlayerModerationsLoading = false;
         this.refreshPlayerModerations();
     });
@@ -3917,6 +3919,7 @@ speechSynthesis.getVoices();
                 });
             }
         }
+        this.cachedPlayerModerationsUserIds.delete(moderated);
     });
 
     API.applyPlayerModeration = function (json) {
@@ -3941,10 +3944,14 @@ speechSynthesis.getVoices();
             Object.assign(ref, json);
             ref.$isExpired = false;
         }
+        if (json.targetUserId) {
+            this.cachedPlayerModerationsUserIds.add(json.targetUserId);
+        }
         return ref;
     };
 
     API.expirePlayerModerations = function () {
+        this.cachedPlayerModerationsUserIds.clear();
         for (var ref of this.cachedPlayerModerations.values()) {
             ref.$isExpired = true;
         }
@@ -11162,12 +11169,20 @@ speechSynthesis.getVoices();
                 } catch (err) {
                     console.error(err);
                 }
-                if (userId) {
-                    this.gameLogApiLoggingEnabled = true;
-                    if (!API.cachedUsers.has(userId)) {
-                        API.getUser({ userId });
-                    }
+                if (!userId) {
+                    break;
                 }
+                this.gameLogApiLoggingEnabled = true;
+                if (
+                    API.cachedUsers.has(userId) ||
+                    API.cachedPlayerModerationsUserIds.has(userId)
+                ) {
+                    break;
+                }
+                if (this.debugGameLog || this.debugWebRequests) {
+                    console.log('Fetching user from gameLog:', userId);
+                }
+                API.getUser({ userId });
                 break;
             case 'avatar-change':
                 var ref = this.lastLocation.playerList.get(gameLog.displayName);
@@ -11246,27 +11261,42 @@ speechSynthesis.getVoices();
                 database.addGamelogEventToDatabase(entry);
                 break;
             case 'vrc-quit':
-                if (!this.vrcQuitFix || !this.isGameRunning) {
+                if (!this.isGameRunning) {
                     break;
                 }
-                var bias = Date.parse(gameLog.dt) + 3000;
-                if (bias < Date.now()) {
-                    console.log('QuitFix: Bias too low, not killing VRC');
-                    break;
-                }
-                AppApi.QuitGame().then((processCount) => {
-                    if (processCount > 1) {
-                        console.log(
-                            'QuitFix: More than 1 process running, not killing VRC'
-                        );
-                    } else if (processCount === 1) {
-                        console.log('QuitFix: Killed VRC');
-                    } else {
-                        console.log(
-                            'QuitFix: Nothing to kill, no VRC process running'
-                        );
+                if (this.vrcQuitFix) {
+                    var bias = Date.parse(gameLog.dt) + 3000;
+                    if (bias < Date.now()) {
+                        console.log('QuitFix: Bias too low, not killing VRC');
+                        break;
                     }
-                });
+                    AppApi.QuitGame().then((processCount) => {
+                        if (processCount > 1) {
+                            console.log(
+                                'QuitFix: More than 1 process running, not killing VRC'
+                            );
+                        } else if (processCount === 1) {
+                            console.log('QuitFix: Killed VRC');
+                        } else {
+                            console.log(
+                                'QuitFix: Nothing to kill, no VRC process running'
+                            );
+                        }
+                    });
+                }
+                if (this.vrcOSCFix) {
+                    workerTimers.setTimeout(() => {
+                        AppApi.KillInstall().then((processKilled) => {
+                            if (processKilled) {
+                                console.log('OSCFix: Killed Install.exe');
+                            } else {
+                                console.log(
+                                    'OSCFix: Nothing to kill, no Install.exe process running'
+                                );
+                            }
+                        });
+                    }, 2000);
+                }
                 break;
             case 'openvr-init':
                 this.isGameNoVR = false;
@@ -11313,7 +11343,7 @@ speechSynthesis.getVoices();
             return;
         }
         if (this.debugGameLog) {
-            console.log('Fetching userId for', displayName);
+            console.log('Searching for userId for:', displayName);
         }
         var params = {
             n: 5,
@@ -15394,6 +15424,10 @@ speechSynthesis.getVoices();
         'VRCX_vrcQuitFix',
         true
     );
+    $app.data.vrcOSCFix = await configRepository.getBool(
+        'VRCX_vrcOSCFix',
+        true
+    );
     $app.data.vrBackgroundEnabled = await configRepository.getBool(
         'VRCX_vrBackgroundEnabled',
         false
@@ -15573,6 +15607,7 @@ speechSynthesis.getVoices();
             this.relaunchVRChatAfterCrash
         );
         await configRepository.setBool('VRCX_vrcQuitFix', this.vrcQuitFix);
+        await configRepository.setBool('VRCX_vrcOSCFix', this.vrcOSCFix);
         await configRepository.setBool(
             'VRCX_vrBackgroundEnabled',
             this.vrBackgroundEnabled
