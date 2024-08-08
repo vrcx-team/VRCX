@@ -424,6 +424,10 @@
                         "header": "VRChat終了時の挙動を修正する",
                         "description": "ゲーム終了時、VRChatのプロセスを強制終了"
                     },
+                    "vrchat_osc_fix": {
+                        "header": "VRChatのOSCの挙動を修正する",
+                        "description": "ゲーム終了時、インストールプロセスを強制終了"
+                    },
                     "auto_cache_management": {
                         "header": "VRChat終了時にキャッシュを自動で管理する",
                         "description": "旧バージョンのキャッシュを自動削除"
@@ -688,11 +692,11 @@
                 "future_proofing": "Future Proofing",
                 "labs": "ラボ",
                 "cache": "キャッシュ",
-                "content_horror": "ホラー",
-                "content_gore": "ゴア",
-                "content_violence": "暴力",
-                "content_adult": "成人向け",
-                "content_sex": "性的要素"
+                "content_horror": "極度のホラー",
+                "content_gore": "過剰なゴア",
+                "content_violence": "写実的な暴力",
+                "content_adult": "成人向けの言葉やテーマ",
+                "content_sex": "性的なものを思わせる"
             },
             "actions": {
                 "delete_cache_tooltip": "キャッシュからワールドを削除",
@@ -766,11 +770,11 @@
                 "impostor": "インポスター",
                 "future_proofing": "Future Proofing",
                 "cache": "キャッシュ",
-                "content_horror": "ホラー",
-                "content_gore": "ゴア",
-                "content_violence": "暴力",
-                "content_adult": "成人向け",
-                "content_sex": "性的要素"
+                "content_horror": "極度のホラー",
+                "content_gore": "過剰なゴア",
+                "content_violence": "写実的な暴力",
+                "content_adult": "成人向けの言葉やテーマ",
+                "content_sex": "性的なものを思わせる"
             },
             "labels": {
                 "public": "(パブリック)",
@@ -1038,22 +1042,22 @@
             "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
             "author_tags": "タグ (コンマ区切り)",
             "content_tags": "コンテンツ タグ (コンマ区切り)",
-            "content_horror": "ホラー",
-            "content_gore": "グロ表現",
-            "content_violence": "暴力",
-            "content_adult": "成人向け",
-            "content_sex": "性的要素",
+            "content_horror": "極度のホラー",
+            "content_gore": "過剰なゴア",
+            "content_violence": "写実的な暴力",
+            "content_adult": "成人向けの言葉やテーマ",
+            "content_sex": "性的なものを思わせる",
             "cancel": "キャンセル",
             "save": "保存"
         },
         "set_avatar_tags": {
             "header": "アバタータグを設定",
             "content_tags": "コンテンツ警告タグ",
-            "content_horror": "ホラー",
-            "content_gore": "グロ表現",
-            "content_violence": "暴力",
-            "content_adult": "成人向け",
-            "content_sex": "性的要素",
+            "content_horror": "極度のホラー",
+            "content_gore": "過剰なゴア",
+            "content_violence": "写実的な暴力",
+            "content_adult": "成人向けの言葉やテーマ",
+            "content_sex": "性的なものを思わせる",
             "custom_tags_placeholder": "カスタムタグ",
             "select_all": "全て選択",
             "select_none": "選択解除",
