@@ -7,6 +7,7 @@
 using NLog;
 using NLog.Targets;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -133,6 +134,15 @@ namespace VRCX
             #endregion
             catch (Exception e)
             {
+                var cpuError = WinApi.GetCpuErrorMessage();
+                if (cpuError != null)
+                {
+                    var messageBoxResult = MessageBox.Show(cpuError.Value.Item1, "Potentially Faulty CPU Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    if (messageBoxResult == DialogResult.Yes)
+                    {
+                        Process.Start(cpuError.Value.Item2);
+                    }
+                }
                 logger.Fatal(e, "Unhandled Exception, program dying");
                 MessageBox.Show(e.ToString(), "PLEASE REPORT IN https://vrcx.app/discord", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(0);

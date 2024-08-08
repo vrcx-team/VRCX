@@ -424,6 +424,10 @@
                         "header": "VRChat Quit Fix",
                         "description": "Kill VRChat after exiting game"
                     },
+                    "vrchat_osc_fix": {
+                        "header": "VRChat OSC Fix",
+                        "description": "Kill install process after exiting game"
+                    },
                     "auto_cache_management": {
                         "header": "Automatically Manage Cache When Closing VRChat",
                         "description": "Auto delete old versions from cache"
