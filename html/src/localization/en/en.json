@@ -265,6 +265,7 @@
                     "theme_mode_system": "System",
                     "theme_mode_light": "Light",
                     "theme_mode_dark": "Dark",
+                    "theme_mode_darkvanillaold": "Dark Vanilla (old)",
                     "theme_mode_darkvanilla": "Dark Vanilla",
                     "theme_mode_pink": "Pink",
                     "theme_mode_material3": "Material 3",
