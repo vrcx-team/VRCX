@@ -18,7 +18,7 @@ module.exports = {
             dependOn: 'vendor'
         },
         'theme.dark': './src/theme.dark.scss',
-        'theme.darkvanillaold': './src/theme.darkvanilla.1.7.scss',
+        'theme.darkvanillaold': './src/theme.darkvanillaold.scss',
         'theme.darkvanilla': './src/theme.darkvanilla.scss',
         'theme.pink': './src/theme.pink.scss',
         'theme.material3': './src/theme.material3.scss',

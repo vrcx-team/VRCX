@@ -15692,6 +15692,11 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.changeThemeMode = async function () {
+        if (
+            document.contains(document.getElementById('app-theme-dark-style'))
+        ) {
+            document.getElementById('app-theme-dark-style').remove();
+        }
         if (document.contains(document.getElementById('app-theme-style'))) {
             document.getElementById('app-theme-style').remove();
         }
@@ -15704,7 +15709,11 @@ speechSynthesis.getVoices();
                 this.isDarkMode = false;
                 break;
             case 'dark':
-                $appThemeStyle.href = 'theme.dark.css';
+                $appThemeStyle.href = '';
+                this.isDarkMode = true;
+                break;
+            case 'darkvanillaold':
+                $appThemeStyle.href = 'theme.darkvanillaold.css';
                 this.isDarkMode = true;
                 break;
             case 'darkvanilla':
@@ -15720,21 +15729,22 @@ speechSynthesis.getVoices();
                 this.isDarkMode = true;
                 break;
             case 'system':
-                if (this.systemIsDarkMode()) {
-                    $appThemeStyle.href = 'theme.dark.css';
-                    this.isDarkMode = true;
-                } else {
-                    $appThemeStyle.href = '';
-                    this.isDarkMode = false;
-                }
+                this.isDarkMode = this.systemIsDarkMode();
                 break;
         }
         if (this.isDarkMode) {
             AppApi.ChangeTheme(1);
+            var $appThemeDarkStyle = document.createElement('link');
+            $appThemeDarkStyle.setAttribute('id', 'app-theme-dark-style');
+            $appThemeDarkStyle.rel = 'stylesheet';
+            $appThemeDarkStyle.href = 'theme.dark.css';
+            document.head.appendChild($appThemeDarkStyle);
         } else {
             AppApi.ChangeTheme(0);
         }
-        document.head.appendChild($appThemeStyle);
+        if ($appThemeStyle.href) {
+            document.head.appendChild($appThemeStyle);
+        }
         this.updateVRConfigVars();
         await this.updatetrustColor();
     };
