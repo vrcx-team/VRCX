@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using CefSharp;
 using Microsoft.Win32;
@@ -66,13 +68,12 @@ namespace VRCX
             var processes = Process.GetProcessesByName("install");
             foreach (var p in processes)
             {
-                // Sometimes install.exe is suspended
-                ResumeProcess(p.Id);
-
                 // "E:\SteamLibrary\steamapps\common\VRChat\install.exe"
-                var match = Regex.Match(p.MainModule.FileName, "(.+?\\\\VRChat.*)(!?\\\\install.exe)");
+                var match = Regex.Match(GetProcessName(p.Id), "(.+?\\\\VRChat.*)(!?\\\\install.exe)");
                 if (match.Success)
                 {
+                    // Sometimes install.exe is suspended
+                    ResumeProcess(p.Id);
                     p.Kill();
                     isSuccess = true;
                     break;
@@ -84,6 +85,9 @@ namespace VRCX
 
         [DllImport("ntdll.dll")]
         private static extern uint NtResumeProcess([In] IntPtr processHandle);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern bool QueryFullProcessImageName(IntPtr hProcess, uint dwFlags, [Out, MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpExeName, ref uint lpdwSize);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr OpenProcess(uint processAccess, bool inheritHandle, int processId);
@@ -109,6 +113,35 @@ namespace VRCX
                 if (hProc != IntPtr.Zero)
                     CloseHandle(hProc);
             }
+        }
+
+        public static string GetProcessName(int pid)
+        {
+            IntPtr hProc = IntPtr.Zero;
+            try
+            {
+                // 0x400 mean required to retrieve certain information about a process, such as its token, exit code, and priority class.
+                // 0x10 mean required to read memory in a process using ReadProcessMemory.
+                hProc = OpenProcess(0x0400 | 0x10, false, pid);
+                if (hProc != IntPtr.Zero)
+                {
+                    int lengthSb = 4000;
+                    uint lpSize = 65535;
+                    var sb = new StringBuilder(lengthSb);
+                    string result = String.Empty;
+                    if (QueryFullProcessImageName(hProc, 0, sb, ref lpSize))
+                    {
+                        result = sb.ToString();
+                    }
+                    return result;
+                }
+            }
+            finally
+            {
+                if (hProc != IntPtr.Zero)
+                    CloseHandle(hProc);
+            }
+            return String.Empty;
         }
 
         /// <summary>
