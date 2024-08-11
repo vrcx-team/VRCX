@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -122,7 +121,7 @@ namespace VRCX
             {
                 // 0x400 mean required to retrieve certain information about a process, such as its token, exit code, and priority class.
                 // 0x10 mean required to read memory in a process using ReadProcessMemory.
-                hProc = OpenProcess(0x0400 | 0x10, false, pid);
+                hProc = OpenProcess(0x400 | 0x10, false, pid);
                 if (hProc != IntPtr.Zero)
                 {
                     int lengthSb = 4000;
