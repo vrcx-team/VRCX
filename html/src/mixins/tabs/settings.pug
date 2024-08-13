@@ -147,14 +147,17 @@ mixin settingsTab()
                                 el-dropdown-item(v-for="(obj, language) in $i18n.messages" v-text="obj.language" @click.native="changeAppLanguage(language)")
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.theme_mode') }}
-                        el-radio-group(v-model="themeMode" size="mini" @change="saveThemeMode")
-                            el-radio-button(label="system") {{ $t('view.settings.appearance.appearance.theme_mode_system') }}
-                            el-radio-button(label="light") {{ $t('view.settings.appearance.appearance.theme_mode_light') }}
-                            el-radio-button(label="dark") {{ $t('view.settings.appearance.appearance.theme_mode_dark') }}
-                            el-radio-button(label="darkvanillaold") {{ $t('view.settings.appearance.appearance.theme_mode_darkvanillaold') }}
-                            el-radio-button(label="darkvanilla") {{ $t('view.settings.appearance.appearance.theme_mode_darkvanilla') }}
-                            el-radio-button(label="pink") {{ $t('view.settings.appearance.appearance.theme_mode_pink') }}
-                            el-radio-button(label="material3") {{ $t('view.settings.appearance.appearance.theme_mode_material3') }}
+                        el-dropdown(@click.native.stop trigger="click" size="small")
+                            el-button(size="mini")
+                                span {{ $t(`view.settings.appearance.appearance.theme_mode_${themeMode}`) }} #[i.el-icon-arrow-down.el-icon--right]
+                            el-dropdown-menu(#default="dropdown")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_system')" @click.native="saveThemeMode('system')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_light')" @click.native="saveThemeMode('light')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_dark')" @click.native="saveThemeMode('dark')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_darkvanillaold')" @click.native="saveThemeMode('darkvanillaold')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_darkvanilla')" @click.native="saveThemeMode('darkvanilla')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_pink')" @click.native="saveThemeMode('pink')")
+                                el-dropdown-item(v-text="$t('view.settings.appearance.appearance.theme_mode_material3')" @click.native="saveThemeMode('material3')")
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.zoom') }}
                         el-input-number(size="small" v-model="zoomLevel" @change="setZoomLevel" :precision="0" style="width:128px")
@@ -162,11 +165,11 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.appearance.appearance.vrcplus_profile_icons') }}
                         el-switch(v-model="displayVRCPlusIconsAsAvatar" @change="saveOpenVROption")
                     div.options-container-item
-                        span.name {{ $t('view.settings.appearance.appearance.disable_nicknames') }}
-                        el-switch(v-model="hideNicknames" @change="saveOpenVROption")
+                        span.name {{ $t('view.settings.appearance.appearance.nicknames') }}
+                        el-switch(v-model="hideNicknames" :active-value="false" :inactive-value="true" @change="saveOpenVROption")
                     div.options-container-item
-                        span.name {{ $t('view.settings.appearance.appearance.disable_tooltips') }}
-                        el-switch(v-model="hideTooltips" @change="saveOpenVROption")
+                        span.name {{ $t('view.settings.appearance.appearance.tooltips') }}
+                        el-switch(v-model="hideTooltips" :active-value="false" :inactive-value="true" @change="saveOpenVROption")
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.appearance.sort_favorite_by') }}
                         el-switch(v-model="sortFavorites" :inactive-text="$t('view.settings.appearance.appearance.sort_favorite_by_name')" :active-text="$t('view.settings.appearance.appearance.sort_favorite_by_date')" @change="saveSortFavoritesOption")
@@ -224,11 +227,11 @@ mixin settingsTab()
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_dialog.header') }}
                     div.options-container-item
-                        span.name {{ $t('view.settings.appearance.user_dialog.hide_vrchat_notes') }}
-                        el-switch(v-model="hideUserNotes" @change="saveUserDialogOption")
+                        span.name {{ $t('view.settings.appearance.user_dialog.vrchat_notes') }}
+                        el-switch(v-model="hideUserNotes" :active-value="false" :inactive-value="true" @change="saveUserDialogOption")
                     div.options-container-item
-                        span.name {{ $t('view.settings.appearance.user_dialog.hide_vrcx_memos') }}
-                        el-switch(v-model="hideUserMemos" @change="saveUserDialogOption")
+                        span.name {{ $t('view.settings.appearance.user_dialog.vrcx_memos') }}
+                        el-switch(v-model="hideUserMemos" :active-value="false" :inactive-value="true" @change="saveUserDialogOption")
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.user_dialog.export_vrcx_memos_into_vrchat_notes') }}
                         br
@@ -366,20 +369,20 @@ mixin settingsTab()
                             el-radio-button(label="2") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_right') }}
                             el-radio-button(label="0") {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.display_overlay_on_both') }}
                     div.options-container-item
-                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.background_color') }}
+                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.grey_background') }}
                         el-switch(v-model="vrBackgroundEnabled" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
                         span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.minimal_feed_icons') }}
                         el-switch(v-model="minimalFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
-                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_vr_devices') }}
-                        el-switch(v-model="hideDevicesFromFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
+                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_vr_devices') }}
+                        el-switch(v-model="hideDevicesFromFeed" @change="saveOpenVROption" :active-value="false" :inactive-value="true" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
                         span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_cpu_usage') }}
                         el-switch(v-model="vrOverlayCpuUsage" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
-                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.hide_game_uptime') }}
-                        el-switch(v-model="hideUptimeFromFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
+                        span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_game_uptime') }}
+                        el-switch(v-model="hideUptimeFromFeed" @change="saveOpenVROption" :active-value="false" :inactive-value="true" :disabled="!openVR || !overlayWrist")
                     div.options-container-item
                         span.name {{ $t('view.settings.wrist_overlay.steamvr_wrist_overlay.show_pc_uptime') }}
                         el-switch(v-model="pcUptimeOnFeed" @change="saveOpenVROption" :disabled="!openVR || !overlayWrist")
@@ -398,14 +401,14 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.discord_presence.discord_presence.instance_type_player_count') }}
                         el-switch(v-model="discordInstance" @change="saveDiscordOption" :disabled="!discordActive")
                     div.options-container-item
-                        span.name {{ $t('view.settings.discord_presence.discord_presence.hide_details_in_private') }}
-                        el-switch(v-model="discordHideInvite" @change="saveDiscordOption" :disabled="!discordActive")
+                        span.name {{ $t('view.settings.discord_presence.discord_presence.show_details_in_private') }}
+                        el-switch(v-model="discordHideInvite" @change="saveDiscordOption" :active-value="false" :inactive-value="true" :disabled="!discordActive")
                     div.options-container-item
                         span.name {{ $t('view.settings.discord_presence.discord_presence.join_button') }}
                         el-switch(v-model="discordJoinButton" @change="saveDiscordOption" :disabled="!discordActive")
                     div.options-container-item
-                        span.name {{ $t('view.settings.discord_presence.discord_presence.hide_images') }}
-                        el-switch(v-model="discordHideImage" @change="saveDiscordOption" :disabled="!discordActive")
+                        span.name {{ $t('view.settings.discord_presence.discord_presence.show_images') }}
+                        el-switch(v-model="discordHideImage" @change="saveDiscordOption" :active-value="false" :inactive-value="true" :disabled="!discordActive")
             //- "Advanced" Tab
             el-tab-pane(:label="$t('view.settings.category.advanced')")
                 //- Advanced | Advanced
@@ -455,10 +458,10 @@ mixin settingsTab()
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.auto_cache_management.description') }}
                         el-switch(v-model="autoSweepVRChatCache" @change="saveOpenVROption")
                     //- Advanced | Disable local world database
-                    span.sub-header {{ $t('view.settings.advanced.advanced.disable_local_world_persistence.header') }}
+                    span.sub-header {{ $t('view.settings.advanced.advanced.local_world_persistence.header') }}
                     div.options-container-item
-                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.disable_local_world_persistence.description') }}
-                        el-switch(v-model="disableWorldDatabase" @change="saveVRCXWindowOption")
+                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.local_world_persistence.description') }}
+                        el-switch(v-model="disableWorldDatabase" :active-value="false" :inactive-value="true" @change="saveVRCXWindowOption")
                 //- Advanced | Remote Avatar Database
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.remote_database.header') }}
