@@ -5,7 +5,7 @@
 
 :root {
     --ThemeName: 'Dark Vanilla';
-    --ThemeVers: '2.0';
+    --ThemeVers: '2.0.1';
     --ThemeAuth: 'MintLily';
 
     --dv_bright: #eecce0;
@@ -643,7 +643,6 @@ i[class='el-icon-star-off']:not(.el-menu-item div.el-tooltip i) {
 }
 
 .el-dialog__wrapper[style^='z-index: '] {
-    backdrop-filter: blur(8px);
     background-color: rgba(0, 0, 0, 0.4);
 }
 
