@@ -91,7 +91,11 @@
                 "new_group": "Новая Группа"
             },
             "avatars": {
-                "header": "Аватары"
+                "header": "Аватары",
+                "search": "Поиск",
+                "vrchat_favorites": "Избранное VRChat",
+                "local_favorites": "Локальное избранное (Требует VRC+)",
+                "new_group": "Новая Группа"
             },
             "bulk_unfavorite_mode": "Массовый режим удаления избранного",
             "bulk_unfavorite_selection": "Удалить выбранное",
@@ -106,7 +110,8 @@
             "delete_tooltip": "Удалить",
             "unavailable_tooltip": "Недоступен",
             "private": "Приватный",
-            "sort_by": "Сортировать по"
+            "sort_by": "Сортировать по",
+            "select_avatar_tooltip": "Выбрать Аватар"
         },
         "friend_log": {
             "filter_placeholder": "Фильтр",
@@ -211,7 +216,8 @@
                     "header": "Приложение",
                     "startup": "Запускать при старте Windows",
                     "minimized": "Запускать в свернутом режиме",
-                    "tray": "Сворачивать в трей"
+                    "tray": "Сворачивать в трей",
+                    "proxy": "Настройки прокси-сервера"
                 },
                 "favorites": {
                     "header": "Избранные друзья",
@@ -596,6 +602,7 @@
                 "instance_users": "Пользователи:",
                 "instance_game_version": "Версия игры:",
                 "instance_queuing_enabled": "Очередь включена",
+                "last_join": "Последний заход:",
                 "instance_creator": "Создатель инстанса",
                 "note": "Заметка VRC",
                 "note_placeholder": "Нажмите, чтобы добавить заметку",
@@ -1004,7 +1011,7 @@
             "delete_old_cache": "Удалить старые версии из кэша",
             "sweep_cache": "Удалить кэш",
             "max_cache_size": "Макс. размер кэша [GB] (мин. 20)",
-            "cache_expiry_delay": "Срок действия кэша [Days] (30 – 150)",
+            "cache_expiry_delay": "Срок действия кэша [Дни] (min 30)",
             "cache_directory": "Местоположение папки кэша",
             "picture_directory": "Местоположение папки картинок",
             "fpv_steadycam_fov": "Угол обзора Steadycam от первого лица",
@@ -1313,6 +1320,9 @@
         },
         "group_member_moderation": {
             "header": "Модерация участников группы",
+            "filter_type": "Тип фильтра",
+            "select_type": "Выбрать тип",
+            "search_placeholder": "Поиск",
             "members": "Участник",
             "bans": "Баны",
             "invites": "Приглашения",
@@ -1598,6 +1608,13 @@
             "cancel": "Отмена",
             "save": "Сохранить",
             "input_error": "Требуется корректное число"
+        },
+        "proxy_settings": {
+            "header": "Настройки прокси-сервера",
+            "description": "Введите адрес и порт прокси-сервераt",
+            "placeholder": "127.0.0.1:8080",
+            "close": "Закрыть",
+            "restart": "Перезапустить"
         }
     },
     "table": {
