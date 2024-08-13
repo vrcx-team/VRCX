@@ -427,7 +427,7 @@
                     },
                     "vrchat_osc_fix": {
                         "header": "VRChat OSC Fix",
-                        "description": "Kill install process after exiting game"
+                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
                     },
                     "auto_cache_management": {
                         "header": "Automatically Manage Cache When Closing VRChat",
