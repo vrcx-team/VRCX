@@ -298,7 +298,9 @@ namespace VRCX
         {
             try
             {
+#pragma warning disable SYSLIB0014 // Type or member is obsolete
                 var request = WebRequest.CreateHttp((string)options["url"]);
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
                 if (ProxySet)
                     request.Proxy = Proxy;
                 
