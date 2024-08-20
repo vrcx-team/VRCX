@@ -265,14 +265,14 @@
                     "theme_mode_system": "Sistema",
                     "theme_mode_light": "Claro",
                     "theme_mode_dark": "Oscuro",
-                    "theme_mode_darkvanillaold": "Vainilla Oscura (viejo)",
-                    "theme_mode_darkvanilla": "Vainilla Oscura",
+                    "theme_mode_darkvanillaold": "Dark Vanilla (old)",
+                    "theme_mode_darkvanilla": "Dark Vanilla",
                     "theme_mode_pink": "Rosa",
                     "theme_mode_material3": "Material 3",
                     "zoom": "Zoom",
                     "vrcplus_profile_icons": "Iconos de perfil VRCPlus",
-                    "disable_tooltips": "Deshabilitar las descripciones emergentes",
-                    "disable_nicknames": "Desactivar apodos",
+                    "tooltips": "Tooltips",
+                    "nicknames": "Memo Nicknames",
                     "sort_favorite_by": "Ordenar Favoritos por",
                     "sort_favorite_by_name": "nombre",
                     "sort_favorite_by_date": "fecha",
@@ -314,8 +314,8 @@
                 },
                 "user_dialog": {
                     "header": "Diálogo del usuario",
-                    "hide_vrchat_notes": "Ocultar notas de VRChat",
-                    "hide_vrcx_memos": "Ocultar notas de VRCX",
+                    "vrchat_notes": "VRChat Notes",
+                    "vrcx_memos": "VRCX Memos",
                     "export_vrcx_memos_into_vrchat_notes": "Exportar las notas de VRCX a las notas de VRChat",
                     "export_notes": "Exportar notas"
                 },
@@ -352,7 +352,7 @@
                         "desktop_notification_while_afk": "Notificaciones de escritorio mientras se está AFK"
                     },
                     "text_to_speech": {
-                        "header": "Opciones de Texto a Voz",
+                        "header": "Text-To-Speech",
                         "when_to_play": "Notificaciones TTS. Cuándo se reproduce",
                         "when_to_play_never": "Nunca",
                         "when_to_play_inside_vr": "Dentro de VR",
@@ -366,7 +366,7 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "Overlay de muñeca SteamVR",
-                    "description": "* Se ejecuta automáticamente cuando VRChat se está ejecutando.",
+                    "description": "* Runs automatically while VRChat is running.",
                     "grip": "Agarre: Grip para Vive u otros mandos, Oculus botones X/A",
                     "menu": "Menú: Menú Vive, Index B, Oculus botones Y/B",
                     "steamvr_overlay": "Overlay de SteamVR",
@@ -379,12 +379,12 @@
                     "display_overlay_on": "Mostrar Overlay en",
                     "display_overlay_on_left": "Mano izquierda",
                     "display_overlay_on_right": "Mano derecha",
-                    "display_overlay_on_both": "Ambas manos",
-                    "background_color": "Color de fondo",
+                    "display_overlay_on_both": "Both Hands",
+                    "grey_background": "Grey Background",
                     "minimal_feed_icons": "Iconos de Actividad minimalistas",
-                    "hide_vr_devices": "Ocultar dispositivos VR",
+                    "show_vr_devices": "Show VR Devices",
                     "show_cpu_usage": "Mostrar uso de CPU",
-                    "hide_game_uptime": "Ocultar tiempo de juego",
+                    "show_game_uptime": "Show Game Uptime",
                     "show_pc_uptime": "Mostrar tiempo de actividad del PC",
                     "wrist_feed_filters": "Filtros de Actividad en la muñeca"
                 }
@@ -392,13 +392,13 @@
             "discord_presence": {
                 "discord_presence": {
                     "header": "Rich Presence de Discord",
-                    "description": "* Sólo funciona cuando VRChat se está ejecutando.",
+                    "description": "* Only active while VRChat is running.",
                     "enable": "Habilitar",
                     "enable_tooltip": "Es recomendable desactivar la Presencia en el config.json de VRChat para evitar conflictos",
                     "instance_type_player_count": "Tipo de instancia/jugadores en instancia",
                     "join_button": "Botón de unirse (sólo instancias públicas)",
-                    "hide_details_in_private": "Ocultar detalles de mundos privados",
-                    "hide_images": "Ocultar imágenes del mundo"
+                    "show_details_in_private": "Show world details in private",
+                    "show_images": "Show world images"
                 }
             },
             "advanced": {
@@ -425,13 +425,17 @@
                         "header": "Solución para salir de VRChat",
                         "description": "Forzar el cerrado de VRChat despues de salir del juego"
                     },
+                    "vrchat_osc_fix": {
+                        "header": "VRChat OSC Fix",
+                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
+                    },
                     "auto_cache_management": {
                         "header": "Gestionar Caché Automáticamente al Cerrar VRChat",
                         "description": "Eliminar automáticamente versiones antiguas de la caché"
                     },
-                    "disable_local_world_persistence": {
-                        "header": "Disable Local World Persistence",
-                        "description": "Disable localhost webserver (requires restart)"
+                    "local_world_persistence": {
+                        "header": "Local World Persistence",
+                        "description": "Localhost webserver (requires restart)"
                     },
                     "remote_database": {
                         "header": "Base de Datos de Avatares Remotos",
@@ -441,7 +445,7 @@
                     "youtube_api": {
                         "header": "API de YouTube",
                         "enable": "Habilitar",
-                        "youtube_api_key": "Clave de la API de YouTube",
+                        "youtube_api_key": "Clave del API de YouTube",
                         "enable_tooltip": "Obtiene títulos de vídeo para utilizarlos con gameLog y la duración de la barra de progreso superpuesta"
                     },
                     "video_progress_pie": {
@@ -588,7 +592,7 @@
                 "moderation_enable_avatar_interaction": "Habilitar interacciones de avatar",
                 "moderation_disable_avatar_interaction": "Deshabilita las Interacciones con el Avatar",
                 "edit_status": "Estatus social",
-                "edit_language": "Idiomas",
+                "edit_language": "Idioma",
                 "edit_bio": "Biografía",
                 "edit_pronouns": "Pronombres",
                 "report_hacking": "Reportar por Hacking",
@@ -879,7 +883,7 @@
                 "header": "Publicaciónes",
                 "visibility": "Visibilidad:",
                 "edited_at": "Editado en:",
-                "created_at": "Creado en:",
+                "created_at": "Creado el:",
                 "edit_tooltip": "Editar publicación",
                 "delete_tooltip": "Eliminar publicación",
                 "edited_by": "Editado por:",
@@ -938,7 +942,7 @@
             "update": "Actualizar"
         },
         "language": {
-            "header": "Idiomas",
+            "header": "Idioma",
             "add_language": "Añadir Idioma",
             "select_language": "Seleccionar idioma",
             "ok": "Aceptar",
@@ -1112,8 +1116,8 @@
             "favorite": "Favoritos",
             "friends": "Amigos",
             "everyone": "Todo el mundo",
-            "cancel": "Cancelar",
-            "save": "Guardar"
+            "reset": "Restablecer",
+            "close": "Cerrar"
         },
         "world_export": {
             "header": "Exportar Mundos Favoritos"
@@ -1208,7 +1212,7 @@
         "invite_message": {
             "header": "Enviar Mensaje de Invitación",
             "confirmation": "¿Estás seguro de que lo quieres enviar?",
-            "select_image": "Seleccionar imagen",
+            "select_image": "Seleccionar Imagen",
             "clear_selected_image": "Quitar imagen seleccionada",
             "cancel": "Cancelar",
             "refresh": "Refrescar",
@@ -1326,7 +1330,7 @@
             "filter_type": "Tipo de filtro",
             "select_type": "Seleccionar tipo",
             "search_placeholder": "Buscar",
-            "members": "Members",
+            "members": "Miembros",
             "bans": "Bans",
             "invites": "Invites",
             "logs": "Logs",
@@ -1352,35 +1356,35 @@
             "avatar": "Avatar",
             "joined_at": "Se unió el",
             "banned_at": "Banned At",
-            "created_at": "Created At",
-            "type": "Type",
+            "created_at": "Creado el",
+            "type": "Tipo",
             "description": "Description",
             "data": "Data",
             "note": "Nota",
             "roles": "Roles",
-            "user_id": "User ID",
+            "user_id": "ID de usuario",
             "user_id_placeholder": "Enter User ID(s)",
             "select_user": "Select User",
-            "selected_users": "Selected Users",
-            "select_all": "Select All",
-            "cancel": "Cancel",
-            "choose_roles_placeholder": "Choose Roles",
-            "selected_roles": "Selected Roles",
-            "remove_roles": "Remove Roles",
-            "add_roles": "Add Roles"
+            "selected_users": "Usuarios seleccionados",
+            "select_all": "Seleccionar todos",
+            "cancel": "Cancelar",
+            "choose_roles_placeholder": "Seleccionar roles",
+            "selected_roles": "Roles seleccionados",
+            "remove_roles": "Quitar roles",
+            "add_roles": "Añadir roles"
         },
         "group_post_edit": {
             "header": "Create/Edit Post",
             "title": "Title",
-            "message": "Message",
+            "message": "Mensaje",
             "send_notification": "Send Notification",
             "post_visibility": "Post Visibility",
-            "visibility_public": "Public",
-            "visibility_group": "Group",
-            "image": "Image",
-            "cancel": "Cancel",
-            "create_post": "Create Post",
-            "edit_post": "Edit Post"
+            "visibility_public": "Públicos",
+            "visibility_group": "Grupos",
+            "image": "Imagen",
+            "cancel": "Cancelar",
+            "create_post": "Crear publicación",
+            "edit_post": "Editar publicación"
         },
         "boop_dialog": {
             "header": "Boop",
@@ -1644,7 +1648,7 @@
             "displayName": "Mostrar nombre",
             "status": "Estado",
             "rank": "Rango",
-            "language": "Idiomas",
+            "language": "Idioma",
             "bioLink": "Enlaces",
             "date": "Fecha",
             "user": "Usuario",
@@ -1678,14 +1682,14 @@
             "displayName": "Mostrar nombre",
             "rank": "Rango",
             "status": "Estado",
-            "language": "Idiomas",
+            "language": "Idioma",
             "bioLink": "Enlaces",
-            "joinCount": "N.º de uniones",
-            "timeTogether": "Tiempo juntos",
-            "lastSeen": "Última vez visto",
-            "lastActivity": "Última actividad",
-            "lastLogin": "Último inicio de sesión",
-            "dateJoined": "Fecha de registro",
+            "joinCount": "Número de uniones",
+            "timeTogether": "Tiempo Juntos",
+            "lastSeen": "Última Vez Visto",
+            "lastActivity": "Última Actividad",
+            "lastLogin": "Último Inicio De Sesión",
+            "dateJoined": "Fecha De Registro",
             "unfriend": "Eliminar amigo"
         },
         "profile": {

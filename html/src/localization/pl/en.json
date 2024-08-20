@@ -20,6 +20,8 @@
             "login": "Zaloguj się",
             "register": "Zarejestruj się",
             "forgotPassword": "Nie pamiętasz hasła?",
+            "updater": "Aktualizacja",
+            "proxy_settings": "Ustawienia proxy",
             "field": {
                 "username": "Nazwa użytkownika lub e-mail",
                 "password": "Hasło",
@@ -85,12 +87,17 @@
             },
             "worlds": {
                 "header": "Światy",
+                "search": "Szukaj",
                 "vrchat_favorites": "Ulubione VRChat",
                 "local_favorites": "Ulubione lokalne",
                 "new_group": "Nowa grupa"
             },
             "avatars": {
-                "header": "Awatary"
+                "header": "Awatary",
+                "search": "Szukaj",
+                "vrchat_favorites": "Ulubione VRChat",
+                "local_favorites": "Lokalne ulubione (wymaga VRC+)",
+                "new_group": "Nowa grupa"
             },
             "bulk_unfavorite_mode": "Masowe usuwanie ulubionych",
             "bulk_unfavorite_selection": "Usuń zaznaczone ulubione",
@@ -105,7 +112,8 @@
             "delete_tooltip": "Usuń",
             "unavailable_tooltip": "Niedostępny",
             "private": "Prywatne",
-            "sort_by": "Sortuj wg"
+            "sort_by": "Sortuj wg",
+            "select_avatar_tooltip": "Wybierz awatar"
         },
         "friend_log": {
             "filter_placeholder": "Filtruj",
@@ -141,6 +149,8 @@
                 "two_factor": "Autoryzacja dwuetapowa (2FA)",
                 "two_factor_enabled": "Włączona",
                 "two_factor_disabled": "Wyłączona",
+                "v_bucks": "Kredyty VRChat",
+                "refresh": "Kliknij, aby odświeżyć",
                 "logout": "Wyloguj się",
                 "manage_gallery_icon": "Zarządzaj obrazkami/ikonami/emoji",
                 "export_friend_list": "Eksportuj listę znajomych",
@@ -208,11 +218,17 @@
                     "header": "Aplikacja",
                     "startup": "Uruchamiaj razem z Windows",
                     "minimized": "Uruchamiaj zminimalizowane",
-                    "tray": "Zamykaj do zasobnika"
+                    "tray": "Zamykaj do zasobnika",
+                    "proxy": "Ustawienia proxy"
                 },
-                "game_log": {
-                    "header": "Logi gry",
-                    "resource_load": "Loguj ładowanie zasobów Udon"
+                "favorites": {
+                    "header": "Ulubieni znajomi VRCX",
+                    "group_placeholder": "Wybierz grupy"
+                },
+                "logging": {
+                    "header": "Logi",
+                    "resource_load": "Loguj wczytywanie tekstu/obrazków w Udonie",
+                    "empty_avatar": "Loguj awatary w aktywności bez nazw"
                 },
                 "automation": {
                     "header": "Automatyzacja",
@@ -223,7 +239,12 @@
                     "auto_state_change_active_or_busy": "Dostępny / Zajęty",
                     "auto_state_change_join_me_or_ask_me": "Dołącz do mnie / Zapytaj mnie",
                     "auto_state_change_join_me_or_busy": "Dołącz do mnie / Zajęty",
-                    "auto_state_change_ask_me_or_busy": "Zapytaj mnie / Zajęty"
+                    "auto_state_change_ask_me_or_busy": "Zapytaj mnie / Zajęty",
+                    "auto_invite_request_accept": "Automatycznie akceptuj prośby o dołączenie",
+                    "auto_invite_request_accept_tooltip": "Automatycznie akceptuj prośby o dołączenie od ulubionych znajomych",
+                    "auto_invite_request_accept_off": "Wył.",
+                    "auto_invite_request_accept_favs": "Wszystkie ulubione",
+                    "auto_invite_request_accept_selected_favs": "Ulubione VRCX"
                 },
                 "legal_notice": {
                     "header": "Informacje prawne",
@@ -244,12 +265,14 @@
                     "theme_mode_system": "Systemowy",
                     "theme_mode_light": "Jasny",
                     "theme_mode_dark": "Ciemny",
-                    "theme_mode_darkvanillaold": "Ciemna Wanilia (stary)",
-                    "theme_mode_darkvanilla": "Ciemna Wanilia",
+                    "theme_mode_darkvanillaold": "Dark Vanilla (old)",
+                    "theme_mode_darkvanilla": "Dark Vanilla",
                     "theme_mode_pink": "Różowy",
                     "theme_mode_material3": "Material 3",
+                    "zoom": "Powiększ",
                     "vrcplus_profile_icons": "Ikony profilu VRCPlus",
-                    "disable_tooltips": "Wyłącz podpowiedzi",
+                    "tooltips": "Tooltips",
+                    "nicknames": "Memo Nicknames",
                     "sort_favorite_by": "Sortuj ulubione wg",
                     "sort_favorite_by_name": "nazwa",
                     "sort_favorite_by_date": "data",
@@ -291,8 +314,8 @@
                 },
                 "user_dialog": {
                     "header": "Podgląd użytkownika",
-                    "hide_vrchat_notes": "Ukryj notatki VRChat",
-                    "hide_vrcx_memos": "Ukryj notatki VRCX",
+                    "vrchat_notes": "VRChat Notes",
+                    "vrcx_memos": "VRCX Memos",
                     "export_vrcx_memos_into_vrchat_notes": "Eksportuj notatki VRCX do notatek VRChat",
                     "export_notes": "Eksportuj notatki"
                 },
@@ -311,6 +334,8 @@
                         "overlay_notifications": "Nakładka powiadomień",
                         "notification_position": "Pozycja powiadomień",
                         "xsoverlay_notifications": "Powiadomienia XSOverlay",
+                        "ovrtoolkit_hud_notifications": "Powiadomienia OVR Toolkit na HUDzie",
+                        "ovrtoolkit_wrist_notifications": "Powiadomienia OVR Toolkit na nadgarstku",
                         "user_images": "Obrazki użytkowników (wolniejsze)",
                         "notification_timeout": "Czas trwania powiadomień"
                     },
@@ -327,7 +352,7 @@
                         "desktop_notification_while_afk": "Powiadomienia na pulpicie podczas AFK"
                     },
                     "text_to_speech": {
-                        "header": "Opcje tekstu-na-mowę",
+                        "header": "Text-To-Speech",
                         "when_to_play": "Kiedy odtwarzać powiadomienia jako tekst-na-mowę",
                         "when_to_play_never": "Nigdy",
                         "when_to_play_inside_vr": "W VR",
@@ -341,7 +366,7 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "Nakładka SteamVR na nadgarstku",
-                    "description": "* Uruchamia się automatycznie, gdy VRChat jest włączony.",
+                    "description": "* Runs automatically while VRChat is running.",
                     "grip": "Chwyt: chwyt Vive lub innego kontrolera, przyciski Oculus X/A",
                     "menu": "Menu: przyciski menu Vive, Index B, Oculus Y/B",
                     "steamvr_overlay": "Nakładka SteamVR",
@@ -354,12 +379,12 @@
                     "display_overlay_on": "Wyświetlaj nakładkę na",
                     "display_overlay_on_left": "Lewa dłoń",
                     "display_overlay_on_right": "Prawa dłoń",
-                    "display_overlay_on_both": "Obie dłonie",
-                    "background_color": "Kolor tła",
+                    "display_overlay_on_both": "Both Hands",
+                    "grey_background": "Grey Background",
                     "minimal_feed_icons": "Minimalne ikony aktywności",
-                    "hide_vr_devices": "Ukryj urządzenia VR",
-                    "hide_cpu_usage": "Ukryj użycie CPU",
-                    "hide_game_uptime": "Ukryj czas gry",
+                    "show_vr_devices": "Show VR Devices",
+                    "show_cpu_usage": "Pokaż użycie CPU",
+                    "show_game_uptime": "Show Game Uptime",
                     "show_pc_uptime": "Pokaż czas pracy PC",
                     "wrist_feed_filters": "Filtry aktywności nadgarstka"
                 }
@@ -367,13 +392,13 @@
             "discord_presence": {
                 "discord_presence": {
                     "header": "Status Discord",
-                    "description": "* Działa tylko, gdy VRChat jest uruchomiony.",
+                    "description": "* Only active while VRChat is running.",
                     "enable": "Włącz",
                     "enable_tooltip": "Zalecane jest wyłączenie statusu Discord (Rich Presence) w config.json VRChatu, aby uniknąć konfliktów",
                     "instance_type_player_count": "Typ instancji/liczba użytkowników",
                     "join_button": "Przycisk dołączania (tylko publiczne)",
-                    "hide_details_in_private": "Ukryj szczegóły świata na prywatnym",
-                    "hide_images": "Ukryj obrazki światów"
+                    "show_details_in_private": "Show world details in private",
+                    "show_images": "Show world images"
                 }
             },
             "advanced": {
@@ -400,9 +425,17 @@
                         "header": "Poprawka zamykania procesu VRChat",
                         "description": "Uśmierć proces VRChat po zamknięciu gry"
                     },
+                    "vrchat_osc_fix": {
+                        "header": "Poprawka OSC VRChatu",
+                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
+                    },
                     "auto_cache_management": {
                         "header": "Automatycznie zarządzaj pamięcią podręczną podczas zamykania VRChat",
                         "description": "Automatyczne usuwaj stare wersje z pamięci podręcznej"
+                    },
+                    "local_world_persistence": {
+                        "header": "Local World Persistence",
+                        "description": "Localhost webserver (requires restart)"
                     },
                     "remote_database": {
                         "header": "Zewnętrzna baza danych awatarów",
@@ -412,7 +445,8 @@
                     "youtube_api": {
                         "header": "YouTube API",
                         "enable": "Włącz",
-                        "youtube_api_key": "Klucz API Youtube"
+                        "youtube_api_key": "Klucz YouTube API",
+                        "enable_tooltip": "Fetches video titles for use with gameLog and duration for overlay progress bar"
                     },
                     "video_progress_pie": {
                         "header": "Nakładka wykresu postępu na wideo",
@@ -525,6 +559,7 @@
                 "busy": "Nie przeszkadzać"
             },
             "previous_display_names": "Poprzednie wyświetlane nazwy:",
+            "pronouns": "Zaimki",
             "tags": {
                 "friend_no": "Znajomy nr.{number}",
                 "vrchat_team": "VRChat Team"
@@ -538,6 +573,7 @@
                 "request_invite": "Poproś o zaproszenie",
                 "request_invite_with_message": "Poproś o zaproszenie z wiadomością",
                 "invite_to_group": "Zaproś do grupy",
+                "send_boop": "Wyślij zaczepkę",
                 "manage_gallery_icon": "Zarządzaj obrazkami/ikonami/emoji",
                 "accept_friend_request": "Zaakceptuj zaproszenie do znajomych",
                 "decline_friend_request": "Odrzuć zaproszenie do znajomych",
@@ -558,6 +594,7 @@
                 "edit_status": "Status",
                 "edit_language": "Język",
                 "edit_bio": "Bio",
+                "edit_pronouns": "Zaimki",
                 "report_hacking": "Zgłoś za hakowanie",
                 "unfriend": "Usuń ze znajomych",
                 "logout": "Wyloguj się"
@@ -570,6 +607,7 @@
                 "instance_queue": "Kolejka:",
                 "instance_users": "Użytkownicy:",
                 "instance_game_version": "Wersja gry:",
+                "last_join": "Ostatnie dołączenie:",
                 "instance_queuing_enabled": "Kolejkowanie włączone",
                 "instance_creator": "Twórca instancji",
                 "note": "Notatka",
@@ -583,6 +621,7 @@
                 "last_seen": "Ostatnio widziany",
                 "join_count": "Liczba dołączeń",
                 "time_together": "Czas spędzony razem",
+                "play_time": "Czas gry",
                 "online_for": "Online od",
                 "offline_for": "Offline od",
                 "last_activity": "Ostatnia aktywność",
@@ -591,6 +630,7 @@
                 "friended": "Znajomi",
                 "unfriended": "Usunięto ze znajomych",
                 "avatar_cloning": "Klonowanie awatara",
+                "booping": "Zaczepki",
                 "avatar_cloning_allow": "Zezwolono",
                 "avatar_cloning_deny": "Wyłączone",
                 "home_location": "Lokalizacja domowa",
@@ -600,7 +640,10 @@
                 "copy_url": "Kopiuj URL",
                 "copy_display_name": "Kopiuj wyświetlaną nazwę",
                 "accuracy_notice": "Informacje z lokalnej bazy danych mogą nie być dokładne",
-                "instance_full": "pełna"
+                "instance_full": "pełna",
+                "instance_closed": "zamknięta",
+                "instance_hard_closed": "hard closed",
+                "close_instance": "Zamknij instancję"
             },
             "groups": {
                 "header": "Grupy",
@@ -615,6 +658,7 @@
                 "sort_by": "Sortuj wg:",
                 "order_by": "Sortuj wg:",
                 "sorting": {
+                    "name": "Nazwa",
                     "updated": "Zaktualizowano",
                     "created": "Utworzono",
                     "favorites": "Ulubione",
@@ -808,8 +852,11 @@
                 "visibility_everyone": "Widoczna dla wszystkich",
                 "visibility_friends": "Widoczna dla znajomych",
                 "visibility_hidden": "Widoczność ukryta",
+                "create_post": "Utwórz post",
                 "moderation_tools": "Narzędzia moderacyjne",
-                "leave": "Opuść grupę"
+                "leave": "Opuść grupę",
+                "block": "Zablokuj grupę",
+                "unblock": "Odblokuj grupę"
             },
             "info": {
                 "header": "Informacje",
@@ -835,6 +882,10 @@
             "posts": {
                 "header": "Posty",
                 "visibility": "Widoczność:",
+                "edited_at": "Edytowano:",
+                "created_at": "Data utworzenia:",
+                "edit_tooltip": "Edytuj post",
+                "delete_tooltip": "Usuń post",
                 "edited_by": "Edytowany przez:",
                 "search_placeholder": "Szukaj",
                 "posts_count": "Posty: "
@@ -871,11 +922,15 @@
         "favorite": {
             "header": "Wybierz grupę",
             "vrchat_favorites": "Ulubione VRChat",
-            "local_favorites": "Ulubione lokalne"
+            "local_favorites": "Ulubione lokalne",
+            "local_avatar_favorites": "Lokalne ulubione (wymaga VRC+)"
         },
         "invite": {
             "header": "Zaproszenie",
             "select_placeholder": "Wybierz znajomych",
+            "add_self": "Dodaj siebie",
+            "add_friends_in_instance": "Dodaj znajomych na instancji",
+            "add_favorite_friends": "Dodaj ulubionych znajomych",
             "invite_with_message": "Zaproś z wiadomością",
             "invite": "Zaproś",
             "friends_in_instance": "Znajomi w instancji"
@@ -897,6 +952,11 @@
             "header": "Bio",
             "bio_placeholder": "Proszę wprowadzić bio",
             "add_link": "Dodaj link",
+            "update": "Zaktualizuj"
+        },
+        "pronouns": {
+            "header": "Zaimki",
+            "pronouns_placeholder": "Wprowadź swoje zaimki",
             "update": "Zaktualizuj"
         },
         "new_instance": {
@@ -935,6 +995,7 @@
             "queueEnabled": "Kolejka",
             "normal": "Normalna",
             "group": "Grupa",
+            "legacy": "Stare",
             "roles": "Role"
         },
         "launch_options": {
@@ -998,6 +1059,7 @@
             "content_violence": "Przemoc",
             "content_adult": "Dla dorosłych",
             "content_sex": "Erotyczne",
+            "custom_tags_placeholder": "Własne tagi",
             "select_all": "Zaznacz wszystko",
             "select_none": "Odznacz wszystko",
             "cancel": "Anuluj",
@@ -1054,8 +1116,8 @@
             "favorite": "Ulubione",
             "friends": "Znajomi",
             "everyone": "Wszyscy",
-            "cancel": "Anuluj",
-            "save": "Zapisz"
+            "reset": "Resetuj",
+            "close": "Zamknij"
         },
         "world_export": {
             "header": "Eksport ulubionych światów"
@@ -1150,6 +1212,8 @@
         "invite_message": {
             "header": "Wyślij zaproszenie z wiadomością",
             "confirmation": "Czy na pewno chcesz wysłać?",
+            "select_image": "Wybierz obrazek",
+            "clear_selected_image": "Wyczyść zaznaczony obrazek",
             "cancel": "Anuluj",
             "refresh": "Odśwież",
             "confirm": "Potwierdź"
@@ -1192,7 +1256,12 @@
             "refresh": "Odśwież",
             "upload": "Prześlij",
             "clear": "Wyczyść",
-            "emoji_animation_styles": "Style animacji"
+            "emoji_animation_styles": "Style animacji",
+            "emoji_animation_type": "Animowane emoji",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "Liczba klatek:",
+            "emoji_loop_pingpong": "Pętla Ping Pong",
+            "flipbook_info": "Wybierz spritesheet PNG 1024x1024, aby użyć go jako animowane emoji. Dostępne rozmiary siatki: 4, 16, lub 64 (maks. 64 FPS, maks. 64 klatek)"
         },
         "change_content_image": {
             "avatar": "Zmień obrazek awatara",
@@ -1258,20 +1327,44 @@
         },
         "group_member_moderation": {
             "header": "Moderowanie członków grupy",
+            "filter_type": "Typ filtru",
+            "select_type": "Wybierz typ",
+            "search_placeholder": "Szukaj",
+            "members": "Członkowie",
+            "bans": "Bany",
+            "invites": "Zaproszenia",
+            "logs": "Logi",
+            "sent_invites": "Wysłane zaproszenia",
+            "join_requests": "Prośby o dołączenie",
+            "blocked_requests": "Zablokowane prośby",
             "notes": "Notatki menedżera",
             "note_placeholder": "Kliknij, aby dodać notatkę",
             "actions": "Akcje",
             "kick": "Wyrzuć",
             "ban": "Zbanuj",
+            "unban": "Odbanuj",
             "save_note": "Zapisz notatkę",
+            "delete_sent_invite": "Usuń wysłane zaproszenie",
+            "delete_blocked_requests": "Usuń zablokowane prośby",
+            "accept_join_requests": "Akceptuj prośby o dołączenie",
+            "reject_join_requests": "Odrzuć prośby o dołączenie",
+            "block_join_requests": "Zablokuj prośby o dołączenie",
             "group_members": "Członkowie grupy",
             "progress": "Postęp:",
             "display_name": "Wyświetlana nazwa",
             "visibility": "Widoczność",
             "avatar": "Awatar",
             "joined_at": "Dołączono",
+            "banned_at": "Zbanowany",
+            "created_at": "Data utworzenia",
+            "type": "Typ",
+            "description": "Opis",
+            "data": "Dane",
             "note": "Notatka",
             "roles": "Role",
+            "user_id": "ID użytkownika",
+            "user_id_placeholder": "ID użytkownika(ów)",
+            "select_user": "Wybierz użytkownika",
             "selected_users": "Zaznaczeni użytkownicy",
             "select_all": "Zaznacz wszystko",
             "cancel": "Anuluj",
@@ -1279,6 +1372,28 @@
             "selected_roles": "Wybrane role",
             "remove_roles": "Usuń role",
             "add_roles": "Dodaj role"
+        },
+        "group_post_edit": {
+            "header": "Utwórz/Edytuj post",
+            "title": "Tytuł",
+            "message": "Wiadomość",
+            "send_notification": "Wyślij powiadomienie",
+            "post_visibility": "Widoczność postu",
+            "visibility_public": "Publiczne",
+            "visibility_group": "Grupa",
+            "image": "Obrazek",
+            "cancel": "Anuluj",
+            "create_post": "Utwórz post",
+            "edit_post": "Edytuj post"
+        },
+        "boop_dialog": {
+            "header": "Zaczepka",
+            "emoji_manager": "Zarządzanie emoji",
+            "select_emoji": "Wybierz emoji",
+            "my_emojis": "Moje emoji",
+            "default_emojis": "Domyślne emoji",
+            "cancel": "Anuluj",
+            "send": "Wyślij"
         }
     },
     "prompt": {
@@ -1500,6 +1615,13 @@
             "cancel": "Anuluj",
             "save": "Zapisz",
             "input_error": "Wymagana jest prawidłowa liczba"
+        },
+        "proxy_settings": {
+            "header": "Ustawienia proxy",
+            "description": "Wprowadź adres serwera proxy i port",
+            "placeholder": "127.0.0.1:8080",
+            "close": "Zamknij",
+            "restart": "Zrestartuj"
         }
     },
     "table": {
@@ -1549,7 +1671,7 @@
         "notification": {
             "date": "Data",
             "type": "Typ",
-            "user": "Użytkownik",
+            "user_group": "Użytkownik/Grupa",
             "photo": "Obrazek",
             "message": "Wiadomość",
             "action": "Akcja"

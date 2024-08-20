@@ -20,6 +20,8 @@
             "login": "로그인",
             "register": "가입",
             "forgotPassword": "비밀번호를 잊어버리셨나요?",
+            "updater": "Updater",
+            "proxy_settings": "Proxy settings",
             "field": {
                 "username": "닉네임 혹은 이메일",
                 "password": "비밀번호",
@@ -85,12 +87,17 @@
             },
             "worlds": {
                 "header": "월드",
+                "search": "검색",
                 "vrchat_favorites": "VRChat 즐겨찾기",
                 "local_favorites": "VRCX 즐겨찾기",
                 "new_group": "새 그룹"
             },
             "avatars": {
-                "header": "아바타"
+                "header": "아바타",
+                "search": "검색",
+                "vrchat_favorites": "VRChat 즐겨찾기",
+                "local_favorites": "Local Favorites (Requires VRC+)",
+                "new_group": "새 그룹"
             },
             "bulk_unfavorite_mode": "즐겨찾기 해제 모드",
             "bulk_unfavorite_selection": "선택한 즐겨찾기 해제",
@@ -104,8 +111,9 @@
             "clear_tooltip": "비우기",
             "delete_tooltip": "지우기",
             "unavailable_tooltip": "Unavailable",
-            "private": "Private",
-            "sort_by": "Sort By"
+            "private": "비공개",
+            "sort_by": "Sort By",
+            "select_avatar_tooltip": "아바타 선택"
         },
         "friend_log": {
             "filter_placeholder": "필터",
@@ -141,6 +149,8 @@
                 "two_factor": "2단계 인증 (2FA)",
                 "two_factor_enabled": "사용",
                 "two_factor_disabled": "사용 안 함",
+                "v_bucks": "V-Bucks",
+                "refresh": "새로고침",
                 "logout": "로그아웃",
                 "manage_gallery_icon": "Manage Photos/Icons/Emojis",
                 "export_friend_list": "친구 목록 내보내기",
@@ -208,11 +218,17 @@
                     "header": "애플리케이션",
                     "startup": "Windows 시작 시 실행",
                     "minimized": "최소화 상태로 시작",
-                    "tray": "닫지 않고 트레이로 최소화하기"
+                    "tray": "닫지 않고 트레이로 최소화하기",
+                    "proxy": "Proxy settings"
                 },
-                "game_log": {
-                    "header": "VRChat 로그",
-                    "resource_load": "Udon 리소스 로드 기록"
+                "favorites": {
+                    "header": "VRCX Favorite Friends",
+                    "group_placeholder": "Choose Groups"
+                },
+                "logging": {
+                    "header": "Logging",
+                    "resource_load": "Log Udon string/image load",
+                    "empty_avatar": "Log avatars in feed without names"
                 },
                 "automation": {
                     "header": "자동화",
@@ -223,7 +239,12 @@
                     "auto_state_change_active_or_busy": "초록불(Active) / 빨간불(Busy)",
                     "auto_state_change_join_me_or_ask_me": "파란불(Join Me) / 주황불(Ask Me)",
                     "auto_state_change_join_me_or_busy": "파란불(Join Me) / 빨간불(Busy)",
-                    "auto_state_change_ask_me_or_busy": "주황불(Ask Me) / 빨간불(Busy)"
+                    "auto_state_change_ask_me_or_busy": "주황불(Ask Me) / 빨간불(Busy)",
+                    "auto_invite_request_accept": "Auto Accept Invite Requests",
+                    "auto_invite_request_accept_tooltip": "Automatically accept invite requests from favorite friends",
+                    "auto_invite_request_accept_off": "끄기",
+                    "auto_invite_request_accept_favs": "All Favorites",
+                    "auto_invite_request_accept_selected_favs": "VRCX Favorites"
                 },
                 "legal_notice": {
                     "header": "법적 공지",
@@ -244,12 +265,14 @@
                     "theme_mode_system": "시스템",
                     "theme_mode_light": "라이트",
                     "theme_mode_dark": "다크",
-                    "theme_mode_darkvanillaold": "다크 바닐라 (오래된)",
+                    "theme_mode_darkvanillaold": "Dark Vanilla (old)",
                     "theme_mode_darkvanilla": "다크 바닐라",
                     "theme_mode_pink": "핑크",
                     "theme_mode_material3": "머티리얼 3",
+                    "zoom": "Zoom",
                     "vrcplus_profile_icons": "VRC+ 프로필 사진으로 표시",
-                    "disable_tooltips": "툴팁 숨김",
+                    "tooltips": "Tooltips",
+                    "nicknames": "Memo Nicknames",
                     "sort_favorite_by": "즐겨찾기 순서",
                     "sort_favorite_by_name": "이름순",
                     "sort_favorite_by_date": "시간순",
@@ -291,8 +314,8 @@
                 },
                 "user_dialog": {
                     "header": "유저 정보 대화 상자",
-                    "hide_vrchat_notes": "VRChat 메모 숨김",
-                    "hide_vrcx_memos": "VRCX 메모 숨김",
+                    "vrchat_notes": "VRChat Notes",
+                    "vrcx_memos": "VRCX Memos",
                     "export_vrcx_memos_into_vrchat_notes": "VRCX 메모를 VRChat 메모로 내보내기",
                     "export_notes": "메모 내보내기"
                 },
@@ -311,6 +334,8 @@
                         "overlay_notifications": "오버레이 알림 사용",
                         "notification_position": "알림 위치 설정",
                         "xsoverlay_notifications": "XSOverlay 알림 사용",
+                        "ovrtoolkit_hud_notifications": "OVR Toolkit HUD Notifications",
+                        "ovrtoolkit_wrist_notifications": "OVR Toolkit Wrist Notifications",
                         "user_images": "유저 이미지 표시 (느림)",
                         "notification_timeout": "알림 시간 설정"
                     },
@@ -323,10 +348,11 @@
                         "when_to_display_outside_vr": "VR을 벗고 있을 때",
                         "when_to_display_game_closed": "VRChat을 하지 않을 때",
                         "when_to_display_game_running": "VRChat을 할 때",
-                        "when_to_display_always": "항상"
+                        "when_to_display_always": "항상",
+                        "desktop_notification_while_afk": "Desktop Notifications While AFK"
                     },
                     "text_to_speech": {
-                        "header": "음성합성 (Text-To-Speech) 설정",
+                        "header": "Text-To-Speech",
                         "when_to_play": "알림 TTS 재생 조건",
                         "when_to_play_never": "안함",
                         "when_to_play_inside_vr": "VR을 쓰고 있을 때",
@@ -340,7 +366,7 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "SteamVR 손목 오버레이",
-                    "description": "* VRChat이 실행 중일때만 작동합니다",
+                    "description": "* Runs automatically while VRChat is running.",
                     "grip": "그립(Grip): 바이브 혹은 기타 컨트롤러 쥐기 동작, 오큘러스 X/A 버튼",
                     "menu": "메뉴(Menu): 바이브 메뉴, 인덱스 B 버튼, 오큘러스 Y/B 버튼",
                     "steamvr_overlay": "SteamVR 오버레이 사용",
@@ -353,12 +379,12 @@
                     "display_overlay_on": "오버레이를 표시할 위치",
                     "display_overlay_on_left": "왼손",
                     "display_overlay_on_right": "오른손",
-                    "display_overlay_on_both": "양손",
-                    "background_color": "배경색 사용",
+                    "display_overlay_on_both": "Both Hands",
+                    "grey_background": "Grey Background",
                     "minimal_feed_icons": "작은 피드 아이콘 사용",
-                    "hide_vr_devices": "VR 주변기기 숨김",
-                    "hide_cpu_usage": "CPU 사용량 숨김",
-                    "hide_game_uptime": "VRChat 실행 시간 숨김",
+                    "show_vr_devices": "Show VR Devices",
+                    "show_cpu_usage": "Show CPU Usage",
+                    "show_game_uptime": "Show Game Uptime",
                     "show_pc_uptime": "PC 사용 시간 표시",
                     "wrist_feed_filters": "손목 피드 필터 설정"
                 }
@@ -366,13 +392,13 @@
             "discord_presence": {
                 "discord_presence": {
                     "header": "디스코드 연동 (Rich Presence)",
-                    "description": "* VRChat이 실행 중일때만 작동합니다",
+                    "description": "* Only active while VRChat is running.",
                     "enable": "사용",
                     "enable_tooltip": "충돌을 막기 위해 VRChat 설정 파일(config.json)에서 Rich Presence를 비활성화하는 편이 좋습니다",
                     "instance_type_player_count": "인스턴스 유형/인원수 표시",
                     "join_button": "Public일 경우 참가 버튼 표시",
-                    "hide_details_in_private": "비공개 월드에서 상세 정보 숨김",
-                    "hide_images": "월드 이미지 숨김"
+                    "show_details_in_private": "Show world details in private",
+                    "show_images": "Show world images"
                 }
             },
             "advanced": {
@@ -380,6 +406,7 @@
                     "header": "고급",
                     "launch_options": "VRChat 실행 설정",
                     "screenshot_metadata": "스크린샷 메타데이터",
+                    "vrc_registry_backup": "VRC Registry Backup",
                     "common_folders": "Common Folders",
                     "pending_offline": {
                         "header": "오프라인 대기",
@@ -398,9 +425,17 @@
                         "header": "VRChat 종료 해결",
                         "description": "VRChat을 끌 때 강제 종료하기"
                     },
+                    "vrchat_osc_fix": {
+                        "header": "VRChat OSC Fix",
+                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
+                    },
                     "auto_cache_management": {
                         "header": "VRChat을 종료할 때 캐시 관리",
                         "description": "오래된 버전 캐시 삭제하기"
+                    },
+                    "local_world_persistence": {
+                        "header": "Local World Persistence",
+                        "description": "Localhost webserver (requires restart)"
                     },
                     "remote_database": {
                         "header": "원격 아바타 데이터베이스",
@@ -408,9 +443,10 @@
                         "avatar_database_provider": "아바타 데이터베이스 제공자 설정"
                     },
                     "youtube_api": {
-                        "header": "유튜브 API",
+                        "header": "유튜브 API 설정",
                         "enable": "사용",
-                        "youtube_api_key": "유튜브 API 키 설정"
+                        "youtube_api_key": "유튜브 API 키",
+                        "enable_tooltip": "Fetches video titles for use with gameLog and duration for overlay progress bar"
                     },
                     "video_progress_pie": {
                         "header": "비디오 진행률 파이 오버레이",
@@ -424,7 +460,8 @@
                         "description_tooltip": "안타깝게도 Windows는 기본적으로 PNG 텍스트 청크 보기를 지원하지 않지만(몇 가지 기능은 지원), exiftool, PNG chunk inspector 또는 헥스 에디터와 같은 명령줄 도구를 사용하여 볼 수 있습니다",
                         "enable": "사용",
                         "modify_filename": "파일 이름 수정",
-                        "modify_filename_tooltip": "파일 메타데이터 외에 스크린샷 파일 이름에 월드 ID를 추가합니다"
+                        "modify_filename_tooltip": "파일 메타데이터 외에 스크린샷 파일 이름에 월드 ID를 추가합니다",
+                        "copy_to_clipboard": "Copy to Clipboard"
                     },
                     "app_launcher": {
                         "header": "앱 실행",
@@ -522,6 +559,7 @@
                 "busy": "방해 금지"
             },
             "previous_display_names": "이전 닉네임:",
+            "pronouns": "Pronouns",
             "tags": {
                 "friend_no": "Friend No.{number}",
                 "vrchat_team": "VRChat Team"
@@ -535,6 +573,7 @@
                 "request_invite": "초대 요청",
                 "request_invite_with_message": "메시지 초대 요청",
                 "invite_to_group": "그룹에 초대",
+                "send_boop": "Send Boop",
                 "manage_gallery_icon": "갤러리/아이콘/이모지 관리",
                 "accept_friend_request": "친구 요청 수락",
                 "decline_friend_request": "친구 요청 거절",
@@ -555,6 +594,7 @@
                 "edit_status": "상태 설정",
                 "edit_language": "언어 설정",
                 "edit_bio": "자기소개 설정",
+                "edit_pronouns": "Pronouns",
                 "report_hacking": "불법 프로그램 신고",
                 "unfriend": "친구 끊기",
                 "logout": "로그아웃"
@@ -567,6 +607,7 @@
                 "instance_queue": "대기열:",
                 "instance_users": "유저 수:",
                 "instance_game_version": "버전:",
+                "last_join": "Last Join:",
                 "instance_queuing_enabled": "대기열 활성화",
                 "instance_creator": "방파개",
                 "note": "VRChat 메모",
@@ -580,6 +621,7 @@
                 "last_seen": "마지막으로 본 시간",
                 "join_count": "방문 횟수",
                 "time_together": "함께한 시간",
+                "play_time": "Play Time",
                 "online_for": "온라인 시간",
                 "offline_for": "오프라인 시간",
                 "last_activity": "마지막 활동",
@@ -588,16 +630,20 @@
                 "friended": "친구 추가됨",
                 "unfriended": "친구 끊음",
                 "avatar_cloning": "아바타 복제",
+                "booping": "Booping",
                 "avatar_cloning_allow": "허용",
                 "avatar_cloning_deny": "거부",
                 "home_location": "홈 월드",
-                "id": "User ID",
+                "id": "유저 ID",
                 "id_tooltip": "Copy to clipboard",
                 "copy_id": "Copy ID",
                 "copy_url": "Copy URL",
                 "copy_display_name": "Copy DisplayName",
                 "accuracy_notice": "VRCX 기준이라서 정확하지 않을 수 있습니다",
-                "instance_full": "풀방"
+                "instance_full": "풀방",
+                "instance_closed": "closed",
+                "instance_hard_closed": "hard closed",
+                "close_instance": "Close Instance"
             },
             "groups": {
                 "header": "그룹",
@@ -612,9 +658,10 @@
                 "sort_by": "Sort by:",
                 "order_by": "Order by:",
                 "sorting": {
+                    "name": "Name",
                     "updated": "Updated",
                     "created": "Created",
-                    "favorites": "Favorites",
+                    "favorites": "즐겨찾기",
                     "popularity": "Popularity"
                 },
                 "order": {
@@ -704,6 +751,7 @@
                 "last_updated": "마지막 업데이트",
                 "publication_date": "Publication Date",
                 "labs_publication_date": "Labs Publication Date",
+                "time_in_labs": "Time In Labs:",
                 "version": "버전",
                 "platform": "플랫폼",
                 "last_visited": "마지막 방문",
@@ -720,6 +768,7 @@
                 "public": "공개",
                 "private": "비공개",
                 "fallback": "대체",
+                "impostor": "Impostor",
                 "future_proofing": "Future Proofing",
                 "cache": "캐시",
                 "content_horror": "Horror",
@@ -735,7 +784,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "캐시에서 아바타 삭제",
-                "favorite_tooltip": "즐겨찾기 추가",
+                "favorite_tooltip": "즐겨찾기",
                 "unfavorite_tooltip": "즐겨찾기 해제",
                 "refresh": "새로고침",
                 "select": "아바타 선택",
@@ -750,7 +799,9 @@
                 "change_content_tags": "Change Content Tags",
                 "change_image": "이미지 변경",
                 "download_package": "유니티 패키지 다운로드",
-                "delete": "삭제"
+                "delete": "삭제",
+                "delete_impostor": "Delete Impostor",
+                "create_impostor": "Create Impostor"
             },
             "info": {
                 "header": "정보",
@@ -762,8 +813,8 @@
                 "last_updated": "마지막 업데이트",
                 "version": "버전",
                 "platform": "플랫폼",
-                "memo": "Memo",
-                "memo_placeholder": "Click to add a memo"
+                "memo": "VRCX 메모",
+                "memo_placeholder": "-"
             },
             "json": {
                 "header": "JSON",
@@ -801,7 +852,11 @@
                 "visibility_everyone": "모두에게 보임",
                 "visibility_friends": "친구에게 보임",
                 "visibility_hidden": "보이지 않음",
-                "leave": "그룹 탈퇴"
+                "create_post": "Create Post",
+                "moderation_tools": "Moderation Tools",
+                "leave": "그룹 탈퇴",
+                "block": "Block Group",
+                "unblock": "Unblock Group"
             },
             "info": {
                 "header": "정보",
@@ -824,6 +879,17 @@
                 "role_created_at": "생성일:",
                 "role_permissions": "권한:"
             },
+            "posts": {
+                "header": "Posts",
+                "visibility": "Visibility:",
+                "edited_at": "Edited At:",
+                "created_at": "생성일:",
+                "edit_tooltip": "Edit Post",
+                "delete_tooltip": "Delete Post",
+                "edited_by": "Edited by:",
+                "search_placeholder": "검색",
+                "posts_count": "Posts: "
+            },
             "members": {
                 "header": "회원",
                 "all_members": "모든 그룹원",
@@ -842,7 +908,9 @@
                 },
                 "unsubscribed_announcements": "Unsubscribed from announcements",
                 "visibility": "Visibility:",
-                "representing": "Representing"
+                "representing": "Representing",
+                "manager_notes": "Manager Notes:",
+                "search": "검색"
             },
             "gallery": {
                 "header": "갤러리"
@@ -854,13 +922,18 @@
         "favorite": {
             "header": "그룹 선택",
             "vrchat_favorites": "VRChat 즐겨찾기",
-            "local_favorites": "VRCX 즐겨찾기"
+            "local_favorites": "VRCX 즐겨찾기",
+            "local_avatar_favorites": "Local Favorites (Requires VRC+)"
         },
         "invite": {
             "header": "초대",
             "select_placeholder": "친구 선택",
+            "add_self": "Add Self",
+            "add_friends_in_instance": "Add Friends In Instance",
+            "add_favorite_friends": "Add Favorite Friends",
             "invite_with_message": "메시지 초대",
-            "invite": "초대"
+            "invite": "초대",
+            "friends_in_instance": "Friends In Instance"
         },
         "social_status": {
             "header": "소셜 상태 설정",
@@ -879,6 +952,11 @@
             "header": "자기소개 설정",
             "bio_placeholder": "자기소개를 입력하세요",
             "add_link": "링크 추가",
+            "update": "변경"
+        },
+        "pronouns": {
+            "header": "Pronouns",
+            "pronouns_placeholder": "Please input your pronouns",
             "update": "변경"
         },
         "new_instance": {
@@ -917,6 +995,7 @@
             "queueEnabled": "대기열",
             "normal": "일반",
             "group": "그룹",
+            "legacy": "Legacy",
             "roles": "역할"
         },
         "launch_options": {
@@ -980,10 +1059,11 @@
             "content_violence": "Violence",
             "content_adult": "Adult",
             "content_sex": "Sexual",
+            "custom_tags_placeholder": "Custom tags",
             "select_all": "Select All",
             "select_none": "Select None",
-            "cancel": "Cancel",
-            "save": "Save"
+            "cancel": "취소",
+            "save": "저장"
         },
         "download_history": {
             "header": "다운로드 기록",
@@ -1036,8 +1116,8 @@
             "favorite": "친한 친구",
             "friends": "친구",
             "everyone": "모두",
-            "cancel": "취소",
-            "save": "저장"
+            "reset": "Reset",
+            "close": "닫기"
         },
         "world_export": {
             "header": "월드 즐겨찾기 내보내기"
@@ -1132,6 +1212,8 @@
         "invite_message": {
             "header": "초대 메시지 보내기",
             "confirmation": "정말로 보낼건가요?",
+            "select_image": "Select Image",
+            "clear_selected_image": "Clear Selected Image",
             "cancel": "취소",
             "refresh": "새로고침",
             "confirm": "확인"
@@ -1174,7 +1256,12 @@
             "refresh": "새로고침",
             "upload": "업로드",
             "clear": "해제",
-            "emoji_animation_styles": "Animation Styles"
+            "emoji_animation_styles": "Animation Styles",
+            "emoji_animation_type": "Animated Emoji",
+            "emoji_animation_fps": "FPS:",
+            "emoji_animation_frame_count": "Frame Count:",
+            "emoji_loop_pingpong": "Loop PingPong",
+            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)"
         },
         "change_content_image": {
             "avatar": "아바타 이미지 변경",
@@ -1200,10 +1287,10 @@
         },
         "gallery_select": {
             "header": "Select Image",
-            "gallery": "Photos",
+            "gallery": "갤러리",
             "none": "None",
-            "refresh": "Refresh",
-            "upload": "Upload"
+            "refresh": "새로고침",
+            "upload": "업로드"
         },
         "open_source": {
             "header": "오픈 소스 소프트웨어 안내",
@@ -1223,6 +1310,90 @@
             "copy_image": "이미지 복사",
             "open_folder": "폴더 열기",
             "upload": "업로드"
+        },
+        "registry_backup": {
+            "header": "VRC Registry Settings Backup",
+            "backup": "Backup",
+            "restore": "Restore",
+            "save_to_file": "Save to file",
+            "delete": "지우기",
+            "restore_from_file": "Restore from file",
+            "reset": "Reset",
+            "name": "Name",
+            "date": "Date",
+            "action": "Action",
+            "auto_backup": "Weekly Auto Backup",
+            "restore_prompt": "VRCX has noticed auto backup of VRC registry settings is enabled but this computer doesn't have any, if you'd like to restore from backup you can do so from here."
+        },
+        "group_member_moderation": {
+            "header": "Group Member Moderation",
+            "filter_type": "Filter Type",
+            "select_type": "Select Type",
+            "search_placeholder": "검색",
+            "members": "회원",
+            "bans": "Bans",
+            "invites": "Invites",
+            "logs": "Logs",
+            "sent_invites": "Sent Invites",
+            "join_requests": "Join Requests",
+            "blocked_requests": "Blocked Requests",
+            "notes": "Manager Note",
+            "note_placeholder": "-",
+            "actions": "Actions",
+            "kick": "Kick",
+            "ban": "Ban",
+            "unban": "Unban",
+            "save_note": "Save Note",
+            "delete_sent_invite": "Delete Sent Invite",
+            "delete_blocked_requests": "Delete Blocked Requests",
+            "accept_join_requests": "Accept Join Requests",
+            "reject_join_requests": "Reject Join Requests",
+            "block_join_requests": "Block Join Requests",
+            "group_members": "Group Members",
+            "progress": "진행:",
+            "display_name": "Display Name",
+            "visibility": "Visibility",
+            "avatar": "Avatar",
+            "joined_at": "가입일",
+            "banned_at": "Banned At",
+            "created_at": "최초 업로드",
+            "type": "유형",
+            "description": "Description",
+            "data": "Data",
+            "note": "VRChat 메모",
+            "roles": "역할",
+            "user_id": "유저 ID",
+            "user_id_placeholder": "Enter User ID(s)",
+            "select_user": "Select User",
+            "selected_users": "선택된 유저",
+            "select_all": "Select All",
+            "cancel": "취소",
+            "choose_roles_placeholder": "역할 선택",
+            "selected_roles": "Selected Roles",
+            "remove_roles": "Remove Roles",
+            "add_roles": "Add Roles"
+        },
+        "group_post_edit": {
+            "header": "Create/Edit Post",
+            "title": "Title",
+            "message": "메시지",
+            "send_notification": "Send Notification",
+            "post_visibility": "Post Visibility",
+            "visibility_public": "공개",
+            "visibility_group": "그룹",
+            "image": "이미지",
+            "cancel": "취소",
+            "create_post": "Create Post",
+            "edit_post": "Edit Post"
+        },
+        "boop_dialog": {
+            "header": "Boop",
+            "emoji_manager": "Emoji Manager",
+            "select_emoji": "Select Emoji",
+            "my_emojis": "My Emojis",
+            "default_emojis": "Default Emojis",
+            "cancel": "취소",
+            "send": "보내기"
         }
     },
     "prompt": {
@@ -1379,9 +1550,9 @@
         "change_world_recommended_capacity": {
             "header": "Change Recommended Capacity",
             "description": "Enter world recommended capacity (soft cap)",
-            "cancel": "Cancel",
-            "ok": "OK",
-            "input_error": "Valid number is required",
+            "cancel": "취소",
+            "ok": "확인",
+            "input_error": "숫자만 입력 가능",
             "message": {
                 "success": "World recommended capacity changed"
             }
@@ -1444,6 +1615,13 @@
             "cancel": "취소",
             "save": "저장",
             "input_error": "숫자만 입력 가능"
+        },
+        "proxy_settings": {
+            "header": "Proxy Settings",
+            "description": "Enter proxy server address and port",
+            "placeholder": "127.0.0.1:8080",
+            "close": "닫기",
+            "restart": "Restart"
         }
     },
     "table": {
@@ -1493,7 +1671,7 @@
         "notification": {
             "date": "날짜",
             "type": "유형",
-            "user": "유저",
+            "user_group": "User/Group",
             "photo": "사진",
             "message": "메시지",
             "action": "작업"
