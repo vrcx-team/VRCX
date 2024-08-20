@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 steamapps=$HOME/.local/share/Steam/steamapps/compatdata
-stable=$(curl -s https://api.github.com/repos/vrcx-team/VRCX/releases/latest | grep -o "https.*releases/download.*zip")
-nightly=$(curl -s https://api.github.com/repos/Natsumi-sama/VRCX/releases/latest | grep -o "https.*releases/download.*zip")
+stable=$(curl -s https://api0.vrcx.app/releases/stable/latest | grep -o "https.*releases/download.*zip")
+nightly=$(curl -s https://api0.vrcx.app/releases/nightly/latest | grep -o "https.*releases/download.*zip")
 download_url=$stable
 XDG_DATA_HOME=${XDG_DATA_HOME:=$HOME/.local/share}
 
