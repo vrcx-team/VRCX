@@ -3,9 +3,9 @@
  * https://github.com/MintLily/Dark-Vanilla
  */
 
-:root {
+ :root {
     --ThemeName: 'Dark Vanilla';
-    --ThemeVers: '2.0';
+    --ThemeVers: '2.0.2';
     --ThemeAuth: 'MintLily';
 
     --dv_bright: #eecce0;
@@ -285,6 +285,13 @@ tr[class='el-table__row el-table__row--striped']:hover .el-table__expand-icon {
     color: var(--dv_bright);
 }
 
+.el-message-box {
+    background-color: var(--dv_bg-top);
+    border-radius: var(--dv_lg-rounded);
+    border-color: transparent;
+    box-shadow: var(--shadow);
+}
+
 /* Game Log */
 table.el-table__body[style^='width:']
     tr[class='el-table__row']:hover
@@ -511,6 +518,7 @@ div.options-container[style='margin-top: 45px; border-top: 1px solid rgb(238, 23
 .el-button--primary {
     background-color: var(--dv_muted);
     border-color: var(--dv_muted);
+    border-radius: var(--dv_md-rounded);
 }
 
 .el-button--primary:focus,
@@ -643,7 +651,6 @@ i[class='el-icon-star-off']:not(.el-menu-item div.el-tooltip i) {
 }
 
 .el-dialog__wrapper[style^='z-index: '] {
-    backdrop-filter: blur(8px);
     background-color: rgba(0, 0, 0, 0.4);
 }
 
