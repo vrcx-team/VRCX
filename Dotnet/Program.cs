@@ -140,7 +140,7 @@ namespace VRCX
                     var messageBoxResult = MessageBox.Show(cpuError.Value.Item1, "Potentially Faulty CPU Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
                     if (messageBoxResult == DialogResult.Yes)
                     {
-                        Process.Start(cpuError.Value.Item2);
+                        AppApi.Instance.OpenLink(cpuError.Value.Item2);
                     }
                 }
                 logger.Fatal(e, "Unhandled Exception, program dying");

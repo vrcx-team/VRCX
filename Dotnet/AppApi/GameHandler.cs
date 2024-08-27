@@ -1,5 +1,8 @@
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using CefSharp;
 using Microsoft.Win32;
@@ -65,9 +68,11 @@ namespace VRCX
             foreach (var p in processes)
             {
                 // "E:\SteamLibrary\steamapps\common\VRChat\install.exe"
-                var match = Regex.Match(p.MainModule.FileName, "(.+?\\\\VRChat.*)(!?\\\\install.exe)");
+                var match = Regex.Match(GetProcessName(p.Id), "(.+?\\\\VRChat.*)(!?\\\\install.exe)");
                 if (match.Success)
                 {
+                    // Sometimes install.exe is suspended
+                    ResumeProcess(p.Id);
                     p.Kill();
                     isSuccess = true;
                     break;
@@ -75,6 +80,67 @@ namespace VRCX
             }
 
             return isSuccess;
+        }
+
+        [DllImport("ntdll.dll")]
+        private static extern uint NtResumeProcess([In] IntPtr processHandle);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern bool QueryFullProcessImageName(IntPtr hProcess, uint dwFlags, [Out, MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpExeName, ref uint lpdwSize);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr OpenProcess(uint processAccess, bool inheritHandle, int processId);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool CloseHandle([In] IntPtr handle);
+
+        public static void ResumeProcess(int processId)
+        {
+            IntPtr hProc = IntPtr.Zero;
+            try
+            {
+                // Gets the handle to the Process
+                // 0x800 mean required to suspend or resume a process.
+                hProc = OpenProcess(0x800, false, processId);
+                if (hProc != IntPtr.Zero)
+                    NtResumeProcess(hProc);
+            }
+            finally
+            {
+                // close handle.
+                if (hProc != IntPtr.Zero)
+                    CloseHandle(hProc);
+            }
+        }
+
+        public static string GetProcessName(int pid)
+        {
+            IntPtr hProc = IntPtr.Zero;
+            try
+            {
+                // 0x400 mean required to retrieve certain information about a process, such as its token, exit code, and priority class.
+                // 0x10 mean required to read memory in a process using ReadProcessMemory.
+                hProc = OpenProcess(0x400 | 0x10, false, pid);
+                if (hProc != IntPtr.Zero)
+                {
+                    int lengthSb = 4000;
+                    uint lpSize = 65535;
+                    var sb = new StringBuilder(lengthSb);
+                    string result = String.Empty;
+                    if (QueryFullProcessImageName(hProc, 0, sb, ref lpSize))
+                    {
+                        result = sb.ToString();
+                    }
+                    return result;
+                }
+            }
+            finally
+            {
+                if (hProc != IntPtr.Zero)
+                    CloseHandle(hProc);
+            }
+            return String.Empty;
         }
 
         /// <summary>

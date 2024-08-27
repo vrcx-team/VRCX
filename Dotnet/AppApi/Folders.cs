@@ -100,7 +100,7 @@ namespace VRCX
 
         public bool OpenVrcAppDataFolder()
         {
-            var path = GetVRChatAppDataLocation();
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"Low\VRChat\VRChat";
             if (!Directory.Exists(path))
                 return false;
             
