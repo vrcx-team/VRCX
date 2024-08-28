@@ -23522,21 +23522,6 @@ speechSynthesis.getVoices();
         }
     });
 
-    API.setWorldImage = function (params) {
-        return this.call(`worlds/${params.id}`, {
-            method: 'PUT',
-            params
-        }).then((json) => {
-            var args = {
-                json,
-                params
-            };
-            this.$emit('WORLDIMAGE:SET', args);
-            this.$emit('WORLD', args);
-            return args;
-        });
-    };
-
     API.$on('WORLDIMAGE:SET', function (args) {
         $app.worldDialog.loading = false;
         $app.changeWorldImageDialogLoading = false;
