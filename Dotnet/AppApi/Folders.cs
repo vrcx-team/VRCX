@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.Win32;
 
 namespace VRCX
 {
@@ -52,16 +53,41 @@ namespace VRCX
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "VRChat");
         }
         
+        private string GetSteamUserdataPathFromRegistry()
+        {
+            string steamUserdataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Steam\userdata");
+
+            try
+            {
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Valve\Steam"))
+                {
+                    if (key != null)
+                    {
+                        object o = key.GetValue("InstallPath");
+                        if (o != null)
+                        {
+                            steamUserdataPath = Path.Combine(o.ToString(), @"userdata");
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            return steamUserdataPath;
+        }
+
         public string GetVRChatScreenshotsLocation()
         {
             // program files steam userdata screenshots
-            var steamPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Steam\userdata");
+            var steamUserdataPath = GetSteamUserdataPathFromRegistry();
             var screenshotPath = string.Empty;
             var latestWriteTime = DateTime.MinValue;
-            if (!Directory.Exists(steamPath)) 
+            if (!Directory.Exists(steamUserdataPath)) 
                 return screenshotPath;
             
-            var steamUserDirs = Directory.GetDirectories(steamPath);
+            var steamUserDirs = Directory.GetDirectories(steamUserdataPath);
             foreach (var steamUserDir in steamUserDirs)
             {
                 var screenshotDir = Path.Combine(steamUserDir, @"760\remote\438100\screenshots");
