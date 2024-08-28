@@ -29,7 +29,8 @@ namespace VRCX
                 PersistSessionCookies = true,
                 PersistUserPreferences = true,
                 UserAgent = Program.Version,
-                BrowserSubprocessPath = Environment.ProcessPath
+                BrowserSubprocessPath = Environment.ProcessPath,
+                BackgroundColor = 0xFF101010
             };
 
             cefSettings.RegisterScheme(new CefCustomScheme
@@ -60,8 +61,9 @@ namespace VRCX
 
             if (Program.LaunchDebug)
             {
+                // it's dead fuck https://github.com/chromiumembedded/cef/issues/3740
                 logger.Info("Debug mode enabled");
-                cefSettings.RemoteDebuggingPort = 8088;
+                cefSettings.RemoteDebuggingPort = 8089;
                 cefSettings.CefCommandLineArgs["remote-allow-origins"] = "*";
             }
 

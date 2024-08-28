@@ -7,8 +7,8 @@ import elements_es from 'element-ui/lib/locale/lang/es';
 import fr from './fr/en.json' assert { type: 'JSON' };
 import elements_fr from 'element-ui/lib/locale/lang/fr';
 
-import hu from './hu/en.json' assert { type: 'JSON' };
-import elements_hu from 'element-ui/lib/locale/lang/hu';
+// import hu from './hu/en.json' assert { type: 'JSON' };
+// import elements_hu from 'element-ui/lib/locale/lang/hu';
 
 import ja from './ja/en.json' assert { type: 'JSON' };
 import elements_ja from 'element-ui/lib/locale/lang/ja';
@@ -37,7 +37,7 @@ import elements_zh_TW from 'element-ui/lib/locale/lang/zh-TW';
 const localized_en = { ...en, ...elements_en };
 const localized_es = { ...es, ...elements_es };
 const localized_fr = { ...fr, ...elements_fr };
-const localized_hu = { ...hu, ...elements_hu };
+// const localized_hu = { ...hu, ...elements_hu };
 const localized_ja = { ...ja, ...elements_ja };
 const localized_ko = { ...ko, ...elements_ko };
 const localized_pl = { ...pl, ...elements_pl };
@@ -51,7 +51,7 @@ export {
     localized_en as en,
     localized_es as es,
     localized_fr as fr,
-    localized_hu as hu,
+    // localized_hu as hu,
     localized_ja as ja_JP,
     localized_ko as ko,
     localized_pl as pl,
