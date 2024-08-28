@@ -51,67 +51,27 @@
   </PropertyGroup>
   <ItemGroup>
 	  <Reference Include="Blake2Sharp">
-		  <HintPath>librsync.net\Blake2Sharp.dll</HintPath>
+		  <HintPath>libs\Blake2Sharp.dll</HintPath>
 	  </Reference>
 	  <Reference Include="librsync.net">
-		  <HintPath>librsync.net\librsync.net.dll</HintPath>
+		  <HintPath>libs\librsync.net.dll</HintPath>
 	  </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Dotnet\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dotnet\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Dotnet\Overlay\VRForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Dotnet\Overlay\VRForm.Designer.cs">
-      <DependentUpon>VRForm.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Dotnet\WinformBase.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <EmbeddedResource Update="Dotnet\MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Dotnet\Overlay\VRForm.resx">
-      <DependentUpon>VRForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="app.manifest" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <None Include="Version">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="openvr_api.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="sqlite3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+	  <None Include="libs\openvr_api.dll">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <TargetPath>openvr_api.dll</TargetPath>
+	  </None>
+	  <None Include="libs\sqlite3.dll">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <TargetPath>sqlite3.dll</TargetPath>
+	  </None>
     <Content Include="VRCX.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
