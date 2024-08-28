@@ -113,7 +113,7 @@
             "unavailable_tooltip": "不可用",
             "private": "私人",
             "sort_by": "排序方式:",
-            "select_avatar_tooltip": "更换为此模型"
+            "select_avatar_tooltip": "选择模型"
         },
         "friend_log": {
             "filter_placeholder": "筛选好友日志",
@@ -297,7 +297,7 @@
                         "sort_by_status": "依状态排序",
                         "sort_gps_to_top": "将GPS动态置于顶部",
                         "sort_gps_to_top_notice": "(仅限在线好友)",
-                        "sort_favorite_by": "星标好友排序依据",
+                        "sort_favorite_by": "星标玩家 排序依据",
                         "sort_favorite_by_alphabet": "字母顺序",
                         "sort_favorite_by_online_time": "在线时长",
                         "sort_online_by": "活跃好友排序依据",
@@ -443,9 +443,9 @@
                         "avatar_database_provider": "数据库提供方设置"
                     },
                     "youtube_api": {
-                        "header": "Youtube API",
+                        "header": "YouTube API",
                         "enable": "启用",
-                        "youtube_api_key": "Youtube API 密钥",
+                        "youtube_api_key": "YouTube API 密钥",
                         "enable_tooltip": "获取视频标题以供日志记录时使用，并获取进度条的时间"
                     },
                     "video_progress_pie": {
@@ -573,6 +573,7 @@
                 "request_invite": "申请加入",
                 "request_invite_with_message": "发送带消息的加入申请",
                 "invite_to_group": "邀请加入群组",
+                "send_boop": "Send Boop",
                 "manage_gallery_icon": "管理相册 / 图标",
                 "accept_friend_request": "接受好友申请",
                 "decline_friend_request": "拒绝好友申请",
@@ -593,7 +594,7 @@
                 "edit_status": "社交状态",
                 "edit_language": "语言",
                 "edit_bio": "自我介绍",
-                "edit_pronouns": "人称代词",
+                "edit_pronouns": "人称代词：",
                 "report_hacking": "报告这个用户的作弊行为(例如盗模)",
                 "unfriend": "解除好友关系",
                 "logout": "退出登录"
@@ -629,6 +630,7 @@
                 "friended": "添加为好友的时间",
                 "unfriended": "解除好友的时间",
                 "avatar_cloning": "是否允许克隆模型",
+                "booping": "Booping",
                 "avatar_cloning_allow": "允许",
                 "avatar_cloning_deny": "不允许",
                 "home_location": "出生点",
@@ -656,7 +658,7 @@
                 "sort_by": "排序方式:",
                 "order_by": "顺序:",
                 "sorting": {
-                    "name": "世界名称",
+                    "name": "名称",
                     "updated": "更新时间",
                     "created": "创建时间",
                     "favorites": "收藏次数",
@@ -699,7 +701,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "从缓存中删除世界",
-                "favorites_tooltip": "收藏此内容",
+                "favorites_tooltip": "收藏此世界",
                 "refresh": "刷新",
                 "new_instance": "创建新房间",
                 "make_home": "设为出生点",
@@ -782,7 +784,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "从缓存中删除模型",
-                "favorite_tooltip": "收藏此世界",
+                "favorite_tooltip": "收藏",
                 "unfavorite_tooltip": "从我的收藏中移除",
                 "refresh": "刷新",
                 "select": "选择模型",
@@ -811,7 +813,7 @@
                 "last_updated": "最后更新",
                 "version": "版本",
                 "platform": "平台",
-                "memo": "本地备注",
+                "memo": "VRCX 本地备注",
                 "memo_placeholder": "点击添加备注"
             },
             "json": {
@@ -881,11 +883,11 @@
                 "header": "帖子",
                 "visibility": "可见性:",
                 "edited_at": "最后编辑于：",
-                "created_at": "创建于：",
+                "created_at": "创建时间：",
                 "edit_tooltip": "编辑帖子",
                 "delete_tooltip": "删除帖子",
                 "edited_by": "最后编辑者：",
-                "search_placeholder": "搜索帖子",
+                "search_placeholder": "搜索公告",
                 "posts_count": "帖子总数: "
             },
             "members": {
@@ -921,15 +923,15 @@
             "header": "选择收藏夹",
             "vrchat_favorites": "VRChat 上的收藏",
             "local_favorites": "本地收藏",
-            "local_avatar_favorites": "模型收藏 (本地，游戏中不可见)"
+            "local_avatar_favorites": "本地收藏（游戏内不可见）"
         },
         "invite": {
-            "header": "邀请",
+            "header": "邀请玩家",
             "select_placeholder": "选择好友",
             "add_self": "添加自己",
             "add_friends_in_instance": "在房间中添加好友",
             "add_favorite_friends": "添加星标",
-            "invite_with_message": "发送带消息的邀请",
+            "invite_with_message": "邀请消息",
             "invite": "邀请",
             "friends_in_instance": "在房间里的好友"
         },
@@ -953,7 +955,7 @@
             "update": "更新"
         },
         "pronouns": {
-            "header": "人称代词",
+            "header": "人称代词：",
             "pronouns_placeholder": "请输入你的人称代词（例如武装直升机）",
             "update": "更新"
         },
@@ -1114,8 +1116,8 @@
             "favorite": "星标好友",
             "friends": "好友",
             "everyone": "所有人",
-            "reset": "重置为默认",
-            "close": "关闭并保存"
+            "reset": "重置",
+            "close": "关闭"
         },
         "world_export": {
             "header": "导出世界收藏夹"
@@ -1235,13 +1237,13 @@
         },
         "edit_send_invite_message": {
             "header": "编辑并发送邀请消息",
-            "description": "编辑冷却时间：一小时",
+            "description": "编辑冷却时间：一小时。",
             "cancel": "取消",
             "send": "发送"
         },
         "edit_send_invite_response_message": {
             "header": "编辑并发送拒绝消息",
-            "description": "编辑冷却时间：一小时",
+            "description": "编辑冷却时间：一小时。",
             "cancel": "取消",
             "send": "发送"
         },
@@ -1301,7 +1303,7 @@
             "ok": "确定"
         },
         "screenshot_metadata": {
-            "header": "图片元数据查看器",
+            "header": "屏幕截图元数据查看器",
             "drag": "拖放图片到这里",
             "browse": "选择文件",
             "last_screenshot": "上一张图片",
@@ -1354,13 +1356,13 @@
             "avatar": "模型",
             "joined_at": "加入于",
             "banned_at": "封禁于",
-            "created_at": "创建于",
+            "created_at": "创建时间",
             "type": "类型",
             "description": "描述",
             "data": "数据",
             "note": "备注",
             "roles": "身份组",
-            "user_id": "输入用户名 / 用户 ID",
+            "user_id": "用户 ID",
             "user_id_placeholder": "用户名 / 用户ID",
             "select_user": "选择用户",
             "selected_users": "已选择的用户",
@@ -1378,11 +1380,20 @@
             "send_notification": "发送通知",
             "post_visibility": "帖子可见性",
             "visibility_public": "公开",
-            "visibility_group": "仅群组内可见",
+            "visibility_group": "群组",
             "image": "图片",
             "cancel": "取消",
-            "create_post": "创建帖子",
+            "create_post": "创建群组帖子",
             "edit_post": "编辑帖子"
+        },
+        "boop_dialog": {
+            "header": "Boop",
+            "emoji_manager": "Emoji Manager",
+            "select_emoji": "Select Emoji",
+            "my_emojis": "My Emojis",
+            "default_emojis": "Default Emojis",
+            "cancel": "取消",
+            "send": "发送"
         }
     },
     "prompt": {
@@ -1426,7 +1437,7 @@
             }
         },
         "direct_access_user_id": {
-            "header": "打开用户资料页",
+            "header": "打开玩家资料页",
             "description": "输入用户资料链接或用户 ID (UUID)",
             "cancel": "取消",
             "ok": "确定",
@@ -1436,7 +1447,7 @@
             }
         },
         "direct_access_username": {
-            "header": "打开用户资料页",
+            "header": "打开玩家资料页",
             "description": "输入用户名称",
             "cancel": "取消",
             "ok": "确定",
@@ -1527,7 +1538,7 @@
             }
         },
         "change_world_capacity": {
-            "header": "更改人数上限",
+            "header": "更改世界最大人数",
             "description": "输入世界可容纳的人数, 最大值：80",
             "cancel": "取消",
             "ok": "确定",
@@ -1576,7 +1587,7 @@
             "description": "以小时为单位，较大的数值可能会影响性能 (默认值：24，为 0 时关闭)",
             "cancel": "取消",
             "ok": "确定",
-            "input_error": "请输入有效的值"
+            "input_error": "请输入有效的小时数"
         },
         "new_local_favorite_group": {
             "header": "新建收藏夹",
@@ -1617,14 +1628,14 @@
         "feed": {
             "date": "时间",
             "type": "类型",
-            "user": "用户",
+            "user": "玩家",
             "detail": "详细信息"
         },
         "gameLog": {
             "date": "时间",
             "type": "类型",
             "icon": "图标",
-            "user": "用户",
+            "user": "玩家",
             "detail": "详细信息",
             "action": "操作"
         },
@@ -1640,14 +1651,14 @@
             "language": "语言",
             "bioLink": "社交链接",
             "date": "时间",
-            "user": "用户",
+            "user": "玩家",
             "type": "种类",
             "detail": "详细信息"
         },
         "friendLog": {
             "date": "时间",
             "type": "类型",
-            "user": "用户",
+            "user": "玩家",
             "action": "操作"
         },
         "moderation": {
@@ -1669,11 +1680,11 @@
             "no": "No.",
             "avatar": "模型",
             "displayName": "显示名称",
-            "rank": "信誉等级",
+            "rank": "信任等级",
             "status": "状态",
             "language": "语言",
             "bioLink": "社交链接",
-            "joinCount": "一起玩的次数",
+            "joinCount": "见面的次数",
             "timeTogether": "一起玩的时长",
             "lastSeen": "最后见面",
             "lastActivity": "最后活动",
