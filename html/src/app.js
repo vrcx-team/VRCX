@@ -9582,28 +9582,12 @@ speechSynthesis.getVoices();
 
     // ascending
     var compareByName = function (a, b) {
-        var A = String(a.name).toUpperCase();
-        var B = String(b.name).toUpperCase();
-        if (A < B) {
-            return -1;
-        }
-        if (A > B) {
-            return 1;
-        }
-        return 0;
+        return a.name.localeCompare(b.name);
     };
 
     // ascending
     var compareByDisplayName = function (a, b) {
-        var A = String(a.displayName).toUpperCase();
-        var B = String(b.displayName).toUpperCase();
-        if (A < B) {
-            return -1;
-        }
-        if (A > B) {
-            return 1;
-        }
-        return 0;
+        return a.displayName.localeCompare(b.displayName);
     };
 
     // descending
