@@ -374,6 +374,7 @@ speechSynthesis.getVoices();
     API.websocketDomainVrchat = 'wss://pipeline.vrchat.cloud';
     API.endpointDomain = 'https://api.vrchat.cloud/api/1';
     API.websocketDomain = 'wss://pipeline.vrchat.cloud';
+    API.attemptingAutoLogin = false;
 
     API.call = function (endpoint, options) {
         var init = {
@@ -483,9 +484,7 @@ speechSynthesis.getVoices();
                     status === 401 &&
                     data.error.message === '"Missing Credentials"'
                 ) {
-                    if (endpoint === 'auth/user') {
-                        this.$emit('AUTOLOGIN');
-                    }
+                    this.$emit('AUTOLOGIN');
                     throw new Error('401: Missing Credentials');
                 }
                 if (status === 403 && endpoint.substring(0, 6) === 'config') {
@@ -8597,30 +8596,58 @@ speechSynthesis.getVoices();
     };
 
     API.$on('AUTOLOGIN', function () {
+        if (this.attemptingAutoLogin) {
+            return;
+        }
+        this.attemptingAutoLogin = true;
         var user =
             $app.loginForm.savedCredentials[$app.loginForm.lastUserLoggedIn];
-        if (typeof user !== 'undefined') {
-            if ($app.enablePrimaryPassword) {
-                this.logout();
-            } else {
-                $app.relogin(user).then(() => {
-                    if (this.errorNoty) {
-                        this.errorNoty.close();
-                    }
-                    if (!navigator.onLine) {
-                        this.errorNoty = new Noty({
-                            type: 'error',
-                            text: 'You are offline.'
-                        }).show();
-                    } else {
-                        this.errorNoty = new Noty({
-                            type: 'success',
-                            text: 'Automatically logged in.'
-                        }).show();
-                    }
-                });
-            }
+        if (typeof user === 'undefined') {
+            this.attemptingAutoLogin = false;
+            return;
         }
+        if ($app.enablePrimaryPassword) {
+            this.logout();
+            return;
+        }
+        $app.relogin(user)
+            .then(() => {
+                if (this.errorNoty) {
+                    this.errorNoty.close();
+                }
+                this.errorNoty = new Noty({
+                    type: 'success',
+                    text: 'Automatically logged in.'
+                }).show();
+                console.log('Automatically logged in.');
+            })
+            .catch((err) => {
+                if (this.errorNoty) {
+                    this.errorNoty.close();
+                }
+                this.errorNoty = new Noty({
+                    type: 'error',
+                    text: 'Failed to login automatically.'
+                }).show();
+                console.error('Failed to login automatically.', err);
+            })
+            .finally(() => {
+                if (!navigator.onLine) {
+                    this.errorNoty = new Noty({
+                        type: 'error',
+                        text: `You're offline.`
+                    }).show();
+                    console.error(`You're offline.`);
+                }
+            });
+    });
+
+    API.$on('USER:CURRENT', function () {
+        this.attemptingAutoLogin = false;
+    });
+
+    API.$on('LOGOUT', function () {
+        this.attemptingAutoLogin = false;
     });
 
     $app.data.loginForm = {
