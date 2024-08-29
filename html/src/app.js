@@ -5358,6 +5358,14 @@ speechSynthesis.getVoices();
         } catch (err) {}
     };
 
+    API.reconnectWebSocket = function () {
+        if (!$app.friendLogInitStatus) {
+            return;
+        }
+        this.closeWebSocket();
+        this.getAuth();
+    };
+
     // #endregion
     // #region | API: Visit
 
@@ -5634,9 +5642,14 @@ speechSynthesis.getVoices();
                             throw err;
                         })
                         .then((args) => {
-                            API.getCurrentUser().finally(() => {
-                                this.loginForm.loading = false;
-                            });
+                            API.getCurrentUser()
+                                .finally(() => {
+                                    this.loginForm.loading = false;
+                                })
+                                .catch((err) => {
+                                    this.nextCurrentUserRefresh = 120; // 1min
+                                    console.error(err);
+                                });
                             return args;
                         });
                 } else {
@@ -5758,16 +5771,14 @@ speechSynthesis.getVoices();
                 }
                 if (--this.nextCurrentUserRefresh <= 0) {
                     this.nextCurrentUserRefresh = 840; // 7mins
-                    API.getCurrentUser().catch((err1) => {
-                        throw err1;
-                    });
-                    AppApi.CheckGameRunning();
+                    API.getCurrentUser();
                 }
                 if (--this.nextGroupInstanceRefresh <= 0) {
                     if (this.friendLogInitStatus) {
                         this.nextGroupInstanceRefresh = 600; // 5min
                         API.getUsersGroupInstances();
                     }
+                    AppApi.CheckGameRunning();
                 }
                 if (--this.nextAppUpdateCheck <= 0) {
                     if (this.branch === 'Stable') {
@@ -9072,12 +9083,12 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.refreshFriendsList = async function () {
-        await API.getCurrentUser();
+        await API.getCurrentUser().catch((err) => {
+            console.error(err);
+        });
         this.nextCurrentUserRefresh = 840; // 7mins
         await API.refreshFriends();
-        API.closeWebSocket();
-        await API.getCurrentUser();
-        this.nextCurrentUserRefresh = 840; // 7mins
+        API.reconnectWebSocket();
     };
 
     $app.methods.refreshFriends = function (ref, origin) {
