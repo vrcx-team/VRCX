@@ -5568,7 +5568,6 @@ speechSynthesis.getVoices();
     var $app = {
         data: {
             API,
-            nextCurrentUserRefresh: 0,
             nextFriendsRefresh: 0,
             nextGroupInstanceRefresh: 0,
             nextAppUpdateCheck: 7200,
@@ -5646,7 +5645,6 @@ speechSynthesis.getVoices();
                                     this.loginForm.loading = false;
                                 })
                                 .catch((err) => {
-                                    this.nextCurrentUserRefresh = 120; // 1min
                                     console.error(err);
                                 });
                             return args;
@@ -5761,16 +5759,11 @@ speechSynthesis.getVoices();
             if (API.isLoggedIn === true) {
                 if (--this.nextFriendsRefresh <= 0) {
                     this.nextFriendsRefresh = 7200; // 1hour
-                    this.nextCurrentUserRefresh = 840; // 7mins
                     this.refreshFriendsList();
                     this.updateStoredUser(API.currentUser);
                     if (this.isGameRunning) {
                         API.refreshPlayerModerations();
                     }
-                }
-                if (--this.nextCurrentUserRefresh <= 0) {
-                    this.nextCurrentUserRefresh = 840; // 7mins
-                    API.getCurrentUser();
                 }
                 if (--this.nextGroupInstanceRefresh <= 0) {
                     if (this.friendLogInitStatus) {
@@ -9113,7 +9106,6 @@ speechSynthesis.getVoices();
         await API.getCurrentUser().catch((err) => {
             console.error(err);
         });
-        this.nextCurrentUserRefresh = 840; // 7mins
         await API.refreshFriends();
         API.reconnectWebSocket();
     };
