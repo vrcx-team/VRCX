@@ -256,7 +256,8 @@ namespace VRCX
                                     ParseLogStringDownload(fileInfo, logContext, line, offset) ||
                                     ParseLogImageDownload(fileInfo, logContext, line, offset) ||
                                     ParseVoteKick(fileInfo, logContext, line, offset) ||
-                                    ParseFailedToJoin(fileInfo, logContext, line, offset))
+                                    ParseFailedToJoin(fileInfo, logContext, line, offset) ||
+                                    ParseInstanceResetWarning(fileInfo, logContext, line, offset))
                                 {
                                 }
                             }
@@ -1187,6 +1188,25 @@ namespace VRCX
                 "event",
                 $"VRChat couldn't start OSC server, you may be affected by (https://vrchat.canny.io/bug-reports/p/installexe-breaks-osc-port-binding) \"{line.Substring(offset)}\""
             });
+            return true;
+        }
+
+        private bool ParseInstanceResetWarning(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2024.08.30 01:43:40 Log        -  [ModerationManager] This instance will be reset in 60 minutes due to its age.
+            if (line.Length < 100 || line[35] != 'M' || line[45] != 'M' || line[59] != 'i' || !line.Contains("[ModerationManager] This instance will be reset in "))
+                return false;
+
+            int index = line.IndexOf("[ModerationManager] This instance will be reset in ") + 20;
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "event",
+                line[index..]
+            });
+
             return true;
         }
 
