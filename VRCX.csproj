@@ -50,6 +50,11 @@
     <CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="DBMerger\**" />
+    <EmbeddedResource Remove="DBMerger\**" />
+    <None Remove="DBMerger\**" />
+  </ItemGroup>
+  <ItemGroup>
 	  <Reference Include="Blake2Sharp">
 		  <HintPath>librsync.net\Blake2Sharp.dll</HintPath>
 	  </Reference>
