@@ -107,7 +107,9 @@ namespace VRCX
         // old asset bundle cacher downloader method reused for updating, it's not pretty
         public void DownloadFile(string fileUrl, string hashUrl, int size)
         {
+#pragma warning disable SYSLIB0014 // Type or member is obsolete
             client = new WebClient();
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
             client.Headers.Add("user-agent", Program.Version);
             DownloadProgress = 0;
             DownloadSize = size;

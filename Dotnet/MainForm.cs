@@ -29,7 +29,6 @@ namespace VRCX
         {
             Instance = this;
             InitializeComponent();
-
             
             // adding a 5s delay here to avoid excessive writes to disk
             _saveTimer = new Timer();
@@ -42,8 +41,9 @@ namespace VRCX
                 Icon = icon;
                 TrayIcon.Icon = icon;
             }
-            catch
+            catch (Exception ex)
             {
+                jslogger.Error(ex);
             }
 
             Browser = new ChromiumWebBrowser("file://vrcx/index.html")
@@ -94,8 +94,9 @@ namespace VRCX
                     Size = size;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                jslogger.Error(ex);
             }
 
             try
@@ -123,8 +124,9 @@ namespace VRCX
                     WindowState = state;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                jslogger.Error(ex);
             }
 
             // 가끔 화면 위치가 안맞음.. 이걸로 해결 될지는 모르겠음
@@ -148,6 +150,7 @@ namespace VRCX
             SaveWindowState();
             _saveTimer?.Stop();
         }
+        
         private void MainForm_Move(object sender, System.EventArgs e)
         {
             if (WindowState != FormWindowState.Normal)
@@ -169,7 +172,6 @@ namespace VRCX
                 Hide();
             }
         }
-        
         
         private void SaveWindowState()
         {

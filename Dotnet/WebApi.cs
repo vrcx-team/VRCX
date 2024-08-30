@@ -181,7 +181,8 @@ namespace VRCX
         {
             if (ProxySet)
                 request.Proxy = Proxy;
-            
+
+            request.AutomaticDecompression = DecompressionMethods.All;
             request.Method = "POST";
             string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             request.ContentType = "multipart/form-data; boundary=" + boundary;
@@ -228,7 +229,8 @@ namespace VRCX
         {
             if (ProxySet)
                 request.Proxy = Proxy;
-            
+
+            request.AutomaticDecompression = DecompressionMethods.All;
             request.Method = "PUT";
             request.ContentType = options["fileMIME"] as string;
             var fileData = options["fileData"] as string;
@@ -245,7 +247,8 @@ namespace VRCX
         {
             if (ProxySet)
                 request.Proxy = Proxy;
-            
+
+            request.AutomaticDecompression = DecompressionMethods.All;
             request.Method = "POST";
             string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             request.ContentType = "multipart/form-data; boundary=" + boundary;
@@ -298,13 +301,16 @@ namespace VRCX
         {
             try
             {
+#pragma warning disable SYSLIB0014 // Type or member is obsolete
                 var request = WebRequest.CreateHttp((string)options["url"]);
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
                 if (ProxySet)
                     request.Proxy = Proxy;
                 
                 request.CookieContainer = _cookieContainer;
                 request.KeepAlive = true;
                 request.UserAgent = Program.Version;
+                request.AutomaticDecompression = DecompressionMethods.All;
 
                 if (options.TryGetValue("headers", out object headers))
                 {
