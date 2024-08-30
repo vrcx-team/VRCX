@@ -5780,11 +5780,7 @@ speechSynthesis.getVoices();
                     AppApi.CheckGameRunning();
                 }
                 if (--this.nextAppUpdateCheck <= 0) {
-                    if (this.branch === 'Stable') {
-                        this.nextAppUpdateCheck = 14400; // 2hours
-                    } else {
-                        this.nextAppUpdateCheck = 7200; // 1hour
-                    }
+                    this.nextAppUpdateCheck = 7200; // 1hour
                     if (this.autoUpdateVRCX !== 'Off') {
                         this.checkForVRCXUpdate();
                     }
