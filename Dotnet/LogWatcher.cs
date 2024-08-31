@@ -257,7 +257,9 @@ namespace VRCX
                                     ParseLogImageDownload(fileInfo, logContext, line, offset) ||
                                     ParseVoteKick(fileInfo, logContext, line, offset) ||
                                     ParseFailedToJoin(fileInfo, logContext, line, offset) ||
-                                    ParseInstanceResetWarning(fileInfo, logContext, line, offset))
+                                    ParseInstanceResetWarning(fileInfo, logContext, line, offset) ||
+                                    ParseVoteKickInitiation(fileInfo, logContext, line, offset) ||
+                                    ParseVoteKickSuccess(fileInfo, logContext, line, offset))
                                 {
                                 }
                             }
@@ -1194,10 +1196,48 @@ namespace VRCX
         private bool ParseInstanceResetWarning(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2024.08.30 01:43:40 Log        -  [ModerationManager] This instance will be reset in 60 minutes due to its age.
-            if (line.Length < 100 || line[35] != 'M' || line[45] != 'M' || line[59] != 'i' || !line.Contains("[ModerationManager] This instance will be reset in "))
+            if (!line.Contains("[ModerationManager] This instance will be reset in "))
                 return false;
 
             int index = line.IndexOf("[ModerationManager] This instance will be reset in ") + 20;
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "event",
+                line[index..]
+            });
+
+            return true;
+        }
+
+        private bool ParseVoteKickInitiation(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2024.08.29 02:04:47 Log        -  [ModerationManager] A vote kick has been initiated against בורקס במאווררים 849d, do you agree?
+            if (!line.Contains("[ModerationManager] A vote kick has been initiated against "))
+                return false;
+
+            int index = line.IndexOf("[ModerationManager] A vote kick has been initiated against ") + 20;
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "event",
+                line[index..]
+            });
+
+            return true;
+        }
+
+        private bool ParseVoteKickSuccess(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            // 2024.08.29 02:05:21 Log        -  [ModerationManager] Vote to kick בורקס במאווררים 849d succeeded
+            if (!line.Contains("[ModerationManager] Vote to kick "))
+                return false;
+
+            int index = line.IndexOf("[ModerationManager] Vote to kick ") + 20;
 
             AppendLog(new[]
             {
