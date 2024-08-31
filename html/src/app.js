@@ -33249,6 +33249,7 @@ speechSynthesis.getVoices();
             text: D.text,
             roleIds: D.roleIds,
             visibility: D.visibility,
+            sendNotification: D.sendNotification,
             imageId: null
         };
         if (this.gallerySelectDialog.selectedFileId) {
