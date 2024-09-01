@@ -4239,6 +4239,13 @@ speechSynthesis.getVoices();
         ) {
             this.refreshFavoriteAvatars(args.params.tags);
         }
+
+        if (
+            args.params.type === 'friend' && 
+            $app.localFavoriteFriendsGroups.includes("friend:" + args.params.tags)
+        )  {
+            $app.updateLocalFavoriteFriends();
+        }
     });
 
     API.$on('FAVORITE:DELETE', function (args) {
