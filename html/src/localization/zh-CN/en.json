@@ -34,7 +34,7 @@
         "feed": {
             "favorites_only_tooltip": "仅显示星标好友",
             "filter_placeholder": "筛选动态",
-            "search_placeholder": "搜索动态"
+            "search_placeholder": "搜索"
         },
         "game_log": {
             "filter_placeholder": "筛选游戏日志",
@@ -58,7 +58,7 @@
             },
             "world": {
                 "header": "世界",
-                "category": "依类别搜索",
+                "category": "按类别搜索",
                 "community_lab": "包含社区实验室"
             },
             "avatar": {
@@ -71,9 +71,9 @@
                 "private": "私人",
                 "local": "本地",
                 "remote": "远程",
-                "sort_name": "依名称排序",
-                "sort_update": "依更新时间排序",
-                "sort_created": "依建立时间排序"
+                "sort_name": "按名称排序",
+                "sort_update": "按更新时间排序",
+                "sort_created": "按建立时间排序"
             },
             "group": {
                 "header": "群组"
@@ -89,14 +89,14 @@
                 "header": "世界",
                 "search": "搜索",
                 "vrchat_favorites": "VRChat 上的收藏",
-                "local_favorites": "本地收藏（游戏内不可见）",
+                "local_favorites": "本地收藏（需要VRC+，游戏内不可见）",
                 "new_group": "创建新的收藏夹"
             },
             "avatars": {
                 "header": "模型",
                 "search": "搜索",
                 "vrchat_favorites": "VRChat 上的收藏",
-                "local_favorites": "本地收藏（游戏内不可见）",
+                "local_favorites": "本地收藏（需要VRC+，游戏内不可见）",
                 "new_group": "创建新的收藏夹"
             },
             "bulk_unfavorite_mode": "批量删除模式",
@@ -178,7 +178,7 @@
             "invite_response_messages": "对邀请的快捷回复",
             "invite_request_messages": "请求加入的留言",
             "invite_request_response_messages": "对加入请求的快捷回复",
-            "past_display_names": "使用过的显示名称",
+            "past_display_names": "使用过的昵称",
             "config_json": "API 端点返回的 JSON 信息",
             "current_user_json": "当前账户的 JSON 信息",
             "feedback": "举报提交记录",
@@ -235,11 +235,11 @@
                     "auto_state_change": "自动化状态切换",
                     "auto_state_change_tooltip": "当房间中有其他人时自动切换状态 (独自一人 / 有其他人时) 如果你不知道这是什么，保持默认关闭即可",
                     "auto_state_change_off": "关闭",
-                    "auto_state_change_active_or_ask_me": "加入我 / 询问我",
+                    "auto_state_change_active_or_ask_me": "欢迎加入 / 忙碌",
                     "auto_state_change_active_or_busy": "在线 / 请勿打扰",
-                    "auto_state_change_join_me_or_ask_me": "加入我 / 请勿打扰",
-                    "auto_state_change_join_me_or_busy": "加入我 / 请勿打扰",
-                    "auto_state_change_ask_me_or_busy": "询问我 / 请勿打扰",
+                    "auto_state_change_join_me_or_ask_me": "欢迎加入 / 请勿打扰",
+                    "auto_state_change_join_me_or_busy": "欢迎加入 / 请勿打扰",
+                    "auto_state_change_ask_me_or_busy": "忙碌 / 请勿打扰",
                     "auto_invite_request_accept": "自动同意邀请请求",
                     "auto_invite_request_accept_tooltip": "自动同意来自星标好友的邀请请求",
                     "auto_invite_request_accept_off": "关闭",
@@ -273,10 +273,10 @@
                     "vrcplus_profile_icons": "VRC+ 个人信息图标",
                     "tooltips": "显示提示",
                     "nicknames": "显示本地好友备注",
-                    "sort_favorite_by": "收藏排序依据",
+                    "sort_favorite_by": "收藏排序规则",
                     "sort_favorite_by_name": "名称",
                     "sort_favorite_by_date": "时间",
-                    "sort_instance_users_by": "房间用户排序依据",
+                    "sort_instance_users_by": "房间用户排序规则",
                     "sort_instance_users_by_time": "时间",
                     "sort_instance_users_by_alphabet": "字母顺序",
                     "table_max_size": "最大显示记录",
@@ -294,19 +294,19 @@
                     "sorting": {
                         "header": "排序",
                         "sort_private_to_bottom": "将处在私人世界的好友置于底部",
-                        "sort_by_status": "依状态排序",
+                        "sort_by_status": "按状态排序",
                         "sort_gps_to_top": "将GPS动态置于顶部",
                         "sort_gps_to_top_notice": "(仅限在线好友)",
-                        "sort_favorite_by": "星标好友排序依据",
+                        "sort_favorite_by": "星标好友排序规则",
                         "sort_favorite_by_alphabet": "字母顺序",
                         "sort_favorite_by_online_time": "在线时长",
-                        "sort_online_by": "活跃好友排序依据",
+                        "sort_online_by": "活跃好友排序规则",
                         "sort_online_by_alphabet": "字母顺序",
                         "sort_online_by_online_time": "在线时长",
-                        "sort_active_by": "在线好友排序依据",
+                        "sort_active_by": "在线好友排序规则",
                         "sort_active_by_alphabet": "字母顺序",
                         "sort_active_by_online_time": "在线时长",
-                        "sort_offline_by": "离线好友排序依据",
+                        "sort_offline_by": "离线好友排序规则",
                         "sort_offline_by_alphabet": "字母顺序",
                         "sort_offline_by_offline_time": "离线时长"
                     },
@@ -554,12 +554,12 @@
                 "active": "活跃中",
                 "offline": "离线",
                 "online": "在线",
-                "join_me": "加入我",
-                "ask_me": "询问我",
+                "join_me": "欢迎加入",
+                "ask_me": "忙碌",
                 "busy": "请勿打扰"
             },
-            "previous_display_names": "曾使用的显示名称：",
-            "pronouns": "人称代词：",
+            "previous_display_names": "曾使用的昵称",
+            "pronouns": "人称代词",
             "tags": {
                 "friend_no": "第 {number} 位好友",
                 "vrchat_team": "VRChat Team"
@@ -581,7 +581,7 @@
                 "show_avatar_author": "显示模型信息",
                 "show_fallback_avatar": "显示备用模型信息",
                 "show_previous_instances": "显示一起加入过的房间",
-                "show_previous_images": "显示使用过的图片",
+                "show_previous_images": "显示使用过的封面",
                 "moderation_block": "屏蔽",
                 "moderation_unblock": "解除屏蔽",
                 "moderation_mute": "静音",
@@ -636,7 +636,7 @@
                 "id_tooltip": "复制到剪贴板",
                 "copy_id": "复制 ID",
                 "copy_url": "复制URL",
-                "copy_display_name": "复制显示名称",
+                "copy_display_name": "复制昵称",
                 "accuracy_notice": "本地数据库的数据可能不准确",
                 "instance_full": "房间已满",
                 "instance_closed": "房间已关闭",
@@ -673,8 +673,8 @@
             "avatars": {
                 "header": "创建的模型",
                 "total_count": "总共 {count}",
-                "sort_by_name": "依名称排序",
-                "sort_by_update": "依更新时间排序",
+                "sort_by_name": "按名称排序",
+                "sort_by_update": "按更新时间排序",
                 "all": "所有",
                 "public": "公开",
                 "private": "私人"
@@ -705,7 +705,7 @@
                 "make_home": "设为出生点",
                 "reset_home": "重置出生点为默认",
                 "show_previous_instances": "显示加入过的房间",
-                "show_previous_images": "显示使用过的图片",
+                "show_previous_images": "显示使用过的封面",
                 "rename": "重命名",
                 "change_description": "更改描述",
                 "change_capacity": "更改人数上限",
@@ -715,7 +715,7 @@
                 "change_image": "更改图片",
                 "download_package": "下载 Unity Package",
                 "publish_to_labs": "发布到社区实验室",
-                "unpublish": "取消公开状态",
+                "unpublish": "取消公开",
                 "delete": "删除"
             },
             "instances": {
@@ -782,20 +782,20 @@
             },
             "actions": {
                 "delete_cache_tooltip": "从缓存中删除模型",
-                "favorite_tooltip": "收藏此世界",
+                "favorite_tooltip": "收藏此内容",
                 "unfavorite_tooltip": "从我的收藏中移除",
                 "refresh": "刷新",
                 "select": "选择模型",
                 "select_fallback": "选择为后备模型",
                 "block": "屏蔽模型",
                 "unblock": "解除屏蔽模型",
-                "show_previous_images": "显示曾使用的图片",
+                "show_previous_images": "显示曾使用的封面",
                 "make_public": "设为公开",
                 "make_private": "设为私人",
                 "rename": "重命名",
                 "change_description": "更改描述",
                 "change_content_tags": "更改内容标签",
-                "change_image": "更改图片",
+                "change_image": "更改封面",
                 "download_package": "下载 Unity Package",
                 "delete": "删除",
                 "delete_impostor": "删除模型替身",
@@ -836,8 +836,8 @@
                 "subscribed": "接收群组通知"
             },
             "actions": {
-                "represent_tooltip": "显示在个人信息上",
-                "unrepresent_tooltip": "停止显示在个人信息上",
+                "represent_tooltip": "显示在名牌上",
+                "unrepresent_tooltip": "停止显示在名牌上",
                 "cancel_join_request_tooltip": "取消待处理的请求",
                 "pending_request_tooltip": "待接受邀请",
                 "request_join_tooltip": "请求加入",
@@ -921,7 +921,7 @@
             "header": "选择收藏夹",
             "vrchat_favorites": "VRChat 上的收藏",
             "local_favorites": "本地收藏",
-            "local_avatar_favorites": "模型收藏 (本地，游戏中不可见)"
+            "local_avatar_favorites": "模型收藏 (需要VRC+，游戏中不可见)"
         },
         "invite": {
             "header": "邀请",
@@ -1008,7 +1008,7 @@
         "config_json": {
             "header": "VRChat JSON 配置文件",
             "description1": "这些选项仅适用于高级用户。",
-            "description2": "将输入框留白来设为默认值，设置需要重新启动游戏才会应用。",
+            "description2": "将输入框留白以使用默认值，设置需要重新启动游戏才会应用。",
             "cache_size": "缓存大小：",
             "refresh": "刷新",
             "delete_all_cache": "删除所有缓存",
@@ -1037,7 +1037,7 @@
         },
         "set_world_tags": {
             "header": "设置世界标签",
-            "avatar_scaling_disabled": "关闭模型缩放",
+            "avatar_scaling_disabled": "关闭模型缩放功能",
             "enable_debugging": "为其他人启用世界调试菜单",
             "author_tags": "作者添加的标签(以逗号分隔)",
             "content_tags": "内容警告标签(以逗号分隔)",
@@ -1168,7 +1168,7 @@
         },
         "avatar_database_provider": {
             "header": "模型数据库提供方",
-            "add_provider": "新增提供方"
+            "add_provider": "新增"
         },
         "chatbox_blacklist": {
             "header": "聊天框黑名单",
@@ -1349,7 +1349,7 @@
             "block_join_requests": "屏蔽加入请求",
             "group_members": "群组成员",
             "progress": "操作进度:",
-            "display_name": "显示名称",
+            "display_name": "昵称",
             "visibility": "可见性",
             "avatar": "模型",
             "joined_at": "加入于",
@@ -1634,7 +1634,7 @@
             "photonId": "Photon ID",
             "icon": "图标",
             "platform": "平台",
-            "displayName": "显示名称",
+            "displayName": "昵称",
             "status": "状态",
             "rank": "信誉等级",
             "language": "语言",
@@ -1668,7 +1668,7 @@
         "friendList": {
             "no": "No.",
             "avatar": "模型",
-            "displayName": "显示名称",
+            "displayName": "昵称",
             "rank": "信誉等级",
             "status": "状态",
             "language": "语言",
@@ -1715,10 +1715,10 @@
         },
         "previous_instances": {
             "date": "日期",
-            "display_name": "显示名称",
+            "display_name": "昵称",
             "world": "世界",
             "instance_name": "房间名称",
-            "instance_creator": "房间创建者",
+            "instance_creator": "房间建立者",
             "time": "停留时间",
             "count": "加入次数",
             "action": "操作"

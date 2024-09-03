@@ -784,7 +784,7 @@
             },
             "actions": {
                 "delete_cache_tooltip": "從快取中刪除角色",
-                "favorite_tooltip": "收藏",
+                "favorite_tooltip": "新增到我的收藏",
                 "unfavorite_tooltip": "從我的收藏中移除",
                 "refresh": "重新整理",
                 "select": "選擇角色",

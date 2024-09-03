@@ -68,36 +68,39 @@ namespace VRCX
         public byte[] ResizeImageToFitLimits(byte[] imageData, int maxWidth = 2000, int maxHeight = 2000, long maxSize = 10_000_000)
         {
             using var fileMemoryStream = new MemoryStream(imageData);
-            System.Drawing.Bitmap image = new System.Drawing.Bitmap(fileMemoryStream);
+            var image = new Bitmap(fileMemoryStream);
+            
+            // for APNG, check if image is png format and less than maxSize
+            if (image.RawFormat.Equals(System.Drawing.Imaging.ImageFormat.Png) &&
+                imageData.Length < maxSize &&
+                image.Width <= maxWidth &&
+                image.Height <= maxHeight)
+            {
+                return imageData;
+            }
+            
             if (image.Width > maxWidth)
             {
                 var sizingFactor = image.Width / (double)maxWidth;
-                int newHeight = (int)Math.Round(image.Height / sizingFactor);
-                image = new System.Drawing.Bitmap(image, maxWidth, newHeight);
+                var newHeight = (int)Math.Round(image.Height / sizingFactor);
+                image = new Bitmap(image, maxWidth, newHeight);
             }
             if (image.Height > maxHeight)
             {
                 var sizingFactor = image.Height / (double)maxHeight;
-                int newWidth = (int)Math.Round(image.Width / sizingFactor);
-                image = new System.Drawing.Bitmap(image, newWidth, maxHeight);
+                var newWidth = (int)Math.Round(image.Width / sizingFactor);
+                image = new Bitmap(image, newWidth, maxHeight);
             }
 
-            void saveToFileToUpload()
-            {
-                using var imageSaveMemoryStream = new MemoryStream();
-                image.Save(imageSaveMemoryStream, System.Drawing.Imaging.ImageFormat.Png);
-                imageData = imageSaveMemoryStream.ToArray();
-            }
-
-            saveToFileToUpload();
-
+            SaveToFileToUpload();
             for (int i = 0; i < 250 && imageData.Length > maxSize; i++)
             {
-                saveToFileToUpload();
+                SaveToFileToUpload();
                 if (imageData.Length < maxSize)
                     break;
-                int newWidth = image.Width;
-                int newHeight = image.Height;
+                
+                int newWidth;
+                int newHeight;
                 if (image.Width > image.Height)
                 {
                     newWidth = image.Width - 25;
@@ -108,7 +111,7 @@ namespace VRCX
                     newHeight = image.Height - 25;
                     newWidth = (int)Math.Round(image.Width / (image.Height / (double)newHeight));
                 }
-                image = new System.Drawing.Bitmap(image, newWidth, newHeight);
+                image = new Bitmap(image, newWidth, newHeight);
             }
 
             if (imageData.Length > maxSize)
@@ -117,6 +120,13 @@ namespace VRCX
             }
 
             return imageData;
+
+            void SaveToFileToUpload()
+            {
+                using var imageSaveMemoryStream = new MemoryStream();
+                image.Save(imageSaveMemoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                imageData = imageSaveMemoryStream.ToArray();
+            }
         }
 
         /// <summary>
