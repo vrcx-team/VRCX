@@ -9117,9 +9117,13 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.refreshFriendsList = async function () {
-        await API.getCurrentUser().catch((err) => {
-            console.error(err);
-        });
+        // If we just got user less then 1 min before code call, don't call it again
+        if ($app.nextCurrentUserRefresh < 720)
+        {
+            await API.getCurrentUser().catch((err) => {
+                console.error(err);
+            });
+        }
         await API.refreshFriends();
         API.reconnectWebSocket();
     };
