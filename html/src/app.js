@@ -1905,7 +1905,7 @@ speechSynthesis.getVoices();
     };
 
     API.getCurrentUser = function () {
-        this.nextCurrentUserRefresh = 840; // 7mins
+        $app.nextCurrentUserRefresh = 840; // 7mins
         return this.call('auth/user', {
             method: 'GET'
         }).then((json) => {
