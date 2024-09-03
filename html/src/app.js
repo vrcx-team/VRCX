@@ -1905,6 +1905,7 @@ speechSynthesis.getVoices();
     };
 
     API.getCurrentUser = function () {
+        this.nextCurrentUserRefresh = 840; // 7mins
         return this.call('auth/user', {
             method: 'GET'
         }).then((json) => {
@@ -5773,7 +5774,6 @@ speechSynthesis.getVoices();
             if (API.isLoggedIn === true) {
                 if (--this.nextFriendsRefresh <= 0) {
                     this.nextFriendsRefresh = 7200; // 1hour
-                    this.nextCurrentUserRefresh = 840; // 7mins
                     this.refreshFriendsList();
                     this.updateStoredUser(API.currentUser);
                     if (this.isGameRunning) {
@@ -5781,7 +5781,6 @@ speechSynthesis.getVoices();
                     }
                 }
                 if (--this.nextCurrentUserRefresh <= 0) {
-                    this.nextCurrentUserRefresh = 840; // 7mins
                     API.getCurrentUser();
                 }
                 if (--this.nextGroupInstanceRefresh <= 0) {
@@ -9121,7 +9120,6 @@ speechSynthesis.getVoices();
         await API.getCurrentUser().catch((err) => {
             console.error(err);
         });
-        this.nextCurrentUserRefresh = 840; // 7mins
         await API.refreshFriends();
         API.reconnectWebSocket();
     };
