@@ -4246,9 +4246,11 @@ speechSynthesis.getVoices();
         }
 
         if (
-            args.params.type === 'friend' && 
-            $app.localFavoriteFriendsGroups.includes("friend:" + args.params.tags)
-        )  {
+            args.params.type === 'friend' &&
+            $app.localFavoriteFriendsGroups.includes(
+                'friend:' + args.params.tags
+            )
+        ) {
             $app.updateLocalFavoriteFriends();
         }
     });
@@ -5317,6 +5319,15 @@ speechSynthesis.getVoices();
                 if ($app.debugWebSocket) {
                     console.log('WebSocket closed');
                 }
+                workerTimers.setTimeout(() => {
+                    if (
+                        this.isLoggedIn &&
+                        $app.friendLogInitStatus &&
+                        this.webSocket === null
+                    ) {
+                        this.getAuth();
+                    }
+                }, 5000);
             };
             socket.onerror = () => {
                 if (this.errorNoty) {
@@ -5375,7 +5386,7 @@ speechSynthesis.getVoices();
     };
 
     API.reconnectWebSocket = function () {
-        if (!$app.friendLogInitStatus) {
+        if (!this.isLoggedIn || !$app.friendLogInitStatus) {
             return;
         }
         this.closeWebSocket();
@@ -8320,6 +8331,7 @@ speechSynthesis.getVoices();
             }).show();
         }
         this.isLoggedIn = false;
+        $app.friendLogInitStatus = false;
     });
 
     API.$on('LOGIN', function (args) {
