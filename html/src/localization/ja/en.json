@@ -434,8 +434,8 @@
                         "description": "旧バージョンのキャッシュを自動削除"
                     },
                     "local_world_persistence": {
-                        "header": "Local World Persistence",
-                        "description": "Localhost webserver (requires restart)"
+                        "header": "ローカルでのワールド永続化",
+                        "description": "Webサーバーをローカルでホストする (再起動が必要です)"
                     },
                     "remote_database": {
                         "header": "リモートアバターデータベース",
