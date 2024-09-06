@@ -1671,7 +1671,7 @@
         "notification": {
             "date": "日付",
             "type": "種類",
-            "user_group": "User/Group",
+            "user_group": "ユーザー/グループ",
             "photo": "画像",
             "message": "メッセージ",
             "action": "アクション"
