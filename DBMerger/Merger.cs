@@ -1,7 +1,9 @@
 ﻿using NLog;
+using NLog.Fluent;
 using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -9,6 +11,10 @@ namespace DBMerger
 {
     public partial class Merger(SQLiteConnection dbConn, string oldDBName, string newDBName, Config config)
     {
+        // C#'s iso date string has millionths of a second but the db stores
+        // dates with only thousands of a second, so define our own format
+        private const string JSDateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz";
+
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly Regex userIDRegex = UserIDRegex();
 
@@ -25,8 +31,6 @@ namespace DBMerger
             try
             {
                 MergeInternal();
-
-                //throw new Exception("AHHH GOD PLEASE MAKE IT STOP");
             }
             catch
             {
@@ -130,7 +134,7 @@ namespace DBMerger
                     var oldDateTime = DateTime.Parse((string)old[1]);
                     var newDateTime = DateTime.Parse((string)existing[1]);
                     old[1] = oldDateTime > newDateTime ? oldDateTime : newDateTime;
-                    old[1] = ((DateTime)old[1]).ToString("o");
+                    old[1] = ((DateTime)old[1]).ToString(JSDateTimeFormat);
 
                     // Don't concatenate memos if they're the exact same or
                     // the new memo ends with the old one (suggesting import
@@ -246,9 +250,9 @@ namespace DBMerger
         {
             MergeTable(
                 table => userIDRegex.IsMatch(table) 
-                         && (table.EndsWith("_avatar_history") 
-                            || table.EndsWith("_notifications") 
-                            || table.EndsWith("_moderation")),
+                    && (table.EndsWith("_avatar_history") 
+                        || table.EndsWith("_notifications") 
+                        || table.EndsWith("_moderation")),
                 [0],
                 (old, existing) =>
                 {
@@ -269,6 +273,9 @@ namespace DBMerger
                 }
             );
 
+            var overlappingTables = new List<string>();
+            DateTime? oldestInNewTables = null;
+            DateTime? newestInOldTables = null;
             for (int i = 0; i < unMergedTables.Count; i++)
             {
                 // All other feed tables shouldve been merged, so just by
@@ -293,12 +300,14 @@ namespace DBMerger
 
                 // Find min value of new db table and max value of old db table
                 var oldestInNew = dbConn.ExecuteScalar<string>($"SELECT MIN({colNames[1]}) FROM {newDBName}.{table};");
+                DateTime? oldestInNewDT = oldestInNew != null ? DateTime.Parse(oldestInNew) : null;
                 var newestInOld = dbConn.ExecuteScalar<string>($"SELECT MAX({colNames[1]}) FROM {oldDBName}.{table};");
+                DateTime? newestInOldDT = newestInOld != null ? DateTime.Parse(newestInOld) : null;
 
                 // If either tables are empty or the oldest value in the new
                 // table is still newer than the newest value in the old
                 // (the tables don't overlap in time at all)
-                if (oldestInNew == null || newestInOld == null || DateTime.Parse(oldestInNew) > DateTime.Parse(newestInOld))
+                if (newestInOldDT == null || oldestInNewDT == null || oldestInNewDT > newestInOldDT)
                 {
                     logger.Debug($"User tables {table} has no overlap");
                     // Then we can just combine them since there is no data
@@ -312,10 +321,130 @@ namespace DBMerger
                 }
                 else
                 {
+                    // I don't think people will actually care to choose a date
+                    // for every single overlapping database
+                    // Although it could easily be argued that people would want
+                    // per user overlap control
                     logger.Debug($"User tables {table} has overlap");
-                    // uhhh shit yourself idk
+                    if (oldestInNewTables == null || oldestInNewDT < oldestInNewTables)
+                    {
+                        oldestInNewTables = oldestInNewDT;
+                    }
+                    if (newestInOldTables == null || newestInOldDT > newestInOldTables)
+                    {
+                        newestInOldTables = newestInOldDT;
+                    }
+                    overlappingTables.Add(table);
                 }
             }
+
+            if (overlappingTables.Count > 0)
+            {
+                // The datetimes should not be null here since there are
+                // overlapping tables
+                MergeUsersOverlap(overlappingTables, oldestInNewTables.Value, newestInOldTables.Value);
+            }
+        }
+
+        private void MergeUsersOverlap(List<string> tables, DateTime oldestInNew, DateTime newestInOld)
+        {
+            PrintOverlapWarning(tables, oldestInNew, newestInOld);
+
+            string userInput = null;
+            bool datetimeParsed;
+            DateTime cutoffTime;
+            do
+            {
+                if (userInput != null)
+                {
+                    logger.Error("Unrecognized input: " + userInput);
+                }
+
+                userInput = Console.ReadLine();
+                datetimeParsed = DateTime.TryParseExact(
+                    userInput, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out cutoffTime
+                );
+            }
+            while (userInput != "keep old" && userInput != "keep new" && !datetimeParsed);
+
+            // If user wants to keep new one then do nothing
+            if (userInput == "keep new")
+            {
+                logger.Info("Keeping new");
+                return;
+            }
+            if (userInput == "keep old")
+            {
+                logger.Info("Keeping old");
+
+                // For old we just delete all rows from new and reinsert rows
+                // from old
+                foreach (var table in tables)
+                {
+                    logger.Debug($"Deleting all rows in new database's {table}");
+                    dbConn.Execute($"DELETE FROM {newDBName}.{table}");
+
+                    logger.Debug($"Adding rows from old database's {table}");
+                    dbConn.Execute($"INSERT INTO {newDBName}.{table} SELECT * FROM {oldDBName}.{table};");
+
+                    SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, table)[1]);
+                }
+                return;
+            }
+
+            // Else we do the cutoff
+            var cutoffStr = cutoffTime.ToString(JSDateTimeFormat);
+            logger.Info("Merging at date: " + cutoffTime.ToString("yyyy-MM-dd HH:mm:ss"));
+            foreach (var table in tables)
+            {
+                var colNames = GetTableColumnNames(dbConn, table);
+
+                // Cutoff data in new db thats older than cutoff
+                logger.Debug($"Deleting rows in new database's {table} older than cutoff");
+                dbConn.Execute($"DELETE FROM {newDBName}.{table} WHERE {colNames[1]}<?;", cutoffStr);
+
+                // Insert old rows in to the new db
+                logger.Debug($"Adding rows from old database's {table} older than cutoff");
+                var columnsClause = string.Join(", ", colNames.Skip(1));
+                dbConn.Execute(
+                    $"INSERT INTO {newDBName}.{table}({columnsClause})" +
+                        $"SELECT {columnsClause} FROM {oldDBName}.{table} " +
+                            $"WHERE {colNames[1]}<?;", cutoffStr
+                );
+
+                SortTable(dbConn, newDBName, table, colNames[1]);
+            }
+        }
+
+        private void PrintOverlapWarning(List<string> tables, DateTime oldestInNew, DateTime newestInOld)
+        {
+            var overlap = newestInOld - oldestInNew;
+            var overlapString = $"{overlap.Days} days, {overlap.Hours} hours";
+
+            logger.Warn(new string('=', 100));
+            logger.Warn("WARNING:".PadLeft(46));
+            logger.Warn("The merger has is unable to automatically merge the following USER FEED tables:");
+            foreach (var table in tables)
+            {
+                logger.Warn(table);
+            }
+            logger.Warn("");
+            logger.Warn("This is because these USER FEED tables contain overlap that can't be resolved:");
+            logger.Warn("old database".PadRight(64, '-') + "|");
+            logger.Warn(("|" + " new database".PadLeft(64, '-')).PadLeft(100));
+            logger.Warn($"overlap ({overlapString})".PadRight(35) + "|" + new string('-', 28) + "|");
+            logger.Warn("cutoff (^)".PadLeft(49));
+            logger.Warn("");
+            logger.Warn("Please choose a cutoff date and time. Data in the old USER FEED tables after this date");
+            logger.Warn("will be discarded, and data in the new USER FEED tables before this date will be discarded as well.");
+            logger.Warn("The remaining data will then be spliced together.");
+            logger.Warn("Your input should be in this format: `YYYY-MM-DD HH:MM:SS`");
+            logger.Warn("");
+            logger.Warn("Alternatively, you can enter `keep new` to discard the old data or `keep old` to discard new data.");
+            logger.Warn("");
+            logger.Warn("Again, this only affects USER FEED tables, all other tables are merged properly.");
+            logger.Warn("To read more about this process please check the VRCX wiki: <woops>");
+            logger.Warn(new string('=', 100));
         }
 
         private void ImportConfig()
