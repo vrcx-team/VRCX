@@ -965,7 +965,7 @@
             "access_type_public": "パブリック",
             "access_type_group": "グループ",
             "access_type_friend_plus": "フレンド+",
-            "access_type_friend": "Friend",
+            "access_type_friend": "フレンド",
             "access_type_invite_plus": "インバイト+",
             "access_type_invite": "招待を送信",
             "group_access_type": "グループアクセス",
