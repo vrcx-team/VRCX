@@ -1010,7 +1010,7 @@
         "config_json": {
             "header": "VRChat Config JSON",
             "description1": "これらのオプションは上級者向けです。",
-            "description2": "デフォルトに設定するには空欄にしてください。設定を適用させるにはゲームを再起動する必要があります。",
+            "description2": "デフォルトに設定するには空欄にしてください。設定を適用するにはゲームを再起動する必要があります。",
             "cache_size": "キャッシュサイズ:",
             "refresh": "更新",
             "delete_all_cache": "全てのキャッシュを削除",
