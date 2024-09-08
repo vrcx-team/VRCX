@@ -38,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\sqlite3.dll" Link="sqlite3.dll">
+		<Content Include="..\libs\sqlite3.dll" Link="sqlite3.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
