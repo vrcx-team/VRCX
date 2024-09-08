@@ -4239,6 +4239,13 @@ speechSynthesis.getVoices();
         ) {
             this.refreshFavoriteAvatars(args.params.tags);
         }
+
+        if (
+            args.params.type === 'friend' && 
+            $app.localFavoriteFriendsGroups.includes("friend:" + args.params.tags)
+        )  {
+            $app.updateLocalFavoriteFriends();
+        }
     });
 
     API.$on('FAVORITE:DELETE', function (args) {
@@ -5220,6 +5227,11 @@ speechSynthesis.getVoices();
                 $app.instanceQueueReady(instanceId);
                 break;
 
+            case 'instance-queue-left':
+                console.log('instance-queue-left', content);
+                $app.instanceQueueClear();
+                break;
+
             case 'content-refresh':
                 var contentType = content.contentType;
                 console.log('content-refresh', content);
@@ -5780,11 +5792,7 @@ speechSynthesis.getVoices();
                     AppApi.CheckGameRunning();
                 }
                 if (--this.nextAppUpdateCheck <= 0) {
-                    if (this.branch === 'Stable') {
-                        this.nextAppUpdateCheck = 14400; // 2hours
-                    } else {
-                        this.nextAppUpdateCheck = 7200; // 1hour
-                    }
+                    this.nextAppUpdateCheck = 7200; // 1hour
                     if (this.autoUpdateVRCX !== 'Off') {
                         this.checkForVRCXUpdate();
                     }
@@ -29000,16 +29008,13 @@ speechSynthesis.getVoices();
         // workerTimers.setTimeout(this.instanceQueueTimeout, 3600000);
     };
 
-    // $app.methods.instanceQueueTimeout = function () {
-    //     // remove instance from queue after 1hour of inactivity
-    //     API.queuedInstances.forEach((ref) => {
-    //         // 59mins
-    //         if (Date.now() - ref.updatedAt > 3540000) {
-    //             ref.$msgBox.close();
-    //             API.queuedInstances.delete(ref.location);
-    //         }
-    //     });
-    // };
+    $app.methods.instanceQueueClear = function () {
+        // remove all instances from queue
+        API.queuedInstances.forEach((ref) => {
+            ref.$msgBox.close();
+            API.queuedInstances.delete(ref.location);
+        });
+    };
 
     /**
      * @param {{ groupId: string }} params
@@ -33249,6 +33254,7 @@ speechSynthesis.getVoices();
             text: D.text,
             roleIds: D.roleIds,
             visibility: D.visibility,
+            sendNotification: D.sendNotification,
             imageId: null
         };
         if (this.gallerySelectDialog.selectedFileId) {
