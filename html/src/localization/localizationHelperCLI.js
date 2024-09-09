@@ -17,22 +17,58 @@ function* GetLocalizationObjects() {
     }
 }
 
-const AddLocalizationKey = (key, value) => {
-    const objects = key.split('.');
+// Shamelessly stolen from https://stackoverflow.com/a/55017155/11030436
+const InsertKeyInObj = (obj, key, value, above_key) => {
+    const keys = Object.keys(obj);
+    if (keys.length === 0 || !(Object.hasOwn(above_key, obj))) {
+        obj[key] = value;
+        return obj;
+    }
+
+    // Reconstruct object from scratch, inserting our new key when the next
+    // key is the above_key
+
+    // Again utilize the dummy key in case we're adding above the first key
+    keys.unshift('dummy');
+    obj.dummy = {};
+    const ret = keys.reduce((newObj, currKey, i) => {
+        if (currKey !== key) {
+            newObj[currKey] = obj[currKey];
+        }
+
+        if (i < keys.length - 1 && keys[i + 1] === above_key) {
+            newObj[key] = value;
+        }
+
+        return newObj;
+    }, {})
+    delete ret.dummy;
+    return ret;
+}
+
+const AddLocalizationKey = (key, value, above_key) => {
+    // Use dummy key in case the user wants to add a key to the root json object
+    // unlikely, but still a valid use case
+    const objects = ['dummy', ...key.split('.')];
 
     for (const [localePath, localeObj] of GetLocalizationObjects()) {
-        let currentObj = localeObj;
-        let i = 0;
+        let dummy = { 'dummy': localeObj }
+        let lastObj = dummy;
+        let currentObj = dummy.dummy;
+        // Have index start at one to skip the dummy key
+        let i = 1;
+
         // Last element is final key not object so loop n - 1 times
-        for (i = 0; i < objects.length - 1; i++) {
-            if (!(objects[i] in currentObj)) {
+        for (; i < objects.length - 1; i++) {
+            if (!Object.hasOwn(objects[i], currentObj)) {
                 currentObj[objects[i]] = {};
             }
 
+            lastObj = currentObj;
             currentObj = currentObj[objects[i]];
         }
-        currentObj[objects[i]] = value;
-        fs.writeFileSync(localePath, `${JSON.stringify(localeObj, null, 4)}\n`);
+        lastObj[objects[i - 1]] = InsertKeyInObj(currentObj, objects[i], value, above_key);
+        fs.writeFileSync(localePath, `${JSON.stringify(dummy.dummy, null, 4)}\n`);
     }
 
     console.log(`\`${key}:${value}\` added to every localization file!`);
@@ -40,7 +76,7 @@ const AddLocalizationKey = (key, value) => {
 
 const RemoveLocalizationKey = (key) => {
     const removeKey = (obj, objects, i) => {
-        if (!(objects[i] in obj)) {
+        if (!(Object.hasOwn(objects[i], obj))) {
             return;
         }
         
@@ -68,10 +104,10 @@ const RemoveLocalizationKey = (key) => {
 
 const cliParser = yargs(hideBin(process.argv))
     .command({
-        command: 'add <key> <value>',
-        aliases: ['a'],
-        desc: 'adds key and value to all localization files',
-        handler: (argv) => AddLocalizationKey(argv.key, argv.value)
+        command: 'add <key> <value> [above_key]',
+        aliases: ['a', 'replace', 'r'],
+        desc: 'adds or replaces a key and value to all localization files above `above_key`',
+        handler: (argv) => AddLocalizationKey(argv.key, argv.value, argv.above_key)
     })
     .command({
         command: 'remove <key>',
@@ -82,7 +118,8 @@ const cliParser = yargs(hideBin(process.argv))
     .demandCommand(1)
     .example([
         ['$0 add foo.bar "I\'m adding a key!"', 'Adding a key as `foo.bar`'],
-        ['$0 remove foo.bar', 'removes the foo.bar key']
+        ['$0 remove foo.bar', 'removes the foo.bar key'],
+        ['$0 add foo.bar "I\'m adding a key!" baz', 'Adding a key aboe the existing `foo.baz` key' ]
     ])
     .help(false)
     .version(false)
