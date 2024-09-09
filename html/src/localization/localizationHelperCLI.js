@@ -20,7 +20,7 @@ function* GetLocalizationObjects() {
 // Shamelessly stolen from https://stackoverflow.com/a/55017155/11030436
 const InsertKeyInObj = (obj, key, value, above_key) => {
     const keys = Object.keys(obj);
-    if (keys.length === 0 || !(Object.hasOwn(above_key, obj))) {
+    if (keys.length === 0 || !(Object.hasOwn(obj, above_key))) {
         obj[key] = value;
         return obj;
     }
@@ -60,7 +60,7 @@ const AddLocalizationKey = (key, value, above_key) => {
 
         // Last element is final key not object so loop n - 1 times
         for (; i < objects.length - 1; i++) {
-            if (!Object.hasOwn(objects[i], currentObj)) {
+            if (!Object.hasOwn(currentObj, objects[i])) {
                 currentObj[objects[i]] = {};
             }
 
@@ -76,10 +76,10 @@ const AddLocalizationKey = (key, value, above_key) => {
 
 const RemoveLocalizationKey = (key) => {
     const removeKey = (obj, objects, i) => {
-        if (!(Object.hasOwn(objects[i], obj))) {
+        if (!(Object.hasOwn(obj, objects[i]))) {
             return;
         }
-        
+
         if (objects.length - 1 === i) {
             delete obj[objects[i]];
         } else {
@@ -119,7 +119,7 @@ const cliParser = yargs(hideBin(process.argv))
     .example([
         ['$0 add foo.bar "I\'m adding a key!"', 'Adding a key as `foo.bar`'],
         ['$0 remove foo.bar', 'removes the foo.bar key'],
-        ['$0 add foo.bar "I\'m adding a key!" baz', 'Adding a key aboe the existing `foo.baz` key' ]
+        ['$0 add foo.bar "I\'m adding a key!" baz', 'Adding a key aboe the existing `foo.baz` key']
     ])
     .help(false)
     .version(false)
