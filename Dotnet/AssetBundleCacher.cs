@@ -110,6 +110,8 @@ namespace VRCX
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
             client = new WebClient();
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
+            if (WebApi.ProxySet)
+                client.Proxy = WebApi.Proxy;
             client.Headers.Add("user-agent", Program.Version);
             DownloadProgress = 0;
             DownloadSize = size;

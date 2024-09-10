@@ -81,7 +81,15 @@ namespace VRCX
 
         private static string DownloadFile(string fileUrl)
         {
-            HttpClient client = new HttpClient();
+            HttpClientHandler handler = new HttpClientHandler();
+
+            if(WebApi.ProxySet)
+            {
+                handler.Proxy = WebApi.Proxy;
+                handler.UseProxy = true;
+            }
+
+            HttpClient client = new HttpClient(handler);
 
             try
             {
