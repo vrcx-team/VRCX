@@ -2158,15 +2158,21 @@ speechSynthesis.getVoices();
         return this.call(`users/${params.userId}`, {
             method: 'GET'
         }).then((json) => {
+            if (!json || !json.name) {
+                console.error('Invalid user data:', json);
+                return;
+            }
             var args = {
                 json,
                 params
             };
             this.$emit('USER', args);
             return args;
+        }).catch((error) => {
+            console.error('API.getUser error:', error);
         });
     };
-
+    
     /**
      * Fetch user from cache if they're in it. Otherwise, calls API.
      * @param {{ userId: string }} params identifier of registered user
@@ -9082,8 +9088,13 @@ speechSynthesis.getVoices();
         $app.sortFriendsGroup1 = false;
         $app.sortFriendsGroup2 = false;
         $app.sortFriendsGroup3 = false;
+    
+        API.$off('FRIEND:LOADED');
+        API.$on('FRIEND:LOADED', function () {
+            $app.isFriendsLoaded = true;
+        });
     });
-
+    
     API.$on('USER:CURRENT', function (args) {
         // USER:CURRENT에서 처리를 함
         $app.refreshFriends(args.ref, args.origin);
@@ -9628,9 +9639,14 @@ speechSynthesis.getVoices();
 
     // ascending
     var compareByName = function (a, b) {
+        if (!a || !b || !a.name || !b.name) {
+            console.warn('Invalid data in compareByName:', a, b);
+            return 0;
+        }
         return a.name.localeCompare(b.name);
     };
-
+    
+    
     // ascending
     var compareByDisplayName = function (a, b) {
         return a.displayName.localeCompare(b.displayName);
@@ -9793,52 +9809,89 @@ speechSynthesis.getVoices();
 
     // Online friends
     $app.computed.friendsGroup1 = function () {
+        if (!this.isFriendsLoaded || !Array.isArray(this.friendsGroup1_) || this.friendsGroup1_.length === 0) {
+            return [];
+        }
+    
+        this.friendsGroup1_ = this.friendsGroup1_.filter(friend => friend && friend.name);
+        if (this.friendsGroup1_.length === 0) {
+            console.warn('No valid data in friendsGroup1');
+            return [];
+        }
+    
         if (this.orderFriendsGroup1) {
-            if (this.orderFriendsGroupPrivate) {
-                this.friendsGroupB_.sort(compareByPrivate);
-            }
-            if (this.orderFriendsGroupStatus) {
-                this.friendsGroupB_.sort(compareByStatus);
-            }
             return this.friendsGroupB_;
         }
+    
         if (this.sortFriendsGroup1) {
             this.sortFriendsGroup1 = false;
-            this.friendsGroup1_.sort(compareByName);
-            if (this.orderFriendsGroupPrivate) {
-                this.friendsGroup1_.sort(compareByPrivate);
-            }
-            if (this.orderFriendsGroupStatus) {
-                this.friendsGroup1_.sort(compareByStatus);
+            try {
+                this.friendsGroup1_.sort(compareByName);
+            } catch (e) {
+                console.error('Error during sorting friendsGroup1:', e);
             }
         }
+    
         return this.friendsGroup1_;
     };
 
     // Active friends
     $app.computed.friendsGroup2 = function () {
+        if (!this.isFriendsLoaded || !Array.isArray(this.friendsGroup2_) || this.friendsGroup2_.length === 0) {
+            return [];
+        }
+    
+        this.friendsGroup2_ = this.friendsGroup2_.filter(friend => friend && friend.name);
+        if (this.friendsGroup2_.length === 0) {
+            console.warn('No valid data in friendsGroup2');
+            return [];
+        }
+    
         if (this.orderFriendsGroup2) {
             return this.friendsGroupC_;
         }
+    
         if (this.sortFriendsGroup2) {
             this.sortFriendsGroup2 = false;
-            this.friendsGroup2_.sort(compareByName);
+            try {
+                this.friendsGroup2_.sort(compareByName);
+            } catch (e) {
+                console.error('Error during sorting friendsGroup2:', e);
+            }
         }
+    
         return this.friendsGroup2_;
     };
 
     // Offline friends
     $app.computed.friendsGroup3 = function () {
+        if (!this.isFriendsLoaded || !Array.isArray(this.friendsGroup3_) || this.friendsGroup3_.length === 0) {
+            return [];
+        }
+    
+        this.friendsGroup3_ = this.friendsGroup3_.filter(friend => friend && friend.name);
+        if (this.friendsGroup3_.length === 0) {
+            console.warn('No valid data in friendsGroup3');
+            return [];
+        }
+    
         if (this.orderFriendsGroup3) {
             return this.friendsGroupD_;
         }
+    
         if (this.sortFriendsGroup3) {
             this.sortFriendsGroup3 = false;
-            this.friendsGroup3_.sort(compareByName);
+            try {
+                this.friendsGroup3_.sort(compareByName);
+            } catch (e) {
+                console.error('Error during sorting friendsGroup3:', e);
+            }
         }
+    
         return this.friendsGroup3_;
     };
-
+    
+    
     $app.methods.userStatusClass = function (user, pendingOffline) {
         var style = {};
         if (typeof user === 'undefined') {
