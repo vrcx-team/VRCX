@@ -991,10 +991,14 @@ speechSynthesis.getVoices();
                 }
             },
             showGroupDialog() {
-                if (!this.location || !this.link) {
+                var location = this.location;
+                if (this.isTraveling) {
+                    location = this.traveling;
+                }
+                if (!location || !this.link) {
                     return;
                 }
-                var L = API.parseLocation(this.location);
+                var L = API.parseLocation(location);
                 if (!L.groupId) {
                     return;
                 }
