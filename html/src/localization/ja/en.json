@@ -1677,7 +1677,7 @@
             "action": "アクション"
         },
         "friendList": {
-            "no": "いいえ。",
+            "no": "No.",
             "avatar": "アバター",
             "displayName": "表示名",
             "rank": "ランク",
@@ -1705,7 +1705,7 @@
             }
         },
         "social_status": {
-            "no": "いいえ。",
+            "no": "No.",
             "status": "ステータス"
         },
         "download_history": {

@@ -31,9 +31,9 @@ mixin feedTab()
                             el-popover(placement="right" width="500px" trigger="click")
                                 div(slot="reference" style="display:inline-block;vertical-align:top;width:160px")
                                     template(v-if="scope.row.previousCurrentAvatarThumbnailImageUrl")
-                                        img.x-link(v-lazy="scope.row.previousCurrentAvatarImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
+                                        img.x-link(v-lazy="scope.row.previousCurrentAvatarThumbnailImageUrl" style="flex:none;width:160px;height:120px;border-radius:4px")
                                         br
-                                    avatar-info(:imageurl="scope.row.previousCurrentAvatarImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.previousOwnerId" :hintavatarname="scope.row.previousAvatarName" :avatartags="scope.row.previousCurrentAvatarTags")
+                                    avatar-info(:imageurl="scope.row.previousCurrentAvatarThumbnailImageUrl" :userid="scope.row.userId" :hintownerid="scope.row.previousOwnerId" :hintavatarname="scope.row.previousAvatarName" :avatartags="scope.row.previousCurrentAvatarTags")
                                 img.x-link(v-lazy="scope.row.previousCurrentAvatarImageUrl" style="width:500px;height:375px" @click="showFullscreenImageDialog(scope.row.previousCurrentAvatarImageUrl)")
                             span(style="position:relative;vertical-align:top;margin:0 5px")
                                 i.el-icon-right

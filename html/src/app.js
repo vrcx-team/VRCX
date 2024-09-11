@@ -991,10 +991,14 @@ speechSynthesis.getVoices();
                 }
             },
             showGroupDialog() {
-                if (!this.location || !this.link) {
+                var location = this.location;
+                if (this.isTraveling) {
+                    location = this.traveling;
+                }
+                if (!location || !this.link) {
                     return;
                 }
-                var L = API.parseLocation(this.location);
+                var L = API.parseLocation(location);
                 if (!L.groupId) {
                     return;
                 }
@@ -1905,6 +1909,7 @@ speechSynthesis.getVoices();
     };
 
     API.getCurrentUser = function () {
+        $app.nextCurrentUserRefresh = 840; // 7mins
         return this.call('auth/user', {
             method: 'GET'
         }).then((json) => {
@@ -2005,6 +2010,7 @@ speechSynthesis.getVoices();
                 $online_for: Date.now(),
                 $travelingToTime: Date.now(),
                 $offline_for: '',
+                $active_for: '',
                 $isVRCPlus: false,
                 $isModerator: false,
                 $isTroll: false,
@@ -4241,9 +4247,11 @@ speechSynthesis.getVoices();
         }
 
         if (
-            args.params.type === 'friend' && 
-            $app.localFavoriteFriendsGroups.includes("friend:" + args.params.tags)
-        )  {
+            args.params.type === 'friend' &&
+            $app.localFavoriteFriendsGroups.includes(
+                'friend:' + args.params.tags
+            )
+        ) {
             $app.updateLocalFavoriteFriends();
         }
     });
@@ -5312,6 +5320,15 @@ speechSynthesis.getVoices();
                 if ($app.debugWebSocket) {
                     console.log('WebSocket closed');
                 }
+                workerTimers.setTimeout(() => {
+                    if (
+                        this.isLoggedIn &&
+                        $app.friendLogInitStatus &&
+                        this.webSocket === null
+                    ) {
+                        this.getAuth();
+                    }
+                }, 5000);
             };
             socket.onerror = () => {
                 if (this.errorNoty) {
@@ -5370,7 +5387,7 @@ speechSynthesis.getVoices();
     };
 
     API.reconnectWebSocket = function () {
-        if (!$app.friendLogInitStatus) {
+        if (!this.isLoggedIn || !$app.friendLogInitStatus) {
             return;
         }
         this.closeWebSocket();
@@ -5773,7 +5790,6 @@ speechSynthesis.getVoices();
             if (API.isLoggedIn === true) {
                 if (--this.nextFriendsRefresh <= 0) {
                     this.nextFriendsRefresh = 7200; // 1hour
-                    this.nextCurrentUserRefresh = 840; // 7mins
                     this.refreshFriendsList();
                     this.updateStoredUser(API.currentUser);
                     if (this.isGameRunning) {
@@ -5781,7 +5797,6 @@ speechSynthesis.getVoices();
                     }
                 }
                 if (--this.nextCurrentUserRefresh <= 0) {
-                    this.nextCurrentUserRefresh = 840; // 7mins
                     API.getCurrentUser();
                 }
                 if (--this.nextGroupInstanceRefresh <= 0) {
@@ -8317,6 +8332,7 @@ speechSynthesis.getVoices();
             }).show();
         }
         this.isLoggedIn = false;
+        $app.friendLogInitStatus = false;
     });
 
     API.$on('LOGIN', function (args) {
@@ -9118,10 +9134,13 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.refreshFriendsList = async function () {
-        await API.getCurrentUser().catch((err) => {
-            console.error(err);
-        });
-        this.nextCurrentUserRefresh = 840; // 7mins
+        // If we just got user less then 1 min before code call, don't call it again
+        if ($app.nextCurrentUserRefresh < 720)
+        {
+            await API.getCurrentUser().catch((err) => {
+                console.error(err);
+            });
+        }
         await API.refreshFriends();
         API.reconnectWebSocket();
     };
@@ -9470,6 +9489,7 @@ speechSynthesis.getVoices();
             ) {
                 ctx.ref.$online_for = '';
                 ctx.ref.$offline_for = Date.now();
+                ctx.ref.$active_for = '';
                 var ts = Date.now();
                 var time = ts - $location_at;
                 var worldName = await this.getWorldName(location);
@@ -9495,6 +9515,7 @@ speechSynthesis.getVoices();
                 ctx.ref.$location_at = Date.now();
                 ctx.ref.$online_for = Date.now();
                 ctx.ref.$offline_for = '';
+                ctx.ref.$active_for = '';
                 var worldName = await this.getWorldName(newRef.location);
                 var groupName = await this.getGroupName(location);
                 var feed = {
@@ -9509,6 +9530,9 @@ speechSynthesis.getVoices();
                 };
                 this.addFeed(feed);
                 database.addOnlineOfflineToDatabase(feed);
+            }
+            if (newState === 'active') {
+                ctx.ref.$active_for = Date.now();
             }
         }
         if (ctx.state === 'online') {
@@ -9628,18 +9652,33 @@ speechSynthesis.getVoices();
 
     // ascending
     var compareByName = function (a, b) {
+        if (typeof a.name !== 'string' || typeof b.name !== 'string') {
+            return 0;
+        }
         return a.name.localeCompare(b.name);
     };
 
     // ascending
     var compareByDisplayName = function (a, b) {
+        if (
+            typeof a.displayName !== 'string' ||
+            typeof b.displayName !== 'string'
+        ) {
+            return 0;
+        }
         return a.displayName.localeCompare(b.displayName);
     };
 
     // descending
     var compareByUpdatedAt = function (a, b) {
-        var A = String(a.updated_at).toUpperCase();
-        var B = String(b.updated_at).toUpperCase();
+        if (
+            typeof a.updated_at !== 'string' ||
+            typeof b.updated_at !== 'string'
+        ) {
+            return 0;
+        }
+        var A = a.updated_at.toUpperCase();
+        var B = b.updated_at.toUpperCase();
         if (A < B) {
             return 1;
         }
@@ -9651,8 +9690,14 @@ speechSynthesis.getVoices();
 
     // descending
     var compareByCreatedAt = function (a, b) {
-        var A = String(a.created_at).toUpperCase();
-        var B = String(b.created_at).toUpperCase();
+        if (
+            typeof a.created_at !== 'string' ||
+            typeof b.created_at !== 'string'
+        ) {
+            return 0;
+        }
+        var A = a.created_at.toUpperCase();
+        var B = b.created_at.toUpperCase();
         if (A < B) {
             return 1;
         }
@@ -12978,7 +13023,8 @@ speechSynthesis.getVoices();
             for (var unityPackage of unityPackages) {
                 if (
                     unityPackage.variant &&
-                    unityPackage.variant !== 'standard'
+                    unityPackage.variant !== 'standard' &&
+                    unityPackage.variant !== 'security'
                 ) {
                     continue;
                 }
@@ -18258,7 +18304,8 @@ speechSynthesis.getVoices();
             for (var unityPackage of unityPackages) {
                 if (
                     unityPackage.variant &&
-                    unityPackage.variant !== 'standard'
+                    unityPackage.variant !== 'standard' &&
+                    unityPackage.variant !== 'security'
                 ) {
                     continue;
                 }
@@ -18898,7 +18945,11 @@ speechSynthesis.getVoices();
         var bundleSizes = [];
         for (let i = ref.unityPackages.length - 1; i > -1; i--) {
             var unityPackage = ref.unityPackages[i];
-            if (unityPackage.variant && unityPackage.variant !== 'standard') {
+            if (
+                unityPackage.variant &&
+                unityPackage.variant !== 'standard' &&
+                unityPackage.variant !== 'security'
+            ) {
                 continue;
             }
             if (!this.compareUnityVersion(unityPackage.unitySortNumber)) {
@@ -20012,7 +20063,8 @@ speechSynthesis.getVoices();
             for (var unityPackage of ref.unityPackages) {
                 if (
                     unityPackage.variant &&
-                    unityPackage.variant !== 'standard'
+                    unityPackage.variant !== 'standard' &&
+                    unityPackage.variant !== 'security'
                 ) {
                     continue;
                 }
@@ -21871,6 +21923,8 @@ speechSynthesis.getVoices();
     $app.methods.userOnlineFor = function (ctx) {
         if (ctx.ref.state === 'online' && ctx.ref.$online_for) {
             return Date.now() - ctx.ref.$online_for;
+        } else if (ctx.ref.state === 'active' && ctx.ref.$active_for) {
+            return Date.now() - ctx.ref.$active_for;
         } else if (ctx.ref.$offline_for) {
             return Date.now() - ctx.ref.$offline_for;
         }
@@ -21880,6 +21934,8 @@ speechSynthesis.getVoices();
     $app.methods.userOnlineForTimestamp = function (ctx) {
         if (ctx.ref.state === 'online' && ctx.ref.$online_for) {
             return ctx.ref.$online_for;
+        } else if (ctx.ref.state === 'active' && ctx.ref.$active_for) {
+            return ctx.ref.$active_for;
         } else if (ctx.ref.$offline_for) {
             return ctx.ref.$offline_for;
         }
@@ -22845,6 +22901,9 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.sortAlphabetically = function (a, b, field) {
+        if (!a[field] || !b[field]) {
+            return 0;
+        }
         return a[field].toLowerCase().localeCompare(b[field].toLowerCase());
     };
 
@@ -24605,7 +24664,11 @@ speechSynthesis.getVoices();
         var assetUrl = '';
         for (var i = ref.unityPackages.length - 1; i > -1; i--) {
             var unityPackage = ref.unityPackages[i];
-            if (unityPackage.variant && unityPackage.variant !== 'standard') {
+            if (
+                unityPackage.variant &&
+                unityPackage.variant !== 'standard' &&
+                unityPackage.variant !== 'security'
+            ) {
                 continue;
             }
             if (
@@ -24771,7 +24834,11 @@ speechSynthesis.getVoices();
         var assetUrl = '';
         for (var i = ref.unityPackages.length - 1; i > -1; i--) {
             var unityPackage = ref.unityPackages[i];
-            if (unityPackage.variant && unityPackage.variant !== 'standard') {
+            if (
+                unityPackage.variant &&
+                unityPackage.variant !== 'standard' &&
+                unityPackage.variant !== 'security'
+            ) {
                 continue;
             }
             if (
@@ -24894,7 +24961,8 @@ speechSynthesis.getVoices();
                 var unityPackage = unityPackages[i];
                 if (
                     unityPackage.variant &&
-                    unityPackage.variant !== 'standard'
+                    unityPackage.variant !== 'standard' &&
+                    unityPackage.variant !== 'security'
                 ) {
                     continue;
                 }
@@ -31972,7 +32040,11 @@ speechSynthesis.getVoices();
         var assetUrl = '';
         for (let i = D.ref.unityPackages.length - 1; i > -1; i--) {
             var unityPackage = D.ref.unityPackages[i];
-            if (unityPackage.variant && unityPackage.variant !== 'standard') {
+            if (
+                unityPackage.variant &&
+                unityPackage.variant !== 'standard' &&
+                unityPackage.variant !== 'security'
+            ) {
                 continue;
             }
             if (
