@@ -4247,7 +4247,7 @@ speechSynthesis.getVoices();
         }
 
         if (
-            args.params.type === 'friend' &&
+            args.params.type === 'friend' && 
             $app.localFavoriteFriendsGroups.includes(
                 'friend:' + args.params.tags
             )
@@ -8972,24 +8972,20 @@ speechSynthesis.getVoices();
     $app.data.pendingActiveFriends = new Set();
     $app.data.friendsNo = 0;
     $app.data.isFriendsGroupMe = true;
-    $app.data.isFriendsGroup0 = true;
-    $app.data.isFriendsGroup1 = true;
-    $app.data.isFriendsGroup2 = true;
-    $app.data.isFriendsGroup3 = false;
+    $app.data.isVIPFriends = true;
+    $app.data.isOnlineFriends = true;
+    $app.data.isActiveFriends = true;
+    $app.data.isOfflineFriends = false;
     $app.data.isGroupInstances = false;
     $app.data.groupInstances = [];
-    $app.data.friendsGroup0_ = [];
-    $app.data.friendsGroup1_ = [];
-    $app.data.friendsGroup2_ = [];
-    $app.data.friendsGroup3_ = [];
-    $app.data.friendsGroupA_ = [];
-    $app.data.friendsGroupB_ = [];
-    $app.data.friendsGroupC_ = [];
-    $app.data.friendsGroupD_ = [];
-    $app.data.sortFriendsGroup0 = false;
-    $app.data.sortFriendsGroup1 = false;
-    $app.data.sortFriendsGroup2 = false;
-    $app.data.sortFriendsGroup3 = false;
+    $app.data.vipFriends_ = [];
+    $app.data.onlineFriends_ = [];
+    $app.data.activeFriends_ = [];
+    $app.data.offlineFriends_ = [];
+    $app.data.sortVIPFriends = false;
+    $app.data.sortOnlineFriends = false;
+    $app.data.sortActiveFriends = false;
+    $app.data.sortOfflineFriends = false;
 
     $app.methods.saveFriendsGroupStates = async function () {
         await configRepository.setBool(
@@ -8998,19 +8994,19 @@ speechSynthesis.getVoices();
         );
         await configRepository.setBool(
             'VRCX_isFriendsGroupFavorites',
-            this.isFriendsGroup0
+            this.isVIPFriends
         );
         await configRepository.setBool(
             'VRCX_isFriendsGroupOnline',
-            this.isFriendsGroup1
+            this.isOnlineFriends
         );
         await configRepository.setBool(
             'VRCX_isFriendsGroupActive',
-            this.isFriendsGroup2
+            this.isActiveFriends
         );
         await configRepository.setBool(
             'VRCX_isFriendsGroupOffline',
-            this.isFriendsGroup3
+            this.isOfflineFriends
         );
     };
 
@@ -9019,19 +9015,19 @@ speechSynthesis.getVoices();
             'VRCX_isFriendsGroupMe',
             true
         );
-        this.isFriendsGroup0 = await configRepository.getBool(
+        this.isVIPFriends = await configRepository.getBool(
             'VRCX_isFriendsGroupFavorites',
             true
         );
-        this.isFriendsGroup1 = await configRepository.getBool(
+        this.isOnlineFriends = await configRepository.getBool(
             'VRCX_isFriendsGroupOnline',
             true
         );
-        this.isFriendsGroup2 = await configRepository.getBool(
+        this.isActiveFriends = await configRepository.getBool(
             'VRCX_isFriendsGroupActive',
             false
         );
-        this.isFriendsGroup3 = await configRepository.getBool(
+        this.isOfflineFriends = await configRepository.getBool(
             'VRCX_isFriendsGroupOffline',
             false
         );
@@ -9082,22 +9078,18 @@ speechSynthesis.getVoices();
         $app.friends.clear();
         $app.pendingActiveFriends.clear();
         $app.friendsNo = 0;
-        $app.isFriendsGroup0 = true;
-        $app.isFriendsGroup1 = true;
-        $app.isFriendsGroup2 = true;
-        $app.isFriendsGroup3 = false;
-        $app.friendsGroup0_ = [];
-        $app.friendsGroup1_ = [];
-        $app.friendsGroup2_ = [];
-        $app.friendsGroup3_ = [];
-        $app.friendsGroupA_ = [];
-        $app.friendsGroupB_ = [];
-        $app.friendsGroupC_ = [];
-        $app.friendsGroupD_ = [];
-        $app.sortFriendsGroup0 = false;
-        $app.sortFriendsGroup1 = false;
-        $app.sortFriendsGroup2 = false;
-        $app.sortFriendsGroup3 = false;
+        $app.isVIPFriends = true;
+        $app.isOnlineFriends = true;
+        $app.isActiveFriends = true;
+        $app.isOfflineFriends = false;
+        $app.vipFriends_ = [];
+        $app.onlineFriends_ = [];
+        $app.activeFriends_ = [];
+        $app.offlineFriends_ = [];
+        $app.sortVIPFriends = false;
+        $app.sortOnlineFriends = false;
+        $app.sortActiveFriends = false;
+        $app.sortOfflineFriends = false;
     });
 
     API.$on('USER:CURRENT', function (args) {
@@ -9137,9 +9129,9 @@ speechSynthesis.getVoices();
         // If we just got user less then 1 min before code call, don't call it again
         if ($app.nextCurrentUserRefresh < 720)
         {
-            await API.getCurrentUser().catch((err) => {
-                console.error(err);
-            });
+        await API.getCurrentUser().catch((err) => {
+            console.error(err);
+        });
         }
         await API.refreshFriends();
         API.reconnectWebSocket();
@@ -9213,22 +9205,18 @@ speechSynthesis.getVoices();
         this.friends.set(id, ctx);
         if (ctx.state === 'online') {
             if (ctx.isVIP) {
-                this.friendsGroup0_.push(ctx);
-                this.friendsGroupA_.unshift(ctx);
-                this.sortFriendsGroup0 = true;
+                this.vipFriends_.push(ctx);
+                this.sortVIPFriends = true;
             } else {
-                this.friendsGroup1_.push(ctx);
-                this.friendsGroupB_.unshift(ctx);
-                this.sortFriendsGroup1 = true;
+                this.onlineFriends_.push(ctx);
+                this.sortOnlineFriends = true;
             }
         } else if (ctx.state === 'active') {
-            this.friendsGroup2_.push(ctx);
-            this.friendsGroupC_.unshift(ctx);
-            this.sortFriendsGroup2 = true;
+            this.activeFriends_.push(ctx);
+            this.sortActiveFriends = true;
         } else {
-            this.friendsGroup3_.push(ctx);
-            this.friendsGroupD_.unshift(ctx);
-            this.sortFriendsGroup3 = true;
+            this.offlineFriends_.push(ctx);
+            this.sortOfflineFriends = true;
         }
     };
 
@@ -9240,18 +9228,14 @@ speechSynthesis.getVoices();
         this.friends.delete(id);
         if (ctx.state === 'online') {
             if (ctx.isVIP) {
-                removeFromArray(this.friendsGroup0_, ctx);
-                removeFromArray(this.friendsGroupA_, ctx);
+                removeFromArray(this.vipFriends_, ctx);
             } else {
-                removeFromArray(this.friendsGroup1_, ctx);
-                removeFromArray(this.friendsGroupB_, ctx);
+                removeFromArray(this.onlineFriends_, ctx);
             }
         } else if (ctx.state === 'active') {
-            removeFromArray(this.friendsGroup2_, ctx);
-            removeFromArray(this.friendsGroupC_, ctx);
+            removeFromArray(this.activeFriends_, ctx);
         } else {
-            removeFromArray(this.friendsGroup3_, ctx);
-            removeFromArray(this.friendsGroupD_, ctx);
+            removeFromArray(this.offlineFriends_, ctx);
         }
     };
 
@@ -9329,37 +9313,23 @@ speechSynthesis.getVoices();
                         });
                     }
                     if (ctx.isVIP) {
-                        removeFromArray(this.friendsGroupA_, ctx);
-                        this.friendsGroupA_.unshift(ctx);
-                        this.sortFriendsGroup0 = true;
+                        this.sortVIPFriends = true;
                     } else {
-                        removeFromArray(this.friendsGroupB_, ctx);
-                        this.friendsGroupB_.unshift(ctx);
-                        this.sortFriendsGroup0 = true;
+                        this.sortOnlineFriends = true;
                     }
-                } else if (ctx.state === 'active') {
-                    removeFromArray(this.friendsGroupC_, ctx);
-                    this.friendsGroupC_.push(ctx);
-                } else {
-                    removeFromArray(this.friendsGroupD_, ctx);
-                    this.friendsGroupD_.push(ctx);
                 }
             }
             if (ctx.isVIP !== isVIP) {
                 ctx.isVIP = isVIP;
                 if (ctx.state === 'online') {
                     if (ctx.isVIP) {
-                        removeFromArray(this.friendsGroup1_, ctx);
-                        removeFromArray(this.friendsGroupB_, ctx);
-                        this.friendsGroup0_.push(ctx);
-                        this.friendsGroupA_.unshift(ctx);
-                        this.sortFriendsGroup0 = true;
+                        removeFromArray(this.onlineFriends_, ctx);
+                        this.vipFriends_.push(ctx);
+                        this.sortVIPFriends = true;
                     } else {
-                        removeFromArray(this.friendsGroup0_, ctx);
-                        removeFromArray(this.friendsGroupA_, ctx);
-                        this.friendsGroup1_.push(ctx);
-                        this.friendsGroupB_.unshift(ctx);
-                        this.sortFriendsGroup1 = true;
+                        removeFromArray(this.vipFriends_, ctx);
+                        this.onlineFriends_.push(ctx);
+                        this.sortOnlineFriends = true;
                     }
                 }
             }
@@ -9367,14 +9337,14 @@ speechSynthesis.getVoices();
                 ctx.name = ref.displayName;
                 if (ctx.state === 'online') {
                     if (ctx.isVIP) {
-                        this.sortFriendsGroup0 = true;
+                        this.sortVIPFriends = true;
                     } else {
-                        this.sortFriendsGroup1 = true;
+                        this.sortOnlineFriends = true;
                     }
                 } else if (ctx.state === 'active') {
-                    this.sortFriendsGroup2 = true;
+                    this.sortActiveFriends = true;
                 } else {
-                    this.sortFriendsGroup3 = true;
+                    this.sortOfflineFriends = true;
                 }
             }
             // FIXME: 도배 가능성 있음
@@ -9490,6 +9460,9 @@ speechSynthesis.getVoices();
                 ctx.ref.$online_for = '';
                 ctx.ref.$offline_for = Date.now();
                 ctx.ref.$active_for = '';
+                if (newState === 'active') {
+                    ctx.ref.$active_for = Date.now();
+                }
                 var ts = Date.now();
                 var time = ts - $location_at;
                 var worldName = await this.getWorldName(location);
@@ -9537,37 +9510,29 @@ speechSynthesis.getVoices();
         }
         if (ctx.state === 'online') {
             if (ctx.isVIP) {
-                removeFromArray(this.friendsGroup0_, ctx);
-                removeFromArray(this.friendsGroupA_, ctx);
+                removeFromArray(this.vipFriends_, ctx);
             } else {
-                removeFromArray(this.friendsGroup1_, ctx);
-                removeFromArray(this.friendsGroupB_, ctx);
+                removeFromArray(this.onlineFriends_, ctx);
             }
         } else if (ctx.state === 'active') {
-            removeFromArray(this.friendsGroup2_, ctx);
-            removeFromArray(this.friendsGroupC_, ctx);
+            removeFromArray(this.activeFriends_, ctx);
         } else {
-            removeFromArray(this.friendsGroup3_, ctx);
-            removeFromArray(this.friendsGroupD_, ctx);
+            removeFromArray(this.offlineFriends_, ctx);
         }
         if (newState === 'online') {
             if (isVIP) {
-                this.friendsGroup0_.push(ctx);
-                this.friendsGroupA_.unshift(ctx);
-                this.sortFriendsGroup0 = true;
+                this.vipFriends_.push(ctx);
+                this.sortVIPFriends = true;
             } else {
-                this.friendsGroup1_.push(ctx);
-                this.friendsGroupB_.unshift(ctx);
-                this.sortFriendsGroup1 = true;
+                this.onlineFriends_.push(ctx);
+                this.sortOnlineFriends = true;
             }
         } else if (newState === 'active') {
-            this.friendsGroup2_.push(ctx);
-            this.friendsGroupC_.unshift(ctx);
-            this.sortFriendsGroup2 = true;
+            this.activeFriends_.push(ctx);
+            this.sortActiveFriends = true;
         } else {
-            this.friendsGroup3_.push(ctx);
-            this.friendsGroupD_.unshift(ctx);
-            this.sortFriendsGroup3 = true;
+            this.offlineFriends_.push(ctx);
+            this.sortOfflineFriends = true;
         }
         if (ctx.state !== newState) {
             this.updateOnlineFriendCoutner();
@@ -9616,31 +9581,18 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.updateFriendGPS = function (userId) {
-        if (!this.orderFriendsGroupGPS) {
-            if (this.orderFriendsGroupPrivate || this.orderFriendsGroupStatus) {
-                this.sortFriendsGroup0 = true;
-                this.sortFriendsGroup1 = true;
-            }
-            return;
-        }
         var ctx = this.friends.get(userId);
-        if (typeof ctx.ref !== 'undefined' && ctx.state === 'online') {
-            if (ctx.isVIP) {
-                removeFromArray(this.friendsGroupA_, ctx);
-                this.friendsGroupA_.unshift(ctx);
-                this.sortFriendsGroup1 = true;
-            } else {
-                removeFromArray(this.friendsGroupB_, ctx);
-                this.friendsGroupB_.unshift(ctx);
-                this.sortFriendsGroup0 = true;
-            }
+        if (ctx.isVIP) {
+            this.sortVIPFriends = true;
+        } else {
+            this.sortOnlineFriends = true;
         }
     };
 
     $app.data.onlineFriendCount = 0;
     $app.methods.updateOnlineFriendCoutner = function () {
         var onlineFriendCount =
-            this.friendsGroup0.length + this.friendsGroup1.length;
+            this.vipFriends.length + this.onlineFriends.length;
         if (onlineFriendCount !== this.onlineFriendCount) {
             AppApi.ExecuteVrFeedFunction(
                 'updateOnlineFriendCount',
@@ -9723,15 +9675,13 @@ speechSynthesis.getVoices();
     };
 
     // status
-    var compareByStatus = function (a, b) {
+    var compareByStatusAndPrivate = function (a, b) {
         if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
             return 0;
         }
-        if (
-            $app.orderFriendsGroupPrivate &&
-            (a.ref.location !== 'private' || b.ref.location !== 'private')
-        ) {
-            return 0;
+        const privateSort = compareByPrivate(a, b);
+        if (privateSort !== 0) { 
+            return privateSort;
         }
         if (a.ref.status === b.ref.status) {
             return 0;
@@ -9742,8 +9692,17 @@ speechSynthesis.getVoices();
         return $app.sortStatus(a.ref.status, b.ref.status);
     };
 
-    $app.methods.sortByStatus = function (a, b, field) {
-        return this.sortStatus(a[field], b[field]);
+    var compareByStatus = function (a, b) {
+        if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
+            return 0;
+        }
+        if (a.ref.status === b.ref.status) {
+            return 0;
+        }
+        if (a.ref.state === 'offline') {
+            return 1;
+        }
+        return $app.sortStatus(a.ref.status, b.ref.status);
     };
 
     $app.methods.sortStatus = function (a, b) {
@@ -9812,76 +9771,147 @@ speechSynthesis.getVoices();
         return 0;
     };
 
+    // location at but for the sidebar
+    var compareByRefLocationAt = function (a, b) {
+        if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
+            return 0;
+        }
+
+        if (a.ref.location === b.ref.location) {
+            return compareByStatus(a, b);
+        }
+
+        if (a.ref.location === 'private') {
+            return 1;
+        } else if (b.ref.location === 'private') {
+            return -1;
+        }
+
+        return a.ref.location.localeCompare(b.ref.location);
+    }
+
+    var compareByActivityField = function (a, b, field) {
+        if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
+            return 0;
+        }
+
+        // When the field is just and empty string, it means they've been
+        // in whatever active state for the longest
+        if (a.ref[field] < b.ref[field] || a.ref[field] !== '' && b.ref[field] === '') {
+            return 1;
+        }
+        if (a.ref[field] > b.ref[field] || a.ref[field] === '' && b.ref[field] !== '') {
+            return -1;
+        }
+        return 0;
+    }
+
+    // online for
+    var compareByOnlineFor = function (a, b) {
+        return compareByActivityField(a, b, "$online_for");
+    }
+
+    // offline for
+    var compareByOfflineFor = function (a, b) {
+        return compareByActivityField(a, b, "$offline_for");
+    }
+
+    // active for
+    var compareByActiveFor = function (a, b) {
+        return compareByActivityField(a, b, "$active_for");
+    }
+
+    var getOnlineAndVIPFriendsSortFunction = function () {
+        let sortFunc = null;
+        switch ($app.onlineAndVIPFriendsSortMethod) {
+            case "Sort Private to Bottom":
+                sortFunc = compareByPrivate;
+                break;
+            case "Sort by Status":
+                sortFunc = compareByStatus;
+                break;
+            case "Sort by Status and Private to Bottom":
+                sortFunc = compareByStatusAndPrivate;
+                break;
+            case "Sort by Location":
+                sortFunc = compareByRefLocationAt;
+                break;
+            case "Default":
+                sortFunc = () => 0;
+                break;
+        }
+
+        return sortFunc;
+    }
+
     // VIP friends
-    $app.computed.friendsGroup0 = function () {
-        if (this.orderFriendsGroup0) {
-            if (this.orderFriendsGroupPrivate) {
-                this.friendsGroupA_.sort(compareByPrivate);
-            }
-            if (this.orderFriendsGroupStatus) {
-                this.friendsGroupA_.sort(compareByStatus);
-            }
-            return this.friendsGroupA_;
+    $app.computed.vipFriends = function () {
+        if (!this.sortVIPFriends) {
+            return this.vipFriends_;
         }
-        if (this.sortFriendsGroup0) {
-            this.sortFriendsGroup0 = false;
-            this.friendsGroup0_.sort(compareByName);
-            if (this.orderFriendsGroupPrivate) {
-                this.friendsGroup0_.sort(compareByPrivate);
-            }
-            if (this.orderFriendsGroupStatus) {
-                this.friendsGroup0_.sort(compareByStatus);
-            }
+        this.sortVIPFriends = false;
+
+        if (this.orderVIPFriends) {
+            this.vipFriends_.sort(compareByOnlineFor);
+        } else {
+            this.vipFriends_.sort(compareByName);
         }
-        return this.friendsGroup0_;
+
+        const outerSortFunc = getOnlineAndVIPFriendsSortFunction()
+        this.vipFriends_.sort(outerSortFunc);
+
+        return this.vipFriends_;
     };
 
     // Online friends
-    $app.computed.friendsGroup1 = function () {
-        if (this.orderFriendsGroup1) {
-            if (this.orderFriendsGroupPrivate) {
-                this.friendsGroupB_.sort(compareByPrivate);
-            }
-            if (this.orderFriendsGroupStatus) {
-                this.friendsGroupB_.sort(compareByStatus);
-            }
-            return this.friendsGroupB_;
+    $app.computed.onlineFriends = function () {
+        if (!this.sortOnlineFriends) {
+            return this.onlineFriends_;
         }
-        if (this.sortFriendsGroup1) {
-            this.sortFriendsGroup1 = false;
-            this.friendsGroup1_.sort(compareByName);
-            if (this.orderFriendsGroupPrivate) {
-                this.friendsGroup1_.sort(compareByPrivate);
-            }
-            if (this.orderFriendsGroupStatus) {
-                this.friendsGroup1_.sort(compareByStatus);
-            }
+        this.sortOnlineFriends = false;
+
+        if (this.orderOnlineFriends) {
+            this.onlineFriends_.sort(compareByOnlineFor);
+        } else {
+            this.onlineFriends_.sort(compareByName);
         }
-        return this.friendsGroup1_;
+
+        const outerSortFunc = getOnlineAndVIPFriendsSortFunction()
+        this.onlineFriends_.sort(outerSortFunc);
+
+        return this.onlineFriends_;
     };
 
     // Active friends
-    $app.computed.friendsGroup2 = function () {
-        if (this.orderFriendsGroup2) {
-            return this.friendsGroupC_;
+    $app.computed.activeFriends = function () {
+        if (!this.sortActiveFriends) {
+            return this.activeFriends_;
         }
-        if (this.sortFriendsGroup2) {
-            this.sortFriendsGroup2 = false;
-            this.friendsGroup2_.sort(compareByName);
+        this.sortActiveFriends = false;
+
+        if (this.orderActiveFriends) {
+            this.activeFriends_.sort(compareByActiveFor);
+        } else {
+            this.activeFriends_.sort(compareByName);
         }
-        return this.friendsGroup2_;
+
+        return this.activeFriends_;
     };
 
     // Offline friends
-    $app.computed.friendsGroup3 = function () {
-        if (this.orderFriendsGroup3) {
-            return this.friendsGroupD_;
+    $app.computed.offlineFriends = function () {
+        if (!this.sortOfflineFriends) {
+            return this.offlineFriends_;
         }
-        if (this.sortFriendsGroup3) {
-            this.sortFriendsGroup3 = false;
-            this.friendsGroup3_.sort(compareByName);
+        this.sortOfflineFriends = false;
+
+        if (this.orderOfflineFriends) {
+            this.offlineFriends_.sort(compareByOfflineFor);
+        } else {
+            this.offlineFriends_.sort(compareByName);
         }
-        return this.friendsGroup3_;
+
+        return this.offlineFriends_;
     };
 
     $app.methods.userStatusClass = function (user, pendingOffline) {
@@ -15970,65 +16000,77 @@ speechSynthesis.getVoices();
             this.vrcRegistryAutoBackup
         );
     };
-    $app.data.orderFriendsGroup0 = await configRepository.getBool(
+    $app.data.orderVIPFriends = await configRepository.getBool(
         'orderFriendGroup0',
         true
     );
-    $app.data.orderFriendsGroup1 = await configRepository.getBool(
+    $app.data.orderOnlineFriends = await configRepository.getBool(
         'orderFriendGroup1',
         true
     );
-    $app.data.orderFriendsGroup2 = await configRepository.getBool(
+    $app.data.orderActiveFriends = await configRepository.getBool(
         'orderFriendGroup2',
         true
     );
-    $app.data.orderFriendsGroup3 = await configRepository.getBool(
+    $app.data.orderOfflineFriends = await configRepository.getBool(
         'orderFriendGroup3',
         true
     );
-    $app.data.orderFriendsGroupPrivate = await configRepository.getBool(
-        'orderFriendGroupPrivate',
-        false
+    $app.data.onlineAndVIPFriendsSortMethod = await configRepository.getString(
+        'onlineAndVIPFriendsSortMethod',
+        'Default'
     );
-    $app.data.orderFriendsGroupStatus = await configRepository.getBool(
-        'orderFriendsGroupStatus',
-        false
+
+    // Migrate old settings
+    // Assume all exist if one does
+    const orderFriendsGroupPrivate = await configRepository.getBool(
+        'orderFriendGroupPrivate'
     );
-    $app.data.orderFriendsGroupGPS = await configRepository.getBool(
-        'orderFriendGroupGPS',
-        true
-    );
+    if (orderFriendsGroupPrivate !== null) {
+        await configRepository.remove('orderFriendGroupPrivate');
+        const orderFriendsGroupStatus = await configRepository.getBool(
+            'orderFriendsGroupStatus'
+        );
+        await configRepository.remove('orderFriendsGroupStatus');
+        const orderFriendsGroupGPS = await configRepository.getBool(
+            'orderFriendGroupGPS'
+        );
+        await configRepository.remove('orderFriendGroupGPS');
+
+        if (orderFriendsGroupGPS) {
+            $app.data.onlineAndVIPFriendsSortMethod = "Sort by Location";
+        } else if (orderFriendsGroupPrivate && orderFriendsGroupStatus) {
+            $app.data.onlineAndVIPFriendsSortMethod = "Sort by Status and Private to Bottom";
+        } else if (orderFriendsGroupPrivate) {
+            $app.data.onlineAndVIPFriendsSortMethod = "Sort Private to Bottom";
+        } else if (orderFriendsGroupStatus) {
+            $app.data.onlineAndVIPFriendsSortMethod = "Sort by Status"
+        }
+    }
+
     $app.methods.saveOrderFriendGroup = async function () {
         await configRepository.setBool(
             'orderFriendGroup0',
-            this.orderFriendsGroup0
+            this.orderVIPFriends
         );
         await configRepository.setBool(
             'orderFriendGroup1',
-            this.orderFriendsGroup1
+            this.orderOnlineFriends
         );
         await configRepository.setBool(
             'orderFriendGroup2',
-            this.orderFriendsGroup2
+            this.orderActiveFriends
         );
         await configRepository.setBool(
             'orderFriendGroup3',
-            this.orderFriendsGroup3
+            this.orderOfflineFriends
         );
-        await configRepository.setBool(
-            'orderFriendGroupPrivate',
-            this.orderFriendsGroupPrivate
+        await configRepository.setString(
+            'onlineAndVIPFriendsSortMethod',
+            this.onlineAndVIPFriendsSortMethod
         );
-        await configRepository.setBool(
-            'orderFriendsGroupStatus',
-            this.orderFriendsGroupStatus
-        );
-        await configRepository.setBool(
-            'orderFriendGroupGPS',
-            this.orderFriendsGroupGPS
-        );
-        this.sortFriendsGroup0 = true;
-        this.sortFriendsGroup1 = true;
+        this.sortVIPFriends = true;
+        this.sortOnlineFriends = true;
     };
     $app.data.discordActive = await configRepository.getBool(
         'discordActive',
@@ -20232,7 +20274,7 @@ speechSynthesis.getVoices();
 
     $app.methods.addFavoriteFriendsToInvite = function () {
         var D = this.inviteDialog;
-        for (var friend of this.friendsGroup0) {
+        for (var friend of this.vipFriends) {
             if (!D.userIds.includes(friend.id)) {
                 D.userIds.push(friend.id);
             }
@@ -21922,11 +21964,11 @@ speechSynthesis.getVoices();
 
     $app.methods.userOnlineFor = function (ctx) {
         if (ctx.ref.state === 'online' && ctx.ref.$online_for) {
-            return Date.now() - ctx.ref.$online_for;
+            return timeToText(Date.now() - ctx.ref.$online_for);
         } else if (ctx.ref.state === 'active' && ctx.ref.$active_for) {
-            return Date.now() - ctx.ref.$active_for;
+            return timeToText(Date.now() - ctx.ref.$active_for);
         } else if (ctx.ref.$offline_for) {
-            return Date.now() - ctx.ref.$offline_for;
+            return timeToText(Date.now() - ctx.ref.$offline_for);
         }
         return '-';
     };
@@ -28795,17 +28837,13 @@ speechSynthesis.getVoices();
                 continue;
             }
             if (ctx.isVIP) {
-                removeFromArray(this.friendsGroup1_, ctx);
-                removeFromArray(this.friendsGroupB_, ctx);
-                this.friendsGroup0_.push(ctx);
-                this.friendsGroupA_.unshift(ctx);
-                this.sortFriendsGroup0 = true;
+                removeFromArray(this.onlineFriends_, ctx);
+                this.vipFriends_.push(ctx);
+                this.sortVIPFriends = true;
             } else {
-                removeFromArray(this.friendsGroup0_, ctx);
-                removeFromArray(this.friendsGroupA_, ctx);
-                this.friendsGroup1_.push(ctx);
-                this.friendsGroupB_.unshift(ctx);
-                this.sortFriendsGroup1 = true;
+                removeFromArray(this.vipFriends_, ctx);
+                this.onlineFriends_.push(ctx);
+                this.sortOnlineFriends = true;
             }
         }
     };

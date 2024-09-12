@@ -293,10 +293,11 @@
                     "header": "側板",
                     "sorting": {
                         "header": "排序",
+                        "sort_default": "Default",
                         "sort_private_to_bottom": "將 私人世界 排序到底部",
                         "sort_by_status": "依狀態排序",
-                        "sort_gps_to_top": "將 GPS 排序到頂部",
-                        "sort_gps_to_top_notice": "（僅限上線玩家）",
+                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
+                        "sort_by_location": "Sort by Location",
                         "sort_favorite_by": "收藏玩家 排序依據",
                         "sort_favorite_by_alphabet": "字母順序",
                         "sort_favorite_by_online_time": "上線時長",

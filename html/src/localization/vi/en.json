@@ -293,10 +293,11 @@
                     "header": "Bẳng điều khiển bên cạnh",
                     "sorting": {
                         "header": "Sắp xếp",
+                        "sort_default": "Default",
                         "sort_private_to_bottom": "Sắp xếp Private xuống dưới cùng",
                         "sort_by_status": "Sắp xếp theo status",
-                        "sort_gps_to_top": "Sắp xếp vị trí GPS lên đầu",
-                        "sort_gps_to_top_notice": "(Chỉ bao gồm online trong thời gian)",
+                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
+                        "sort_by_location": "Sort by Location",
                         "sort_favorite_by": "Sắp xếp mục yêu thích theo",
                         "sort_favorite_by_alphabet": "bảng chữ cái",
                         "sort_favorite_by_online_time": "online trong",

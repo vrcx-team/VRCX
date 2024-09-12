@@ -293,10 +293,11 @@
                     "header": "Panneau latéral",
                     "sorting": {
                         "header": "Comportement du tri",
+                        "sort_default": "Default",
                         "sort_private_to_bottom": "Joueurs en privé en fin de liste",
                         "sort_by_status": "Trier par statut",
-                        "sort_gps_to_top": "Trier les GPS vers le haut",
-                        "sort_gps_to_top_notice": "(seulement en ligne)",
+                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
+                        "sort_by_location": "Sort by Location",
                         "sort_favorite_by": "Trier les favoris par",
                         "sort_favorite_by_alphabet": "alphabétique",
                         "sort_favorite_by_online_time": "en ligne depuis",

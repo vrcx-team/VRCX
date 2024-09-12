@@ -293,10 +293,11 @@
                     "header": "Painel lateral",
                     "sorting": {
                         "header": "Ordenação",
+                        "sort_default": "Default",
                         "sort_private_to_bottom": "Ordenar Privado para baixo",
                         "sort_by_status": "Ordenar por status",
-                        "sort_gps_to_top": "Ordenar GPS para cima",
-                        "sort_gps_to_top_notice": "(apenas online)",
+                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
+                        "sort_by_location": "Sort by Location",
                         "sort_favorite_by": "Ordenar Favoritos por",
                         "sort_favorite_by_alphabet": "alfabético",
                         "sort_favorite_by_online_time": "online para",

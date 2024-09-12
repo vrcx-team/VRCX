@@ -293,10 +293,11 @@
                     "header": "Panel boczny",
                     "sorting": {
                         "header": "Sortowanie",
+                        "sort_default": "Default",
                         "sort_private_to_bottom": "Sortuj prywatne niżej",
                         "sort_by_status": "Sortuj wg statusu",
-                        "sort_gps_to_top": "Sortuj GPS wyżej",
-                        "sort_gps_to_top_notice": "(tylko dla czasu online)",
+                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
+                        "sort_by_location": "Sort by Location",
                         "sort_favorite_by": "Sortuj ulubione wg",
                         "sort_favorite_by_alphabet": "alfabetycznie",
                         "sort_favorite_by_online_time": "czas online",
