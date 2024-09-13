@@ -20717,8 +20717,11 @@ speechSynthesis.getVoices();
             params.groupAccessType = D.groupAccessType;
             params.ownerId = D.groupId;
             params.queueEnabled = D.queueEnabled;
-            if (D.groupAccessType === 'member') {
+            if (D.groupAccessType === 'members') {
                 params.roleIds = D.roleIds;
+                params.canRequestInvite = true;
+            } else if (D.groupAccessType === 'plus') {
+                params.canRequestInvite = true;
             }
         }
         API.createInstance(params)
