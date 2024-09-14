@@ -14649,6 +14649,12 @@ speechSynthesis.getVoices();
             {
                 prop: 'displayName',
                 value: ''
+            },
+            {
+                prop: 'type',
+                value: false,
+                filterFn: (row, filter) => 
+                    !(filter.value && row.type === 'Unfriend')
             }
         ],
         tableProps: {
@@ -14856,7 +14862,9 @@ speechSynthesis.getVoices();
                 this.queueFriendLogNoty(friendLogHistory);
                 this.friendLog.delete(id);
                 database.deleteFriendLogCurrent(id);
-                this.notifyMenu('friendLog');
+                if (!this.hideUnfriends) {
+                    this.notifyMenu('friendLog');
+                }
                 this.updateSharedFeed(true);
                 this.deleteFriend(id);
             }
@@ -15653,6 +15661,11 @@ speechSynthesis.getVoices();
         'VRCX_hideUserMemos',
         false
     );
+    $app.data.hideUnfriends = await configRepository.getBool(
+        'VRCX_hideUnfriends',
+        false
+    );
+    $app.data.friendLogTable.filters[2].value = $app.data.hideUnfriends;
     $app.methods.saveOpenVROption = async function () {
         await configRepository.setBool('openVR', this.openVR);
         await configRepository.setBool('openVRAlways', this.openVRAlways);
@@ -15776,6 +15789,13 @@ speechSynthesis.getVoices();
             'VRCX_hideUserMemos',
             this.hideUserMemos
         );
+    };
+    $app.methods.saveFriendLogOptions = async function () {
+        await configRepository.setBool(
+            'VRCX_hideUnfriends',
+            this.hideUnfriends
+        );
+        this.friendLogTable.filters[2].value = this.hideUnfriends;
     };
     $app.data.TTSvoices = speechSynthesis.getVoices();
     $app.methods.saveNotificationTTS = async function () {

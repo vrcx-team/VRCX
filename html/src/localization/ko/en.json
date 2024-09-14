@@ -323,6 +323,10 @@
                 "user_colors": {
                     "header": "유저 색상",
                     "random_colors_from_user_id": "유저 ID별 무작위 색상 사용"
+                },
+                "friend_log": {
+                    "header": "Friend Log",
+                    "hide_unfriends": "Hide Unfriends"
                 }
             },
             "notifications": {

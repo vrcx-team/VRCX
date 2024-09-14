@@ -323,6 +323,10 @@
                 "user_colors": {
                     "header": "玩家名稱顏色",
                     "random_colors_from_user_id": "從玩家 ID 隨機挑選顏色"
+                },
+                "friend_log": {
+                    "header": "Friend Log",
+                    "hide_unfriends": "Hide Unfriends"
                 }
             },
             "notifications": {

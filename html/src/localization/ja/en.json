@@ -323,6 +323,10 @@
                 "user_colors": {
                     "header": "ユーザーの色",
                     "random_colors_from_user_id": "ユーザーIDからランダムに色を生成"
+                },
+                "friend_log": {
+                    "header": "Friend Log",
+                    "hide_unfriends": "Hide Unfriends"
                 }
             },
             "notifications": {

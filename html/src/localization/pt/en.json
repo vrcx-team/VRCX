@@ -323,6 +323,10 @@
                 "user_colors": {
                     "header": "Cores do Usuário",
                     "random_colors_from_user_id": "Cores Aleatórias do ID do Usuário"
+                },
+                "friend_log": {
+                    "header": "Friend Log",
+                    "hide_unfriends": "Hide Unfriends"
                 }
             },
             "notifications": {

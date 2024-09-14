@@ -261,6 +261,12 @@ mixin settingsTab()
                         div
                             el-color-picker(v-model="trustColor.troll" @change="updatetrustColor" size="mini" :predefine="['#782f2f']")
                             span.color-picker(slot="trigger" class="x-tag-troll") Nuisance
+                //- Appearance | Friend Log
+                div.options-container
+                    span.header {{ $t('view.settings.appearance.friend_log.header') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.appearance.friend_log.hide_unfriends') }}
+                        el-switch(v-model="hideUnfriends" @change="saveFriendLogOptions")
             //- Notifications Tab
             el-tab-pane(:label="$t('view.settings.category.notifications')")
                 //- Notifications | Notifications
