@@ -574,6 +574,7 @@
                 "request_invite": "申请加入",
                 "request_invite_with_message": "发送带消息的加入申请",
                 "invite_to_group": "邀请加入群组",
+                "send_boop": "Send Boop",
                 "manage_gallery_icon": "管理相册 / 图标",
                 "accept_friend_request": "接受好友申请",
                 "decline_friend_request": "拒绝好友申请",
@@ -630,6 +631,7 @@
                 "friended": "添加为好友的时间",
                 "unfriended": "解除好友的时间",
                 "avatar_cloning": "是否允许克隆模型",
+                "booping": "Booping",
                 "avatar_cloning_allow": "允许",
                 "avatar_cloning_deny": "不允许",
                 "home_location": "出生点",
@@ -1384,6 +1386,15 @@
             "cancel": "取消",
             "create_post": "创建帖子",
             "edit_post": "编辑帖子"
+        },
+        "boop_dialog": {
+            "header": "Boop",
+            "emoji_manager": "Emoji Manager",
+            "select_emoji": "Select Emoji",
+            "my_emojis": "My Emojis",
+            "default_emojis": "Default Emojis",
+            "cancel": "Cancel",
+            "send": "Send"
         }
     },
     "prompt": {
