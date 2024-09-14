@@ -269,7 +269,7 @@ mixin settingsTab()
                     span.header {{ $t('view.settings.appearance.friend_log.header') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.friend_log.hide_unfriends') }}
-                        el-switch(v-model="friendLogTable.filters[2].value" @change="saveFriendLogOptions")
+                        el-switch(v-model="hideUnfriends" @change="saveFriendLogOptions")
             //- Notifications Tab
             el-tab-pane(:label="$t('view.settings.category.notifications')")
                 //- Notifications | Notifications
