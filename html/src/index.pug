@@ -460,14 +460,13 @@ html
                                         template(#content v-else)
                                             span -
                                         .detail
-                                            span.name(v-if="userDialog.unFriended && !hideUnfriends") {{ $t('dialog.user.info.unfriended') }}
+                                            span.name(v-if="userDialog.unFriended") {{ $t('dialog.user.info.unfriended') }}
                                                 el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" :content="$t('dialog.user.info.accuracy_notice')")
                                                     i.el-icon-warning
                                             span.name(v-else) {{ $t('dialog.user.info.friended') }}
                                                 el-tooltip(v-if="!hideTooltips" placement="top" style="margin-left:5px" :content="$t('dialog.user.info.accuracy_notice')")
                                                     i.el-icon-warning
-                                            span.extra(v-if="!hideUnfriends") {{ userDialog.dateFriended | formatDate('long') }}
-                                            span.extra(v-else) -
+                                            span.extra {{ userDialog.dateFriended | formatDate('long') }}
                                 template(v-if="API.currentUser.id === userDialog.id")
                                     .x-friend-item(@click="toggleAvatarCopying")
                                         .detail

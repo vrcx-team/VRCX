@@ -2011,7 +2011,7 @@ speechSynthesis.getVoices();
                 $online_for: Date.now(),
                 $travelingToTime: Date.now(),
                 $offline_for: '',
-                $active_for: '',
+                $active_for: Date.now(),
                 $isVRCPlus: false,
                 $isModerator: false,
                 $isTroll: false,
@@ -9759,6 +9759,9 @@ speechSynthesis.getVoices();
         if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
             return 0;
         }
+        if (a.state !== 'online' || b.state !== 'online') {
+            return 0;
+        }
 
         return a.ref.location.localeCompare(b.ref.location);
     }
@@ -9779,56 +9782,57 @@ speechSynthesis.getVoices();
         return 0;
     }
 
-    // online for
-    var compareByOnlineFor = function (a, b) {
-        return compareByActivityField(a, b, "$online_for");
-    }
+    // last active
+    var compareByLastActive = function (a, b) {
+        if (a.state === 'online' && b.state === 'online') {
+            if (
+                a.ref?.$online_for &&
+                b.ref?.$online_for &&
+                a.ref.$online_for === b.ref.$online_for
+            ) {
+                compareByActivityField(a, b, 'last_login');
+            }
+            return compareByActivityField(a, b, '$online_for');
+        }
 
-    // offline for
-    var compareByOfflineFor = function (a, b) {
-        return compareByActivityField(a, b, "$offline_for");
-    }
-
-    // active for
-    var compareByActiveFor = function (a, b) {
-        return compareByActivityField(a, b, "$active_for");
-    }
+        return compareByActivityField(a, b, 'last_activity');
+    };
 
     var getFriendsSortFunction = function (sortMethods) {
         const sorts = [];
         for (const sortMethod of sortMethods) {
             switch (sortMethod) {
-                case "Sort Private to Bottom":
+                case 'Sort Alphabetically':
+                    sorts.push(compareByName);
+                    break;
+                case 'Sort Private to Bottom':
                     sorts.push(compareByPrivate);
                     break;
-                case "Sort by Status":
+                case 'Sort by Status':
                     sorts.push(compareByStatus);
                     break;
-                case "Sort by Name":
-                    sorts.push(compareByStatusAndPrivate);
+                case 'Sort by Last Active':
+                    sorts.push(compareByLastActive);
                     break;
-                case "Sort by Online For":
-                    sorts.push(compareByOnlineFor);
-                    break;
-                case "Sort by Offline For":
-                    sorts.push(compareByOfflineFor);
-                    break;
-                case "Sort by Active For":
-                    sorts.push(compareByActiveFor);
-                    break;
-                case "Sort by Time in Instance":
+                case 'Sort by Time in Instance':
                     sorts.push((a, b) => {
-                        if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
+                        if (
+                            typeof a.ref === 'undefined' ||
+                            typeof b.ref === 'undefined'
+                        ) {
+                            return 0;
+                        }
+                        if (a.state !== 'online' || b.state !== 'online') {
                             return 0;
                         }
 
-                        return compareByLocationAt(a.ref, b.ref);
+                        return compareByLocationAt(b.ref, a.ref);
                     });
                     break;
-                case "Sort by Location":
+                case 'Sort by Location':
                     sorts.push(compareByLocation);
                     break;
-                case "None":
+                case 'None':
                     sorts.push(() => 0);
                     break;
             }
@@ -9843,8 +9847,8 @@ speechSynthesis.getVoices();
                 }
             }
             return res;
-        }
-    }
+        };
+    };
 
     // VIP friends
     $app.computed.vipFriends = function () {
@@ -9853,7 +9857,7 @@ speechSynthesis.getVoices();
         }
         this.sortVIPFriends = false;
 
-        this.vipFriends_.sort(getFriendsSortFunction(this.vipFriendsSortMethod));
+        this.vipFriends_.sort(getFriendsSortFunction(this.sidebarSortMethods));
         return this.vipFriends_;
     };
 
@@ -9864,7 +9868,9 @@ speechSynthesis.getVoices();
         }
         this.sortOnlineFriends = false;
 
-        this.onlineFriends_.sort(getFriendsSortFunction(this.onlineFriendsSortMethod));
+        this.onlineFriends_.sort(
+            getFriendsSortFunction(this.sidebarSortMethods)
+        );
 
         return this.onlineFriends_;
     };
@@ -9876,7 +9882,9 @@ speechSynthesis.getVoices();
         }
         this.sortActiveFriends = false;
 
-        this.activeFriends_.sort(getFriendsSortFunction(this.activeFriendsSortMethod));
+        this.activeFriends_.sort(
+            getFriendsSortFunction(this.sidebarSortMethods)
+        );
 
         return this.activeFriends_;
     };
@@ -9888,7 +9896,9 @@ speechSynthesis.getVoices();
         }
         this.sortOfflineFriends = false;
 
-        this.offlineFriends_.sort(getFriendsSortFunction(this.offlineFriendsSortMethod));
+        this.offlineFriends_.sort(
+            getFriendsSortFunction(this.sidebarSortMethods)
+        );
 
         return this.offlineFriends_;
     };
@@ -16040,72 +16050,104 @@ speechSynthesis.getVoices();
             this.vrcRegistryAutoBackup
         );
     };
-    // TODO: FIX DEFAULTS BEFORE MEGNING PLS
-    $app.data.vipFriendsSortMethod = JSON.parse(await configRepository.getString(
-        'vipFriendsSortMethod',
-        '["Default"]'
-    ));
-    $app.data.onlineFriendsSortMethod = JSON.parse(await configRepository.getString(
-        'onlineFriendsSortMethod',
-        '["Default"]'
-    ));
-    $app.data.activeFriendsSortMethod = JSON.parse(await configRepository.getString(
-        'activeFriendsSortMethod',
-        '["Default"]'
-    ));
-    $app.data.offlineFriendsSortMethod = JSON.parse(await configRepository.getString(
-        'offlineFriendsSortMethod',
-        '["Default"]'
-    ));
+    $app.data.sidebarSortMethod1 = '';
+    $app.data.sidebarSortMethod2 = '';
+    $app.data.sidebarSortMethod3 = '';
+    $app.data.sidebarSortMethods = JSON.parse(
+        await configRepository.getString(
+            'VRCX_sidebarSortMethods',
+            JSON.stringify(['', '', ''])
+        )
+    );
+    if ($app.data.sidebarSortMethods?.length === 3) {
+        $app.data.sidebarSortMethod1 = $app.data.sidebarSortMethods[0];
+        $app.data.sidebarSortMethod2 = $app.data.sidebarSortMethods[1];
+        $app.data.sidebarSortMethod3 = $app.data.sidebarSortMethods[2];
+    }
 
     // Migrate old settings
     // Assume all exist if one does
-
-    // TODO: FIX THIS BEFORE MERGING PLS
     const orderFriendsGroupPrivate = await configRepository.getBool(
         'orderFriendGroupPrivate'
     );
     if (orderFriendsGroupPrivate !== null) {
         await configRepository.remove('orderFriendGroupPrivate');
+
         const orderFriendsGroupStatus = await configRepository.getBool(
             'orderFriendsGroupStatus'
         );
         await configRepository.remove('orderFriendsGroupStatus');
+
         const orderFriendsGroupGPS = await configRepository.getBool(
             'orderFriendGroupGPS'
         );
         await configRepository.remove('orderFriendGroupGPS');
 
-        if (orderFriendsGroupGPS) {
-            $app.data.onlineAndVIPFriendsSortMethod = "Sort by Location";
-        } else if (orderFriendsGroupPrivate && orderFriendsGroupStatus) {
-            $app.data.onlineAndVIPFriendsSortMethod = "Sort by Status and Private to Bottom";
-        } else if (orderFriendsGroupPrivate) {
-            $app.data.onlineAndVIPFriendsSortMethod = "Sort Private to Bottom";
-        } else if (orderFriendsGroupStatus) {
-            $app.data.onlineAndVIPFriendsSortMethod = "Sort by Status"
+        const orderOnlineFor =
+            await configRepository.getBool('orderFriendGroup0');
+        await configRepository.remove('orderFriendGroup0');
+        await configRepository.remove('orderFriendGroup1');
+        await configRepository.remove('orderFriendGroup2');
+        await configRepository.remove('orderFriendGroup3');
+
+        var sortOrder = [];
+        if (orderFriendsGroupPrivate) {
+            sortOrder.push('Sort Private to Bottom');
         }
+        if (orderFriendsGroupStatus) {
+            sortOrder.push('Sort by Status');
+        }
+        if (orderOnlineFor && orderFriendsGroupGPS) {
+            sortOrder.push('Sort by Time in Instance');
+        }
+        if (!orderOnlineFor) {
+            sortOrder.push('Sort Alphabetically');
+        }
+
+        if (sortOrder.length > 0) {
+            while (sortOrder.length < 3) {
+                sortOrder.push('');
+            }
+            $app.data.sidebarSortMethods = sortOrder;
+            $app.data.sidebarSortMethod1 = sortOrder[0];
+            $app.data.sidebarSortMethod2 = sortOrder[1];
+            $app.data.sidebarSortMethod3 = sortOrder[2];
+        }
+        await configRepository.setString(
+            'VRCX_sidebarSortMethods',
+            JSON.stringify(sortOrder)
+        );
     }
 
-    $app.methods.saveOrderFriendGroup = async function () {
+    $app.methods.saveSidebarSortOrder = async function () {
+        if (this.sidebarSortMethod1 === this.sidebarSortMethod2) {
+            this.sidebarSortMethod2 = '';
+        }
+        if (this.sidebarSortMethod1 === this.sidebarSortMethod3) {
+            this.sidebarSortMethod3 = '';
+        }
+        if (this.sidebarSortMethod2 === this.sidebarSortMethod3) {
+            this.sidebarSortMethod3 = '';
+        }
+        if (!this.sidebarSortMethod1) {
+            this.sidebarSortMethod2 = '';
+        }
+        if (!this.sidebarSortMethod2) {
+            this.sidebarSortMethod3 = '';
+        }
+        this.sidebarSortMethods = [
+            this.sidebarSortMethod1,
+            this.sidebarSortMethod2,
+            this.sidebarSortMethod3
+        ];
         await configRepository.setString(
-            'vipFriendsSortMethod',
-            JSON.stringify(this.vipFriendsSortMethod)
-        );
-        await configRepository.setString(
-            'onlineFriendsSortMethod',
-            JSON.stringify(this.onlineFriendsSortMethod)
-        );
-        await configRepository.setString(
-            'activeFriendsSortMethod',
-            JSON.stringify(this.activeFriendsSortMethod)
-        );
-        await configRepository.setString(
-            'offlineFriendsSortMethod',
-            JSON.stringify(this.offlineFriendsSortMethod)
+            'VRCX_sidebarSortMethods',
+            JSON.stringify(this.sidebarSortMethods)
         );
         this.sortVIPFriends = true;
         this.sortOnlineFriends = true;
+        this.sortActiveFriends = true;
+        this.sortOfflineFriends = true;
     };
     $app.data.discordActive = await configRepository.getBool(
         'discordActive',
@@ -17867,8 +17909,10 @@ speechSynthesis.getVoices();
                                         if (!D.dateFriended) {
                                             if (ref2.type === 'Unfriend') {
                                                 D.unFriended = true;
-                                                D.dateFriended =
-                                                    ref2.created_at;
+                                                if (!this.hideUnfriends) {
+                                                    D.dateFriended =
+                                                        ref2.created_at;
+                                                }
                                             }
                                             if (ref2.type === 'Friend') {
                                                 D.unFriended = false;
@@ -17878,7 +17922,8 @@ speechSynthesis.getVoices();
                                         }
                                         if (
                                             ref2.type === 'Friend' ||
-                                            ref2.type === 'Unfriend'
+                                            (ref2.type === 'Unfriend' &&
+                                                !this.hideUnfriends)
                                         ) {
                                             D.dateFriendedInfo.push(ref2);
                                         }

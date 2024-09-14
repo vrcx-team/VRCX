@@ -197,29 +197,37 @@ mixin settingsTab()
                 div.options-container
                     span.header {{ $t('view.settings.appearance.side_panel.header') }}
                     br
-                    span.sub-header {{ $t('view.settings.appearance.side_panel.sorting.header') }}
                     div.options-container-item
-                        el-radio-group(v-model="onlineAndVIPFriendsSortMethod" @change="saveOrderFriendGroup" size="mini")
-                            el-radio-button(label="Default") {{ $t('view.settings.appearance.side_panel.sorting.sort_default') }}
-                            el-radio-button(label="Sort Private to Bottom") {{ $t('view.settings.appearance.side_panel.sorting.sort_private_to_bottom') }}
-                            el-radio-button(label="Sort by Status") {{ $t('view.settings.appearance.side_panel.sorting.sort_by_status') }}
-                            el-radio-button(label="Sort by Status and Private to Bottom") {{ $t('view.settings.appearance.side_panel.sorting.sort_by_status_and_private_to_bottom') }}
-                            el-radio-button(label="Sort by Location") {{ $t('view.settings.appearance.side_panel.sorting.sort_by_location') }}
+                        span.name {{ $t('view.settings.appearance.side_panel.sorting.header') }}
+                        el-select(v-model="sidebarSortMethod1" style="width:170px" :placeholder="$t('view.settings.appearance.side_panel.sorting.placeholder')" @change="saveSidebarSortOrder")
+                            el-option-group(:label="$t('view.settings.appearance.side_panel.sorting.dropdown_header')")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.alphabetical')" value="Sort Alphabetically")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
+                        i.el-icon-arrow-right(style="margin:16px 5px")
+                        el-select(v-model="sidebarSortMethod2" :disabled="!sidebarSortMethod1" style="width:170px" clearable :placeholder="$t('view.settings.appearance.side_panel.sorting.placeholder')" @change="saveSidebarSortOrder")
+                            el-option-group(:label="$t('view.settings.appearance.side_panel.sorting.dropdown_header')")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.alphabetical')" value="Sort Alphabetically")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
+                        i.el-icon-arrow-right(style="margin:16px 5px")
+                        el-select(v-model="sidebarSortMethod3" :disabled="!sidebarSortMethod2" style="width:170px" clearable :placeholder="$t('view.settings.appearance.side_panel.sorting.placeholder')" @change="saveSidebarSortOrder")
+                            el-option-group(:label="$t('view.settings.appearance.side_panel.sorting.dropdown_header')")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.alphabetical')" value="Sort Alphabetically")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.status')" value="Sort by Status")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.private_to_bottom')" value="Sort Private to Bottom")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.last_active')" value="Sort by Last Active")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.time_in_instance')" value="Sort by Time in Instance")
+                                el-option.x-friend-item(:label="$t('view.settings.appearance.side_panel.sorting.location')" value="Sort by Location")
                     div.options-container-item
-                        span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_favorite_by') }}
-                        el-switch(v-model="orderVIPFriends" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_favorite_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_favorite_by_online_time')" @change="saveOrderFriendGroup")
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_online_by') }}
-                        el-switch(v-model="orderOnlineFriends" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_online_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_online_by_online_time')" @change="saveOrderFriendGroup")
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_active_by') }}
-                        el-switch(v-model="orderActiveFriends" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_active_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_active_by_online_time')" @change="saveOrderFriendGroup")
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_offline_by') }}
-                        el-switch(v-model="orderOfflineFriends" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_offline_time')" @change="saveOrderFriendGroup")
-                    span.sub-header {{ $t('view.settings.appearance.side_panel.width') }}
-                    div.options-container-item
-                        el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{300: ''}" :min="200" :max="500" style="width:300px")
+                        span.name(style="vertical-align:top;padding-top:10px") {{ $t('view.settings.appearance.side_panel.width') }}
+                        el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{300: ''}" :min="200" :max="500" style="display:inline-block;width:300px")
                 //- Appearance | User Dialog
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_dialog.header') }}
@@ -233,6 +241,12 @@ mixin settingsTab()
                         span.name {{ $t('view.settings.appearance.user_dialog.export_vrcx_memos_into_vrchat_notes') }}
                         br
                         el-button(size="small" icon="el-icon-document-copy" @click="showNoteExportDialog") {{ $t('view.settings.appearance.user_dialog.export_notes') }}
+                //- Appearance | Friend Log
+                div.options-container
+                    span.header {{ $t('view.settings.appearance.friend_log.header') }}
+                    div.options-container-item
+                        span.name {{ $t('view.settings.appearance.friend_log.hide_unfriends') }}
+                        el-switch(v-model="hideUnfriends" @change="saveFriendLogOptions")
                 //- Appearance | User Colors
                 div.options-container
                     span.header {{ $t('view.settings.appearance.user_colors.header') }}
@@ -261,12 +275,6 @@ mixin settingsTab()
                         div
                             el-color-picker(v-model="trustColor.troll" @change="updatetrustColor" size="mini" :predefine="['#782f2f']")
                             span.color-picker(slot="trigger" class="x-tag-troll") Nuisance
-                //- Appearance | Friend Log
-                div.options-container
-                    span.header {{ $t('view.settings.appearance.friend_log.header') }}
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.friend_log.hide_unfriends') }}
-                        el-switch(v-model="hideUnfriends" @change="saveFriendLogOptions")
             //- Notifications Tab
             el-tab-pane(:label="$t('view.settings.category.notifications')")
                 //- Notifications | Notifications
