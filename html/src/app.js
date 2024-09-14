@@ -16056,7 +16056,11 @@ speechSynthesis.getVoices();
     $app.data.sidebarSortMethods = JSON.parse(
         await configRepository.getString(
             'VRCX_sidebarSortMethods',
-            JSON.stringify(['', '', ''])
+            JSON.stringify([
+                'Sort Private to Bottom',
+                'Sort by Time in Instance',
+                'Sort by Last Active'
+            ])
         )
     );
     if ($app.data.sidebarSortMethods?.length === 3) {
