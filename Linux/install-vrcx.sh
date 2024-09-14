@@ -76,7 +76,7 @@ rm vrcx.zip
 echo "#!/usr/bin/env bash
 export WINEPREFIX=$WINEPREFIX
 export WINEDLLOVERRIDES="libglesv2=d" # Workaround for https://bugs.winehq.org/show_bug.cgi?id=44985
-wine $WINEPREFIX/drive_c/vrcx/VRCX.exe -no-cef-sandbox" > $WINEPREFIX/drive_c/vrcx/vrcx
+wine $WINEPREFIX/drive_c/vrcx/VRCX.exe" > $WINEPREFIX/drive_c/vrcx/vrcx
 chmod +x $WINEPREFIX/drive_c/vrcx/vrcx
 
 echo "Install VRCX.png to $XDG_DATA_HOME/icons"
