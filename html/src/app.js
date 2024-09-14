@@ -25,6 +25,7 @@ import gameLogService from './service/gamelog.js';
 import security from './security.js';
 import database from './repository/database.js';
 import * as localizedStrings from './localization/localizedStrings.js';
+import removeConfusables, { removeWhitespace } from './libsAndLolisAndSugoiLibs/confusables.js';
 
 // #endregion
 
@@ -9993,65 +9994,106 @@ speechSynthesis.getVoices();
     $app.data.quickSearch = '';
     $app.data.quickSearchItems = [];
 
-    $app.methods.quickSearchRemoteMethod = function (query) {
-        var results = [];
-        if (query) {
-            var QUERY = query.toUpperCase();
-            for (var ctx of this.friends.values()) {
-                if (typeof ctx.ref === 'undefined') {
-                    continue;
-                }
-                var NAME = ctx.name.toUpperCase();
-                var match = NAME.includes(QUERY);
-                if (!match && ctx.memo) {
-                    match = String(ctx.memo).toUpperCase().includes(QUERY);
-                }
-                if (!match && ctx.ref.note) {
-                    match = String(ctx.ref.note).toUpperCase().includes(QUERY);
-                }
-                if (match) {
-                    results.push({
-                        value: ctx.id,
-                        label: ctx.name,
-                        ref: ctx.ref,
-                        NAME
-                    });
-                }
-            }
-            results.sort(function (a, b) {
-                var A = a.NAME.startsWith(QUERY);
-                var B = b.NAME.startsWith(QUERY);
-                if (A !== B) {
-                    if (A) {
-                        return -1;
-                    }
-                    if (B) {
-                        return 1;
-                    }
-                }
-                if (a.NAME < b.NAME) {
-                    return -1;
-                }
-                if (a.NAME > b.NAME) {
-                    return 1;
-                }
-                return 0;
-            });
-            if (results.length > 4) {
-                results.length = 4;
-            }
-            results.push({
-                value: `search:${query}`,
-                label: query
-            });
+    var localeIncludes = function (str, search, comparer) {
+        // These checks are stolen from https://stackoverflow.com/a/69623589/11030436
+        if (search === "") {
+            return true;
+        } else if (!str || !search) {
+            return false;
         }
+        const strObj = String(str);
+        const searchObj = String(search);
+
+        if (strObj.length === 0) {
+            return false;
+        }
+
+        if (searchObj.length > strObj.length) {
+            return false;
+        }
+
+        // Now simply loop through each substring and compare them
+        for (let i = 0; i < str.length - searchObj.length + 1; i++) {
+            const substr = strObj.substring(i, i + searchObj.length);
+            if (comparer.compare(substr, searchObj) === 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Making a persistent comparer increases perf by like 10x lmao
+    $app.data._stringComparer = undefined;
+    $app.computed.stringComparer = function () {
+        if (typeof this._stringComparer === 'undefined') {
+            this._stringComparer = Intl.Collator(this.appLanguage, { usage: "search", sensitivity: "base" });
+        }
+        return this._stringComparer;
+    }
+
+    $app.methods.quickSearchRemoteMethod = function (query) {
+        if (!query) {
+            this.quickSearchItems = [];
+        }
+
+        const results = [];
+        const cleanQuery = removeWhitespace(query);
+
+        for (let ctx of this.friends.values()) {
+            if (typeof ctx.ref === 'undefined') {
+                continue;
+            }
+
+            const cleanName = removeConfusables(ctx.name);
+            let match = localeIncludes(cleanName, cleanQuery, this.stringComparer);
+            if (!match) {
+                // Also check regular name in case search is with special characters
+                match = localeIncludes(ctx.name, cleanQuery, this.stringComparer);
+            }
+            // Use query with whitespace for notes and memos as people are more
+            // likely to include spaces in memos and notes
+            if (!match && ctx.memo) {
+                match = localeIncludes(ctx.memo, query, this.stringComparer);
+            }
+            if (!match && ctx.ref.note) {
+                match = localeIncludes(ctx.ref.note, query, this.stringComparer);
+            }
+
+            if (match) {
+                results.push({
+                    value: ctx.id,
+                    label: ctx.name,
+                    ref: ctx.ref,
+                    name: ctx.name
+                });
+            }
+        }
+
+        results.sort(function (a, b) {
+            var A = $app.stringComparer.compare(a.name.substring(0, cleanQuery.length), cleanQuery) === 0;
+            var B = $app.stringComparer.compare(b.name.substring(0, cleanQuery.length), cleanQuery) === 0;
+            if (A && !B) {
+                return -1;
+            } else if (B && !A) {
+                return 1;
+            }
+            return compareByName(a, b);
+        });
+        if (results.length > 4) {
+            results.length = 4;
+        }
+        results.push({
+            value: `search:${query}`,
+            label: query
+        });
+
         this.quickSearchItems = results;
     };
 
     $app.methods.quickSearchChange = function (value) {
         if (value) {
             if (value.startsWith('search:')) {
-                var searchText = value.substr(7);
+                const searchText = value.substr(7);
                 if (this.quickSearchItems.length > 1 && searchText.length) {
                     this.friendsListSearch = searchText;
                     this.$refs.menu.activeIndex = 'friendsList';
@@ -22765,8 +22807,10 @@ speechSynthesis.getVoices();
         }
         var results = [];
         if (this.friendsListSearch) {
-            var query = this.friendsListSearch.toUpperCase();
+            var query = this.friendsListSearch;
+            var cleanedQuery = removeWhitespace(query);
         }
+
         for (var ctx of this.friends.values()) {
             if (typeof ctx.ref === 'undefined') {
                 continue;
@@ -22784,29 +22828,26 @@ speechSynthesis.getVoices();
                     filters.includes('Display Name') &&
                     ctx.ref.displayName
                 ) {
-                    match = String(ctx.ref.displayName)
-                        .toUpperCase()
-                        .includes(query);
+                    match = localeIncludes(ctx.ref.displayName, cleanedQuery, this.stringComparer)
+                        || localeIncludes(removeConfusables(ctx.ref.displayName), cleanedQuery, this.stringComparer);
                 }
                 if (!match && filters.includes('Memo') && ctx.memo) {
-                    match = String(ctx.memo).toUpperCase().includes(query);
+                    match = localeIncludes(ctx.memo, query, this.stringComparer);
                 }
                 if (!match && filters.includes('Bio') && ctx.ref.bio) {
-                    match = String(ctx.ref.bio).toUpperCase().includes(query);
+                    match = localeIncludes(ctx.ref.bio, query, this.stringComparer);
                 }
                 if (
                     !match &&
                     filters.includes('Status') &&
                     ctx.ref.statusDescription
                 ) {
-                    match = String(ctx.ref.statusDescription)
-                        .toUpperCase()
-                        .includes(query);
+                    match = localeIncludes(ctx.ref.statusDescription, query, this.stringComparer);
                 }
                 if (!match && filters.includes('Rank') && ctx.ref.$friendNum) {
                     match = String(ctx.ref.$trustLevel)
                         .toUpperCase()
-                        .includes(query);
+                        .includes(query.toUpperCase());
                 }
                 if (!match) {
                     continue;
