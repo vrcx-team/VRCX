@@ -79,11 +79,6 @@ export WINEDLLOVERRIDES="libglesv2=d" # Workaround for https://bugs.winehq.org/s
 wine $WINEPREFIX/drive_c/vrcx/VRCX.exe -no-cef-sandbox" > $WINEPREFIX/drive_c/vrcx/vrcx
 chmod +x $WINEPREFIX/drive_c/vrcx/vrcx
 
-if [[ -d $HOME/.local/bin ]]; then
-	echo "Install VRCX to $HOME/.local/bin"
-	ln -nsf $WINEPREFIX/drive_c/vrcx/vrcx $HOME/.local/bin/vrcx
-fi
-
 echo "Install VRCX.png to $XDG_DATA_HOME/icons"
 curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png -o "$XDG_DATA_HOME/icons/VRCX.png"
 
@@ -92,7 +87,7 @@ echo "[Desktop Entry]
 Type=Application
 Name=VRCX
 Categories=Utility;
-Exec=$HOME/.local/bin/vrcx
+Exec=$WINEPREFIX/drive_c/vrcx/vrcx
 Icon=VRCX
 " > $XDG_DATA_HOME/applications/vrcx.desktop
 
