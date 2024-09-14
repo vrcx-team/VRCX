@@ -293,10 +293,11 @@
                     "header": "侧边栏",
                     "sorting": {
                         "header": "排序",
+                        "sort_default": "Default",
                         "sort_private_to_bottom": "将处在私人世界的好友置于底部",
                         "sort_by_status": "按状态排序",
-                        "sort_gps_to_top": "将GPS动态置于顶部",
-                        "sort_gps_to_top_notice": "(仅限在线好友)",
+                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
+                        "sort_by_location": "Sort by Location",
                         "sort_favorite_by": "星标好友排序规则",
                         "sort_favorite_by_alphabet": "字母顺序",
                         "sort_favorite_by_online_time": "在线时长",

@@ -199,27 +199,24 @@ mixin settingsTab()
                     br
                     span.sub-header {{ $t('view.settings.appearance.side_panel.sorting.header') }}
                     div.options-container-item
-                        span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_private_to_bottom') }}
-                        el-switch(v-model="orderFriendsGroupPrivate" @change="saveOrderFriendGroup")
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_by_status') }}
-                        el-switch(v-model="orderFriendsGroupStatus" @change="saveOrderFriendGroup")
-                    div.options-container-item
-                        span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_gps_to_top') }}
-                        el-switch(v-model="orderFriendsGroupGPS" @change="saveOrderFriendGroup")
-                        span.name(style="margin-left:5px") {{ $t('view.settings.appearance.side_panel.sorting.sort_gps_to_top_notice') }}
+                        el-radio-group(v-model="onlineAndVIPFriendsSortMethod" @change="saveOrderFriendGroup" size="mini")
+                            el-radio-button(label="Default") {{ $t('view.settings.appearance.side_panel.sorting.sort_default') }}
+                            el-radio-button(label="Sort Private to Bottom") {{ $t('view.settings.appearance.side_panel.sorting.sort_private_to_bottom') }}
+                            el-radio-button(label="Sort by Status") {{ $t('view.settings.appearance.side_panel.sorting.sort_by_status') }}
+                            el-radio-button(label="Sort by Status and Private to Bottom") {{ $t('view.settings.appearance.side_panel.sorting.sort_by_status_and_private_to_bottom') }}
+                            el-radio-button(label="Sort by Location") {{ $t('view.settings.appearance.side_panel.sorting.sort_by_location') }}
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_favorite_by') }}
-                        el-switch(v-model="orderFriendsGroup0" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_favorite_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_favorite_by_online_time')" @change="saveOrderFriendGroup")
+                        el-switch(v-model="orderVIPFriends" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_favorite_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_favorite_by_online_time')" @change="saveOrderFriendGroup")
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_online_by') }}
-                        el-switch(v-model="orderFriendsGroup1" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_online_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_online_by_online_time')" @change="saveOrderFriendGroup")
+                        el-switch(v-model="orderOnlineFriends" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_online_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_online_by_online_time')" @change="saveOrderFriendGroup")
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_active_by') }}
-                        el-switch(v-model="orderFriendsGroup2" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_active_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_active_by_online_time')" @change="saveOrderFriendGroup")
+                        el-switch(v-model="orderActiveFriends" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_active_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_active_by_online_time')" @change="saveOrderFriendGroup")
                     div.options-container-item
                         span.name {{ $t('view.settings.appearance.side_panel.sorting.sort_offline_by') }}
-                        el-switch(v-model="orderFriendsGroup3" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_offline_time')" @change="saveOrderFriendGroup")
+                        el-switch(v-model="orderOfflineFriends" :inactive-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_alphabet')" :active-text="$t('view.settings.appearance.side_panel.sorting.sort_offline_by_offline_time')" @change="saveOrderFriendGroup")
                     span.sub-header {{ $t('view.settings.appearance.side_panel.width') }}
                     div.options-container-item
                         el-slider(v-model="asideWidth" @input="setAsideWidth" :show-tooltip="false" :marks="{300: ''}" :min="200" :max="500" style="width:300px")

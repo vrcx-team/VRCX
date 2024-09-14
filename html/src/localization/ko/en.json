@@ -293,10 +293,11 @@
                     "header": "친구 목록",
                     "sorting": {
                         "header": "정렬",
+                        "sort_default": "Default",
                         "sort_private_to_bottom": "비공개 월드는 마지막에 표시",
                         "sort_by_status": "상태순",
-                        "sort_gps_to_top": "GPS순",
-                        "sort_gps_to_top_notice": "(온라인만 해당)",
+                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
+                        "sort_by_location": "Sort by Location",
                         "sort_favorite_by": "친한 친구 순서",
                         "sort_favorite_by_alphabet": "이름순",
                         "sort_favorite_by_online_time": "시간순",
