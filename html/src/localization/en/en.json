@@ -588,6 +588,8 @@
                 "moderation_show_avatar": "Show Avatar",
                 "moderation_enable_avatar_interaction": "Enable Avatar Interaction",
                 "moderation_disable_avatar_interaction": "Disable Avatar Interaction",
+                "moderation_enable_chatbox": "Unmute Chatbox",
+                "moderation_disable_chatbox": "Mute Chatbox",
                 "edit_status": "Social Status",
                 "edit_language": "Language",
                 "edit_bio": "Bio",

@@ -3911,12 +3911,11 @@ speechSynthesis.getVoices();
         var userId = this.currentUser.id;
         for (var ref of this.cachedPlayerModerations.values()) {
             if (
-                ref.$isDeleted === false &&
                 ref.type === type &&
                 ref.targetUserId === moderated &&
                 ref.sourceUserId === userId
             ) {
-                ref.$isDeleted = true;
+                this.cachedPlayerModerations.delete(ref.id);
                 this.$emit('PLAYER-MODERATION:@DELETE', {
                     ref,
                     params: {
@@ -3940,7 +3939,6 @@ speechSynthesis.getVoices();
                 targetDisplayName: '',
                 created: '',
                 // VRCX
-                $isDeleted: false,
                 $isExpired: false,
                 //
                 ...json
@@ -3965,10 +3963,9 @@ speechSynthesis.getVoices();
 
     API.deleteExpiredPlayerModerations = function () {
         for (var ref of this.cachedPlayerModerations.values()) {
-            if (ref.$isDeleted || ref.$isExpired === false) {
+            if (!ref.$isExpired) {
                 continue;
             }
-            ref.$isDeleted = true;
             this.$emit('PLAYER-MODERATION:@DELETE', {
                 ref,
                 params: {
@@ -5663,6 +5660,14 @@ speechSynthesis.getVoices();
                     (await configRepository.getString('lastUserLoggedIn')) !==
                         null
                 ) {
+                    var user =
+                        this.loginForm.savedCredentials[
+                            this.loginForm.lastUserLoggedIn
+                        ];
+                    if (user?.loginParmas?.endpoint) {
+                        API.endpointDomain = user.loginParmas.endpoint;
+                        API.websocketDomain = user.loginParmas.websocket;
+                    }
                     // login at startup
                     this.loginForm.loading = true;
                     API.getConfig()
@@ -15029,17 +15034,11 @@ speechSynthesis.getVoices();
         var { length } = array;
         for (var i = 0; i < length; ++i) {
             if (array[i].id === ref.id) {
-                if (ref.$isDeleted) {
-                    array.splice(i, 1);
-                } else {
-                    Vue.set(array, i, ref);
-                }
+                Vue.set(array, i, ref);
                 return;
             }
         }
-        if (ref.$isDeleted === false) {
-            $app.playerModerationTable.data.push(ref);
-        }
+        $app.playerModerationTable.data.push(ref);
     });
 
     API.$on('PLAYER-MODERATION:@DELETE', function (args) {
@@ -17446,6 +17445,7 @@ speechSynthesis.getVoices();
         isHideAvatar: false,
         isShowAvatar: false,
         isInteractOff: false,
+        isMuteChat: false,
         isFavorite: false,
 
         $location: {},
@@ -17657,7 +17657,6 @@ speechSynthesis.getVoices();
         var D = $app.userDialog;
         if (
             D.visible === false ||
-            ref.$isDeleted ||
             (ref.targetUserId !== D.id &&
                 ref.sourceUserId !== this.currentUser.id)
         ) {
@@ -17671,6 +17670,8 @@ speechSynthesis.getVoices();
             D.isHideAvatar = true;
         } else if (ref.type === 'interactOff') {
             D.isInteractOff = true;
+        } else if (ref.type === 'muteChat') {
+            D.isMuteChat = true;
         }
         $app.$message({
             message: 'User moderated',
@@ -17696,6 +17697,8 @@ speechSynthesis.getVoices();
             D.isHideAvatar = false;
         } else if (ref.type === 'interactOff') {
             D.isInteractOff = false;
+        } else if (ref.type === 'muteChat') {
+            D.isMuteChat = false;
         }
     });
 
@@ -17813,9 +17816,9 @@ speechSynthesis.getVoices();
                     D.isBlock = false;
                     D.isMute = false;
                     D.isInteractOff = false;
+                    D.isMuteChat = false;
                     for (var ref of API.cachedPlayerModerations.values()) {
                         if (
-                            ref.$isDeleted === false &&
                             ref.targetUserId === D.id &&
                             ref.sourceUserId === API.currentUser.id
                         ) {
@@ -17827,6 +17830,8 @@ speechSynthesis.getVoices();
                                 D.isHideAvatar = true;
                             } else if (ref.type === 'interactOff') {
                                 D.isInteractOff = true;
+                            } else if (ref.type === 'muteChat') {
+                                D.isMuteChat = true;
                             }
                         }
                     }
@@ -18830,6 +18835,18 @@ speechSynthesis.getVoices();
                 API.sendPlayerModeration({
                     moderated: userId,
                     type: 'interactOff'
+                });
+                break;
+            case 'Unmute Chatbox':
+                API.deletePlayerModeration({
+                    moderated: userId,
+                    type: 'muteChat'
+                });
+                break;
+            case 'Mute Chatbox':
+                API.sendPlayerModeration({
+                    moderated: userId,
+                    type: 'muteChat'
                 });
                 break;
             case 'Report Hacking':
@@ -25186,7 +25203,8 @@ speechSynthesis.getVoices();
         this.userFavoriteWorlds = [];
         var worldLists = [];
         var params = {
-            ownerId: userId
+            ownerId: userId,
+            n: 100
         };
         var json = await API.call('favorite/groups', {
             method: 'GET',
