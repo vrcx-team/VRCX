@@ -27111,11 +27111,42 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.setCurrentUserLocation = function (location) {
+    $app.methods.setCurrentUserLocation = async function (location) {
         API.currentUser.$location_at = Date.now();
         API.currentUser.$travelingToTime = Date.now();
         API.currentUser.$locationTag = location;
         this.updateCurrentUserLocation();
+
+        // janky gameLog support for Quest
+        var lastLocation = '';
+        for (var i = this.gameLogSessionTable.length - 1; i > -1; i--) {
+            var item = this.gameLogSessionTable[i];
+            if (item.type === 'Location') {
+                lastLocation = item.location;
+                break;
+            }
+        }
+        if (this.isRealInstance(location) && lastLocation !== location) {
+            var dt = new Date().toJSON();
+            var L = API.parseLocation(location);
+            var entry = {
+                created_at: dt,
+                type: 'Location',
+                location: location,
+                worldId: L.worldId,
+                worldName: await this.getWorldName(L.worldI),
+                groupName: await this.getGroupName(L.groupId),
+                time: 0
+            };
+            database.addGamelogLocationToDatabase(entry);
+            this.queueGameLogNoty(entry);
+            this.addGameLog(entry);
+            this.addInstanceJoinHistory(location, dt);
+
+            this.applyUserDialogLocation();
+            this.applyWorldDialogInstances();
+            this.applyGroupDialogInstances();
+        }
     };
 
     $app.data.avatarHistory = new Set();
