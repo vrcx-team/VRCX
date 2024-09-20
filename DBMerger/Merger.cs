@@ -51,7 +51,7 @@ namespace DBMerger
         private void MergeInternal()
         {
             unMergedTables = dbConn.QueryScalars<string>($"SELECT name FROM {oldDBName}.sqlite_schema WHERE type='table';");
-            
+
             // Holds sensitive information. Burn it with fire so no sensitive
             // data gets leaked
             unMergedTables.Remove("cookies");
@@ -215,7 +215,7 @@ namespace DBMerger
                 // Literally just place back in what's already there
                 // created_at times should be pretty consistent, so we can trust
                 // that no duplicates will be created
-                (old, existing) => 
+                (old, existing) =>
                 {
                     if (existing != null)
                     {
@@ -227,7 +227,7 @@ namespace DBMerger
                     // Return existing over old so we know that pk is unique
                     return existing ?? old;
                 },
-                table => SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, table)[1])
+                table => SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, newDBName, table)[1])
             );
 
             MergeTable(
@@ -244,20 +244,20 @@ namespace DBMerger
                     old[0] = null;
                     return existing ?? old;
                 },
-                table => SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, table)[1])
+                table => SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, newDBName, table)[1])
             );
         }
 
         private void MergeUsers()
         {
             MergeTable(
-                table => userIDRegex.IsMatch(table) 
-                    && (table.EndsWith("_avatar_history") 
-                        || table.EndsWith("_notifications") 
+                table => userIDRegex.IsMatch(table)
+                    && (table.EndsWith("_avatar_history")
+                        || table.EndsWith("_notifications")
                         || table.EndsWith("_moderation")),
                 [0],
                 (old, existing) =>
-                {                    
+                {
                     if (existing == null)
                     {
                         logger.Trace("Inserting new feed entry");
@@ -298,7 +298,7 @@ namespace DBMerger
 
                 logger.Debug($"Merging table `{table}` into new database");
 
-                List<string> colNames = GetTableColumnNames(dbConn, table);
+                List<string> colNames = GetTableColumnNames(dbConn, oldDBName, table);
 
                 // Find min value of new db table and max value of old db table
                 var oldestInNew = dbConn.ExecuteScalar<string>($"SELECT MIN({colNames[1]}) FROM {newDBName}.{table};");
@@ -389,7 +389,7 @@ namespace DBMerger
                     logger.Debug($"Adding rows from old database's {table}");
                     dbConn.Execute($"INSERT INTO {newDBName}.{table} SELECT * FROM {oldDBName}.{table};");
 
-                    SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, table)[1]);
+                    SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, newDBName, table)[1]);
                 }
                 return;
             }
@@ -399,7 +399,9 @@ namespace DBMerger
             logger.Info("Merging at date: " + cutoffTime.ToString("yyyy-MM-dd HH:mm:ss"));
             foreach (var table in tables)
             {
-                var colNames = GetTableColumnNames(dbConn, table);
+                // Get column names from old db in case newdb has columns
+                // old db doesn't
+                var colNames = GetTableColumnNames(dbConn, oldDBName, table);
 
                 // Cutoff data in new db thats older than cutoff
                 logger.Debug($"Deleting rows in new database's {table} older than cutoff");
@@ -498,7 +500,7 @@ namespace DBMerger
                 logger.Debug($"Merging table `{table}` into new database");
 
                 // Prepare queries
-                var colNames = GetTableColumnNames(dbConn, table);
+                var colNames = GetTableColumnNames(dbConn, newDBName, table);
 
                 var valuesClause = string.Join(',', new string('?', colNames.Count).ToCharArray());
                 var insertQuery = $"INSERT INTO {newDBName}.{table} VALUES ({valuesClause});";
@@ -516,6 +518,14 @@ namespace DBMerger
 
                     // Insert new row in place of the existing row
                     var newRow = rowTransformer(oldRow, existingRow);
+                    if (newRow.Length < colNames.Count)
+                    {
+                        // Row count may not match between old and new db, so
+                        // just add null data
+                        var temp = new object[colNames.Count];
+                        newRow.CopyTo(temp, 0);
+                        newRow = temp;
+                    }
                     dbConn.Execute(insertQuery, newRow);
                 }
 
@@ -523,8 +533,8 @@ namespace DBMerger
             }
         }
 
-        private static List<string> GetTableColumnNames(SQLiteConnection conn, string table)
-            => conn.QueryScalars<string>("SELECT name FROM pragma_table_info(?);", table);
+        private static List<string> GetTableColumnNames(SQLiteConnection conn, string db, string table)
+            => conn.QueryScalars<string>($"SELECT name FROM pragma_table_info(?, ?);", table, db);
 
         private static void SortTable(SQLiteConnection conn, string db, string table, string sortCol)
         {
