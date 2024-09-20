@@ -2768,7 +2768,7 @@ speechSynthesis.getVoices();
                 userCount: 0, // PC only?
                 queueEnabled: false, // only present with group instance type
                 queueSize: 0, // only present when queuing is enabled
-                platforms: [],
+                platforms: {},
                 gameServerVersion: 0,
                 hardClose: null, // boolean or null
                 closedAt: null, // string or null
@@ -2781,8 +2781,15 @@ speechSynthesis.getVoices();
                 region: '',
                 canRequestInvite: false,
                 permanent: false,
-                private: '',
-                strict: false,
+                private: '', // part of instance tag
+                hidden: '', // part of instance tag
+                nonce: '', // only present when you're the owner
+                strict: false, // deprecated
+                displayName: null,
+                groupAccessType: null, // only present with group instance type
+                roleRestricted: false, // only present with group instance type
+                instancePersistenceEnabled: null,
+                playerPersistenceEnabled: null,
                 // VRCX
                 $fetchedAt: '',
                 ...json
@@ -27135,9 +27142,9 @@ speechSynthesis.getVoices();
             var entry = {
                 created_at: dt,
                 type: 'Location',
-                location: location,
+                location,
                 worldId: L.worldId,
-                worldName: await this.getWorldName(L.worldI),
+                worldName: await this.getWorldName(L.worldId),
                 groupName: await this.getGroupName(L.groupId),
                 time: 0
             };

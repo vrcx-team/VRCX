@@ -261,7 +261,7 @@
                 "appearance": {
                     "header": "Appearance",
                     "language": "Language",
-                    "theme_mode": "Theme mode",
+                    "theme_mode": "Theme",
                     "theme_mode_system": "System",
                     "theme_mode_light": "Light",
                     "theme_mode_dark": "Dark",
