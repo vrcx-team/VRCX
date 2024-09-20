@@ -227,7 +227,7 @@ namespace DBMerger
                     // Return existing over old so we know that pk is unique
                     return existing ?? old;
                 },
-                table => SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, newDBName, table)[1])
+                table => SortTable(dbConn, newDBName, table, 1)
             );
 
             MergeTable(
@@ -244,7 +244,7 @@ namespace DBMerger
                     old[0] = null;
                     return existing ?? old;
                 },
-                table => SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, newDBName, table)[1])
+                table => SortTable(dbConn, newDBName, table, 1)
             );
         }
 
@@ -319,7 +319,7 @@ namespace DBMerger
                         $"INSERT INTO {newDBName}.{table}({columnsClause})" +
                             $"SELECT {columnsClause} FROM {oldDBName}.{table};"
                     );
-                    SortTable(dbConn, newDBName, table, colNames[1]);
+                    SortTable(dbConn, newDBName, table, 1);
                 }
                 else
                 {
@@ -389,7 +389,7 @@ namespace DBMerger
                     logger.Debug($"Adding rows from old database's {table}");
                     dbConn.Execute($"INSERT INTO {newDBName}.{table} SELECT * FROM {oldDBName}.{table};");
 
-                    SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, newDBName, table)[1]);
+                    SortTable(dbConn, newDBName, table, 1);
                 }
                 return;
             }
@@ -416,7 +416,7 @@ namespace DBMerger
                             $"WHERE {colNames[1]}<?;", cutoffStr
                 );
 
-                SortTable(dbConn, newDBName, table, colNames[1]);
+                SortTable(dbConn, newDBName, table, 1);
             }
         }
 
@@ -536,7 +536,7 @@ namespace DBMerger
         private static List<string> GetTableColumnNames(SQLiteConnection conn, string db, string table)
             => conn.QueryScalars<string>($"SELECT name FROM pragma_table_info(?, ?);", table, db);
 
-        private static void SortTable(SQLiteConnection conn, string db, string table, string sortCol)
+        private static void SortTable(SQLiteConnection conn, string db, string table, int sortCol, bool isDesc = false)
         {
             logger.Debug($"Sorting table {db}.{table}");
 
@@ -556,7 +556,14 @@ namespace DBMerger
             conn.Execute(createQuery);
 
             logger.Debug("Adding rows...");
-            conn.Execute($"INSERT INTO {db}.{newTableName} SELECT * FROM {db}.{table} ORDER BY {sortCol} DESC;");
+            var colNames = GetTableColumnNames(conn, db, table);
+            // Skip pks so they get reassigned
+            var selectClause = string.Join(',', colNames.Skip(1));
+            conn.Execute(
+                $"INSERT INTO {db}.{newTableName} ({selectClause}) " +
+                    $"SELECT {selectClause} FROM {db}.{table} " +
+                        $"ORDER BY {colNames[sortCol]} {(isDesc ? "DESC" : "ASC")};"
+            );
 
             logger.Debug("Dropping old and renaming");
             conn.Execute($"DROP TABLE {db}.{table}");
