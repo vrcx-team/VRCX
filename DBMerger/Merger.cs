@@ -154,12 +154,11 @@ namespace DBMerger
                 [2, 3],
                 (old, existing) =>
                 {
-                    // Let sqlite generate the new pk
-                    old[0] = null;
-
                     if (existing == null)
                     {
                         logger.Trace("Inserting new favorite");
+                        // Let sqlite generate new pk
+                        old[0] = null;
                         return old;
                     }
 
@@ -170,9 +169,9 @@ namespace DBMerger
                     var oldDateTime = DateTime.Parse((string)old[1]);
                     var newDateTime = DateTime.Parse((string)existing[1]);
                     var updatedDateTime = oldDateTime < newDateTime ? oldDateTime : newDateTime;
-                    old[1] = updatedDateTime;
+                    existing[1] = updatedDateTime;
 
-                    return old;
+                    return existing;
                 }
             );
         }
@@ -224,7 +223,9 @@ namespace DBMerger
                         logger.Trace(string.Join(", ", old));
                         logger.Trace(string.Join(", ", existing));
                     }
-                    return old;
+                    old[0] = null;
+                    // Return existing over old so we know that pk is unique
+                    return existing ?? old;
                 },
                 table => SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, table)[1])
             );
@@ -240,7 +241,8 @@ namespace DBMerger
                         logger.Trace(string.Join(", ", old));
                         logger.Trace(string.Join(", ", existing));
                     }
-                    return old;
+                    old[0] = null;
+                    return existing ?? old;
                 },
                 table => SortTable(dbConn, newDBName, table, GetTableColumnNames(dbConn, table)[1])
             );
@@ -255,7 +257,7 @@ namespace DBMerger
                         || table.EndsWith("_moderation")),
                 [0],
                 (old, existing) =>
-                {
+                {                    
                     if (existing == null)
                     {
                         logger.Trace("Inserting new feed entry");
