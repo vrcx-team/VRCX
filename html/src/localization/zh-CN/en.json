@@ -292,24 +292,16 @@
                 "side_panel": {
                     "header": "侧边栏",
                     "sorting": {
-                        "header": "排序",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "将处在私人世界的好友置于底部",
-                        "sort_by_status": "按状态排序",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "星标好友排序规则",
-                        "sort_favorite_by_alphabet": "字母顺序",
-                        "sort_favorite_by_online_time": "在线时长",
-                        "sort_online_by": "活跃好友排序规则",
-                        "sort_online_by_alphabet": "字母顺序",
-                        "sort_online_by_online_time": "在线时长",
-                        "sort_active_by": "在线好友排序规则",
-                        "sort_active_by_alphabet": "字母顺序",
-                        "sort_active_by_online_time": "在线时长",
-                        "sort_offline_by": "离线好友排序规则",
-                        "sort_offline_by_alphabet": "字母顺序",
-                        "sort_offline_by_offline_time": "离线时长"
+                        "header": "排序设置",
+                        "alphabetical": "名称",
+                        "private_to_bottom": "置底私人位置",
+                        "status": "状态",
+                        "status_and_private_to_bottom": "置底私人状态",
+                        "location": "所在位置",
+                        "last_active": "最后活跃",
+                        "time_in_instance": "在房间的时长",
+                        "placeholder": "排序依据",
+                        "dropdown_header": "选择排序方式"
                     },
                     "width": "侧边栏宽度"
                 },
@@ -325,8 +317,8 @@
                     "random_colors_from_user_id": "从用户 ID 随机挑选颜色"
                 },
                 "friend_log": {
-                    "header": "Friend Log",
-                    "hide_unfriends": "Hide Unfriends"
+                    "header": "好友日志",
+                    "hide_unfriends": "隐藏 Unfriends 事件"
                 }
             },
             "notifications": {
@@ -371,7 +363,7 @@
             "wrist_overlay": {
                 "steamvr_wrist_overlay": {
                     "header": "SteamVR 手腕叠加层",
-                    "description": "* 当 VRChat 运行时它会自动开启",
+                    "description": "* 当 VRChat 运行时它会自动运行",
                     "grip": "握持：Vive 或其它控制器的握持键、Oculus X/A 按键",
                     "menu": "菜单：Vive 菜单键、Index B、Oculus Y/B 按键",
                     "steamvr_overlay": "SteamVR 叠加层",
@@ -429,10 +421,6 @@
                     "vrchat_quit_fix": {
                         "header": "修复 VRChat 关闭问题",
                         "description": "在 VRChat 退出时强制停止 VRChat 进程"
-                    },
-                    "vrchat_osc_fix": {
-                        "header": "修复OSC问题",
-                        "description": "在退出游戏时一并结束 install.exe"
                     },
                     "auto_cache_management": {
                         "header": "缓存自动清理",
@@ -612,7 +600,7 @@
                 "instance_queue": "在排队等待的用户:",
                 "instance_users": "房间用户:",
                 "instance_game_version": "游戏版本:",
-                "last_join": "已加入时长:",
+                "last_join": "距离上次加入房间:",
                 "instance_queuing_enabled": "允许排队加入",
                 "instance_creator": "房间建立者",
                 "note": "VRChat 备注",
