@@ -786,7 +786,8 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.last_updated') }}
-                                        span.extra {{ worldDialog.lastUpdated | formatDate('long') }}
+                                        span.extra(v-if="worldDialog.lastUpdated") {{ worldDialog.lastUpdated | formatDate('long') }}
+                                        span.extra(v-else) {{ worldDialog.ref.updated_at | formatDate('long') }}
                                 .x-friend-item(v-if="worldDialog.ref.labsPublicationDate !== 'none'" style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.labs_publication_date') }}
@@ -860,12 +861,18 @@ html
                                     el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.public') }}
                                     el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.private') }}
                                     el-tag.x-tag-platform-pc(v-if="avatarDialog.isPC" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
+                                        span.x-grey(v-if="avatarDialog.platformInfo.pc" style=";margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.platformInfo.pc.performanceRating }}
+                                        span.x-grey(v-if="avatarDialog.bundleSizes['standalonewindows']" style=";margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.bundleSizes['standalonewindows'].fileSize }}
                                     el-tag.x-tag-platform-quest(v-if="avatarDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Android
+                                        span.x-grey(v-if="avatarDialog.platformInfo.android" style=";margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.platformInfo.android.performanceRating }}
+                                        span.x-grey(v-if="avatarDialog.bundleSizes['android']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.bundleSizes['android'].fileSize }}
                                     el-tag.x-tag-platform-ios(v-if="avatarDialog.isIos" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
+                                        span.x-grey(v-if="avatarDialog.platformInfo.ios" style=";margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.platformInfo.ios.performanceRating }}
+                                        span.x-grey(v-if="avatarDialog.bundleSizes['ios']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.bundleSizes['ios'].fileSize }}
                                     el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.fallback') }}
                                     el-tag(v-if="avatarDialog.hasImposter" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.impostor') }}
+                                        span.x-grey(v-if="avatarDialog.imposterVersion" style="margin-left:5px;border-left:inherit;padding-left:5px") V{{ avatarDialog.imposterVersion }}
                                     el-tag(v-if="avatarDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.future_proofing') }}
-                                    el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-right:5px;margin-top:5px")
                                     el-tag.x-link(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini" @click="openFolderGeneric(avatarDialog.cachePath)" style="margin-right:5px;margin-top:5px")
                                         span(v-text="avatarDialog.cacheSize")
                                         |  {{ $t('dialog.avatar.tags.cache') }}
@@ -931,7 +938,8 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.avatar.info.last_updated') }}
-                                        span.extra {{ avatarDialog.ref.updated_at | formatDate('long') }}
+                                        span.extra(v-if="avatarDialog.lastUpdated") {{ avatarDialog.lastUpdated | formatDate('long') }}
+                                        span.extra(v-else) {{ avatarDialog.ref.updated_at | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.avatar.info.version') }}

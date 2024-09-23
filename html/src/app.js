@@ -18444,6 +18444,31 @@ speechSynthesis.getVoices();
         return { isPC, isQuest, isIos };
     };
 
+    $app.methods.getPlatformInfo = function (unityPackages) {
+        var pc = {};
+        var android = {};
+        var ios = {};
+        if (typeof unityPackages === 'object') {
+            for (var unityPackage of unityPackages) {
+                if (
+                    unityPackage.variant &&
+                    unityPackage.variant !== 'standard' &&
+                    unityPackage.variant !== 'security'
+                ) {
+                    continue;
+                }
+                if (unityPackage.platform === 'standalonewindows') {
+                    pc = unityPackage;
+                } else if (unityPackage.platform === 'android') {
+                    android = unityPackage;
+                } else if (unityPackage.platform === 'ios') {
+                    ios = unityPackage;
+                }
+            }
+        }
+        return { pc, android, ios };
+    };
+
     $app.methods.replaceVrcPackageUrl = function (url) {
         if (!url) {
             return '';
@@ -19114,8 +19139,21 @@ speechSynthesis.getVoices();
                     var fileSize = `${(
                         version.file.sizeInBytes / 1048576
                     ).toFixed(2)} MB`;
-                    bundleSizes[platform] = { createdAt, fileSize };
+                    bundleSizes[platform] = {
+                        createdAt,
+                        fileSize
+                    };
 
+                    // update avatar dialog
+                    if (this.avatarDialog.id === ref.id) {
+                        this.avatarDialog.bundleSizes[platform] =
+                            bundleSizes[platform];
+                        if (
+                            this.avatarDialog.lastUpdated < version.created_at
+                        ) {
+                            this.avatarDialog.lastUpdated = version.created_at;
+                        }
+                    }
                     // update world dialog
                     if (this.worldDialog.id === ref.id) {
                         this.worldDialog.bundleSizes[platform] =
@@ -19779,11 +19817,14 @@ speechSynthesis.getVoices();
         isBlocked: false,
         isQuestFallback: false,
         hasImposter: false,
+        imposterVersion: '',
         isPC: false,
         isQuest: false,
         isIos: false,
         treeData: [],
-        fileSize: '',
+        bundleSizes: [],
+        platformInfo: {},
+        lastUpdated: '',
         inCache: false,
         cacheSize: 0,
         cacheLocked: false,
@@ -19834,7 +19875,6 @@ speechSynthesis.getVoices();
         D.id = avatarId;
         D.fileAnalysis = {};
         D.treeData = [];
-        D.fileSize = '';
         D.inCache = false;
         D.cacheSize = 0;
         D.cacheLocked = false;
@@ -19844,6 +19884,10 @@ speechSynthesis.getVoices();
         D.isQuest = false;
         D.isIos = false;
         D.hasImposter = false;
+        D.imposterVersion = '';
+        D.lastUpdated = '';
+        D.bundleSizes = [];
+        D.platformInfo = {};
         D.isFavorite =
             API.cachedFavoritesByObjectId.has(avatarId) ||
             (this.isLocalUserVrcplusSupporter() &&
@@ -19883,49 +19927,19 @@ speechSynthesis.getVoices();
                 D.isPC = isPC;
                 D.isQuest = isQuest;
                 D.isIos = isIos;
-                var assetUrl = '';
+                D.platformInfo = this.getPlatformInfo(args.ref.unityPackages);
                 for (let i = ref.unityPackages.length - 1; i > -1; i--) {
                     var unityPackage = ref.unityPackages[i];
-                    if (
-                        !assetUrl &&
-                        unityPackage.platform === 'standalonewindows' &&
-                        unityPackage.variant === 'standard' &&
-                        this.compareUnityVersion(unityPackage.unitySortNumber)
-                    ) {
-                        assetUrl = unityPackage.assetUrl;
-                    }
                     if (unityPackage.variant === 'impostor') {
                         D.hasImposter = true;
+                        D.imposterVersion = unityPackage.impostorizerVersion;
+                        break;
                     }
                 }
-                var fileId = extractFileId(assetUrl);
-                var fileVersion = parseInt(extractFileVersion(assetUrl), 10);
-                if (!fileId) {
-                    fileId = extractFileId(ref.assetUrl);
-                    fileVersion = parseInt(
-                        extractFileVersion(ref.assetUrl),
-                        10
-                    );
-                }
-                D.fileSize = '';
-                if (fileId) {
-                    D.fileSize = 'Loading';
-                    API.getBundles(fileId)
-                        .then((args2) => {
-                            var { versions } = args2.json;
-                            for (let i = versions.length - 1; i > -1; i--) {
-                                var version = versions[i];
-                                if (version.version === fileVersion) {
-                                    D.fileSize = `${(
-                                        version.file.sizeInBytes / 1048576
-                                    ).toFixed(2)} MB`;
-                                    break;
-                                }
-                            }
-                        })
-                        .catch(() => {
-                            D.fileSize = 'Error';
-                        });
+                if (D.bundleSizes.length === 0) {
+                    this.getBundleDateSize(ref).then((bundleSizes) => {
+                        D.bundleSizes = bundleSizes;
+                    });
                 }
             })
             .catch((err) => {
