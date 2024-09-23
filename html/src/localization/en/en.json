@@ -567,7 +567,7 @@
                 "request_invite_with_message": "Request Invite With Message",
                 "invite_to_group": "Invite To Group",
                 "send_boop": "Send Boop",
-                "manage_gallery_icon": "Manage Photos/Icons/Emojis",
+                "manage_gallery_icon": "Manage VRC+ Images",
                 "accept_friend_request": "Accept Friend Request",
                 "decline_friend_request": "Decline Friend Request",
                 "cancel_friend_request": "Cancel Friend Request",
@@ -1247,7 +1247,7 @@
             "send": "Send"
         },
         "gallery_icons": {
-            "header": "Photos, Icons, Emojis and Stickers",
+            "header": "Manage Photos, Icons, Emojis and Stickers",
             "description": "Recommended image size: 1200x900px (4:3)",
             "gallery": "Photos",
             "icons": "Icons",

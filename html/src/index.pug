@@ -871,13 +871,13 @@ html
                                     el-tag.x-tag-platform-ios(v-if="avatarDialog.isIos" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
                                         span.x-grey(v-if="avatarDialog.platformInfo.ios" style=";margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.platformInfo.ios.performanceRating }}
                                         span.x-grey(v-if="avatarDialog.bundleSizes['ios']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.bundleSizes['ios'].fileSize }}
-                                    el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.fallback') }}
-                                    el-tag(v-if="avatarDialog.hasImposter" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.impostor') }}
-                                        span.x-grey(v-if="avatarDialog.imposterVersion" style="margin-left:5px;border-left:inherit;padding-left:5px") V{{ avatarDialog.imposterVersion }}
-                                    el-tag(v-if="avatarDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.future_proofing') }}
                                     el-tag.x-link(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini" @click="openFolderGeneric(avatarDialog.cachePath)" style="margin-right:5px;margin-top:5px")
                                         span(v-text="avatarDialog.cacheSize")
                                         |  {{ $t('dialog.avatar.tags.cache') }}
+                                    el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.fallback') }}
+                                    el-tag(v-if="avatarDialog.hasImposter" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.impostor') }}
+                                        span.x-grey(v-if="avatarDialog.imposterVersion" style="margin-left:5px;border-left:inherit;padding-left:5px") v{{ avatarDialog.imposterVersion }}
+                                    el-tag(v-if="avatarDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.future_proofing') }}
                                     div
                                         template(v-for="tag in avatarDialog.ref.tags")
                                             el-tag(v-if="tag.startsWith('content_')" :key="tag" effect="plain" size="mini" style="margin-right:5px;margin-top:5px")

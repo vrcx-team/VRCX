@@ -5262,6 +5262,10 @@ speechSynthesis.getVoices();
                     if ($app.galleryDialogVisible) {
                         $app.refreshEmojiTable();
                     }
+                } else if (contentType === 'sticker') {
+                    if ($app.galleryDialogVisible) {
+                        $app.refreshStickerTable();
+                    }
                 } else if (contentType === 'avatar') {
                     // hmm, utilizing this might be too spamy and cause UI to move around
                 } else if (contentType === 'world') {
@@ -19098,12 +19102,8 @@ speechSynthesis.getVoices();
         D.avatarScalingDisabled = ref.tags?.includes(
             'feature_avatar_scaling_disabled'
         );
-        D.focusViewDisabled = ref.tags?.includes(
-            'feature_focus_view_disabled'
-        );
-        D.stickersDisabled = ref.tags?.includes(
-            'feature_stickers_disabled'
-        );
+        D.focusViewDisabled = ref.tags?.includes('feature_focus_view_disabled');
+        D.stickersDisabled = ref.tags?.includes('feature_stickers_disabled');
         $app.applyWorldDialogInstances();
         for (var room of D.rooms) {
             if ($app.isRealInstance(room.tag)) {
@@ -25584,7 +25584,6 @@ speechSynthesis.getVoices();
     });
 
     // #endregion
-        // #endregion
     // #region | Sticker
     API.$on('LOGIN', function () {
         $app.stickerTable = [];
@@ -25694,6 +25693,7 @@ speechSynthesis.getVoices();
             $app.stickerTable.unshift(args.json);
         }
     });
+
     // #endregion
     // #region | Emoji
 
