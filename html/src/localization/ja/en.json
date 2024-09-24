@@ -292,24 +292,16 @@
                 "side_panel": {
                     "header": "サイドパネル",
                     "sorting": {
-                        "header": "並び替え",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "プライベートを下に並び替え",
-                        "sort_by_status": "ステータスで並べ替え",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "お気に入り欄の並べ替え:",
-                        "sort_favorite_by_alphabet": "アルファベット順",
-                        "sort_favorite_by_online_time": "オンライン順",
-                        "sort_online_by": "オンライン欄の並べ替え:",
-                        "sort_online_by_alphabet": "アルファベット順",
-                        "sort_online_by_online_time": "オンライン順",
-                        "sort_active_by": "アクティブ欄の並べ替え:",
-                        "sort_active_by_alphabet": "アルファベット順",
-                        "sort_active_by_online_time": "オンライン順",
-                        "sort_offline_by": "オフライン欄の並べ替え:",
-                        "sort_offline_by_alphabet": "アルファベット順",
-                        "sort_offline_by_offline_time": "オンライン順"
+                        "header": "並べ替え",
+                        "alphabetical": "アルファベット順",
+                        "private_to_bottom": "Privateを下に",
+                        "status": "ステータス",
+                        "status_and_private_to_bottom": "ステータスとPrivateを下",
+                        "location": "場所",
+                        "last_active": "最終活動時間",
+                        "time_in_instance": "インスタンスにいた時間",
+                        "placeholder": "並べ替え",
+                        "dropdown_header": "並べ替え順を選択"
                     },
                     "width": "幅"
                 },
@@ -325,8 +317,8 @@
                     "random_colors_from_user_id": "ユーザーIDからランダムに色を生成"
                 },
                 "friend_log": {
-                    "header": "Friend Log",
-                    "hide_unfriends": "Hide Unfriends"
+                    "header": "フレンドログ",
+                    "hide_unfriends": "フレンド解除を隠す"
                 }
             },
             "notifications": {
