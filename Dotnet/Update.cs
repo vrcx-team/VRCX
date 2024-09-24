@@ -81,19 +81,15 @@ namespace VRCX
 
         private static string DownloadFile(string fileUrl)
         {
-            HttpClientHandler handler = new HttpClientHandler();
-
-            if(WebApi.ProxySet)
-            {
-                handler.Proxy = WebApi.Proxy;
-                handler.UseProxy = true;
-            }
-
-            HttpClient client = new HttpClient(handler);
+            var httpClientHandler = new HttpClientHandler();
+            if (WebApi.ProxySet)
+                httpClientHandler.Proxy = WebApi.Proxy;
+            
+            var httpClient = new HttpClient(httpClientHandler);
 
             try
             {
-                HttpResponseMessage response = client.GetAsync(fileUrl).Result;
+                HttpResponseMessage response = httpClient.GetAsync(fileUrl).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -122,7 +118,7 @@ namespace VRCX
             }
             finally
             {
-                client.Dispose();
+                httpClient.Dispose();
             }
         }
 

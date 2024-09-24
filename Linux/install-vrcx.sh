@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 steamapps=$HOME/.local/share/Steam/steamapps/compatdata
-stable=$(curl -s https://api0.vrcx.app/releases/stable/latest | grep -o "https.*releases/download.*zip")
-nightly=$(curl -s https://api0.vrcx.app/releases/nightly/latest | grep -o "https.*releases/download.*zip")
+stable="https://api0.vrcx.app/releases/stable/latest/download?type=zip"
+nightly="https://api0.vrcx.app/releases/nightly/latest/download?type=zip"
 download_url=$stable
 XDG_DATA_HOME=${XDG_DATA_HOME:=$HOME/.local/share}
 
@@ -76,13 +76,8 @@ rm vrcx.zip
 echo "#!/usr/bin/env bash
 export WINEPREFIX=$WINEPREFIX
 export WINEDLLOVERRIDES="libglesv2=d" # Workaround for https://bugs.winehq.org/show_bug.cgi?id=44985
-wine $WINEPREFIX/drive_c/vrcx/VRCX.exe -no-cef-sandbox" > $WINEPREFIX/drive_c/vrcx/vrcx
+wine $WINEPREFIX/drive_c/vrcx/VRCX.exe" > $WINEPREFIX/drive_c/vrcx/vrcx
 chmod +x $WINEPREFIX/drive_c/vrcx/vrcx
-
-if [[ -d $HOME/.local/bin ]]; then
-	echo "Install VRCX to $HOME/.local/bin"
-	ln -nsf $WINEPREFIX/drive_c/vrcx/vrcx $HOME/.local/bin/vrcx
-fi
 
 echo "Install VRCX.png to $XDG_DATA_HOME/icons"
 curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png -o "$XDG_DATA_HOME/icons/VRCX.png"
@@ -92,7 +87,7 @@ echo "[Desktop Entry]
 Type=Application
 Name=VRCX
 Categories=Utility;
-Exec=$HOME/.local/bin/vrcx
+Exec=$WINEPREFIX/drive_c/vrcx/vrcx
 Icon=VRCX
 " > $XDG_DATA_HOME/applications/vrcx.desktop
 

@@ -127,11 +127,11 @@ html
                                             location.extra(v-if="isGameRunning && !gameLogDisabled" :location="lastLocation.location" :traveling="lastLocationDestination" :link="false")
                                             location.extra(v-else-if="isRealInstance(API.currentUser.$locationTag) || isRealInstance(API.currentUser.$travelingToLocation)" :location="API.currentUser.$locationTag" :traveling="API.currentUser.$travelingToLocation" :link="false")
                                             span.extra(v-else v-text="API.currentUser.statusDescription")
-                                .x-friend-group.x-link(@click="isFriendsGroup0 = !isFriendsGroup0; saveFriendsGroupStates()" v-show="friendsGroup0.length")
-                                    i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup0 }")
-                                    span(style="margin-left:5px") {{ $t('side_panel.favorite') }} &horbar; {{ friendsGroup0.length }}
-                                div(v-show="isFriendsGroup0")
-                                    .x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" @click="showUserDialog(friend.id)")
+                                .x-friend-group.x-link(@click="isVIPFriends = !isVIPFriends; saveFriendsGroupStates()" v-show="vipFriends.length")
+                                    i.el-icon-arrow-right(:class="{ rotate: isVIPFriends }")
+                                    span(style="margin-left:5px") {{ $t('side_panel.favorite') }} &horbar; {{ vipFriends.length }}
+                                div(v-show="isVIPFriends")
+                                    .x-friend-item(v-for="friend in vipFriends" :key="friend.id" @click="showUserDialog(friend.id)")
                                         template(v-if="friend.ref")
                                             .avatar(:class="userStatusClass(friend.ref, friend.pendingOffline)")
                                                 img(v-lazy="userImage(friend.ref)")
@@ -143,11 +143,11 @@ html
                                         template(v-else)
                                             span(v-text="friend.name || friend.id")
                                             el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
-                                .x-friend-group.x-link(@click="isFriendsGroup1 = !isFriendsGroup1; saveFriendsGroupStates()" v-show="friendsGroup1.length")
-                                    i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup1 }")
-                                    span(style="margin-left:5px") {{ $t('side_panel.online') }} &horbar; {{ friendsGroup1.length }}
-                                div(v-show="isFriendsGroup1")
-                                    .x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" @click="showUserDialog(friend.id)")
+                                .x-friend-group.x-link(@click="isOnlineFriends = !isOnlineFriends; saveFriendsGroupStates()" v-show="onlineFriends.length")
+                                    i.el-icon-arrow-right(:class="{ rotate: isOnlineFriends }")
+                                    span(style="margin-left:5px") {{ $t('side_panel.online') }} &horbar; {{ onlineFriends.length }}
+                                div(v-show="isOnlineFriends")
+                                    .x-friend-item(v-for="friend in onlineFriends" :key="friend.id" @click="showUserDialog(friend.id)")
                                         template(v-if="friend.ref")
                                             .avatar(:class="userStatusClass(friend.ref, friend.pendingOffline)")
                                                 img(v-lazy="userImage(friend.ref)")
@@ -159,11 +159,11 @@ html
                                         template(v-else)
                                             span(v-text="friend.name || friend.id")
                                             el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
-                                .x-friend-group.x-link(@click="isFriendsGroup2 = !isFriendsGroup2; saveFriendsGroupStates()" v-show="friendsGroup2.length")
-                                    i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup2 }")
-                                    span(style="margin-left:5px") {{ $t('side_panel.active') }} &horbar; {{ friendsGroup2.length }}
-                                div(v-show="isFriendsGroup2")
-                                    .x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" @click="showUserDialog(friend.id)")
+                                .x-friend-group.x-link(@click="isActiveFriends = !isActiveFriends; saveFriendsGroupStates()" v-show="activeFriends.length")
+                                    i.el-icon-arrow-right(:class="{ rotate: isActiveFriends }")
+                                    span(style="margin-left:5px") {{ $t('side_panel.active') }} &horbar; {{ activeFriends.length }}
+                                div(v-show="isActiveFriends")
+                                    .x-friend-item(v-for="friend in activeFriends" :key="friend.id" @click="showUserDialog(friend.id)")
                                         template(v-if="friend.ref")
                                             .avatar
                                                 img(v-lazy="userImage(friend.ref)")
@@ -174,11 +174,11 @@ html
                                         template(v-else)
                                             span(v-text="friend.name || friend.id")
                                             el-button(type="text" icon="el-icon-close" size="mini" @click.stop="confirmDeleteFriend(friend.id)" style="margin-left:5px")
-                                .x-friend-group.x-link(@click="isFriendsGroup3 = !isFriendsGroup3; saveFriendsGroupStates()" v-show="friendsGroup3.length")
-                                    i.el-icon-arrow-right(:class="{ rotate: isFriendsGroup3 }")
-                                    span(style="margin-left:5px") {{ $t('side_panel.offline') }} &horbar; {{ friendsGroup3.length }}
-                                div(v-show="isFriendsGroup3")
-                                    .x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" @click="showUserDialog(friend.id)")
+                                .x-friend-group.x-link(@click="isOfflineFriends = !isOfflineFriends; saveFriendsGroupStates()" v-show="offlineFriends.length")
+                                    i.el-icon-arrow-right(:class="{ rotate: isOfflineFriends }")
+                                    span(style="margin-left:5px") {{ $t('side_panel.offline') }} &horbar; {{ offlineFriends.length }}
+                                div(v-show="isOfflineFriends")
+                                    .x-friend-item(v-for="friend in offlineFriends" :key="friend.id" @click="showUserDialog(friend.id)")
                                         template(v-if="friend.ref")
                                             .avatar
                                                 img(v-lazy="userImage(friend.ref)")
@@ -311,6 +311,8 @@ html
                                             el-dropdown-item(v-else icon="el-icon-circle-close" command="Block" divided :disabled="userDialog.ref.$isModerator") {{ $t('dialog.user.actions.moderation_block') }}
                                             el-dropdown-item(v-if="userDialog.isMute" icon="el-icon-microphone" command="Unmute" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_unmute') }}
                                             el-dropdown-item(v-else icon="el-icon-turn-off-microphone" command="Mute" :disabled="userDialog.ref.$isModerator") {{ $t('dialog.user.actions.moderation_mute') }}
+                                            el-dropdown-item(v-if="userDialog.isMuteChat" icon="el-icon-chat-line-round" command="Unmute Chatbox" style="color:#F56C6C") {{ $t('dialog.user.actions.moderation_enable_chatbox') }}
+                                            el-dropdown-item(v-else icon="el-icon-chat-dot-round" command="Mute Chatbox") {{ $t('dialog.user.actions.moderation_disable_chatbox') }}
                                             el-dropdown-item(icon="el-icon-user-solid" command="Show Avatar")
                                                 i.el-icon-check.el-icon--left(v-if="userDialog.isShowAvatar")
                                                 span {{ $t('dialog.user.actions.moderation_show_avatar') }}
@@ -784,7 +786,8 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.last_updated') }}
-                                        span.extra {{ worldDialog.lastUpdated | formatDate('long') }}
+                                        span.extra(v-if="worldDialog.lastUpdated") {{ worldDialog.lastUpdated | formatDate('long') }}
+                                        span.extra(v-else) {{ worldDialog.ref.updated_at | formatDate('long') }}
                                 .x-friend-item(v-if="worldDialog.ref.labsPublicationDate !== 'none'" style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.world.info.labs_publication_date') }}
@@ -858,12 +861,18 @@ html
                                     el-tag(v-if="avatarDialog.ref.releaseStatus === 'public'" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.public') }}
                                     el-tag(v-else type="danger" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.private') }}
                                     el-tag.x-tag-platform-pc(v-if="avatarDialog.isPC" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") PC
+                                        span.x-grey(v-if="avatarDialog.platformInfo.pc" style=";margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.platformInfo.pc.performanceRating }}
+                                        span.x-grey(v-if="avatarDialog.bundleSizes['standalonewindows']" style=";margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.bundleSizes['standalonewindows'].fileSize }}
                                     el-tag.x-tag-platform-quest(v-if="avatarDialog.isQuest" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") Android
+                                        span.x-grey(v-if="avatarDialog.platformInfo.android" style=";margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.platformInfo.android.performanceRating }}
+                                        span.x-grey(v-if="avatarDialog.bundleSizes['android']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.bundleSizes['android'].fileSize }}
                                     el-tag.x-tag-platform-ios(v-if="avatarDialog.isIos" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
+                                        span.x-grey(v-if="avatarDialog.platformInfo.ios" style=";margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.platformInfo.ios.performanceRating }}
+                                        span.x-grey(v-if="avatarDialog.bundleSizes['ios']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ avatarDialog.bundleSizes['ios'].fileSize }}
                                     el-tag(v-if="avatarDialog.isQuestFallback" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.fallback') }}
                                     el-tag(v-if="avatarDialog.hasImposter" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.impostor') }}
+                                        span.x-grey(v-if="avatarDialog.imposterVersion" style="margin-left:5px;border-left:inherit;padding-left:5px") V{{ avatarDialog.imposterVersion }}
                                     el-tag(v-if="avatarDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.avatar.tags.future_proofing') }}
-                                    el-tag(v-if="avatarDialog.fileSize" type="info" effect="plain" size="mini" v-text="avatarDialog.fileSize" style="margin-right:5px;margin-top:5px")
                                     el-tag.x-link(v-if="avatarDialog.inCache" type="info" effect="plain" size="mini" @click="openFolderGeneric(avatarDialog.cachePath)" style="margin-right:5px;margin-top:5px")
                                         span(v-text="avatarDialog.cacheSize")
                                         |  {{ $t('dialog.avatar.tags.cache') }}
@@ -929,7 +938,8 @@ html
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.avatar.info.last_updated') }}
-                                        span.extra {{ avatarDialog.ref.updated_at | formatDate('long') }}
+                                        span.extra(v-if="avatarDialog.lastUpdated") {{ avatarDialog.lastUpdated | formatDate('long') }}
+                                        span.extra(v-else) {{ avatarDialog.ref.updated_at | formatDate('long') }}
                                 .x-friend-item(style="cursor:default")
                                     .detail
                                         span.name {{ $t('dialog.avatar.info.version') }}
@@ -1329,7 +1339,7 @@ html
                     br
                     el-button(size="mini" v-text="$t('dialog.invite.add_self')" @click="addSelfToInvite" style="margin-top:10px")
                     el-button(size="mini" v-text="$t('dialog.invite.add_friends_in_instance')" @click="addFriendsInInstanceToInvite" :disabled="inviteDialog.friendsInInstance.length === 0" style="margin-top:10px")
-                    el-button(size="mini" v-text="$t('dialog.invite.add_favorite_friends')" @click="addFavoriteFriendsToInvite" :disabled="friendsGroup0.length === 0" style="margin-top:10px")
+                    el-button(size="mini" v-text="$t('dialog.invite.add_favorite_friends')" @click="addFavoriteFriendsToInvite" :disabled="vipFriends.length === 0" style="margin-top:10px")
                     el-select(v-model="inviteDialog.userIds" multiple clearable :placeholder="$t('dialog.invite.select_placeholder')" filterable :disabled="inviteDialog.loading" style="width:100%;margin-top:15px")
                         el-option-group(v-if="API.currentUser" :label="$t('side_panel.me')")
                             el-option.x-friend-item(:label="API.currentUser.displayName" :value="API.currentUser.id" style="height:auto")
@@ -1345,24 +1355,24 @@ html
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
-                            el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                        el-option-group(v-if="vipFriends.length" :label="$t('side_panel.favorite')")
+                            el-option.x-friend-item(v-for="friend in vipFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
                                         img(v-lazy="userImage(friend.ref)")
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup1.length" :label="$t('side_panel.online')")
-                            el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                        el-option-group(v-if="onlineFriends.length" :label="$t('side_panel.online')")
+                            el-option.x-friend-item(v-for="friend in onlineFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
                                         img(v-lazy="userImage(friend.ref)")
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup2.length" :label="$t('side_panel.active')")
-                            el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                        el-option-group(v-if="activeFriends.length" :label="$t('side_panel.active')")
+                            el-option.x-friend-item(v-for="friend in activeFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar
                                         img(v-lazy="userImage(friend.ref)")
@@ -1515,32 +1525,32 @@ html
                                                 img(v-lazy="userImage(API.currentUser)")
                                             .detail
                                                 span.name(v-text="API.currentUser.displayName")
-                                    el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
-                                        el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                    el-option-group(v-if="vipFriends.length" :label="$t('side_panel.favorite')")
+                                        el-option.x-friend-item(v-for="friend in vipFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                             template(v-if="friend.ref")
                                                 .avatar(:class="userStatusClass(friend.ref)")
                                                     img(v-lazy="userImage(friend.ref)")
                                                 .detail
                                                     span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                             span(v-else v-text="friend.id")
-                                    el-option-group(v-if="friendsGroup1.length" :label="$t('side_panel.online')")
-                                        el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                    el-option-group(v-if="onlineFriends.length" :label="$t('side_panel.online')")
+                                        el-option.x-friend-item(v-for="friend in onlineFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                             template(v-if="friend.ref")
                                                 .avatar(:class="userStatusClass(friend.ref)")
                                                     img(v-lazy="userImage(friend.ref)")
                                                 .detail
                                                     span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                             span(v-else v-text="friend.id")
-                                    el-option-group(v-if="friendsGroup2.length" :label="$t('side_panel.active')")
-                                        el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                    el-option-group(v-if="activeFriends.length" :label="$t('side_panel.active')")
+                                        el-option.x-friend-item(v-for="friend in activeFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                             template(v-if="friend.ref")
                                                 .avatar
                                                     img(v-lazy="userImage(friend.ref)")
                                                 .detail
                                                     span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                             span(v-else v-text="friend.id")
-                                    el-option-group(v-if="friendsGroup3.length" :label="$t('side_panel.offline')")
-                                        el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                                    el-option-group(v-if="offlineFriends.length" :label="$t('side_panel.offline')")
+                                        el-option.x-friend-item(v-for="friend in offlineFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                             template(v-if="friend.ref")
                                                 .avatar
                                                     img(v-lazy="userImage(friend.ref)")
@@ -2900,32 +2910,32 @@ html
                                     .detail
                                         span.name(v-text="inviteGroupDialog.userObject.displayName" :style="{'color':inviteGroupDialog.userObject.$userColour}")
                                 span(v-else v-text="inviteGroupDialog.userId")
-                        el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
-                            el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                        el-option-group(v-if="vipFriends.length" :label="$t('side_panel.favorite')")
+                            el-option.x-friend-item(v-for="friend in vipFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
                                         img(v-lazy="userImage(friend.ref)")
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup1.length" :label="$t('side_panel.online')")
-                            el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                        el-option-group(v-if="onlineFriends.length" :label="$t('side_panel.online')")
+                            el-option.x-friend-item(v-for="friend in onlineFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
                                         img(v-lazy="userImage(friend.ref)")
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup2.length" :label="$t('side_panel.active')")
-                            el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                        el-option-group(v-if="activeFriends.length" :label="$t('side_panel.active')")
+                            el-option.x-friend-item(v-for="friend in activeFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar
                                         img(v-lazy="userImage(friend.ref)")
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup3.length" :label="$t('side_panel.offline')")
-                            el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                        el-option-group(v-if="offlineFriends.length" :label="$t('side_panel.offline')")
+                            el-option.x-friend-item(v-for="friend in offlineFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar
                                         img(v-lazy="userImage(friend.ref)")
@@ -3325,32 +3335,32 @@ html
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="sendBoopDialog" :visible.sync="sendBoopDialog.visible" :title="$t('dialog.boop_dialog.header')" width="450px")
                 div(v-if="sendBoopDialog.visible")
                     el-select(v-model="sendBoopDialog.userId" :placeholder="$t('dialog.new_instance.instance_creator_placeholder')" filterable style="width:100%")
-                        el-option-group(v-if="friendsGroup0.length" :label="$t('side_panel.favorite')")
-                            el-option.x-friend-item(v-for="friend in friendsGroup0" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                        el-option-group(v-if="vipFriends.length" :label="$t('side_panel.favorite')")
+                            el-option.x-friend-item(v-for="friend in vipFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
                                         img(v-lazy="userImage(friend.ref)")
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup1.length" :label="$t('side_panel.online')")
-                            el-option.x-friend-item(v-for="friend in friendsGroup1" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                        el-option-group(v-if="onlineFriends.length" :label="$t('side_panel.online')")
+                            el-option.x-friend-item(v-for="friend in onlineFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar(:class="userStatusClass(friend.ref)")
                                         img(v-lazy="userImage(friend.ref)")
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup2.length" :label="$t('side_panel.active')")
-                            el-option.x-friend-item(v-for="friend in friendsGroup2" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                        el-option-group(v-if="activeFriends.length" :label="$t('side_panel.active')")
+                            el-option.x-friend-item(v-for="friend in activeFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar
                                         img(v-lazy="userImage(friend.ref)")
                                     .detail
                                         span.name(v-text="friend.ref.displayName" :style="{'color':friend.ref.$userColour}")
                                 span(v-else v-text="friend.id")
-                        el-option-group(v-if="friendsGroup3.length" :label="$t('side_panel.offline')")
-                            el-option.x-friend-item(v-for="friend in friendsGroup3" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
+                        el-option-group(v-if="offlineFriends.length" :label="$t('side_panel.offline')")
+                            el-option.x-friend-item(v-for="friend in offlineFriends" :key="friend.id" :label="friend.name" :value="friend.id" style="height:auto")
                                 template(v-if="friend.ref")
                                     .avatar
                                         img(v-lazy="userImage(friend.ref)")
