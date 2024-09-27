@@ -14731,7 +14731,7 @@ speechSynthesis.getVoices();
         }
         var friendLogHistory = {
             created_at: new Date().toJSON(),
-            type: 'CancelFriendRequst',
+            type: 'CancelFriendRequest',
             userId: ref.id,
             displayName: ref.displayName
         };
@@ -27389,7 +27389,7 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 8;
+        var databaseVersion = 9;
         if (this.databaseVersion < databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({
@@ -27411,6 +27411,7 @@ speechSynthesis.getVoices();
                 await database.updateTableForGroupNames(); // alter tables to include group name
                 await database.fixBrokenNotifications(); // fix notifications being null
                 await database.fixBrokenGroupChange(); // fix spam group left & name change
+                await database.fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
                 await database.vacuum(); // succ
                 await database.setWal(); // https://www.sqlite.org/wal.html
                 await configRepository.setInt(
