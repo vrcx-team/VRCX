@@ -657,6 +657,8 @@ html
                                     el-tag.x-tag-platform-ios(v-if="worldDialog.isIos" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") iOS
                                         span.x-grey(v-if="worldDialog.bundleSizes['ios']" style="margin-left:5px;border-left:inherit;padding-left:5px") {{ worldDialog.bundleSizes['ios'].fileSize }}
                                     el-tag(v-if="worldDialog.avatarScalingDisabled" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.avatar_scaling_disabled') }}
+                                    el-tag(v-if="worldDialog.focusViewDisabled" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.focus_view_disabled') }}
+                                    el-tag(v-if="worldDialog.stickersDisabled" type="warning" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.stickers_disabled') }}
                                     el-tag(v-if="worldDialog.ref.unityPackageUrl" type="success" effect="plain" size="mini" style="margin-right:5px;margin-top:5px") {{ $t('dialog.world.tags.future_proofing') }}
                                     el-tag.x-link(v-if="worldDialog.inCache" type="info" effect="plain" size="mini" style="margin-right:5px;margin-top:5px" @click="openFolderGeneric(worldDialog.cachePath)")
                                         span(v-text="worldDialog.cacheSize")
@@ -1658,6 +1660,11 @@ html
             //- dialog: Set World Tags
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="setWorldTagsDialog" :visible.sync="setWorldTagsDialog.visible" :title="$t('dialog.set_world_tags.header')" width="400px")
                 el-checkbox(v-model="setWorldTagsDialog.avatarScalingDisabled") {{ $t('dialog.set_world_tags.avatar_scaling_disabled') }}
+                br
+                el-checkbox(v-model="setWorldTagsDialog.focusViewDisabled") {{ $t('dialog.set_world_tags.focus_view_disabled') }}
+                br
+                el-checkbox(v-model="setWorldTagsDialog.stickersDisabled") {{ $t('dialog.set_world_tags.stickers_disabled') }}
+                br
                 el-checkbox(v-model="setWorldTagsDialog.debugAllowed") {{ $t('dialog.set_world_tags.enable_debugging') }}
                 div(style='font-size:12px;margin-top:10px')
                     | {{ $t('dialog.set_world_tags.author_tags') }} #[br]
@@ -2521,7 +2528,7 @@ html
                             div(style="float:right;margin-top:5px")
                                 el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteVRCPlusIcon(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
-                    el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
+                    el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogEmojisLoading")
                         span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
                             span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/9
                         input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
@@ -2562,6 +2569,20 @@ html
                             div(style="float:right;margin-top:5px")
                                 el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
                                 el-button(type="default" @click="deleteEmoji(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                    el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogStickersLoading")
+                        span(slot="label") {{ $t('dialog.gallery_icons.stickers') }}
+                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ stickerTable.length }}/9
+                        input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeSticker" id="StickerUploadButton" style="display:none")
+                        el-button-group
+                            el-button(type="default" size="small" @click="refreshStickerTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
+                            el-button(type="default" size="small" @click="displayStickerUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
+                        br
+                        .x-friend-item(v-if="image.versions && image.versions.length > 0" v-for="image in stickerTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
+                            .vrcplus-icon(v-if="image.versions[image.versions.length - 1].file.url" style="overflow:hidden" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)") 
+                                img.avatar(v-lazy="image.versions[image.versions.length - 1].file.url")
+                            div(style="float:right;margin-top:5px")
+                                el-button(type="default" @click="showFullscreenImageDialog(image.versions[image.versions.length - 1].file.url)" size="mini" icon="el-icon-download" circle)
+                                el-button(type="default" @click="deleteSticker(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
 
             //- dialog Table: Previous Instances User
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="previousInstancesUserDialog" :visible.sync="previousInstancesUserDialog.visible" :title="$t('dialog.previous_instances.header')" width="1000px")
