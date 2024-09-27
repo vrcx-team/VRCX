@@ -9182,6 +9182,40 @@ speechSynthesis.getVoices();
                 this.deleteFriend(id);
             }
         }
+
+        this.saveFriendOrder();
+    };
+
+    $app.methods.saveFriendOrder = async function () {
+        var currentTime = Date.now();
+        var lastStoreTime = await configRepository.getString(
+            `VRCX_lastStoreTime_${API.currentUser.id}`,
+            ''
+        );
+        // store once every week
+        if (lastStoreTime && currentTime - lastStoreTime < 604800000) {
+            return;
+        }
+        var storedData = {};
+        try {
+            var data = await configRepository.getString(
+                `VRCX_friendOrder_${API.currentUser.id}`
+            );
+            if (data) {
+                var storedData = JSON.parse(data);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+        storedData[currentTime] = Array.from(this.friends.keys());
+        await configRepository.setString(
+            `VRCX_friendOrder_${API.currentUser.id}`,
+            JSON.stringify(storedData)
+        );
+        await configRepository.setString(
+            `VRCX_lastStoreTime_${API.currentUser.id}`,
+            currentTime
+        );
     };
 
     $app.methods.addFriend = function (id, state) {
