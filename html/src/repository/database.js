@@ -2610,6 +2610,12 @@ class Database {
         }
     }
 
+    async fixCancelFriendRequestTypo() {
+        await sqliteService.executeNonQuery(
+            `UPDATE ${Database.userPrefix}_friend_log_history SET type = 'CancelFriendRequest' WHERE type = 'CancelFriendRequst'`
+        );
+    }
+
     async vacuum() {
         await sqliteService.executeNonQuery('VACUUM');
     }

@@ -5262,6 +5262,10 @@ speechSynthesis.getVoices();
                     if ($app.galleryDialogVisible) {
                         $app.refreshEmojiTable();
                     }
+                } else if (contentType === 'sticker') {
+                    if ($app.galleryDialogVisible) {
+                        $app.refreshStickerTable();
+                    }
                 } else if (contentType === 'avatar') {
                     // hmm, utilizing this might be too spamy and cause UI to move around
                 } else if (contentType === 'world') {
@@ -9178,6 +9182,40 @@ speechSynthesis.getVoices();
                 this.deleteFriend(id);
             }
         }
+
+        this.saveFriendOrder();
+    };
+
+    $app.methods.saveFriendOrder = async function () {
+        var currentTime = Date.now();
+        var lastStoreTime = await configRepository.getString(
+            `VRCX_lastStoreTime_${API.currentUser.id}`,
+            ''
+        );
+        // store once every week
+        if (lastStoreTime && currentTime - lastStoreTime < 604800000) {
+            return;
+        }
+        var storedData = {};
+        try {
+            var data = await configRepository.getString(
+                `VRCX_friendOrder_${API.currentUser.id}`
+            );
+            if (data) {
+                var storedData = JSON.parse(data);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+        storedData[currentTime] = Array.from(this.friends.keys());
+        await configRepository.setString(
+            `VRCX_friendOrder_${API.currentUser.id}`,
+            JSON.stringify(storedData)
+        );
+        await configRepository.setString(
+            `VRCX_lastStoreTime_${API.currentUser.id}`,
+            currentTime
+        );
     };
 
     $app.methods.addFriend = function (id, state) {
@@ -14731,7 +14769,7 @@ speechSynthesis.getVoices();
         }
         var friendLogHistory = {
             created_at: new Date().toJSON(),
-            type: 'CancelFriendRequst',
+            type: 'CancelFriendRequest',
             userId: ref.id,
             displayName: ref.displayName
         };
@@ -15361,6 +15399,7 @@ speechSynthesis.getVoices();
         },
         layout: 'table'
     };
+    $app.data.stickerTable = [];
     $app.data.emojiTable = [];
     $app.data.VRCPlusIconsTable = [];
     $app.data.galleryTable = [];
@@ -18316,6 +18355,8 @@ speechSynthesis.getVoices();
         isQuest: false,
         isIos: false,
         avatarScalingDisabled: false,
+        focusViewDisabled: false,
+        stickersDisabled: false,
         inCache: false,
         cacheSize: '',
         bundleSizes: [],
@@ -18336,6 +18377,8 @@ speechSynthesis.getVoices();
                 isQuest: false,
                 isIos: false,
                 avatarScalingDisabled: false,
+                focusViewDisabled: false,
+                stickersDisabled: false,
                 inCache: false,
                 cacheSize: '',
                 bundleSizes: [],
@@ -18350,6 +18393,8 @@ speechSynthesis.getVoices();
                 isQuest: false,
                 isIos: false,
                 avatarScalingDisabled: false,
+                focusViewDisabled: false,
+                stickersDisabled: false,
                 inCache: false,
                 cacheSize: '',
                 bundleSizes: [],
@@ -18369,6 +18414,10 @@ speechSynthesis.getVoices();
                 this.currentInstanceWorld.isIos = isIos;
                 this.currentInstanceWorld.avatarScalingDisabled =
                     args.ref?.tags.includes('feature_avatar_scaling_disabled');
+                this.currentInstanceWorld.focusViewDisabled =
+                    args.ref?.tags.includes('feature_focus_view_disabled');
+                this.currentInstanceWorld.stickersDisabled =
+                    args.ref?.tags.includes('feature_stickers_disabled');
                 this.checkVRChatCache(args.ref).then((cacheInfo) => {
                     if (cacheInfo.Item1 > 0) {
                         this.currentInstanceWorld.inCache = true;
@@ -19044,6 +19093,8 @@ speechSynthesis.getVoices();
         ref: {},
         isFavorite: false,
         avatarScalingDisabled: false,
+        focusViewDisabled: false,
+        stickersDisabled: false,
         rooms: [],
         treeData: [],
         bundleSizes: [],
@@ -19085,6 +19136,8 @@ speechSynthesis.getVoices();
         D.avatarScalingDisabled = ref.tags?.includes(
             'feature_avatar_scaling_disabled'
         );
+        D.focusViewDisabled = ref.tags?.includes('feature_focus_view_disabled');
+        D.stickersDisabled = ref.tags?.includes('feature_stickers_disabled');
         $app.applyWorldDialogInstances();
         for (var room of D.rooms) {
             if ($app.isRealInstance(room.tag)) {
@@ -19224,6 +19277,8 @@ speechSynthesis.getVoices();
         D.timeSpent = 0;
         D.isFavorite = false;
         D.avatarScalingDisabled = false;
+        D.focusViewDisabled = false;
+        D.stickersDisabled = false;
         D.isPC = false;
         D.isQuest = false;
         D.isIos = false;
@@ -19282,6 +19337,12 @@ speechSynthesis.getVoices();
                     );
                     D.avatarScalingDisabled = args.ref?.tags.includes(
                         'feature_avatar_scaling_disabled'
+                    );
+                    D.focusViewDisabled = args.ref?.tags.includes(
+                        'feature_focus_view_disabled'
+                    );
+                    D.stickersDisabled = args.ref?.tags.includes(
+                        'feature_stickers_disabled'
                     );
                     D.isPC = isPC;
                     D.isQuest = isQuest;
@@ -21109,6 +21170,8 @@ speechSynthesis.getVoices();
         contentTags: [],
         debugAllowed: false,
         avatarScalingDisabled: false,
+        focusViewDisabled: false,
+        stickersDisabled: false,
         contentHorror: false,
         contentGore: false,
         contentViolence: false,
@@ -21122,6 +21185,8 @@ speechSynthesis.getVoices();
         D.visible = true;
         D.debugAllowed = false;
         D.avatarScalingDisabled = false;
+        D.focusViewDisabled = false;
+        D.stickersDisabled = false;
         D.contentHorror = false;
         D.contentGore = false;
         D.contentViolence = false;
@@ -21159,6 +21224,12 @@ speechSynthesis.getVoices();
                     break;
                 case 'feature_avatar_scaling_disabled':
                     D.avatarScalingDisabled = true;
+                    break;
+                case 'feature_focus_view_disabled':
+                    D.focusViewDisabled = true;
+                    break;
+                case 'feature_stickers_disabled':
+                    D.stickersDisabled = true;
                     break;
             }
         });
@@ -21211,6 +21282,12 @@ speechSynthesis.getVoices();
         }
         if (D.avatarScalingDisabled) {
             tags.unshift('feature_avatar_scaling_disabled');
+        }
+        if (D.focusViewDisabled) {
+            tags.unshift('feature_focus_view_disabled');
+        }
+        if (D.stickersDisabled) {
+            tags.unshift('feature_stickers_disabled');
         }
         API.saveWorld({
             id: this.worldDialog.id,
@@ -25374,6 +25451,8 @@ speechSynthesis.getVoices();
     $app.data.galleryDialogVisible = false;
     $app.data.galleryDialogGalleryLoading = false;
     $app.data.galleryDialogIconsLoading = false;
+    $app.data.galleryDialogEmojisLoading = false;
+    $app.data.galleryDialogStickersLoading = false;
 
     API.$on('LOGIN', function () {
         $app.galleryTable = [];
@@ -25385,6 +25464,7 @@ speechSynthesis.getVoices();
         this.refreshGalleryTable();
         this.refreshVRCPlusIconsTable();
         this.refreshEmojiTable();
+        this.refreshStickerTable();
         workerTimers.setTimeout(() => this.setGalleryTab(pageNum), 100);
     };
 
@@ -25538,6 +25618,117 @@ speechSynthesis.getVoices();
     });
 
     // #endregion
+    // #region | Sticker
+    API.$on('LOGIN', function () {
+        $app.stickerTable = [];
+    });
+
+    $app.methods.refreshStickerTable = function () {
+        this.galleryDialogStickersLoading = true;
+        var params = {
+            n: 100,
+            tag: 'sticker'
+        };
+        API.getFileList(params);
+    };
+
+    API.$on('FILES:LIST', function (args) {
+        if (args.params.tag === 'sticker') {
+            $app.stickerTable = args.json.reverse();
+            $app.galleryDialogStickersLoading = false;
+        }
+    });
+
+    $app.methods.deleteSticker = function (fileId) {
+        API.deleteFile(fileId).then((args) => {
+            API.$emit('STICKER:DELETE', args);
+            return args;
+        });
+    };
+
+    API.$on('STICKER:DELETE', function (args) {
+        var array = $app.stickerTable;
+        var { length } = array;
+        for (var i = 0; i < length; ++i) {
+            if (args.fileId === array[i].id) {
+                array.splice(i, 1);
+                break;
+            }
+        }
+    });
+
+    $app.methods.onFileChangeSticker = function (e) {
+        var clearFile = function () {
+            if (document.querySelector('#StickerUploadButton')) {
+                document.querySelector('#StickerUploadButton').value = '';
+            }
+        };
+        var files = e.target.files || e.dataTransfer.files;
+        if (!files.length) {
+            return;
+        }
+        if (files[0].size >= 100000000) {
+            // 100MB
+            $app.$message({
+                message: 'File size too large',
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        if (!files[0].type.match(/image.*/)) {
+            $app.$message({
+                message: "File isn't an image",
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        var r = new FileReader();
+        r.onload = function () {
+            var params = {
+                tag: 'sticker',
+                maskTag: 'square'
+            };
+            var base64Body = btoa(r.result);
+            API.uploadSticker(base64Body, params).then((args) => {
+                $app.$message({
+                    message: 'Sticker uploaded',
+                    type: 'success'
+                });
+                return args;
+            });
+        };
+        r.readAsBinaryString(files[0]);
+        clearFile();
+    };
+
+    $app.methods.displayStickerUpload = function () {
+        document.getElementById('StickerUploadButton').click();
+    };
+
+    API.uploadSticker = function (imageData, params) {
+        return this.call('file/image', {
+            uploadImage: true,
+            postData: JSON.stringify(params),
+            imageData
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('STICKER:ADD', args);
+            return args;
+        });
+    };
+
+    API.$on('STICKER:ADD', function (args) {
+        if (Object.keys($app.stickerTable).length !== 0) {
+            $app.stickerTable.unshift(args.json);
+        }
+    });
+
+    // #endregion
     // #region | Emoji
 
     API.$on('LOGIN', function () {
@@ -25545,7 +25736,7 @@ speechSynthesis.getVoices();
     });
 
     $app.methods.refreshEmojiTable = function () {
-        this.galleryDialogIconsLoading = true;
+        this.galleryDialogEmojisLoading = true;
         var params = {
             n: 100,
             tag: 'emoji'
@@ -25556,7 +25747,7 @@ speechSynthesis.getVoices();
     API.$on('FILES:LIST', function (args) {
         if (args.params.tag === 'emoji') {
             $app.emojiTable = args.json.reverse();
-            $app.galleryDialogIconsLoading = false;
+            $app.galleryDialogEmojisLoading = false;
         }
     });
 
@@ -27232,7 +27423,7 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 8;
+        var databaseVersion = 9;
         if (this.databaseVersion < databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({
@@ -27254,6 +27445,7 @@ speechSynthesis.getVoices();
                 await database.updateTableForGroupNames(); // alter tables to include group name
                 await database.fixBrokenNotifications(); // fix notifications being null
                 await database.fixBrokenGroupChange(); // fix spam group left & name change
+                await database.fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
                 await database.vacuum(); // succ
                 await database.setWal(); // https://www.sqlite.org/wal.html
                 await configRepository.setInt(

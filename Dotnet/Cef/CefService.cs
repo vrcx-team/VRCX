@@ -27,7 +27,6 @@ namespace VRCX
                 LogSeverity = LogSeverity.Disable,
                 WindowlessRenderingEnabled = true,
                 PersistSessionCookies = true,
-                PersistUserPreferences = true,
                 UserAgent = Program.Version,
                 BrowserSubprocessPath = Environment.ProcessPath,
                 BackgroundColor = 0xFF101010
