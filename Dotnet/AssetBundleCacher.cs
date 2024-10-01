@@ -34,11 +34,11 @@ namespace VRCX
         public static WebClient client;
         public static Process process;
 
-        public string GetAssetId(string id)
+        public string GetAssetId(string id, string variant = "")
         {
             using(var sha256 = SHA256.Create())
             {
-                byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(id));
+                byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(id + variant));
                 StringBuilder idHex = new StringBuilder(hash.Length * 2);
                 foreach (byte b in hash)
                 {
@@ -48,15 +48,43 @@ namespace VRCX
             }
         }
 
-        public string GetAssetVersion(int version)
+        public string GetAssetVersion(int version, int variantVersion = 0)
         {
-            byte[] bytes = BitConverter.GetBytes(version);
-            string versionHex = string.Empty;
-            foreach (byte b in bytes)
+            var versionHex = string.Empty;
+            var variantVersionBytes = BitConverter.GetBytes(variantVersion);
+            foreach (var b in variantVersionBytes)
             {
                 versionHex += b.ToString("X2");
             }
+            var versionBytes = BitConverter.GetBytes(version);
+            foreach (var b in versionBytes)
+            {
+                versionHex += b.ToString("X2");
+            }
+            
             return versionHex.PadLeft(32, '0');
+        }
+        
+        public int ReverseHexToDecimal(string hexString)
+        {
+            if (hexString.Length != 32)
+                return 0; // it's cooked
+
+            var versionHexString = hexString.Substring(16, 8); // 16..24
+            var variantVersionHexString = hexString.Substring(24, 8); // 24..32
+            var versionBytes = new byte[4];
+            var variantVersionBytes = new byte[4];
+            for (var i = 0; i < 4; i++)
+            {
+                var versionValue = Convert.ToInt32(versionHexString.Substring(i * 2, 2), 16);
+                versionBytes[i] = (byte)versionValue;
+                var variantVersionValue = Convert.ToInt32(variantVersionHexString.Substring(i * 2, 2), 16);
+                variantVersionBytes[i] = (byte)variantVersionValue;
+            }
+            var version = BitConverter.ToInt32(versionBytes, 0);
+            var variantVersion = BitConverter.ToInt32(variantVersionBytes, 0);
+
+            return version + variantVersion;
         }
 
         public string GetVRChatCacheLocation()
@@ -69,12 +97,14 @@ namespace VRCX
         /// </summary>
         /// <param name="id">The ID of the asset bundle.</param>
         /// <param name="version">The version of the asset bundle.</param>
+        /// <param name="variant">The variant of the asset bundle.</param>
+        /// <param name="variantVersion">The version of the variant of the asset bundle.</param>
         /// <returns>The full location of the VRChat cache for the specified asset bundle.</returns>
-        public string GetVRChatCacheFullLocation(string id, int version)
+        public string GetVRChatCacheFullLocation(string id, int version, string variant = "", int variantVersion = 0)
         {
             var cachePath = GetVRChatCacheLocation();
-            var idHash = GetAssetId(id);
-            var versionLocation = GetAssetVersion(version);
+            var idHash = GetAssetId(id, variant); 
+            var versionLocation = GetAssetVersion(version, variantVersion);
             return Path.Combine(cachePath, idHash, versionLocation);
         }
 
@@ -83,12 +113,17 @@ namespace VRCX
         /// </summary>
         /// <param name="id">The ID of the asset bundle.</param>
         /// <param name="version">The version of the asset bundle.</param>
+        /// <param name="variant">The variant of the asset bundle.</param>
+        /// <param name="variantVersion">The version of the variant of the asset bundle.</param>
         /// <returns>A Tuple containing the file size, lock status and path of the asset bundle.</returns>
-        public Tuple<long, bool, string> CheckVRChatCache(string id, int version)
+        public Tuple<long, bool, string> CheckVRChatCache(string id, int version, string variant, int variantVersion)
         {
             long fileSize = -1;
             var isLocked = false;
             var fullLocation = GetVRChatCacheFullLocation(id, version);
+            if (!Directory.Exists(fullLocation))
+                fullLocation = GetVRChatCacheFullLocation(id, version, variant, variantVersion);
+            
             var fileLocation = Path.Combine(fullLocation, "__data");
             var cachePath = string.Empty;
             if (File.Exists(fileLocation))
@@ -206,11 +241,17 @@ namespace VRCX
         /// </summary>
         /// <param name="id">The ID of the asset bundle to delete.</param>
         /// <param name="version">The version of the asset bundle to delete.</param>
-        public void DeleteCache(string id, int version)
+        /// <param name="variant">The variant of the asset bundle to delete.</param>
+        /// <param name="variantVersion">The version of the variant of the asset bundle to delete.</param>
+        public void DeleteCache(string id, int version, string variant, int variantVersion)
         {
-            var FullLocation = GetVRChatCacheFullLocation(id, version);
-            if (Directory.Exists(FullLocation))
-                Directory.Delete(FullLocation, true);
+            var path = GetVRChatCacheFullLocation(id, version);
+            if (Directory.Exists(path))
+                Directory.Delete(path, true);
+            
+            path = GetVRChatCacheFullLocation(id, version, variant, variantVersion);
+            if (Directory.Exists(path))
+                Directory.Delete(path, true);
         }
 
         /// <summary>
@@ -235,26 +276,31 @@ namespace VRCX
             if (!Directory.Exists(cachePath))
                 return;
             var directories = new DirectoryInfo(cachePath);
-            DirectoryInfo[] cacheDirectories = directories.GetDirectories();
-            foreach (DirectoryInfo cacheDirectory in cacheDirectories)
+            var cacheDirectories = directories.GetDirectories();
+            foreach (var cacheDirectory in cacheDirectories)
             {
-                var VersionDirectories = cacheDirectory.GetDirectories().OrderBy(d => Convert.ToInt32(d.Name, 16));
-                int i = 0;
-                foreach (DirectoryInfo VersionDirectory in VersionDirectories)
+                var versionDirectories =
+                    cacheDirectory.GetDirectories().OrderBy(d => ReverseHexToDecimal(d.Name)).ToArray();
+                for (var index = 0; index < versionDirectories.Length; index++)
                 {
-                    i++;
-                    if (VersionDirectory.GetDirectories().Length + VersionDirectory.GetFiles().Length == 0)
+                    var versionDirectory = versionDirectories[index];
+                    if (versionDirectory.GetDirectories().Length + versionDirectory.GetFiles().Length == 0)
                     {
-                        VersionDirectory.Delete();
+                        versionDirectory.Delete(); // delete empty directory
+                        continue;
                     }
-                    else if (i < VersionDirectories.Count())
-                    {
-                        if (!File.Exists(Path.Combine(VersionDirectory.FullName, "__lock")))
-                            VersionDirectory.Delete(true);
-                    }
+
+                    if (index == versionDirectories.Length - 1)
+                        continue; // skip last version
+
+                    if (File.Exists(Path.Combine(versionDirectory.FullName, "__lock")))
+                        continue; // skip locked version
+                    
+                    versionDirectory.Delete(true);
                 }
+
                 if (cacheDirectory.GetDirectories().Length + cacheDirectory.GetFiles().Length == 0)
-                    cacheDirectory.Delete();
+                    cacheDirectory.Delete(); // delete empty directory
             }
         }
 
