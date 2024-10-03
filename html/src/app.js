@@ -1430,7 +1430,9 @@ speechSynthesis.getVoices();
 
     API.isLoggedIn = false;
     API.cachedUsers = new Map();
-    API.currentUser = {};
+    API.currentUser = {
+        $userColour: ''
+    };
     API.currentTravelers = new Map();
 
     API.$on('USER:CURRENT', function (args) {
@@ -9127,6 +9129,12 @@ speechSynthesis.getVoices();
         // USER:CURRENT에서 처리를 함
         $app.refreshFriends(args.ref, args.origin);
         $app.updateOnlineFriendCoutner();
+
+        if ($app.randomUserColours) {
+            $app.getNameColour(this.currentUser.id).then((colour) => {
+                this.currentUser.$userColour = colour;
+            });
+        }
     });
 
     API.$on('FRIEND:ADD', function (args) {
