@@ -292,24 +292,16 @@
                 "side_panel": {
                     "header": "Panel Lateral",
                     "sorting": {
-                        "header": "Clasificación",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "Ordenar privados abajo",
-                        "sort_by_status": "Ordenar por estado",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "Ordenar Favoritos por",
-                        "sort_favorite_by_alphabet": "alfabético",
-                        "sort_favorite_by_online_time": "en línea desde",
-                        "sort_online_by": "Ordenar En línea por",
-                        "sort_online_by_alphabet": "alfabético",
-                        "sort_online_by_online_time": "en línea desde",
-                        "sort_active_by": "Ordenar Activo por",
-                        "sort_active_by_alphabet": "alfabético",
-                        "sort_active_by_online_time": "en línea desde",
-                        "sort_offline_by": "Ordenar Desconectado por",
-                        "sort_offline_by_alphabet": "alfabético",
-                        "sort_offline_by_offline_time": "desconectado desde"
+                        "header": "Ordenar",
+                        "alphabetical": "Alfabético",
+                        "private_to_bottom": "Privado al Final",
+                        "status": "Estado",
+                        "status_and_private_to_bottom": "Estado y Privado al Final",
+                        "location": "Ubicación",
+                        "last_active": "Última Actividad",
+                        "time_in_instance": "Tiempo en Instancia",
+                        "placeholder": "Orden de Clasificación",
+                        "dropdown_header": "Elegir Orden de Clasificación"
                     },
                     "width": "Anchura"
                 },
@@ -429,10 +421,6 @@
                     "vrchat_quit_fix": {
                         "header": "Solución para salir de VRChat",
                         "description": "Forzar el cerrado de VRChat despues de salir del juego"
-                    },
-                    "vrchat_osc_fix": {
-                        "header": "VRChat OSC Fix",
-                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
                     },
                     "auto_cache_management": {
                         "header": "Gestionar Caché Automáticamente al Cerrar VRChat",
@@ -596,6 +584,8 @@
                 "moderation_show_avatar": "Mostrar Avatar",
                 "moderation_enable_avatar_interaction": "Habilitar interacciones de avatar",
                 "moderation_disable_avatar_interaction": "Deshabilita las Interacciones con el Avatar",
+                "moderation_enable_chatbox": "Unmute Chatbox",
+                "moderation_disable_chatbox": "Mute Chatbox",
                 "edit_status": "Estatus social",
                 "edit_language": "Idioma",
                 "edit_bio": "Biografía",
@@ -695,6 +685,8 @@
                 "public": "Público",
                 "private": "Privado",
                 "avatar_scaling_disabled": "Escalado de Avatares Deshabilitado",
+                "focus_view_disabled": "Focus View Disabled",
+                "stickers_disabled": "Pegatinas desactivadas",
                 "future_proofing": "Future Proofing",
                 "labs": "Labs",
                 "cache": "Caché",
@@ -1045,6 +1037,8 @@
         "set_world_tags": {
             "header": "Establecer Etiquetas del Mundo",
             "avatar_scaling_disabled": "Deshabilitar Escalado de Avatar",
+            "focus_view_disabled": "Disable focus view",
+            "stickers_disabled": "Pegatinas desactivadas",
             "enable_debugging": "Habilitar depuración del mundo para otros",
             "author_tags": "Etiquetas de autor (separadas por comas)",
             "content_tags": "Etiquetas de Advertencia de Contenido",
@@ -1258,6 +1252,7 @@
             "gallery": "Fotos",
             "icons": "Iconos",
             "emojis": "Emojis",
+            "stickers": "Pegatinas",
             "refresh": "Refrescar",
             "upload": "Subir",
             "clear": "Limpiar",
