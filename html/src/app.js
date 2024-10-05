@@ -5444,7 +5444,9 @@ speechSynthesis.getVoices();
         }
         try {
             const params = new URLSearchParams(new URL(url).search);
-            return params.get('v');
+            let version = params.get('v');
+            if (version) return version;
+            return '0'
         } catch {
             return '0';
         }
