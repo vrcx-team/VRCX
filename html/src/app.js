@@ -5438,13 +5438,15 @@ speechSynthesis.getVoices();
 
     var extractVariantVersion = (url) => {
         if (!url) {
-            return '';
+            return '0';
         }
         try {
             const params = new URLSearchParams(new URL(url).search);
-            return params.get('v');
+            let version = params.get('v');
+            if (version) return version;
+            return '0'
         } catch {
-            return '';
+            return '0';
         }
     };
 
