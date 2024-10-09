@@ -11126,22 +11126,26 @@ speechSynthesis.getVoices();
         this.addGameLogEntry(gameLog, this.lastLocation.location);
     };
 
-    $app.methods.deleteGameLogEntry = function (row) {
+    $app.methods.deleteGameLogEntryPrompt = function (row) {
         this.$confirm('Continue? Delete Log', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
-                    removeFromArray(this.gameLogTable.data, row);
-                    database.deleteGameLogEntry(row);
-                    console.log(row);
-                    database.getGamelogDatabase().then((data) => {
-                        this.gameLogSessionTable = data;
-                        this.updateSharedFeed(true);
-                    });
+                    this.deleteGameLogEntry(row);
                 }
             }
+        });
+    };
+
+    $app.methods.deleteGameLogEntry = function (row) {
+        removeFromArray(this.gameLogTable.data, row);
+        database.deleteGameLogEntry(row);
+        console.log(row);
+        database.getGamelogDatabase().then((data) => {
+            this.gameLogSessionTable = data;
+            this.updateSharedFeed(true);
         });
     };
 
