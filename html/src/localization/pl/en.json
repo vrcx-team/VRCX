@@ -384,12 +384,12 @@
                     "display_overlay_on": "Wyświetlaj nakładkę na",
                     "display_overlay_on_left": "Lewa dłoń",
                     "display_overlay_on_right": "Prawa dłoń",
-                    "display_overlay_on_both": "Both Hands",
-                    "grey_background": "Grey Background",
+                    "display_overlay_on_both": "Obie dłonie",
+                    "grey_background": "Szare tło",
                     "minimal_feed_icons": "Minimalne ikony aktywności",
-                    "show_vr_devices": "Show VR Devices",
+                    "show_vr_devices": "Pokaż urządzenia VR",
                     "show_cpu_usage": "Pokaż użycie CPU",
-                    "show_game_uptime": "Show Game Uptime",
+                    "show_game_uptime": "Pokaż czas gry",
                     "show_pc_uptime": "Pokaż czas pracy PC",
                     "wrist_feed_filters": "Filtry aktywności nadgarstka"
                 }
@@ -402,7 +402,7 @@
                     "enable_tooltip": "Zalecane jest wyłączenie statusu Discord (Rich Presence) w config.json VRChatu, aby uniknąć konfliktów",
                     "instance_type_player_count": "Typ instancji/liczba użytkowników",
                     "join_button": "Przycisk dołączania (tylko publiczne)",
-                    "show_details_in_private": "Show world details in private",
+                    "show_details_in_private": "Pokaż szczegóły świata na prywatnym",
                     "show_images": "Show world images"
                 }
             },
@@ -440,7 +440,7 @@
                     },
                     "local_world_persistence": {
                         "header": "Local World Persistence",
-                        "description": "Localhost webserver (requires restart)"
+                        "description": "Serwer localhost (wymaga restartu)"
                     },
                     "remote_database": {
                         "header": "Zewnętrzna baza danych awatarów",
