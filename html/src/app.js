@@ -488,6 +488,17 @@ speechSynthesis.getVoices();
                     this.$emit('AUTOLOGIN');
                     throw new Error('401: Missing Credentials');
                 }
+                if (
+                    status === 401 &&
+                    data.error.message === '"Unauthorized"' &&
+                    endpoint !== 'auth/user'
+                ) {
+                    // trigger 2FA dialog
+                    if (!$app.twoFactorAuthDialogVisible) {
+                        $app.API.getCurrentUser();
+                    }
+                    throw new Error('401: Unauthorized');
+                }
                 if (status === 403 && endpoint.substring(0, 6) === 'config') {
                     $app.$alert(
                         'VRChat currently blocks most VPNs. Please disable any connected VPNs and try again.',
