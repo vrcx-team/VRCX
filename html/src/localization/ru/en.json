@@ -293,23 +293,15 @@
                     "header": "Боковая панель",
                     "sorting": {
                         "header": "Сортировка",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "Упорядочить приватных внизу",
-                        "sort_by_status": "Сортировать по статусу",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "Сортировать избранные по",
-                        "sort_favorite_by_alphabet": "алфавиту",
-                        "sort_favorite_by_online_time": "онлайн",
-                        "sort_online_by": "Сортировать онлайн по",
-                        "sort_online_by_alphabet": "алфавиту",
-                        "sort_online_by_online_time": "онлайн",
-                        "sort_active_by": "Сортировать активен по",
-                        "sort_active_by_alphabet": "алфавиту",
-                        "sort_active_by_online_time": "онлайн",
-                        "sort_offline_by": "Сортировать офлайн по",
-                        "sort_offline_by_alphabet": "алфавиту",
-                        "sort_offline_by_offline_time": "офлайн"
+                        "alphabetical": "По алфавиту",
+                        "sort_private_to_bottom": "Приватные в конец ",
+                        "status": "По статусу",
+                        "sort_by_status_and_private_to_bottom": "Приватные в конец у",
+                        "location": "По местоположению",
+                        "last_active": "По последней активности",
+                        "time_in_instance": "По времени в инстансе",
+                        "placeholder": "Порядок сортировки",
+                        "dropdown_header": "Выберите порядок сортировки"
                     },
                     "width": "Ширина"
                 },
@@ -325,8 +317,8 @@
                     "random_colors_from_user_id": "Случайные цвета из ID пользователя"
                 },
                 "friend_log": {
-                    "header": "Friend Log",
-                    "hide_unfriends": "Hide Unfriends"
+                    "header": "Журнал Друзей",
+                    "hide_unfriends": "Скрыть Не друзей"
                 }
             },
             "notifications": {
@@ -429,10 +421,6 @@
                     "vrchat_quit_fix": {
                         "header": "Исправить остановку процесса VRChat",
                         "description": "Завершить процесс VRChat после выхода из игры"
-                    },
-                    "vrchat_osc_fix": {
-                        "header": "Исправить OSC VRChat",
-                        "description": "Возобновление и завершение приостановленного процесса install.exe после выхода из игры"
                     },
                     "auto_cache_management": {
                         "header": "Автоматически управлять кэшем при закрытии VRChat",
@@ -578,29 +566,31 @@
                 "request_invite": "Запросить приглашение",
                 "request_invite_with_message": "Запросить приглашение с сообщением",
                 "invite_to_group": "Пригласить в группу",
-                "send_boop": "Отрпвить Буп",
+                "send_boop": "Отправить Буп",
                 "manage_gallery_icon": "Настроить Фото/Иконки/Эмодзи",
                 "accept_friend_request": "Принять запрос в друзья",
                 "decline_friend_request": "Отклонить предложение дружбы",
                 "cancel_friend_request": "Отменить запрос в друзья",
                 "send_friend_request": "Отправить заявку в друзья",
                 "show_avatar_author": "Показать автора аватара",
-                "show_fallback_avatar": "Показать детали fallback аватара",
+                "show_fallback_avatar": "Показать детали Fallback аватара",
                 "show_previous_instances": "Показать предыдущие инстансы",
                 "show_previous_images": "Показать предыдущие изображения",
                 "moderation_block": "Забанить",
                 "moderation_unblock": "Разбанить",
-                "moderation_mute": "Заглушить",
-                "moderation_unmute": "Восстановить голос",
+                "moderation_mute": "Заглушить голос",
+                "moderation_unmute": "Включить голос",
                 "moderation_hide_avatar": "Скрывать аватар",
                 "moderation_show_avatar": "Показать аватар",
                 "moderation_enable_avatar_interaction": "Включить взаимодействие с аватаром",
                 "moderation_disable_avatar_interaction": "Отключить взаимодействие с аватаром",
+                "moderation_enable_chatbox": "Включить Chatbox",
+                "moderation_disable_chatbox": "Заглушить Chatbox",
                 "edit_status": "Статус",
                 "edit_language": "Язык",
                 "edit_bio": "Био",
                 "edit_pronouns": "Местоимение",
-                "report_hacking": "Пожаловаться",
+                "report_hacking": "Сообщить о взломе",
                 "unfriend": "Удалить из друзей",
                 "logout": "Выйти"
             },
@@ -695,6 +685,8 @@
                 "public": "Публичные",
                 "private": "Приватные",
                 "avatar_scaling_disabled": "Масштабирование аватара отключено",
+                "focus_view_disabled": "Отключить фокусировку камеры",
+                "stickers_disabled": " Отключить стикеры",
                 "future_proofing": "Перспективные решения",
                 "labs": "Labs",
                 "cache": "Кэш",
@@ -992,7 +984,7 @@
             "group_id": "Группа",
             "location": "Местоположение",
             "url": "URL",
-            "copy_url": "﻿Копировать ссылку",
+            "copy_url": "Копировать ссылку",
             "self_invite": "Пригласить себя",
             "invite": "Пригласить",
             "launch": "Открыть",
@@ -1045,6 +1037,8 @@
         "set_world_tags": {
             "header": "Установить теги мира",
             "avatar_scaling_disabled": "Отключить масштабирование аватара",
+            "focus_view_disabled": "Отключить вид от первого лица",
+            "stickers_disabled": "Отключить стикеры",
             "enable_debugging": "Включить отладку мира для других",
             "author_tags": "Теги автора (через запятую)",
             "content_tags": "Теги предупреждения о контенте",
