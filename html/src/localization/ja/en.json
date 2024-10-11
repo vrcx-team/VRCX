@@ -292,24 +292,16 @@
                 "side_panel": {
                     "header": "サイドパネル",
                     "sorting": {
-                        "header": "並び替え",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "プライベートを下に並び替え",
-                        "sort_by_status": "ステータスで並べ替え",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "お気に入り欄の並べ替え:",
-                        "sort_favorite_by_alphabet": "アルファベット順",
-                        "sort_favorite_by_online_time": "オンライン順",
-                        "sort_online_by": "オンライン欄の並べ替え:",
-                        "sort_online_by_alphabet": "アルファベット順",
-                        "sort_online_by_online_time": "オンライン順",
-                        "sort_active_by": "アクティブ欄の並べ替え:",
-                        "sort_active_by_alphabet": "アルファベット順",
-                        "sort_active_by_online_time": "オンライン順",
-                        "sort_offline_by": "オフライン欄の並べ替え:",
-                        "sort_offline_by_alphabet": "アルファベット順",
-                        "sort_offline_by_offline_time": "オンライン順"
+                        "header": "並べ替え",
+                        "alphabetical": "アルファベット順",
+                        "private_to_bottom": "Privateを下に",
+                        "status": "ステータス",
+                        "status_and_private_to_bottom": "ステータスとPrivateを下",
+                        "location": "場所",
+                        "last_active": "最終活動時間",
+                        "time_in_instance": "インスタンスにいた時間",
+                        "placeholder": "並べ替え",
+                        "dropdown_header": "並べ替え順を選択"
                     },
                     "width": "幅"
                 },
@@ -325,8 +317,8 @@
                     "random_colors_from_user_id": "ユーザーIDからランダムに色を生成"
                 },
                 "friend_log": {
-                    "header": "Friend Log",
-                    "hide_unfriends": "Hide Unfriends"
+                    "header": "フレンドログ",
+                    "hide_unfriends": "フレンド解除を隠す"
                 }
             },
             "notifications": {
@@ -431,16 +423,16 @@
                         "description": "ゲーム終了時、VRChatのプロセスを強制終了"
                     },
                     "vrchat_osc_fix": {
-                        "header": "VRChat OSC Fix",
-                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
+                        "header": "VRChatのOSCの挙動を修正する",
+                        "description": "ゲーム終了時、インストールプロセスを強制終了"
                     },
                     "auto_cache_management": {
                         "header": "VRChat終了時にキャッシュを自動で管理する",
                         "description": "旧バージョンのキャッシュを自動削除"
                     },
                     "local_world_persistence": {
-                        "header": "Local World Persistence",
-                        "description": "Localhost webserver (requires restart)"
+                        "header": "ローカルでのワールド永続化",
+                        "description": "Webサーバーをローカルでホストする (再起動が必要です)"
                     },
                     "remote_database": {
                         "header": "リモートアバターデータベース",
@@ -698,11 +690,11 @@
                 "future_proofing": "Future Proofing",
                 "labs": "ラボ",
                 "cache": "キャッシュ",
-                "content_horror": "ホラー",
-                "content_gore": "ゴア",
-                "content_violence": "暴力",
-                "content_adult": "成人向け",
-                "content_sex": "性的要素"
+                "content_horror": "極度のホラー",
+                "content_gore": "過剰なゴア",
+                "content_violence": "写実的な暴力",
+                "content_adult": "成人向けの言葉やテーマ",
+                "content_sex": "性的なものを思わせる"
             },
             "actions": {
                 "delete_cache_tooltip": "キャッシュからワールドを削除",
@@ -776,11 +768,11 @@
                 "impostor": "インポスター",
                 "future_proofing": "Future Proofing",
                 "cache": "キャッシュ",
-                "content_horror": "ホラー",
-                "content_gore": "ゴア",
-                "content_violence": "暴力",
-                "content_adult": "成人向け",
-                "content_sex": "性的要素"
+                "content_horror": "極度のホラー",
+                "content_gore": "過剰なゴア",
+                "content_violence": "写実的な暴力",
+                "content_adult": "成人向けの言葉やテーマ",
+                "content_sex": "性的なものを思わせる"
             },
             "labels": {
                 "public": "(パブリック)",
@@ -970,7 +962,7 @@
             "access_type_public": "パブリック",
             "access_type_group": "グループ",
             "access_type_friend_plus": "フレンド+",
-            "access_type_friend": "Friend",
+            "access_type_friend": "フレンド",
             "access_type_invite_plus": "インバイト+",
             "access_type_invite": "招待を送信",
             "group_access_type": "グループアクセス",
@@ -1015,7 +1007,7 @@
         "config_json": {
             "header": "VRChat Config JSON",
             "description1": "これらのオプションは上級者向けです。",
-            "description2": "デフォルトに設定するには空欄にしてください。設定を適用させるにはゲームを再起動する必要があります。",
+            "description2": "デフォルトに設定するには空欄にしてください。設定を適用するにはゲームを再起動する必要があります。",
             "cache_size": "キャッシュサイズ:",
             "refresh": "更新",
             "delete_all_cache": "全てのキャッシュを削除",
@@ -1048,22 +1040,22 @@
             "enable_debugging": "ワールドデバッグを他のユーザー向けに有効化",
             "author_tags": "タグ (コンマ区切り)",
             "content_tags": "コンテンツ タグ (コンマ区切り)",
-            "content_horror": "ホラー",
-            "content_gore": "グロ表現",
-            "content_violence": "暴力",
-            "content_adult": "成人向け",
-            "content_sex": "性的要素",
+            "content_horror": "極度のホラー",
+            "content_gore": "過剰なゴア",
+            "content_violence": "写実的な暴力",
+            "content_adult": "成人向けの言葉やテーマ",
+            "content_sex": "性的なものを思わせる",
             "cancel": "キャンセル",
             "save": "保存"
         },
         "set_avatar_tags": {
             "header": "アバタータグを設定",
             "content_tags": "コンテンツ警告タグ",
-            "content_horror": "ホラー",
-            "content_gore": "グロ表現",
-            "content_violence": "暴力",
-            "content_adult": "成人向け",
-            "content_sex": "性的要素",
+            "content_horror": "極度のホラー",
+            "content_gore": "過剰なゴア",
+            "content_violence": "写実的な暴力",
+            "content_adult": "成人向けの言葉やテーマ",
+            "content_sex": "性的なものを思わせる",
             "custom_tags_placeholder": "カスタムタグ",
             "select_all": "全て選択",
             "select_none": "選択解除",
@@ -1196,7 +1188,7 @@
             "description1": "これにより、VRCXのノートが全てVRChatのノートにインポートされます。",
             "description2": "以下の制限にご注意ください:",
             "description3": "- APIエンドポイントにはレート制限があり、リクエストを送る際は間隔を開ける必要があります。",
-            "description4": "- 1ノートあたり256文字の制限があります。",
+            "description4": "- ノート1つにつき256文字の制限があります。",
             "description5": "- 汚い言葉はフィルタリングされます (おふざけは禁止されています) 。",
             "description6": "- 改行はできません。スペースに置き換えられます。",
             "description7": "- 既にノートが設定されているユーザーのノートは上書きされます。",
@@ -1676,7 +1668,7 @@
         "notification": {
             "date": "日付",
             "type": "種類",
-            "user_group": "User/Group",
+            "user_group": "ユーザー/グループ",
             "photo": "画像",
             "message": "メッセージ",
             "action": "アクション"

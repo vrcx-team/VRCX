@@ -69,22 +69,28 @@ namespace VRCX
         {
             if (hexString.Length != 32)
                 return 0; // it's cooked
-
-            var versionHexString = hexString.Substring(16, 8); // 16..24
-            var variantVersionHexString = hexString.Substring(24, 8); // 24..32
-            var versionBytes = new byte[4];
-            var variantVersionBytes = new byte[4];
-            for (var i = 0; i < 4; i++)
-            {
-                var versionValue = Convert.ToInt32(versionHexString.Substring(i * 2, 2), 16);
-                versionBytes[i] = (byte)versionValue;
-                var variantVersionValue = Convert.ToInt32(variantVersionHexString.Substring(i * 2, 2), 16);
-                variantVersionBytes[i] = (byte)variantVersionValue;
+            
+            try {
+                var versionHexString = hexString.Substring(16, 8); // 16..24
+                var variantVersionHexString = hexString.Substring(24, 8); // 24..32
+                var versionBytes = new byte[4];
+                var variantVersionBytes = new byte[4];
+                for (var i = 0; i < 4; i++)
+                {
+                    var versionValue = Convert.ToInt32(versionHexString.Substring(i * 2, 2), 16);
+                    versionBytes[i] = (byte)versionValue;
+                    var variantVersionValue = Convert.ToInt32(variantVersionHexString.Substring(i * 2, 2), 16);
+                    variantVersionBytes[i] = (byte)variantVersionValue;
+                }
+                var version = BitConverter.ToInt32(versionBytes, 0);
+                var variantVersion = BitConverter.ToInt32(variantVersionBytes, 0);
+                return version + variantVersion;
             }
-            var version = BitConverter.ToInt32(versionBytes, 0);
-            var variantVersion = BitConverter.ToInt32(variantVersionBytes, 0);
-
-            return version + variantVersion;
+            catch (Exception ex)
+            {
+                logger.Error($"Failed to convert hex to decimal: {hexString} {ex}");
+                return 0; // it's cooked
+            }
         }
 
         public string GetVRChatCacheLocation()
