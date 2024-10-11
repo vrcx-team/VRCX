@@ -488,6 +488,17 @@ speechSynthesis.getVoices();
                     this.$emit('AUTOLOGIN');
                     throw new Error('401: Missing Credentials');
                 }
+                if (
+                    status === 401 &&
+                    data.error.message === '"Unauthorized"' &&
+                    endpoint !== 'auth/user'
+                ) {
+                    // trigger 2FA dialog
+                    if (!$app.twoFactorAuthDialogVisible) {
+                        $app.API.getCurrentUser();
+                    }
+                    throw new Error('401: Unauthorized');
+                }
                 if (status === 403 && endpoint.substring(0, 6) === 'config') {
                     $app.$alert(
                         'VRChat currently blocks most VPNs. Please disable any connected VPNs and try again.',
@@ -1430,7 +1441,9 @@ speechSynthesis.getVoices();
 
     API.isLoggedIn = false;
     API.cachedUsers = new Map();
-    API.currentUser = {};
+    API.currentUser = {
+        $userColour: ''
+    };
     API.currentTravelers = new Map();
 
     API.$on('USER:CURRENT', function (args) {
@@ -2894,20 +2907,23 @@ speechSynthesis.getVoices();
             this.currentUser.onlineFriends.length +
             this.currentUser.activeFriends.length;
         var count = Math.trunc(N / 50);
-        for (var i = count; i > -1; i--) {
+        mainLoop: for (var i = count; i > -1; i--) {
             if (params.offset > 5000) {
                 // API offset limit is 5000
                 break;
             }
-            for (var j = 0; j < 10; j++) {
+            retryLoop: for (var j = 0; j < 10; j++) {
                 // handle 429 ratelimit error, retry 10 times
                 try {
                     var args = await this.getFriends(params);
                     friends = friends.concat(args.json);
-                    params.offset += 50;
-                    break;
+                    break retryLoop;
                 } catch (err) {
                     console.error(err);
+                    if (err?.message?.includes('Not Found')) {
+                        console.error('Awful workaround for awful VRC API bug');
+                        break retryLoop;
+                    }
                     if (j === 9) {
                         throw err;
                     }
@@ -2916,6 +2932,7 @@ speechSynthesis.getVoices();
                     });
                 }
             }
+            params.offset += 50;
         }
         return friends;
     };
@@ -2932,20 +2949,23 @@ speechSynthesis.getVoices();
             this.currentUser.activeFriends.length;
         var N = this.currentUser.friends.length - onlineCount;
         var count = Math.trunc(N / 50);
-        for (var i = count; i > -1; i--) {
+        mainLoop: for (var i = count; i > -1; i--) {
             if (params.offset > 5000) {
                 // API offset limit is 5000
                 break;
             }
-            for (var j = 0; j < 10; j++) {
+            retryLoop: for (var j = 0; j < 10; j++) {
                 // handle 429 ratelimit error, retry 10 times
                 try {
                     var args = await this.getFriends(params);
                     friends = friends.concat(args.json);
-                    params.offset += 50;
-                    break;
+                    break retryLoop;
                 } catch (err) {
                     console.error(err);
+                    if (err?.message?.includes('Not Found')) {
+                        console.error('Awful workaround for awful VRC API bug');
+                        break retryLoop;
+                    }
                     if (j === 9) {
                         throw err;
                     }
@@ -2954,6 +2974,7 @@ speechSynthesis.getVoices();
                     });
                 }
             }
+            params.offset += 50;
         }
         return friends;
     };
@@ -5438,13 +5459,17 @@ speechSynthesis.getVoices();
 
     var extractVariantVersion = (url) => {
         if (!url) {
-            return '';
+            return '0';
         }
         try {
             const params = new URLSearchParams(new URL(url).search);
-            return params.get('v');
+            const version = params.get('v');
+            if (version) {
+                return version;
+            }
+            return '0';
         } catch {
-            return '';
+            return '0';
         }
     };
 
@@ -9127,6 +9152,12 @@ speechSynthesis.getVoices();
         // USER:CURRENT에서 처리를 함
         $app.refreshFriends(args.ref, args.origin);
         $app.updateOnlineFriendCoutner();
+
+        if ($app.randomUserColours) {
+            $app.getNameColour(this.currentUser.id).then((colour) => {
+                this.currentUser.$userColour = colour;
+            });
+        }
     });
 
     API.$on('FRIEND:ADD', function (args) {
@@ -9164,7 +9195,9 @@ speechSynthesis.getVoices();
             console.error(err);
         });
         }
-        await API.refreshFriends();
+        await API.refreshFriends().catch((err) => {
+            console.error(err);
+        });
         API.reconnectWebSocket();
     };
 
@@ -11104,22 +11137,26 @@ speechSynthesis.getVoices();
         this.addGameLogEntry(gameLog, this.lastLocation.location);
     };
 
-    $app.methods.deleteGameLogEntry = function (row) {
+    $app.methods.deleteGameLogEntryPrompt = function (row) {
         this.$confirm('Continue? Delete Log', 'Confirm', {
             confirmButtonText: 'Confirm',
             cancelButtonText: 'Cancel',
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
-                    removeFromArray(this.gameLogTable.data, row);
-                    database.deleteGameLogEntry(row);
-                    console.log(row);
-                    database.getGamelogDatabase().then((data) => {
-                        this.gameLogSessionTable = data;
-                        this.updateSharedFeed(true);
-                    });
+                    this.deleteGameLogEntry(row);
                 }
             }
+        });
+    };
+
+    $app.methods.deleteGameLogEntry = function (row) {
+        removeFromArray(this.gameLogTable.data, row);
+        database.deleteGameLogEntry(row);
+        console.log(row);
+        database.getGamelogDatabase().then((data) => {
+            this.gameLogSessionTable = data;
+            this.updateSharedFeed(true);
         });
     };
 
