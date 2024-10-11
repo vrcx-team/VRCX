@@ -2907,22 +2907,22 @@ speechSynthesis.getVoices();
             this.currentUser.onlineFriends.length +
             this.currentUser.activeFriends.length;
         var count = Math.trunc(N / 50);
-        for (var i = count; i > -1; i--) {
+        mainLoop: for (var i = count; i > -1; i--) {
             if (params.offset > 5000) {
                 // API offset limit is 5000
                 break;
             }
-            for (var j = 0; j < 10; j++) {
+            retryLoop: for (var j = 0; j < 10; j++) {
                 // handle 429 ratelimit error, retry 10 times
                 try {
                     var args = await this.getFriends(params);
                     friends = friends.concat(args.json);
-                    break;
+                    break retryLoop;
                 } catch (err) {
                     console.error(err);
                     if (err?.message?.includes('Not Found')) {
                         console.error('Awful workaround for awful VRC API bug');
-                        break;
+                        break retryLoop;
                     }
                     if (j === 9) {
                         throw err;
@@ -2949,22 +2949,22 @@ speechSynthesis.getVoices();
             this.currentUser.activeFriends.length;
         var N = this.currentUser.friends.length - onlineCount;
         var count = Math.trunc(N / 50);
-        for (var i = count; i > -1; i--) {
+        mainLoop: for (var i = count; i > -1; i--) {
             if (params.offset > 5000) {
                 // API offset limit is 5000
                 break;
             }
-            for (var j = 0; j < 10; j++) {
+            retryLoop: for (var j = 0; j < 10; j++) {
                 // handle 429 ratelimit error, retry 10 times
                 try {
                     var args = await this.getFriends(params);
                     friends = friends.concat(args.json);
-                    break;
+                    break retryLoop;
                 } catch (err) {
                     console.error(err);
                     if (err?.message?.includes('Not Found')) {
                         console.error('Awful workaround for awful VRC API bug');
-                        break;
+                        break retryLoop;
                     }
                     if (j === 9) {
                         throw err;
@@ -2973,8 +2973,8 @@ speechSynthesis.getVoices();
                         workerTimers.setTimeout(resolve, 5000);
                     });
                 }
-                params.offset += 50;
             }
+            params.offset += 50;
         }
         return friends;
     };
