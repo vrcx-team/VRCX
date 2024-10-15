@@ -715,6 +715,7 @@
                 "download_package": "Download Unity Package",
                 "publish_to_labs": "Publish To Labs",
                 "unpublish": "Unpublish",
+                "delete_persistent_data": "Delete Persistent Data",
                 "delete": "Delete"
             },
             "instances": {

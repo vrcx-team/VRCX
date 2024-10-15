@@ -691,6 +691,7 @@ html
                                         el-dropdown-item(icon="el-icon-tickets" command="Previous Instances") {{ $t('dialog.world.actions.show_previous_instances') }}
                                         template(v-if="API.currentUser.id !== worldDialog.ref.authorId")
                                             el-dropdown-item(icon="el-icon-picture-outline" command="Previous Images") {{ $t('dialog.world.actions.show_previous_images') }}
+                                            el-dropdown-item(:disabled="!worldDialog.hasPersistData" icon="el-icon-upload" command="Delete Persistent Data") {{ $t('dialog.world.actions.delete_persistent_data') }}
                                         template(v-else)
                                             el-dropdown-item(icon="el-icon-edit" command="Rename") {{ $t('dialog.world.actions.rename') }}
                                             el-dropdown-item(icon="el-icon-edit" command="Change Description") {{ $t('dialog.world.actions.change_description') }}
@@ -702,6 +703,7 @@ html
                                             el-dropdown-item(v-if="worldDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") {{ $t('dialog.world.actions.download_package') }}
                                             el-dropdown-item(v-if="worldDialog.ref.tags.includes('system_approved') || worldDialog.ref.tags.includes('system_labs')" icon="el-icon-view" command="Unpublish" divided) {{ $t('dialog.world.actions.unpublish') }}
                                             el-dropdown-item(v-else icon="el-icon-view" command="Publish" divided) {{ $t('dialog.world.actions.publish_to_labs') }}
+                                            el-dropdown-item(:disabled="!worldDialog.hasPersistData" icon="el-icon-upload" command="Delete Persistent Data") {{ $t('dialog.world.actions.delete_persistent_data') }}
                                             el-dropdown-item(icon="el-icon-delete" command="Delete" style="color:#F56C6C") {{ $t('dialog.world.actions.delete') }}
                     el-tabs
                         el-tab-pane(:label="$t('dialog.world.instances.header')")

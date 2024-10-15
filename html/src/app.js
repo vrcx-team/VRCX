@@ -434,6 +434,9 @@ speechSynthesis.getVoices();
                 this.$throw(0, err, endpoint);
             })
             .then((response) => {
+                if (!response.data) {
+                    return response;
+                }
                 try {
                     response.data = JSON.parse(response.data);
                     if ($app.debugWebRequests) {
@@ -499,7 +502,7 @@ speechSynthesis.getVoices();
                     }
                     throw new Error('401: Unauthorized');
                 }
-                if (status === 403 && endpoint.substring(0, 6) === 'config') {
+                if (status === 403 && endpoint === 'config') {
                     $app.$alert(
                         'VRChat currently blocks most VPNs. Please disable any connected VPNs and try again.',
                         'Login Error 403'
@@ -507,13 +510,20 @@ speechSynthesis.getVoices();
                     this.logout();
                     throw new Error(`403: ${endpoint}`);
                 }
-                if (status === 404 && endpoint.substring(0, 8) === 'avatars/') {
+                if (
+                    init.method === 'GET' &&
+                    status === 404 &&
+                    endpoint.startsWith('avatars/')
+                ) {
                     $app.$message({
                         message: 'Avatar private or deleted',
                         type: 'error'
                     });
                     $app.avatarDialog.visible = false;
                     throw new Error(`404: ${data.error.message} ${endpoint}`);
+                }
+                if (status === 404 && endpoint.endsWith('/persist/exists')) {
+                    return false;
                 }
                 if (
                     init.method === 'GET' &&
@@ -522,7 +532,12 @@ speechSynthesis.getVoices();
                 ) {
                     this.failedGetRequests.set(endpoint, Date.now());
                 }
-                if (status === 404 && endpoint.startsWith('users/')) {
+                if (
+                    init.method === 'GET' &&
+                    status === 404 &&
+                    endpoint.startsWith('users/') &&
+                    endpoint.split('/').length - 1 === 1
+                ) {
                     throw new Error(`404: ${data.error.message} ${endpoint}`);
                 }
                 if (
@@ -19168,7 +19183,8 @@ speechSynthesis.getVoices();
         timeSpent: 0,
         isPC: false,
         isQuest: false,
-        isIos: false
+        isIos: false,
+        hasPersistData: false
     };
 
     $app.data.ignoreWorldMemoSave = false;
@@ -19342,6 +19358,7 @@ speechSynthesis.getVoices();
         D.isPC = false;
         D.isQuest = false;
         D.isIos = false;
+        D.hasPersistData = false;
         this.ignoreWorldMemoSave = true;
         D.memo = '';
         var LL = API.parseLocation(this.lastLocation.location);
@@ -19408,6 +19425,7 @@ speechSynthesis.getVoices();
                     D.isQuest = isQuest;
                     D.isIos = isIos;
                     this.updateVRChatWorldCache();
+                    API.hasWorldPersistData({ worldId: D.id });
                     if (args.cache) {
                         API.getWorld(args.params)
                             .catch((err) => {
@@ -19877,6 +19895,18 @@ speechSynthesis.getVoices();
                                 }).then((args) => {
                                     this.$message({
                                         message: 'World has been unpublished',
+                                        type: 'success'
+                                    });
+                                    return args;
+                                });
+                                break;
+                            case 'Delete Persistent Data':
+                                API.deleteWorldPersistData({
+                                    worldId: D.id
+                                }).then((args) => {
+                                    this.$message({
+                                        message:
+                                            'Persistent data has been deleted',
                                         type: 'success'
                                     });
                                     return args;
@@ -34048,6 +34078,72 @@ speechSynthesis.getVoices();
         var epoch = new Date(dateTime).getTime();
         this.instanceJoinHistory.set(location, epoch);
     };
+
+    // #endregion
+
+    // #region persistent data
+
+    /**
+    * @param {{
+            worldId: string
+    }} params
+     * @returns {Promise<{json: any, params}>}
+     */
+    API.deleteWorldPersistData = function (params) {
+        return this.call(
+            `users/${this.currentUser.id}/${params.worldId}/persist`,
+            {
+                method: 'DELETE'
+            }
+        ).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('WORLD:PERSIST:DELETE', args);
+            return args;
+        });
+    };
+
+    /**
+    * @param {{
+            worldId: string
+    }} params
+     * @returns {Promise<{json: any, params}>}
+     */
+    API.hasWorldPersistData = function (params) {
+        return this.call(
+            `users/${this.currentUser.id}/${params.worldId}/persist/exists`,
+            {
+                method: 'GET'
+            }
+        ).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('WORLD:PERSIST:HAS', args);
+            return args;
+        });
+    };
+
+    API.$on('WORLD:PERSIST:HAS', function (args) {
+        if (
+            args.params.worldId === $app.worldDialog.id &&
+            $app.worldDialog.visible
+        ) {
+            $app.worldDialog.hasPersistData = args.json !== false;
+        }
+    });
+
+    API.$on('WORLD:PERSIST:DELETE', function (args) {
+        if (
+            args.params.worldId === $app.worldDialog.id &&
+            $app.worldDialog.visible
+        ) {
+            $app.worldDialog.hasPersistData = false;
+        }
+    });
 
     // #endregion
 
