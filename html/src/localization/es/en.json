@@ -405,11 +405,6 @@
                     "screenshot_metadata": "Metadatos de las Capturas de Pantalla",
                     "vrc_registry_backup": "Copia de seguridad del registro de VRC",
                     "common_folders": "Carpetas Comunes",
-                    "pending_offline": {
-                        "header": "Pendiente de Desconexión",
-                        "description": "Retraso antes de marcar al usuario como desconectado (corrige los falsos positivos)",
-                        "set_delay": "Establecer retraso"
-                    },
                     "primary_password": {
                         "header": "Contraseña Principal",
                         "description": "Cifrar contraseña (deshabilita el inicio de sesión automático)"

@@ -413,11 +413,6 @@
                     "screenshot_metadata": "Métadonnées d'une capture d'écran",
                     "vrc_registry_backup": "Sauvegarde du registre VRC",
                     "common_folders": "Dossiers communs",
-                    "pending_offline": {
-                        "header": "En attendant l'hors ligne",
-                        "description": "Délai avant de marquer un utilisateur comme étant hors ligne (corrige les faux positifs)",
-                        "set_delay": "Réglage du délai"
-                    },
                     "primary_password": {
                         "header": "Mot de passe principal",
                         "description": "Encodage du mot de passe (désactive la connexion automatique)"

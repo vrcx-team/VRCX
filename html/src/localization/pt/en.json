@@ -413,11 +413,6 @@
                     "screenshot_metadata": "Screenshot Metadata",
                     "vrc_registry_backup": "Backup do Registro VRC",
                     "common_folders": "Pastas Comuns",
-                    "pending_offline": {
-                        "header": "Pendências Offline",
-                        "description": "Atraso antes de marcar o usuário como offline (corrige falsos positivos)",
-                        "set_delay": "Definir Atraso"
-                    },
                     "primary_password": {
                         "header": "Senha Primaria",
                         "description": "Criptografar senha (desativa o login automático)"

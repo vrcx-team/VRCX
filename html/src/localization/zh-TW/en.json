@@ -413,11 +413,6 @@
                     "screenshot_metadata": "螢幕截圖詳細資訊",
                     "vrc_registry_backup": "VRC Registry Backup",
                     "common_folders": "遊戲資料夾",
-                    "pending_offline": {
-                        "header": "待確認離線",
-                        "description": "將玩家標記為離線之前延遲（防止誤判）",
-                        "set_delay": "設定延遲"
-                    },
                     "primary_password": {
                         "header": "主密碼",
                         "description": "密碼加密（將停用自動登入）"

@@ -405,11 +405,6 @@
                     "screenshot_metadata": "Screenshot Metadata",
                     "vrc_registry_backup": "VRC Registry Backup",
                     "common_folders": "Common Folders",
-                    "pending_offline": {
-                        "header": "Pending Offline",
-                        "description": "Delay before marking user as offline (fixes false positives)",
-                        "set_delay": "Set Delay"
-                    },
                     "primary_password": {
                         "header": "Primary Password",
                         "description": "Encrypt password (disables auto login)"

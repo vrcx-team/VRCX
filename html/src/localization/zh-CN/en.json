@@ -405,11 +405,6 @@
                     "screenshot_metadata": "截图元数据查看器",
                     "vrc_registry_backup": "VRC 设置数据备份工具",
                     "common_folders": "常用文件夹",
-                    "pending_offline": {
-                        "header": "离线标记延迟",
-                        "description": "将好友标记为离线之前的延迟(防止误判)",
-                        "set_delay": "设置延迟"
-                    },
                     "primary_password": {
                         "header": "独立密码",
                         "description": "使用独立密码加密 VRCX 数据(将停用自动登录)"

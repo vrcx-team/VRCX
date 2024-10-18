@@ -5098,7 +5098,8 @@ speechSynthesis.getVoices();
                         json: {
                             location: content.location,
                             travelingToLocation: content.travelingToLocation,
-                            ...content.user
+                            ...content.user,
+                            state: 'online'
                         },
                         params: {
                             userId: content.userId
@@ -5118,7 +5119,10 @@ speechSynthesis.getVoices();
             case 'friend-active':
                 if (content?.user?.id) {
                     this.$emit('USER', {
-                        json: content.user,
+                        json: {
+                            ...content.user,
+                            state: 'active'
+                        },
                         params: {
                             userId: content.userId
                         }
@@ -5175,7 +5179,8 @@ speechSynthesis.getVoices();
                     json: {
                         location: content.location,
                         travelingToLocation: content.travelingToLocation,
-                        ...content.user
+                        ...content.user,
+                        state: 'online'
                     },
                     params: {
                         userId: content.userId
@@ -9464,7 +9469,7 @@ speechSynthesis.getVoices();
                     this.sortOfflineFriends = true;
                 }
             }
-            // FIXME: 도배 가능성 있음
+            // from getCurrentUser only, fetch user if offline in an instance
             if (
                 origin &&
                 ctx.state !== 'online' &&
@@ -9544,21 +9549,11 @@ speechSynthesis.getVoices();
         ) {
             if (this.debugFriendState) {
                 console.log(
-                    ctx.name,
-                    new Date().toJSON(),
-                    'falsePositiveOffline',
-                    stateInput,
-                    ctx.ref.state
+                    `falsePositiveOffline ${ctx.name} currentState:${ctx.ref.state} expectedState:${stateInput}`
                 );
             }
             return;
         }
-        var isVIP = this.localFavoriteFriends.has(id);
-        var newState = stateInput;
-        var args = await API.getUser({
-            userId: id
-        });
-        newState = args.ref.state;
         if (this.debugFriendState) {
             console.log(
                 ctx.name,
@@ -9568,7 +9563,9 @@ speechSynthesis.getVoices();
                 ctx.ref.state
             );
         }
-        var newRef = args.ref;
+        var isVIP = this.localFavoriteFriends.has(id);
+        var newState = stateInput;
+        var ref = ctx.ref;
         if (ctx.state !== newState && typeof ctx.ref !== 'undefined') {
             if (
                 (newState === 'offline' || newState === 'active') &&
@@ -9587,8 +9584,8 @@ speechSynthesis.getVoices();
                 var feed = {
                     created_at: new Date().toJSON(),
                     type: 'Offline',
-                    userId: newRef.id,
-                    displayName: newRef.displayName,
+                    userId: ref.id,
+                    displayName: ref.displayName,
                     location,
                     worldName,
                     groupName,
@@ -9606,14 +9603,14 @@ speechSynthesis.getVoices();
                 ctx.ref.$online_for = Date.now();
                 ctx.ref.$offline_for = '';
                 ctx.ref.$active_for = '';
-                var worldName = await this.getWorldName(newRef.location);
+                var worldName = await this.getWorldName(ref.location);
                 var groupName = await this.getGroupName(location);
                 var feed = {
                     created_at: new Date().toJSON(),
                     type: 'Online',
                     userId: id,
                     displayName: ctx.name,
-                    location: newRef.location,
+                    location: ref.location,
                     worldName,
                     groupName,
                     time: ''
@@ -9655,7 +9652,7 @@ speechSynthesis.getVoices();
             this.updateOnlineFriendCoutner();
         }
         ctx.state = newState;
-        ctx.name = newRef.displayName;
+        ctx.name = ref.displayName;
         ctx.isVIP = isVIP;
     };
 
@@ -10589,9 +10586,6 @@ speechSynthesis.getVoices();
                 // clear previousLocation after GPS
                 ref.$previousLocation = '';
                 ref.$travelingToTime = Date.now();
-            }
-            if (friend.state !== 'online') {
-                API.getUser({ userId: ref.id });
             }
         }
         if (
@@ -15738,10 +15732,7 @@ speechSynthesis.getVoices();
             '[ "https://avtr.just-h.party/vrcx_search.php" ]'
         )
     );
-    $app.data.pendingOfflineDelay = await configRepository.getInt(
-        'VRCX_pendingOfflineDelay',
-        110000
-    );
+    $app.data.pendingOfflineDelay = 110000;
     if (await configRepository.getString('VRCX_avatarRemoteDatabaseProvider')) {
         // move existing provider to new list
         var avatarRemoteDatabaseProvider = await configRepository.getString(
@@ -29307,41 +29298,6 @@ speechSynthesis.getVoices();
                 this.sortOnlineFriends = true;
             }
         }
-    };
-
-    // #endregion
-    // #region | App: pending offline timer
-
-    $app.methods.promptSetPendingOffline = function () {
-        this.$prompt(
-            $t('prompt.pending_offline_delay.description'),
-            $t('prompt.pending_offline_delay.header'),
-            {
-                distinguishCancelAndClose: true,
-                confirmButtonText: $t('prompt.pending_offline_delay.save'),
-                cancelButtonText: $t('prompt.pending_offline_delay.cancel'),
-                inputValue: this.pendingOfflineDelay / 1000,
-                inputPattern: /\d+$/,
-                inputErrorMessage: $t(
-                    'prompt.pending_offline_delay.input_error'
-                ),
-                callback: async (action, instance) => {
-                    if (
-                        action === 'confirm' &&
-                        instance.inputValue &&
-                        !isNaN(instance.inputValue)
-                    ) {
-                        this.pendingOfflineDelay = Math.trunc(
-                            Number(instance.inputValue) * 1000
-                        );
-                        await configRepository.setInt(
-                            'VRCX_pendingOfflineDelay',
-                            this.pendingOfflineDelay
-                        );
-                    }
-                }
-            }
-        );
     };
 
     // #endregion

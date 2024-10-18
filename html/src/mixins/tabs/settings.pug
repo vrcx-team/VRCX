@@ -563,11 +563,6 @@ mixin settingsTab()
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.cache_debug.header') }}
                     br
-                    span.sub-header {{ $t('view.settings.advanced.advanced.pending_offline.header') }}
-                    div.options-container-item
-                        span.name {{ $t('view.settings.advanced.advanced.pending_offline.description') }}
-                        el-button-group(style="display:block")
-                            el-button(size="small" icon="el-icon-s-operation" @click="promptSetPendingOffline") {{ $t('view.settings.advanced.advanced.pending_offline.set_delay') }}
                     +simpleSwitch("view.settings.advanced.advanced.cache_debug.udon_exception_logging", "udonExceptionLogging", "saveOpenVROption")
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.cache_debug.disable_gamelog') }}

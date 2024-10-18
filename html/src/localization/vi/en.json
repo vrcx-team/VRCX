@@ -413,11 +413,6 @@
                     "screenshot_metadata": "Screenshot Metadata",
                     "vrc_registry_backup": "VRC Registry Backup",
                     "common_folders": "Thư mục chung",
-                    "pending_offline": {
-                        "header": "Đang chờ Offline",
-                        "description": "Trì trệ trước khi đánh dấu người chơi đang offline (sửa lỗi hiển thị sai)",
-                        "set_delay": "Đặt trì trệ"
-                    },
                     "primary_password": {
                         "header": "Mật khẩu chính",
                         "description": "Mã hóa mật khẩu (sẽ tắt đăng nhập tự động)"
