@@ -82,14 +82,14 @@ chmod +x $WINEPREFIX/drive_c/vrcx/vrcx
 echo "Install VRCX.png to $XDG_DATA_HOME/icons"
 curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png -o "$XDG_DATA_HOME/icons/VRCX.png"
 
-echo "Install vrcx.desktop to $XDG_DATA_HOME/applications"
+echo "Install vrcx.exe.desktop to $XDG_DATA_HOME/applications"
 echo "[Desktop Entry]
 Type=Application
 Name=VRCX
 Categories=Utility;
 Exec=$WINEPREFIX/drive_c/vrcx/vrcx
 Icon=VRCX
-" > $XDG_DATA_HOME/applications/vrcx.desktop
+" > $XDG_DATA_HOME/applications/vrcx.exe.desktop
 
 
 echo "Done! Check your menu for VRCX."
