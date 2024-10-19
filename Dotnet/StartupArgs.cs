@@ -74,8 +74,8 @@ namespace VRCX
                 if (arg.StartsWith(VrcxLaunchArguements.ConfigDirectoryPrefix) && arg.Length > VrcxLaunchArguements.ConfigDirectoryPrefix.Length)
                     arguements.ConfigDirectory = arg.Substring(VrcxLaunchArguements.ConfigDirectoryPrefix.Length + 1);
 
-                if (arg.StartsWith(VrcxLaunchArguements.ProxyServerPrefix) && arg.Length > VrcxLaunchArguements.ProxyServerPrefix.Length)
-                    arguements.ProxyUrl = arg.Substring(VrcxLaunchArguements.ProxyServerPrefix.Length + 1).Replace("'", string.Empty).Replace("\"", string.Empty);
+                if (arg.StartsWith(VrcxLaunchArguements.ProxyUrlPrefix) && arg.Length > VrcxLaunchArguements.ProxyUrlPrefix.Length)
+                    arguements.ProxyUrl = arg.Substring(VrcxLaunchArguements.ProxyUrlPrefix.Length + 1).Replace("'", string.Empty).Replace("\"", string.Empty);
             }
             return arguements;
         }
@@ -94,7 +94,7 @@ namespace VRCX
             public const string ConfigDirectoryPrefix = "--config";
             public string ConfigDirectory { get; set; } = null;
 
-            public const string ProxyServerPrefix = "--proxy-server";
+            public const string ProxyUrlPrefix = "--proxy-server";
             public string ProxyUrl { get; set; } = null;
         }
 

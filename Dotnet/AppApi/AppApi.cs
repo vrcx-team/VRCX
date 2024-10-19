@@ -296,7 +296,7 @@ namespace VRCX
 
             if (!string.IsNullOrWhiteSpace(StartupArgs.LaunchArguements.ProxyUrl))
             {
-                args.Add($"{StartupArgs.VrcxLaunchArguements.ProxyServerPrefix}={StartupArgs.LaunchArguements.ProxyUrl}");
+                args.Add($"{StartupArgs.VrcxLaunchArguements.ProxyUrlPrefix}={StartupArgs.LaunchArguements.ProxyUrl}");
             }
 
             var vrcxProcess = new Process
