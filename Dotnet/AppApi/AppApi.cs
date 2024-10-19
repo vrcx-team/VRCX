@@ -278,11 +278,11 @@ namespace VRCX
         }
 
         /// <summary>
-        /// Restarts the VRCX application for an update by launching a new process with the "/Upgrade" argument and exiting the current process.
+        /// Restarts the VRCX application for an update by launching a new process with the upgrade argument and exiting the current process.
         /// </summary>
         public void RestartApplication()
         {
-            List<string> args = [ "/Upgrade" ];
+            List<string> args = [ StartupArgs.VrcxLaunchArguements.IsUpgradePrefix ];
 
             if (StartupArgs.LaunchArguements.IsDebug == true)
             {
