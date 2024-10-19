@@ -16,6 +16,10 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using Valve.VR;
 using Device = SharpDX.Direct3D11.Device;
+using Device1 = SharpDX.Direct3D11.Device1;
+using Device2 = SharpDX.Direct3D11.Device2;
+using Device3 = SharpDX.Direct3D11.Device3;
+using Device4 = SharpDX.Direct3D11.Device4;
 
 namespace VRCX
 {
@@ -87,7 +91,8 @@ namespace VRCX
         {
             Factory f = new Factory1();
             _device = new Device(f.GetAdapter(OpenVR.System.GetD3D9AdapterIndex()),
-                DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport);
+                DeviceCreationFlags.BgraSupport);
+            UpgradeDevice();
 
             _texture1?.Dispose();
             _texture1 = new Texture2D(
@@ -100,12 +105,11 @@ namespace VRCX
                     ArraySize = 1,
                     Format = Format.B8G8R8A8_UNorm,
                     SampleDescription = new SampleDescription(1, 0),
-                    Usage = ResourceUsage.Dynamic,
-                    BindFlags = BindFlags.ShaderResource,
-                    CpuAccessFlags = CpuAccessFlags.Write
+                    BindFlags = BindFlags.ShaderResource
                 }
             );
-            
+            _browser1?.UpdateRender(_device, _texture1);
+
             _texture2?.Dispose();
             _texture2 = new Texture2D(
                 _device,
@@ -117,11 +121,48 @@ namespace VRCX
                     ArraySize = 1,
                     Format = Format.B8G8R8A8_UNorm,
                     SampleDescription = new SampleDescription(1, 0),
-                    Usage = ResourceUsage.Dynamic,
-                    BindFlags = BindFlags.ShaderResource,
-                    CpuAccessFlags = CpuAccessFlags.Write
+                    BindFlags = BindFlags.ShaderResource
                 }
             );
+            _browser2?.UpdateRender(_device, _texture2);
+        }
+        
+        private void UpgradeDevice()
+        {
+            Device5 device5 = _device.QueryInterfaceOrNull<Device5>();
+            if (device5 != null)
+            {
+                _device.Dispose();
+                _device = device5;
+                return;
+            }
+            Device4 device4 = _device.QueryInterfaceOrNull<Device4>();
+            if (device4 != null)
+            {
+                _device.Dispose();
+                _device = device4;
+                return;
+            }
+            Device3 device3 = _device.QueryInterfaceOrNull<Device3>();
+            if (device3 != null)
+            {
+                _device.Dispose();
+                _device = device3;
+                return;
+            }
+            Device2 device2 = _device.QueryInterfaceOrNull<Device2>();
+            if (device2 != null)
+            {
+                _device.Dispose();
+                _device = device2;
+                return;
+            }
+            Device1 device1 = _device.QueryInterfaceOrNull<Device1>();
+            if (device1 != null)
+            {
+                _device.Dispose();
+                _device = device1;
+            }
         }
 
         private void ThreadLoop()
@@ -152,10 +193,6 @@ namespace VRCX
 
             while (_thread != null)
             {
-                if (_wristOverlayActive)
-                    _browser1.RenderToTexture(_texture1);
-                if (_hmdOverlayActive)
-                    _browser2.RenderToTexture(_texture2);
                 try
                 {
                     Thread.Sleep(32);
