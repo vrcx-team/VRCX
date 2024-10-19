@@ -104,7 +104,20 @@ namespace VRCX
             var processes = Process.GetProcessesByName("VRCX");
             foreach (var process in processes)
             {
-                var commandLine = GetCommandLine(process);
+                var commandLine = string.Empty;
+
+                try
+                {
+                    using (var searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + process.Id))
+                    {
+                        using (var objects = searcher.Get())
+                        {
+                            commandLine = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString() ?? string.Empty;
+                        }
+                    }
+                }
+                catch { }
+
                 if (commandLine.Contains(CefSharpArguments.SubProcessTypeArgument)) // ignore subprocesses
                 {
                     continue;
@@ -118,25 +131,6 @@ namespace VRCX
             }
 
             return false;
-        }
-
-        public static string GetCommandLine(Process process)
-        {
-            var result = string.Empty;
-
-            try
-            {
-                using (var searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + process.Id))
-                {
-                    using (var objects = searcher.Get())
-                    {
-                        result = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString() ?? string.Empty;
-                    }
-                }
-            }
-            catch { }
-
-            return result;
         }
 
         private static void IPCToMain()
