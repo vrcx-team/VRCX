@@ -23,7 +23,6 @@ namespace VRCX
         public static void ArgsCheck()
         {
             var args = Environment.GetCommandLineArgs();
-            var processList = Process.GetProcessesByName("VRCX");
             
             Debug.Assert(Program.LaunchDebug = true);
 
