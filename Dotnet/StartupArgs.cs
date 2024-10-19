@@ -51,7 +51,7 @@ namespace VRCX
                 disableClosing = true;
 
             // if we're launching a second instance with same config directory, focus the first instance then exit
-            if (!disableClosing && processList.Select(x => ParseArgs(GetCommandLine(x))).Any(x => x.ConfigDirectory == Program.AppDataDirectory))
+            if (!disableClosing && IsDuplicateProcessRunning(LaunchArguements))
             {
                 IPCToMain();
                 Environment.Exit(0);
@@ -99,9 +99,30 @@ namespace VRCX
             public string ProxyUrl { get; set; } = null;
         }
 
-        public static string[] GetCommandLine(Process process)
+        private static bool IsDuplicateProcessRunning(VrcxLaunchArguements launchArguements)
         {
-            var result = new string[0];
+            var processes = Process.GetProcessesByName("VRCX");
+            foreach (var process in processes)
+            {
+                var commandLine = GetCommandLine(process);
+                if (commandLine.Contains(CefSharpArguments.SubProcessTypeArgument)) // ignore subprocesses
+                {
+                    continue;
+                }
+
+                var processArguements = ParseArgs(commandLine.Split(' '));
+                if (processArguements.ConfigDirectory == launchArguements.ConfigDirectory)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static string GetCommandLine(Process process)
+        {
+            var result = string.Empty;
 
             try
             {
@@ -109,7 +130,7 @@ namespace VRCX
                 {
                     using (var objects = searcher.Get())
                     {
-                        result = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString().Split(' ') ?? [];
+                        result = objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString() ?? string.Empty;
                     }
                 }
             }
