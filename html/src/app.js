@@ -11192,8 +11192,8 @@ speechSynthesis.getVoices();
         if (this.gameLogDisabled) {
             return;
         }
-        var userId = '';
-        if (gameLog.displayName) {
+        var userId = gameLog.userId;
+        if (!userId && gameLog.displayName) {
             for (var ref of API.cachedUsers.values()) {
                 if (ref.displayName === gameLog.displayName) {
                     userId = ref.id;
@@ -11267,7 +11267,7 @@ speechSynthesis.getVoices();
                 var joinTime = Date.parse(gameLog.dt);
                 var userMap = {
                     displayName: gameLog.displayName,
-                    userId : gameLog.userId,
+                    userId,
                     joinTime,
                     lastAvatar: ''
                 };
@@ -11292,6 +11292,11 @@ speechSynthesis.getVoices();
                     } else if (typeof ref !== 'undefined') {
                         // set $location_at to join time if user isn't a friend
                         ref.$location_at = joinTime;
+                    } else {
+                        if (this.debugGameLog || this.debugWebRequests) {
+                            console.log('Fetching user from gameLog:', userId);
+                        }
+                        API.getUser({ userId });
                     }
                 } else {
                     // try fetch userId from previous encounter using database
