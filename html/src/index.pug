@@ -200,7 +200,7 @@ html
                                     .detail
                                         span.name
                                             span(v-text="ref.group.name")
-                                            span(style="font-weight:normal;margin-left:5px") ({{ ref.instance.n_users }}/{{ ref.instance.capacity }})
+                                            span(style="font-weight:normal;margin-left:5px") ({{ ref.instance.userCount }}/{{ ref.instance.capacity }})
                                         location.extra(:location="ref.instance.location" :link="false")
 
 

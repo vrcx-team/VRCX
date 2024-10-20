@@ -1245,7 +1245,7 @@ speechSynthesis.getVoices();
                     this.closedAt = this.instance.closedAt;
                 }
                 this.isHardClosed = this.instance.hardClose === true;
-                this.occupants = this.instance.n_users;
+                this.occupants = this.instance.userCount;
                 if (this.location === $app.lastLocation.location) {
                     // use gameLog for occupants when in same location
                     this.occupants = $app.lastLocation.playerList.size;
@@ -2793,7 +2793,7 @@ speechSynthesis.getVoices();
                 hasCapacityForYou: true, // not present depending on endpoint
                 capacity: 0,
                 recommendedCapacity: 0,
-                userCount: 0, // PC only?
+                userCount: 0,
                 queueEnabled: false, // only present with group instance type
                 queueSize: 0, // only present when queuing is enabled
                 platforms: {},
@@ -19615,7 +19615,7 @@ speechSynthesis.getVoices();
             }
             // sort by number of users when no friends in instance
             if (a.users.length === 0 && b.users.length === 0) {
-                if (a.ref?.n_users < b.ref?.n_users) {
+                if (a.ref?.userCount < b.ref?.userCount) {
                     return 1;
                 }
                 return -1;
@@ -19773,7 +19773,7 @@ speechSynthesis.getVoices();
             }
             // sort by number of users when no friends in instance
             if (a.users.length === 0 && b.users.length === 0) {
-                if (a.ref?.n_users < b.ref?.n_users) {
+                if (a.ref?.userCount < b.ref?.userCount) {
                     return 1;
                 }
                 return -1;
