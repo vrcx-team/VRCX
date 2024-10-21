@@ -6710,11 +6710,8 @@ speechSynthesis.getVoices();
         var playDesktopToast = false;
         if (
             this.desktopToast === 'Always' ||
-            (this.desktopToast === 'Outside VR' &&
-                (this.isGameNoVR || !this.isGameRunning)) ||
-            (this.desktopToast === 'Inside VR' &&
-                !this.isGameNoVR &&
-                this.isGameRunning) ||
+            (this.desktopToast === 'Outside VR' && !this.isSteamVRRunning) ||
+            (this.desktopToast === 'Inside VR' && this.isSteamVRRunning) ||
             (this.desktopToast === 'Game Closed' && !this.isGameRunning) ||
             (this.desktopToast === 'Game Running' && this.isGameRunning) ||
             (this.desktopToast === 'Desktop Mode' &&

@@ -232,7 +232,7 @@ Vue.component('marquee-text', MarqueeText);
         watch: {},
         el: '#x-app',
         mounted() {
-            workerTimers.setTimeout(() => AppApiVr.VrInit(), 1000);
+            workerTimers.setTimeout(() => AppApiVr.VrInit(), 5000);
             if (this.appType === '1') {
                 this.refreshCustomScript();
                 this.updateStatsLoop();
@@ -442,6 +442,7 @@ Vue.component('marquee-text', MarqueeText);
                     year: 'numeric',
                     hour: 'numeric',
                     minute: 'numeric',
+                    second: 'numeric',
                     hourCycle: this.config.dtHour12 ? 'h12' : 'h23'
                 })
                 .replace(' AM', ' am')
