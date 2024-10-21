@@ -25,7 +25,9 @@ import gameLogService from './service/gamelog.js';
 import security from './security.js';
 import database from './repository/database.js';
 import * as localizedStrings from './localization/localizedStrings.js';
-import removeConfusables, { removeWhitespace } from './libsAndLolisAndSugoiLibs/confusables.js';
+import removeConfusables, {
+    removeWhitespace
+} from './libsAndLolisAndSugoiLibs/confusables.js';
 
 // #endregion
 
@@ -4292,7 +4294,7 @@ speechSynthesis.getVoices();
         }
 
         if (
-            args.params.type === 'friend' && 
+            args.params.type === 'friend' &&
             $app.localFavoriteFriendsGroups.includes(
                 'friend:' + args.params.tags
             )
@@ -9213,11 +9215,10 @@ speechSynthesis.getVoices();
 
     $app.methods.refreshFriendsList = async function () {
         // If we just got user less then 1 min before code call, don't call it again
-        if ($app.nextCurrentUserRefresh < 720)
-        {
-        await API.getCurrentUser().catch((err) => {
-            console.error(err);
-        });
+        if ($app.nextCurrentUserRefresh < 720) {
+            await API.getCurrentUser().catch((err) => {
+                console.error(err);
+            });
         }
         await API.refreshFriends().catch((err) => {
             console.error(err);
@@ -9877,7 +9878,7 @@ speechSynthesis.getVoices();
         }
 
         return a.ref.location.localeCompare(b.ref.location);
-    }
+    };
 
     var compareByActivityField = function (a, b, field) {
         if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
@@ -9886,14 +9887,20 @@ speechSynthesis.getVoices();
 
         // When the field is just and empty string, it means they've been
         // in whatever active state for the longest
-        if (a.ref[field] < b.ref[field] || a.ref[field] !== '' && b.ref[field] === '') {
+        if (
+            a.ref[field] < b.ref[field] ||
+            (a.ref[field] !== '' && b.ref[field] === '')
+        ) {
             return 1;
         }
-        if (a.ref[field] > b.ref[field] || a.ref[field] === '' && b.ref[field] !== '') {
+        if (
+            a.ref[field] > b.ref[field] ||
+            (a.ref[field] === '' && b.ref[field] !== '')
+        ) {
             return -1;
         }
         return 0;
-    }
+    };
 
     // last active
     var compareByLastActive = function (a, b) {
@@ -10119,7 +10126,7 @@ speechSynthesis.getVoices();
 
     var localeIncludes = function (str, search, comparer) {
         // These checks are stolen from https://stackoverflow.com/a/69623589/11030436
-        if (search === "") {
+        if (search === '') {
             return true;
         } else if (!str || !search) {
             return false;
@@ -10143,19 +10150,19 @@ speechSynthesis.getVoices();
             }
         }
         return false;
-    }
+    };
 
     // Making a persistent comparer increases perf by like 10x lmao
     $app.data._stringComparer = undefined;
     $app.computed.stringComparer = function () {
         if (typeof this._stringComparer === 'undefined') {
             this._stringComparer = Intl.Collator(
-                this.appLanguage.replace("_", "-"),
-                { usage: "search", sensitivity: "base" }
+                this.appLanguage.replace('_', '-'),
+                { usage: 'search', sensitivity: 'base' }
             );
         }
         return this._stringComparer;
-    }
+    };
 
     $app.methods.quickSearchRemoteMethod = function (query) {
         if (!query) {
@@ -10171,10 +10178,18 @@ speechSynthesis.getVoices();
             }
 
             const cleanName = removeConfusables(ctx.name);
-            let match = localeIncludes(cleanName, cleanQuery, this.stringComparer);
+            let match = localeIncludes(
+                cleanName,
+                cleanQuery,
+                this.stringComparer
+            );
             if (!match) {
                 // Also check regular name in case search is with special characters
-                match = localeIncludes(ctx.name, cleanQuery, this.stringComparer);
+                match = localeIncludes(
+                    ctx.name,
+                    cleanQuery,
+                    this.stringComparer
+                );
             }
             // Use query with whitespace for notes and memos as people are more
             // likely to include spaces in memos and notes
@@ -10182,7 +10197,11 @@ speechSynthesis.getVoices();
                 match = localeIncludes(ctx.memo, query, this.stringComparer);
             }
             if (!match && ctx.ref.note) {
-                match = localeIncludes(ctx.ref.note, query, this.stringComparer);
+                match = localeIncludes(
+                    ctx.ref.note,
+                    query,
+                    this.stringComparer
+                );
             }
 
             if (match) {
@@ -10196,8 +10215,16 @@ speechSynthesis.getVoices();
         }
 
         results.sort(function (a, b) {
-            var A = $app.stringComparer.compare(a.name.substring(0, cleanQuery.length), cleanQuery) === 0;
-            var B = $app.stringComparer.compare(b.name.substring(0, cleanQuery.length), cleanQuery) === 0;
+            var A =
+                $app.stringComparer.compare(
+                    a.name.substring(0, cleanQuery.length),
+                    cleanQuery
+                ) === 0;
+            var B =
+                $app.stringComparer.compare(
+                    b.name.substring(0, cleanQuery.length),
+                    cleanQuery
+                ) === 0;
             if (A && !B) {
                 return -1;
             } else if (B && !A) {
@@ -14777,7 +14804,7 @@ speechSynthesis.getVoices();
             {
                 prop: 'type',
                 value: false,
-                filterFn: (row, filter) => 
+                filterFn: (row, filter) =>
                     !(filter.value && row.type === 'Unfriend')
             }
         ],
@@ -23083,21 +23110,42 @@ speechSynthesis.getVoices();
                     filters.includes('Display Name') &&
                     ctx.ref.displayName
                 ) {
-                    match = localeIncludes(ctx.ref.displayName, cleanedQuery, this.stringComparer)
-                        || localeIncludes(removeConfusables(ctx.ref.displayName), cleanedQuery, this.stringComparer);
+                    match =
+                        localeIncludes(
+                            ctx.ref.displayName,
+                            cleanedQuery,
+                            this.stringComparer
+                        ) ||
+                        localeIncludes(
+                            removeConfusables(ctx.ref.displayName),
+                            cleanedQuery,
+                            this.stringComparer
+                        );
                 }
                 if (!match && filters.includes('Memo') && ctx.memo) {
-                    match = localeIncludes(ctx.memo, query, this.stringComparer);
+                    match = localeIncludes(
+                        ctx.memo,
+                        query,
+                        this.stringComparer
+                    );
                 }
                 if (!match && filters.includes('Bio') && ctx.ref.bio) {
-                    match = localeIncludes(ctx.ref.bio, query, this.stringComparer);
+                    match = localeIncludes(
+                        ctx.ref.bio,
+                        query,
+                        this.stringComparer
+                    );
                 }
                 if (
                     !match &&
                     filters.includes('Status') &&
                     ctx.ref.statusDescription
                 ) {
-                    match = localeIncludes(ctx.ref.statusDescription, query, this.stringComparer);
+                    match = localeIncludes(
+                        ctx.ref.statusDescription,
+                        query,
+                        this.stringComparer
+                    );
                 }
                 if (!match && filters.includes('Rank') && ctx.ref.$friendNum) {
                     match = String(ctx.ref.$trustLevel)
