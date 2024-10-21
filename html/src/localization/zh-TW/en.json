@@ -293,23 +293,15 @@
                     "header": "側板",
                     "sorting": {
                         "header": "排序",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "將 私人世界 排序到底部",
-                        "sort_by_status": "依狀態排序",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "收藏玩家 排序依據",
-                        "sort_favorite_by_alphabet": "字母順序",
-                        "sort_favorite_by_online_time": "上線時長",
-                        "sort_online_by": "網頁玩家 排序依據",
-                        "sort_online_by_alphabet": "字母順序",
-                        "sort_online_by_online_time": "上線時長",
-                        "sort_active_by": "上線玩家 排序依據",
-                        "sort_active_by_alphabet": "字母順序",
-                        "sort_active_by_online_time": "上線時長",
-                        "sort_offline_by": "離線玩家 排序依據",
-                        "sort_offline_by_alphabet": "字母順序",
-                        "sort_offline_by_offline_time": "離線時長"
+                        "alphabetical": "Alphabetical",
+                        "private_to_bottom": "Private to Bottom",
+                        "status": "Status",
+                        "status_and_private_to_bottom": "Status and Private to Bottom",
+                        "location": "Location",
+                        "last_active": "Last Active",
+                        "time_in_instance": "Time in Instance",
+                        "placeholder": "Sort Order",
+                        "dropdown_header": "Choose Sort Order"
                     },
                     "width": "寬度"
                 },
@@ -429,10 +421,6 @@
                     "vrchat_quit_fix": {
                         "header": "VRChat 關閉修正",
                         "description": "在離開遊戲時強制停止 VRChat"
-                    },
-                    "vrchat_osc_fix": {
-                        "header": "VRChat OSC 修正",
-                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
                     },
                     "auto_cache_management": {
                         "header": "關閉 VRChat 時自動管理快取",
@@ -596,13 +584,15 @@
                 "moderation_show_avatar": "顯示角色",
                 "moderation_enable_avatar_interaction": "開啟角色互動",
                 "moderation_disable_avatar_interaction": "關閉角色互動",
+                "moderation_disable_chatbox": "Mute Chatbox",
                 "edit_status": "社交狀態",
                 "edit_language": "語言",
                 "edit_bio": "自我介紹",
                 "edit_pronouns": "代稱",
                 "report_hacking": "檢舉駭客行為",
                 "unfriend": "解除好友",
-                "logout": "登出"
+                "logout": "登出",
+                "moderation_enable_chatbox": "Unmute Chatbox"
             },
             "info": {
                 "header": "資訊",
@@ -695,6 +685,7 @@
                 "public": "公開",
                 "private": "私人",
                 "avatar_scaling_disabled": "角色縮放關閉",
+                "stickers_disabled": "Stickers Disabled",
                 "future_proofing": "Future Proofing",
                 "labs": "社區實驗室",
                 "cache": "快取",
@@ -702,7 +693,8 @@
                 "content_gore": "血腥",
                 "content_violence": "暴力",
                 "content_adult": "成人",
-                "content_sex": "色情"
+                "content_sex": "色情",
+                "focus_view_disabled": "Focus View Disabled"
             },
             "actions": {
                 "delete_cache_tooltip": "從快取中刪除世界",
@@ -1045,6 +1037,7 @@
         "set_world_tags": {
             "header": "設定世界標籤",
             "avatar_scaling_disabled": "關閉角色縮放",
+            "stickers_disabled": "Disable stickers",
             "enable_debugging": "為其他人啟用世界偵錯",
             "author_tags": "作者標籤(使用逗號分隔每個標籤)",
             "content_tags": "內容警告標籤",
@@ -1054,7 +1047,8 @@
             "content_adult": "成人",
             "content_sex": "色情",
             "cancel": "取消",
-            "save": "儲存"
+            "save": "儲存",
+            "focus_view_disabled": "Disable focus view"
         },
         "set_avatar_tags": {
             "header": "設定角色標籤",
@@ -1258,6 +1252,7 @@
             "gallery": "相簿",
             "icons": "圖示",
             "emojis": "表情符號",
+            "stickers": "Stickers",
             "refresh": "重新整理",
             "upload": "上傳",
             "clear": "清除",

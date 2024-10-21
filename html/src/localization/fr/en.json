@@ -293,23 +293,15 @@
                     "header": "Panneau latéral",
                     "sorting": {
                         "header": "Comportement du tri",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "Joueurs en privé en fin de liste",
-                        "sort_by_status": "Trier par statut",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "Trier les favoris par",
-                        "sort_favorite_by_alphabet": "alphabétique",
-                        "sort_favorite_by_online_time": "en ligne depuis",
-                        "sort_online_by": "Trier les en ligne par",
-                        "sort_online_by_alphabet": "alphabétique",
-                        "sort_online_by_online_time": "en ligne depuis",
-                        "sort_active_by": "Trier les actifs par",
-                        "sort_active_by_alphabet": "alphabétique",
-                        "sort_active_by_online_time": "en ligne depuis",
-                        "sort_offline_by": "Trier les hors ligne par",
-                        "sort_offline_by_alphabet": "alphabétique",
-                        "sort_offline_by_offline_time": "hors ligne depuis"
+                        "alphabetical": "Alphabetical",
+                        "private_to_bottom": "Private to Bottom",
+                        "status": "Status",
+                        "status_and_private_to_bottom": "Status and Private to Bottom",
+                        "location": "Location",
+                        "last_active": "Last Active",
+                        "time_in_instance": "Time in Instance",
+                        "placeholder": "Sort Order",
+                        "dropdown_header": "Choose Sort Order"
                     },
                     "width": "Largeur"
                 },
@@ -429,10 +421,6 @@
                     "vrchat_quit_fix": {
                         "header": "Correction de l'arrêt de VRChat",
                         "description": "Arrêter VRChat après avoir quitté le jeu"
-                    },
-                    "vrchat_osc_fix": {
-                        "header": "VRChat OSC Fix",
-                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
                     },
                     "auto_cache_management": {
                         "header": "Gérer automatiquement le cache lors de la fermeture de VRChat",
@@ -602,7 +590,9 @@
                 "edit_pronouns": "Pronoms",
                 "report_hacking": "Signaler un piratage",
                 "unfriend": "Supprimer des amis",
-                "logout": "Se déconnecter"
+                "logout": "Se déconnecter",
+                "moderation_enable_chatbox": "Unmute Chatbox",
+                "moderation_disable_chatbox": "Mute Chatbox"
             },
             "info": {
                 "header": "Infos",
@@ -702,7 +692,9 @@
                 "content_gore": "Gore",
                 "content_violence": "Violence",
                 "content_adult": "Adulte",
-                "content_sex": "Sexuel"
+                "content_sex": "Sexuel",
+                "focus_view_disabled": "Focus View Disabled",
+                "stickers_disabled": "Stickers Disabled"
             },
             "actions": {
                 "delete_cache_tooltip": "Supprimer le monde du cache",
@@ -1054,7 +1046,9 @@
             "content_adult": "Adulte",
             "content_sex": "Sexuel",
             "cancel": "Annuler",
-            "save": "Sauvegarder"
+            "save": "Sauvegarder",
+            "focus_view_disabled": "Disable focus view",
+            "stickers_disabled": "Disable stickers"
         },
         "set_avatar_tags": {
             "header": "Modifier les tags de l'avatar",
@@ -1266,7 +1260,8 @@
             "emoji_animation_fps": "FPS",
             "emoji_animation_frame_count": "Nombre de frames",
             "emoji_loop_pingpong": "Animé en boucle",
-            "flipbook_info": "Sélectionnez une image PNG 1024x1024 pour l'utiliser comme emoji animé : 4, 16 ou 64 (64 FPS max, 64 frames max)."
+            "flipbook_info": "Sélectionnez une image PNG 1024x1024 pour l'utiliser comme emoji animé : 4, 16 ou 64 (64 FPS max, 64 frames max).",
+            "stickers": "Stickers"
         },
         "change_content_image": {
             "avatar": "Changer l'image de l'avatar",

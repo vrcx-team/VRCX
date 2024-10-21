@@ -422,10 +422,6 @@
                         "header": "VRChat終了時の挙動を修正する",
                         "description": "ゲーム終了時、VRChatのプロセスを強制終了"
                     },
-                    "vrchat_osc_fix": {
-                        "header": "VRChatのOSCの挙動を修正する",
-                        "description": "ゲーム終了時、インストールプロセスを強制終了"
-                    },
                     "auto_cache_management": {
                         "header": "VRChat終了時にキャッシュを自動で管理する",
                         "description": "旧バージョンのキャッシュを自動削除"
@@ -594,7 +590,9 @@
                 "edit_pronouns": "代名詞",
                 "report_hacking": "ハッキングを通報",
                 "unfriend": "フレンド解除",
-                "logout": "ログアウト"
+                "logout": "ログアウト",
+                "moderation_enable_chatbox": "Unmute Chatbox",
+                "moderation_disable_chatbox": "Mute Chatbox"
             },
             "info": {
                 "header": "情報",
@@ -694,7 +692,9 @@
                 "content_gore": "過剰なゴア",
                 "content_violence": "写実的な暴力",
                 "content_adult": "成人向けの言葉やテーマ",
-                "content_sex": "性的なものを思わせる"
+                "content_sex": "性的なものを思わせる",
+                "focus_view_disabled": "Focus View Disabled",
+                "stickers_disabled": "Stickers Disabled"
             },
             "actions": {
                 "delete_cache_tooltip": "キャッシュからワールドを削除",
@@ -1046,7 +1046,9 @@
             "content_adult": "成人向けの言葉やテーマ",
             "content_sex": "性的なものを思わせる",
             "cancel": "キャンセル",
-            "save": "保存"
+            "save": "保存",
+            "focus_view_disabled": "Disable focus view",
+            "stickers_disabled": "Disable stickers"
         },
         "set_avatar_tags": {
             "header": "アバタータグを設定",
@@ -1258,7 +1260,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "フレーム数:",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "アニメーション絵文字として使用する1024x1024のPNGスプライトシート画像を選択 (最大 64FPS)"
+            "flipbook_info": "アニメーション絵文字として使用する1024x1024のPNGスプライトシート画像を選択 (最大 64FPS)",
+            "stickers": "Stickers"
         },
         "change_content_image": {
             "avatar": "アバターの画像を変更",

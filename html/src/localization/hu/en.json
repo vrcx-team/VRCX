@@ -293,23 +293,15 @@
                     "header": "Side Panel",
                     "sorting": {
                         "header": "Sorting",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "Sort Private to bottom",
-                        "sort_by_status": "Sort by status",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "Kedvencek rendezése",
-                        "sort_favorite_by_alphabet": "betűrend",
-                        "sort_favorite_by_online_time": "online for",
-                        "sort_online_by": "Sort Online by",
-                        "sort_online_by_alphabet": "betűrend",
-                        "sort_online_by_online_time": "online for",
-                        "sort_active_by": "Sort Active by",
-                        "sort_active_by_alphabet": "betűrend",
-                        "sort_active_by_online_time": "online for",
-                        "sort_offline_by": "Sort Offline by",
-                        "sort_offline_by_alphabet": "betűrend",
-                        "sort_offline_by_offline_time": "offline for"
+                        "alphabetical": "Alphabetical",
+                        "private_to_bottom": "Private to Bottom",
+                        "status": "Status",
+                        "status_and_private_to_bottom": "Status and Private to Bottom",
+                        "location": "Location",
+                        "last_active": "Last Active",
+                        "time_in_instance": "Time in Instance",
+                        "placeholder": "Sort Order",
+                        "dropdown_header": "Choose Sort Order"
                     },
                     "width": "Szélesség"
                 },
@@ -429,10 +421,6 @@
                     "vrchat_quit_fix": {
                         "header": "VRChat Quit Fix",
                         "description": "Kill VRChat after exiting game"
-                    },
-                    "vrchat_osc_fix": {
-                        "header": "VRChat OSC Fix",
-                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
                     },
                     "auto_cache_management": {
                         "header": "Automatically Manage Cache When Closing VRChat",
@@ -602,7 +590,9 @@
                 "edit_pronouns": "Pronouns",
                 "report_hacking": "Report For Hacking",
                 "unfriend": "Unfriend",
-                "logout": "Kijelentkezés"
+                "logout": "Kijelentkezés",
+                "moderation_enable_chatbox": "Unmute Chatbox",
+                "moderation_disable_chatbox": "Mute Chatbox"
             },
             "info": {
                 "header": "Info",
@@ -702,7 +692,9 @@
                 "content_gore": "Gore",
                 "content_violence": "Violence",
                 "content_adult": "Adult",
-                "content_sex": "Sexual"
+                "content_sex": "Sexual",
+                "focus_view_disabled": "Focus View Disabled",
+                "stickers_disabled": "Stickers Disabled"
             },
             "actions": {
                 "delete_cache_tooltip": "Delete world from cache",
@@ -1054,7 +1046,9 @@
             "content_adult": "Adult",
             "content_sex": "Sexual",
             "cancel": "Mégse",
-            "save": "Save"
+            "save": "Save",
+            "focus_view_disabled": "Disable focus view",
+            "stickers_disabled": "Disable stickers"
         },
         "set_avatar_tags": {
             "header": "Set Avatar Tags",
@@ -1266,7 +1260,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Frame Count:",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)"
+            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)",
+            "stickers": "Stickers"
         },
         "change_content_image": {
             "avatar": "Change Avatar Image",

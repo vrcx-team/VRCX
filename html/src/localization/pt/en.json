@@ -293,23 +293,15 @@
                     "header": "Painel lateral",
                     "sorting": {
                         "header": "Ordenação",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "Ordenar Privado para baixo",
-                        "sort_by_status": "Ordenar por status",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "Ordenar Favoritos por",
-                        "sort_favorite_by_alphabet": "alfabético",
-                        "sort_favorite_by_online_time": "online para",
-                        "sort_online_by": "Ordenar Online por",
-                        "sort_online_by_alphabet": "alfabético",
-                        "sort_online_by_online_time": "online para",
-                        "sort_active_by": "Ordenar Ativos por",
-                        "sort_active_by_alphabet": "alfabético",
-                        "sort_active_by_online_time": "online para",
-                        "sort_offline_by": "Ordenar Offline por",
-                        "sort_offline_by_alphabet": "alfabético",
-                        "sort_offline_by_offline_time": "offline para"
+                        "alphabetical": "Alphabetical",
+                        "private_to_bottom": "Private to Bottom",
+                        "status": "Status",
+                        "status_and_private_to_bottom": "Status and Private to Bottom",
+                        "location": "Location",
+                        "last_active": "Last Active",
+                        "time_in_instance": "Time in Instance",
+                        "placeholder": "Sort Order",
+                        "dropdown_header": "Choose Sort Order"
                     },
                     "width": "Largura"
                 },
@@ -429,10 +421,6 @@
                     "vrchat_quit_fix": {
                         "header": "Correção para Fechar o VRChat",
                         "description": "Elimine o VRChat após sair do jogo"
-                    },
-                    "vrchat_osc_fix": {
-                        "header": "Correção VRChat OSC",
-                        "description": "Retomar e encerrar o processo install.exe suspenso após sair do jogo"
                     },
                     "auto_cache_management": {
                         "header": "Gerenciar automaticamente o cache ao fechar o VRChat",
@@ -602,7 +590,9 @@
                 "edit_pronouns": "Pronomes",
                 "report_hacking": "Reportar por Trapaça",
                 "unfriend": "Remover Amizade",
-                "logout": "Encerrar Sessão"
+                "logout": "Encerrar Sessão",
+                "moderation_enable_chatbox": "Unmute Chatbox",
+                "moderation_disable_chatbox": "Mute Chatbox"
             },
             "info": {
                 "header": "Informação",
@@ -702,7 +692,9 @@
                 "content_gore": "Gore",
                 "content_violence": "Violencia",
                 "content_adult": "Adulto",
-                "content_sex": "Sexual"
+                "content_sex": "Sexual",
+                "focus_view_disabled": "Focus View Disabled",
+                "stickers_disabled": "Stickers Disabled"
             },
             "actions": {
                 "delete_cache_tooltip": "Excluir mundo do cache",
@@ -1054,7 +1046,9 @@
             "content_adult": "Adulto",
             "content_sex": "Sexual",
             "cancel": "Cancelar",
-            "save": "Salvar"
+            "save": "Salvar",
+            "focus_view_disabled": "Disable focus view",
+            "stickers_disabled": "Disable stickers"
         },
         "set_avatar_tags": {
             "header": "Definir Etiquetas do Avatar",
@@ -1266,7 +1260,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Contagem de Quadros:",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)"
+            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)",
+            "stickers": "Stickers"
         },
         "change_content_image": {
             "avatar": "Mudar Imagem do Avatar",

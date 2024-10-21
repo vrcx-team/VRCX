@@ -293,23 +293,15 @@
                     "header": "친구 목록",
                     "sorting": {
                         "header": "정렬",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "비공개 월드는 마지막에 표시",
-                        "sort_by_status": "상태순",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "친한 친구 순서",
-                        "sort_favorite_by_alphabet": "이름순",
-                        "sort_favorite_by_online_time": "시간순",
-                        "sort_online_by": "온라인 순서",
-                        "sort_online_by_alphabet": "이름순",
-                        "sort_online_by_online_time": "시간순",
-                        "sort_active_by": "최근에 활동한 유저순",
-                        "sort_active_by_alphabet": "이름순",
-                        "sort_active_by_online_time": "시간순",
-                        "sort_offline_by": "오프라인 순서",
-                        "sort_offline_by_alphabet": "이름순",
-                        "sort_offline_by_offline_time": "시간순"
+                        "alphabetical": "Alphabetical",
+                        "private_to_bottom": "Private to Bottom",
+                        "status": "Status",
+                        "status_and_private_to_bottom": "Status and Private to Bottom",
+                        "location": "Location",
+                        "last_active": "Last Active",
+                        "time_in_instance": "Time in Instance",
+                        "placeholder": "Sort Order",
+                        "dropdown_header": "Choose Sort Order"
                     },
                     "width": "너비"
                 },
@@ -429,10 +421,6 @@
                     "vrchat_quit_fix": {
                         "header": "VRChat 종료 해결",
                         "description": "VRChat을 끌 때 강제 종료하기"
-                    },
-                    "vrchat_osc_fix": {
-                        "header": "VRChat OSC Fix",
-                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
                     },
                     "auto_cache_management": {
                         "header": "VRChat을 종료할 때 캐시 관리",
@@ -602,7 +590,9 @@
                 "edit_pronouns": "Pronouns",
                 "report_hacking": "불법 프로그램 신고",
                 "unfriend": "친구 끊기",
-                "logout": "로그아웃"
+                "logout": "로그아웃",
+                "moderation_enable_chatbox": "Unmute Chatbox",
+                "moderation_disable_chatbox": "Mute Chatbox"
             },
             "info": {
                 "header": "정보",
@@ -702,7 +692,9 @@
                 "content_gore": "Gore",
                 "content_violence": "Violence",
                 "content_adult": "Adult",
-                "content_sex": "Sexual"
+                "content_sex": "Sexual",
+                "focus_view_disabled": "Focus View Disabled",
+                "stickers_disabled": "Stickers Disabled"
             },
             "actions": {
                 "delete_cache_tooltip": "캐시에서 월드 삭제",
@@ -1054,7 +1046,9 @@
             "content_adult": "Adult",
             "content_sex": "Sexual",
             "cancel": "취소",
-            "save": "저장"
+            "save": "저장",
+            "focus_view_disabled": "Disable focus view",
+            "stickers_disabled": "Disable stickers"
         },
         "set_avatar_tags": {
             "header": "Set Avatar Tags",
@@ -1266,7 +1260,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Frame Count:",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)"
+            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)",
+            "stickers": "Stickers"
         },
         "change_content_image": {
             "avatar": "아바타 이미지 변경",

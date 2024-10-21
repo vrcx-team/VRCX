@@ -590,7 +590,9 @@
                 "edit_pronouns": "人称代词",
                 "report_hacking": "报告这个用户的作弊行为(例如盗模)",
                 "unfriend": "解除好友关系",
-                "logout": "退出登录"
+                "logout": "退出登录",
+                "moderation_enable_chatbox": "Unmute Chatbox",
+                "moderation_disable_chatbox": "Mute Chatbox"
             },
             "info": {
                 "header": "信息",
@@ -690,7 +692,9 @@
                 "content_gore": "血腥",
                 "content_violence": "暴力",
                 "content_adult": "成人内容",
-                "content_sex": "性暗示"
+                "content_sex": "性暗示",
+                "focus_view_disabled": "Focus View Disabled",
+                "stickers_disabled": "Stickers Disabled"
             },
             "actions": {
                 "delete_cache_tooltip": "从缓存中删除世界",
@@ -1042,7 +1046,9 @@
             "content_adult": "成人内容",
             "content_sex": "性暗示",
             "cancel": "取消",
-            "save": "保存"
+            "save": "保存",
+            "focus_view_disabled": "Disable focus view",
+            "stickers_disabled": "Disable stickers"
         },
         "set_avatar_tags": {
             "header": "设置模型标签",
@@ -1254,7 +1260,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "帧数:",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "选择一个1024x1024的PNG精灵表作为动画表情（最大FPS 64）"
+            "flipbook_info": "选择一个1024x1024的PNG精灵表作为动画表情（最大FPS 64）",
+            "stickers": "Stickers"
         },
         "change_content_image": {
             "avatar": "更改模型封面",

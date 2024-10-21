@@ -294,14 +294,14 @@
                     "sorting": {
                         "header": "Сортировка",
                         "alphabetical": "По алфавиту",
-                        "sort_private_to_bottom": "Приватные в конец ",
                         "status": "По статусу",
-                        "sort_by_status_and_private_to_bottom": "Приватные в конец у",
                         "location": "По местоположению",
                         "last_active": "По последней активности",
                         "time_in_instance": "По времени в инстансе",
                         "placeholder": "Порядок сортировки",
-                        "dropdown_header": "Выберите порядок сортировки"
+                        "dropdown_header": "Выберите порядок сортировки",
+                        "private_to_bottom": "Private to Bottom",
+                        "status_and_private_to_bottom": "Status and Private to Bottom"
                     },
                     "width": "Ширина"
                 },
@@ -1260,7 +1260,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Количество кадров:",
             "emoji_loop_pingpong": "Зацикленный PingPong",
-            "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи, доступные размеры сетки кадров: 4, 16 или 64 (максимальный FPS 64, максимальное количество кадров 64)"
+            "flipbook_info": "Выберите спрайт-лист PNG размером 1024x1024 для использования в качестве анимированного эмодзи, доступные размеры сетки кадров: 4, 16 или 64 (максимальный FPS 64, максимальное количество кадров 64)",
+            "stickers": "Stickers"
         },
         "change_content_image": {
             "avatar": "Изменить изображение аватара",

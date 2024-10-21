@@ -293,23 +293,15 @@
                     "header": "Bẳng điều khiển bên cạnh",
                     "sorting": {
                         "header": "Sắp xếp",
-                        "sort_default": "Default",
-                        "sort_private_to_bottom": "Sắp xếp Private xuống dưới cùng",
-                        "sort_by_status": "Sắp xếp theo status",
-                        "sort_by_status_and_private_to_bottom": "Sort by Status and Private to Bottom",
-                        "sort_by_location": "Sort by Location",
-                        "sort_favorite_by": "Sắp xếp mục yêu thích theo",
-                        "sort_favorite_by_alphabet": "bảng chữ cái",
-                        "sort_favorite_by_online_time": "online trong",
-                        "sort_online_by": "Sắp xếp online theo",
-                        "sort_online_by_alphabet": "bản chữ cái",
-                        "sort_online_by_online_time": "online trong",
-                        "sort_active_by": "Sắp xếp active theo",
-                        "sort_active_by_alphabet": "bảng chữ cái",
-                        "sort_active_by_online_time": "online trong",
-                        "sort_offline_by": "Sắp xếp offline theo",
-                        "sort_offline_by_alphabet": "bảng chữ cái",
-                        "sort_offline_by_offline_time": "offline trong"
+                        "alphabetical": "Alphabetical",
+                        "private_to_bottom": "Private to Bottom",
+                        "status": "Status",
+                        "status_and_private_to_bottom": "Status and Private to Bottom",
+                        "location": "Location",
+                        "last_active": "Last Active",
+                        "time_in_instance": "Time in Instance",
+                        "placeholder": "Sort Order",
+                        "dropdown_header": "Choose Sort Order"
                     },
                     "width": "Chiều rộng"
                 },
@@ -429,10 +421,6 @@
                     "vrchat_quit_fix": {
                         "header": "Sửa lỗi VRChat thoát không đúng cách",
                         "description": "Ngưng chạy VRChat hoàn toàn khi thoát trò chơi"
-                    },
-                    "vrchat_osc_fix": {
-                        "header": "VRChat OSC Fix",
-                        "description": "Resuming and terminating the suspended install.exe process after exiting game"
                     },
                     "auto_cache_management": {
                         "header": "Tự động quản lý cache khi đóng VRChat",
@@ -602,7 +590,9 @@
                 "edit_pronouns": "Pronouns",
                 "report_hacking": "Báo cáo Hack",
                 "unfriend": "Bỏ bạn",
-                "logout": "Đang xuất"
+                "logout": "Đang xuất",
+                "moderation_enable_chatbox": "Unmute Chatbox",
+                "moderation_disable_chatbox": "Mute Chatbox"
             },
             "info": {
                 "header": "Thông tin",
@@ -702,7 +692,9 @@
                 "content_gore": "Gore",
                 "content_violence": "Violence",
                 "content_adult": "Adult",
-                "content_sex": "Sexual"
+                "content_sex": "Sexual",
+                "focus_view_disabled": "Focus View Disabled",
+                "stickers_disabled": "Stickers Disabled"
             },
             "actions": {
                 "delete_cache_tooltip": "Xóa world khỏi cache",
@@ -1054,7 +1046,9 @@
             "content_adult": "Adult",
             "content_sex": "Sexual",
             "cancel": "Hủy",
-            "save": "Lưu"
+            "save": "Lưu",
+            "focus_view_disabled": "Disable focus view",
+            "stickers_disabled": "Disable stickers"
         },
         "set_avatar_tags": {
             "header": "Set Avatar Tags",
@@ -1266,7 +1260,8 @@
             "emoji_animation_fps": "FPS:",
             "emoji_animation_frame_count": "Frame Count:",
             "emoji_loop_pingpong": "Loop PingPong",
-            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)"
+            "flipbook_info": "Select a 1024x1024 PNG spritesheet to use as an animated emoji, available frame grid sizes: 4, 16 or 64 (max FPS 64, max frames 64)",
+            "stickers": "Stickers"
         },
         "change_content_image": {
             "avatar": "Đổi ảnh Avatar",
