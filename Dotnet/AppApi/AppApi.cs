@@ -278,16 +278,33 @@ namespace VRCX
         }
 
         /// <summary>
-        /// Restarts the VRCX application for an update by launching a new process with the "/Upgrade" argument and exiting the current process.
+        /// Restarts the VRCX application for an update by launching a new process with the upgrade argument and exiting the current process.
         /// </summary>
         public void RestartApplication()
         {
+            List<string> args = [ StartupArgs.VrcxLaunchArguements.IsUpgradePrefix ];
+
+            if (StartupArgs.LaunchArguements.IsDebug == true)
+            {
+                args.Add(StartupArgs.VrcxLaunchArguements.IsDebugPrefix);
+            }
+
+            if (!string.IsNullOrWhiteSpace(StartupArgs.LaunchArguements.ConfigDirectory))
+            {
+                args.Add($"{StartupArgs.VrcxLaunchArguements.ConfigDirectoryPrefix}={StartupArgs.LaunchArguements.ConfigDirectory}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(StartupArgs.LaunchArguements.ProxyUrl))
+            {
+                args.Add($"{StartupArgs.VrcxLaunchArguements.ProxyUrlPrefix}={StartupArgs.LaunchArguements.ProxyUrl}");
+            }
+
             var vrcxProcess = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Path.Combine(Program.BaseDirectory, "VRCX.exe"),
-                    Arguments = "/Upgrade",
+                    Arguments = string.Join(' ', args),
                     UseShellExecute = true,
                     WorkingDirectory = Program.BaseDirectory
                 }
@@ -362,8 +379,8 @@ namespace VRCX
         /// <returns>The launch command.</returns>
         public string GetLaunchCommand()
         {
-            var command = StartupArgs.LaunchCommand;
-            StartupArgs.LaunchCommand = string.Empty;
+            var command = StartupArgs.LaunchArguements.LaunchCommand;
+            StartupArgs.LaunchArguements.LaunchCommand = string.Empty;
             return command;
         }
 
