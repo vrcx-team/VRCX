@@ -455,6 +455,8 @@ namespace VRCX
             // 2021.12.12 11:47:22 Log        -  [Behaviour] OnPlayerJoined:Unnamed
             // 2021.12.12 11:53:14 Log        -  [Behaviour] OnPlayerLeftRoom
 
+            // Future logs will be formatted like this: [Behaviour] OnPlayerJoined Natsumi-sama (usr_032383a7-748c-4fb2-94e4-bcb928e5de6b)
+
             if (line.Contains("[Behaviour] OnPlayerJoined") && !line.Contains("] OnPlayerJoined:"))
             {
                 var lineOffset = line.LastIndexOf("] OnPlayerJoined");
@@ -464,14 +466,15 @@ namespace VRCX
                 if (lineOffset > line.Length)
                     return true;
 
-                var userDisplayName = line.Substring(lineOffset);
+                var userInfo = ParseUserInfo(line.Substring(lineOffset));
 
                 AppendLog(new[]
                 {
                     fileInfo.Name,
                     ConvertLogTimeToISO8601(line),
                     "player-joined",
-                    userDisplayName
+                    userInfo.DisplayName,
+                    userInfo.UserId
                 });
 
                 return true;
@@ -486,14 +489,15 @@ namespace VRCX
                 if (lineOffset > line.Length)
                     return true;
 
-                var userDisplayName = line.Substring(lineOffset);
+                var userInfo = ParseUserInfo(line.Substring(lineOffset));
 
                 AppendLog(new[]
                 {
                     fileInfo.Name,
                     ConvertLogTimeToISO8601(line),
                     "player-left",
-                    userDisplayName
+                    userInfo.DisplayName,
+                    userInfo.UserId
                 });
 
                 return true;
@@ -1283,6 +1287,26 @@ namespace VRCX
             }
 
             return new string[][] { };
+        }
+
+        private static (string DisplayName, string UserId) ParseUserInfo(string userInfo)
+        {
+            string userDisplayName;
+            string userId;
+
+            int pos = userInfo.LastIndexOf(" (");
+            if (pos >= 0)
+            {
+                userDisplayName = userInfo.Substring(0, pos);
+                userId = userInfo.Substring(pos + 2, userInfo.LastIndexOf(')') - (pos + 3));
+            }
+            else
+            {
+                userDisplayName = userInfo;
+                userId = null;
+            }
+
+            return (userDisplayName, userId);
         }
 
         private class LogContext
