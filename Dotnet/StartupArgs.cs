@@ -100,7 +100,9 @@ namespace VRCX
 
         private static bool IsDuplicateProcessRunning(VrcxLaunchArguements launchArguements)
         {
-            var processes = Process.GetProcessesByName("VRCX");
+            var processes = Process.GetProcessesByName("VRCX")
+                .Where(x => x.Id != Environment.ProcessId);
+
             foreach (var process in processes)
             {
                 var commandLine = string.Empty;
