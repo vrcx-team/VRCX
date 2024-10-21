@@ -2920,6 +2920,10 @@ speechSynthesis.getVoices();
                     break retryLoop;
                 } catch (err) {
                     console.error(err);
+                    if (!API.currentUser.isLoggedIn) {
+                        console.error(`User isn't logged in`);
+                        break mainLoop;
+                    }
                     if (err?.message?.includes('Not Found')) {
                         console.error('Awful workaround for awful VRC API bug');
                         break retryLoop;
@@ -25070,7 +25074,11 @@ speechSynthesis.getVoices();
             case -16:
                 if (this.downloadCurrent.ref.id === 'VRCXUpdate') {
                     if (this.downloadCurrent.autoInstall) {
-                        workerTimers.setTimeout(() => this.restartVRCX(), 2000);
+                        var isUpgrade = true;
+                        workerTimers.setTimeout(
+                            () => this.restartVRCX(isUpgrade),
+                            2000
+                        );
                     } else {
                         this.downloadDialog.visible = false;
                         this.pendingVRCXInstall = this.downloadCurrent.ref.name;
@@ -26202,8 +26210,8 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.restartVRCX = function () {
-        AppApi.RestartApplication();
+    $app.methods.restartVRCX = function (isUpgrade) {
+        AppApi.RestartApplication(isUpgrade);
     };
 
     $app.methods.loadBranchVersions = async function () {
@@ -34005,7 +34013,8 @@ speechSynthesis.getVoices();
                         workerTimers.setTimeout(resolve, 100);
                     });
                     if (action === 'confirm') {
-                        AppApi.RestartApplication();
+                        var isUpgrade = false;
+                        this.restartVRCX(isUpgrade);
                     }
                 }
             }

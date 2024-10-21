@@ -280,24 +280,21 @@ namespace VRCX
         /// <summary>
         /// Restarts the VRCX application for an update by launching a new process with the upgrade argument and exiting the current process.
         /// </summary>
-        public void RestartApplication()
+        public void RestartApplication(bool isUpgrade)
         {
-            List<string> args = [ StartupArgs.VrcxLaunchArguements.IsUpgradePrefix ];
+            var args = new List<string>();
+            
+            if (isUpgrade)
+                args.Add(StartupArgs.VrcxLaunchArguments.IsUpgradePrefix);
 
-            if (StartupArgs.LaunchArguements.IsDebug == true)
-            {
-                args.Add(StartupArgs.VrcxLaunchArguements.IsDebugPrefix);
-            }
+            if (StartupArgs.LaunchArguments.IsDebug)
+                args.Add(StartupArgs.VrcxLaunchArguments.IsDebugPrefix);
 
-            if (!string.IsNullOrWhiteSpace(StartupArgs.LaunchArguements.ConfigDirectory))
-            {
-                args.Add($"{StartupArgs.VrcxLaunchArguements.ConfigDirectoryPrefix}={StartupArgs.LaunchArguements.ConfigDirectory}");
-            }
+            if (!string.IsNullOrWhiteSpace(StartupArgs.LaunchArguments.ConfigDirectory))
+                args.Add($"{StartupArgs.VrcxLaunchArguments.ConfigDirectoryPrefix}={StartupArgs.LaunchArguments.ConfigDirectory}");
 
-            if (!string.IsNullOrWhiteSpace(StartupArgs.LaunchArguements.ProxyUrl))
-            {
-                args.Add($"{StartupArgs.VrcxLaunchArguements.ProxyUrlPrefix}={StartupArgs.LaunchArguements.ProxyUrl}");
-            }
+            if (!string.IsNullOrWhiteSpace(StartupArgs.LaunchArguments.ProxyUrl))
+                args.Add($"{StartupArgs.VrcxLaunchArguments.ProxyUrlPrefix}={StartupArgs.LaunchArguments.ProxyUrl}");
 
             var vrcxProcess = new Process
             {
@@ -379,8 +376,8 @@ namespace VRCX
         /// <returns>The launch command.</returns>
         public string GetLaunchCommand()
         {
-            var command = StartupArgs.LaunchArguements.LaunchCommand;
-            StartupArgs.LaunchArguements.LaunchCommand = string.Empty;
+            var command = StartupArgs.LaunchArguments.LaunchCommand;
+            StartupArgs.LaunchArguments.LaunchCommand = string.Empty;
             return command;
         }
 

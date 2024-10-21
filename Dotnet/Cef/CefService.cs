@@ -59,13 +59,14 @@ namespace VRCX
 
             if (Program.LaunchDebug)
             {
-                // it's dead fuck https://github.com/chromiumembedded/cef/issues/3740
+                // chrome://inspect/#devices
+                // Discover network targets, Configure...
+                // Add Remote Target: localhost:8089
                 logger.Info("Debug mode enabled");
                 cefSettings.RemoteDebuggingPort = 8089;
                 cefSettings.CefCommandLineArgs["remote-allow-origins"] = "*";
             }
-
-            //CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
+            
             CefSharpSettings.ShutdownOnExit = false;
             CefSharpSettings.ConcurrentTaskExecution = true;
 

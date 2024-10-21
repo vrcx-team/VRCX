@@ -59,8 +59,8 @@ namespace VRCX
 
         private void SetProxy()
         {
-            if (!string.IsNullOrEmpty(StartupArgs.LaunchArguements.ProxyUrl))
-                ProxyUrl = StartupArgs.LaunchArguements.ProxyUrl;
+            if (!string.IsNullOrEmpty(StartupArgs.LaunchArguments.ProxyUrl))
+                ProxyUrl = StartupArgs.LaunchArguments.ProxyUrl;
 
             if (string.IsNullOrEmpty(ProxyUrl))
             {
