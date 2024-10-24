@@ -1039,6 +1039,11 @@ namespace VRCX
             if (string.Compare(line, offset, "VRCApplication: OnApplicationQuit at ", 0, 37, StringComparison.Ordinal) != 0)
                 return false;
 
+            // 2024.10.23 21:18:34 Log        -  VRCApplication: HandleApplicationQuit at 936.5161
+
+            if (string.Compare(line, offset, "VRCApplication: HandleApplicationQuit at ", 0, 37, StringComparison.Ordinal) != 0)
+                return false;
+
             AppendLog(new[]
             {
                 fileInfo.Name,
