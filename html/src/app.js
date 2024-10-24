@@ -772,7 +772,7 @@ speechSynthesis.getVoices();
             canRequestInvite: false,
             strict: false
         };
-        if (_tag === 'offline') {
+        if (_tag === 'offline' || _tag === 'offline:offline') {
             ctx.isOffline = true;
         } else if (_tag === 'private') {
             ctx.isPrivate = true;
@@ -27417,6 +27417,7 @@ speechSynthesis.getVoices();
             return false;
         }
         switch (instanceId) {
+            case 'offline:offline':
             case 'offline':
             case 'private':
             case 'traveling':
@@ -27497,6 +27498,10 @@ speechSynthesis.getVoices();
         this.updateCurrentUserLocation();
 
         // janky gameLog support for Quest
+        if (this.isGameRunning) {
+            // with the current state of things, lets not run this if we don't need to
+            return;
+        }
         var lastLocation = '';
         for (var i = this.gameLogSessionTable.length - 1; i > -1; i--) {
             var item = this.gameLogSessionTable[i];

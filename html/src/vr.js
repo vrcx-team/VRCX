@@ -263,7 +263,7 @@ Vue.component('marquee-text', MarqueeText);
             canRequestInvite: false,
             strict: false
         };
-        if (_tag === 'offline') {
+        if (_tag === 'offline' || _tag === 'offline:offline') {
             ctx.isOffline = true;
         } else if (_tag === 'private') {
             ctx.isPrivate = true;
