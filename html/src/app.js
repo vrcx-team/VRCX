@@ -29246,9 +29246,37 @@ speechSynthesis.getVoices();
         }
 
         avatarIdRemoveList.forEach((id) => {
-            removeFromArray(this.localAvatarFavoritesList, id);
-            if (!this.avatarHistory.has(id)) {
-                database.removeAvatarFromCache(id);
+            // remove from cache if no longer in favorites
+            var avatarInFavorites = false;
+            loop: for (
+                var i = 0;
+                i < this.localAvatarFavoriteGroups.length;
+                ++i
+            ) {
+                var groupName = this.localAvatarFavoriteGroups[i];
+                if (
+                    !this.localAvatarFavorites[groupName] ||
+                    group === groupName
+                ) {
+                    continue loop;
+                }
+                for (
+                    var j = 0;
+                    j < this.localAvatarFavorites[groupName].length;
+                    ++j
+                ) {
+                    var avatarId = this.localAvatarFavorites[groupName][j].id;
+                    if (id === avatarId) {
+                        avatarInFavorites = true;
+                        break loop;
+                    }
+                }
+            }
+            if (!avatarInFavorites) {
+                removeFromArray(this.localAvatarFavoritesList, id);
+                if (!this.avatarHistory.has(id)) {
+                    database.removeAvatarFromCache(id);
+                }
             }
         });
     };
