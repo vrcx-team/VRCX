@@ -1035,13 +1035,9 @@ namespace VRCX
         private bool ParseApplicationQuit(FileInfo fileInfo, LogContext logContext, string line, int offset)
         {
             // 2022.06.12 01:51:46 Log        -  VRCApplication: OnApplicationQuit at 1603.499
-
-            if (string.Compare(line, offset, "VRCApplication: OnApplicationQuit at ", 0, 37, StringComparison.Ordinal) != 0)
-                return false;
-
             // 2024.10.23 21:18:34 Log        -  VRCApplication: HandleApplicationQuit at 936.5161
-
-            if (string.Compare(line, offset, "VRCApplication: HandleApplicationQuit at ", 0, 37, StringComparison.Ordinal) != 0)
+            if (string.Compare(line, offset, "VRCApplication: OnApplicationQuit at ", 0, 37, StringComparison.Ordinal) != 0 &&
+                string.Compare(line, offset, "VRCApplication: HandleApplicationQuit at ", 0, 41, StringComparison.Ordinal) != 0)
                 return false;
 
             AppendLog(new[]
@@ -1303,7 +1299,7 @@ namespace VRCX
             if (pos >= 0)
             {
                 userDisplayName = userInfo.Substring(0, pos);
-                userId = userInfo.Substring(pos + 2, userInfo.LastIndexOf(')') - (pos + 4));
+                userId = userInfo.Substring(pos + 2, userInfo.LastIndexOf(')') - (pos + 2));
             }
             else
             {
