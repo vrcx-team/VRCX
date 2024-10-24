@@ -774,9 +774,9 @@ speechSynthesis.getVoices();
         };
         if (_tag === 'offline' || _tag === 'offline:offline') {
             ctx.isOffline = true;
-        } else if (_tag === 'private') {
+        } else if (_tag === 'private' || _tag === 'private:private') {
             ctx.isPrivate = true;
-        } else if (_tag === 'traveling') {
+        } else if (_tag === 'traveling' || _tag === 'traveling:traveling') {
             ctx.isTraveling = true;
         } else if (_tag.startsWith('local') === false) {
             var sep = _tag.indexOf(':');
@@ -27417,10 +27417,12 @@ speechSynthesis.getVoices();
             return false;
         }
         switch (instanceId) {
-            case 'offline:offline':
             case 'offline':
+            case 'offline:offline':
             case 'private':
+            case 'private:private':
             case 'traveling':
+            case 'traveling:traveling':
             case instanceId.startsWith('local'):
                 return false;
         }

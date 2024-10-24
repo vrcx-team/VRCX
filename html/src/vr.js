@@ -265,9 +265,9 @@ Vue.component('marquee-text', MarqueeText);
         };
         if (_tag === 'offline' || _tag === 'offline:offline') {
             ctx.isOffline = true;
-        } else if (_tag === 'private') {
+        } else if (_tag === 'private' || _tag === 'private:private') {
             ctx.isPrivate = true;
-        } else if (_tag === 'traveling') {
+        } else if (_tag === 'traveling' || _tag === 'traveling:traveling') {
             ctx.isTraveling = true;
         } else if (_tag.startsWith('local') === false) {
             var sep = _tag.indexOf(':');
