@@ -1298,7 +1298,7 @@ namespace VRCX
             if (pos >= 0)
             {
                 userDisplayName = userInfo.Substring(0, pos);
-                userId = userInfo.Substring(pos + 2, userInfo.LastIndexOf(')') - (pos + 3));
+                userId = userInfo.Substring(pos + 2, userInfo.LastIndexOf(')') - (pos + 4));
             }
             else
             {
