@@ -100,4 +100,8 @@
   <Target Name="CefSharpAfterBuildDebug" AfterTargets="AfterBuild">
     <CallTarget Targets="CefSharpAfterBuildDiagnostic" />
   </Target>
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="$(ProjectDir)/build-tools/Topten.nvpatch.exe --enable VRCX.exe" WorkingDirectory="$(OutDir)" />
+  </Target>
 </Project>
