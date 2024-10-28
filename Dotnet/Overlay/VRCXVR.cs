@@ -241,6 +241,9 @@ namespace VRCX
                             OpenVR.Shutdown();
                             nextInit = DateTime.UtcNow.AddSeconds(10);
                             system = null;
+
+                            _wristOverlayHandle = 0;
+                            _hmdOverlayHandle = 0;
                             break;
                         }
                     }
