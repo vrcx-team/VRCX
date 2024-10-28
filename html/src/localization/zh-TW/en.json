@@ -211,7 +211,6 @@
                     "auto_update_off": "關閉",
                     "auto_update_notify": "通知",
                     "auto_update_download": "自動下載",
-                    "auto_update_install": "自動安裝",
                     "change_log": "更新日誌"
                 },
                 "application": {

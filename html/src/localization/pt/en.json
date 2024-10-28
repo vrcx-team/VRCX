@@ -211,7 +211,6 @@
                     "auto_update_off": "Desligado",
                     "auto_update_notify": "Notificar",
                     "auto_update_download": "Transferência Automática",
-                    "auto_update_install": "Instalar automaticamente",
                     "change_log": "Registro de Alterações"
                 },
                 "application": {

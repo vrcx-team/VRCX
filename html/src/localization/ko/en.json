@@ -211,7 +211,6 @@
                     "auto_update_off": "끄기",
                     "auto_update_notify": "알림",
                     "auto_update_download": "자동 다운로드",
-                    "auto_update_install": "자동 설치",
                     "change_log": "변경사항"
                 },
                 "application": {

@@ -211,7 +211,6 @@
                     "auto_update_off": "Tắt",
                     "auto_update_notify": "Thông báo",
                     "auto_update_download": "Tự động tải về",
-                    "auto_update_install": "Tự động cài đặt",
                     "change_log": "Thông tin về thay đổi (log)"
                 },
                 "application": {

@@ -211,7 +211,6 @@
                     "auto_update_off": "Off",
                     "auto_update_notify": "Notify",
                     "auto_update_download": "Auto Download",
-                    "auto_update_install": "Auto Install",
                     "change_log": "Change Log"
                 },
                 "application": {

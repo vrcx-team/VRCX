@@ -211,7 +211,6 @@
                     "auto_update_off": "Désactivé",
                     "auto_update_notify": "Me demander",
                     "auto_update_download": "Téléchargement automatique",
-                    "auto_update_install": "Installation automatique",
                     "change_log": "Journal des modifications"
                 },
                 "application": {

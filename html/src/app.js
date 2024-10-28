@@ -15729,6 +15729,9 @@ speechSynthesis.getVoices();
         'VRCX_autoUpdateVRCX',
         'Auto Download'
     );
+    if ($app.data.autoUpdateVRCX === 'Auto Install') {
+        $app.data.autoUpdateVRCX = 'Auto Download';
+    }
     $app.data.branch = await configRepository.getString(
         'VRCX_branch',
         'Stable'
@@ -25148,17 +25151,9 @@ speechSynthesis.getVoices();
                 return;
             case -16:
                 if (this.downloadCurrent.ref.id === 'VRCXUpdate') {
-                    if (this.downloadCurrent.autoInstall) {
-                        var isUpgrade = true;
-                        workerTimers.setTimeout(
-                            () => this.restartVRCX(isUpgrade),
-                            2000
-                        );
-                    } else {
-                        this.downloadDialog.visible = false;
-                        this.pendingVRCXInstall = this.downloadCurrent.ref.name;
-                        this.showVRCXUpdateDialog();
-                    }
+                    this.downloadDialog.visible = false;
+                    this.pendingVRCXInstall = this.downloadCurrent.ref.name;
+                    this.showVRCXUpdateDialog();
                 }
                 this.downloadFileComplete('Success');
                 return;
@@ -26222,8 +26217,7 @@ speechSynthesis.getVoices();
         updateHashUrl,
         size,
         name,
-        type,
-        autoInstall
+        type
     ) {
         var ref = {
             id: 'VRCXUpdate',
@@ -26234,8 +26228,7 @@ speechSynthesis.getVoices();
             type,
             updateSetupUrl,
             updateHashUrl,
-            size,
-            autoInstall
+            size
         });
         this.downloadQueueTable.data = Array.from(this.downloadQueue.values());
         if (!this.downloadInProgress) {
@@ -26274,15 +26267,7 @@ speechSynthesis.getVoices();
                 }
                 var name = release.name;
                 var type = 'Manual';
-                var autoInstall = false;
-                this.downloadVRCXUpdate(
-                    downloadUrl,
-                    hashUrl,
-                    size,
-                    name,
-                    type,
-                    autoInstall
-                );
+                this.downloadVRCXUpdate(downloadUrl, hashUrl, size, name, type);
                 this.VRCXUpdateDialog.visible = false;
                 this.showDownloadDialog();
             }
@@ -26425,24 +26410,12 @@ speechSynthesis.getVoices();
                 } else if (this.autoUpdateVRCX === 'Notify') {
                     // this.showVRCXUpdateDialog();
                 } else if (this.autoUpdateVRCX === 'Auto Download') {
-                    var autoInstall = false;
                     this.downloadVRCXUpdate(
                         downloadUrl,
                         hashUrl,
                         size,
                         name,
-                        type,
-                        autoInstall
-                    );
-                } else if (this.autoUpdateVRCX === 'Auto Install') {
-                    var autoInstall = true;
-                    this.downloadVRCXUpdate(
-                        downloadUrl,
-                        hashUrl,
-                        size,
-                        name,
-                        type,
-                        autoInstall
+                        type
                     );
                 }
             }

@@ -211,7 +211,6 @@
                     "auto_update_off": "Выкл",
                     "auto_update_notify": "Оповестить",
                     "auto_update_download": "Автозагрузка",
-                    "auto_update_install": "Автоустановка",
                     "change_log": "Список изменений"
                 },
                 "application": {
