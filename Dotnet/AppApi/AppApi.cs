@@ -356,18 +356,18 @@ namespace VRCX
 
         public void ExecuteVrFeedFunction(string function, string json)
         {
-            if (VRCXVR._browser1 == null) return;
-            if (VRCXVR._browser1.IsLoading)
+            if (VRCXVR._wristOverlay == null) return;
+            if (VRCXVR._wristOverlay.IsLoading)
                 VRCXVR.Instance.Restart();
-            VRCXVR._browser1.ExecuteScriptAsync($"$app.{function}", json);
+            VRCXVR._wristOverlay.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         public void ExecuteVrOverlayFunction(string function, string json)
         {
-            if (VRCXVR._browser2 == null) return;
-            if (VRCXVR._browser2.IsLoading)
+            if (VRCXVR._hmdOverlay == null) return;
+            if (VRCXVR._hmdOverlay.IsLoading)
                 VRCXVR.Instance.Restart();
-            VRCXVR._browser2.ExecuteScriptAsync($"$app.{function}", json);
+            VRCXVR._hmdOverlay.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         /// <summary>
