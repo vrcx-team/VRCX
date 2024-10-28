@@ -12,6 +12,7 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Management;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace VRCX
@@ -50,6 +51,7 @@ namespace VRCX
             if (!disableClosing && IsDuplicateProcessRunning(LaunchArguments))
             {
                 IPCToMain();
+                Thread.Sleep(10);
                 Environment.Exit(0);
             }
         }
@@ -97,13 +99,13 @@ namespace VRCX
 
         private static bool IsDuplicateProcessRunning(VrcxLaunchArguments launchArguments)
         {
-            var processes = Process.GetProcessesByName("VRCX")
-                .Where(x => x.Id != Environment.ProcessId);
-
+            var processes = Process.GetProcessesByName("VRCX");
             foreach (var process in processes)
             {
+                if (process.Id == Environment.ProcessId)
+                    continue;
+                
                 var commandLine = string.Empty;
-
                 try
                 {
                     using var searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + process.Id);

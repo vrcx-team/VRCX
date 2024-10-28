@@ -2983,6 +2983,10 @@ speechSynthesis.getVoices();
                     break retryLoop;
                 } catch (err) {
                     console.error(err);
+                    if (!API.currentUser.isLoggedIn) {
+                        console.error(`User isn't logged in`);
+                        break mainLoop;
+                    }
                     if (err?.message?.includes('Not Found')) {
                         console.error('Awful workaround for awful VRC API bug');
                         break retryLoop;
@@ -25534,6 +25538,10 @@ speechSynthesis.getVoices();
             remainingGroups: []
         };
         var args = await API.getGroups({ userId });
+        if (userId !== this.userDialog.id) {
+            this.userDialog.isGroupsLoading = false;
+            return;
+        }
         if (userId === API.currentUser.id) {
             // update current user groups
             API.currentUserGroups.clear();
@@ -33125,8 +33133,10 @@ speechSynthesis.getVoices();
         D.selectedAuditLogTypes = [];
         API.getCachedGroup({ groupId }).then((args) => {
             D.groupRef = args.ref;
+            if (this.hasGroupPermission(D.groupRef, 'group-audit-view')) {
+                API.getGroupAuditLogTypes({ groupId });
+            }
         });
-        API.getGroupAuditLogTypes({ groupId });
         this.groupMemberModerationTableForceUpdate = 0;
         D.visible = true;
         this.setGroupMemberModerationTable(this.groupDialog.members);
