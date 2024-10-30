@@ -27,7 +27,7 @@ import * as localizedStrings from './localization/localizedStrings.js';
 import removeConfusables, {
     removeWhitespace
 } from './libsAndLolisAndSugoiLibs/confusables.js';
-import _utils from './classes/utils.js';
+import $utils from './classes/utils.js';
 import _apiInit from './classes/apiInit.js';
 import _apiRequestHandler from './classes/apiRequestHandler.js';
 import _vrcxJsonStorage from './classes/vrcxJsonStorage.js';
@@ -90,7 +90,6 @@ speechSynthesis.getVoices();
     // everything in this program is global stored in $app, I hate it, it is what it is
     let $app = {};
     const API = new _apiInit($app);
-    const $utils = new _utils().$utils;
     const vrcxJsonStorage = new _vrcxJsonStorage(VRCXStorage);
 
     let vrcxClasses = {
@@ -17501,6 +17500,7 @@ speechSynthesis.getVoices();
             if (
                 !API.cachedFavoritesByObjectId.has(id) &&
                 ref.authorId !== API.currentUser.id &&
+                !this.localAvatarFavoritesList.includes(id) &&
                 !$app.avatarHistory.has(id)
             ) {
                 API.cachedAvatars.delete(id);
