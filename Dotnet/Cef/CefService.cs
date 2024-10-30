@@ -51,6 +51,7 @@ namespace VRCX
             cefSettings.CefCommandLineArgs.Add("disable-pdf-extension");
             cefSettings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
             cefSettings.CefCommandLineArgs.Add("disable-web-security");
+            cefSettings.CefCommandLineArgs.Add("disk-cache-size", "2147483647");
 
             if (WebApi.ProxySet)
             {
