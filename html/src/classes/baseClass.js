@@ -1,5 +1,4 @@
-import _utils from './utils';
-let $utils = new _utils().$utils;
+import $utils from './utils';
 /* eslint-disable no-unused-vars */
 let $app = {};
 let API = {};

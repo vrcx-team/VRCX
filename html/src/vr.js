@@ -16,12 +16,11 @@ import * as workerTimers from 'worker-timers';
 import MarqueeText from 'vue-marquee-text-component';
 import * as localizedStrings from './localization/localizedStrings.js';
 
-import _utils from './classes/utils.js';
+import $utils from './classes/utils.js';
 
 Vue.component('marquee-text', MarqueeText);
 
 (async function () {
-    const $utils = new _utils().$utils;
     let $app = {};
 
     await CefSharp.BindObjectAsync('AppApiVr');
