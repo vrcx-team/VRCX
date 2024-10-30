@@ -1770,7 +1770,7 @@ html
                         span {{ $t('dialog.vrcx_updater.latest_version') }}
                 template(#footer)
                     el-button(v-if="(VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release !== pendingVRCXInstall) || VRCXUpdateDialog.release !== appVersion" type="primary" size="small" @click="installVRCXUpdate") {{ $t('dialog.vrcx_updater.download') }}
-                    el-button(v-if="VRCXUpdateDialog.updatePending" type="primary" size="small" @click="restartVRCX") {{ $t('dialog.vrcx_updater.install') }}
+                    el-button(v-if="VRCXUpdateDialog.updatePending" type="primary" size="small" @click="restartVRCX(true)") {{ $t('dialog.vrcx_updater.install') }}
 
             //- dialog: launch
             el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchDialog" :visible.sync="launchDialog.visible" :title="$t('dialog.launch.header')" width="450px")

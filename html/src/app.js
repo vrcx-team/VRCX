@@ -1554,7 +1554,7 @@ speechSynthesis.getVoices();
             console.error('API.$on(USER) invalid args', args);
             return;
         }
-        $app.queueUpdateFriend({ id: args.json.id, state: args.json.state });
+        $app.updateFriend({ id: args.json.id, state: args.json.state });
         args.ref = this.applyUser(args.json);
     });
 
@@ -2888,12 +2888,45 @@ speechSynthesis.getVoices();
                     userId: json.id
                 }
             });
-            if (json.location === 'traveling') {
+
+            var state = 'offline';
+            if (json.platform === 'web') {
+                state = 'active';
+            } else if (json.platform) {
+                state = 'online';
+            }
+            var ref = $app.friends.get(json.id);
+            if (ref?.state !== state) {
+                if ($app.debugFriendState) {
+                    console.log(
+                        `Bulk friend fetch, friend state does not match ${json.displayName} from ${ref?.state} to ${state}`
+                    );
+                }
                 this.getUser({
                     userId: json.id
                 });
-                // console.log('Fetching traveling user', json.id);
-            } // ?? hmm
+            } else if (json.location === 'traveling') {
+                if ($app.debugFriendState) {
+                    console.log(
+                        'Bulk friend fetch, fetching traveling user',
+                        json
+                    );
+                }
+                this.getUser({
+                    userId: json.id
+                });
+            }
+
+            // if (
+            //     !args.params.offline &&
+            //     json.platform !== 'web' &&
+            //     json.location === 'offline'
+            // ) {
+            //     console.log('Fetching offline user', json);
+            //     this.getUser({
+            //         userId: json.id
+            //     });
+            // }
         }
     });
 
@@ -5111,15 +5144,16 @@ speechSynthesis.getVoices();
                             userId: content.userId
                         }
                     });
+                } else {
+                    this.$emit('FRIEND:STATE', {
+                        json: {
+                            state: 'online'
+                        },
+                        params: {
+                            userId: content.userId
+                        }
+                    });
                 }
-                this.$emit('FRIEND:STATE', {
-                    json: {
-                        state: 'online'
-                    },
-                    params: {
-                        userId: content.userId
-                    }
-                });
                 break;
 
             case 'friend-active':
@@ -5133,15 +5167,16 @@ speechSynthesis.getVoices();
                             userId: content.userId
                         }
                     });
+                } else {
+                    this.$emit('FRIEND:STATE', {
+                        json: {
+                            state: 'active'
+                        },
+                        params: {
+                            userId: content.userId
+                        }
+                    });
                 }
-                this.$emit('FRIEND:STATE', {
-                    json: {
-                        state: 'active'
-                    },
-                    params: {
-                        userId: content.userId
-                    }
-                });
                 break;
 
             case 'friend-offline':
@@ -5185,8 +5220,8 @@ speechSynthesis.getVoices();
                     json: {
                         location: content.location,
                         travelingToLocation: content.travelingToLocation,
-                        ...content.user,
-                        state: 'online'
+                        ...content.user
+                        // state: 'online'
                     },
                     params: {
                         userId: content.userId
@@ -9196,18 +9231,18 @@ speechSynthesis.getVoices();
     });
 
     API.$on('FRIEND:STATE', function (args) {
-        $app.queueUpdateFriend({
+        $app.updateFriend({
             id: args.params.userId,
             state: args.json.state
         });
     });
 
     API.$on('FAVORITE', function (args) {
-        $app.queueUpdateFriend({ id: args.ref.favoriteId });
+        $app.updateFriend({ id: args.ref.favoriteId });
     });
 
     API.$on('FAVORITE:@DELETE', function (args) {
-        $app.queueUpdateFriend({ id: args.ref.favoriteId });
+        $app.updateFriend({ id: args.ref.favoriteId });
     });
 
     API.$on('LOGIN', function () {
@@ -9243,7 +9278,7 @@ speechSynthesis.getVoices();
         }
         for (var [id, state] of map) {
             if (this.friends.has(id)) {
-                this.queueUpdateFriend({ id, state, origin });
+                this.updateFriend({ id, state, origin });
             } else {
                 this.addFriend(id, state);
             }
@@ -9363,28 +9398,6 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.data.updateFriendQueue = [];
-    $app.data.updateFriendTimer = null;
-
-    $app.methods.queueUpdateFriend = function (ctx) {
-        this.updateFriendQueue.push(ctx);
-        if (this.updateFriendTimer !== null) {
-            return;
-        }
-        this.updateFriendTimer = workerTimers.setTimeout(() => {
-            var queue = [...this.updateFriendQueue];
-            this.updateFriendQueue = [];
-            this.updateFriendTimer = null;
-            for (var i = 0; i < queue.length; ++i) {
-                try {
-                    this.updateFriend(queue[i]);
-                } catch (err) {
-                    console.error(err);
-                }
-            }
-        }, 5);
-    };
-
     $app.data.updateFriendInProgress = new Map();
 
     $app.methods.updateFriend = function (ctx) {
@@ -9392,24 +9405,6 @@ speechSynthesis.getVoices();
         var stateInput = state;
         var ctx = this.friends.get(id);
         if (typeof ctx === 'undefined') {
-            return;
-        }
-        var lastOnlineDate = this.APILastOnline.get(id);
-        if (
-            stateInput &&
-            ctx.state !== stateInput &&
-            lastOnlineDate &&
-            lastOnlineDate > Date.now() - 1000
-        ) {
-            // crappy double online fix
-            if (this.debugFriendState) {
-                console.log(
-                    ctx.name,
-                    new Date().toJSON(),
-                    'userAlreadyOnline',
-                    stateInput
-                );
-            }
             return;
         }
         if (stateInput === 'online') {
@@ -9500,7 +9495,8 @@ speechSynthesis.getVoices();
                         ctx.name,
                         new Date().toJSON(),
                         'pendingOfflineCheck',
-                        stateInput
+                        stateInput,
+                        ctx.state
                     );
                 }
                 return;
@@ -9538,35 +9534,28 @@ speechSynthesis.getVoices();
     $app.methods.updateFriendDelayedCheck = async function (
         id,
         ctx,
-        stateInput,
+        newState,
         location,
         $location_at
     ) {
         var date = this.APILastOnline.get(id);
         if (
             ctx.state === 'online' &&
-            (stateInput === 'active' || stateInput === 'offline') &&
+            (newState === 'active' || newState === 'offline') &&
             date &&
             date > Date.now() - 120000
         ) {
             if (this.debugFriendState) {
                 console.log(
-                    `falsePositiveOffline ${ctx.name} currentState:${ctx.ref.state} expectedState:${stateInput}`
+                    `falsePositiveOffline ${ctx.name} currentState:${ctx.ref.state} expectedState:${newState}`
                 );
             }
             return;
         }
         if (this.debugFriendState) {
-            console.log(
-                ctx.name,
-                new Date().toJSON(),
-                'updateFriendState',
-                stateInput,
-                ctx.ref.state
-            );
+            console.log(ctx.name, 'updateFriendState', newState, ctx.state);
         }
         var isVIP = this.localFavoriteFriends.has(id);
-        var newState = stateInput;
         var ref = ctx.ref;
         if (ctx.state !== newState && typeof ctx.ref !== 'undefined') {
             if (
@@ -9654,6 +9643,7 @@ speechSynthesis.getVoices();
             this.updateOnlineFriendCoutner();
         }
         ctx.state = newState;
+        ctx.ref.state = newState;
         ctx.name = ref.displayName;
         ctx.isVIP = isVIP;
     };
@@ -10761,7 +10751,7 @@ speechSynthesis.getVoices();
             $app.addFeed(feed);
             database.addStatusToDatabase(feed);
         }
-        if (props.bio) {
+        if (props.bio && props.bio[0] && props.bio[1]) {
             var bio = '';
             var previousBio = '';
             if (props.bio[0]) {

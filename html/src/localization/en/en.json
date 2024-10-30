@@ -216,8 +216,8 @@
                 "application": {
                     "header": "Application",
                     "startup": "Start at Windows startup",
-                    "minimized": "Start as minimized state",
-                    "tray": "Close to tray",
+                    "minimized": "Start minimized",
+                    "tray": "Minimize to tray when closing",
                     "proxy": "Proxy settings"
                 },
                 "favorites": {
