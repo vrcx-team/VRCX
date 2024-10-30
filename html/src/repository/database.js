@@ -186,7 +186,7 @@ class Database {
 
     // memos
 
-    async getMemo(userId) {
+    async getUserMemo(userId) {
         var row = {};
         await sqliteService.execute(
             (dbRow) => {
@@ -204,7 +204,7 @@ class Database {
         return row;
     }
 
-    async getAllMemos() {
+    async getAllUserMemos() {
         var memos = [];
         await sqliteService.execute((dbRow) => {
             var row = {
@@ -216,7 +216,7 @@ class Database {
         return memos;
     }
 
-    setMemo(entry) {
+    setUserMemo(entry) {
         sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO memos (user_id, edited_at, memo) VALUES (@user_id, @edited_at, @memo)`,
             {
@@ -227,7 +227,7 @@ class Database {
         );
     }
 
-    deleteMemo(userId) {
+    deleteUserMemo(userId) {
         sqliteService.executeNonQuery(
             `DELETE FROM memos WHERE user_id = @user_id`,
             {

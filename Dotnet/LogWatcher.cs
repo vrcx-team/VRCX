@@ -603,15 +603,15 @@ namespace VRCX
                 var data = line.Substring(offset + 24);
                 if (data == logContext.LastVideoError)
                     return true;
-            logContext.LastVideoError = data;
+                logContext.LastVideoError = data;
 
-            AppendLog(new[]
-            {
-                fileInfo.Name,
-                ConvertLogTimeToISO8601(line),
-                "event",
-                "VideoError: " + data
-            });
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "event",
+                    "VideoError: " + data
+                });
 
                 return true;
             }
@@ -1015,6 +1015,19 @@ namespace VRCX
         {
             // 2022.11.29 04:27:33 Error      -  [UdonBehaviour] An exception occurred during Udon execution, this UdonBehaviour will be halted.
             // VRC.Udon.VM.UdonVMException: An exception occurred in an UdonVM, execution will be halted. --->VRC.Udon.VM.UdonVMException: An exception occurred during EXTERN to 'VRCSDKBaseVRCPlayerApi.__get_displayName__SystemString'. --->System.NullReferenceException: Object reference not set to an instance of an object.
+            
+            if (line.Contains("[PyPyDance]"))
+            {
+                AppendLog(new[]
+                {
+                    fileInfo.Name,
+                    ConvertLogTimeToISO8601(line),
+                    "udon-exception",
+                    line
+                });
+                return true;
+            }
+            
             var lineOffset = line.IndexOf(" ---> VRC.Udon.VM.UdonVMException: ");
             if (lineOffset < 0)
                 return false;
@@ -1193,7 +1206,7 @@ namespace VRCX
                 fileInfo.Name,
                 ConvertLogTimeToISO8601(line),
                 "event",
-                $"VRChat couldn't start OSC server, you may be affected by (https://vrchat.canny.io/bug-reports/p/installexe-breaks-osc-port-binding) \"{line.Substring(offset)}\""
+                $"VRChat couldn't start OSC server, \"{line.Substring(offset)}\""
             });
             return true;
         }

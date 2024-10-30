@@ -1,0 +1,67 @@
+mixin tags()
+    //- dialog: Set World Tags
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="setWorldTagsDialog" :visible.sync="setWorldTagsDialog.visible" :title="$t('dialog.set_world_tags.header')" width="400px")
+        el-checkbox(v-model="setWorldTagsDialog.avatarScalingDisabled") {{ $t('dialog.set_world_tags.avatar_scaling_disabled') }}
+        br
+        el-checkbox(v-model="setWorldTagsDialog.focusViewDisabled") {{ $t('dialog.set_world_tags.focus_view_disabled') }}
+        br
+        el-checkbox(v-model="setWorldTagsDialog.stickersDisabled") {{ $t('dialog.set_world_tags.stickers_disabled') }}
+        br
+        el-checkbox(v-model="setWorldTagsDialog.debugAllowed") {{ $t('dialog.set_world_tags.enable_debugging') }}
+        div(style='font-size:12px;margin-top:10px')
+            | {{ $t('dialog.set_world_tags.author_tags') }} #[br]
+        el-input(type="textarea" v-model="setWorldTagsDialog.authorTags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+        div(style='font-size:12px;margin-top:10px')
+            | {{ $t('dialog.set_world_tags.content_tags') }} #[br]
+        el-checkbox(v-model="setWorldTagsDialog.contentHorror") {{ $t('dialog.set_world_tags.content_horror') }}
+        br
+        el-checkbox(v-model="setWorldTagsDialog.contentGore") {{ $t('dialog.set_world_tags.content_gore') }}
+        br
+        el-checkbox(v-model="setWorldTagsDialog.contentViolence") {{ $t('dialog.set_world_tags.content_violence') }}
+        br
+        el-checkbox(v-model="setWorldTagsDialog.contentAdult") {{ $t('dialog.set_world_tags.content_adult') }}
+        br
+        el-checkbox(v-model="setWorldTagsDialog.contentSex") {{ $t('dialog.set_world_tags.content_sex') }}
+        //- el-input(type="textarea" v-model="setWorldTagsDialog.contentTags" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+        template(#footer)
+            div(style="display:flex")
+                el-button(size="small" @click="setWorldTagsDialog.visible = false") {{ $t('dialog.set_world_tags.cancel') }}
+                el-button(type="primary" size="small" @click="saveSetWorldTagsDialog") {{ $t('dialog.set_world_tags.save') }}
+
+    //- dialog: Set Avatar Tags
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="setAvatarTagsDialog" :visible.sync="setAvatarTagsDialog.visible" :title="$t('dialog.set_avatar_tags.header')" width="770px")
+        template(v-if="setAvatarTagsDialog.visible")
+            el-checkbox(v-model="setAvatarTagsDialog.contentHorror" @change="updateSelectedAvatarTags") {{ $t('dialog.set_avatar_tags.content_horror') }}
+            br
+            el-checkbox(v-model="setAvatarTagsDialog.contentGore" @change="updateSelectedAvatarTags") {{ $t('dialog.set_avatar_tags.content_gore') }}
+            br
+            el-checkbox(v-model="setAvatarTagsDialog.contentViolence" @change="updateSelectedAvatarTags") {{ $t('dialog.set_avatar_tags.content_violence') }}
+            br
+            el-checkbox(v-model="setAvatarTagsDialog.contentAdult" @change="updateSelectedAvatarTags") {{ $t('dialog.set_avatar_tags.content_adult') }}
+            br
+            el-checkbox(v-model="setAvatarTagsDialog.contentSex" @change="updateSelectedAvatarTags") {{ $t('dialog.set_avatar_tags.content_sex') }}
+            br
+            el-input(v-model="setAvatarTagsDialog.selectedTagsCsv" @input="updateInputAvatarTags" size="mini" :autosize="{ minRows:2, maxRows:5 }" :placeholder="$t('dialog.set_avatar_tags.custom_tags_placeholder')" style="margin-top:10px")
+            template(v-if="setAvatarTagsDialog.ownAvatars.length === setAvatarTagsDialog.selectedCount")
+                el-button(size="small" @click="setAvatarTagsSelectToggle") {{ $t('dialog.set_avatar_tags.select_none') }}
+            template(v-else)
+                el-button(size="small" @click="setAvatarTagsSelectToggle") {{ $t('dialog.set_avatar_tags.select_all') }}
+            span(style="margin-left:5px") {{ setAvatarTagsDialog.selectedCount }} / {{ setAvatarTagsDialog.ownAvatars.length }}
+            span(v-if="setAvatarTagsDialog.loading" style="margin-left:5px")
+                i.el-icon-loading
+            br
+            .x-friend-list(style="margin-top:10px;min-height:60px;max-height:280px")
+                .x-friend-item(v-for="avatar in setAvatarTagsDialog.ownAvatars" :key="setAvatarTagsDialog.forceUpdate" @click="showAvatarDialog(avatar.id)" class="x-friend-item-border" style="width:350px")
+                    .avatar
+                        img(v-if="avatar.thumbnailImageUrl" v-lazy="avatar.thumbnailImageUrl")
+                    .detail
+                        span.name(v-text="avatar.name")
+                        span.extra(v-text="avatar.releaseStatus" v-if="avatar.releaseStatus === 'public'" style="color: #67c23a;")
+                        span.extra(v-text="avatar.releaseStatus" v-else-if="avatar.releaseStatus === 'private'" style="color: #f56c6c;")
+                        span.extra(v-text="avatar.releaseStatus" v-else)
+                        span.extra(v-text="avatar.$tagString")
+                    el-button(type="text" size="mini" @click.stop style="margin-left:5px")
+                        el-checkbox(v-model="avatar.$selected" @change="updateAvatarTagsSelection")
+        template(#footer)
+            el-button(size="small" @click="setAvatarTagsDialog.visible = false") {{ $t('dialog.set_avatar_tags.cancel') }}
+            el-button(type="primary" size="small" @click="saveSetAvatarTagsDialog") {{ $t('dialog.set_avatar_tags.save') }}

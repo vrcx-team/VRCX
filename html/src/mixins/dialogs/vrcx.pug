@@ -1,0 +1,57 @@
+mixin vrcx()
+    //- dialog: Cache Download
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="downloadDialog" :visible.sync="downloadDialog.visible" :title="$t('dialog.download_history.header')" width="770px")
+        template(v-if="downloadDialog.visible")
+            div(v-if="downloadInProgress && downloadCurrent.ref")
+                span(v-text="downloadCurrent.ref.name")
+                el-button(type="text" icon="el-icon-close" size="mini" @click="cancelDownload(downloadCurrent.id)" style="margin-left:5px")
+                el-progress(:percentage="downloadProgress" :format="downloadProgressText")
+            template(v-if="downloadQueueTable.data.length >= 1")
+                span(style="margin-top:15px") {{ $t('dialog.download_history.queue') }}
+                data-tables(v-bind="downloadQueueTable" style="margin-top:10px")
+                    el-table-column(:label="$t('table.download_history.name')" prop="name")
+                    el-table-column(:label="$t('table.download_history.type')" prop="type" width="70")
+                    el-table-column(:label="$t('table.download_history.cancel')" width="60" align="right")
+                        template(v-once #default="scope")
+                            el-button(type="text" icon="el-icon-close" size="mini" @click="cancelDownload(scope.row.ref.id)")
+            span(style="margin-top:15px") {{ $t('dialog.download_history.history') }}
+            data-tables(v-bind="downloadHistoryTable" style="margin-top:10px")
+                el-table-column(:label="$t('table.download_history.time')" prop="date" width="90")
+                    template(v-once #default="scope")
+                        timer(:epoch="scope.row.date")
+                el-table-column(:label="$t('table.download_history.name')" prop="name")
+                    template(v-once #default="scope")
+                        span(v-text="scope.row.ref.name")
+                el-table-column(:label="$t('table.download_history.type')" prop="type" width="70")
+                el-table-column(:label="$t('table.download_history.status')" prop="status" width="80")
+        template(#footer)
+            el-button(v-if="downloadQueue.size >= 1" size="small" @click="cancelAllDownloads") {{ $t('dialog.download_history.cancel_all') }}
+            el-button(size="small" @click="downloadDialog.visible = false") {{ $t('dialog.download_history.close') }}
+
+    //- dialog: update VRCX
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="VRCXUpdateDialog" :visible.sync="VRCXUpdateDialog.visible" :title="$t('dialog.vrcx_updater.header')" width="400px")
+        div(v-loading="checkingForVRCXUpdate" style="margin-top:15px")
+            div(v-if="VRCXUpdateDialog.updatePending" style="margin-bottom:15px")
+                span(v-text="pendingVRCXInstall")
+                br
+                span {{ $t('dialog.vrcx_updater.ready_for_update') }}
+            el-select(v-model="branch" @change="loadBranchVersions" style="display:inline-block;width:150px;margin-right:15px")
+                el-option(v-once v-for="branch in branches" :key="branch.name" :label="branch.name" :value="branch.name")
+            el-select(v-model="VRCXUpdateDialog.release" style="display:inline-block;width:150px")
+                el-option(v-for="item in VRCXUpdateDialog.releases" :key="item.name" :label="item.tag_name" :value="item.name")
+            div(v-if="!VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release === appVersion" style="margin-top:15px")
+                span {{ $t('dialog.vrcx_updater.latest_version') }}
+        template(#footer)
+            el-button(v-if="(VRCXUpdateDialog.updatePending && VRCXUpdateDialog.release !== pendingVRCXInstall) || VRCXUpdateDialog.release !== appVersion" type="primary" size="small" @click="installVRCXUpdate") {{ $t('dialog.vrcx_updater.download') }}
+            el-button(v-if="VRCXUpdateDialog.updatePending" type="primary" size="small" @click="restartVRCX(true)") {{ $t('dialog.vrcx_updater.install') }}
+
+    //- dialog: change log
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="changeLogDialog" :visible.sync="changeLogDialog.visible" :title="$t('dialog.change_log.header')" width="800px")
+        .changelog-dialog(v-if="changeLogDialog.visible")
+            h2(v-text="changeLogDialog.buildName")
+            span {{ $t('dialog.change_log.description') }} #[a.x-link(@click="openExternalLink('https://www.patreon.com/Natsumi_VRCX')") Patreon], #[a.x-link(@click="openExternalLink('https://ko-fi.com/natsumi_sama')") Ko-fi].
+            vue-markdown(:source="changeLogDialog.changeLog" :linkify="false")
+        template(#footer)
+            el-button(type="small" @click="openExternalLink('https://github.com/vrcx-team/VRCX/releases')") {{ $t('dialog.change_log.github') }}
+            el-button(type="small" @click="openExternalLink('https://patreon.com/Natsumi_VRCX')") {{ $t('dialog.change_log.donate') }}
+            el-button(type="small" @click="changeLogDialog.visible = false") {{ $t('dialog.change_log.close') }}
