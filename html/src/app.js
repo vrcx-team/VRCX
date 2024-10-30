@@ -27599,7 +27599,6 @@ speechSynthesis.getVoices();
                 await database.fixBrokenGroupChange(); // fix spam group left & name change
                 await database.fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
                 await database.vacuum(); // succ
-                await database.setWal(); // https://www.sqlite.org/wal.html
                 await configRepository.setInt(
                     'VRCX_databaseVersion',
                     databaseVersion

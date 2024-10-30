@@ -2620,10 +2620,6 @@ class Database {
         await sqliteService.executeNonQuery('VACUUM');
     }
 
-    async setWal() {
-        await sqliteService.executeNonQuery('PRAGMA journal_mode=WAL');
-    }
-
     async getInstanceJoinHistory() {
         var oneWeekAgo = new Date(Date.now() - 604800000).toJSON();
         var instances = new Map();
