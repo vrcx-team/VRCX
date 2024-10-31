@@ -207,7 +207,7 @@
                 "vrcx_updater": {
                     "header": "VRCX Updater",
                     "change_build": "Change build",
-                    "auto_update": "Auto update",
+                    "update_action": "Update action",
                     "auto_update_off": "Off",
                     "auto_update_notify": "Notify",
                     "auto_update_download": "Auto Download",
@@ -443,7 +443,7 @@
                     },
                     "screenshot_helper": {
                         "header": "Screenshot Helper",
-                        "description": "Will store the world ID, world name and players in instance inside the file metadata of any pictures you take in-game.",
+                        "description": "Store world ID, world name and players inside the instance inside the file metadata of any pictures you take in-game.",
                         "description_tooltip": "Unfortunately, windows doesn't support viewing PNG text chunks(few things do) natively, but you can view it using a command-line tool like exiftool, a png chunk inspector, or a hex editor.",
                         "enable": "Enable",
                         "modify_filename": "Modify Filename",

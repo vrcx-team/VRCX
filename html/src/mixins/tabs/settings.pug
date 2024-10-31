@@ -73,7 +73,7 @@ mixin settingsTab()
                     div.options-container-item
                         el-button(size="small" icon="el-icon-document" @click="showChangeLogDialog()") {{ $t("view.settings.general.vrcx_updater.change_log") }}
                         el-button(size="small" icon="el-icon-upload" @click="showVRCXUpdateDialog()") {{ $t("view.settings.general.vrcx_updater.change_build") }}
-                    +simpleRadioGroup("view.settings.general.vrcx_updater.auto_update", "autoUpdateVRCX", [
+                    +simpleRadioGroup("view.settings.general.vrcx_updater.update_action", "autoUpdateVRCX", [
                         { label: "Off", translationKey: "view.settings.general.vrcx_updater.auto_update_off" },
                         { label: "Notify", translationKey: "view.settings.general.vrcx_updater.auto_update_notify" },
                         { label: "Auto Download", translationKey: "view.settings.general.vrcx_updater.auto_update_download" },
@@ -446,7 +446,7 @@ mixin settingsTab()
                     span.sub-header {{ $t('view.settings.advanced.advanced.primary_password.header') }}
                     div.options-container-item
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.primary_password.description') }}
-                        el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange" :disabled="!loginForm.savedCredentials[API.currentUser.id]")
+                        el-switch(v-model="enablePrimaryPassword" @change="enablePrimaryPasswordChange" :disabled="!enablePrimaryPassword")
                     span.sub-header {{ $t('view.settings.advanced.advanced.relaunch_vrchat.header') }}
                     //- Advanced | Relaunch VRChat After Crash
                     div.options-container-item

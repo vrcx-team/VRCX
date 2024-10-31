@@ -173,6 +173,14 @@ speechSynthesis.getVoices();
             this.checkVRChatDebugLogging();
             this.checkAutoBackupRestoreVrcRegistry();
             await this.migrateStoredUsers();
+            this.loginForm.savedCredentials =
+                (await configRepository.getString('savedCredentials')) !== null
+                    ? JSON.parse(
+                          await configRepository.getString('savedCredentials')
+                      )
+                    : {};
+            this.loginForm.lastUserLoggedIn =
+                await configRepository.getString('lastUserLoggedIn');
             this.$nextTick(async function () {
                 this.$el.style.display = '';
                 if (
@@ -599,14 +607,6 @@ speechSynthesis.getVoices();
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
             this.cachedUsers.set(ref.id, ref);
-
-            if (this.currentUser?.offlineFriends.includes(ref.id)) {
-                $app.addFriend(ref.id, 'offline');
-            } else if (this.currentUser?.activeFriends.includes(ref.id)) {
-                $app.addFriend(ref.id, 'active');
-            } else if (this.currentUser?.onlineFriends.includes(ref.id)) {
-                $app.addFriend(ref.id, 'online');
-            }
         } else {
             var props = {};
             for (var prop in ref) {
@@ -680,6 +680,10 @@ speechSynthesis.getVoices();
                     }
                 }
             }
+        }
+        var friendCtx = $app.friends.get(ref.id);
+        if (friendCtx) {
+            friendCtx.ref = ref;
         }
         if (ref.id === this.currentUser.id) {
             if (ref.status) {
@@ -4274,9 +4278,6 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.refreshFriends = function (ref, fromGetCurrentUser) {
-        if (!this.friendLogInitStatus) {
-            return;
-        }
         var map = new Map();
         for (var id of ref.friends) {
             map.set(id, 'offline');
@@ -5347,6 +5348,7 @@ speechSynthesis.getVoices();
             args.json?.presence?.groups
         );
         await $app.getCurrentUserGroups();
+        $app.refreshFriends(args.ref, args.fromGetCurrentUser);
         try {
             if (
                 await configRepository.getBool(`friendLogInit_${args.json.id}`)
@@ -5355,7 +5357,6 @@ speechSynthesis.getVoices();
             } else {
                 await $app.initFriendLog(args.json.id);
             }
-            $app.refreshFriends(args.ref, args.fromGetCurrentUser);
         } catch (err) {
             if (!$app.dontLogMeOut) {
                 $app.$message({
