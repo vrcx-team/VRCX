@@ -599,6 +599,14 @@ speechSynthesis.getVoices();
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
             this.cachedUsers.set(ref.id, ref);
+
+            if (this.currentUser?.offlineFriends.includes(ref.id)) {
+                $app.addFriend(ref.id, 'offline');
+            } else if (this.currentUser?.activeFriends.includes(ref.id)) {
+                $app.addFriend(ref.id, 'active');
+            } else if (this.currentUser?.onlineFriends.includes(ref.id)) {
+                $app.addFriend(ref.id, 'online');
+            }
         } else {
             var props = {};
             for (var prop in ref) {
@@ -4219,7 +4227,7 @@ speechSynthesis.getVoices();
 
     API.$on('USER:CURRENT', function (args) {
         // USER:CURRENT에서 처리를 함
-        $app.refreshFriends(args.ref, args.origin);
+        $app.refreshFriends(args.ref, args.fromGetCurrentUser);
         $app.updateOnlineFriendCoutner();
 
         if ($app.randomUserColours) {
@@ -4252,13 +4260,9 @@ speechSynthesis.getVoices();
         $app.updateFriend({ id: args.ref.favoriteId });
     });
 
-    API.$on('LOGIN', function () {
-        $app.nextFriendsRefresh = 0;
-    });
-
     $app.methods.refreshFriendsList = async function () {
-        // If we just got user less then 1 min before code call, don't call it again
-        if (this.nextCurrentUserRefresh < 720) {
+        // If we just got user less then 2 min before code call, don't call it again
+        if (this.nextCurrentUserRefresh < 300) {
             await API.getCurrentUser().catch((err) => {
                 console.error(err);
             });
@@ -4269,7 +4273,10 @@ speechSynthesis.getVoices();
         API.reconnectWebSocket();
     };
 
-    $app.methods.refreshFriends = function (ref, origin) {
+    $app.methods.refreshFriends = function (ref, fromGetCurrentUser) {
+        if (!this.friendLogInitStatus) {
+            return;
+        }
         var map = new Map();
         for (var id of ref.friends) {
             map.set(id, 'offline');
@@ -4285,7 +4292,7 @@ speechSynthesis.getVoices();
         }
         for (var [id, state] of map) {
             if (this.friends.has(id)) {
-                this.updateFriend({ id, state, origin });
+                this.updateFriend({ id, state, fromGetCurrentUser });
             } else {
                 this.addFriend(id, state);
             }
@@ -4408,7 +4415,7 @@ speechSynthesis.getVoices();
     $app.data.updateFriendInProgress = new Map();
 
     $app.methods.updateFriend = function (ctx) {
-        var { id, state, origin } = ctx;
+        var { id, state, fromGetCurrentUser } = ctx;
         var stateInput = state;
         var ctx = this.friends.get(id);
         if (typeof ctx === 'undefined') {
@@ -4475,11 +4482,16 @@ speechSynthesis.getVoices();
             }
             // from getCurrentUser only, fetch user if offline in an instance
             if (
-                origin &&
+                fromGetCurrentUser &&
                 ctx.state !== 'online' &&
                 typeof ref !== 'undefined' &&
                 this.isRealInstance(ref.location)
             ) {
+                if (this.debugFriendState) {
+                    console.log(
+                        `Fetching offline friend in an instance ${ctx.name}`
+                    );
+                }
                 API.getUser({
                     userId: id
                 });
@@ -5343,10 +5355,11 @@ speechSynthesis.getVoices();
             } else {
                 await $app.initFriendLog(args.json.id);
             }
+            $app.refreshFriends(args.ref, args.fromGetCurrentUser);
         } catch (err) {
             if (!$app.dontLogMeOut) {
                 $app.$message({
-                    message: 'Failed to load freinds list, logging out',
+                    message: 'Failed to load friends list, logging out',
                     type: 'error'
                 });
                 this.logout();
@@ -6855,7 +6868,9 @@ speechSynthesis.getVoices();
                 API.getUser({
                     userId: id
                 });
-            } catch {}
+            } catch (err) {
+                console.error('Fetch user on add as friend', err);
+            }
             return;
         }
         API.getFriendStatus({

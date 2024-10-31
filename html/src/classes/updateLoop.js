@@ -6,9 +6,17 @@ export default class extends baseClass {
         super(_app, _API, _t);
     }
 
+    init() {
+        API.$on('LOGIN', function () {
+            $app.nextCurrentUserRefresh = 300;
+            $app.nextFriendsRefresh = 3600;
+            $app.nextGroupInstanceRefresh = 0;
+        });
+    }
+
     _data = {
-        nextCurrentUserRefresh: 0,
-        nextFriendsRefresh: 0,
+        nextCurrentUserRefresh: 300,
+        nextFriendsRefresh: 3600,
         nextGroupInstanceRefresh: 0,
         nextAppUpdateCheck: 3600,
         ipcTimeout: 0,

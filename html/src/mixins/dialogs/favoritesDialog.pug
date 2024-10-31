@@ -1,4 +1,4 @@
-mixin favorites()
+mixin favoritesDialog()
     //- dialog: favorite
     el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="favoriteDialog" :visible.sync="favoriteDialog.visible" :title="$t('dialog.favorite.header')" width="300px")
         div(v-if="favoriteDialog.visible" v-loading="favoriteDialog.loading")

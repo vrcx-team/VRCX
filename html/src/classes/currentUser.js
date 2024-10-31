@@ -16,7 +16,7 @@ export default class extends baseClass {
             }).then((json) => {
                 var args = {
                     json,
-                    origin: true
+                    fromGetCurrentUser: true
                 };
                 if (
                     json.requiresTwoFactorAuth &&
