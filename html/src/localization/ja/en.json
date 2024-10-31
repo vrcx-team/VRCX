@@ -293,9 +293,9 @@
                     "sorting": {
                         "header": "並べ替え",
                         "alphabetical": "アルファベット順",
-                        "private_to_bottom": "Privateを下に",
+                        "private_to_bottom": "プライベートを下に",
                         "status": "ステータス",
-                        "status_and_private_to_bottom": "ステータスとPrivateを下",
+                        "status_and_private_to_bottom": "ステータスとプライベートを下",
                         "location": "場所",
                         "last_active": "最終活動時間",
                         "time_in_instance": "インスタンスにいた時間",
@@ -393,7 +393,7 @@
                     "enable_tooltip": "競合を防ぐため、VRChatのconfig.jsonでDiscord Rich Presenceを無効化することを推奨します。",
                     "instance_type_player_count": "インスタンス詳細/プレイヤー数",
                     "join_button": "Joinボタンを表示 (パブリックのみ)",
-                    "show_details_in_private": "Privateでもワールド詳細を表示",
+                    "show_details_in_private": "プライベートでもワールド詳細を表示",
                     "show_images": "ワールド画像を表示"
                 }
             },
