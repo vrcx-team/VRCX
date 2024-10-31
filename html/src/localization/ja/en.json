@@ -792,8 +792,8 @@
                 "change_image": "画像を変更",
                 "download_package": "Unity Packageをダウンロード",
                 "delete": "削除",
-                "delete_impostor": "Impostorを削除",
-                "create_impostor": "Impostorを作成"
+                "delete_impostor": "インポスターを削除",
+                "create_impostor": "インポスターを作成"
             },
             "info": {
                 "header": "情報",
