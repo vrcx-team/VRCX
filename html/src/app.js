@@ -684,6 +684,7 @@ speechSynthesis.getVoices();
         var friendCtx = $app.friends.get(ref.id);
         if (friendCtx) {
             friendCtx.ref = ref;
+            friendCtx.name = ref.displayName;
         }
         if (ref.id === this.currentUser.id) {
             if (ref.status) {
@@ -4567,7 +4568,7 @@ speechSynthesis.getVoices();
         ) {
             if (this.debugFriendState) {
                 console.log(
-                    `falsePositiveOffline ${ctx.name} currentState:${ctx.ref.state} expectedState:${newState}`
+                    `falsePositiveOffline ${ctx.name} currentState:${ctx.state} expectedState:${newState}`
                 );
             }
             return;
@@ -5367,6 +5368,10 @@ speechSynthesis.getVoices();
                 throw err;
             }
         }
+        $app.sortVIPFriends = true;
+        $app.sortOnlineFriends = true;
+        $app.sortActiveFriends = true;
+        $app.sortOfflineFriends = true;
         $app.getAvatarHistory();
         $app.getAllUserMemos();
         if ($app.randomUserColours) {
