@@ -566,9 +566,9 @@ speechSynthesis.getVoices();
                 //
                 ...json
             };
-            if ($app.lastLocation.playerList.has(json.displayName)) {
+            if ($app.lastLocation.playerList.has(json.id)) {
                 // update $location_at from instance join time
-                var player = $app.lastLocation.playerList.get(json.displayName);
+                var player = $app.lastLocation.playerList.get(json.id);
                 ref.$location_at = player.joinTime;
                 ref.$online_for = player.joinTime;
             }
@@ -5428,17 +5428,14 @@ speechSynthesis.getVoices();
                         joinTime: Date.parse(ctx.created_at),
                         lastAvatar: ''
                     };
-                    this.lastLocation.playerList.set(ctx.displayName, userMap);
+                    this.lastLocation.playerList.set(ctx.userId, userMap);
                     if (this.friends.has(ctx.userId)) {
-                        this.lastLocation.friendList.set(
-                            ctx.displayName,
-                            userMap
-                        );
+                        this.lastLocation.friendList.set(ctx.userId, userMap);
                     }
                 }
                 if (ctx.type === 'OnPlayerLeft') {
-                    this.lastLocation.playerList.delete(ctx.displayName);
-                    this.lastLocation.friendList.delete(ctx.displayName);
+                    this.lastLocation.playerList.delete(ctx.userId);
+                    this.lastLocation.friendList.delete(ctx.userId);
                 }
             }
             this.lastLocation.playerList.forEach((ref1) => {
@@ -5743,7 +5740,6 @@ speechSynthesis.getVoices();
             };
             database.updateGamelogLocationTimeToDatabase(update);
         }
-        this.gameLogApiLoggingEnabled = false;
         this.lastLocationDestination = '';
         this.lastLocationDestinationTime = 0;
         this.lastLocation = {
@@ -5779,17 +5775,7 @@ speechSynthesis.getVoices();
     $app.data.lastLocationDestinationTime = 0;
 
     $app.methods.silentSearchUser = function (displayName) {
-        var playerListRef = this.lastLocation.playerList.get(displayName);
-        if (
-            !this.gameLogApiLoggingEnabled ||
-            !playerListRef ||
-            playerListRef.userId
-        ) {
-            return;
-        }
-        if (this.debugGameLog) {
-            console.log('Searching for userId for:', displayName);
-        }
+        console.log('Searching for userId for:', displayName);
         var params = {
             n: 5,
             offset: 0,
@@ -9318,7 +9304,7 @@ speechSynthesis.getVoices();
                         API.getUser(args.params);
                     }
                     var inCurrentWorld = false;
-                    if (this.lastLocation.playerList.has(D.ref.displayName)) {
+                    if (this.lastLocation.playerList.has(D.ref.id)) {
                         inCurrentWorld = true;
                     }
                     if (userId !== API.currentUser.id) {
@@ -9450,7 +9436,7 @@ speechSynthesis.getVoices();
             for (var friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
                 var addUser = !users.some(function (user) {
-                    return friend.displayName === user.displayName;
+                    return friend.userId === user.id;
                 });
                 if (addUser) {
                     var ref = API.cachedUsers.get(friend.userId);
@@ -9538,26 +9524,11 @@ speechSynthesis.getVoices();
 
     API.$on('USER:APPLY', function (ref) {
         // add user ref to playerList, friendList, photonLobby, photonLobbyCurrent
-        if ($app.lastLocation.playerList.has(ref.displayName)) {
-            var playerListRef = $app.lastLocation.playerList.get(
-                ref.displayName
-            );
-            if (!playerListRef.userId) {
-                playerListRef.userId = ref.id;
-                $app.lastLocation.playerList.set(
-                    ref.displayName,
-                    playerListRef
-                );
-                if ($app.lastLocation.friendList.has(ref.displayName)) {
-                    $app.lastLocation.friendList.set(
-                        ref.displayName,
-                        playerListRef
-                    );
-                }
-            }
+        var playerListRef = $app.lastLocation.playerList.get(ref.id);
+        if (playerListRef) {
             // add/remove friends from lastLocation.friendList
             if (
-                !$app.lastLocation.friendList.has(ref.displayName) &&
+                !$app.lastLocation.friendList.has(ref.id) &&
                 $app.friends.has(ref.id)
             ) {
                 var userMap = {
@@ -9565,13 +9536,13 @@ speechSynthesis.getVoices();
                     userId: ref.id,
                     joinTime: playerListRef.joinTime
                 };
-                $app.lastLocation.friendList.set(ref.displayName, userMap);
+                $app.lastLocation.friendList.set(ref.id, userMap);
             }
             if (
-                $app.lastLocation.friendList.has(ref.displayName) &&
+                $app.lastLocation.friendList.has(ref.id) &&
                 !$app.friends.has(ref.id)
             ) {
-                $app.lastLocation.friendList.delete(ref.displayName);
+                $app.lastLocation.friendList.delete(ref.id);
             }
             $app.photonLobby.forEach((ref1, id) => {
                 if (
@@ -9699,10 +9670,7 @@ speechSynthesis.getVoices();
         var playersInInstance = this.lastLocation.playerList;
         if (playersInInstance.size > 0) {
             var ref = API.cachedUsers.get(API.currentUser.id);
-            if (
-                typeof ref !== 'undefined' &&
-                playersInInstance.has(ref.displayName)
-            ) {
+            if (typeof ref !== 'undefined' && playersInInstance.has(ref.id)) {
                 pushUser(ref);
             }
             for (var player of playersInInstance.values()) {
@@ -9719,7 +9687,7 @@ speechSynthesis.getVoices();
                         pushUser(ref);
                     } else {
                         var { joinTime } = this.lastLocation.playerList.get(
-                            player.displayName
+                            player.userId
                         );
                         if (!joinTime) {
                             joinTime = Date.now();
@@ -10801,7 +10769,7 @@ speechSynthesis.getVoices();
             for (var friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
                 var addUser = !instance.users.some(function (user) {
-                    return friend.displayName === user.displayName;
+                    return friend.userId === user.id;
                 });
                 if (addUser) {
                     var ref = API.cachedUsers.get(friend.userId);
@@ -10984,7 +10952,7 @@ speechSynthesis.getVoices();
             for (var friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
                 var addUser = !instance.users.some(function (user) {
-                    return friend.displayName === user.displayName;
+                    return friend.userId === user.id;
                 });
                 if (addUser) {
                     var ref = API.cachedUsers.get(friend.userId);
@@ -17497,7 +17465,7 @@ speechSynthesis.getVoices();
         API.cachedUsers.forEach((ref, id) => {
             if (
                 !this.friends.has(id) &&
-                !this.lastLocation.playerList.has(ref.displayName) &&
+                !this.lastLocation.playerList.has(ref.id) &&
                 id !== API.currentUser.id
             ) {
                 API.cachedUsers.delete(id);
@@ -18359,7 +18327,7 @@ speechSynthesis.getVoices();
             !this.lastLocation.location ||
             this.lastLocation.location !== ref.travelingToLocation ||
             ref.id === API.currentUser.id ||
-            this.lastLocation.playerList.has(ref.displayName)
+            this.lastLocation.playerList.has(ref.id)
         ) {
             return;
         }
@@ -18518,7 +18486,7 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 9;
+        var databaseVersion = 10;
         if (this.databaseVersion < databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({
@@ -18541,6 +18509,7 @@ speechSynthesis.getVoices();
                 await database.fixBrokenNotifications(); // fix notifications being null
                 await database.fixBrokenGroupChange(); // fix spam group left & name change
                 await database.fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
+                await database.fixBrokenGameLogDisplayNames(); // fix gameLog display names "DisplayName (userId)"
                 await database.vacuum(); // succ
                 await configRepository.setInt(
                     'VRCX_databaseVersion',

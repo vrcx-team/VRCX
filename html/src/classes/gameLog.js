@@ -30,7 +30,6 @@ export default class extends baseClass {
             }
         },
         gameLogSessionTable: [],
-        gameLogApiLoggingEnabled: false,
         lastVideoUrl: '',
         lastResourceloadUrl: ''
     };
@@ -121,62 +120,30 @@ export default class extends baseClass {
                         joinTime,
                         lastAvatar: ''
                     };
-                    this.lastLocation.playerList.set(
-                        gameLog.displayName,
-                        userMap
-                    );
-                    if (userId) {
-                        var ref = API.cachedUsers.get(userId);
-                        if (userId === API.currentUser.id) {
-                            // skip
-                        } else if (this.friends.has(userId)) {
-                            this.lastLocation.friendList.set(
-                                gameLog.displayName,
-                                userMap
-                            );
-                            if (
-                                ref.location !== this.lastLocation.location &&
-                                ref.travelingToLocation !==
-                                    this.lastLocation.location
-                            ) {
-                                // fix $location_at with private
-                                ref.$location_at = joinTime;
-                            }
-                        } else if (typeof ref !== 'undefined') {
-                            // set $location_at to join time if user isn't a friend
+                    this.lastLocation.playerList.set(userId, userMap);
+                    var ref = API.cachedUsers.get(userId);
+                    if (!userId) {
+                        console.error('Missing userId:', gameLog.displayName);
+                    } else if (userId === API.currentUser.id) {
+                        // skip
+                    } else if (this.friends.has(userId)) {
+                        this.lastLocation.friendList.set(userId, userMap);
+                        if (
+                            ref.location !== this.lastLocation.location &&
+                            ref.travelingToLocation !==
+                                this.lastLocation.location
+                        ) {
+                            // fix $location_at with private
                             ref.$location_at = joinTime;
-                        } else {
-                            if (this.debugGameLog || this.debugWebRequests) {
-                                console.log(
-                                    'Fetching user from gameLog:',
-                                    userId
-                                );
-                            }
-                            API.getUser({ userId });
                         }
+                    } else if (typeof ref !== 'undefined') {
+                        // set $location_at to join time if user isn't a friend
+                        ref.$location_at = joinTime;
                     } else {
-                        // TODO: remove this
-                        // try fetch userId from previous encounter using database
-                        database
-                            .getUserIdFromDisplayName(gameLog.displayName)
-                            .then((oldUserId) => {
-                                if (this.isGameRunning) {
-                                    if (oldUserId) {
-                                        API.getUser({ userId: oldUserId });
-                                    } else if (
-                                        Date.now() - joinTime <
-                                        5 * 1000
-                                    ) {
-                                        workerTimers.setTimeout(
-                                            () =>
-                                                this.silentSearchUser(
-                                                    gameLog.displayName
-                                                ),
-                                            10 * 1000
-                                        );
-                                    }
-                                }
-                            });
+                        if (this.debugGameLog || this.debugWebRequests) {
+                            console.log('Fetching user from gameLog:', userId);
+                        }
+                        API.getUser({ userId });
                     }
                     this.updateVRLastLocation();
                     this.getCurrentInstanceUserList();
@@ -191,15 +158,13 @@ export default class extends baseClass {
                     database.addGamelogJoinLeaveToDatabase(entry);
                     break;
                 case 'player-left':
-                    var ref = this.lastLocation.playerList.get(
-                        gameLog.displayName
-                    );
+                    var ref = this.lastLocation.playerList.get(userId);
                     if (typeof ref === 'undefined') {
                         break;
                     }
                     var time = Date.now() - ref.joinTime;
-                    this.lastLocation.playerList.delete(gameLog.displayName);
-                    this.lastLocation.friendList.delete(gameLog.displayName);
+                    this.lastLocation.playerList.delete(userId);
+                    this.lastLocation.friendList.delete(userId);
                     this.photonLobbyAvatars.delete(userId);
                     this.updateVRLastLocation();
                     this.getCurrentInstanceUserList();
@@ -276,47 +241,25 @@ export default class extends baseClass {
                     this.processScreenshot(gameLog.screenshotPath);
                     break;
                 case 'api-request':
-                    var bias = Date.parse(gameLog.dt) + 60 * 1000;
-                    if (
-                        !this.isGameRunning ||
-                        this.lastLocation.location === '' ||
-                        this.lastLocation.location === 'traveling' ||
-                        bias < Date.now()
-                    ) {
-                        break;
-                    }
-                    var userId = '';
-                    try {
-                        var url = new URL(gameLog.url);
-                        var urlParams = new URLSearchParams(gameLog.url);
-                        if (url.pathname.substring(0, 13) === '/api/1/users/') {
-                            var pathArray = url.pathname.split('/');
-                            userId = pathArray[4];
-                        } else if (urlParams.has('userId')) {
-                            userId = urlParams.get('userId');
-                        }
-                    } catch (err) {
-                        console.error(err);
-                    }
-                    if (!userId) {
-                        break;
-                    }
-                    this.gameLogApiLoggingEnabled = true;
-                    if (
-                        API.cachedUsers.has(userId) ||
-                        API.cachedPlayerModerationsUserIds.has(userId)
-                    ) {
-                        break;
-                    }
-                    if (this.debugGameLog || this.debugWebRequests) {
-                        console.log('Fetching user from gameLog:', userId);
-                    }
-                    API.getUser({ userId });
+                    // var userId = '';
+                    // try {
+                    //     var url = new URL(gameLog.url);
+                    //     var urlParams = new URLSearchParams(gameLog.url);
+                    //     if (url.pathname.substring(0, 13) === '/api/1/users/') {
+                    //         var pathArray = url.pathname.split('/');
+                    //         userId = pathArray[4];
+                    //     } else if (urlParams.has('userId')) {
+                    //         userId = urlParams.get('userId');
+                    //     }
+                    // } catch (err) {
+                    //     console.error(err);
+                    // }
+                    // if (!userId) {
+                    //     break;
+                    // }
                     break;
                 case 'avatar-change':
-                    var ref = this.lastLocation.playerList.get(
-                        gameLog.displayName
-                    );
+                    var ref = this.lastLocation.playerList.get(userId);
                     if (
                         this.photonLoggingEnabled ||
                         typeof ref === 'undefined' ||
@@ -326,14 +269,11 @@ export default class extends baseClass {
                     }
                     if (!ref.lastAvatar) {
                         ref.lastAvatar = gameLog.avatarName;
-                        this.lastLocation.playerList.set(
-                            gameLog.displayName,
-                            ref
-                        );
+                        this.lastLocation.playerList.set(userId, ref);
                         break;
                     }
                     ref.lastAvatar = gameLog.avatarName;
-                    this.lastLocation.playerList.set(gameLog.displayName, ref);
+                    this.lastLocation.playerList.set(userId, ref);
                     var entry = {
                         created_at: gameLog.dt,
                         type: 'AvatarChange',

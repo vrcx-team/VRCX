@@ -2616,6 +2616,31 @@ class Database {
         );
     }
 
+    async getBrokenGameLogDisplayNames() {
+        var badEntries = [];
+        await sqliteService.execute((dbRow) => {
+            badEntries.push({
+                id: dbRow[0],
+                displayName: dbRow[1]
+            });
+        }, 'SELECT id, display_name FROM gamelog_join_leave WHERE display_name LIKE "% (%"');
+        return badEntries;
+    }
+
+    async fixBrokenGameLogDisplayNames() {
+        var badEntries = await this.getBrokenGameLogDisplayNames();
+        badEntries.forEach((entry) => {
+            var newDisplayName = entry.displayName.split(' (')[0];
+            sqliteService.executeNonQuery(
+                `UPDATE gamelog_join_leave SET display_name = @new_display_name WHERE id = @id`,
+                {
+                    '@new_display_name': newDisplayName,
+                    '@id': entry.id
+                }
+            );
+        });
+    }
+
     async vacuum() {
         await sqliteService.executeNonQuery('VACUUM');
     }
