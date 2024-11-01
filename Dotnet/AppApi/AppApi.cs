@@ -278,16 +278,30 @@ namespace VRCX
         }
 
         /// <summary>
-        /// Restarts the VRCX application for an update by launching a new process with the "/Upgrade" argument and exiting the current process.
+        /// Restarts the VRCX application for an update by launching a new process with the upgrade argument and exiting the current process.
         /// </summary>
-        public void RestartApplication()
+        public void RestartApplication(bool isUpgrade)
         {
+            var args = new List<string>();
+            
+            if (isUpgrade)
+                args.Add(StartupArgs.VrcxLaunchArguments.IsUpgradePrefix);
+
+            if (StartupArgs.LaunchArguments.IsDebug)
+                args.Add(StartupArgs.VrcxLaunchArguments.IsDebugPrefix);
+
+            if (!string.IsNullOrWhiteSpace(StartupArgs.LaunchArguments.ConfigDirectory))
+                args.Add($"{StartupArgs.VrcxLaunchArguments.ConfigDirectoryPrefix}={StartupArgs.LaunchArguments.ConfigDirectory}");
+
+            if (!string.IsNullOrWhiteSpace(StartupArgs.LaunchArguments.ProxyUrl))
+                args.Add($"{StartupArgs.VrcxLaunchArguments.ProxyUrlPrefix}={StartupArgs.LaunchArguments.ProxyUrl}");
+
             var vrcxProcess = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = Path.Combine(Program.BaseDirectory, "VRCX.exe"),
-                    Arguments = "/Upgrade",
+                    Arguments = string.Join(' ', args),
                     UseShellExecute = true,
                     WorkingDirectory = Program.BaseDirectory
                 }
@@ -342,18 +356,18 @@ namespace VRCX
 
         public void ExecuteVrFeedFunction(string function, string json)
         {
-            if (VRCXVR._browser1 == null) return;
-            if (VRCXVR._browser1.IsLoading)
+            if (VRCXVR._wristOverlay == null) return;
+            if (VRCXVR._wristOverlay.IsLoading)
                 VRCXVR.Instance.Restart();
-            VRCXVR._browser1.ExecuteScriptAsync($"$app.{function}", json);
+            VRCXVR._wristOverlay.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         public void ExecuteVrOverlayFunction(string function, string json)
         {
-            if (VRCXVR._browser2 == null) return;
-            if (VRCXVR._browser2.IsLoading)
+            if (VRCXVR._hmdOverlay == null) return;
+            if (VRCXVR._hmdOverlay.IsLoading)
                 VRCXVR.Instance.Restart();
-            VRCXVR._browser2.ExecuteScriptAsync($"$app.{function}", json);
+            VRCXVR._hmdOverlay.ExecuteScriptAsync($"$app.{function}", json);
         }
 
         /// <summary>
@@ -362,8 +376,8 @@ namespace VRCX
         /// <returns>The launch command.</returns>
         public string GetLaunchCommand()
         {
-            var command = StartupArgs.LaunchCommand;
-            StartupArgs.LaunchCommand = string.Empty;
+            var command = StartupArgs.LaunchArguments.LaunchCommand;
+            StartupArgs.LaunchArguments.LaunchCommand = string.Empty;
             return command;
         }
 

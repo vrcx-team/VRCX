@@ -1,0 +1,38 @@
+mixin launch()
+    //- dialog: launch
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchDialog" :visible.sync="launchDialog.visible" :title="$t('dialog.launch.header')" width="450px")
+        el-form(:model="launchDialog" label-width="80px")
+            el-form-item(:label="$t('dialog.launch.url')")
+                el-input(v-model="launchDialog.url" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" style="width:260px")
+                el-tooltip(placement="right" :content="$t('dialog.launch.copy_tooltip')" :disabled="hideTooltips")
+                    el-button(@click="copyInstanceMessage(launchDialog.url)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
+            el-form-item(v-if="launchDialog.shortUrl" :label="$t('dialog.launch.short_url')")
+                el-tooltip(placement="top" style="margin-left:5px" :content="$t('dialog.launch.short_url_notice')")
+                    i.el-icon-warning
+                el-input(v-model="launchDialog.shortUrl" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" style="width:241px")
+                el-tooltip(placement="right" :content="$t('dialog.launch.copy_tooltip')" :disabled="hideTooltips")
+                    el-button(@click="copyInstanceMessage(launchDialog.shortUrl)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
+            el-form-item(:label="$t('dialog.launch.location')")
+                el-input(v-model="launchDialog.location" size="mini" @click.native="$event.target.tagName === 'INPUT' && $event.target.select()" style="width:260px")
+                el-tooltip(placement="right" :content="$t('dialog.launch.copy_tooltip')" :disabled="hideTooltips")
+                    el-button(@click="copyInstanceMessage(launchDialog.location)" size="mini" icon="el-icon-s-order" style="margin-right:5px" circle)
+        template(#footer)
+            el-checkbox(v-model="launchDialog.desktop" @change="saveLaunchDialog" style="float:left;margin-top:5px") {{ $t('dialog.launch.start_as_desktop') }}
+            el-button(size="small" @click="showPreviousInstanceInfoDialog(launchDialog.location)") {{ $t('dialog.launch.info') }}
+            el-button(size="small" @click="showInviteDialog(launchDialog.location)" :disabled="!checkCanInvite(launchDialog.location)") {{ $t('dialog.launch.invite') }}
+            el-button(type="primary" size="small" @click="launchGame(launchDialog.location, launchDialog.shortName, launchDialog.desktop)" :disabled="!launchDialog.secureOrShortName") {{ $t('dialog.launch.launch') }}
+
+    //- dialog: launch options
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="launchOptionsDialog" :visible.sync="launchOptionsDialog.visible" :title="$t('dialog.launch_options.header')" width="600px")
+        div(style="font-size:12px")
+            | {{ $t('dialog.launch_options.description') }} #[br]
+            | {{ $t('dialog.launch_options.example') }} #[el-tag(size="mini") --fps=144]
+        el-input(type="textarea" v-model="launchOptionsDialog.launchArguments" size="mini" show-word-limit :autosize="{ minRows:2, maxRows:5 }" placeholder="" style="margin-top:10px")
+        div(style="font-size:12px;margin-top:10px")
+            | {{ $t('dialog.launch_options.path_override') }}
+        el-input(type="textarea" v-model="launchOptionsDialog.vrcLaunchPathOverride" placeholder="C:\\Program Files (x86)\\Steam\\steamapps\\common\\VRChat" :rows="1" style="display:block;margin-top:10px")
+        template(#footer)
+            div(style="display:flex")
+                el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/launch-options')") {{ $t('dialog.launch_options.vrchat_docs') }}
+                el-button(size="small" @click="openExternalLink('https://docs.unity3d.com/Manual/CommandLineArguments.html')") {{ $t('dialog.launch_options.unity_manual') }}
+                el-button(type="primary" size="small" :disabled="launchOptionsDialog.loading" @click="updateLaunchOptions" style="margin-left:auto") {{ $t('dialog.launch_options.save') }}

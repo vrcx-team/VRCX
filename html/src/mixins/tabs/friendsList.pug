@@ -67,7 +67,7 @@ mixin friendsListTab()
                 el-table-column(:label="$t('table.friendList.joinCount')" width="120" prop="$joinCount" sortable)
                 el-table-column(:label="$t('table.friendList.timeTogether')" width="140" prop="$timeSpent" sortable)
                     template(v-once #default="scope")
-                        span(v-if="scope.row.$timeSpent") {{ scope.row.$timeSpent | timeToText }}
+                        span(v-if="scope.row.$timeSpent") {{ timeToText(scope.row.$timeSpent) }}
                 el-table-column(:label="$t('table.friendList.lastSeen')" width="170" prop="$lastSeen" sortable :sort-method="(a, b) => sortAlphabetically(a, b, '$lastSeen')")
                     template(v-once #default="scope")
                         span {{ scope.row.$lastSeen | formatDate('long') }}

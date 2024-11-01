@@ -211,7 +211,6 @@
                     "auto_update_off": "オフ",
                     "auto_update_notify": "通知のみ",
                     "auto_update_download": "自動ダウンロード",
-                    "auto_update_install": "自動インストール",
                     "change_log": "更新履歴"
                 },
                 "application": {
@@ -405,11 +404,6 @@
                     "screenshot_metadata": "スクリーンショットのメタデータ",
                     "vrc_registry_backup": "VRChatのレジストリをバックアップ",
                     "common_folders": "共通フォルダ",
-                    "pending_offline": {
-                        "header": "オフラインの保留",
-                        "description": "オフラインと判定されるまでの時間 (誤検知対策)",
-                        "set_delay": "遅延時間を設定"
-                    },
                     "primary_password": {
                         "header": "プライマリーパスワード",
                         "description": "パスワードを暗号化 (自動ログイン無効化)"
