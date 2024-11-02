@@ -295,9 +295,18 @@ export default class extends baseClass {
                             }
                         });
                     } else {
-                        this.$emit('FRIEND:STATE', {
+                        this.$emit('USER', {
                             json: {
-                                state: 'active'
+                                id: content.userId,
+                                platform: content.platform,
+                                state: 'active',
+
+                                location: 'offline',
+                                worldId: 'offline',
+                                instanceId: 'offline',
+                                travelingToLocation: 'offline',
+                                travelingToWorld: 'offline',
+                                travelingToInstance: 'offline'
                             },
                             params: {
                                 userId: content.userId
@@ -307,9 +316,19 @@ export default class extends baseClass {
                     break;
 
                 case 'friend-offline':
-                    this.$emit('FRIEND:STATE', {
+                    // more JANK, hell yeah
+                    this.$emit('USER', {
                         json: {
-                            state: 'offline'
+                            id: content.userId,
+                            platform: content.platform,
+                            state: 'offline',
+
+                            location: 'offline',
+                            worldId: 'offline',
+                            instanceId: 'offline',
+                            travelingToLocation: 'offline',
+                            travelingToWorld: 'offline',
+                            travelingToInstance: 'offline'
                         },
                         params: {
                             userId: content.userId
@@ -348,8 +367,8 @@ export default class extends baseClass {
                         json: {
                             location: content.location,
                             travelingToLocation: content.travelingToLocation,
-                            ...content.user
-                            // state: 'online'
+                            ...content.user,
+                            state: 'online' // JANK
                         },
                         params: {
                             userId: content.userId

@@ -325,7 +325,7 @@ speechSynthesis.getVoices();
     });
 
     API.$on('USER', function (args) {
-        if (!args?.json?.displayName) {
+        if (!args?.json?.id) {
             console.error('API.$on(USER) invalid args', args);
             return;
         }
@@ -465,23 +465,6 @@ speechSynthesis.getVoices();
                 $app.onGroupLeft(groupId);
             }
         }
-    };
-
-    var userUpdateQueue = [];
-    var userUpdateTimer = null;
-    var queueUserUpdate = function (ctx) {
-        userUpdateQueue.push(ctx);
-        if (userUpdateTimer !== null) {
-            return;
-        }
-        userUpdateTimer = workerTimers.setTimeout(() => {
-            userUpdateTimer = null;
-            var { length } = userUpdateQueue;
-            for (var i = 0; i < length; ++i) {
-                API.$emit('USER:UPDATE', userUpdateQueue[i]);
-            }
-            userUpdateQueue.length = 0;
-        }, 1);
     };
 
     API.applyUser = function (json) {
@@ -668,7 +651,7 @@ speechSynthesis.getVoices();
                     props.location.push(ts - ref.$location_at);
                     ref.$location_at = ts;
                 }
-                queueUserUpdate({
+                API.$emit('USER:UPDATE', {
                     ref,
                     props
                 });
@@ -1383,7 +1366,8 @@ speechSynthesis.getVoices();
             if (ref?.state !== state) {
                 if ($app.debugFriendState) {
                     console.log(
-                        `Bulk friend fetch, friend state does not match ${json.displayName} from ${ref?.state} to ${state}`
+                        `Bulk friend fetch, friend state does not match ${json.displayName} from ${ref?.state} to ${state}`,
+                        json
                     );
                 }
                 this.getUser({
@@ -4232,7 +4216,9 @@ speechSynthesis.getVoices();
 
     API.$on('USER:CURRENT', function (args) {
         // USER:CURRENT에서 처리를 함
-        $app.refreshFriends(args.ref, args.fromGetCurrentUser);
+        if ($app.friendLogInitStatus) {
+            $app.refreshFriends(args.ref, args.fromGetCurrentUser);
+        }
         $app.updateOnlineFriendCoutner();
 
         if ($app.randomUserColours) {
@@ -4346,12 +4332,17 @@ speechSynthesis.getVoices();
         }
         var ref = API.cachedUsers.get(id);
         var isVIP = this.localFavoriteFriends.has(id);
+        var name = '';
+        var friend = this.friendLog.get(id);
+        if (friend) {
+            name = friend.displayName;
+        }
         var ctx = {
             id,
             state: state || 'offline',
             isVIP,
             ref,
-            name: '',
+            name,
             no: ++this.friendsNo,
             memo: '',
             pendingOffline: false,
@@ -4574,7 +4565,9 @@ speechSynthesis.getVoices();
             return;
         }
         if (this.debugFriendState) {
-            console.log(ctx.name, 'updateFriendState', newState, ctx.state);
+            console.log(
+                `${ctx.name} updateFriendState ${newState} -> ${ctx.state}`
+            );
         }
         var isVIP = this.localFavoriteFriends.has(id);
         var ref = ctx.ref;
@@ -5333,6 +5326,7 @@ speechSynthesis.getVoices();
         $app.friendLogInitStatus = false;
         await database.initUserTables(args.json.id);
         $app.$refs.menu.activeIndex = 'feed';
+        await $app.updateDatabaseVersion();
         // eslint-disable-next-line require-atomic-updates
         $app.gameLogTable.data = await database.lookupGameLogDatabase(
             $app.gameLogTable.search,
@@ -5349,14 +5343,13 @@ speechSynthesis.getVoices();
             args.json?.presence?.groups
         );
         await $app.getCurrentUserGroups();
-        $app.refreshFriends(args.ref, args.fromGetCurrentUser);
         try {
             if (
                 await configRepository.getBool(`friendLogInit_${args.json.id}`)
             ) {
-                await $app.getFriendLog();
+                await $app.getFriendLog(args.ref);
             } else {
-                await $app.initFriendLog(args.json.id);
+                await $app.initFriendLog(args.ref);
             }
         } catch (err) {
             if (!$app.dontLogMeOut) {
@@ -5487,6 +5480,7 @@ speechSynthesis.getVoices();
         ) {
             // skip GPS if user is offline or traveling
             var previousLocation = props.location[1];
+            var newLocation = props.location[0];
             var time = props.location[2];
             if (previousLocation === 'traveling') {
                 previousLocation = ref.$previousLocation;
@@ -5496,18 +5490,32 @@ speechSynthesis.getVoices();
                     time = 0;
                 }
             }
-            if (ref.$previousLocation === props.location[0]) {
+            if ($app.debugFriendState) {
+                console.log(
+                    `${ref.displayName} ${previousLocation} -> ${newLocation}`
+                );
+            }
+            if (!previousLocation) {
+                // no previous location
+                if ($app.debugFriendState) {
+                    console.log(
+                        ref.displayName,
+                        'no previous location',
+                        newLocation
+                    );
+                }
+            } else if (ref.$previousLocation === newLocation) {
                 // location traveled to is the same
-                ref.$location_at = Date.now() - props.location[2];
+                ref.$location_at = Date.now() - time;
             } else {
-                var worldName = await $app.getWorldName(props.location[0]);
-                var groupName = await $app.getGroupName(props.location[0]);
+                var worldName = await $app.getWorldName(newLocation);
+                var groupName = await $app.getGroupName(newLocation);
                 var feed = {
                     created_at: new Date().toJSON(),
                     type: 'GPS',
                     userId: ref.id,
                     displayName: ref.displayName,
-                    location: props.location[0],
+                    location: newLocation,
                     worldName,
                     groupName,
                     previousLocation,
@@ -6798,8 +6806,8 @@ speechSynthesis.getVoices();
 
     $app.data.friendLogInitStatus = false;
 
-    $app.methods.initFriendLog = async function (userId) {
-        await this.updateDatabaseVersion();
+    $app.methods.initFriendLog = async function (currentUser) {
+        this.refreshFriends(currentUser, true);
         var sqlValues = [];
         var friends = await API.refreshFriends();
         for (var friend of friends) {
@@ -6813,7 +6821,7 @@ speechSynthesis.getVoices();
             sqlValues.unshift(row);
         }
         database.setFriendLogCurrentArray(sqlValues);
-        await configRepository.setBool(`friendLogInit_${userId}`, true);
+        await configRepository.setBool(`friendLogInit_${currentUser.id}`, true);
         this.friendLogInitStatus = true;
     };
 
@@ -6828,14 +6836,14 @@ speechSynthesis.getVoices();
         await configRepository.setBool(`friendLogInit_${userId}`, true);
     };
 
-    $app.methods.getFriendLog = async function () {
-        await this.updateDatabaseVersion();
+    $app.methods.getFriendLog = async function (currentUser) {
         var friendLogCurrentArray = await database.getFriendLogCurrent();
         for (var friend of friendLogCurrentArray) {
             this.friendLog.set(friend.userId, friend);
         }
         this.friendLogTable.data = [];
         this.friendLogTable.data = await database.getFriendLogHistory();
+        this.refreshFriends(currentUser, true);
         await API.refreshFriends();
         this.friendLogInitStatus = true;
         // check for friend/name/rank change AFTER friendLogInitStatus is set
@@ -17790,6 +17798,7 @@ speechSynthesis.getVoices();
         if (!API.isLoggedIn) {
             return;
         }
+        console.log('LaunchCommand:', input);
         var args = input.split('/');
         var command = args[0];
         var commandArg = args[1];
