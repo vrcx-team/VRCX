@@ -477,7 +477,6 @@
                         "instance_cache": "インスタンスキャッシュ:",
                         "clear_cache": "キャッシュを消去",
                         "auto_clear_cache": "キャッシュの自動消去",
-                        "download_history": "ダウンロード履歴",
                         "show_console": "コンソールを表示"
                     },
                     "sqlite_table_size": {

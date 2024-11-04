@@ -473,7 +473,6 @@
                         "instance_cache": "Caché de instancia:",
                         "clear_cache": "Limpiar caché",
                         "auto_clear_cache": "Limpiar caché automáticamente",
-                        "download_history": "Historial de Descargas",
                         "show_console": "Mostrar Consola"
                     },
                     "sqlite_table_size": {

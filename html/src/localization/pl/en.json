@@ -485,7 +485,6 @@
                         "instance_cache": "Pamięć instancji:",
                         "clear_cache": "Wyczyść pamięć podręczną",
                         "auto_clear_cache": "Autoczyszczenie pamięci podręcznej",
-                        "download_history": "Historia pobierania",
                         "show_console": "Pokaż konsolę"
                     },
                     "sqlite_table_size": {

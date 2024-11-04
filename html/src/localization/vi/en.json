@@ -485,7 +485,6 @@
                         "instance_cache": "Instance cache:",
                         "clear_cache": "Xóa hết Cache",
                         "auto_clear_cache": "Tự động xóa hết Cache",
-                        "download_history": "Lịch sử tải về",
                         "show_console": "Hiển thị console"
                     },
                     "sqlite_table_size": {

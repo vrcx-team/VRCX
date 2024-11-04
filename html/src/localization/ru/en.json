@@ -473,7 +473,6 @@
                         "instance_cache": "Кэш инстансов:",
                         "clear_cache": "Очистить кэш",
                         "auto_clear_cache": "Автоочистка кэша",
-                        "download_history": "История загрузок",
                         "show_console": "Открыть консоль"
                     },
                     "sqlite_table_size": {

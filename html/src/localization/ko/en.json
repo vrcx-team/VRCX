@@ -485,7 +485,6 @@
                         "instance_cache": "Instance cache:",
                         "clear_cache": "캐시 정리",
                         "auto_clear_cache": "캐시 타이머 설정",
-                        "download_history": "다운로드 기록",
                         "show_console": "개발자 도구(Console) 열기"
                     },
                     "sqlite_table_size": {
