@@ -3712,8 +3712,6 @@ speechSynthesis.getVoices();
     $app.data.debugGameLog = false;
     $app.data.debugFriendState = false;
 
-    $app.data.APILastOnline = new Map();
-
     $app.methods.notifyMenu = function (index) {
         var { menu } = this.$refs;
         if (menu.activeIndex !== index) {
@@ -4346,6 +4344,8 @@ speechSynthesis.getVoices();
             no: ++this.friendsNo,
             memo: '',
             pendingOffline: false,
+            pendingOfflineTime: '',
+            pendingState: '',
             $nickName: ''
         };
         if (this.friendLogInitStatus) {
@@ -4405,8 +4405,6 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.data.updateFriendInProgress = new Map();
-
     $app.methods.updateFriend = function (ctx) {
         var { id, state, fromGetCurrentUser } = ctx;
         var stateInput = state;
@@ -4414,9 +4412,19 @@ speechSynthesis.getVoices();
         if (typeof ctx === 'undefined') {
             return;
         }
+        if (stateInput) {
+            ctx.pendingState = stateInput;
+            if (typeof ref !== 'undefined') {
+                ctx.ref.state = stateInput;
+            }
+        }
         if (stateInput === 'online') {
-            this.APILastOnline.set(id, Date.now());
+            if (this.debugFriendState && ctx.pendingOffline) {
+                var time = (Date.now() - ctx.pendingOfflineTime) / 1000;
+                console.log(`${ctx.name} pendingOfflineCancelTime ${time}`);
+            }
             ctx.pendingOffline = false;
+            ctx.pendingOfflineTime = '';
         }
         var ref = API.cachedUsers.get(id);
         var isVIP = this.localFavoriteFriends.has(id);
@@ -4498,34 +4506,35 @@ speechSynthesis.getVoices();
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
             }
-            // delayed second check to prevent status flapping
-            var date = this.updateFriendInProgress.get(id);
-            if (date && date > Date.now() - this.pendingOfflineDelay + 5000) {
-                // check if already waiting
+            // prevent status flapping
+            if (ctx.pendingOffline) {
                 if (this.debugFriendState) {
-                    console.log(
-                        ctx.name,
-                        new Date().toJSON(),
-                        'pendingOfflineCheck',
-                        stateInput,
-                        ctx.state
-                    );
+                    console.log(ctx.name, 'pendingOfflineAlreadyWaiting');
                 }
                 return;
             }
             ctx.pendingOffline = true;
-            this.updateFriendInProgress.set(id, Date.now());
+            ctx.pendingOfflineTime = Date.now();
             // wait 2minutes then check if user came back online
             workerTimers.setTimeout(() => {
+                if (!ctx.pendingOffline) {
+                    if (this.debugFriendState) {
+                        console.log(ctx.name, 'pendingOfflineAlreadyCancelled');
+                    }
+                    return;
+                }
                 ctx.pendingOffline = false;
-                this.updateFriendInProgress.delete(id);
-                this.updateFriendDelayedCheck(
-                    id,
-                    ctx,
-                    stateInput,
-                    location,
-                    $location_at
-                );
+                ctx.pendingOfflineTime = '';
+                if (ctx.pendingState === ctx.state) {
+                    if (this.debugFriendState) {
+                        console.log(
+                            ctx.name,
+                            'pendingOfflineCancelledStateMatched'
+                        );
+                    }
+                    return;
+                }
+                this.updateFriendDelayedCheck(ctx, location, $location_at);
             }, this.pendingOfflineDelay);
         } else {
             ctx.ref = ref;
@@ -4533,41 +4542,26 @@ speechSynthesis.getVoices();
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
             }
-            this.updateFriendDelayedCheck(
-                id,
-                ctx,
-                stateInput,
-                location,
-                $location_at
-            );
+            this.updateFriendDelayedCheck(ctx, location, $location_at);
         }
     };
 
     $app.methods.updateFriendDelayedCheck = async function (
-        id,
         ctx,
-        newState,
         location,
         $location_at
     ) {
-        var date = this.APILastOnline.get(id);
-        if (
-            ctx.state === 'online' &&
-            (newState === 'active' || newState === 'offline') &&
-            date &&
-            date > Date.now() - 120000
-        ) {
-            if (this.debugFriendState) {
-                console.log(
-                    `falsePositiveOffline ${ctx.name} currentState:${ctx.state} expectedState:${newState}`
-                );
-            }
-            return;
-        }
+        var id = ctx.id;
+        var newState = ctx.pendingState;
         if (this.debugFriendState) {
             console.log(
-                `${ctx.name} updateFriendState ${newState} -> ${ctx.state}`
+                `${ctx.name} updateFriendState ${ctx.state} -> ${newState}`
             );
+            if (location !== ctx.ref?.location) {
+                console.log(
+                    `${ctx.name} pendingOfflineLocation ${location} -> ${ctx.ref.location}`
+                );
+            }
         }
         var isVIP = this.localFavoriteFriends.has(id);
         var ref = ctx.ref;
@@ -4657,7 +4651,6 @@ speechSynthesis.getVoices();
             this.updateOnlineFriendCoutner();
         }
         ctx.state = newState;
-        ctx.ref.state = newState;
         ctx.name = ref.displayName;
         ctx.isVIP = isVIP;
     };
@@ -5490,9 +5483,9 @@ speechSynthesis.getVoices();
                     time = 0;
                 }
             }
-            if ($app.debugFriendState) {
+            if ($app.debugFriendState && previousLocation) {
                 console.log(
-                    `${ref.displayName} ${previousLocation} -> ${newLocation}`
+                    `${ref.displayName} GPS ${previousLocation} -> ${newLocation}`
                 );
             }
             if (!previousLocation) {
@@ -5500,7 +5493,7 @@ speechSynthesis.getVoices();
                 if ($app.debugFriendState) {
                     console.log(
                         ref.displayName,
-                        'no previous location',
+                        'Ignoring GPS, no previous location',
                         newLocation
                     );
                 }
