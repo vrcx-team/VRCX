@@ -90,14 +90,18 @@
                 "search": "Search",
                 "vrchat_favorites": "VRChat Favorites",
                 "local_favorites": "Local Favorites",
-                "new_group": "New Group"
+                "new_group": "New Group",
+                "refresh": "Refresh",
+                "cancel_refresh": "Cancel Refresh"
             },
             "avatars": {
                 "header": "Avatars",
                 "search": "Search",
                 "vrchat_favorites": "VRChat Favorites",
                 "local_favorites": "Local Favorites (Requires VRC+)",
-                "new_group": "New Group"
+                "new_group": "New Group",
+                "refresh": "Refresh",
+                "cancel_refresh": "Cancel Refresh"
             },
             "bulk_unfavorite_mode": "Bulk Unfavorite Mode",
             "bulk_unfavorite_selection": "Bulk Unfavorite Selection",

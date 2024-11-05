@@ -19800,6 +19800,29 @@ speechSynthesis.getVoices();
         $app.getLocalWorldFavorites();
     });
 
+    $app.methods.refreshLocalWorldFavorites = async function () {
+        if (this.refreshingLocalFavorites) {
+            return;
+        }
+        this.refreshingLocalFavorites = true;
+        for (var worldId of this.localWorldFavoritesList) {
+            if (!this.refreshingLocalFavorites) {
+                break;
+            }
+            try {
+                await API.getWorld({
+                    worldId
+                });
+            } catch (err) {
+                console.error(err);
+            }
+            await new Promise((resolve) => {
+                workerTimers.setTimeout(resolve, 1000);
+            });
+        }
+        this.refreshingLocalFavorites = false;
+    };
+
     $app.data.worldFavoriteSearch = '';
     $app.data.worldFavoriteSearchResults = [];
 
@@ -20186,6 +20209,31 @@ speechSynthesis.getVoices();
                 }
             }
         });
+    };
+
+    $app.data.refreshingLocalFavorites = false;
+
+    $app.methods.refreshLocalAvatarFavorites = async function () {
+        if (this.refreshingLocalFavorites) {
+            return;
+        }
+        this.refreshingLocalFavorites = true;
+        for (var avatarId of this.localAvatarFavoritesList) {
+            if (!this.refreshingLocalFavorites) {
+                break;
+            }
+            try {
+                await API.getAvatar({
+                    avatarId
+                });
+            } catch (err) {
+                console.error(err);
+            }
+            await new Promise((resolve) => {
+                workerTimers.setTimeout(resolve, 1000);
+            });
+        }
+        this.refreshingLocalFavorites = false;
     };
 
     $app.data.avatarFavoriteSearch = '';
