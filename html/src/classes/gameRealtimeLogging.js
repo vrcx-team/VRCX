@@ -1151,10 +1151,10 @@ export default class extends baseClass {
                     }
                 } else if (
                     !ref.isFriend &&
-                    this.lastLocation.playerList.has(ref.displayName)
+                    this.lastLocation.playerList.has(user.id)
                 ) {
                     var { joinTime } = this.lastLocation.playerList.get(
-                        ref.displayName
+                        user.id
                     );
                     if (!joinTime) {
                         joinTime = Date.parse(gameLogDate);

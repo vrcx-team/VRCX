@@ -97,7 +97,7 @@ export default class extends baseClass {
                         (this.sharedFeedFilters.wrist.OnPlayerJoining ===
                             'VIP' &&
                             isFavorite)) &&
-                    !$app.lastLocation.playerList.has(ref.displayName)
+                    !$app.lastLocation.playerList.has(ref.id)
                 ) {
                     if (ref.$location.tag === $app.lastLocation.location) {
                         var feedEntry = {

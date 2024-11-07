@@ -485,7 +485,6 @@
                         "instance_cache": "Cache de Instância:",
                         "clear_cache": "Limpar Cache",
                         "auto_clear_cache": "Limpar Cache Automaticmente",
-                        "download_history": "Histórico de Download",
                         "show_console": "Mostrar Console"
                     },
                     "sqlite_table_size": {

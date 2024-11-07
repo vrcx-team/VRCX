@@ -485,7 +485,6 @@
                         "instance_cache": "房間緩存：",
                         "clear_cache": "清除快取",
                         "auto_clear_cache": "自動清除快取",
-                        "download_history": "下載紀錄",
                         "show_console": "顯示主控台"
                     },
                     "sqlite_table_size": {

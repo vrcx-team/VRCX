@@ -173,6 +173,14 @@ speechSynthesis.getVoices();
             this.checkVRChatDebugLogging();
             this.checkAutoBackupRestoreVrcRegistry();
             await this.migrateStoredUsers();
+            this.loginForm.savedCredentials =
+                (await configRepository.getString('savedCredentials')) !== null
+                    ? JSON.parse(
+                          await configRepository.getString('savedCredentials')
+                      )
+                    : {};
+            this.loginForm.lastUserLoggedIn =
+                await configRepository.getString('lastUserLoggedIn');
             this.$nextTick(async function () {
                 this.$el.style.display = '';
                 if (
@@ -317,7 +325,7 @@ speechSynthesis.getVoices();
     });
 
     API.$on('USER', function (args) {
-        if (!args?.json?.displayName) {
+        if (!args?.json?.id) {
             console.error('API.$on(USER) invalid args', args);
             return;
         }
@@ -459,23 +467,6 @@ speechSynthesis.getVoices();
         }
     };
 
-    var userUpdateQueue = [];
-    var userUpdateTimer = null;
-    var queueUserUpdate = function (ctx) {
-        userUpdateQueue.push(ctx);
-        if (userUpdateTimer !== null) {
-            return;
-        }
-        userUpdateTimer = workerTimers.setTimeout(() => {
-            userUpdateTimer = null;
-            var { length } = userUpdateQueue;
-            for (var i = 0; i < length; ++i) {
-                API.$emit('USER:UPDATE', userUpdateQueue[i]);
-            }
-            userUpdateQueue.length = 0;
-        }, 1);
-    };
-
     API.applyUser = function (json) {
         var ref = this.cachedUsers.get(json.id);
         if (typeof json.statusDescription !== 'undefined') {
@@ -558,9 +549,9 @@ speechSynthesis.getVoices();
                 //
                 ...json
             };
-            if ($app.lastLocation.playerList.has(json.displayName)) {
+            if ($app.lastLocation.playerList.has(json.id)) {
                 // update $location_at from instance join time
-                var player = $app.lastLocation.playerList.get(json.displayName);
+                var player = $app.lastLocation.playerList.get(json.id);
                 ref.$location_at = player.joinTime;
                 ref.$online_for = player.joinTime;
             }
@@ -599,14 +590,6 @@ speechSynthesis.getVoices();
             this.applyUserTrustLevel(ref);
             this.applyUserLanguage(ref);
             this.cachedUsers.set(ref.id, ref);
-
-            if (this.currentUser?.offlineFriends.includes(ref.id)) {
-                $app.addFriend(ref.id, 'offline');
-            } else if (this.currentUser?.activeFriends.includes(ref.id)) {
-                $app.addFriend(ref.id, 'active');
-            } else if (this.currentUser?.onlineFriends.includes(ref.id)) {
-                $app.addFriend(ref.id, 'online');
-            }
         } else {
             var props = {};
             for (var prop in ref) {
@@ -668,7 +651,7 @@ speechSynthesis.getVoices();
                     props.location.push(ts - ref.$location_at);
                     ref.$location_at = ts;
                 }
-                queueUserUpdate({
+                API.$emit('USER:UPDATE', {
                     ref,
                     props
                 });
@@ -680,6 +663,11 @@ speechSynthesis.getVoices();
                     }
                 }
             }
+        }
+        var friendCtx = $app.friends.get(ref.id);
+        if (friendCtx) {
+            friendCtx.ref = ref;
+            friendCtx.name = ref.displayName;
         }
         if (ref.id === this.currentUser.id) {
             if (ref.status) {
@@ -1378,7 +1366,8 @@ speechSynthesis.getVoices();
             if (ref?.state !== state) {
                 if ($app.debugFriendState) {
                     console.log(
-                        `Bulk friend fetch, friend state does not match ${json.displayName} from ${ref?.state} to ${state}`
+                        `Bulk friend fetch, friend state does not match ${json.displayName} from ${ref?.state} to ${state}`,
+                        json
                     );
                 }
                 this.getUser({
@@ -3723,8 +3712,6 @@ speechSynthesis.getVoices();
     $app.data.debugGameLog = false;
     $app.data.debugFriendState = false;
 
-    $app.data.APILastOnline = new Map();
-
     $app.methods.notifyMenu = function (index) {
         var { menu } = this.$refs;
         if (menu.activeIndex !== index) {
@@ -4227,7 +4214,9 @@ speechSynthesis.getVoices();
 
     API.$on('USER:CURRENT', function (args) {
         // USER:CURRENT에서 처리를 함
-        $app.refreshFriends(args.ref, args.fromGetCurrentUser);
+        if ($app.friendLogInitStatus) {
+            $app.refreshFriends(args.ref, args.fromGetCurrentUser);
+        }
         $app.updateOnlineFriendCoutner();
 
         if ($app.randomUserColours) {
@@ -4274,9 +4263,6 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.refreshFriends = function (ref, fromGetCurrentUser) {
-        if (!this.friendLogInitStatus) {
-            return;
-        }
         var map = new Map();
         for (var id of ref.friends) {
             map.set(id, 'offline');
@@ -4344,15 +4330,22 @@ speechSynthesis.getVoices();
         }
         var ref = API.cachedUsers.get(id);
         var isVIP = this.localFavoriteFriends.has(id);
+        var name = '';
+        var friend = this.friendLog.get(id);
+        if (friend) {
+            name = friend.displayName;
+        }
         var ctx = {
             id,
             state: state || 'offline',
             isVIP,
             ref,
-            name: '',
+            name,
             no: ++this.friendsNo,
             memo: '',
             pendingOffline: false,
+            pendingOfflineTime: '',
+            pendingState: '',
             $nickName: ''
         };
         if (this.friendLogInitStatus) {
@@ -4412,8 +4405,6 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.data.updateFriendInProgress = new Map();
-
     $app.methods.updateFriend = function (ctx) {
         var { id, state, fromGetCurrentUser } = ctx;
         var stateInput = state;
@@ -4421,11 +4412,21 @@ speechSynthesis.getVoices();
         if (typeof ctx === 'undefined') {
             return;
         }
-        if (stateInput === 'online') {
-            this.APILastOnline.set(id, Date.now());
-            ctx.pendingOffline = false;
-        }
         var ref = API.cachedUsers.get(id);
+        if (stateInput) {
+            ctx.pendingState = stateInput;
+            if (typeof ref !== 'undefined') {
+                ctx.ref.state = stateInput;
+            }
+        }
+        if (stateInput === 'online') {
+            if (this.debugFriendState && ctx.pendingOffline) {
+                var time = (Date.now() - ctx.pendingOfflineTime) / 1000;
+                console.log(`${ctx.name} pendingOfflineCancelTime ${time}`);
+            }
+            ctx.pendingOffline = false;
+            ctx.pendingOfflineTime = '';
+        }
         var isVIP = this.localFavoriteFriends.has(id);
         var location = '';
         var $location_at = '';
@@ -4505,34 +4506,41 @@ speechSynthesis.getVoices();
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
             }
-            // delayed second check to prevent status flapping
-            var date = this.updateFriendInProgress.get(id);
-            if (date && date > Date.now() - this.pendingOfflineDelay + 5000) {
-                // check if already waiting
+            // prevent status flapping
+            if (ctx.pendingOffline) {
                 if (this.debugFriendState) {
-                    console.log(
-                        ctx.name,
-                        new Date().toJSON(),
-                        'pendingOfflineCheck',
-                        stateInput,
-                        ctx.state
-                    );
+                    console.log(ctx.name, 'pendingOfflineAlreadyWaiting');
                 }
                 return;
             }
+            if (this.debugFriendState) {
+                console.log(ctx.name, 'pendingOfflineBegin');
+            }
             ctx.pendingOffline = true;
-            this.updateFriendInProgress.set(id, Date.now());
+            ctx.pendingOfflineTime = Date.now();
             // wait 2minutes then check if user came back online
             workerTimers.setTimeout(() => {
+                if (!ctx.pendingOffline) {
+                    if (this.debugFriendState) {
+                        console.log(ctx.name, 'pendingOfflineAlreadyCancelled');
+                    }
+                    return;
+                }
                 ctx.pendingOffline = false;
-                this.updateFriendInProgress.delete(id);
-                this.updateFriendDelayedCheck(
-                    id,
-                    ctx,
-                    stateInput,
-                    location,
-                    $location_at
-                );
+                ctx.pendingOfflineTime = '';
+                if (ctx.pendingState === ctx.state) {
+                    if (this.debugFriendState) {
+                        console.log(
+                            ctx.name,
+                            'pendingOfflineCancelledStateMatched'
+                        );
+                    }
+                    return;
+                }
+                if (this.debugFriendState) {
+                    console.log(ctx.name, 'pendingOfflineEnd');
+                }
+                this.updateFriendDelayedCheck(ctx, location, $location_at);
             }, this.pendingOfflineDelay);
         } else {
             ctx.ref = ref;
@@ -4540,39 +4548,26 @@ speechSynthesis.getVoices();
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
             }
-            this.updateFriendDelayedCheck(
-                id,
-                ctx,
-                stateInput,
-                location,
-                $location_at
-            );
+            this.updateFriendDelayedCheck(ctx, location, $location_at);
         }
     };
 
     $app.methods.updateFriendDelayedCheck = async function (
-        id,
         ctx,
-        newState,
         location,
         $location_at
     ) {
-        var date = this.APILastOnline.get(id);
-        if (
-            ctx.state === 'online' &&
-            (newState === 'active' || newState === 'offline') &&
-            date &&
-            date > Date.now() - 120000
-        ) {
-            if (this.debugFriendState) {
+        var id = ctx.id;
+        var newState = ctx.pendingState;
+        if (this.debugFriendState) {
+            console.log(
+                `${ctx.name} updateFriendState ${ctx.state} -> ${newState}`
+            );
+            if (location !== ctx.ref?.location) {
                 console.log(
-                    `falsePositiveOffline ${ctx.name} currentState:${ctx.ref.state} expectedState:${newState}`
+                    `${ctx.name} pendingOfflineLocation ${location} -> ${ctx.ref.location}`
                 );
             }
-            return;
-        }
-        if (this.debugFriendState) {
-            console.log(ctx.name, 'updateFriendState', newState, ctx.state);
         }
         var isVIP = this.localFavoriteFriends.has(id);
         var ref = ctx.ref;
@@ -4662,7 +4657,6 @@ speechSynthesis.getVoices();
             this.updateOnlineFriendCoutner();
         }
         ctx.state = newState;
-        ctx.ref.state = newState;
         ctx.name = ref.displayName;
         ctx.isVIP = isVIP;
     };
@@ -4782,6 +4776,16 @@ speechSynthesis.getVoices();
             return -1;
         }
         return 0;
+    };
+
+    var compareByMemberCount = function (a, b) {
+        if (
+            typeof a.memberCount !== 'number' ||
+            typeof b.memberCount !== 'number'
+        ) {
+            return 0;
+        }
+        return a.memberCount - b.memberCount;
     };
 
     // private
@@ -5331,6 +5335,7 @@ speechSynthesis.getVoices();
         $app.friendLogInitStatus = false;
         await database.initUserTables(args.json.id);
         $app.$refs.menu.activeIndex = 'feed';
+        await $app.updateDatabaseVersion();
         // eslint-disable-next-line require-atomic-updates
         $app.gameLogTable.data = await database.lookupGameLogDatabase(
             $app.gameLogTable.search,
@@ -5351,11 +5356,10 @@ speechSynthesis.getVoices();
             if (
                 await configRepository.getBool(`friendLogInit_${args.json.id}`)
             ) {
-                await $app.getFriendLog();
+                await $app.getFriendLog(args.ref);
             } else {
-                await $app.initFriendLog(args.json.id);
+                await $app.initFriendLog(args.ref);
             }
-            $app.refreshFriends(args.ref, args.fromGetCurrentUser);
         } catch (err) {
             if (!$app.dontLogMeOut) {
                 $app.$message({
@@ -5366,6 +5370,10 @@ speechSynthesis.getVoices();
                 throw err;
             }
         }
+        $app.sortVIPFriends = true;
+        $app.sortOnlineFriends = true;
+        $app.sortActiveFriends = true;
+        $app.sortOfflineFriends = true;
         $app.getAvatarHistory();
         $app.getAllUserMemos();
         if ($app.randomUserColours) {
@@ -5427,17 +5435,14 @@ speechSynthesis.getVoices();
                         joinTime: Date.parse(ctx.created_at),
                         lastAvatar: ''
                     };
-                    this.lastLocation.playerList.set(ctx.displayName, userMap);
+                    this.lastLocation.playerList.set(ctx.userId, userMap);
                     if (this.friends.has(ctx.userId)) {
-                        this.lastLocation.friendList.set(
-                            ctx.displayName,
-                            userMap
-                        );
+                        this.lastLocation.friendList.set(ctx.userId, userMap);
                     }
                 }
                 if (ctx.type === 'OnPlayerLeft') {
-                    this.lastLocation.playerList.delete(ctx.displayName);
-                    this.lastLocation.friendList.delete(ctx.displayName);
+                    this.lastLocation.playerList.delete(ctx.userId);
+                    this.lastLocation.friendList.delete(ctx.userId);
                 }
             }
             this.lastLocation.playerList.forEach((ref1) => {
@@ -5484,6 +5489,7 @@ speechSynthesis.getVoices();
         ) {
             // skip GPS if user is offline or traveling
             var previousLocation = props.location[1];
+            var newLocation = props.location[0];
             var time = props.location[2];
             if (previousLocation === 'traveling') {
                 previousLocation = ref.$previousLocation;
@@ -5493,18 +5499,32 @@ speechSynthesis.getVoices();
                     time = 0;
                 }
             }
-            if (ref.$previousLocation === props.location[0]) {
+            if ($app.debugFriendState && previousLocation) {
+                console.log(
+                    `${ref.displayName} GPS ${previousLocation} -> ${newLocation}`
+                );
+            }
+            if (!previousLocation) {
+                // no previous location
+                if ($app.debugFriendState) {
+                    console.log(
+                        ref.displayName,
+                        'Ignoring GPS, no previous location',
+                        newLocation
+                    );
+                }
+            } else if (ref.$previousLocation === newLocation) {
                 // location traveled to is the same
-                ref.$location_at = Date.now() - props.location[2];
+                ref.$location_at = Date.now() - time;
             } else {
-                var worldName = await $app.getWorldName(props.location[0]);
-                var groupName = await $app.getGroupName(props.location[0]);
+                var worldName = await $app.getWorldName(newLocation);
+                var groupName = await $app.getGroupName(newLocation);
                 var feed = {
                     created_at: new Date().toJSON(),
                     type: 'GPS',
                     userId: ref.id,
                     displayName: ref.displayName,
-                    location: props.location[0],
+                    location: newLocation,
                     worldName,
                     groupName,
                     previousLocation,
@@ -5742,7 +5762,6 @@ speechSynthesis.getVoices();
             };
             database.updateGamelogLocationTimeToDatabase(update);
         }
-        this.gameLogApiLoggingEnabled = false;
         this.lastLocationDestination = '';
         this.lastLocationDestinationTime = 0;
         this.lastLocation = {
@@ -5778,17 +5797,7 @@ speechSynthesis.getVoices();
     $app.data.lastLocationDestinationTime = 0;
 
     $app.methods.silentSearchUser = function (displayName) {
-        var playerListRef = this.lastLocation.playerList.get(displayName);
-        if (
-            !this.gameLogApiLoggingEnabled ||
-            !playerListRef ||
-            playerListRef.userId
-        ) {
-            return;
-        }
-        if (this.debugGameLog) {
-            console.log('Searching for userId for:', displayName);
-        }
+        console.log('Searching for userId for:', displayName);
         var params = {
             n: 5,
             offset: 0,
@@ -6806,8 +6815,8 @@ speechSynthesis.getVoices();
 
     $app.data.friendLogInitStatus = false;
 
-    $app.methods.initFriendLog = async function (userId) {
-        await this.updateDatabaseVersion();
+    $app.methods.initFriendLog = async function (currentUser) {
+        this.refreshFriends(currentUser, true);
         var sqlValues = [];
         var friends = await API.refreshFriends();
         for (var friend of friends) {
@@ -6821,7 +6830,7 @@ speechSynthesis.getVoices();
             sqlValues.unshift(row);
         }
         database.setFriendLogCurrentArray(sqlValues);
-        await configRepository.setBool(`friendLogInit_${userId}`, true);
+        await configRepository.setBool(`friendLogInit_${currentUser.id}`, true);
         this.friendLogInitStatus = true;
     };
 
@@ -6836,14 +6845,14 @@ speechSynthesis.getVoices();
         await configRepository.setBool(`friendLogInit_${userId}`, true);
     };
 
-    $app.methods.getFriendLog = async function () {
-        await this.updateDatabaseVersion();
+    $app.methods.getFriendLog = async function (currentUser) {
         var friendLogCurrentArray = await database.getFriendLogCurrent();
         for (var friend of friendLogCurrentArray) {
             this.friendLog.set(friend.userId, friend);
         }
         this.friendLogTable.data = [];
         this.friendLogTable.data = await database.getFriendLogHistory();
+        this.refreshFriends(currentUser, true);
         await API.refreshFriends();
         this.friendLogInitStatus = true;
         // check for friend/name/rank change AFTER friendLogInitStatus is set
@@ -8904,6 +8913,10 @@ speechSynthesis.getVoices();
             name: $t('dialog.user.worlds.order.descending'),
             value: 'descending'
         },
+        groupSorting: {
+            name: $t('dialog.user.groups.sorting.alphabetical'),
+            value: 'alphabetical'
+        },
         avatarSorting: 'update',
         avatarReleaseStatus: 'all',
 
@@ -8954,6 +8967,15 @@ speechSynthesis.getVoices();
         }
         D.worldOrder = order;
         await this.refreshUserDialogWorlds();
+    };
+
+    $app.methods.setUserDialogGroupSorting = async function (sortOrder) {
+        var D = this.userDialog;
+        if (D.groupSorting === sortOrder) {
+            return;
+        }
+        D.groupSorting = sortOrder;
+        await this.sortCurrentUserGroups();
     };
 
     $app.methods.getFaviconUrl = function (resource) {
@@ -9300,10 +9322,7 @@ speechSynthesis.getVoices();
                         );
                         this.setUserDialogAvatars(userId);
                         this.userDialogLastAvatar = userId;
-                        if (
-                            userId === API.currentUser.id &&
-                            D.avatars.length === 0
-                        ) {
+                        if (userId === API.currentUser.id) {
                             this.refreshUserDialogAvatars();
                         }
                         this.setUserDialogAvatarsRemote(userId);
@@ -9317,7 +9336,7 @@ speechSynthesis.getVoices();
                         API.getUser(args.params);
                     }
                     var inCurrentWorld = false;
-                    if (this.lastLocation.playerList.has(D.ref.displayName)) {
+                    if (this.lastLocation.playerList.has(D.ref.id)) {
                         inCurrentWorld = true;
                     }
                     if (userId !== API.currentUser.id) {
@@ -9449,7 +9468,7 @@ speechSynthesis.getVoices();
             for (var friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
                 var addUser = !users.some(function (user) {
-                    return friend.displayName === user.displayName;
+                    return friend.userId === user.id;
                 });
                 if (addUser) {
                     var ref = API.cachedUsers.get(friend.userId);
@@ -9537,26 +9556,11 @@ speechSynthesis.getVoices();
 
     API.$on('USER:APPLY', function (ref) {
         // add user ref to playerList, friendList, photonLobby, photonLobbyCurrent
-        if ($app.lastLocation.playerList.has(ref.displayName)) {
-            var playerListRef = $app.lastLocation.playerList.get(
-                ref.displayName
-            );
-            if (!playerListRef.userId) {
-                playerListRef.userId = ref.id;
-                $app.lastLocation.playerList.set(
-                    ref.displayName,
-                    playerListRef
-                );
-                if ($app.lastLocation.friendList.has(ref.displayName)) {
-                    $app.lastLocation.friendList.set(
-                        ref.displayName,
-                        playerListRef
-                    );
-                }
-            }
+        var playerListRef = $app.lastLocation.playerList.get(ref.id);
+        if (playerListRef) {
             // add/remove friends from lastLocation.friendList
             if (
-                !$app.lastLocation.friendList.has(ref.displayName) &&
+                !$app.lastLocation.friendList.has(ref.id) &&
                 $app.friends.has(ref.id)
             ) {
                 var userMap = {
@@ -9564,13 +9568,13 @@ speechSynthesis.getVoices();
                     userId: ref.id,
                     joinTime: playerListRef.joinTime
                 };
-                $app.lastLocation.friendList.set(ref.displayName, userMap);
+                $app.lastLocation.friendList.set(ref.id, userMap);
             }
             if (
-                $app.lastLocation.friendList.has(ref.displayName) &&
+                $app.lastLocation.friendList.has(ref.id) &&
                 !$app.friends.has(ref.id)
             ) {
-                $app.lastLocation.friendList.delete(ref.displayName);
+                $app.lastLocation.friendList.delete(ref.id);
             }
             $app.photonLobby.forEach((ref1, id) => {
                 if (
@@ -9698,10 +9702,7 @@ speechSynthesis.getVoices();
         var playersInInstance = this.lastLocation.playerList;
         if (playersInInstance.size > 0) {
             var ref = API.cachedUsers.get(API.currentUser.id);
-            if (
-                typeof ref !== 'undefined' &&
-                playersInInstance.has(ref.displayName)
-            ) {
+            if (typeof ref !== 'undefined' && playersInInstance.has(ref.id)) {
                 pushUser(ref);
             }
             for (var player of playersInInstance.values()) {
@@ -9718,7 +9719,7 @@ speechSynthesis.getVoices();
                         pushUser(ref);
                     } else {
                         var { joinTime } = this.lastLocation.playerList.get(
-                            player.displayName
+                            player.userId
                         );
                         if (!joinTime) {
                             joinTime = Date.now();
@@ -9960,6 +9961,7 @@ speechSynthesis.getVoices();
 
     $app.methods.setUserDialogAvatarsRemote = async function (userId) {
         if (this.avatarRemoteDatabase && userId !== API.currentUser.id) {
+            this.userDialog.isAvatarsLoading = true;
             var data = await this.lookupAvatars('authorId', userId);
             var avatars = new Set();
             this.userDialogAvatars.forEach((avatar) => {
@@ -9968,12 +9970,19 @@ speechSynthesis.getVoices();
             if (data && typeof data === 'object') {
                 data.forEach((avatar) => {
                     if (avatar.id && !avatars.has(avatar.id)) {
-                        this.userDialog.avatars.push(avatar);
+                        if (avatar.authorId === userId) {
+                            this.userDialog.avatars.push(avatar);
+                        } else {
+                            console.error(
+                                `Avatar authorId mismatch for ${avatar.id} - ${avatar.name}`
+                            );
+                        }
                     }
                 });
             }
             this.userDialog.avatarSorting = 'name';
             this.userDialog.avatarReleaseStatus = 'all';
+            this.userDialog.isAvatarsLoading = false;
         }
         this.sortUserDialogAvatars(this.userDialog.avatars);
     };
@@ -10171,6 +10180,8 @@ speechSynthesis.getVoices();
         if (fileId) {
             D.loading = true;
         }
+        D.avatarSorting = 'update';
+        D.avatarReleaseStatus = 'all';
         var params = {
             n: 50,
             offset: 0,
@@ -10800,7 +10811,7 @@ speechSynthesis.getVoices();
             for (var friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
                 var addUser = !instance.users.some(function (user) {
-                    return friend.displayName === user.displayName;
+                    return friend.userId === user.id;
                 });
                 if (addUser) {
                     var ref = API.cachedUsers.get(friend.userId);
@@ -10983,7 +10994,7 @@ speechSynthesis.getVoices();
             for (var friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
                 var addUser = !instance.users.some(function (user) {
-                    return friend.displayName === user.displayName;
+                    return friend.userId === user.id;
                 });
                 if (addUser) {
                     var ref = API.cachedUsers.get(friend.userId);
@@ -15546,10 +15557,7 @@ speechSynthesis.getVoices();
             this.setUserDialogAvatars(userId);
             if (this.userDialogLastAvatar !== userId) {
                 this.userDialogLastAvatar = userId;
-                if (
-                    userId === API.currentUser.id &&
-                    this.userDialog.avatars.length === 0
-                ) {
+                if (userId === API.currentUser.id) {
                     this.refreshUserDialogAvatars();
                 } else {
                     this.setUserDialogAvatarsRemote(userId);
@@ -16791,10 +16799,18 @@ speechSynthesis.getVoices();
                 this.userGroups.remainingGroups.unshift(group);
             }
         }
-        this.userDialog.isGroupsLoading = false;
         if (userId === API.currentUser.id) {
-            this.sortCurrentUserGroups();
+            this.userDialog.groupSorting =
+                this.userDialogGroupSortingOptions.inGame;
+        } else if (
+            this.userDialog.groupSorting ===
+            this.userDialogGroupSortingOptions.inGame
+        ) {
+            this.userDialog.groupSorting =
+                this.userDialogGroupSortingOptions.alphabetical;
         }
+        await this.sortCurrentUserGroups();
+        this.userDialog.isGroupsLoading = false;
     };
 
     $app.methods.getCurrentUserGroups = async function () {
@@ -16808,28 +16824,47 @@ speechSynthesis.getVoices();
         this.saveCurrentUserGroups();
     };
 
-    $app.methods.sortCurrentUserGroups = function () {
-        var groupList = [];
-        var sortGroups = function (a, b) {
-            var aIndex = groupList.indexOf(a?.id);
-            var bIndex = groupList.indexOf(b?.id);
-            if (aIndex === -1 && bIndex === -1) {
-                return 0;
-            }
-            if (aIndex === -1) {
-                return 1;
-            }
-            if (bIndex === -1) {
-                return -1;
-            }
-            return aIndex - bIndex;
-        };
-        AppApi.GetVRChatRegistryKey(
-            `VRC_GROUP_ORDER_${API.currentUser.id}`
-        ).then((json) => {
-            groupList = JSON.parse(json);
-            this.userGroups.remainingGroups.sort(sortGroups);
-        });
+    $app.methods.sortCurrentUserGroups = async function () {
+        var D = this.userDialog;
+        var inGameGroupList = [];
+        var sortMethod = function () {};
+
+        switch (D.groupSorting.value) {
+            case 'alphabetical':
+                sortMethod = compareByName;
+                break;
+            case 'members':
+                sortMethod = compareByMemberCount;
+                break;
+            case 'inGame':
+                sortMethod = function (a, b) {
+                    var aIndex = inGameGroupList.indexOf(a?.id);
+                    var bIndex = inGameGroupList.indexOf(b?.id);
+                    if (aIndex === -1 && bIndex === -1) {
+                        return 0;
+                    }
+                    if (aIndex === -1) {
+                        return 1;
+                    }
+                    if (bIndex === -1) {
+                        return -1;
+                    }
+                    return aIndex - bIndex;
+                };
+                try {
+                    var json = await AppApi.GetVRChatRegistryKey(
+                        `VRC_GROUP_ORDER_${API.currentUser.id}`
+                    );
+                    inGameGroupList = JSON.parse(json);
+                } catch (err) {
+                    console.error(err);
+                }
+                break;
+        }
+
+        this.userGroups.ownGroups.sort(sortMethod);
+        this.userGroups.mutualGroups.sort(sortMethod);
+        this.userGroups.remainingGroups.sort(sortMethod);
     };
 
     // #endregion
@@ -17496,7 +17531,7 @@ speechSynthesis.getVoices();
         API.cachedUsers.forEach((ref, id) => {
             if (
                 !this.friends.has(id) &&
-                !this.lastLocation.playerList.has(ref.displayName) &&
+                !this.lastLocation.playerList.has(ref.id) &&
                 id !== API.currentUser.id
             ) {
                 API.cachedUsers.delete(id);
@@ -17816,6 +17851,7 @@ speechSynthesis.getVoices();
         if (!API.isLoggedIn) {
             return;
         }
+        console.log('LaunchCommand:', input);
         var args = input.split('/');
         var command = args[0];
         var commandArg = args[1];
@@ -18358,7 +18394,7 @@ speechSynthesis.getVoices();
             !this.lastLocation.location ||
             this.lastLocation.location !== ref.travelingToLocation ||
             ref.id === API.currentUser.id ||
-            this.lastLocation.playerList.has(ref.displayName)
+            this.lastLocation.playerList.has(ref.id)
         ) {
             return;
         }
@@ -18517,7 +18553,7 @@ speechSynthesis.getVoices();
     );
 
     $app.methods.updateDatabaseVersion = async function () {
-        var databaseVersion = 9;
+        var databaseVersion = 10;
         if (this.databaseVersion < databaseVersion) {
             if (this.databaseVersion) {
                 var msgBox = this.$message({
@@ -18540,6 +18576,7 @@ speechSynthesis.getVoices();
                 await database.fixBrokenNotifications(); // fix notifications being null
                 await database.fixBrokenGroupChange(); // fix spam group left & name change
                 await database.fixCancelFriendRequestTypo(); // fix CancelFriendRequst typo
+                await database.fixBrokenGameLogDisplayNames(); // fix gameLog display names "DisplayName (userId)"
                 await database.vacuum(); // succ
                 await configRepository.setInt(
                     'VRCX_databaseVersion',
@@ -19823,6 +19860,29 @@ speechSynthesis.getVoices();
         $app.getLocalWorldFavorites();
     });
 
+    $app.methods.refreshLocalWorldFavorites = async function () {
+        if (this.refreshingLocalFavorites) {
+            return;
+        }
+        this.refreshingLocalFavorites = true;
+        for (var worldId of this.localWorldFavoritesList) {
+            if (!this.refreshingLocalFavorites) {
+                break;
+            }
+            try {
+                await API.getWorld({
+                    worldId
+                });
+            } catch (err) {
+                console.error(err);
+            }
+            await new Promise((resolve) => {
+                workerTimers.setTimeout(resolve, 1000);
+            });
+        }
+        this.refreshingLocalFavorites = false;
+    };
+
     $app.data.worldFavoriteSearch = '';
     $app.data.worldFavoriteSearchResults = [];
 
@@ -20209,6 +20269,31 @@ speechSynthesis.getVoices();
                 }
             }
         });
+    };
+
+    $app.data.refreshingLocalFavorites = false;
+
+    $app.methods.refreshLocalAvatarFavorites = async function () {
+        if (this.refreshingLocalFavorites) {
+            return;
+        }
+        this.refreshingLocalFavorites = true;
+        for (var avatarId of this.localAvatarFavoritesList) {
+            if (!this.refreshingLocalFavorites) {
+                break;
+            }
+            try {
+                await API.getAvatar({
+                    avatarId
+                });
+            } catch (err) {
+                console.error(err);
+            }
+            await new Promise((resolve) => {
+                workerTimers.setTimeout(resolve, 1000);
+            });
+        }
+        this.refreshingLocalFavorites = false;
     };
 
     $app.data.avatarFavoriteSearch = '';
@@ -20754,6 +20839,21 @@ speechSynthesis.getVoices();
                 value: 'ascending'
             }
         };
+
+        this.userDialogGroupSortingOptions = {
+            alphabetical: {
+                name: $t('dialog.user.groups.sorting.alphabetical'),
+                value: 'alphabetical'
+            },
+            members: {
+                name: $t('dialog.user.groups.sorting.members'),
+                value: 'members'
+            },
+            inGame: {
+                name: $t('dialog.user.groups.sorting.in_game'),
+                value: 'inGame'
+            }
+        };
     };
 
     $app.methods.applyGroupDialogSortingStrings = function () {
@@ -20792,6 +20892,9 @@ speechSynthesis.getVoices();
             this.userDialogWorldSortingOptions.updated;
         this.userDialog.worldOrder =
             this.userDialogWorldOrderOptions.descending;
+        this.userDialog.groupSorting =
+            this.userDialogGroupSortingOptions.alphabetical;
+
         this.groupDialog.memberFilter = this.groupDialogFilterOptions.everyone;
         this.groupDialog.memberSortOrder =
             this.groupDialogSortingOptions.joinedAtDesc;

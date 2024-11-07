@@ -473,7 +473,6 @@
                         "instance_cache": "房间信息缓存:",
                         "clear_cache": "清除缓存",
                         "auto_clear_cache": "自动清除缓存",
-                        "download_history": "下载记录",
                         "show_console": "显示界面调试工具"
                     },
                     "sqlite_table_size": {

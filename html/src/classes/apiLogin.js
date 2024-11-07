@@ -13,15 +13,6 @@ export default class extends baseClass {
     }
 
     async init() {
-        $app.savedCredentials =
-            (await configRepository.getString('savedCredentials')) !== null
-                ? JSON.parse(
-                      await configRepository.getString('savedCredentials')
-                  )
-                : {};
-        $app.lastUserLoggedIn =
-            await configRepository.getString('lastUserLoggedIn');
-
         API.isLoggedIn = false;
         API.attemptingAutoLogin = false;
 
