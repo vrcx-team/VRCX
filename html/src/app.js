@@ -4412,6 +4412,7 @@ speechSynthesis.getVoices();
         if (typeof ctx === 'undefined') {
             return;
         }
+        var ref = API.cachedUsers.get(id);
         if (stateInput) {
             ctx.pendingState = stateInput;
             if (typeof ref !== 'undefined') {
@@ -4426,7 +4427,6 @@ speechSynthesis.getVoices();
             ctx.pendingOffline = false;
             ctx.pendingOfflineTime = '';
         }
-        var ref = API.cachedUsers.get(id);
         var isVIP = this.localFavoriteFriends.has(id);
         var location = '';
         var $location_at = '';
@@ -4513,6 +4513,9 @@ speechSynthesis.getVoices();
                 }
                 return;
             }
+            if (this.debugFriendState) {
+                console.log(ctx.name, 'pendingOfflineBegin');
+            }
             ctx.pendingOffline = true;
             ctx.pendingOfflineTime = Date.now();
             // wait 2minutes then check if user came back online
@@ -4533,6 +4536,9 @@ speechSynthesis.getVoices();
                         );
                     }
                     return;
+                }
+                if (this.debugFriendState) {
+                    console.log(ctx.name, 'pendingOfflineEnd');
                 }
                 this.updateFriendDelayedCheck(ctx, location, $location_at);
             }, this.pendingOfflineDelay);
@@ -4770,6 +4776,16 @@ speechSynthesis.getVoices();
             return -1;
         }
         return 0;
+    };
+
+    var compareByMemberCount = function (a, b) {
+        if (
+            typeof a.memberCount !== 'number' ||
+            typeof b.memberCount !== 'number'
+        ) {
+            return 0;
+        }
+        return a.memberCount - b.memberCount;
     };
 
     // private
@@ -8897,6 +8913,10 @@ speechSynthesis.getVoices();
             name: $t('dialog.user.worlds.order.descending'),
             value: 'descending'
         },
+        groupSorting: {
+            name: $t('dialog.user.groups.sorting.alphabetical'),
+            value: 'alphabetical'
+        },
         avatarSorting: 'update',
         avatarReleaseStatus: 'all',
 
@@ -8947,6 +8967,15 @@ speechSynthesis.getVoices();
         }
         D.worldOrder = order;
         await this.refreshUserDialogWorlds();
+    };
+
+    $app.methods.setUserDialogGroupSorting = async function (sortOrder) {
+        var D = this.userDialog;
+        if (D.groupSorting === sortOrder) {
+            return;
+        }
+        D.groupSorting = sortOrder;
+        await this.sortCurrentUserGroups();
     };
 
     $app.methods.getFaviconUrl = function (resource) {
@@ -9293,10 +9322,7 @@ speechSynthesis.getVoices();
                         );
                         this.setUserDialogAvatars(userId);
                         this.userDialogLastAvatar = userId;
-                        if (
-                            userId === API.currentUser.id &&
-                            D.avatars.length === 0
-                        ) {
+                        if (userId === API.currentUser.id) {
                             this.refreshUserDialogAvatars();
                         }
                         this.setUserDialogAvatarsRemote(userId);
@@ -9935,6 +9961,7 @@ speechSynthesis.getVoices();
 
     $app.methods.setUserDialogAvatarsRemote = async function (userId) {
         if (this.avatarRemoteDatabase && userId !== API.currentUser.id) {
+            this.userDialog.isAvatarsLoading = true;
             var data = await this.lookupAvatars('authorId', userId);
             var avatars = new Set();
             this.userDialogAvatars.forEach((avatar) => {
@@ -9943,12 +9970,19 @@ speechSynthesis.getVoices();
             if (data && typeof data === 'object') {
                 data.forEach((avatar) => {
                     if (avatar.id && !avatars.has(avatar.id)) {
-                        this.userDialog.avatars.push(avatar);
+                        if (avatar.authorId === userId) {
+                            this.userDialog.avatars.push(avatar);
+                        } else {
+                            console.error(
+                                `Avatar authorId mismatch for ${avatar.id} - ${avatar.name}`
+                            );
+                        }
                     }
                 });
             }
             this.userDialog.avatarSorting = 'name';
             this.userDialog.avatarReleaseStatus = 'all';
+            this.userDialog.isAvatarsLoading = false;
         }
         this.sortUserDialogAvatars(this.userDialog.avatars);
     };
@@ -10146,6 +10180,8 @@ speechSynthesis.getVoices();
         if (fileId) {
             D.loading = true;
         }
+        D.avatarSorting = 'update';
+        D.avatarReleaseStatus = 'all';
         var params = {
             n: 50,
             offset: 0,
@@ -15521,10 +15557,7 @@ speechSynthesis.getVoices();
             this.setUserDialogAvatars(userId);
             if (this.userDialogLastAvatar !== userId) {
                 this.userDialogLastAvatar = userId;
-                if (
-                    userId === API.currentUser.id &&
-                    this.userDialog.avatars.length === 0
-                ) {
+                if (userId === API.currentUser.id) {
                     this.refreshUserDialogAvatars();
                 } else {
                     this.setUserDialogAvatarsRemote(userId);
@@ -16766,10 +16799,18 @@ speechSynthesis.getVoices();
                 this.userGroups.remainingGroups.unshift(group);
             }
         }
-        this.userDialog.isGroupsLoading = false;
         if (userId === API.currentUser.id) {
-            this.sortCurrentUserGroups();
+            this.userDialog.groupSorting =
+                this.userDialogGroupSortingOptions.inGame;
+        } else if (
+            this.userDialog.groupSorting ===
+            this.userDialogGroupSortingOptions.inGame
+        ) {
+            this.userDialog.groupSorting =
+                this.userDialogGroupSortingOptions.alphabetical;
         }
+        await this.sortCurrentUserGroups();
+        this.userDialog.isGroupsLoading = false;
     };
 
     $app.methods.getCurrentUserGroups = async function () {
@@ -16783,28 +16824,47 @@ speechSynthesis.getVoices();
         this.saveCurrentUserGroups();
     };
 
-    $app.methods.sortCurrentUserGroups = function () {
-        var groupList = [];
-        var sortGroups = function (a, b) {
-            var aIndex = groupList.indexOf(a?.id);
-            var bIndex = groupList.indexOf(b?.id);
-            if (aIndex === -1 && bIndex === -1) {
-                return 0;
-            }
-            if (aIndex === -1) {
-                return 1;
-            }
-            if (bIndex === -1) {
-                return -1;
-            }
-            return aIndex - bIndex;
-        };
-        AppApi.GetVRChatRegistryKey(
-            `VRC_GROUP_ORDER_${API.currentUser.id}`
-        ).then((json) => {
-            groupList = JSON.parse(json);
-            this.userGroups.remainingGroups.sort(sortGroups);
-        });
+    $app.methods.sortCurrentUserGroups = async function () {
+        var D = this.userDialog;
+        var inGameGroupList = [];
+        var sortMethod = function () {};
+
+        switch (D.groupSorting.value) {
+            case 'alphabetical':
+                sortMethod = compareByName;
+                break;
+            case 'members':
+                sortMethod = compareByMemberCount;
+                break;
+            case 'inGame':
+                sortMethod = function (a, b) {
+                    var aIndex = inGameGroupList.indexOf(a?.id);
+                    var bIndex = inGameGroupList.indexOf(b?.id);
+                    if (aIndex === -1 && bIndex === -1) {
+                        return 0;
+                    }
+                    if (aIndex === -1) {
+                        return 1;
+                    }
+                    if (bIndex === -1) {
+                        return -1;
+                    }
+                    return aIndex - bIndex;
+                };
+                try {
+                    var json = await AppApi.GetVRChatRegistryKey(
+                        `VRC_GROUP_ORDER_${API.currentUser.id}`
+                    );
+                    inGameGroupList = JSON.parse(json);
+                } catch (err) {
+                    console.error(err);
+                }
+                break;
+        }
+
+        this.userGroups.ownGroups.sort(sortMethod);
+        this.userGroups.mutualGroups.sort(sortMethod);
+        this.userGroups.remainingGroups.sort(sortMethod);
     };
 
     // #endregion
@@ -20779,6 +20839,21 @@ speechSynthesis.getVoices();
                 value: 'ascending'
             }
         };
+
+        this.userDialogGroupSortingOptions = {
+            alphabetical: {
+                name: $t('dialog.user.groups.sorting.alphabetical'),
+                value: 'alphabetical'
+            },
+            members: {
+                name: $t('dialog.user.groups.sorting.members'),
+                value: 'members'
+            },
+            inGame: {
+                name: $t('dialog.user.groups.sorting.in_game'),
+                value: 'inGame'
+            }
+        };
     };
 
     $app.methods.applyGroupDialogSortingStrings = function () {
@@ -20817,6 +20892,9 @@ speechSynthesis.getVoices();
             this.userDialogWorldSortingOptions.updated;
         this.userDialog.worldOrder =
             this.userDialogWorldOrderOptions.descending;
+        this.userDialog.groupSorting =
+            this.userDialogGroupSortingOptions.alphabetical;
+
         this.groupDialog.memberFilter = this.groupDialogFilterOptions.everyone;
         this.groupDialog.memberSortOrder =
             this.groupDialogSortingOptions.joinedAtDesc;

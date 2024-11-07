@@ -640,9 +640,15 @@
             "groups": {
                 "header": "Groups",
                 "total_count": "Total {count}",
+                "sort_by": "Sort by:",
                 "own_groups": "Own Groups",
                 "mutual_groups": "Mutual Groups",
-                "groups": "Groups"
+                "groups": "Groups",
+                "sorting": {
+                    "alphabetical": "Alphabetical",
+                    "members": "Members",
+                    "in_game": "In-Game Order"
+                }
             },
             "worlds": {
                 "header": "Worlds",
