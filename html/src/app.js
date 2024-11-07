@@ -1356,6 +1356,7 @@ speechSynthesis.getVoices();
                 }
             });
 
+            // we don't update friend state here, it's not reliable
             var state = 'offline';
             if (json.platform === 'web') {
                 state = 'active';
@@ -4490,7 +4491,7 @@ speechSynthesis.getVoices();
             ) {
                 if (this.debugFriendState) {
                     console.log(
-                        `Fetching offline friend in an instance ${ctx.name}`
+                        `Fetching offline friend in an instance from getCurrentUser ${ctx.name}`
                     );
                 }
                 API.getUser({
@@ -4547,7 +4548,21 @@ speechSynthesis.getVoices();
             ctx.isVIP = isVIP;
             if (typeof ref !== 'undefined') {
                 ctx.name = ref.displayName;
+
+                // wtf, from getCurrentUser only, fetch user if online in offline location
+                if (fromGetCurrentUser && stateInput === 'online') {
+                    if (this.debugFriendState) {
+                        console.log(
+                            `Fetching friend coming online from getCurrentUser ${ctx.name}`
+                        );
+                    }
+                    API.getUser({
+                        userId: id
+                    });
+                    return;
+                }
             }
+
             this.updateFriendDelayedCheck(ctx, location, $location_at);
         }
     };
@@ -8001,7 +8016,12 @@ speechSynthesis.getVoices();
     if (!(await VRCXStorage.Get('VRCX_ProxyServer'))) {
         await VRCXStorage.Set('VRCX_ProxyServer', '');
     }
+    if ((await VRCXStorage.Get('VRCX_DisableGpuAcceleration')) === '') {
+        await VRCXStorage.Set('VRCX_DisableGpuAcceleration', 'false');
+    }
     $app.data.proxyServer = await VRCXStorage.Get('VRCX_ProxyServer');
+    $app.data.disableGpuAcceleration =
+        (await VRCXStorage.Get('VRCX_DisableGpuAcceleration')) === 'true';
     $app.data.disableWorldDatabase =
         (await VRCXStorage.Get('VRCX_DisableWorldDatabase')) === 'true';
     $app.methods.saveVRCXWindowOption = async function () {
@@ -8017,6 +8037,10 @@ speechSynthesis.getVoices();
         VRCXStorage.Set(
             'VRCX_DisableWorldDatabase',
             this.disableWorldDatabase.toString()
+        );
+        VRCXStorage.Set(
+            'VRCX_DisableGpuAcceleration',
+            this.disableGpuAcceleration.toString()
         );
         AppApi.SetStartup(this.isStartAtWindowsStartup);
     };

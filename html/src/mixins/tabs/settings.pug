@@ -84,6 +84,11 @@ mixin settingsTab()
                     +simpleSwitch("view.settings.general.application.minimized", "isStartAsMinimizedState", "saveVRCXWindowOption")
                     +simpleSwitch("view.settings.general.application.tray", "isCloseToTray", "saveVRCXWindowOption")
                     div.options-container-item
+                        span.name {{ $t('view.settings.general.application.disable_gpu_acceleration') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.application.disable_gpu_acceleration_tooltip')")
+                                i.el-icon-warning
+                        el-switch(v-model="disableGpuAcceleration" @change="saveVRCXWindowOption")
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-connection" @click="promptProxySettings()") {{ $t("view.settings.general.application.proxy") }}
                 //- General | Favorite
                 +simpleSettingsCategory("view.settings.general.favorites.header")
@@ -96,6 +101,9 @@ mixin settingsTab()
                 //- General | Game Log
                 div.options-container
                     span.header {{ $t('view.settings.general.logging.header') }}
+                    div.options-container-item
+                        span.name(style="min-width:225px") {{ $t('view.settings.advanced.advanced.cache_debug.udon_exception_logging') }}
+                        el-switch(v-model="udonExceptionLogging" @change="saveOpenVROption")
                     div.options-container-item
                         span.name(style="min-width:225px") {{ $t('view.settings.general.logging.resource_load') }}
                         el-switch(v-model="logResourceLoad" @change="saveLoggingOptions")
@@ -562,7 +570,6 @@ mixin settingsTab()
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.cache_debug.header') }}
                     br
-                    +simpleSwitch("view.settings.advanced.advanced.cache_debug.udon_exception_logging", "udonExceptionLogging", "saveOpenVROption")
                     div.options-container-item
                         span.name {{ $t('view.settings.advanced.advanced.cache_debug.disable_gamelog') }}
                         el-switch(v-model="gameLogDisabled" @change="disableGameLogDialog")

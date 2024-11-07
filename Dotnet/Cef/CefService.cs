@@ -57,6 +57,11 @@ namespace VRCX
             {
                 cefSettings.CefCommandLineArgs["proxy-server"] = WebApi.ProxyUrl;
             }
+            
+            if (VRCXStorage.Instance.Get("VRCX_DisableGpuAcceleration") == "true")
+            {
+                cefSettings.CefCommandLineArgs.Add("disable-gpu");
+            }
 
             if (Program.LaunchDebug)
             {
