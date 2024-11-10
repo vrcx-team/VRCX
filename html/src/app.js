@@ -329,8 +329,8 @@ speechSynthesis.getVoices();
             console.error('API.$on(USER) invalid args', args);
             return;
         }
-        $app.updateFriend({ id: args.json.id, state: args.json.state });
-        args.ref = this.applyUser(args.json);
+        $app.updateFriend({ id: args.json.id, state: args.json.state }); // online/offline
+        args.ref = this.applyUser(args.json); // GPS
     });
 
     API.$on('USER:LIST', function (args) {
@@ -1355,47 +1355,6 @@ speechSynthesis.getVoices();
                     userId: json.id
                 }
             });
-
-            // we don't update friend state here, it's not reliable
-            var state = 'offline';
-            if (json.platform === 'web') {
-                state = 'active';
-            } else if (json.platform) {
-                state = 'online';
-            }
-            var ref = $app.friends.get(json.id);
-            if (ref?.state !== state) {
-                if ($app.debugFriendState) {
-                    console.log(
-                        `Bulk friend fetch, friend state does not match ${json.displayName} from ${ref?.state} to ${state}`,
-                        json
-                    );
-                }
-                this.getUser({
-                    userId: json.id
-                });
-            } else if (json.location === 'traveling') {
-                if ($app.debugFriendState) {
-                    console.log(
-                        'Bulk friend fetch, fetching traveling user',
-                        json
-                    );
-                }
-                this.getUser({
-                    userId: json.id
-                });
-            }
-
-            // if (
-            //     !args.params.offline &&
-            //     json.platform !== 'web' &&
-            //     json.location === 'offline'
-            // ) {
-            //     console.log('Fetching offline user', json);
-            //     this.getUser({
-            //         userId: json.id
-            //     });
-            // }
         }
     });
 
@@ -1404,9 +1363,18 @@ speechSynthesis.getVoices();
     API.refreshFriends = async function () {
         this.isRefreshFriendsLoading = true;
         try {
-            var onlineFriends = await this.refreshOnlineFriends();
-            var offlineFriends = await this.refreshOfflineFriends();
+            var onlineFriends = await this.bulkRefreshFriends({
+                offline: false
+            });
+            var offlineFriends = await this.bulkRefreshFriends({
+                offline: true
+            });
             var friends = onlineFriends.concat(offlineFriends);
+            friends = await this.refetchBrokenFriends(friends);
+            if (!$app.friendLogInitStatus) {
+                friends = await this.refreshRemainingFriends(friends);
+            }
+
             this.isRefreshFriendsLoading = false;
             return friends;
         } catch (err) {
@@ -1415,18 +1383,14 @@ speechSynthesis.getVoices();
         }
     };
 
-    API.refreshOnlineFriends = async function () {
+    API.bulkRefreshFriends = async function (params) {
         var friends = [];
         var params = {
+            ...params,
             n: 50,
-            offset: 0,
-            offline: false
+            offset: 0
         };
-        var N =
-            this.currentUser.onlineFriends.length +
-            this.currentUser.activeFriends.length;
-        var count = Math.trunc(N / 50);
-        mainLoop: for (var i = count; i > -1; i--) {
+        mainLoop: for (var i = 100; i > -1; i--) {
             if (params.offset > 5000) {
                 // API offset limit is 5000
                 break;
@@ -1436,6 +1400,9 @@ speechSynthesis.getVoices();
                 try {
                     var args = await this.getFriends(params);
                     friends = friends.concat(args.json);
+                    if (!args.json || args.json.length < 50) {
+                        break mainLoop;
+                    }
                     break retryLoop;
                 } catch (err) {
                     console.error(err);
@@ -1460,48 +1427,60 @@ speechSynthesis.getVoices();
         return friends;
     };
 
-    API.refreshOfflineFriends = async function () {
-        var friends = [];
-        var params = {
-            n: 50,
-            offset: 0,
-            offline: true
-        };
-        var onlineCount =
-            this.currentUser.onlineFriends.length +
-            this.currentUser.activeFriends.length;
-        var N = this.currentUser.friends.length - onlineCount;
-        var count = Math.trunc(N / 50);
-        mainLoop: for (var i = count; i > -1; i--) {
-            if (params.offset > 5000) {
-                // API offset limit is 5000
-                break;
-            }
-            retryLoop: for (var j = 0; j < 10; j++) {
-                // handle 429 ratelimit error, retry 10 times
+    API.refreshRemainingFriends = async function (friends) {
+        for (var userId of this.currentUser.friends) {
+            if (!friends.some((x) => x.id === userId)) {
                 try {
-                    var args = await this.getFriends(params);
-                    friends = friends.concat(args.json);
-                    break retryLoop;
+                    console.log('Fetching remaining friend', userId);
+                    var args = await this.getUser({ userId });
+                    friends.push(args.json);
                 } catch (err) {
                     console.error(err);
-                    if (!API.currentUser.isLoggedIn) {
-                        console.error(`User isn't logged in`);
-                        break mainLoop;
-                    }
-                    if (err?.message?.includes('Not Found')) {
-                        console.error('Awful workaround for awful VRC API bug');
-                        break retryLoop;
-                    }
-                    if (j === 9) {
-                        throw err;
-                    }
-                    await new Promise((resolve) => {
-                        workerTimers.setTimeout(resolve, 5000);
-                    });
                 }
             }
-            params.offset += 50;
+        }
+        return friends;
+    };
+
+    API.refetchBrokenFriends = async function (friends) {
+        // attempt to broken data from bulk friend fetch
+        for (var i = 0; i < friends.length; i++) {
+            var friend = friends[i];
+            try {
+                // we don't update friend state here, it's not reliable
+                var state = 'offline';
+                if (friend.platform === 'web') {
+                    state = 'active';
+                } else if (friend.platform) {
+                    state = 'online';
+                }
+                var ref = $app.friends.get(friend.id);
+                if (ref?.state !== state) {
+                    if ($app.debugFriendState) {
+                        console.log(
+                            `Refetching friend state it does not match ${friend.displayName} from ${ref?.state} to ${state}`,
+                            friend
+                        );
+                    }
+                    var args = await this.getUser({
+                        userId: friend.id
+                    });
+                    friends[i] = args.json;
+                } else if (friend.location === 'traveling') {
+                    if ($app.debugFriendState) {
+                        console.log(
+                            'Refetching traveling friend',
+                            friend.displayName
+                        );
+                    }
+                    var args = await this.getUser({
+                        userId: friend.id
+                    });
+                    friends[i] = args.json;
+                }
+            } catch (err) {
+                console.error(err);
+            }
         }
         return friends;
     };
@@ -5495,6 +5474,7 @@ speechSynthesis.getVoices();
             $app.applyGroupDialogInstances();
         }
         if (
+            !props.state &&
             props.location &&
             props.location[0] !== 'offline' &&
             props.location[0] !== '' &&
@@ -5506,7 +5486,7 @@ speechSynthesis.getVoices();
             var previousLocation = props.location[1];
             var newLocation = props.location[0];
             var time = props.location[2];
-            if (previousLocation === 'traveling') {
+            if (previousLocation === 'traveling' && ref.$previousLocation) {
                 previousLocation = ref.$previousLocation;
                 var travelTime = Date.now() - ref.$travelingToTime;
                 time -= travelTime;
@@ -6877,8 +6857,8 @@ speechSynthesis.getVoices();
                 this.updateFriendship(ref);
             }
         }
-        if (typeof API.currentUser.friends !== 'undefined') {
-            this.updateFriendships(API.currentUser);
+        if (typeof currentUser.friends !== 'undefined') {
+            this.updateFriendships(currentUser);
         }
     };
 
