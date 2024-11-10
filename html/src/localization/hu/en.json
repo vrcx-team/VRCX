@@ -211,7 +211,6 @@
                     "auto_update_off": "Kikapcsolva",
                     "auto_update_notify": "Értesítsen",
                     "auto_update_download": "Automatikus letöltés",
-                    "auto_update_install": "Automatikus telepítés",
                     "change_log": "Változásnapló"
                 },
                 "application": {
@@ -413,11 +412,6 @@
                     "screenshot_metadata": "Screenshot Metadata",
                     "vrc_registry_backup": "VRC Registry Backup",
                     "common_folders": "Common Folders",
-                    "pending_offline": {
-                        "header": "Pending Offline",
-                        "description": "Delay before marking user as offline (fixes false positives)",
-                        "set_delay": "Set Delay"
-                    },
                     "primary_password": {
                         "header": "Primary Password",
                         "description": "Encrypt password (disables auto login)"
@@ -491,7 +485,6 @@
                         "instance_cache": "Instance cache:",
                         "clear_cache": "Clear Cache",
                         "auto_clear_cache": "Auto Clear Cache",
-                        "download_history": "Download History",
                         "show_console": "Show Console"
                     },
                     "sqlite_table_size": {

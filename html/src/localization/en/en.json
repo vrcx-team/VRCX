@@ -90,21 +90,28 @@
                 "search": "Search",
                 "vrchat_favorites": "VRChat Favorites",
                 "local_favorites": "Local Favorites",
-                "new_group": "New Group"
+                "new_group": "New Group",
+                "refresh": "Refresh",
+                "cancel_refresh": "Cancel Refresh"
             },
             "avatars": {
                 "header": "Avatars",
                 "search": "Search",
                 "vrchat_favorites": "VRChat Favorites",
                 "local_favorites": "Local Favorites (Requires VRC+)",
-                "new_group": "New Group"
+                "new_group": "New Group",
+                "refresh": "Refresh",
+                "cancel_refresh": "Cancel Refresh"
             },
-            "bulk_unfavorite_mode": "Bulk Unfavorite Mode",
-            "bulk_unfavorite_selection": "Bulk Unfavorite Selection",
+            "edit_mode": "Edit Mode",
+            "copy": "Copy",
+            "clear": "Clear",
+            "bulk_unfavorite": "Bulk Unfavorite",
             "refresh_tooltip": "Refresh all favorites",
             "export": "Export",
             "import": "Import",
             "move_tooltip": "Move",
+            "copy_tooltip": "Copy",
             "unfavorite_tooltip": "Unfavorite",
             "visibility_tooltip": "Change Visibility",
             "rename_tooltip": "Rename",
@@ -207,18 +214,19 @@
                 "vrcx_updater": {
                     "header": "VRCX Updater",
                     "change_build": "Change build",
-                    "auto_update": "Auto update",
+                    "update_action": "Update action",
                     "auto_update_off": "Off",
                     "auto_update_notify": "Notify",
                     "auto_update_download": "Auto Download",
-                    "auto_update_install": "Auto Install",
                     "change_log": "Change Log"
                 },
                 "application": {
                     "header": "Application",
                     "startup": "Start at Windows startup",
-                    "minimized": "Start as minimized state",
-                    "tray": "Close to tray",
+                    "minimized": "Start minimized",
+                    "tray": "Minimize to tray when closing",
+                    "disable_gpu_acceleration": "Disable GPU Acceleration",
+                    "disable_gpu_acceleration_tooltip": "Only change this option if you know what you're doing, may fix issues with UI, requires restarting VRCX",
                     "proxy": "Proxy settings"
                 },
                 "favorites": {
@@ -405,11 +413,6 @@
                     "screenshot_metadata": "Screenshot Metadata",
                     "vrc_registry_backup": "VRC Registry Backup",
                     "common_folders": "Common Folders",
-                    "pending_offline": {
-                        "header": "Pending Offline",
-                        "description": "Delay before marking user as offline (fixes false positives)",
-                        "set_delay": "Set Delay"
-                    },
                     "primary_password": {
                         "header": "Primary Password",
                         "description": "Encrypt password (disables auto login)"
@@ -449,7 +452,7 @@
                     },
                     "screenshot_helper": {
                         "header": "Screenshot Helper",
-                        "description": "Will store the world ID, world name and players in instance inside the file metadata of any pictures you take in-game.",
+                        "description": "Store world ID, world name and players inside the instance inside the file metadata of any pictures you take in-game.",
                         "description_tooltip": "Unfortunately, windows doesn't support viewing PNG text chunks(few things do) natively, but you can view it using a command-line tool like exiftool, a png chunk inspector, or a hex editor.",
                         "enable": "Enable",
                         "modify_filename": "Modify Filename",
@@ -479,7 +482,6 @@
                         "instance_cache": "Instance cache:",
                         "clear_cache": "Clear Cache",
                         "auto_clear_cache": "Auto Clear Cache",
-                        "download_history": "Download History",
                         "show_console": "Show Console"
                     },
                     "sqlite_table_size": {
@@ -643,9 +645,15 @@
             "groups": {
                 "header": "Groups",
                 "total_count": "Total {count}",
+                "sort_by": "Sort by:",
                 "own_groups": "Own Groups",
                 "mutual_groups": "Mutual Groups",
-                "groups": "Groups"
+                "groups": "Groups",
+                "sorting": {
+                    "alphabetical": "Alphabetical",
+                    "members": "Members",
+                    "in_game": "In-Game Order"
+                }
             },
             "worlds": {
                 "header": "Worlds",
@@ -715,6 +723,7 @@
                 "download_package": "Download Unity Package",
                 "publish_to_labs": "Publish To Labs",
                 "unpublish": "Unpublish",
+                "delete_persistent_data": "Delete Persistent Data",
                 "delete": "Delete"
             },
             "instances": {

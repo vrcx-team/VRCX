@@ -71,8 +71,8 @@ namespace VRCX
                 return 0; // it's cooked
             
             try {
-                var versionHexString = hexString.Substring(16, 8); // 16..24
-                var variantVersionHexString = hexString.Substring(24, 8); // 24..32
+                var variantVersionHexString = hexString.Substring(16, 8); // 16..24
+                var versionHexString = hexString.Substring(24, 8); // 24..32
                 var versionBytes = new byte[4];
                 var variantVersionBytes = new byte[4];
                 for (var i = 0; i < 4; i++)

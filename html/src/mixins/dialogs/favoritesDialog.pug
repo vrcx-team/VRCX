@@ -1,0 +1,230 @@
+mixin favoritesDialog()
+    //- dialog: favorite
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="favoriteDialog" :visible.sync="favoriteDialog.visible" :title="$t('dialog.favorite.header')" width="300px")
+        div(v-if="favoriteDialog.visible" v-loading="favoriteDialog.loading")
+            span(style="display:block;text-align:center") {{ $t('dialog.favorite.vrchat_favorites') }}
+            template(v-if="favoriteDialog.currentGroup && favoriteDialog.currentGroup.key")
+                el-button(style="display:block;width:100%;margin:10px 0" @click="deleteFavoriteNoConfirm(favoriteDialog.objectId)") #[i.el-icon-check] {{ favoriteDialog.currentGroup.displayName }} ({{ favoriteDialog.currentGroup.count }} / {{ favoriteDialog.currentGroup.capacity }})
+            template(v-else)
+                el-button(v-for="group in favoriteDialog.groups" :key="group" style="display:block;width:100%;margin:10px 0" @click="addFavorite(group)") {{ group.displayName }} ({{ group.count }} / {{ group.capacity }})
+        div(v-if="favoriteDialog.visible && favoriteDialog.type === 'world'" style="margin-top:20px")
+            span(style="display:block;text-align:center") {{ $t('dialog.favorite.local_favorites') }}
+            template(v-for="group in localWorldFavoriteGroups" :key="group")
+                el-button(v-if="hasLocalWorldFavorite(favoriteDialog.objectId, group)" style="display:block;width:100%;margin:10px 0" @click="removeLocalWorldFavorite(favoriteDialog.objectId, group)") #[i.el-icon-check] {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+                el-button(v-else style="display:block;width:100%;margin:10px 0" @click="addLocalWorldFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+        div(v-if="favoriteDialog.visible && favoriteDialog.type === 'avatar'" style="margin-top:20px")
+            span(style="display:block;text-align:center") {{ $t('dialog.favorite.local_avatar_favorites') }}
+            template(v-for="group in localAvatarFavoriteGroups" :key="group")
+                el-button(v-if="hasLocalAvatarFavorite(favoriteDialog.objectId, group)" style="display:block;width:100%;margin:10px 0" @click="removeLocalAvatarFavorite(favoriteDialog.objectId, group)") #[i.el-icon-check] {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+                el-button(v-else style="display:block;width:100%;margin:10px 0" :disabled="!isLocalUserVrcplusSupporter()" @click="addLocalAvatarFavorite(favoriteDialog.objectId, group)") {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+
+    //- dialog: export friends list
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportFriendsListDialog" :title="$t('dialog.export_friends_list.header')" width="650px")
+        el-tabs(type="card")
+            el-tab-pane(:label="$t('dialog.export_friends_list.csv')")
+                el-input(type="textarea" v-if="exportFriendsListDialog" v-model="exportFriendsListCsv" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+            el-tab-pane(:label="$t('dialog.export_friends_list.json')")
+                el-input(type="textarea" v-if="exportFriendsListDialog" v-model="exportFriendsListJson" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+
+    //- dialog: export avatars list
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="exportAvatarsListDialog" :title="$t('dialog.export_own_avatars.header')" width="650px")
+        el-input(type="textarea" v-if="exportAvatarsListDialog" v-model="exportAvatarsListCsv" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+
+    //- dialog: export world list
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="worldExportDialogRef" :visible.sync="worldExportDialogVisible" :title="$t('dialog.world_export.header')" width="650px")
+        el-dropdown(@click.native.stop trigger="click" size="small")
+            el-button(size="mini")
+                span(v-if="worldExportFavoriteGroup") {{ worldExportFavoriteGroup.displayName }} ({{ worldExportFavoriteGroup.count }}/{{ worldExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
+                span(v-else) All Favorites #[i.el-icon-arrow-down.el-icon--right]
+            el-dropdown-menu(#default="dropdown")
+                el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldExportGroup(null)") None
+                template(v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
+                    el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldExportGroup(groupAPI)") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+        el-dropdown(@click.native.stop trigger="click" size="small" style="margin-left:10px")
+            el-button(size="mini")
+                span(v-if="worldExportLocalFavoriteGroup") {{ worldExportLocalFavoriteGroup }} ({{ getLocalWorldFavoriteGroupLength(worldExportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
+                span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+            el-dropdown-menu(#default="dropdown")
+                el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldExportLocalGroup(null)") None
+                template(v-for="group in localWorldFavoriteGroups" :key="group")
+                    el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldExportLocalGroup(group)") {{ group }} ({{ localWorldFavorites[group].length }})
+        br
+        el-input(type="textarea" v-if="worldExportDialogVisible" v-model="worldExportContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+
+    //- dialog: World import dialog
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="worldImportDialog" :visible.sync="worldImportDialog.visible" :title="$t('dialog.world_import.header')" width="650px")
+        div(style="font-size:12px")
+            | {{ $t('dialog.world_import.description') }}
+        el-input(type="textarea" v-model="worldImportDialog.input" size="mini" rows="10" resize="none" style="margin-top:15px")
+        el-button(size="small" @click="processWorldImportList" :disabled="!worldImportDialog.input") {{ $t('dialog.world_import.process_list') }}
+        span(v-if="worldImportDialog.progress" style="margin-top:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.world_import.process_progress') }} {{ worldImportDialog.progress }}/{{ worldImportDialog.progressTotal }}
+        br
+        el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px")
+            el-button(size="mini")
+                span(v-if="worldImportDialog.worldImportFavoriteGroup") {{ worldImportDialog.worldImportFavoriteGroup.displayName }} ({{ worldImportDialog.worldImportFavoriteGroup.count }}/{{ worldImportDialog.worldImportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
+                span(v-else) {{ $t('dialog.world_import.select_vrchat_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
+            el-dropdown-menu(#default="dropdown")
+                template(v-for="groupAPI in API.favoriteWorldGroups" :key="groupAPI.name")
+                    el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+        el-dropdown(@click.native.stop trigger="click" size="small" style="margin:5px")
+            el-button(size="mini")
+                span(v-if="worldImportDialog.worldImportLocalFavoriteGroup") {{ worldImportDialog.worldImportLocalFavoriteGroup }} ({{ getLocalWorldFavoriteGroupLength(worldImportDialog.worldImportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
+                span(v-else) {{ $t('dialog.world_import.select_local_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
+            el-dropdown-menu(#default="dropdown")
+                template(v-for="group in localWorldFavoriteGroups" :key="group")
+                    el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectWorldImportLocalGroup(group)" ) {{ group }} ({{ getLocalWorldFavoriteGroupLength(group) }})
+        el-button(size="small" @click="importWorldImportTable" style="margin:5px" :disabled="worldImportTable.data.length === 0 || (!worldImportDialog.worldImportFavoriteGroup && !worldImportDialog.worldImportLocalFavoriteGroup)") {{ $t('dialog.world_import.import') }}
+        el-button(v-if="worldImportDialog.loading" size="small" @click="cancelWorldImport" style="margin-top:10px") {{ $t('dialog.world_import.cancel') }}
+        span(v-if="worldImportDialog.worldImportFavoriteGroup") {{ worldImportTable.data.length }} / {{ worldImportDialog.worldImportFavoriteGroup.capacity - worldImportDialog.worldImportFavoriteGroup.count }}
+        span(v-if="worldImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.world_import.import_progress') }} {{ worldImportDialog.importProgress }}/{{ worldImportDialog.importProgressTotal }}
+        br
+        el-button(size="small" @click="clearWorldImportTable") {{ $t('dialog.world_import.clear_table') }}
+        template(v-if="worldImportDialog.errors")
+            el-button(size="small" @click="worldImportDialog.errors = ''" style="margin-left:5px") {{ $t('dialog.world_import.clear_errors') }}
+            h2(style="font-weight:bold;margin:0") {{ $t('dialog.world_import.errors') }}
+            pre(v-text="worldImportDialog.errors" style="white-space:pre-wrap;font-size:12px")
+        data-tables(v-if="worldImportDialog.visible" v-bind="worldImportTable" v-loading="worldImportDialog.loading" style="margin-top:10px")
+            el-table-column(:label="$t('table.import.image')" width="70" prop="thumbnailImageUrl")
+                template(v-once #default="scope")
+                    el-popover(placement="right" height="500px" trigger="hover")
+                        img.friends-list-avatar(slot="reference" v-lazy="scope.row.thumbnailImageUrl")
+                        img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="showFullscreenImageDialog(scope.row.imageUrl)")
+            el-table-column(:label="$t('table.import.name')" prop="name")
+                template(v-once #default="scope")
+                    span.x-link(v-text="scope.row.name" @click="showWorldDialog(scope.row.id)")
+            el-table-column(:label="$t('table.import.author')" width="120" prop="authorName")
+                template(v-once #default="scope")
+                    span.x-link(v-text="scope.row.authorName" @click="showUserDialog(scope.row.authorId)")
+            el-table-column(:label="$t('table.import.status')" width="70" prop="releaseStatus")
+                template(v-once #default="scope")
+                    span(v-text="scope.row.releaseStatus" v-if="scope.row.releaseStatus === 'public'" style="color:#67c23a")
+                    span(v-text="scope.row.releaseStatus" v-else-if="scope.row.releaseStatus === 'private'" style="color:#f56c6c")
+                    span(v-text="scope.row.releaseStatus" v-else)
+            el-table-column(:label="$t('table.import.action')" width="90" align="right")
+                template(v-once #default="scope")
+                    el-button(type="text" icon="el-icon-close" size="mini" @click="deleteItemWorldImport(scope.row)")
+
+    //- dialog: export avatar list
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarExportDialogRef" :visible.sync="avatarExportDialogVisible" :title="$t('dialog.avatar_export.header')" width="650px")
+        el-dropdown(@click.native.stop trigger="click" size="small")
+            el-button(size="mini")
+                span(v-if="avatarExportFavoriteGroup") {{ avatarExportFavoriteGroup.displayName }} ({{ avatarExportFavoriteGroup.count }}/{{ avatarExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
+                span(v-else) All Favorites #[i.el-icon-arrow-down.el-icon--right]
+            el-dropdown-menu(#default="dropdown")
+                el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportGroup(null)") All Favorites
+                template(v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
+                    el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportGroup(groupAPI)") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+        el-dropdown(@click.native.stop trigger="click" size="small" style="margin-left:10px")
+            el-button(size="mini")
+                span(v-if="avatarExportLocalFavoriteGroup") {{ avatarExportLocalFavoriteGroup }} ({{ getLocalAvatarFavoriteGroupLength(avatarExportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
+                span(v-else) Select Group #[i.el-icon-arrow-down.el-icon--right]
+            el-dropdown-menu(#default="dropdown")
+                el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportLocalGroup(null)") None
+                template(v-for="group in localAvatarFavoriteGroups" :key="group")
+                    el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarExportLocalGroup(group)" ) {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+        br
+        el-input(type="textarea" v-if="avatarExportDialogVisible" v-model="avatarExportContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+
+    //- dialog: Avatar import dialog
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarImportDialog" :visible.sync="avatarImportDialog.visible" :title="$t('dialog.avatar_import.header')" width="650px")
+        div(style="font-size:12px")
+            | {{ $t('dialog.avatar_import.description') }}
+        el-input(type="textarea" v-model="avatarImportDialog.input" size="mini" rows="10" resize="none" style="margin-top:15px")
+        el-button(size="small" @click="processAvatarImportList" :disabled="!avatarImportDialog.input") {{ $t('dialog.avatar_import.process_list') }}
+        span(v-if="avatarImportDialog.progress" style="margin-top:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.avatar_import.process_progress') }} {{ avatarImportDialog.progress }}/{{ avatarImportDialog.progressTotal }}
+        br
+        el-dropdown(@click.native.stop trigger="click" size="small")
+            el-button(size="mini")
+                span(v-if="avatarImportDialog.avatarImportFavoriteGroup") {{ avatarImportDialog.avatarImportFavoriteGroup.displayName }} ({{ avatarImportDialog.avatarImportFavoriteGroup.count }}/{{ avatarImportDialog.avatarImportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
+                span(v-else) {{ $t('dialog.avatar_import.select_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
+            el-dropdown-menu(#default="dropdown")
+                template(v-for="groupAPI in API.favoriteAvatarGroups" :key="groupAPI.name")
+                    el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+        el-dropdown(@click.native.stop trigger="click" size="small" style="margin:5px")
+            el-button(size="mini")
+                span(v-if="avatarImportDialog.avatarImportLocalFavoriteGroup") {{ avatarImportDialog.avatarImportLocalFavoriteGroup }} ({{ getLocalAvatarFavoriteGroupLength(avatarImportDialog.avatarImportLocalFavoriteGroup) }}) #[i.el-icon-arrow-down.el-icon--right]
+                span(v-else) {{ $t('dialog.avatar_import.select_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
+            el-dropdown-menu(#default="dropdown")
+                template(v-for="group in localAvatarFavoriteGroups" :key="group")
+                    el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectAvatarImportLocalGroup(group)" ) {{ group }} ({{ getLocalAvatarFavoriteGroupLength(group) }})
+        el-button(size="small" @click="importAvatarImportTable" style="margin:5px" :disabled="avatarImportTable.data.length === 0 || (!avatarImportDialog.avatarImportFavoriteGroup && !avatarImportDialog.avatarImportLocalFavoriteGroup)") {{ $t('dialog.avatar_import.import') }}
+        el-button(v-if="avatarImportDialog.loading" size="small" @click="cancelAvatarImport" style="margin-top:10px") {{ $t('dialog.avatar_import.cancel') }}
+        span(v-if="avatarImportDialog.avatarImportFavoriteGroup") {{ avatarImportTable.data.length }} / {{ avatarImportDialog.avatarImportFavoriteGroup.capacity - avatarImportDialog.avatarImportFavoriteGroup.count }}
+        span(v-if="avatarImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.avatar_import.import_progress') }} {{ avatarImportDialog.importProgress }}/{{ avatarImportDialog.importProgressTotal }}
+        br
+        el-button(size="small" @click="clearAvatarImportTable") {{ $t('dialog.avatar_import.clear_table') }}
+        template(v-if="avatarImportDialog.errors")
+            el-button(size="small" @click="avatarImportDialog.errors = ''" style="margin-left:5px") {{ $t('dialog.avatar_import.clear_errors') }}
+            h2(style="font-weight:bold;margin:0") {{ $t('dialog.avatar_import.errors') }}
+            pre(v-text="avatarImportDialog.errors" style="white-space:pre-wrap;font-size:12px")
+        data-tables(v-if="avatarImportDialog.visible" v-bind="avatarImportTable" v-loading="avatarImportDialog.loading" style="margin-top:10px")
+            el-table-column(:label="$t('table.import.image')" width="70" prop="thumbnailImageUrl")
+                template(v-once #default="scope")
+                    el-popover(placement="right" height="500px" trigger="hover")
+                        img.friends-list-avatar(slot="reference" v-lazy="scope.row.thumbnailImageUrl")
+                        img.friends-list-avatar(v-lazy="scope.row.imageUrl" style="height:500px;cursor:pointer" @click="showFullscreenImageDialog(scope.row.imageUrl)")
+            el-table-column(:label="$t('table.import.name')" prop="name")
+                template(v-once #default="scope")
+                    span.x-link(v-text="scope.row.name" @click="showAvatarDialog(scope.row.id)")
+            el-table-column(:label="$t('table.import.author')" width="120" prop="authorName")
+                template(v-once #default="scope")
+                    span.x-link(v-text="scope.row.authorName" @click="showUserDialog(scope.row.authorId)")
+            el-table-column(:label="$t('table.import.status')" width="70" prop="releaseStatus")
+                template(v-once #default="scope")
+                    span(v-text="scope.row.releaseStatus" v-if="scope.row.releaseStatus === 'public'" style="color:#67c23a")
+                    span(v-text="scope.row.releaseStatus" v-else-if="scope.row.releaseStatus === 'private'" style="color:#f56c6c")
+                    span(v-text="scope.row.releaseStatus" v-else)
+            el-table-column(:label="$t('table.import.action')" width="90" align="right")
+                template(v-once #default="scope")
+                    el-button(type="text" icon="el-icon-close" size="mini" @click="deleteItemAvatarImport(scope.row)")
+
+    //- dialog: export friend list
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="friendExportDialogRef" :visible.sync="friendExportDialogVisible" :title="$t('dialog.friend_export.header')" width="650px")
+        el-dropdown(@click.native.stop trigger="click" size="small")
+            el-button(size="mini")
+                span(v-if="friendExportFavoriteGroup") {{ friendExportFavoriteGroup.displayName }} ({{ friendExportFavoriteGroup.count }}/{{ friendExportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
+                span(v-else) All Favorites #[i.el-icon-arrow-down.el-icon--right]
+            el-dropdown-menu(#default="dropdown")
+                el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectFriendExportGroup(null)") All Favorites
+                template(v-for="groupAPI in API.favoriteFriendGroups" :key="groupAPI.name")
+                    el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectFriendExportGroup(groupAPI)") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+        br
+        el-input(type="textarea" v-if="friendExportDialogVisible" v-model="friendExportContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px" @click.native="$event.target.tagName === 'TEXTAREA' && $event.target.select()")
+
+    //- dialog: Friend import dialog
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="friendImportDialog" :visible.sync="friendImportDialog.visible" :title="$t('dialog.friend_import.header')" width="650px")
+        div(style="font-size:12px")
+            | {{ $t('dialog.friend_import.description') }}
+        el-input(type="textarea" v-model="friendImportDialog.input" size="mini" rows="10" resize="none" style="margin-top:15px")
+        el-button(size="small" @click="processFriendImportList" :disabled="!friendImportDialog.input") {{ $t('dialog.friend_import.process_list') }}
+        span(v-if="friendImportDialog.progress" style="margin-top:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.friend_import.process_progress') }} {{ friendImportDialog.progress }}/{{ friendImportDialog.progressTotal }}
+        br
+        el-dropdown(@click.native.stop trigger="click" size="small")
+            el-button(size="mini")
+                span(v-if="friendImportDialog.friendImportFavoriteGroup") {{ friendImportDialog.friendImportFavoriteGroup.displayName }} ({{ friendImportDialog.friendImportFavoriteGroup.count }}/{{ friendImportDialog.friendImportFavoriteGroup.capacity }}) #[i.el-icon-arrow-down.el-icon--right]
+                span(v-else) {{ $t('dialog.friend_import.select_group_placeholder') }} #[i.el-icon-arrow-down.el-icon--right]
+            el-dropdown-menu(#default="dropdown")
+                template(v-for="groupAPI in API.favoriteFriendGroups" :key="groupAPI.name")
+                    el-dropdown-item(style="display:block;margin:10px 0" @click.native="selectFriendImportGroup(groupAPI)" :disabled="groupAPI.count >= groupAPI.capacity") {{ groupAPI.displayName }} ({{ groupAPI.count }}/{{ groupAPI.capacity }})
+        el-button(size="small" @click="importFriendImportTable" style="margin:5px" :disabled="friendImportTable.data.length === 0 || !friendImportDialog.friendImportFavoriteGroup") {{ $t('dialog.friend_import.import') }}
+        el-button(v-if="friendImportDialog.loading" size="small" @click="cancelFriendImport" style="margin-top:10px") {{ $t('dialog.friend_import.cancel') }}
+        span(v-if="friendImportDialog.friendImportFavoriteGroup") {{ friendImportTable.data.length }} / {{ friendImportDialog.friendImportFavoriteGroup.capacity - friendImportDialog.friendImportFavoriteGroup.count }}
+        span(v-if="friendImportDialog.importProgress" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.friend_import.import_progress') }} {{ friendImportDialog.importProgress }}/{{ friendImportDialog.importProgressTotal }}
+        br
+        el-button(size="small" @click="clearFriendImportTable") {{ $t('dialog.friend_import.clear_table') }}
+        template(v-if="friendImportDialog.errors")
+            el-button(size="small" @click="friendImportDialog.errors = ''" style="margin-left:5px") {{ $t('dialog.friend_import.clear_errors') }}
+            h2(style="font-weight:bold;margin:0") {{ $t('dialog.friend_import.errors') }}
+            pre(v-text="friendImportDialog.errors" style="white-space:pre-wrap;font-size:12px")
+        data-tables(v-if="friendImportDialog.visible" v-bind="friendImportTable" v-loading="friendImportDialog.loading" style="margin-top:10px")
+            el-table-column(:label="$t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl")
+                template(v-once #default="scope")
+                    el-popover(placement="right" height="500px" trigger="hover")
+                        img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row)")
+                        img.friends-list-avatar(v-lazy="userImageFull(scope.row)" style="height:500px;cursor:pointer" @click="showFullscreenImageDialog(userImageFull(scope.row))")
+            el-table-column(:label="$t('table.import.name')" prop="displayName")
+                template(v-once #default="scope")
+                    span.x-link(v-text="scope.row.displayName" @click="showUserDialog(scope.row.id)")
+            el-table-column(:label="$t('table.import.action')" width="90" align="right")
+                template(v-once #default="scope")
+                    el-button(type="text" icon="el-icon-close" size="mini" @click="deleteItemFriendImport(scope.row)")

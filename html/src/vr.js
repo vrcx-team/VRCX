@@ -1,4 +1,4 @@
-// Copyright(c) 2019-2022 pypy, Natsumi and individual contributors.
+// Copyright(c) 2019-2024 pypy, Natsumi and individual contributors.
 // All rights reserved.
 //
 // This work is licensed under the terms of the MIT license.
@@ -15,10 +15,13 @@ import ElementUI from 'element-ui';
 import * as workerTimers from 'worker-timers';
 import MarqueeText from 'vue-marquee-text-component';
 import * as localizedStrings from './localization/localizedStrings.js';
+
+import $utils from './classes/utils.js';
+
 Vue.component('marquee-text', MarqueeText);
 
 (async function () {
-    var $app = null;
+    let $app = {};
 
     await CefSharp.BindObjectAsync('AppApiVr');
 
@@ -32,75 +35,18 @@ Vue.component('marquee-text', MarqueeText);
         timeout: 3000
     });
 
+    // localization
     Vue.use(VueI18n);
-
-    var i18n = new VueI18n({
+    const i18n = new VueI18n({
         locale: 'en',
         fallbackLocale: 'en',
         messages: localizedStrings
     });
-
-    // var $t = i18n.t.bind(i18n);
-
+    // eslint-disable-next-line no-unused-vars
+    const $t = i18n.t.bind(i18n);
     Vue.use(ElementUI, {
         i18n: (key, value) => i18n.t(key, value)
     });
-
-    var escapeTag = (s) =>
-        String(s).replace(/["&'<>]/gu, (c) => `&#${c.charCodeAt(0)};`);
-    Vue.filter('escapeTag', escapeTag);
-
-    var escapeTagRecursive = (obj) => {
-        if (typeof obj === 'string') {
-            return escapeTag(obj);
-        }
-        if (typeof obj === 'object') {
-            for (var key in obj) {
-                obj[key] = escapeTagRecursive(obj[key]);
-            }
-        }
-        return obj;
-    };
-
-    var commaNumber = (n) =>
-        String(Number(n) || 0).replace(/(\d)(?=(\d{3})+(?!\d))/gu, '$1,');
-    Vue.filter('commaNumber', commaNumber);
-
-    var textToHex = (s) =>
-        String(s)
-            .split('')
-            .map((c) => c.charCodeAt(0).toString(16))
-            .join(' ');
-    Vue.filter('textToHex', textToHex);
-
-    var timeToText = function (sec) {
-        var n = Number(sec);
-        if (isNaN(n)) {
-            return escapeTag(sec);
-        }
-        n = Math.floor(n / 1000);
-        var arr = [];
-        if (n < 0) {
-            n = -n;
-        }
-        if (n >= 86400) {
-            arr.push(`${Math.floor(n / 86400)}d`);
-            n %= 86400;
-        }
-        if (n >= 3600) {
-            arr.push(`${Math.floor(n / 3600)}h`);
-            n %= 3600;
-        }
-        if (n >= 60) {
-            arr.push(`${Math.floor(n / 60)}m`);
-            n %= 60;
-        }
-        if (arr.length === 0 && n < 60) {
-            arr.push(`${n}s`);
-        }
-        return arr.join(' ');
-    };
-    Vue.filter('timeToText', timeToText);
 
     Vue.component('location', {
         template:
@@ -130,7 +76,7 @@ Vue.component('marquee-text', MarqueeText);
         methods: {
             parse() {
                 this.text = this.location;
-                var L = $app.parseLocation(this.location);
+                var L = $utils.parseLocation(this.location);
                 if (L.isOffline) {
                     this.text = 'Offline';
                 } else if (L.isPrivate) {
@@ -176,18 +122,7 @@ Vue.component('marquee-text', MarqueeText);
         }
     });
 
-    var removeFromArray = function (array, item) {
-        var { length } = array;
-        for (var i = 0; i < length; ++i) {
-            if (array[i] === item) {
-                array.splice(i, 1);
-                return true;
-            }
-        }
-        return false;
-    };
-
-    var $app = {
+    const app = {
         i18n,
         data: {
             // 1 = 대시보드랑 손목에 보이는거
@@ -228,124 +163,20 @@ Vue.component('marquee-text', MarqueeText);
             deviceCount: 0
         },
         computed: {},
-        methods: {},
+        methods: {
+            ...$utils
+        },
         watch: {},
         el: '#x-app',
         mounted() {
-            workerTimers.setTimeout(() => AppApiVr.VrInit(), 1000);
+            workerTimers.setTimeout(() => AppApiVr.VrInit(), 5000);
             if (this.appType === '1') {
                 this.refreshCustomScript();
                 this.updateStatsLoop();
             }
         }
     };
-
-    $app.methods.parseLocation = function (tag) {
-        var _tag = String(tag || '');
-        var ctx = {
-            tag: _tag,
-            isOffline: false,
-            isPrivate: false,
-            isTraveling: false,
-            worldId: '',
-            instanceId: '',
-            instanceName: '',
-            accessType: '',
-            accessTypeName: '',
-            region: '',
-            shortName: '',
-            userId: null,
-            hiddenId: null,
-            privateId: null,
-            friendsId: null,
-            groupId: null,
-            groupAccessType: null,
-            canRequestInvite: false,
-            strict: false
-        };
-        if (_tag === 'offline') {
-            ctx.isOffline = true;
-        } else if (_tag === 'private') {
-            ctx.isPrivate = true;
-        } else if (_tag === 'traveling') {
-            ctx.isTraveling = true;
-        } else if (_tag.startsWith('local') === false) {
-            var sep = _tag.indexOf(':');
-            // technically not part of instance id, but might be there when coping id from url so why not support it
-            var shortNameQualifier = '&shortName=';
-            var shortNameIndex = _tag.indexOf(shortNameQualifier);
-            if (shortNameIndex >= 0) {
-                ctx.shortName = _tag.substr(
-                    shortNameIndex + shortNameQualifier.length
-                );
-                _tag = _tag.substr(0, shortNameIndex);
-            }
-            if (sep >= 0) {
-                ctx.worldId = _tag.substr(0, sep);
-                ctx.instanceId = _tag.substr(sep + 1);
-                ctx.instanceId.split('~').forEach((s, i) => {
-                    if (i) {
-                        var A = s.indexOf('(');
-                        var Z = A >= 0 ? s.lastIndexOf(')') : -1;
-                        var key = Z >= 0 ? s.substr(0, A) : s;
-                        var value = A < Z ? s.substr(A + 1, Z - A - 1) : '';
-                        if (key === 'hidden') {
-                            ctx.hiddenId = value;
-                        } else if (key === 'private') {
-                            ctx.privateId = value;
-                        } else if (key === 'friends') {
-                            ctx.friendsId = value;
-                        } else if (key === 'canRequestInvite') {
-                            ctx.canRequestInvite = true;
-                        } else if (key === 'region') {
-                            ctx.region = value;
-                        } else if (key === 'group') {
-                            ctx.groupId = value;
-                        } else if (key === 'groupAccessType') {
-                            ctx.groupAccessType = value;
-                        } else if (key === 'strict') {
-                            ctx.strict = true;
-                        }
-                    } else {
-                        ctx.instanceName = s;
-                    }
-                });
-                ctx.accessType = 'public';
-                if (ctx.privateId !== null) {
-                    if (ctx.canRequestInvite) {
-                        // InvitePlus
-                        ctx.accessType = 'invite+';
-                    } else {
-                        // InviteOnly
-                        ctx.accessType = 'invite';
-                    }
-                    ctx.userId = ctx.privateId;
-                } else if (ctx.friendsId !== null) {
-                    // FriendsOnly
-                    ctx.accessType = 'friends';
-                    ctx.userId = ctx.friendsId;
-                } else if (ctx.hiddenId !== null) {
-                    // FriendsOfGuests
-                    ctx.accessType = 'friends+';
-                    ctx.userId = ctx.hiddenId;
-                } else if (ctx.groupId !== null) {
-                    // Group
-                    ctx.accessType = 'group';
-                }
-                ctx.accessTypeName = ctx.accessType;
-                if (ctx.groupAccessType !== null) {
-                    if (ctx.groupAccessType === 'public') {
-                        ctx.accessTypeName = 'groupPublic';
-                    } else if (ctx.groupAccessType === 'plus') {
-                        ctx.accessTypeName = 'groupPlus';
-                    }
-                }
-            } else {
-                ctx.worldId = _tag;
-            }
-        }
-        return ctx;
-    };
+    Object.assign($app, app);
 
     $app.methods.configUpdate = function (json) {
         this.config = JSON.parse(json);
@@ -442,6 +273,7 @@ Vue.component('marquee-text', MarqueeText);
                     year: 'numeric',
                     hour: 'numeric',
                     minute: 'numeric',
+                    second: 'numeric',
                     hourCycle: this.config.dtHour12 ? 'h12' : 'h23'
                 })
                 .replace(' AM', ' am')
@@ -453,14 +285,14 @@ Vue.component('marquee-text', MarqueeText);
                 this.cpuUsage = cpuUsage.toFixed(0);
             }
             if (this.lastLocation.date !== 0) {
-                this.lastLocationTimer = timeToText(
+                this.lastLocationTimer = $utils.timeToText(
                     Date.now() - this.lastLocation.date
                 );
             } else {
                 this.lastLocationTimer = '';
             }
             if (this.lastLocation.onlineFor) {
-                this.onlineForTimer = timeToText(
+                this.onlineForTimer = $utils.timeToText(
                     Date.now() - this.lastLocation.onlineFor
                 );
             } else {
@@ -519,7 +351,7 @@ Vue.component('marquee-text', MarqueeText);
             if (this.config.pcUptimeOnFeed) {
                 AppApiVr.GetUptime().then((uptime) => {
                     if (uptime) {
-                        this.pcUptime = timeToText(uptime);
+                        this.pcUptime = $utils.timeToText(uptime);
                     }
                 });
             } else {
@@ -537,8 +369,8 @@ Vue.component('marquee-text', MarqueeText);
             console.error('noty is undefined');
             return;
         }
-        var noty = escapeTagRecursive(noty);
-        var message = escapeTag(message) || '';
+        var noty = $utils.escapeTagRecursive(noty);
+        var message = $utils.escapeTag(message) || '';
         var text = '';
         var img = '';
         if (image) {
@@ -726,25 +558,6 @@ Vue.component('marquee-text', MarqueeText);
         return style;
     };
 
-    $app.methods.displayLocation = function (location, worldName, groupName) {
-        var text = worldName;
-        var L = this.parseLocation(location);
-        if (L.isOffline) {
-            text = 'Offline';
-        } else if (L.isPrivate) {
-            text = 'Private';
-        } else if (L.isTraveling) {
-            text = 'Traveling';
-        } else if (L.worldId) {
-            if (groupName) {
-                text = `${worldName} ${L.accessTypeName}(${groupName})`;
-            } else if (L.instanceId) {
-                text = `${worldName} ${L.accessTypeName}`;
-            }
-        }
-        return escapeTag(text);
-    };
-
     $app.methods.notyClear = function () {
         Noty.closeAll();
     };
@@ -768,7 +581,7 @@ Vue.component('marquee-text', MarqueeText);
         var dt = Date.now();
         this.hudFeed.forEach((item) => {
             if (item.time + this.config.photonOverlayMessageTimeout < dt) {
-                removeFromArray(this.hudFeed, item);
+                $utils.removeFromArray(this.hudFeed, item);
             }
         });
         if (this.hudFeed.length > 10) {
@@ -789,7 +602,7 @@ Vue.component('marquee-text', MarqueeText);
                 item.text === data.text
             ) {
                 combo = item.combo + 1;
-                removeFromArray(this.hudFeed, item);
+                $utils.removeFromArray(this.hudFeed, item);
             }
         });
         this.hudFeed.unshift({

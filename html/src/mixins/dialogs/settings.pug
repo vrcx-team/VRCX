@@ -1,0 +1,195 @@
+mixin settings()
+    //- dialog: VRChat Config JSON
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="VRChatConfigDialog" :visible.sync="VRChatConfigDialog.visible" :title="$t('dialog.config_json.header')" width="420px")
+        div(style='font-size:12px;word-break:keep-all')
+            | {{ $t('dialog.config_json.description1') }} #[br]
+            | {{ $t('dialog.config_json.description2') }}
+        br
+        span(style="margin-right:5px") {{ $t('dialog.config_json.cache_size') }}
+        span(v-text="VRChatUsedCacheSize")
+        span /
+        span(v-text="VRChatTotalCacheSize")
+        span GB
+        el-tooltip(placement="top" :content="$t('dialog.config_json.refresh')" :disabled="hideTooltips")
+            el-button(type="default" :loading="VRChatCacheSizeLoading" @click="getVRChatCacheSize" size="small" icon="el-icon-refresh" circle style="margin-left:5px")
+        br
+        span {{ $t('dialog.config_json.delete_all_cache') }}
+        el-button(size="small" style="margin-left:5px" icon="el-icon-delete" @click="showDeleteAllVRChatCacheConfirm()") {{ $t('dialog.config_json.delete_cache') }}
+        br
+        span {{ $t('dialog.config_json.delete_old_cache') }}
+        el-button(size="small" style="margin-left:5px" icon="el-icon-folder-delete" @click="sweepVRChatCache()") {{ $t('dialog.config_json.sweep_cache') }}
+        br
+        div(style="display:inline-block;margin-top:10px" v-for="(item, value) in VRChatConfigList" :key="value")
+            span(v-text="item.name" style="word-break:keep-all")
+            |:
+            el-input(v-model="VRChatConfigFile[value]" :placeholder="item.default" size="mini" :type="item.type?item.type:'text'" :min="item.min" :max="item.max")
+        div(style="display:inline-block;margin-top:10px")
+            span {{ $t('dialog.config_json.camera_resolution') }}
+            br
+            el-dropdown(@command="(command) => setVRChatCameraResolution(command)" size="small" trigger="click" style="margin-top:5px")
+                el-button(size="small")
+                    span #[span(v-text="getVRChatCameraResolution()")] #[i.el-icon-arrow-down.el-icon--right]
+                el-dropdown-menu(#default="dropdown")
+                    el-dropdown-item(v-for="row in VRChatCameraResolutions" :key="row.index" v-text="row.name" :command="row")
+        div(style="display:inline-block;margin-top:10px;margin-left:10px")
+            span {{ $t('dialog.config_json.screenshot_resolution') }}
+            br
+            el-dropdown(@command="(command) => setVRChatScreenshotResolution(command)" size="small" trigger="click" style="margin-top:5px")
+                el-button(size="small")
+                    span #[span(v-text="getVRChatScreenshotResolution()")] #[i.el-icon-arrow-down.el-icon--right]
+                el-dropdown-menu(#default="dropdown")
+                    el-dropdown-item(v-for="row in VRChatScreenshotResolutions" :key="row.index" v-text="row.name" :command="row")
+        el-checkbox(v-model="VRChatConfigFile.picture_output_split_by_date" style="margin-top:5px;display:block" :checked="true") {{ $t('dialog.config_json.picture_sort_by_date') }}
+        el-checkbox(v-model="VRChatConfigFile.disableRichPresence" style="margin-top:5px;display:block") {{ $t('dialog.config_json.disable_discord_presence') }}
+        template(#footer)
+            el-button(size="small" @click="openExternalLink('https://docs.vrchat.com/docs/configuration-file')") {{ $t('dialog.config_json.vrchat_docs') }}
+            el-button(size="small" @click="VRChatConfigDialog.visible = false") {{ $t('dialog.config_json.cancel') }}
+            el-button(type="primary" size="small" :disabled="VRChatConfigDialog.loading" @click="saveVRChatConfigFile") {{ $t('dialog.config_json.save') }}
+
+    //- dialog: YouTube Api Dialog
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="youTubeApiDialog" :visible.sync="youTubeApiDialog.visible" :title="$t('dialog.youtube_api.header')" width="400px")
+        div(style='font-size:12px;')
+            | {{ $t('dialog.youtube_api.description') }} #[br]
+        el-input(type="textarea" v-model="youTubeApiKey" :placeholder="$t('dialog.youtube_api.placeholder')" maxlength="39" show-word-limit style="display:block;margin-top:10px")
+        template(#footer)
+            div(style="display:flex")
+                el-button(size="small" @click="openExternalLink('https://rapidapi.com/blog/how-to-get-youtube-api-key/')") {{ $t('dialog.youtube_api.guide') }}
+                el-button(type="primary" size="small" @click="testYouTubeApiKey" style="margin-left:auto") {{ $t('dialog.youtube_api.save') }}
+
+    //- dialog: Discord username list
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" :visible.sync="discordNamesDialogVisible" :title="$t('dialog.discord_names.header')" width="650px")
+        div(style='font-size:12px;')
+            | {{ $t('dialog.discord_names.description') }}
+        el-input(type="textarea" v-if="discordNamesDialogVisible" v-model="discordNamesContent" size="mini" rows="15" resize="none" readonly style="margin-top:15px")
+
+    //- dialog: Note export dialog
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="noteExportDialog" :visible.sync="noteExportDialog.visible" :title="$t('dialog.note_export.header')" width="1000px")
+        div(style="font-size:12px")
+            | {{ $t('dialog.note_export.description1') }} #[br]
+            | {{ $t('dialog.note_export.description2') }} #[br]
+            | {{ $t('dialog.note_export.description3') }} #[br]
+            | {{ $t('dialog.note_export.description4') }} #[br]
+            | {{ $t('dialog.note_export.description5') }} #[br]
+            | {{ $t('dialog.note_export.description6') }} #[br]
+            | {{ $t('dialog.note_export.description7') }} #[br]
+            | {{ $t('dialog.note_export.description8') }} #[br]
+        el-button(size="small" @click="updateNoteExportDialog" :disabled="noteExportDialog.loading" style="margin-top:10px") {{ $t('dialog.note_export.refresh') }}
+        el-button(size="small" @click="exportNoteExport" :disabled="noteExportDialog.loading" style="margin-top:10px") {{ $t('dialog.note_export.export') }}
+        el-button(v-if="noteExportDialog.loading" size="small" @click="cancelNoteExport" style="margin-top:10px") {{ $t('dialog.note_export.cancel') }}
+        span(v-if="noteExportDialog.loading" style="margin:10px") #[i.el-icon-loading(style="margin-right:5px")] {{ $t('dialog.note_export.progress') }} {{ noteExportDialog.progress }}/{{ noteExportDialog.progressTotal }}
+        template(v-if="noteExportDialog.errors")
+            el-button(size="small" @click="noteExportDialog.errors = ''") {{ $t('dialog.note_export.clear_errors') }}
+            h2(style="font-weight:bold;margin:0") {{ $t('dialog.note_export.errors') }}
+            pre(v-text="noteExportDialog.errors" style="white-space:pre-wrap;font-size:12px")
+        data-tables(v-if="noteExportDialog.visible" v-bind="noteExportTable" v-loading="noteExportDialog.loading" style="margin-top:10px")
+            el-table-column(:label="$t('table.import.image')" width="70" prop="currentAvatarThumbnailImageUrl")
+                template(v-once #default="scope")
+                    el-popover(placement="right" height="500px" trigger="hover")
+                        img.friends-list-avatar(slot="reference" v-lazy="userImage(scope.row.ref)")
+                        img.friends-list-avatar(v-lazy="userImageFull(scope.row.ref)" style="height:500px;cursor:pointer" @click="showFullscreenImageDialog(userImageFull(scope.row.ref))")
+            el-table-column(:label="$t('table.import.name')" width="170" prop="name")
+                template(v-once #default="scope")
+                    span.x-link(v-text="scope.row.name" @click="showUserDialog(scope.row.id)")
+            el-table-column(:label="$t('table.import.note')" prop="memo")
+                template(v-once #default="scope")
+                    el-input(v-model="scope.row.memo" type="textarea" maxlength="256" show-word-limit :rows="2" :autosize="{ minRows: 1, maxRows: 10 }" size="mini" resize="none")
+            el-table-column(:label="$t('table.import.skip_export')" width="90" align="right")
+                template(v-once #default="scope")
+                    el-button(type="text" icon="el-icon-close" size="mini" @click="removeFromNoteExportTable(scope.row)")
+
+    //- dialog: chatbox blacklist
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="chatboxBlacklistDialog" :visible.sync="chatboxBlacklistDialog.visible" :title="$t('dialog.chatbox_blacklist.header')" width="600px")
+        div(v-loading="chatboxBlacklistDialog.loading" v-if="chatboxBlacklistDialog.visible")
+            h2 {{ $t('dialog.chatbox_blacklist.keyword_blacklist') }}
+            el-input(v-for="(item, index) in chatboxBlacklist" :key="index" :value="item" v-model="chatboxBlacklist[index]" size="small" style="margin-top:5px" @change="saveChatboxBlacklist")
+                el-button(slot="append" icon="el-icon-delete" @click="chatboxBlacklist.splice(index, 1); saveChatboxBlacklist()")
+            el-button(@click="chatboxBlacklist.push('')" size="mini" style="margin-top:5px") {{ $t('dialog.chatbox_blacklist.add_item') }}
+            br
+            h2 {{ $t('dialog.chatbox_blacklist.user_blacklist') }}
+            el-tag(v-for="user in chatboxUserBlacklist" type="info" disable-transitions="true" :key="user[0]" style="margin-right:5px;margin-top:5px" closable @close="deleteChatboxUserBlacklist(user[0])")
+                span {{user[1]}}
+
+    //- dialog: Notification position
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="notificationPositionDialog" :visible.sync="notificationPositionDialog.visible" :title="$t('dialog.notification_position.header')" width="400px")
+        div(style='font-size:12px;')
+            | {{ $t('dialog.notification_position.description') }}
+        svg.notification-position(version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 200" style="margin-top:15px;" xml:space="preserve")
+            path(style="fill:black;" d="M291.89,5A3.11,3.11,0,0,1,295,8.11V160.64a3.11,3.11,0,0,1-3.11,3.11H8.11A3.11,3.11,0,0,1,5,160.64V8.11A3.11,3.11,0,0,1,8.11,5H291.89m0-5H8.11A8.11,8.11,0,0,0,0,8.11V160.64a8.11,8.11,0,0,0,8.11,8.11H291.89a8.11,8.11,0,0,0,8.11-8.11V8.11A8.11,8.11,0,0,0,291.89,0Z")
+            rect(style="fill:#c4c4c4;" x="5" y="5" width="290" height="158.75" rx="2.5")
+        el-radio-group(v-model="notificationPosition" size="mini" @change="changeNotificationPosition")
+            el-radio(label="topLeft" v-model="notificationPosition" style="margin:0;position:absolute;left:35px;top:120px;") ‎
+            el-radio(label="top" v-model="notificationPosition" style="margin:0;position:absolute;left:195px;top:120px;") ‎
+            el-radio(label="topRight" v-model="notificationPosition" style="margin:0;position:absolute;right:25px;top:120px;") ‎
+            el-radio(label="centerLeft" v-model="notificationPosition" style="margin:0;position:absolute;left:35px;top:200px;") ‎
+            el-radio(label="center" v-model="notificationPosition" style="margin:0;position:absolute;left:195px;top:200px;") ‎
+            el-radio(label="centerRight" v-model="notificationPosition" style="margin:0;position:absolute;right:25px;top:200px;") ‎
+            el-radio(label="bottomLeft" v-model="notificationPosition" style="margin:0;position:absolute;left:35px;top:280px;") ‎
+            el-radio(label="bottom" v-model="notificationPosition" style="margin:0;position:absolute;left:195px;top:280px;") ‎
+            el-radio(label="bottomRight" v-model="notificationPosition" style="margin:0;position:absolute;right:25px;top:280px;") ‎
+        template(#footer)
+            div(style="display:flex")
+                el-button(type="primary" size="small" style="margin-left:auto" @click="notificationPositionDialog.visible = false") {{ $t('dialog.notification_position.ok') }}
+
+    //- dialog: avatar database provider
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="avatarProviderDialog" :visible.sync="avatarProviderDialog.visible" :title="$t('dialog.avatar_database_provider.header')" width="600px")
+        div
+            el-input(v-for="(provider, index) in avatarRemoteDatabaseProviderList" :key="index" :value="provider" v-model="avatarRemoteDatabaseProviderList[index]" @change="saveAvatarProviderList" size="small" style="margin-top:5px")
+                el-button(slot="append" icon="el-icon-delete" @click="removeAvatarProvider(provider)")
+            el-button(@click="avatarRemoteDatabaseProviderList.push('')" size="mini" style="margin-top:5px") {{ $t('dialog.avatar_database_provider.add_provider') }}
+
+    //- dialog: Registry Auto Backup
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @closed="clearVrcRegistryDialog" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="registryBackupDialog" :visible.sync="registryBackupDialog.visible" :title="$t('dialog.registry_backup.header')" width="600px")
+        div(v-if="registryBackupDialog.visible" style="margin-top:10px")
+            div.options-container
+                div.options-container-item
+                    span.name {{ $t('dialog.registry_backup.auto_backup') }}
+                    el-switch(v-model="vrcRegistryAutoBackup" @change="saveVrcRegistryAutoBackup")
+            el-button(@click="promptVrcRegistryBackupName" size="small") {{ $t('dialog.registry_backup.backup') }}
+            el-button(@click="AppApi.OpenVrcRegJsonFileDialog()" size="small") {{ $t('dialog.registry_backup.restore_from_file') }}
+            el-button(@click="deleteVrcRegistry" size="small") {{ $t('dialog.registry_backup.reset') }}
+            data-tables(v-bind="registryBackupTable" style="margin-top:10px")
+                el-table-column(:label="$t('dialog.registry_backup.name')" prop="name")
+                el-table-column(:label="$t('dialog.registry_backup.date')" prop="date")
+                    template(v-once #default="scope")
+                        span {{ scope.row.date | formatDate('long') }}
+                el-table-column(:label="$t('dialog.registry_backup.action')" width="90" align="right")
+                    template(v-once #default="scope")
+                        el-tooltip(placement="top" :content="$t('dialog.registry_backup.restore')" :disabled="hideTooltips")
+                            el-button(type="text" icon="el-icon-upload2" size="mini" @click="restoreVrcRegistryBackup(scope.row)")
+                        el-tooltip(placement="top" :content="$t('dialog.registry_backup.save_to_file')" :disabled="hideTooltips")
+                            el-button(type="text" icon="el-icon-download" size="mini" @click="saveVrcRegistryBackupToFile(scope.row)")
+                        el-tooltip(placement="top" :content="$t('dialog.registry_backup.delete')" :disabled="hideTooltips")
+                            el-button(type="text" icon="el-icon-delete" size="mini" @click="deleteVrcRegistryBackup(scope.row)")
+
+    //- dialog: Enable primary password
+    el-dialog.x-dialog(
+        :visible.sync="enablePrimaryPasswordDialog.visible"
+        :before-close="enablePrimaryPasswordDialog.beforeClose"
+        ref="primaryPasswordDialog"
+        :close-on-click-modal="false"
+        :title="$t('dialog.primary_password.header')"
+        width="400px"
+    )
+        el-input(
+            v-model="enablePrimaryPasswordDialog.password"
+            :placeholder="$t('dialog.primary_password.password_placeholder')"
+            type="password"
+            size="mini"
+            maxlength="32"
+            show-password
+            autofocus
+        )
+        el-input(
+            v-model="enablePrimaryPasswordDialog.rePassword"
+            :placeholder="$t('dialog.primary_password.re_input_placeholder')"
+            type="password"
+            style="margin-top:5px"
+            size="mini"
+            maxlength="32"
+            show-password
+        )
+        template(#footer)
+            el-button(
+                type="primary" size="small" @click="setPrimaryPassword"
+                :disabled="enablePrimaryPasswordDialog.password.length===0||enablePrimaryPasswordDialog.password!==enablePrimaryPasswordDialog.rePassword"
+            ) {{ $t('dialog.primary_password.ok') }}

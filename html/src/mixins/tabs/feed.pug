@@ -9,14 +9,12 @@ mixin feedTab()
                     el-select(v-model="feedTable.filter" @change="feedTableLookup" multiple clearable collapse-tags style="flex:1" :placeholder="$t('view.feed.filter_placeholder')")
                         el-option(v-once v-for="type in ['GPS', 'Online', 'Offline', 'Status', 'Avatar', 'Bio']" :key="type" :label="type" :value="type")
                     el-input(v-model="feedTable.search" :placeholder="$t('view.feed.search_placeholder')" @keyup.native.13="feedTableLookup" @change="feedTableLookup" clearable style="flex:none;width:150px;margin:0 10px")
-                    //- el-tooltip(placement="bottom" content="Clear feed" :disabled="hideTooltips")
-                    //-     el-button(type="default" @click="clearFeed()" icon="el-icon-delete" circle style="flex:none")
             el-table-column(type="expand" width="20")
                 template(v-once #default="scope")
                     div(style="position:relative;font-size:14px")
                         template(v-if="scope.row.type === 'GPS'")
                             location(v-if="scope.row.previousLocation" :location="scope.row.previousLocation")
-                            el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ scope.row.time | timeToText }}
+                            el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ timeToText(scope.row.time) }}
                             br
                             span
                                 i.el-icon-right
@@ -24,7 +22,7 @@ mixin feedTab()
                         template(v-else-if="scope.row.type === 'Offline'")
                             template(v-if="scope.row.location")
                                 location(:location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
-                                el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ scope.row.time | timeToText }}
+                                el-tag(type="info" effect="plain" size="mini" style="margin-left:5px") {{ timeToText(scope.row.time) }}
                         template(v-else-if="scope.row.type === 'Online'")
                             location(v-if="scope.row.location" :location="scope.row.location" :hint="scope.row.worldName" :grouphint="scope.row.groupName")
                         template(v-else-if="scope.row.type === 'Avatar'")

@@ -211,7 +211,6 @@
                     "auto_update_off": "关闭",
                     "auto_update_notify": "显示通知",
                     "auto_update_download": "自动下载",
-                    "auto_update_install": "自动安装",
                     "change_log": "更新日志"
                 },
                 "application": {
@@ -405,11 +404,6 @@
                     "screenshot_metadata": "截图元数据查看器",
                     "vrc_registry_backup": "VRC 设置数据备份工具",
                     "common_folders": "常用文件夹",
-                    "pending_offline": {
-                        "header": "离线标记延迟",
-                        "description": "将好友标记为离线之前的延迟(防止误判)",
-                        "set_delay": "设置延迟"
-                    },
                     "primary_password": {
                         "header": "独立密码",
                         "description": "使用独立密码加密 VRCX 数据(将停用自动登录)"
@@ -479,7 +473,6 @@
                         "instance_cache": "房间信息缓存:",
                         "clear_cache": "清除缓存",
                         "auto_clear_cache": "自动清除缓存",
-                        "download_history": "下载记录",
                         "show_console": "显示界面调试工具"
                     },
                     "sqlite_table_size": {

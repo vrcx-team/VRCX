@@ -211,7 +211,6 @@
                     "auto_update_off": "關閉",
                     "auto_update_notify": "通知",
                     "auto_update_download": "自動下載",
-                    "auto_update_install": "自動安裝",
                     "change_log": "更新日誌"
                 },
                 "application": {
@@ -413,11 +412,6 @@
                     "screenshot_metadata": "螢幕截圖詳細資訊",
                     "vrc_registry_backup": "VRC Registry Backup",
                     "common_folders": "遊戲資料夾",
-                    "pending_offline": {
-                        "header": "待確認離線",
-                        "description": "將玩家標記為離線之前延遲（防止誤判）",
-                        "set_delay": "設定延遲"
-                    },
                     "primary_password": {
                         "header": "主密碼",
                         "description": "密碼加密（將停用自動登入）"
@@ -491,7 +485,6 @@
                         "instance_cache": "房間緩存：",
                         "clear_cache": "清除快取",
                         "auto_clear_cache": "自動清除快取",
-                        "download_history": "下載紀錄",
                         "show_console": "顯示主控台"
                     },
                     "sqlite_table_size": {

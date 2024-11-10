@@ -211,7 +211,6 @@
                     "auto_update_off": "Tắt",
                     "auto_update_notify": "Thông báo",
                     "auto_update_download": "Tự động tải về",
-                    "auto_update_install": "Tự động cài đặt",
                     "change_log": "Thông tin về thay đổi (log)"
                 },
                 "application": {
@@ -413,11 +412,6 @@
                     "screenshot_metadata": "Screenshot Metadata",
                     "vrc_registry_backup": "VRC Registry Backup",
                     "common_folders": "Thư mục chung",
-                    "pending_offline": {
-                        "header": "Đang chờ Offline",
-                        "description": "Trì trệ trước khi đánh dấu người chơi đang offline (sửa lỗi hiển thị sai)",
-                        "set_delay": "Đặt trì trệ"
-                    },
                     "primary_password": {
                         "header": "Mật khẩu chính",
                         "description": "Mã hóa mật khẩu (sẽ tắt đăng nhập tự động)"
@@ -491,7 +485,6 @@
                         "instance_cache": "Instance cache:",
                         "clear_cache": "Xóa hết Cache",
                         "auto_clear_cache": "Tự động xóa hết Cache",
-                        "download_history": "Lịch sử tải về",
                         "show_console": "Hiển thị console"
                     },
                     "sqlite_table_size": {

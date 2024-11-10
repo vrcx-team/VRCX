@@ -51,22 +51,28 @@ namespace VRCX
             cefSettings.CefCommandLineArgs.Add("disable-pdf-extension");
             cefSettings.CefCommandLineArgs["autoplay-policy"] = "no-user-gesture-required";
             cefSettings.CefCommandLineArgs.Add("disable-web-security");
-            cefSettings.SetOffScreenRenderingBestPerformanceArgs(); // causes white screen sometimes?
+            cefSettings.CefCommandLineArgs.Add("disk-cache-size", "2147483647");
 
             if (WebApi.ProxySet)
             {
                 cefSettings.CefCommandLineArgs["proxy-server"] = WebApi.ProxyUrl;
             }
+            
+            if (VRCXStorage.Instance.Get("VRCX_DisableGpuAcceleration") == "true")
+            {
+                cefSettings.CefCommandLineArgs.Add("disable-gpu");
+            }
 
             if (Program.LaunchDebug)
             {
-                // it's dead fuck https://github.com/chromiumembedded/cef/issues/3740
+                // chrome://inspect/#devices
+                // Discover network targets, Configure...
+                // Add Remote Target: localhost:8089
                 logger.Info("Debug mode enabled");
                 cefSettings.RemoteDebuggingPort = 8089;
                 cefSettings.CefCommandLineArgs["remote-allow-origins"] = "*";
             }
-
-            //CefSharpSettings.WcfEnabled = true; // TOOD: REMOVE THIS LINE YO (needed for synchronous configRepository)
+            
             CefSharpSettings.ShutdownOnExit = false;
             CefSharpSettings.ConcurrentTaskExecution = true;
 

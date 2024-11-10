@@ -211,7 +211,6 @@
                     "auto_update_off": "Desligado",
                     "auto_update_notify": "Notificar",
                     "auto_update_download": "Transferência Automática",
-                    "auto_update_install": "Instalar automaticamente",
                     "change_log": "Registro de Alterações"
                 },
                 "application": {
@@ -413,11 +412,6 @@
                     "screenshot_metadata": "Screenshot Metadata",
                     "vrc_registry_backup": "Backup do Registro VRC",
                     "common_folders": "Pastas Comuns",
-                    "pending_offline": {
-                        "header": "Pendências Offline",
-                        "description": "Atraso antes de marcar o usuário como offline (corrige falsos positivos)",
-                        "set_delay": "Definir Atraso"
-                    },
                     "primary_password": {
                         "header": "Senha Primaria",
                         "description": "Criptografar senha (desativa o login automático)"
@@ -491,7 +485,6 @@
                         "instance_cache": "Cache de Instância:",
                         "clear_cache": "Limpar Cache",
                         "auto_clear_cache": "Limpar Cache Automaticmente",
-                        "download_history": "Histórico de Download",
                         "show_console": "Mostrar Console"
                     },
                     "sqlite_table_size": {

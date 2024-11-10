@@ -211,7 +211,6 @@
                     "auto_update_off": "Выкл",
                     "auto_update_notify": "Оповестить",
                     "auto_update_download": "Автозагрузка",
-                    "auto_update_install": "Автоустановка",
                     "change_log": "Список изменений"
                 },
                 "application": {
@@ -405,11 +404,6 @@
                     "screenshot_metadata": "Метаданные скриншота",
                     "vrc_registry_backup": "Резервное копирование реестра VRC",
                     "common_folders": "Общие папки",
-                    "pending_offline": {
-                        "header": "Ожидание отключения",
-                        "description": "Задержка перед отметкой пользователя как офлайн (исправляет ложные срабатывания)",
-                        "set_delay": "Установить задержку"
-                    },
                     "primary_password": {
                         "header": "Основной пароль",
                         "description": "Шифровать пароль (отключает автоматический вход)"
@@ -479,7 +473,6 @@
                         "instance_cache": "Кэш инстансов:",
                         "clear_cache": "Очистить кэш",
                         "auto_clear_cache": "Автоочистка кэша",
-                        "download_history": "История загрузок",
                         "show_console": "Открыть консоль"
                     },
                     "sqlite_table_size": {

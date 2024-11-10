@@ -211,7 +211,6 @@
                     "auto_update_off": "Désactivé",
                     "auto_update_notify": "Me demander",
                     "auto_update_download": "Téléchargement automatique",
-                    "auto_update_install": "Installation automatique",
                     "change_log": "Journal des modifications"
                 },
                 "application": {
@@ -413,11 +412,6 @@
                     "screenshot_metadata": "Métadonnées d'une capture d'écran",
                     "vrc_registry_backup": "Sauvegarde du registre VRC",
                     "common_folders": "Dossiers communs",
-                    "pending_offline": {
-                        "header": "En attendant l'hors ligne",
-                        "description": "Délai avant de marquer un utilisateur comme étant hors ligne (corrige les faux positifs)",
-                        "set_delay": "Réglage du délai"
-                    },
                     "primary_password": {
                         "header": "Mot de passe principal",
                         "description": "Encodage du mot de passe (désactive la connexion automatique)"
@@ -491,7 +485,6 @@
                         "instance_cache": "Cache de l'instance:",
                         "clear_cache": "Vider le cache",
                         "auto_clear_cache": "Vidage automatique du cache",
-                        "download_history": "Télécharger l'historique",
                         "show_console": "Afficher la console"
                     },
                     "sqlite_table_size": {

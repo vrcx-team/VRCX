@@ -211,7 +211,6 @@
                     "auto_update_off": "Wył.",
                     "auto_update_notify": "Powiadamiaj",
                     "auto_update_download": "Auto. pobieranie",
-                    "auto_update_install": "Auto. instalacja",
                     "change_log": "Lista zmian"
                 },
                 "application": {
@@ -413,11 +412,6 @@
                     "screenshot_metadata": "Metadane zrzutu ekranu",
                     "vrc_registry_backup": "Kopia zapasowa rejestru VRC",
                     "common_folders": "Foldery",
-                    "pending_offline": {
-                        "header": "Oczekujące offline",
-                        "description": "Odczekaj przed oznaczeniem użytkownika jako offline (unika fałszywych alarmów)",
-                        "set_delay": "Ustaw opóźnienie"
-                    },
                     "primary_password": {
                         "header": "Hasło główne",
                         "description": "Szyfruj hasło (wyłącza automatyczne logowanie)"
@@ -491,7 +485,6 @@
                         "instance_cache": "Pamięć instancji:",
                         "clear_cache": "Wyczyść pamięć podręczną",
                         "auto_clear_cache": "Autoczyszczenie pamięci podręcznej",
-                        "download_history": "Historia pobierania",
                         "show_console": "Pokaż konsolę"
                     },
                     "sqlite_table_size": {
