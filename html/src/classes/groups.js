@@ -3024,263 +3024,251 @@ export default class extends baseClass {
             var D = this.groupMemberModeration;
             var memberCount = D.selectedUsersArray.length;
             D.progressTotal = memberCount;
-            try {
-                for (var i = 0; i < memberCount; i++) {
-                    if (!D.visible || !D.progressTotal) {
-                        break;
-                    }
-                    var user = D.selectedUsersArray[i];
-                    D.progressCurrent = i + 1;
-                    if (user.userId === API.currentUser.id) {
-                        continue;
-                    }
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                console.log(`Kicking ${user.userId} ${i + 1}/${memberCount}`);
+                try {
                     await API.kickGroupMember({
                         groupId: D.id,
                         userId: user.userId
                     });
-                    console.log(
-                        `Kicking ${user.userId} ${i + 1}/${memberCount}`
-                    );
+                } catch (err) {
+                    console.error(err);
+                    this.$message({
+                        message: `Failed to kick group member: ${err}`,
+                        type: 'error'
+                    });
                 }
-                this.$message({
-                    message: `Kicked ${memberCount} group members`,
-                    type: 'success'
-                });
-            } catch (err) {
-                console.error(err);
-                this.$message({
-                    message: `Failed to kick group member: ${err}`,
-                    type: 'error'
-                });
-            } finally {
-                D.progressCurrent = 0;
-                D.progressTotal = 0;
             }
+            this.$message({
+                message: `Kicked ${memberCount} group members`,
+                type: 'success'
+            });
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
         },
 
         async groupMembersBan() {
             var D = this.groupMemberModeration;
             var memberCount = D.selectedUsersArray.length;
             D.progressTotal = memberCount;
-            try {
-                for (var i = 0; i < memberCount; i++) {
-                    if (!D.visible || !D.progressTotal) {
-                        break;
-                    }
-                    var user = D.selectedUsersArray[i];
-                    D.progressCurrent = i + 1;
-                    if (user.userId === API.currentUser.id) {
-                        continue;
-                    }
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                console.log(`Banning ${user.userId} ${i + 1}/${memberCount}`);
+                try {
                     await API.banGroupMember({
                         groupId: D.id,
                         userId: user.userId
                     });
-                    console.log(
-                        `Banning ${user.userId} ${i + 1}/${memberCount}`
-                    );
+                } catch (err) {
+                    console.error(err);
+                    this.$message({
+                        message: `Failed to ban group member: ${err}`,
+                        type: 'error'
+                    });
                 }
-                this.$message({
-                    message: `Banned ${memberCount} group members`,
-                    type: 'success'
-                });
-            } catch (err) {
-                console.error(err);
-                this.$message({
-                    message: `Failed to ban group member: ${err}`,
-                    type: 'error'
-                });
-            } finally {
-                D.progressCurrent = 0;
-                D.progressTotal = 0;
             }
+            this.$message({
+                message: `Banned ${memberCount} group members`,
+                type: 'success'
+            });
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
         },
 
         async groupMembersUnban() {
             var D = this.groupMemberModeration;
             var memberCount = D.selectedUsersArray.length;
             D.progressTotal = memberCount;
-            try {
-                for (var i = 0; i < memberCount; i++) {
-                    if (!D.visible || !D.progressTotal) {
-                        break;
-                    }
-                    var user = D.selectedUsersArray[i];
-                    D.progressCurrent = i + 1;
-                    if (user.userId === API.currentUser.id) {
-                        continue;
-                    }
+
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                console.log(`Unbanning ${user.userId} ${i + 1}/${memberCount}`);
+                try {
                     await API.unbanGroupMember({
                         groupId: D.id,
                         userId: user.userId
                     });
-                    console.log(
-                        `Unbanning ${user.userId} ${i + 1}/${memberCount}`
-                    );
+                } catch (err) {
+                    console.error(err);
+                    this.$message({
+                        message: `Failed to unban group member: ${err}`,
+                        type: 'error'
+                    });
                 }
-                this.$message({
-                    message: `Unbanned ${memberCount} group members`,
-                    type: 'success'
-                });
-            } catch (err) {
-                console.error(err);
-                this.$message({
-                    message: `Failed to unban group member: ${err}`,
-                    type: 'error'
-                });
-            } finally {
-                D.progressCurrent = 0;
-                D.progressTotal = 0;
             }
+            this.$message({
+                message: `Unbanned ${memberCount} group members`,
+                type: 'success'
+            });
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
         },
 
         async groupMembersDeleteSentInvite() {
             var D = this.groupMemberModeration;
             var memberCount = D.selectedUsersArray.length;
             D.progressTotal = memberCount;
-            try {
-                for (var i = 0; i < memberCount; i++) {
-                    if (!D.visible || !D.progressTotal) {
-                        break;
-                    }
-                    var user = D.selectedUsersArray[i];
-                    D.progressCurrent = i + 1;
-                    if (user.userId === API.currentUser.id) {
-                        continue;
-                    }
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                console.log(
+                    `Deleting group invite ${user.userId} ${i + 1}/${memberCount}`
+                );
+                try {
                     await API.deleteSentGroupInvite({
                         groupId: D.id,
                         userId: user.userId
                     });
-                    console.log(
-                        `Deleting group invite ${user.userId} ${i + 1}/${memberCount}`
-                    );
+                } catch (err) {
+                    console.error(err);
+                    this.$message({
+                        message: `Failed to delete group invites: ${err}`,
+                        type: 'error'
+                    });
                 }
-                this.$message({
-                    message: `Deleted ${memberCount} group invites`,
-                    type: 'success'
-                });
-            } catch (err) {
-                console.error(err);
-                this.$message({
-                    message: `Failed to delete group invites: ${err}`,
-                    type: 'error'
-                });
-            } finally {
-                D.progressCurrent = 0;
-                D.progressTotal = 0;
             }
+            this.$message({
+                message: `Deleted ${memberCount} group invites`,
+                type: 'success'
+            });
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
         },
 
         async groupMembersDeleteBlockedRequest() {
             var D = this.groupMemberModeration;
             var memberCount = D.selectedUsersArray.length;
             D.progressTotal = memberCount;
-            try {
-                for (var i = 0; i < memberCount; i++) {
-                    if (!D.visible || !D.progressTotal) {
-                        break;
-                    }
-                    var user = D.selectedUsersArray[i];
-                    D.progressCurrent = i + 1;
-                    if (user.userId === API.currentUser.id) {
-                        continue;
-                    }
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                console.log(
+                    `Deleting blocked group request ${user.userId} ${i + 1}/${memberCount}`
+                );
+                try {
                     await API.deleteBlockedGroupRequest({
                         groupId: D.id,
                         userId: user.userId
                     });
-                    console.log(
-                        `Deleting blocked group request ${user.userId} ${i + 1}/${memberCount}`
-                    );
+                } catch (err) {
+                    console.error(err);
+                    this.$message({
+                        message: `Failed to delete blocked group requests: ${err}`,
+                        type: 'error'
+                    });
                 }
-                this.$message({
-                    message: `Deleted ${memberCount} blocked group requests`,
-                    type: 'success'
-                });
-            } catch (err) {
-                console.error(err);
-                this.$message({
-                    message: `Failed to delete blocked group requests: ${err}`,
-                    type: 'error'
-                });
-            } finally {
-                D.progressCurrent = 0;
-                D.progressTotal = 0;
             }
+            this.$message({
+                message: `Deleted ${memberCount} blocked group requests`,
+                type: 'success'
+            });
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
         },
 
         async groupMembersAcceptInviteRequest() {
             var D = this.groupMemberModeration;
             var memberCount = D.selectedUsersArray.length;
             D.progressTotal = memberCount;
-            try {
-                for (var i = 0; i < memberCount; i++) {
-                    if (!D.visible || !D.progressTotal) {
-                        break;
-                    }
-                    var user = D.selectedUsersArray[i];
-                    D.progressCurrent = i + 1;
-                    if (user.userId === API.currentUser.id) {
-                        continue;
-                    }
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                console.log(
+                    `Accepting group join request ${user.userId} ${i + 1}/${memberCount}`
+                );
+                try {
                     await API.acceptGroupInviteRequest({
                         groupId: D.id,
                         userId: user.userId
                     });
-                    console.log(
-                        `Accepting group join request ${user.userId} ${i + 1}/${memberCount}`
-                    );
+                } catch (err) {
+                    console.error(err);
+                    this.$message({
+                        message: `Failed to accept group join requests: ${err}`,
+                        type: 'error'
+                    });
                 }
-                this.$message({
-                    message: `Accepted ${memberCount} group join requests`,
-                    type: 'success'
-                });
-            } catch (err) {
-                console.error(err);
-                this.$message({
-                    message: `Failed to accept group join requests: ${err}`,
-                    type: 'error'
-                });
-            } finally {
-                D.progressCurrent = 0;
-                D.progressTotal = 0;
             }
+            this.$message({
+                message: `Accepted ${memberCount} group join requests`,
+                type: 'success'
+            });
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
         },
 
         async groupMembersRejectInviteRequest() {
             var D = this.groupMemberModeration;
             var memberCount = D.selectedUsersArray.length;
             D.progressTotal = memberCount;
-            try {
-                for (var i = 0; i < memberCount; i++) {
-                    if (!D.visible || !D.progressTotal) {
-                        break;
-                    }
-                    var user = D.selectedUsersArray[i];
-                    D.progressCurrent = i + 1;
-                    if (user.userId === API.currentUser.id) {
-                        continue;
-                    }
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                console.log(
+                    `Rejecting group join request ${user.userId} ${i + 1}/${memberCount}`
+                );
+                try {
                     await API.rejectGroupInviteRequest({
                         groupId: D.id,
                         userId: user.userId
                     });
-                    console.log(
-                        `Rejecting group join request ${user.userId} ${i + 1}/${memberCount}`
-                    );
+                } catch (err) {
+                    console.error(err);
+                    this.$message({
+                        message: `Failed to reject group join requests: ${err}`,
+                        type: 'error'
+                    });
                 }
                 this.$message({
                     message: `Rejected ${memberCount} group join requests`,
                     type: 'success'
                 });
-            } catch (err) {
-                console.error(err);
-                this.$message({
-                    message: `Failed to reject group join requests: ${err}`,
-                    type: 'error'
-                });
-            } finally {
                 D.progressCurrent = 0;
                 D.progressTotal = 0;
             }
@@ -3290,178 +3278,174 @@ export default class extends baseClass {
             var D = this.groupMemberModeration;
             var memberCount = D.selectedUsersArray.length;
             D.progressTotal = memberCount;
-            try {
-                for (var i = 0; i < memberCount; i++) {
-                    if (!D.visible || !D.progressTotal) {
-                        break;
-                    }
-                    var user = D.selectedUsersArray[i];
-                    D.progressCurrent = i + 1;
-                    if (user.userId === API.currentUser.id) {
-                        continue;
-                    }
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.userId === API.currentUser.id) {
+                    continue;
+                }
+                console.log(
+                    `Blocking group join request ${user.userId} ${i + 1}/${memberCount}`
+                );
+                try {
                     await API.blockGroupInviteRequest({
                         groupId: D.id,
                         userId: user.userId
                     });
-                    console.log(
-                        `Blocking group join request ${user.userId} ${i + 1}/${memberCount}`
-                    );
+                } catch (err) {
+                    console.error(err);
+                    this.$message({
+                        message: `Failed to block group join requests: ${err}`,
+                        type: 'error'
+                    });
                 }
-                this.$message({
-                    message: `Blocked ${memberCount} group join requests`,
-                    type: 'success'
-                });
-            } catch (err) {
-                console.error(err);
-                this.$message({
-                    message: `Failed to block group join requests: ${err}`,
-                    type: 'error'
-                });
-            } finally {
-                D.progressCurrent = 0;
-                D.progressTotal = 0;
             }
+            this.$message({
+                message: `Blocked ${memberCount} group join requests`,
+                type: 'success'
+            });
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
         },
 
         async groupMembersSaveNote() {
             var D = this.groupMemberModeration;
             var memberCount = D.selectedUsersArray.length;
             D.progressTotal = memberCount;
-            try {
-                for (var i = 0; i < memberCount; i++) {
-                    if (!D.visible || !D.progressTotal) {
-                        break;
-                    }
-                    var user = D.selectedUsersArray[i];
-                    D.progressCurrent = i + 1;
-                    if (user.managerNotes === D.note) {
-                        continue;
-                    }
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                if (user.managerNotes === D.note) {
+                    continue;
+                }
+                console.log(
+                    `Setting note ${D.note} ${user.userId} ${
+                        i + 1
+                    }/${memberCount}`
+                );
+                try {
                     await API.setGroupMemberProps(user.userId, D.id, {
                         managerNotes: D.note
                     });
-                    console.log(
-                        `Setting note ${D.note} ${user.userId} ${
-                            i + 1
-                        }/${memberCount}`
-                    );
+                } catch (err) {
+                    console.error(err);
+                    this.$message({
+                        message: `Failed to set group member note: ${err}`,
+                        type: 'error'
+                    });
                 }
-                this.$message({
-                    message: `Saved notes for ${memberCount} group members`,
-                    type: 'success'
-                });
-            } catch (err) {
-                console.error(err);
-                this.$message({
-                    message: `Failed to set group member note: ${err}`,
-                    type: 'error'
-                });
-            } finally {
-                D.progressCurrent = 0;
-                D.progressTotal = 0;
             }
+            this.$message({
+                message: `Saved notes for ${memberCount} group members`,
+                type: 'success'
+            });
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
         },
 
         async groupMembersAddRoles() {
             var D = this.groupMemberModeration;
             var memberCount = D.selectedUsersArray.length;
             D.progressTotal = memberCount;
-            try {
-                for (var i = 0; i < memberCount; i++) {
-                    if (!D.visible || !D.progressTotal) {
-                        break;
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                var rolesToAdd = [];
+                D.selectedRoles.forEach((roleId) => {
+                    if (!user.roleIds.includes(roleId)) {
+                        rolesToAdd.push(roleId);
                     }
-                    var user = D.selectedUsersArray[i];
-                    D.progressCurrent = i + 1;
-                    var rolesToAdd = [];
-                    D.selectedRoles.forEach((roleId) => {
-                        if (!user.roleIds.includes(roleId)) {
-                            rolesToAdd.push(roleId);
-                        }
-                    });
+                });
 
-                    if (!rolesToAdd.length) {
-                        continue;
-                    }
-                    for (var j = 0; j < rolesToAdd.length; j++) {
-                        var roleId = rolesToAdd[j];
-                        console.log(
-                            `Adding role: ${roleId} ${user.userId} ${
-                                i + 1
-                            }/${memberCount}`
-                        );
+                if (!rolesToAdd.length) {
+                    continue;
+                }
+                for (var j = 0; j < rolesToAdd.length; j++) {
+                    var roleId = rolesToAdd[j];
+                    console.log(
+                        `Adding role: ${roleId} ${user.userId} ${
+                            i + 1
+                        }/${memberCount}`
+                    );
+                    try {
                         await API.addGroupMemberRole({
                             groupId: D.id,
                             userId: user.userId,
                             roleId
                         });
+                    } catch (err) {
+                        console.error(err);
+                        this.$message({
+                            message: `Failed to add group member roles: ${err}`,
+                            type: 'error'
+                        });
                     }
                 }
-                this.$message({
-                    message: 'Added group member roles',
-                    type: 'success'
-                });
-            } catch (err) {
-                console.error(err);
-                this.$message({
-                    message: `Failed to add group member roles: ${err}`,
-                    type: 'error'
-                });
-            } finally {
-                D.progressCurrent = 0;
-                D.progressTotal = 0;
             }
+            this.$message({
+                message: 'Added group member roles',
+                type: 'success'
+            });
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
         },
 
         async groupMembersRemoveRoles() {
             var D = this.groupMemberModeration;
             var memberCount = D.selectedUsersArray.length;
             D.progressTotal = memberCount;
-            try {
-                for (var i = 0; i < memberCount; i++) {
-                    if (!D.visible || !D.progressTotal) {
-                        break;
+            for (var i = 0; i < memberCount; i++) {
+                if (!D.visible || !D.progressTotal) {
+                    break;
+                }
+                var user = D.selectedUsersArray[i];
+                D.progressCurrent = i + 1;
+                var rolesToRemove = [];
+                D.selectedRoles.forEach((roleId) => {
+                    if (user.roleIds.includes(roleId)) {
+                        rolesToRemove.push(roleId);
                     }
-                    var user = D.selectedUsersArray[i];
-                    D.progressCurrent = i + 1;
-                    var rolesToRemove = [];
-                    D.selectedRoles.forEach((roleId) => {
-                        if (user.roleIds.includes(roleId)) {
-                            rolesToRemove.push(roleId);
-                        }
-                    });
-                    if (!rolesToRemove.length) {
-                        continue;
-                    }
-                    for (var j = 0; j < rolesToRemove.length; j++) {
-                        var roleId = rolesToRemove[j];
-                        console.log(
-                            `Removing role ${roleId} ${user.userId} ${
-                                i + 1
-                            }/${memberCount}`
-                        );
+                });
+                if (!rolesToRemove.length) {
+                    continue;
+                }
+                for (var j = 0; j < rolesToRemove.length; j++) {
+                    var roleId = rolesToRemove[j];
+                    console.log(
+                        `Removing role ${roleId} ${user.userId} ${
+                            i + 1
+                        }/${memberCount}`
+                    );
+                    try {
                         await API.removeGroupMemberRole({
                             groupId: D.id,
                             userId: user.userId,
                             roleId
                         });
+                    } catch (err) {
+                        console.error(err);
+                        this.$message({
+                            message: `Failed to remove group member roles: ${err}`,
+                            type: 'error'
+                        });
                     }
                 }
-                this.$message({
-                    message: 'Roles removed',
-                    type: 'success'
-                });
-            } catch (err) {
-                console.error(err);
-                this.$message({
-                    message: `Failed to remove group member roles: ${err}`,
-                    type: 'error'
-                });
-            } finally {
-                D.progressCurrent = 0;
-                D.progressTotal = 0;
             }
+            this.$message({
+                message: 'Roles removed',
+                type: 'success'
+            });
+            D.progressCurrent = 0;
+            D.progressTotal = 0;
         },
 
         async selectGroupMemberUserId() {
