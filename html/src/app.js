@@ -1390,19 +1390,16 @@ speechSynthesis.getVoices();
             n: 50,
             offset: 0
         };
+        // API offset limit is 5000
         mainLoop: for (var i = 100; i > -1; i--) {
-            if (params.offset > 5000) {
-                // API offset limit is 5000
-                break;
-            }
             retryLoop: for (var j = 0; j < 10; j++) {
                 // handle 429 ratelimit error, retry 10 times
                 try {
                     var args = await this.getFriends(params);
-                    friends = friends.concat(args.json);
-                    if (!args.json || args.json.length < 50) {
+                    if (!args.json || args.json.length === 0) {
                         break mainLoop;
                     }
+                    friends = friends.concat(args.json);
                     break retryLoop;
                 } catch (err) {
                     console.error(err);
@@ -1413,9 +1410,6 @@ speechSynthesis.getVoices();
                     if (err?.message?.includes('Not Found')) {
                         console.error('Awful workaround for awful VRC API bug');
                         break retryLoop;
-                    }
-                    if (j === 9) {
-                        throw err;
                     }
                     await new Promise((resolve) => {
                         workerTimers.setTimeout(resolve, 5000);
@@ -4557,7 +4551,10 @@ speechSynthesis.getVoices();
             console.log(
                 `${ctx.name} updateFriendState ${ctx.state} -> ${newState}`
             );
-            if (location !== ctx.ref?.location) {
+            if (
+                typeof ctx.ref !== 'undefined' &&
+                location !== ctx.ref.location
+            ) {
                 console.log(
                     `${ctx.name} pendingOfflineLocation ${location} -> ${ctx.ref.location}`
                 );
@@ -4602,14 +4599,14 @@ speechSynthesis.getVoices();
                 ctx.ref.$online_for = Date.now();
                 ctx.ref.$offline_for = '';
                 ctx.ref.$active_for = '';
-                var worldName = await this.getWorldName(ref.location);
+                var worldName = await this.getWorldName(location);
                 var groupName = await this.getGroupName(location);
                 var feed = {
                     created_at: new Date().toJSON(),
                     type: 'Online',
                     userId: id,
                     displayName: ctx.name,
-                    location: ref.location,
+                    location,
                     worldName,
                     groupName,
                     time: ''
