@@ -29,7 +29,7 @@ namespace VRCX
         {
             Instance = this;
             InitializeComponent();
-            
+
             // adding a 5s delay here to avoid excessive writes to disk
             _saveTimer = new Timer();
             _saveTimer.Interval = 5000;
@@ -141,16 +141,16 @@ namespace VRCX
             }
             LastSizeWidth = Size.Width;
             LastSizeHeight = Size.Height;
-            
+
             _saveTimer?.Start();
         }
-        
+
         private void SaveTimer_Tick(object sender, EventArgs e)
         {
             SaveWindowState();
             _saveTimer?.Stop();
         }
-        
+
         private void MainForm_Move(object sender, System.EventArgs e)
         {
             if (WindowState != FormWindowState.Normal)
@@ -159,7 +159,7 @@ namespace VRCX
             }
             LastLocationX = Location.X;
             LastLocationY = Location.Y;
-            
+
             _saveTimer?.Start();
         }
 
@@ -172,7 +172,7 @@ namespace VRCX
                 Hide();
             }
         }
-        
+
         private void SaveWindowState()
         {
             VRCXStorage.Instance.Set("VRCX_LocationX", LastLocationX.ToString());
@@ -203,11 +203,11 @@ namespace VRCX
 
         public void Focus_Window()
         {
+            Show();
             if (WindowState == FormWindowState.Minimized)
             {
                 WindowState = FormWindowState.Normal;
             }
-            Show();
             // Focus();
             Activate();
         }
