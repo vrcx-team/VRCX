@@ -25,6 +25,20 @@ namespace VRCX
         private int LastSizeWidth;
         private int LastSizeHeight;
 
+        private FormWindowState _LastWindowStateToRestore = FormWindowState.Normal;
+        private FormWindowState LastWindowStateToRestore
+        {
+            get => _LastWindowStateToRestore;
+            set
+            {
+                // Used to restore window state after minimized
+                if (FormWindowState.Minimized != value)
+                {
+                    _LastWindowStateToRestore = value;
+                }
+            }
+        }
+
         public MainForm()
         {
             Instance = this;
@@ -129,12 +143,16 @@ namespace VRCX
                 jslogger.Error(ex);
             }
 
+            LastWindowStateToRestore = WindowState;
+
             // 가끔 화면 위치가 안맞음.. 이걸로 해결 될지는 모르겠음
             Browser.Invalidate();
         }
 
         private void MainForm_Resize(object sender, System.EventArgs e)
         {
+            LastWindowStateToRestore = WindowState;
+
             if (WindowState != FormWindowState.Normal)
             {
                 return;
@@ -206,7 +224,7 @@ namespace VRCX
             Show();
             if (WindowState == FormWindowState.Minimized)
             {
-                WindowState = FormWindowState.Normal;
+                WindowState = LastWindowStateToRestore;
             }
             // Focus();
             Activate();
