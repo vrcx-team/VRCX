@@ -299,18 +299,25 @@ mixin userDialog()
                     el-button(type="default" :loading="userDialog.isGroupsLoading" @click="getUserGroups(userDialog.id)" size="mini" icon="el-icon-refresh" circle)
                     span(style="margin-left:5px") {{ $t('dialog.user.groups.total_count', { count: userGroups.groups.length }) }}
                     div(style="float:right")
-                        span(style="margin-right:5px") {{ $t('dialog.user.groups.sort_by') }}
-                        el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="userDialog.isGroupsLoading")
-                            el-button(size="mini")
-                                span {{ userDialog.groupSorting.name }} #[i.el-icon-arrow-down.el-icon--right]
-                            el-dropdown-menu(#default="dropdown")
-                                el-dropdown-item(:disabled="item === userDialogGroupSortingOptions.inGame && userDialog.id !== API.currentUser.id" v-for="(item) in userDialogGroupSortingOptions" v-text="item.name" @click.native="setUserDialogGroupSorting(item)")
+                        template(v-if="!userDialogGroupEditMode")
+                            span(style="margin-right:5px") {{ $t('dialog.user.groups.sort_by') }}
+                            el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px" :disabled="userDialog.isGroupsLoading")
+                                el-button(size="mini")
+                                    span {{ userDialog.groupSorting.name }} #[i.el-icon-arrow-down.el-icon--right]
+                                el-dropdown-menu(#default="dropdown")
+                                    el-dropdown-item(:disabled="item === userDialogGroupSortingOptions.inGame && userDialog.id !== API.currentUser.id" v-for="(item) in userDialogGroupSortingOptions" v-text="item.name" @click.native="setUserDialogGroupSorting(item)")
+                        el-button(v-if="userDialogGroupEditMode" size="small" @click="exitEditModeCurrentUserGroups" icon="el-icon-edit" style="margin-right:5px") {{ $t('dialog.user.groups.exit_edit_mode') }}
+                        el-button(v-else-if="API.currentUser.id === userDialog.id" size="small" @click="editModeCurrentUserGroups" icon="el-icon-edit" style="margin-right:5px") {{ $t('dialog.user.groups.edit_mode') }}
                     div(v-loading="userDialog.isGroupsLoading" style="margin-top:10px")
-                        template(v-if="userGroups.ownGroups.length > 0")
-                            span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.own_groups') }}
-                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.ownGroups.length }}/{{ API.cachedConfig?.constants?.GROUPS?.MAX_OWNED }}
-                            .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
-                                .x-friend-item(v-for="group in userGroups.ownGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border")
+                        template(v-if="userDialogGroupEditMode")
+                            .x-friend-list(style="margin-top:10px;margin-bottom:15px;max-height:unset")
+                                .x-friend-item(v-for="group in userDialogGroupEditGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border" style="width:100%")
+                                    div(@click.stop style="margin-right:3px;margin-left:5px")
+                                        el-button(@click="moveGroupUp(group.id)" size="mini" icon="el-icon-arrow-up" style="display:block;padding:7px;font-size:9px;margin-left:0")
+                                        el-button(@click="moveGroupDown(group.id)" size="mini" icon="el-icon-arrow-down" style="display:block;padding:7px;font-size:9px;margin-left:0")
+                                    div(@click.stop style="margin-right:10px")
+                                        el-button(@click="moveGroupTop(group.id)" size="mini" icon="el-icon-top" style="display:block;padding:7px;font-size:9px;margin-left:0")
+                                        el-button(@click="moveGroupBottom(group.id)" size="mini" icon="el-icon-bottom" style="display:block;padding:7px;font-size:9px;margin-left:0")
                                     .avatar
                                         img(v-lazy="group.iconUrl")
                                     .detail
@@ -323,46 +330,67 @@ mixin userDialog()
                                                     span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
                                                 i.el-icon-view(style="margin-right:5px")
                                             span ({{ group.memberCount }})
-                        template(v-if="userGroups.mutualGroups.length > 0")
-                            span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.mutual_groups') }}
-                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.mutualGroups.length }}
-                            .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
-                                .x-friend-item(v-for="group in userGroups.mutualGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border")
-                                    .avatar
-                                        img(v-lazy="group.iconUrl")
-                                    .detail
-                                        span.name(v-text="group.name")
-                                        span.extra
-                                            el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
-                                                i.el-icon-collection-tag(style="margin-right:5px")
-                                            el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
-                                                template(#content)
-                                                    span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
-                                                i.el-icon-view(style="margin-right:5px")
-                                            span ({{ group.memberCount }})
-                        template(v-if="userGroups.remainingGroups.length > 0")
-                            span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.groups') }}
-                            span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.remainingGroups.length }}
-                                template(v-if="API.currentUser.id === userDialog.id")
-                                    |/
-                                    template(v-if="API.currentUser.$isVRCPlus")
-                                        | {{ API.cachedConfig?.constants?.GROUPS?.MAX_JOINED_PLUS }}
-                                    template(v-else)
-                                        | {{ API.cachedConfig?.constants?.GROUPS?.MAX_JOINED }}
-                            .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
-                                .x-friend-item(v-for="group in userGroups.remainingGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border")
-                                    .avatar
-                                        img(v-lazy="group.iconUrl")
-                                    .detail
-                                        span.name(v-text="group.name")
-                                        span.extra
-                                            el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
-                                                i.el-icon-collection-tag(style="margin-right:5px")
-                                            el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
-                                                template(#content)
-                                                    span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
-                                                i.el-icon-view(style="margin-right:5px")
-                                            span ({{ group.memberCount }})
+                                    el-tooltip(placement="right" :content="$t('dialog.user.groups.leave_group_tooltip')" :disabled="hideTooltips")
+                                        el-button(v-if="shiftHeld" @click.stop="leaveGroupPrompt(group.id)" size="mini" icon="el-icon-close" circle style="color:#f56c6c;margin-left:5px")
+                                        el-button(v-else @click.stop="leaveGroupPrompt(group.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")
+                        template(v-else)
+                            template(v-if="userGroups.ownGroups.length > 0")
+                                span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.own_groups') }}
+                                span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.ownGroups.length }}/{{ API.cachedConfig?.constants?.GROUPS?.MAX_OWNED }}
+                                .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
+                                    .x-friend-item(v-for="group in userGroups.ownGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border")
+                                        .avatar
+                                            img(v-lazy="group.iconUrl")
+                                        .detail
+                                            span.name(v-text="group.name")
+                                            span.extra
+                                                el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
+                                                    i.el-icon-collection-tag(style="margin-right:5px")
+                                                el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
+                                                    template(#content)
+                                                        span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
+                                                    i.el-icon-view(style="margin-right:5px")
+                                                span ({{ group.memberCount }})
+                            template(v-if="userGroups.mutualGroups.length > 0")
+                                span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.mutual_groups') }}
+                                span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.mutualGroups.length }}
+                                .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
+                                    .x-friend-item(v-for="group in userGroups.mutualGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border")
+                                        .avatar
+                                            img(v-lazy="group.iconUrl")
+                                        .detail
+                                            span.name(v-text="group.name")
+                                            span.extra
+                                                el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
+                                                    i.el-icon-collection-tag(style="margin-right:5px")
+                                                el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
+                                                    template(#content)
+                                                        span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
+                                                    i.el-icon-view(style="margin-right:5px")
+                                                span ({{ group.memberCount }})
+                            template(v-if="userGroups.remainingGroups.length > 0")
+                                span(style="font-weight:bold;font-size:16px") {{ $t('dialog.user.groups.groups') }}
+                                span(style="color:#909399;font-size:12px;margin-left:5px") {{ userGroups.remainingGroups.length }}
+                                    template(v-if="API.currentUser.id === userDialog.id")
+                                        |/
+                                        template(v-if="API.currentUser.$isVRCPlus")
+                                            | {{ API.cachedConfig?.constants?.GROUPS?.MAX_JOINED_PLUS }}
+                                        template(v-else)
+                                            | {{ API.cachedConfig?.constants?.GROUPS?.MAX_JOINED }}
+                                .x-friend-list(style="margin-top:10px;margin-bottom:15px;min-height:60px")
+                                    .x-friend-item(v-for="group in userGroups.remainingGroups" :key="group.id" @click="showGroupDialog(group.id)" class="x-friend-item-border")
+                                        .avatar
+                                            img(v-lazy="group.iconUrl")
+                                        .detail
+                                            span.name(v-text="group.name")
+                                            span.extra
+                                                el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
+                                                    i.el-icon-collection-tag(style="margin-right:5px")
+                                                el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
+                                                    template(#content)
+                                                        span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
+                                                    i.el-icon-view(style="margin-right:5px")
+                                                span ({{ group.memberCount }})
                 el-tab-pane(:label="$t('dialog.user.worlds.header')")
                     el-button(type="default" :loading="userDialog.isWorldsLoading" @click="refreshUserDialogWorlds()" size="mini" icon="el-icon-refresh" circle)
                     span(style="margin-left:5px") {{ $t('dialog.user.worlds.total_count', { count: userDialog.worlds.length }) }}

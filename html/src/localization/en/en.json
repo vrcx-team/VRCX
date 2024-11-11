@@ -646,6 +646,8 @@
                 "header": "Groups",
                 "total_count": "Total {count}",
                 "sort_by": "Sort by:",
+                "edit_mode": "Edit Mode",
+                "exit_edit_mode": "Exit Edit Mode",
                 "own_groups": "Own Groups",
                 "mutual_groups": "Mutual Groups",
                 "groups": "Groups",
@@ -653,7 +655,8 @@
                     "alphabetical": "Alphabetical",
                     "members": "Members",
                     "in_game": "In-Game Order"
-                }
+                },
+                "leave_group_tooltip": "Leave Group"
             },
             "worlds": {
                 "header": "Worlds",

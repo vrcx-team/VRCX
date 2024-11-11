@@ -2284,6 +2284,23 @@ export default class extends baseClass {
             });
         },
 
+        leaveGroupPrompt(groupId) {
+            this.$confirm(
+                'Are you sure you want to leave this group?',
+                'Confirm',
+                {
+                    confirmButtonText: 'Confirm',
+                    cancelButtonText: 'Cancel',
+                    type: 'info',
+                    callback: (action) => {
+                        if (action === 'confirm') {
+                            this.leaveGroup(groupId);
+                        }
+                    }
+                }
+            );
+        },
+
         cancelGroupRequest(groupId) {
             return API.cancelGroupRequest({
                 groupId

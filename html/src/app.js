@@ -9362,6 +9362,7 @@ speechSynthesis.getVoices();
         D.dateFriended = '';
         D.unFriended = false;
         D.dateFriendedInfo = [];
+        this.userDialogGroupEditMode = false;
         if (userId === API.currentUser.id) {
             this.getWorldName(API.currentUser.homeLocation).then(
                 (worldName) => {
@@ -16981,9 +16982,37 @@ speechSynthesis.getVoices();
         this.saveCurrentUserGroups();
     };
 
+    $app.data.inGameGroupOrder = [];
+
+    $app.methods.updateInGameGroupOrder = async function () {
+        this.inGameGroupOrder = [];
+        try {
+            var json = await AppApi.GetVRChatRegistryKey(
+                `VRC_GROUP_ORDER_${API.currentUser.id}`
+            );
+            this.inGameGroupOrder = JSON.parse(json);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    $app.methods.sortGroupsByInGame = function (a, b) {
+        var aIndex = this.inGameGroupOrder.indexOf(a?.id);
+        var bIndex = this.inGameGroupOrder.indexOf(b?.id);
+        if (aIndex === -1 && bIndex === -1) {
+            return 0;
+        }
+        if (aIndex === -1) {
+            return 1;
+        }
+        if (bIndex === -1) {
+            return -1;
+        }
+        return aIndex - bIndex;
+    };
+
     $app.methods.sortCurrentUserGroups = async function () {
         var D = this.userDialog;
-        var inGameGroupList = [];
         var sortMethod = function () {};
 
         switch (D.groupSorting.value) {
@@ -16994,34 +17023,85 @@ speechSynthesis.getVoices();
                 sortMethod = compareByMemberCount;
                 break;
             case 'inGame':
-                sortMethod = function (a, b) {
-                    var aIndex = inGameGroupList.indexOf(a?.id);
-                    var bIndex = inGameGroupList.indexOf(b?.id);
-                    if (aIndex === -1 && bIndex === -1) {
-                        return 0;
-                    }
-                    if (aIndex === -1) {
-                        return 1;
-                    }
-                    if (bIndex === -1) {
-                        return -1;
-                    }
-                    return aIndex - bIndex;
-                };
-                try {
-                    var json = await AppApi.GetVRChatRegistryKey(
-                        `VRC_GROUP_ORDER_${API.currentUser.id}`
-                    );
-                    inGameGroupList = JSON.parse(json);
-                } catch (err) {
-                    console.error(err);
-                }
+                sortMethod = this.sortGroupsByInGame;
+                await this.updateInGameGroupOrder();
                 break;
         }
 
         this.userGroups.ownGroups.sort(sortMethod);
         this.userGroups.mutualGroups.sort(sortMethod);
         this.userGroups.remainingGroups.sort(sortMethod);
+    };
+
+    $app.data.userDialogGroupEditMode = false;
+    $app.data.userDialogGroupEditGroups = [];
+
+    $app.methods.editModeCurrentUserGroups = async function () {
+        await this.updateInGameGroupOrder();
+        this.userDialogGroupEditGroups = Array.from(
+            API.currentUserGroups.values()
+        );
+        this.userDialogGroupEditGroups.sort(this.sortGroupsByInGame);
+        this.userDialogGroupEditMode = true;
+    };
+
+    $app.methods.exitEditModeCurrentUserGroups = async function () {
+        this.userDialogGroupEditMode = false;
+        this.userDialogGroupEditGroups = [];
+        await this.sortCurrentUserGroups();
+    };
+
+    $app.methods.moveGroupUp = function (groupId) {
+        var index = this.inGameGroupOrder.indexOf(groupId);
+        if (index > 0) {
+            this.inGameGroupOrder.splice(index, 1);
+            this.inGameGroupOrder.splice(index - 1, 0, groupId);
+            this.saveInGameGroupOrder();
+        }
+    };
+
+    $app.methods.moveGroupDown = function (groupId) {
+        var index = this.inGameGroupOrder.indexOf(groupId);
+        if (index < this.inGameGroupOrder.length - 1) {
+            this.inGameGroupOrder.splice(index, 1);
+            this.inGameGroupOrder.splice(index + 1, 0, groupId);
+            this.saveInGameGroupOrder();
+        }
+    };
+
+    $app.methods.moveGroupTop = function (groupId) {
+        var index = this.inGameGroupOrder.indexOf(groupId);
+        if (index > 0) {
+            this.inGameGroupOrder.splice(index, 1);
+            this.inGameGroupOrder.unshift(groupId);
+            this.saveInGameGroupOrder();
+        }
+    };
+
+    $app.methods.moveGroupBottom = function (groupId) {
+        var index = this.inGameGroupOrder.indexOf(groupId);
+        if (index < this.inGameGroupOrder.length - 1) {
+            this.inGameGroupOrder.splice(index, 1);
+            this.inGameGroupOrder.push(groupId);
+            this.saveInGameGroupOrder();
+        }
+    };
+
+    $app.methods.saveInGameGroupOrder = async function () {
+        this.userDialogGroupEditGroups.sort(this.sortGroupsByInGame);
+        try {
+            await AppApi.SetVRChatRegistryKey(
+                `VRC_GROUP_ORDER_${API.currentUser.id}`,
+                JSON.stringify(this.inGameGroupOrder),
+                3
+            );
+        } catch (err) {
+            console.error(err);
+            this.$message({
+                message: 'Failed to save in-game group order',
+                type: 'error'
+            });
+        }
     };
 
     // #endregion
