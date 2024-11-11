@@ -65,10 +65,10 @@ mixin feedTab()
                                 i.x-user-status(:class="statusClass(scope.row.status)")
                             span(v-text="scope.row.statusDescription")
                         template(v-else-if="scope.row.type === 'Bio'")
-                            pre(v-text="scope.row.previousBio" style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0")
-                            span
-                                i.el-icon-right
-                            pre(v-text="scope.row.bio" style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0")
+                            template(v-for="(bio,idx) in formatDifference(scope.row.previousBio,scope.row.bio)")
+                                pre(v-html="bio" style="font-family:inherit;font-size:12px;white-space:pre-wrap;margin:0 0.5em 0 0")
+                                span(v-if="idx===0")
+                                    i.el-icon-right
             el-table-column(:label="$t('table.feed.date')" prop="created_at" sortable="custom" width="120")
                 template(v-once #default="scope")
                     el-tooltip(placement="right")

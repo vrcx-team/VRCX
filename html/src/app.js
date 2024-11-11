@@ -5697,6 +5697,138 @@ speechSynthesis.getVoices();
         }
     });
 
+    /**
+     * Function that prepare the Longest Common Subsequence (LCS) scores matrix
+     * @param {*} s1 String 1
+     * @param {*} s2 String 2
+     * @returns
+     */
+    $app.methods.lcsMatrix = function (s1, s2) {
+        const m = s1.length;
+        const n = s2.length;
+        const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+
+        // Fill the matrix for LCS
+        for (let i = 1; i <= m; i++) {
+            for (let j = 1; j <= n; j++) {
+                if (s1[i - 1] === s2[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+
+        return dp;
+    };
+
+    /**
+     * Function that find the differences between both strings, and return the differences and their position in the strings.
+     * @param {*} s1 String 1
+     * @param {*} s2 String 2
+     * @returns
+     */
+    $app.methods.findDifferences = function (s1, s2) {
+        const dp = $app.lcsMatrix(s1, s2);
+        const differencesS1 = [];
+        const differencesS2 = [];
+        let i = s1.length;
+        let j = s2.length;
+
+        // Backtrack to find differences
+        while (i > 0 && j > 0) {
+            if (s1[i - 1] === s2[j - 1]) {
+                i--;
+                j--;
+            } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+                differencesS1.push({ index: i - 1, char: s1[i - 1] }); // Deletion in s1
+                i--;
+            } else {
+                differencesS2.push({ index: j - 1, char: s2[j - 1] }); // Insertion in s2
+                j--;
+            }
+        }
+
+        // Remaining characters in s1 (deletions)
+        while (i > 0) {
+            differencesS1.push({ index: i - 1, char: s1[i - 1] });
+            i--;
+        }
+
+        // Remaining characters in s2 (insertions)
+        while (j > 0) {
+            differencesS2.push({ index: j - 1, char: s2[j - 1] });
+            j--;
+        }
+
+        return {
+            differencesS1: differencesS1.reverse(), // Reverse to maintain original order
+            differencesS2: differencesS2.reverse()
+        };
+    };
+
+    $app.methods.findSequeces = function (arr) {
+        if (arr.length === 0) return [];
+        return arr.reduce(
+            (p, c, i) => {
+                if (i === 0) return p;
+                let lastSeq = p.pop();
+                p.push(lastSeq);
+                if (c - lastSeq[1] !== 1) {
+                    p.push([c, c]);
+                } else {
+                    lastSeq[1] = c;
+                }
+                return p;
+            },
+            [[arr[0], arr[0]]]
+        );
+    };
+
+    /**
+     * Function that format the differences between two strings with HTML tags
+     * markerStartTag and markerEndTag are optional, if emitted, the differences will be highlighted with yellow and underlined.
+     * @param {*} s1
+     * @param {*} s2
+     * @param {*} markerStartTag
+     * @param {*} markerEndTag
+     * @returns An array that contains both the string 1 and string 2, which the differences are formated with HTML tags
+     */
+    $app.methods.formatDifference = function (
+        s1,
+        s2,
+        markerStartTag = '<u><font color="yellow">',
+        markerEndTag = '</font></u>'
+    ) {
+        const texts = [s1, s2];
+        const differs = $app.findDifferences(s1, s2);
+        return Object.values(differs)
+            .map((i) => $app.findSequeces(i.map((j) => j.index)))
+            .map((i, k) => {
+                let stringBuilder = [];
+                let lastPos = 0;
+                let key = Date.now();
+                i.forEach((j) => {
+                    stringBuilder.push(texts[k].substring(lastPos, j[0]));
+                    stringBuilder.push(
+                        `{{diffTag-${key}}}${texts[k].substring(j[0], j[1] + 1)}{{diffTagClose-${key}}}`
+                    );
+                    lastPos = j[1] + 1;
+                });
+                stringBuilder.push(texts[k].substr(lastPos, texts[k].length));
+                let returnVal = stringBuilder
+                    .join('')
+                    .replaceAll(/&/g, '&amp;')
+                    .replaceAll(/</g, '&lt;')
+                    .replaceAll(/>/g, '&gt;')
+                    .replaceAll(/"/g, '&quot;')
+                    .replaceAll(/'/g, '&#039;')
+                    .replaceAll(`{{diffTag-${key}}}`, markerStartTag)
+                    .replaceAll(`{{diffTagClose-${key}}}`, markerEndTag);
+                return returnVal;
+            });
+    };
+
     // #endregion
     // #region | App: gameLog
 
