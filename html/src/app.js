@@ -5767,7 +5767,7 @@ speechSynthesis.getVoices();
         };
     };
 
-    $app.methods.findSequeces = function (arr) {
+    $app.methods.findSequences = function (arr) {
         if (arr.length === 0) return [];
         return arr.reduce(
             (p, c, i) => {
@@ -5792,7 +5792,7 @@ speechSynthesis.getVoices();
      * @param {*} s2
      * @param {*} markerStartTag
      * @param {*} markerEndTag
-     * @returns An array that contains both the string 1 and string 2, which the differences are formated with HTML tags
+     * @returns An array that contains both the string 1 and string 2, which the differences are formatted with HTML tags
      */
     $app.methods.formatDifference = function (
         s1,
@@ -5803,7 +5803,7 @@ speechSynthesis.getVoices();
         const texts = [s1, s2];
         const differs = $app.findDifferences(s1, s2);
         return Object.values(differs)
-            .map((i) => $app.findSequeces(i.map((j) => j.index)))
+            .map((i) => $app.findSequences(i.map((j) => j.index)))
             .map((i, k) => {
                 let stringBuilder = [];
                 let lastPos = 0;
