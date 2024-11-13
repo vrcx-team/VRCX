@@ -1,6 +1,6 @@
 import * as workerTimers from 'worker-timers';
 import Noty from 'noty';
-import { baseClass, $app, API, $t } from './baseClass.js';
+import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {
@@ -262,12 +262,28 @@ export default class extends baseClass {
                     break;
 
                 case 'friend-online':
+                    // Where is instanceId, travelingToWorld, travelingToInstance?
+                    // More JANK, what a mess
+                    var $location = $utils.parseLocation(content.location);
+                    var $travelingToLocation = $utils.parseLocation(
+                        content.travelingToLocation
+                    );
                     if (content?.user?.id) {
                         this.$emit('USER', {
                             json: {
+                                id: content.userId,
+                                platform: content.platform,
+                                state: 'online',
+
                                 location: content.location,
+                                worldId: content.worldId,
+                                instanceId: $location.instanceId,
                                 travelingToLocation:
                                     content.travelingToLocation,
+                                travelingToWorld: $travelingToLocation.worldId,
+                                travelingToInstance:
+                                    $travelingToLocation.instanceId,
+
                                 ...content.user
                             },
                             params: {
@@ -289,13 +305,6 @@ export default class extends baseClass {
                 case 'friend-active':
                     if (content?.user?.id) {
                         this.$emit('USER', {
-                            json: content.user,
-                            params: {
-                                userId: content.userId
-                            }
-                        });
-                    } else {
-                        this.$emit('USER', {
                             json: {
                                 id: content.userId,
                                 platform: content.platform,
@@ -306,7 +315,18 @@ export default class extends baseClass {
                                 instanceId: 'offline',
                                 travelingToLocation: 'offline',
                                 travelingToWorld: 'offline',
-                                travelingToInstance: 'offline'
+                                travelingToInstance: 'offline',
+
+                                ...content.user
+                            },
+                            params: {
+                                userId: content.userId
+                            }
+                        });
+                    } else {
+                        this.$emit('FRIEND:STATE', {
+                            json: {
+                                state: 'active'
                             },
                             params: {
                                 userId: content.userId
@@ -346,6 +366,10 @@ export default class extends baseClass {
                     break;
 
                 case 'friend-location':
+                    var $location = $utils.parseLocation(content.location);
+                    var $travelingToLocation = $utils.parseLocation(
+                        content.travelingToLocation
+                    );
                     if (!content?.user?.id) {
                         var ref = this.cachedUsers.get(content.userId);
                         if (typeof ref !== 'undefined') {
@@ -353,8 +377,14 @@ export default class extends baseClass {
                                 json: {
                                     ...ref,
                                     location: content.location,
+                                    worldId: content.worldId,
+                                    instanceId: $location.instanceId,
                                     travelingToLocation:
-                                        content.travelingToLocation
+                                        content.travelingToLocation,
+                                    travelingToWorld:
+                                        $travelingToLocation.worldId,
+                                    travelingToInstance:
+                                        $travelingToLocation.instanceId
                                 },
                                 params: {
                                     userId: content.userId
@@ -366,7 +396,12 @@ export default class extends baseClass {
                     this.$emit('USER', {
                         json: {
                             location: content.location,
+                            worldId: content.worldId,
+                            instanceId: $location.instanceId,
                             travelingToLocation: content.travelingToLocation,
+                            travelingToWorld: $travelingToLocation.worldId,
+                            travelingToInstance:
+                                $travelingToLocation.instanceId,
                             ...content.user,
                             state: 'online' // JANK
                         },

@@ -329,8 +329,13 @@ speechSynthesis.getVoices();
             console.error('API.$on(USER) invalid args', args);
             return;
         }
-        $app.updateFriend({ id: args.json.id, state: args.json.state }); // online/offline
-        args.ref = this.applyUser(args.json); // GPS
+        if (args.json.state === 'online') {
+            args.ref = this.applyUser(args.json); // GPS
+            $app.updateFriend({ id: args.json.id, state: args.json.state }); // online/offline
+        } else {
+            $app.updateFriend({ id: args.json.id, state: args.json.state }); // online/offline
+            args.ref = this.applyUser(args.json); // GPS
+        }
     });
 
     API.$on('USER:LIST', function (args) {
@@ -487,6 +492,7 @@ speechSynthesis.getVoices();
         }
         if (typeof ref === 'undefined') {
             ref = {
+                ageVerificationStatus: '',
                 allowAvatarCopying: false,
                 badges: [],
                 bio: '',
