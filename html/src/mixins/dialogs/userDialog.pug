@@ -325,11 +325,34 @@ mixin userDialog()
                                         span.extra
                                             el-tooltip(v-if="group.isRepresenting" placement="top" :content="$t('dialog.group.members.representing')")
                                                 i.el-icon-collection-tag(style="margin-right:5px")
-                                            el-tooltip(v-if="group.memberVisibility !== 'visible'" placement="top")
+                                            el-tooltip(v-if="group.myMember.visibility !== 'visible'" placement="top")
                                                 template(#content)
-                                                    span {{ $t('dialog.group.members.visibility') }} {{ group.memberVisibility }}
+                                                    span {{ $t('dialog.group.members.visibility') }} {{ group.myMember.visibility }}
                                                 i.el-icon-view(style="margin-right:5px")
                                             span ({{ group.memberCount }})
+                                    el-dropdown(@click.native.stop :disabled="group.privacy !== 'default'" trigger="click" size="small" style="margin-right:5px")
+                                        el-button(size="mini")
+                                            span(v-if="group.myMember.visibility === 'visible'") {{ $t('dialog.group.tags.visible') }}
+                                            span(v-else-if="group.myMember.visibility === 'friends'") {{ $t('dialog.group.tags.friends') }}
+                                            span(v-else-if="group.myMember.visibility === 'hidden'") {{ $t('dialog.group.tags.hidden') }}
+                                            span(v-else) {{ group.myMember.visibility }}
+                                            i.el-icon-arrow-down.el-icon--right(style="margin-left:5px")
+                                        el-dropdown-menu
+                                            el-dropdown-item(@click.native="setGroupVisibility(group.id, 'visible')") #[i.el-icon-check(v-if="group.myMember.visibility === 'visible'")] {{ $t('dialog.group.actions.visibility_everyone') }}
+                                            el-dropdown-item(@click.native="setGroupVisibility(group.id, 'friends')") #[i.el-icon-check(v-if="group.myMember.visibility === 'friends'")] {{ $t('dialog.group.actions.visibility_friends') }}
+                                            el-dropdown-item(@click.native="setGroupVisibility(group.id, 'hidden')") #[i.el-icon-check(v-if="group.myMember.visibility === 'hidden'")] {{ $t('dialog.group.actions.visibility_hidden') }}
+                                            
+                                    //- JSON is missing isSubscribedToAnnouncements, can't be implemented
+                                    //- el-dropdown(@click.native.stop trigger="click" size="small" style="margin-right:5px")
+                                    //-     el-tooltip(placement="top" :disabled="hideTooltips")
+                                    //-         template(#content)
+                                    //-             span(v-if="group.myMember.isSubscribedToAnnouncements") {{ $t('dialog.group.actions.unsubscribe') }}
+                                    //-             span(v-else) {{ $t('dialog.group.actions.subscribe') }}
+                                    //-         el-button(v-if="group.myMember.isSubscribedToAnnouncements" @click.stop="setGroupSubscription(group.id, false)" circle size="mini")
+                                    //-             i.el-icon-chat-line-square
+                                    //-         el-button(v-else circle @click.stop="setGroupSubscription(group.id, true)" size="mini")
+                                    //-             i.el-icon-chat-square(style="color:#f56c6c")
+
                                     el-tooltip(placement="right" :content="$t('dialog.user.groups.leave_group_tooltip')" :disabled="hideTooltips")
                                         el-button(v-if="shiftHeld" @click.stop="leaveGroupPrompt(group.id)" size="mini" icon="el-icon-close" circle style="color:#f56c6c;margin-left:5px")
                                         el-button(v-else @click.stop="leaveGroupPrompt(group.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")

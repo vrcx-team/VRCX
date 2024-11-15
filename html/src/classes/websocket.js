@@ -466,7 +466,15 @@ export default class extends baseClass {
                     break;
 
                 case 'group-member-updated':
-                    var groupId = content.member.groupId;
+                    var member = content.member;
+                    if (!member) {
+                        console.error(
+                            'group-member-updated missing member',
+                            content
+                        );
+                        break;
+                    }
+                    var groupId = member.groupId;
                     if (
                         $app.groupDialog.visible &&
                         $app.groupDialog.id === groupId
@@ -474,24 +482,12 @@ export default class extends baseClass {
                         $app.getGroupDialogGroup(groupId);
                     }
                     this.$emit('GROUP:MEMBER', {
-                        json: content.member,
+                        json: member,
                         params: {
                             groupId
                         }
                     });
-                    console.log('group-member-updated', content);
-
-                    // content {
-                    //   groupId: string,
-                    //   id: string,
-                    //   isRepresenting: boolean,
-                    //   isSubscribedToAnnouncements: boolean,
-                    //   joinedAt: string,
-                    //   membershipStatus: string,
-                    //   roleIds: string[],
-                    //   userId: string,
-                    //   visibility: string
-                    // }
+                    console.log('group-member-updated', member);
                     break;
 
                 case 'instance-queue-joined':

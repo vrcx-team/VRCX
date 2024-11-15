@@ -16935,7 +16935,9 @@ speechSynthesis.getVoices();
             API.currentUserGroups.clear();
             args.json.forEach((group) => {
                 var ref = API.applyGroup(group);
-                API.currentUserGroups.set(group.id, ref);
+                if (!API.currentUserGroups.has(group.id)) {
+                    API.currentUserGroups.set(group.id, ref);
+                }
             });
             this.saveCurrentUserGroups();
         }
@@ -16982,7 +16984,9 @@ speechSynthesis.getVoices();
         API.currentUserGroups.clear();
         for (var group of args.json) {
             var ref = API.applyGroup(group);
-            API.currentUserGroups.set(group.id, ref);
+            if (!API.currentUserGroups.has(group.id)) {
+                API.currentUserGroups.set(group.id, ref);
+            }
         }
         await API.getGroupPermissions({ userId: API.currentUser.id });
         this.saveCurrentUserGroups();

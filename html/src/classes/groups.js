@@ -32,10 +32,6 @@ export default class extends baseClass {
 
         API.$on('GROUP', function (args) {
             args.ref = this.applyGroup(args.json);
-            this.cachedGroups.set(args.ref.id, args.ref);
-            if (this.currentUserGroups.has(args.ref.id)) {
-                this.currentUserGroups.set(args.ref.id, args.ref);
-            }
         });
 
         API.$on('GROUP', function (args) {
@@ -244,12 +240,6 @@ export default class extends baseClass {
             ) {
                 $app.groupDialog.ref.isRepresenting =
                     args.params.isRepresenting;
-            }
-            if (
-                $app.userDialog.visible &&
-                $app.userDialog.id === this.currentUser.id
-            ) {
-                $app.getCurrentUserRepresentedGroup();
             }
         });
 
@@ -1408,10 +1398,36 @@ export default class extends baseClass {
                         }
                     }
                 }
+                if (json.myMember) {
+                    if (typeof json.myMember.roleIds === 'undefined') {
+                        // keep roleIds
+                        json.myMember.roleIds = ref.myMember.roleIds;
+                    }
+                    Object.assign(ref.myMember, json.myMember);
+                }
                 Object.assign(ref, json);
+            }
+            // update myMember without fetching member
+            if (typeof json.memberVisibility !== 'undefined') {
+                ref.myMember.visibility = json.memberVisibility;
+            }
+            if (typeof json.isRepresenting !== 'undefined') {
+                ref.myMember.isRepresenting = json.isRepresenting;
+            }
+            if (typeof json.membershipStatus !== 'undefined') {
+                ref.myMember.membershipStatus = json.membershipStatus;
+            }
+            if (typeof json.roleIds !== 'undefined') {
+                ref.myMember.roleIds = json.roleIds;
             }
             ref.$url = `https://vrc.group/${ref.shortCode}.${ref.discriminator}`;
             this.applyGroupLanguage(ref);
+
+            var currentUserGroupRef = this.currentUserGroups.get(ref.id);
+            if (currentUserGroupRef && currentUserGroupRef !== ref) {
+                this.currentUserGroups.set(ref.id, ref);
+            }
+
             return ref;
         };
 
@@ -1430,6 +1446,28 @@ export default class extends baseClass {
                     }
                 }
             }
+            // update myMember without fetching member
+            if (json.userId === this.currentUser.id) {
+                var ref = this.cachedGroups.get(json.groupId);
+                if (typeof ref !== 'undefined') {
+                    this.$emit('GROUP', {
+                        json: {
+                            ...ref,
+                            memberVisibility: json.visibility,
+                            isRepresenting: json.isRepresenting,
+                            isSubscribedToAnnouncements:
+                                json.isSubscribedToAnnouncements,
+                            joinedAt: json.joinedAt,
+                            roleIds: json.roleIds,
+                            membershipStatus: json.membershipStatus
+                        },
+                        params: {
+                            groupId: json.groupId
+                        }
+                    });
+                }
+            }
+
             return json;
         };
 
@@ -1999,7 +2037,7 @@ export default class extends baseClass {
             API.cachedGroups.clear();
             API.currentUserGroups.clear();
             for (var group of savedGroups) {
-                var ref = {
+                var json = {
                     id: group.id,
                     name: group.name,
                     iconUrl: group.iconUrl,
@@ -2009,7 +2047,7 @@ export default class extends baseClass {
                         roleIds: group.roleIds
                     }
                 };
-                API.cachedGroups.set(group.id, ref);
+                var ref = API.applyGroup(json);
                 API.currentUserGroups.set(group.id, ref);
             }
 
@@ -2358,8 +2396,7 @@ export default class extends baseClass {
                     iconUrl: ''
                 });
                 API.getGroup({ groupId, includeRoles: true }).then((args) => {
-                    var ref = API.applyGroup(args.json);
-                    API.currentUserGroups.set(groupId, ref);
+                    API.applyGroup(args.json); // make sure this runs before saveCurrentUserGroups
                     this.saveCurrentUserGroups();
                     return args;
                 });
@@ -3496,19 +3533,19 @@ export default class extends baseClass {
         async addGroupMemberToSelection(userId) {
             var D = this.groupMemberModeration;
 
-            // fetch memeber if there is one
+            // fetch member if there is one
             // banned members don't have a user object
 
-            var memeber = {};
-            var memeberArgs = await API.getGroupMember({
+            var member = {};
+            var memberArgs = await API.getGroupMember({
                 groupId: D.id,
                 userId
             });
-            if (memeberArgs.json) {
-                memeber = API.applyGroupMember(memeberArgs.json);
+            if (memberArgs.json) {
+                member = API.applyGroupMember(memberArgs.json);
             }
-            if (memeber.user) {
-                D.selectedUsers.set(memeber.userId, memeber);
+            if (member.user) {
+                D.selectedUsers.set(member.userId, member);
                 D.selectedUsersArray = Array.from(D.selectedUsers.values());
                 this.groupMemberModerationTableForceUpdate++;
                 return;
@@ -3517,11 +3554,11 @@ export default class extends baseClass {
             var userArgs = await API.getCachedUser({
                 userId
             });
-            memeber.userId = userArgs.json.id;
-            memeber.user = userArgs.json;
-            memeber.displayName = userArgs.json.displayName;
+            member.userId = userArgs.json.id;
+            member.user = userArgs.json;
+            member.displayName = userArgs.json.displayName;
 
-            D.selectedUsers.set(memeber.userId, memeber);
+            D.selectedUsers.set(member.userId, member);
             D.selectedUsersArray = Array.from(D.selectedUsers.values());
             this.groupMemberModerationTableForceUpdate++;
         }
