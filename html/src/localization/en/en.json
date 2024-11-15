@@ -712,6 +712,7 @@
                 "favorites_tooltip": "Favorites",
                 "refresh": "Refresh",
                 "new_instance": "New Instance",
+                "new_instance_and_self_invite": "New Instance and Self Invite",
                 "make_home": "Make Home",
                 "reset_home": "Reset Home",
                 "show_previous_instances": "Show Previous Instances",

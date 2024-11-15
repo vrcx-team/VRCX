@@ -11259,6 +11259,19 @@ speechSynthesis.getVoices();
             case 'New Instance':
                 this.showNewInstanceDialog(D.$location.tag);
                 break;
+            case 'New Instance and Self Invite':
+                this.newInstanceDialog.worldId = D.id;
+                this.createNewInstance().then((args) => {
+                    if (!args?.json?.location) {
+                        this.$message({
+                            message: 'Failed to create instance',
+                            type: 'error'
+                        });
+                        return;
+                    }
+                    this.selfInvite(args.json.location);
+                });
+                break;
             case 'Add Favorite':
                 this.showFavoriteDialog('world', D.id);
                 break;
@@ -12241,16 +12254,28 @@ speechSynthesis.getVoices();
         loading: false,
         selectedTab: '0',
         instanceCreated: false,
-        queueEnabled: false,
+        queueEnabled: await configRepository.getBool(
+            'instanceDialogQueueEnabled',
+            true
+        ),
         worldId: '',
         instanceId: '',
-        instanceName: '',
-        userId: '',
-        accessType: '',
-        region: '',
+        instanceName: await configRepository.getString(
+            'instanceDialogInstanceName',
+            ''
+        ),
+        userId: await configRepository.getString('instanceDialogUserId', ''),
+        accessType: await configRepository.getString(
+            'instanceDialogAccessType',
+            'public'
+        ),
+        region: await configRepository.getString('instanceRegion', ''),
         groupRegion: '',
-        groupId: '',
-        groupAccessType: '',
+        groupId: await configRepository.getString('instanceDialogGroupId', ''),
+        groupAccessType: await configRepository.getString(
+            'instanceDialogGroupAccessType',
+            'plus'
+        ),
         strict: false,
         location: '',
         shortName: '',
@@ -12372,7 +12397,7 @@ speechSynthesis.getVoices();
         this.saveNewInstanceDialog();
     };
 
-    $app.methods.createNewInstance = function () {
+    $app.methods.createNewInstance = async function () {
         var D = this.newInstanceDialog;
         if (D.loading) {
             return;
@@ -12424,19 +12449,20 @@ speechSynthesis.getVoices();
                 params.canRequestInvite = true;
             }
         }
-        API.createInstance(params)
-            .then((args) => {
-                D.location = args.json.location;
-                D.instanceId = args.json.instanceId;
-                D.secureOrShortName =
-                    args.json.shortName || args.json.secureName;
-                D.instanceCreated = true;
-                this.updateNewInstanceDialog();
-                return args;
-            })
-            .finally(() => {
-                D.loading = false;
-            });
+        try {
+            var args = await API.createInstance(params);
+            D.location = args.json.location;
+            D.instanceId = args.json.instanceId;
+            D.secureOrShortName = args.json.shortName || args.json.secureName;
+            D.instanceCreated = true;
+            this.updateNewInstanceDialog();
+            D.loading = false;
+            return args;
+        } catch (err) {
+            D.loading = false;
+            console.error(err);
+            return null;
+        }
     };
 
     $app.methods.selfInvite = function (location, shortName) {
@@ -12503,10 +12529,6 @@ speechSynthesis.getVoices();
             this.newInstanceDialog.groupAccessType
         );
         await configRepository.setBool(
-            'instanceDialogStrict',
-            this.newInstanceDialog.strict
-        );
-        await configRepository.setBool(
             'instanceDialogQueueEnabled',
             this.newInstanceDialog.queueEnabled
         );
@@ -12527,31 +12549,6 @@ speechSynthesis.getVoices();
             return;
         }
         D.worldId = L.worldId;
-        D.accessType = await configRepository.getString(
-            'instanceDialogAccessType',
-            'public'
-        );
-        D.region = await configRepository.getString(
-            'instanceRegion',
-            'US West'
-        );
-        D.instanceName = await configRepository.getString(
-            'instanceDialogInstanceName',
-            ''
-        );
-        D.userId = await configRepository.getString('instanceDialogUserId', '');
-        D.groupId = await configRepository.getString(
-            'instanceDialogGroupId',
-            ''
-        );
-        D.groupAccessType = await configRepository.getString(
-            'instanceDialogGroupAccessType',
-            'plus'
-        );
-        D.queueEnabled = await configRepository.getBool(
-            'instanceDialogQueueEnabled',
-            true
-        );
         D.instanceCreated = false;
         D.lastSelectedGroupId = '';
         D.selectedGroupRoles = [];
