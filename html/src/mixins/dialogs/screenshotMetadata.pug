@@ -23,13 +23,16 @@ mixin screenshotMetadata()
             br
             span(v-text="screenshotMetadataDialog.metadata.fileName")
             br
+            template(v-if="screenshotMetadataDialog.metadata.note")
+                span(v-text="screenshotMetadataDialog.metadata.note")
+                br
             span(v-if="screenshotMetadataDialog.metadata.dateTime" style="margin-right:5px") {{ screenshotMetadataDialog.metadata.dateTime | formatDate('long') }}
             span(v-if="screenshotMetadataDialog.metadata.fileResolution" v-text="screenshotMetadataDialog.metadata.fileResolution" style="margin-right:5px")
             el-tag(v-if="screenshotMetadataDialog.metadata.fileSize" type="info" effect="plain" size="mini" v-text="screenshotMetadataDialog.metadata.fileSize")
             br
             location(v-if="screenshotMetadataDialog.metadata.world" :location="screenshotMetadataDialog.metadata.world.instanceId" :hint="screenshotMetadataDialog.metadata.world.name")
             br
-            span.x-link(v-if="screenshotMetadataDialog.metadata.author" v-text="screenshotMetadataDialog.metadata.author.displayName" @click="showUserDialog(screenshotMetadataDialog.metadata.author.id)" style="color:#909399;font-family:monospace")
+            display-name(v-if="screenshotMetadataDialog.metadata.author" :userid="screenshotMetadataDialog.metadata.author.id" :hind="screenshotMetadataDialog.metadata.author.displayName" style="color:#909399;font-family:monospace")
             br
             el-carousel(ref="screenshotMetadataCarousel" :interval="0" initial-index="1" indicator-position="none" arrow="always" height="600px" style="margin-top:10px" @change="screenshotMetadataCarouselChange")
                 el-carousel-item

@@ -559,7 +559,11 @@ export default class extends baseClass {
             props: {
                 userid: String,
                 location: String,
-                key: Number
+                key: Number,
+                hint: {
+                    type: String,
+                    default: ''
+                }
             },
             data() {
                 return {
@@ -569,7 +573,9 @@ export default class extends baseClass {
             methods: {
                 async parse() {
                     this.username = this.userid;
-                    if (this.userid) {
+                    if (this.hint) {
+                        this.username = this.hint;
+                    } else if (this.userid) {
                         var args = await API.getCachedUser({
                             userId: this.userid
                         });

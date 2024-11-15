@@ -525,6 +525,10 @@ export default class extends baseClass {
                         if ($app.galleryDialogVisible) {
                             $app.refreshEmojiTable();
                         }
+                    } else if (contentType === 'print') {
+                        if ($app.galleryDialogVisible) {
+                            $app.refreshPrintTable();
+                        }
                     } else if (contentType === 'avatar') {
                         // hmm, utilizing this might be too spamy and cause UI to move around
                     } else if (contentType === 'world') {

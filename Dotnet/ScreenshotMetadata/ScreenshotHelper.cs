@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Xml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -172,6 +173,18 @@ namespace VRCX
             // If not JSON metadata, return early so we're not throwing/catching pointless exceptions
             if (!metadataString.StartsWith("{"))
             {
+                // parse VRC prints
+                var xmlIndex = metadataString.IndexOf("<x:xmpmeta");
+                if (xmlIndex != -1)
+                {
+                    var xmlString = metadataString.Substring(xmlIndex);
+                    // everything after index
+                    var result = ParseVRCPrint(xmlString.Substring(xmlIndex - 7));
+                    result.SourceFile = path;
+
+                    return result;
+                }
+                
                 logger.ConditionalDebug("Screenshot file '{0}' has unknown non-JSON metadata:\n{1}\n", path, metadataString);
                 return ScreenshotMetadata.JustError(path, "File has unknown non-JSON metadata.");
             }
@@ -192,6 +205,44 @@ namespace VRCX
                 logger.Error(ex, "Failed to parse screenshot metadata JSON for file '{0}'", path);
                 return ScreenshotMetadata.JustError(path, "Failed to parse screenshot metadata JSON. Check logs.");
             }
+        }
+        
+        public static ScreenshotMetadata ParseVRCPrint(string xmlString)
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml(xmlString);
+            var root = doc.DocumentElement;
+            var nsManager = new XmlNamespaceManager(doc.NameTable);
+            nsManager.AddNamespace("x", "adobe:ns:meta/");
+            nsManager.AddNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+            nsManager.AddNamespace("xmp", "http://ns.adobe.com/xap/1.0/");
+            nsManager.AddNamespace("tiff", "http://ns.adobe.com/tiff/1.0/");
+            nsManager.AddNamespace("dc", "http://purl.org/dc/elements/1.1/");
+            nsManager.AddNamespace("vrc", "http://ns.vrchat.com/vrc/1.0/");
+            var creatorTool = root.SelectSingleNode("//xmp:CreatorTool", nsManager)?.InnerText;
+            var authorId = root.SelectSingleNode("//xmp:Author", nsManager)?.InnerText;
+            var dateTime = root.SelectSingleNode("//tiff:DateTime", nsManager)?.InnerText;
+            var note = root.SelectSingleNode("//dc:title/rdf:Alt/rdf:li", nsManager)?.InnerText;
+            var worldId = root.SelectSingleNode("//vrc:World", nsManager)?.InnerText;
+
+            return new ScreenshotMetadata
+            {
+                Application = creatorTool,
+                Version = 1,
+                Author = new ScreenshotMetadata.AuthorDetail
+                {
+                    Id = authorId,
+                    DisplayName = null
+                },
+                World = new ScreenshotMetadata.WorldDetail
+                {
+                    Id = worldId,
+                    InstanceId = worldId,
+                    Name = null
+                },
+                Timestamp = DateTime.TryParse(dateTime, out var dt) ? dt : null,
+                Note = note
+            };
         }
 
         /// <summary>

@@ -7573,6 +7573,7 @@ speechSynthesis.getVoices();
         },
         layout: 'table'
     };
+    $app.data.printTable = [];
     $app.data.stickerTable = [];
     $app.data.emojiTable = [];
     $app.data.VRCPlusIconsTable = [];
@@ -16068,8 +16069,11 @@ speechSynthesis.getVoices();
                 // D.metadata.resolution = `${regex[18]}x${regex[19]}`;
             }
         }
+        if (metadata.timestamp) {
+            D.metadata.dateTime = Date.parse(metadata.timestamp);
+        }
         if (!D.metadata.dateTime) {
-            D.metadata.dateTime = Date.parse(json.creationDate);
+            D.metadata.dateTime = Date.parse(metadata.creationDate);
         }
 
         if (this.fullscreenImageDialog?.visible) {
@@ -17120,6 +17124,7 @@ speechSynthesis.getVoices();
     $app.data.galleryDialogIconsLoading = false;
     $app.data.galleryDialogEmojisLoading = false;
     $app.data.galleryDialogStickersLoading = false;
+    $app.data.galleryDialogPrintsLoading = false;
 
     API.$on('LOGIN', function () {
         $app.galleryTable = [];
@@ -17132,6 +17137,7 @@ speechSynthesis.getVoices();
         this.refreshVRCPlusIconsTable();
         this.refreshEmojiTable();
         this.refreshStickerTable();
+        this.refreshPrintTable();
         workerTimers.setTimeout(() => this.setGalleryTab(pageNum), 100);
     };
 
@@ -17392,6 +17398,120 @@ speechSynthesis.getVoices();
     API.$on('STICKER:ADD', function (args) {
         if (Object.keys($app.stickerTable).length !== 0) {
             $app.stickerTable.unshift(args.json);
+        }
+    });
+
+    // #endregion
+    // #region | Prints
+    API.$on('LOGIN', function () {
+        $app.printTable = [];
+    });
+
+    $app.methods.refreshPrintTable = function () {
+        this.galleryDialogPrintsLoading = true;
+        var params = {
+            n: 100,
+            tag: 'print'
+        };
+        API.getFileList(params);
+    };
+
+    API.$on('FILES:LIST', function (args) {
+        if (args.params.tag === 'print') {
+            $app.printTable = args.json.reverse();
+            $app.galleryDialogPrintsLoading = false;
+        }
+    });
+
+    $app.methods.deletePrint = function (fileId) {
+        API.deleteFile(fileId).then((args) => {
+            API.$emit('PRINT:DELETE', args);
+            return args;
+        });
+    };
+
+    API.$on('PRINT:DELETE', function (args) {
+        var array = $app.printTable;
+        var { length } = array;
+        for (var i = 0; i < length; ++i) {
+            if (args.fileId === array[i].id) {
+                array.splice(i, 1);
+                break;
+            }
+        }
+    });
+
+    $app.methods.onFileChangePrint = function (e) {
+        var clearFile = function () {
+            if (document.querySelector('#PrintUploadButton')) {
+                document.querySelector('#PrintUploadButton').value = '';
+            }
+        };
+        var files = e.target.files || e.dataTransfer.files;
+        if (!files.length) {
+            return;
+        }
+        if (files[0].size >= 100000000) {
+            // 100MB
+            $app.$message({
+                message: 'File size too large',
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        if (!files[0].type.match(/image.*/)) {
+            $app.$message({
+                message: "File isn't an image",
+                type: 'error'
+            });
+            clearFile();
+            return;
+        }
+        var r = new FileReader();
+        r.onload = function () {
+            var date = new Date();
+            var timestamp = date.toISOString().slice(0, 19);
+            var params = {
+                note: 'test print',
+                worldId: 'wrld_10e5e467-fc65-42ed-8957-f02cace1398c',
+                timestamp
+            };
+            var base64Body = btoa(r.result);
+            API.uploadPrint(base64Body, params).then((args) => {
+                $app.$message({
+                    message: 'Print uploaded',
+                    type: 'success'
+                });
+                return args;
+            });
+        };
+        r.readAsBinaryString(files[0]);
+        clearFile();
+    };
+
+    $app.methods.displayPrintUpload = function () {
+        document.getElementById('PrintUploadButton').click();
+    };
+
+    API.uploadPrint = function (imageData, params) {
+        return this.call('prints', {
+            uploadImagePrint: true,
+            postData: JSON.stringify(params),
+            imageData
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('PRINT:ADD', args);
+            return args;
+        });
+    };
+
+    API.$on('PRINT:ADD', function (args) {
+        if (Object.keys($app.printTable).length !== 0) {
+            $app.printTable.unshift(args.json);
         }
     });
 
