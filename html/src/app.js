@@ -1857,7 +1857,7 @@ speechSynthesis.getVoices();
 
     API.$on('NOTIFICATION:LIST:HIDDEN', function (args) {
         for (var json of args.json) {
-            json.type = 'hiddenFriendRequest';
+            json.type = 'ignoredFriendRequest';
             this.$emit('NOTIFICATION', {
                 json,
                 params: {
@@ -1907,7 +1907,7 @@ speechSynthesis.getVoices();
         args.ref = ref;
         if (
             ref.type === 'friendRequest' ||
-            ref.type === 'hiddenFriendRequest' ||
+            ref.type === 'ignoredFriendRequest' ||
             ref.type.includes('.')
         ) {
             for (var i = array.length - 1; i >= 0; i--) {
@@ -1975,7 +1975,7 @@ speechSynthesis.getVoices();
         for (var i = array.length - 1; i >= 0; i--) {
             if (
                 array[i].type === 'friendRequest' ||
-                array[i].type === 'hiddenFriendRequest' ||
+                array[i].type === 'ignoredFriendRequest' ||
                 array[i].type.includes('.')
             ) {
                 array.splice(i, 1);
@@ -7380,7 +7380,7 @@ speechSynthesis.getVoices();
         if (ref.senderUserId !== this.currentUser.id) {
             if (
                 ref.type !== 'friendRequest' &&
-                ref.type !== 'hiddenFriendRequest' &&
+                ref.type !== 'ignoredFriendRequest' &&
                 !ref.type.includes('.')
             ) {
                 database.addNotificationToDatabase(ref);
@@ -7431,7 +7431,7 @@ speechSynthesis.getVoices();
             type: 'info',
             callback: (action) => {
                 if (action === 'confirm') {
-                    if (row.type === 'hiddenFriendRequest') {
+                    if (row.type === 'ignoredFriendRequest') {
                         API.deleteHiddenFriendRequest(
                             {
                                 notificationId: row.id
@@ -7458,7 +7458,7 @@ speechSynthesis.getVoices();
                     $app.removeFromArray(this.notificationTable.data, row);
                     if (
                         row.type !== 'friendRequest' &&
-                        row.type !== 'hiddenFriendRequest'
+                        row.type !== 'ignoredFriendRequest'
                     ) {
                         database.deleteNotification(row.id);
                     }
