@@ -67,6 +67,7 @@ mixin worldDialog()
                                     el-dropdown-item(icon="el-icon-edit" command="Change Recommended Capacity") {{ $t('dialog.world.actions.change_recommended_capacity') }}
                                     el-dropdown-item(icon="el-icon-edit" command="Change YouTube Preview") {{ $t('dialog.world.actions.change_preview') }}
                                     el-dropdown-item(icon="el-icon-edit" command="Change Tags") {{ $t('dialog.world.actions.change_tags') }}
+                                    el-dropdown-item(icon="el-icon-edit" command="Change Allowed Domains") {{ $t('dialog.world.actions.change_allowed_video_player_domains') }}
                                     el-dropdown-item(icon="el-icon-picture-outline" command="Change Image") {{ $t('dialog.world.actions.change_image') }}
                                     el-dropdown-item(v-if="worldDialog.ref.unityPackageUrl" icon="el-icon-download" command="Download Unity Package") {{ $t('dialog.world.actions.download_package') }}
                                     el-dropdown-item(v-if="worldDialog.ref.tags.includes('system_approved') || worldDialog.ref.tags.includes('system_labs')" icon="el-icon-view" command="Unpublish" divided) {{ $t('dialog.world.actions.unpublish') }}
@@ -215,3 +216,12 @@ mixin worldDialog()
                             span
                                 span(v-text="scope.data.key" style="font-weight:bold;margin-right:5px")
                                 span(v-if="!scope.data.children" v-text="scope.data.value")
+
+    //- dialog: change Allowed Video Player Domains
+    el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="worldAllowedDomainsDialog" :visible.sync="worldAllowedDomainsDialog.visible" :title="$t('dialog.allowed_video_player_domains.header')" width="600px")
+        div(v-loading="bioDialog.loading")
+            el-input(v-for="(domain, index) in worldAllowedDomainsDialog.urlList" :key="index" :value="domain" v-model="worldAllowedDomainsDialog.urlList[index]" size="small" style="margin-top:5px")
+                el-button(slot="append" icon="el-icon-delete" @click="worldAllowedDomainsDialog.urlList.splice(index, 1)")
+            el-button(@click="worldAllowedDomainsDialog.urlList.push('')" size="mini" style="margin-top:5px") {{ $t('dialog.allowed_video_player_domains.add_domain') }}
+        template(#footer)
+            el-button(type="primary" size="small" :disabled="!worldAllowedDomainsDialog.worldId" @click="saveWorldAllowedDomains") {{ $t('dialog.allowed_video_player_domains.save') }}

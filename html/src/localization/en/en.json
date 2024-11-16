@@ -724,6 +724,7 @@
                 "change_preview": "Change Youtube Preview",
                 "change_tags": "Change Tags",
                 "change_image": "Change Image",
+                "change_allowed_video_player_domains": "Change Allowed Video Player Domains",
                 "download_package": "Download Unity Package",
                 "publish_to_labs": "Publish To Labs",
                 "unpublish": "Unpublish",
@@ -1408,6 +1409,11 @@
             "default_emojis": "Default Emojis",
             "cancel": "Cancel",
             "send": "Send"
+        },
+        "allowed_video_player_domains": {
+            "header": "Allowed Video Player Domains",
+            "add_domain": "Add Domain",
+            "save": "Save"
         }
     },
     "prompt": {
