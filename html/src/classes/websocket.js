@@ -514,19 +514,34 @@ export default class extends baseClass {
                     var contentType = content.contentType;
                     console.log('content-refresh', content);
                     if (contentType === 'icon') {
-                        if ($app.galleryDialogVisible) {
+                        if (
+                            $app.galleryDialogVisible &&
+                            !$app.galleryDialogIconsLoading
+                        ) {
                             $app.refreshVRCPlusIconsTable();
                         }
                     } else if (contentType === 'gallery') {
-                        if ($app.galleryDialogVisible) {
+                        if (
+                            $app.galleryDialogVisible &&
+                            !$app.galleryDialogGalleryLoading
+                        ) {
                             $app.refreshGalleryTable();
                         }
                     } else if (contentType === 'emoji') {
-                        if ($app.galleryDialogVisible) {
+                        if (
+                            $app.galleryDialogVisible &&
+                            !$app.galleryDialogEmojisLoading
+                        ) {
                             $app.refreshEmojiTable();
                         }
-                    } else if (contentType === 'print') {
-                        if ($app.galleryDialogVisible) {
+                    } else if (
+                        contentType === 'print' ||
+                        contentType === 'prints'
+                    ) {
+                        if (
+                            $app.galleryDialogVisible &&
+                            !$app.galleryDialogPrintsLoading
+                        ) {
                             $app.refreshPrintTable();
                         }
                     } else if (contentType === 'avatar') {

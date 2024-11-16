@@ -5447,7 +5447,11 @@ speechSynthesis.getVoices();
                 }
             }
             this.lastLocation.playerList.forEach((ref1) => {
-                if (ref1.userId && !API.cachedUsers.has(ref1.userId)) {
+                if (
+                    ref1.userId &&
+                    typeof ref1.userId === 'string' &&
+                    !API.cachedUsers.has(ref1.userId)
+                ) {
                     API.getUser({ userId: ref1.userId });
                 }
             });
@@ -8148,6 +8152,10 @@ speechSynthesis.getVoices();
         await configRepository.setBool(
             'VRCX_StartAtWindowsStartup',
             this.isStartAtWindowsStartup
+        );
+        await configRepository.setBool(
+            'VRCX_saveInstancePrints',
+            this.saveInstancePrints
         );
         VRCXStorage.Set(
             'VRCX_StartAsMinimizedState',
@@ -17521,6 +17529,52 @@ speechSynthesis.getVoices();
             $app.printTable.unshift(args.json);
         }
     });
+
+    API.getPrint = function (params) {
+        return this.call(`prints/${params.printId}`, {
+            method: 'GET'
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('PRINT', args);
+            return args;
+        });
+    };
+
+    API.editPrint = function (params) {
+        return this.call(`prints/${params.printId}`, {
+            method: 'POST',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('PRINT:EDIT', args);
+            return args;
+        });
+    };
+
+    $app.data.saveInstancePrints = await configRepository.getBool(
+        'VRCX_saveInstancePrints',
+        false
+    );
+
+    $app.methods.trySavePrintToFile = async function (printId) {
+        var print = await API.getPrint({ printId });
+        var imageUrl = print.json?.files?.image;
+        if (!imageUrl) {
+            console.error('Print image URL is missing', print);
+            return;
+        }
+        var fileName = `${printId}.png`;
+        var status = await AppApi.SavePrintToFile(imageUrl, fileName);
+        if (status) {
+            console.log(`Print saved to file: ${fileName}`);
+        }
+    };
 
     // #endregion
     // #region | Emoji

@@ -32,7 +32,7 @@ mixin screenshotMetadata()
             br
             location(v-if="screenshotMetadataDialog.metadata.world" :location="screenshotMetadataDialog.metadata.world.instanceId" :hint="screenshotMetadataDialog.metadata.world.name")
             br
-            display-name(v-if="screenshotMetadataDialog.metadata.author" :userid="screenshotMetadataDialog.metadata.author.id" :hind="screenshotMetadataDialog.metadata.author.displayName" style="color:#909399;font-family:monospace")
+            display-name(v-if="screenshotMetadataDialog.metadata.author" :userid="screenshotMetadataDialog.metadata.author.id" :hint="screenshotMetadataDialog.metadata.author.displayName" style="color:#909399;font-family:monospace")
             br
             el-carousel(ref="screenshotMetadataCarousel" :interval="0" initial-index="1" indicator-position="none" arrow="always" height="600px" style="margin-top:10px" @change="screenshotMetadataCarouselChange")
                 el-carousel-item

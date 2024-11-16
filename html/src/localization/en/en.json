@@ -433,6 +433,10 @@
                         "header": "Local World Persistence",
                         "description": "Localhost webserver (requires restart)"
                     },
+                    "save_instance_prints_to_file": {
+                        "header": "Save Instance Prints To File",
+                        "description": "Save spawned prints to your VRChat Pictures folder"
+                    },
                     "remote_database": {
                         "header": "Remote Avatar Database",
                         "enable": "Enable",

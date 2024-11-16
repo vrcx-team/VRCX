@@ -598,6 +598,9 @@ export default class extends baseClass {
                 },
                 key() {
                     this.parse();
+                },
+                userid() {
+                    this.parse();
                 }
             },
             mounted() {

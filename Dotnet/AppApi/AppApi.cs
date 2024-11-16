@@ -30,7 +30,6 @@ namespace VRCX
 
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly MD5 _hasher = MD5.Create();
-        private static bool dialogOpen;
 
         static AppApi()
         {
@@ -574,6 +573,17 @@ namespace VRCX
             }
 
             return null;
+        }
+
+        public async Task<bool> SavePrintToFile(string url, string fileName)
+        {
+            var directory = Path.Combine(GetVRChatPhotosLocation(), "Prints");
+            Directory.CreateDirectory(directory);
+            var path = Path.Combine(directory, fileName);
+            if (File.Exists(path))
+                return false;
+
+            return await ImageCache.SaveImageToFile(url, path);
         }
     }
 }
