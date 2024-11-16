@@ -298,6 +298,8 @@ mixin userDialog()
                 el-tab-pane(:label="$t('dialog.user.groups.header')")
                     el-button(type="default" :loading="userDialog.isGroupsLoading" @click="getUserGroups(userDialog.id)" size="mini" icon="el-icon-refresh" circle)
                     span(style="margin-left:5px") {{ $t('dialog.user.groups.total_count', { count: userGroups.groups.length }) }}
+                    template(v-if="userDialogGroupEditMode")
+                        span(style="margin-left:10px;color:#909399;font-size:10px") {{ $t('dialog.user.groups.hold_shift') }}
                     div(style="float:right")
                         template(v-if="!userDialogGroupEditMode")
                             span(style="margin-right:5px") {{ $t('dialog.user.groups.sort_by') }}

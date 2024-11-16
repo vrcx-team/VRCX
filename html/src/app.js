@@ -17450,31 +17450,52 @@ speechSynthesis.getVoices();
     $app.methods.refreshPrintTable = function () {
         this.galleryDialogPrintsLoading = true;
         var params = {
-            n: 100,
-            tag: 'print'
+            n: 100
         };
-        API.getFileList(params);
+        API.getPrints(params);
     };
 
-    API.$on('FILES:LIST', function (args) {
-        if (args.params.tag === 'print') {
-            $app.printTable = args.json.reverse();
-            $app.galleryDialogPrintsLoading = false;
-        }
-    });
-
-    $app.methods.deletePrint = function (fileId) {
-        API.deleteFile(fileId).then((args) => {
-            API.$emit('PRINT:DELETE', args);
+    API.getPrints = function (params) {
+        return this.call(`prints/user/${API.currentUser.id}`, {
+            method: 'GET',
+            params
+        }).then((json) => {
+            var args = {
+                json,
+                params
+            };
+            this.$emit('PRINT:LIST', args);
             return args;
         });
+    };
+
+    API.deletePrint = function (printId) {
+        return this.call(`prints/${printId}`, {
+            method: 'DELETE'
+        }).then((json) => {
+            var args = {
+                json,
+                printId
+            };
+            this.$emit('PRINT:DELETE', args);
+            return args;
+        });
+    };
+
+    API.$on('PRINT:LIST', function (args) {
+        $app.printTable = args.json.reverse();
+        $app.galleryDialogPrintsLoading = false;
+    });
+
+    $app.methods.deletePrint = function (printId) {
+        API.deletePrint(printId);
     };
 
     API.$on('PRINT:DELETE', function (args) {
         var array = $app.printTable;
         var { length } = array;
         for (var i = 0; i < length; ++i) {
-            if (args.fileId === array[i].id) {
+            if (args.printId === array[i].id) {
                 array.splice(i, 1);
                 break;
             }
@@ -17594,7 +17615,15 @@ speechSynthesis.getVoices();
             console.error('Print image URL is missing', print);
             return;
         }
-        var fileName = `${printId}.png`;
+        var createdAt = new Date(print.json.createdAt);
+        var authorName = print.json.authorName;
+        // fileDate format: 2024-11-03_16-14-25.757
+        var fileNameDate = createdAt
+            .toISOString()
+            .replace(/:/g, '-')
+            .replace(/T/g, '_')
+            .replace(/Z/g, '');
+        var fileName = `Prints\\${createdAt.toISOString().slice(0, 7)}\\${authorName}_${fileNameDate}_${printId}.png`;
         var status = await AppApi.SavePrintToFile(imageUrl, fileName);
         if (status) {
             console.log(`Print saved to file: ${fileName}`);

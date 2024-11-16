@@ -435,6 +435,7 @@
                     },
                     "save_instance_prints_to_file": {
                         "header": "Save Instance Prints To File",
+                        "header_tooltip": "Requires \"--enable-sdk-log-levels\" VRC launch option",
                         "description": "Save spawned prints to your VRChat Pictures folder"
                     },
                     "remote_database": {
@@ -652,6 +653,7 @@
                 "sort_by": "Sort by:",
                 "edit_mode": "Edit Mode",
                 "exit_edit_mode": "Exit Edit Mode",
+                "hold_shift": "Hold shift to leave without confirmation",
                 "own_groups": "Own Groups",
                 "mutual_groups": "Mutual Groups",
                 "groups": "Groups",

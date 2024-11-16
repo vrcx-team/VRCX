@@ -577,9 +577,8 @@ namespace VRCX
 
         public async Task<bool> SavePrintToFile(string url, string fileName)
         {
-            var directory = Path.Combine(GetVRChatPhotosLocation(), "Prints");
-            Directory.CreateDirectory(directory);
-            var path = Path.Combine(directory, fileName);
+            var path = Path.Combine(GetVRChatPhotosLocation(), fileName);
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
             if (File.Exists(path))
                 return false;
 
