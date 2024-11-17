@@ -44,6 +44,13 @@ namespace VRCX
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Vector3? Pos { get; set; }
+        
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime? Timestamp { get; set; }
+        
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string? Note { get; set; }
+
 
         /// <summary>
         /// Any error that occurred while parsing the file. This being true implies nothing else is set.
