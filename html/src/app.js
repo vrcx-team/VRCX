@@ -4581,6 +4581,10 @@ speechSynthesis.getVoices();
                 );
             }
         }
+        if (!this.friends.has(id)) {
+            console.log('Friend not found', id);
+            return;
+        }
         var isVIP = this.localFavoriteFriends.has(id);
         var ref = ctx.ref;
         if (ctx.state !== newState && typeof ctx.ref !== 'undefined') {
@@ -17615,7 +17619,12 @@ speechSynthesis.getVoices();
             console.error('Print image URL is missing', print);
             return;
         }
-        var createdAt = new Date(print.json.createdAt);
+        var createdAt = new Date();
+        if (print.json.timestamp) {
+            createdAt = new Date(print.json.timestamp);
+        } else if (print.json.createdAt) {
+            createdAt = new Date(print.json.createdAt);
+        }
         var authorName = print.json.authorName;
         // fileDate format: 2024-11-03_16-14-25.757
         var fileNameDate = createdAt
@@ -17623,10 +17632,11 @@ speechSynthesis.getVoices();
             .replace(/:/g, '-')
             .replace(/T/g, '_')
             .replace(/Z/g, '');
-        var fileName = `Prints\\${createdAt.toISOString().slice(0, 7)}\\${authorName}_${fileNameDate}_${printId}.png`;
-        var status = await AppApi.SavePrintToFile(imageUrl, fileName);
+        var path = `${createdAt.toISOString().slice(0, 7)}`;
+        var fileName = `${authorName}_${fileNameDate}_${printId}.png`;
+        var status = await AppApi.SavePrintToFile(imageUrl, path, fileName);
         if (status) {
-            console.log(`Print saved to file: ${fileName}`);
+            console.log(`Print saved to file: ${path}\\${fileName}`);
         }
     };
 

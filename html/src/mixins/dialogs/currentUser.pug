@@ -161,12 +161,13 @@ mixin currentUser()
                 .x-friend-item(v-for="image in printTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                     .vrcplus-icon(style="overflow:hidden" @click="showFullscreenImageDialog(image.files.image)") 
                         img.avatar(v-lazy="image.files.image")
-                    div(style="margin-top:5px")
-                        span(v-text="image.note")
-                        br
-                        location(v-if="image.worldId" :location="image.worldId" :hint="image.worldName")
-                        br
-                        display-name(v-if="image.authorId" :userid="image.authorId" :hint="image.authorName" style="color:#909399;font-family:monospace")
-                    div(style="float:right;margin-top:5px")
+                    div(style="margin-top:5px;width:208px")
+                        span.x-ellipsis(v-if="image.note" v-text="image.note" style="display:block")
+                        span(v-else style="display:block") &nbsp;
+                        location.x-ellipsis(v-if="image.worldId" :location="image.worldId" :hint="image.worldName" style="display:block")
+                        span(v-else style="display:block") &nbsp;
+                        display-name.x-ellipsis(v-if="image.authorId" :userid="image.authorId" :hint="image.authorName" style="color:#909399;font-family:monospace;display:block")
+                        span(v-else style="font-family:monospace;display:block") &nbsp;
+                    div(style="float:right")
                         el-button(type="default" @click="showFullscreenImageDialog(image.files.image)" size="mini" icon="el-icon-picture-outline" circle)
                         el-button(type="default" @click="deletePrint(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")

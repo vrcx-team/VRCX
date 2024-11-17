@@ -278,8 +278,9 @@ namespace VRCX
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                logger.Warn("Failed to parse log file: {0} {1}", fileInfo.FullName, ex.Message);
             }
         }
 

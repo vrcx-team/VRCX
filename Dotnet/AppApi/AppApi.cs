@@ -575,14 +575,15 @@ namespace VRCX
             return null;
         }
 
-        public async Task<bool> SavePrintToFile(string url, string fileName)
+        public async Task<bool> SavePrintToFile(string url, string path, string fileName)
         {
-            var path = Path.Combine(GetVRChatPhotosLocation(), fileName);
-            Directory.CreateDirectory(Path.GetDirectoryName(path));
-            if (File.Exists(path))
+            var folder = Path.Combine(GetVRChatPhotosLocation(), "Prints", MakeValidFileName(path));
+            Directory.CreateDirectory(folder);
+            var filePath = Path.Combine(folder, MakeValidFileName(fileName));
+            if (File.Exists(filePath))
                 return false;
 
-            return await ImageCache.SaveImageToFile(url, path);
+            return await ImageCache.SaveImageToFile(url, filePath);
         }
     }
 }
