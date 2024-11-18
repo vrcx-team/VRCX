@@ -89,6 +89,11 @@ mixin settingsTab()
                                 i.el-icon-warning
                         el-switch(v-model="disableGpuAcceleration" @change="saveVRCXWindowOption")
                     div.options-container-item
+                        span.name(style="min-width:225px") {{ $t('view.settings.general.application.disable_vr_overlay_gpu_acceleration') }}
+                            el-tooltip(placement="top" style="margin-left:5px" :content="$t('view.settings.general.application.disable_gpu_acceleration_tooltip')")
+                                i.el-icon-warning
+                        el-switch(v-model="disableVrOverlayGpuAcceleration" @change="saveVRCXWindowOption")
+                    div.options-container-item
                         el-button(size="small" icon="el-icon-connection" @click="promptProxySettings()") {{ $t("view.settings.general.application.proxy") }}
                 //- General | Favorite
                 +simpleSettingsCategory("view.settings.general.favorites.header")

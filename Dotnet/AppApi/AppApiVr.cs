@@ -47,7 +47,7 @@ namespace VRCX
         /// <returns>An array of arrays containing information about the connected VR devices.</returns>
         public string[][] GetVRDevices()
         {
-            return VRCXVR.Instance.GetDevices();
+            return Program.VRCXVRInstance.GetDevices();
         }
         
         /// <summary>

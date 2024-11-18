@@ -8172,9 +8172,17 @@ speechSynthesis.getVoices();
     if ((await VRCXStorage.Get('VRCX_DisableGpuAcceleration')) === '') {
         await VRCXStorage.Set('VRCX_DisableGpuAcceleration', 'false');
     }
+    if (
+        (await VRCXStorage.Get('VRCX_DisableVrOverlayGpuAcceleration')) === ''
+    ) {
+        await VRCXStorage.Set('VRCX_DisableVrOverlayGpuAcceleration', 'false');
+    }
     $app.data.proxyServer = await VRCXStorage.Get('VRCX_ProxyServer');
     $app.data.disableGpuAcceleration =
         (await VRCXStorage.Get('VRCX_DisableGpuAcceleration')) === 'true';
+    $app.data.disableVrOverlayGpuAcceleration =
+        (await VRCXStorage.Get('VRCX_DisableVrOverlayGpuAcceleration')) ===
+        'true';
     $app.data.disableWorldDatabase =
         (await VRCXStorage.Get('VRCX_DisableWorldDatabase')) === 'true';
     $app.methods.saveVRCXWindowOption = async function () {
@@ -8198,6 +8206,10 @@ speechSynthesis.getVoices();
         VRCXStorage.Set(
             'VRCX_DisableGpuAcceleration',
             this.disableGpuAcceleration.toString()
+        );
+        VRCXStorage.Set(
+            'VRCX_DisableVrOverlayGpuAcceleration',
+            this.disableVrOverlayGpuAcceleration.toString()
         );
         AppApi.SetStartup(this.isStartAtWindowsStartup);
     };

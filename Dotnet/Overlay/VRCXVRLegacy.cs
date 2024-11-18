@@ -16,14 +16,10 @@ using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using Valve.VR;
 using Device = SharpDX.Direct3D11.Device;
-using Device1 = SharpDX.Direct3D11.Device1;
-using Device2 = SharpDX.Direct3D11.Device2;
-using Device3 = SharpDX.Direct3D11.Device3;
-using Device4 = SharpDX.Direct3D11.Device4;
 
 namespace VRCX
 {
-    public class VRCXVR : VRCXVRInterface
+    public class VRCXVRLegacy : VRCXVRInterface
     {
         public static VRCXVRInterface Instance;
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -33,36 +29,28 @@ namespace VRCX
         private static readonly float[] _translationRight = { 7f / 100f, -5f / 100f, 6f / 100f };
         private static readonly float[] _rotationLeft = { 90f * (float)(Math.PI / 180f), 90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
         private static readonly float[] _rotationRight = { -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f), -90f * (float)(Math.PI / 180f) };
-        private static OffScreenBrowser _wristOverlay;
-        private static OffScreenBrowser _hmdOverlay;
+        private static OffScreenBrowserLegacy _wristOverlay;
+        private static OffScreenBrowserLegacy _hmdOverlay;
         private readonly List<string[]> _deviceList;
         private readonly ReaderWriterLockSlim _deviceListLock;
         private bool _active;
         private Device _device;
+        private bool _hmdOverlayActive;
         private bool _menuButton;
         private int _overlayHand;
-        private Factory _factory;
         private Texture2D _texture1;
         private Texture2D _texture2;
         private Thread _thread;
-        private DateTime _nextOverlayUpdate;
-
-        private ulong _hmdOverlayHandle;
-        private bool _hmdOverlayActive;
-        private bool _hmdOverlayWasActive;
-        
-        private ulong _wristOverlayHandle;
         private bool _wristOverlayActive;
-        private bool _wristOverlayWasActive;
-        
+        private DateTime _nextOverlayUpdate;
         public bool IsHmdAfk { get; private set; }
 
-        static VRCXVR()
+        static VRCXVRLegacy()
         {
-            Instance = new VRCXVR();
+            Instance = new VRCXVRLegacy();
         }
 
-        public VRCXVR()
+        public VRCXVRLegacy()
         {
             _deviceListLock = new ReaderWriterLockSlim();
             _deviceList = new List<string[]>();
@@ -90,19 +78,16 @@ namespace VRCX
         public override void Restart()
         {
             Exit();
-            Instance = new VRCXVR();
+            Instance = new VRCXVRLegacy();
             Instance.Init();
             MainForm.Instance.Browser.ExecuteScriptAsync("console.log('VRCXVR Restarted');");
         }
 
         private void SetupTextures()
         {
-            _factory ??= new Factory1();
-            
-            _device?.Dispose();
-            _device = new Device(_factory.GetAdapter(OpenVR.System.GetD3D9AdapterIndex()),
-                DeviceCreationFlags.BgraSupport);
-            UpgradeDevice();
+            Factory f = new Factory1();
+            _device = new Device(f.GetAdapter(OpenVR.System.GetD3D9AdapterIndex()),
+                DeviceCreationFlags.SingleThreaded | DeviceCreationFlags.BgraSupport);
 
             _texture1?.Dispose();
             _texture1 = new Texture2D(
@@ -115,11 +100,12 @@ namespace VRCX
                     ArraySize = 1,
                     Format = Format.B8G8R8A8_UNorm,
                     SampleDescription = new SampleDescription(1, 0),
-                    BindFlags = BindFlags.ShaderResource
+                    Usage = ResourceUsage.Dynamic,
+                    BindFlags = BindFlags.ShaderResource,
+                    CpuAccessFlags = CpuAccessFlags.Write
                 }
             );
-            _wristOverlay?.UpdateRender(_device, _texture1);
-
+            
             _texture2?.Dispose();
             _texture2 = new Texture2D(
                 _device,
@@ -131,48 +117,11 @@ namespace VRCX
                     ArraySize = 1,
                     Format = Format.B8G8R8A8_UNorm,
                     SampleDescription = new SampleDescription(1, 0),
-                    BindFlags = BindFlags.ShaderResource
+                    Usage = ResourceUsage.Dynamic,
+                    BindFlags = BindFlags.ShaderResource,
+                    CpuAccessFlags = CpuAccessFlags.Write
                 }
             );
-            _hmdOverlay?.UpdateRender(_device, _texture2);
-        }
-        
-        private void UpgradeDevice()
-        {
-            Device5 device5 = _device.QueryInterfaceOrNull<Device5>();
-            if (device5 != null)
-            {
-                _device.Dispose();
-                _device = device5;
-                return;
-            }
-            Device4 device4 = _device.QueryInterfaceOrNull<Device4>();
-            if (device4 != null)
-            {
-                _device.Dispose();
-                _device = device4;
-                return;
-            }
-            Device3 device3 = _device.QueryInterfaceOrNull<Device3>();
-            if (device3 != null)
-            {
-                _device.Dispose();
-                _device = device3;
-                return;
-            }
-            Device2 device2 = _device.QueryInterfaceOrNull<Device2>();
-            if (device2 != null)
-            {
-                _device.Dispose();
-                _device = device2;
-                return;
-            }
-            Device1 device1 = _device.QueryInterfaceOrNull<Device1>();
-            if (device1 != null)
-            {
-                _device.Dispose();
-                _device = device1;
-            }
         }
 
         private void ThreadLoop()
@@ -186,14 +135,16 @@ namespace VRCX
             var overlayVisible1 = false;
             var overlayVisible2 = false;
             var dashboardHandle = 0UL;
+            var overlayHandle1 = 0UL;
+            var overlayHandle2 = 0UL;
             
-            _wristOverlay = new OffScreenBrowser(
+            _wristOverlay = new OffScreenBrowserLegacy(
                 "file://vrcx/vr.html?1",
                 512,
                 512
             );
 
-            _hmdOverlay = new OffScreenBrowser(
+            _hmdOverlay = new OffScreenBrowserLegacy(
                 "file://vrcx/vr.html?2",
                 1024,
                 1024
@@ -201,6 +152,10 @@ namespace VRCX
 
             while (_thread != null)
             {
+                if (_wristOverlayActive)
+                    _wristOverlay.RenderToTexture(_texture1);
+                if (_hmdOverlayActive)
+                    _hmdOverlay.RenderToTexture(_texture2);
                 try
                 {
                     Thread.Sleep(32);
@@ -241,9 +196,6 @@ namespace VRCX
                             OpenVR.Shutdown();
                             nextInit = DateTime.UtcNow.AddSeconds(10);
                             system = null;
-
-                            _wristOverlayHandle = 0;
-                            _hmdOverlayHandle = 0;
                             break;
                         }
                     }
@@ -275,30 +227,22 @@ namespace VRCX
                                 logger.Error(err);
                             }
 
-                            if (_wristOverlayActive)
+                            err = ProcessOverlay1(overlay, ref overlayHandle1, ref overlayVisible1, dashboardVisible, overlayIndex);
+                            if (err != EVROverlayError.None &&
+                                overlayHandle1 != 0)
                             {
-                                err = ProcessOverlay1(overlay, ref _wristOverlayHandle, ref overlayVisible1,
-                                    dashboardVisible, overlayIndex);
-                                if (err != EVROverlayError.None &&
-                                    _wristOverlayHandle != 0)
-                                {
-                                    overlay.DestroyOverlay(_wristOverlayHandle);
-                                    _wristOverlayHandle = 0;
-                                    logger.Error(err);
-                                }
+                                overlay.DestroyOverlay(overlayHandle1);
+                                overlayHandle1 = 0;
+                                logger.Error(err);
                             }
 
-                            if (_hmdOverlayActive)
+                            err = ProcessOverlay2(overlay, ref overlayHandle2, ref overlayVisible2, dashboardVisible);
+                            if (err != EVROverlayError.None &&
+                                overlayHandle2 != 0)
                             {
-                                err = ProcessOverlay2(overlay, ref _hmdOverlayHandle, ref overlayVisible2,
-                                    dashboardVisible);
-                                if (err != EVROverlayError.None &&
-                                    _hmdOverlayHandle != 0)
-                                {
-                                    overlay.DestroyOverlay(_hmdOverlayHandle);
-                                    _hmdOverlayHandle = 0;
-                                    logger.Error(err);
-                                }
+                                overlay.DestroyOverlay(overlayHandle2);
+                                overlayHandle2 = 0;
+                                logger.Error(err);
                             }
                         }
                     }
@@ -334,22 +278,6 @@ namespace VRCX
             _wristOverlayActive = wristOverlay;
             _menuButton = menuButton;
             _overlayHand = overlayHand;
-
-            if (_hmdOverlayActive != _hmdOverlayWasActive && _hmdOverlayHandle != 0)
-            {
-                OpenVR.Overlay.DestroyOverlay(_hmdOverlayHandle);
-                _hmdOverlayHandle = 0;
-            }
-            
-            _hmdOverlayWasActive = _hmdOverlayActive;
-            
-            if (_wristOverlayActive != _wristOverlayWasActive && _wristOverlayHandle != 0)
-            {
-                OpenVR.Overlay.DestroyOverlay(_wristOverlayHandle);
-                _wristOverlayHandle = 0;
-            }
-            
-            _wristOverlayWasActive = _wristOverlayActive;
         }
 
         public override void Refresh()

@@ -208,17 +208,17 @@ namespace VRCX
 
         public void SetVR(bool active, bool hmdOverlay, bool wristOverlay, bool menuButton, int overlayHand)
         {
-            VRCXVR.Instance.SetActive(active, hmdOverlay, wristOverlay, menuButton, overlayHand);
+            Program.VRCXVRInstance.SetActive(active, hmdOverlay, wristOverlay, menuButton, overlayHand);
         }
 
         public void RefreshVR()
         {
-            VRCXVR.Instance.Restart();
+            Program.VRCXVRInstance.Restart();
         }
 
         public void RestartVR()
         {
-            VRCXVR.Instance.Restart();
+            Program.VRCXVRInstance.Restart();
         }
 
         public void SetZoom(double zoomLevel)
@@ -355,18 +355,12 @@ namespace VRCX
 
         public void ExecuteVrFeedFunction(string function, string json)
         {
-            if (VRCXVR._wristOverlay == null) return;
-            if (VRCXVR._wristOverlay.IsLoading)
-                VRCXVR.Instance.Restart();
-            VRCXVR._wristOverlay.ExecuteScriptAsync($"$app.{function}", json);
+            Program.VRCXVRInstance.ExecuteVrFeedFunction(function, json);
         }
 
         public void ExecuteVrOverlayFunction(string function, string json)
         {
-            if (VRCXVR._hmdOverlay == null) return;
-            if (VRCXVR._hmdOverlay.IsLoading)
-                VRCXVR.Instance.Restart();
-            VRCXVR._hmdOverlay.ExecuteScriptAsync($"$app.{function}", json);
+            Program.VRCXVRInstance.ExecuteVrOverlayFunction(function, json);
         }
 
         /// <summary>

@@ -227,6 +227,8 @@
                     "tray": "Minimize to tray when closing",
                     "disable_gpu_acceleration": "Disable GPU Acceleration",
                     "disable_gpu_acceleration_tooltip": "Only change this option if you know what you're doing, breaks SteamVR overlay, may fix issues with UI, requires restarting VRCX",
+                    "disable_vr_overlay_gpu_acceleration": "Disable VR Overlay GPU Acceleration",
+                    "disable_vr_overlay_gpu_acceleration_tooltip": "VR Overlay GPU acceleration can cause VRCX to crash or cause VRAM memory leaks, requires restarting VRCX",
                     "proxy": "Proxy settings"
                 },
                 "favorites": {
