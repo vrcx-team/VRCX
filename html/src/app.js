@@ -8931,8 +8931,9 @@ speechSynthesis.getVoices();
         ) {
             var url = new URL(input);
             var urlPath = url.pathname;
-            if (urlPath.substring(5, 12) === '/world/') {
-                var worldId = urlPath.substring(12);
+            var urlPathSplit = urlPath.split('/');
+            if (urlPathSplit.length >= 4 && urlPathSplit[2] === 'world') {
+                var worldId = urlPathSplit[3];
                 this.showWorldDialog(worldId);
                 return true;
             } else if (urlPath.substring(5, 12) === '/launch') {
@@ -9000,16 +9001,21 @@ speechSynthesis.getVoices();
         if (input.startsWith('https://vrchat.')) {
             var url = new URL(input);
             var urlPath = url.pathname;
-            if (urlPath.substring(5, 11) === '/user/') {
-                var userId = urlPath.substring(11);
+            var urlPathSplit = urlPath.split('/');
+            if (urlPathSplit.length < 4) {
+                return false;
+            }
+            var type = urlPathSplit[2];
+            if (type === 'user') {
+                var userId = urlPathSplit[3];
                 this.showUserDialog(userId);
                 return true;
-            } else if (urlPath.substring(5, 13) === '/avatar/') {
-                var avatarId = urlPath.substring(13);
+            } else if (type === 'avatar') {
+                var avatarId = urlPathSplit[3];
                 this.showAvatarDialog(avatarId);
                 return true;
-            } else if (urlPath.substring(5, 12) === '/group/') {
-                var groupId = urlPath.substring(12);
+            } else if (type === 'group') {
+                var groupId = urlPathSplit[3];
                 this.showGroupDialog(groupId);
                 return true;
             }
