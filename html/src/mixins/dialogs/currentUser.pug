@@ -61,14 +61,14 @@ mixin currentUser()
 
     //- dialog: Gallery/VRCPlusIcons
     el-dialog.x-dialog(:before-close="beforeDialogClose" @mousedown.native="dialogMouseDown" @mouseup.native="dialogMouseUp" ref="galleryDialog" :visible.sync="galleryDialogVisible" :title="$t('dialog.gallery_icons.header')" width="100%")
-        span(style="padding-bottom:10px") {{ $t('dialog.gallery_icons.description') }}
-        br
-        br
         el-tabs(type="card" ref="galleryTabs")
             el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogGalleryLoading")
                 span(slot="label") {{ $t('dialog.gallery_icons.gallery') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
                 input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1200x900px (4:3)
+                br
+                br
                 el-button-group
                     el-button(type="default" size="small" @click="refreshGalleryTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                     el-button(type="default" size="small" @click="displayGalleryUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -84,6 +84,9 @@ mixin currentUser()
                 span(slot="label") {{ $t('dialog.gallery_icons.icons') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ VRCPlusIconsTable.length }}/64
                 input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1200x900px (4:3)
+                br
+                br
                 el-button-group
                     el-button(type="default" size="small" @click="refreshVRCPlusIconsTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                     el-button(type="default" size="small" @click="displayVRCPlusIconUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -99,6 +102,9 @@ mixin currentUser()
                 span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/9
                 input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1200x900px (4:3)
+                br
+                br
                 el-button-group(style="margin-right:10px")
                     el-button(type="default" size="small" @click="refreshEmojiTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                     el-button(type="default" size="small" @click="displayEmojiUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -140,6 +146,9 @@ mixin currentUser()
                 span(slot="label") {{ $t('dialog.gallery_icons.stickers') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ stickerTable.length }}/9
                 input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeSticker" id="StickerUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1200x900px (4:3)
+                br
+                br
                 el-button-group
                     el-button(type="default" size="small" @click="refreshStickerTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
                     el-button(type="default" size="small" @click="displayStickerUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
@@ -154,9 +163,13 @@ mixin currentUser()
                 span(slot="label") {{ $t('dialog.gallery_icons.prints') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ printTable.length }}/64
                 input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangePrint" id="PrintUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1920x1080px (16:9)
+                br
+                br
                 el-button-group
                     el-button(type="default" size="small" @click="refreshPrintTable" icon="el-icon-refresh") {{ $t('dialog.gallery_icons.refresh') }}
-                    //- el-button(type="default" size="small" @click="displayPrintUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
+                    el-button(type="default" size="small" @click="displayPrintUpload" icon="el-icon-upload2" :disabled="!API.currentUser.$isVRCPlus") {{ $t('dialog.gallery_icons.upload') }}
+                el-input(type="textarea" v-model="printUploadNote" size="mini" rows="1" resize="none" maxlength="32" style="margin-left:10px;width:300px" :placeholder="$t('dialog.gallery_icons.note')")
                 br
                 .x-friend-item(v-for="image in printTable" :key="image.id" style="display:inline-block;margin-top:10px;width:unset;cursor:default")
                     .vrcplus-icon(style="overflow:hidden" @click="showFullscreenImageDialog(image.files.image)") 
@@ -168,6 +181,8 @@ mixin currentUser()
                         span(v-else style="display:block") &nbsp;
                         display-name.x-ellipsis(v-if="image.authorId" :userid="image.authorId" :hint="image.authorName" style="color:#909399;font-family:monospace;display:block")
                         span(v-else style="font-family:monospace;display:block") &nbsp;
+                        span.x-ellipsis(v-if="image.timestamp" style="color:#909399;font-family:monospace;font-size:11px;display:block") {{ image.timestamp | formatDate('long') }}
+                        span(v-else style="display:block") &nbsp;
                     div(style="float:right")
                         el-button(type="default" @click="showFullscreenImageDialog(image.files.image)" size="mini" icon="el-icon-picture-outline" circle)
                         el-button(type="default" @click="deletePrint(image.id)" size="mini" icon="el-icon-delete" circle style="margin-left:5px")

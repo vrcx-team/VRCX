@@ -17505,7 +17505,7 @@ speechSynthesis.getVoices();
     };
 
     API.$on('PRINT:LIST', function (args) {
-        $app.printTable = args.json.reverse();
+        $app.printTable = args.json;
         $app.galleryDialogPrintsLoading = false;
     });
 
@@ -17523,6 +17523,8 @@ speechSynthesis.getVoices();
             }
         }
     });
+
+    $app.data.printUploadNote = '';
 
     $app.methods.onFileChangePrint = function (e) {
         var clearFile = function () {
@@ -17556,8 +17558,8 @@ speechSynthesis.getVoices();
             var date = new Date();
             var timestamp = date.toISOString().slice(0, 19);
             var params = {
-                note: 'test print',
-                worldId: 'wrld_10e5e467-fc65-42ed-8957-f02cace1398c',
+                note: $app.printUploadNote,
+                // worldId: '',
                 timestamp
             };
             var base64Body = btoa(r.result);

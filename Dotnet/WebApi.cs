@@ -304,9 +304,8 @@ namespace VRCX
             var boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             request.ContentType = "multipart/form-data; boundary=" + boundary;
             var requestStream = request.GetRequestStream();
-            // var requestStream = new MemoryStream();
             var imageData = options["imageData"] as string;
-            var fileToUpload = Convert.FromBase64String(imageData);
+            var fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), 1920, 1080);
             const string fileFormKey = "image";
             const string fileName = "image";
             const string fileMimeType = "image/png";
@@ -315,6 +314,8 @@ namespace VRCX
             var header = string.Format(headerTemplate, boundary, fileFormKey, fileName, fileMimeType, fileSize);
             var headerBytes = Encoding.UTF8.GetBytes(header);
             await requestStream.WriteAsync(headerBytes);
+            var newlineBytes = Encoding.UTF8.GetBytes("\r\n");
+            await requestStream.WriteAsync(newlineBytes);
             using (var fileStream = new MemoryStream(fileToUpload))
             {
                 var buffer = new byte[1024];
@@ -325,10 +326,9 @@ namespace VRCX
                 }
                 fileStream.Close();
             }
-            var newlineBytes = Encoding.UTF8.GetBytes("\r\n");
-            await requestStream.WriteAsync(newlineBytes);
             const string textContentType = "text/plain; charset=utf-8";
-            const string formDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\nContent-Type: {2}\r\nContent-Length: {3}\r\n{4}\r\n";
+            const string formDataTemplate = "--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\nContent-Type: {2}\r\nContent-Length: {3}\r\n\r\n{4}\r\n";
+            await requestStream.WriteAsync(newlineBytes);
             if (options.TryGetValue("postData", out var postDataObject))
             {
                 var jsonPostData = JsonConvert.DeserializeObject<Dictionary<string, string>>(postDataObject.ToString());
@@ -344,13 +344,7 @@ namespace VRCX
             }
             var endBytes = Encoding.UTF8.GetBytes("--" + boundary + "--");
             await requestStream.WriteAsync(endBytes);
-            // test file
-            // var newFileStream = new FileStream(@"D:\WindowsFiles\Desktop\test", FileMode.Create, FileAccess.Write);
-            // requestStream.WriteTo(newFileStream);
-            // newFileStream.Close();
-
             requestStream.Close();
-            // throw new NotImplementedException();
         }
 
 #pragma warning disable CS4014
