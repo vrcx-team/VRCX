@@ -1,6 +1,7 @@
 import * as workerTimers from 'worker-timers';
 import gameLogService from '../service/gamelog.js';
 import configRepository from '../repository/config.js';
+import database from '../repository/database.js';
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
 
 export default class extends baseClass {

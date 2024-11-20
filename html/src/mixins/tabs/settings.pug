@@ -355,6 +355,9 @@ mixin settingsTab()
                                 span {{ getTTSVoiceName() }} #[i.el-icon-arrow-down.el-icon--right]
                             el-dropdown-menu(#default="dropdown")
                                 el-dropdown-item(v-if="voice" v-for="(voice, index) in TTSvoices" :key="index" v-text="voice.name" :command="index")
+                    div.options-container-item
+                        span.name {{ $t('view.settings.notifications.notifications.text_to_speech.use_memo_nicknames') }}
+                        el-switch(v-model="notificationTTSNickName" @change="saveOpenVROption" :disabled="notificationTTS === 'Never'")
             //- Wrist Overlay Tab
             el-tab-pane(:label="$t('view.settings.category.wrist_overlay')")
                 //- Wrist Overlay | SteamVR Wrist Overlay

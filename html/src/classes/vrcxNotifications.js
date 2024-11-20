@@ -246,7 +246,7 @@ export default class extends baseClass {
                 }
             }
             if (playNotificationTTS) {
-                this.playNotyTTS(noty, message);
+                this.playNotyTTS(noty, displayName, message);
             }
             if (
                 playDesktopToast ||
@@ -309,8 +309,7 @@ export default class extends baseClass {
             }
         },
 
-        async notyGetImage(noty) {
-            var imageUrl = '';
+        getUserIdFromNoty(noty) {
             var userId = '';
             if (noty.userId) {
                 userId = noty.userId;
@@ -326,6 +325,13 @@ export default class extends baseClass {
                     }
                 }
             }
+            return userId;
+        },
+
+        async notyGetImage(noty) {
+            var imageUrl = '';
+            var userId = this.getUserIdFromNoty(noty);
+
             if (noty.thumbnailImageUrl) {
                 imageUrl = noty.thumbnailImageUrl;
             } else if (noty.details && noty.details.imageUrl) {
@@ -397,20 +403,29 @@ export default class extends baseClass {
             );
         },
 
-        playNotyTTS(noty, message) {
+        async playNotyTTS(noty, displayName, message) {
+            if (this.notificationTTSNickName) {
+                var userId = this.getUserIdFromNoty(noty);
+                var memo = await $app.getUserMemo(userId);
+                if (memo.memo) {
+                    var array = memo.memo.split('\n');
+                    var nickName = array[0];
+                    displayName = nickName;
+                }
+            }
             switch (noty.type) {
                 case 'OnPlayerJoined':
-                    this.speak(`${noty.displayName} has joined`);
+                    this.speak(`${displayName} has joined`);
                     break;
                 case 'OnPlayerLeft':
-                    this.speak(`${noty.displayName} has left`);
+                    this.speak(`${displayName} has left`);
                     break;
                 case 'OnPlayerJoining':
-                    this.speak(`${noty.displayName} is joining`);
+                    this.speak(`${displayName} is joining`);
                     break;
                 case 'GPS':
                     this.speak(
-                        `${noty.displayName} is in ${this.displayLocation(
+                        `${displayName} is in ${this.displayLocation(
                             noty.location,
                             noty.worldName,
                             noty.groupName
@@ -426,22 +441,20 @@ export default class extends baseClass {
                             noty.groupName
                         )}`;
                     }
-                    this.speak(
-                        `${noty.displayName} has logged in${locationName}`
-                    );
+                    this.speak(`${displayName} has logged in${locationName}`);
                     break;
                 case 'Offline':
-                    this.speak(`${noty.displayName} has logged out`);
+                    this.speak(`${displayName} has logged out`);
                     break;
                 case 'Status':
                     this.speak(
-                        `${noty.displayName} status is now ${noty.status} ${noty.statusDescription}`
+                        `${displayName} status is now ${noty.status} ${noty.statusDescription}`
                     );
                     break;
                 case 'invite':
                     this.speak(
                         `${
-                            noty.senderUsername
+                            displayName
                         } has invited you to ${this.displayLocation(
                             noty.details.worldId,
                             noty.details.worldName,
@@ -451,33 +464,31 @@ export default class extends baseClass {
                     break;
                 case 'requestInvite':
                     this.speak(
-                        `${noty.senderUsername} has requested an invite${message}`
+                        `${displayName} has requested an invite${message}`
                     );
                     break;
                 case 'inviteResponse':
                     this.speak(
-                        `${noty.senderUsername} has responded to your invite${message}`
+                        `${displayName} has responded to your invite${message}`
                     );
                     break;
                 case 'requestInviteResponse':
                     this.speak(
-                        `${noty.senderUsername} has responded to your invite request${message}`
+                        `${displayName} has responded to your invite request${message}`
                     );
                     break;
                 case 'friendRequest':
-                    this.speak(
-                        `${noty.senderUsername} has sent you a friend request`
-                    );
+                    this.speak(`${displayName} has sent you a friend request`);
                     break;
                 case 'Friend':
-                    this.speak(`${noty.displayName} is now your friend`);
+                    this.speak(`${displayName} is now your friend`);
                     break;
                 case 'Unfriend':
-                    this.speak(`${noty.displayName} is no longer your friend`);
+                    this.speak(`${displayName} is no longer your friend`);
                     break;
                 case 'TrustLevel':
                     this.speak(
-                        `${noty.displayName} trust level is now ${noty.trustLevel}`
+                        `${displayName} trust level is now ${noty.trustLevel}`
                     );
                     break;
                 case 'DisplayName':
@@ -489,7 +500,7 @@ export default class extends baseClass {
                     this.speak(noty.message);
                     break;
                 case 'groupChange':
-                    this.speak(`${noty.senderUsername} ${noty.message}`);
+                    this.speak(`${displayName} ${noty.message}`);
                     break;
                 case 'group.announcement':
                     this.speak(noty.message);
@@ -513,10 +524,10 @@ export default class extends baseClass {
                     this.speak(noty.message);
                     break;
                 case 'PortalSpawn':
-                    if (noty.displayName) {
+                    if (displayName) {
                         this.speak(
                             `${
-                                noty.displayName
+                                displayName
                             } has spawned a portal to ${this.displayLocation(
                                 noty.instanceId,
                                 noty.worldName,
@@ -529,11 +540,11 @@ export default class extends baseClass {
                     break;
                 case 'AvatarChange':
                     this.speak(
-                        `${noty.displayName} changed into avatar ${noty.name}`
+                        `${displayName} changed into avatar ${noty.name}`
                     );
                     break;
                 case 'ChatBoxMessage':
-                    this.speak(`${noty.displayName} said ${noty.text}`);
+                    this.speak(`${displayName} said ${noty.text}`);
                     break;
                 case 'Event':
                     this.speak(noty.data);
@@ -545,28 +556,28 @@ export default class extends baseClass {
                     this.speak(`Now playing: ${noty.notyName}`);
                     break;
                 case 'BlockedOnPlayerJoined':
-                    this.speak(`Blocked user ${noty.displayName} has joined`);
+                    this.speak(`Blocked user ${displayName} has joined`);
                     break;
                 case 'BlockedOnPlayerLeft':
-                    this.speak(`Blocked user ${noty.displayName} has left`);
+                    this.speak(`Blocked user ${displayName} has left`);
                     break;
                 case 'MutedOnPlayerJoined':
-                    this.speak(`Muted user ${noty.displayName} has joined`);
+                    this.speak(`Muted user ${displayName} has joined`);
                     break;
                 case 'MutedOnPlayerLeft':
-                    this.speak(`Muted user ${noty.displayName} has left`);
+                    this.speak(`Muted user ${displayName} has left`);
                     break;
                 case 'Blocked':
-                    this.speak(`${noty.displayName} has blocked you`);
+                    this.speak(`${displayName} has blocked you`);
                     break;
                 case 'Unblocked':
-                    this.speak(`${noty.displayName} has unblocked you`);
+                    this.speak(`${displayName} has unblocked you`);
                     break;
                 case 'Muted':
-                    this.speak(`${noty.displayName} has muted you`);
+                    this.speak(`${displayName} has muted you`);
                     break;
                 case 'Unmuted':
-                    this.speak(`${noty.displayName} has unmuted you`);
+                    this.speak(`${displayName} has unmuted you`);
                     break;
             }
         },

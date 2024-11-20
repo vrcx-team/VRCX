@@ -1,4 +1,5 @@
 import { baseClass, $app, API, $t, $utils } from './baseClass.js';
+import database from '../repository/database.js';
 
 export default class extends baseClass {
     constructor(_app, _API, _t) {

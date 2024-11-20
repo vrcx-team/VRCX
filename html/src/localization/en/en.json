@@ -366,7 +366,8 @@
                         "when_to_play_game_closed": "Game Closed",
                         "when_to_play_game_running": "Game Running",
                         "when_to_play_always": "Always",
-                        "tts_voice": "TTS Voice"
+                        "tts_voice": "TTS Voice",
+                        "use_memo_nicknames": "Use Memo Nicknames"
                     }
                 }
             },
