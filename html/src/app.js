@@ -13651,6 +13651,7 @@ speechSynthesis.getVoices();
         };
         return this.call('file/image', {
             uploadImage: true,
+            matchingDimensions: true,
             postData: JSON.stringify(params),
             imageData
         }).then((json) => {
@@ -17334,6 +17335,7 @@ speechSynthesis.getVoices();
         };
         return this.call('file/image', {
             uploadImage: true,
+            matchingDimensions: false,
             postData: JSON.stringify(params),
             imageData
         }).then((json) => {
@@ -17445,6 +17447,7 @@ speechSynthesis.getVoices();
     API.uploadSticker = function (imageData, params) {
         return this.call('file/image', {
             uploadImage: true,
+            matchingDimensions: true,
             postData: JSON.stringify(params),
             imageData
         }).then((json) => {
@@ -17762,6 +17765,7 @@ speechSynthesis.getVoices();
     API.uploadEmoji = function (imageData, params) {
         return this.call('file/image', {
             uploadImage: true,
+            matchingDimensions: true,
             postData: JSON.stringify(params),
             imageData
         }).then((json) => {

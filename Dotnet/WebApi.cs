@@ -200,7 +200,7 @@ namespace VRCX
                 }
             }
             var imageData = options["imageData"] as string;
-            byte[] fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData));
+            byte[] fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), false);
             string fileFormKey = "image";
             string fileName = "image.png";
             string fileMimeType = "image/png";
@@ -268,7 +268,8 @@ namespace VRCX
                 }
             }
             var imageData = options["imageData"] as string;
-            byte[] fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData));
+            var matchingDimensions = options["matchingDimensions"] as bool? ?? false;
+            byte[] fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), matchingDimensions);
 
             string fileFormKey = "file";
             string fileName = "blob";
@@ -305,7 +306,7 @@ namespace VRCX
             request.ContentType = "multipart/form-data; boundary=" + boundary;
             var requestStream = request.GetRequestStream();
             var imageData = options["imageData"] as string;
-            var fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), 1920, 1080);
+            var fileToUpload = AppApi.Instance.ResizeImageToFitLimits(Convert.FromBase64String(imageData), false, 1920, 1080);
             const string fileFormKey = "image";
             const string fileName = "image";
             const string fileMimeType = "image/png";

@@ -65,7 +65,7 @@ mixin currentUser()
             el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogGalleryLoading")
                 span(slot="label") {{ $t('dialog.gallery_icons.gallery') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ galleryTable.length }}/64
-                input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
+                input(type="file" accept="image/*" @change="onFileChangeGallery" id="GalleryUploadButton" style="display:none")
                 span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1200x900px (4:3)
                 br
                 br
@@ -83,8 +83,8 @@ mixin currentUser()
             el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogIconsLoading")
                 span(slot="label") {{ $t('dialog.gallery_icons.icons') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ VRCPlusIconsTable.length }}/64
-                input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
-                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1200x900px (4:3)
+                input(type="file" accept="image/*" @change="onFileChangeVRCPlusIcon" id="VRCPlusIconUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 2000x2000px (1:1)
                 br
                 br
                 el-button-group
@@ -101,8 +101,8 @@ mixin currentUser()
             el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogEmojisLoading")
                 span(slot="label") {{ $t('dialog.gallery_icons.emojis') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ emojiTable.length }}/9
-                input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
-                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1200x900px (4:3)
+                input(type="file" accept="image/*" @change="onFileChangeEmoji" id="EmojiUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 2000x2000px (1:1)
                 br
                 br
                 el-button-group(style="margin-right:10px")
@@ -145,8 +145,8 @@ mixin currentUser()
             el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogStickersLoading")
                 span(slot="label") {{ $t('dialog.gallery_icons.stickers') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ stickerTable.length }}/9
-                input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangeSticker" id="StickerUploadButton" style="display:none")
-                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1200x900px (4:3)
+                input(type="file" accept="image/*" @change="onFileChangeSticker" id="StickerUploadButton" style="display:none")
+                span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 2000x2000px (1:1)
                 br
                 br
                 el-button-group
@@ -162,7 +162,7 @@ mixin currentUser()
             el-tab-pane(v-if="galleryDialogVisible" v-loading="galleryDialogPrintsLoading")
                 span(slot="label") {{ $t('dialog.gallery_icons.prints') }}
                     span(style="color:#909399;font-size:12px;margin-left:5px") {{ printTable.length }}/64
-                input(type="file" accept="image/png,image/jpg,image/jpeg,image/webp,image/bmp,image/gif" @change="onFileChangePrint" id="PrintUploadButton" style="display:none")
+                input(type="file" accept="image/*" @change="onFileChangePrint" id="PrintUploadButton" style="display:none")
                 span {{ $t('dialog.gallery_icons.recommended_image_size') }}: 1920x1080px (16:9)
                 br
                 br
