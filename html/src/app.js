@@ -17643,28 +17643,39 @@ speechSynthesis.getVoices();
         false
     );
 
-    $app.methods.trySavePrintToFile = async function (printId) {
-        var print = await API.getPrint({ printId });
-        var imageUrl = print.json?.files?.image;
-        if (!imageUrl) {
-            console.error('Print image URL is missing', print);
-            return;
-        }
+    $app.methods.getPrintDate = function (print) {
         var createdAt = new Date();
-        if (print.json.timestamp) {
-            createdAt = new Date(print.json.timestamp);
-        } else if (print.json.createdAt) {
-            createdAt = new Date(print.json.createdAt);
+        if (print.timestamp) {
+            createdAt = new Date(print.timestamp);
+        } else if (print.createdAt) {
+            createdAt = new Date(print.createdAt);
         }
-        var authorName = print.json.authorName;
+        return createdAt;
+    };
+
+    $app.methods.getPrintFileName = function (print) {
+        var authorName = print.authorName;
         // fileDate format: 2024-11-03_16-14-25.757
+        var createdAt = this.getPrintDate(print);
         var fileNameDate = createdAt
             .toISOString()
             .replace(/:/g, '-')
             .replace(/T/g, '_')
             .replace(/Z/g, '');
+        var fileName = `${authorName}_${fileNameDate}_${print.id}.png`;
+        return fileName;
+    };
+
+    $app.methods.trySavePrintToFile = async function (printId) {
+        var args = await API.getPrint({ printId });
+        var imageUrl = args.json?.files?.image;
+        if (!imageUrl) {
+            console.error('Print image URL is missing', args);
+            return;
+        }
+        var createdAt = this.getPrintDate(args.json);
         var path = `${createdAt.toISOString().slice(0, 7)}`;
-        var fileName = `${authorName}_${fileNameDate}_${printId}.png`;
+        var fileName = this.getPrintFileName(args.json);
         var status = await AppApi.SavePrintToFile(imageUrl, path, fileName);
         if (status) {
             console.log(`Print saved to file: ${path}\\${fileName}`);
@@ -17739,6 +17750,8 @@ speechSynthesis.getVoices();
             clearFile();
             return;
         }
+        // set Emoji settings from fileName
+        this.parseEmojiFileName(files[0].name);
         var r = new FileReader();
         r.onload = function () {
             var params = {
@@ -17851,6 +17864,42 @@ speechSynthesis.getVoices();
             animation: ${animationDurationMs}ms steps(1) 0s infinite ${animStyle} running animated-emoji-${frameCount};
         `;
         return style;
+    };
+
+    $app.methods.getEmojiFileName = function (emoji) {
+        if (emoji.frames) {
+            var loopStyle = emoji.loopStyle || 'linear';
+            return `${emoji.name}_${emoji.animationStyle}animationStyle_${emoji.frames}frames_${emoji.framesOverTime}fps_${loopStyle}loopStyle.png`;
+        } else {
+            return `${emoji.name}_${emoji.animationStyle}animationStyle.png`;
+        }
+    };
+
+    $app.methods.parseEmojiFileName = function (fileName) {
+        // remove file extension
+        fileName = fileName.replace(/\.[^/.]+$/, '');
+        var array = fileName.split('_');
+        for (var i = 0; i < array.length; ++i) {
+            var value = array[i];
+            if (value.endsWith('animationStyle')) {
+                this.emojiAnimType = false;
+                this.emojiAnimationStyle = value
+                    .replace('animationStyle', '')
+                    .toLowerCase();
+            }
+            if (value.endsWith('frames')) {
+                this.emojiAnimType = true;
+                this.emojiAnimFrameCount = parseInt(
+                    value.replace('frames', '')
+                );
+            }
+            if (value.endsWith('fps')) {
+                this.emojiAnimFps = parseInt(value.replace('fps', ''));
+            }
+            if (value.endsWith('loopStyle')) {
+                this.emojiAnimLoopPingPong = value === 'pingpong';
+            }
+        }
     };
 
     // #endregion
@@ -21302,7 +21351,7 @@ speechSynthesis.getVoices();
         }
     };
 
-    $app.methods.downloadAndSaveImage = async function (url) {
+    $app.methods.downloadAndSaveImage = async function (url, fileName) {
         if (!url) {
             return;
         }
@@ -21323,7 +21372,10 @@ speechSynthesis.getVoices();
             }
             var link = document.createElement('a');
             link.href = response.data;
-            var fileName = `${$utils.extractFileId(url)}.png`;
+            var fileId = $utils.extractFileId(url);
+            if (!fileName && fileId) {
+                fileName = `${fileId}.png`;
+            }
             if (!fileName) {
                 fileName = `${url.split('/').pop()}.png`;
             }
@@ -21703,10 +21755,11 @@ speechSynthesis.getVoices();
 
     $app.data.fullscreenImageDialog = {
         visible: false,
-        imageUrl: ''
+        imageUrl: '',
+        fileName: ''
     };
 
-    $app.methods.showFullscreenImageDialog = function (imageUrl) {
+    $app.methods.showFullscreenImageDialog = function (imageUrl, fileName) {
         if (!imageUrl) {
             return;
         }
@@ -21715,6 +21768,7 @@ speechSynthesis.getVoices();
         );
         var D = this.fullscreenImageDialog;
         D.imageUrl = imageUrl;
+        D.fileName = fileName;
         D.visible = true;
     };
 
