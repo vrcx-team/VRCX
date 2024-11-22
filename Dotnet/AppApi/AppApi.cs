@@ -592,5 +592,16 @@ namespace VRCX
 
             return await ImageCache.SaveImageToFile(url, filePath);
         }
+
+        public async Task<bool> SaveStickerToFile(string url, string path, string fileName)
+        {
+            var folder = Path.Combine(GetVRChatPhotosLocation(), "Stickers", MakeValidFileName(path));
+            Directory.CreateDirectory(folder);
+            var filePath = Path.Combine(folder, MakeValidFileName(fileName));
+            if (File.Exists(filePath))
+                return false;
+
+            return await ImageCache.SaveImageToFile(url, filePath);
+        }
     }
 }
