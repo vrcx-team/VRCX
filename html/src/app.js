@@ -17567,6 +17567,8 @@ speechSynthesis.getVoices();
         var r = new FileReader();
         r.onload = function () {
             var date = new Date();
+            // why the fuck isn't this UTC
+            date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
             var timestamp = date.toISOString().slice(0, 19);
             var params = {
                 note: $app.printUploadNote,
@@ -17645,10 +17647,10 @@ speechSynthesis.getVoices();
 
     $app.methods.getPrintDate = function (print) {
         var createdAt = new Date();
-        if (print.timestamp) {
-            createdAt = new Date(print.timestamp);
-        } else if (print.createdAt) {
+        if (print.createdAt) {
             createdAt = new Date(print.createdAt);
+        } else if (print.timestamp) {
+            createdAt = new Date(print.timestamp);
         }
         return createdAt;
     };
