@@ -4673,7 +4673,9 @@ speechSynthesis.getVoices();
             this.updateOnlineFriendCoutner();
         }
         ctx.state = newState;
-        ctx.name = ref.displayName;
+        if (ref?.displayName) {
+            ctx.name = ref.displayName;
+        }
         ctx.isVIP = isVIP;
     };
 
@@ -5524,6 +5526,9 @@ speechSynthesis.getVoices();
                 console.log(
                     `${ref.displayName} GPS ${previousLocation} -> ${newLocation}`
                 );
+            }
+            if (previousLocation === 'offline') {
+                previousLocation = '';
             }
             if (!previousLocation) {
                 // no previous location
@@ -16726,7 +16731,8 @@ speechSynthesis.getVoices();
     };
 
     $app.methods.sweepVRChatCache = async function () {
-        await AssetBundleCacher.SweepCache();
+        var output = await AssetBundleCacher.SweepCache();
+        console.log('SweepCache', output);
         if (this.VRChatConfigDialog.visible) {
             this.getVRChatCacheSize();
         }

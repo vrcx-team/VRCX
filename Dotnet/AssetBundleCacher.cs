@@ -5,6 +5,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
@@ -276,17 +277,19 @@ namespace VRCX
         /// <summary>
         /// Removes empty directories from the VRChat cache directory and deletes old versions of cached asset bundles.
         /// </summary>
-        public void SweepCache()
+        public List<string> SweepCache()
         {
+            var output = new List<string>();
             var cachePath = GetVRChatCacheLocation();
             if (!Directory.Exists(cachePath))
-                return;
+                return output;
             var directories = new DirectoryInfo(cachePath);
             var cacheDirectories = directories.GetDirectories();
             foreach (var cacheDirectory in cacheDirectories)
             {
+                // var versionDirectories = cacheDirectory.GetDirectories().OrderBy(d => ReverseHexToDecimal(d.Name)).ToArray();
                 var versionDirectories =
-                    cacheDirectory.GetDirectories().OrderBy(d => ReverseHexToDecimal(d.Name)).ToArray();
+                    cacheDirectory.GetDirectories().OrderBy(d => d.LastWriteTime).ToArray();
                 for (var index = 0; index < versionDirectories.Length; index++)
                 {
                     var versionDirectory = versionDirectories[index];
@@ -303,11 +306,14 @@ namespace VRCX
                         continue; // skip locked version
                     
                     versionDirectory.Delete(true);
+                    output.Add($"{cacheDirectory.Name}\\{versionDirectory.Name}");
                 }
 
                 if (cacheDirectory.GetDirectories().Length + cacheDirectory.GetFiles().Length == 0)
                     cacheDirectory.Delete(); // delete empty directory
             }
+
+            return output;
         }
 
         /// <summary>
