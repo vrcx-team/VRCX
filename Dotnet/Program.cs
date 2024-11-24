@@ -178,6 +178,7 @@ namespace VRCX
             Application.SetCompatibleTextRenderingDefault(false);
 
             logger.Info("{0} Starting...", Version);
+            logger.Debug("Wine support detection: {0}", Wine.GetIfWine());
             
             ProcessMonitor.Instance.Init();
             SQLiteLegacy.Instance.Init();
