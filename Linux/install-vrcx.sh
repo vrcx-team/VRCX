@@ -6,7 +6,7 @@ nightly="https://api0.vrcx.app/releases/nightly/latest/download"
 download_url=$stable
 XDG_DATA_HOME=${XDG_DATA_HOME:=$HOME/.local/share}
 
-export WINEPREFIX="$HOME/Downloads/vrcxtesting"
+export WINEPREFIX="$XDG_DATA_HOME"/vrcx
 export WINEARCH=win64
 
 set -e
