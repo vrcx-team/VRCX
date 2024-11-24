@@ -78,6 +78,15 @@ export WINEPREFIX=$WINEPREFIX
 wine $WINEPREFIX/drive_c/vrcx/VRCX.exe" > $WINEPREFIX/drive_c/vrcx/vrcx
 chmod +x $WINEPREFIX/drive_c/vrcx/vrcx
 
+rel_path=$(dirname $(realpath $0))
+
+# Install twemoji fonts as Segoe UI is proprietary and not included in wine
+if [[ -d "$rel_path/fonts" ]]; then
+    echo "Installing twemoji fonts."
+    cp -r "$rel_path/fonts/"* "$WINEPREFIX/drive_c/windows/Fonts"
+	WINEPREFIX=$WINEPREFIX wine reg add 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\Fonts' /v 'seguiemj' /t REG_SZ /d 'seguiemj.ttf' /f
+fi
+
 echo "Install VRCX.png to $XDG_DATA_HOME/icons"
 curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png -o "$XDG_DATA_HOME/icons/VRCX.png"
 
