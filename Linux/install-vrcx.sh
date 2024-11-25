@@ -69,7 +69,7 @@ else
    rm -rf "${INSTALL_LOCATION:?}/"*
 fi
 
-cd $INSTALL_LOCATION
+cd "$INSTALL_LOCATION"
 curl -L $download_url -o vrcx_setup.exe
 WINEPREFIX=$WINEPREFIX wine vrcx_setup.exe /S /SKIP_SHORTCUT=true
 rm vrcx_setup.exe
