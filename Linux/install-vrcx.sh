@@ -66,7 +66,7 @@ INSTALL_LOCATION="$WINEPREFIX/drive_c/Program Files/VRCX"
 if [[ ! -d $INSTALL_LOCATION ]]; then
 	mkdir -p "$INSTALL_LOCATION"
 else
-   rm -r "${INSTALL_LOCATION:?}/"*
+   rm -rf "${INSTALL_LOCATION:?}/"*
 fi
 
 cd $INSTALL_LOCATION
