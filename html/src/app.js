@@ -17484,7 +17484,14 @@ speechSynthesis.getVoices();
         }
     });
 
+    $app.data.stickersCache = [];
+
     $app.methods.trySaveStickerToFile = async function (displayName, fileId) {
+        if ($app.stickersCache.includes(fileId)) return;
+        $app.stickersCache.push(fileId);
+        if ($app.stickersCache.size > 100) {
+            $app.stickersCache.shift();
+        }
         var args = await API.call(`file/${fileId}`);
         var imageUrl = args.versions[1].file.url;
         var createdAt = args.versions[0].created_at;
@@ -17699,7 +17706,14 @@ speechSynthesis.getVoices();
         return fileName;
     };
 
+    $app.data.printCache = [];
+
     $app.methods.trySavePrintToFile = async function (printId) {
+        if ($app.printCache.includes(printId)) return;
+        $app.printCache.push(printId);
+        if ($app.printCache.length > 100) {
+            $app.printCache.shift();
+        }
         var args = await API.getPrint({ printId });
         var imageUrl = args.json?.files?.image;
         if (!imageUrl) {
