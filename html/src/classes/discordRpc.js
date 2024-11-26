@@ -25,7 +25,7 @@ export default class extends baseClass {
             }
             if (
                 !this.discordActive ||
-                !this.isGameRunning ||
+                (!this.isGameRunning && !this.gameLogDisabled) ||
                 (!currentLocation && !this.lastLocation$.tag)
             ) {
                 this.setDiscordActive(false);

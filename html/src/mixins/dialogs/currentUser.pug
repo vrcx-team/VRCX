@@ -182,7 +182,7 @@ mixin currentUser()
                         span(v-else style="display:block") &nbsp;
                         display-name.x-ellipsis(v-if="image.authorId" :userid="image.authorId" :hint="image.authorName" style="color:#909399;font-family:monospace;display:block")
                         span(v-else style="font-family:monospace;display:block") &nbsp;
-                        span.x-ellipsis(v-if="image.timestamp" style="color:#909399;font-family:monospace;font-size:11px;display:block") {{ image.timestamp | formatDate('long') }}
+                        span.x-ellipsis(v-if="image.createdAt" style="color:#909399;font-family:monospace;font-size:11px;display:block") {{ image.createdAt | formatDate('long') }}
                         span(v-else style="display:block") &nbsp;
                     div(style="float:right")
                         el-button(type="default" @click="showFullscreenImageDialog(image.files.image, getPrintFileName(image))" size="mini" icon="el-icon-picture-outline" circle)

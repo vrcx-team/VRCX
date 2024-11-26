@@ -160,6 +160,9 @@ Section "Install" SecInstall
     IntFmt $0 "0x%08X" $0
     WriteRegDWORD HKLM  "Software\Microsoft\Windows\CurrentVersion\Uninstall\VRCX" "EstimatedSize" "$0"
 
+    ${GetParameters} $R2
+    ${GetOptions} $R2 /SKIP_SHORTCUT= $3
+    StrCmp $3 "true" +3
     CreateShortCut "$SMPROGRAMS\VRCX.lnk" "$INSTDIR\VRCX.exe"
     ApplicationID::Set "$SMPROGRAMS\VRCX.lnk" "VRCX"
 

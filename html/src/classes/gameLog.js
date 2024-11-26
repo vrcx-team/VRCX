@@ -405,6 +405,13 @@ export default class extends baseClass {
                     // };
                     // database.addGamelogEventToDatabase(entry);
                     break;
+                case 'sticker-spawn':
+                    if (!$app.saveInstanceStickers) {
+                        break;
+                    }
+
+                    $app.trySaveStickerToFile(gameLog.displayName, gameLog.fileId);
+                    break;
             }
             if (entry) {
                 // add tag colour

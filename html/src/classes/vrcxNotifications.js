@@ -453,9 +453,7 @@ export default class extends baseClass {
                     break;
                 case 'invite':
                     this.speak(
-                        `${
-                            displayName
-                        } has invited you to ${this.displayLocation(
+                        `${displayName} has invited you to ${this.displayLocation(
                             noty.details.worldId,
                             noty.details.worldName,
                             noty.groupName
@@ -526,9 +524,7 @@ export default class extends baseClass {
                 case 'PortalSpawn':
                     if (displayName) {
                         this.speak(
-                            `${
-                                displayName
-                            } has spawned a portal to ${this.displayLocation(
+                            `${displayName} has spawned a portal to ${this.displayLocation(
                                 noty.instanceId,
                                 noty.worldName,
                                 noty.groupName

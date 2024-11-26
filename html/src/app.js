@@ -9,6 +9,7 @@ import '@fontsource/noto-sans-kr';
 import '@fontsource/noto-sans-jp';
 import '@fontsource/noto-sans-sc';
 import '@fontsource/noto-sans-tc';
+import '@infolektuell/noto-color-emoji';
 import Noty from 'noty';
 import Vue from 'vue';
 import VueLazyload from 'vue-lazyload';
@@ -3659,6 +3660,9 @@ speechSynthesis.getVoices();
         isSteamVRRunning,
         isHmdAfk
     ) {
+        if (this.gameLogDisabled) {
+            return;
+        }
         if (isGameRunning !== this.isGameRunning) {
             this.isGameRunning = isGameRunning;
             if (isGameRunning) {
@@ -8206,6 +8210,10 @@ speechSynthesis.getVoices();
         await configRepository.setBool(
             'VRCX_saveInstancePrints',
             this.saveInstancePrints
+        );
+        await configRepository.setBool(
+            'VRCX_saveInstanceStickers',
+            this.saveInstanceStickers
         );
         VRCXStorage.Set(
             'VRCX_StartAsMinimizedState',
@@ -17480,6 +17488,29 @@ speechSynthesis.getVoices();
         }
     });
 
+    $app.data.stickersCache = [];
+
+    $app.methods.trySaveStickerToFile = async function (displayName, fileId) {
+        if ($app.stickersCache.includes(fileId)) return;
+        $app.stickersCache.push(fileId);
+        if ($app.stickersCache.size > 100) {
+            $app.stickersCache.shift();
+        }
+        var args = await API.call(`file/${fileId}`);
+        var imageUrl = args.versions[1].file.url;
+        var createdAt = args.versions[0].created_at;
+        var path = createdAt.slice(0, 7);
+        var fileNameDate = createdAt
+            .replace(/:/g, '-')
+            .replace(/T/g, '_')
+            .replace(/Z/g, '');
+        var fileName = `${displayName}_${fileNameDate}_${fileId}.png`;
+        var status = await AppApi.SaveStickerToFile(imageUrl, path, fileName);
+        if (status) {
+            console.log(`Sticker saved to file: ${path}\\${fileName}`);
+        }
+    };
+
     // #endregion
     // #region | Prints
     API.$on('LOGIN', function () {
@@ -17651,20 +17682,37 @@ speechSynthesis.getVoices();
         false
     );
 
-    $app.methods.getPrintDate = function (print) {
-        var createdAt = new Date();
+    $app.data.saveInstanceStickers = await configRepository.getBool(
+        'VRCX_saveInstanceStickers',
+        false
+    );
+
+    $app.methods.getPrintLocalDate = function (print) {
         if (print.createdAt) {
-            createdAt = new Date(print.createdAt);
-        } else if (print.timestamp) {
-            createdAt = new Date(print.timestamp);
+            var createdAt = new Date(print.createdAt);
+            // cursed convert to local time
+            createdAt.setMinutes(
+                createdAt.getMinutes() - createdAt.getTimezoneOffset()
+            );
+            return createdAt;
         }
+        if (print.timestamp) {
+            var createdAt = new Date(print.timestamp);
+            return createdAt;
+        }
+
+        var createdAt = new Date();
+        // cursed convert to local time
+        createdAt.setMinutes(
+            createdAt.getMinutes() - createdAt.getTimezoneOffset()
+        );
         return createdAt;
     };
 
     $app.methods.getPrintFileName = function (print) {
         var authorName = print.authorName;
         // fileDate format: 2024-11-03_16-14-25.757
-        var createdAt = this.getPrintDate(print);
+        var createdAt = this.getPrintLocalDate(print);
         var fileNameDate = createdAt
             .toISOString()
             .replace(/:/g, '-')
@@ -17674,15 +17722,22 @@ speechSynthesis.getVoices();
         return fileName;
     };
 
+    $app.data.printCache = [];
+
     $app.methods.trySavePrintToFile = async function (printId) {
+        if ($app.printCache.includes(printId)) return;
+        $app.printCache.push(printId);
+        if ($app.printCache.length > 100) {
+            $app.printCache.shift();
+        }
         var args = await API.getPrint({ printId });
         var imageUrl = args.json?.files?.image;
         if (!imageUrl) {
             console.error('Print image URL is missing', args);
             return;
         }
-        var createdAt = this.getPrintDate(args.json);
-        var path = `${createdAt.toISOString().slice(0, 7)}`;
+        var createdAt = this.getPrintLocalDate(args.json);
+        var path = createdAt.toISOString().slice(0, 7);
         var fileName = this.getPrintFileName(args.json);
         var status = await AppApi.SavePrintToFile(imageUrl, path, fileName);
         if (status) {
@@ -19053,9 +19108,19 @@ speechSynthesis.getVoices();
                 break;
             }
         }
-        if (this.isRealInstance(location) && lastLocation !== location) {
+        if (lastLocation === location) {
+            return;
+        }
+        this.lastLocationDestination = '';
+        this.lastLocationDestinationTime = 0;
+
+        if (this.isRealInstance(location)) {
             var dt = new Date().toJSON();
             var L = $utils.parseLocation(location);
+
+            this.lastLocation.location = location;
+            this.lastLocation.date = dt;
+
             var entry = {
                 created_at: dt,
                 type: 'Location',
@@ -19073,6 +19138,9 @@ speechSynthesis.getVoices();
             this.applyUserDialogLocation();
             this.applyWorldDialogInstances();
             this.applyGroupDialogInstances();
+        } else {
+            this.lastLocation.location = '';
+            this.lastLocation.date = '';
         }
     };
 
@@ -20554,7 +20622,9 @@ speechSynthesis.getVoices();
                     ref.name.toLowerCase().includes(search) ||
                     ref.authorName.toLowerCase().includes(search)
                 ) {
-                    results.push(ref);
+                    if (!results.some((r) => r.id == ref.id)) {
+                        results.push(ref);
+                    }
                 }
             }
         }
@@ -20568,7 +20638,9 @@ speechSynthesis.getVoices();
                 ref.name.toLowerCase().includes(search) ||
                 ref.authorName.toLowerCase().includes(search)
             ) {
-                results.push(ref);
+                if (!results.some((r) => r.id == ref.id)) {
+                    results.push(ref);
+                }
             }
         }
 

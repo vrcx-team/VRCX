@@ -441,6 +441,10 @@
                         "header_tooltip": "Requires \"--enable-sdk-log-levels\" VRC launch option",
                         "description": "Save spawned prints to your VRChat Pictures folder"
                     },
+                    "save_instance_stickers_to_file": {
+                        "header": "Save Instance Stickers To File",
+                        "description": "Save placed stickers to your VRChat Pictures folder"
+                    },
                     "remote_database": {
                         "header": "Remote Avatar Database",
                         "enable": "Enable",
