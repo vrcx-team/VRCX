@@ -443,7 +443,7 @@
                     },
                     "save_instance_stickers_to_file": {
                         "header": "Save Instance Stickers To File",
-                        "description": "Save dropped Stickers to your VRChat Pictures folder"
+                        "description": "Save placed stickers to your VRChat Pictures folder"
                     },
                     "remote_database": {
                         "header": "Remote Avatar Database",

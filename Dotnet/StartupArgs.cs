@@ -133,7 +133,7 @@ namespace VRCX
         private static void IPCToMain()
         {
             new IPCServer().CreateIPCServer();
-            var ipcClient = new NamedPipeClientStream(".", "vrcx-ipc", PipeDirection.InOut);
+            var ipcClient = new NamedPipeClientStream(".", IPCServer.GetIpcName(), PipeDirection.InOut);
             ipcClient.Connect();
 
             if (ipcClient.IsConnected)
