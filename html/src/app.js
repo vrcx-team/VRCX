@@ -8207,6 +8207,10 @@ speechSynthesis.getVoices();
             'VRCX_saveInstancePrints',
             this.saveInstancePrints
         );
+        await configRepository.setBool(
+            'VRCX_saveInstanceStickers',
+            this.saveInstanceStickers
+        );
         VRCXStorage.Set(
             'VRCX_StartAsMinimizedState',
             this.isStartAsMinimizedState.toString()
@@ -17480,6 +17484,29 @@ speechSynthesis.getVoices();
         }
     });
 
+    $app.data.stickersCache = [];
+
+    $app.methods.trySaveStickerToFile = async function (displayName, fileId) {
+        if ($app.stickersCache.includes(fileId)) return;
+        $app.stickersCache.push(fileId);
+        if ($app.stickersCache.size > 100) {
+            $app.stickersCache.shift();
+        }
+        var args = await API.call(`file/${fileId}`);
+        var imageUrl = args.versions[1].file.url;
+        var createdAt = args.versions[0].created_at;
+        var path = `${createdAt.slice(0, 7)}`;
+        var fileNameDate = createdAt
+            .replace(/:/g, '-')
+            .replace(/T/g, '_')
+            .replace(/Z/g, '');
+        var fileName = `${displayName}_${fileNameDate}_${fileId}.png`;
+        var status = await AppApi.SaveStickerToFile(imageUrl, path, fileName);
+        if (status) {
+            console.log(`Sticker saved to file: ${path}\\${fileName}`);
+        }
+    };
+
     // #endregion
     // #region | Prints
     API.$on('LOGIN', function () {
@@ -17651,6 +17678,11 @@ speechSynthesis.getVoices();
         false
     );
 
+    $app.data.saveInstanceStickers = await configRepository.getBool(
+        'VRCX_saveInstanceStickers',
+        false
+    );
+
     $app.methods.getPrintDate = function (print) {
         var createdAt = new Date();
         if (print.createdAt) {
@@ -17674,7 +17706,14 @@ speechSynthesis.getVoices();
         return fileName;
     };
 
+    $app.data.printCache = [];
+
     $app.methods.trySavePrintToFile = async function (printId) {
+        if ($app.printCache.includes(printId)) return;
+        $app.printCache.push(printId);
+        if ($app.printCache.length > 100) {
+            $app.printCache.shift();
+        }
         var args = await API.getPrint({ printId });
         var imageUrl = args.json?.files?.image;
         if (!imageUrl) {

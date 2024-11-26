@@ -259,7 +259,8 @@ namespace VRCX
                                     ParseFailedToJoin(fileInfo, logContext, line, offset) ||
                                     ParseInstanceResetWarning(fileInfo, logContext, line, offset) ||
                                     ParseVoteKickInitiation(fileInfo, logContext, line, offset) ||
-                                    ParseVoteKickSuccess(fileInfo, logContext, line, offset))
+                                    ParseVoteKickSuccess(fileInfo, logContext, line, offset) ||
+                                    ParseStickerSpawn(fileInfo, logContext, line, offset))
                                 {
                                 }
                             }
@@ -1265,6 +1266,32 @@ namespace VRCX
                 ConvertLogTimeToISO8601(line),
                 "event",
                 line[index..]
+            });
+
+            return true;
+        }
+
+        private bool ParseStickerSpawn(FileInfo fileInfo, LogContext logContext, string line, int offset)
+        {
+            var index = line.IndexOf("[StickersManager] User ");
+            if (index == -1 || !line.Contains("file_") || !line.Contains("spawned sticker"))
+                return false;
+
+            string info = line.Substring(index + 23);
+
+            var (userId, displayName) = ParseUserInfo(info);
+
+            var fileIdIndex = info.IndexOf("file_");
+            string fileId = info.Substring(fileIdIndex);
+
+            AppendLog(new[]
+            {
+                fileInfo.Name,
+                ConvertLogTimeToISO8601(line),
+                "sticker-spawn",
+                userId,
+                displayName,
+                fileId,
             });
 
             return true;

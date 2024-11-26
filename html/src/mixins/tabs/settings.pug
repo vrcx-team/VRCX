@@ -489,6 +489,10 @@ mixin settingsTab()
                     div.options-container-item
                         span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.save_instance_prints_to_file.description') }}
                         el-switch(v-model="saveInstancePrints" @change="saveVRCXWindowOption")
+                    span.sub-header {{ $t('view.settings.advanced.advanced.save_instance_stickers_to_file.header') }}
+                    div.options-container-item
+                        span.name(style="min-width:300px") {{ $t('view.settings.advanced.advanced.save_instance_stickers_to_file.description') }}
+                        el-switch(v-model="saveInstanceStickers" @change="saveVRCXWindowOption")
                 //- Advanced | Remote Avatar Database
                 div.options-container
                     span.header {{ $t('view.settings.advanced.advanced.remote_database.header') }}
