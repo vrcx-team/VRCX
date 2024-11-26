@@ -440,7 +440,10 @@
               "header": "将实例打印保存到文件",
               "header_tooltip": "需要使用 \"--enable-sdk-log-levels\" VRC 启动选项",
               "description": "将生成的打印保存到您的VRChat图片文件夹中"
-
+          },
+          "save_instance_stickers_to_file": {
+              "header": "保存实例贴纸到文件",
+              "description": "将放置的贴纸保存到您的 VRChat 图片文件夹"
           },
           "remote_database": {
             "header": "模型数据库",
@@ -738,6 +741,7 @@
         "download_package": "下载 Unity Package",
         "publish_to_labs": "发布到社区实验室",
         "unpublish": "取消公开",
+        "delete_persistent_data": "删除持久数据",
         "delete": "删除"
       },
       "instances": {
