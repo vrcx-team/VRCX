@@ -80,8 +80,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="130.1.90" />
-    <PackageReference Include="CefSharp.WinForms.NETCore" Version="130.1.90" />
+    <PackageReference Include="CefSharp.OffScreen.NETCore" Version="131.2.70" />
+    <PackageReference Include="CefSharp.WinForms.NETCore" Version="131.2.70" />
     <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -89,10 +89,10 @@
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
-	<PackageReference Include="System.Drawing.Common" Version="8.0.10" />
-	<PackageReference Include="System.Management" Version="8.0.0" />
+	<PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+	<PackageReference Include="System.Management" Version="9.0.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="Websocket.Client" Version="5.1.2" />
   </ItemGroup>
