@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 steamapps=$HOME/.local/share/Steam/steamapps/compatdata
-stable="https://api0.vrcx.app/releases/stable/latest/download?type=zip"
-nightly="https://api0.vrcx.app/releases/nightly/latest/download?type=zip"
+stable="https://api0.vrcx.app/releases/stable/latest/download"
+nightly="https://api0.vrcx.app/releases/nightly/latest/download"
 download_url=$stable
 XDG_DATA_HOME=${XDG_DATA_HOME:=$HOME/.local/share}
 
@@ -61,22 +61,19 @@ fi
 winetricks --force -q corefonts # Workaround for https://bugs.winehq.org/show_bug.cgi?id=32342
 
 echo "Download VRCX"
+INSTALL_LOCATION="$WINEPREFIX/drive_c/Program Files/VRCX"
 
-if [[ ! -d $WINEPREFIX/drive_c/vrcx ]]; then
-	mkdir -p $WINEPREFIX/drive_c/vrcx
+if [[ ! -d $INSTALL_LOCATION ]]; then
+	mkdir -p "$INSTALL_LOCATION"
 else
-   rm -r $WINEPREFIX/drive_c/vrcx/*
+   rm -rf "${INSTALL_LOCATION:?}/"*
 fi
 
-cd $WINEPREFIX/drive_c/vrcx
-curl -L $download_url -o vrcx.zip
-unzip -uq vrcx.zip
-rm vrcx.zip
+cd "$INSTALL_LOCATION"
+curl -L $download_url -o vrcx_setup.exe
+WINEPREFIX=$WINEPREFIX wine vrcx_setup.exe /S /SKIP_SHORTCUT=true
+rm vrcx_setup.exe
 
-echo "#!/usr/bin/env bash
-export WINEPREFIX=$WINEPREFIX
-wine $WINEPREFIX/drive_c/vrcx/VRCX.exe" > $WINEPREFIX/drive_c/vrcx/vrcx
-chmod +x $WINEPREFIX/drive_c/vrcx/vrcx
 
 echo "Install VRCX.png to $XDG_DATA_HOME/icons"
 curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png -o "$XDG_DATA_HOME/icons/VRCX.png"
@@ -86,7 +83,7 @@ echo "[Desktop Entry]
 Type=Application
 Name=VRCX
 Categories=Utility;
-Exec=$WINEPREFIX/drive_c/vrcx/vrcx
+Exec=WINEPREFIX=$WINEPREFIX wine '$INSTALL_LOCATION/VRCX.exe'
 Icon=VRCX
 " > $XDG_DATA_HOME/applications/vrcx.exe.desktop
 
