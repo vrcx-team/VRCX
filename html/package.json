@@ -30,6 +30,7 @@
     "@fontsource/noto-sans-kr": "^5.0.19",
     "@fontsource/noto-sans-sc": "^5.0.20",
     "@fontsource/noto-sans-tc": "^5.0.20",
+    "@infolektuell/noto-color-emoji": "^0.2.0",
     "animate.css": "^4.1.1",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.2",

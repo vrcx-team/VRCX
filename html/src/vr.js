@@ -8,6 +8,7 @@ import '@fontsource/noto-sans-kr';
 import '@fontsource/noto-sans-jp';
 import '@fontsource/noto-sans-sc';
 import '@fontsource/noto-sans-tc';
+import '@infolektuell/noto-color-emoji';
 import Noty from 'noty';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
