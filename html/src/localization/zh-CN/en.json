@@ -693,7 +693,7 @@
             },
             "avatars": {
                 "header": "创建的模型",
-                "total_count": "总共 {count}",
+                "total_count": "总共 {count} 个",
                 "sort_by_name": "按名称排序",
                 "sort_by_update": "按更新时间排序",
                 "all": "所有",
