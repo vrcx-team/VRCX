@@ -187,7 +187,7 @@
             "invite_request_response_messages": "对加入请求的快捷回复",
             "past_display_names": "使用过的昵称",
             "config_json": "API 端点返回的 JSON 信息",
-            "current_user_json": "当前账户的 JSON 信息",
+            "current_user_json": "当前账号的 JSON 信息",
             "feedback": "举报提交记录",
             "refresh_tooltip": "刷新",
             "clear_results_tooltip": "清除结果"
@@ -635,7 +635,7 @@
                 "offline_for": "离线时长",
                 "last_activity": "最后活动",
                 "last_login": "最后登录",
-                "date_joined": "账户创建日期",
+                "date_joined": "账号创建日期",
                 "friended": "添加为好友的时间",
                 "unfriended": "解除好友的时间",
                 "avatar_cloning": "是否允许克隆模型",
@@ -1417,7 +1417,7 @@
         },
         "boop_dialog": {
             "header": "Boop",
-            "emoji_manager": "表情管理器",
+            "emoji_manager": "表情管理",
             "select_emoji": "选择表情",
             "my_emojis": "我的表情",
             "default_emojis": "默认表情",
@@ -1425,7 +1425,7 @@
             "send": "发送"
         },
         "allowed_video_player_domains": {
-            "header": "允许的视频播放器域名",
+            "header": "允许在视频播放器使用的域名",
             "add_domain": "添加域名",
             "save": "保存"
         }
@@ -1518,14 +1518,14 @@
             }
         },
         "notification_timeout": {
-            "header": "通知显示时间",
+            "header": "通知显示时长",
             "description": "输入秒数",
             "cancel": "取消",
             "ok": "确定",
             "input_error": "请输入有效的秒数"
         },
         "overlay_message_timeout": {
-            "header": "消息叠加界面显示时间",
+            "header": "消息在叠加界面显示的时长",
             "description": "输入秒数",
             "cancel": "取消",
             "ok": "确定",
@@ -1603,11 +1603,11 @@
             }
         },
         "change_table_size": {
-            "header": "最大显示记录",
+            "header": "最大读取记录数",
             "description": "限制从数据库读取记录到界面接口的数量，较大的数据表大小可能会影响内存用量和程序性能 (默认值：1000)",
             "cancel": "取消",
             "save": "保存",
-            "input_error": "请输入有效的行数"
+            "input_error": "请输入有效的数量"
         },
         "photon_lobby_timeout": {
             "header": "用户超时阀值",
@@ -1723,7 +1723,7 @@
             "lastSeen": "最后见面",
             "lastActivity": "最后活动",
             "lastLogin": "最后登录",
-            "dateJoined": "账户创建于",
+            "dateJoined": "账号创建于",
             "unfriend": "解除好友"
         },
         "profile": {
