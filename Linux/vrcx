@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+export WINEPREFIX=~/.local/share/vrcx
+
+wine ~/.local/share/vrcx/drive_c/winediscordipcbridge.exe &
+IPCBRIDGE_PID=$!
+
+wine ~/.local/share/vrcx/drive_c/vrcx/VRCX.exe &
+VRCX_PID=$!
+
+while kill -0 $VRCX_PID 2>/dev/null; do
+    if ps -A | grep -i "VRChat.exe" > /dev/null; then
+        isGameRunning=true
+    else
+        isGameRunning=false
+    fi
+    echo "isGameRunning=$isGameRunning" > "$WINEPREFIX/drive_c/users/$USER/AppData/Roaming/VRCX/wine.tmp"
+    sleep 1
+done
+
+echo "isGameRunning=false" > "$WINEPREFIX/drive_c/users/$USER/AppData/Roaming/VRCX/wine.tmp"
+
+kill $IPCBRIDGE_PID 2>/dev/null

@@ -22,7 +22,8 @@ export default class extends baseClass {
         ipcTimeout: 0,
         nextClearVRCXCacheCheck: 0,
         nextDiscordUpdate: 0,
-        nextAutoStateChange: 0
+        nextAutoStateChange: 0,
+        nextGameRunningCheck: 0,
     };
 
     _methods = {
@@ -74,6 +75,10 @@ export default class extends baseClass {
                     if (--this.nextAutoStateChange <= 0) {
                         this.nextAutoStateChange = 3;
                         this.updateAutoStateChange();
+                    }
+                    if (--this.nextGameRunningCheck <= 0) {
+                        this.nextGameRunningCheck = 3;
+                        AppApi.CheckGameRunning();
                     }
                 }
             } catch (err) {
