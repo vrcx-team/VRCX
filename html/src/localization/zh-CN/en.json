@@ -661,7 +661,7 @@
                 "edit_mode": "编辑模式",
                 "exit_edit_mode": "退出编辑模式",
                 "hold_shift": "按住Shift键可在不确认的情况下退出",
-                "own_groups": "自己的群组",
+                "own_groups": "拥有的群组",
                 "mutual_groups": "共同群组",
                 "groups": "群组",
                 "sorting": {
