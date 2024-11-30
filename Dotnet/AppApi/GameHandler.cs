@@ -26,6 +26,11 @@ namespace VRCX
         {
             var isGameRunning = false;
             var isSteamVRRunning = false;
+            
+            if (ProcessMonitor.Instance.IsProcessRunning("VRChat"))
+            {
+                isGameRunning = true;
+            }
 
             if (Wine.GetIfWine())
             {
@@ -37,13 +42,6 @@ namespace VRCX
                     {
                         isGameRunning = true;
                     }
-                }
-            }
-            else
-            {
-                if (ProcessMonitor.Instance.IsProcessRunning("VRChat"))
-                {
-                    isGameRunning = true;
                 }
             }
 

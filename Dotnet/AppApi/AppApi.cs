@@ -603,5 +603,10 @@ namespace VRCX
 
             return await ImageCache.SaveImageToFile(url, filePath);
         }
+        
+        public bool IsRunningUnderWine()
+        {
+            return Wine.GetIfWine();
+        }
     }
 }

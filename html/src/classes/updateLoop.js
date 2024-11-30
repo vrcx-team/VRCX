@@ -23,7 +23,7 @@ export default class extends baseClass {
         nextClearVRCXCacheCheck: 0,
         nextDiscordUpdate: 0,
         nextAutoStateChange: 0,
-        nextGameRunningCheck: 0,
+        nextGameRunningCheck: 0
     };
 
     _methods = {
@@ -76,7 +76,10 @@ export default class extends baseClass {
                         this.nextAutoStateChange = 3;
                         this.updateAutoStateChange();
                     }
-                    if (--this.nextGameRunningCheck <= 0) {
+                    if (
+                        this.isRunningUnderWine &&
+                        --this.nextGameRunningCheck <= 0
+                    ) {
                         this.nextGameRunningCheck = 3;
                         AppApi.CheckGameRunning();
                     }

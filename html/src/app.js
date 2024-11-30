@@ -128,6 +128,7 @@ speechSynthesis.getVoices();
             isGameNoVR: true,
             isSteamVRRunning: false,
             isHmdAfk: false,
+            isRunningUnderWine: false,
             appVersion: '',
             latestAppVersion: '',
             shiftHeld: false
@@ -141,6 +142,7 @@ speechSynthesis.getVoices();
         el: '#x-app',
         async mounted() {
             await this.initLanguage();
+            this.isRunningUnderWine = await AppApi.IsRunningUnderWine();
             await this.changeThemeMode();
             await AppApi.SetUserAgent();
             this.appVersion = await AppApi.GetVersion();
@@ -8166,6 +8168,20 @@ speechSynthesis.getVoices();
         }
         this.updateVRConfigVars();
         await this.updatetrustColor();
+        await this.applyWineEmojis();
+    };
+
+    $app.methods.applyWineEmojis = async function () {
+        if (document.contains(document.getElementById('app-emoji-font'))) {
+            document.getElementById('app-emoji-font').remove();
+        }
+        if (this.isRunningUnderWine) {
+            var $appEmojiFont = document.createElement('link');
+            $appEmojiFont.setAttribute('id', 'app-emoji-font');
+            $appEmojiFont.rel = 'stylesheet';
+            $appEmojiFont.href = 'emoji.font.css';
+            document.head.appendChild($appEmojiFont);
+        }
     };
 
     $app.data.isStartAtWindowsStartup = await configRepository.getBool(
