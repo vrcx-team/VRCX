@@ -84,7 +84,7 @@ WINEPREFIX=$WINEPREFIX wine reg add 'HKLM\Software\Microsoft\Windows NT\CurrentV
 rm seguiemj.ttf
 
 curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/Linux/vrcx.sh -o $WINEPREFIX/drive_c/vrcx.sh
-chmod +x $WINEPREFIX/drive_c/vrcx
+chmod +x $WINEPREFIX/drive_c/vrcx.sh
 
 curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/Linux/winediscordipcbridge.exe -o $WINEPREFIX/drive_c/winediscordipcbridge.exe
 
