@@ -16112,7 +16112,7 @@ speechSynthesis.getVoices();
     ) {
         var D = this.screenshotMetadataDialog;
         var metadata = JSON.parse(json);
-        if (typeof metadata === 'undefined' || !metadata.sourceFile) {
+        if (!metadata?.sourceFile) {
             D.metadata = {};
             D.metadata.error =
                 'Invalid file selected. Please select a valid VRChat screenshot.';
