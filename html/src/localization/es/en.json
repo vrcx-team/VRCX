@@ -90,21 +90,28 @@
                 "search": "Buscar",
                 "vrchat_favorites": "Favoritos de VRChat",
                 "local_favorites": "Favoritos locales",
-                "new_group": "Nuevo Grupo"
+                "new_group": "Nuevo Grupo",
+                "refresh": "Actualizar",
+                "cancel_refresh": "Cancelar actualización"
             },
             "avatars": {
                 "header": "Avatares",
                 "search": "Buscar",
                 "vrchat_favorites": "Favoritos de VRChat",
                 "local_favorites": "Favoritos locales (Requiere VRC+)",
-                "new_group": "Nuevo Grupo"
+                "new_group": "Nuevo Grupo",
+                "refresh": "Actualizar",
+                "cancel_refresh": "Cancelar actualización"
             },
-            "bulk_unfavorite_mode": "Eliminar favoritos en masa",
-            "bulk_unfavorite_selection": "Eliminar favoritos seleccionados",
+            "edit_mode": "Modo Edición",
+            "copy": "Copiar",
+            "clear": "Limpiar",
+            "bulk_unfavorite": "Eliminar favoritos en masa",
             "refresh_tooltip": "Actualizar todos los favoritos",
             "export": "Exportar",
             "import": "Importar",
             "move_tooltip": "Mover",
+            "copy_tooltip": "Copiar",
             "unfavorite_tooltip": "Eliminar favorito",
             "visibility_tooltip": "Cambiar visibilidad",
             "rename_tooltip": "Renombrar",
@@ -207,7 +214,7 @@
                 "vrcx_updater": {
                     "header": "Actualizador de VRCX",
                     "change_build": "Cambiar versión",
-                    "auto_update": "Actualización automática",
+                    "update_action": "Actualización",
                     "auto_update_off": "Desactivado",
                     "auto_update_notify": "Notificar",
                     "auto_update_download": "Descarga automática",
@@ -218,6 +225,8 @@
                     "startup": "Iniciar al ejecutar Windows",
                     "minimized": "Iniciar minimizado",
                     "tray": "Cerrar en la bandeja",
+                    "disable_gpu_acceleration": "Desactivar la aceleración de la GPU",
+                    "disable_gpu_acceleration_tooltip": "Sólo cambie esta opción si sabe lo que está haciendo, puede solucionar problemas con la interfaz de usuario, requiere reiniciar VRCX",
                     "proxy": "Ajustes de proxy"
                 },
                 "favorites": {
@@ -636,9 +645,15 @@
             "groups": {
                 "header": "Grupos",
                 "total_count": "Total {count}",
+                "sort_by": "Clasificar por:",
                 "own_groups": "Grupos propios",
                 "mutual_groups": "Grupos mutuos",
-                "groups": "Grupos"
+                "groups": "Grupos",
+                "sorting": {
+                    "alphabetical": "Alfabético",
+                    "members": "Miembros",
+                    "in_game": "Orden en el juego"
+                }
             },
             "worlds": {
                 "header": "Mundos",
@@ -708,6 +723,7 @@
                 "download_package": "Descargar paquete de Unity",
                 "publish_to_labs": "Publicar en Labs",
                 "unpublish": "Anular la publicación",
+                "delete_persistent_data": "Borrar datos persistentes",
                 "delete": "Eliminar"
             },
             "instances": {

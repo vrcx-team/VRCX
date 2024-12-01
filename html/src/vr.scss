@@ -175,7 +175,7 @@ input,
 textarea,
 select,
 button {
-    font-family: 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC', 'Noto Sans SC', 'Noto Color Emoji',
+    font-family: 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans TC', 'Noto Sans SC',
         'Meiryo UI', 'Malgun Gothic', 'Segoe UI', sans-serif;
     line-height: normal;
     text-shadow:
@@ -350,8 +350,8 @@ i.x-user-status.busy {
 .spin {
     animation: rotation 2.5s infinite linear;
     position: absolute;
-    width: 14px;
-    height: 28px;
+    width: 24px;
+    height: 30px;
 }
 
 @keyframes rotation {

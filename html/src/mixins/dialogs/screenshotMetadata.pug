@@ -37,13 +37,13 @@ mixin screenshotMetadata()
             el-carousel(ref="screenshotMetadataCarousel" :interval="0" initial-index="1" indicator-position="none" arrow="always" height="600px" style="margin-top:10px" @change="screenshotMetadataCarouselChange")
                 el-carousel-item
                     span(placement="top" width="700px" trigger="click")
-                        img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.previousFilePath" style="width:100%;height:100%;object-fit:contain")
+                        img.x-link(slot="reference" :src="screenshotMetadataDialog.metadata.previousFilePath" style="width:100%;height:100%;object-fit:contain")
                 el-carousel-item
                     span(placement="top" width="700px" trigger="click" @click="showFullscreenImageDialog(screenshotMetadataDialog.metadata.filePath)")
-                        img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.filePath" style="width:100%;height:100%;object-fit:contain")
+                        img.x-link(slot="reference" :src="screenshotMetadataDialog.metadata.filePath" style="width:100%;height:100%;object-fit:contain")
                 el-carousel-item
                     span(placement="top" width="700px" trigger="click")
-                        img.x-link(slot="reference" v-lazy="screenshotMetadataDialog.metadata.nextFilePath" style="width:100%;height:100%;object-fit:contain")
+                        img.x-link(slot="reference" :src="screenshotMetadataDialog.metadata.nextFilePath" style="width:100%;height:100%;object-fit:contain")
             br
             template(v-if="screenshotMetadataDialog.metadata.error")
                 pre(v-text="screenshotMetadataDialog.metadata.error" style="white-space:pre-wrap;font-size:12px")

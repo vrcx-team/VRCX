@@ -26,10 +26,23 @@ namespace VRCX
         {
             var isGameRunning = false;
             var isSteamVRRunning = false;
-
+            
             if (ProcessMonitor.Instance.IsProcessRunning("VRChat"))
             {
                 isGameRunning = true;
+            }
+
+            if (Wine.GetIfWine())
+            {
+                var wineTmpPath = Path.Combine(Program.AppDataDirectory, "wine.tmp");
+                if (File.Exists(wineTmpPath))
+                {
+                    var wineTmp = File.ReadAllText(wineTmpPath);
+                    if (wineTmp.Contains("isGameRunning=true"))
+                    {
+                        isGameRunning = true;
+                    }
+                }
             }
 
             if (ProcessMonitor.Instance.IsProcessRunning("vrserver"))

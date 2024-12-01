@@ -128,6 +128,7 @@ speechSynthesis.getVoices();
             isGameNoVR: true,
             isSteamVRRunning: false,
             isHmdAfk: false,
+            isRunningUnderWine: false,
             appVersion: '',
             latestAppVersion: '',
             shiftHeld: false
@@ -141,6 +142,7 @@ speechSynthesis.getVoices();
         el: '#x-app',
         async mounted() {
             await this.initLanguage();
+            this.isRunningUnderWine = await AppApi.IsRunningUnderWine();
             await this.changeThemeMode();
             await AppApi.SetUserAgent();
             this.appVersion = await AppApi.GetVersion();
@@ -7376,7 +7378,7 @@ speechSynthesis.getVoices();
         ) {
             return;
         }
-        if (!$utils.checkCanInvite(currentLocation)) {
+        if (!$app.checkCanInvite(currentLocation)) {
             return;
         }
 
@@ -7395,6 +7397,9 @@ speechSynthesis.getVoices();
             )
                 .then((_args) => {
                     $app.$message(`Auto invite sent to ${ref.senderUsername}`);
+                    API.hideNotification({
+                        notificationId: ref.id
+                    });
                     return _args;
                 })
                 .catch((err) => {
@@ -8163,6 +8168,20 @@ speechSynthesis.getVoices();
         }
         this.updateVRConfigVars();
         await this.updatetrustColor();
+        await this.applyWineEmojis();
+    };
+
+    $app.methods.applyWineEmojis = async function () {
+        if (document.contains(document.getElementById('app-emoji-font'))) {
+            document.getElementById('app-emoji-font').remove();
+        }
+        if (this.isRunningUnderWine) {
+            var $appEmojiFont = document.createElement('link');
+            $appEmojiFont.setAttribute('id', 'app-emoji-font');
+            $appEmojiFont.rel = 'stylesheet';
+            $appEmojiFont.href = 'emoji.font.css';
+            document.head.appendChild($appEmojiFont);
+        }
     };
 
     $app.data.isStartAtWindowsStartup = await configRepository.getBool(
@@ -12353,7 +12372,7 @@ speechSynthesis.getVoices();
             'instanceDialogAccessType',
             'public'
         ),
-        region: await configRepository.getString('instanceRegion', ''),
+        region: await configRepository.getString('instanceRegion', 'US West'),
         groupRegion: '',
         groupId: await configRepository.getString('instanceDialogGroupId', ''),
         groupAccessType: await configRepository.getString(
@@ -16109,7 +16128,7 @@ speechSynthesis.getVoices();
     ) {
         var D = this.screenshotMetadataDialog;
         var metadata = JSON.parse(json);
-        if (typeof metadata === 'undefined' || !metadata.sourceFile) {
+        if (!metadata?.sourceFile) {
             D.metadata = {};
             D.metadata.error =
                 'Invalid file selected. Please select a valid VRChat screenshot.';
@@ -20740,13 +20759,33 @@ speechSynthesis.getVoices();
 
     API.$on('AVATAR', function (args) {
         if ($app.localAvatarFavoritesList.includes(args.ref.id)) {
+            for (var i = 0; i < $app.localAvatarFavoriteGroups.length; ++i) {
+                var groupName = $app.localAvatarFavoriteGroups[i];
+                if (!$app.localAvatarFavorites[groupName]) {
+                    continue;
+                }
+                for (
+                    var j = 0;
+                    j < $app.localAvatarFavorites[groupName].length;
+                    ++j
+                ) {
+                    var ref = $app.localAvatarFavorites[groupName][j];
+                    if (ref.id === args.ref.id) {
+                        $app.localAvatarFavorites[groupName][j] = args.ref;
+                    }
+                }
+            }
+
             // update db cache
             database.addAvatarToCache(args.ref);
         }
     });
 
     API.$on('LOGIN', function () {
-        $app.getLocalAvatarFavorites();
+        $app.localAvatarFavoriteGroups = [];
+        $app.localAvatarFavoritesList = [];
+        $app.localAvatarFavorites = {};
+        workerTimers.setTimeout($app.getLocalAvatarFavorites(), 100);
     });
 
     $app.methods.getLocalAvatarFavorites = async function () {

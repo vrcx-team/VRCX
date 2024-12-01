@@ -83,6 +83,11 @@ cp seguiemj.ttf "$WINEPREFIX/drive_c/windows/Fonts"
 WINEPREFIX=$WINEPREFIX wine reg add 'HKLM\Software\Microsoft\Windows NT\CurrentVersion\Fonts' /v 'seguiemj' /t REG_SZ /d 'seguiemj.ttf' /f
 rm seguiemj.ttf
 
+curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/Linux/vrcx.sh -o $WINEPREFIX/drive_c/vrcx.sh
+chmod +x $WINEPREFIX/drive_c/vrcx.sh
+
+curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/Linux/winediscordipcbridge.exe -o $WINEPREFIX/drive_c/winediscordipcbridge.exe
+
 echo "Install VRCX.png to $XDG_DATA_HOME/icons"
 curl -L https://raw.githubusercontent.com/vrcx-team/VRCX/master/VRCX.png -o "$XDG_DATA_HOME/icons/VRCX.png"
 
@@ -91,7 +96,7 @@ echo "[Desktop Entry]
 Type=Application
 Name=VRCX
 Categories=Utility;
-Exec=WINEPREFIX=$WINEPREFIX wine '$INSTALL_LOCATION/VRCX.exe'
+Exec=$WINEPREFIX/drive_c/vrcx.sh
 Icon=VRCX
 " > $XDG_DATA_HOME/applications/vrcx.exe.desktop
 

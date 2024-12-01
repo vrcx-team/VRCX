@@ -80,5 +80,10 @@ namespace VRCX
                 output = filePath;
             return output;
         }
+        
+        public bool IsRunningUnderWine()
+        {
+            return Wine.GetIfWine();
+        }
     }
 }
