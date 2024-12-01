@@ -36,7 +36,8 @@ namespace VRCX
         private static void Install()
         {
             var setupArguments = "/S";
-            if (Wine.GetIfWine()) setupArguments += " /DISABLE_SHORTCUT=true";
+            if (Wine.GetIfWine())
+                setupArguments += " /SKIP_SHORTCUT=true";
             
             try
             {

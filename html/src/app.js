@@ -20785,7 +20785,7 @@ speechSynthesis.getVoices();
         $app.localAvatarFavoriteGroups = [];
         $app.localAvatarFavoritesList = [];
         $app.localAvatarFavorites = {};
-        workerTimers.setTimeout($app.getLocalAvatarFavorites(), 100);
+        workerTimers.setTimeout(() => $app.getLocalAvatarFavorites(), 100);
     });
 
     $app.methods.getLocalAvatarFavorites = async function () {
