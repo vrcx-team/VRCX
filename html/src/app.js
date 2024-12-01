@@ -7376,7 +7376,7 @@ speechSynthesis.getVoices();
         ) {
             return;
         }
-        if (!$utils.checkCanInvite(currentLocation)) {
+        if (!$app.checkCanInvite(currentLocation)) {
             return;
         }
 
@@ -7395,6 +7395,9 @@ speechSynthesis.getVoices();
             )
                 .then((_args) => {
                     $app.$message(`Auto invite sent to ${ref.senderUsername}`);
+                    API.hideNotification({
+                        notificationId: ref.id
+                    });
                     return _args;
                 })
                 .catch((err) => {
