@@ -12372,7 +12372,7 @@ speechSynthesis.getVoices();
             'instanceDialogAccessType',
             'public'
         ),
-        region: await configRepository.getString('instanceRegion', ''),
+        region: await configRepository.getString('instanceRegion', 'US West'),
         groupRegion: '',
         groupId: await configRepository.getString('instanceDialogGroupId', ''),
         groupAccessType: await configRepository.getString(
@@ -20759,13 +20759,33 @@ speechSynthesis.getVoices();
 
     API.$on('AVATAR', function (args) {
         if ($app.localAvatarFavoritesList.includes(args.ref.id)) {
+            for (var i = 0; i < $app.localAvatarFavoriteGroups.length; ++i) {
+                var groupName = $app.localAvatarFavoriteGroups[i];
+                if (!$app.localAvatarFavorites[groupName]) {
+                    continue;
+                }
+                for (
+                    var j = 0;
+                    j < $app.localAvatarFavorites[groupName].length;
+                    ++j
+                ) {
+                    var ref = $app.localAvatarFavorites[groupName][j];
+                    if (ref.id === args.ref.id) {
+                        $app.localAvatarFavorites[groupName][j] = args.ref;
+                    }
+                }
+            }
+
             // update db cache
             database.addAvatarToCache(args.ref);
         }
     });
 
     API.$on('LOGIN', function () {
-        $app.getLocalAvatarFavorites();
+        $app.localAvatarFavoriteGroups = [];
+        $app.localAvatarFavoritesList = [];
+        $app.localAvatarFavorites = {};
+        workerTimers.setTimeout($app.getLocalAvatarFavorites(), 100);
     });
 
     $app.methods.getLocalAvatarFavorites = async function () {
