@@ -45,7 +45,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ContentSQLiteInteropFiles>true</ContentSQLiteInteropFiles>
-    <CopySQLiteInteropFiles>false</CopySQLiteInteropFiles>
+    <CopySQLiteInteropFiles>true</CopySQLiteInteropFiles>
     <CleanSQLiteInteropFiles>false</CleanSQLiteInteropFiles>
     <CollectSQLiteInteropFiles>false</CollectSQLiteInteropFiles>
   </PropertyGroup>
@@ -68,10 +68,6 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		  <TargetPath>openvr_api.dll</TargetPath>
 	  </None>
-	  <None Include="libs\sqlite3.dll">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <TargetPath>sqlite3.dll</TargetPath>
-	  </None>
     <Content Include="VRCX.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -88,6 +84,8 @@
     <PackageReference Include="NLog" Version="5.3.4" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
 	<PackageReference Include="System.Drawing.Common" Version="9.0.0" />
 	<PackageReference Include="System.Management" Version="9.0.0" />
