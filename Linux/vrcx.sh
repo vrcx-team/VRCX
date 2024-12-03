@@ -12,7 +12,7 @@ launch_ipcbridge() {
 launch_ipcbridge
 
 # Launch VRCX
-wine ~/.local/share/vrcx/drive_c/vrcx/VRCX.exe &
+wine "$WINEPREFIX/drive_c/Program Files/VRCX/VRCX.exe" &
 VRCX_PID=$!
 
 while kill -0 $VRCX_PID 2>/dev/null; do
